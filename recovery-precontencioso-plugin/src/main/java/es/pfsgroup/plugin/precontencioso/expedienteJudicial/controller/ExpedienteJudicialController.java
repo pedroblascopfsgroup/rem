@@ -76,6 +76,7 @@ public class ExpedienteJudicialController {
 	private static final String LISTA_PROCEDIMIENTOS_JSON = "plugin/precontencioso/acciones/json/tipoProcedimientoJSON";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	private static final String DOCUMENTO_INSTANCIA_REGISTRO = "plugin/precontencioso/generarDocs/documentoInstanciaRegistro";
+	private static final String DOCUMENTO_INSTANCIA_REGISTRO_CANARIAS = "plugin/precontencioso/generarDocs/documentoInstanciaRegistroCanarias";
 	private static final String JSON_BIENES_PROCEDIMIENTO = "plugin/precontencioso/generarDocs/bienesProcedimientoJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
@@ -472,6 +473,12 @@ public class ExpedienteJudicialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
+	public String documentoInstanciaRegistroCanarias(ModelMap model) {
+		return DOCUMENTO_INSTANCIA_REGISTRO_CANARIAS;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
 	public String bienesAsociadosProcedimiento(ModelMap model, @RequestParam(value = "id", required = true) Long idProcedimiento) {
 
 		List<BienProcedimientoDTO> bienes = bienApi.getBienesPersonasContratos(idProcedimiento, null, null, null);
@@ -513,6 +520,37 @@ public class ExpedienteJudicialController {
 
 		FileItem instanciaDocumento = generarDocumentoApi.generarDocumentoBienes(idProcedimiento, idsBien, localidad, nombreNotario, localidadNotario, numProtocolo, 
 				fechaEscritura, localidadRegProp, numeroRegProp);
+		model.put("fileItem", instanciaDocumento);
+
+		return JSP_DOWNLOAD_FILE;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String generarDocumentoBienesCanarias(ModelMap model,
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien,
+			@RequestParam(value = "localidad", required = true) String localidad,
+			@RequestParam(value = "nombreNotario", required = false) String nombreNotario,
+			@RequestParam(value = "numProtocolo", required = false) String numProtocolo,
+			@RequestParam(value = "fechaEscritura", required = false) String fechaEscritura,
+			@RequestParam(value = "nombreNotario2", required = false) String nombreNotario2,
+			@RequestParam(value = "numProtocolo2", required = false) String numProtocolo2,
+			@RequestParam(value = "fechaEscritura2", required = false) String fechaEscritura2,
+			@RequestParam(value = "localidadRegProp", required = false) String localidadRegProp, 
+			@RequestParam(value = "numeroRegProp", required = false) String numeroRegProp 
+			) {
+		
+		if (generarDocumentoApi == null) {
+			logger.error("LiquidacionDocController.generarCertSaldo: No existe una implementacion para generarDocumentoApi");
+			throw new BusinessOperationException("Not implemented generarDocumentoApi");
+		}
+
+		FileItem instanciaDocumento = generarDocumentoApi.generarDocumentoBienesCanarias(idProcedimiento, idsBien, localidad, 
+				nombreNotario, numProtocolo, fechaEscritura, 
+				nombreNotario2, numProtocolo2, fechaEscritura2,
+				localidadRegProp, numeroRegProp);
 		model.put("fileItem", instanciaDocumento);
 
 		return JSP_DOWNLOAD_FILE;

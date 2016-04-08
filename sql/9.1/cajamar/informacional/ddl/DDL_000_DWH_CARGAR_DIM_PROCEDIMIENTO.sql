@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=María V.
---## FECHA_CREACION=20160406
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160408
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=CMREC-2898
+--## INCIDENCIA_LINK=CMREC-2897
 --## PRODUCTO=NO
 --## 
---## Finalidad: Se cambia la carga de D_PRC_COBRO_TIPO_DET para que se cargue como D_PRC_COBRO_TIPO
+--## Finalidad: se elimina el filtro de gaa.usuariocrear=SAG en la carga de GESTOR_PRC_ID en D_PRC
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -20,9 +20,9 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 -- ===============================================================================================
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 01/04/2016
--- Motivos del cambio: Se cambia la carga de D_PRC_COBRO_TIPO_DET para que se cargue como D_PRC_COBRO_TIPO
+-- Responsable ultima modificacion: María V., PFS Group
+-- Fecha ultima modificacion: 08/04/2016
+-- Motivos del cambio: se elimina el filtro de gaa.usuariocrear=SAG en la carga de GESTOR_PRC_ID en D_PRC
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -2745,7 +2745,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                     JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
                     JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
                     JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
-                     WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor concursal'' and gaa.usuariocrear=''SAG''';
+                     WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor concursal''';
 
   EXECUTE IMMEDIATE
   'INSERT INTO TMP_PRC_SUPERVISOR (PROCEDIMIENTO_ID, SUPERVISOR_PRC_ID)

@@ -21,8 +21,9 @@ SET DEFINE OFF;
 
 DECLARE
  V_ESQUEMA    VARCHAR2(25 CHAR):= '#ESQUEMA#';
+ V_ESQUEMA2   VARCHAR2(25 CHAR):= '#ESQUEMA02#';
  V_ESQUEMA_M  VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';
- TABLA        VARCHAR(30 CHAR) := 'TMP_BATCH_SV_BPM_INSTANCE';
+ TABLA        VARCHAR(30 CHAR) := 'BATCH_SEG_DATOS_SALIDA';
  ITABLE_SPACE VARCHAR(25 CHAR) := '#TABLESPACE_INDEX#';
  ERR_NUM      NUMBER;
  ERR_MSG      VARCHAR2(2048 CHAR);
@@ -36,12 +37,20 @@ BEGIN
 
   V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||'
             (
-              EXP_ID           NUMBER(16)                   NOT NULL,
-              PROCESSINSTANCE  INTEGER,
-              TOKEN            INTEGER,
-              MODULEINSTANCE   INTEGER,
-              VARIABLEMAP      INTEGER,
-              DD_TPX_CODIGO    VARCHAR2 (20 CHAR)
+              EXP_ID            NUMBER(16),
+              EXP_DESCRIPCION   VARCHAR2(310 CHAR),
+              EXP_MANUAL        NUMBER,
+              DD_AEX_CODIGO     VARCHAR2(25 CHAR),
+              DD_EEX_ID         NUMBER,
+              DD_EST_ID         NUMBER,
+              EXP_FECHA_EST_ID  DATE,
+              OFI_ID            NUMBER(16),
+              CNT_ID            NUMBER(16),
+              PER_ID            NUMBER(16),
+              ARQ_ID            NUMBER(16),
+              CEX_PASE          NUMBER,
+              PEX_PASE          NUMBER,
+              DD_TPX_CODIGO     VARCHAR2 (20 CHAR)
             ) NOLOGGING';
 
   IF V_EXISTE = 0 THEN

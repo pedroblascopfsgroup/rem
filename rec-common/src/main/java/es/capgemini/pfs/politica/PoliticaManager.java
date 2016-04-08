@@ -60,6 +60,7 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 
 /**
  * Clase con los métodos de negocio relativos a los Objetivos.
@@ -318,8 +319,8 @@ public class PoliticaManager {
      */
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_MOTIVO)
     public List<DDMotivo> getMotivoList(){
-		
-    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class);
+    	Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class, filtro);
     	
 		return motivos;
     }

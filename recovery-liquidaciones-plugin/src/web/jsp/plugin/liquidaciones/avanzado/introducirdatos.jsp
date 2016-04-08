@@ -79,14 +79,15 @@
 				}
 				if (r.liquidacion != undefined) {
 					capital.setValue(r.liquidacion.capital);
-					interesesOrdinarios.setValue(r.liquidacion.interesesDemora);
+					interesesOrdinarios.setValue(r.liquidacion.interesesOrdinarios);
+					interesesDemora.setValue(r.liquidacion.interesesDemora);
 					comisiones.setValue(r.liquidacion.comisiones);
 					impuestos.setValue(r.liquidacion.impuestos);
 					gastos.setValue(r.liquidacion.gastos);
-					//fechaCierre.setValue(r.liquidacion.fechaCierre);
+					fechaCierre.setValue(r.liquidacion.fechaCierre);
 				}
 				if (r.contrato != undefined) {
-					fechaCierre.setValue(r.contrato.fechaVencimiento);
+					fechaVencimiento.setValue(r.contrato.fechaVencimiento);
 					tipoInteres.setValue(r.contrato.tipoInteres);
 				}
 		}});
@@ -106,6 +107,7 @@
 		impuestos="impuestos"
 		tipoInteres="tipoInteres"
 		fechaCierre_date="fechaCierre"
+		fechaVencimiento="fechaVencimiento"
 	
 		costasLetrado="costasLetrado"
 		costasProcurador="costasProcurador"
@@ -159,6 +161,7 @@
 	<pfsforms:numberfield name="gastos" labelKey="plugin.liquidaciones.introducirdatos.control.gastos" label="**Gastos" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="impuestos" labelKey="plugin.liquidaciones.introducirdatos.control.impuestos" label="**Impuestos" value="" obligatory="true" allowDecimals="true"/>
 	<pfs:hidden name="tipoInteres" value="" />
+	<pfs:hidden name="fechaVencimiento" value="" />
 	<pfsforms:datefield name="fechaCierre" labelKey="plugin.liquidaciones.introducirdatos.control.fechaCierre" label="**Fecha Cierre" obligatory="true"/>
 	fechaCierre.on('render', function() {this.validate();});
 	

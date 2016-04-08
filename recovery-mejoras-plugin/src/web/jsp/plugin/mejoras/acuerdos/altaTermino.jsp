@@ -362,7 +362,7 @@
 					
 					return false;
        			}
-       			if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora ) {
+       			if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));
        				date = Ext.util.Format.date(date, "d/m/y");
 	       			Ext.Msg.show({

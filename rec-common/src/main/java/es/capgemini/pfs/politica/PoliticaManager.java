@@ -25,6 +25,7 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -59,6 +60,7 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 
 /**
  * Clase con los métodos de negocio relativos a los Objetivos.
@@ -88,6 +90,9 @@ public class PoliticaManager {
     
     @Autowired
     private PersonaDao personaDao;
+    
+    @Autowired
+    private ExpedienteManagerApi expedienteManager;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -314,8 +319,8 @@ public class PoliticaManager {
      */
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_MOTIVO)
     public List<DDMotivo> getMotivoList(){
-		
-    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class);
+    	Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class, filtro);
     	
 		return motivos;
     }
@@ -404,7 +409,7 @@ public class PoliticaManager {
         if (expediente.getSeguimiento() && !expediente.getComite().isComiteSeguimiento()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoSeguimiento", idExpediente); }
         if (expediente.isGestionDeuda() && !expediente.getComite().isComiteGestionDeuda()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoGestionDeuda", idExpediente); }
         
-        executor.execute(InternaBusinessOperation.BO_EXP_MGR_CERRAR_DECISION_POLITICA, idExpediente);
+        expedienteManager.cerrarDecisionPolitica(idExpediente);
     }
 
     /**

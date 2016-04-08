@@ -60,11 +60,11 @@ public class RecoveryBPMfwkInfoProcInputs implements Serializable{
 	}
 
 	public Date getFecha() {
-		return fecha == null ? null : (Date) fecha.clone();
+		return fecha == null ? null : ((Date) fecha.clone());
 	}
 
 	public void setFecha(Date fecha) {
-		this.fecha = fecha == null ? null : (Date) fecha.clone();
+		this.fecha = fecha == null ? null : ((Date) fecha.clone());
 	}
 
 	public RecoveryBPMfwkDDTipoAccion getTipo_accion() {

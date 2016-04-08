@@ -1052,24 +1052,26 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())
 					&& !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
 				
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%'|| :numProcJuz ||'%-''%'|| :anyoProjuz ||'%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%'|| :numProcJuz ||'%/''%'|| :anyoProjuz ||'%')");
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+
+				//hql.append(" or prc.codigoProcedimientoEnJuzgado= '"+dto.getNumeroProcedimientoEnJuzgado()+"/"+dto.getAnyoProcedimientoEnJuzgado()+"' )");
 
 				
-				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
-				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
+//				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
+//				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
 				
 			} else if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())) {
 				
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%'|| :numProcJuz ||'%-''%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%'|| :numProcJuz ||'%/''%')");
-				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%')");
+//				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
 				
 			} else if (!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
 				
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-''%'|| :anyoProjuz ||'%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/''%'|| :anyoProjuz ||'%')");
-				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+//				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
 
 			}
 

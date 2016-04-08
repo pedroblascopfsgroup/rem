@@ -22,6 +22,7 @@
 		<json:property name='tieneTareaNotificacion' value="${expediente.fechaVencimiento!=null}" />
 		<json:property name='tieneComiteMixto' value="${expediente.comite.comiteMixto}" />
 		<json:property name='tieneComiteSeguimiento' value="${expediente.comite.comiteSeguimiento}" />
+		<json:property name='tieneComiteGestionDeuda' value="${expediente.comite.comiteGestionDeuda}" />
 		<json:property name="fechaVencimiento">
 		  <fwk:date value="${expediente.fechaVencimiento}"/>
 		</json:property>
@@ -139,6 +140,12 @@
 		<json:property name='idGestorActual' value="${expediente.idGestorActual}" />
 		<json:property name='idSupervisorActual' value="${expediente.idSupervisorActual}" />
 	</json:object>
+	<c:if test="${expediente.decisionComite!=null}">
+		<json:property name='tieneDecisionComite' value="true" />
+	</c:if>
+	<c:if test="${expediente.decisionComite==null}">
+		<json:property name='tieneDecisionComite' value="false" />
+	</c:if>	
 	<json:object name="decision">
 		<json:property name='ultimaSesion' value="${expediente.comite.ultimaSesion.id}" />
 		<json:property name='comite' value="${expediente.comite.nombre}" />

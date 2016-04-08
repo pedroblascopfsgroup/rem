@@ -19,6 +19,7 @@ import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.devon.web.DynamicElementManager;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.asunto.dao.EstadoProcedimientoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
@@ -240,12 +241,12 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 		
 		///Si tenemos una propuesta asociada al procedimiento
 		if(!Checks.esNulo(dto.getPropuesta())){
-			EXTAcuerdo propuesta = (EXTAcuerdo) propuestaDao.get(dto.getPropuesta());
-			
-			///cambiamos el estado de la propuesta a vigente
-			propuestaApi.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_VIGENTE, false);
 			///Asociamos la propuesta al asunto
 			propuestaApi.asignaPropuestaAlAsunto(dto.getPropuesta(),dto.getAsunto());
+			
+			///Asociamos la propuesta al procedimiento
+			Acuerdo propuesta = propuestaDao.get(dto.getPropuesta());
+			p.setPropuesta(propuesta);
 		}
 
 		// Al crear una nueva lista borramos la anterior (de contratos

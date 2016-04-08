@@ -17,6 +17,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Set<String> tipoGestorLetrado;
 	private Map<String, String> tipoSupervisorProrroga;
 	private Set<String> tiposGestoresDeProcuradores;
+	private Set<String> perfilesConsulta;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -114,5 +115,20 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 
 	public void setTiposGestoresDeProcuradores(Set<String> tiposGestoresDeProcuradores) {
 		this.tiposGestoresDeProcuradores = tiposGestoresDeProcuradores;
+	}
+
+	/**
+	 * @return the perfilesConsulta
+	 */
+	@Override
+	public Set<String> getPerfilesConsulta() {
+		return perfilesConsulta;
+	}
+
+	/**
+	 * @param perfilesConsulta the perfilesConsulta to set
+	 */
+	public void setPerfilesConsulta(Set<String> perfilesConsulta) {
+		this.perfilesConsulta = perfilesConsulta;
 	}
 }

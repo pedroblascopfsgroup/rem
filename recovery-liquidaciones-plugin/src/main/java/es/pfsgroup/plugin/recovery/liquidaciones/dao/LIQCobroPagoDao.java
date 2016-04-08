@@ -24,5 +24,13 @@ public interface LIQCobroPagoDao extends AbstractDao<LIQCobroPago, Long>{
      * @return lista de CobroPago
      */
 	public List<LIQCobroPago> getByIdAsunto(Long id);
+	
+	
+	/**
+     * Recupera una lista de CobroPago por Id de asunto filtrando por contrato.
+     * @param id long
+     * @return lista de CobroPago
+     */
+	public List<LIQCobroPago> getByIdAsuntoContrato(Long id);
 
 }

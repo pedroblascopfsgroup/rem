@@ -62,7 +62,7 @@ public class AdjudicacionBccLeaveActionHandler extends AdjudicacionHayaLeaveActi
 
 			// opción A - IVA/IGIC
 			String tributacion = adjProcedimientoManager.comprobarBienSujetoIVA(prc.getId());
-        	boolean opA = (tributacion != null && !tributacion.equals("ITP"));
+        	boolean opA = (tributacion != null && (tributacion.startsWith("IGIC") || tributacion.startsWith("IVA")));
 			
         	// opción E - Requiere doc Adicional
         	String docAdicional = dameValorTarea(campos, "comboAdicional");

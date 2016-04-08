@@ -3381,6 +3381,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'numberfield',"name":"d_importe","fieldLabel":"Intereses",allowBlank:false}
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	   				]);
+	
+	//id: 448 : TRAMITE DE INTERESES: Confirmar Notificacion H042_ConfirmarNotificacion
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
+	                      ]);
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

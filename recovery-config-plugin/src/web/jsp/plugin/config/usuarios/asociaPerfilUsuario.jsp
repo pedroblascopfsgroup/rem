@@ -92,7 +92,7 @@
 		permiteGuardar="permiteGuardar"	
 		tipoTab="tipoTab" />
 
-	<pfs:editForm saveOrUpdateFlow="plugin/config/usuarios/ADMguardarPerfilUsuario"
+	<pfs:editForm saveOrUpdateFlow="plugin/config/usuarios/ADMguardarPerfilUsuarioSeguro"
 		leftColumFields="username,perfil,jerarquia,centros,password"
 		parameters="parametros" 
 		onSuccessMode="tabGenericoConMsgGuardando" />

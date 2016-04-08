@@ -1434,8 +1434,8 @@
 		,value : '${NMBbien.tipoBien.codigo}'
 	});
 
-		
-	var poblacion = app.creaText('bien.poblacion', '<s:message code="bienesCliente.poblacion" text="**Poblacion" />' , '${NMBbien.poblacion}', {maxLength:50});
+	
+	var poblacion = app.creaText('bien.poblacion', '<s:message code="bienesCliente.poblacion" text="**Poblacion" />' , '<s:message javaScriptEscape="true" text="${NMBbien.poblacion}" />', {maxLength:50});
 	
 	var refCatastral = app.creaText('bien.referenciaCatastral', '<s:message code="bienesCliente.refcatastral" text="**Ref. catastral" />' , '<s:message text="${NMBbien.referenciaCatastral}" javaScriptEscape="true" />', {maxLength:20,width:250});
 	

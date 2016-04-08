@@ -256,7 +256,11 @@ public class BurofaxCMManager implements BurofaxCMApi {
 
 		LiquidacionPCO liquidacion = null;
 		if (!Checks.esNulo(contrato)) {
-			liquidacion = liquidacionDao.getLiquidacionDelContrato(contrato.getId());
+			try {
+				liquidacion = liquidacionDao.getLiquidacionDelContrato(contrato.getId());
+			} catch (Exception e) {
+				logger.error("Error al obtener la liquidacion correspondiente al contrato: " + e.getMessage());
+			}
 		}
 		
 		if (!Checks.esNulo(contrato)) {

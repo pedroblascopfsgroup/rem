@@ -58,7 +58,9 @@ public class PROAprobadoConCondicionesDeudaActionHandler extends PROBaseActionHa
         }
 
         expedienteManager.cambiarEstadoItinerarioExpediente(idExpediente, DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE);
-
+        
+        expedienteManager.desCongelarExpediente(idExpediente);
+        
         executionContext.getProcessInstance().signal();
     }
 

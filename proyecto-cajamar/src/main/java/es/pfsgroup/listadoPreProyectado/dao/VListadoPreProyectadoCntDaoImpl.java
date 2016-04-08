@@ -48,7 +48,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		}
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
-		sb.append(" where 1=1 ");
+		sb.append(" where f.diasVencidos BETWEEN 1 AND 120 ");
 		//sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {
@@ -140,7 +140,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasExp.length; i++) {
 					String zonaExp = zonasExp[i];
-					sb.append(" f.zonExp = '" + zonaExp + "' ");
+					sb.append(" f.zonExp LIKE '" + zonaExp + "%' ");
 					if (i<zonasExp.length-1) {
 						sb.append(" or ");
 					}
@@ -277,7 +277,8 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		select.add(Projections.property("f.propuesta").as("propuesta"));
 		select.add(Projections.property("f.estadoGestion").as("estadoGestion"));
 		select.add(Projections.property("f.fechaPrevReguCnt").as("fechaPrevReguCnt"));
-
+		select.add(Projections.property("f.importePteDifer").as("importePteDifer"));
+		
 		Criteria query = getSession().createCriteria(VListadoPreProyectadoCnt.class, "f");
 		query.setProjection(Projections.distinct(select));
 		query.add(Restrictions.in("f.expId", expsId));

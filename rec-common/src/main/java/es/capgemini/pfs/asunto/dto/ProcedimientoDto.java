@@ -31,6 +31,7 @@ public class ProcedimientoDto extends WebDto {
     private static final String PORCENTAJE_RECUPERACION_NULO = "dc.proc.porcentajeRecuperacionNulo";
     private static final String PLAZO_NULO = "dc.proc.plazoNulo";
     private static final String PERSONAS_SELECCIONADAS_NULO = "dc.proc.personasSeleccionadasNulo";
+     private static final String PROPUESTA_NULO = "dc.proc.propuestasNulo";
 
     //private static final String CONTRATOS_SELECCIONADOS_NULO = "dc.proc.contratosSeleccionadosNulo";
     //private static final String PORCENTAJE_RECUPERACION_INVALIDO = "dc.proc.porcentajeRecuperacionInvalido";
@@ -90,6 +91,10 @@ public class ProcedimientoDto extends WebDto {
             if (actuacion == null || "".equals(actuacion)) {
                 context.addMessage(new MessageBuilder().code(TIPO_ACTUACION_NULO).error().source("").defaultText(
                         "**Debe seleccionar un tipo de Actuación.").build());
+            }
+            if (DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && propuesta == null) {
+                context.addMessage(new MessageBuilder().code(PROPUESTA_NULO).error().source("").defaultText(
+                        "**Debe seleccionar una propuesta.").build());
             }
             if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && saldorecuperar == null) {
                 context.addMessage(new MessageBuilder().code(SALDO_RECUPERAR_NULO).error().source("").defaultText(

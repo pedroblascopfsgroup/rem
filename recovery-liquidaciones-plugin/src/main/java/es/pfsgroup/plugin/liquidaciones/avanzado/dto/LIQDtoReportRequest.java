@@ -29,6 +29,7 @@ public class LIQDtoReportRequest extends WebDto {
 	private BigDecimal comisiones;
 	private BigDecimal gastos;
 	private BigDecimal impuestos;
+	private Float tipoInteres;
 	private String fechaCierre;
 	
 	private BigDecimal costasLetrado;
@@ -120,6 +121,14 @@ public class LIQDtoReportRequest extends WebDto {
 
 	public void setImpuestos(BigDecimal impuestos) {
 		this.impuestos = impuestos;
+	}
+
+	public Float getTipoInteres() {
+		return tipoInteres;
+	}
+
+	public void setTipoInteres(Float tipoInteres) {
+		this.tipoInteres = tipoInteres;
 	}
 
 	public String getFechaCierre() {

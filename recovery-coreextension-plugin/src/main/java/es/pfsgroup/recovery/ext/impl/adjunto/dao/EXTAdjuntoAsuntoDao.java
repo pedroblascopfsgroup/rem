@@ -14,4 +14,6 @@ public interface EXTAdjuntoAsuntoDao extends
 
 	List<EXTAdjuntoAsunto> getAdjuntoAsuntoByNombreByAsu(Long idAsunto, String nombre);
 
+	List<EXTAdjuntoAsunto> getAdjuntoAsuntoByNombreAndPrcIdAndTipoAdjunto(Long idPrc, String nombre, String codTipoAdjunto);
+
 }

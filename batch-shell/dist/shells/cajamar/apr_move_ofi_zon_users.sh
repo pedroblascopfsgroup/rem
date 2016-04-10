@@ -40,15 +40,11 @@ then
 else
    for fichero in $arrayFicheros
    do
-		mascaraSem=$DIR_BACKUP$fichero$mascara$extensionSem
-        mascaraZip=$DIR_BACKUP$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+		ficheroSem=$DIR_BACKUP$fichero$mascara$extensionSem
+        ficheroZip=$DIR_BACKUP$fichero$mascara$extensionZip
 	
 	    sed -i 's/ //g' $ficheroSem
 	
-	    #echo "$ficheroZip" "$DIR_HRE_OUTPUT"
-    	#echo "$ficheroSem" "$DIR_HRE_OUTPUT"
 	    cp $ficheroZip $DIR_HRE_OUTPUT
 	    cp $ficheroSem $DIR_HRE_OUTPUT
    done

@@ -27,7 +27,6 @@ do
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
-	   #echo "$hora_actual"
 	done
 done
 
@@ -38,9 +37,7 @@ then
 else
    for fichero in $arrayFicheros
    do
-        mascaraZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
-	
+        ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
 	    mv $ficheroZip $DIR_DESTINO
    done
    echo "$(basename $0) Ficheros encontrados"

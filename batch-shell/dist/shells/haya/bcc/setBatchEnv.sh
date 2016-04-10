@@ -29,3 +29,4 @@ export DIR_BCC_BACKUP=$INSTALL_DIR/control/etl/backup/aprov-cajamar/
 export DIR_BCC_INPUT=$INSTALL_DIR/control/etl/input/aprov-cajamar/
 export DIR_BASE_ETL=$INSTALL_DIR/programas/etl
 export MAX_WAITING_MINUTES=10
+export MAX_WAITING_MINUTES_FOR_START=720

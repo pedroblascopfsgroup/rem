@@ -42,10 +42,8 @@ then
 else
    for fichero in $arrayFicheros
    do
-	    mascaraSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+	    ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 	
         sed -i 's/ //g' $ficheroSem
         mv $ficheroZip $DIR_DESTINO

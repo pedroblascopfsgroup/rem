@@ -1,18 +1,18 @@
 #!/bin/bash
- 
 
-ficheros=OFICINAS,ZONAS
-
-if [ -z ${DIR_DESTINO} ]; then
-    echo "$(basename $0) Error: DIR_DESTINO no definido. Compruebe invocación previa a setBatchEnv.sh"
-    exit 1
-fi
-rm -f $DIR_DESTINO*
+ficheros=VENCIDOS
 
 if [ -z "$1" ]; then
     echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
     exit 1
 fi
+
+if [ -z ${DIR_DESTINO} ]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi 
+echo "Limpiando $DIR_DESTINO$ficheros*"
+rm -f $DIR_DESTINO$ficheros*
 
 mascara='_'$ENTIDAD'_'$1
 extensionSem=".sem"
@@ -29,16 +29,16 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
-
+    ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
+    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
+    
     echo "$ficheroSem"
-	./ftp/ftp_get_tr_files.sh $1 $fichero
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
-	   sleep 900
-	   hora_actual=`date +%Y%m%d%H%M%S`
-	   ./ftp/ftp_get_tr_files.sh $1 $fichero
-	done
+    ./ftp/ftp_get_aux_files.sh $1 $fichero
+    while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+        sleep 900
+        hora_actual=`date +%Y%m%d%H%M%S`
+        ./ftp/ftp_get_aux_files.sh $1 $fichero
+    done
 done
 
 if [ "$hora_actual" -ge "$hora_limite" ]
@@ -48,8 +48,8 @@ then
 else
    for fichero in $arrayFicheros
    do
-	    ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
+	    ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO
@@ -58,4 +58,3 @@ else
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi
-

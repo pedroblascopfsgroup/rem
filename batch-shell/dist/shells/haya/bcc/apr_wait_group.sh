@@ -26,11 +26,11 @@ do
     ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 
     echo "$ficheroSem"
-    ./ftp/ftp_get_grupos.sh $1
+    ./ftp/ftp_get_tr_files.sh $1 $fichero
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
-	   ./ftp/ftp_get_grupos.sh $1
+	   ./ftp/ftp_get_tr_files.sh $1 $fichero
 	   #echo "$hora_actual"
 	done
 done
@@ -42,10 +42,8 @@ then
 else
    for fichero in $arrayFicheros
    do
-	    mascaraSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+	    ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 	
         sed -i 's/ //g' $ficheroSem
         mv $ficheroZip $DIR_DESTINO

@@ -52,6 +52,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
+import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
 import es.pfsgroup.plugin.precontencioso.burofax.api.BurofaxApi;
 import es.pfsgroup.plugin.precontencioso.burofax.dto.BurofaxDTO;
 import es.pfsgroup.plugin.precontencioso.burofax.manager.BurofaxManager;
@@ -368,23 +369,27 @@ public class BurofaxController {
 	@RequestMapping
 	public String configurarTipoBurofax(WebRequest request, ModelMap model,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
 		DocumentoPCO doc = null;
+		final String contexto = precontenciosoContext.getRecovery();
+		
 		String[] arrayIdDirecciones=request.getParameter("arrayIdDirecciones").replace("[","").replace("]","").split(",");
 		String[] arrayIdBurofax=request.getParameter("arrayIdBurofax").replace("[","").replace("]","").split(",");
-		if(!Checks.esNulo(idDocumento)){
-    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
-    		if(!Checks.esNulo(doc)){
-	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+		if (!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
+			if(!Checks.esNulo(idDocumento)){
+	    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+	    		if(!Checks.esNulo(doc)){
+		    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+		    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+		    			return JSON_RESPUESTA;
+		    		}
+	    		} else {
 	    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
-	    			return JSON_RESPUESTA;
+	    			return JSON_RESPUESTA;   			
 	    		}
-    		} else {
-    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
-    			return JSON_RESPUESTA;   			
-    		}
-    	} else {
-			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
-			return JSON_RESPUESTA;
-    	}
+	    	} else {
+				model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+				return JSON_RESPUESTA;
+	    	}
+		}
 
 		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,doc);
 		
@@ -880,22 +885,25 @@ public class BurofaxController {
 	@RequestMapping
     public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento) throws Exception{
     	DocumentoPCO doc = null;
+    	final String contexto = precontenciosoContext.getRecovery();
     	
-    	if(!Checks.esNulo(idDocumento)){
-    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
-    		if(!Checks.esNulo(doc)){
-	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+    	if (!PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(contexto)) {
+	    	if(!Checks.esNulo(idDocumento)){
+	    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
+	    		if(!Checks.esNulo(doc)){
+		    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+		    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+		    			return JSON_RESPUESTA;
+		    		}
+	    		} else {
 	    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
-	    			return JSON_RESPUESTA;
+	    			return JSON_RESPUESTA;   			
 	    		}
-    		} else {
-    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
-    			return JSON_RESPUESTA;   			
-    		}
-    	} else if (comboEditable){
-			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
-			return JSON_RESPUESTA;   			
-		}
+	    	} else if (comboEditable){
+				model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+				return JSON_RESPUESTA;   			
+			}
+    	}
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	

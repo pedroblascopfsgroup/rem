@@ -24,7 +24,7 @@ DIR_BASE=/recovery/haya
 cp config/$1/config.ini $DIR_BASE/batch-server/programas/etl/config/
 unzip zip/batch*.zip
 rm -rf $DIR_BASE/batch-server/batch/*
-cp -r batch/* $DIR_BASE/batch-server/batch/
+cp -r zip/batch/* $DIR_BASE/batch-server/batch/
 chmod -R a+rwx $DIR_BASE/batch-server/batch/*
 #cd $LOCAL_PATH
 rm -f $DIR_BASE/batch-server/sareb/shells/*.sh

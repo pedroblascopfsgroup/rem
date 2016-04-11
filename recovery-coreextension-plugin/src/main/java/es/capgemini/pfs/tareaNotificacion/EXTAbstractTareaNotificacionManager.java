@@ -109,7 +109,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		dto.setUsuarioLogado(usuarioLogado);
 		List listaRetorno = new ArrayList();
 
-		Page page;
+		Page page = null;
 		if (dto.getTraerGestionVencidos() != null && dto.getTraerGestionVencidos()) {
 			agregarTareasGestionVencidosSeguimiento(dto, listaRetorno, opcion);
 
@@ -120,7 +120,10 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 			((PageSql) page).setResults(listaRetorno);
 			((PageSql) page).setTotalCount(listaRetorno.size());
 		} else {
-			page = obtenerTareasPendientes(dto, opcion, modelClass);
+			
+			if(perfiles.size() > 0 && zonas.size() > 0) {
+				page = obtenerTareasPendientes(dto, opcion, modelClass);
+			}
 			
 			if (page != null) {
 				listaRetorno.addAll(page.getResults());

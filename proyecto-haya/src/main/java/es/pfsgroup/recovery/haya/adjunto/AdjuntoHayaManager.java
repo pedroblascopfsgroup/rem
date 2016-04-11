@@ -64,6 +64,7 @@ import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
+import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 
 @Service("adjuntoManagerHayaImpl")
 public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
@@ -222,7 +223,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExp);	
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
-		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, uploadForm.getParameter("comboTipoFichero"));
+		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(claseExp, uploadForm.getParameter("comboTipoFichero")));
 		try {
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
 			super.uploadDoc(uploadForm, new Long(respuesta.getIdDocumento()));
@@ -230,6 +231,17 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			logger.error("upload error: " + e);
 		}
 		return respuesta;
+	}
+	
+	private String obtenerMatricula(String claseExp, String tipoFichero){
+		StringBuilder sb = new StringBuilder();
+		MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoFichero));
+		if(!Checks.esNulo(mapeo)){
+			sb.append(claseExp);
+			sb.append("-");
+			sb.append(mapeo.getTipoFicheroExterno());
+		}
+		return sb.toString();
 	}
 	
 	private String getClaseExpedienteByProcedimientoPadre(Procedimiento prc) {

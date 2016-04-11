@@ -14,8 +14,13 @@
 --##                  0.2 Se incluyen procedimientos de tipo concursos.
 --##       20151118 - 0.3 Adaptación a migracion HRE. NO migramos concursos.
 --##                                                 LOS_LOTE_SUBASTAS
---##       210151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
---##       210151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
+--##       20151123 - 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
+--##       20151127 - 0.5 Ponemos propiedad CAJAMAR - Gestion HAYA
+--##       20151211 - 0.6 Seleccionamos arquetipo específico migración
+--##       20160114 - 0.7 GMN Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
+--##       20160210 - 0.8 GMN Se filtra por marca HAYA y motivos ('EX','CN','IM','AR','MA','SC')
+--##       20160321 - 0.9 GMN CMREC-2850: Se filtra por marca HAYA y motivos ('EX','CN','IM','AR','MA') EXCLUIMOs LA MARCA SC
+--##       20160329 - 0.10 GMN Se incluye AL (ALCALA) en el filtro HAYA
 --##########################################
 --*/
 
@@ -105,32 +110,32 @@ BEGIN
 --/***************************************
 --*  INICIO MIGRACION DESDE MAESTRA      *
 --***************************************/
-
-    SELECT COUNT(1)
-    INTO V_COUNT
-    FROM ALL_SEQUENCES
-    WHERE SEQUENCE_NAME  = 'S_ASU_ASUNTOS'
-    AND SEQUENCE_OWNER = V_ESQUEMA;
-
-    IF V_COUNT = 1 THEN
-
-      v_SQL := 'DROP SEQUENCE '||V_ESQUEMA||'.S_ASU_ASUNTOS';
-      
-      EXECUTE IMMEDIATE(v_SQL);
-      
-      v_SQL := 'CREATE SEQUENCE  '||V_ESQUEMA||'.S_ASU_ASUNTOS  MINVALUE 100000000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 100000000 CACHE 20 NOORDER  NOCYCLE';
-      
-      EXECUTE IMMEDIATE(v_SQL);
-      
-    ELSE
-
-      v_SQL := 'CREATE SEQUENCE  '||V_ESQUEMA||'.S_ASU_ASUNTOS  MINVALUE 100000000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 100000000 CACHE 20 NOORDER  NOCYCLE';
-      
-      EXECUTE IMMEDIATE(v_SQL);
-      
-    END IF;
-    
-    COMMIT;
+ -- La secuencia S_ASU_ASUNTOS se crea en el scrip anterior.
+--    SELECT COUNT(1)
+--    INTO V_COUNT
+--    FROM ALL_SEQUENCES
+--    WHERE SEQUENCE_NAME  = 'S_ASU_ASUNTOS'
+--    AND SEQUENCE_OWNER = V_ESQUEMA;
+--
+--    IF V_COUNT = 1 THEN
+--
+--      v_SQL := 'DROP SEQUENCE '||V_ESQUEMA||'.S_ASU_ASUNTOS';
+--      
+--      EXECUTE IMMEDIATE(v_SQL);
+--      
+--      v_SQL := 'CREATE SEQUENCE  '||V_ESQUEMA||'.S_ASU_ASUNTOS  MINVALUE 100000000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 100000000 CACHE 20 NOORDER  NOCYCLE';
+--      
+--      EXECUTE IMMEDIATE(v_SQL);
+--      
+--    ELSE
+--
+--      v_SQL := 'CREATE SEQUENCE  '||V_ESQUEMA||'.S_ASU_ASUNTOS  MINVALUE 100000000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 100000000 CACHE 20 NOORDER  NOCYCLE';
+--      
+--      EXECUTE IMMEDIATE(v_SQL);
+--      
+--    END IF;
+--    
+--    COMMIT;
 
 /*    
     
@@ -1083,7 +1088,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1190,7 +1195,7 @@ BEGIN
            , 0    as BORRADO
            , 4    as DD_EEX_ID
            , null as EXP_DESCRIPCION
-           , null as DD_TPX_ID
+           , (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'') as DD_TPX_ID
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO
@@ -1201,8 +1206,19 @@ BEGIN
 --    	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
-     WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
+        , ( select op.CD_PROCEDIMIENTO, op.numero_contrato
+              from '||V_ESQUEMA||'.mig_procedimientos_operaciones op
+                 , '||V_ESQUEMA||'.cnt_contratos cnt
+                 , '||V_ESQUEMA||'.dd_ges_gestion_especial b
+                 , '||V_ESQUEMA||'.dd_cre_condiciones_remun_ext r
+             where op.numero_contrato = cnt.cnt_contrato
+               and cnt.dd_ges_id = b.dd_ges_id 
+               and cnt.dd_cre_id = r.dd_cre_id
+               and b.dd_ges_codigo = ''HAYA'' 
+               and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''AL'') ) MARCA
+     WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO
+       AND PRC.CD_PROCEDIMIENTO = MARCA.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos
     
@@ -1475,7 +1491,7 @@ BEGIN
            , GES.DD_GES_ID as DD_GES_ID
     FROM (SELECT DISTINCT CD_PROCEDIMIENTO FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS ) HIT, 
          (SELECT PCAB.CD_PROCEDIMIENTO
-               ,  substr(max (pcab.cd_procedimiento || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               ,  substr(max (cnt.cnt_contrato || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO               
                ,  (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Litigio'') AS DD_TAS_ID
                ,  PCAB.ENTIDAD_PROPIETARIA
                ,  PCAB.GESTION_PLATAFORMA
@@ -1484,6 +1500,10 @@ BEGIN
                       on pdem.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO
                left join '||V_ESQUEMA||'.per_personas per 
                       on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                                            
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
 --          UNION
 --          SELECT CD_CONCURSO AS CD_PROCEDIMIENTO
@@ -2484,7 +2504,7 @@ BEGIN
                               , BIE_ID
                               , VERSION 
                             ) 
-                            SELECT DISTINCT 
+                            SELECT /*+ ordered */ DISTINCT 
                                      LOS.LOS_ID
                                    , E.BIE_ID
                                    , LOS.VERSION 
@@ -2514,6 +2534,15 @@ BEGIN
     -- PRB_PCR_BIE
     ----------------
 
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.BIE_BIEN COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  BIE_BIEN Analizada');
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_MAESTRA_HITOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_MAESTRA_HITOS Analizada');	
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  MIG_PROCEDIMIENTOS_BIENES Analizada');		
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS COMPUTE STATISTICS');
+	DBMS_OUTPUT.PUT_LINE('[WARN-ACC] - '||to_char(sysdate,'HH24:MI:SS')||'  PRC_PROCEDIMIENTOS Analizada');		
+
     EXECUTE IMMEDIATE ('
     INSERT INTO '||V_ESQUEMA||'.PRB_PRC_BIE
             (
@@ -2534,8 +2563,10 @@ BEGIN
                    SELECT DISTINCT A.PRC_ID, B.BIE_ID
                    FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
                       , '||V_ESQUEMA||'.BIE_BIEN B
+		      , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS C
                    WHERE A.CD_BIEN IS NOT NULL --tRAMITES DE aDJUDICACION PARA ARRIBA
                      AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
+		     AND A.PRC_ID = C.PRC_ID
                  UNION
                    SELECT DISTINCT D.PRC_ID, B.BIE_ID --SUBASTAS
                    FROM '||V_ESQUEMA||'.BIE_BIEN B

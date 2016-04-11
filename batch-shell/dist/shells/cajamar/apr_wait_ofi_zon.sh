@@ -1,15 +1,20 @@
 #!/bin/bash
-# Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-DIR_INPUT=/recovery/transferencia/aprov_troncal/
-MAX_WAITING_MINUTES=10
+
 ficheros=OFICINAS,ZONAS
 
-#echo $(basename $0)
+if [ -z ${DIR_DESTINO} ]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+rm -f $DIR_DESTINO*
 
-DIR_DESTINO=/recovery/batch-server/control/etl/input/
+if [ -z "$1" ]; then
+    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
+    exit 1
+fi
 
-mascara='_'$ENTIDAD'_'????????
+mascara='_'$ENTIDAD'_'$1
 extensionSem=".sem"
 extensionZip=".zip"
 
@@ -24,11 +29,11 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT$fichero$mascara$extensionSem
-        ficheroZip=$DIR_INPUT$fichero$mascara$extensionZip
+	ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
+    ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 
-        echo "$ficheroSem"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+    echo "$ficheroSem"
+	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
 	   #echo "$hora_actual"
@@ -42,14 +47,12 @@ then
 else
    for fichero in $arrayFicheros
    do
-	mascaraSem=$DIR_INPUT$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+	    ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 	
-	sed -i 's/ //g' $ficheroSem
-	mv $ficheroZip $DIR_DESTINO
-	mv $ficheroSem $DIR_DESTINO
+	    sed -i 's/ //g' $ficheroSem
+	    mv $ficheroZip $DIR_DESTINO
+	    mv $ficheroSem $DIR_DESTINO
    done
    echo "$(basename $0) Ficheros encontrados"
    exit 0

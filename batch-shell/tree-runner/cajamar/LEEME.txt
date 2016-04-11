@@ -48,10 +48,10 @@
 
  Para ejecutar el árbol completo: 
  
-     nohup ./run-tree.sh > log/run-tree.log 2> log/run-tree.error &
+     nohup ./run-tree.sh YYYYMMDD > log/run-tree.log 2> log/run-tree.error &
 
  Para ejecutar una rama en concreto: 
  
-     nohup ./scripts/run-parallel.sh <nombre-rama>.txt > log/rama.log 2> log/rama.error &
+     nohup ./scripts/run-parallel.sh <nombre-rama>.txt YYYYMMDD > log/rama.log 2> log/rama.error &
 
 .....................................................................................

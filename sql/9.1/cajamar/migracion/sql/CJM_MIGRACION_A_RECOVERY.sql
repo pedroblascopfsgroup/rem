@@ -23,6 +23,9 @@
 --## 20151124 0.4 Se cruza con la tabla de BIE_BIENES para cargar LOB_LOTE_BIEN y PRB_PRC_BIE
 --##              se quita el min PK de LOS_LOTE_SUBASTA
 --##              Se saca del script la caracterizacion de procuradores
+--## 20151217 0.5 Se adapta a SYS_GUID para la tabla de EXP_EXPEDIENTES
+--## 20151229 0.6 Se modifica Nombre Asunto a la cadena: contrato+NIF/CIF+NombreApellidos
+--## 20160114 0.7 GMN Se asigna el DD_TPX_ID (tipo de expediente a recuperaciones - RECU)
 --##########################################
 --*/
 
@@ -1086,7 +1089,7 @@ BEGIN
                                              , ARQ.ARQ_ID
                                FROM '||V_ESQUEMA||'.MIG_TMP_PER_ID TPI
                                   , '||V_ESQUEMA||'.PER_PERSONAS PER
-                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ
+                                  , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
                                WHERE TPI.PER_ID IS NOT NULL
                                  AND TPI.PER_ID = PER.PER_ID
                               )'
@@ -1172,6 +1175,7 @@ BEGIN
            , CD_EXPEDIENTE_NUSE
            , NUMERO_EXP_NUSE
            , CD_PROCEDIMIENTO
+           , SYS_GUID
            )        
     SELECT '||V_ESQUEMA||'.S_EXP_EXPEDIENTES.NEXTVAL as EXP_ID
            , null as AAA_ID
@@ -1193,10 +1197,11 @@ BEGIN
            , 0    as BORRADO
            , 4    as DD_EEX_ID
            , null as EXP_DESCRIPCION
-           , null as DD_TPX_ID
+           , (select dd_TPX_ID from '||V_ESQUEMA||'.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = ''RECU'') as DD_TPX_ID
            , PRC.CD_EXPEDIENTE_NUSE
            , PRC.NUMERO_EXP_NUSE
            , PRC.CD_PROCEDIMIENTO
+           , SYS_GUID() as SYS_GUID               
       FROM 
       	(        
         SELECT CD_PROCEDIMIENTO, CD_EXPEDIENTE_NUSE , NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA            	
@@ -1204,7 +1209,7 @@ BEGIN
     	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
-        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Resto''  AND BORRADO = 0) ARQ             	
+        , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ             	
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO');
 
     -- 23.316 filas insertadas. <-- 1 CD_PROCEDIMIENTO = 1 EXPEDIENTE. Las mismas que el count distinct cd_procedimiento de mig_maestra_hitos
@@ -1481,7 +1486,7 @@ BEGIN
            , SYS_GUID() as SYS_GUID           
     FROM (SELECT DISTINCT CD_PROCEDIMIENTO FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS ) HIT, 
          (SELECT PCAB.CD_PROCEDIMIENTO
-               ,  substr(max (pcab.cd_procedimiento || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               ,  substr(max (cnt.cnt_contrato || '' | '' || per_doc_id || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
                ,  (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Litigio'') AS DD_TAS_ID
                ,  PCAB.ENTIDAD_PROPIETARIA
                ,  PCAB.GESTION_PLATAFORMA
@@ -1490,16 +1495,24 @@ BEGIN
                       on pdem.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO
                left join '||V_ESQUEMA||'.per_personas per 
                       on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                                  
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
           UNION
           SELECT CD_CONCURSO AS CD_PROCEDIMIENTO
-               , substr(max(cd_concurso || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
+               , substr(max(cnt.cnt_contrato || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
                , (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'') AS DD_TAS_ID
                , ENTIDAD_PROPIETARIA
                , GESTION_PLATAFORMA
             from '||V_ESQUEMA||'.mig_concursos_cabecera 
                left join  '||V_ESQUEMA||'.per_personas per 
                       on per.per_doc_id = nif
+               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
+                      on per.per_id = cpe.per_id
+               left join '||V_ESQUEMA||'.cnt_contratos cnt
+                      on cpe.cnt_id = cnt.cnt_id                              
              GROUP BY CD_CONCURSO,ENTIDAD_PROPIETARIA, GESTION_PLATAFORMA
           ) CAB,        
           '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP,
@@ -1654,7 +1667,7 @@ FROM (
                  ELSE MAE.PRC_PRC_ID
               END as PRC_PRC_ID
             , DD_JUZ_ID as DD_JUZ_ID
-            , CAB.NUM_AUTO_SIN_FORMATO as PRC_COD_PROC_EN_JUZGADO
+            , CAB.NUM_AUTO as PRC_COD_PROC_EN_JUZGADO
             , 0 as PRC_DECIDIDO
             , null as PRC_PROCESS_BPM
             , null as PRC_DOC_FECHA
@@ -1674,10 +1687,10 @@ FROM (
             , null as T_REFERENCIA
             , null as RPR_REFERENCIA
       FROM (select distinct CD_PROCEDIMIENTO, PRC_ID, PRC_PRC_ID, DD_TPO_CODIGO from  '||V_ESQUEMA||'.MIG_MAESTRA_HITOS Z ) MAE,
-           (SELECT DISTINCT CD_PROCEDIMIENTO, null FECHA_PUBLICACION_BOE, JUZGADO, IMPORTE_PRINCIPAL, NUM_AUTO_SIN_FORMATO 
+           (SELECT DISTINCT CD_PROCEDIMIENTO, null FECHA_PUBLICACION_BOE, JUZGADO, IMPORTE_PRINCIPAL, NUM_AUTO_SIN_FORMATO AS NUM_AUTO
               FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA
             UNION
-            SELECT DISTINCT CD_CONCURSO CD_PROCEDIMIENTO, FECHA_PUBLICACION_BOE, JUZGADO, IMPORTE_PRINCIPAL, NUM_AUTO_SIN_FORMATO 
+            SELECT DISTINCT CD_CONCURSO CD_PROCEDIMIENTO, FECHA_PUBLICACION_BOE, JUZGADO, IMPORTE_PRINCIPAL, NUM_AUTOS AS NUM_AUTO
               FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA K 
              WHERE NOT EXISTS(SELECT 1 FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA L WHERE K.CD_CONCURSO = L.CD_PROCEDIMIENTO)
             ) CAB,

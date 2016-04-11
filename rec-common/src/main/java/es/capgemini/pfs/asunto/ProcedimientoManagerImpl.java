@@ -52,6 +52,8 @@ import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Funciones relacionadas a los procedimientos.
@@ -71,6 +73,9 @@ public class ProcedimientoManagerImpl implements ProcedimientoManager {
 
 	@Autowired
 	private TipoProcedimientoDao tipoProcedimientoDao;
+	
+    @Autowired
+    private GenericABMDao genericDao;
 
 	/**
 	 * Devuelve los procedimientos asociados a un expediente.
@@ -682,6 +687,16 @@ public class ProcedimientoManagerImpl implements ProcedimientoManager {
 			return "";
 		}
 
+	}
+
+	@Override
+	public List<DDTipoActuacion> getTiposActuacionByIdTipoAsunto(Long idAsunto) {
+		Asunto asunto = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			return asunto.getTipoAsunto().getTiposActuacion();	
+		}else{
+			return null;
+		}
 	}
 
 }

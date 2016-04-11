@@ -104,31 +104,19 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	private static final String DEVON_HOME = "DEVON_HOME";
 	private static final String DEVON_PROPERTIES = "devon.properties";
 	private static final String UVEM_URL = "uvem.url";
-	private static String URL = "http://midtr2epd.cm.es:31485/bisa/endpoint";
+	private String URL = "http://midtr2epd.cm.es:31485/bisa/endpoint";
 	
 	boolean uvemInstalado = false;
 	
 	public void UVEMUtils() {
-		if (appProperties == null) {
+		if (Checks.esNulo(appProperties)) {
 			this.appProperties = cargarProperties(DEVON_PROPERTIES);
-		} else {
-			if(appProperties.contains(UVEM_URL) && appProperties.getProperty(UVEM_URL) != null){
-				URL = appProperties.getProperty(UVEM_URL);
-			}else{
-				System.out.println("UVEM no instalado");
-			}
-		}
-		
-		if (appProperties == null) {
-			System.out.println("No puedo consultar devon.properties");
-		
-		} else if (appProperties.containsKey(UVEM_URL) && appProperties.getProperty(UVEM_URL) != null) {
-			System.out.println("UVEM instalado");
+		} 
+		if(!Checks.esNulo(appProperties) && appProperties.containsKey(UVEM_URL) && !Checks.esNulo(appProperties.getProperty(UVEM_URL))){
 			URL = appProperties.getProperty(UVEM_URL);
-		} else {
+		}else{
 			System.out.println("UVEM no instalado");
-		}
-
+		}		
 	}
 	
 	private Properties cargarProperties(String nombreProps) {
@@ -282,7 +270,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			if(asunto != null && procedimiento != null && bien != null) {
 				System.out.println("Unidades de gestion no nulas.");
 				List<EXTGestorAdicionalAsunto> gestores = asunto.getGestoresAsunto();
-				if(gestores != null || gestores.size() > 0){
+				if(gestores != null && gestores.size() > 0){
 					for(EXTGestorAdicionalAsunto gestor : gestores){
 						if (EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROCURADOR.compareTo( gestor.getTipoGestor().getCodigo()) == 0){
 							procuradorAsunto = gestor;
@@ -821,7 +809,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			if(asunto != null && procedimiento != null && bien != null) {
 				System.out.println("Unidades de gestion no nulas.");
 				List<EXTGestorAdicionalAsunto> gestores = asunto.getGestoresAsunto();
-				if(gestores != null || gestores.size() > 0){
+				if(gestores != null && gestores.size() > 0){
 					for(EXTGestorAdicionalAsunto gestor : gestores){
 						if (EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROCURADOR.compareTo( gestor.getTipoGestor().getCodigo()) == 0){
 							procuradorAsunto = gestor;
@@ -889,17 +877,17 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		System.out.println("*** CONTSI"); // 	longitud="4"	 Tipo subtipo inmueble	siempre " " (spaces)
 		servicioGMPETS07_INS.setCodigoNuevoTipoSubtipoDeInmueblcontsi(StringUtils.rightPad("",4,' ').substring(0, 4));
 		//LIMPOX	"CantidadDecimal15"	IMPORTE OPERACION 
-		CantidadDecimal15 importeOperacion = new CantidadDecimal15(new BigDecimal(0.00));
+		CantidadDecimal15 importeOperacion = new CantidadDecimal15(BigDecimal.valueOf(0.00));
 		servicioGMPETS07_INS.setImporteOperacionlimpox(importeOperacion);
 		//LIMPOP	"NUMERICO_15" longitud="16"	IMPORTE OPERACION 
 		//CADC02	longitud="2"	CANTIDAD DE DECIMALES COLAB.
 		//LIMVAX	"CantidadDecimal15"	IMPORTE VALOR DE LA TASACION
-		CantidadDecimal15 importeValorTasacion = new CantidadDecimal15(new BigDecimal(0.00));
+		CantidadDecimal15 importeValorTasacion = new CantidadDecimal15(BigDecimal.valueOf(0.00));
 		servicioGMPETS07_INS.setImporteValorDeLaTasacionlimvax(importeValorTasacion);
 		//LIMVAT	"NUMERICO_15" longitud="16"	IMPORTE VENTA COLABORADOR
 		//CADC01	longitud="2"	CANTIDAD DE DECIMALES COLAB.	
 		//LIMFIX	"CantidadDecimal15"	IMPORTE VALOR FINALIZADO 
-		CantidadDecimal15 importeValorFinalizado = new CantidadDecimal15(new BigDecimal(0.00));
+		CantidadDecimal15 importeValorFinalizado = new CantidadDecimal15(BigDecimal.valueOf(0.00));
 		servicioGMPETS07_INS.setImporteValorFinalizadolimfix(importeValorFinalizado);
 		//LIMFIN	"NUMERICO_15" longitud="16"	IMPORTE VALOR FINALIZADO    	
 		//CADC34	longitud="2"	CANTIDAD DE DECIMALES COLAB.	
@@ -1001,13 +989,14 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		NMBValoracionesBien nueva = new NMBValoracionesBien();
 		if(valoracionActiva != null){
 			for (NMBValoracionesBien val : valoraciones) {
-				if (val.getId() == valoracionActiva.getId() ) 
+				if (val.getId() == valoracionActiva.getId() ){ 
 					nueva = val;
 					nueva.setCodigoNuita(new Long(numeroIdentificadorTasacion));
 					nueva.setFechaSolicitudTasacion(new Date());
 					Auditoria auditoria = Auditoria.getNewInstance();
 					nueva.setAuditoria(auditoria);
 					break;
+				}
 	        }
 		} else {
 			nueva.setCodigoNuita(new Long(numeroIdentificadorTasacion));

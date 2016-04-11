@@ -26,6 +26,19 @@
 						<value>FZAR_PPUESTA</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_PER">
+					<!-- Tareas tipo abrir cliente -->
+					<set>
+						<value>29</value>
+						<value>SOLEXPMGDEUDA</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_COBROS_PAGOS">
+					<!-- Tareas tipo abrir asunto -->
+					<set>
+						<value>CONTACOBR</value>
+					</set>
+				</entry>
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">

@@ -19,6 +19,7 @@
 <%@ attribute name="labelWidth" required="false" type="java.lang.String"%>
 <%@ attribute name="searchOnEnter" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="labelStyle" required="false" type="java.lang.String" %>
+<%@ attribute name="forceSelection" required="false" type="java.lang.Boolean" %>
 
 <c:set var="_width" value="175" />
 <c:if test="${width != null}">
@@ -55,6 +56,13 @@ var ${name} = new Ext.form.ComboBox({
 				<c:if test="${value > 0}">,value:'${value}'</c:if>
 				<%--<c:if test="${readOnly}">,readOnly:${readOnly}</c:if>--%>
 				<c:if test="${searchOnEnter}">,enableKeyEvents: true
+				<c:if test="${forceSelection != null}">
+					<c:choose>
+						<c:when test="${forceSelection}">,forceSelection: true</c:when>
+						<c:otherwise>,forceSelection: false</c:otherwise>
+					</c:choose>
+				</c:if>
+				<c:if test="${obligatory}">,allowBlank: false</c:if>
 				,listeners : {
 					keypress : function(target,e){				
 							if((e.getKey() == e.ENTER) && (this.getValue() != '') && (this.getValue() != 0)) {

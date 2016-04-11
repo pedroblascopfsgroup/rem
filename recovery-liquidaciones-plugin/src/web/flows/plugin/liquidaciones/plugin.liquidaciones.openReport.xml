@@ -44,7 +44,7 @@
 			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionesManager.createReport', request)"	result="flowScope.response" />
 			<evaluate expression="response.cabecera" result="flowScope.cabecera" />
 			<evaluate expression="response.cuerpo" result="flowScope.cuerpo" />
-			<!-- <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" /> -->
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
 	    	<evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
 		</on-entry>
 	</end-state>

@@ -142,6 +142,14 @@
   panel.getProcedimientoId = function(){
     return entidad.get("data").id;
   }
+  
+  panel.setVisibleTab = function(data){
+  if(data.esProcedimientoAcuerdo){
+    	return false;
+    }else{
+    	return true;
+    }
+  }
 
   return panel;
 

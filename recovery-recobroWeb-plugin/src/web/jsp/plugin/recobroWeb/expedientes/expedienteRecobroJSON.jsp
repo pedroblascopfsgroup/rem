@@ -22,6 +22,7 @@
 		<json:property name='tieneTareaNotificacion' value="${expediente.fechaVencimiento!=null}" />
 		<json:property name='tieneComiteMixto' value="${expediente.comite.comiteMixto}" />
 		<json:property name='tieneComiteSeguimiento' value="${expediente.comite.comiteSeguimiento}" />
+		<json:property name='tieneComiteGestionDeuda' value="${expediente.comite.comiteGestionDeuda}" />
 		<json:property name="fechaVencimiento">
 		  <fwk:date value="${expediente.fechaVencimiento}"/>
 		</json:property>
@@ -41,7 +42,6 @@
 		<json:property name='tareaPendienteDescripcion' value="${tareaPendiente.descripcionTarea}" escapeXml="false"/>
 		<json:property name='esRecuperacion' value="${expediente.arquetipo.itinerario.dDtipoItinerario.itinerarioRecuperacion == true}"/>
 		<json:property name='esSeguimiento' value="${expediente.arquetipo.itinerario.dDtipoItinerario.itinerarioSeguimiento == true}"/>
-		
 		<json:property name='comiteElevarNull' value="${comiteElevar==null}"/>
 		<json:property name='comiteElevar' value="${comiteElevar.id}"/>
 		<json:property name='comitesDelegarNull' value="${comitesDelegarNull==null}"/>
@@ -140,6 +140,12 @@
 		<json:property name='idGestorActual' value="${expediente.idGestorActual}" />
 		<json:property name='idSupervisorActual' value="${expediente.idSupervisorActual}" />
 	</json:object>
+	<c:if test="${expediente.decisionComite!=null}">
+		<json:property name='tieneDecisionComite' value="true" />
+	</c:if>
+	<c:if test="${expediente.decisionComite==null}">
+		<json:property name='tieneDecisionComite' value="false" />
+	</c:if>	
 	<json:object name="decision">
 		<json:property name='ultimaSesion' value="${expediente.comite.ultimaSesion.id}" />
 		<json:property name='comite' value="${expediente.comite.nombre}" />
@@ -179,6 +185,7 @@
 		<json:property name="usuarioExterno" value="${usuario.usuarioExterno}"/>
 	</json:object>
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
+	<json:property name="esGestor" value="${esGestor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
 	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
 	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">
@@ -187,4 +194,11 @@
 			<json:property name = "codigo" value = "${est.estadoItinerario.codigo}"/>
 		</json:object>
 	</json:array>
+	<json:object name="sancion">
+		<c:if test="${expediente.sancion!=null}">
+			<json:property name='observaciones' value="${expediente.sancion.observaciones}" />
+			<json:property name='codDecision' value="${expediente.sancion.decision.codigo}" />
+			<json:property name='descDecision' value="${expediente.sancion.decision.descripcion}" />
+		</c:if>
+	</json:object>
 </fwk:json>

@@ -162,10 +162,10 @@ public class RecoveryBPMfwkPeticionBatch implements Auditable, Serializable {
 	}
 
 	public Date getFechaProcesado() {
-		return fechaProcesado == null ? null : (Date) fechaProcesado.clone();
+		return fechaProcesado == null ? null : ((Date) fechaProcesado.clone());
 	}
 
 	public void setFechaProcesado(Date fechaProcesado) {
-		this.fechaProcesado = fechaProcesado == null ? null : (Date) fechaProcesado.clone();;
+		this.fechaProcesado = fechaProcesado == null ? null : ((Date) fechaProcesado.clone());
 	}
 }

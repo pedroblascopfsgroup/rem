@@ -839,6 +839,14 @@
 	panel.setVisibleTab = function(data){
 		return data.aceptacion.estaAceptado;
 	}
+	
+	panel.setVisibleTab = function(data){
+		if(data.toolbar.esAsuntoAcuerdo){
+			return false;
+		}else{
+			return true;
+		}
+	}
 
 	return panel;
 })

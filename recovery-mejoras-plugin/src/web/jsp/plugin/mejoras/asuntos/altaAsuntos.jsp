@@ -213,6 +213,31 @@
 		 />
 		
 	comboJerarquia.disabled=cambioGestor||cambioSupervisor;	
+	
+	<%-- Creamos el combo tipo de asunto --%>
+	var listaTiposDeAsunto = <fwk:json>
+						<json:array name="tipoAsunto" items="${tiposDeAsunto}" var="tasu">
+							<json:object>
+								<json:property name="id" value="${tasu.id}" />
+								<json:property name="descripcion" value="${tasu.descripcion}" />
+							</json:object>
+						</json:array>
+					</fwk:json>;
+	
+	<pfsforms:combo name="tipoDeAsunto" 
+		dict="listaTiposDeAsunto" 
+		displayField="descripcion" 
+		root="tipoAsunto" 
+		labelKey="expedientes.nuevo.asunto.tipo.asunto"
+		label="**Tipo de asunto"
+		value="0" 
+		valueField="id"
+		labelStyle="font-weight:bolder;"
+		 />
+		 
+	tipoDeAsunto.setValue("${asuntoEditar.tipoAsunto.id}");	 
+	
+	<%-- Fin creacion combo tipo de asunto  --%>
 
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -299,8 +324,8 @@
 	]);
 	
 	var optionsDespachoStore = page.getStore({
-	       //flow: 'coreextension/getListTipoDespachoData'
-	       flow: 'asuntos/buscarDespachosPorZonaTipoGestor'
+	       flow: 'coreextension/getListTipoDespachoData'
+	       //flow: 'asuntos/buscarDespachosPorZonaTipoGestor'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoDespachos'
 	    	 ,idProperty: 'cod'
@@ -365,7 +390,7 @@
 		comboTipoUsuario.reset();
 		comboTipoDespacho.reset();
 		
-		if (comboZonas.getValue()!='') {
+		<%-- if (comboZonas.getValue()!='') {
 			optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue(), 'zonas': comboZonas.getValue()}); 
 			comboTipoDespacho.setDisabled(false);
 		} else {
@@ -373,6 +398,18 @@
 			Ext.Msg.show({
 				title:'Zonas',
 				msg: 'Debe seleccionar una zona para ver los correspondientes despachos.',
+				buttons: Ext.Msg.OK,
+				icon:Ext.MessageBox.WARNING});			
+		} --%>
+		
+		if (comboTipoGestor.getValue()!='') {
+			optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()}); 
+			comboTipoDespacho.setDisabled(false);
+		} else {
+			comboTipoDespacho.setDisabled(true);
+			Ext.Msg.show({
+				title:'Zonas',
+				msg: 'Debe seleccionar un tipo gestor.',
 				buttons: Ext.Msg.OK,
 				icon:Ext.MessageBox.WARNING});			
 		}
@@ -417,6 +454,9 @@
 		comboTipoUsuario.setDisabled(true);
 		comboTipoGestor.setValue('');
 	}; 
+	
+	comboZonas.hidden= true;
+	comboJerarquia.hidden= true;
 	
 	var insertar = new Ext.Button({
 		text:'<s:message code="app.agregar" text="**Agregar" />'
@@ -501,9 +541,12 @@
 		,autoHeight:true	
 		,title: '<s:message code="menu.clientes.filtrado.findGestores" text="**Modificar Gestores" />'
 		,collapsible: false
-		,items: [tituloTipoGestor,comboTipoGestor
+		,items: [
+		
+		
+				tituloTipoGestor,comboTipoGestor
 				,tituloDespacho,comboTipoDespacho
-				,tituloUsuario,comboTipoUsuario]
+				,tituloUsuario,comboTipoUsuario ]
 		,bbar: [insertar]
 	});
 	
@@ -603,7 +646,8 @@
  					<c:if test="${codigoEstadoAsunto!=null}" >
                     	,codigoEstadoAsunto: '${codigoEstadoAsunto}'
                     </c:if>
-                    ,listaGestoresId: Ext.encode(getGestoresId())				
+                    ,listaGestoresId: Ext.encode(getGestoresId())
+                    ,tipoDeAsunto: tipoDeAsunto.getValue()				
 				}
 				,success :  function(){ 
                   				page.fireEvent(app.event.DONE);
@@ -645,7 +689,7 @@
 						,defaults:{xtype:'fieldset',border:false,autoHeight:true}
 						,items:[
 							{
-								items:[txtNombreAsunto,comboJerarquia]
+								items:[txtNombreAsunto,comboJerarquia,tipoDeAsunto]
 							},{
 								items:[comboZonas]
 								,style:'padding:5px'

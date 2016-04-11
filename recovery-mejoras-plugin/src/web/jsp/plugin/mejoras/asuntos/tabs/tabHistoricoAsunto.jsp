@@ -261,7 +261,7 @@
 							idEntidad: recStore.get('idEntidad')
 							,codigoTipoEntidad: recStore.get('tipoEntidad')
 							,descripcion: recStore.get('descripcionTarea')
-							,fecha: app.format.dateRenderer(recStore.get('fechaInicio'))
+							,fecha: recStore.get('fechaInicio')
 							,situacion: 'Asunto'
 							,idTareaAsociada: recStore.get('idTarea')
 							,idTraza:recStore.get('idTraza')
@@ -284,7 +284,7 @@
 								idEntidad: recStore.get('idEntidad')
 								,codigoTipoEntidad: recStore.get('tipoEntidad')
 								,descripcion: recStore.get('descripcionTarea')
-								,fecha: app.format.dateRenderer(recStore.get('fechaInicio'))
+								,fecha: recStore.get('fechaInicio')
 								,situacion: 'Asunto'
 								,idTareaAsociada: recStore.get('idTarea')
 								,isConsulta:true

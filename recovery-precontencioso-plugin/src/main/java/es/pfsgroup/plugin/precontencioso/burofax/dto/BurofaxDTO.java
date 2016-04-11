@@ -9,7 +9,7 @@ public class BurofaxDTO extends WebDto{
 	
 	private static final long serialVersionUID = 4065164471137337436L;
 	
-	private Long id;
+	private String id;
 	private Long idBurofax;
 	private Long idEnvio;
 	private Long idCliente;
@@ -121,10 +121,10 @@ public class BurofaxDTO extends WebDto{
 	public void setIdEnvio(Long idEnvio) {
 		this.idEnvio = idEnvio;
 	}
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
@@ -165,5 +165,11 @@ public class BurofaxDTO extends WebDto{
 	}
 	public void setTienePersona(boolean tienePersona) {
 		this.tienePersona = tienePersona;
+	}
+	
+	@Override
+	public String toString() {
+		
+		return "id: " + id + "; idBurofax: " + idBurofax + "; idEnvio: " + idEnvio + "; idCliente: " + idCliente + "; idDireccion: " + idDireccion + "; idTipoBurofax: " + idTipoBurofax +  "; cliente: " + cliente + "; tipoIntervencion: " + "; contrato: " + contrato + "; estado: " + estado + "; refExternaEnvio: " + refExternaEnvio + "; direccion: " + direccion + "; tipo: " + tipo + "; tipoDescripcion: "+ tipoDescripcion + "; fechaSolicitud: " + fechaSolicitud + "; fechaEnvio: " + fechaEnvio + "; fechaAcuse: " + fechaAcuse + "; resultado: " + resultado + "; esPersonaManual: " + esPersonaManual + "; tienePersona: " + tienePersona;
 	}
 }

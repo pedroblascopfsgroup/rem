@@ -7,9 +7,7 @@
 
 	<end-state id="persona" view="plugin/liquidaciones/personaJSON">
 		<on-entry>
-			<evaluate
-				expression="executor.execute('plugin.liquidaciones.liquidacionesManager.findpPrimerTitular', id)"
-				result="flowScope.persona" />
+			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionesManager.findpPrimerTitular', id)" result="flowScope.persona" />
 		</on-entry>
 	</end-state>
 </flow>

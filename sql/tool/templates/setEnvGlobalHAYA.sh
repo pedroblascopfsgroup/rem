@@ -7,8 +7,6 @@ export VARIABLES_SUSTITUCION='#ESQUEMA#;HAYA01,#ESQUEMA_MASTER#;HAYAMASTER,#ESQU
 
 #Indicar en MULTIENTIDAD las que se desee que se consideren para la ejecución de los scripts
 export MULTIENTIDAD='BCC,SAREB'
-
-
 export SAREB='HAYA01'
 export BCC='HAYA02'
 

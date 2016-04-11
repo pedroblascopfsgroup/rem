@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
+import java.io.File;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -71,6 +72,8 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 @Controller
 public class BurofaxController {
 	
+	private static final String CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO = "plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento";
+
 	private static final String JSON_LIST_BUROFAX  ="plugin/precontencioso/burofax/json/listaBurofaxJSON";
 	
 	private static final String JSP_TIPO_BUROFAX  ="plugin/precontencioso/burofax/jsp/tipoBurofax";
@@ -84,6 +87,7 @@ public class BurofaxController {
 	private static final String JSP_EDITAR_BUROFAX  ="plugin/precontencioso/burofax/jsp/editarBurofax";
 	
 	private static final String JSP_ENVIAR_BUROFAX  ="plugin/precontencioso/burofax/jsp/enviarBurofax";
+	private static final String JSP_ENVIAR_BUROFAX_CAJAMAR  ="plugin/precontencioso/burofax/jsp/enviarBurofaxCajamar";
 	
 	private static final String JSP_AGREGAR_NOTIFICACION  ="plugin/precontencioso/burofax/jsp/pantallaNotificacion";
 	
@@ -165,7 +169,7 @@ public class BurofaxController {
 			
 			for(BurofaxPCO burofax : listaBurofax){
 				BurofaxDTO dto=new BurofaxDTO();
-				dto.setId(burofax.getId());
+				dto.setId(burofax.getId().toString());
 				dto.setIdBurofax(burofax.getId());
 
 				if(!Checks.esNulo(burofax.getTipoIntervencion())){
@@ -219,10 +223,14 @@ public class BurofaxController {
 					
 					for(Direccion direccion : direcciones){
 				    		if(!Checks.esNulo(burofax.getContrato())){
-				    			dto.setId(burofax.getId()+burofax.getContrato().getId()+direccion.getId());
+				    			StringBuilder id = new StringBuilder();
+				    			id.append(burofax.getId()).append(burofax.getContrato().getId()).append(direccion.getId());
+				    			dto.setId(id.toString());
 				    		}
 				    		else{
-				    			dto.setId(burofax.getId()+burofax.getDemandado().getId()+direccion.getId());
+				    			StringBuilder id = new StringBuilder();
+				    			id.append(burofax.getId()).append(burofax.getDemandado().getId()).append(direccion.getId());
+				    			dto.setId(id.toString());
 				    		}
 				    		//dto.setIdCliente(burofax.getDemandado().getId());
 				    		dto.setIdDireccion(direccion.getId());
@@ -291,7 +299,7 @@ public class BurofaxController {
 			    			else{
 						    	listadoBurofax.add(dto);
 				    			dto=new BurofaxDTO();
-				    			dto.setId(direccion.getId());
+				    			dto.setId(direccion.getId().toString());
 			    			}
 				    		
 				    }
@@ -356,6 +364,7 @@ public class BurofaxController {
 	 * @return
 	 * @throws Exception 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String configurarTipoBurofax(WebRequest request, ModelMap model,Long idTipoBurofax,Long idDireccion,Long idBurofax, Long idDocumento) throws Exception{
 		DocumentoPCO doc = null;
@@ -365,10 +374,16 @@ public class BurofaxController {
     		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
     		if(!Checks.esNulo(doc)){
 	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
-	    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento",null));
+	    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
 	    			return JSON_RESPUESTA;
 	    		}
+    		} else {
+    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+    			return JSON_RESPUESTA;   			
     		}
+    	} else {
+			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+			return JSON_RESPUESTA;
     	}
 
 		burofaxManager.configurarTipoBurofax(idTipoBurofax,arrayIdDirecciones,arrayIdBurofax,null,doc);
@@ -591,6 +606,7 @@ public class BurofaxController {
 		return DEFAULT;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	private String guardaPersonaYPersonaManual(WebRequest request, 
 			ModelMap model,
@@ -844,8 +860,13 @@ public class BurofaxController {
     	model.put("arrayIdBurofax",idBurofax);
     	model.put("arrayIdEnvios",arrayIdEnvios);
 		
-    	
-    	return JSP_ENVIAR_BUROFAX;
+    	//CAJAMAR y HAYA-CAJAMAR tienen su propio JSP
+		Usuario userLogged = usuarioManager.getUsuarioLogado(); 
+		if (userLogged.getEntidad().getDescripcion().equals("CAJAMAR")) {
+			return JSP_ENVIAR_BUROFAX_CAJAMAR;
+		} else {
+			return JSP_ENVIAR_BUROFAX;
+		}
     }
     
     /**
@@ -855,7 +876,8 @@ public class BurofaxController {
      * @return
      * @throws Exception 
      */
-    @RequestMapping
+    @SuppressWarnings("unchecked")
+	@RequestMapping
     public String guardarEnvioBurofax(WebRequest request, ModelMap model,Boolean certificado,Long idTipoBurofax,Boolean comboEditable,  Long idDocumento) throws Exception{
     	DocumentoPCO doc = null;
     	
@@ -863,11 +885,17 @@ public class BurofaxController {
     		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
     		if(!Checks.esNulo(doc)){
 	    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
-	    			model.put("msgError", messageService.getMessage("plugin.precontencioso.grid.burofax.mensajes.validacionTipoDocumento",null));
+	    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
 	    			return JSON_RESPUESTA;
 	    		}
+    		} else {
+    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+    			return JSON_RESPUESTA;   			
     		}
-    	}
+    	} else if (comboEditable){
+			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
+			return JSON_RESPUESTA;   			
+		}
     	
     	String[] arrayIdEnvios=request.getParameter("arrayIdEnvios").replace("[","").replace("]","").replace("&quot;", "").split(",");
     	
@@ -942,23 +970,27 @@ public class BurofaxController {
 	@RequestMapping
 	private String descargarBurofax(WebRequest request, ModelMap model,@RequestParam(value = "idEnvio", required = true) Long idEnvio){
 		
-    	BurofaxEnvioIntegracionPCO burofaxEnvio=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
+    	BurofaxEnvioIntegracionPCO envioIntegracion=burofaxManager.getBurofaxEnvioIntegracionByIdEnvio(idEnvio);
 
-		if(!Checks.esNulo(burofaxEnvio) && !Checks.esNulo(burofaxEnvio.getContenido())){
-			EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
-			if(!Checks.esNulo(envioBurofax)){
-				
-				FileItem fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, burofaxEnvio.getNombreFichero());
+		if(!Checks.esNulo(envioIntegracion) && !Checks.esNulo(envioIntegracion.getContenido())){
+			Usuario userLogged = usuarioManager.getUsuarioLogado();
+			FileItem fileitem = null;
+			if (userLogged.getEntidad().getDescripcion().equals("CAJAMAR")) {
+				fileitem = burofaxManager.obtenerBurofaxPDF(envioIntegracion.getNombreFichero());
 				fileitem.setContentType("application/pdf");
-				if(!Checks.esNulo(burofaxEnvio.getNombreFichero())){
-					fileitem.setFileName(burofaxEnvio.getNombreFichero());
+			} else {
+				EnvioBurofaxPCO envioBurofax = burofaxManager.getEnvioBurofaxById(idEnvio);
+				if(!Checks.esNulo(envioBurofax)){
+					String nombreFichero = envioIntegracion.getNombreFichero(); 
+					if(Checks.esNulo(nombreFichero)){
+						nombreFichero = "BUROFAX-"+idEnvio+".pdf";
+					}
+					fileitem = burofaxManager.generarBurofaxPDF(envioBurofax, nombreFichero);
+					fileitem.setFileName(nombreFichero);
+					fileitem.setContentType("application/pdf");
 				}
-				else{
-					fileitem.setFileName("BUROFAX-"+burofaxEnvio.getCliente().replace(",","").trim()+".pdf");
-				}
-				model.put("fileItem", fileitem);
-			
 			}
+			model.put("fileItem", fileitem);
 		}
 
 		return JSP_DOWNLOAD_FILE;

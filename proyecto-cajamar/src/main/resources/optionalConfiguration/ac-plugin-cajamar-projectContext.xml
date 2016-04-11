@@ -189,6 +189,18 @@
 						<value>FZAR_PPUESTA</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_PER">
+					<!-- Tareas tipo abrir cliente -->
+					<set>
+						<value>29</value>
+					</set>
+				</entry>	
+				<entry key="ABRIR_COBROS_PAGOS">
+					<!-- Tareas tipo abrir asunto -->
+					<set>
+						<value>CONTACOBR</value>
+					</set>
+				</entry>			
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">
@@ -309,6 +321,11 @@
 		<property name="tiposGestoresDeProcuradores">
 			<set>
 				<value>GESPROC</value>
+			</set>
+		</property>
+		<property name="perfilesConsulta">
+			<set>
+				<value>CON_CONSULTA</value>
 			</set>
 		</property>
 	</bean>

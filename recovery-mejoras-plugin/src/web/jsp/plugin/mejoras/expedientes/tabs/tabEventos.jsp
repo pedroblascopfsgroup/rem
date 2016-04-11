@@ -65,7 +65,7 @@
 		{header:'<s:message code="historicoEventos.grid.alertada" text="**Alertada"/>',dataIndex:'alertada',renderer:app.format.booleanToYesNoRenderer},
 		{header:'<s:message code="historicoEventos.grid.finalizada" text="**Finalizada"/>',dataIndex:'finalizada',renderer:app.format.booleanToYesNoRenderer},
 		{header:'<s:message code="historicoEventos.grid.emisor" text="**Emisor"/>',dataIndex:'emisor'},
-		{header:'idTraza',dataIndex:'idTraza'}
+		{header:'idTraza',dataIndex:'idTraza',hidden:true}
 	]);
 	
 	var eventosGrid = app.crearGrid(eventosStore,eventosCM,{

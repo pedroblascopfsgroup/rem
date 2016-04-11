@@ -107,4 +107,12 @@ public interface LiquidacionApi {
 	 */
 	BigDecimal getTotalLiquidacionPCO(Long idProcedimientoPCO);
 
+	/**
+	 * Obtiene la liquidación de un contrato
+	 * 
+	 * @param cntId
+	 * @return
+	 */
+	LiquidacionPCO getLiquidacionByCnt(Long cntId);
+
 }

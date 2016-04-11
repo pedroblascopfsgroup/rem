@@ -162,7 +162,6 @@
 			,height:415
 			,bbar : [ 
 				botonesTabla
-					,incluirContrato,excluirContrato
 				<sec:authorize ifAllGranted="INCLUIR_EXCLUIR_CONTRATOS">
 					,incluirContrato,excluirContrato
 				</sec:authorize>  

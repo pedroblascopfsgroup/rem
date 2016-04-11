@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<input name="id" type="java.lang.Long"/>
+	<input name="estadoItinerario" type="java.lang.String"/>
+
+	<end-state id="listado" view="plugin/itinerarios/insertarReglaElevacionEstado">
+		<on-entry>
+			<evaluate expression="executor.execute('plugin.itinerarios.estados.getEstadoGenerico',id,estadoItinerario)" result="flowScope.estado"/>
+			<evaluate expression="executor.execute('plugin.itinerarios.reglasElevacion.getRestoReglas',id,estadoItinerario)" result="flowScope.ddTipoReglasElevacion"/>
+		</on-entry>
+		
+	</end-state>
+</flow>
+
+
+

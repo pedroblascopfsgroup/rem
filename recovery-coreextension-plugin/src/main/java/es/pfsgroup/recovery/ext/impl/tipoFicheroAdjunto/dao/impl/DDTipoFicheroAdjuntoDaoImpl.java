@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -18,10 +19,15 @@ public class DDTipoFicheroAdjuntoDaoImpl extends AbstractEntityDao<DDTipoFichero
 			List<DDTipoActuacion> actuaciones) {
 		
 		String codigoTipoOtros ="OT";
+		ArrayList<String> codigosActuacion = new ArrayList<String>();
 		StringBuffer hql = new StringBuffer();
 		hql.append(" Select tf from DDTipoFicheroAdjunto tf left join tf.tipoActuacion tac where tf.auditoria.borrado = false and  ( tf.codigo = '"+codigoTipoOtros+"' or tac.codigo in (");
 		for(DDTipoActuacion actuacion:actuaciones){
-			hql.append("'").append(actuacion.getCodigo()).append("',");
+			
+			if(!codigosActuacion.contains(actuacion.getCodigo())){
+				hql.append("'").append(actuacion.getCodigo()).append("',");	
+			}
+			codigosActuacion.add(actuacion.getCodigo());
 		}
 		hql.delete(hql.length()-1, hql.length());
 		hql.append(" )) order by tf.descripcion asc");

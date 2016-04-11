@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idPersona" type="java.lang.Long" />
+	<input name="isGestor" type="java.lang.Boolean" />
+	<input name="isSupervisor" type="java.lang.Boolean" />
+	<input name="proponer" type="java.lang.Boolean" />
+	<input name="idArquetipo" type="java.lang.Long"/>
+
+    <action-state id="obtenerExpedienteManual">
+		<evaluate expression="executor.execute('personaManager.obtenerIdExpedientePropuestoPersona', idPersona)" result="flowScope.idExpediente" />
+		<transition to="newOrEdit" />
+	</action-state>
+
+	<decision-state id="newOrEdit">
+		<if test="idExpediente!=null" then="buscar" else="crearExpedienteManual" />
+	</decision-state>
+   
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente" />
+		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta" />
+		<transition to="formulario" />
+	</action-state>
+
+	<action-state id="crearExpedienteManual">
+		<evaluate expression="executor.execute('expedienteManager.crearExpedienteManualGestDeuda', idPersona, idArquetipo)" result="flowScope.expediente" />
+		<transition to="formulario" />
+	</action-state>
+
+
+    <view-state id="formulario" view="${view}">
+    	<on-entry>
+    		<evaluate expression="executor.execute('dictionaryManager.getList', 'DDMotivoExpedienteManual')" result="flowScope.motivos"/>
+    		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta" />
+    		<evaluate expression="executor.execute('personaManager.getClienteActivo', idPersona)" result="flowScope.clienteActivo" />
+			<set name="flowScope.view" value="'expedientes/creacionExpedienteGestDeuda'" />
+			<set name="flowScope.idArquetipo" value="idArquetipo" />
+    	</on-entry>
+		<transition to="close" />
+    </view-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

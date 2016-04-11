@@ -31,7 +31,7 @@ public abstract class BatchJobLauncher extends FileHandler {
     private EntidadDao entidadDao;
 
     /**
-     * Obtiene un fichero de semáforo, genera parámetros para el job y lo lanza.
+     * Obtiene un fichero de semï¿½foro, genera parï¿½metros para el job y lo lanza.
      * @param file File
      *
      */
@@ -84,7 +84,9 @@ public abstract class BatchJobLauncher extends FileHandler {
             //Si ha dado en este punto la excepcion indica que el fichero no se ha terminado de copiar
             logger.warn("Problemas al leer el fichero: " + e.getMessage());
             try {
-                fis.close();
+            	if(fis != null){
+            		fis.close();
+            	}
             } catch (Exception e1) {
             }
             //Esperamos 1/2 segundo he intentamos nuevamente
@@ -96,7 +98,9 @@ public abstract class BatchJobLauncher extends FileHandler {
             waitEndOfFile(file);
         } finally {
             try {
-                fis.close();
+            	if(fis != null){
+            		fis.close();
+            	}
             } catch (Exception e1) {
             }
         }

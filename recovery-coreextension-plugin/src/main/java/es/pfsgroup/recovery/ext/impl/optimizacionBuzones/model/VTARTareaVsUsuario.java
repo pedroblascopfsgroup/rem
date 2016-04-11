@@ -187,6 +187,11 @@ public class VTARTareaVsUsuario {
     @Column(name="SPR_ID", insertable=false, updatable = false)
     private Long idProrroga;
     
+    @Column(name="DD_TAC_ID", insertable=false, updatable = false)
+    private Long idActuacion;
+    
+    @Column(name="DD_TPO_ID", insertable=false, updatable = false)
+    private Long idProcedimiento;
 
 	@ManyToOne
     @JoinColumn(name = "PRC_ID")

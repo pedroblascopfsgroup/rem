@@ -145,6 +145,10 @@ public class Expediente implements Serializable, Auditable, Describible {
     @Column(name = "EXP_DESCRIPCION")
     private String descripcionExpediente;
     
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SAE_ID")
+    private Sancion sancion;
+
 	@Column(name = "SYS_GUID")
 	private String guid;
 
@@ -369,7 +373,14 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return descripcion del gestor actual
      */
     public String getGestorActual() {
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+    	
+    	Estado estadoActual= null;
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null){
+    		estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+    	}
+    	
+        
         if (estadoActual != null && estadoActual.getGestorPerfil() != null) { return estadoActual.getGestorPerfil().getDescripcion(); }
         return "";
     }
@@ -633,21 +644,50 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return boolean: <code>true</code> si el itineario del expediente es de seguimiento
      */
     public boolean getSeguimiento() {
-        return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento();
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null && arquetipo.getItinerario().getdDtipoItinerario() != null){
+    		return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento();
+    	}
+    	else{
+    		return false;
+    	}
+        
     }
     
     /**
      * @return boolean: <code>true</code> si el itineario del expediente es de recuperacion
      */
     public boolean getRecuperacion() {
-        return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion();
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null && arquetipo.getItinerario().getdDtipoItinerario() != null){
+            return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion();
+
+    	}
+    	else{
+    		return false;
+    	}
+    }
+    
+    /**
+     * @return boolean: <code>true</code> si el itineario del expediente es de gestión de deuda
+     */    
+    public boolean isGestionDeuda() {
+    	return arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda();
     }
 
     /**
      * @return String: Descripci�n del itinerario del expediente
      */
     public String getTipoItinerario() {
-        return arquetipo.getItinerario().getdDtipoItinerario().getDescripcion();
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null && arquetipo.getItinerario().getdDtipoItinerario() != null){
+    		return arquetipo.getItinerario().getdDtipoItinerario().getDescripcion();
+    	}
+    	else{
+    		return null;
+    	}
+
+        
     }
 
     /**
@@ -977,7 +1017,8 @@ public class Expediente implements Serializable, Auditable, Describible {
             if (estadoItinerario.getCodigo().equals(tarea.getEstadoItinerario().getCodigo())
                     && (SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                             || SubtipoTarea.CODIGO_REVISAR_EXPEDIENE.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_DECISION_COMITE
-                            .equals(tarea.getSubtipoTarea().getCodigoSubtarea())
+                            .equals(tarea.getSubtipoTarea().getCodigoSubtarea()) || SubtipoTarea.CODIGO_TAREA_EN_SANCION.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) 
+                            || SubtipoTarea.CODIGO_TAREA_SANCIONADO.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) 
                             || SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA.equals(tarea.getSubtipoTarea().getCodigoSubtarea()) )) { return tarea.getId(); }
         }
         return null;
@@ -1094,5 +1135,13 @@ public class Expediente implements Serializable, Auditable, Describible {
 
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+	
+	public Sancion getSancion() {
+		return sancion;
+	}
+
+	public void setSancion(Sancion sancion) {
+		this.sancion = sancion;
 	}
 }

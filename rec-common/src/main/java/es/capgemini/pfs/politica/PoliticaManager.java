@@ -25,6 +25,7 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
@@ -59,6 +60,7 @@ import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 
 /**
  * Clase con los métodos de negocio relativos a los Objetivos.
@@ -88,6 +90,9 @@ public class PoliticaManager {
     
     @Autowired
     private PersonaDao personaDao;
+    
+    @Autowired
+    private ExpedienteManagerApi expedienteManager;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -314,8 +319,8 @@ public class PoliticaManager {
      */
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_GET_TIPO_MOTIVO)
     public List<DDMotivo> getMotivoList(){
-		
-    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class);
+    	Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+    	List<DDMotivo> motivos = genericDao.getList(DDMotivo.class, filtro);
     	
 		return motivos;
     }
@@ -399,9 +404,12 @@ public class PoliticaManager {
     public void cerrarDecisionPolitica(Long idExpediente) {
         Expediente expediente = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, idExpediente);
 
-        if (!expediente.getComite().isComiteSeguimiento()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoSeguimiento",
-                idExpediente); }
-        executor.execute(InternaBusinessOperation.BO_EXP_MGR_CERRAR_DECISION_POLITICA, idExpediente);
+        //Si el tipo de expediente no coincide con el el tipo de comite
+        //Se emite un error
+        if (expediente.getSeguimiento() && !expediente.getComite().isComiteSeguimiento()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoSeguimiento", idExpediente); }
+        if (expediente.isGestionDeuda() && !expediente.getComite().isComiteGestionDeuda()) { throw new BusinessOperationException("cerrarDecisionPolitica.expedienteNoGestionDeuda", idExpediente); }
+        
+        expedienteManager.cerrarDecisionPolitica(idExpediente);
     }
 
     /**
@@ -410,8 +418,8 @@ public class PoliticaManager {
      */
     @BusinessOperation(InternaBusinessOperation.BO_POL_MGR_INICIALIZAR_POLITICAS_EXPEDIENTE)
     public void inicializaPoliticasExpediente(Expediente expediente) {
-        //Si no es un expediente de seguimiento
-        if (!expediente.getSeguimiento()) { return; }
+        //Si no es un expediente de seguimiento y tampoco de gestión de deuda
+        if (!expediente.getSeguimiento() && !expediente.isGestionDeuda()) { return; }
 
         DDAmbitoExpediente ambitoExpediente = expediente.getArquetipo().getItinerario().getAmbitoExpediente();
 

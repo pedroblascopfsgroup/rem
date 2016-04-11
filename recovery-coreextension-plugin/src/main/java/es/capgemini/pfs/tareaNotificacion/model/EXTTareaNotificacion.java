@@ -200,6 +200,10 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 			+ "', '"
 			+ SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC
 			+ "', '"
+			+ SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN
+			+ "', '"
+			+ SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC
+			+ "', '"
 			+ SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO
 			+ "') then 'Pr�rroga'"
 			+ "     WHEN stb.dd_sta_codigo in ('"

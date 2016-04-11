@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -31,6 +32,9 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -45,8 +49,10 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		implements ContratoDao {
 
 	private static Long staticCheckFechaCargaTimestamp = null;
+	private static Map<Long, Long> staticMapCheckFechaCargaTimestamp = new HashMap<Long, Long>();
 
 	private static Date staticCacheFechaCarga = null;
+	private static Map<Long, Date> staticMapCacheFechaCarga = new HashMap<Long, Date>();
 
 	private static final long FECHA_CARGA_CACHE_TIMEOUT = 3600000;
 	
@@ -61,6 +67,9 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	
 	@Resource
     private Properties appProperties;
+	
+	@Autowired
+    UsuarioManager usuarioManager;
 
 	/**
 	 * Devuelve un HQL con los contratos existentes en los procedimientos en
@@ -124,7 +133,7 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public Date getUltimaFechaCarga() {
+	public synchronized Date getUltimaFechaCarga() {
 		long valor=0;
 		
 		try {
@@ -136,17 +145,31 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
             logger.warn("No esta parametrizado el tiempo de cacheo para la fecha de carga, se toma un valor por defecto (1 Hora)");
             valor= FECHA_CARGA_CACHE_TIMEOUT;
         }
-		
-		
-		
-		// si no hemos cacheado la fecha o ha pasado demasiado tiempo desde que la hemos cacheado, la volvemos a consultar.
-		if ((staticCheckFechaCargaTimestamp == null)
-				|| (staticCacheFechaCarga == null)
-				|| ((new Date().getTime() - staticCheckFechaCargaTimestamp) > valor)) {
-			staticCacheFechaCarga = recuperaUltimaFechaCargaDeBBDD();
-                        staticCheckFechaCargaTimestamp = new Date().getTime();
-		}
 
+		// si no hemos cacheado la fecha o ha pasado demasiado tiempo desde que la hemos cacheado, la volvemos a consultar.
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		if (!Checks.esNulo(usuarioLogado) && !Checks.esNulo(usuarioLogado.getEntidad())) {
+			// Comprobamos por entidad
+			if ((Checks.esNulo(staticMapCheckFechaCargaTimestamp.get(usuarioLogado.getEntidad().getId()))) ||			
+				(Checks.esNulo(staticMapCacheFechaCarga.get(usuarioLogado.getEntidad().getId())))
+				|| ((new Date().getTime() - staticMapCheckFechaCargaTimestamp.get(usuarioLogado.getEntidad().getId())) > valor)) {
+			
+					staticMapCacheFechaCarga.put(usuarioLogado.getEntidad().getId(), recuperaUltimaFechaCargaDeBBDD());
+					staticMapCheckFechaCargaTimestamp.put(usuarioLogado.getEntidad().getId(), new Date().getTime());
+			}
+			
+			return staticMapCacheFechaCarga.get(usuarioLogado.getEntidad().getId());
+		} else {		
+			// Si no hay usuario logado se comprueba como antiguamente
+			if ((staticCheckFechaCargaTimestamp == null) ||		
+					(staticCacheFechaCarga == null)
+					|| ((new Date().getTime() - staticCheckFechaCargaTimestamp) > valor)) {
+				
+				staticCacheFechaCarga = recuperaUltimaFechaCargaDeBBDD();
+	            staticCheckFechaCargaTimestamp = new Date().getTime();
+			}
+		}
+		
 		return staticCacheFechaCarga;
 	}
 
@@ -271,7 +294,7 @@ public class ContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	public Page buscarContratosExpediente(DtoBuscarContrato dto) {
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select ec.contrato from ");
+		hql.append(" select ec.contrato, ec.pase from ");
 		hql.append(" ExpedienteContrato ec, Contrato c, Movimiento m ");
 		hql.append(" where ec.expediente.id = :expediente ");
 		hql.append(" and ec.auditoria.borrado = false ");

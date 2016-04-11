@@ -32,7 +32,7 @@ public class RuleManager {
      */
     @PostConstruct
     @SuppressWarnings("unchecked")
-    public void init() {
+    public synchronized void init() {
         if (rulesObj == null) {
             rulesObj = new HashMap<String, Class>();
             for (Rule type : rules) {

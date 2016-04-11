@@ -23,7 +23,6 @@ fi
 
 
 IMAGE_NAME=filemon/oracle_11g
-DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 SQL_PACKAGE_DIR=$(pwd)/../../../tool/tmp/package
 DUMP_DIRECTORY=$(pwd)/DUMP
 ORADATA_HOST_DIR=~/oradata-$CONTAINER_NAME
@@ -51,9 +50,10 @@ VAR_DB_EXISTS=no
 
 function show_help () {
 	echo "Uso: "
-	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-ignoredmp]"
-	echo "            [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
+	echo " MODO 1: $0 [-help] [-remove] [-restart] [-oradata=<directorio datafiles>] [-port=<oracle port>] [-name=<containte name>]"
+	echo "            [-ignoredmp] [-dmpdir=<directorio dumps>] [-errorlog=<fichero_logs>] [-piterdebug]"
 	echo " MODO 2: $0 -impdp=<fichero_dump_a_importar> [-remove] [-help] [-oradata=<directorio datafiles>] [-port=<oracle port>]"
+	echo "            [-name=<containte name>]"
 	echo " MODO 3: $0 -flashback [-help]"
 	echo " MODO 4: $0 -scripts [-help] [-errorlog=<fichero_logs>] [-piterdebug] [-fromtag=<tag_de_partida>]"
 	echo " -------------------------------------------------------------------------------------------------------------------"
@@ -66,6 +66,7 @@ function show_help () {
 	echo "                 Pipeline de integración contínua, en caso contrario no tiene sentido especificarlo"
 	echo "     -statistics: Actualiza las estadísticas en la BD"
 	echo "     -port=: Puerto por el que escuchará la BBDD"
+	echo "     -name=: Nombre que le queremos dar al contenedor"
 	echo ""
 	echo " OPCIONES MODO 1. Línea base."
 	echo "    -remove: Indicar este parámetro si se quiere volver a generar el contenedor, implica reiniciar"
@@ -140,12 +141,16 @@ if [[ "x$@" != "x" ]]; then
 			OPTION_STATISTICS=yes
 		elif [[ "x$op" == x-port=* ]]; then
 			OPTION_PORT=$(echo $op | cut -f2 -d=)
+		elif [[ "x$op" == x-name=* ]]; then
+			CONTAINER_NAME=$(echo $op | cut -f2 -d=)
 		fi
 	done
 else
 	echo "[INFO]: Mostramos el mensaje de ayuda al no especificar parámetros."
 	show_help
 fi
+
+DOCKER_PS="$(docker ps -a | grep $CONTAINER_NAME)"
 
 cd $(pwd)/$(dirname $0)
 ##
@@ -157,10 +162,17 @@ function package_sql () {
 		local package_script=./sql/tool/package-scripts-from-tag.sh
 		local tag_or_list=$1
 		local cliente=$2
+		POST_PKG_SCRIPTS_DIR=$WORKSPACE_DIR/post-package
 		rm -Rf $WORKSPACE_DIR/package*
 		rm -Rf $SQL_PACKAGE_DIR
 		rm -Rf $PACKAGE_TAGS_DIR
+		rm -Rf $POST_PKG_SCRIPTS_DIR
 		cd ../../../..
+
+		if [[ -d $PROJECT_BASE/post-package ]]; then
+			cp -R $PROJECT_BASE/post-package $WORKSPACE_DIR
+			chmod -R 777 $POST_PKG_SCRIPTS_DIR
+		fi
 
 		if [[ -f $TAG_LISTS_FILE ]]; then
 			tag_or_list=$(basename $TAG_LISTS_FILE)
@@ -204,6 +216,22 @@ function package_sql () {
 		fi
 
 		cp -R $SQL_PACKAGE_DIR $ws_package_dir
+
+		if [[ -d $POST_PKG_SCRIPTS_DIR ]]; then
+			echo "[INFO]: Ejecutando scripts post-empaquetado"
+			echo "[INFO]: Exportando variables [ws_package_dir] "
+			export ws_package_dir
+			for script in $POST_PKG_SCRIPTS_DIR/*; do
+				echo "[INFO]: Ejecutando $(basename $script)"
+				chmod +x $script
+				$script
+				if [[ $? -ne 0 ]]; then
+					echo "[ERRR] Fallo al ejecutar $script"
+					exit 1
+				fi
+			done
+		fi
+
 		chmod -R go+w $ws_package_dir
 		for sh in $(find $ws_package_dir -name '*.sh'); do
 			chmod ugo+x $sh

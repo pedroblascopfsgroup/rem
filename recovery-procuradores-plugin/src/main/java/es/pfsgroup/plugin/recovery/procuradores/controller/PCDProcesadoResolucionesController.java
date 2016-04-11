@@ -1115,6 +1115,12 @@ public class PCDProcesadoResolucionesController {
     	if (mapaDatosPersistidos.containsKey(CON_TESTIMONIO)){
     		datosPersistidos.add(mapaDatosPersistidos.get(CON_TESTIMONIO));
     	}
+    	if (mapaDatosPersistidos.containsKey("cuantiaLetrado")){
+    		datosPersistidos.add(mapaDatosPersistidos.get("cuantiaLetrado"));
+    	}
+    	if (mapaDatosPersistidos.containsKey("cuantiaProcurador")){
+    		datosPersistidos.add(mapaDatosPersistidos.get("cuantiaProcurador"));
+    	}
     	model.put("datosPersistidos", datosPersistidos);
     	return JSON_DATOS_ADICIONALES;
     }
@@ -1193,6 +1199,16 @@ public class PCDProcesadoResolucionesController {
     public String getDictionary(String dictionary, ModelMap model) throws ClassNotFoundException {
 
     	List dictionaryData = utilDiccionario.dameValoresDiccionario(Class.forName(dictionary));
+		
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
+    }
+
+    @RequestMapping
+    public String getDictionaryDenormalized(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionario.dameValoresDiccionarioSinBorrado(Class.forName(dictionary));
 		
         model.put("pagina", dictionaryData);
 

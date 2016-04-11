@@ -9,7 +9,7 @@
 
     <end-state id="listadoFechas" view="clientes/buscarFechasDesdeJSON">
 	    <on-entry>
-	    	<evaluate expression="executor.execute('cirbeManager.getFechasExtraccionPersona',idPersona, fecha1, fecha2, fecha3)" result="flowScope.result" />
+	    	<evaluate expression="executor.execute('cirbeManager.getFechasActualizacionPersona',idPersona, fecha1, fecha2, fecha3)" result="flowScope.result" />
 	    </on-entry>
     </end-state> 	
 

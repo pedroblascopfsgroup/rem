@@ -1,12 +1,15 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos.controller;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -277,9 +280,23 @@ public class MEJAcuerdoController {
 			fechaPaseMora = fechasPaseMora.get(0); 
 		}
 		
+		Date fechaPaseMoraFormated = null;
+		if (fechaPaseMora != null){
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				fechaPaseMoraFormated = sdf.parse(fechaPaseMora);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} 
+		}
+		
 		if(!Checks.esNulo(tipoAcuerdoPlanPago)){ map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());}
 		map.put("yaHayPlanPago", yaHayPlanPago);
-		map.put("fechaPaseMora", fechaPaseMora);
+		if(!Checks.esNulo(fechaPaseMoraFormated)){
+			map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		}else{
+			map.put("fechaPaseMora", 0L);
+		}
 		if(!Checks.esNulo(tipoAcuerdoFondosPropios)){map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());}
 		if(!Checks.esNulo(tipoAcuerdoRegulParcial)){map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());}
 		
@@ -352,8 +369,48 @@ public class MEJAcuerdoController {
 			}
 		}
 		
+		List<TerminoContrato> contratos = termino.getContratosTermino();
+		List<String> fechasPaseMora = new ArrayList<String>();
+		List<String> fechasPaseMoraFormated = new ArrayList<String>();
+		for(TerminoContrato contrat : contratos) {
+			if(contrat.getContrato() != null){
+				fechasPaseMora.add(mejAcuerdoApi.getFechaPaseMora(contrat.getContrato().getId()));
+			}
+		}
+		
+		
+		for(String fecha : fechasPaseMora){
+			if(fecha == null){
+				fechasPaseMoraFormated.add("0");
+			}else{
+				fechasPaseMoraFormated.add(fecha);
+			}
+		}
+		
+		Comparator<String> comparador = Collections.reverseOrder();
+		Collections.sort(fechasPaseMoraFormated, comparador);
+		
+		String fechaPaseMora = null; 
+		if(!Checks.estaVacio(fechasPaseMora)){
+			fechaPaseMora = fechasPaseMora.get(0); 
+		}
+		
+		Date fechaPaseMoraFormated = null;
+		if (fechaPaseMora != null){
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				fechaPaseMoraFormated = sdf.parse(fechaPaseMora);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} 
+		}
+		
+		map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
-		map.put("yaHayPlanPago", yaHayPlanPago);		
+		map.put("yaHayPlanPago", yaHayPlanPago);
+		
+		
 		
 		return JSP_ALTA_TERMINO_ACUERDO;
 	}

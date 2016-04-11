@@ -132,6 +132,7 @@
 						<value>823</value>
 						<value>824</value>
 						<value>825</value>
+						<value>PCO_DPREDOC</value>						
 						<value>PCO_DPREDOC</value>
 						
 						<!-- HRE-BCC -->
@@ -254,8 +255,23 @@
 				<entry key="ABRIR_EXP">
 					<set>
 						<value>FZAR_PPUESTA</value>
+						<value>ENSAN</value>
+						<value>SANC</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_PER">
+					<!-- Tareas tipo abrir cliente -->
+					<set>
+						<value>29</value>
+						<value>SOLEXPMGDEUDA</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_COBROS_PAGOS">
+					<!-- Tareas tipo abrir asunto -->
+					<set>
+						<value>CONTACOBR</value>
+					</set>
+				</entry>				
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">
@@ -433,6 +449,11 @@
 				<value>GESPROC</value>
 			</set>
 		</property>
+		<property name="perfilesConsulta">
+			<set>
+				<value>HAYACONSULTA</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextHaya" parent="procedimientosProjectContextDefault">
@@ -545,7 +566,7 @@
 								<entry key="btnConfirmar" value="1" />
 								<entry key="btnVisar" value="0" />
 								<entry key="btnDescartar" value="1" />
-								<entry key="btnGenerar" value="1" />
+								<entry key="btnGenerar" value="0" />
 								<entry key="btnLiqGenDoc" value="1" />
 								<entry key="botonRefreshLiq" value="1" />
 							</map>

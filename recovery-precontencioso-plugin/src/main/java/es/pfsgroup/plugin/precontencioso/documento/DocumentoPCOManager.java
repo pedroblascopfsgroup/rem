@@ -102,7 +102,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     private UsuarioManager usuarioManager; 
 	
     private final Log logger = LogFactory.getLog(getClass());
-    private static SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    private SimpleDateFormat webDateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * Devolvemos todas las solicitudes de los documentos de un 

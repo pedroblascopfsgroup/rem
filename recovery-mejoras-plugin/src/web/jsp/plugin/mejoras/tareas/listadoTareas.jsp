@@ -307,7 +307,7 @@
 		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
 		,iconCls:'icon_limpiar'
 		,handler:function(){
-			app.resetCampos([nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, descTarea, fechaVencDesde, fechaVencHasta]);
+			app.resetCampos([nombreTarea, comboFechaDesdeOp, comboFechaHastaOp, descTarea, fechaVencDesde, fechaVencHasta, comboEstado, comboCtgResol]);
 			tareasStore.webflow(paramsBusquedaInicial);
 			panelFiltros.collapse(true);
 		}
@@ -1488,7 +1488,12 @@
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP:
 						app.abreExpediente(rec.get('idEntidad'), rec.get('descripcion'));
 						break;
-						
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER:
+						app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO:
+						app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'contabilidadcobros');
+						break;
 
 					default:
 				

@@ -177,7 +177,7 @@
 			bloquearCampos = 1;
 			*/			 
 			bloquearCampos = 2; 
-			origen = 'Autom�tico';
+			origen = 'Automatico';
 		} else {
 			/* MANUAL */
 			bloquearCampos = 2;
@@ -359,7 +359,7 @@
 	
 		
 		var descripcionNMB = new Ext.form.TextArea({
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripci�n" />'
+			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.descripcion" text="**Descripcion" />'
 			,value:'<s:message javaScriptEscape="true" text="${NMBbien.descripcionBien}" />'
 			,name:'descripcion'
 			,width:240		
@@ -389,7 +389,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:14
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 14 d�gitos" arguments="14" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 14 digitos" arguments="14" />'
 				,labelStyle : labelStyle
 			}
 		);
@@ -404,7 +404,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:8
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 8 d�gitos" arguments="8" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 8 digitos" arguments="8" />'
 				,labelStyle : labelStyle
 			}
 		);
@@ -549,7 +549,7 @@
 					,autocomplete: "off"
 				}
 				, maxLength:5
-				, maxLengthText:'<s:message code="plugin.nuevoModeloBienes.error.porcentajeImpuestoCompra" text="**El valor no puede tener m�s de 5 d�gitos" />'
+				, maxLengthText:'<s:message code="plugin.nuevoModeloBienes.error.porcentajeImpuestoCompra" text="**El valor no puede tener mas de 5 digitos" />'
 				,labelStyle: labelStyle
 			}
 		);
@@ -574,7 +574,7 @@
 		
 		var viviendaHabitual = app.creaCombo({
 			store:sinoStore
-			,value:  '${NMBbien.viviendaHabitual}' == '1' ? 'S�' : '${NMBbien.viviendaHabitual}' == '2' ? 'No' : ''
+			,value:  '${NMBbien.viviendaHabitual}' == '1' ? 'Si' : '${NMBbien.viviendaHabitual}' == '2' ? 'No' : ''
 			,displayField:'descripcion'
 			,valueField:'codigo'
 			,mode: 'local'
@@ -598,7 +598,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle: labelStyle
 			}
 		);
@@ -787,9 +787,9 @@
 			,resizable: true
 			,forceSelection: true
 			,editable: false
-			,emptyText:'-- Seleccione pa�s --'
+			,emptyText:'-- Seleccione pais --'
 			,triggerAction: 'all'
-			,fieldLabel: '<s:message code="plugin.nuevoModeloBienes.pais" text="**Pa�s" />'
+			,fieldLabel: '<s:message code="plugin.nuevoModeloBienes.pais" text="**Pais" />'
 			,labelStyle:labelStyle
 		});
 		
@@ -804,17 +804,17 @@
 			,resizable: true
 			,forceSelection: true
 			,editable: false
-			,emptyText:'-- Seleccione Tipo de v�a --'
+			,emptyText:'-- Seleccione Tipo de via --'
 			,triggerAction: 'all'
-			,fieldLabel: '<s:message code="plugin.nuevoModeloBienes.tipoVia" text="**Tipo v�a" />'
+			,fieldLabel: '<s:message code="plugin.nuevoModeloBienes.tipoVia" text="**Tipo via" />'
 			,labelStyle:labelStyle
 		});
 
 		var poblacionNMB = app.creaText('poblacion', '<s:message code="plugin.nuevoModeloBienes.poblacion" text="**Localidad (migrado)" />', poblacion_valor, {maxLength:50,labelStyle:labelStyle,disabled: true});
-		var codPostal = app.creaText('codPostal', '<s:message code="plugin.nuevoModeloBienes.codPostal" text="**C�digo Postal" />' , codPostal_valor, {maxLength:50,labelStyle:labelStyle});
+		var codPostal = app.creaText('codPostal', '<s:message code="plugin.nuevoModeloBienes.codPostal" text="**Codigo Postal" />' , codPostal_valor, {maxLength:50,labelStyle:labelStyle});
 
 		var direccion = new Ext.form.TextArea({
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.direccion" text="**Direcci�n" />'
+			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.direccion" text="**Direccion" />'
 			,value:'<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.direccion}" />'
 			,name:'direccion'
 			,width:240
@@ -844,13 +844,13 @@
 			,width:180
 		});
 		var referenciaCatastral = app.creaText('referenciaCatastralBien', '<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Referencia catastral" />' , referenciaCatastralBien_valor, {maxLength:20,labelStyle : labelStyle});
-		var numFinca = app.creaText('numFinca', '<s:message code="plugin.mejoras.bienesNMB.numFinca" text="**N�mero de finca" />' , numFinca_valor, {maxLength:50,labelStyle : labelStyle});
+		var numFinca = app.creaText('numFinca', '<s:message code="plugin.mejoras.bienesNMB.numFinca" text="**Numero de finca" />' , numFinca_valor, {maxLength:50,labelStyle : labelStyle});
 		var tomo = app.creaNumber('tomo', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo" />' , tomo_valor, {maxLength:6,labelStyle : labelStyle});
 		var libro = app.creaNumber('libro', '<s:message code="plugin.mejoras.bienesNMB.libro" text="**libro" />' , libro_valor, {maxLength:6,labelStyle : labelStyle});
 		var folio = app.creaNumber('folio', '<s:message code="plugin.mejoras.bienesNMB.folio" text="**folio" />' , folio_valor, {maxLength:6,labelStyle : labelStyle});
 		var inscripcion = app.creaText('inscripcion', '<s:message code="plugin.mejoras.bienesNMB.inscripcion" text="**inscripcion" />' , inscripcion_valor, {maxLength:20,labelStyle : labelStyle});
 		var fechaInscripcion = new Ext.ux.form.XDateField({
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaInscripcion" text="**Fecha Inscripci�n" />'
+			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaInscripcion" text="**Fecha Inscripcion" />'
 			,labelStyle : labelStyle
 			,name:'fechaInscripcion'
 			,value:	'<fwk:date value="${NMBbien.datosRegistralesActivo != null ? NMBbien.datosRegistralesActivo.fechaInscripcion : ''}" />'
@@ -858,7 +858,7 @@
 			,style:'margin:0px'		
 			,minValue: fechaMinima	
 		});
-		var numRegistro = app.creaText('numRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**N�mero de registro" />' , numRegistro_valor, {maxLength:6,labelStyle : labelStyle});
+		var numRegistro = app.creaText('numRegistro', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.numRegistro" text="**Numero de registro" />' , numRegistro_valor, {maxLength:6,labelStyle : labelStyle});
 		var municipoLibro = app.creaText('municipoLibro','<s:message code="plugin.mejoras.bienesNMB.municipoLibroMigrado" text="**Municipio (migrado)" />' , municipoLibro_valor, {maxLength:50,labelStyle : labelStyle, disabled: true});
 		var comboProvinciaRegistro = app.creaCombo({
 			data : <app:dict value="${provincias}" />
@@ -919,7 +919,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle : labelStyle
 			}
 		);
@@ -934,7 +934,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle : labelStyle
 			}
 		);
@@ -961,13 +961,13 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				,labelStyle: labelStyle
 			}
 		);
 		
 		var fechaValorApreciacion = new Ext.ux.form.XDateField({
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaValorApreciacion" text="**Fecha valor apreciaci�n" />'
+			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaValorApreciacion" text="**Fecha valor apreciacion" />'
 			,labelStyle: labelStyle
 			,name:'fechaValorApreciacion'
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaValorApreciacion : ''}" />'
@@ -978,7 +978,7 @@
 		
 		var importeValorApreciacion = app.creaNumber(
 			'importeValorApreciacion'
-			, '<s:message code="plugin.mejoras.bienesNMB.importeValorApreciacion" text="**Valor apreciaci�n" />' 
+			, '<s:message code="plugin.mejoras.bienesNMB.importeValorApreciacion" text="**Valor apreciacion" />' 
 			, importeValorApreciacion_valor
 			, {
 				autoCreate : {
@@ -987,13 +987,13 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle: labelStyle
 			}
 		);
 		
 		var fechaValorTasacion = new Ext.ux.form.XDateField({
-			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaValorTasacion" text="**Fecha valor tasaci�n" />'
+			fieldLabel:'<s:message code="plugin.mejoras.bienesNMB.fechaValorTasacion" text="**Fecha valor tasacion" />'
 			,labelStyle: labelStyle
 			,name:'fechaValorTasacion'
 			,value:	'<fwk:date value="${NMBbien.valoracionActiva != null ? NMBbien.valoracionActiva.fechaValorTasacion : ''}" />'
@@ -1012,7 +1012,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle: labelStyle
 			}
 		);
@@ -1037,7 +1037,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle: labelStyle
 				<c:if test="${operacion == 'editar'}">,disabled: true</c:if>
 			}
@@ -1260,7 +1260,7 @@
 						return false;
 					}
 					if(direccion.getValue() == null || direccion.getValue() == '') {
-						msgError = '<s:message text="**La direcci�n es un dato obligatorio." code="plugin.nuevoModeloBienes.error.direccion"/>';
+						msgError = '<s:message text="**La direccion es un dato obligatorio." code="plugin.nuevoModeloBienes.error.direccion"/>';
 						focusError(pestanaLocalizacion,direccion);
 						return false;
 					}
@@ -1278,27 +1278,27 @@
 					return false;
 				}
 				if(nCuenta_entidad.getActiveError() != '') {
-					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error N�m cuenta - Entidad:"/> ' + nCuenta_entidad.getActiveError();
+					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error Num cuenta - Entidad:"/> ' + nCuenta_entidad.getActiveError();
 					focusError(pestanaCuentaBancaria,nCuenta_entidad);
 					return false;
 				}
 				if(nCuenta_oficina.getActiveError() != '') {
-					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error N�m cuenta - Oficina:"/> ' + nCuenta_oficina.getActiveError();
+					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error Num cuenta - Oficina:"/> ' + nCuenta_oficina.getActiveError();
 					focusError(pestanaCuentaBancaria,nCuenta_oficina);
 					return false;
 				}
 				if(nCuenta_dc.getActiveError() != '') {
-					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error N�m cuenta - D�gito control:"/> ' + nCuenta_dc.getActiveError();
+					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error Num cuenta - Digito control:"/> ' + nCuenta_dc.getActiveError();
 					focusError(pestanaCuentaBancaria,nCuenta_dc);
 					return false;
 				}
 				if(nCuenta_cuenta.getActiveError() != '') {
-					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error N�m cuenta:"/> ' + nCuenta_cuenta.getActiveError();
+					msgError='<s:message code="plugin.nuevoModeloBienes.numCuentaEntidadError" text="**Error Num cuenta:"/> ' + nCuenta_cuenta.getActiveError();
 					focusError(pestanaCuentaBancaria,nCuenta_cuenta);
 					return false;
 				}
 				if (!validarDC()) {
-					msgError='<s:message text="**El n�mero de cuenta introducida es incorrecta." code="plugin.nuevoModeloBienes.cuentaIncorrecta"/>';
+					msgError='<s:message text="**El numero de cuenta introducida es incorrecta." code="plugin.nuevoModeloBienes.cuentaIncorrecta"/>';
 					var tabPanel = Ext.getCmp('idTabPanel');
 					tabPanel.setActiveTab(pestanaCuentaBancaria);
 					return false;
@@ -1352,10 +1352,10 @@
 					, autocomplete: "off"
 				}
 				, maxLength:3
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 3 d�gitos" arguments="3" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 3 digitos" arguments="3" />'
 				, labelStyle : labelStyle
 				, maxValue:100
-				, maxText:'<s:message code="error.maxvalor" text="**El valor m�ximo es 100" />'
+				, maxText:'<s:message code="error.maxvalor" text="**El valor maximo es 100" />'
 			}
 		);
 		
@@ -1368,19 +1368,19 @@
  		
  		var entidad = app.creaText('entidad', '<s:message code="plugin.nuevoModeloBienes.entidad" text="**Entidad" />' , entidad_valor, {maxLength:50,labelStyle:labelStyle});
 		
-		var nCuenta_entidad = app.creaText('nCuenta_entidad', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N� Cuenta" />',nCuenta_entidad_valor,{width:45,maxLength:4,validator : function(v) {
-						    	return (v.length == 0 || /\d{4}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un n�mero con {0} d�gitos" arguments="4" />';},autoCreate:{tag: "input", type: "text", size: "6",maxLength: "4", autocomplete: "off", style: "margin-left:4px"}});
-		var nCuenta_oficina = app.creaText('nCuenta_oficina', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N� Cuenta" />',nCuenta_oficina_valor,{width:45,maxLength:4,validator : function(v) {
-						    	return (v.length == 0 || /\d{4}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un n�mero con {0} d�gitos" arguments="4" />';},autoCreate:{tag: "input", type: "text", size: "6",maxLength: "4", autocomplete: "off"}});
-		var nCuenta_dc = app.creaText('nCuenta_dc', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N� Cuenta" />',nCuenta_dc_valor,{width:25,maxLength:2,validator : function(v) {
-						    	return (v.length == 0 || /\d{2}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un n�mero con {0} d�gitos" arguments="2" />';},autoCreate:{tag: "input", type: "text", size: "4",maxLength: "2", autocomplete: "off", style: "margin-left:4px"}});
-		var nCuenta_cuenta = app.creaText('nCuenta_entidad', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N� Cuenta" />',nCuenta_cuenta_valor,{width:85,maxLength:10,validator : function(v) {
-						    	return (v.length == 0 || /\d{10}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un n�mero con {0} d�gitos" arguments="10" />';},autoCreate:{tag: "input", type: "text", size: "12",maxLength: "10", autocomplete: "off", style: "margin-left:4px"}});
+		var nCuenta_entidad = app.creaText('nCuenta_entidad', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N\u00BA Cuenta" />',nCuenta_entidad_valor,{width:45,maxLength:4,validator : function(v) {
+						    	return (v.length == 0 || /\d{4}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un numero con {0} digitos" arguments="4" />';},autoCreate:{tag: "input", type: "text", size: "6",maxLength: "4", autocomplete: "off", style: "margin-left:4px"}});
+		var nCuenta_oficina = app.creaText('nCuenta_oficina', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N\u00BA Cuenta" />',nCuenta_oficina_valor,{width:45,maxLength:4,validator : function(v) {
+						    	return (v.length == 0 || /\d{4}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un numero con {0} digitos" arguments="4" />';},autoCreate:{tag: "input", type: "text", size: "6",maxLength: "4", autocomplete: "off"}});
+		var nCuenta_dc = app.creaText('nCuenta_dc', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N\u00BACuenta" />',nCuenta_dc_valor,{width:25,maxLength:2,validator : function(v) {
+						    	return (v.length == 0 || /\d{2}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un numero con {0} digitos" arguments="2" />';},autoCreate:{tag: "input", type: "text", size: "4",maxLength: "2", autocomplete: "off", style: "margin-left:4px"}});
+		var nCuenta_cuenta = app.creaText('nCuenta_entidad', '<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N\u00BA Cuenta" />',nCuenta_cuenta_valor,{width:85,maxLength:10,validator : function(v) {
+						    	return (v.length == 0 || /\d{10}$/.test(v))? true : '<s:message code="plugin.nuevoModeloBienes.validacionCuentaEntidad" text="**Debe introducir un numero con {0} digitos" arguments="10" />';},autoCreate:{tag: "input", type: "text", size: "12",maxLength: "10", autocomplete: "off", style: "margin-left:4px"}});
 		
 		var cfgPanelNCuenta = {
 			style : "margin-top:4px;margin-bottom:2px;"
 		};
-		var nCuenta_panel = app.creaPanelHz(cfgPanelNCuenta,[{html:"<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N� Cuenta" />"+":", border: false, width : 105, cls: 'x-form-item'}, nCuenta_entidad, {html : ' ', border:false, width : 5},  nCuenta_oficina, {html : ' ', border:false, width : 5},  nCuenta_dc, {html : ' ', border:false, width : 5},  nCuenta_cuenta]);
+		var nCuenta_panel = app.creaPanelHz(cfgPanelNCuenta,[{html:"<s:message code="plugin.nuevoModeloBienes.nCuenta" text="**N\u00BA Cuenta" />"+":", border: false, width : 105, cls: 'x-form-item'}, nCuenta_entidad, {html : ' ', border:false, width : 5},  nCuenta_oficina, {html : ' ', border:false, width : 5},  nCuenta_dc, {html : ' ', border:false, width : 5},  nCuenta_cuenta]);
 		
 		var marca = app.creaText('marca', '<s:message code="plugin.nuevoModeloBienes.marca" text="**Marca" />' , marca_valor, {maxLength:50,labelStyle : labelStyle});
 		var modelo = app.creaText('modelo', '<s:message code="plugin.nuevoModeloBienes.modelo" text="**Modelo" />' , modelo_valor, {maxLength:50,labelStyle : labelStyle});
@@ -1397,7 +1397,7 @@
 			,labelStyle : labelStyle
 			,minValue: fechaMinima	
 		});
-		var nBastidor = app.creaText('nBastidor', '<s:message code="plugin.nuevoModeloBienes.nBastidor" text="**N� Bastidor" />' , nBastidor_valor, {style : 'text-transform: uppercase',maxLength:50,labelStyle : labelStyle});
+		var nBastidor = app.creaText('nBastidor', '<s:message code="plugin.nuevoModeloBienes.nBastidor" text="**N\u00BA Bastidor" />' , nBastidor_valor, {style : 'text-transform: uppercase',maxLength:50,labelStyle : labelStyle});
 		
 		var tiposFinancieros = app.creaCombo({
 			data : <app:dict value="${tiposProdBanco}" />
@@ -1410,7 +1410,7 @@
 		
 		var importeValorProdBancario = app.creaNumber(
 			'importeValorProdBancario'
-			, '<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoraci�n " />' 
+			, '<s:message code="plugin.nuevoModeloBienes.importeValorProdBancario" text="**Valoracion " />' 
 			, importeValorProdBancario_valor
 			, {
 				autoCreate : {
@@ -1419,7 +1419,7 @@
 					, autocomplete: "off"
 				}
 				, maxLength:10
-				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 10 d�gitos" arguments="10" />'
+				, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 10 digitos" arguments="10" />'
 				, labelStyle: labelStyle
 			}
 		);
@@ -1434,8 +1434,8 @@
 		,value : '${NMBbien.tipoBien.codigo}'
 	});
 
-		
-	var poblacion = app.creaText('bien.poblacion', '<s:message code="bienesCliente.poblacion" text="**Poblacion" />' , '${NMBbien.poblacion}', {maxLength:50});
+	
+	var poblacion = app.creaText('bien.poblacion', '<s:message code="bienesCliente.poblacion" text="**Poblacion" />' , '<s:message javaScriptEscape="true" text="${NMBbien.poblacion}" />', {maxLength:50});
 	
 	var refCatastral = app.creaText('bien.referenciaCatastral', '<s:message code="bienesCliente.refcatastral" text="**Ref. catastral" />' , '<s:message text="${NMBbien.referenciaCatastral}" javaScriptEscape="true" />', {maxLength:20,width:250});
 	
@@ -1452,7 +1452,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:3
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 8 d�gitos" arguments="3" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 8 digitos" arguments="3" />'
 		}
 	);
 
@@ -1479,7 +1479,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:14
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 14 d�gitos" arguments="14" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 14 digitos" arguments="14" />'
 		}
 	);
 	var cargas = app.creaNumber(
@@ -1493,7 +1493,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 8 d�gitos" arguments="8" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 8 digitos" arguments="8" />'
 		}
 	);
 	var superficie = app.creaNumber(
@@ -1508,7 +1508,7 @@
 				, autocomplete: "off"
 			}
 			, maxLength:8
-			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener m�s de 8 d�gitos" arguments="8" />'
+			, maxLengthText:'<s:message code="error.maxdigitos" text="**El valor no puede tener mas de 8 digitos" arguments="8" />'
 		}
 	);
 			
@@ -1721,7 +1721,7 @@
 							}
 					   }
 					   else{
-					   		Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor err�neo" code="fwk.ui.errorList.fieldLabel.error"/>');
+					   		Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erroneo" code="fwk.ui.errorList.fieldLabel.error"/>');
 					   }
 				   }
 				});
@@ -1758,7 +1758,7 @@
 				   		}
 				   		else
 						{											   		
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor err�neo" code="fwk.ui.errorList.fieldLabel.error"/>');						}
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erroneo" code="fwk.ui.errorList.fieldLabel.error"/>');						}
 				   }
 				});
 			</sec:authorize>
@@ -1795,7 +1795,7 @@
 						//}
 						//else
 						//{	
-						//	Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor err�neo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
+						//	Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erroneo" code="fwk.ui.errorList.fieldLabel.error"/>');										   		
 						//}
 				   }
 				});
@@ -1828,7 +1828,7 @@
 						//}
 						//else
 						//{											   		
-							//Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor err�neo" code="fwk.ui.errorList.fieldLabel.error"/>');
+							//Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erroneo" code="fwk.ui.errorList.fieldLabel.error"/>');
 						//}
 				   }
 				});
@@ -2057,7 +2057,7 @@
 						}
 						else
 						{											   		
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor err�neo" code="fwk.ui.errorList.fieldLabel.error"/>');
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erroneo" code="fwk.ui.errorList.fieldLabel.error"/>');
 						}
 				   }
 				});
@@ -2086,7 +2086,7 @@
 						}
 						else
 						{											   		
-							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor err�neo" code="fwk.ui.errorList.fieldLabel.error"/>');						}
+							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Hay campos con valor erroneo" code="fwk.ui.errorList.fieldLabel.error"/>');						}
 				   		}
 				});
 			</sec:authorize>
@@ -2160,7 +2160,7 @@
 	}
 	
 	var desactivarCamposInmueble = function() {
-	//El cliente no quiere que se habiliten los campos. Los quiere siempre activos. Se comprobar�n cuando de verdad se diferencien con un tipo los bienes/inmuebles
+	//El cliente no quiere que se habiliten los campos. Los quiere siempre activos. Se comprobaran cuando de verdad se diferencien con un tipo los bienes/inmuebles
 /*
 		if(tipo.getValue()==app.tipoBien.CODIGO_TIPOBIEN_PISO || tipo.getValue()==app.tipoBien.CODIGO_TIPOBIEN_FINCA) {
 			datosRegistrales.enable();

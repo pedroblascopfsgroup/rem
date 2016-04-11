@@ -59,10 +59,6 @@
 			<artifactId>pfs-commons-java</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>es.pfsgroup.plugin</groupId>
-			<artifactId>recovery-precontencioso-plugin</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

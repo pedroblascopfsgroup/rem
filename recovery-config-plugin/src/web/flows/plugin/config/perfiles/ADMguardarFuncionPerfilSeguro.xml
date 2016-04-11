@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <!--<var name="dto" class="es.capgemini.pfs.cliente.dto.DtoBuscarClientes"/> -->
+	<input name="idPerfil" type="java.lang.Long"/>
+	<input name="idsFuncion" type="java.lang.String" />
+	<input name="password" type="java.lang.String" />
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <end-state id="listado" view="default" >
+    	<secured attributes="ROLE_ADMIN" match="any" />
+		<on-entry>
+			<!--<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" /> -->
+			<evaluate expression="executor.execute('pfsconverter.createLongCollection',idsFuncion,',')" result="flowScope.funciones"/>
+			<evaluate expression="executor.execute('ADMPerfilManager.guardaFuncionesPerfilSeguro',idPerfil,funciones,password)" result="flowScope.pagina"/>
+		</on-entry>
+	</end-state>
+	
+    
+</flow>

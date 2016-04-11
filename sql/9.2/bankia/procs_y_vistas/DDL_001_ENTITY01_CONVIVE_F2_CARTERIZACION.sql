@@ -10,7 +10,7 @@
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.2 Versión corregida
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

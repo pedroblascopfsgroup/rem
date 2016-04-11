@@ -289,10 +289,24 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
 		
+		Asunto asun = prc.getAsunto();
+		
 		if( buscarTPRCsinContenedor(prc)) {
 			//Si entra, este procedimiento requiere un contenedor y no existe.
 			//AQUI LA LLAMADA A crearPropuesta
 			
+			String idAsunto=asun.getId().toString();
+    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
+    		CrearPropuestaDto crearPropuesta = RecoveryToGestorExpAssembler.getCrearPropuestaDto(idAsunto, claseExpe, usuPass);
+    		
+    		try {
+				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
+				insertarContenedor(respuesta.getIdExpediente(), asun, claseExpe);
+			} catch (GestorDocumentalException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		

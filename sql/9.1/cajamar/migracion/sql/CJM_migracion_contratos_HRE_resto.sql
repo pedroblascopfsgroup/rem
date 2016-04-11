@@ -515,11 +515,18 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , tex.tex_id
                      , tev.tev_nombre
                      , decode( tev.tev_nombre
-                             , ''fecha_fin_revision'', to_char(sysdate,''yyyy-mm-dd'')
+                             , ''fecha_fin_revision'', to_char(NVL(FECHA_REALIZ_ESTUDIO_SOLV,sysdate),''yyyy-mm-dd'')
                              , ''gestion'', decode(tmp.cdTipoAct,''AGE'',''AGENCIA_EXTERNA''
                                                                 ,''PCO'',''SIN_GESTION''
                                                                 ,''GES'',''SIN_GESTION'')
-                             , ''proc_iniciar'', null
+                             , ''proc_iniciar'', CASE CAB.TIPO_PROCEDIMIENTO
+                                                  WHEN ''P01'' THEN ''H001''
+                                                  WHEN ''P02'' THEN ''H022''
+                                                  WHEN ''P03'' THEN ''H020''
+                                                  WHEN ''P06'' THEN ''H016''
+                                                  WHEN ''P07'' THEN ''H024''
+                                                  WHEN ''P08'' THEN ''H026''
+                                               END
                              , ''observaciones'', null
                              ) as tev_valor
                      , 0 as version
@@ -532,6 +539,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , '||v_esquema||'.TAR_TAREAS_NOTIFICACIONES  TAR
                      , '||v_esquema||'.TAP_TAREA_PROCEDIMIENTO    TAP
                      , '||v_esquema||'.TEX_TAREA_EXTERNA          TEX
+		     , '||v_esquema||'.MIG_EXPEDIENTES_CABECERA   CAB
                      --** Obtenemos valores por producto cartesiano
                      , (Select ''fecha_fin_revision'' as tev_nombre from dual
                         union all
@@ -545,7 +553,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                     AND tar.tar_tarea = tap.tap_codigo
                     AND tar.tar_id = tex.tar_id
                     AND tap.tap_id = tex.tap_id
-             ';
+		    AND TMP.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE';
+
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla '||v_esquema||'.TEV_TAREA_EXTERNA_VALOR cargada. '||SQL%ROWCOUNT||' Filas');
     Commit;

@@ -1,9 +1,12 @@
 package es.pfsgroup.recovery.ext.impl.adjunto.dao.impl;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
@@ -26,5 +29,22 @@ public class EXTAdjuntoAsuntoDaoImpl extends AbstractEntityDao<EXTAdjuntoAsunto,
 		hql.append(nombre);
 		hql.append("%'");
 		return getSession().createQuery(hql.toString()).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Set<AdjuntoAsunto> getAdjuntoAsuntoByIdDocumento(List<Integer> idsDocumento) {
+		StringBuilder listToString = new StringBuilder();
+		for ( int i = 0; i< idsDocumento.size(); i++){
+			listToString.append(idsDocumento.get(i));
+			if ( i != idsDocumento.size()-1){
+				listToString.append(", ");
+			}
+	    }
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select aa from AdjuntoAsunto aa where aa.auditoria.borrado = false and aa.servicerId in(");
+		hql.append(listToString);
+		hql.append(")");
+		return new HashSet<AdjuntoAsunto>(getSession().createQuery(hql.toString()).list());
 	}
 }

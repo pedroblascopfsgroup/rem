@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -23,6 +24,7 @@ import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.adjuntos.manager.AdjuntoManager;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
+import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -32,8 +34,6 @@ import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
-import es.capgemini.pfs.users.domain.Funcion;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPropuestaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.IdentificacionDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
@@ -59,6 +60,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAss
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
+import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
@@ -97,7 +99,10 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	@Autowired
 	private HayaProjectContext hayaProjectContext;    
-    
+	
+	@Autowired
+	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
+	
     @Override
 	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
@@ -123,19 +128,29 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				}
 			}
 		}
-		
-		List<RespuestaDocumentosExpedientes> listRespuesta = new ArrayList<RespuestaDocumentosExpedientes>();
+		List<Integer> idsDocumento = new ArrayList<Integer>();
 		try {
 			for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
 				UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
 				CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
 				DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
-				listRespuesta.add(gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto));			
+				RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
+				for(IdentificacionDocumento idenDoc : respuesta.getDocumentos()) {
+						idsDocumento.add(idenDoc.getIdentificadorNodo());
+				}
 			}
 		} catch (GestorDocumentalException e) {
 			logger.error("getAdjuntosConBorrado error: " + e);
 		}
-		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(GestorDocToRecoveryAssembler.outputDtoToAdjuntoGridDto(listRespuesta), false);
+		
+		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
+			return null;
+		}
+		Set<AdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByIdDocumento(idsDocumento);
+		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		adjuntosAsunto.addAll(creaObjetosEXTAsuntos(list, usuario, false));
+		return adjuntosAsunto;
 	}
     
     private void insertarContenedor(Integer idExpediente, Asunto asun, String claseExp) {
@@ -260,6 +275,15 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Override
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
+		
+		if( buscarTPRCsinContenedor(prc)) {
+			//Si entra, este procedimiento requiere un contenedor y no existe.
+			//AQUI LA LLAMADA A crearPropuesta
+			
+		}
+		
+		
 		return super.getAdjuntosConBorradoByPrcId(prcId);
 	}
 
@@ -323,20 +347,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 	}
 
-	
-	private  boolean tieneFuncion(Usuario usuario, String codigo) {
-		List<Perfil> perfiles = usuario.getPerfiles();
-		for (Perfil per : perfiles) {
-			for (Funcion fun : per.getFunciones()) {
-				if (fun.getDescripcion().equals(codigo)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-	
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm){
 		return gestorDocumentalApi.altaDocumento(idEntidad, tipoEntidadGrid, tipoDocumento, uploadForm);
 	}
@@ -398,7 +408,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	/**
 	 * Busca si NO hay contenedor para el tipo de prc.
 	 * @param prc
-	 * @return 0 - Ya existe contenedor; 1 - No existe contenedor y hay que crearlo; 2 - Tipo PRC no requiere contenedor
+	 *  @return false - No se ha de crear contenedor ||| true - Hay que crear un contenedor para el TIPO de prc
 	 */
 	public boolean buscarTPRCsinContenedor(Procedimiento prc) {
 		

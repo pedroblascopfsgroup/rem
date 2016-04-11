@@ -820,7 +820,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		return adjuntos;
 	}
 	
-	private Set<EXTAdjuntoDto> creaObjetosEXTAsuntos(final Set<AdjuntoAsunto> adjuntos, final Usuario usuario, final Boolean borrarOtrosUsu) {
+	protected Set<EXTAdjuntoDto> creaObjetosEXTAsuntos(final Set<AdjuntoAsunto> adjuntos, final Usuario usuario, final Boolean borrarOtrosUsu) {
 		if (adjuntos == null)
 			return null;
 
@@ -868,6 +868,9 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getRefCentera() {
+					if(aa.getServicerId() != null) {
+						return aa.getServicerId().toString();
+					}
 					return null;
 				}
 

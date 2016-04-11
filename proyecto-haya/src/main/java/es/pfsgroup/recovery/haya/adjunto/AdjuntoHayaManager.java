@@ -306,7 +306,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		}
 		List<Integer> idsDocumento = new ArrayList<Integer>();
 		try {
-			String claseExpediente = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+			String claseExpediente = getClaseExpedienteByProcedimientoPadre(prc);
 			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
 			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(prc.getAsunto().getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
 			DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);

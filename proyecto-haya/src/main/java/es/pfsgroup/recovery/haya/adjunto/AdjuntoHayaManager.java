@@ -34,6 +34,7 @@ import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -62,6 +63,7 @@ import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
 import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
@@ -207,15 +209,47 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 			}else{
 				Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
 				listaContenedores = getContenedoresByAsunto(asun);
+				//Contenedores adecuados segun el combo elegido
+				listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);
+								
 				for(String claseExpe : listaContenedores) {
-					RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExpe, uploadForm);
-					if(!Checks.esNulo(respuesta.getIdDocumento())) {
-						break;
+					if(!Checks.esNulo(claseExpe)) {
+						RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExpe, uploadForm);
+						if(!Checks.esNulo(respuesta.getIdDocumento())) {
+							break;
+						}
 					}
 				}
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Se filtran los contenedores por el Tipo de Documento a subir, con los contenedores creados del Asunto
+	 * si devuelve varios, estarán ordenados por fechacreacion descendente.
+	 * @param uploadForm
+	 * @param listaContenedores
+	 * @return
+	 */
+	private List<String> contenedoresAdecuadosYOrdenados(WebFileItem uploadForm, List<String> listaContenedores) {
+		String codTFA = uploadForm.getParameters().get("comboTipoFichero");
+		DDTipoFicheroAdjunto tipoFichero = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codTFA));
+		List<TipoProcedimiento> listTipoPrc = genericDao.getList(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "tipoActuacion", tipoFichero.getTipoActuacion()));
+		List<String> listContenedoresPorTipoPrc = new ArrayList<String>();
+		for(TipoProcedimiento tipoPrc : listTipoPrc) {
+			String codMapeado = hayaProjectContext.getMapaClasesExpeGesDoc().get(tipoPrc.getCodigo());
+			if(!Checks.esNulo(codMapeado)) {
+				listContenedoresPorTipoPrc.add(codMapeado);
+			}
+		}
+		for(String tipoContenedor : listaContenedores) {
+			if(!listContenedoresPorTipoPrc.contains(tipoContenedor)) {
+				listaContenedores.set(listaContenedores.indexOf(tipoContenedor),null);
+			}
+		}
+		
+		return listaContenedores;
 	}
 	
 	private RespuestaCrearDocumento uploadGestorDoc(Long idAsunto, String claseExp, WebFileItem uploadForm) {

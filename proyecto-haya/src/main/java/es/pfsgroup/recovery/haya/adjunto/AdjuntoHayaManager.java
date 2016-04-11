@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
@@ -23,6 +24,7 @@ import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.adjuntos.manager.AdjuntoManager;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
+import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
@@ -31,18 +33,17 @@ import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
-import es.capgemini.pfs.users.domain.Funcion;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.IdentificacionDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAss
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
+import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
@@ -89,7 +91,10 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	
 	@Autowired
 	private HayaProjectContext hayaProjectContext;    
-    
+	
+	@Autowired
+	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
+	
     @Override
 	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
@@ -102,19 +107,25 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				
 			}
 		}
-		
-		List<RespuestaDocumentosExpedientes> listRespuesta = new ArrayList<RespuestaDocumentosExpedientes>();
+		List<Integer> idsDocumento = new ArrayList<Integer>();
 		try {
 			for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
 				UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
 				CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
 				DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
-				listRespuesta.add(gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto));			
+				RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
+				for(IdentificacionDocumento idenDoc : respuesta.getDocumentos()) {
+						idsDocumento.add(idenDoc.getIdentificadorNodo());
+				}
 			}
 		} catch (GestorDocumentalException e) {
 			logger.error("getAdjuntosConBorrado error: " + e);
 		}
-		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(GestorDocToRecoveryAssembler.outputDtoToAdjuntoGridDto(listRespuesta), false);
+		Set<AdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByIdDocumento(idsDocumento);
+		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		adjuntosAsunto.addAll(creaObjetosEXTAsuntos(list, usuario, false));
+		return adjuntosAsunto;
 	}
     
     private List<String> getDistinctTipoProcedimientoFromAsunto(Asunto asun) {
@@ -290,20 +301,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 	}
 
-	
-	private  boolean tieneFuncion(Usuario usuario, String codigo) {
-		List<Perfil> perfiles = usuario.getPerfiles();
-		for (Perfil per : perfiles) {
-			for (Funcion fun : per.getFunciones()) {
-				if (fun.getDescripcion().equals(codigo)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-	
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm){
 		return gestorDocumentalApi.altaDocumento(idEntidad, tipoEntidadGrid, tipoDocumento, uploadForm);
 	}

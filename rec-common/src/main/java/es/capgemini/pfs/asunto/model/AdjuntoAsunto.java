@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -74,6 +75,13 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 
     @Embedded
     private Auditoria auditoria;
+    
+    @Transient
+	private String refCentera;
+    
+	@Transient
+	private String nombreTipoDoc;
+
 
     /**
      * Constructor vacio.
@@ -238,5 +246,20 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 	public void setServicerId(Long servicerId) {
 		this.servicerId = servicerId;
 	}
-
+	
+	public String getRefCentera() {
+		return refCentera;
+	}
+	
+	public void setRefCentera(String refCentera) {
+		this.refCentera = refCentera;
+	}
+	
+	public String getNombreTipoDoc() {
+		return nombreTipoDoc;
+	}
+	
+	public void setNombreTipoDoc(String nombreTipoDoc) {
+		this.nombreTipoDoc = nombreTipoDoc;
+	}
 }

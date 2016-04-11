@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.Persona;
@@ -97,8 +98,19 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(VIVHABITUAL, obtenerTextoViviendaHabitual(cnt, VIVHABITUAL));
 		datosDoc.put(INTERESINITELEG, obtenerTipoInteresPrestamo(cnt, INTERESINITELEG));
 		datosDoc.put(COMIAPERTEL, obtenerTipoComisionApert(liquidacion, COMIAPERTEL));
+		datosDoc.put(NUMCUENTATELE, obtenerNumeroCuentaCompleto((EXTContrato) cnt, NUMCUENTATELE));
 
 		return datosDoc;
+	}
+
+	private String obtenerNumeroCuentaCompleto(EXTContrato cnt,	String campo) 
+	{
+		String resultado = noDisponible(campo);
+		if(!Checks.esNulo(cnt.getCharextra8())) {
+			resultado = cnt.getCharextra8();
+		}
+		
+		return resultado;
 	}
 
 	private String obtenerTipoComisionApert(LiquidacionPCO liquidacion,	String campo) {

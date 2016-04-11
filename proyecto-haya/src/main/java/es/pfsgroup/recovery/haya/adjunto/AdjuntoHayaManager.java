@@ -294,6 +294,18 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		if( buscarTPRCsinContenedor(prc)) {
 			//Si entra, este procedimiento requiere un contenedor y no existe.
 			//AQUI LA LLAMADA A crearPropuesta
+			String idAsunto=prc.getAsunto().getId().toString();
+    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
+    		CrearPropuestaDto crearPropuesta = RecoveryToGestorExpAssembler.getCrearPropuestaDto(idAsunto, claseExpe, usuPass);
+    		
+    		try {
+				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
+				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
+			} catch (GestorDocumentalException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			String idAsunto=asun.getId().toString();
     		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
@@ -308,9 +320,28 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				e.printStackTrace();
 			}
 		}
+		List<Integer> idsDocumento = new ArrayList<Integer>();
+		try {
+			String claseExpediente = prc.getTipoProcedimiento().getCodigo();
+			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
+			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(prc.getAsunto().getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
+			DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
+			RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
+			for(IdentificacionDocumento idenDoc : respuesta.getDocumentos()) {
+				idsDocumento.add(idenDoc.getIdentificadorNodo());
+			}
+		} catch (GestorDocumentalException e) {
+			logger.error("getAdjuntosConBorrado error: " + e);
+		}
 		
-		
-		return super.getAdjuntosConBorradoByPrcId(prcId);
+		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
+			return null;
+		}
+		Set<AdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByIdDocumentoAndPrcId(idsDocumento, prcId);
+		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		adjuntosAsunto.addAll(creaObjetosEXTAsuntos(list, usuario, false));
+		return adjuntosAsunto;
 	}
 
 	@Override

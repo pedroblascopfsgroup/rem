@@ -38,8 +38,7 @@ public class RecoveryToGestorDocAssembler {
 		doc.setUsuarioOperacional(usuario.getUsuarioOperacional());
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setDescripcionDocumento(webFileItem.getFileItem().getFileName());
-//		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
-		doc.setGeneralDocumento(rellenarGeneralDocumento("01", "ESCR", "27"));
+		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
 		doc.setArchivoFisico("{}");
 		
 		return doc;

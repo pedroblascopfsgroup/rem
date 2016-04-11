@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto B.
---## FECHA_CREACION=20160212
+--## FECHA_CREACION=20160331
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.0
 --## INCIDENCIA_LINK=BKREC-1745

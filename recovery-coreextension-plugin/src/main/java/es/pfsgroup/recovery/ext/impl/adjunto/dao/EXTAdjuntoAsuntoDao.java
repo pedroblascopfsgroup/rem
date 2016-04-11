@@ -16,8 +16,6 @@ public interface EXTAdjuntoAsuntoDao extends
 
 	List<EXTAdjuntoAsunto> getAdjuntoAsuntoByNombreByAsu(Long idAsunto, String nombre);
 	
-	Set<AdjuntoAsunto> getAdjuntoAsuntoByIdDocumento(List<Integer> idsDocumento);
-	
 	Set<AdjuntoAsunto> getAdjuntoAsuntoByIdDocumentoAndPrcId(List<Integer> idsDocumento, Long idPrc);
 
 }

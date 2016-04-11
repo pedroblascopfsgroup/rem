@@ -121,6 +121,10 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		} catch (GestorDocumentalException e) {
 			logger.error("getAdjuntosConBorrado error: " + e);
 		}
+		
+		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
+			return null;
+		}
 		Set<AdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByIdDocumento(idsDocumento);
 		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -238,6 +242,15 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Override
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
+		
+		if( buscarTPRCsinContenedor(prc)) {
+			//Si entra, este procedimiento requiere un contenedor y no existe.
+			//AQUI LA LLAMADA A crearPropuesta
+			
+		}
+		
+		
 		return super.getAdjuntosConBorradoByPrcId(prcId);
 	}
 
@@ -362,7 +375,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	/**
 	 * Busca si NO hay contenedor para el tipo de prc.
 	 * @param prc
-	 * @return 0 - Ya existe contenedor; 1 - No existe contenedor y hay que crearlo; 2 - Tipo PRC no requiere contenedor
+	 *  @return false - No se ha de crear contenedor ||| true - Hay que crear un contenedor para el TIPO de prc
 	 */
 	public boolean buscarTPRCsinContenedor(Procedimiento prc) {
 		

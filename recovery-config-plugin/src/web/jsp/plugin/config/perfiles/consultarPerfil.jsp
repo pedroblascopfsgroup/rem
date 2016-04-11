@@ -54,7 +54,7 @@
 	
 		
 	<pfs:buttonremove name="btEliminar"
-		flow="plugin/config/perfiles/ADMeliminarFuncionPerfil"
+		flow="plugin/config/perfiles/ADMeliminarFuncionPerfilSeguro"
 		novalueMsgKey="plugin.config.perfiles.consulta.message.novalue"
 		novalueMsg="**Seleccione una función de la lista"  
 		paramId="idFuncion"  
@@ -74,7 +74,7 @@ var btEliminar= new Ext.Button({
     					parms.idFuncion = gridFunciones.getSelectionModel().getSelected().get('id');
     					parms.password = rta;
     					page.webflow({
-							flow: 'plugin/config/perfiles/ADMeliminarFuncionPerfil'
+							flow: 'plugin/config/perfiles/ADMeliminarFuncionPerfilSeguro'
 							,params: parms
 							,success : function(){ 
 								gridFunciones.store.webflow(parms); 

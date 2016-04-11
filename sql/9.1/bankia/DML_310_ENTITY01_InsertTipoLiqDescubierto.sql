@@ -40,7 +40,7 @@ DECLARE
     ' INSERT (' || V_PREFIJO || 'ID, ' || V_PREFIJO || 'CODIGO, ' || V_PREFIJO || 'DESCRIPCION, ' || V_PREFIJO || 'DESCRIPCION_LARGA, ' || V_PREFIJO || 'RUTA_PLANTILLA, usuariocrear, fechacrear) ' ||
     ' VALUES (actual.id, actual.codigo, actual.descripcion, actual.descripcion_larga, actual.ruta_plantilla, actual.usuariocrear, actual.fechacrear) ' ||
     ' WHEN MATCHED THEN ' ||
-    ' UPDATE SET tabla.' || V_PREFIJO || 'DESCRIPCION=actual.descripcion, tabla.' || V_PREFIJO || 'DESCRIPCION_LARGA=actual.descripcion_larga,BORRADO=0'  ;
+    ' UPDATE SET tabla.' || V_PREFIJO || 'DESCRIPCION=actual.descripcion, tabla.' || V_PREFIJO || 'DESCRIPCION_LARGA=actual.descripcion_larga, tabla.' || V_PREFIJO || 'RUTA_PLANTILLA=actual.ruta_plantilla,BORRADO=0'  ;
          
     --Valores a insertar
     TYPE T_TIPO IS TABLE OF VARCHAR2(4000 CHAR);

@@ -443,6 +443,7 @@ public class PropuestaManager implements PropuestaApi {
 	/**
 	 * {@inheritDoc}
 	 */
+	@BusinessOperation(BO_PROPUESTA_CAMBIAR_ESTADO)
 	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento) {
 		this.cambiarEstadoPropuesta(propuesta, nuevoCodigoEstado);
 		

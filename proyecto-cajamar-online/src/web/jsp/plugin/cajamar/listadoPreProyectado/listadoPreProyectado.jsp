@@ -490,6 +490,7 @@
 		,{name:'propuesta'}
 		,{name:'estadoGestion'}
 		,{name:'fechaPrevReguCnt'}
+		,{name: 'importePteDifer'}
 	]);
 
 	 var preProCntsStore = page.getStore({
@@ -515,6 +516,7 @@
 		,{header: '<s:message code="preproyectado.contratos.fechaPaseAMora" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraCnt',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Última Propuesta" />',dataIndex: 'propuesta',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.estadoGestion" text="**Estado Gestión" />',dataIndex: 'estadoGestion',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.importePteDifer" text="**Imp. Pdte. Diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
 		<%-- ,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true} --%>
 	]);
 	
@@ -551,10 +553,6 @@
 		,{name:'fechaVtoTarea'}
 		,{name:'numContratos'}
 		,{name:'volRiesgoExp'}
-		,{name:'importeInicialExp'}
-		,{name:'regularizadoExp'}
-		,{name:'importeActual'}
-		,{name:'importePteDifer'}
 		,{name:'tramoExp'}
 		,{name:'diasVencidosExp'}
 		,{name:'fechaPaseAMoraExp'}
@@ -573,7 +571,7 @@
 		,baseParams: paramsBusquedaInicial
 		,flow:'listadopreproyectado/getListPreproyectadoExp'
  		//,reader : new Ext.data.JsonReader({root:'expedientes',totalProperty : 'total'}, expedientesRecord)
- 		,reader : new Ext.data.JsonReader({root:'expedientes'}, expedientesRecord)
+ 		,reader : new Ext.data.JsonReader({idProperty: 'expId', root:'expedientes'}, expedientesRecord)
 	});
 	
 	var expanderExp = new Ext.ux.grid.RowExpander({
@@ -607,7 +605,8 @@
 						,'fechaPaseAMoraCnt'
 						,'propuesta'
 						,'estadoGestion'
-						,'fechaPrevReguCnt'				
+						,'fechaPrevReguCnt'
+						,'importePteDifer'				
 				],
 				data: contratos
 			});
@@ -653,11 +652,11 @@
 		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.numContratos" text="**Nro. contratos" />',dataIndex: 'numContratos',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.volRiesgoExp" text="**Vol. Riesgo Exp." />',dataIndex: 'volRiesgoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}		
-		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+<%--	,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true, css: cssExp}
+--%>	,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true, css: cssExp}

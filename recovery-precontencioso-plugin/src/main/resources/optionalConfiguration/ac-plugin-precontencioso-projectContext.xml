@@ -45,6 +45,8 @@
 				<value>apellido2</value>
 				<value>apellido1</value>
 				<value>nombre</value>
+				<value>FECHA_ACTUAL</value>
+				<value>TOTAL_LIQUIDACION_LETRA</value>
 			</list>
 		</property>
 

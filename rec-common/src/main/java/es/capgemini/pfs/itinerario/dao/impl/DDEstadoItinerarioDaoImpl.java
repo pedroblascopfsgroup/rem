@@ -32,7 +32,7 @@ public class DDEstadoItinerarioDaoImpl extends AbstractEntityDao<DDEstadoItinera
     @SuppressWarnings("unchecked")
     @Override
     public List<DDEstadoItinerario> findByEntidad(String tipoEntidad) {
-        String hsql = "from DDEstadoItinerario where tipoEntidad.codigo = ?";
+        String hsql = "from DDEstadoItinerario where tipoEntidad.codigo = ? and auditoria.borrado = false";
         return getHibernateTemplate().find(hsql, new Object[] {tipoEntidad});
     }
 

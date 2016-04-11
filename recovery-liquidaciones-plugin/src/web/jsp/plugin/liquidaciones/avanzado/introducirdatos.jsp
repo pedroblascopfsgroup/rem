@@ -79,11 +79,16 @@
 				}
 				if (r.liquidacion != undefined) {
 					capital.setValue(r.liquidacion.capital);
-					interesesOrdinarios.setValue(r.liquidacion.interesesDemora);
+					interesesOrdinarios.setValue(r.liquidacion.interesesOrdinarios);
+					interesesDemora.setValue(r.liquidacion.interesesDemora);
 					comisiones.setValue(r.liquidacion.comisiones);
 					impuestos.setValue(r.liquidacion.impuestos);
 					gastos.setValue(r.liquidacion.gastos);
 					fechaCierre.setValue(r.liquidacion.fechaCierre);
+				}
+				if (r.contrato != undefined) {
+					fechaVencimiento.setValue(r.contrato.fechaVencimiento);
+					tipoInteres.setValue(r.contrato.tipoInteres);
 				}
 		}});
 	});
@@ -100,7 +105,9 @@
 		comisiones="comisiones"
 		gastos="gastos"
 		impuestos="impuestos"
+		tipoInteres="tipoInteres"
 		fechaCierre_date="fechaCierre"
+		fechaVencimiento="fechaVencimiento"
 	
 		costasLetrado="costasLetrado"
 		costasProcurador="costasProcurador"
@@ -116,29 +123,33 @@
 	<pfs:buttoncancel name="btCancelar"/>
 	
 	<pfs:button name="btAceptar" caption="**Aceptar"  captioneKey="plugin.liquidaciones.introducirdatos.action.aceptar" iconCls="icon_ok">
-		if (validarForm()) {
-			var p=parametros();
-			
-			var storeList = tiposInteresStore.data.items;
-			if (storeList.length > 0) {
-				var tiposInteresesData = [];
-				
-				var i;
-				for (i=0;i < storeList.length;i++) {
-					var reg = storeList[i].data;
-					var tipo = '';
-					tipo = reg.fecha + '#' + reg.tipoInteres;
-					tiposInteresesData.push(tipo);
-				}
-			}
-			
-			p.tiposIntereses = tiposInteresesData;
-			
-			app.downloadFile({flow: 'liquidaciones/openReport', params: p});
-			page.fireEvent(app.event.DONE);
-			
+		if (tipoDemoraCierre.value > 100) {
+			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
 		} else {
-			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+			if (validarForm()) {
+				var p=parametros();
+				
+				var storeList = tiposInteresStore.data.items;
+				if (storeList.length > 0) {
+					var tiposInteresesData = [];
+					
+					var i;
+					for (i=0;i < storeList.length;i++) {
+						var reg = storeList[i].data;
+						var tipo = '';
+						tipo = reg.fecha + '#' + reg.tipoInteres;
+						tiposInteresesData.push(tipo);
+					}
+				}
+				
+				p.tiposIntereses = tiposInteresesData;
+				
+				app.downloadFile({flow: 'liquidaciones/openReport', params: p});
+				page.fireEvent(app.event.DONE);
+				
+			} else {
+				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+			}
 		}
 	</pfs:button>
 
@@ -149,18 +160,20 @@
 	<pfsforms:numberfield name="comisiones" labelKey="plugin.liquidaciones.introducirdatos.control.comisiones" label="**Comisiones" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="gastos" labelKey="plugin.liquidaciones.introducirdatos.control.gastos" label="**Gastos" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="impuestos" labelKey="plugin.liquidaciones.introducirdatos.control.impuestos" label="**Impuestos" value="" obligatory="true" allowDecimals="true"/>
+	<pfs:hidden name="tipoInteres" value="" />
+	<pfs:hidden name="fechaVencimiento" value="" />
 	<pfsforms:datefield name="fechaCierre" labelKey="plugin.liquidaciones.introducirdatos.control.fechaCierre" label="**Fecha Cierre" obligatory="true"/>
 	fechaCierre.on('render', function() {this.validate();});
 	
 
-	<pfsforms:fieldset name="fieldDatosCierre" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.datoscierre" border="true" width="260" height="260"
-		items="capital,interesesOrdinarios,interesesDemora,comisiones,gastos,impuestos,fechaCierre" />
+	<pfsforms:fieldset name="fieldDatosCierre" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.datoscierre" border="true" width="280" height="260"
+		items="capital,interesesOrdinarios,interesesDemora,comisiones,gastos,impuestos,tipoInteres,fechaCierre" />
 		
 	<pfsforms:numberfield name="costasLetrado" labelKey="plugin.liquidaciones.introducirdatos.control.costasLetrado" label="**Costas Letrado" value="" obligatory="false" allowDecimals="true"/>
 	<pfsforms:numberfield name="costasProcurador" labelKey="plugin.liquidaciones.introducirdatos.control.costasProcurador" label="**Costas Procurador" value="" obligatory="false" allowDecimals="true"/>
 	<pfsforms:numberfield name="otrosGastos" labelKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" label="**Otros Gastos" value="" obligatory="false" allowDecimals="true"/>
 		
-	<pfsforms:fieldset name="fieldOtrosGastos" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" border="true" width="260" height="260"
+	<pfsforms:fieldset name="fieldOtrosGastos" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" border="true" width="280" height="260"
 		items="costasLetrado,costasProcurador,otrosGastos" />
 	
 	<%--<pfsforms:numberfield name="baseCalculo" labelKey="plugin.liquidaciones.introducirdatos.control.baseCalculo" label="**Base de Cálculo" value="" obligatory="true" allowDecimals="true"/>  --%>
@@ -174,7 +187,7 @@
 	<pfsforms:numberfield name="tipoDemoraCierre" labelKey="plugin.liquidaciones.introducirdatos.control.tipoDemoraCierre" label="**Tipo Demora al Cierre" value="" 
 		obligatory="true" allowDecimals="true" allowNegative="false" />
 
-	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="260" height="260"
+	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="280" height="260"
 		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre" />
 
 	var fieldImportes = new Ext.Panel({
@@ -214,30 +227,29 @@
 		if (!newTipoInteres.isValid())
 			return false;
 		
-		if (newTipoInteres.value>100) {
-			newTipoInteres.value="";
-			return false;
-		}
-			
 		return true;
 	};
 	
 	<pfs:button name="btnOkTipoInteres" captioneKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.agregar" caption="**Agregar" iconCls="icon_mas">
-		if (validarFormNewTipoInteres()) {
-		    var newTipoInteresRecord = tiposInteresStore.recordType;
-	   		var t = new newTipoInteresRecord({
-	   			fecha: newFecha.value,
-	   			tipoInteres: newTipoInteres.value
-	   		});
-			tiposInteresStore.insert(0,t);			
-			
-
-			wNewTipoInteres.hide();
-			
-			newFecha.reset();
-			newTipoInteres.reset();
+		if (newTipoInteres.value > 100) {
+			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.nuevoTipoInteres" text="**El nuevo tipo de interés no puede ser superior al 100%" />');
 		} else {
-			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+			if (validarFormNewTipoInteres()) {
+			    var newTipoInteresRecord = tiposInteresStore.recordType;
+		   		var t = new newTipoInteresRecord({
+		   			fecha: newFecha.value,
+		   			tipoInteres: newTipoInteres.value
+		   		});
+				tiposInteresStore.insert(0,t);			
+				
+	
+				wNewTipoInteres.hide();
+				
+				newFecha.reset();
+				newTipoInteres.reset();
+			} else {
+				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+			}
 		}
 	</pfs:button>
 	
@@ -265,7 +277,7 @@
 	
 	var wNewTipoInteres = new Ext.Window({
 		width: 330
-		//,closable: false
+		,closable: false
 		,title: '<s:message code="plugin.liquidaciones.introducirdatos.control.newTipoInteres.title" text="**Actualización de tipos de interés" />'
 		,modal: true
 		,items: [panelNewTipoInteres]
@@ -388,11 +400,6 @@
 			
 		if (!tipoDemoraCierre.isValid())
 			return false;
-		
-		if (tipoDemoraCierre.value > 100) {
-			tipoDemoraCierre.value="";
-			return false;
-		}
 						
 		return true;
 	}		

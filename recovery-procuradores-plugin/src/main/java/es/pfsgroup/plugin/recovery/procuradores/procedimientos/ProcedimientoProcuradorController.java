@@ -137,7 +137,7 @@ public class ProcedimientoProcuradorController {
 		procedimientoDervidadoDto.setProcedimientoPadre(procedimiento.getId());
 		procedimientoDervidadoDto.setTipoReclamacion(procedimiento.getTipoReclamacion().getCodigo());
 		procedimientoDervidadoDto.setTipoActuacion("TR");
-		procedimientoDervidadoDto.setTipoProcedimiento("HC103");
+		procedimientoDervidadoDto.setTipoProcedimiento("HC107"); // provisión de fondos procurador
 		procedimientoDervidadoDto.setPorcentajeRecuperacion(procedimiento.getPorcentajeRecuperacion());
 		procedimientoDervidadoDto.setPlazoRecuperacion(procedimiento.getPlazoRecuperacion());
 		procedimientoDervidadoDto.setSaldoRecuperacion(procedimiento.getSaldoRecuperacion());

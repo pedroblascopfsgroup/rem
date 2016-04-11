@@ -323,6 +323,11 @@
 				<value>GESPROC</value>
 			</set>
 		</property>
+		<property name="perfilesConsulta">
+			<set>
+				<value>CON_CONSULTA</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextCAJAMAR" parent="procedimientosProjectContextDefault">

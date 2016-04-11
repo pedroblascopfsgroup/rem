@@ -488,7 +488,7 @@ function(entidad,page){
 				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion12-devolverEnSancion'
-					,iconCls : 'icon_revisar_expediente'
+					,iconCls : 'icon_completar_expediente'
 					,handler:function(){
 						cambioEstado(tipoAccion.DEVOLVER_ENSANCION)
 					}
@@ -535,7 +535,7 @@ function(entidad,page){
 					}
 				}
 				,{
-					text:'<s:message code="expedientes.menu.solicitarcancelacion" text="**Solicitar Cancelacin" />'
+					text:'<s:message code="expedientes.menu.solicitarcancelacion" text="**Solicitar Cancelacion" />'
 					,id : 'expediente-accion4-solicitarCancelacion'
 					,iconCls : 'icon_cancelar_expediente'
 					,handler:function(){
@@ -544,7 +544,7 @@ function(entidad,page){
 				},
 				//Botn ver solicitud: Se muestra si es supervisor y hay solicitud pendiente.
 				{
-					text:'<s:message code="expedientes.menu.verSolicitudCancelacion" text="**Ver Solicitud Cancelacin" />'
+					text:'<s:message code="expedientes.menu.verSolicitudCancelacion" text="**Ver Solicitud Cancelacion" />'
 					,id : 'expediente-accion5-verCancelacion'
 					,iconCls : 'icon_rechazar_cancelar_expediente'
 					,handler:function(){
@@ -1045,7 +1045,6 @@ function(entidad,page){
 					showHide(estadoExpediente == EXP_CONGELADO, 'expediente-accion2-devolverRevision' );
 			}
 		}
-
 		if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
 			if (solicitud==null || solicitud==""){	
 				showHide(true, 'expediente-accion4-solicitarCancelacion');
@@ -1060,6 +1059,8 @@ function(entidad,page){
 			}else{
 				showHide(true, 'expediente-accion6-cancelacionExpediente');
 			}
+			<%-- Si el usuario es supervisor deshabilitar la opcion de solicitar cancelacion --%>
+			showHide(false, 'expediente-accion4-solicitarCancelacion');
 		}
 		if (entidad.getData('esSupervisor')  && ([EXP_ACTIVO, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0) ){
 			if (solicitud!=null && solicitud!=""){	

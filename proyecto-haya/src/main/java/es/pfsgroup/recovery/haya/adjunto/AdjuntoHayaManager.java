@@ -124,7 +124,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 					RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 					insertarContenedor(respuesta.getIdExpediente(), asun, claseExpe);
 				} catch (GestorDocumentalException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -290,7 +289,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
-		
 		if( buscarTPRCsinContenedor(prc)) {
 			//Si entra, este procedimiento requiere un contenedor y no existe.
 			//AQUI LA LLAMADA A crearPropuesta
@@ -303,10 +301,8 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
 			} catch (GestorDocumentalException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 		List<Integer> idsDocumento = new ArrayList<Integer>();
 		try {
@@ -321,7 +317,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		} catch (GestorDocumentalException e) {
 			logger.error("getAdjuntosConBorrado error: " + e);
 		}
-		
 		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
 			return null;
 		}

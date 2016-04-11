@@ -571,7 +571,7 @@
 		,baseParams: paramsBusquedaInicial
 		,flow:'listadopreproyectado/getListPreproyectadoExp'
  		//,reader : new Ext.data.JsonReader({root:'expedientes',totalProperty : 'total'}, expedientesRecord)
- 		,reader : new Ext.data.JsonReader({root:'expedientes'}, expedientesRecord)
+ 		,reader : new Ext.data.JsonReader({idProperty: 'expId', root:'expedientes'}, expedientesRecord)
 	});
 	
 	var expanderExp = new Ext.ux.grid.RowExpander({

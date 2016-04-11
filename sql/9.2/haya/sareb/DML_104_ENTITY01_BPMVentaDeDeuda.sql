@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160331
+--## FECHA_CREACION=20160411
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-947
@@ -47,7 +47,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('P454','P454_ObtenerAprobacionCN','plugin/procedimientos-bpmHaya-plugin/tramiteVentaDeDeuda/obtenerAprobacionCN',null,'(valores[''P454_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI && valores[''P454_ObtenerAprobacionCN''][''revisionCorrecta''] == null) ? ''Es necesario rellenar el campo revision correcta'' : null','valores[''P454_ObtenerAprobacionCN''][''revisionCorrecta''] == DDSiNo.SI ? ''si'':''no''',null,'0','Obtener aprobación CN','0','PRODUCTO-947','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       T_TIPO_TAP('P454','P454_ObtenerAprobacionCN','plugin/procedimientos-bpmHaya-plugin/tramiteVentaDeDeuda/obtenerAprobacionCN',null,'(valores[''P454_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI && valores[''P454_ObtenerAprobacionCN''][''revisionCorrecta''] == null) ? ''Es necesario rellenar el campo revision correcta'' : null','valores[''P454_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI ? (valores[''P454_ObtenerAprobacionCN''][''revisionCorrecta''] == DDSiNo.SI ? ''si'' : ''no'') : ''no''',null,'0','Obtener aprobación CN','0','PRODUCTO-947','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P454','P454_ComunicacionAcreditadoCN',null,null,null,null,null,'0','Comunicación al Acreditado CN','0','PRODUCTO-947','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P454','P454_EnviarDesistirWFCN',null,null,null,null,null,'0','Enviar a desistir WF CN','0','PRODUCTO-947','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P454','P454_PeticionEscriturasCaracterEjecutivo',null,null,'(valores[''P454_PeticionEscriturasCaracterEjecutivo''][''adjuntarEscrituras''] == DDSiNo.NO && valores[''P454_PeticionEscriturasCaracterEjecutivo''][''aceptacionAcreditado''] == null) ? ''Es necesario rellenar el campo aceptacion del acreditado'' : null','valores[''P454_PeticionEscriturasCaracterEjecutivo''][''adjuntarEscrituras''] == DDSiNo.SI ? ''si'' : ((valores[''P454_PeticionEscriturasCaracterEjecutivo''][''aceptacionAcreditado''] != null && valores[''P454_PeticionEscriturasCaracterEjecutivo''][''aceptacionAcreditado''] == DDSiNo.SI) ? ''si'':''no'')',null,'0','Peticion Escrituras con Caracter Ejecutivo','0','PRODUCTO-947','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)

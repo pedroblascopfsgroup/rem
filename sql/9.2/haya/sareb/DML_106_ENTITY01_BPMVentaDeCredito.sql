@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160406
+--## FECHA_CREACION=20160411
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-946
@@ -47,7 +47,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('P455','P455_ObtenerAprobacionCN','plugin/procedimientos-bpmHaya-plugin/tramiteVentaDeCredito/obtenerAprobacionCN',null,'(valores[''P455_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI && valores[''P455_ObtenerAprobacionCN''][''revisionCorrecta''] == null) ? ''El campo revisión correcta es obligatorio'' : null','valores[''P455_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI ? ''Si'' : ''No''',null,'0','Obtener aprobación CN','0','PRODUCTO-946','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
+       T_TIPO_TAP('P455','P455_ObtenerAprobacionCN','plugin/procedimientos-bpmHaya-plugin/tramiteVentaDeCredito/obtenerAprobacionCN',null,'(valores[''P455_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI && valores[''P455_ObtenerAprobacionCN''][''revisionCorrecta''] == null) ? ''El campo revisión correcta es obligatorio'' : null','valores[''P455_ObtenerAprobacionCN''][''obtencionAprobacion''] == DDSiNo.SI ? (valores[''P455_ObtenerAprobacionCN''][''revisionCorrecta''] == DDSiNo.SI ? ''Si'' : ''No'') : ''No''',null,'0','Obtener aprobación CN','0','PRODUCTO-946','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P455','P455_ComunicacionAcreditadoCN',null,null,null,null,null,'0','Comunicación al acreditado CN','0','PRODUCTO-946','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P455','P455_EnviarDesistirWFCN',null,null,null,null,null,'0','Enviar a desistir WF CN','0','PRODUCTO-946','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)
        ,T_TIPO_TAP('P455','P455_ConfeccionarBorradorContratoAcreditado',null,null,null,'valores[''P455_ConfeccionarBorradorContratoAcreditado''][''requiereValidacion''] == DDSiNo.SI ? ''Si'' : ''No''',null,'0','Confeccionar borrador contrato acreditado','0','PRODUCTO-946','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'803',null,null,null)

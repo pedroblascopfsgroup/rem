@@ -137,7 +137,7 @@
 			if (validarForm() == '') {
 				var flow='/pfs/liquidaciondoc/generarCertSaldo';
 				var params={idLiquidacion: idLiquidacionSeleccionada, idPlantilla: comboPlantillas.getValue(), 
-					codigoPropietaria: comboPropietarias.getValue(), localidadFirma: comboLocalidades.getValue(), notario: notario.getValue()};
+					codigoPropietaria: comboPropietarias.getValue(), localidadFirma: comboLocalidades.getValue(), notario: escape(notario.getValue())};
 				app.openBrowserWindow(flow,params);
 				page.fireEvent(app.event.DONE);
 			}else{

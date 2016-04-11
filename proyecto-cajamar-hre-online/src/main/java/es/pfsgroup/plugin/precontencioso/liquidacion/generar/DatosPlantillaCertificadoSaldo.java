@@ -116,7 +116,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerTipoComisionApert(LiquidacionPCO liquidacion,	String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getComisiones())) {
-			resultado = currencyInstance.format( liquidacion.getComisiones());
+			resultado = numberInstance.format( liquidacion.getComisiones());
 		}
 		return resultado;
 	}
@@ -124,7 +124,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteComisionesPagadas(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getComisiones())) {
-			resultado = currencyInstance.format( liquidacion.getComisiones());
+			resultado = numberInstance.format( liquidacion.getComisiones());
 		}
 		return resultado;
 	}
@@ -132,7 +132,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteIntereseCreditoDispuesto(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getInteresesOrdinarios())) {
-			resultado = currencyInstance.format( liquidacion.getInteresesOrdinarios());
+			resultado = numberInstance.format( liquidacion.getInteresesOrdinarios());
 		}
 		return resultado;
 	}
@@ -140,7 +140,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerTipoComision(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getComisiones())) {
-			resultado = currencyInstance.format( liquidacion.getComisiones());
+			resultado = numberInstance.format( liquidacion.getComisiones());
 		}
 		return resultado;
 	}
@@ -148,7 +148,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerTipoInteresPrestamo(Contrato contrato, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(contrato.getTipoInteres());
+			resultado = numberInstance.format(contrato.getTipoInteres());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -184,7 +184,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteInteresesMoratorios(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getInteresesDemora());
+			resultado = numberInstance.format(liquidacion.getInteresesDemora());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -206,7 +206,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteInteresesRemuneratorios(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getInteresesOrdinarios());
+			resultado = numberInstance.format(liquidacion.getInteresesOrdinarios());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -216,7 +216,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteCapitalPendiente(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getCapitalNoVencido());
+			resultado = numberInstance.format(liquidacion.getCapitalNoVencido());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -268,7 +268,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImportePrestamo(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
+			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}

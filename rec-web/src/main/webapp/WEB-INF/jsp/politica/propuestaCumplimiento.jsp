@@ -8,10 +8,10 @@
 <fwk:page>
 	
 	var labelStyle = 'font-weight:bolder;width:100px';
-	
+		
 	var resumenObjetivo = new Ext.form.TextArea({
 		fieldLabel: '<s:message code="objetivo.propuestaCumplimiento.resumenObjetivo" text="**Resumen del objetivo" />'
-		,value:'${objetivo.resumen}'
+		,value: resumen
 		,labelStyle: labelStyle
 		,style:'font-weight:bolder;margin-bottom:10px;'
 		,width: 570

@@ -1,8 +1,8 @@
 # Conf. Entorno
-export DIR_RAIZ = /recovery/iap031 
+export DIR_RAIZ = /recovery/haya 
 #/recovery/iap031 	[INTE] 
 #/recovery/haya 	[RSI, PRE Y PRO]
-export JAVA_HOME=/usr/java/jdk1.6.0_07
+export JAVA_HOME=/usr/java/jdk1.6.0_27
 #/usr/java/jdk1.6.0_07	[INTE]   
 #/usr/java/jdk1.6.0_27	[VAL01, PRE Y PRO]
 export PATH=$JAVA_HOME/bin:$PATH
@@ -10,7 +10,7 @@ export BATCH_INSTALL_DIR=$DIR_RAIZ/batch-server/sareb/programas/batch
 export BATCH_USER=ops-haya
 export DEVON_HOME=$DIR_RAIZ/batch-server/sareb 
 export LANG=es_ES.UTF-8
-export ORACLE_HOME=/opt/sw/oracle/product/11.2.0/client_1 
+export ORACLE_HOME=/opt/app/oracle/product/10.2.0/db_1 
 #/opt/sw/oracle/product/11.2.0/client_1	[INTE Y VAL01]
 #/opt/app/oracle/product/10.2.0/db_1	[PRE Y PRO]
 export PATH=$PATH:$ORACLE_HOME/bin

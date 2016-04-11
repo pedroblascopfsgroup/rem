@@ -44,6 +44,13 @@ public class Entidad implements Serializable {
     @Column(name = "DESCRIPCION")
     private String descripcion;
 
+    @Column(name = "CODIGO")
+    private String codigo;
+
+    @Column(name = "DESCRIPCION_LARGA")
+    private String descripcionLarga;
+
+
     @OneToMany(mappedBy = "entidad", fetch = FetchType.EAGER)
     @MapKey(columns = { @Column(name = "dataKey") })
     private Map<String, EntidadConfig> configuracion;
@@ -122,6 +129,22 @@ public class Entidad implements Serializable {
 
 	public void setTiposDeGestores(List<EXTDDTipoGestor> tiposDeGestores) {
 		this.tiposDeGestores = tiposDeGestores;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
+	}
+
+	public String getDescripcionLarga() {
+		return descripcionLarga;
+	}
+
+	public void setDescripcionLarga(String descripcionLarga) {
+		this.descripcionLarga = descripcionLarga;
 	}
 
 }

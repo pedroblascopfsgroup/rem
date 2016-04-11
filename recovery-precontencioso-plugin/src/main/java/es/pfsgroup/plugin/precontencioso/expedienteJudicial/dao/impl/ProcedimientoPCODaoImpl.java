@@ -318,7 +318,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			query.createCriteria("estadosPreparacionProc.estadoPreparacion", "estadoPreparacion");
 
 			where.add(Restrictions.in("estadoPreparacion.codigo", filtro.getProCodigosEstado().split(",")));
-			where.add(Restrictions.isNull("estadosPreparacionProc.fechaFin"));
+			//where.add(Restrictions.isNull("estadosPreparacionProc.fechaFin"));
 		}
 		
 		where.addAll(dateRangeFilter("procedimientoPco.fechaInicioPreparacion", filtro.getProFechaInicioPreparacionDesde(), filtro.getProFechaInicioPreparacionHasta()));

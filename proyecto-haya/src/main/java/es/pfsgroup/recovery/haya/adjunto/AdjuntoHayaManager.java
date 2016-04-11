@@ -25,6 +25,7 @@ import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
 import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
@@ -37,16 +38,20 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPropuestaDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
+import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
 import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
+import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioExpedientesApi;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
@@ -73,6 +78,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	private GestorDocumentalServicioDocumentosApi gestorDocumentalServicioDocumentosApi;
 	
 	@Autowired
+	private GestorDocumentalServicioExpedientesApi gestorDocumentalServicioExpedientesApi;
+	
+	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Autowired
@@ -93,13 +101,26 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
     @Override
 	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
-		Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+		
+    	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
 		
 		for(Procedimiento prc : asun.getProcedimientos()) {
 			if( buscarTPRCsinContenedor(prc)) {
 				//Si entra, este procedimiento requiere un contenedor y no existe.
 				//AQUI LA LLAMADA A crearPropuesta
 				
+				String idAsunto=asun.getId().toString();
+	    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+				UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
+	    		CrearPropuestaDto crearPropuesta = RecoveryToGestorExpAssembler.getCrearPropuestaDto(idAsunto, claseExpe, usuPass);
+	    		
+	    		try {
+					RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
+					insertarContenedor(respuesta.getIdExpediente(), asun, claseExpe);
+				} catch (GestorDocumentalException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -116,6 +137,17 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		}
 		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(GestorDocToRecoveryAssembler.outputDtoToAdjuntoGridDto(listRespuesta), false);
 	}
+    
+    private void insertarContenedor(Integer idExpediente, Asunto asun, String claseExp) {
+    	ContenedorGestorDocumental contenedor = new ContenedorGestorDocumental();
+		contenedor.setIdExterno(new Long(idExpediente));
+		contenedor.setAsunto(asun);
+		contenedor.setCodigoTipo(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS);
+		contenedor.setCodigoClase(claseExp);
+		Auditoria.save(contenedor);
+		genericDao.save(ContenedorGestorDocumental.class, contenedor);
+		
+    }
     
     private List<String> getDistinctTipoProcedimientoFromAsunto(Asunto asun) {
     	List<String> listTipoProcedimiento = new ArrayList<String>();
@@ -145,6 +177,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 
 	@Override
 	public String upload(WebFileItem uploadForm) {
+		
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
 			Procedimiento prc = null;

@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.gestorDocumental.dto.servicios;
 
-import es.pfsgroup.plugin.gestorDocumental.model.servicios.PropuestaMetadatos;
 
 public class CrearPropuestaDto {
 
@@ -17,7 +16,7 @@ public class CrearPropuestaDto {
 	/**
 	 * Clase de expediente inmobiliario (Suelo, obra en curso, obra terminada…)
 	 */
-	private Integer codClase;
+	private String codClase;
 	
 	/**
 	 * Descripción del expediente
@@ -27,7 +26,7 @@ public class CrearPropuestaDto {
 	/**
 	 * Objeto constituido por los metadatos para un expediente de propuestas
 	 */
-	private PropuestaMetadatos propuestaMetadatos;
+	private String propuestaMetadatos;
 	
 
 	public String getUsuario() {
@@ -46,11 +45,11 @@ public class CrearPropuestaDto {
 		this.password = password;
 	}
 
-	public Integer getCodClase() {
+	public String getCodClase() {
 		return codClase;
 	}
-
-	public void setCodClase(Integer codClase) {
+	
+	public void setCodClase(String codClase) {
 		this.codClase = codClase;
 	}
 
@@ -62,11 +61,11 @@ public class CrearPropuestaDto {
 		this.descripcionExpediente = descripcionExpediente;
 	}
 
-	public PropuestaMetadatos getPropuestaMetadatos() {
+	public String getPropuestaMetadatos() {
 		return propuestaMetadatos;
 	}
 	
-	public void setPropuestaMetadatos(PropuestaMetadatos propuestaMetadatos) {
+	public void setPropuestaMetadatos(String propuestaMetadatos) {
 		this.propuestaMetadatos = propuestaMetadatos;
 	}
 }

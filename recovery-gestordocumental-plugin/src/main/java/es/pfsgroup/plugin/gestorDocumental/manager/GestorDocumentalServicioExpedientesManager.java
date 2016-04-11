@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,19 +26,19 @@ public class GestorDocumentalServicioExpedientesManager implements GestorDocumen
 
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
 	
-	public static final Integer CLASE_EXP_SUELO = 1;
-	public static final Integer CLASE_EXP_OBRA_EN_CURSO = 2;
-	public static final Integer CLASE_EXP_OBRA_FINALIZADA = 3;
-	public static final Integer CLASE_EXP_NORMAS = 4;
-	public static final Integer CLASE_EXP_VENTA = 5;	
 	
-//	AI	01	SUELO (Proyecto)
-//	AI	02	OBRA EN CURSO (Promoción)
-//	AI	03	OBRA FINALIZADA (Activo)
-//	AI	04	NORMAS E INSTRUMENTOS DE AMBITO GENERAL
-//	AI	05	VENTA (AI)*
+	private static final String USUARIO_PATH = "usuario=";
+	private static final String PASSWORD_PATH = "password=";
+	private static final String COD_CLASE_PATH = "codClase=";
+	private static final String DESCRIPCION_EXPEDIENTE_PATH = "descripcionExpediente=";
+	private static final String PROPUESTA_METADATOS_PATH = "propuestaMetadatos=";
+	
+	private static final String USUARIO = "usuario";
+	private static final String PASSWORD = "password";
+	private static final String COD_CLASE = "codClase";
+	private static final String DESCRIPCION_EXPEDIENTE = "descripcionExpediente";
+	private static final String PROPUESTA_METADATOS="propuestaMetadatos";
 
-	
 	@Autowired
 	private RestClientApi restClientApi;
 	
@@ -114,14 +116,35 @@ public class GestorDocumentalServicioExpedientesManager implements GestorDocumen
 	public RespuestaCrearExpediente crearPropuesta(CrearPropuestaDto crearPropuesta) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
-		serverRequest.setPath("");
-		//serverRequest.setRequestObject(crearPropuesta);
+		serverRequest.setPath(getPathCrearPropuesta(crearPropuesta));
+		serverRequest.setMultipart(getMultipartCrearPropuesta(crearPropuesta));
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
 		return respuesta;
+	}
+	
+	private String getPathCrearPropuesta(CrearPropuestaDto crearPropuesta) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/crearPropuesta");
+		sb.append("?").append(USUARIO_PATH).append(crearPropuesta.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearPropuesta.getPassword());
+		sb.append("&").append(COD_CLASE_PATH).append(crearPropuesta.getCodClase());
+		sb.append("&").append(DESCRIPCION_EXPEDIENTE_PATH).append(crearPropuesta.getDescripcionExpediente());
+		sb.append("&").append(PROPUESTA_METADATOS_PATH).append(crearPropuesta.getPropuestaMetadatos());
+		return sb.toString();
+	}
+	
+	private MultiPart getMultipartCrearPropuesta(CrearPropuestaDto crearPropuesta){
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearPropuesta.getUsuario())
+				.field(PASSWORD,  crearPropuesta.getPassword())
+				.field(COD_CLASE, crearPropuesta.getCodClase().toString())
+				.field(DESCRIPCION_EXPEDIENTE, crearPropuesta.getDescripcionExpediente())
+				.field(PROPUESTA_METADATOS, crearPropuesta.getPropuestaMetadatos());
+		return multipart;
 	}
 
 	@Override

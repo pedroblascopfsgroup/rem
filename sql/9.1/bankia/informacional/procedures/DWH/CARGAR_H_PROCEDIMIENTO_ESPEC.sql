@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO_ESPEC (DATE_START IN DATE, DA
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable última modificación: Diego Pérez, PFS Group
--- Fecha ultima modificacion: 12/08/2015
--- Motivos del cambio: Usuario/Propietario
+-- Responsable última modificación: Pedro S., PFS Group
+-- Fecha ultima modificacion: 11/04/2016
+-- Motivos del cambio: Control de carga en periodos
 
 -- Cliente: Recovery BI Bankia
 --

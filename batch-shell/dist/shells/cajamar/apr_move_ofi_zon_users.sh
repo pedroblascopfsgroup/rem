@@ -26,7 +26,7 @@ do
     ficheroZip=$DIR_BACKUP$fichero$mascara$extensionZip
 
        #echo "$ficheroSem"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
 	   #echo "$hora_actual"

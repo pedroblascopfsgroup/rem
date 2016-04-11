@@ -37,7 +37,7 @@ do
     echo "Esperando..."
     echo "$ficheroSem"
     echo "$ficheroZip"
-    while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+    while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
        sleep 10
        hora_actual=`date +%Y%m%d%H%M%S`
     done
@@ -64,7 +64,7 @@ do
     echo "Esperando..."
     echo "$ficheroSem"
     echo "$ficheroZip"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
 	done

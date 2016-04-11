@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 
@@ -33,23 +34,6 @@ public class EXTAdjuntoAsuntoDaoImpl extends AbstractEntityDao<EXTAdjuntoAsunto,
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Set<AdjuntoAsunto> getAdjuntoAsuntoByIdDocumento(List<Integer> idsDocumento) {
-		StringBuilder listToString = new StringBuilder();
-		for ( int i = 0; i< idsDocumento.size(); i++){
-			listToString.append(idsDocumento.get(i));
-			if ( i != idsDocumento.size()-1){
-				listToString.append(", ");
-			}
-	    }
-		StringBuffer hql = new StringBuffer();
-		hql.append(" select aa from AdjuntoAsunto aa where aa.auditoria.borrado = false and aa.servicerId in(");
-		hql.append(listToString);
-		hql.append(")");
-		return new HashSet<AdjuntoAsunto>(getSession().createQuery(hql.toString()).list());
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
 	public Set<AdjuntoAsunto> getAdjuntoAsuntoByIdDocumentoAndPrcId(List<Integer> idsDocumento, Long idPrc) {
 		StringBuilder listToString = new StringBuilder();
 		for ( int i = 0; i< idsDocumento.size(); i++){
@@ -59,7 +43,12 @@ public class EXTAdjuntoAsuntoDaoImpl extends AbstractEntityDao<EXTAdjuntoAsunto,
 			}
 	    }
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select aa from AdjuntoAsunto aa where aa.auditoria.borrado = false and aa.procedimiento.id = "+idPrc+" and aa.servicerId in(");
+		hql.append(" select aa from AdjuntoAsunto aa where aa.auditoria.borrado = false ");
+		if(!Checks.esNulo(idPrc)) {
+			hql.append(" and aa.procedimiento.id = ");
+			hql.append(idPrc);
+		}
+		hql.append(" and aa.servicerId in( ");
 		hql.append(listToString);
 		hql.append(")");
 		return new HashSet<AdjuntoAsunto>(getSession().createQuery(hql.toString()).list());

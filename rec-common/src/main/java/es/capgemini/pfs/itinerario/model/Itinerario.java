@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -50,7 +51,8 @@ public class Itinerario implements Serializable, Auditable {
 
     @OneToMany(mappedBy = "itinerario")
     @JoinColumn(name = "ITI_ID")
-    private List<Estado> estados;
+    @OrderBy("estadoItinerario ASC")
+    private List<Estado> estados; 
 
     @ManyToOne
     @JoinColumn(name = "DD_TIT_ID")

@@ -34,6 +34,10 @@ public class DDEstadoItinerarioPolitica implements Auditable, Dictionary {
     public static final String ESTADO_REVISAR_EXPEDIENTE = "RE";
     public static final String ESTADO_DECISION_COMITE = "DC";
     public static final String ESTADO_VIGENTE = "VIG";
+    public static final String ESTADO_PERIODO_CARENCIA = "CAR";
+    public static final String ESTADO_GESTION_VENCIDOS = "GV";
+    public static final String ESTADO_EN_SANCION = "ENSAN";
+    public static final String ESTADO_SANCIONADO = "SANC";
 
     @Id
     @Column(name = "DD_EPI_ID")

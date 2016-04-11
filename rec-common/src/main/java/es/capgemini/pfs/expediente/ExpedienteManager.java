@@ -1445,6 +1445,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_REVISION_EXPEDIENTE, isSupervisor);
         if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
         
+        executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+        
         /*El BPM debe cambiar el estado del itinerario en el expediente*/
         executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),ExpedienteBPMConstants.TRANSITION_ENVIARAENSANCION);
         
@@ -1462,6 +1464,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, isSupervisor);
         if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+        
+        executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
 
         //Verifico que tenga un comit� al cual elevar
         DDZona zonaExpediente = exp.getOficina().getZona();

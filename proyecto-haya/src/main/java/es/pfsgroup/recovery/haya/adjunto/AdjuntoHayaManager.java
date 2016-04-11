@@ -124,7 +124,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 					RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 					insertarContenedor(respuesta.getIdExpediente(), asun, claseExpe);
 				} catch (GestorDocumentalException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -290,9 +289,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
-		
-		Asunto asun = prc.getAsunto();
-		
 		if( buscarTPRCsinContenedor(prc)) {
 			//Si entra, este procedimiento requiere un contenedor y no existe.
 			//AQUI LA LLAMADA A crearPropuesta
@@ -305,20 +301,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
 			} catch (GestorDocumentalException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			String idAsunto=asun.getId().toString();
-    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
-			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
-    		CrearPropuestaDto crearPropuesta = RecoveryToGestorExpAssembler.getCrearPropuestaDto(idAsunto, claseExpe, usuPass);
-    		
-    		try {
-				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
-				insertarContenedor(respuesta.getIdExpediente(), asun, claseExpe);
-			} catch (GestorDocumentalException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -335,20 +317,6 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		} catch (GestorDocumentalException e) {
 			logger.error("getAdjuntosConBorrado error: " + e);
 		}
-		List<Integer> idsDocumento = new ArrayList<Integer>();
-		try {
-			String claseExpediente = prc.getTipoProcedimiento().getCodigo();
-			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
-			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(prc.getAsunto().getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
-			DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
-			RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
-			for(IdentificacionDocumento idenDoc : respuesta.getDocumentos()) {
-				idsDocumento.add(idenDoc.getIdentificadorNodo());
-			}
-		} catch (GestorDocumentalException e) {
-			logger.error("getAdjuntosConBorrado error: " + e);
-		}
-		
 		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
 			return null;
 		}

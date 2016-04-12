@@ -34,7 +34,6 @@ import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -63,7 +62,6 @@ import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
 import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
@@ -207,8 +205,8 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				uploadGestorDoc(idAsunto, claseExp, uploadForm);
 			}else{
 				listaContenedores = getContenedoresByAsunto(idAsunto);
-				//Contenedores adecuados segun el combo elegido
-				listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);
+				//Contenedores adecuados segun el combo elegido - ELIMINADO ESTE FILTRO DE CRUCE
+				//listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);
 				if(Checks.esNulo(listaContenedores) || Checks.estaVacio(listaContenedores)) {
 					return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
 				}
@@ -226,13 +224,13 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		return null;
 	}
 	
-	/**
+	/** ELIMINADO METODO ya que hemos encontrado incoherencias en el cruce entre tipos Documento y el mapeo de codigos TFA
 	 * Se filtran los contenedores por el Tipo de Documento a subir, con los contenedores creados del Asunto.
 	 * Si devuelve varios, estarán ordenados por fechacreacion descendente.
 	 * @param uploadForm
 	 * @param listaContenedores
 	 * @return
-	 */
+	 
 	private List<String> contenedoresAdecuadosYOrdenados(WebFileItem uploadForm, List<String> listaContenedores) {
 		String codTFA = uploadForm.getParameters().get("comboTipoFichero");
 		DDTipoFicheroAdjunto tipoFichero = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codTFA));
@@ -251,7 +249,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		}
 		
 		return listaContenedores;
-	}
+	}*/
 	
 	private RespuestaCrearDocumento uploadGestorDoc(Long idAsunto, String claseExp, WebFileItem uploadForm) {
 		RespuestaCrearDocumento respuesta = null;

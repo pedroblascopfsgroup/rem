@@ -45,7 +45,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
-import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -78,9 +77,6 @@ public class AdjuntoCajamarManager extends AdjuntoManager  implements AdjuntoApi
 	
 	@Autowired
 	private EXTAsuntoManager extAsuntoManager;
-	
-	@Autowired
-	private HayaProjectContext hayaProjectContext;
 	
     @Resource
     Properties appProperties;

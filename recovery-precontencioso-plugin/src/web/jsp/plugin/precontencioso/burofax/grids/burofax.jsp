@@ -1372,7 +1372,7 @@ var pdfRender = function(value, meta, record) {
 		else{
 			btnNotificar.setDisabled(true);
 		}
-		<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
+		<%-- Si hay un envio seleccionado y su estado es SOLICITADO habilitamos el boton de descargar burofax --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' && myCboxSelModel.getCount() == 1){
 			btnDescargarBurofax.setDisabled(false);
 		}

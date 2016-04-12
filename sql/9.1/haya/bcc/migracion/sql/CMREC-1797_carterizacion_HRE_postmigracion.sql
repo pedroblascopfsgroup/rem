@@ -42,7 +42,7 @@ V_GAA T_ARRAY_GAA := T_ARRAY_GAA(
 					,T_GAA('GRUPO-D-SAJUR','SAJUR','D-SAJUR')
 					,T_GAA('GRUPO-D-CJ-SCON','CJ-SCON','D-CJ-SCON')
 					,T_GAA('GRUPO-D-SUCONT','SUCONT','D-SUCONT')
-					,T_GAA('GRUPO-D-SUCONGE','SUP','D-SUCONGE')
+-- BORRADO					,T_GAA('GRUPO-D-SUCONGE','SUP','D-SUCONGE')
 					,T_GAA('GRUPO-D-SUCONPR','SUCONPR','D-SUCONPR')
 					,T_GAA('GRUPO-D-SGESDOC','SGESDOC','D-SGESDOC')
 					,T_GAA('GRUPO-D-SPGL','SPGL','D-SPGL')
@@ -60,8 +60,8 @@ V_GAA T_ARRAY_GAA := T_ARRAY_GAA(
   
 BEGIN
 
-EXECUTE IMMEDIATE 'delete from  '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO where dd_tge_id in (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo in (''DRECU'',''CJ-GAREO'',''GAEST'',''GAFIS'',''GAJUR'',''GCON'',''GCONGE'',''GCONPR'',''GGESDOC'',''CJ-GESTLLA'',''CJ-SAREO'',''SAEST'',''CJ-SFIS'',''SAJUR'',''CJ-SCON'',''SUCONT'',''SUP'',''SUCONPR'',''SGESDOC'',''SPGL'',''SUCONGEN2'',''GCTRGE'',''SCTRGE'',''CM_GE_PCO'',''CM_GD_PCO'',''CM_GL_PCO'',''SUP_PCO''))'; 
-EXECUTE IMMEDIATE 'delete from  '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO where GAH_TIPO_GESTOR_ID in (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo in (''DRECU'',''CJ-GAREO'',''GAEST'',''GAFIS'',''GAJUR'',''GCON'',''GCONGE'',''GCONPR'',''GGESDOC'',''CJ-GESTLLA'',''CJ-SAREO'',''SAEST'',''CJ-SFIS'',''SAJUR'',''CJ-SCON'',''SUCONT'',''SUP'',''SUCONPR'',''SGESDOC'',''SPGL'',''SUCONGEN2'',''GCTRGE'',''SCTRGE'',''CM_GE_PCO'',''CM_GD_PCO'',''CM_GL_PCO'',''SUP_PCO''))'; 
+--EXECUTE IMMEDIATE 'delete from  '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO where dd_tge_id in (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo in (''DRECU'',''CJ-GAREO'',''GAEST'',''GAFIS'',''GAJUR'',''GCON'',''GCONGE'',''GCONPR'',''GGESDOC'',''CJ-GESTLLA'',''CJ-SAREO'',''SAEST'',''CJ-SFIS'',''SAJUR'',''CJ-SCON'',''SUCONT'',''SUP'',''SUCONPR'',''SGESDOC'',''SPGL'',''SUCONGEN2'',''GCTRGE'',''SCTRGE'',''CM_GE_PCO'',''CM_GD_PCO'',''CM_GL_PCO'',''SUP_PCO''))'; 
+--EXECUTE IMMEDIATE 'delete from  '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO where GAH_TIPO_GESTOR_ID in (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo in (''DRECU'',''CJ-GAREO'',''GAEST'',''GAFIS'',''GAJUR'',''GCON'',''GCONGE'',''GCONPR'',''GGESDOC'',''CJ-GESTLLA'',''CJ-SAREO'',''SAEST'',''CJ-SFIS'',''SAJUR'',''CJ-SCON'',''SUCONT'',''SUP'',''SUCONPR'',''SGESDOC'',''SPGL'',''SUCONGEN2'',''GCTRGE'',''SCTRGE'',''CM_GE_PCO'',''CM_GD_PCO'',''CM_GL_PCO'',''SUP_PCO''))'; 
 
  FOR I IN V_GAA.FIRST .. V_GAA.LAST
  LOOP

@@ -55,7 +55,7 @@ BEGIN
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
 	
 	IF V_NUM > 0 THEN
-		V_SQL := 'SELECT ITI_ID FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE ITI_NOMBRE = ''Estándar'' AND DD_TIT_ID = '||V_DD_TIT_ID||' AND ROWNUM = 1';
+		V_SQL := 'SELECT ITI_ID FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE ITI_NOMBRE = ''Estándar'' AND borrado = 0 AND DD_TIT_ID = '||V_DD_TIT_ID||' AND ROWNUM = 1';
 		EXECUTE IMMEDIATE V_SQL INTO V_ITI;
 
 		-- Comprobar si existe el perfil de gestión para los nuevos estados del itinerario

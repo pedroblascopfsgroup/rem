@@ -135,11 +135,11 @@ public class RecobroDetalleFacturacionCorrectorTemporal implements Serializable{
 	}
 
 	public Date getFechaCobro() {
-		return (Date)fechaCobro.clone();
+		return fechaCobro != null ? ((Date)fechaCobro.clone()):null;
 	}
 
 	public void setFechaCobro(Date fechaCobro) {
-		this.fechaCobro = (Date)fechaCobro.clone();
+		this.fechaCobro = fechaCobro != null ? ((Date)fechaCobro.clone()):null;
 	}
 
 	public Float getPorcentaje() {

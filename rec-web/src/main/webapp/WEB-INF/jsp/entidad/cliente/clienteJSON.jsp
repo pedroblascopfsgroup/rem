@@ -42,6 +42,13 @@
 		<json:property name="isNull" value="${expedientePropuesto==null}" />
 		<json:property name="id" value="${expedientePropuesto.id}" />
 		<json:property name="seguimiento" value="${expedientePropuesto!=null && expedientePropuesto.seguimiento}" />
+		<json:property name="isGestionDeuda" value="${expedientePropuesto!=null && expedientePropuesto.gestionDeuda}" />
+		<c:if test="${expedientePropuesto!=null && expedientePropuesto.arquetipo!=null}">
+			<json:property name="arquetipo" value="${expedientePropuesto.arquetipo.id}" />
+		</c:if>
+		<c:if test="${expedientePropuesto==null || expedientePropuesto.arquetipo==null}">
+			<json:property name="arquetipo" value="" />
+		</c:if>
 	</json:object>
 	<json:property name="noHayExpedientes" value="${noHayExpedientes}" />
 	<json:property name="clienteExceptuado" value="${clienteExceptuado}" />

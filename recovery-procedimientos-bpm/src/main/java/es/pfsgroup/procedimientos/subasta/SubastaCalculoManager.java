@@ -522,6 +522,9 @@ public class SubastaCalculoManager {
 		if (!Checks.esNulo(subasta.getCostasLetrado())){
 			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasLetrado());
 		}
+		if (!Checks.esNulo(subasta.getCostasProcurador())){
+			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasProcurador());
+		}
 		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
 		for (Contrato contrato : contratos) {
 			Movimiento ultimoMovimiento = contrato.getLastMovimiento();

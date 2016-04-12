@@ -24,7 +24,7 @@
 	<property name="sqlValidacion">
 		<map>
 			<entry>
-				<key><value>ID_ACREDITADO</value></key>
+				<key><value>CIF/NIF Acreditado</value></key>
 				<value>
 					<![CDATA[
 						SELECT CASE

@@ -122,6 +122,9 @@ public class Subasta implements Serializable, Auditable {
 
 	@Column(name = "SUB_COSTAS_LETRADO")
 	private Float costasLetrado;
+
+	@Column(name = "SUB_COSTAS_PROCURADOR")
+	private Float costasProcurador;
 	
 	@OneToMany(mappedBy = "subasta", fetch = FetchType.LAZY)
 	@OrderBy("id ASC")
@@ -526,6 +529,14 @@ public class Subasta implements Serializable, Auditable {
 
 	public void setCostasLetrado(Float costasLetrado) {
 		this.costasLetrado = costasLetrado;
+	}
+	
+	public Float getCostasProcurador() {
+		return costasProcurador;
+	}
+
+	public void setCostasProcurador(Float costasProcurador) {
+		this.costasProcurador = costasProcurador;
 	}
 
 	public List<LoteSubasta> getLotesSubasta() {

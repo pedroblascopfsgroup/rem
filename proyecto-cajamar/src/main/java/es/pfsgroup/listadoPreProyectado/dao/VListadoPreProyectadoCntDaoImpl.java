@@ -42,13 +42,13 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
 		if (isBuscadorProyectado) {
-			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion ");
+			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.importePteDifer ");
 		} else {
-			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
+			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.importePteDifer, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
 		}
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
-		sb.append(" where 1=1 ");
+		sb.append(" where f.diasVencidos BETWEEN 1 AND 120 ");
 		//sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {
@@ -140,7 +140,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasExp.length; i++) {
 					String zonaExp = zonasExp[i];
-					sb.append(" f.zonExp = '" + zonaExp + "' ");
+					sb.append(" f.zonExp LIKE '" + zonaExp + "%' ");
 					if (i<zonasExp.length-1) {
 						sb.append(" or ");
 					}
@@ -238,7 +238,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(Long expId, Usuario usuarioLogado) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt ");
+		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.importePteDifer, f.fechaPrevReguCnt ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
 		sb.append(" where f.expId = " + expId);
 		
@@ -276,8 +276,9 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		select.add(Projections.property("f.fechaPaseAMoraCnt").as("fechaPaseAMoraCnt"));
 		select.add(Projections.property("f.propuesta").as("propuesta"));
 		select.add(Projections.property("f.estadoGestion").as("estadoGestion"));
+		select.add(Projections.property("f.importePteDifer").as("importePteDifer"));
 		select.add(Projections.property("f.fechaPrevReguCnt").as("fechaPrevReguCnt"));
-
+		
 		Criteria query = getSession().createCriteria(VListadoPreProyectadoCnt.class, "f");
 		query.setProjection(Projections.distinct(select));
 		query.add(Restrictions.in("f.expId", expsId));
@@ -334,11 +335,12 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 			cnt.setFechaPaseAMoraCnt((Date) item[7]);
 			cnt.setPropuesta((String) item[8]);
 			cnt.setEstadoGestion((String)item[9]);
+			cnt.setImportePteDifer((BigDecimal) item[10]);
 			if (!isBuscadorProyectado) {
-				cnt.setFechaPrevReguCnt((Date) item[10]);
-				cnt.setNomTitular((String) item[11]);
-				cnt.setNifTitular((String) item[12]);
-				cnt.setOfiCodigo((String) item[13]);
+				cnt.setFechaPrevReguCnt((Date) item[11]);
+				cnt.setNomTitular((String) item[12]);
+				cnt.setNifTitular((String) item[13]);
+				cnt.setOfiCodigo((String) item[14]);
 			}
 			
 			resultado.add(cnt);

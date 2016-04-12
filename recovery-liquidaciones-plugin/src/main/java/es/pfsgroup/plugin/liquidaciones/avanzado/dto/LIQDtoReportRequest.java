@@ -29,7 +29,9 @@ public class LIQDtoReportRequest extends WebDto {
 	private BigDecimal comisiones;
 	private BigDecimal gastos;
 	private BigDecimal impuestos;
+	private Float tipoInteres;
 	private String fechaCierre;
+	private String fechaVencimiento;
 	
 	private BigDecimal costasLetrado;
 	private BigDecimal costasProcurador;
@@ -122,12 +124,28 @@ public class LIQDtoReportRequest extends WebDto {
 		this.impuestos = impuestos;
 	}
 
+	public Float getTipoInteres() {
+		return tipoInteres;
+	}
+
+	public void setTipoInteres(Float tipoInteres) {
+		this.tipoInteres = tipoInteres;
+	}
+
 	public String getFechaCierre() {
 		return fechaCierre;
 	}
 
 	public void setFechaCierre(String fechaCierre) {
 		this.fechaCierre = fechaCierre;
+	}
+
+	public String getFechaVencimiento() {
+		return fechaVencimiento;
+	}
+
+	public void setFechaVencimiento(String fechaVencimiento) {
+		this.fechaVencimiento = fechaVencimiento;
 	}
 
 	public BigDecimal getCostasLetrado() {

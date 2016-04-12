@@ -9,7 +9,7 @@
     <end-state id="listado" view="default" >
     	<secured attributes="ROLE_ADMIN" match="any" />
 		<on-entry>
-			<evaluate expression="executor.execute('ADMPerfilManager.borrarFuncionPerfilSegura',id,idFuncion,password)" 
+			<evaluate expression="executor.execute('ADMPerfilManager.borrarFuncionPerfilSeguro',id,idFuncion,password)" 
 				result="flowScope.pagina"/>
 		</on-entry>
 	</end-state>	

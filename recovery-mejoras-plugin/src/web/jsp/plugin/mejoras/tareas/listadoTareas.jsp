@@ -1475,7 +1475,6 @@
 			
 			// Por default abre una notificacion standard
 			default:
-				debugger;
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
 				
@@ -1492,7 +1491,9 @@
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER:
 						app.abreCliente(rec.get('idEntidadPersona'), rec.get('descripcion'));
 						break;
-						
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO:
+						app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'contabilidadcobros');
+						break;
 
 					default:
 				

@@ -110,7 +110,7 @@ public class DatosLiquidacionExtractosDaoImpl implements DatosLiquidacionExtract
 		plainQueryMovimientoLiq.append(" FROM MLQ_MOV_LIQ_CUENTAS_CREDITO ");
 		plainQueryMovimientoLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryMovimientoLiq.append("  AND MLQ_PCO_LIQ_ID = :idLiquidacion ");
-		plainQueryMovimientoLiq.append("	ORDER BY MLQ_FECHAO ASC ");
+		plainQueryMovimientoLiq.append("	ORDER BY MLQ_NUSECT ASC ");
 
 		return plainQueryMovimientoLiq.toString();
 	}

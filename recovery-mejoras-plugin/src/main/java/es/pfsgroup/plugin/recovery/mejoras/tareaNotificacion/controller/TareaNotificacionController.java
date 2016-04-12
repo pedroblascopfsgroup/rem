@@ -18,6 +18,7 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.tareaNotificacion.dao.TareaNotificacionDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.NFADDTipoRevisionAlerta;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -30,6 +31,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 public class TareaNotificacionController {
 	
 	private static final String JSON_PLUGIN_MEJORAS_TAREAS_CONSULTA_NOTIF_SIN_RESP = "plugin/mejoras/tareas/consultaNotificacionSinRespuestaJSON";
+	private static final String DEFAULT = "default";
 	
 	@Resource
 	Properties appProperties;
@@ -43,8 +45,11 @@ public class TareaNotificacionController {
 	@Autowired
 	private GenericABMDao genericDao;
 	
-    @Autowired
+	@Autowired
     private TareaNotificacionDao tareaNotificacionDao;
+	
+	@Autowired
+	private TareaNotificacionApi tareaNotificacionApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -154,4 +159,10 @@ public class TareaNotificacionController {
 		return "plugin/mejoras/tareas/listaTareasExcel";
     }
 
+	@RequestMapping
+	public String crearNuevaTarea(ModelMap model, DtoGenerarTarea dto) {
+		tareaNotificacionApi.crearTarea(dto);
+
+		return DEFAULT;
+	}
 }

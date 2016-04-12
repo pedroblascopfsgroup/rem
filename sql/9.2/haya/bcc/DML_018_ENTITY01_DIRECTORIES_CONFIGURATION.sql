@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Rachel
---## FECHA_CREACION=20160318
+--## FECHA_CREACION=20160330
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.0-cj
 --## INCIDENCIA_LINK=CMREC-1849
@@ -23,23 +23,32 @@ DECLARE
     V_NUM_EXISTE NUMBER(16);  
     ERR_NUM NUMBER(25); 
     ERR_MSG VARCHAR2(1024 CHAR); 
+    TYPE T_TIPO IS TABLE OF VARCHAR2(500 CHAR);
+    TYPE T_ARRAY IS TABLE OF T_TIPO;
+    V_TIPO T_ARRAY := T_ARRAY(
+      T_TIPO('directorioPdfBurofaxPCO', '/recovery/haya/app-server/bcc/output/burofax', 'Directorio donde se generan los burofaxes'),
+      T_TIPO('directorioPlantillasLiquidacion', '/recovery/haya/app-server/bcc/plantillas/', 'Directorio donde se almacenan las plantillas de los documentos de LIQUIDACION')
+    );
+    V_TMP_TIPO T_TIPO;
+
 BEGIN
-	
-    DBMS_OUTPUT.PUT_LINE('[INFO] Configuración de directorio de salida de burofaxes'); 
 
-    V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = ''directorioPdfBurofaxPCO''';
-    EXECUTE IMMEDIATE V_MSQL INTO V_NUM_EXISTE;
-    IF V_NUM_EXISTE > 0 THEN      
-        DBMS_OUTPUT.PUT_LINE('[INFO] Existe el registro en la tabla '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD');
-    ELSE
-        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD (PEN_ID, PEN_PARAM, PEN_VALOR, PEN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES ('||V_ESQUEMA||'.s_pen_param_entidad.nextval, ''directorioPdfBurofaxPCO'', ''/recovery/app-server/haya/bcc/output/burofax'', ''Directorio donde se almacenan los acrhivos pdf de los BUROFAXES'', 0, ''DD'', sysdate, 0)';
-        EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('[INFO] Registro insertado en '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD');
-    END IF;
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] Configuración de plantillas'); 
-    V_MSQL := 'UPDATE '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD SET PEN_VALOR=''/recovery/app-server/haya/bcc/plantillas/'' where PEN_PARAM = ''directorioPlantillasLiquidacion''';
-    EXECUTE IMMEDIATE V_MSQL;
+    FOR I IN V_TIPO.FIRST .. V_TIPO.LAST
+    LOOP
+        V_TMP_TIPO := V_TIPO(I);
+        DBMS_OUTPUT.PUT_LINE('[INFO] Configuración de: ' ||V_TMP_TIPO(1));
+        V_MSQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD WHERE PEN_PARAM = '''||V_TMP_TIPO(1)||'''';
+        EXECUTE IMMEDIATE V_MSQL INTO V_NUM_EXISTE;
+        IF V_NUM_EXISTE > 0 THEN
+            DBMS_OUTPUT.PUT_LINE('[INFO] Existe el registro en la tabla '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD. Actualizando valor...');
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD SET PEN_VALOR='''||V_TMP_TIPO(2)||''' where PEN_PARAM = '''||V_TMP_TIPO(1)||'''';
+            EXECUTE IMMEDIATE V_MSQL;
+        ELSE
+            V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD (PEN_ID, PEN_PARAM, PEN_VALOR, PEN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) VALUES ('||V_ESQUEMA||'.s_pen_param_entidad.nextval, '''||V_TMP_TIPO(1)||''', '''||V_TMP_TIPO(2)||''', '''||V_TMP_TIPO(3)||''', 0, ''DD'', sysdate, 0)';
+            EXECUTE IMMEDIATE V_MSQL;
+            DBMS_OUTPUT.PUT_LINE('[INFO] Registro insertado en '||V_ESQUEMA||'.PEN_PARAM_ENTIDAD');
+        END IF;
+    END LOOP; 
 
     COMMIT;
 

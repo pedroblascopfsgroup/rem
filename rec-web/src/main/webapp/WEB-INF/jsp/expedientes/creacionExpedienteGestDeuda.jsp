@@ -65,7 +65,6 @@
     var perfilSupervisor = '${expediente.supervisorActual}';
 
 	var updatePropuesta = function() {
-		debugger;
 		if (comboMotivos.getValue() == '') {
 			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expediente.error.motivos"/>');
 			return;	

@@ -135,7 +135,7 @@ if ((view != null) && (id != null)){
 					<option value='${usuario.entidad.descripcion}'selected>${usuario.entidad.descripcionLarga}</option>
 						<c:forEach items='${usuario.usuEntidad}' var='item'>
 							<c:if test="${usuario.entidad.descripcion != item.entidad.descripcion}">
-		  						<option> <c:out value='${item.entidad.descripcionLarga}'/></option>
+		  						<option value='${item.entidad.descripcion}'> <c:out value='${item.entidad.descripcionLarga}'/></option>
 		  					</c:if>
 						</c:forEach>
 				</select> 

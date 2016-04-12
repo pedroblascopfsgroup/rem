@@ -209,7 +209,10 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				listaContenedores = getContenedoresByAsunto(idAsunto);
 				//Contenedores adecuados segun el combo elegido
 				listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);
-								
+				if(Checks.esNulo(listaContenedores) || Checks.estaVacio(listaContenedores)) {
+					return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+				}
+				
 				for(String claseExpe : listaContenedores) {
 					if(!Checks.esNulo(claseExpe)) {
 						RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExpe, uploadForm);
@@ -224,8 +227,8 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	}
 	
 	/**
-	 * Se filtran los contenedores por el Tipo de Documento a subir, con los contenedores creados del Asunto
-	 * si devuelve varios, estarán ordenados por fechacreacion descendente.
+	 * Se filtran los contenedores por el Tipo de Documento a subir, con los contenedores creados del Asunto.
+	 * Si devuelve varios, estarán ordenados por fechacreacion descendente.
 	 * @param uploadForm
 	 * @param listaContenedores
 	 * @return
@@ -237,7 +240,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 		List<String> listContenedoresPorTipoPrc = new ArrayList<String>();
 		for(TipoProcedimiento tipoPrc : listTipoPrc) {
 			String codMapeado = hayaProjectContext.getMapaClasesExpeGesDoc().get(tipoPrc.getCodigo());
-			if(!Checks.esNulo(codMapeado)) {
+			if(!Checks.esNulo(codMapeado) && !listContenedoresPorTipoPrc.contains(codMapeado)) {
 				listContenedoresPorTipoPrc.add(codMapeado);
 			}
 		}

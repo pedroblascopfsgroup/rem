@@ -46,7 +46,7 @@ else
         
         mv $ficheroZip $DIR_DESTINO
         cd $DIR_DESTINO
-        unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION"
+        unzip $fichero$mascara$extensionZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION"
     done
     echo "$(basename $0) Ficheros encontrados"
     exit 0

@@ -21,11 +21,9 @@ for fichero in $arrayFicheros
 do
     ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
 
-    ./ftp/ftp_get_tr_files.sh $1 $fichero
     while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip ]; do
         sleep 900
         hora_actual=`date +%Y%m%d%H%M%S`
-        ./ftp/ftp_get_tr_files.sh $1 $fichero
     done
 done
 
@@ -46,7 +44,7 @@ else
         
         mv $ficheroZip $DIR_DESTINO
         cd $DIR_DESTINO
-        unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION"
+        unzip $fichero$mascara$extensionZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION"
     done
     echo "$(basename $0) Ficheros encontrados"
     exit 0

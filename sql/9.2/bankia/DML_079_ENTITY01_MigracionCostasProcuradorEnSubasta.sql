@@ -35,7 +35,7 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] Comienza la migración');
 		
  V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' old
-            USING ( SELECT sub.PRC_ID, sub.SUB_ID, sub.SUB_COSTAS_PROCURADOR, tev.TEV_VALOR
+            USING ( SELECT DISTINCT sub.PRC_ID, sub.SUB_ID, sub.SUB_COSTAS_PROCURADOR,  TO_NUMBER(REPLACE(TEV.TEV_VALOR,''.'','','')) TEV_VALOR
                       FROM '||V_ESQUEMA||'.SUB_SUBASTA sub
                       JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tar ON sub.PRC_ID = tar.PRC_ID
 		      JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex ON tar.TAR_ID = tex.TAR_ID

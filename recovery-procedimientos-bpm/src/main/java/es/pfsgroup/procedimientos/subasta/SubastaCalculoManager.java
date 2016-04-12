@@ -432,7 +432,7 @@ public class SubastaCalculoManager {
 			return;
 		}
 
-		EXTAsunto asuntoSubasta = (EXTAsunto) subasta.getAsunto();
+		EXTAsunto asuntoSubasta = EXTAsunto.instanceOf(subasta.getAsunto());
 
 		// Si la gestión del asunto donde está la subasta es Haya.
 		if (asuntoSubasta.getGestionAsunto() != null && DDGestionAsunto.HAYA.equals(asuntoSubasta.getGestionAsunto().getCodigo())) {

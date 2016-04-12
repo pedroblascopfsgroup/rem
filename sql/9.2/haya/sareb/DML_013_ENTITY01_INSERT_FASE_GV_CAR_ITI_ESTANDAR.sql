@@ -51,7 +51,7 @@ BEGIN
 		
 		
 	-- Comprobar si existe el itinerario de tipo Gestión de deuda con nombre Estándar
-	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE ITI_NOMBRE = ''Estándar'' AND borrado = 0 AND DD_TIT_ID = (SELECT DD_TIT_ID FROM '||V_ESQUEMA_M||'.DD_TIT_TIPO_ITINERARIOS WHERE DD_TIT_CODIGO = ''DEU'')';
+	V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ITI_ITINERARIOS WHERE ITI_NOMBRE = ''Estándar'' AND borrado = 0 AND DD_TIT_ID = '||V_DD_TIT_ID||'';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
 	
 	IF V_NUM > 0 THEN

@@ -44,11 +44,13 @@ cp -r plantillas/bcc/* $BCC_DIR_PLANTILLAS
 chmod -R og+rwx $SAREB_DIR_PLANTILLAS
 chmod -R og+rwx $BCC_DIR_PLANTILLAS
 
-echo "Creando directorios para mensajería"
-mkdir -p $INTEGRATION_INPUT
-mkdir -p $INTEGRATION_OUTPUT
-chmod -R og+rwx $INTEGRATION_INPUT
-chmod -R og+rwx $INTEGRATION_OUTPUT
+if [ ! -e $INTEGRATION_INPUT ]; then
+    echo "Creando directorios para mensajería"
+    mkdir -p $INTEGRATION_INPUT
+    mkdir -p $INTEGRATION_OUTPUT
+    chmod -R og+rwx $INTEGRATION_INPUT
+    chmod -R og+rwx $INTEGRATION_OUTPUT
+fi
 
 echo "Copiando ficheros WAR ..."
 if [ -f war/pfs.war ]; then

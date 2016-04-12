@@ -184,9 +184,9 @@ public class LiquidacionesAvanzadoManager {
 				comisiones = comisiones.subtract(new BigDecimal(ec.getComisiones().toString()));
 				tramo.setComisiones(new BigDecimal(ec.getComisiones().toString()));
 			}
-			if (!Checks.esNulo(ec.getGastos())) {
-				gastos = gastos.subtract(new BigDecimal(ec.getGastos().toString()));
-				tramo.setGastos(new BigDecimal(ec.getGastos().toString()));
+			if (!Checks.esNulo(ec.getGastosOtros())) {
+				gastos = gastos.subtract(new BigDecimal(ec.getGastosOtros().toString()));
+				tramo.setGastos(new BigDecimal(ec.getGastosOtros().toString()));
 			}
 			if (!Checks.esNulo(ec.getGastosAbogado())) {
 				costasLetrado = costasLetrado.subtract(new BigDecimal(ec.getGastosAbogado().toString()));

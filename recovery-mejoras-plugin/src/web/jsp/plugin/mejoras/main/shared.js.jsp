@@ -5,6 +5,44 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+
+//------------------------------------------------
+// Sobreescribe la funcion filter para IE8
+//------------------------------------------------
+
+function isIE () {
+  var myNav = navigator.userAgent.toLowerCase();
+  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+if (isIE () && isIE () < 9) {
+	if (!Array.prototype.filter){
+		  Array.prototype.filter = function(fun /*, thisp */){
+		    "use strict";
+		
+		    if (this === void 0 || this === null)
+		      throw new TypeError();
+		
+		    var t = Object(this);
+		    var len = t.length >>> 0;
+		    if (typeof fun !== "function")
+		      throw new TypeError();
+		
+		    var res = [];
+		    var thisp = arguments[1];
+		    for (var i = 0; i < len; i++){
+		      if (i in t){
+		        var val = t[i]; // in case fun mutates this
+		        if (fun.call(thisp, val, i, t))
+		          res.push(val);
+		      }
+		    }
+		
+		    return res;
+		  };
+	}
+}
+
 //------------------------------------------------
 // Extendemos un nuevo tipo de combo que permite con
 // la propiedad listAlignOffsets setearle unas dimensiones
@@ -163,6 +201,7 @@ app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value =
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_EXP" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_PER" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -1805,5 +1844,3 @@ app.promptPw=function(title,msg,handler){
 		        }
 		    }
 	});
-
-

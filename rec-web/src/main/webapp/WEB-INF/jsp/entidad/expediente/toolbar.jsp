@@ -131,7 +131,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -147,7 +147,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -191,11 +191,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeENSANaRE = function(params, rta){
+	var devolverExpedienteDeENSANaRE = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeENSANaRE'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoARevision" text="**Devuelto a Revisión" />', entidad.refrescar());
 				},error:function(){
@@ -232,11 +232,11 @@ function(entidad,page){
 		});
 	};
 
-	var devolverExpedienteDeSANCaCE = function(params, rta){
+	var devolverExpedienteDeSANCaCE = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaCE'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoACompletar" text="**Devuelto a Completar Expediente" />', entidad.refrescar());
 				},error:function(){
@@ -313,11 +313,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeSANCaENSAN = function(params, rta){
+	var devolverExpedienteDeSANCaENSAN = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaENSAN'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoAEnSancion" text="**Devuelto a En Sanción" />', entidad.refrescar());
 				},error:function(){
@@ -338,7 +338,12 @@ function(entidad,page){
 		w.on(app.event.DONE, function(){
 			w.close();
 			maskAll();
-			Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.solicitudCancelacionRealizada" text="**expedientes.consulta.solicitudCancelacionRealizada" />', entidad.refrescar());
+			if(esSupervisor){
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.decisionCancelacionOk" text="**Cancelacion Confirmada" />', entidad.refrescar());
+			}else{
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.solicitudCancelacionRealizada" text="**expedientes.consulta.solicitudCancelacionRealizada" />', entidad.refrescar());
+			}
+			
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
 	};
@@ -483,7 +488,7 @@ function(entidad,page){
 				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion12-devolverEnSancion'
-					,iconCls : 'icon_revisar_expediente'
+					,iconCls : 'icon_completar_expediente'
 					,handler:function(){
 						cambioEstado(tipoAccion.DEVOLVER_ENSANCION)
 					}
@@ -530,7 +535,7 @@ function(entidad,page){
 					}
 				}
 				,{
-					text:'<s:message code="expedientes.menu.solicitarcancelacion" text="**Solicitar Cancelacin" />'
+					text:'<s:message code="expedientes.menu.solicitarcancelacion" text="**Solicitar Cancelacion" />'
 					,id : 'expediente-accion4-solicitarCancelacion'
 					,iconCls : 'icon_cancelar_expediente'
 					,handler:function(){
@@ -539,7 +544,7 @@ function(entidad,page){
 				},
 				//Botn ver solicitud: Se muestra si es supervisor y hay solicitud pendiente.
 				{
-					text:'<s:message code="expedientes.menu.verSolicitudCancelacion" text="**Ver Solicitud Cancelacin" />'
+					text:'<s:message code="expedientes.menu.verSolicitudCancelacion" text="**Ver Solicitud Cancelacion" />'
 					,id : 'expediente-accion5-verCancelacion'
 					,iconCls : 'icon_rechazar_cancelar_expediente'
 					,handler:function(){
@@ -1012,11 +1017,11 @@ function(entidad,page){
 												
 							if(estados[i].codigo == 'CE')
 							{
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion14-devolverCompletarExpediente');
+								showHide((estadoExpediente ==  EXP_ACTIVO || estadoExpediente ==  EXP_CONGELADO) ,'expediente-accion14-devolverCompletarExpediente');
 							}
 							
 							if(estados[i].codigo == 'ENSAN'){
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion16-devolverAEnSancion');
+								showHide((estadoExpediente ==  EXP_ACTIVO || estadoExpediente ==  EXP_CONGELADO) ,'expediente-accion16-devolverAEnSancion');
 							}
 						}	
 					}
@@ -1040,7 +1045,6 @@ function(entidad,page){
 					showHide(estadoExpediente == EXP_CONGELADO, 'expediente-accion2-devolverRevision' );
 			}
 		}
-
 		if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
 			if (solicitud==null || solicitud==""){	
 				showHide(true, 'expediente-accion4-solicitarCancelacion');
@@ -1055,6 +1059,8 @@ function(entidad,page){
 			}else{
 				showHide(true, 'expediente-accion6-cancelacionExpediente');
 			}
+			<%-- Si el usuario es supervisor deshabilitar la opcion de solicitar cancelacion --%>
+			showHide(false, 'expediente-accion4-solicitarCancelacion');
 		}
 		if (entidad.getData('esSupervisor')  && ([EXP_ACTIVO, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0) ){
 			if (solicitud!=null && solicitud!=""){	

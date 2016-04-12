@@ -30,6 +30,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Entity
 @Table(name = "DD_TAS_TIPOS_ASUNTO", schema = "${master.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
+@Where(clause= Auditoria.UNDELETED_RESTICTION)
 public class DDTiposAsunto implements Auditable, Dictionary {
 
     private static final long serialVersionUID = 1L;

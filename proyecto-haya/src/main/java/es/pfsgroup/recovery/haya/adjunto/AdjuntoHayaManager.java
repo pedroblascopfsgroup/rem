@@ -206,8 +206,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				claseExp = getClaseExpedienteByProcedimientoPadre(prc);
 				uploadGestorDoc(idAsunto, claseExp, uploadForm);
 			}else{
-				Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", idAsunto));
-				listaContenedores = getContenedoresByAsunto(asun);
+				listaContenedores = getContenedoresByAsunto(idAsunto);
 				//Contenedores adecuados segun el combo elegido
 				listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);
 				if(Checks.esNulo(listaContenedores) || Checks.estaVacio(listaContenedores)) {
@@ -512,9 +511,9 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	 * @param asu
 	 * @return
 	 */
-	private List<String> getContenedoresByAsunto(Asunto asun) {
+	private List<String> getContenedoresByAsunto(Long idAsunto) {
 		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
-		List<ContenedorGestorDocumental> listaContenedor = genericDao.getListOrdered(ContenedorGestorDocumental.class, order ,genericDao.createFilter(FilterType.EQUALS, "asunto", asun));
+		List<ContenedorGestorDocumental> listaContenedor = genericDao.getListOrdered(ContenedorGestorDocumental.class, order ,genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
 		List<String> listaClaseExp = new ArrayList<String>();
 		
 		for(ContenedorGestorDocumental contenedor : listaContenedor) {

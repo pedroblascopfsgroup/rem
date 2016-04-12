@@ -69,8 +69,10 @@ import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
@@ -98,6 +100,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -155,6 +158,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private EXTGestorAdicionalAsuntoDao gestorAdicionalAsuntoDao;
+	
+	@Autowired
+	EXTGestorAdicionalAsuntoHistoricoDao gestorAdicionalAsuntoHistoricoDao;
 
 	@Autowired(required = false)
 	private List<ModificacionAsuntoListener> listeners;
@@ -958,6 +964,23 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
 																		, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
 			gaa.setGestor(gestor);
+			
+			List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
+			
+
+			
+			EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
+			gaah.setGestor(gaa.getGestor());
+			gaah.setAuditoria(Auditoria.getNewInstance());
+			gaah.setAsunto(gaa.getAsunto());
+			gaah.setTipoGestor(gaa.getTipoGestor());
+			gaah.setFechaDesde(new Date());
+			
+			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+			}
+			
+			
 			gestorAdicionalAsuntoDao.save(gaa);
 		}
 		

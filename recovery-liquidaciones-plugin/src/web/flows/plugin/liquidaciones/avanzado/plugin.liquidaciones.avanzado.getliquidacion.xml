@@ -8,6 +8,7 @@
 	<end-state id="persona" view="plugin/liquidaciones/avanzado/liquidacionJSON">
 		<on-entry>
 			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionesManager.findpPrimerTitular', id)" result="flowScope.persona" />
+			<evaluate expression="executor.execute('contratoManager.get', id)" result="flowScope.contrato" />
 			<evaluate expression="executor.execute('plugin.liquidaciones.liquidacionManager.getLiquidacionByCnt', id)" result="flowScope.liquidacion" />
 		</on-entry>
 	</end-state>

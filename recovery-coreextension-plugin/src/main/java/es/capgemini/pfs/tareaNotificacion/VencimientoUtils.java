@@ -51,12 +51,20 @@ public class VencimientoUtils implements ApplicationContextAware {
 
 		@Override
 		public Date getFechaReal() {
-			return (Date)fechaReal.clone();
+			if(fechaReal != null){
+				return (Date)fechaReal.clone();
+			}else{
+				return null;
+			}
 		}
 
 		@Override
 		public Date getFechaVencimiento() {
-			return (Date)fechaCalculada.clone();
+			if(fechaCalculada != null){
+				return (Date)fechaCalculada.clone();
+			}else{
+				return null;
+			}
 		}
 	}
 

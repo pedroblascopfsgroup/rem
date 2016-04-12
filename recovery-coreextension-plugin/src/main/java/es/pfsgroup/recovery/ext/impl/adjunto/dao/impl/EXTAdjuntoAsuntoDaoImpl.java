@@ -53,4 +53,20 @@ public class EXTAdjuntoAsuntoDaoImpl extends AbstractEntityDao<EXTAdjuntoAsunto,
 		hql.append(")");
 		return new HashSet<AdjuntoAsunto>(getSession().createQuery(hql.toString()).list());
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EXTAdjuntoAsunto> getAdjuntoAsuntoByNombreAndPrcIdAndTipoAdjunto(Long idPrc, String nombre, String codTipoAdjunto) {
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select aa from EXTAdjuntoAsunto aa where aa.auditoria.borrado = false and aa.procedimiento.id = ");
+		hql.append(idPrc);
+		hql.append(" and aa.nombre like '");
+		hql.append(nombre);
+		hql.append("%'");
+		hql.append(" AND aa.tipoFichero.codigo = '").append(codTipoAdjunto).append("' ");
+		hql.append(" ORDER BY aa.auditoria.fechaCrear DESC ");
+
+		return getSession().createQuery(hql.toString()).list();
+
+	}
 }

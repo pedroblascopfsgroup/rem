@@ -97,9 +97,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     
     
     updateStores: function(idTipoResolucion){
-
+    	
         campos = this.arrayCampos[idTipoResolucion];
-
+        this.dsDatosAdicionales.load({params:{idProcedimiento:this.idProcedimiento}});
         for (var i=0;i<campos.length;i++)
         {        
                 var campo=campos[i];
@@ -601,6 +601,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     	
     	var datosAdicionalesRecord = Ext.data.Record.create([
     	                                                     {name : 'conTestimonio'} 
+    	                                                     ,{name : 'cuantiaLetrado'} 
+    	                                                     ,{name : 'cuantiaProcurador'} 
     	                                                    ]);
 
 		this.dsDatosAdicionales = new Ext.data.Store({
@@ -978,8 +980,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 
     	this.dsDatosAdicionales.on('load', function(store, r, options) {
 
+    		var i=0;
 			var conTestimonio = Ext.getCmp('d_contratoRecibido_id');
-			if (conTestimonio != '' && conTestimonio != null && store.getAt(0).get('conTestimonio') != '' ) {
+			if (conTestimonio != '' && conTestimonio != null && store.getAt(i).get('conTestimonio') != '' ) {
 				var valor = "";
 				if(store.getAt(0).get('conTestimonio') == "S"){
 					valor = "SI"
@@ -988,6 +991,23 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 				}
 				conTestimonio.setValue(valor);
 				conTestimonio.setReadOnly(true);
+				i++;
+			}
+			
+			var cuantiaLetrado = Ext.getCmp('d_cuantiaLetrado_id');
+			if (cuantiaLetrado != '' && cuantiaLetrado != null && store.getAt(i).get('cuantiaLetrado') != '' ) {
+				
+				cuantiaLetrado.setValue(store.getAt(i).get('cuantiaLetrado'));
+				cuantiaLetrado.setReadOnly(false);
+				i++;
+			}
+			
+			var cuantiaProcurador = Ext.getCmp('d_cuantiaProcurador_id');
+			if (cuantiaProcurador != '' && cuantiaProcurador != null && store.getAt(i).get('cuantiaProcurador') != '' ) {
+				
+				cuantiaProcurador.setValue(store.getAt(i).get('cuantiaProcurador'));
+				cuantiaProcurador.setReadOnly(false);
+				i++
 			}
 		});
     	
@@ -1347,15 +1367,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 227 : TRAMITE COSTAS : Solicitud de tasación de costas
 	this.arrayCampos.push([
 	   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:true, filtrar:true}
-					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",id:'d_cuantiaLetrado_id',allowBlank:true, filtrar:true}
+					,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",id:'d_cuantiaProcurador_id',allowBlank:false}
 	   		]);
 	
     // id: 228 : TRAMITE COSTAS : Tasación de costas del juzgado
 	   		this.arrayCampos.push([
 	   			   				{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
-	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	   			   				,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false,id:'d_cuantiaLetrado_id'}
+	   							,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false,id:'d_cuantiaProcurador_id'}
 	   			   		]);
 	
      //id: 229 : TRAMITE COSTAS : Impugnación tasación de costas del juzgado
@@ -1388,13 +1408,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	   				]);
 	
-    //id: 231 : TRAMITE COSTAS : Autoaprobacion de costas
+    //id: 231 : TRAMITE COSTAS : Auto aprobacion de costas
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
-						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false, id:'d_cuantiaLetrado_id'}
+						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false, id:'d_cuantiaProcurador_id'}
 	   				]);
 	
 
@@ -2108,10 +2128,10 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
-	//id: 299 : T. VALORACIÓN INMUEBLE: Presentar alegaciones
+	//id: 299 : T. VALORACIÓN INMUEBLE:  H058_RegistrarResultado
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_combo","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_combo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_combo", filtradoProcurador:true, "fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_combo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	
@@ -2553,7 +2573,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		   	               	   		}
 	         					}   
 	                       }
-	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,filtradoProcurador:true,id:'d_motivo'+this.idFactoria}
+	                       ,{"xtype":'textfield',"name":"d_motivo","fieldLabel":"Motivo oposición",allowBlank:true,filtradoProcurador:true,filtrar:true,id:'d_motivo'+this.idFactoria}
 	                      ]);
 	
 	//id: 338 : T. EJECUCIÓN TÍTULO JUDICIAL: Confirmar presentar impugnacion
@@ -3221,7 +3241,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		         				}
 		                      }
 		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmision","fieldLabel":"Admisión","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes registrables",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+		                     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes registrables",allowBlank:false,filtradoProcurador:true, "autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 434 : T. EMBARGO DE SALARIOS: Solicitar la notificacion retención al pagador
@@ -3251,8 +3271,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAprobada","fieldLabel":"Aprobada",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAprobada'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false}
-						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_cuantiaLetrado","fieldLabel":"Cuantía letrado",allowBlank:false,id:'d_cuantiaLetrado_id'}
+						   ,{"xtype":'numberfield',"name":"d_cuantiaProcurador","fieldLabel":"Cuantía procurador",allowBlank:false,id:'d_cuantiaProcurador_id'}
 	   				]);
 	
 	//id: 438 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion
@@ -3320,7 +3340,53 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield', "name":"d_fechaPresentacion", "fieldLabel":"Fecha Presentación", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
         ,{"xtype":'datefield', "name":"d_fechaNuevoTest", "fieldLabel":"Fecha nuevo testimoio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
-
+    
+  //id: 443 : PROCEDIMIENTO MONITORIO: Interposición de la demanda
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
+	                      	 ,displayField:'descripcion',valueField:'codigo',typeAhead: false,loadingText: 'Searching...',width: '300',resizable: true,pageSize: 10,	mode: 'local'
+	                      		,listeners:{afterRender:function(combo){
+	                      			 combo.mode='remote';
+	                      		 		}
+	                      		 }
+	                        }
+	                       ,{"xtype":'datefield',"name":"d_fechaCierre","fieldLabel":"Fecha cierre de la déuda",allowBlank:false,filtrar:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_principalDemanda","fieldLabel":"Principal de la demanda",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtrar:true}
+	                       ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_provisionFondos", "fieldLabel":"Solicitar provisión de fondos", id:'d_provisionFondos' + this.idFactoria, "autoload":true, mode:'local',triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo', filtrar:true}
+	                       ]);
+	
+	//id: 444 : TRAMITE COSTAS: Confirmar Notificacion H007_ConfirmarNotificacion
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":storeSINO,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
+	                      ]);
+	
+	//id: 445 : TRAMITE DE INTERESES: Registrar Vista
+	this.arrayCampos.push([{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha vista",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }]);
+	
+	//id: 446 : TRAMITE DE INTERESES: Solicitar liquidación de intereses
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaRec","fieldLabel":"Fecha de recepción",allowBlank:false,filtrar:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaPre","fieldLabel":"Fecha de presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_intereses","fieldLabel":"Importe intereses",allowBlank:false}
+	   				]);
+	
+	//id: 447 : TRAMITE DE INTERESES: Registrar resolucion
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'numberfield',"name":"d_importe","fieldLabel":"Intereses",allowBlank:false}
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	   				]);
+	
+	//id: 448 : TRAMITE DE INTERESES: Confirmar Notificacion H042_ConfirmarNotificacion
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
+	                      ]);
 
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

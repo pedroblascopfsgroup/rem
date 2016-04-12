@@ -428,6 +428,7 @@ public class SubastaCalculoManager {
 
 		// Las NO DELEGADAS no hace nada.
 		if (subasta.getTipoSubasta() != null && DDTipoSubasta.NDE.equals(subasta.getTipoSubasta().getCodigo())) {
+			loguear("Condicion 0", subasta.getId());
 			return;
 		}
 
@@ -436,34 +437,43 @@ public class SubastaCalculoManager {
 		// Si la gestión del asunto donde está la subasta es Haya.
 		if (asuntoSubasta.getGestionAsunto() != null && DDGestionAsunto.HAYA.equals(asuntoSubasta.getGestionAsunto().getCodigo())) {
 			modificarTipoSubastaNoDelegada(subasta);
+			loguear("Condicion 1", subasta.getId());
 			return;
 		}
 
 		// Si el asunto donde está la subasta es un concurso.
 		if (asuntoSubasta.getTipoAsunto() != null && DDTiposAsunto.CONCURSAL.equals(asuntoSubasta.getTipoAsunto().getCodigo())) {
 			modificarTipoSubastaNoDelegada(subasta);
+			loguear("Condicion 2", subasta.getId());
 			return;
 		}
 
 		// Si existe algún bien en la subasta que tenga cargas anteriores.
 		if (!"0".equals(subasta.getCargasAnteriores())) {
 			modificarTipoSubastaNoDelegada(subasta);
+			loguear("Condicion 3", subasta.getId());
 			return;
 		}
 
 		// Si la deuda de las operaciones relacionadas con los bienes/garantías es mayor a 1 millon de €.
 		if (deudaOperacionesRelacionadasMayor1M(subasta)) {
 			modificarTipoSubastaNoDelegada(subasta);
+			loguear("Condicion 4", subasta.getId());
 			return;
 		}
 
 		// Si el riesgo de consignación supera el umbral.
 		if (riesgoConsignacionSuperaUmbral(subasta)) {
 			modificarTipoSubastaNoDelegada(subasta);
+			loguear("Condicion 5", subasta.getId());
 			return;
 		}
 	}
 
+	public void loguear(String msg, Long id) {
+		System.out.println("SUBASTA [" + id.toString() + "] - " + msg);
+	}
+	
 	/**
 	 * Cambia el tipo de subasta a no delegada
 	 * @param subasta
@@ -504,6 +514,8 @@ public class SubastaCalculoManager {
 			}
 		}
 
+		loguear("Condicion 4 - numero de contratos: " + contratos.size(), subasta.getId());
+
 		BigDecimal sumatorioDeuda = BigDecimal.ZERO;
 		for (Contrato contrato : contratos) {
 			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
@@ -511,7 +523,11 @@ public class SubastaCalculoManager {
 			BigDecimal capitalNoVencido = new BigDecimal(Float.toString(ultimoMovimiento.getPosVivaNoVencida()));
 
 			sumatorioDeuda = sumatorioDeuda.add(deudaIrregular.add(capitalNoVencido));
+
+			loguear("Condicion 4 - ContratoID:" + contrato.getId() + " DeudaIrre(" + deudaIrregular + ") + capitalNoVencido(" + capitalNoVencido + ") = sumatorioDeuda " + sumatorioDeuda, subasta.getId());
 		}
+
+		loguear("Condicion 4 - sumatorioDeuda " + sumatorioDeuda + " supera millon? " + (sumatorioDeuda.compareTo(MILLON) > 0), subasta.getId());
 
 		return sumatorioDeuda.compareTo(MILLON) > 0;
 	}
@@ -523,6 +539,9 @@ public class SubastaCalculoManager {
 			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasLetrado());
 		}
 		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
+		
+		loguear("Condicion 5 - numero de contratos: " + contratos.size(), subasta.getId());
+
 		for (Contrato contrato : contratos) {
 			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
 
@@ -530,17 +549,37 @@ public class SubastaCalculoManager {
 			BigDecimal capitalNoVencido = BigDecimal.valueOf(ultimoMovimiento.getPosVivaNoVencida());
 
 			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(deudaIrregular.add(capitalNoVencido));
+
+			loguear("Condicion 5 - ContratoID:" + contrato.getId() + " DeudaIrre(" + deudaIrregular + ") + capitalNoVencido(" + capitalNoVencido + ") = sumatorioDeudaEntidad " + sumatorioDeudaEntidad, subasta.getId());
 		}
+		
 		BigDecimal pujaSinPostores = BigDecimal.ZERO;
+		loguear("Condicion 5 - TOTAL sumatorioDeudaEntidad " + sumatorioDeudaEntidad, subasta.getId());
+		
+		loguear("Condicion 5 - nroLotesSubastas: " + subasta.getLotesSubasta().size(), subasta.getId());
+		
 		for (LoteSubasta lote : subasta.getLotesSubasta()) {
 			if(!Checks.esNulo(lote.getInsPujaSinPostores())){
 				pujaSinPostores = BigDecimal.valueOf(lote.getInsPujaSinPostores());
 			}
+	
+			loguear("Condicion 5 - LoteId: " + lote.getId() + " - pujaSinPostores: " + pujaSinPostores, subasta.getId());
+		
 			// Donde Riesgo de Consignación = Puja sin postores - Deuda entidad
 			BigDecimal riesgodeConsignacion = pujaSinPostores.subtract(sumatorioDeudaEntidad);
+			
+			loguear("Condicion 5 - LoteId: " + lote.getId() + " - riesgodeConsignacion: " + riesgodeConsignacion, subasta.getId());
 
 			// 10% deuda entidad
 			BigDecimal tenPercentDeudaEntidad = sumatorioDeudaEntidad.multiply(new BigDecimal("0.1"));
+			
+			loguear("Condicion 5 - LoteId: " + lote.getId() + " - tenPercentDeudaEntidad: " + tenPercentDeudaEntidad, subasta.getId());
+
+
+			loguear("Condicion 5 - lote.getRiesgoConsignacion(): " + lote.getRiesgoConsignacion(), subasta.getId());
+			loguear("Condicion 5 - !isNegative(riesgodeConsignacion): " + !isNegative(riesgodeConsignacion), subasta.getId());
+			loguear("Condicion 5 - riesgodeConsignacion.compareTo(tenPercentDeudaEntidad) > 0 " + (riesgodeConsignacion.compareTo(tenPercentDeudaEntidad) > 0), subasta.getId());
+			loguear("Condicion 5 - riesgodeConsignacion.compareTo(FIFTEEN_THOUSAND) > 0 " + (riesgodeConsignacion.compareTo(FIFTEEN_THOUSAND) > 0), subasta.getId());
 
 			if (lote.getRiesgoConsignacion() 
 					&& !isNegative(riesgodeConsignacion)

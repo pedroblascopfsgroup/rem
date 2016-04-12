@@ -193,7 +193,7 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 	@Override
 	public String upload(WebFileItem uploadForm) {
 		
-		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
+		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){			
 			Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
 			Procedimiento prc = null;
 			String claseExp = "";
@@ -204,20 +204,22 @@ public class AdjuntoHayaManager extends AdjuntoManager  implements AdjuntoApi {
 				claseExp = getClaseExpedienteByProcedimientoPadre(prc);
 				uploadGestorDoc(idAsunto, claseExp, uploadForm);
 			}else{
+				boolean contenedorEncontrado = false;
 				listaContenedores = getContenedoresByAsunto(idAsunto);
 				//Contenedores adecuados segun el combo elegido - ELIMINADO ESTE FILTRO DE CRUCE
-				//listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);
-				if(Checks.esNulo(listaContenedores) || Checks.estaVacio(listaContenedores)) {
-					return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
-				}
-				
+				//listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);				
 				for(String claseExpe : listaContenedores) {
 					if(!Checks.esNulo(claseExpe)) {
 						RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExpe, uploadForm);
 						if(!Checks.esNulo(respuesta.getIdDocumento())) {
+							contenedorEncontrado = true;
 							break;
 						}
 					}
+				}
+				
+				if(!contenedorEncontrado) {
+					return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
 				}
 			}
 		}

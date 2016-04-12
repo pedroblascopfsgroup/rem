@@ -89,7 +89,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(COMISAPER, obtenerTipoComision(liquidacion, COMISAPER));
 		datosDoc.put(FECVENCIM, obtenerFechaVencimiento(cnt, FECVENCIM));
 		datosDoc.put(FECHALIQTELEGRAM, obtenerFechaLiquidacion(liquidacion, FECHALIQTELEGRAM));
-		datosDoc.put(CAPITALCER, obtenerImporteCapitalPendiente(liquidacion, CAPITALCER));
+		datosDoc.put(CAPITALCER, obtenerImportePrestamo(liquidacion, CAPITALCER));
 		datosDoc.put(INTERESCER, obtenerImporteInteresesRemuneratorios(liquidacion, INTERESCER));
 		datosDoc.put(IMPINTERESTELEG, obtenerImporteIntereseCreditoDispuesto(liquidacion, IMPINTERESTELEG));
 		datosDoc.put(IMPCOMITELEG, obtenerImporteComisionesPagadas(liquidacion, IMPCOMITELEG));

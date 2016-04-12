@@ -833,7 +833,7 @@ public class PoliticaManager {
                 Boolean isValida = false;
 
                 //Si el expediente está en Decisión de Comité, directamente las políticas del expediente son vigentes
-                if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(sEstadoItinerario)) {
+                if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(sEstadoItinerario) || DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(sEstadoItinerario)) {
                     isValida = true;
                 }
 

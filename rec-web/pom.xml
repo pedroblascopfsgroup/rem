@@ -1605,6 +1605,8 @@
 							<goal>stop</goal>
 							<goal>rm</goal>
 							<goal>update</goal>
+							<goal>ps</goal>
+							<goal>browser</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -1642,6 +1644,10 @@
 		</profile>
 		<profile>
 			<id>bankia</id>
+			<properties>
+				<docker.container>bankia-app-server</docker.container>
+				<docker.cliente>bankia</docker.cliente>
+			</properties>
 			<dependencies>
 				<!-- Versión de AspectJ -->
 				<dependency>
@@ -2075,6 +2081,10 @@
 		</profile>
 		<profile>
 			<id>haya</id>
+			<properties>
+				<docker.container>haya-app-server</docker.container>
+				<docker.cliente>haya</docker.cliente>
+			</properties>
 			<dependencies>
 				<!--  PARA JMS **************** -->
 				<dependency>

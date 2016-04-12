@@ -3,6 +3,7 @@ package es.capgemini.pfs.batch.recobro.facturacion.manager.impl;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -250,8 +251,19 @@ public class CalculoFacturacionManagerImpl implements CalculoFacturacionManager 
 	 */
 	private int getDifDias(Date fechaDesde, Date fechaHasta) {
 		// Obtenemos la diferencia en d�as
-		long difEnMilisegundos = fechaHasta.getTime() - fechaDesde.getTime();
-		int difEnDias = (int) (difEnMilisegundos / (24 * 60 * 60 * 1000));
+		
+		GregorianCalendar cFechaDesde = new GregorianCalendar();
+		cFechaDesde.setTime(fechaDesde);
+		
+		GregorianCalendar cFechaHasta = new GregorianCalendar();
+		cFechaHasta.setTime(fechaHasta);
+		
+		int difEnDias = cFechaHasta.get(Calendar.DAY_OF_YEAR) - cFechaDesde.get(Calendar.DAY_OF_YEAR);
+		
+		//OJO el código de abajo da problemas con el mes que se cambia al horario de verano, siendo marzo de 29,9 días, que al pasar a int = 30 días
+		/*long difEnMilisegundos = fechaHasta.getTime() - fechaDesde.getTime();
+		int difEnDias = (int) (difEnMilisegundos / (24 * 60 * 60 * 1000));*/
+		
 		// Como desde y hasta son inclusives
 		difEnDias++;
 

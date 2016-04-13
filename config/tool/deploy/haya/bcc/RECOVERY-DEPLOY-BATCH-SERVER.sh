@@ -47,3 +47,5 @@ done
 rm *.zip
 cd $LOCAL_PATH
 cp scripts/batch/*.sh $BASE_DIR/
+chmod a+rx $BASE_DIR/*.sh
+cp jar/batch-shell*.jar $BASE_DIR/bcc/shells/batch-shell.jar

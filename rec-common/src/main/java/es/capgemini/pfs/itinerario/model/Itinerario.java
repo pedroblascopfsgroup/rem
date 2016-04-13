@@ -22,6 +22,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -52,6 +53,7 @@ public class Itinerario implements Serializable, Auditable {
     @OneToMany(mappedBy = "itinerario")
     @JoinColumn(name = "ITI_ID")
     @OrderBy("estadoItinerario ASC")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<Estado> estados; 
 
     @ManyToOne

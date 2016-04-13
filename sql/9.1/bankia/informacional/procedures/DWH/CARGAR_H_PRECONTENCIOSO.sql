@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_EN
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable ultima modificacion: Sergio García, PFS Group
--- Fecha ultima modificacion: 18/12/2015
--- Motivos del cambio: Trunc en fecha de estado.
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 12/04/2016
+-- Motivos del cambio: Cambio en Marca ESTADO_PREPARACION_ID
 -- Cliente: Recovery BI Bankia
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de PreContencioso
@@ -141,17 +141,17 @@ BEGIN
     commit;
      
     execute immediate 'merge into TMP_PRE_FECHA_ESTADO t1
-                       using (select a.pco_prc_id, a.PCO_PRC_HEP_FECHA_INCIO, a.pco_prc_hep_id, a.DD_PCO_PEP_ID
-                      from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP a 
-                      left join 
-                      (select PCO_PRC_ID, Max(PCO_PRC_HEP_FECHA_INCIO) as fecha, max(pco_prc_hep_id) as secuencial
-                      from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
-                      group by pco_prc_id) b
-                      on a.pco_prc_id=b.pco_prc_id and a.PCO_PRC_HEP_FECHA_INCIO=b.fecha and a.pco_prc_hep_id=b.secuencial 
-                      where b.pco_prc_id is not null) t2
-
-                       on (t1.PCO_PRC_ID = t2.PCO_PRC_ID and t1.FECHA_ACTUAL_ESTADO = t2.PCO_PRC_HEP_FECHA_INCIO)
-                       when matched then update set t1.ESTADO_PREPARACION_ID = t2.DD_PCO_PEP_ID';
+						using (select PCO_PRC_HEP_FECHA_INCIO, pco_prc_id, DD_PCO_PEP_ID
+						from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
+						where PCO_PRC_HEP_FECHA_FIN is null
+						and DD_PCO_PEP_ID<>5
+						union 
+						select max(PCO_PRC_HEP_FECHA_INCIO), pco_prc_id, max(DD_PCO_PEP_ID) 
+						from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
+						where DD_PCO_PEP_ID=5
+						group by pco_prc_id) t2
+						on (t1.PCO_PRC_ID = t2.PCO_PRC_ID and t1.FECHA_ACTUAL_ESTADO = t2.PCO_PRC_HEP_FECHA_INCIO)
+						when matched then update set t1.ESTADO_PREPARACION_ID = t2.DD_PCO_PEP_ID';
                 
                        
           /*              

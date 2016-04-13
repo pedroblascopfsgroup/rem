@@ -17,7 +17,7 @@
 			<json:property name="cargaBien" value="${rec.importeCargas}"/>
 			<json:property name="observaciones" value="${rec.observaciones}"/>		
 			<json:property name="numeroActivo" value="${rec.numeroActivo}"/>
-			<json:property name="referenciaCatastral" value="${rec.referenciaCatastral}"/>
+			<json:property name="referenciaCatastral" value="${rec.datosRegistralesActivo.referenciaCatastralBien}"/>
 			<c:forEach items="${rec.NMBEmbargosProcedimiento}" var="ins">
 				<c:if test="${ins.procedimiento.id == idProcedimiento}">			
 					<json:property name="idEmbargo" value="${ins.id}"/>

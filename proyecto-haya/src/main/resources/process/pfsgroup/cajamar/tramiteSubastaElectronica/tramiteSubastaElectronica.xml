@@ -405,7 +405,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>tramiteSubElectronicaLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>

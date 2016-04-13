@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubasta" width="1088" height="836">
-  <node name="Inicio" x="0" y="0" width="132" height="36">
+<root-container name="tramiteSubastaElectronica" width="1131" height="506">
+  <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SolicitudSubasta" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_SolicitudDeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -17,10 +14,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SenyalamientoSubasta" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_DecretoConvocatoriaDeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -31,7 +25,23 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_PrepararInformeSubasta" x="0" y="0" width="132" height="36">
+  <node name="forkEntregaYRevisa" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_EntregaYRecepcionEdictoEImpresoTasa" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_EntregaYRecepcionEdictoEImpresoTasaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -42,32 +52,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_ValidarInformeDeSubasta" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="fork1" x="0" y="0" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_RegistrarResSuspSubasta" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_PedirCorreccionDelEdicto" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -78,24 +63,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_ValidarInformeDeSubastaDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_ObtenerValidacionComite" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_ConfirmarCorreccionDelEdicto" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -106,21 +74,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_DictarInstruccionesSubasta" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_CelebracionSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_ConfirmarLecturaInstruccionesDeSubastaYPagoDeTasa" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -131,7 +85,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_BPMTramiteSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_RegistrarElPagoDeLaTasaParaPublicacionBOE" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -139,17 +93,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_CelebracionDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_BPMTramiteCesionRemate" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_BPMTramiteAdjudicacion" x="0" y="0" width="132" height="36">
+  <node name="P458_RegistrarPublicacionDeSubastaEnElBOE" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -157,7 +101,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SolicitarMandamientoPago" x="0" y="0" width="132" height="36">
+  <node name="P458_RegistrarPublicacionDeSubastaEnElBOEDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_PedirCorreccionDelEdictoPublicacionBOE" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -168,7 +120,40 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_ConfirmarRecepcionMandamientoDePago" x="0" y="0" width="132" height="36">
+  <node name="P458_ConfirmarCorrecccionDelEdictoPublicacionBOE" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_ConfirmarCorrecccionDelEdictoPublicacionBOEDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarResultadoDeLaSubasta" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarResultadoDeLaSubastaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -182,21 +167,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_RecepcionMandamientoPago" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_RecepcionMandamientoPagoDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_SolicitarAdjudicacionSegunInstruccionesEntidad" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -207,7 +178,50 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_ObtenerValidacionComiteDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_RegistrarResultadoPresentacionEscritoAlJuzgado" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarResultadoPresentacionEscritoAlJuzgadoDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_BPMTramiteAdjudicacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_BPMTramiteCesionDeRemate" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_BPMTramiteAdjudicacionTerceros" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RevisarDocumentacion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -216,12 +230,6 @@
     </edge>
   </node>
   <node name="forkCelebracion" x="0" y="0" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -251,14 +259,6 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="D" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
   <node name="C" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -267,7 +267,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="F" x="0" y="0" width="132" height="36">
+  <node name="P458_AdjuntarNotasSimples" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -275,7 +275,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="G" x="0" y="0" width="132" height="36">
+  <node name="P458_AdjuntarTasaciones" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -283,21 +283,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_BPMTramiteSolSolvenciaPatrimonial" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_ConfirmarContabilidad" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_AdjuntarTasacionesDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -305,7 +291,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="fork2" x="0" y="0" width="252" height="24">
+  <node name="P458_SolicitarInformeFiscal" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -313,7 +299,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_RevisarDocumentacion" x="0" y="0" width="132" height="36">
+  <node name="P458_AdjuntarInformeFiscal" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -324,7 +310,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_RegistrarResSuspSubastaDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_PrepararInformeDeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -332,10 +318,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_DictarInstruccionesDeneSuspension" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_ValidarInformeDeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -346,18 +329,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_DictarInstruccionesSubastaDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_LecturaConfirmacionInstrucciones" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_ValidarInformeDeSubastaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -368,39 +340,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="NS" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="TA" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="IF" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="IS" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarNotasSimples" x="0" y="0" width="132" height="36">
+  <node name="P458_ObtenerValidacionComite" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -411,21 +351,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="fork3" x="0" y="0" width="252" height="24">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarTasaciones" x="0" y="0" width="132" height="36">
+  <node name="P458_ObtenerValidacionComiteDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -436,24 +362,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SolicitarInformeFiscal" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="H002_AdjuntarInformeFiscal" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P458_PendienteConfirmacionPagoDeTasa" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -464,7 +373,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_AdjuntarTasacionesDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_PendienteConfirmacionPagoDeTasaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -472,23 +381,18 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H002_SolicitarSuspenderSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_DictarInstruccionesDeSubastaYPagoDeTasa" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  </node>
+  <node name="Decision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="Fin" x="0" y="0" width="132" height="36"/>
-  <node name="Fin2" x="0" y="0" width="132" height="36"/>
-  <node name="Fin3" x="0" y="0" width="132" height="36"/>
-  <node name="Fin4" x="0" y="0" width="132" height="36"/>
-  <node name="Fin5" x="0" y="0" width="132" height="36"/>
 </root-container>

@@ -343,7 +343,7 @@
 			</action>
 		</event>	
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="tramiteAdjudicacion"></transition>
+		<transition to="Fin" name="hcj_tramiteAdjudicacion"></transition>
 	</state>
 
 	<state name="P458_BPMTramiteCesionDeRemate">
@@ -366,7 +366,7 @@
 			</action>
 		</event>	
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="tramiteCesionDeRemate"></transition>
+		<transition to="Fin" name="hcj_tramiteCesionRemate"></transition>
 	</state>
 
 	<state name="P458_BPMTramiteAdjudicacionTerceros">

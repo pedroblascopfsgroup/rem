@@ -80,14 +80,14 @@ select distinct auxi.asu_id, auxi.usd_id, auxi.dd_tge_id
           select distinct asu.asu_id, usd.usd_id, tge.dd_tge_id,
                  rank() over (partition by asu.asu_id order by usu.usu_id) as ranking
            from '||V_ESQUEMA||'.MIG_RGE_REL_GESTOR_EXPEDIENTE rge
-           inner join '||V_ESQUEMA||'.mig_expedientes_cabecera mig on rge.cd_expediente = mig.cd_expediente
-           inner join '||V_ESQUEMA||'.asu_asuntos asu              on mig.cd_expediente = asu.asu_id_externo
-           inner join '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc       on prc.asu_id = asu.asu_id 
-           inner join '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS pco   on pco.prc_id = prc.prc_id
-           inner join '||V_ESQUEMA||'.DD_GHC_GEST_HAYA_CAJAMAR ghc on ghc.dd_ghc_haya_codigo = rge.cod_gestor
-           inner join '||V_ESQUEMA_MASTER||'.USU_USUARIOS usu      on usu.usu_username = ghc.dd_ghc_bcc_codigo 
-           inner join '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS usd   on usu.usu_id = usd.usu_id and usd.borrado = 0
-           inner join '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO des     on usd.des_id = des.des_id and des.borrado = 0
+           inner join '||V_ESQUEMA||'.mig_expedientes_cabecera mig    on rge.cd_expediente = mig.cd_expediente
+           inner join '||V_ESQUEMA||'.asu_asuntos asu                 on mig.cd_expediente = asu.asu_id_externo
+           inner join '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc          on prc.asu_id = asu.asu_id 
+           inner join '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS pco      on pco.prc_id = prc.prc_id
+           inner join '||V_ESQUEMA||'.DD_GHC_GEST_HAYA_CAJAMAR ghc    on ghc.dd_ghc_haya_codigo = rge.cod_gestor
+           inner join '||V_ESQUEMA_MASTER||'.USU_USUARIOS usu         on usu.usu_username = ghc.dd_ghc_bcc_codigo 
+           inner join '||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS usd      on usu.usu_id = usd.usu_id and usd.borrado = 0
+           inner join '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO des        on usd.des_id = des.des_id and des.borrado = 0
            inner join '||V_ESQUEMA_MASTER||'.dd_tde_tipo_despacho tde on  des.dd_tde_id = tde.dd_tde_id and tde.borrado = 0
            inner join '||V_ESQUEMA||'.TGP_TIPO_GESTOR_PROPIEDAD tgp   on tde.DD_TDE_CODIGO = tgp.TGP_VALOR and tgp.borrado = 0        
            inner join '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR  tge  on tgp.DD_TGE_ID = tge.DD_TGE_ID and tge.borrado = 0 and tge.dd_tge_codigo not in (''GESPROC'',''OFICINA'')

@@ -622,6 +622,32 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
   --  ) auxi where auxi.ranking = 1
      ) aux');
 
+  --Insertamos carterizacion de grupos sin gestor particular
+  
+ EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
+    select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
+           aux.asu_id, 
+           aux.usd_id,
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GEXT''), 
+           '''||V_USUARIO||''', 
+           TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
+    from 
+     (
+ select distinct asu.asu_id, usd.usd_id
+       from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
+               '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
+               '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on des.des_id= usd.des_id 			and usd.USD_GESTOR_DEFECTO = 1  inner join 
+               '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usd.usu_id = usu.usu_id and usu.USU_EXTERNO = 1  and usu.usu_grupo = 1
+--Se añade el gestos por defecto para poner al grupo en la carterizacion				
+          where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id 
+                                                                                           and gaa.dd_tge_id = (select dd_tge_id 
+                                                                                                                  from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
+                                                                                                                  where dd_tge_codigo=''GEXT'')
+                          )
+     ) aux');    
+     
+     
 END LOOP;       
      
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAA_GESTOR_ADICIONAL_ASUNTO cargada. Letrados. '||SQL%ROWCOUNT||' Filas.');
@@ -661,6 +687,33 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
                                                                                                                           where dd_tge_codigo=''GEXT'')
                             )
 --      ) auxi where auxi.ranking = 1
+     ) aux');    
+ 
+ --Insertamos carterizacion de grupos sin gestor particular
+ 
+    EXECUTE IMMEDIATE('insert into '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
+    select '||V_ESQUEMA||'.s_GAH_GESTOR_ADIC_HISTORICO.nextval, 
+           aux.asu_id, 
+           aux.usd_id,
+           TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF''), 
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GEXT''), 
+           '''||V_USUARIO||''', 
+           TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
+    from 
+     (
+          select distinct asu.asu_id, usd.usd_id
+          from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join           
+               '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
+               '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on des.des_id= usd.des_id 			and usd.USD_GESTOR_DEFECTO = 1  inner join 
+               '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usd.usu_id = usu.usu_id and usu.USU_EXTERNO = 1  and usu.usu_grupo = 1
+--Se añade el gestos por defecto para poner al grupo en la carterizacion				
+				and usd.USD_GESTOR_DEFECTO = 1 
+          where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah where gah.gah_asu_id = asu.asu_id 
+                                                                                               and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
+                                                                                                                           from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
+                                                                                                                          where dd_tge_codigo=''GEXT'')
+                            )
      ) aux');    
      
  END LOOP;     

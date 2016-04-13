@@ -385,5 +385,15 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_Analiza_haya02.sh ejecutado correctamente"           
 
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""HRE_INSERT_TEV_VALORES_PRECONTENCIOSO.sh"                      
+./"$sh_dir"HRE_INSERT_TEV_VALORES_PRECONTENCIOSO.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"HRE_INSERT_TEV_VALORES_PRECONTENCIOSO.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""HRE_INSERT_TEV_VALORES_PRECONTENCIOSO.sh ejecutado correctamente"           
+
 echo "[INFO] FIN CJM_lanza_migracion.sh. Revise el fichero de log" `date` 
 exit 0

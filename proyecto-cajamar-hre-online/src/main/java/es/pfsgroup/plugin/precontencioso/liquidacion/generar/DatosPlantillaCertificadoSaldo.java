@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.Persona;
@@ -88,7 +89,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(COMISAPER, obtenerTipoComision(liquidacion, COMISAPER));
 		datosDoc.put(FECVENCIM, obtenerFechaVencimiento(cnt, FECVENCIM));
 		datosDoc.put(FECHALIQTELEGRAM, obtenerFechaLiquidacion(liquidacion, FECHALIQTELEGRAM));
-		datosDoc.put(CAPITALCER, obtenerImporteCapitalPendiente(liquidacion, CAPITALCER));
+		datosDoc.put(CAPITALCER, obtenerImportePrestamo(liquidacion, CAPITALCER));
 		datosDoc.put(INTERESCER, obtenerImporteInteresesRemuneratorios(liquidacion, INTERESCER));
 		datosDoc.put(IMPINTERESTELEG, obtenerImporteIntereseCreditoDispuesto(liquidacion, IMPINTERESTELEG));
 		datosDoc.put(IMPCOMITELEG, obtenerImporteComisionesPagadas(liquidacion, IMPCOMITELEG));
@@ -97,14 +98,25 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(VIVHABITUAL, obtenerTextoViviendaHabitual(cnt, VIVHABITUAL));
 		datosDoc.put(INTERESINITELEG, obtenerTipoInteresPrestamo(cnt, INTERESINITELEG));
 		datosDoc.put(COMIAPERTEL, obtenerTipoComisionApert(liquidacion, COMIAPERTEL));
+		datosDoc.put(NUMCUENTATELE, obtenerNumeroCuentaCompleto((EXTContrato) cnt, NUMCUENTATELE));
 
 		return datosDoc;
+	}
+
+	private String obtenerNumeroCuentaCompleto(EXTContrato cnt,	String campo) 
+	{
+		String resultado = noDisponible(campo);
+		if(!Checks.esNulo(cnt.getCharextra8())) {
+			resultado = cnt.getCharextra8();
+		}
+		
+		return resultado;
 	}
 
 	private String obtenerTipoComisionApert(LiquidacionPCO liquidacion,	String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getComisiones())) {
-			resultado = currencyInstance.format( liquidacion.getComisiones());
+			resultado = numberInstance.format( liquidacion.getComisiones());
 		}
 		return resultado;
 	}
@@ -112,7 +124,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteComisionesPagadas(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getComisiones())) {
-			resultado = currencyInstance.format( liquidacion.getComisiones());
+			resultado = numberInstance.format( liquidacion.getComisiones());
 		}
 		return resultado;
 	}
@@ -120,7 +132,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteIntereseCreditoDispuesto(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getInteresesOrdinarios())) {
-			resultado = currencyInstance.format( liquidacion.getInteresesOrdinarios());
+			resultado = numberInstance.format( liquidacion.getInteresesOrdinarios());
 		}
 		return resultado;
 	}
@@ -128,7 +140,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerTipoComision(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo);
 		if (!Checks.esNulo(liquidacion.getComisiones())) {
-			resultado = currencyInstance.format( liquidacion.getComisiones());
+			resultado = numberInstance.format( liquidacion.getComisiones());
 		}
 		return resultado;
 	}
@@ -136,7 +148,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerTipoInteresPrestamo(Contrato contrato, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(contrato.getTipoInteres());
+			resultado = numberInstance.format(contrato.getTipoInteres());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -172,7 +184,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteInteresesMoratorios(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getInteresesDemora());
+			resultado = numberInstance.format(liquidacion.getInteresesDemora());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -194,7 +206,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteInteresesRemuneratorios(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getInteresesOrdinarios());
+			resultado = numberInstance.format(liquidacion.getInteresesOrdinarios());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -204,7 +216,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImporteCapitalPendiente(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getCapitalNoVencido());
+			resultado = numberInstance.format(liquidacion.getCapitalNoVencido());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -256,7 +268,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImportePrestamo(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
+			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}

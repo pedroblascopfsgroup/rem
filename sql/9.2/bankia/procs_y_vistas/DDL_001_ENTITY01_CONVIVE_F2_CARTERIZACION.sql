@@ -703,7 +703,7 @@ from
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
 			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
-                    where tas.DD_TAS_CODIGO = '02'  pas.dd_pas_codigo = 'BANKIA')
+                    where tas.DD_TAS_CODIGO = '02' and pas.dd_pas_codigo = 'BANKIA')
  ) aux ;
  
  

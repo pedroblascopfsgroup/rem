@@ -34,6 +34,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 @Entity
 @Table(name = "EST_ESTADOS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause= Auditoria.UNDELETED_RESTICTION)
 public class Estado implements Serializable, Auditable {
 
     private static final long serialVersionUID = 1L;

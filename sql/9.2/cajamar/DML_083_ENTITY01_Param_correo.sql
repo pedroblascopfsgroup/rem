@@ -1,20 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Luis Caballero
---## FECHA_CREACION=20160330
+--## AUTOR=Rachel
+--## FECHA_CREACION=20160413
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HR-2127
---## PRODUCTO=SI
+--## INCIDENCIA_LINK=CMREC-3077
+--## PRODUCTO=NO
 --## Finalidad: DML
 --##           
---## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;

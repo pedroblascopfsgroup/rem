@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=María Villanueva
---## FECHA_CREACION=20160321
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160413
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1271
+--## INCIDENCIA_LINK=CMREC-2389
 --## PRODUCTO=NO
 --## 
---## Finalidad: Distinct en carga de politicas y control de FECHACREAR
+--## Finalidad: SE AÑADE CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
   -- Autor: Maria Villanueva, PFS Group
   -- Fecha creación:Septiembre 2015
   -- Responsable ultima modificacion: María Villanueva, PFS Group
-  -- Fecha ultima modificacion: 21/03/2016
-  -- Motivos del cambio: Distinct en carga de politicas y control de FECHACREAR
+  -- Fecha ultima modificacion: 12/04/2016
+  -- Motivos del cambio: SE AÑADE CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
   -- Cliente: Recovery BI CAJAMAR
   --
   -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -146,7 +146,8 @@ begin
                           OFICINA_PERSONA_ID,    
                           TRAMO_PUNTUACION_ID,    
                           TRAMO_ALERTA_ID,    
-                          NUM_CLIENTES  
+                          NUM_CLIENTES,
+                          ARQUETIPO_PERSONA_ID  
                           )  
                           select
                           '''||fecha||''',
@@ -162,7 +163,8 @@ begin
                           NVL(PER.OFI_ID,-1), 
                           -1, 
                           -1, 
-                           1
+                           1,
+                          -1
                       from '||v_datastage||'.PER_PERSONAS PER, '||v_datastage||'.ZON_ZONIFICACION ZON
                       where PER.BORRADO = 0
                       AND PER.OFI_ID = ZON.OFI_ID (+)';
@@ -267,6 +269,15 @@ begin
       
       v_rowcount := sql%rowcount;
 
+      execute immediate 'merge into TMP_H_PER per 
+      using (select distinct PER_ID, ARQ_ID from '||v_datastage||'.ARR_ARQ_RECUPERACION_PERSONA)arq
+      on (per.PERSONA_ID=arq.PER_ID)
+      when matched then update set per.ARQUETIPO_PERSONA_ID=arq.ARQ_ID
+      where per.DIA_ID = '''||fecha||'''';
+      commit;
+
+      v_rowcount := sql%rowcount;
+
       --Log_Proceso
       execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (3) - Politica Actual: ' || to_char(v_rowcount), 4;
       commit;
@@ -346,7 +357,7 @@ begin
             POLITICA_PERSONA_ID,
             POLITICA_PERSONA_ANT_ID,
             TIPO_POLITICA_PERSONA_ID,
-                  TIPO_POLITICA_PER_ANT_ID,
+            TIPO_POLITICA_PER_ANT_ID,
             RATING_ID,
             RATING_ANT_ID,
             ZONA_PERSONA_ID,
@@ -357,7 +368,8 @@ begin
             NUM_CLIENTES,
             VOLUMEN_RIESGO,
             POS_VENCIDA,
-            POS_NO_VENCIDA
+            POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
           )
       select  DIA_ID,
           FECHA_CARGA_DATOS,
@@ -376,7 +388,8 @@ begin
           NUM_CLIENTES,
           VOLUMEN_RIESGO,
           POS_VENCIDA,
-          POS_NO_VENCIDA
+          POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
         from TMP_H_PER
         where dia_id = fecha;
       v_rowcount   := sql%rowcount;
@@ -483,7 +496,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
               NUM_CLIENTES,
               VOLUMEN_RIESGO,
               POS_VENCIDA,
-              POS_NO_VENCIDA
+              POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
             )
         select SEMANA,
             MAX_DIA_SEMANA,
@@ -502,7 +516,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
             NUM_CLIENTES,
             VOLUMEN_RIESGO,
             POS_VENCIDA,
-            POS_NO_VENCIDA
+            POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
         from H_PER
         where dia_id = max_dia_semana;
         
@@ -633,7 +648,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
                 NUM_CLIENTES,
                 VOLUMEN_RIESGO,
                 POS_VENCIDA,
-                POS_NO_VENCIDA
+                POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
               )
           select  MES,
               MAX_DIA_MES,
@@ -652,7 +668,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
               NUM_CLIENTES,
               VOLUMEN_RIESGO,
               POS_VENCIDA,
-              POS_NO_VENCIDA
+              POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
           from H_PER
           where dia_id = max_dia_mes;
           
@@ -784,7 +801,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
             NUM_CLIENTES,
             VOLUMEN_RIESGO,
             POS_VENCIDA,
-            POS_NO_VENCIDA
+            POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
           )
       select TRIMESTRE,
           MAX_DIA_TRIMESTRE,
@@ -803,7 +821,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
           NUM_CLIENTES,
           VOLUMEN_RIESGO,
           POS_VENCIDA,
-          POS_NO_VENCIDA
+          POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
         from H_PER
         where dia_id = max_dia_trimestre;
       v_rowcount := sql%rowcount;
@@ -915,7 +934,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
             NUM_CLIENTES,
             VOLUMEN_RIESGO,
             POS_VENCIDA,
-            POS_NO_VENCIDA
+            POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
           )
       select anio,
           max_dia_anio,
@@ -934,7 +954,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
           NUM_CLIENTES,
           VOLUMEN_RIESGO,
           POS_VENCIDA,
-          POS_NO_VENCIDA
+          POS_NO_VENCIDA,
+            ARQUETIPO_PERSONA_ID
         from H_PER
         where dia_id = max_dia_anio;
         
@@ -1003,5 +1024,5 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   end;
     
 end cargar_h_per;
-/
-EXIT
+/ 
+EXIT;

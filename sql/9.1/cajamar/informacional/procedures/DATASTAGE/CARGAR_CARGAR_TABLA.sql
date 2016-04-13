@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_CARGAR_TABLA (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Diego Perez, PFS Group
 -- Fecha creacion: Abril 2015
--- Responsable ultima modificacion: Jaime S-C., PFS Group
--- Fecha ultima modificacion: 18/01/2016
--- Motivos del cambio: CMP_CICLO_MARCADO_POLITICA Y POL_POLITICA
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 13/04/2016
+-- Motivos del cambio: ARR_ARQ_RECUPERACION_PERSONA
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas relacionadas con los CARGAR_TABLA
@@ -205,6 +205,7 @@ create or replace PROCEDURE CARGAR_CARGAR_TABLA (error OUT VARCHAR2) AS
   187 ACU_OPERACIONES_TERMINOS
   188 CMP_CICLO_MARCADO_POLITICA
   189 POL_POLITICA
+  191 ARR_ARQ_RECUPERACION_PERSONA
   */
 
 BEGIN
@@ -4027,6 +4028,23 @@ INSERT INTO CARGAR_TABLA_PARAMETROS
             1,
             190);
 
+
+    -- ARR_ARQ_RECUPERACION_PERSONA
+    insert into CARGAR_TABLA_PARAMETROS
+    values ('ARR_ARQ_RECUPERACION_PERSONA',
+            3,
+            'ARR_ID, PER_ID, ARQ_ID, ARQ_NAME, ARQ_PRIO, ARQ_DATE, VERSION, USUARIOCREAR, FECHACREARNOT, USUARIOMODIFICAR, FECHAMODIFICAR, USUARIOBORRAR, FECHABORRAR, BORRADO',
+            'A.ARR_ID,A.PER_ID,A.ARQ_ID,A.ARQ_NAME,A.ARQ_PRIO,A.ARQ_DATE,A.VERSION,A.USUARIOCREAR,A.FECHACREARNOT,A.USUARIOMODIFICAR,A.FECHAMODIFICAR,A.USUARIOBORRAR,A.FECHABORRAR,A.BORRADO',
+            'CM01.ARR_ARQ_RECUPERACION_PERSONA A',
+            '',
+            '',
+            '',
+            '',
+            '',
+            'ARR_ID NUMBER(16, 0), PER_ID NUMBER(16, 0), ARQ_ID NUMBER(16, 0), ARQ_NAME VARCHAR2(100 CHAR), ARQ_PRIO NUMBER(16, 0), ARQ_DATE TIMESTAMP(6), VERSION NUMBER(1, 0), USUARIOCREAR VARCHAR2(50 CHAR) NOT NULL, FECHACREAR TIMESTAMP(6) NOT NULL, USUARIOMODIFICAR VARCHAR2(50 CHAR), FECHAMODIFICAR TIMESTAMP(6), USUARIOBORRAR VARCHAR2(50 CHAR), FECHABORRAR TIMESTAMP(6), BORRADO NUMBER(1, 0) NOT NULL',
+            'S',
+            1,
+            191);
 
     COMMIT;
 

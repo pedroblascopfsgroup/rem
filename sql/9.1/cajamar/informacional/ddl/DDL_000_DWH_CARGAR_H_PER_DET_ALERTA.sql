@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160413
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-2389
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Se  quita la carga de ARQUETIPO_PERSONA_ID en D_PER
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_H_PER_DET_ALERTA(DATE_START IN date, DATE_END IN date, O_ERROR_STATUS OUT VARCHAR2) AS 
 -- ===============================================================================================
 -- Autor: Maria Villanueva, PFS Group
@@ -562,3 +580,5 @@ BEGIN
   
 end;
 end CARGAR_H_PER_DET_ALERTA;
+/ 
+EXIT;

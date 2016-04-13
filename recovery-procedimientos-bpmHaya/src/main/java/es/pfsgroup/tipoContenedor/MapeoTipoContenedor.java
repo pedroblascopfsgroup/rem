@@ -1,4 +1,6 @@
-package es.pfsgroup.plugin.gestorDocumental.model;
+package es.pfsgroup.tipoContenedor;
+
+import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

@@ -309,10 +309,9 @@ public class AdjuntoManager implements AdjuntoApi{
 		return adjuntosMapeados;
 	}
 	
-	
 	@Override
 	@Transactional(readOnly = false)
-	public String uploadDoc(WebFileItem uploadForm, Long idDocumento) {
+	public String upload(WebFileItem uploadForm) {
 		String comboTipoFichero = uploadForm.getParameter("comboTipoFichero");
 		
 		FileItem fileItem = uploadForm.getFileItem();
@@ -347,8 +346,6 @@ public class AdjuntoManager implements AdjuntoApi{
 				adjuntoAsunto.setProcedimiento(procedimiento);
 			}
         }
-        // Id del documento del gestor documental
-        adjuntoAsunto.setServicerId(idDocumento);
         
         Auditoria.save(adjuntoAsunto);
 		asunto.getAdjuntos().add(adjuntoAsunto);
@@ -360,14 +357,6 @@ public class AdjuntoManager implements AdjuntoApi{
         }
         
         return null;
-		
-	}
-
-	
-	@Override
-	@Transactional(readOnly = false)
-	public String upload(WebFileItem uploadForm) {
-		return uploadDoc(uploadForm, null);
 	}
 	
 	

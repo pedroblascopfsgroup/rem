@@ -401,5 +401,4 @@
 	<alias name="procedimientosProjectContextCAJAMAR" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextCAJAMAR" alias="coreProjectContext"/>
 	<alias name="commonProjectContextCAJAMAR" alias="commonProjectContext"/>
-	<alias name="adjuntoManagerCajamarImpl" alias="adjuntoManagerImpl"/>
 </beans>	

@@ -73,7 +73,7 @@ import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
-import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
+import es.pfsgroup.tipoContenedor.MapeoTipoContenedor;
 
 @Component
 public class AdjuntoHayaManager {
@@ -258,13 +258,13 @@ public class AdjuntoHayaManager {
 	
 	private String obtenerMatricula(String tipoExp, String claseExp, String tipoFichero){
 		StringBuilder sb = new StringBuilder();
-		MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoFichero));
+		MapeoTipoContenedor mapeo = genericDao.get(MapeoTipoContenedor.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoFichero));
 		if(!Checks.esNulo(mapeo)){
 			sb.append(tipoExp);
 			sb.append("-");
 			sb.append(claseExp);
 			sb.append("-");
-			sb.append(mapeo.getTipoFicheroExterno());
+			sb.append(mapeo.getCodigoTDN2().substring(6));
 		}
 		return sb.toString();
 	}

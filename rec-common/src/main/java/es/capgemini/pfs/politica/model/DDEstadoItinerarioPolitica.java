@@ -55,8 +55,11 @@ public class DDEstadoItinerarioPolitica implements Auditable, Dictionary {
 
     @Column(name = "DD_EPI_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+    @Column(name = "DD_EPI_ORDEN")
+    private Long orden;
 
-    @Embedded
+	@Embedded
     private Auditoria auditoria;
 
     @Version
@@ -160,5 +163,14 @@ public class DDEstadoItinerarioPolitica implements Auditable, Dictionary {
     public void setVersion(Integer version) {
         this.version = version;
     }
+    
+    
+    public Long getOrden() {
+		return orden;
+	}
+
+	public void setOrden(Long orden) {
+		this.orden = orden;
+	}
 
 }

@@ -20,7 +20,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -41,7 +41,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -68,7 +68,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -95,7 +95,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -117,7 +117,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -139,7 +139,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -161,7 +161,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -182,7 +182,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -208,7 +208,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -230,7 +230,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -257,7 +257,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -287,7 +287,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -309,7 +309,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>tramitesAcuerdosLeaveActionHandler
+				<targetBean>genericLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>
@@ -647,14 +647,14 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="NOTIFICACIONALLETRADO" name="avanzaBPM"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 
 	<node name="Decision">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-        		<targetBean>genericUserDecisionActionHandler</targetBean>
-    		</action>
-    		<transition to="Fin" name="Fin"></transition>
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+    	</action>
+		<transition to="Fin" name="Fin"></transition>
 	</node>
 
 	<end-state name="Fin">

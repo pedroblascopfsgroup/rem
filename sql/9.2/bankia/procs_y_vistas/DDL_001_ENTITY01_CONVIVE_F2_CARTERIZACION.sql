@@ -685,7 +685,7 @@ from
                     from #ESQUEMA#.asu_asuntos asuu inner join
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
-			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO on tas.dd_tas_id=asuu.dd_tas_id
+			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
                     where tas.DD_TAS_CODIGO = '02' and pas.dd_pas_codigo = 'BANKIA')
   ) aux ;
 
@@ -702,8 +702,8 @@ from
                     from #ESQUEMA#.asu_asuntos asuu inner join
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
-			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO on tas.dd_tas_id=asuu.dd_tas_id
-                    where tas.DD_TAS_CODIGO = '02' and  pas.dd_pas_codigo = 'BANKIA')
+			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
+                    where tas.DD_TAS_CODIGO = '02'  pas.dd_pas_codigo = 'BANKIA')
  ) aux ;
  
  
@@ -722,7 +722,7 @@ from
                     from #ESQUEMA#.asu_asuntos asuu inner join
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
-			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO on tas.dd_tas_id=asuu.dd_tas_id
+			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
                     where tas.DD_TAS_CODIGO = '02' and pas.dd_pas_codigo = 'BANKIA')
   ) aux ;
 
@@ -739,7 +739,7 @@ from
                     from #ESQUEMA#.asu_asuntos asuu inner join
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
-			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO on tas.dd_tas_id=asuu.dd_tas_id
+			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
                     where tas.DD_TAS_CODIGO = '02' and  pas.dd_pas_codigo = 'BANKIA')
  ) aux ; 
  -- Carterizamos para Gestor expediente judicial PREDOC
@@ -757,8 +757,8 @@ from
                     from #ESQUEMA#.asu_asuntos asuu inner join
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
-			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO on tas.dd_tas_id=asuu.dd_tas_id
-                    where tas.DD_TAS_CODIGO = '02'and pas.dd_pas_codigo = 'BANKIA')
+			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
+                    where tas.DD_TAS_CODIGO = '02' and pas.dd_pas_codigo = 'BANKIA')
   ) aux ;
 
 insert into #ESQUEMA#.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
@@ -774,7 +774,7 @@ from
                     from #ESQUEMA#.asu_asuntos asuu inner join
                          #ESQUEMA#.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
-			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO on tas.dd_tas_id=asuu.dd_tas_id
+			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
                     where tas.DD_TAS_CODIGO = '02' and  pas.dd_pas_codigo = 'BANKIA')
  ) aux ; 
 

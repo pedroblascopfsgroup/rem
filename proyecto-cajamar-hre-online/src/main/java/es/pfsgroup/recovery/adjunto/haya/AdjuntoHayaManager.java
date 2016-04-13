@@ -64,9 +64,9 @@ import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAssembler;
 import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
-import es.pfsgroup.procedimientos.context.HayaProjectContext;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
+import es.pfsgroup.recovery.context.CajamarHreProjectContext;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -115,7 +115,7 @@ public class AdjuntoHayaManager {
 	private EXTAsuntoManager extAsuntoManager;
 	
 	@Autowired
-	private HayaProjectContext hayaProjectContext;    
+	private CajamarHreProjectContext cajamarHreProjectContext;    
 	
 	@Autowired
 	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
@@ -132,7 +132,7 @@ public class AdjuntoHayaManager {
     				//AQUI LA LLAMADA A crearPropuesta
     				
     				String idAsunto=asun.getId().toString();
-    	    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+    	    		String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
     				UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
     	    		CrearPropuestaDto crearPropuesta = RecoveryToGestorExpAssembler.getCrearPropuestaDto(idAsunto, claseExpe, usuPass);
     	    		
@@ -183,7 +183,7 @@ public class AdjuntoHayaManager {
     private List<String> getDistinctTipoProcedimientoFromAsunto(Asunto asun) {
     	List<String> listTipoProcedimiento = new ArrayList<String>();
     	for (Procedimiento prc : asun.getProcedimientos()) {
-    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+    		String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
     		if(!listTipoProcedimiento.contains(claseExpe) && !Checks.esNulo(claseExpe)) {
     			listTipoProcedimiento.add(claseExpe);
     		}
@@ -270,13 +270,13 @@ public class AdjuntoHayaManager {
 	}
 	
 	private String getClaseExpedienteByProcedimientoPadre(Procedimiento prc) {
-		String claseExp = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+		String claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 		Procedimiento padre = prc.getProcedimientoPadre();
 		while(Checks.esNulo(claseExp)) {
-			if(hayaProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
+			if(cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
 				padre = padre.getProcedimientoPadre();
 			}else{
-				claseExp = hayaProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
+				claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
 			}
 		}
 		return claseExp;
@@ -315,7 +315,7 @@ public class AdjuntoHayaManager {
 			//Si entra, este procedimiento requiere un contenedor y no existe.
 			//AQUI LA LLAMADA A crearPropuesta
 			String idAsunto=prc.getAsunto().getId().toString();
-    		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+    		String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
     		CrearPropuestaDto crearPropuesta = RecoveryToGestorExpAssembler.getCrearPropuestaDto(idAsunto, claseExpe, usuPass);
     		
@@ -475,7 +475,7 @@ public class AdjuntoHayaManager {
 		
 		boolean resultado = false;
 		
-		String claseExpe = hayaProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
+		String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 		if(Checks.esNulo(claseExpe) || claseExpe=="")
 		{
 			//Para este tipo de procedimiento no se requiere contendor

@@ -10,6 +10,29 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 	
+	<bean id="cajamarHreProjectContextDefault" 
+		class="es.pfsgroup.recovery.context.CajamarHreProjectContextImpl" abstract="true">
+		<property name="mapaClasesExpeGesDoc">
+			<map>
+				<entry key="H001" value="01"/>
+				<entry key="H018" value="02"/>
+				<entry key="H020" value="02"/>
+				<entry key="H024" value="03"/>
+				<entry key="H068" value="03"/>
+				<entry key="CodigoApelacion" value="04"/>
+				<entry key="H022" value="05"/>
+				<entry key="H016" value="06"/>
+				<entry key="H026" value="07"/>
+				<entry key="H004" value="08"/>
+				<entry key="H009" value="09"/>
+				<entry key="H021" value="09"/>
+				<entry key="CodigoRecuperaciones" value="10"/>
+				<entry key="PCO" value="11"/>
+			</map>
+		</property>
+	</bean>  
+	
 	<alias name="adjuntoManagerHayaCajamarImpl" alias="adjuntoManagerImpl"/>
 	
+	<bean id="cajamarHreProjectContext" parent="cajamarHreProjectContextDefault"/>
 </beans>	

@@ -502,7 +502,7 @@
 		,baseParams: paramsBusquedaInicial
 		,flow:'listadopreproyectado/getListPreproyectadoCnt'
  		//,reader : new Ext.data.JsonReader({root:'contratos',totalProperty : 'total'}, contratosRecord)
- 		,reader : new Ext.data.JsonReader({root:'contratos'}, contratosRecord)
+ 		,reader : new Ext.data.JsonReader({idProperty: 'contrato',root:'contratos'}, contratosRecord)
 	});
 	
 	var contratosCM = new Ext.grid.ColumnModel([

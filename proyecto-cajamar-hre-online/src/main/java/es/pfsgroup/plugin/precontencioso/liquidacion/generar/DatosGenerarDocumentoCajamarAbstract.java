@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.capgemini.devon.bo.BusinessOperationException;
-import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -47,6 +46,7 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 	private static final Locale localeSpa = new java.util.Locale("es", "ES");
 	protected static final SimpleDateFormat formatFecha = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, localeSpa);
 	protected static final NumberFormat currencyInstance = NumberFormat.getCurrencyInstance(localeSpa);
+	protected static final NumberFormat numberInstance = NumberFormat.getInstance(localeSpa);
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -118,16 +118,13 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 		
 		int cuentaAvalista=0;
 		int cuentaTmp=0;
-		int i = 0;
 		for(ContratoPersona cp : contratosPersona) {
-			i++;
 			if (cp.isAvalista()) {
 				cuentaAvalista++;
 			}
 		}
 		
 		for (ContratoPersona cp : contratosPersona) {
-            i++;
             if (cp.isAvalista()) {
             	cuentaTmp++;
             	Persona p = cp.getPersona();
@@ -190,7 +187,7 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 	private String obtenerImporteLiquidacion(LiquidacionPCO liq, String nombreCampo) {
 		String resultado = "";
 		try {
-			resultado = currencyInstance.format(liq.getTotal());
+			resultado = numberInstance.format(liq.getTotal());
 		} catch (NullPointerException e) {
 			resultado = noDisponible(nombreCampo);
 		}

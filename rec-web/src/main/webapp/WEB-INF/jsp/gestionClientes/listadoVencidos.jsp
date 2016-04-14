@@ -55,7 +55,7 @@
 		readOnly="false" />
 	<pfsforms:textfield
 		labelKey="menu.clientes.listado.busqueda.codigoContrato"
-		label="**Código de contrato"
+		label="**CÃ³digo de contrato"
 		name="codigoContrato"
 		value=""
 		readOnly="false" />
@@ -155,7 +155,7 @@
         ,{name : 'relacionExpediente', type:'string', sortType:Ext.data.SortTypes.asText}
 		,{name : 'itinerario'}
 		,{name : 'riesgoAutorizado', type:'float', sortType:Ext.data.SortTypes.asFloat}        
-        ,{name : 'dispuestoVencido', type:'float', sortType:Ext.data.SortTypes.asFloat}        
+        ,{name : 'dispuestoVencido', type:'string', sortType:Ext.data.SortTypes.asFloat}        
         ,{name : 'dispuestoNoVencido', type:'float', sortType:Ext.data.SortTypes.asFloat}
         ,{name : 'riesgoDispuesto', type:'float', sortType:Ext.data.SortTypes.asFloat}        
 	]);
@@ -176,6 +176,15 @@
 			maskAll();
 		});
 	
+	
+	var dispuestoMoneyRender = function (value, meta, record) {
+		var money = record.get('dispuestoVencido');
+		if (money){
+			return money + ' &euro;';
+		}
+		return value;
+	};
+		
 	var clientesCm=new Ext.grid.ColumnModel([
 			{header : '<s:message code="menu.clientes.listado.lista.nombre" text="**Nombre" />'
 			, dataIndex : 'nombre' ,sortable:true,width:120}
@@ -198,7 +207,8 @@
 			,{header : '<s:message code="menu.clientes.consultacliente.datosTab.riesgoAutorizado" text="**Riesgo autorizado"/>'
 			, dataIndex : 'riesgoAutorizado',sortable:true,renderer: app.format.moneyRenderer, width:100, align:'right'}
 			,{header : '<s:message code="menu.clientes.consultacliente.datosTab.volRiesgoDirectoVencido" text="**Dispuesto vencido" />'
-			, dataIndex : 'dispuestoVencido',sortable:false,renderer: app.format.moneyRenderer, width:100, align:'right'}
+			<%-- , dataIndex : 'dispuestoVencido',sortable:false,renderer: app.format.moneyRenderer, width:100, align:'right'}--%>
+			, dataIndex : 'dispuestoVencido',renderer: dispuestoMoneyRender,sortable:false, width:100, align:'right'}
 			,{header : '<s:message code="menu.clientes.consultacliente.datosTab.volRiesgoDirectoNoVencido" text="**Dispuesto no vencido" />'
 			, dataIndex : 'dispuestoNoVencido',sortable:false,renderer: app.format.moneyRenderer, width:100, align:'right', hidden:true}
 			,{header : '<s:message code="menu.clientes.consultacliente.datosTab.riesgoDispuesto" text="**Riesgo dispuesto"/>'

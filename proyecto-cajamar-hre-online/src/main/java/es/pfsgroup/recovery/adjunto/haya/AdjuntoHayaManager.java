@@ -373,13 +373,13 @@ public class AdjuntoHayaManager {
 	*/
 	private List<String> contenedoresAdecuadosYOrdenados(WebFileItem uploadForm, List<String> listaContenedores) {
 		String codTFA = uploadForm.getParameters().get("comboTipoFichero");
-		DDTipoFicheroAdjunto tipoFichero = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codTFA));
-		List<TipoProcedimiento> listTipoPrc = genericDao.getList(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "tipoActuacion", tipoFichero.getTipoActuacion()));
+
 		List<String> listContenedoresPorTipoPrc = new ArrayList<String>();
-		for(TipoProcedimiento tipoPrc : listTipoPrc) {
-			String codMapeado = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(tipoPrc.getCodigo());
-			if(!Checks.esNulo(codMapeado) && !listContenedoresPorTipoPrc.contains(codMapeado)) {
-				listContenedoresPorTipoPrc.add(codMapeado);
+		List<MapeoTipoContenedor> tipoContenedorAndFichero = genericDao.getList(MapeoTipoContenedor.class,genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", codTFA));
+		for(MapeoTipoContenedor tipoFichMapeado : tipoContenedorAndFichero) {
+			String categoria = tipoFichMapeado.getCodigoTDN2().substring(3, 5);
+			if(!Checks.esNulo(categoria) && !listContenedoresPorTipoPrc.contains(categoria)) {
+				listContenedoresPorTipoPrc.add(categoria);
 			}
 		}
 		for(String tipoContenedor : listaContenedores) {

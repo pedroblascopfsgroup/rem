@@ -489,7 +489,7 @@
 		});
 
 	<%-- Campo Texto Observaciones --%>
-	<%-- var observaciones=new Ext.form.TextArea({
+	 var observaciones=new Ext.form.TextArea({
 		fieldLabel:'<s:message code="contabilidad.observaciones" text="**Observaciones" />'
 		,width:550
 		,height:80
@@ -498,11 +498,11 @@
 		,labelStyle:labelStyle
 	    ,name: 'contabilidadCobro.observaciones'
 	    <c:if test="${contabilidadCobro.observaciones!=null}" >
-			,value:'${contabilidadCobro.observaciones}'
+			,value:'<s:message text="${contabilidadCobro.observaciones}" javaScriptEscape="true" />'
 		</c:if>
-	});--%>
+	});
 	
-	var observaciones = new Ext.form.HtmlEditor({
+	<%-- var observaciones = new Ext.form.HtmlEditor({
 			id:'htmlRespuesta'
 			,fieldLabel : '<s:message code="contabilidad.observaciones" text="**Observaciones" />'
 			,width:550

@@ -351,14 +351,6 @@ BEGIN
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_CNT. Update 2', 4;
 
     -- Contrato enviado a agencia
-    /*Pedro S. tunning
-    execute immediate 'select max(TRUNC(FECHA_HIST)) from ' || V_DATASTAGE || '.H_REC_FICHERO_CONTRATOS where TRUNC(FECHA_HIST) <= to_date(''' || fecha || ''')' into max_dia_enviado_agencia;
-
-     execute immediate 'merge into TMP_H_CNT hc
-            using (select distinct CNT_ID from '||V_DATASTAGE||'.H_REC_FICHERO_CONTRATOS where to_char(TRUNC(FECHA_HIST), '''||formato_fecha||''') = '''||max_dia_enviado_agencia||''') crc
-            on (crc.CNT_ID = hc.CONTRATO_ID)
-            when matched then update set hc.ENVIADO_AGENCIA_CNT_ID = 1 where hc.DIA_ID = '''||fecha||'''';
-    */
     execute immediate 'merge into TMP_H_CNT hc
             using (select distinct CNT_ID from '||V_DATASTAGE||'.H_REC_FICHERO_CONTRATOS A,
             (select max(TRUNC(FECHA_HIST)) MAX_FECHA_HIST from ' || V_DATASTAGE || '.H_REC_FICHERO_CONTRATOS where TRUNC(FECHA_HIST) <= to_date(''' || fecha || ''')) B

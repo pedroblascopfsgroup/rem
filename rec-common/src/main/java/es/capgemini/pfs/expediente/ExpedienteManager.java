@@ -2714,7 +2714,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             //Se rechaz� la solicitud de cancelaci�n
 
             //Si el expediente est� en DC, le devolvemos su estado Congelado
-            if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo())) {
+            if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo()) 
+            		|| DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo())) {
                 DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                         DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO);
                 expediente.setEstadoExpediente(estadoExpediente);
@@ -3809,7 +3810,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     public List<DtoPersonaPoliticaExpediente> getPersonasPoliticasDelExpediente(Long idExpediente) {
         Expediente expediente = expedienteDao.get(idExpediente);
         List<DtoPersonaPoliticaExpediente> list = new ArrayList<DtoPersonaPoliticaExpediente>();
-        if (expediente.getSeguimiento()) {
+        if (expediente.getSeguimiento() || expediente.isGestionDeuda()) {
             DtoPersonaPoliticaExpediente dto;
             for (ExpedientePersona expedientePersona : expediente.getPersonas()) {
                 Long idPersona = expedientePersona.getPersona().getId();

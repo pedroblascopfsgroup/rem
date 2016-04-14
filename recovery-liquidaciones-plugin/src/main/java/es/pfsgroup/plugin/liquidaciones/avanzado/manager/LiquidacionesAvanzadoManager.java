@@ -126,6 +126,7 @@ public class LiquidacionesAvanzadoManager {
 		BigDecimal impuestos = request.getImpuestos();
 		BigDecimal comisiones = request.getComisiones();
 		BigDecimal gastos = request.getGastos()!=null?request.getGastos():BigDecimal.ZERO;
+		gastos = gastos.add(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO);
 		BigDecimal costasLetrado = request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO;
 		BigDecimal costasProcurador = request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO;
 		
@@ -237,7 +238,7 @@ public class LiquidacionesAvanzadoManager {
 		//3.- Por último el tramo del Calculo de Deuda, desde la última fecha hasta la fecha Calculo
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();
 		ultTramo.setFechaValor(request.getFechaDeLiquidacion());
-		ultTramo.setDescripcion("Cálculo deuda");
+		ultTramo.setDescripcion("C\u00E1lculo deuda");
 		ultTramo.setSaldo(saldo);
 		ultTramo.setInteresesPendientes(intereses);
 		
@@ -295,7 +296,7 @@ public class LiquidacionesAvanzadoManager {
 				
 				LIQDtoTramoLiquidacion tramoCambioTipo = new LIQDtoTramoLiquidacion();
 				tramoCambioTipo.setFechaValor(DateFormat.toString(fechaCambio));
-				tramoCambioTipo.setDescripcion("Cambio interés de demora");
+				tramoCambioTipo.setDescripcion("Cambio inter\u00E9s de demora");
 				tramoCambioTipo.setSaldo(saldo);
 				tramoCambioTipo.setInteresesPendientes(intereses);
 				tramoCambioTipo.setDias(diferenciaDias(fecha, fechaCambio));

@@ -371,6 +371,11 @@
 				
 				if(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA){
 					noPuedeEditarEstadoGestion = false;
+					if(panel.getFaseActualExpediente()){
+						noPuedeModificar = false;
+					}else{
+						noPuedeModificar = true
+					}
 				}
 				
 				if((panel.getFaseActualExpediente() == app.estItinerario.ESTADO_REVISAR_EXPEDIENTE && codigoEstado == app.codigoAcuerdoPropuesto && panel.esGestorSupervisorActual()) ||
@@ -463,11 +468,11 @@
 	}
 
 	panel.esSupervisor = function(){
-		return entidad.get("data").toolbar.esSupervisor;
+		return entidad.get("data").esSupervisor;
 	}
 
 	panel.esGestor = function(){
-		return entidad.get("data").toolbar.esGestor;
+		return entidad.get("data").esGestor;
 	}
 	
 	panel.getUsuarioLogado = function(){

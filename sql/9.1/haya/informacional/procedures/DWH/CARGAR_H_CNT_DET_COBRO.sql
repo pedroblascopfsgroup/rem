@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_CNT_DET_COBRO (DATE_START IN date, DATE_END
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Mayo 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 23/11/2015
--- Motivos del cambio:usuario propietario
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 13/04/2016
+-- Motivos del cambio: BI-70
 -- Cliente: Recovery BI HAYA
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_CNT_DET_COBRO.
@@ -42,7 +42,7 @@ DECLARE
   min_dia_cobro date;
   max_dia_cobro date;
   f_cobro date;
-  fecha_incidencia230615 date;
+  fecha_min_cobro_recalculado date;
   
   cursor c_fecha is select distinct (DIA_ID) from D_F_DIA where DIA_ID between DATE_START and DATE_END;
   cursor c_semana is select distinct SEMANA_ID from D_F_DIA where DIA_ID  between min_dia_cobro and max_dia_cobro order by 1;
@@ -73,7 +73,7 @@ BEGIN
     select valor into formato_fecha from PARAMETROS_ENTORNO where parametro = 'FORMATO_FECHA_DDMMYY';
     select valor into V_HAYA01 from PARAMETROS_ENTORNO where parametro = 'ORIGEN_01';
       
-  fecha_incidencia230615 := '28/05/2015';       
+  fecha_min_cobro_recalculado := add_months(DATE_START, -2);    
 -- ----------------------------- Loop fechas a cargar -----------------------------
   open c_fecha;
   loop --READ_LOOP
@@ -134,7 +134,7 @@ BEGIN
          cpa.CPA_INTERESES_MORATOR,
          cpa.CPA_COMISIONES,
          cpa.CPA_GASTOS    
-    from ' || V_DATASTAGE || '.CPA_COBROS_PAGOS cpa where trunc(cpa.CPA_FECHA_VALOR) >= ''' || fecha_incidencia230615 || '''
+    from ' || V_DATASTAGE || '.CPA_COBROS_PAGOS cpa where trunc(cpa.CPA_FECHA_VALOR) >= ''' || fecha_min_cobro_recalculado || '''
     and  trunc(cpa.CPA_FECHA_VALOR) <= ''' || fecha || ''' and cpa.CPA_ID not in (select COBRO_ID FROM H_CNT_DET_COBRO)';
 
     V_ROWCOUNT := sql%rowcount;     
@@ -477,6 +477,23 @@ BEGIN
         --Log_Proceso
         execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_CNT_DET_COBRO. Update 5', 5;
 
+--Pedro S. BI-70 13/04/2016 Parche posibles lecturas sobre CPR_COBROS_PAGOS_RECOBRO de CPA_IDs no tratados por entrar fuera de carga, repasa todos los cpa_id a 2 meses vista
+
+       execute immediate '   
+          merge into H_CNT_DET_COBRO a
+          using (select CPA_ID, RCF_AGE_ID, RCF_SCA_ID, RCF_ESQ_ID from '||V_DATASTAGE||'.CPR_COBROS_PAGOS_RECOBRO) b
+                 on (b.CPA_ID = a.COBRO_ID and a.DIA_ID between ''' || fecha_min_cobro_recalculado || ''' and ''' || DATE_END || ''')   
+          when matched then update set  a.ESQUEMA_COBRO_ID = b.RCF_ESQ_ID,
+                                        a.AGENCIA_COBRO_ID = b. RCF_AGE_ID,
+                                        a.SUBCARTERA_COBRO_ID = b.RCF_SCA_ID,
+                                        a.COBRO_FACTURADO_ID = 1,
+                                        a.ENVIADO_AGENCIA_COBRO_ID = 1';
+                                        
+       commit;
+
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_DET_COBRO. Update 1', 5;
+		
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina Bucle de Cobros', 4;
      

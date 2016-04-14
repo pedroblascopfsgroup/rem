@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_CONTRATO (DATE_START IN date, DATE_END IN d
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
 -- Fecha creaciÓn: Septiembre 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 23/11/2015
--- Motivos del cambio: usuario propietario
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 13/04/2016
+-- Motivos del cambio: tunning
 -- Cliente: Recovery BI Haya
 --
 -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_CNT.
@@ -18,11 +18,14 @@ DECLARE
   V_ROWCOUNT NUMBER;
 
   V_NUM_ROW NUMBER(10);
+
+
  V_DATASTAGE VARCHAR2(100);
   V_NUMBER  NUMBER(16,0);
   nCount NUMBER;
   V_SQL VARCHAR2(16000);
   V_HAYA01 VARCHAR2(100);
+
 
  formato_fecha VARCHAR2(100);
 
@@ -97,14 +100,19 @@ BEGIN
 
     -- Borrado indices TMP_H_CNT
 	   
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_CNT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
     commit;
 	   
 	   
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_CNT_CNT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
     commit;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_H_CNT'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -170,8 +178,8 @@ BEGIN
 		PERIMETRO_EXP_REC_ID,
 		PERIMETRO_EXP_SEG_ID,
 		CONTRATO_JUDICIALIZADO_ID,
-		PERIMETRO_SIN_GESTION_ID,
-		SIT_CART_DANADA_ID
+		PERIMETRO_SIN_GESTION_ID
+
        )
       select '''||fecha||''',
         '''||fecha||''',
@@ -228,8 +236,10 @@ BEGIN
 		0,
 		0,
 		0,
-		2,
-		-1
+		2
+
+
+
       from '||V_HAYA01||'.H_MOV_MOVIMIENTOS where MOV_FECHA_EXTRACCION = '''||max_dia_con_contratos||''' and BORRADO = 0';
 
       V_ROWCOUNT := sql%rowcount;
@@ -298,8 +308,8 @@ BEGIN
 		PERIMETRO_EXP_REC_ID,
 		PERIMETRO_EXP_SEG_ID,
 		CONTRATO_JUDICIALIZADO_ID,
-		PERIMETRO_SIN_GESTION_ID,
-		SIT_CART_DANADA_ID
+		PERIMETRO_SIN_GESTION_ID
+
        )
       select '''||fecha||''',
         '''||fecha||''',
@@ -356,8 +366,10 @@ BEGIN
 		0,
 		0,
 		0,
-		2,
-		-1
+		2
+
+
+
         from '||V_DATASTAGE||'.MOV_MOVIMIENTOS mov,
              '||V_DATASTAGE||'.CNT_CONTRATOS cnt
       where mov.CNT_ID = cnt.CNT_ID and mov.MOV_FECHA_EXTRACCION = '''||fecha||''' and mov.BORRADO = 0';
@@ -371,10 +383,20 @@ BEGIN
     end if;
 
     -- Crear indices TMP_H_CNT
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_CNT_IX'', ''TMP_H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_CNT_CNT_IX'', ''TMP_H_CNT (CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     commit;
@@ -409,10 +431,18 @@ BEGIN
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_CNT. Update 2', 4;
 
     -- Contrato enviado a agencia
+    /*Pedro S. tunning
     execute immediate 'select max(TRUNC(FECHA_HIST)) from ' || V_DATASTAGE || '.H_REC_FICHERO_CONTRATOS where TRUNC(FECHA_HIST) <= to_date(''' || fecha || ''')' into max_dia_enviado_agencia;
 
      execute immediate 'merge into TMP_H_CNT hc
-            using (select distinct SUBSTR(ID_ENVIO, 9, LENGTH(ID_ENVIO)) as CNT_ID from '||V_DATASTAGE||'.H_REC_FICHERO_CONTRATOS where to_char(TRUNC(FECHA_HIST), '''||formato_fecha||''') = '''||max_dia_enviado_agencia||''') crc
+            using (select distinct CNT_ID from '||V_DATASTAGE||'.H_REC_FICHERO_CONTRATOS where to_char(TRUNC(FECHA_HIST), '''||formato_fecha||''') = '''||max_dia_enviado_agencia||''') crc
+            on (crc.CNT_ID = hc.CONTRATO_ID)
+            when matched then update set hc.ENVIADO_AGENCIA_CNT_ID = 1 where hc.DIA_ID = '''||fecha||'''';
+    */
+    execute immediate 'merge into TMP_H_CNT hc
+            using (select distinct CNT_ID from '||V_DATASTAGE||'.H_REC_FICHERO_CONTRATOS A,
+            (select max(TRUNC(FECHA_HIST)) MAX_FECHA_HIST from ' || V_DATASTAGE || '.H_REC_FICHERO_CONTRATOS where TRUNC(FECHA_HIST) <= to_date(''' || fecha || ''')) B
+            where TRUNC(A.FECHA_HIST) = B.MAX_FECHA_HIST) crc
             on (crc.CNT_ID = hc.CONTRATO_ID)
             when matched then update set hc.ENVIADO_AGENCIA_CNT_ID = 1 where hc.DIA_ID = '''||fecha||'''';
      commit;
@@ -462,6 +492,7 @@ BEGIN
     commit;
 
 
+/*
     -- SIT_CART_DANADA_ID (Repasar cnt_id repetidos)
     execute immediate 'merge into TMP_H_CNT h
                        using (select CNT_ID, VEN_ARRASTRE 
@@ -479,7 +510,10 @@ BEGIN
                                                     when NUM_DIAS_VENCIDOS = 0 then 0
                                                     else -1 end) where SIT_CART_DANADA_ID is null and DIA_ID = fecha;
     commit;
+
        
+
+
     execute immediate 'merge into TMP_H_CNT h
                        using (select CNT_ID, exp.EXP_ID, NVL(DD_TPX_ID, -1) DD_TPX_ID
                               from '||V_HAYA01||'.EXP_EXPEDIENTES exp
@@ -489,7 +523,8 @@ BEGIN
                        when matched then update set h.TIPO_GESTION_EXP_ID = texp.DD_TPX_ID 
                        where h.DIA_ID = '''||fecha||'''';
     commit;     
-    
+    */
+
     update TMP_H_CNT set TRAMO_ANTIGUEDAD_DEUDA_ID = (case when NUM_DIAS_VENCIDOS <= 0 then 0
                                                            when NUM_DIAS_VENCIDOS > 0 and NUM_DIAS_VENCIDOS <= 30 then 1
                                                            when NUM_DIAS_VENCIDOS > 30 and NUM_DIAS_VENCIDOS <= 60 then 2
@@ -593,10 +628,13 @@ BEGIN
 
     -- Borrado indices TMP_CNT_EXPEDIENTE_IX
 	   
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CNT_EXPEDIENTE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
 		 
     commit;
+
 
 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CNT_EXPEDIENTE'', '''', :O_ERROR_STATUS); END;';
@@ -685,7 +723,12 @@ BEGIN
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_CNT_EXPEDIENTE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
     -- Crear indices TMP_CNT_EXPEDIENTE
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_CNT_EXPEDIENTE_IX'', ''TMP_CNT_EXPEDIENTE (CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     commit;
@@ -765,6 +808,7 @@ BEGIN
     commit;
     
     
+
     -- 6. Gestión Judicial: contrato que está en un asunto de tipo Litigio (es decir en cualquier tipo de procedimiento agrupado menos en concursal)
     merge into TMP_H_CNT h
     using (select distinct c.CONTRATO_ID
@@ -778,6 +822,7 @@ BEGIN
     
    
     
+
     -- 4. Gestión Extrajudicial (amistosa): Contratos que están enviados a agencias
     update TMP_H_CNT set PERIMETRO_GES_EXTRA_ID = 1 where AGENCIA_CONTRATO_ID is not null and AGENCIA_CONTRATO_ID <> -1 and DIA_ID = fecha;
     commit;
@@ -796,6 +841,7 @@ BEGIN
     commit;
     
     
+
     -- 2. Expediente Seguimiento: el contrato está en un expediente de tipo seguimiento
     execute immediate 'merge into TMP_H_CNT h 
     using (select distinct CNT_ID
@@ -807,6 +853,7 @@ BEGIN
     where h.DIA_ID = '''||fecha||'''';
     commit;
     
+
 
     -- 1. Sin gestión: contratos que no están siendo gestionados, por lo tanto no están en ninguno de los grupos siguiente.
     update TMP_H_CNT set PERIMETRO_SIN_GESTION_ID = 1 
@@ -820,6 +867,7 @@ BEGIN
     commit;
     
         
+
     update TMP_H_CNT set PERIMETRO_GESTION_ID = (case when PERIMETRO_GES_CONCU_ID = 1 then 7
                                                       when PERIMETRO_GES_JUDI_ID = 1 then 6
                                                       when PERIMETRO_GES_PRE_ID = 1 then 5
@@ -831,12 +879,15 @@ BEGIN
     commit;
 
        -- Borrado indices TMP_CNT_ACCIONES
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CNT_ACCIONES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
     commit;
 
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_CNT_ACCIONES. Termina Borrado de Indices', 4;
+
 
 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CNT_ACCIONES'', '''', :O_ERROR_STATUS); END;';
@@ -866,7 +917,12 @@ BEGIN
 
 
     -- Crear indices TMP_CNT_ACCIONES
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_CNT_ACCIONES_IX'', ''TMP_CNT_ACCIONES (CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     commit;
@@ -1015,8 +1071,8 @@ BEGIN
         PERIMETRO_GES_CONCU_ID,        
         MOTIVO_ALTA_DUDOSO_ID,
         MOTIVO_BAJA_DUDOSO_ID,
-        SIT_CART_DANADA_ID,
-        TIPO_GESTION_EXP_ID,
+        --SIT_CART_DANADA_ID,
+        --TIPO_GESTION_EXP_ID,
         EXPEDIENTE_ID,
         FECHA_CREACION_EXPEDIENTE,
         FECHA_ROTURA_EXPEDIENTE,
@@ -1165,8 +1221,8 @@ BEGIN
         PERIMETRO_GES_CONCU_ID,        
         -1,
         -1,
-        SIT_CART_DANADA_ID,
-        TIPO_GESTION_EXP_ID,
+        --SIT_CART_DANADA_ID,
+        --TIPO_GESTION_EXP_ID,
         EXPEDIENTE_ID,
         FECHA_CREACION_EXPEDIENTE,
         FECHA_ROTURA_EXPEDIENTE,
@@ -1251,6 +1307,13 @@ BEGIN
 
 
    
+
+
+
+
+
+
+
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT. Termina Fecha: '||TO_CHAR(fecha, 'dd/mm/yyyy'), 3;
 
@@ -1259,7 +1322,12 @@ BEGIN
 
   -- Crear indices H_CNT
  
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_IX'', ''H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1278,6 +1346,7 @@ BEGIN
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
  
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 	   
@@ -1319,6 +1388,8 @@ BEGIN
     select min(DIA_H) into min_dia_semana from TMP_FECHA where SEMANA_H = semana;
 
     -- Borrado indices H_CNT_SEMANA
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CNT_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
     commit;
@@ -1401,8 +1472,8 @@ BEGIN
         PERIMETRO_GES_CONCU_ID,  
         MOTIVO_ALTA_DUDOSO_ID,
         MOTIVO_BAJA_DUDOSO_ID,
-        SIT_CART_DANADA_ID,
-        TIPO_GESTION_EXP_ID,
+        --SIT_CART_DANADA_ID,
+        --TIPO_GESTION_EXP_ID,
         EXPEDIENTE_ID,
         FECHA_CREACION_EXPEDIENTE,
         FECHA_ROTURA_EXPEDIENTE,
@@ -1549,8 +1620,8 @@ BEGIN
         PERIMETRO_GES_CONCU_ID,  
         MOTIVO_ALTA_DUDOSO_ID,
         MOTIVO_BAJA_DUDOSO_ID,
-        SIT_CART_DANADA_ID,
-        TIPO_GESTION_EXP_ID,
+        --SIT_CART_DANADA_ID,
+        --TIPO_GESTION_EXP_ID,
         EXPEDIENTE_ID,
         FECHA_CREACION_EXPEDIENTE,
         FECHA_ROTURA_EXPEDIENTE,
@@ -1634,7 +1705,12 @@ BEGIN
 
 
     -- Crear indices H_CNT_SEMANA
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_SEMANA_IX'', ''H_CNT_SEMANA (SEMANA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     commit;
@@ -1665,6 +1741,7 @@ close c_semana;
 
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 	   
@@ -1700,6 +1777,8 @@ close c_semana;
       select min(DIA_H) into min_dia_mes from TMP_FECHA where MES_H = mes;
 
       -- Borrado indices H_CNT_MES
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CNT_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
       commit;
@@ -1781,8 +1860,8 @@ close c_semana;
           PERIMETRO_GES_CONCU_ID,  
           MOTIVO_ALTA_DUDOSO_ID,
           MOTIVO_BAJA_DUDOSO_ID,
-          SIT_CART_DANADA_ID,
-          TIPO_GESTION_EXP_ID,
+          --SIT_CART_DANADA_ID,
+          --TIPO_GESTION_EXP_ID,
           EXPEDIENTE_ID,
           FECHA_CREACION_EXPEDIENTE,
           FECHA_ROTURA_EXPEDIENTE,
@@ -1929,8 +2008,8 @@ close c_semana;
           PERIMETRO_GES_CONCU_ID,  
           MOTIVO_ALTA_DUDOSO_ID,
           MOTIVO_BAJA_DUDOSO_ID,
-          SIT_CART_DANADA_ID,
-          TIPO_GESTION_EXP_ID,
+          --SIT_CART_DANADA_ID,
+          --TIPO_GESTION_EXP_ID,
           EXPEDIENTE_ID,
           FECHA_CREACION_EXPEDIENTE,
           FECHA_ROTURA_EXPEDIENTE,
@@ -2013,7 +2092,12 @@ close c_semana;
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_MES. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
       -- Crear indices H_CNT_MES
+
+
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_MES_IX'', ''H_CNT_MES (MES_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
 
@@ -2041,6 +2125,7 @@ close c_semana;
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_TRIMESTRE. Empieza bucle', 3;
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 	   
@@ -2079,6 +2164,8 @@ close c_semana;
 
 
       -- Borrar indices H_CNT_TRIMESTRE
+
+
           V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CNT_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	   
 
@@ -2159,8 +2246,8 @@ close c_semana;
           PERIMETRO_GES_CONCU_ID,  
           MOTIVO_ALTA_DUDOSO_ID,
           MOTIVO_BAJA_DUDOSO_ID,
-          SIT_CART_DANADA_ID,
-          TIPO_GESTION_EXP_ID,
+          --SIT_CART_DANADA_ID,
+          --TIPO_GESTION_EXP_ID,
           EXPEDIENTE_ID,
           FECHA_CREACION_EXPEDIENTE,
           FECHA_ROTURA_EXPEDIENTE,
@@ -2307,8 +2394,8 @@ close c_semana;
           PERIMETRO_GES_CONCU_ID, 
           MOTIVO_ALTA_DUDOSO_ID,
           MOTIVO_BAJA_DUDOSO_ID,
-          SIT_CART_DANADA_ID,
-          TIPO_GESTION_EXP_ID,
+          --SIT_CART_DANADA_ID,
+          --TIPO_GESTION_EXP_ID,
           EXPEDIENTE_ID,
           FECHA_CREACION_EXPEDIENTE,
           FECHA_ROTURA_EXPEDIENTE,
@@ -2391,7 +2478,12 @@ close c_semana;
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_TRIMESTRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
       -- Crear indices H_CNT_TRIMESTRE
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_TRIMESTRE_IX'', ''H_CNT_TRIMESTRE (TRIMESTRE_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
       commit;
@@ -2420,6 +2512,7 @@ close c_semana;
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_ANIO. Empieza bucle', 3;
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 	   
@@ -2456,6 +2549,8 @@ close c_semana;
       select min(DIA_H) into min_dia_anio from TMP_FECHA where ANIO_H = anio;
 
       -- Crear indices H_CNT_ANIO
+
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CNT_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
@@ -2537,8 +2632,8 @@ close c_semana;
           PERIMETRO_GES_CONCU_ID,  
           MOTIVO_ALTA_DUDOSO_ID,
           MOTIVO_BAJA_DUDOSO_ID,
-          SIT_CART_DANADA_ID,
-          TIPO_GESTION_EXP_ID,
+          --SIT_CART_DANADA_ID,
+          --TIPO_GESTION_EXP_ID,
           EXPEDIENTE_ID,
           FECHA_CREACION_EXPEDIENTE,
           FECHA_ROTURA_EXPEDIENTE,
@@ -2685,8 +2780,8 @@ close c_semana;
           PERIMETRO_GES_CONCU_ID,  
           MOTIVO_ALTA_DUDOSO_ID,
           MOTIVO_BAJA_DUDOSO_ID,
-          SIT_CART_DANADA_ID,
-          TIPO_GESTION_EXP_ID,
+          --SIT_CART_DANADA_ID,
+          --TIPO_GESTION_EXP_ID,
           EXPEDIENTE_ID,
           FECHA_CREACION_EXPEDIENTE,
           FECHA_ROTURA_EXPEDIENTE,
@@ -2769,7 +2864,12 @@ close c_semana;
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_ANIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
       -- Crear indices H_CNT_ANIO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_ANIO_IX'', ''H_CNT_ANIO (ANIO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
 

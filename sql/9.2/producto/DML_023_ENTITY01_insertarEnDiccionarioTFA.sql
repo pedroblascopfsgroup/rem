@@ -43,6 +43,7 @@ DECLARE
       T_TIPO('ESSU', 'Escrito de solicitud de la subasta','AP')
      ,T_TIPO('DCSU', 'Decreto de convocatoria de subasta','AP')
      ,T_TIPO('DO', 'Diligencia de ordenación','AP')
+     ,T_TIPO('EDSU', 'Edicto de subasta','AP')
      ,T_TIPO('ESUSU', 'Edicto subsanado de subasta','AP')
      ,T_TIPO('PTSU', 'Pago tasa subasta','AP')
      ,T_TIPO('PPSBOE', 'Pantallazo de publicación de la subasta en BOE.ES','AP')

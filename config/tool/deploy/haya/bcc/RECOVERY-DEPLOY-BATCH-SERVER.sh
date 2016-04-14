@@ -26,6 +26,7 @@ cp -r batch/* $BASE_DIR/batch/
 chmod -R a+rwx $BASE_DIR/batch/*
 cd $LOCAL_PATH
 rm -f $BASE_DIR/bcc/shells/*.sh
+cp config/$1/setBatchEnv.sh $BASE_DIR/bcc/shells/
 cp scripts/shells/* $BASE_DIR/bcc/shells/
 sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/unzip-messages-to-queue.sh
 sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/zip-messages-from-queue.sh

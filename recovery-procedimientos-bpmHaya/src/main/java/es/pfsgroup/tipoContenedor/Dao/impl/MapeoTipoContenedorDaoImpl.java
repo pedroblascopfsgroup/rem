@@ -24,4 +24,19 @@ public class MapeoTipoContenedorDaoImpl extends AbstractEntityDao<MapeoTipoConte
 		
 		return mapeo;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean existeMapeoByFicheroAdjunto(String codTFA) {
+		StringBuffer hql = new StringBuffer("Select mtc from MapeoTipoContenedor mtc");
+		hql.append(" where mtc.tipoFichero.codigo = '");
+		hql.append(codTFA);
+		hql.append("' and mtc.auditoria.borrado = false");
+		
+		if(getHibernateTemplate().find(hql.toString()).size() > 0) {
+			return true;
+		}
+		
+		return false;
+	}
 }

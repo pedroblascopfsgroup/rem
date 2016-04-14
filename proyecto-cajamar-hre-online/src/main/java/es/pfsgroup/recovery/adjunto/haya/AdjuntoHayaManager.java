@@ -240,14 +240,20 @@ public class AdjuntoHayaManager {
 
 	public String upload(WebFileItem uploadForm) {
 		String retorno = null;
-		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){			
-			Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
-			if (!Checks.esNulo(uploadForm.getParameter("prcId"))){
-				retorno = uploadProcedimiento(uploadForm, idAsunto);
-			}else{
-				retorno = uploadAsunto(uploadForm, idAsunto);
-			}
+		if(mapeoTipoContenedorDao.existeMapeoByFicheroAdjunto(uploadForm.getParameter("comboTipoFichero"))) {
+			if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){			
+				Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
+				if (!Checks.esNulo(uploadForm.getParameter("prcId"))){
+					retorno = uploadProcedimiento(uploadForm, idAsunto);
+				}else{
+					retorno = uploadAsunto(uploadForm, idAsunto);
+				}
+			}		
 		}
+		else {
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO;
+		}
+		
 		return retorno;
 	}
 	
@@ -274,9 +280,28 @@ public class AdjuntoHayaManager {
 	
 	private String uploadProcedimiento(WebFileItem uploadForm, Long idAsunto) {
 		Long idProcedimiento = Long.parseLong(uploadForm.getParameter("prcId"));
+		boolean contenedorEncontrado = false;
+		List<String> listaContenedores = null;
+		listaContenedores = getContenedoresByAsunto(idAsunto);	
+		listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);	
+		
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
 		String claseExp = getClaseExpedienteByProcedimientoPadre(prc);
-		uploadGestorDoc(idAsunto, claseExp, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
+		
+		//Se va a comprobar la claseExp encontrada por el prc (o por los padres del prc), con los contenedores existentes en el asunto, y debe haber uno que coincida.
+		for(String claseExpExistente : listaContenedores) {
+			if(!Checks.esNulo(claseExpExistente) && claseExpExistente.equals(claseExp) ){
+				RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExp, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
+				if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getIdDocumento())) {
+					contenedorEncontrado = true;
+					break;
+				}
+			}
+		}
+		
+		if(!contenedorEncontrado) {
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+		}
 		return null;
 	}
 	
@@ -475,7 +500,7 @@ public class AdjuntoHayaManager {
 				Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(Long.parseLong(uploadForm.getParameter("id")));
 				adjuntoAsunto.setAsunto(asunto);
 			} else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad)) {
-				Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(Long.parseLong(uploadForm.getParameter("id")));
+				Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(Long.parseLong(uploadForm.getParameter("prcId")));
 				adjuntoAsunto.setAsunto(prc.getAsunto());
 				adjuntoAsunto.setProcedimiento(prc);
 			}

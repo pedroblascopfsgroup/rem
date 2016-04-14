@@ -267,7 +267,7 @@
 	</state>
 
 	<decision name="P458_RegistrarResultadoDeLaSubastaDecision" expression="#{P458_RegistrarResultadoDeLaSubastaDecision}">
-		<transition to="Decision" name="suspension"></transition>
+		<transition to="Decision1" name="suspension"></transition>
 		<transition to="P458_SolicitarAdjudicacionSegunInstruccionesEntidad" name="no"></transition>		
 		<transition to="P458_BPMTramiteAdjudicacion" name="siSinRemate"></transition>
 		<transition to="P458_BPMTramiteCesionDeRemate" name="siConRemate"></transition>
@@ -626,7 +626,7 @@
 
 	<decision name="P458_PendienteConfirmacionPagoDeTasaDecision" expression="#{P458_PendienteConfirmacionPagoDeTasaDecision}">
 		<transition to="P458_DictarInstruccionesDeSubastaYPagoDeTasa" name="si"></transition>
-		<transition to="Decision" name="no"></transition>
+		<transition to="Decision2" name="no"></transition>
 	</decision>
 
 	<state name="P458_DictarInstruccionesDeSubastaYPagoDeTasa">
@@ -650,7 +650,14 @@
 		<transition to="Fin" name="avanzaBPM"></transition>
 	</state>
 
-	<node name="Decision">
+	<node name="Decision1">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+    	</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<node name="Decision2">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
     	</action>

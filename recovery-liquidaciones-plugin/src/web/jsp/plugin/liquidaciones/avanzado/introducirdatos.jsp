@@ -325,7 +325,9 @@
 	tipoDemoraCierre.labelStyle=labelStyle;
 
 	var panelEdicion = new Ext.FormPanel({
-		autoHeight : true
+		//autoHeight : true
+		height: 500
+		,autoScroll : true
 		,autoWidth : true
 		,standardSubmit: true
 		,url: 'liquidaciones/openReport'

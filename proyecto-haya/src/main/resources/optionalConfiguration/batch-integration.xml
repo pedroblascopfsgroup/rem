@@ -186,7 +186,7 @@
 						<list>
 							<bean class="es.pfsgroup.recovery.integration.bpm.TareaExternaPayloadRegexRule">
 								<property name="tipo" value="BPM-FIN"/>
-								<property name="codigoProcedimiento" value="HCJ001|HCJ002|HCJ003"/> <!--  IVA/IGIC -->
+								<property name="codigoProcedimiento" value="HCJ001|HCJ002|HCJ003|P459"/> <!--  IVA/IGIC -->
 							</bean>
 						</list>
 					</constructor-arg>

@@ -26,12 +26,15 @@ do
     ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
 
     echo "$ficheroSem"
-    ./ftp/ftp_get_aux_files.sh $1 $fichero
+    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
+        ./ftp/ftp_get_aux_files.sh $1 $fichero
+    fi
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
-	   sleep 10
-	   hora_actual=`date +%Y%m%d%H%M%S`
-	   ./ftp/ftp_get_aux_files.sh $1 $fichero
-	   #echo "$hora_actual"
+	    sleep 10
+	    hora_actual=`date +%Y%m%d%H%M%S`
+        if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
+	        ./ftp/ftp_get_aux_files.sh $1 $fichero
+        fi
 	done
 done
 

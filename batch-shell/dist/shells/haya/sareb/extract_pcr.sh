@@ -1,7 +1,6 @@
 #!/bin/bash
 # Generado manualmente por PBO
  
-ENTIDAD=5074
 MAX_WAITING_MINUTES=720
 ficheros=PCR
 

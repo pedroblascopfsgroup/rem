@@ -2,7 +2,6 @@
 # Generado automaticamente a las mié jul 23 13:32:52 CEST 2014
  
 LAUNCH_JOB=ejecutarProcesoControlSimulacion
-ENTIDAD=2038
 WAIT_FOR_JOBS=procesoControlSimulacionRecobroJob,procesoPreparacionSimulacionRecobroJob,procesoMarcadoExpedientesJob,procesoLimpiezaExpedientesJob,procesoRevisionExpedientesActivosJob,procesoRearquetipacionExpedientesJob,procesoArquetipadoSimulacionJob,procesoGeneracionExpedientesJob,procesoRepartoJob,procesoGeneracionPersistenciaInformeSimulacionRecobroJob
 
 JMX_ADMIN=jmx_admin

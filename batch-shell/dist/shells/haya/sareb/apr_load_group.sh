@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=5074
+
 CARPETA=gcl
 DIR_DESTINO=/$DEVON_HOME/tmp/pfs/$ENTIDAD/$CARPETA/
 MAX_WAITING_MINUTES=600

@@ -1,7 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
- 
-ENTIDAD=2038
+
 MAX_WAITING_MINUTES=720
 ficheros=RECEP_BUROFAX_????????.txt
 
@@ -21,6 +20,7 @@ hora_actual=`date +%Y%m%d%H%M%S`
 filename=$(basename $0)
 nameETL="${filename%.*}"
 
+NOM_ETL=_ENTREGA
 export DIR_ETL=$DIR_BASE_ETL/$nameETL
 export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
@@ -36,6 +36,8 @@ fi
 cd $DIR_ETL
 
 if [ -f $MAINSH ]; then
+	mv $ENVIO_DOCALIA/*$NOM_ETL.txt $DIR_DESTINO
+	
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"

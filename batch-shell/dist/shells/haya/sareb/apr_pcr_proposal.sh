@@ -1,7 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
-ENTIDAD=2038
 CARPETA=pcr
 DIR_DESTINO=/$DEVON_HOME/tmp/pfs/$ENTIDAD/$CARPETA/
 MAX_WAITING_MINUTES=10

@@ -40,6 +40,7 @@ import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -74,6 +75,7 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
 import es.pfsgroup.tipoContenedor.MapeoTipoContenedor;
+import es.pfsgroup.tipoContenedor.Dao.MapeoTipoContenedorDao;
 
 @Component
 public class AdjuntoHayaManager {
@@ -119,6 +121,9 @@ public class AdjuntoHayaManager {
 	
 	@Autowired
 	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
+	
+	@Autowired
+	private MapeoTipoContenedorDao mapeoTipoContenedorDao;
 	
     @Resource
     Properties appProperties;
@@ -222,7 +227,7 @@ public class AdjuntoHayaManager {
 				boolean contenedorEncontrado = false;
 				listaContenedores = getContenedoresByAsunto(idAsunto);
 				//Contenedores adecuados segun el combo elegido - ELIMINADO ESTE FILTRO DE CRUCE
-				//listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);				
+				listaContenedores = contenedoresAdecuadosYOrdenados(uploadForm, listaContenedores);				
 				for(String claseExpe : listaContenedores) {
 					if(!Checks.esNulo(claseExpe)) {
 						RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExpe, uploadForm);
@@ -258,7 +263,9 @@ public class AdjuntoHayaManager {
 	
 	private String obtenerMatricula(String tipoExp, String claseExp, String tipoFichero){
 		StringBuilder sb = new StringBuilder();
-		MapeoTipoContenedor mapeo = genericDao.get(MapeoTipoContenedor.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoFichero));
+		//MapeoTipoContenedor mapeo = genericDao.getList(MapeoTipoContenedor.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoFichero)).get(0);
+		//Recogemos el mapeo filtrado por el TFA y el codigo TDN2
+		MapeoTipoContenedor mapeo = mapeoTipoContenedorDao.getMapeoByTfaAndTdn2(tipoExp, claseExp, tipoFichero);
 		if(!Checks.esNulo(mapeo)){
 			sb.append(tipoExp);
 			sb.append("-");
@@ -281,6 +288,34 @@ public class AdjuntoHayaManager {
 		}
 		return claseExp;
 	}
+	
+	/**
+	 * Se filtran los contenedores por el Tipo de Documento a subir, con los contenedores creados del Asunto.
+	 * Si devuelve varios, estarán ordenados por fechacreacion descendente.
+	 * @param uploadForm
+	 * @param listaContenedores
+	 * @return
+	*/
+	private List<String> contenedoresAdecuadosYOrdenados(WebFileItem uploadForm, List<String> listaContenedores) {
+		String codTFA = uploadForm.getParameters().get("comboTipoFichero");
+		DDTipoFicheroAdjunto tipoFichero = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codTFA));
+		List<TipoProcedimiento> listTipoPrc = genericDao.getList(TipoProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "tipoActuacion", tipoFichero.getTipoActuacion()));
+		List<String> listContenedoresPorTipoPrc = new ArrayList<String>();
+		for(TipoProcedimiento tipoPrc : listTipoPrc) {
+			String codMapeado = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(tipoPrc.getCodigo());
+			if(!Checks.esNulo(codMapeado) && !listContenedoresPorTipoPrc.contains(codMapeado)) {
+				listContenedoresPorTipoPrc.add(codMapeado);
+			}
+		}
+		for(String tipoContenedor : listaContenedores) {
+			if(!listContenedoresPorTipoPrc.contains(tipoContenedor)) {
+				listaContenedores.set(listaContenedores.indexOf(tipoContenedor),null);
+			}
+		}
+		
+		return listaContenedores;
+	} 
+	
 
 	public String uploadPersona(WebFileItem uploadForm) {
 		return null;

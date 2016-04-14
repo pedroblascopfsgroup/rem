@@ -9,6 +9,8 @@
 	
 	var labelStyle = 'font-weight:bolder;width:100px';
 	
+	var resumen = ${objetivo.resumen};
+	
 	var resumenObjetivo = new Ext.form.TextArea({
 		fieldLabel: '<s:message code="objetivo.propuestaCumplimiento.resumenObjetivo" text="**Resumen del objetivo" />'
 		,value:'${objetivo.resumen}'

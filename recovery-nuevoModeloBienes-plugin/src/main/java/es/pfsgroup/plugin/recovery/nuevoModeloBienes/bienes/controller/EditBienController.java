@@ -1530,6 +1530,13 @@ public class EditBienController {
 			adjudicacion.setCesionRemate(null);
 		}
 
+		if (!Checks.esNulo(request.getParameter("postores"))) {
+			adjudicacion.setPostores(Boolean.parseBoolean(request
+					.getParameter("postores")));
+		} else {
+			adjudicacion.setPostores(null);
+		}
+
 		// selector persona
 		if (!Checks.esNulo(request.getParameter("gestoriaAdjudicataria"))) {
 			Usuario gestor = proxyFactory.proxy(UsuarioApi.class).get(

@@ -283,7 +283,7 @@ echo "[OK] ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh ejecutado corr
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh"                               
-./"$sh_dir"CMREC-2102_Corrige_estados_subastas.sh "$1"   
+./"$sh_dir"CJM_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh "$1"   
 if [ $? != 0 ] ; then 
   echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh"
   echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          

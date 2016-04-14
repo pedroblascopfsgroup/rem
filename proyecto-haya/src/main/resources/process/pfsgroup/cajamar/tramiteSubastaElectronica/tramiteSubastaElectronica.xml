@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2"
 	name="tramiteSubastaElectronica">
 
 	<start-state name="inicio">
-		<transition to="P458_SolicitudDeSubasta"></transition>
+		<transition to="P458_SolicitudSubasta"></transition>
 	</start-state>
 
-	<state name="P458_SolicitudDeSubasta">
+	<state name="P458_SolicitudSubasta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -25,10 +24,10 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_DecretoConvocatoriaDeSubasta" name="avanzaBPM"></transition>
+		<transition to="P458_DecretoConvocatoriaSubasta" name="avanzaBPM"></transition>
 	</state>
 
-	<state name="P458_DecretoConvocatoriaDeSubasta">
+	<state name="P458_DecretoConvocatoriaSubasta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -47,15 +46,15 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="forkEntregaYRevisa" name="avanzaBPM"></transition>
-		<transition to="P458_SolicitudDeSubasta" name="vueltaAtras"></transition>
+		<transition to="P458_SolicitudSubasta" name="vueltaAtras"></transition>
 	</state>
 
 	<fork name="forkEntregaYRevisa">
-		<transition to="P458_EntregaYRecepcionEdictoEImpresoTasa" name="entregaYRecepcionEdictoEImpresoTasa"></transition>
+		<transition to="P458_EntregaRecepcionEdictoImpresoTasa" name="entregaRecepcionEdictoImpresoTasa"></transition>
 		<transition to="P458_RevisarDocumentacion" name="revisarDocumentacion"></transition>
 	</fork>
 	
-	<state name="P458_EntregaYRecepcionEdictoEImpresoTasa">
+	<state name="P458_EntregaRecepcionEdictoImpresoTasa">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -73,16 +72,16 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_EntregaYRecepcionEdictoEImpresoTasaDecision" name="avanzaBPM"></transition>
+		<transition to="P458_EntregaRecepcionEdictoImpresoTasaDecision" name="avanzaBPM"></transition>
 	</state>
 
-	<decision name="P458_EntregaYRecepcionEdictoEImpresoTasaDecision" expression="#{P458_EntregaYRecepcionEdictoEImpresoTasaDecision}">
-		<transition to="P458_ConfirmarLecturaInstruccionesDeSubastaYPagoDeTasa" name="no"></transition>
-		<transition to="P458_ConfirmarLecturaInstruccionesDeSubastaYPagoDeTasa" name="siYCorrecto"></transition>
-		<transition to="P458_PedirCorreccionDelEdicto" name="siYIncorrecto"></transition>
+	<decision name="P458_EntregaRecepcionEdictoImpresoTasaDecision" expression="#{P458_EntregaRecepcionEdictoImpresoTasaDecision}">
+		<transition to="P458_ConfirmarLecturaInstruccionesSubastaPagoTasa" name="no"></transition>
+		<transition to="P458_ConfirmarLecturaInstruccionesSubastaPagoTasa" name="siYCorrecto"></transition>
+		<transition to="P458_PedirCorreccionEdicto" name="siYIncorrecto"></transition>
 	</decision>
 
-	<state name="P458_PedirCorreccionDelEdicto">
+	<state name="P458_PedirCorreccionEdicto">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -100,11 +99,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_ConfirmarCorreccionDelEdicto" name="avanzaBPM"></transition>
-		<transition to="P458_EntregaYRecepcionEdictoEImpresoTasa" name="vueltaAtras"></transition>
+		<transition to="P458_ConfirmarCorreccionEdicto" name="avanzaBPM"></transition>
+		<transition to="P458_EntregaRecepcionEdictoImpresoTasa" name="vueltaAtras"></transition>
 	</state>
 
-	<state name="P458_ConfirmarCorreccionDelEdicto">
+	<state name="P458_ConfirmarCorreccionEdicto">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -122,11 +121,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_EntregaYRecepcionEdictoEImpresoTasa" name="avanzaBPM"></transition>
-		<transition to="P458_PedirCorreccionDelEdicto" name="vueltaAtras"></transition>
+		<transition to="P458_EntregaRecepcionEdictoImpresoTasa" name="avanzaBPM"></transition>
+		<transition to="P458_PedirCorreccionEdicto" name="vueltaAtras"></transition>
 	</state>
 
-	<state name="P458_ConfirmarLecturaInstruccionesDeSubastaYPagoDeTasa">
+	<state name="P458_ConfirmarLecturaInstruccionesSubastaPagoTasa">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -144,11 +143,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarElPagoDeLaTasaParaPublicacionBOE" name="avanzaBPM"></transition>
-		<transition to="P458_EntregaYRecepcionEdictoEImpresoTasa" name="vueltaAtras"></transition>
+		<transition to="P458_RegistrarPagoTasaPublicacionBOE" name="avanzaBPM"></transition>
+		<transition to="P458_EntregaRecepcionEdictoImpresoTasa" name="vueltaAtras"></transition>
 	</state>
 
-	<state name="P458_RegistrarElPagoDeLaTasaParaPublicacionBOE">
+	<state name="P458_RegistrarPagoTasaPublicacionBOE">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -166,10 +165,10 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarPublicacionDeSubastaEnElBOE" name="avanzaBPM"></transition>
+		<transition to="P458_RegistrarPublicacionSubastaBOE" name="avanzaBPM"></transition>
 	</state>
 
-	<state name="P458_RegistrarPublicacionDeSubastaEnElBOE">
+	<state name="P458_RegistrarPublicacionSubastaBOE">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -187,15 +186,15 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarPublicacionDeSubastaEnElBOEDecision" name="avanzaBPM"></transition>
+		<transition to="P458_RegistrarPublicacionSubastaBOEDecision" name="avanzaBPM"></transition>
 	</state>
 
-	<decision name="P458_RegistrarPublicacionDeSubastaEnElBOEDecision" expression="#{P458_RegistrarPublicacionDeSubastaEnElBOEDecision}">
+	<decision name="P458_RegistrarPublicacionSubastaBOEDecision" expression="#{P458_RegistrarPublicacionSubastaBOEDecision}">
 		<transition to="P458_RegistrarResultadoDeLaSubasta" name="no"></transition>
-		<transition to="P458_PedirCorreccionDelEdictoPublicacionBOE" name="si"></transition>
+		<transition to="P458_PedirCorreccionEdictoPublicacionBOE" name="si"></transition>
 	</decision>
 
-	<state name="P458_PedirCorreccionDelEdictoPublicacionBOE">
+	<state name="P458_PedirCorreccionEdictoPublicacionBOE">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -213,11 +212,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_ConfirmarCorrecccionDelEdictoPublicacionBOE" name="avanzaBPM"></transition>
-		<transition to="P458_RegistrarPublicacionDeSubastaEnElBOE" name="vueltaAtras"></transition>
+		<transition to="P458_ConfirmarCorrecccionEdictoPublicacionBOE" name="avanzaBPM"></transition>
+		<transition to="P458_RegistrarPublicacionSubastaBOE" name="vueltaAtras"></transition>
 	</state>
 
-	<state name="P458_ConfirmarCorrecccionDelEdictoPublicacionBOE">
+	<state name="P458_ConfirmarCorrecccionEdictoPublicacionBOE">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -235,16 +234,16 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_ConfirmarCorrecccionDelEdictoPublicacionBOEDecision" name="avanzaBPM"></transition>
-		<transition to="P458_PedirCorreccionDelEdictoPublicacionBOE" name="vueltaAtras"></transition>
+		<transition to="P458_ConfirmarCorrecccionEdictoPublicacionBOEDecision" name="avanzaBPM"></transition>
+		<transition to="P458_PedirCorreccionEdictoPublicacionBOE" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="P458_ConfirmarCorrecccionDelEdictoPublicacionBOEDecision" expression="#{P458_ConfirmarCorrecccionDelEdictoPublicacionBOEDecision}">
-		<transition to="P458_RegistrarElPagoDeLaTasaParaPublicacionBOE" name="si"></transition>		
-		<transition to="P458_RegistrarPublicacionDeSubastaEnElBOE" name="no"></transition>	
+	<decision name="P458_ConfirmarCorrecccionEdictoPublicacionBOEDecision" expression="#{P458_ConfirmarCorrecccionEdictoPublicacionBOEDecision}">
+		<transition to="P458_RegistrarPagoTasaPublicacionBOE" name="si"></transition>		
+		<transition to="P458_RegistrarPublicacionSubastaBOE" name="no"></transition>	
 	</decision>
 	
-	<state name="P458_RegistrarResultadoDeLaSubasta">
+	<state name="P458_RegistrarResultadoSubasta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -262,11 +261,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarResultadoDeLaSubastaDecision" name="avanzaBPM"></transition>
-		<transition to="P458_RegistrarPublicacionDeSubastaEnElBOE" name="vueltaAtras"></transition>
+		<transition to="P458_RegistrarResultadoSubastaDecision" name="avanzaBPM"></transition>
+		<transition to="P458_RegistrarPublicacionSubastaBOE" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="P458_RegistrarResultadoDeLaSubastaDecision" expression="#{P458_RegistrarResultadoDeLaSubastaDecision}">
+	<decision name="P458_RegistrarResultadoSubastaDecision" expression="#{P458_RegistrarResultadoSubastaDecision}">
 		<transition to="Decision1" name="suspension"></transition>
 		<transition to="P458_SolicitarAdjudicacionSegunInstruccionesEntidad" name="no"></transition>		
 		<transition to="P458_BPMTramiteAdjudicacion" name="siSinRemate"></transition>
@@ -293,7 +292,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P458_RegistrarResultadoPresentacionEscritoAlJuzgado" name="avanzaBPM"></transition>
-		<transition to="P458_RegistrarResultadoDeLaSubasta" name="vueltaAtras"></transition>
+		<transition to="P458_RegistrarResultadoSubasta" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="P458_RegistrarResultadoPresentacionEscritoAlJuzgado">
@@ -417,7 +416,7 @@
 		<transition to="A" name="A"></transition>
 		<transition to="B" name="B"></transition>
 		<transition to="C" name="C"></transition>
-		<transition to="P458_PrepararInformeDeSubasta" name="prepararInformeDeSubasta"></transition>
+		<transition to="P458_PrepararInformeSubasta" name="prepararInformeSubasta"></transition>
 	</fork>
 
 	<decision name="A" expression="#{DecisionRama_1}">
@@ -525,7 +524,7 @@
 		<transition to="P458_SolicitarInformeFiscal" name="vueltaAtras"></transition>
 	</state>
 
-	<state name="P458_PrepararInformeDeSubasta">
+	<state name="P458_PrepararInformeSubasta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -543,10 +542,10 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_ValidarInformeDeSubasta" name="avanzaBPM"></transition>
+		<transition to="P458_ValidarInformeSubasta" name="avanzaBPM"></transition>
 	</state>
 
-	<state name="P458_ValidarInformeDeSubasta">
+	<state name="P458_ValidarInformeSubasta">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -564,13 +563,13 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_ValidarInformeDeSubastaDecision" name="avanzaBPM"></transition>
-		<transition to="P458_PrepararInformeDeSubasta" name="vueltaAtras"></transition>
+		<transition to="P458_ValidarInformeSubastaDecision" name="avanzaBPM"></transition>
+		<transition to="P458_PrepararInformeSubasta" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="P458_ValidarInformeDeSubastaDecision" expression="#{P458_ValidarInformeDeSubastaDecision}">
-		<transition to="P458_PrepararInformeDeSubasta" name="rechazado"></transition>
-		<transition to="P458_DictarInstruccionesDeSubastaYPagoDeTasa" name="aceptadoConAtribuciones"></transition>
+	<decision name="P458_ValidarInformeSubastaDecision" expression="#{P458_ValidarInformeSubastaDecision}">
+		<transition to="P458_PrepararInformeSubasta" name="rechazado"></transition>
+		<transition to="P458_DictarInstruccionesSubastaYPagoTasa" name="aceptadoConAtribuciones"></transition>
 		<transition to="P458_ObtenerValidacionComite" name="aceptadoSinAtribuciones"></transition>
 	</decision>
 	
@@ -593,13 +592,13 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P458_ObtenerValidacionComiteDecision" name="avanzaBPM"></transition>
-		<transition to="P458_ValidarInformeDeSubasta" name="vueltaAtras"></transition>
+		<transition to="P458_ValidarInformeSubasta" name="vueltaAtras"></transition>
 	</state>
 		
 	<decision name="P458_ObtenerValidacionComiteDecision" expression="#{P458_ObtenerValidacionComiteDecision}">
-		<transition to="P458_PrepararInformeDeSubasta" name="rechazado"></transition>
+		<transition to="P458_PrepararInformeSubasta" name="rechazado"></transition>
 		<transition to="P458_PendienteConfirmacionPagoDeTasa" name="noPagarTasa"></transition>
-		<transition to="P458_DictarInstruccionesDeSubastaYPagoDeTasa" name="siPagarTasa"></transition>
+		<transition to="P458_DictarInstruccionesSubastaYPagoTasa" name="siPagarTasa"></transition>
 	</decision>
 
 	<state name="P458_PendienteConfirmacionPagoDeTasa">
@@ -620,16 +619,16 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_PendienteConfirmacionPagoDeTasaDecision" name="avanzaBPM"></transition>
+		<transition to="P458_PendienteConfirmacionPagoTasaDecision" name="avanzaBPM"></transition>
 		<transition to="P458_ObtenerValidacionComite" name="vueltaAtras"></transition>
 	</state>
 
-	<decision name="P458_PendienteConfirmacionPagoDeTasaDecision" expression="#{P458_PendienteConfirmacionPagoDeTasaDecision}">
-		<transition to="P458_DictarInstruccionesDeSubastaYPagoDeTasa" name="si"></transition>
+	<decision name="P458_PendienteConfirmacionPagoTasaDecision" expression="#{P458_PendienteConfirmacionPagoTasaDecision}">
+		<transition to="P458_DictarInstruccionesSubastaYPagoTasa" name="si"></transition>
 		<transition to="Decision2" name="no"></transition>
 	</decision>
 
-	<state name="P458_DictarInstruccionesDeSubastaYPagoDeTasa">
+	<state name="P458_DictarInstruccionesSubastaYPagoTasa">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -642,7 +641,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericLeaveActionHandler
+				<targetBean>tramiteSubElectronicaLeaveActionHandler
 				</targetBean>
 			</action>
 		</event>

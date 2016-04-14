@@ -115,7 +115,11 @@ public class ObjetivoManager {
             if (compruebaValidezObjetivo(objetivo)) {
                 objetivoDao.save(objetivo);
             } else {
-                throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");
+            	if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida.gestion.deuda");
+            	}else{
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");	
+            	}
             }
 
             PlazoTareasDefault plazoPropuesta = (PlazoTareasDefault) executor.execute(
@@ -135,7 +139,11 @@ public class ObjetivoManager {
             if (compruebaValidezObjetivo(objetivo)) {
                 objetivoDao.saveOrUpdate(objetivo);
             } else {
-                throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");
+            	if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida.gestion.deuda");
+            	}else{
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");	
+            	}
             }
 
             // Si es un alta de objetivo Y LA POLITICA ES VIGENTE creamos la tarea de propuesta
@@ -208,8 +216,8 @@ public class ObjetivoManager {
                     String tendencia = ((DDTendencia) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTendencia.class,
                             DDTendencia.TEN_DESCENDENTE)).getDescripcion();
                     
-                    if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente())){
-                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido.restrictiva.sareb");
+                    if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido.restrictiva.gesdeu");
                     }else{
                     	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido", tendencia, tipoOperadorMenor
                                 .getDescripcion());	
@@ -227,8 +235,8 @@ public class ObjetivoManager {
                     String tendencia = ((DDTendencia) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTendencia.class,
                             DDTendencia.TEN_ASCENDENTE)).getDescripcion();
                     
-                    if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente())){
-                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido.norestrictiva.sareb");
+                    if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido.norestrictiva.gesdeu");
                     }else{
 	                    throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido", tendencia, tipoOperadorMayor
 	                            .getDescripcion());

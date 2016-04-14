@@ -2079,9 +2079,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS, exp.getProcessBpm());
         }
         
-        //Si el expediente es de itinerario Seguimiento
-        if (exp.getTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO) 
-        			|| exp.getTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO)) {
+        //Si el expediente es de itinerario Seguimiento o Gestión de deuda
+        if (exp.getCodigoTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO) 
+        			|| exp.getCodigoTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO)
+        			|| exp.getCodigoTipoItinerario().equals(DDTipoItinerario.ITINERARIO_GESTION_DEUDA)) {
 	        //Cancelamos sus políticas
 	        List<CicloMarcadoPolitica> ciclos = cicloMarcadoPoliticaDao.getCiclosMarcadoExpediente(exp.getId());
 	        for (CicloMarcadoPolitica ciclo : ciclos) {

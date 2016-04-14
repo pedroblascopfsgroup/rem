@@ -340,7 +340,6 @@
 		buttonBar.push(btnMarcarGarantia);
 	</sec:authorize>
 	
-	debugger;
 	var embargoProcedimientoGrid = app.crearGrid(embargoProcedimientoStore,embargoProcedimientoCm,{
 		title:'<s:message code="procedimiento.embargos.grid" text="**Marcado Bienes" />'
 		,height : 400

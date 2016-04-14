@@ -11,7 +11,7 @@ array['dos']=2;
 array['tres']=3;
 var tipo_wf='${tipoWf}'
 
-<%@ include file="/WEB-INF/jsp/plugin/procedimientos-bpmHaya-plugin/elementos.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/cajamar/elementos.jsp" %>
 
 var items=[];
 var muestraBotonGuardar = 0;

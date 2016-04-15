@@ -119,25 +119,58 @@ public class AdjuntoHayaManager {
 	
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
     	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+    	boolean contenedorCreado = false;
    		for(Procedimiento prc : asun.getProcedimientos()) {
-			crearPropuesta(prc);
+   			/*si mínimo un contenedor es creado, se hace este if para luego esperar 1 min o no a que termine el refresco del grid, ya que, al crear un contenedor en el WS de Haya, 
+   			* tarda aprox. 1 min en estar activo para poder empezar a adjuntar archivos
+   			*/
+   			if(!contenedorCreado) {
+   			contenedorCreado = crearPropuesta(prc);
+   			}
+   			else {
+   				crearPropuesta(prc);
+   			}
 		}
         
    		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
-			for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
-				adjuntosAsunto.addAll(documentosExpediente(id, null, claseExpediente));
-			}
+		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
+			adjuntosAsunto = documentosExpediente(id, null, claseExpediente);
+		}
+		
+		esperarUnMinutoPorContenedorNuevo(contenedorCreado);
+			
 		return adjuntosAsunto;
 	}
 	
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
-		crearPropuesta(prc);
+		
+		esperarUnMinutoPorContenedorNuevo(crearPropuesta(prc));
+		
 		String claseExpediente = getClaseExpedienteByProcedimientoPadre(prc);
 		return documentosExpediente(prc.getAsunto().getId(), prcId, claseExpediente);
 	}
 	
-	private void crearPropuesta(Procedimiento prc) {
+	/**
+	 * Metodo que hace esperar un minuto si se crear al menos un contenedor nuevo.
+	 * Esto es debido, a que en haya, desde que se crea el contenedor, hasta que se puede adjuntar algun archivo, 
+	 * se debe esperar un minuto aproximado para que el contenedor este activo.
+	 * @param esperar
+	 */
+	private void esperarUnMinutoPorContenedorNuevo(boolean esperar) {
+		if(esperar) {
+			//Añadimos una espera de 1 min, que es lo que aproxmadamente tarda en estar activo el contenedor al ser creado
+			try {
+				Thread.sleep(60000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  
+		}
+	}
+	
+	private boolean crearPropuesta(Procedimiento prc) {
+		boolean creado = false;
 		if( buscarTPRCsinContenedor(prc)) {
 			String idAsunto=prc.getAsunto().getId().toString();
 			String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
@@ -147,10 +180,12 @@ public class AdjuntoHayaManager {
 			try {
 				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
+				creado = true;
 			} catch (GestorDocumentalException e) {
 				e.printStackTrace();
-			}	
+			}		
 		}
+		return creado;
 	}
 	
 	private List<EXTAdjuntoDto> documentosExpediente(Long idAsunto, Long idPrc, String claseExpediente) {

@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +64,7 @@ public class SubastaCalculoManagerTest {
 
 		Subasta subastaNoDelegada = new Subasta();
 		subastaNoDelegada.setTipoSubasta(tipoNoDelegada);
+		subastaNoDelegada.setId(1L);
 
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaNoDelegada);
@@ -268,7 +270,8 @@ public class SubastaCalculoManagerTest {
 		List<Movimiento> movimientos = new ArrayList<Movimiento>();
 		movimientos.add(movimiento);
 
-		Contrato contrato = new Contrato();		
+		Contrato contrato = new Contrato();
+		contrato.setId(1L);
 		contrato.setEstadoContrato(estadoContrato);			
 		contrato.setMovimientos(movimientos);		
 
@@ -281,17 +284,23 @@ public class SubastaCalculoManagerTest {
 		NMBBien bien  = new NMBBien();
 		bien.setContratos(contratosBien);
 
+		NMBBien bien2  = new NMBBien();
+		bien2.setContratos(contratosBien);
+		
 		List<Bien> listadoBienes = new ArrayList<Bien>();
 		listadoBienes.add(bien);
+		listadoBienes.add(bien2);
 
 		LoteSubasta lote = new LoteSubasta();
+		lote.setId(1L);
 		lote.setBienes(listadoBienes);
 		lote.setRiesgoConsignacion(false);
 
 		List<LoteSubasta> loteSubasta = new ArrayList<LoteSubasta>();
 		loteSubasta.add(lote);
 
-		Subasta subastaToTest = newSubastaToTest();	
+		Subasta subastaToTest = newSubastaToTest();
+		subastaToTest.setId(1L);
 		subastaToTest.setLotesSubasta(loteSubasta);
 
 		return subastaToTest;
@@ -345,6 +354,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTest();
 		subastaToTest.setLotesSubasta(arrayLotes);
 		subastaToTest.setProcedimiento(procedimiento);
+		subastaToTest.setId(1L);
 
 		return subastaToTest;
 	}
@@ -387,6 +397,7 @@ public class SubastaCalculoManagerTest {
 		subasta.setCargasAnteriores("0");
 		subasta.setLotesSubasta(loteSubasta);
 		subasta.setProcedimiento(procedimiento);
+		subasta.setId(1L);
 
 		return subasta;
 	}

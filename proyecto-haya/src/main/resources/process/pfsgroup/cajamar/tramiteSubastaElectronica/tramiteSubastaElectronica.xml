@@ -291,11 +291,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarResultadoPresentacionEscritoAlJuzgado" name="avanzaBPM"></transition>
+		<transition to="P458_RegResulPresentacionEscrJuzgado" name="avanzaBPM"></transition>
 		<transition to="P458_RegistrarResultadoSubasta" name="vueltaAtras"></transition>
 	</state>
 
-	<state name="P458_RegistrarResultadoPresentacionEscritoAlJuzgado">
+	<state name="P458_RegResulPresentacionEscrJuzgado">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -313,11 +313,11 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarResultadoPresentacionEscritoAlJuzgadoDecision" name="avanzaBPM"></transition>
+		<transition to="P458_RegResulPresentacionEscrJuzgadoDecision" name="avanzaBPM"></transition>
 		<transition to="P458_SolicitarAdjudicacionSegunInstruccionesEntidad" name="vueltaAtras"></transition>
 	</state>
 	
-	<decision name="P458_RegistrarResultadoPresentacionEscritoAlJuzgadoDecision" expression="#{P458_RegistrarResultadoPresentacionEscritoAlJuzgadoDecision}">
+	<decision name="P458_RegResulPresentacionEscrJuzgadoDecision" expression="#{P458_RegResulPresentacionEscrJuzgadoDecision}">
 		<transition to="P458_BPMTramiteAdjudicacion" name="sinCesion"></transition>		
 		<transition to="P458_BPMTramiteCesionDeRemate" name="conCesion"></transition>
 	</decision>
@@ -409,7 +409,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P458_RegistrarResultadoPresentacionEscritoAlJuzgadoDecision" name="avanzaBPM"></transition>
+		<transition to="P458_RegResulPresentacionEscrJuzgadoDecision" name="avanzaBPM"></transition>
 	</state>
 
 	<fork name="forkCelebracion">

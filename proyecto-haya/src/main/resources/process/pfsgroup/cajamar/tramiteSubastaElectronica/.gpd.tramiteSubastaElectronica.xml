@@ -6,7 +6,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_SolicitudDeSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_SolicitudSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -14,7 +14,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_DecretoConvocatoriaDeSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_DecretoConvocatoriaSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -33,7 +33,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_EntregaYRecepcionEdictoEImpresoTasa" x="0" y="0" width="132" height="36">
+  <node name="P458_EntregaRecepcionEdictoImpresoTasa" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -41,18 +41,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_EntregaYRecepcionEdictoEImpresoTasaDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P458_PedirCorreccionDelEdicto" x="0" y="0" width="132" height="36">
+  <node name="P458_EntregaRecepcionEdictoImpresoTasaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -63,7 +52,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_ConfirmarCorreccionDelEdicto" x="0" y="0" width="132" height="36">
+  <node name="P458_PedirCorreccionEdicto" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -74,7 +63,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_ConfirmarLecturaInstruccionesDeSubastaYPagoDeTasa" x="0" y="0" width="132" height="36">
+  <node name="P458_ConfirmarCorreccionEdicto" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -85,31 +74,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_RegistrarElPagoDeLaTasaParaPublicacionBOE" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P458_RegistrarPublicacionDeSubastaEnElBOE" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P458_RegistrarPublicacionDeSubastaEnElBOEDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P458_PedirCorreccionDelEdictoPublicacionBOE" x="0" y="0" width="132" height="36">
+  <node name="P458_ConfirmarLecturaInstruccionesSubastaPagoTasa" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -120,7 +85,31 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_ConfirmarCorrecccionDelEdictoPublicacionBOE" x="0" y="0" width="132" height="36">
+  <node name="P458_RegistrarPagoTasaPublicacionBOE" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarPublicacionSubastaBOE" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarPublicacionSubastaBOEDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_PedirCorreccionEdictoPublicacionBOE" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -131,15 +120,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_ConfirmarCorrecccionDelEdictoPublicacionBOEDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P458_RegistrarResultadoDeLaSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_ConfirmarCorrecccionEdictoPublicacionBOE" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -150,7 +131,26 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_RegistrarResultadoDeLaSubastaDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_ConfirmarCorrecccionEdictoPublicacionBOEDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarResultadoSubasta" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P458_RegistrarResultadoSubastaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -310,7 +310,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_PrepararInformeDeSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_PrepararInformeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -318,7 +318,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_ValidarInformeDeSubasta" x="0" y="0" width="132" height="36">
+  <node name="P458_ValidarInformeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -329,7 +329,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_ValidarInformeDeSubastaDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_ValidarInformeSubastaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -373,7 +373,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_PendienteConfirmacionPagoDeTasaDecision" x="0" y="0" width="132" height="36">
+  <node name="P458_PendienteConfirmacionPagoTasaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -381,7 +381,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P458_DictarInstruccionesDeSubastaYPagoDeTasa" x="0" y="0" width="132" height="36">
+  <node name="P458_DictarInstruccionesSubastaYPagoTasa" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

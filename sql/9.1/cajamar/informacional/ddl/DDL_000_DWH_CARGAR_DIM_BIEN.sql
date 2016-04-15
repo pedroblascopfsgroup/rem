@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Pedro S.
---## FECHA_CREACION=20160330
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160415
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=CMREC-2314
+--## INCIDENCIA_LINK=CMREC-3085
 --## PRODUCTO=NO
 --## 
---## Finalidad: GARANTIA_NUM_OPE_BIE
+--## Finalidad: cargar dim D_BIE_VIVIENDA_HABITUAL
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -20,9 +20,9 @@ create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 28/03/2016
--- Motivos del cambio: GARANTIA_NUM_OPE_BIE
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: D_BIE_VIVIENDA_HABITUAL
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Subasta
@@ -47,8 +47,9 @@ create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
     -- D_BIE_ZONA
     -- D_BIE_OFICINA
     -- D_BIE_ENTIDAD
-	-- D_BIE_GARANTIA_NUM_OPE_BIE_AGR
-	-- D_BIE_GARANTIA_NUM_OPE_BIE
+	  -- D_BIE_GARANTIA_NUM_OPE_BIE_AGR
+	  -- D_BIE_GARANTIA_NUM_OPE_BIE
+    -- D_BIE_VIVIENDA_HABITUAL
 
 V_NOMBRE VARCHAR2(50) := 'CARGAR_DIM_BIEN';
 V_ROWCOUNT NUMBER;
@@ -439,6 +440,32 @@ BEGIN
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_ENTIDAD. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_BIE_VIVIENDA_HABITUAL
+-- ----------------------------------------------------------------------------------------------
+
+ SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_VIVIENDA_HABITUAL WHERE VIVIENDA_HABITUAL_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_VIVIENDA_HABITUAL(VIVIENDA_HABITUAL_ID, VIVIENDA_HABITUAL_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_VIVIENDA_HABITUAL WHERE VIVIENDA_HABITUAL_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_VIVIENDA_HABITUAL (VIVIENDA_HABITUAL_ID, VIVIENDA_HABITUAL_DESC) VALUES (0 ,'No');
+  END IF;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_VIVIENDA_HABITUAL WHERE VIVIENDA_HABITUAL_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_VIVIENDA_HABITUAL (VIVIENDA_HABITUAL_ID, VIVIENDA_HABITUAL_DESC) VALUES (1 ,'Si');
+  END IF;
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_VIVIENDA_HABITUAL. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;    
+
   
 -- ----------------------------------------------------------------------------------------------
 --                                      D_BIE_GARANTIA_NUM_OPE_BIE_AGR
@@ -533,5 +560,3 @@ END;
 END CARGAR_DIM_BIEN;
 /
 EXIT
-
-

@@ -20,12 +20,15 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 for fichero in $arrayFicheros
 do
     ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
-
-    ./ftp/ftp_get_tr_files.sh $1 $fichero
+    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
+        ./ftp/ftp_get_tr_files.sh $1 $fichero
+    fi
     while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip ]; do
         sleep 900
         hora_actual=`date +%Y%m%d%H%M%S`
-        ./ftp/ftp_get_tr_files.sh $1 $fichero
+        if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
+            ./ftp/ftp_get_tr_files.sh $1 $fichero
+        fi
     done
 done
 
@@ -34,6 +37,11 @@ then
     echo "$(basename $0) Error: Tiempo límite alcanzado: ficheros $ficheros no encontrados"
     exit 1
 else
+    zip -T $ficheroZip
+    while [ $? -ne 0 ] ; do
+        sleep 5
+        zip -T $ficheroZip
+    done
     for fichero in $arrayFicheros
     do
         export mascCONTRATOS=CONTRATOS*.txt

@@ -1,11 +1,11 @@
 export JAVA_HOME=/usr/java/jdk1.6.0_07
 export PATH=$JAVA_HOME/bin:$PATH
-export DEVON_HOME=recovery/haya/batch-server/bcc
-export INSTALL_DIR=/$DEVON_HOME
+export DEVON_HOME=recovery/haya/batch-server
+export INSTALL_DIR=/$DEVON_HOME/bcc
 export BATCH_INSTALL_DIR=$INSTALL_DIR/programas/batch
 export BATCH_USER=map011-batch
 export LANG=es_ES.UTF-8
-export ORACLE_HOME=/opt/sw/oracle/product/11.2.0/client_1
+export ORACLE_HOME=ORACLE_HOME_VALUE
 export PATH=$PATH:$ORACLE_HOME/bin:/recovery/batch-server/bcc/shells
 
 # Código de la entidad

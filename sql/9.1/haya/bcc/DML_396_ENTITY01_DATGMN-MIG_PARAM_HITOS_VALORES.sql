@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUSTAVO MORA NAVARRO
---## FECHA_CREACION=20160401
+--## FECHA_CREACION=20160414
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.9
 --## INCIDENCIA_LINK=CMREC-976
@@ -171,7 +171,7 @@ DECLARE
 , T_MPH ( '177','129','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+4','1','1','H002_RegistrarResSuspSubasta','fecha')
 , T_MPH ( '176','128','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+3','1','1','H002_SolicitarSuspenderSubasta','fecha')
 , T_MPH ( '175','127','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+2','1','1','H002_LecturaConfirmacionInstrucciones','fecha')
-, T_MPH ( '174','126','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),0,1,1)','2','1','H002_DictarInstruccionesSubasta','comboSuspender')
+, T_MPH ( '174','126','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),NULL,0,0,0,1)','2','1','H002_DictarInstruccionesSubasta','comboSuspender')
 , T_MPH ( '173','126','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+1','1','1','H002_DictarInstruccionesSubasta','fecha')
 , T_MPH ( '172','125','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)','2','1','H002_ObtenerValidacionComite','fecha')
 , T_MPH ( '171','125','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(RESOLUCION_COMITE)','1','1','H002_ObtenerValidacionComite','comboResultado')
@@ -208,7 +208,7 @@ DECLARE
 , T_MPH ( '100','49','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+3','1','1','H002_SolicitarSuspenderSubasta','fecha')
 , T_MPH ( '99','48','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+2','1','1','H002_LecturaConfirmacionInstrucciones','fecha')
 , T_MPH ( '97','47','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)+1','1','1','H002_DictarInstruccionesSubasta','fecha')
-, T_MPH ( '98','47','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),0,0,1)','2','1','H002_DictarInstruccionesSubasta','comboSuspender')
+, T_MPH ( '98','47','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),NULL,0,0,0,1)','2','1','H002_DictarInstruccionesSubasta','comboSuspender')
 , T_MPH ( '95','46','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MAX(RESOLUCION_COMITE),0,1,0)','1','1','H002_ObtenerValidacionComite','comboResultado')
 , T_MPH ( '96','46','MIG_PROCEDIMIENTOS_SUBASTAS','MAX(FECHA_RESOLUCION_PROPUESTA)','2','1','H002_ObtenerValidacionComite','fecha')
 , T_MPH ( '94','45','MIG_PROCEDIMIENTOS_SUBASTAS','DECODE(MIN(TIPO_SUBASTA),1,1,0)','1','1','H002_ValidarInformeDeSubasta','comboAtribuciones')

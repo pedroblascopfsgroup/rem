@@ -334,6 +334,15 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh ejecutado correctamente" 
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""HRE_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh"                               
+./"$sh_dir"HRE_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh "$1"   
+if [ $? != 0 ] ; then 
+  echo -e "\n\n======>>> [ERROR] en "$sh_dir"HRE_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh"
+  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
+  exit 1
+fi
+echo "[OK] ""$sh_dir""HRE_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh ejecutado correctamente" 
+
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-2102_Corrige_estados_subastas.sh"                               
 ./"$sh_dir"CMREC-2102_Corrige_estados_subastas.sh "$1"   
@@ -420,6 +429,17 @@ if [ $? != 0 ] ; then
     exit 1           
 fi
 echo "[OK] ""$sh_dir""HRE_INSERT_TEV_VALORES_PRECONTENCIOSO.sh ejecutado correctamente"   
+
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""HRE_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh"                      
+./"$sh_dir"HRE_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"HRE_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""HRE_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh ejecutado correctamente" 
+
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_haya02.sh"                      
 ./"$sh_dir"CJM_Analiza_haya02.sh "$1" 

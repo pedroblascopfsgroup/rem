@@ -324,7 +324,7 @@ from
  ) aux ;
   
     -- Gestor oficina
-
+/*
 insert into cm01.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select cm01.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
        (select usd_id from cm01.usd_usuarios_despachos usd inner join cmmaster.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'GOFI') usd_id,
@@ -357,7 +357,7 @@ from
                          cm01.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
                     where asuu.DD_TAS_ID = 2)
  ) aux ;
- 
+ */
      -- Supervisor concursal
 
 insert into cm01.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
@@ -712,6 +712,8 @@ from
  
  -- Gestor estudio
 
+/* NO APLICA EN CAJAMAR
+ 
 insert into cm01.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select cm01.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
        (select usd_id from cm01.usd_usuarios_despachos usd inner join cmmaster.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'GGE') usd_id,
@@ -745,6 +747,8 @@ from
                     where asuu.DD_TAS_ID = 2)
  ) aux ;
 
+ */
+ 
  -- Supervisor PCO
 
 insert into cm01.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)

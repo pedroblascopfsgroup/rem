@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.recovery.liquidaciones.api;
 
 import java.util.List;
 
+import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
+import es.pfsgroup.plugin.recovery.liquidaciones.excepciones.STAContabilidadException;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
 
 
@@ -48,5 +50,12 @@ public interface ContabilidadCobrosApi {
 	 * @return
 	 */
 	ContabilidadCobros getContabilidadCobroByID(DtoContabilidadCobros dto);
+
+	/**
+	 * Genera una nueva Tarea Notificacion de Contabilidad Cobro.
+	 * @param dto
+	 * @throws STAContabilidadException 
+	 */
+	void crearTarea(DtoGenerarTarea dto) throws STAContabilidadException;
 	
 }

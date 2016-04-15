@@ -4,8 +4,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
@@ -27,11 +32,14 @@ import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.web.genericForm.DtoGenericForm;
 import es.capgemini.pfs.web.genericForm.GenericForm;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.RecoveryAnotacionApi;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacionUsuario;
@@ -49,6 +57,8 @@ import es.pfsgroup.plugin.recovery.procuradores.api.PCDProcesadoResolucionesApi;
 //import es.pfsgroup.recovery.ext.impl.tareas.EXTDtoGenerarTareaIdividualizadaImpl;
 import es.pfsgroup.plugin.recovery.procuradores.controller.PCDProcesadoResolucionesController;
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
+import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 
 @Service
 @Transactional(readOnly = false)
@@ -66,6 +76,12 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	
 	@Autowired
 	private ProcedimientoDao procedimientoDao;
+	
+	@Autowired
+	private AdjuntoApi adjuntoApi;
+	
+	@Autowired
+	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
 	
 	//private static final String ESTADO_GUARDAR = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
 	//private static final String ESTADO_PROCESADO = MSVDDEstadoProceso.CODIGO_PROCESADO;
@@ -223,17 +239,18 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	public void procesar(MSVResolucionesDto dtoResolucion) throws Exception {
 		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
 				MSVResolucion msvResolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
-				
+				//session.getStatistics().getEntityKeys().
 					//Se sobreescribe el fichero del procurador.
 					if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
 					{
 						proxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
-						msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
+
+						subirFicheroAdjunto(msvResolucion);
 					}else{
 						//El gestor adjunta un fichero y no había
 						if(!Checks.esNulo(dtoResolucion.getIdFichero()))
 						{
-							msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
+							subirFicheroAdjunto(msvResolucion);
 						//No se adjunta ningún fichero.
 						}else{
 							  msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarResolucion(dtoResolucion);
@@ -254,7 +271,39 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 						executor.execute("genericFormManager.saveValues",dto);
 					}
 	}
-	
+
+	/**
+	 * Sube un Adjunto asociado a la resolucion y actualiza dicha resolucion con el nuevo ID (utiliza los metodos de adjuntoapi ya que pueden implementar un gestor documental especifico por cliente)
+	 * @param msvResolucion
+	 * @return
+	 */
+	private MSVResolucion subirFicheroAdjunto(MSVResolucion msvResolucion) {
+		if (msvResolucion.getAdjuntoFinal() != null && msvResolucion.getAdjuntoFinal().getAdjunto() != null) {
+			Map<String, String> parameters = new HashMap<String, String>();
+
+			parameters.put("id", msvResolucion.getAsunto().getId().toString());
+			parameters.put("prcId", msvResolucion.getProcedimiento().getId().toString());
+			parameters.put("comboTipoFichero", msvResolucion.getAdjuntoFinal().getTipoFichero().getCodigo());
+
+			WebFileItem uploadForm = new WebFileItem();
+
+			uploadForm.setFileItem(msvResolucion.getAdjuntoFinal().getAdjunto().getFileItem());
+			uploadForm.setParameters(parameters);
+			adjuntoApi.upload(uploadForm);
+		}
+
+		// Se actualiza la resolucion con el nuevo adjunto.
+		EXTAdjuntoAsunto adjunto = msvResolucion.getAdjuntoFinal();
+
+		List<EXTAdjuntoAsunto> x = extAdjuntoAsuntoDao.getAdjuntoAsuntoByNombreAndPrcIdAndTipoAdjunto(adjunto.getProcedimiento().getId(), adjunto.getNombre(), adjunto.getTipoFichero().getCodigo());
+
+		if (!x.isEmpty()) {
+			msvResolucion.setAdjuntoFinal(x.get(0));
+		}
+
+		return msvResolucion;
+	}
+
 	private DtoGenericForm rellenaDTO(MSVResolucion msvResolucion) {
 		
 		GenericForm genericForm = proxyFactory.proxy(GenericFormManagerApi.class).get(msvResolucion.getTarea().getId());

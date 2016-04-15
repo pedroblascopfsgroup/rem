@@ -8,6 +8,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.pfs.users.UsuarioManager;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
@@ -32,7 +33,20 @@ public class LiquidacionesController {
 		LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo);
 		
 		String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
-		model.put("logo", "/img/"+logo);
+		String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		
+		if (!Checks.esNulo(codigoEntidad)) {
+			//Seleccionamos el logo según el codigo entidad
+			if (codigoEntidad.toUpperCase().equals("HAYA")) {
+				logo = "plugin/liquidaciones/logoSarebLiquidaciones.jpg";
+			}
+			
+			if (codigoEntidad.toUpperCase().equals("CAJAMAR")) {
+				logo = "plugin/liquidaciones/logoCajamarLiquidaciones.png";
+			}
+		}
+		
+		model.put("logo", logo);
 		model.put("usuario", usuarioManager.getUsuarioLogado());
 		model.put("cabecera", cabecera);
 		model.put("cuerpo", cuerpo);

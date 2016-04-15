@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -58,6 +57,7 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 		// Recuperar Expedientes
 		Criteria queryGetExpedientes = getSession().createCriteria(VListadoPreProyectadoExp.class, "e");
 		queryGetExpedientes.add(Restrictions.in("e.expId", expIds));
+		queryGetExpedientes.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		List<VListadoPreProyectadoExp> listadoExpedientes = queryGetExpedientes.list();
 
@@ -285,6 +285,9 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 		// solo expedientes de recuperacion
 		query.createAlias("expediente.tipoExpediente", "tipoExpediente");
 		where.add(Restrictions.eq("tipoExpediente.codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION));
+		
+		// Sólo se muestran los expedientes con menos de 120 días vencidos
+		where.add(Restrictions.between("vListadoPreProyectadoExtCalc.diasVencidos", 1l, 120l));
 
 		return where;
 	}

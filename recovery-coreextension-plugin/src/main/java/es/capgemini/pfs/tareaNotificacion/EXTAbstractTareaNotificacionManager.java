@@ -77,18 +77,39 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		return executor;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected Page busquedaGenericaTareas(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
 		EventFactory.onMethodStart(this.getClass());
 
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-		List<Perfil> perfiles = usuarioLogado.getPerfiles();
-		List<DDZona> zonas = usuarioLogado.getZonas();
+		List<Perfil> perfiles = new ArrayList<Perfil>(); 
+		List<DDZona> zonas = new ArrayList<DDZona>();
+		
+		for(ZonaUsuarioPerfil zup : usuarioLogado.getZonaPerfil()) {
+		
+			if(projectContext.getPerfilesConsulta() != null) {
+				
+				if(!projectContext.getPerfilesConsulta().contains(zup.getPerfil().getCodigo())) {
+				
+					if(!perfiles.contains(zup.getPerfil())) {
+						perfiles.add(zup.getPerfil());
+					}
+					
+					zonas.add(zup.getZona());
+				}
+			}
+			else {
+				perfiles.add(zup.getPerfil());
+				zonas.add(zup.getZona());
+			}
+		}
+		
 		dto.setPerfiles(perfiles);
 		dto.setZonas(zonas);
 		dto.setUsuarioLogado(usuarioLogado);
 		List listaRetorno = new ArrayList();
 
-		Page page;
+		Page page = null;
 		if (dto.getTraerGestionVencidos() != null && dto.getTraerGestionVencidos()) {
 			agregarTareasGestionVencidosSeguimiento(dto, listaRetorno, opcion);
 
@@ -101,7 +122,10 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 			((PageSql) page).setResults(listaRetorno);
 			((PageSql) page).setTotalCount(listaRetorno.size());
 		} else {
-			page = obtenerTareasPendientes(dto, opcion, modelClass);
+			
+			if(perfiles.size() > 0 && zonas.size() > 0) {
+				page = obtenerTareasPendientes(dto, opcion, modelClass);
+			}
 			
 			if (page != null) {
 				listaRetorno.addAll(removeTareasDuplicadas(page.getResults()));
@@ -357,6 +381,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 * Rellena el campo Categoria Tarea, según las categorías definidas en ac-plugin-coreextension-projectContext.xml
 	 * @param lista
 	 */
+	@SuppressWarnings("rawtypes")
 	protected void informarCategoriaTarea(final List lista) {
 		for (Object tarea : lista) {
 			try {
@@ -383,6 +408,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 * @param zona
 	 *            zona
 	 */
+	@SuppressWarnings("deprecation")
 	protected void replaceGestorInListOpt(final List<ResultadoBusquedaTareasBuzonesDto> lista, final Usuario usuario) {
 		for (ResultadoBusquedaTareasBuzonesDto tarea : lista) {
 			if (tarea.getDescGestor() != null && tarea.getDescGestor().trim().length() > 0) {
@@ -434,6 +460,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 * @param zona
 	 *            zona
 	 */
+	@SuppressWarnings("deprecation")
 	protected void replaceSupervisorInListOpt(final List<ResultadoBusquedaTareasBuzonesDto> lista, final Usuario usuario) {
 		for (ResultadoBusquedaTareasBuzonesDto tarea : lista) {
 			if (tarea.getDescSupervisor() != null && tarea.getDescSupervisor().trim().length() > 0) {

@@ -107,10 +107,10 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	boolean uvemInstalado = false;
 	
 	public void UVEMUtils() {
-		if (appProperties == null) {
+		if (Checks.esNulo(appProperties)) {
 			this.appProperties = cargarProperties(DEVON_PROPERTIES);
 		} 
-		if(appProperties != null && appProperties.contains(UVEM_URL) && appProperties.getProperty(UVEM_URL) != null){
+		if(!Checks.esNulo(appProperties) && appProperties.containsKey(UVEM_URL) && !Checks.esNulo(appProperties.getProperty(UVEM_URL))){
 			URL = appProperties.getProperty(UVEM_URL);
 		}else{
 			System.out.println("UVEM no instalado");

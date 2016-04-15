@@ -35,8 +35,10 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Id 387 se le cambia la resolución de "Decreto adjudicación" a "Notificación decreto adjudicación al contrario" - R_TR_ADJ_DEC_ADJ_CON');
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_descripcion = ''Notificación decreto adjudicación al contrario'', dd_tr_descripcion_larga = ''Notificación decreto adjudicación al contrario'', usuariomodificar = ''PRODUCTO-1047'', fechamodificar=sysdate where dd_tr_codigo = ''R_TR_ADJ_DEC_ADJ_CON''';
     EXECUTE IMMEDIATE V_MSQL;
-       
-        
+    
+    DBMS_OUTPUT.PUT_LINE('Id 346 se le cambia la resolución de "Diligencia de precinto" a "Documento realización efectiva precinto (Precinto)" - R_DLG_FCH_PRE');
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_descripcion = ''Documento realización efectiva precinto (Precinto)'', dd_tr_descripcion_larga = ''Documento realización efectiva precinto (Precinto)'', usuariomodificar = ''PRODUCTO-1153'', fechamodificar=sysdate where dd_tr_codigo = ''R_DLG_FCH_PRE''';
+    EXECUTE IMMEDIATE V_MSQL;
     
     COMMIT;
 

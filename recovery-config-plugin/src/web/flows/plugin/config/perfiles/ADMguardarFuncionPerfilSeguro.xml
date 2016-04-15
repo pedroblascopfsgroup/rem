@@ -13,7 +13,7 @@
 		<on-entry>
 			<!--<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" /> -->
 			<evaluate expression="executor.execute('pfsconverter.createLongCollection',idsFuncion,',')" result="flowScope.funciones"/>
-			<evaluate expression="executor.execute('ADMPerfilManager.guardaFuncionesPerfil',idPerfil,funciones,password)" result="flowScope.pagina"/>
+			<evaluate expression="executor.execute('ADMPerfilManager.guardaFuncionesPerfilSeguro',idPerfil,funciones,password)" result="flowScope.pagina"/>
 		</on-entry>
 	</end-state>
 	

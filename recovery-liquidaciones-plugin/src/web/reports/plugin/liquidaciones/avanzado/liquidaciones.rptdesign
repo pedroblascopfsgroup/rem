@@ -339,13 +339,11 @@ return true;]]></method>
                 <property name="width">4.104166666666667in</property>
             </column>
             <row id="381">
-                <property name="height">0.7395833333333334in</property>
                 <cell id="382">
                     <property name="fontSize">8pt</property>
                     <property name="verticalAlign">bottom</property>
                     <image name="logotipo" id="380">
-                        <property name="height">0.625in</property>
-                        <property name="width">3.0694444444444446in</property>
+                        <property name="size">size-to-image</property>
                         <property name="source">url</property>
                         <expression name="uri">params["img_src"].value+logo</expression>
                     </image>
@@ -362,43 +360,11 @@ return true;]]></method>
                     <property name="fontSize">8pt</property>
                     <property name="verticalAlign">bottom</property>
                     <text-data id="169">
-                        <expression name="valueExpr">usuario.getUsername();</expression>
+                        <expression name="valueExpr">"Usuario: " + usuario.getUsername();</expression>
                         <property name="contentType">html</property>
                     </text-data>
                 </cell>
-                <cell id="176"/>
-                <cell id="177">
-                    <property name="textAlign">right</property>
-                    <text id="179">
-                        <property name="fontSize">8pt</property>
-                        <structure name="toc"/>
-                        <property name="contentType">html</property>
-                        <text-property name="content"><![CDATA[<value-of format="dd/MM/yyyy">cabecera.getFechaCalculo()</value-of>]]></text-property>
-                    </text>
-                </cell>
-            </row>
-        </grid>
-        <grid id="124">
-            <property name="borderBottomStyle">solid</property>
-            <property name="borderBottomWidth">thin</property>
-            <property name="borderRightStyle">none</property>
-            <property name="height">0.23958333333333334in</property>
-            <property name="width">100%</property>
-            <column id="125">
-                <property name="width">3.0208333333333335in</property>
-            </column>
-            <column id="126">
-                <property name="width">7.416666666666667in</property>
-            </column>
-            <row id="127">
-                <property name="height">0.23958333333333334in</property>
-                <property name="borderBottomStyle">solid</property>
-                <property name="borderBottomWidth">thin</property>
-                <property name="borderLeftStyle">none</property>
-                <property name="borderRightStyle">none</property>
-                <property name="borderTopStyle">none</property>
-                <property name="verticalAlign">bottom</property>
-                <cell id="128">
+                <cell id="176">
                     <text id="130">
                         <property name="fontSize">8pt</property>
                         <property name="fontWeight">normal</property>
@@ -410,15 +376,13 @@ return true;]]></method>
                         <text-property name="content"><![CDATA[EXTRACTO DE LA LIQUIDACION]]></text-property>
                     </text>
                 </cell>
-                <cell id="129">
-                    <text id="180">
+                <cell id="177">
+                    <property name="textAlign">right</property>
+                    <text id="179">
                         <property name="fontSize">8pt</property>
-                        <property name="fontWeight">normal</property>
-                        <property name="marginTop">0pt</property>
-                        <property name="marginBottom">0pt</property>
-                        <property name="textAlign">left</property>
-                        <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[LIQUIDACION JUZGADO]]></text-property>
+                        <structure name="toc"/>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[<value-of format="dd/MM/yyyy">cabecera.getFechaCalculo()</value-of>]]></text-property>
                     </text>
                 </cell>
             </row>
@@ -567,7 +531,7 @@ this.text = d.format(cabecera.getFechaVencimiento());</expression>
                                     <property name="fontSize">6pt</property>
                                     <property name="textAlign">right</property>
                                     <property name="canShrink">true</property>
-                                    <expression name="valueExpr">formatter.format(cabecera.getInteres());</expression>
+                                    <expression name="valueExpr">cabecera.getTipoInteres() +' %';</expression>
                                     <property name="contentType">html</property>
                                 </text-data>
                             </cell>
@@ -654,7 +618,7 @@ this.text = d.format(cabecera.getFechaVencimiento());</expression>
                                     <property name="textAlign">right</property>
                                     <expression name="valueExpr">importPackage(java.text);
 var d = new SimpleDateFormat("dd/MM/yyyy");
-this.text = d.format(cabecera.getFechaLiquidacion());</expression>
+this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                                     <property name="contentType">html</property>
                                 </text-data>
                             </cell>

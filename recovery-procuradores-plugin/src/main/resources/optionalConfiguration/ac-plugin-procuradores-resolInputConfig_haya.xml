@@ -692,6 +692,16 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_NOT_LIQ_INT_CONT">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_NOT_LIQ_INT_CONT</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>

@@ -57,9 +57,11 @@ public class LiquidacionesAvanzadoManager {
 		
 		Date fechaCierre;
 		Date fechaCalculo;
+		Date fechaVencimiento;
 		try {
 			fechaCierre = DateFormat.toDate(request.getFechaCierre());
 			fechaCalculo = DateFormat.toDate(request.getFechaDeLiquidacion());
+			fechaVencimiento = DateFormat.toDate(request.getFechaVencimiento());
 		} catch (ParseException e) {
 			throw new BusinessOperationException("plugin.liquidaciones.error.date.format");
 		}
@@ -71,8 +73,9 @@ public class LiquidacionesAvanzadoManager {
 		cabecera.setDni(request.getDni());
 		
 		cabecera.setCapital(new BigDecimal(cont.getLimiteInicial().toString()));
-		cabecera.setFechaVencimiento(fechaCierre);
+		cabecera.setFechaVencimiento(fechaVencimiento);
 		cabecera.setInteres(request.getInteresesOrdinarios());
+		cabecera.setTipoInteres(request.getTipoInteres());
 		cabecera.setTipoIntDemora(request.getTipoDemoraCierre());
 		
 		cabecera.setFechaCertifDeuda(fechaCierre);
@@ -117,10 +120,16 @@ public class LiquidacionesAvanzadoManager {
 		
 		//1.- Tramo inicial
 		BigDecimal saldo = request.getCapital();
-		BigDecimal intereses = request.getInteresesOrdinarios();
+		BigDecimal intereses = request.getInteresesOrdinarios()!=null?request.getInteresesOrdinarios():BigDecimal.ZERO;
+		intereses = intereses.add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO);
+		
 		BigDecimal impuestos = request.getImpuestos();
 		BigDecimal comisiones = request.getComisiones();
-		BigDecimal gastos = request.getGastos();
+		BigDecimal gastos = request.getGastos()!=null?request.getGastos():BigDecimal.ZERO;
+		gastos = gastos.add(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO);
+		BigDecimal costasLetrado = request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO;
+		BigDecimal costasProcurador = request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO;
+		
 		Date fecha = fechaCierre;
 		Float tipoInt = request.getTipoDemoraCierre();
 		
@@ -157,8 +166,12 @@ public class LiquidacionesAvanzadoManager {
 			if (!Checks.esNulo(ec.getImporte())) {
 				tramo.setImporte(new BigDecimal(ec.getImporte().toString()));
 			}
-			if (!Checks.esNulo(ec.getCapital())) {
-				tramo.setEntregado(new BigDecimal(ec.getCapital().toString()));
+			if (!Checks.esNulo(ec.getCapital()) || !Checks.esNulo(ec.getCapitalNoVencido())) {
+				BigDecimal entregado = BigDecimal.ZERO;
+				entregado = entregado.add(ec.getCapital()!=null?new BigDecimal(ec.getCapital().toString()):BigDecimal.ZERO);
+				entregado = entregado.add(ec.getCapitalNoVencido()!=null?new BigDecimal(ec.getCapitalNoVencido().toString()):BigDecimal.ZERO);
+				
+				tramo.setEntregado(entregado);
 			}
 			if (!Checks.esNulo(ec.getInteresesOrdinarios())) {
 				intereses = intereses.subtract(new BigDecimal(ec.getInteresesOrdinarios().toString()));
@@ -172,11 +185,24 @@ public class LiquidacionesAvanzadoManager {
 				comisiones = comisiones.subtract(new BigDecimal(ec.getComisiones().toString()));
 				tramo.setComisiones(new BigDecimal(ec.getComisiones().toString()));
 			}
-			if (!Checks.esNulo(ec.getGastos())) {
-				gastos = gastos.subtract(new BigDecimal(ec.getGastos().toString()));
-				tramo.setGastos(new BigDecimal(ec.getGastos().toString()));
+			if (!Checks.esNulo(ec.getGastosOtros())) {
+				gastos = gastos.subtract(new BigDecimal(ec.getGastosOtros().toString()));
+				tramo.setGastos(new BigDecimal(ec.getGastosOtros().toString()));
+			}
+			if (!Checks.esNulo(ec.getGastosAbogado())) {
+				costasLetrado = costasLetrado.subtract(new BigDecimal(ec.getGastosAbogado().toString()));
+				tramo.setCostasLetrado(new BigDecimal(ec.getGastosAbogado().toString()));
+			}
+			if (!Checks.esNulo(ec.getGastosProcurador())) {
+				costasProcurador = costasProcurador.subtract(new BigDecimal(ec.getGastosProcurador().toString()));
+				tramo.setCostasProcurador(new BigDecimal(ec.getGastosProcurador().toString()));
 			}
 			tramo.setInteresesPendientes(intereses);
+			tramo.setImpuestosPendientes(impuestos);
+			tramo.setComisionesPendientes(comisiones);
+			tramo.setGastosPendientes(gastos);
+			tramo.setCostasLetradoPendientes(costasLetrado);
+			tramo.setCostasProcuradorPendientes(costasProcurador);
 			tramo.setDias(diferenciaDias(fecha, ec.getFechaValor()));
 			tramo.setTipoDemora(tipoInt);
 
@@ -212,9 +238,16 @@ public class LiquidacionesAvanzadoManager {
 		//3.- Por último el tramo del Calculo de Deuda, desde la última fecha hasta la fecha Calculo
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();
 		ultTramo.setFechaValor(request.getFechaDeLiquidacion());
-		ultTramo.setDescripcion("Cálculo deuda");
+		ultTramo.setDescripcion("C\u00E1lculo deuda");
 		ultTramo.setSaldo(saldo);
 		ultTramo.setInteresesPendientes(intereses);
+		
+		ultTramo.setImpuestosPendientes(impuestos);
+		ultTramo.setComisionesPendientes(comisiones);
+		ultTramo.setGastosPendientes(gastos);
+		ultTramo.setCostasLetradoPendientes(costasLetrado);
+		ultTramo.setCostasProcuradorPendientes(costasProcurador);
+		
 		ultTramo.setDias(diferenciaDias(fecha, fechaCalculo));
 		ultTramo.setTipoDemora(tipoInt);
 		ultTramo.setInteresesDemora(calcularInteresesDemora(saldo, ultTramo.getDias(), tipoInt, request.getBaseCalculo()));
@@ -263,7 +296,7 @@ public class LiquidacionesAvanzadoManager {
 				
 				LIQDtoTramoLiquidacion tramoCambioTipo = new LIQDtoTramoLiquidacion();
 				tramoCambioTipo.setFechaValor(DateFormat.toString(fechaCambio));
-				tramoCambioTipo.setDescripcion("Cambio interés de demora");
+				tramoCambioTipo.setDescripcion("Cambio inter\u00E9s de demora");
 				tramoCambioTipo.setSaldo(saldo);
 				tramoCambioTipo.setInteresesPendientes(intereses);
 				tramoCambioTipo.setDias(diferenciaDias(fecha, fechaCambio));
@@ -301,6 +334,8 @@ public class LiquidacionesAvanzadoManager {
 		if (ultTramo!= null) {
 			//Cogemos el último saldo
 			totalDeuda = totalDeuda.add(ultTramo.getSaldo());
+			//Y le sumamos los intereses pendientes por pagar
+			totalDeuda = totalDeuda.add(ultTramo.getInteresesPendientes());
 			// Y le sumamos todos los intereses demora calculados
 			for (LIQDtoTramoLiquidacion tramo : cuerpo) {
 				if (tramo.getInteresesDemora()!=null) {
@@ -312,33 +347,49 @@ public class LiquidacionesAvanzadoManager {
 		
 		//Impuestos
 		BigDecimal impuestos = BigDecimal.ZERO;
-		if (ultTramo != null && ultTramo.getImpuestos()!=null) {
-			impuestos = ultTramo.getImpuestos();
+		if (ultTramo != null && ultTramo.getImpuestosPendientes()!=null) {
+			impuestos = ultTramo.getImpuestosPendientes();
 		}
 		resumen.setImpuestos(impuestos);
 		
 		//Comisiones
 		BigDecimal comisiones = BigDecimal.ZERO;
-		if (ultTramo != null && ultTramo.getComisiones()!=null) {
-			comisiones = ultTramo.getComisiones();
+		if (ultTramo != null && ultTramo.getComisionesPendientes()!=null) {
+			comisiones = ultTramo.getComisionesPendientes();
 		}
 		resumen.setComisiones(comisiones);
 		
-		//Costas letrado (directamente de la ventana emergente)
-		resumen.setCostasLetrado(request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO);
-		//Costas procurador (directamente de la ventana emergente)
-		resumen.setCostasProcurador(request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO);
-		//Otros gastos (directamente de la ventana emergente)
-		resumen.setOtrosGastos(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO);
+		//Costas letrado
+		BigDecimal costasLetrado = BigDecimal.ZERO;
+		if (ultTramo != null && ultTramo.getCostasLetradoPendientes()!=null) {
+			costasLetrado = ultTramo.getCostasLetradoPendientes();
+		}
+		resumen.setCostasLetrado(costasLetrado);
+		
+		
+		//Costas procurador
+		BigDecimal costasProcurador = BigDecimal.ZERO;
+		if (ultTramo != null && ultTramo.getCostasProcuradorPendientes()!=null) {
+			costasProcurador = ultTramo.getCostasProcuradorPendientes();
+		}
+		resumen.setCostasProcurador(costasProcurador);
+		
+		//Otros gastos
+		BigDecimal gastos = BigDecimal.ZERO;
+		if (ultTramo!=null && ultTramo.getGastosPendientes()!=null) {
+			gastos = ultTramo.getGastosPendientes();
+		}
+		resumen.setOtrosGastos(gastos);
 		
 		//Total a pagar
 		BigDecimal totalPagar = BigDecimal.ZERO;
 		totalPagar = totalPagar.add(totalDeuda);
 		totalPagar = totalPagar.add(impuestos);
 		totalPagar = totalPagar.add(comisiones);
-		totalPagar = totalPagar.add(request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO);
-		totalPagar = totalPagar.add(request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO);
-		totalPagar = totalPagar.add(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO);
+		totalPagar = totalPagar.add(costasLetrado);
+		totalPagar = totalPagar.add(costasProcurador);
+		totalPagar = totalPagar.add(gastos);
+		
 		resumen.setTotalPagar(totalPagar);
 		
 		return resumen;

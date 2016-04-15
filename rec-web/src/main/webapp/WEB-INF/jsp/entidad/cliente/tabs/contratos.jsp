@@ -19,7 +19,7 @@
 		,nombreTab : 'contratosPanel'        
     });
 
-    var limit = 10;
+    var limit = 500;
 
     var Contrato = Ext.data.Record.create([
          {name:'id'}

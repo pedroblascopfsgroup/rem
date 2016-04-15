@@ -292,7 +292,11 @@ public class MEJAcuerdoController {
 		
 		if(!Checks.esNulo(tipoAcuerdoPlanPago)){ map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());}
 		map.put("yaHayPlanPago", yaHayPlanPago);
-		map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		if(!Checks.esNulo(fechaPaseMoraFormated)){
+			map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		}else{
+			map.put("fechaPaseMora", 0L);
+		}
 		if(!Checks.esNulo(tipoAcuerdoFondosPropios)){map.put("idTipoAcuerdoFondosPropios", tipoAcuerdoFondosPropios.getId());}
 		if(!Checks.esNulo(tipoAcuerdoRegulParcial)){map.put("idTipoAcuerdoRegulParcial", tipoAcuerdoRegulParcial.getId());}
 		

@@ -26,6 +26,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
+import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -94,6 +95,9 @@ public class PoliticaManager {
     
     @Autowired
     private ExpedienteManagerApi expedienteManager;
+    
+    @Autowired
+    private ExpedienteDao expedienteDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -1238,21 +1242,28 @@ public class PoliticaManager {
     public void deshacerUltimasPoliticas(Long idExpediente) {
         List<CicloMarcadoPolitica> listadoCiclos = cicloMarcadoPoliticaDao.getCiclosMarcadoExpediente(idExpediente);
 
+        Expediente exp = expedienteDao.get(idExpediente);
+        
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
             
             Collections.sort(listadoPoliticas, new Politica().getEstadoItinerarioComparator());
+            Collections.reverse(listadoPoliticas);
             
             if (listadoPoliticas.size()>1) {
-	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
-	            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
-	
-	            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
-	                    DDEstadoPolitica.ESTADO_PROPUESTA);
-	            politicaProponer.setEstadoPolitica(estadoPropuesta);
-	
-	            politicaDao.delete(politicaBorrar);
-	            politicaDao.update(politicaProponer);
+            	
+            	for(Politica p :listadoPoliticas){
+            		
+            		if(p.getEstadoItinerarioPolitica().getCodigo().equals(exp.getEstadoItinerario().getCodigo())){
+            			DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,DDEstadoPolitica.ESTADO_PROPUESTA);
+        	            p.setEstadoPolitica(estadoPropuesta);
+            			break;
+            		}else{
+            			politicaDao.delete(p);
+            		}
+            		
+            	}
+            	
             }
         }
     }

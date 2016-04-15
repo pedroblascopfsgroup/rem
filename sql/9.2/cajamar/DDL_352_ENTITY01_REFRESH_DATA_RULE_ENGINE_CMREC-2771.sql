@@ -1,12 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS PEREZ
---## FECHA_CREACION=20160411
+--## FECHA_CREACION=20160415
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2.2-cj
 --## INCIDENCIA_LINK=CMREC-2771
 --## PRODUCTO=NO
 --## Finalidad: DDL PARA MODIFICAR EL REFRESCO DE LA VISTA Y OBTENER EL DD_TIPO_PROD_ENTIDAD DEL CONTRATO
+--## SE MODIFICA EL CÁLCULO DE DIAS IRREGULAR COMO LA DIFERENCIA ENTRE SYSDATE-MOV_FECHA_POS_VENCIDA
 --##           
 --## INSTRUCCIONES: ---
 --## VERSIONES:
@@ -79,7 +80,7 @@ DECLARE
         dd_gc1_id,
         cnt_fecha_esc,
         cnt_fecha_constitucion,
-        TRUNC (SYSDATE - mov.mov_cnt_fecha_ini_epi_irreg) AS dias_irregular,
+        TRUNC (SYSDATE - mov.MOV_FECHA_POS_VENCIDA) AS dias_irregular,
         mov_deuda_irregular,
         mov_saldo_dudoso,
         mov_provision,

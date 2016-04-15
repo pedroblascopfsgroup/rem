@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_CNT_DET_COBRO (DATE_START IN date, DATE_END
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Mayo 2015
--- Responsable ultima modificacion: Diego Pérez, PFS Group
--- Fecha ultima modificacion: 11/08/2015
--- Motivos del cambio: Usuario/Propietario
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 13/04/2016
+-- Motivos del cambio: BI-70
 -- Cliente: Recovery BI Bankia
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_CNT_DET_COBRO.
@@ -464,6 +464,24 @@ BEGIN
         --Log_Proceso
         execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_CNT_DET_COBRO. Update 5', 5;
 
+		
+--Pedro S. BI-70 13/04/2016 Parche posibles lecturas sobre CPR_COBROS_PAGOS_RECOBRO de CPA_IDs no tratados por entrar fuera de carga, repasa todos los cpa_id a 2 meses vista
+
+       execute immediate '   
+          merge into H_CNT_DET_COBRO a
+          using (select CPA_ID, RCF_AGE_ID, RCF_SCA_ID, RCF_ESQ_ID from '||V_DATASTAGE||'.CPR_COBROS_PAGOS_RECOBRO) b
+                 on (b.CPA_ID = a.COBRO_ID and a.DIA_ID between ''' || fecha_min_cobro_recalculado || ''' and ''' || DATE_END || ''')   
+          when matched then update set  a.ESQUEMA_COBRO_ID = b.RCF_ESQ_ID,
+                                        a.AGENCIA_COBRO_ID = b. RCF_AGE_ID,
+                                        a.SUBCARTERA_COBRO_ID = b.RCF_SCA_ID,
+                                        a.COBRO_FACTURADO_ID = 1,
+                                        a.ENVIADO_AGENCIA_COBRO_ID = 1';
+                                        
+       commit;
+
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_DET_COBRO. Update 1', 5;
+		
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina Bucle de Cobros', 4;
      

@@ -2,9 +2,9 @@ create or replace package body OPERACION_DDL as
 -- ===============================================================================================
 -- Autor: Diego Pérez, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion:María Villanueva
--- Fecha ?ltima modificaci?n: 11/11/2015
--- Motivos del cambio: Modificación tamño de campo PARAMETROS y de código para que pueda aceptar caracteres especiales.
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: Parametrización índices con esquema indices
 -- Cliente: Recovery BI PRODUCTO
 --
 -- Descripcion: Cabecera Paquete de Operaciones DDL
@@ -38,12 +38,11 @@ create or replace package body OPERACION_DDL as
   
     V_SID NUMBER;    
     V_PARAMETROS varchar2(250 CHAR);
-    --V_ESQUEMA VARCHAR2(250);
     
   BEGIN
     --select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
     select sys_context('USERENV','SID') INTO V_SID from dual;
-    
+	
     V_PARAMETROS := substr(PARAMETROS, 1, 250);
     
     insert into LOG_OPERACION_DLL (FILA_ID, FECHA_INICIO, FECHA_FIN, NUM_SID, TIPO, OPERACION, ESQUEMA, OBJETO, PARAMETROS, ESTADO)
@@ -254,6 +253,7 @@ create or replace package body OPERACION_DDL as
     V_TIPO_INDEX VARCHAR(30); --BITMAP, UNIQUE,...
     V_TIPO VARCHAR2(50);
     V_FECHA TIMESTAMP := systimestamp;
+	V_ESQUEMA_INDEX VARCHAR2(100);
     
   begin  
     V_TIPO := 'INDEX';
@@ -264,6 +264,8 @@ create or replace package body OPERACION_DDL as
     V_TIPO_INDEX := upper(tipo_index);
 
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;  
+
+	select valor into V_ESQUEMA_INDEX from PARAMETROS_ENTORNO where parametro = 'ESQUEMA_INDEX'; 
     
     if V_OPERACION = 'DROP' then
       If OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
@@ -280,11 +282,11 @@ create or replace package body OPERACION_DDL as
 
     If V_OPERACION = 'CREATE' then
       If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
-          OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO_INDEX ||' INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' on ' || V_ESQUEMA || '.' || V_PARAMETROS ||'');
+          OPERACION_DDL.ejecuta_str('CREATE '|| V_TIPO_INDEX ||' INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' on ' || V_ESQUEMA || '.' || V_PARAMETROS ||' TABLESPACE ' || V_ESQUEMA_INDEX || '');
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
       Else 
           If V_DESACTIVAR = 'S' then 
-            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL 2');
+            OPERACION_DDL.ejecuta_str('ALTER INDEX ' || V_ESQUEMA || '.' || V_NOMBRE || ' REBUILD PARALLEL 2 TABLESPACE ' || V_ESQUEMA_INDEX || '');
             execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
           else 
             Raise OBJECTEXISTS;          
@@ -294,7 +296,7 @@ create or replace package body OPERACION_DDL as
 
     If V_OPERACION = 'CREATE_AS' then
       If not OPERACION_DDL.Existe_Objeto(V_TIPO, V_ESQUEMA, V_NOMBRE) Then
-          OPERACION_DDL.ejecuta_str('CREATE INDEX ' || V_PARAMETROS ||'');
+          OPERACION_DDL.ejecuta_str('CREATE INDEX ' || V_PARAMETROS ||' TABLESPACE ' || V_ESQUEMA_INDEX || '');
           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO, :INICIO); END;' USING IN V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK', V_FECHA;      
       End if;
     End if;    

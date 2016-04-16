@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160413
+--## FECHA_CREACION=20160416
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-2389
 --## PRODUCTO=NO
 --## 
---## Finalidad: SE AÑADE CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
+--## Finalidad: SE MODIFICA LA CARGA DE  CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
   -- Autor: Maria Villanueva, PFS Group
   -- Fecha creación:Septiembre 2015
   -- Responsable ultima modificacion: María Villanueva, PFS Group
-  -- Fecha ultima modificacion: 12/04/2016
-  -- Motivos del cambio: SE AÑADE CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
+  -- Fecha ultima modificacion: 16/04/2016
+  -- Motivos del cambio: SE MODIFICA LA CARGA DE  CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
   -- Cliente: Recovery BI CAJAMAR
   --
   -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -270,7 +270,10 @@ begin
       v_rowcount := sql%rowcount;
 
       execute immediate 'merge into TMP_H_PER per 
-      using (select distinct PER_ID, ARQ_ID from '||v_datastage||'.ARR_ARQ_RECUPERACION_PERSONA)arq
+      using (select distinct arr.per_id,arr.arq_id,arr.fechacrear from cm01.ARR_ARQ_RECUPERACION_PERSONA arr, (
+      select max(fechacrear) as fechacrear, per_id from '||v_datastage||'.ARR_ARQ_RECUPERACION_PERSONA 
+       group by per_id) arr2
+      where arr.per_id=arr2.per_id and arr.fechacrear=arr2.fechacrear)arq
       on (per.PERSONA_ID=arq.PER_ID)
       when matched then update set per.ARQUETIPO_PERSONA_ID=arq.ARQ_ID
       where per.DIA_ID = '''||fecha||'''';
@@ -1024,5 +1027,5 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   end;
     
 end cargar_h_per;
-/ 
-EXIT;
+/
+EXIT

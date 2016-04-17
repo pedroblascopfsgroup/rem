@@ -16,20 +16,16 @@ hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
-do
-	ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-
-    echo "$ficheroSem"
-    if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
-        ./ftp/ftp_get_aux_files.sh $1 $fichero
-    fi
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
-	    sleep 10
-	    hora_actual=`date +%Y%m%d%H%M%S`
-        if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
-	        ./ftp/ftp_get_aux_files.sh $1 $fichero
-        fi
+do	
+	./ftp/ftp_get_aux_monthly_files.sh $fichero
+	numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
+	numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
+	while [ "$hora_actual" -lt "$hora_limite" -a $numFicherosSem -eq 0 -o $numFicherosZip -eq 0 ]; do
+		sleep 10
+		hora_actual=`date +%Y%m%d%H%M%S`
+		./ftp/ftp_get_aux_monthly_files.sh $fichero
+		numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
+		numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
 	done
 done
 

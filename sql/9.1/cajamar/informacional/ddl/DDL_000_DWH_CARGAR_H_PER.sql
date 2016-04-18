@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160416
+--## FECHA_CREACION=20160418
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=CMREC-2389
+--## INCIDENCIA_LINK=CMREC-3131
 --## PRODUCTO=NO
 --## 
 --## Finalidad: SE MODIFICA LA CARGA DE  puntuacion
@@ -1030,3 +1030,5 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   end;
     
 end cargar_h_per;
+/
+EXIT

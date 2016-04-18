@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.Resource;
 
@@ -502,7 +503,7 @@ public class SubastaCalculoManager {
 			bienesSubasta.addAll(lote.getBienes());
 		}
 
-		List<Contrato> contratos = new ArrayList<Contrato>();
+		Set<Contrato> contratos = new TreeSet<Contrato>();
 		for (Bien bien : bienesSubasta) {
 			for (NMBContratoBien contratoBien : ((NMBBien) bien).getContratos()) {
 				Contrato contrato = contratoBien.getContrato();

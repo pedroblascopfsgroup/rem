@@ -157,6 +157,23 @@ public class SubastaCalculoManagerTest {
 	}
 
 	/**
+	 * Si la deuda de las operaciones relacionadas es mayor a un millon debido a que usa el mismo contrato varias veces
+	 */
+	@Test
+	public void testDeterminarTipoSubastaDelegadaConDeudaMayorDeUnMillonPorSerMismoContrato(){
+		float deudaIrregular = 500000.00F;
+		float posVivaNoVencida = 0.1F;
+		String estadoActivo = DDEstadoContrato.ESTADO_CONTRATO_ACTIVO;
+
+		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoActivo);
+
+		// Method to test
+		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+
+		comprobarSiLaSubastaNoHaSidoModificadaANoDelegada();
+	}
+
+	/**
 	 * Si la deuda de las operaciones relacionadas es mayor a un millon y el estado es no recibido
 	 * 
 	 * Resultado esperado:
@@ -252,7 +269,7 @@ public class SubastaCalculoManagerTest {
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
 	}
-
+	
 	/**
 	 * Dummy
 	 * provee una subasta de tipo por defecto (delegada) que posee una deuda mayor de un millon
@@ -272,6 +289,8 @@ public class SubastaCalculoManagerTest {
 
 		Contrato contrato = new Contrato();
 		contrato.setId(1L);
+		contrato.setNroContrato("1");
+		contrato.setCodigoContrato("1234");
 		contrato.setEstadoContrato(estadoContrato);			
 		contrato.setMovimientos(movimientos);		
 
@@ -425,5 +444,14 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaActualizada = capturador.getValue();
 
 		assertEquals(DDTipoSubasta.NDE, subastaActualizada.getTipoSubasta().getCodigo());
+	}
+
+	/**
+	 * Metodo que comprueba si la subasta no ha sido actualizada con el tipo no delegada
+	 */
+	private void comprobarSiLaSubastaNoHaSidoModificadaANoDelegada() {
+		
+		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
+
 	}
 }

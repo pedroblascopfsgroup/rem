@@ -537,10 +537,10 @@ public class SubastaCalculoManager {
 		// Deuda entidad = vencido (deuda irregular) + no vencido de todas las operaciones del procedimiento + costas de letrado y procurador
 		BigDecimal sumatorioDeudaEntidad = BigDecimal.ZERO;
 		if (!Checks.esNulo(subasta.getCostasLetrado())){
-			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasLetrado());
+			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(BigDecimal.valueOf(subasta.getCostasLetrado()));
 		}
 		if (!Checks.esNulo(subasta.getCostasProcurador())){
-			sumatorioDeudaEntidad.add(BigDecimal.valueOf(subasta.getCostasProcurador()));
+			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(BigDecimal.valueOf(subasta.getCostasProcurador()));
 		}
 		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
 		

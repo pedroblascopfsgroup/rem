@@ -199,18 +199,20 @@ public class SubastaCalculoManagerTest {
 	 * Si la subasta cumple las condiciones:
 	 * 
 	 * 	Riesgo de Consignación es true
-	 *  Riesgo de Consignación > 10% de Deuda Irregular
+	 *  Riesgo de Consignación > 10% de Deuda entidad
 	 *  
 	 *  Resultado esperado: El estado es cambiado
 	 *  
 	*/
 	@Test
 	public void testDeterminarTipoSubastaRiesgoConsignacionSuperaUmbralSiRiesgoMayor10PorCiento(){
-		float deudaIrregular = 5000f;
-		float posVivaNoVencida = 5000f;
-		float insPujasSinPostores = 12000.0f;
+		float costasLetrado = 10.00F;
+		float costasProcurador = 60.00F;
+		float deudaIrregular = 900.00F;
+		float posVivaNoVencida = 20.00F;
+		float insPujasSinPostores = 1090.00F;
 
-		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
+		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores, costasLetrado, costasProcurador);
 
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
@@ -231,11 +233,13 @@ public class SubastaCalculoManagerTest {
 	 */
 	@Test
 	public void testDeterminarTipoSubastaDelegadaSiRiesgoConsignacionEsNegativo(){
+		float costasLetrado = 0F;
+		float costasProcurador = 0F;
 		float deudaIrregular = 5000.0f;
 		float posVivaNoVencida = 5000.0f;
 		float insPujasSinPostores = 5000.0f;
 
-		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
+		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores, costasLetrado, costasProcurador);
 
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
@@ -257,11 +261,13 @@ public class SubastaCalculoManagerTest {
 	 */
 	@Test
 	public void testDeterminarTipoSubastaDelegadaSiRiesgoConsignacionNoCumpleLasCondiciones(){
+		float costasLetrado = 0F;
+		float costasProcurador = 0F;
 		float deudaIrregular = 0.0f;
 		float posVivaNoVencida = 5000.0f;
 		float insPujasSinPostores = 5000.1f;
 
-		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores);
+		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores, costasLetrado, costasProcurador);
 
 		// Method to test
 		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
@@ -331,7 +337,7 @@ public class SubastaCalculoManagerTest {
 	 * 
 	 * @return dummy
 	 */
-	private Subasta newSubastaToTestRiesgoDeConsignacionSuperaUmbral(float deudaIrregular, float posVivaNoVencida, float insPujasSinPostores) {
+	private Subasta newSubastaToTestRiesgoDeConsignacionSuperaUmbral(float deudaIrregular, float posVivaNoVencida, float insPujasSinPostores, float costasLetrado, float costasProcurador) {
 		Movimiento movimiento = new Movimiento();
 		movimiento.setDeudaIrregular(deudaIrregular);
 		movimiento.setPosVivaNoVencida(posVivaNoVencida);
@@ -374,6 +380,8 @@ public class SubastaCalculoManagerTest {
 		subastaToTest.setLotesSubasta(arrayLotes);
 		subastaToTest.setProcedimiento(procedimiento);
 		subastaToTest.setId(1L);
+		subastaToTest.setCostasLetrado(costasLetrado);
+		subastaToTest.setCostasProcurador(costasProcurador);
 
 		return subastaToTest;
 	}

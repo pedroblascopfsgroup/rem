@@ -37,7 +37,7 @@ public class DDMotivoSuspSubastaElectronica implements Dictionary, Auditable {
 
 	@Id
     @Column(name = "DD_MSE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoSuspSubastaElectronicaaGenerator")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoSuspSubastaElectronicaGenerator")
 	@SequenceGenerator(name = "DDMotivoSuspSubastaElectronicaGenerator", sequenceName = "S_DD_MSE_MOTIVO_SUSP_ELEC")
     private Long id;
 

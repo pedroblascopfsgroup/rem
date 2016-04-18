@@ -2,6 +2,8 @@ package es.pfsgroup.recovery.adjunto.haya;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -178,42 +180,118 @@ public class AdjuntoHayaManager {
 	}
 	
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
-		return null;
+		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
+		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+
+		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
+			@Override
+			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
+				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
+					return 0;
+				} else if (Checks.esNulo(o1)) {
+					return -1;
+				} else if (Checks.esNulo(o2)) {
+					return 1;
+				} else {
+					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
+				}
+			}
+		};
+		if (!Checks.esNulo(asunto)) {
+			List<Contrato> contratos = new ArrayList<Contrato>();
+			contratos.addAll(asunto.getContratos());
+			for (final Contrato c : contratos) {
+				final List<AdjuntoContrato> adjuntos = c.getAdjuntosAsList();
+				Collections.sort(adjuntos, comparador);
+				ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+					@Override
+					public Long getId() {
+						return c.getId();
+					}
+
+					@Override
+					public String getDescripcion() {
+						return c.getDescripcion();
+					}
+
+					@Override
+					public List getAdjuntosAsList() {
+						return adjuntos;
+					}
+
+					@Override
+					public List getAdjuntos() {
+						return adjuntos;
+					}
+				};
+				adjuntosMapeados.add(dto);
+			}
+		}
+		return adjuntosMapeados;
+//		return documentosExpediente(id, id, "");
 //		return super.getAdjuntosContratosAsu(id);
 	}
 
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
-		return null;
+		List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
+		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+
+		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
+			@Override
+			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
+				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
+					return 0;
+				} else if (Checks.esNulo(o1)) {
+					return -1;
+				} else if (Checks.esNulo(o2)) {
+					return 1;
+				} else {
+					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
+				}
+			}
+		};
+
+		for (final Persona p : personas) {
+			final List<AdjuntoPersona> adjuntos = p.getAdjuntosAsList();
+			Collections.sort(adjuntos, comparador);
+			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+				@Override
+				public Long getId() {
+					return p.getId();
+				}
+
+				@Override
+				public String getDescripcion() {
+					return p.getDescripcion();
+				}
+
+				@Override
+				public List getAdjuntosAsList() {
+					return adjuntos;
+				}
+
+				@Override
+				public List getAdjuntos() {
+					return adjuntos;
+				}
+			};
+			adjuntosMapeados.add(dto);
+		}
+
+		return adjuntosMapeados;
+//		return documentosExpediente(id, id, "");
 //		return super.getAdjuntosPersonaAsu(id);
 	}
 
-	public List<ExtAdjuntoGenericoDto> getAdjuntosExpedienteAsu(Long id) {
-		return null;
-//		return super.getAdjuntosExpedienteAsu(id);
-	}
-
-	public List<? extends AdjuntoDto> getAdjuntosConBorradoExp(Long id) {
-		return null;
-//		return super.getAdjuntosConBorradoExp(id);
-	}
-
-	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonasExp(Long id) {
-		return null;
-//		return super.getAdjuntosPersonasExp(id);
-	}
-
-	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id) {
-		return null;
-//		return super.getAdjuntosContratoExp(id);
-	}
-
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id){
-		return null;
-//		return super.getAdjuntosCntConBorrado(id);
+		return documentosExpediente(id, id, "");
+		//		return super.getAdjuntosCntConBorrado(id);
 	}
 
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
-		return null;
+		return documentosExpediente(id, id, "");
 //		return super.getAdjuntosPersonaConBorrado(id);
 	}
 

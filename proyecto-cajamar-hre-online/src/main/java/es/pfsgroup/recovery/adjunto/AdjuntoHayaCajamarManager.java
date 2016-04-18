@@ -88,7 +88,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosExpedienteAsu(id);
 		}else{
-			return adjuntoHayaManager.getAdjuntosExpedienteAsu(id);
+			return super.getAdjuntosExpedienteAsu(id);
+//			return adjuntoHayaManager.getAdjuntosExpedienteAsu(id);
 		}
 	}
 

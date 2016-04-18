@@ -19,8 +19,8 @@ public class GestorDocumentalConstants {
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";
 	
-	public static final String ERROR_NO_EXISTE_CONTENEDOR = "No existe un contenedor adecuado para almacenar este TIPO de archivo. Contacte con su administrador.";
-	public static final String ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO = "Este TIPO de archivo no tiene asociado ning\u00fan contenedor para ser almacenado. Contacte con su administrador.";
+	public static final String ERROR_NO_EXISTE_CONTENEDOR = "No se puede almacenar este TIPO de archivo. Contacte con su administrador - [ERROR: No existe contenedor adecuado].";
+	public static final String ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO = "TIPO de archivo incorrecto para ser almacenado. Contacte con su administrador - [ERROR: No existe mapeo para este tipo de archivo].";
 	
 	public static final String[] generalDocumento = {"Número Registro:", "Fecha Documento:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};
 	public static final String[] generalDocumentoModif = {"Número Registro:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};

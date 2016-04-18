@@ -10,7 +10,7 @@
 	<node name="nodeVieneTramiteAdjudicacion">
 		<action name="miTarea" config-type="bean"
 			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
-			<targetBean>NotificacionElectronicaActionHandler
+			<targetBean>notificacionElectronicaActionHandler
 			</targetBean>
 		</action>
 		<transition to="P400_GestionarNotificacionesAdjudicacion" name="Si"></transition>

@@ -14,6 +14,7 @@
  	<bean id="asignacionHayaDecidirTipoAsuntoHandler" class="es.pfsgroup.procedimientos.asignacion.AsignacionHayaDecidirTipoAsuntoHandler"></bean>
  	<bean id="cesionRemateHayaLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.CesionRemateHayaLeaveActionHandler"></bean>
  	<bean id="tramitesAcuerdosLeaveActionHandler" class="es.pfsgroup.procedimientos.acuerdos.TramitesAcuerdosLeaveActionHandler"></bean>
+ 	<bean id="notificacionElectronicaActionHandler" class="es.pfsgroup.procedimientos.notificacion.NotificacionElectronicaActionHandler"></bean>
  	<bean id="endProcedimientoProcessActionHandler" class="es.capgemini.pfs.bpm.generic.EndProcedimientoProcessActionHandler"></bean>
  	
 	

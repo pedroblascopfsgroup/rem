@@ -47,6 +47,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	private static final String ARCHIVO_FISICO = "archivoFisico";	
 	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS = "rest.client.gestor.documental.documentos";
+	private static final String EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO = "Expedient not found:";
 	
 	@Override
 	public RespuestaDocumentosExpedientes documentosExpediente(CabeceraPeticionRestClientDto cabecera, DocumentosExpedienteDto docExpDto) throws GestorDocumentalException {
@@ -55,6 +56,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 		serverRequest.setPath(getPathDocExp(cabecera, docExpDto));
 		serverRequest.setResponseClass(RespuestaDocumentosExpedientes.class);
 		RespuestaDocumentosExpedientes respuesta = (RespuestaDocumentosExpedientes) getResponse(serverRequest);
+		respuesta = mantenerEsperaCrearContenedor(serverRequest, respuesta);
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			throw new GestorDocumentalException(respuesta.getMensajeError());
 		}
@@ -308,6 +310,20 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	private Object getResponse(ServerRequest serverRequest) {
 		serverRequest.setRestClientUrl(URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS);
 		return restClientApi.getResponse(serverRequest);
+	}
+	
+	private RespuestaDocumentosExpedientes mantenerEsperaCrearContenedor(ServerRequest serverRequest, RespuestaDocumentosExpedientes respuesta) {
+		int mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+		while(mantenerEspera >= 0) {
+			try {
+				Thread.sleep(15000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			respuesta = (RespuestaDocumentosExpedientes) restClientApi.getResponse(serverRequest);
+			mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+		}			
+		return respuesta;
 	}
 
 }

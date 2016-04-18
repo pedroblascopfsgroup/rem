@@ -335,9 +335,8 @@ var setearDatos = function(data) {
     	limpiarPanel(panelEstado[p]);
     }
     
-
 	var panelActivo = null;
-	var idPolitica = 0;
+	var ordenEstPol = 0;
 	
     for (var i=0; i < data.politicas.length; i++)
     {
@@ -350,10 +349,10 @@ var setearDatos = function(data) {
 		
 		setearPanel(panel, politica);
 		
-		if (politica.id > idPolitica)
+		if (politica.orden > ordenEstPol)
 		{
 			panelActivo = panel;
-			idPolitica = politica.id;
+			ordenEstPol = politica.orden;
 		}
     }
     

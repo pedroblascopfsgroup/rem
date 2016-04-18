@@ -65,7 +65,7 @@ public class PoliticaDaoImpl extends AbstractEntityDao<Politica, Long> implement
     public Politica buscarUltimaPolitica(Long idPersona) {
         String hql = "select p from CicloMarcadoPolitica c, Politica p " + " where c.auditoria.borrado=false and p.auditoria.borrado=false"
                 + " and p.cicloMarcadoPolitica = c" + " and p.estadoPolitica.codigo in ('" + DDEstadoPolitica.ESTADO_VIGENTE + "', '"
-                + DDEstadoPolitica.ESTADO_PROPUESTA + "')" + " and c.persona.id = ? " + " order by p.estadoItinerarioPolitica.id desc";
+                + DDEstadoPolitica.ESTADO_PROPUESTA + "')" + " and c.persona.id = ? " + " order by p.estadoItinerarioPolitica.orden desc";
         List<Politica> politicas = getHibernateTemplate().find(hql, idPersona);
         if (politicas.size() > 0) { return politicas.get(0); }
         return null;

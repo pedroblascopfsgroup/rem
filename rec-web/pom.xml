@@ -1591,31 +1591,6 @@
                 </dependencies>-->
             </plugin>
             <!-- JETTY PLUGIN (end) -->
-            <!-- Plugin Docker de PFS -->
-            <plugin>
-				<groupId>es.pfsgroup.maven</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>1.0-SNAPSHOT</version>
-				<executions>
-					<execution>
-						<phase>docker</phase>
-						<goals>
-							<goal>run</goal>
-							<goal>start</goal>
-							<goal>stop</goal>
-							<goal>rm</goal>
-							<goal>update</goal>
-							<goal>ps</goal>
-							<goal>browser</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<container>${docker.container}</container>
-					<DB>${docker.DB}</DB>
-					<cliente>${docker.cliente}</cliente>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -1644,10 +1619,6 @@
 		</profile>
 		<profile>
 			<id>bankia</id>
-			<properties>
-				<docker.container>bankia-app-server</docker.container>
-				<docker.cliente>bankia</docker.cliente>
-			</properties>
 			<dependencies>
 				<!-- Versión de AspectJ -->
 				<dependency>
@@ -2081,10 +2052,6 @@
 		</profile>
 		<profile>
 			<id>haya</id>
-			<properties>
-				<docker.container>haya-app-server</docker.container>
-				<docker.cliente>haya</docker.cliente>
-			</properties>
 			<dependencies>
 				<!--  PARA JMS **************** -->
 				<dependency>
@@ -2299,10 +2266,6 @@
 		</profile>
 		<profile>
 			<id>cajamar</id>
-			<properties>
-				<docker.container>cajamar-app-server</docker.container>
-				<docker.cliente>cajamar</docker.cliente>
-			</properties>
 			<dependencies>
 				<!--  PARA JMS **************** -->
 				<dependency>

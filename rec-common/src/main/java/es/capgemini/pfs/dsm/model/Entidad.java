@@ -34,6 +34,11 @@ public class Entidad implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public static final String WORKING_CODE_KEY = "workingCode";
+    
+    public static final String CODIGO_BANKIA = "BANKIA";
+    public static final String CODIGO_HAYA_SAREB = "HAYA";
+    public static final String CODIGO_HAYA_CAJAMAR = "HCJ";
+    public static final String CODIGO_CAJAMAR = "CAJAMAR";
 
     @Id
     @Column(name = "ID")

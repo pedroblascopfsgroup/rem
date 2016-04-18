@@ -500,30 +500,7 @@
 	    <c:if test="${contabilidadCobro.observaciones!=null}" >
 			,value:'<s:message text="${contabilidadCobro.observaciones}" javaScriptEscape="true" />'
 		</c:if>
-	});
-	
-	<%-- var observaciones = new Ext.form.HtmlEditor({
-			id:'htmlRespuesta'
-			,fieldLabel : '<s:message code="contabilidad.observaciones" text="**Observaciones" />'
-			,width:550
-			,maxLength:100
-			,height : 80
-			,style:style
-			,labelStyle:labelStyle
-			,readOnly:false
-			,hideParent:true
-			,enableColors: false
-        	,enableAlignments: false
-        	,enableFont:false
-        	,enableFontSize:false
-        	,enableFormat:false
-        	,enableLinks:false
-        	,enableLists:false
-        	,enableSourceEdit:false
-        	<c:if test="${contabilidadCobro.observaciones!=null}">
-        	,value:'<s:message text="${contabilidadCobro.observaciones}" javaScriptEscape="true" />'
-			</c:if>
-			});
+		});
 	
 	<%-- CheckBox operaciones en tramite --%>
 	var opTramite = new Ext.form.CheckboxGroup({

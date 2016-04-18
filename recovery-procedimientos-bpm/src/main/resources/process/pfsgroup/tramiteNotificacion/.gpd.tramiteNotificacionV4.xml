@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteNotificacionV4" width="1090" height="529">
+<root-container name="tramiteNotificacionV4" width="1113" height="546">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

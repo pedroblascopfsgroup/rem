@@ -4,9 +4,18 @@
 	name="tramiteNotificacionV4">
 
 	<start-state name="inicio">
-		<transition to="P400_GestionarNotificaciones"></transition>
+		<transition to="nodeVieneTramiteAdjudicacion"></transition>
 	</start-state>
 
+	<node name="nodeVieneTramiteAdjudicacion">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>NotificacionElectronicaActionHandler
+			</targetBean>
+		</action>
+		<transition to="P400_GestionarNotificacionesAdjudicacion" name="Si"></transition>
+		<transition to="P400_GestionarNotificaciones" name="No"></transition>
+	</node>
 
 	<state name="P400_GestionarNotificaciones">
 		<event type="node-enter">
@@ -31,6 +40,28 @@
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
+	<state name="P400_GestionarNotificacionesAdjudicacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
 
 	<end-state name="Fin">
 		<event type="node-enter">

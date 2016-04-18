@@ -646,8 +646,8 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 	private String formatoMensajeValidacionHTML(String mensajeValidacion){
 
 		//Preformato para mensajes de validación en tareas
-		String formatoMensajeIn = "<div align=\"justify\" style=\"font-size: 8pt; font-family: Arial; margin-bottom: 10px;\">";
-		String formatoMensajeOut = "</div>";
+		String formatoMensajeIn = "'<div align=\"justify\" style=\"font-size:8pt;font-family:Arial;margin-bottom:10px;\">";
+		String formatoMensajeOut = "</div>'";
 		
 		return formatoMensajeIn + mensajeValidacion + formatoMensajeOut;
 		

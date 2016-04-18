@@ -2,10 +2,10 @@ create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE,
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable ultima modificacion: Jaime Sánchez-Cuenca Bellido, PFS Group
+-- Responsable ultima modificacion: María Villanueva, PFS Group
 
--- Fecha ultima modificacion: 22/03/2016
--- Motivos del cambio: CMREC-2249 - No correspondencia del asunto y contrato con la persona que sale en el lanzamiento.
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: CMREC-3085 - Se añade la carga del atributo vivienda habitual
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de Bien
@@ -94,7 +94,8 @@ BEGIN
                     IMP_ADJUDICADO,
                     IMP_CESION_REMATE,
                     IMP_BIE_TIPO_SUBASTA,
-                    PROCEDIMIENTO_ID
+                    PROCEDIMIENTO_ID,
+                    VIVIENDA_HABITUAL_ID 
                    )
             SELECT  ''' || fecha || ''',
                     ''' || fecha || ''',
@@ -112,7 +113,9 @@ BEGIN
                      NVL(ADJ.BIE_ADJ_IMPORTE_ADJUDICACION,0) AS IMP_ADJUDICADO,
                      NVL(ADJ.BIE_ADJ_CESION_REMATE_IMP,0) AS IMP_CESION_REMATE,
                      NVL(BIE.BIE_TIPO_SUBASTA,0) AS IMP_BIE_TIPO_SUBASTA,
-                     (SELECT MIN(PRC_ID) FROM '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC WHERE PRC.ASU_ID = SUB.ASU_ID GROUP BY PRC.ASU_ID) AS PROCEDIMIENTO_ID
+                     (SELECT MIN(PRC_ID) FROM '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC WHERE PRC.ASU_ID = SUB.ASU_ID GROUP BY PRC.ASU_ID) AS PROCEDIMIENTO_ID,
+                     (case when BIE.BIE_VIVIENDA_HABITUAL=1 THEN 1 when BIE.BIE_VIVIENDA_HABITUAL =2 THEN 0 else -1 end)  AS VIVIENDA_HABITUAL_ID
+
               FROM '|| V_DATASTAGE ||'.BIE_BIEN BIE, '|| V_DATASTAGE ||'.SUB_SUBASTA SUB, '|| V_DATASTAGE ||'.LOS_LOTE_SUBASTA LOS, '|| V_DATASTAGE ||'. LOB_LOTE_BIEN LOB,
                    '|| V_DATASTAGE ||'.BIE_ADICIONAL ADI, '|| V_DATASTAGE ||'.BIE_LOCALIZACION LOC, '|| V_DATASTAGE ||'.BIE_ADJ_ADJUDICACION ADJ
               WHERE BIE.BIE_ID = LOB.BIE_ID
@@ -153,7 +156,8 @@ BEGIN
                     IMP_ADJUDICADO,
                     IMP_CESION_REMATE,
                     IMP_BIE_TIPO_SUBASTA,
-                    PROCEDIMIENTO_ID
+                    PROCEDIMIENTO_ID,
+                    VIVIENDA_HABITUAL_ID
                    )
               SELECT DISTINCT 
                      ''' || fecha || ''',
@@ -172,7 +176,8 @@ BEGIN
                      NVL(ADJ.BIE_ADJ_IMPORTE_ADJUDICACION,0) AS IMP_ADJUDICADO,
                      NVL(ADJ.BIE_ADJ_CESION_REMATE_IMP,0) AS IMP_CESION_REMATE,
                      NVL(BIE.BIE_TIPO_SUBASTA,0) AS IMP_BIE_TIPO_SUBASTA,
-                     (SELECT MIN(PRC_ID) FROM '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC2 WHERE PRC2.ASU_ID = PRC.ASU_ID GROUP BY PRC2.ASU_ID) AS PROCEDIMIENTO_ID
+                     (SELECT MIN(PRC_ID) FROM '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC2 WHERE PRC2.ASU_ID = PRC.ASU_ID GROUP BY PRC2.ASU_ID) AS PROCEDIMIENTO_ID,
+                     (case when BIE.BIE_VIVIENDA_HABITUAL=1 THEN 1 when BIE.BIE_VIVIENDA_HABITUAL =2 THEN 0 else -1 end)  AS VIVIENDA_HABITUAL_ID
               FROM '|| V_DATASTAGE ||'.BIE_BIEN BIE, '|| V_DATASTAGE ||'.PRB_PRC_BIE PRB, '|| V_DATASTAGE ||'.PRC_PROCEDIMIENTOS PRC,
                    '|| V_DATASTAGE ||'.BIE_ADICIONAL ADI, '|| V_DATASTAGE ||'.BIE_LOCALIZACION LOC, '|| V_DATASTAGE ||'.BIE_ADJ_ADJUDICACION ADJ
               WHERE BIE.BIE_ID = PRB.BIE_ID
@@ -332,7 +337,8 @@ BEGIN
                     TIPO_PROCEDIMIENTO_DET_ID,
                     FASE_ACTUAL_AGR_ID,
                     TITULAR_PROCEDIMIENTO_ID,
-					BIE_FASE_ACTUAL_DETALLE_ID
+					          BIE_FASE_ACTUAL_DETALLE_ID,
+                    VIVIENDA_HABITUAL_ID
                    )
               SELECT DISTINCT 
                      ''' || fecha || ''',
@@ -356,7 +362,8 @@ BEGIN
                     -1 AS TIPO_PROCEDIMIENTO_DET_ID,
                     -1 AS FASE_ACTUAL_AGR_ID,
                     -1 AS TITULAR_PROCEDIMIENTO_ID,
-					-1 AS BIE_FASE_ACTUAL_DETALLE_ID
+					          -1 AS BIE_FASE_ACTUAL_DETALLE_ID,
+                     (case when BIE.BIE_VIVIENDA_HABITUAL=1 THEN 1 when BIE.BIE_VIVIENDA_HABITUAL =2 THEN 0 else -1 end)  AS VIVIENDA_HABITUAL_ID
               FROM '|| V_DATASTAGE ||'.BIE_BIEN BIE, 
                    '|| V_DATASTAGE ||'.BIE_ADICIONAL ADI, '|| V_DATASTAGE ||'.BIE_LOCALIZACION LOC, '|| V_DATASTAGE ||'.BIE_ADJ_ADJUDICACION ADJ
               WHERE NOT EXISTS(SELECT 1
@@ -896,7 +903,8 @@ BEGIN
                             OFICINA_BIEN_ID,
                             ENTIDAD_BIEN_ID,
                             FECHA_LANZAMIENTO_BIEN,
-							FECHA_INTERP_DEM_HIP
+							FECHA_INTERP_DEM_HIP,
+                    VIVIENDA_HABITUAL_ID
                             )
           SELECT  DIA_ID,
                   FECHA_CARGA_DATOS,
@@ -926,7 +934,8 @@ BEGIN
                   OFICINA_BIEN_ID,
                   ENTIDAD_BIEN_ID,
                   FECHA_LANZAMIENTO_BIEN,
-				  FECHA_INTERP_DEM_HIP
+				  FECHA_INTERP_DEM_HIP,
+                    VIVIENDA_HABITUAL_ID
           FROM TMP_H_BIE;
 
         V_ROWCOUNT := sql%rowcount;
@@ -1014,7 +1023,8 @@ BEGIN
                             OFICINA_BIEN_ID,
                             ENTIDAD_BIEN_ID,
                             FECHA_LANZAMIENTO_BIEN,
-							FECHA_INTERP_DEM_HIP
+							FECHA_INTERP_DEM_HIP,
+                    VIVIENDA_HABITUAL_ID
                             )
     select semana, 
            max_dia_semana,
@@ -1044,7 +1054,8 @@ BEGIN
           OFICINA_BIEN_ID,
           ENTIDAD_BIEN_ID,
           FECHA_LANZAMIENTO_BIEN,
-		  FECHA_INTERP_DEM_HIP
+		  FECHA_INTERP_DEM_HIP,
+                    VIVIENDA_HABITUAL_ID
      from H_BIE
      where DIA_ID = max_dia_semana;
      
@@ -1132,7 +1143,8 @@ BEGIN
                     OFICINA_BIEN_ID,
                     ENTIDAD_BIEN_ID,
                     FECHA_LANZAMIENTO_BIEN,
-					FECHA_INTERP_DEM_HIP
+					          FECHA_INTERP_DEM_HIP,
+                    VIVIENDA_HABITUAL_ID
                   )
       select mes,
              max_dia_mes,
@@ -1162,7 +1174,8 @@ BEGIN
               OFICINA_BIEN_ID,
               ENTIDAD_BIEN_ID,
               FECHA_LANZAMIENTO_BIEN,
-			  FECHA_INTERP_DEM_HIP
+			        FECHA_INTERP_DEM_HIP,
+              VIVIENDA_HABITUAL_ID
       from H_BIE where DIA_ID = max_dia_mes;
       
       V_ROWCOUNT := sql%rowcount;     
@@ -1247,7 +1260,8 @@ BEGIN
                   OFICINA_BIEN_ID,
                   ENTIDAD_BIEN_ID,
                   FECHA_LANZAMIENTO_BIEN,
-				  FECHA_INTERP_DEM_HIP
+				          FECHA_INTERP_DEM_HIP,
+                  VIVIENDA_HABITUAL_ID
                   )
       select trimestre,
              max_dia_trimestre,
@@ -1277,7 +1291,8 @@ BEGIN
               OFICINA_BIEN_ID,
               ENTIDAD_BIEN_ID,
               FECHA_LANZAMIENTO_BIEN,
-			  FECHA_INTERP_DEM_HIP
+			        FECHA_INTERP_DEM_HIP,
+              VIVIENDA_HABITUAL_ID
       from H_BIE where DIA_ID = max_dia_trimestre;
       
       V_ROWCOUNT := sql%rowcount;     
@@ -1363,7 +1378,8 @@ BEGIN
                   OFICINA_BIEN_ID,
                   ENTIDAD_BIEN_ID,
                   FECHA_LANZAMIENTO_BIEN,
-				  FECHA_INTERP_DEM_HIP
+				          FECHA_INTERP_DEM_HIP,
+                  VIVIENDA_HABITUAL_ID
                   )
       select anio,
              max_dia_anio,
@@ -1393,7 +1409,8 @@ BEGIN
               OFICINA_BIEN_ID,
               ENTIDAD_BIEN_ID,
               FECHA_LANZAMIENTO_BIEN,
-			  FECHA_INTERP_DEM_HIP
+			        FECHA_INTERP_DEM_HIP,
+              VIVIENDA_HABITUAL_ID
       from H_BIE where DIA_ID = max_dia_anio;
       
       V_ROWCOUNT := sql%rowcount;     

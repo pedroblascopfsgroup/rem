@@ -2,9 +2,9 @@ create or replace PROCEDURE TRUNCAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 22/03/2016
--- Motivos del cambio: GARANTIA_NUM_OPE_BIE
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: D_BIE_VIVIENDA_HABITUAL
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que trunca las tablas de la dimensión Asunto.
@@ -52,6 +52,8 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE_AGR'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_VIVIENDA_HABITUAL'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
   commit;
   --Log_Proceso

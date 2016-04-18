@@ -2,9 +2,9 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 22/03/2016
--- Motivos del cambio: GARANTIA_NUM_OPE_BIE
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: D_BIE_VIVIENDA_HABITUAL
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension SUBASTA.
@@ -29,6 +29,7 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
     -- D_BIE_ENTIDAD
 	-- D_BIE_GARANTIA_NUM_OPE_BIE_AGR
 	-- D_BIE_GARANTIA_NUM_OPE_BIE
+  -- -- D_BIE_VIVIENDA_HABITUAL
     
 
 BEGIN
@@ -203,6 +204,15 @@ BEGIN
                             PRIMARY KEY (GARANTIA_NUM_OPE_BIE_ID)'', :error); END;'; 		 
     execute immediate V_SQL USING OUT error;
     DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_GARANTIA_NUM_OPE_BIE');
+
+
+     ------------------------------ D_BIE_VIVIENDA_HABITUAL --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_VIVIENDA_HABITUAL'', 
+              ''VIVIENDA_HABITUAL_ID NUMBER(16,0) NOT NULL,
+                            VIVIENDA_HABITUAL_DESC VARCHAR2(50) ,
+                            PRIMARY KEY (VIVIENDA_HABITUAL_ID)'', :error); END;';     
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_VIVIENDA_HABITUAL');
    
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

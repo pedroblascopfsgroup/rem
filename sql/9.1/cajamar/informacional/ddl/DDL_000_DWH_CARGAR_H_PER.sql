@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=CMREC-2389
 --## PRODUCTO=NO
 --## 
---## Finalidad: SE MODIFICA LA CARGA DE  CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
+--## Finalidad: SE MODIFICA LA CARGA DE  puntuacion
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
   -- Autor: Maria Villanueva, PFS Group
   -- Fecha creación:Septiembre 2015
   -- Responsable ultima modificacion: María Villanueva, PFS Group
-  -- Fecha ultima modificacion: 16/04/2016
-  -- Motivos del cambio: SE MODIFICA LA CARGA DE  CAMPO ARQUETIPO_PERSONA_ID EN TABLAS DE PERSONAS
+  -- Fecha ultima modificacion: 18/04/2016
+  -- Motivos del cambio: SE MODIFICA LA CARGA DE  puntuacion
   -- Cliente: Recovery BI CAJAMAR
   --
   -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -319,12 +319,16 @@ begin
       
       
       
-      -- TRAMO_PUNTUACION_ID
+     -- TRAMO_PUNTUACION_ID
+
+      select  min(dia_id) into min_dia_mes from D_F_DIA where mes_id=(select mes_id from recovery_cm_dwh.D_F_DIA where DIA_ID =fecha);
+
       execute immediate 'merge into TMP_H_PER per 
-                         using (select PER_ID, MAX(PTO_PUNTUACION) PUNTUACION
-                         from '||v_datastage||'.PTO_PUNTUACION_TOTAL 
-                         where trunc(FECHACREAR) <= '''||fecha||'''
-                         GROUP BY PER_ID) ale
+                         using (select pun.per_id as PER_ID, pun.pto_puntuacion as PUNTUACION from recovery_cm_datastage.PTO_PUNTUACION_TOTAL  pun, ( select PER_ID, max(trunc(FECHACREAR)) FECHACREAR
+                     from '||v_datastage||'.PTO_PUNTUACION_TOTAL 
+                          where trunc(FECHACREAR) >= '''||min_dia_mes||''' and trunc(FECHACREAR) <= '''||fecha||'''
+                         GROUP BY PER_ID) pun2
+                         where pun.per_id=pun2.per_id and trunc(pun.FECHACREAR)=pun2.FECHACREAR) ale
                    on (per.PERSONA_ID = ale.PER_ID)
                    when matched then update
                    set per.TRAMO_PUNTUACION_ID = (case when PUNTUACION is null or  PUNTUACION = 0 then 1
@@ -335,7 +339,6 @@ begin
                    where per.DIA_ID = '''||fecha||'''';
 
       v_rowcount := sql%rowcount;
-
       --Log_Proceso
       execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (5) - Tramo Puntuacion: ' || to_char(v_rowcount), 4;
       commit;
@@ -1027,5 +1030,3 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   end;
     
 end cargar_h_per;
-/
-EXIT

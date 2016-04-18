@@ -13,7 +13,7 @@ export ENTIDAD=0240
 
 # Datos de conexión para las shells JMX
 export JMX_HOST=localhost
-export JMX_PORT=2099
+export JMX_PORT=3094
 export JMX_USER=jmx_admin
 export JMX_PW="IMYzS4aO1q6jg1q1cXFevw==38047741"
 

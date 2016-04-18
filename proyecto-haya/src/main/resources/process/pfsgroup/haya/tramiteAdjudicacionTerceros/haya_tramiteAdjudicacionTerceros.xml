@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2"
+	name="tramiteAdjudicacionTerceros">
+
+	<start-state name="inicio">
+		<transition to="P457_RegistrarDatosAdjudicacion" name="iniciarProceso"></transition>
+	</start-state>
+	
+	<state name="P457_RegistrarDatosAdjudicacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_RegistrarDatosAdjudicacionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="P457_RegistrarDatosAdjudicacionDecision" expression="#{P457_RegistrarDatosAdjudicacionDecision}">
+		<transition to="P457_BPMTramiteAdjudicacion" name="sin"></transition> <!-- Entidad: Con cesion -->
+		<transition to="P457_BPMTramiteCesionRemate" name="con"></transition> <!-- Entidad: Sin cesion -->
+		<transition to="P457_ConfirmarConsignacion" name="terceros"></transition> <!-- Terceros -->
+	</decision>
+	
+	<state name="P457_ConfirmarConsignacion">
+	<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_ConfirmarConsignacionDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P457_ConfirmarConsignacionDecision" expression="#{P457_ConfirmarConsignacionDecision}">
+		<transition to="P457_RegistrarDatosAdjudicacion" name="02"></transition>
+		<transition to="P457_SolicitarMandamientoPago" name="01"></transition>
+	</decision>
+	
+	<state name="P457_SolicitarMandamientoPago">
+	<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_ConfirmarConsignacion" name="vueltaAtras"></transition>
+		<transition to="P457_ConfirmarRecivoEnvioMandamientoPago" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="P457_ConfirmarRecivoEnvioMandamientoPago">
+	<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_SolicitarMandamientoPago" name="vueltaAtras"></transition>
+		<transition to="P457_RecepcionMandamientoPago" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P457_RecepcionMandamientoPago">
+	<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_ConfirmarRecivoEnvioMandamientoPago" name="vueltaAtras"></transition>
+		<transition to="P457_ConfirmarContabilidad" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P457_ConfirmarContabilidad">
+	<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_RecepcionMandamientoPago" name="vueltaAtras"></transition>
+		<transition to="P457_ValorarLanzamientoTramiteSoliSolvPatr" name="avanzaBPM"></transition>
+	</state>
+
+	<state name="P457_ValorarLanzamientoTramiteSoliSolvPatr">
+	<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="P457_ConfirmarContabilidad" name="vueltaAtras"></transition>
+		<transition to="P457_ValorarLanzamientoTramiteSoliSolvPatrDecision" name="avanzaBPM"></transition>
+	</state>
+
+	<decision name="P457_ValorarLanzamientoTramiteSoliSolvPatrDecision" expression="#{P457_ValorarLanzamientoTramiteSoliSolvPatrDecision}">
+		<transition to="P457_BPMTramiteSolicitudSolvenciaPatrimonial" name="01"></transition>
+		<transition to="Fin" name="02"></transition>
+	</decision>
+
+	<state name="P457_BPMTramiteSolicitudSolvenciaPatrimonial">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="hcj_solicitudSolvenciaPatrimonial"></transition>
+	</state>
+
+	<state name="P457_BPMTramiteCesionRemate">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="hcj_tramiteCesionRemate"></transition>
+	</state>
+
+	<state name="P457_BPMTramiteAdjudicacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="hcj_tramiteAdjudicacion"></transition>
+	</state>
+
+	<end-state name="Fin">
+	   <event type="node-enter">
+	      <action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+	          <targetBean>endProcessActionHandler</targetBean>
+	      </action>
+      	    </event>  
+   	 </end-state>
+	
+    
+</process-definition>

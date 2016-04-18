@@ -1,7 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.procedimiento;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
-import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -28,6 +27,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes.dao.NMBBienDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.contratos.NMBContratoManager;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
@@ -127,6 +127,65 @@ public class NMBProcedimientoManager extends
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", b.getId());
 		bien = genericDao.get(NMBBien.class, f1);
 		return bien;
+	}
+	
+	/**
+	 * Comprueba que los siguientes campos de un bien esten rellenos:
+	 * 'Entidad Adjudicataria', 'Importe de Adjudicacion', 'Cesion de remate',
+	 * 'Importe cesion remate'.
+	 * 
+	 * 
+	 * @param idProcedimiento
+	 * @return
+	 */
+	@Override
+	public Boolean validarDatosAdjudicacionTerceroBien(Long idProcedimiento){
+		List<Bien> listaBienes = parent().getBienesDeUnProcedimiento(
+				idProcedimiento);
+		 
+		
+		NMBBien bien = new NMBBien();
+		Bien b;
+		if (!Checks.estaVacio(listaBienes)) {
+			b = listaBienes.get(0); // Un unico bien.
+			bien = (b instanceof NMBBien) ? (NMBBien) b : getNMBBien(b);					
+			if (Checks.esNulo(bien.getAdjudicacion())){
+				return false;
+			} else if(Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
+					return false;
+			} else if(Checks.esNulo(bien.getAdjudicacion().getImporteAdjudicacion()) || bien.getAdjudicacion().getImporteAdjudicacion().equals(new BigDecimal(0))){
+					return false;
+			}
+		}
+		return true;	
+	}
+	
+	/**
+	 * Comprueba si la entidad adjudicataria en un bien de un procedimiento es
+	 * la entidad.
+	 * 
+	 * @param idProcedimiento
+	 * @return
+	 */
+	@Override
+	public Boolean comprobarSiEntidadAdjudicatariaEnBienEsEntidad(Long idProcedimiento){
+		List<Bien> listaBienes = parent().getBienesDeUnProcedimiento(
+				idProcedimiento);
+		
+		NMBBien bien = new NMBBien();
+		Bien b;
+		if (!Checks.estaVacio(listaBienes)) {
+			b = listaBienes.get(0); // Un unico bien.
+			bien = (b instanceof NMBBien) ? (NMBBien) b : getNMBBien(b);
+			if(!Checks.esNulo(bien.getAdjudicacion()) && !Checks.esNulo(bien.getAdjudicacion().getEntidadAdjudicataria())){
+				if(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo().equals(DDEntidadAdjudicataria.ENTIDAD)){
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

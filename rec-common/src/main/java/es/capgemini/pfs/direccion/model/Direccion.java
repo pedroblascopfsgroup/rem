@@ -2,6 +2,7 @@ package es.capgemini.pfs.direccion.model;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -35,7 +36,8 @@ import es.pfsgroup.commons.utils.Checks;
 public class Direccion implements Serializable, Auditable {
 
     private static final long serialVersionUID = -4165996513581993354L;
-
+    private static final NumberFormat codigoPostalFormat = new DecimalFormat("00000");
+    
     @Id
     @Column(name = "DIR_ID")
     private Long id;
@@ -442,7 +444,7 @@ public class Direccion implements Serializable, Auditable {
 			dir += " " + domicilio_n;
 		}
 		if(codigoPostal != null) {
-			dir += " (" + codigoPostal + ")";
+			dir += " (" + codigoPostalFormat.format(codigoPostal) + ")";
 		}
 		if(provincia != null) {
 			dir += ", " + provincia.getDescripcion();

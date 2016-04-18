@@ -25,6 +25,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDSituacionGestion;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -298,8 +299,14 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		}
 		// codigo de disposicion
 		if (!Checks.esNulo(dto.getCodDisposicion())) {
-			hql.append(" AND EXISTS (SELECT 1 FROM Disposicion disp WHERE c = disp.contrato AND disp.codigoDisposicion like '%"
-					+ dto.getCodDisposicion() + "%'))");
+			
+			if(esEntidadCajamar(usuLogado)) {
+				hql.append(" AND EXISTS (SELECT 1 FROM Disposicion disp WHERE c = disp.contrato AND disp.codigoDisposicion like '%"
+						+ dto.getCodDisposicion() + "%'))");
+			}
+			else {
+				hql.append(" AND c.condicionesEspeciales like '%" + dto.getCodDisposicion() + "%'))");
+			}
 		}
 		// codigo de recibo
 		if (!Checks.esNulo(dto.getCodRecibo())) {
@@ -1162,4 +1169,9 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
         }
         return queryR.toString();
     }
+    
+    private boolean esEntidadCajamar(Usuario usuario)
+    {
+		return Entidad.CODIGO_CAJAMAR.equals(usuario.getEntidad().getCodigo());		
+	}
 }

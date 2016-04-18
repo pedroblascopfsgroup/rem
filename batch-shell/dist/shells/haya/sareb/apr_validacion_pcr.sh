@@ -2,7 +2,7 @@
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
  
 CARPETA=pcr
-DIR_DESTINO=/$DEVON_HOME/tmp/pfs/$ENTIDAD/$CARPETA/
+DIR_DESTINO=$DEVON_HOME/tmp/pfs/$ENTIDAD/$CARPETA/
 MAX_WAITING_MINUTES=10
 ficheros=PCR
 WAIT_FOR_JOBS=cargaPCRvalidacionesPCRJob,cargaPCRPasajeProduccionJob,precalculoPCRProduccionJob

@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificacion: Diego Pérez, PFS Group
--- Fecha ultima modificacion: 21/10/2015
--- Motivos del cambio: Solucionado pufo en la inserción de la TMP_PRC_DECISION
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 16/04/2016
+-- Motivos del cambio: Solucionado problemas duplicados marca paralizados
 -- Cliente: Recovery BI Bankia
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_PRC.
@@ -743,7 +743,7 @@ BEGIN
           from  '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS a
           where a.DD_EDE_ID = 2 and a.DPR_PARALIZA = 1
           and trunc(a.FECHACREAR) <= '''||fecha||''' and trunc(a.DPR_FECHA_PARA)>='''||fecha||''' 
-          and trunc(a.FECHACREAR) in (select max(trunc(FECHACREAR)) from  '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS b 
+          and a.FECHACREAR in (select max(FECHACREAR) from  '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS b 
                                       where b.PRC_ID = a.PRC_ID and b.DD_EDE_ID = 2 and b.DPR_PARALIZA = 1
                                       and trunc(b.FECHACREAR) <= '''||fecha||''' and trunc(b.DPR_FECHA_PARA)>='''||fecha||''' )
           group by PRC_ID, DPR_PARALIZA, DPR_FINALIZA,DD_DPA_ID';

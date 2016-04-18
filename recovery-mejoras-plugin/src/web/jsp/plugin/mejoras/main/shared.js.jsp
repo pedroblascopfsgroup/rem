@@ -14,7 +14,7 @@ function isIE () {
   return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
 }
 
-if (isIE () && isIE () < 9) {
+if (isIE () && isIE () <= 9) {
 	if (!Array.prototype.filter){
 		  Array.prototype.filter = function(fun /*, thisp */){
 		    "use strict";
@@ -24,7 +24,7 @@ if (isIE () && isIE () < 9) {
 		
 		    var t = Object(this);
 		    var len = t.length >>> 0;
-		    if (typeof fun !== "function")
+		    if (typeof fun !== 'function')
 		      throw new TypeError();
 		
 		    var res = [];

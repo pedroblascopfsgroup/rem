@@ -50,22 +50,23 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var campoEdicto = items[2 + muestraBotonGuardar];
-var campoFechaPujas = items[3 + muestraBotonGuardar];
+var campoTasacion = items[3 + muestraBotonGuardar];
+var campoFiscal = items[4 + muestraBotonGuardar];
 
-campoFechaPujas.setDisabled(true);
-campoFechaPujas.allowBlank = true;
+campoFiscal.setDisable(true);
+campoFiscal.allowBlank = true;
 
-campoEdicto.on('select', function(){	
-	if(campoEdicto.getValue() == '01') {//si
-		campoFechaPujas.setDisabled(false);
-		campoFechaPujas.allowBlank = false;
+campoTasacion.on('select', function(){	
+	if(campoTasacion.getValue() == '02') {//No
+		campoFiscal.reset();
+		campoFiscal.setDisabled(false);
+		campoFiscal.allowBlank = false;
 	}
-	else if(campoEdicto.getValue() == '02') {//no
-		campoFechaPujas.reset();
-		campoFechaPujas.setDisabled(true);
-		campoFechaPujas.allowBlank = true;
-	}
+	else if(campoTasacion.getValue() == '01') {//si
+		campoFiscal.reset();
+		campoFiscal.setDisabled(true);
+		campoFiscal.allowBlank = true;
+	}		
 });	
 
 </c:if>

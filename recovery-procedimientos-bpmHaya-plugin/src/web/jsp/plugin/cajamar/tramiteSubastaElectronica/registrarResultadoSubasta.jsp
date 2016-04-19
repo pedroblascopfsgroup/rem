@@ -50,45 +50,72 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var campo1 = items[1 + muestraBotonGuardar];
-var campo2 = items[2 + muestraBotonGuardar];
-var campo3 = items[3 + muestraBotonGuardar];
-var campo4 = items[4 + muestraBotonGuardar];
-var campo5 = items[5 + muestraBotonGuardar];
+var campoDecision = items[1 + muestraBotonGuardar];
+var campoMotivo = items[2 + muestraBotonGuardar];
+var campoCoincidencia = items[3 + muestraBotonGuardar];
+var campoPostores = items[4 + muestraBotonGuardar];
+var campoDetalle = items[5 + muestraBotonGuardar];
+var campoObservaciones = items[6 + muestraBotonGuardar];
 
-campo2.setDisabled(true);
-campo3.setDisabled(true);
-campo4.setDisabled(true);
-campo5.setDisabled(true);
+campoMotivo.setDisabled(true);
+campoMotivo.allowBlank = true;
+campoCoincidencia.setDisabled(true);
+campoCoincidencia.allowBlank = true;
+campoPostores.setDisabled(true);
+campoPostores.allowBlank = true;
+campoDetalle.setDisabled(true);
+campoDetalle.allowBlank = true;
 
-campo1.on('select', function(){
-	if(campo1.getValue() == 'NO') {//no
-		campo2.reset();
-		campo3.setDisabled(false);
+comboDecision.on('select', function(){	
+	if(campoResultado.getValue() == 'ENT' || 'TER') {//entidad o terceros
+		campoCoincidencia.reset();
+		campoCoincidencia.setDisabled(true);
+		campoCoincidencia.allowBlank = true;
+		campoMotivo.setDisabled(false);
+		campoMotivo.allowBlank = false;
 	}
-	else {//distinto de no
-		campo3.reset();
-		campo4.reset();
-		campo5.reset();
-		campo2.setDisabled(false);
-	}
-});
-campo3.on('select', function(){
-	if(campo3.getValue() == '01') {//si
-		campo4.setDisabled(false);
-	}else if(campo3.getValue() == '02') {//no
-		campo4.reset();
-		campo4.setDisabled(true);
-	}
-});
-campo4.on('select', function(){
-	if(campo4.getValue() == '01') {//si
-		campo5.setDisabled(false);
-	}else if(campo4.getValue() == '02') {//no
-		campo5.reset();
-		campo5.setDisabled(true);
-	}
+	else if(campoResultado.getValue() == 'NO') {//suspension
+		campoMotivo.reset();
+		campoMotivo.setDisabled(true);
+		campoMotivo.allowBlank = true;
+		campoCoincidencia.setDisabled(false);
+		campoCoincidencia.allowBlank = false;
+	}		
 });	
+
+campoCoincidencia.on('select', function(){	
+		if(campoCoincidencia.getValue() == '01') {//si
+			campoPostores.setDisabled(false);
+			campoPostores.allowBlank = false;
+		}
+		else if(campoResultado.getValue() == '02') {//no
+			campoPostores.reset();
+			campoPostores.setDisabled(true);
+			campoPostores.allowBlank = true;
+		}
+});	
+	
+	
+campoPostores.on('select', function(){	
+		if(campoPostores.getValue() == '01') {//si
+			campoDetalle.setDisabled(false);
+			campoDetalle.allowBlank = false;	
+		}
+		else if(campoPostores.getValue() == '02') {//no
+			campoDetalle.reset();
+			campoDetalle.setDisabled(true);
+			campoDetalle.allowBlank = true;
+		}
+});
+
+campoDetalle.on('select', function(){	
+		if(campoDetalle.getValue() == 'OTR') {//si
+			campoObservaciones.allowBlank = false;	
+		}
+		else {
+			campoObservaciones.allowBlank = true;
+		}
+});
 
 </c:if>
 

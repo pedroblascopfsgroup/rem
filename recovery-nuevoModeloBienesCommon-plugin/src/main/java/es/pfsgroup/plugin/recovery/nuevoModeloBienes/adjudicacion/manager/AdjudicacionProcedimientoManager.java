@@ -719,7 +719,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 								NMBBien bi = (NMBBien) b;
 								if (bi.getAdjudicacion() != null) {
 									NMBAdjudicacionBien adju = bi.getAdjudicacion();
-									if (adju.getPostores() == false) {
+									if (!adju.getPostores()) {
 										return true;
 									}
 								}
@@ -733,7 +733,6 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		return false;
 
 	}
-
 
 	public String compruebaPostores(Long idProcedimiento) {
 
@@ -752,6 +751,47 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 									NMBAdjudicacionBien adju = bi.getAdjudicacion();
 									if (Checks.esNulo(adju.getPostores())) {
 										return "Existe al menos un bien en la subasta con el campo postores sin informar.";
+									} else if (adju.getPostores()) {
+										if (Checks.esNulo(adju.getEntidadAdjudicataria())) {
+											return "Existe al menos un bien en la subasta con el campo entidad adjudicataria sin informar.";
+										} else if ("1".equals(adju.getEntidadAdjudicataria().getCodigo()) && Checks.esNulo(adju.getCesionRemate())) {
+											return "Existe al menos un bien en la subasta con el campo cesión de remate sin informar.";
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public String compruebaRegResEscJuzgadoPOST(Long idProcedimiento) {
+
+		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(idProcedimiento);
+
+		if (!Checks.esNulo(sub)) {
+			List<LoteSubasta> listado = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listado)) {
+				for (LoteSubasta ls : listado) {
+					List<Bien> bienes = ls.getBienes();
+					if (!Checks.estaVacio(bienes)) {
+						for (Bien b : bienes) {
+							if (b instanceof NMBBien) {
+								NMBBien bi = (NMBBien) b;
+								if (bi.getAdjudicacion() != null) {
+									NMBAdjudicacionBien adju = bi.getAdjudicacion();
+									if(Checks.esNulo(adju.getEntidadAdjudicataria())){
+										return "Existe al menos un bien en la subasta con el campo entidad adjudicataria sin informar.";
+									}
+									else if("2".equals(adju.getEntidadAdjudicataria().getCodigo())){
+										return "Existe al menos un bien en la subasta con el campo entidad adjudicataria a terceros.";
+									}
+									else if(Checks.esNulo(adju.getCesionRemate())){
+										return "Existe al menos un bien en la subasta con el campo cesión de remate sin informar.";
 									}
 								}
 							}
@@ -780,7 +820,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 								if (bi.getAdjudicacion() != null) {
 									NMBAdjudicacionBien adju = bi.getAdjudicacion();
 									if (Checks.esNulo(adju.getEntidadAdjudicataria()) || !"ENT".equals(adju.getEntidadAdjudicataria())) {
-										return "Existe al menos un bien en la subasta que no está adjudicado a la entidad.";
+										return "No puede haber adjudicación a terceros en un bien adjudicado a través de una subasta sin postores. Por favor, revise la información en la ficha del bien";
 									}
 								}
 							}

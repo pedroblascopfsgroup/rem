@@ -19,6 +19,7 @@
  	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
  	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.precontencioso.BCCPrecontenciosoLeaveActionHandler" />
  	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.costas.CostasProcuradorHandler"></bean>
+ 	<bean id="tramiteSubElectronicaLeaveActionHandler" class="es.pfsgroup.procedimientos.subastaElectronica.TramiteSubElectronicaLeaveActionHandler"></bean>
 
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -356,6 +357,11 @@
 					}
 					return true;
 				}
+				
+				def compruebaRegResEscJuzgadoPOST = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.compruebaRegResEscJuzgadoPOST(idProcedimiento);
+				}				
 				
   			 ]]>
   			</value>

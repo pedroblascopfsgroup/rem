@@ -215,10 +215,10 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
 				if ("comboPostores".equals(tev.getNombre())) {
-					comboPostores = new Boolean(tev.getValor());
+					comboPostores = ("01".equals(tev.getValor()));
 				}
 				else if ("comboSubastaBienes".equals(tev.getNombre())) {
-					comboSubastaBienes = new Boolean(tev.getValor());
+					comboSubastaBienes = ("01".equals(tev.getValor()));
 				}
 			}
 		}
@@ -285,13 +285,13 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 							if (b instanceof NMBBien) {
 								NMBBien bi = (NMBBien) b;
 								if (bi.getAdjudicacion() != null) {
+									NMBAdjudicacionBien adju = bi.getAdjudicacion();
 									if (coincidencia) {
-										NMBAdjudicacionBien adju = bi.getAdjudicacion();
 										adju.setPostores(comboPostores);
-										genericDao.save(NMBAdjudicacionBien.class, adju);
-										if (comboPostores) {
-											creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
-										}
+										genericDao.save(NMBAdjudicacionBien.class, adju);										
+									}
+									if(adju.getPostores()){
+										creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
 									}
 								}
 							}
@@ -302,7 +302,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		}
 	}
 	
-	private void modificarYCrearDesdeEscJuzgado(Subasta sub, Boolean coincidencia, Boolean comboAdjudicacion) {
+	private void modificarYCrearDesdeEscJuzgado(Subasta sub, Boolean coincidencia, Boolean comboCesion) {
 
 		if (!Checks.esNulo(sub)) {
 			List<LoteSubasta> listado = sub.getLotesSubasta();
@@ -316,12 +316,10 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 								if (bi.getAdjudicacion() != null) {
 									if (coincidencia) {
 										NMBAdjudicacionBien adju = bi.getAdjudicacion();
-										adju.setCesionRemate(comboAdjudicacion);
+										adju.setCesionRemate(comboCesion);
 										genericDao.save(NMBAdjudicacionBien.class, adju);
-										if (comboAdjudicacion) {
-											creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
-										}
 									}
+									creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);									
 								}
 							}
 						}
@@ -406,7 +404,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
 
 		// FIXME
-		// crearNotificacionManualAdjudicacion(procPadre);
+		crearNotificacionManualAdjudicacion(procPadre);
 
 	}
 
@@ -414,18 +412,68 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 		if (adjudicacion != null) {
 			if (adjudicacion.getEntidadAdjudicataria() != null) {
-				if ("ENT".equals(adjudicacion.getEntidadAdjudicataria().getCodigo())) {
-					return "P413";
-				} else if ("TER".equals(adjudicacion.getEntidadAdjudicataria().getCodigo())) {
-					return "P413";
+				if ("1".equals(adjudicacion.getEntidadAdjudicataria().getCodigo())) {
+					 if (!adjudicacion.getCesionRemate()){
+						 return "H005";
+					 }
+					 else if(adjudicacion.getCesionRemate()){
+						 return "H006";
+					 }
+				} else if ("2".equals(adjudicacion.getEntidadAdjudicataria().getCodigo())) {
+					return "P457";
 				}
-			} else if (adjudicacion.getCesionRemate()) {
-				return "P413";
-			}
+			} 
 		}
 
 		// FIXME No puede no devolver un resultado
 		return null;
+	}
+	
+	private void crearNotificacionManualAdjudicacion(Procedimiento prc) {
+		EXTTareaNotificacion notificacion = new EXTTareaNotificacion();
+		notificacion.setProcedimiento(prc);
+		notificacion.setAsunto(prc.getAsunto());
+		notificacion.setEstadoItinerario(genericDao.get(DDEstadoItinerario.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoItinerario.ESTADO_ASUNTO)));
+		SubtipoTarea subtipoTarea = genericDao.get(SubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR));
+		if (subtipoTarea == null) {
+			throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", SubtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR);
+		}
+
+		notificacion.setEspera(Boolean.FALSE);
+		notificacion.setAlerta(Boolean.FALSE);
+
+		notificacion.setTarea("Se ha iniciado un trámite por cada bien");
+		notificacion.setDescripcionTarea("Se ha iniciado un trámite por cada bien");
+
+		notificacion.setCodigoTarea(subtipoTarea.getTipoTarea().getCodigoTarea());
+		notificacion.setSubtipoTarea(subtipoTarea);
+		DDTipoEntidad tipoEntidad = (DDTipoEntidad) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTipoEntidad.class, "5");
+		notificacion.setTipoEntidad(tipoEntidad);
+		Date ahora = new Date(System.currentTimeMillis());
+		notificacion.setFechaInicio(ahora);
+		notificacion.setFechaVenc(ahora);
+		notificacion.setFechaVencReal(ahora);
+		notificacion.setFechaFin(ahora);
+		notificacion.setTareaFinalizada(true);
+		notificacion.setEmisor(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getApellidoNombre());
+
+		Auditoria audit = new Auditoria();
+		audit.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getApellidoNombre());
+		audit.setFechaCrear(ahora);
+		audit.setFechaBorrar(ahora);
+		audit.setUsuarioBorrar(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getApellidoNombre());
+		audit.setBorrado(true);
+		notificacion.setAuditoria(audit);
+
+		notificacion = genericDao.save(EXTTareaNotificacion.class, notificacion);
+
+		TareaExterna tex = new TareaExterna();
+		tex.setAuditoria(audit);
+		tex.setTareaPadre(notificacion);
+		tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "P401_BPMTramiteAdjudicacionV4")));
+		tex.setDetenida(false);
+		genericDao.save(TareaExterna.class, tex);
+
 	}
 
 }

@@ -50,18 +50,31 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var campo3 = items[3 + muestraBotonGuardar];
-var campo4 = items[4 + muestraBotonGuardar];
+var campoResultado = items[2 + muestraBotonGuardar];
+var campoCoincidencia = items[3 + muestraBotonGuardar];
+var campoRecurso = items[6 + muestraBotonGuardar];
 
-campo4.setDisabled(true);
+campoCoincidencia.setDisabled(true);
+campoCoincidencia.allowBlank = true;
+campoRecurso.setDisabled(true);
+campoRecurso.allowBlank = true;
 
-campo3.on('select', function(){	
-	if(campo3.getValue() == '01') {//si
-		campo4.setDisabled(false);
+debugger;
+campoResultado.on('select', function(){
+debugger;
+	if(campoResultado.getValue() == 'FAV' || campoResultado.getValue() == 'FAVC') { //favorable o favorable con aceptacion
+		campoRecurso.reset();
+		campoRecurso.setDisabled(true);
+		campoRecurso.allowBlank = true;
+		campoCoincidencia.setDisabled(false);
+		campoCoincidencia.allowBlank = false;
 	}
-	else if(campo3.getValue() == '02') {//no
-		campo4.reset();
-		campo4.setDisabled(true);
+	else if(campoResultado.getValue() == 'DESF') {//desfavorable
+		campoCoincidencia.reset();
+		campoCoincidencia.setDisabled(true);
+		campoCoincidencia.allowBlank = true;
+		campoRecurso.setDisabled(false);
+		campoRecurso.allowBlank = false;
 	}
 });	
 

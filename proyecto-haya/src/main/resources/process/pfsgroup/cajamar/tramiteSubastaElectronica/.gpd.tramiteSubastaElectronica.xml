@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteSubastaElectronica" width="788" height="468">
+<root-container name="tramiteSubastaElectronica" width="1552" height="848">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -162,9 +162,6 @@
     </edge>
   </node>
   <node name="P458_SolicitarAdjudicacionInstruccionesEntidad" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>

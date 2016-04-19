@@ -229,7 +229,7 @@
 					<constructor-arg index="0">
 						<bean class="es.pfsgroup.recovery.integration.bpm.DecisionProcedimientoPayloadRegexRule">
 							<property name="tipo" value="DATOS-DECISION-PROCEDIMIENTO" />
-							<property name="codigoTiposProcedimientoDerivados" value="H016|H018|H020|H001|H022|H024|H026|H028|H005|HC100|H030|HC101|H006|H064|H032|H007|H034|H036|H038|H040|H066|H042|H04|HC102|H046|H011|P400|H048|H015|H050|HC103|H008|HC104|H002|H004|H052|H065|H054|H058|H062|HC105|HC106|P457" />
+							<property name="codigoTiposProcedimientoDerivados" value="H016|H018|H020|H001|H022|H024|H026|H028|H005|HC100|H030|HC101|H006|H064|H032|H007|H034|H036|H038|H040|H066|H042|H04|HC102|H046|H011|P400|H048|H015|H050|HC103|H008|HC104|H002|H004|H052|H065|H054|H058|H062|HC105|HC106|P458|P457" />
 							<property name="paralizar" value="true" />
 							<property name="finalizar" value="true" />
 						</bean>

@@ -17,37 +17,35 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Motivo suspensión electrónica
+ * Decisión suspensión electrónica
  * @author asoler
  *
  */
 @Entity
-@Table(name = "DD_MSE_MOTIVO_SUSP_ELEC", schema = "${entity.schema}")
+@Table(name = "DD_DSE_DECISION_SUSP_ELEC", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
-public class DDMotivoSuspSubastaElectronica implements Dictionary, Auditable {
+public class DDDecisionSuspensionElec implements Dictionary, Auditable {
 
-	private static final long serialVersionUID = -6956190960482891573L;
+	private static final long serialVersionUID = 5819230585283664638L;
 	
-	public static final String NEGOCIACION_EXTRAJUDICIAL = "NEX";
-    public static final String DEUDA_JUDICIAL = "DJU";
-    public static final String CARGAS_PREVIAS = "CPR";
-    public static final String DECLARACION_CONCURSO = "DCO";
-    public static final String OTROS = "OTR";
+	public static final String NO = "NO";
+    public static final String ENTIDAD = "ENT";
+    public static final String TERCEROS = "TER";
 
 
 	@Id
-    @Column(name = "DD_MSE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDMotivoSuspSubastaElectronicaGenerator")
-	@SequenceGenerator(name = "DDMotivoSuspSubastaElectronicaGenerator", sequenceName = "S_DD_MSE_MOTIVO_SUSP_ELEC")
+    @Column(name = "DD_DSE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDDecisionSuspensionElecGenerator")
+	@SequenceGenerator(name = "DDDecisionSuspensionElecGenerator", sequenceName = "S_DD_DSE_DECISION_SUSP_ELEC")
     private Long id;
 
-    @Column(name = "DD_MSE_CODIGO")
+    @Column(name = "DD_DSE_CODIGO")
     private String codigo;
 
-    @Column(name = "DD_MSE_DESCRIPCION")
+    @Column(name = "DD_DSE_DESCRIPCION")
     private String descripcion;
 
-    @Column(name = "DD_MSE_DESCRIPCION_LARGA")
+    @Column(name = "DD_DSE_DESCRIPCION_LARGA")
     private String descripcionLarga;
 
     @Embedded

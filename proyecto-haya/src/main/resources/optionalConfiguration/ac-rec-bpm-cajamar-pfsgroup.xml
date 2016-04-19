@@ -335,6 +335,11 @@
 				def dameDecisionRegistrarResultadoSubasta = {
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.dameDecisionRegistrarResultadoSubasta(idProcedimiento);
+				}	
+				
+				def compruebaPostores = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.compruebaPostores(idProcedimiento);
 				}				
 
 				def validarHC103SolicitudFondos = {

@@ -43,6 +43,9 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 	private static final String ADJUNTOSTELEGRAM = "ADJUNTOSTELEGRAM";
 	private static final String NOMCRD = "NOMCRD";
 	
+	private static final String INICIO_NO_DISP = "[CAMPO ";
+	private static final String FIN_NO_DISP = " NO DISPONIBLE]";	
+
 	private static final Locale localeSpa = new java.util.Locale("es", "ES");
 	protected static final SimpleDateFormat formatFecha = new SimpleDateFormat(FormatUtils.DD_DE_MES_DE_YYYY, localeSpa);
 
@@ -250,6 +253,10 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 	private static final String NUMPRO="NUMPRO";
 	private static final String DATOS_BIENES="DATOS_BIENES";
 	private static final String FECHAHOY="FECHAHOY";
+
+	private static final String FESC2="FESC2";
+	private static final String NOMNOT2="NOMNOT2";
+	private static final String NUMPRO2="NUMPRO2";
 	
 	@Override
 	public FileItem generarDocumentoBienes(Long idProcedimiento,
@@ -263,14 +270,54 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 		HashMap<String, Object> datosPlantilla = obtenerDatosParaPlantillaProc(idProcedimiento, idsBien);
 	
 		// Añadimos la variables recibidas desde el popup
-		datosPlantilla.put(LOCCRD, localidad);
-		datosPlantilla.put(LOCRP, localidadRegProp);
-		datosPlantilla.put(NUMRP, numeroRegProp);
-		datosPlantilla.put(NOMNOT, nombreNotario);
-		datosPlantilla.put(LOCNOM, localidadNotario);
-		datosPlantilla.put(FESC, fechaEscritura);
-		datosPlantilla.put(NUMPRO, numProtocolo);
-		datosPlantilla.put(FECHAHOY, formateaFecha(new Date()));
+		datosPlantilla.put(LOCCRD, comprobarValorDisponible(localidad, LOCCRD));
+		datosPlantilla.put(LOCRP, comprobarValorDisponible(localidadRegProp, LOCRP));
+		datosPlantilla.put(NUMRP, comprobarValorDisponible(numeroRegProp,NUMRP));
+		datosPlantilla.put(NOMNOT, comprobarValorDisponible(nombreNotario, NOMNOT));
+		datosPlantilla.put(LOCNOM, comprobarValorDisponible(localidadNotario, LOCNOM));
+		datosPlantilla.put(FESC, comprobarValorDisponible(cambiaFormato(fechaEscritura),FESC));
+		datosPlantilla.put(NUMPRO, comprobarValorDisponible(numProtocolo,NUMPRO));
+		datosPlantilla.put(FECHAHOY, comprobarValorDisponible(formateaFecha(new Date()),FECHAHOY));
+		
+		FileItem ficheroDocumento;
+		try {
+			String directorio = parametrizacionDao.buscarParametroPorNombre(DIRECTORIO_PLANTILLAS_LIQUIDACION).getValor();
+			InputStream is = new FileInputStream(directorio + nombrePlantilla);
+			ficheroDocumento = informesApi.generarEscritoConVariables(datosPlantilla, nombrePlantilla, is);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			throw new BusinessOperationException(e);
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new BusinessOperationException(e);
+		}
+	
+		return ficheroDocumento;
+
+	}
+	@Override
+	public FileItem generarDocumentoBienesCanarias(Long idProcedimiento,
+			String idsBien, String localidad, 
+			String nombreNotario, String numProtocolo, String fechaEscritura, 
+			String nombreNotario2, String numProtocolo2, String fechaEscritura2, 
+			String localidadRegProp, String numeroRegProp) {
+
+
+		final String codigoPlantilla = "INSTANCIA_CANARIAS";
+		final String nombrePlantilla = codigoPlantilla + ".docx";
+		HashMap<String, Object> datosPlantilla = obtenerDatosParaPlantillaProc(idProcedimiento, idsBien);
+	
+		// Añadimos la variables recibidas desde el popup
+		datosPlantilla.put(LOCCRD, comprobarValorDisponible(localidad, LOCCRD));
+		datosPlantilla.put(LOCRP, comprobarValorDisponible(localidadRegProp, LOCRP));
+		datosPlantilla.put(NUMRP, comprobarValorDisponible(numeroRegProp,NUMRP));
+		datosPlantilla.put(NOMNOT, comprobarValorDisponible(nombreNotario, NOMNOT));
+		datosPlantilla.put(FESC, comprobarValorDisponible(cambiaFormato(fechaEscritura),FESC));
+		datosPlantilla.put(NUMPRO, comprobarValorDisponible(numProtocolo,NUMPRO));
+		datosPlantilla.put(NOMNOT2, comprobarValorDisponible(nombreNotario2, NOMNOT2));
+		datosPlantilla.put(FESC2, comprobarValorDisponible(cambiaFormato(fechaEscritura2), FESC2));
+		datosPlantilla.put(NUMPRO2, comprobarValorDisponible(numProtocolo2,NUMPRO2));
+		datosPlantilla.put(FECHAHOY, comprobarValorDisponible(formateaFecha(new Date()),FECHAHOY));
 		
 		FileItem ficheroDocumento;
 		try {
@@ -289,6 +336,20 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 
 	}
 	
+	private String cambiaFormato(String fechaEscritura) {
+		String resultado = null;
+		if (!Checks.esNulo(fechaEscritura)) {
+			final SimpleDateFormat formatFechaCorto = new SimpleDateFormat("dd/MM/yyyy", localeSpa);
+			try {
+				Date aux = formatFechaCorto.parse(fechaEscritura);
+				resultado = formateaFecha(aux);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return resultado;
+	}
+
 	private HashMap<String, Object> obtenerDatosParaPlantillaProc(
 			Long idProcedimiento, String idsBien) {
 		
@@ -343,6 +404,13 @@ public class GenerarLiquidacionCajamarManager implements GenerarDocumentoApi {
 
 	protected String formateaFecha(Date fecha) {
 		return formatFecha.format(fecha);
+	}
+
+	protected String comprobarValorDisponible(String valor, String campo) {
+		if (!Checks.esNulo(valor)) {
+			return valor;
+		}
+		return INICIO_NO_DISP + campo + FIN_NO_DISP;
 	}
 
 }

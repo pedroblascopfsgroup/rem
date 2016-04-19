@@ -21,7 +21,6 @@ import es.pfsgroup.recovery.bpmframework.batch.model.RecoveryBPMfwkPeticionBatch
 import es.pfsgroup.recovery.bpmframework.exceptions.RecoveryBPMfwkError;
 import es.pfsgroup.recovery.bpmframework.input.RecoveryBPMfwkInputApi;
 import es.pfsgroup.recovery.bpmframework.input.model.RecoveryBPMfwkInput;
-import es.pfsgroup.recovery.bpmframework.test.batch.RecoveryBPMfwkBatchManager.bo.ProcesaPeticionesPendientesTest;
 import es.pfsgroup.recovery.bpmframework.test.matchers.RecoveryBPMfwkInputPeticionBatchArgumentMatcher;
 
 /**
@@ -165,29 +164,6 @@ public class VerificadorRecoveryBPMfwkBatchManagerTests {
 
         // Comprobar el n�mero de veces que se invoca a executor.execute
         // con las correspondientes operaciones de negocio
-        verify(mockExecutor, times(diferentesTokens)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_START_PROCESS), any(Long.class));
         verify(mockExecutor, never()).execute(any(String.class), any(Long.class), any(RecoveryBPMfwkInput.class));
-        verify(mockExecutor, times(diferentesTokens)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_END_PROCESS), any(Long.class));
-    }
-
-    public void seEjecutaCallbackOnErrorDeCadaToken(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch) {
-
-        // Comprobamos que se buscan las funciones de callback:
-        // (numElementos) veces las de �xito
-        int numElementos = listaPeticionesBatch.size();
-
-        verify(mockExecutor, times(numElementos)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_ERROR), any(Long.class), any(RecoveryBPMfwkInput.class),
-                eq(ProcesaPeticionesPendientesTest.MENSAJE_ERROR));
-
-    }
-
-    public void seEjecutaCallbackOnSuccessDeCadaToken(List<RecoveryBPMfwkPeticionBatch> listaPeticionesBatch) {
-
-        // Comprobamos que se buscan las funciones de callback:
-        // (numElementos) veces las de �xito
-        int numElementos = listaPeticionesBatch.size();
-
-        verify(mockExecutor, times(numElementos)).execute(eq(ProcesaPeticionesPendientesTest.BO_ON_SUCCESS), any(Long.class), any(RecoveryBPMfwkInput.class));
-
     }
 }

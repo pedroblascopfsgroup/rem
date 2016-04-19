@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.manager.MEJFinalizarAsuntoManager;
+import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 
 /**
  * Clase abstracta utilizada para implementar los tests de {@link MEJFinalizarAsuntoManager}
@@ -59,6 +60,9 @@ public abstract class AbstractMEJFinalizarAsuntoManagerTests {
 	
 	@Mock
 	private DDEstadoProcedimiento mockEsPrcCerrado;
+	
+	@Mock
+	protected EXTAsuntoApi mockExtAsuntoApi;
 	
 	protected Long idProcedimiento;
 	

@@ -28,7 +28,7 @@ cp -r batch/* $DIR_BASE/batch-server/batch/
 chmod -R a+rwx $DIR_BASE/batch-server/batch/*
 cd $LOCAL_PATH
 rm -f $DIR_BASE/batch-server/sareb/shells/*.sh
-cp config/$1/setBatchEnv.sh $BASE_DIR/sareb/shells/
+cp config/$1/setBatchEnv.sh $DIR_BASE/batch-server/sareb/shells/
 cp -r scripts/shells/* $DIR_BASE/batch-server/sareb/shells/
 chmod a+rx $DIR_BASE/batch-server/sareb/shells/*.sh
 rm -rf $DIR_BASE/batch-server/sareb/programas/etl/apr_*

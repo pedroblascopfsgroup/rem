@@ -591,7 +591,7 @@ public class AdjuntoHayaManager {
 		            ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, limite);
 		    return Integer.valueOf(param.getValor());
 		} catch (Exception e) {
-		    logger.warn("No esta parametrizado el l�mite m�ximo del fichero en bytes para asuntos, se toma un valor por defecto (2Mb)");
+		    logger.warn("No esta parametrizado el límite máximo del fichero en bytes para asuntos, se toma un valor por defecto (2Mb)");
 		    return new Integer(2 * 1024 * 1024);
 		}
 	 }
@@ -606,11 +606,7 @@ public class AdjuntoHayaManager {
 				EXTAdjuntoDto dto = new EXTAdjuntoDto() {
 					@Override
 					public Boolean getPuedeBorrar() {
-						if (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
-							return true;
-						} else {
-							return false;
-						}
+						return (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername()));
 					}
 
 					@Override
@@ -621,25 +617,21 @@ public class AdjuntoHayaManager {
 					@Override
 					public String getTipoDocumento() {
 						if (aa instanceof EXTAdjuntoAsunto) {
-							if (((EXTAdjuntoAsunto) aa).getTipoFichero() != null)
+							if (((EXTAdjuntoAsunto) aa).getTipoFichero() != null){
 								return ((EXTAdjuntoAsunto) aa).getTipoFichero().getDescripcion();
-							else
-								return "";
-						} else
-							return "";
-
+							}
+						}
+						return "";
 					}
 
 					@Override
 					public Long prcId() {
 						if (aa instanceof EXTAdjuntoAsunto) {
-							if(((EXTAdjuntoAsunto) aa).getProcedimiento() != null)
+							if(((EXTAdjuntoAsunto) aa).getProcedimiento() != null){
 								return ((EXTAdjuntoAsunto) aa).getProcedimiento().getId();
-							else 
-								return null;
+							}
 						}
-						else 
-							return null;
+						return null;
 					}
 
 					@Override
@@ -652,7 +644,6 @@ public class AdjuntoHayaManager {
 
 					@Override
 					public String getNombreTipoDoc() {
-						// TODO Auto-generated method stub
 						return null;
 					}
 				};

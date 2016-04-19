@@ -734,4 +734,63 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 
 	}
 
+
+	public String compruebaPostores(Long idProcedimiento) {
+
+		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(idProcedimiento);
+
+		if (!Checks.esNulo(sub)) {
+			List<LoteSubasta> listado = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listado)) {
+				for (LoteSubasta ls : listado) {
+					List<Bien> bienes = ls.getBienes();
+					if (!Checks.estaVacio(bienes)) {
+						for (Bien b : bienes) {
+							if (b instanceof NMBBien) {
+								NMBBien bi = (NMBBien) b;
+								if (bi.getAdjudicacion() != null) {
+									NMBAdjudicacionBien adju = bi.getAdjudicacion();
+									if (Checks.esNulo(adju.getPostores())) {
+										return "Existe al menos un bien en la subasta con el campo postores sin informar.";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public String compruebaAdjuEntidad(Long idProcedimiento) {
+
+		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(idProcedimiento);
+
+		if (!Checks.esNulo(sub)) {
+			List<LoteSubasta> listado = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listado)) {
+				for (LoteSubasta ls : listado) {
+					List<Bien> bienes = ls.getBienes();
+					if (!Checks.estaVacio(bienes)) {
+						for (Bien b : bienes) {
+							if (b instanceof NMBBien) {
+								NMBBien bi = (NMBBien) b;
+								if (bi.getAdjudicacion() != null) {
+									NMBAdjudicacionBien adju = bi.getAdjudicacion();
+									if (Checks.esNulo(adju.getEntidadAdjudicataria()) || !"ENT".equals(adju.getEntidadAdjudicataria())) {
+										return "Existe al menos un bien en la subasta que no está adjudicado a la entidad.";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
 }

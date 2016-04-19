@@ -47,7 +47,7 @@ DECLARE
     TYPE T_ARRAY IS TABLE OF T_TIPO;
     V_TIPO T_ARRAY := T_ARRAY(
       T_TIPO('FAV', 'Favorable', 'Favorable')
-     ,T_TIPO('FAVC', 'Favorable con condiciones', 'Favorable con condiciones')
+     ,T_TIPO('FAVC', 'Favorable por aceptación', 'Favorable por aceptación')
      ,T_TIPO('DESF', 'Desfavorable', 'Desfavorable')
     ); 
     V_TMP_TIPO T_TIPO;

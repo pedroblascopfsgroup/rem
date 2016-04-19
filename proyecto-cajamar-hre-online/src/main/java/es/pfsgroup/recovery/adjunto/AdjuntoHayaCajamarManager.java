@@ -74,7 +74,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosContratosAsu(id);
 		}else if(esEntidadHaya()){
-			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
+//			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
+			return super.getAdjuntosContratosAsu(id);
 		}
 		return super.getAdjuntosContratosAsu(id);
 	}
@@ -84,7 +85,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonaAsu(id);
 		}else if(esEntidadHaya()){
-			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
+			return super.getAdjuntosPersonaAsu(id);
+//			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
 		}
 		return super.getAdjuntosPersonaAsu(id);
 	}
@@ -138,7 +140,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosCntConBorrado(id);
 		}else if(esEntidadHaya()){
-			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
+			return super.getAdjuntosCntConBorrado(id);
+//			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
 		}
 		return super.getAdjuntosCntConBorrado(id);
 	}
@@ -148,7 +151,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonaConBorrado(id);
 		}else if(esEntidadHaya()){
-			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
+			return super.getAdjuntosPersonaConBorrado(id);
+//			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
 		}
 		return super.getAdjuntosPersonaConBorrado(id);
 	}
@@ -173,7 +177,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			if(esEntidadCajamar()){
 				return adjuntoCajamarManager.uploadPersona(uploadForm);
 			}else if(esEntidadHaya()){
-				return adjuntoHayaManager.uploadPersona(uploadForm);
+				return super.uploadPersona(uploadForm);
+//				return adjuntoHayaManager.uploadPersona(uploadForm);
 			}
 			return super.uploadPersona(uploadForm);
 		}else{
@@ -202,7 +207,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			if(esEntidadCajamar()){
 				return adjuntoCajamarManager.uploadContrato(uploadForm);
 			}else if(esEntidadHaya()){
-				return adjuntoHayaManager.uploadContrato(uploadForm);
+				return super.uploadContrato(uploadForm);
+//				return adjuntoHayaManager.uploadContrato(uploadForm);
 			}
 			return super.uploadContrato(uploadForm);
 		}else{
@@ -236,7 +242,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 		}else if(esEntidadHaya()){
-			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+			return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
+//			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
 		}
 		return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 	}
@@ -246,26 +253,19 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 		}else if(esEntidadHaya()){
-			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+			return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
+			//			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
 		}
 		return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 	}
 
 	private boolean esEntidadCajamar(){
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		if(ENTIDAD_CAJAMAR.equals(usuario.getEntidad().getDescripcion()) && Boolean.parseBoolean(appProperties.getProperty(GESTOR_DOCUMENTAL_WS_ACTIVADO))){
-			return true;
-		}else{
-			return false;	
-		}
+		return (ENTIDAD_CAJAMAR.equals(usuario.getEntidad().getDescripcion()) && Boolean.parseBoolean(appProperties.getProperty(GESTOR_DOCUMENTAL_WS_ACTIVADO)));
 	}	
 	
 	private boolean esEntidadHaya(){
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		if(ENTIDAD_HAYA.equals(usuario.getEntidad().getDescripcion()) && Boolean.parseBoolean(appProperties.getProperty(GESTOR_DOCUMENTAL_HAYA_WS_ACTIVADO))){
-			return true;
-		}else{
-			return false;	
-		}
+		return (ENTIDAD_HAYA.equals(usuario.getEntidad().getDescripcion()) && Boolean.parseBoolean(appProperties.getProperty(GESTOR_DOCUMENTAL_HAYA_WS_ACTIVADO)));
 	}
 }

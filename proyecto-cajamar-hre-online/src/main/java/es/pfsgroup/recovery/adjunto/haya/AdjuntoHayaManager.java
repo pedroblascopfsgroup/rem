@@ -121,7 +121,7 @@ public class AdjuntoHayaManager {
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
     	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
    		for(Procedimiento prc : asun.getProcedimientos()) {
-   				crearPropuesta(prc);
+			crearPropuesta(prc);
 		}
    		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
@@ -137,9 +137,8 @@ public class AdjuntoHayaManager {
 		return documentosExpediente(prc.getAsunto().getId(), prcId, claseExpediente);
 	}
 	
-	private boolean crearPropuesta(Procedimiento prc) {
-		boolean creado = false;
-		if( buscarTPRCsinContenedor(prc)) {
+	private void crearPropuesta(Procedimiento prc) {
+		if(buscarTPRCsinContenedor(prc)) {
 			String idAsunto=prc.getAsunto().getId().toString();
 			String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
@@ -148,12 +147,10 @@ public class AdjuntoHayaManager {
 			try {
 				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
-				creado = true;
 			} catch (GestorDocumentalException e) {
 				e.printStackTrace();
 			}		
 		}
-		return creado;
 	}
 	
 	private List<EXTAdjuntoDto> documentosExpediente(Long idAsunto, Long idPrc, String claseExpediente) {
@@ -489,13 +486,11 @@ public class AdjuntoHayaManager {
 	}
 	
 	private String getUsuarioGestorDocumental() {
-		Parametrizacion parametro = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_USUARIO);
-		return parametro.getValor();
+		return proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_USUARIO).getValor();
 	}
 	
 	private String getPasswordGestorDocumental() {
-		Parametrizacion parametro = proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_PASSWORD);
-		return parametro.getValor();
+		return proxyFactory.proxy(ParametrizacionApi.class).buscarParametroPorNombre(Parametrizacion.GESTOR_DOCUMENTAL_REST_CLIENT_PASSWORD).getValor();
 	}
 	
 	/**
@@ -504,22 +499,14 @@ public class AdjuntoHayaManager {
 	 *  @return false - No se ha de crear contenedor ||| true - Hay que crear un contenedor para el TIPO de prc
 	 */
 	public boolean buscarTPRCsinContenedor(Procedimiento prc) {
-		
 		boolean resultado = false;
-		
 		String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
-		if(Checks.esNulo(claseExpe) || claseExpe=="")
-		{
-			//Para este tipo de procedimiento no se requiere contendor
-			return false;
+		if(!Checks.esNulo(claseExpe)) {
+			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "asunto", prc.getAsunto()), genericDao.createFilter(FilterType.EQUALS, "codigoClase", claseExpe));
+			if(Checks.esNulo(contenedor)) {
+				resultado = true;	
+			}
 		}
-		ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "asunto", prc.getAsunto()), genericDao.createFilter(FilterType.EQUALS, "codigoClase", claseExpe));
-		
-		if(Checks.esNulo(contenedor)) {
-			//Se requiere contenedor y no existe actualmente
-			resultado = true;
-		}
-		
 		return resultado;		
 	}
 	

@@ -3,7 +3,7 @@
 
 shutdown immediate;
 
-startup mount exclusive;
+startup exclusive mount orcl; #startup mount exclusive;
 
 flashback database to restore point before_test;
 

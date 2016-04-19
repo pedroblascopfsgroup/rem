@@ -1,14 +1,14 @@
 --/*
 --##########################################
 --## AUTOR=Luis Antonio Prato Paredes
---## FECHA_CREACION=20160307
+--## FECHA_CREACION=20160331
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=BKREC-1715
+--## VERSION_ARTEFACTO=1.0
+--## INCIDENCIA_LINK=BKREC-1716
 --## PRODUCTO=NO
 --## 
---## Finalidad: Actualizar el campo 
---## INSTRUCCIONES:  Actualizar el campo PRO_FECHA_BAJA, USUARIO_MODIFICAR, FECHA_MODIFICAR de la tabla: PRO_PROVISIONES_ASUNTOS debido a un error en el ETL
+--## Finalidad: Alterar la tabla PRO_PROVISIONES_ASUNTO para añadir la columna de importe
+--## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
@@ -26,21 +26,27 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
 
- 
+    -- Otras variables
 
  BEGIN
 
-        V_MSQL := 'Update ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO set PRO_FECHA_BAJA=SYSDATE, USUARIOMODIFICAR=''BKREC-1716'', FECHAMODIFICAR = SYSDATE WHERE ASU_ID In (select asu.ASU_ID  from 
-	' || V_ESQUEMA || '.ASU_ASUNTOS asu
-  join  ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO pro on asu.asu_id = pro.asu_id
-  left join ' || V_ESQUEMA || '.CNV_AUX_PRC_PRO aux on aux.CODIGO_PROCEDIMIENTO = asu.ASU_ID_EXTERNO
-  where aux.codigo_procedimiento  is null
-    and trunc(pro.pro_fecha_baja) is null)';
+    -- CUERPO DEL SCRIPT
+    -- PARA LA CREACIÓN DE OBJETOS USAR LA CONSULTA DE EXISTENCIA PREVIA
+    -- USAR M_SQL para construir SQL a ejecutar
+    -- USAR EXECUTE IMMEDIATE para ejecutar M_SQL
 
-EXECUTE IMMEDIATE V_MSQL;
+	V_MSQL:='Alter table ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO add IMPORTE_PROVISION NUMBER(15,2)';
+	
+	EXECUTE IMMEDIATE V_MSQL;
+
  EXCEPTION
 
-    
+    -- Opcional: Excepciones particulares que se quieran tratar
+    -- Como esta, por ejemplo:
+    -- WHEN TABLE_EXISTS_EXCEPTION THEN
+        -- DBMS_OUTPUT.PUT_LINE('Ya se ha realizado la copia en la tabla TMP_MOV_'||TODAY);
+
+    -- SIEMPRE DEBE HABER UN OTHERS
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
         DBMS_OUTPUT.put_line('-----------------------------------------------------------');

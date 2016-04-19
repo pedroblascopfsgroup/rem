@@ -1,20 +1,24 @@
 --/*
 --##########################################
---## AUTOR=Luis Antonio Prato Paredes
---## FECHA_CREACION=20160307
---## ARTEFACTO=batch
+--## AUTOR=Daniel Albert Pérez
+--## FECHA_CREACION=20160318
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=BKREC-1715
+--## INCIDENCIA_LINK=HR-2078
 --## PRODUCTO=NO
 --## 
---## Finalidad: Actualizar el campo 
---## INSTRUCCIONES:  Actualizar el campo PRO_FECHA_BAJA, USUARIO_MODIFICAR, FECHA_MODIFICAR de la tabla: PRO_PROVISIONES_ASUNTOS debido a un error en el ETL
+--## Finalidad: 
+--## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+ 
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
 DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
@@ -26,21 +30,36 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
 
- 
-
+    -- Otras variables
+    
  BEGIN
+    
+    DBMS_OUTPUT.put_line('- INICIO PROCESO -');
 
-        V_MSQL := 'Update ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO set PRO_FECHA_BAJA=SYSDATE, USUARIOMODIFICAR=''BKREC-1716'', FECHAMODIFICAR = SYSDATE WHERE ASU_ID In (select asu.ASU_ID  from 
-	' || V_ESQUEMA || '.ASU_ASUNTOS asu
-  join  ' || V_ESQUEMA || '.PRO_PROVISIONES_ASUNTO pro on asu.asu_id = pro.asu_id
-  left join ' || V_ESQUEMA || '.CNV_AUX_PRC_PRO aux on aux.CODIGO_PROCEDIMIENTO = asu.ASU_ID_EXTERNO
-  where aux.codigo_procedimiento  is null
-    and trunc(pro.pro_fecha_baja) is null)';
-
-EXECUTE IMMEDIATE V_MSQL;
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_OBS_OBSERVACIONES
+            (PCO_OBS_ID, PCO_PRC_ID, PCO_OBS_FECHA_ANOTACION, PCO_OBS_TEXTO_ANOTACION
+            , PCO_OBS_SECUENCIA_ANOTACION, USUARIOCREAR, FECHACREAR)
+SELECT
+  S_PCO_OBS_OBSERVACIONES.NEXTVAL AS PCO_OBS_ID
+  , PCO.PCO_PRC_ID
+  , OBS.FECHA_ANOTACION
+  , OBS.TEXTO_ANOTACION
+  , OBS.SECUENCIA_ANOTACION
+  , OBS.USUARIO_ANOTACION
+  , SYSDATE
+FROM
+  '||V_ESQUEMA||'.MIG_EXPEDIENTES_OBSERVACIONES OBS
+INNER JOIN
+  '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+  ON PCO.PCO_PRC_NUM_EXP_INT = TO_CHAR(OBS.CD_EXPEDIENTE)';
+    
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.put_line('- FIN PROCESO -');
+    
  EXCEPTION
 
-    
+    -- SIEMPRE DEBE HABER UN OTHERS
     WHEN OTHERS THEN
         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
         DBMS_OUTPUT.put_line('-----------------------------------------------------------');

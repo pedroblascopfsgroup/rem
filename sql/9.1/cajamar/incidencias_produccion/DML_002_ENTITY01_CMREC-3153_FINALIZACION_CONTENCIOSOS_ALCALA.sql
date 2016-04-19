@@ -1,3 +1,19 @@
+--/*
+--##########################################
+--## AUTOR=JAIME
+--## FECHA_CREACION=20160419
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=CMREC-3153
+--## PRODUCTO=NO
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON
 set timing ON

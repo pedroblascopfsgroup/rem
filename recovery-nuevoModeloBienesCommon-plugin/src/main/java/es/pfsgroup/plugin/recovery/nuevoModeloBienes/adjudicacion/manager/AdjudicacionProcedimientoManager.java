@@ -32,10 +32,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionProcedimientoDelegateApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
@@ -52,7 +56,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 
 	@Autowired
 	private Executor executor;
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -69,56 +73,56 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 		return false;
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA)
-	public Boolean comprobarBienEntidadAdjudicataria(Long bienId){
-		
+	public Boolean comprobarBienEntidadAdjudicataria(Long bienId) {
+
 		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
 		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
-		if (bien.getAdjudicacion() != null){
-			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null && !DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){				
-					return true;
+		if (bien.getAdjudicacion() != null) {
+			if (bien.getAdjudicacion().getEntidadAdjudicataria() != null && !DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())) {
+				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_DECRETO)
-	public Boolean comprobarBienEntidadAdjudicatariaConDecreto(Long bienId){
-		
+	public Boolean comprobarBienEntidadAdjudicatariaConDecreto(Long bienId) {
+
 		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
 		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
-		if (bien.getAdjudicacion() != null){
-			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
-				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
-					if(bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())){
-						if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.DECRETO.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+		if (bien.getAdjudicacion() != null) {
+			if (bien.getAdjudicacion().getEntidadAdjudicataria() != null) {
+				if (!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())) {
+					if (bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())) {
+						if (bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.DECRETO.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())) {
 							return true;
 						}
 					}
-				}			
+				}
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJUDICATARIA_ESCRITURA)
-	public Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId){
-		
+	public Boolean comprobarBienEntidadAdjudicatariaConEscritura(Long bienId) {
+
 		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
 		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
-		if (bien.getAdjudicacion() != null){
-			if(bien.getAdjudicacion().getEntidadAdjudicataria() != null){
-				if(!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
-					if(bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())){
-						if(bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.ESCRITURA.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())){
+		if (bien.getAdjudicacion() != null) {
+			if (bien.getAdjudicacion().getEntidadAdjudicataria() != null) {
+				if (!DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())) {
+					if (bien.getAdjudicacion().getCesionRemate() == null || (bien.getAdjudicacion().getCesionRemate() != null && !bien.getAdjudicacion().getCesionRemate())) {
+						if (bien.getAdjudicacion().getTipoDocAdjudicacion() != null && DDDocAdjudicacion.ESCRITURA.equals(bien.getAdjudicacion().getTipoDocAdjudicacion().getCodigo())) {
 							return true;
 						}
 					}
-				}			
+				}
 			}
 		}
 		return false;
@@ -126,19 +130,17 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_ENTIDAD_ADJ_TERCEROS)
-	public Boolean comprobarBienEntidadAdjudicatariaTerceros(Long bienId){
-			Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
-			NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
-			if (bien.getAdjudicacion() != null){
-				if(bien.getAdjudicacion().getEntidadAdjudicataria() != null && DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
-					return true;
-				}
+	public Boolean comprobarBienEntidadAdjudicatariaTerceros(Long bienId) {
+		Filter filtroBien = genericDao.createFilter(FilterType.EQUALS, "id", bienId);
+		NMBBien bien = genericDao.get(NMBBien.class, filtroBien);
+		if (bien.getAdjudicacion() != null) {
+			if (bien.getAdjudicacion().getEntidadAdjudicataria() != null && DDEntidadAdjudicataria.TERCEROS.equals(bien.getAdjudicacion().getEntidadAdjudicataria().getCodigo())) {
+				return true;
 			}
-			return false;
 		}
+		return false;
+	}
 
-	
-	
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIENES_ASOCIADO_PRC)
 	public Boolean comprobarBienesAsociadoPrc(Long prcId) {
 
@@ -149,7 +151,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 		return false;
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_BIEN_SUJETO_IVA)
 	public String comprobarBienSujetoIVA(Long prcId) {
@@ -157,14 +159,14 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		@SuppressWarnings("unchecked")
 		List<Bien> listaBienes = (List<Bien>) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_BIENES_DE_UN_PROCEDIMIENTO, prcId);
 		if (listaBienes != null && listaBienes.size() == 1) {
-			NMBBien bien = (NMBBien)listaBienes.get(0);
-			if(bien.getTributacion() != null){
+			NMBBien bien = (NMBBien) listaBienes.get(0);
+			if (bien.getTributacion() != null) {
 				return bien.getTributacion().getCodigo();
 			}
 		}
 		return null;
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_TIPO_CARGA_BIEN_INSCRITO)
 	public Boolean comprobarTipoCargaBienInscrito(Long prcId) {
@@ -206,7 +208,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 		return false;
 	}
-	
+
 	public Boolean comprobarCargasBienesProcedimiento(Long prcId) {
 
 		boolean res = true;
@@ -265,10 +267,12 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 						Boolean verificadasCargas = false;
 						Boolean hayRegistrales = false;
 						for (NMBBienCargas carga : cargas) {
-//							TODOS LOS TIPOS DE CARGA, Antes solo se comprobaban los anteriores
+							// TODOS LOS TIPOS DE CARGA, Antes solo se
+							// comprobaban los anteriores
 							if (carga.getRegistral()) {
-								hayRegistrales=true;
-								if (DDSituacionCarga.CANCELADA.compareTo(carga.getSituacionCarga().getCodigo()) == 0 || DDSituacionCarga.RECHAZADA.compareTo(carga.getSituacionCarga().getCodigo()) == 0) {
+								hayRegistrales = true;
+								if (DDSituacionCarga.CANCELADA.compareTo(carga.getSituacionCarga().getCodigo()) == 0
+										|| DDSituacionCarga.RECHAZADA.compareTo(carga.getSituacionCarga().getCodigo()) == 0) {
 									verificadasCargas = true;
 								} else {
 									return false;
@@ -351,18 +355,19 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 						Boolean verificadasCargas = false;
 						Boolean hayEconomicas = false;
 						for (NMBBienCargas carga : cargas) {
-							// PARA TODOS LOS TIPOS DE CARGAS, antes solo los anteriores 
-								if (carga.isEconomica()) {
-									hayEconomicas = true;
-									if (!Checks.esNulo(carga.getSituacionCargaEconomica()) && 
-											(DDSituacionCarga.CANCELADA.compareTo(carga.getSituacionCargaEconomica().getCodigo()) == 0 || (DDSituacionCarga.RECHAZADA.compareTo(carga.getSituacionCargaEconomica().getCodigo()) == 0))) {
+							// PARA TODOS LOS TIPOS DE CARGAS, antes solo los
+							// anteriores
+							if (carga.isEconomica()) {
+								hayEconomicas = true;
+								if (!Checks.esNulo(carga.getSituacionCargaEconomica()) && (DDSituacionCarga.CANCELADA.compareTo(carga.getSituacionCargaEconomica().getCodigo()) == 0
+										|| (DDSituacionCarga.RECHAZADA.compareTo(carga.getSituacionCargaEconomica().getCodigo()) == 0))) {
 									verificadasCargas = true;
 								} else {
 									return false;
 								}
 							}
 						}
-						if (verificadasCargas  || !hayEconomicas) {
+						if (verificadasCargas || !hayEconomicas) {
 							return true;
 						}
 					}
@@ -392,29 +397,30 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 						boolean economica = false;
 						boolean algunaActiva = false;
 						for (NMBBienCargas carga : cargas) {
-							if(carga.getRegistral() && "ACT".compareTo(carga.getSituacionCarga().getCodigo()) == 0){
+							if (carga.getRegistral() && "ACT".compareTo(carga.getSituacionCarga().getCodigo()) == 0) {
 								algunaActiva = true;
-							} else if(carga.isEconomica() && "ACT".compareTo(carga.getSituacionCargaEconomica().getCodigo()) == 0){
+							} else if (carga.isEconomica() && "ACT".compareTo(carga.getSituacionCargaEconomica().getCodigo()) == 0) {
 								algunaActiva = true;
 							}
 							if (carga.getRegistral() && !carga.isEconomica()) {
 								registral = true;
 							} else if (!carga.getRegistral() && carga.isEconomica()) {
 								economica = true;
-							} else if(carga.getRegistral() && carga.isEconomica()) {
+							} else if (carga.getRegistral() && carga.isEconomica()) {
 								registral = true;
 								economica = true;
 							}
 						}
-						//Si todas las cargas son canceladas o rechazadas, entonces se entiende que no hay cargas
-						if(!algunaActiva){
+						// Si todas las cargas son canceladas o rechazadas,
+						// entonces se entiende que no hay cargas
+						if (!algunaActiva) {
 							return "noCargas";
 						}
-						if(registral && economica){
+						if (registral && economica) {
 							return "ambos";
-						} else if(registral){
+						} else if (registral) {
 							return "registrales";
-						} else if(economica){
+						} else if (economica) {
 							return "economicas";
 						}
 					}
@@ -423,27 +429,27 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 		return null;
 	}
-	
-/**
- * 
- * Nomb: Gestoría para adjudicación - Cod: GPA
- * Nomb: Gestoría para saneamiento - Cod: GPS
- * 
- * 
- */
+
+	/**
+	 * 
+	 * Nomb: Gestoría para adjudicación - Cod: GPA Nomb: Gestoría para
+	 * saneamiento - Cod: GPS
+	 * 
+	 * 
+	 */
 
 	@Override
-	@BusinessOperation(overrides=BO_ADJUDICACION_COMPROBAR_GESTORIA_ASIGNADA_PRC)
+	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_GESTORIA_ASIGNADA_PRC)
 	public Boolean comprobarGestoriaAsignadaPrc(Long prcId) {
 
 		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);
 		return existeTipoGestorEnAsunto(prc.getAsunto(), "GEST");
-	}	
+	}
 
 	@Override
-	@BusinessOperation(overrides=BO_ADJUDICACION_COMPROBAR_GESTORIA_ASIGNADA_SANEAMIENTO_CARGAS_BIENES)
+	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_GESTORIA_ASIGNADA_SANEAMIENTO_CARGAS_BIENES)
 	public Boolean comprobarGestoriaAsignadaAlSaneamientoDeCargasDeBienes(Long prcId) {
-		
+
 		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);
 		return existeTipoGestorEnAsunto(prc.getAsunto(), "GGSAN");
 	}
@@ -463,13 +469,12 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 	}
 
 	@Override
-	@BusinessOperation(overrides="es.pfsgroup.recovery.adjudicacion.vieneDeTramitePosesion")
+	@BusinessOperation(overrides = "es.pfsgroup.recovery.adjudicacion.vieneDeTramitePosesion")
 	public Boolean vieneDeTramitePosesion(Long prcId) {
-		
+
 		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);
 
-		if(("P416".compareTo(prc.getProcedimientoPadre().getTipoProcedimiento().getCodigo()) == 0) ||
-				("H015".compareTo(prc.getProcedimientoPadre().getTipoProcedimiento().getCodigo()) == 0)) {
+		if (("P416".compareTo(prc.getProcedimientoPadre().getTipoProcedimiento().getCodigo()) == 0) || ("H015".compareTo(prc.getProcedimientoPadre().getTipoProcedimiento().getCodigo()) == 0)) {
 			return true;
 		} else {
 			return false;
@@ -517,7 +522,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		return Long.valueOf(diffDays).intValue();
 
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_FECHA_REVISION)
 	public Boolean comprobarFechaRevision(Long prcId) {
@@ -527,7 +532,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		if (listaBienes != null && listaBienes.size() > 0) {
 			for (Bien bien : listaBienes) {
 				if (bien instanceof NMBBien) {
-					if(Checks.esNulo(((NMBBien) bien).getAdicional().getFechaRevision())){
+					if (Checks.esNulo(((NMBBien) bien).getAdicional().getFechaRevision())) {
 						return false;
 					}
 				}
@@ -535,9 +540,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 		return true;
 	}
-	
 
-	
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_EXISTE_BIEN_CON_ADJU_ENTIDAD)
 	public Boolean existeBienConAdjudicacionE(Long prcId) {
@@ -547,7 +550,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		if (listaBienes != null && listaBienes.size() > 0) {
 			for (Bien bien : listaBienes) {
 				if (bien instanceof NMBBien) {
-					if(DDEntidadAdjudicataria.ENTIDAD.equals(((NMBBien) bien).getAdjudicacion().getEntidadAdjudicataria().getCodigo())){
+					if (DDEntidadAdjudicataria.ENTIDAD.equals(((NMBBien) bien).getAdjudicacion().getEntidadAdjudicataria().getCodigo())) {
 						return true;
 					}
 				}
@@ -555,16 +558,16 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 		return false;
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_ES_BIEN_CON_CESION_REMATE)
-	public Boolean esBienConCesionRemate(Long bieId){
-		
+	public Boolean esBienConCesionRemate(Long bieId) {
+
 		Bien bien = genericDao.get(Bien.class, genericDao.createFilter(FilterType.EQUALS, "id", bieId));
-		
+
 		if (bien instanceof NMBBien) {
-			if(!Checks.esNulo(((NMBBien) bien).getAdjudicacion()) && !Checks.esNulo(((NMBBien) bien).getAdjudicacion().getCesionRemate())){
-				if(((NMBBien) bien).getAdjudicacion().getCesionRemate()){
+			if (!Checks.esNulo(((NMBBien) bien).getAdjudicacion()) && !Checks.esNulo(((NMBBien) bien).getAdjudicacion().getCesionRemate())) {
+				if (((NMBBien) bien).getAdjudicacion().getCesionRemate()) {
 					return true;
 				}
 			}
@@ -572,7 +575,6 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		return false;
 	}
 
-	
 	@Override
 	@BusinessOperation(overrides = BO_ADJUDICACION_COMPROBAR_ADJUNTO_ASUNTO)
 	public Boolean comprobarAdjuntoAsunto(Long prcId, String tipo) {
@@ -580,7 +582,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Long asuId = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId).getAsunto().getId();
 		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(asuId);
 		Set<AdjuntoAsunto> adjuntos = asu.getAdjuntos();
-		
+
 		for (AdjuntoAsunto adjunto : adjuntos) {
 			if (!Checks.esNulo(adjunto.getId()) && adjunto.getAsunto().getId() == asuId) {
 				if (adjunto instanceof EXTAdjuntoAsunto) {
@@ -598,105 +600,138 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		return false;
 
 	}
-	
-	public Boolean existeAdjuntoUG(Long idProcedimiento, String codigoDocAdjunto, String uGestion){
-		//Balancea la comprobación de existencia de archivos adjuntos, dentro de la unidad de gestión indicada:
+
+	public Boolean existeAdjuntoUG(Long idProcedimiento, String codigoDocAdjunto, String uGestion) {
+		// Balancea la comprobación de existencia de archivos adjuntos, dentro
+		// de la unidad de gestión indicada:
 		// Asunto.........: ASU
 		// Procedimiento..: PRC
-		if (uGestion.equals("ASU")){
+		if (uGestion.equals("ASU")) {
 			return comprobarAdjuntoAsunto(idProcedimiento, codigoDocAdjunto);
-		}else if (uGestion.equals("PRC")){
+		} else if (uGestion.equals("PRC")) {
 			return comprobarAdjunto(idProcedimiento, codigoDocAdjunto);
-		}else{
+		} else {
 			return false;
 		}
-		
+
 	}
-	
-	public String existeAdjuntoUGMensaje(String codigoDocAdjunto, String uGestion){
-		
-		//Mensaje de validación
+
+	public String existeAdjuntoUGMensaje(String codigoDocAdjunto, String uGestion) {
+
+		// Mensaje de validación
 		String mensajeValidacion = "Es necesario aportar ";
-		
+
 		DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
-		
-		//Dependiendo del entorno de comprobación de existencia, se retorna un mensaje
-		if (uGestion.equals("ASU")){
+
+		// Dependiendo del entorno de comprobación de existencia, se retorna un
+		// mensaje
+		if (uGestion.equals("ASU")) {
 			mensajeValidacion = mensajeValidacion.concat("sobre el asunto, el documento adjunto ");
-		}else if(uGestion.equals("PRC")){
+		} else if (uGestion.equals("PRC")) {
 			mensajeValidacion = mensajeValidacion.concat("sobre el procedimiento, el documento adjunto ");
 		}
-		
-		//Incluye en el mensaje, la descripción de documento adjunto.
+
+		// Incluye en el mensaje, la descripción de documento adjunto.
 		mensajeValidacion = mensajeValidacion.concat(tipoFicheroAdjunto.getDescripcion());
-		
-		//Si no encuentra el doc. adjunto por codigo, retorna un mensaje fijo de advertencia
-		if (tipoFicheroAdjunto.getCodigo().isEmpty()){
+
+		// Si no encuentra el doc. adjunto por codigo, retorna un mensaje fijo
+		// de advertencia
+		if (tipoFicheroAdjunto.getCodigo().isEmpty()) {
 			mensajeValidacion = "ATENCION: No se ha podido verificar la existencia de un adjunto porque no existe el codigo indicado: " + codigoDocAdjunto;
 		}
 
-		//Si la unidad de gestión no es ninguna de las definidas, retorna un mensaje fijo de advertencia.
-		if (uGestion.isEmpty() && !uGestion.equals("ASU") && !uGestion.equals("PRC")){
+		// Si la unidad de gestión no es ninguna de las definidas, retorna un
+		// mensaje fijo de advertencia.
+		if (uGestion.isEmpty() && !uGestion.equals("ASU") && !uGestion.equals("PRC")) {
 			mensajeValidacion = "ATENCION: No es posible verificar la existencia de un adjunto en esta unidad de gestión: " + uGestion;
 		}
-		
+
 		return mensajeValidacion;
 	}
-	
-	private String formatoMensajeValidacionHTML(String mensajeValidacion){
 
-		//Preformato para mensajes de validación en tareas
+	private String formatoMensajeValidacionHTML(String mensajeValidacion) {
+
+		// Preformato para mensajes de validación en tareas
 		String formatoMensajeIn = "<div align=\"justify\" style=\"font-size:8pt;font-family:Arial;margin-bottom:10px;\">";
 		String formatoMensajeOut = "</div>";
-		
+
 		return formatoMensajeIn + mensajeValidacion + formatoMensajeOut;
-		
+
 	}
-	
-	public String existeAdjuntoUGMensajeHTML(String codigoDocAdjunto, String uGestion){
+
+	public String existeAdjuntoUGMensajeHTML(String codigoDocAdjunto, String uGestion) {
 
 		return formatoMensajeValidacionHTML(existeAdjuntoUGMensaje(codigoDocAdjunto, uGestion));
-		
+
 	}
 
-	
-	public Boolean existeAdjuntoUG(Long idProcedimiento,String cadenaDAUG){
-		
+	public Boolean existeAdjuntoUG(Long idProcedimiento, String cadenaDAUG) {
+
 		String[] arrayDAUG = cadenaDAUG.split(";");
 		String tipoDoc = new String();
 		String uGestion = new String();
-		
-		for (String elementoDAUG: arrayDAUG){
-			
+
+		for (String elementoDAUG : arrayDAUG) {
+
 			tipoDoc = elementoDAUG.split(",")[0].trim();
 			uGestion = elementoDAUG.split(",")[1].trim();
-			
-			if (!existeAdjuntoUG(idProcedimiento, tipoDoc, uGestion)){
+
+			if (!existeAdjuntoUG(idProcedimiento, tipoDoc, uGestion)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
-	public String existeAdjuntoUGMensajeHTML(Long idProcedimiento,String cadenaDAUG){
-		
+
+	public String existeAdjuntoUGMensajeHTML(Long idProcedimiento, String cadenaDAUG) {
+
 		String[] arrayDAUG = cadenaDAUG.split(";");
 		String mensajeMultiValidacion = new String();
 		String tipoDoc = new String();
 		String uGestion = new String();
-		
-		for (String elementoDAUG: arrayDAUG){
-			
+
+		for (String elementoDAUG : arrayDAUG) {
+
 			tipoDoc = elementoDAUG.split(",")[0].trim();
 			uGestion = elementoDAUG.split(",")[1].trim();
-			
-			if (!existeAdjuntoUG(idProcedimiento, tipoDoc, uGestion)){
-				mensajeMultiValidacion = mensajeMultiValidacion.concat(existeAdjuntoUGMensaje(tipoDoc,uGestion)).concat("<br>");
+
+			if (!existeAdjuntoUG(idProcedimiento, tipoDoc, uGestion)) {
+				mensajeMultiValidacion = mensajeMultiValidacion.concat(existeAdjuntoUGMensaje(tipoDoc, uGestion)).concat("<br>");
 			}
 		}
-		
+
 		return formatoMensajeValidacionHTML(mensajeMultiValidacion);
+	}
+
+	public Boolean dameDecisionRegistrarResultadoSubasta(Long idProcedimiento) {
+
+		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(idProcedimiento);
+
+		if (!Checks.esNulo(sub)) {
+			List<LoteSubasta> listado = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listado)) {
+				for (LoteSubasta ls : listado) {
+					List<Bien> bienes = ls.getBienes();
+					if (!Checks.estaVacio(bienes)) {
+						for (Bien b : bienes) {
+							if (b instanceof NMBBien) {
+								NMBBien bi = (NMBBien) b;
+								if (bi.getAdjudicacion() != null) {
+									NMBAdjudicacionBien adju = bi.getAdjudicacion();
+									if (adju.getPostores() == false) {
+										return true;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+
 	}
 
 }

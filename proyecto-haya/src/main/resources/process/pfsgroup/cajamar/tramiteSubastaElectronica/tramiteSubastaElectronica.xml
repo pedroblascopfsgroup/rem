@@ -266,10 +266,8 @@
 
 	<decision name="P458_RegistrarResultadoSubastaDecision" expression="#{P458_RegistrarResultadoSubastaDecision}">
 		<transition to="Decision1" name="suspension"></transition>
-		<transition to="P458_SolicitarAdjudicacionInstruccionesEntidad" name="no"></transition>		
-		<transition to="P458_BPMTramiteAdjudicacion" name="siSinRemate"></transition>
-		<transition to="P458_BPMTramiteCesionDeRemate" name="siConRemate"></transition>
-		<transition to="P458_BPMTramiteAdjudicacionTerceros" name="adjudicadoATerceros"></transition>
+		<transition to="P458_SolicitarAdjudicacionInstruccionesEntidad" name="tareaSolicitar"></transition>		
+		<transition to="Fin" name="tramites"></transition>
 	</decision>
 	
 	<state name="P458_SolicitarAdjudicacionInstruccionesEntidad">
@@ -317,8 +315,9 @@
 	</state>
 	
 	<decision name="P458_RegResulPresentacionEscrJuzgadoDecision" expression="#{P458_RegResulPresentacionEscrJuzgadoDecision}">
-		<transition to="P458_BPMTramiteAdjudicacion" name="sinCesion"></transition>		
-		<transition to="P458_BPMTramiteCesionDeRemate" name="conCesion"></transition>
+		<transition to="Fin" name="tramites"></transition>		
+		<transition to="P458_RegResulPresentacionEscrJuzgado" name="desfConRecurso"></transition>
+		<transition to="Decision1" name="desfSinRecurso"></transition>
 	</decision>
 
 	<state name="P458_BPMTramiteAdjudicacion">

@@ -91,7 +91,9 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		} else if (executionContext.getNode().getName().contains("DictarInstruccionesSubastaYPagoTasa")) {
 			estableceNotificacion(executionContext);
 		} else if (executionContext.getNode().getName().contains("RegistrarResultadoSubasta")) {
-			personalizamos(executionContext);
+			personalizamosRegResSubasta(executionContext);
+		} else if (executionContext.getNode().getName().contains("RegResulPresentacionEscrJuzgado")) {
+			personalizamosRegResEscJuzgado(executionContext);
 		}
 
 	}
@@ -198,7 +200,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		return valores;
 	}
 
-	private void personalizamos(ExecutionContext executionContext) {
+	private void personalizamosRegResSubasta(ExecutionContext executionContext) {
 
 		Procedimiento prc = getProcedimiento(executionContext);
 		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
@@ -215,33 +217,63 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				if ("comboPostores".equals(tev.getNombre())) {
 					comboPostores = new Boolean(tev.getValor());
 				}
-				if ("comboSubastaBienes".equals(tev.getNombre())) {
+				else if ("comboSubastaBienes".equals(tev.getNombre())) {
 					comboSubastaBienes = new Boolean(tev.getValor());
 				}
 			}
 		}
 
-		// primer paso
-		// comprobamos valor postores en la tarea
-		if (comboSubastaBienes) {
-			if (comboPostores) {
-				// Decision SI y SI
-				modificarYCrearBienesDeLaSubasta(sub, comboSubastaBienes, comboPostores);
-			} else {
-				// Decision SI y NO
-				modificarYCrearBienesDeLaSubasta(sub, comboSubastaBienes, comboPostores);
+		
+		modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores);
+		
+//		// primer paso
+//		// comprobamos valor postores en la tarea
+//		if (comboSubastaBienes) {
+//			if (comboPostores) {
+//				// Decision SI y SI
+//				modificarYCrearBienesDeLaSubasta(sub, comboSubastaBienes, comboPostores);
+//			} else {
+//				// Decision SI y NO
+//				modificarYCrearBienesDeLaSubasta(sub, comboSubastaBienes, comboPostores);
+//			}
+//		}
+//		// Decision NO
+//		else {
+//			// SEGUNDO PASO
+//			// No hacemos nada
+//			modificarYCrearBienesDeLaSubasta(sub, null, null);
+//		}
+
+	}
+	
+	private void personalizamosRegResEscJuzgado(ExecutionContext executionContext) {
+
+		Procedimiento prc = getProcedimiento(executionContext);
+		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
+
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
+
+		Boolean comboCoincidencia = false;
+		Boolean comboAdjudicacion = false;
+
+		if (!Checks.esNulo(listado)) {
+			for (TareaExternaValor tev : listado) {
+				if ("comboCoincidencia".equals(tev.getNombre())) {
+					comboCoincidencia = new Boolean(tev.getValor());
+				}
+				else if ("comboAdjudicacion".equals(tev.getNombre())) {
+					comboAdjudicacion = new Boolean(tev.getValor());
+				}
 			}
 		}
-		// Decision NO
-		else {
-			// SEGUNDO PASO
-			// No hacemos nada
-			modificarYCrearBienesDeLaSubasta(sub, null, null);
-		}
+		
+		modificarYCrearDesdeEscJuzgado(sub, comboCoincidencia, comboAdjudicacion);
 
 	}
 
-	private void modificarYCrearBienesDeLaSubasta(Subasta sub, Boolean coincidencia, Boolean comboPostores) {
+	private void modificarYCrearDesdeSubasta(Subasta sub, Boolean coincidencia, Boolean comboPostores) {
 
 		if (!Checks.esNulo(sub)) {
 			List<LoteSubasta> listado = sub.getLotesSubasta();
@@ -258,6 +290,35 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 										adju.setPostores(comboPostores);
 										genericDao.save(NMBAdjudicacionBien.class, adju);
 										if (comboPostores) {
+											creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void modificarYCrearDesdeEscJuzgado(Subasta sub, Boolean coincidencia, Boolean comboAdjudicacion) {
+
+		if (!Checks.esNulo(sub)) {
+			List<LoteSubasta> listado = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listado)) {
+				for (LoteSubasta ls : listado) {
+					List<Bien> bienes = ls.getBienes();
+					if (!Checks.estaVacio(bienes)) {
+						for (Bien b : bienes) {
+							if (b instanceof NMBBien) {
+								NMBBien bi = (NMBBien) b;
+								if (bi.getAdjudicacion() != null) {
+									if (coincidencia) {
+										NMBAdjudicacionBien adju = bi.getAdjudicacion();
+										adju.setCesionRemate(comboAdjudicacion);
+										genericDao.save(NMBAdjudicacionBien.class, adju);
+										if (comboAdjudicacion) {
 											creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
 										}
 									}

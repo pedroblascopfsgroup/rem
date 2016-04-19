@@ -331,6 +331,11 @@
 					}
 					return
 				}
+				
+				def dameDecisionRegistrarResultadoSubasta = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.dameDecisionRegistrarResultadoSubasta(idProcedimiento);
+				}				
 
 				def validarHC103SolicitudFondos = {
 					if (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 

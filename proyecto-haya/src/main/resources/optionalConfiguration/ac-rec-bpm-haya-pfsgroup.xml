@@ -95,9 +95,6 @@
 	<!-- Cambios Kevin -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAdjudicacionTerceros/haya_tramiteAdjudicacionTerceros.xml" p:version="-1"/>
 	
-	<!-- Cambios subasta electronica -->
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaElectronica/tramiteSubastaElectronica.xml" p:version="-1"/>
-	
 	<!-- Groovy's -->
   	<bean id="jbpmUtilHreSareb" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">

@@ -1,0 +1,15 @@
+Nuevo procedimiento para lanzar DDL/DMLs para resolución incidencias.
+
+Se incluyen en éste procedimiento todo aquel SQL necesario para resolver una incidencia puntual en producción pero con un cambio que no debe propagarse al resto de entornos.
+Ello quiere decir que no se van a integrar en el proceso de integración contínua y que debemos ser cuidadosos con lo que ponemos en dicho directorio.
+
+El procedimiento, va a ser insertar los scripts en:
+
+sql/9.1/cajamar/incidencias_produccion/
+
+Los scripts se subirán y tagearán como el resto, pero no se pasarán a producción como el resto de tags. En su lugar, yo o gustavo lanzaremos el job necesario para su empaquetado, y  pasaremos dicho empaquetado a explotación para su despliegue y ejecución en los entornos que les indiquemos.
+
+El procedimiento será probar dichos scripts en el entorno PRE, dado que es una copia de PRO, y validarlos antes de lanzarlos en PRO.
+
+
+Un saludo.

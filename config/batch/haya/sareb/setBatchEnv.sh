@@ -44,7 +44,6 @@ export HOST=192.168.235.59
 export USER=ftpsocpart
 export PASS=tempo.99
 export PORT=2153
-export HABILITAR_FTP=NO #Las shells usan esta variable para saber si tienen que trabajar con el ftp (SOLO PRO) o no.
 
 export DIR_SFT_HAYA_RECEPCION=/sftp_haya/recepcion/convivencia
 export DIR_SFT_HRE_RECEPCION=/sftp_hre/recepcion
@@ -61,7 +60,7 @@ export SFTP_DIR_BNK_IN_APR_TR=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/in/ap
 export SFTP_DIR_BNK_IN_APR_AUX=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/in/aprovisionamiento/auxiliar
 export SFTP_DIR_BNK_IN_UVEM=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/in/uvem
 
-#JMX --Revisar valores entornos!!
+#JMX
 export JMX_ADMIN=jmx_admin
 export JMX_PW=IMYzS4aO1q6jg1q1cXFevw==46794765
 export JMX_HOST=localhost

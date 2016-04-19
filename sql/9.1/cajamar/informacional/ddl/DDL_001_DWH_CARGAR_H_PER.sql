@@ -1,9 +1,27 @@
+--/*
+--##########################################
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160419
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3131
+--## PRODUCTO=NO
+--## 
+--## Finalidad: SE MODIFICA el tramo de puntuación
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O_ERROR_STATUS OUT VARCHAR2) AS
   -- ===============================================================================================
   -- Autor: Maria Villanueva, PFS Group
   -- Fecha creación:Septiembre 2015
   -- Responsable ultima modificacion: María Villanueva, PFS Group
-  -- Fecha ultima modificacion: 19/04/2016
+  -- Fecha ultima modificacion: 18/04/2016
   -- Motivos del cambio: SE MODIFICA el tramo de puntuación
   -- Cliente: Recovery BI CAJAMAR
   --
@@ -301,7 +319,7 @@ begin
       
       
       
-     -- TRAMO_PUNTUACION_ID
+      -- TRAMO_PUNTUACION_ID
 
       select  min(dia_id) into min_dia_mes from D_F_DIA where mes_id=(select mes_id from D_F_DIA where DIA_ID =fecha);
 
@@ -329,6 +347,7 @@ begin
       --Log_Proceso
       execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' using in v_nombre, 'TMP_H_PER. Update (5) - Tramo Puntuacion: ' || to_char(v_rowcount), 4;
       commit;
+      
       
     
     -- Borrado indices H_PER
@@ -1017,3 +1036,5 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
   end;
     
 end cargar_h_per;
+/
+EXIT

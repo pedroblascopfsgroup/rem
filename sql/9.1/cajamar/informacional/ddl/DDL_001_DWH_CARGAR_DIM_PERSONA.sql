@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160419
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3131
+--## PRODUCTO=NO
+--## 
+--## Finalidad: SE MODIFICA el tramo de puntuación
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_DIM_PERSONA(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
@@ -182,8 +200,7 @@ BEGIN
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_PER_RATING_EXTERNO_ANTERIOR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
   
-  
--- ----------------------------------------------------------------------------------------------
+ -- ----------------------------------------------------------------------------------------------
 --                                     D_PER_TRAMO_PUNTUACION
 -- ----------------------------------------------------------------------------------------------
   SELECT COUNT(*) INTO V_NUM_ROW FROM D_PER_TRAMO_PUNTUACION WHERE TRAMO_PUNTUACION_ID = -1;
@@ -872,3 +889,5 @@ EXCEPTION
     --ROLLBACK;
 END;
 END CARGAR_DIM_PERSONA;
+/ 
+EXIT;

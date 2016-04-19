@@ -259,6 +259,7 @@
 	      ,iconCls:'icon_marcar_pte'
 	      ,handler: function() {
 	              procedimientosStore.webflow({id:data.id});
+	              
 	      }
 	});
 	
@@ -266,8 +267,10 @@
 		btnCargaListaPrc.setDisabled(true);
 	});
        
-        
-	
+       
+	var toolbar = new Ext.Toolbar({
+		buttonAlign: 'left'
+	});
 	var procedimientosGrid = app.crearGrid(procedimientosStore,procedimientosCm,{
 		title:'<s:message code="asunto.tabcabecera.grid.titulo" text="**Procedimientos"/>'
 		<app:test id="procedimientosGrid" addComa="true" />
@@ -276,13 +279,24 @@
 		,style:'padding-right: 5px'
 		,cls:'cursor_pointer'
 		,height : 250
+		,bbar: toolbar
 	});
 	
 	
 	
+	procedimientosStore.on('load', function(procedimientosStore){
+		procedimientosGrid.getBottomToolbar().removeAll(true);
+		procedimientosGrid.getBottomToolbar().doLayout();
+		procedimientosGrid.getBottomToolbar().add('Mostrando '+procedimientosStore.getTotalCount().toString()+' actuaciones');
+		procedimientosGrid.getBottomToolbar().doLayout();
+		procedimientosGrid.getBottomToolbar().setVisible(true);
+	
+	});
+	
 	entidad.cacheStore(procedimientosGrid.getStore());
 	
 	procedimientosGrid.on('rowdblclick', function(grid, rowIndex, e) {
+    	
     	var rec = grid.getStore().getAt(rowIndex);
     	//var nombre_procedimiento='<s:message text="${asunto.nombre}" javaScriptEscape="true" />'+'-'+rec.get('tipoProcedimiento');
     	var nombre_procedimiento=rec.get('nombre');
@@ -379,6 +393,7 @@
 	}
         
      function refreshTipoAsuntoAcuerdo(){
+     procedimientosGrid.getBottomToolbar().setVisible(false);
     	var codigoAsunto = data.cabecera.tipoAsuntoCodigo;
     	var idAsuOrigen = data.cabecera.idAsuOrigen;
     	var idExpOrigen = data.cabecera.idExpOrigen;

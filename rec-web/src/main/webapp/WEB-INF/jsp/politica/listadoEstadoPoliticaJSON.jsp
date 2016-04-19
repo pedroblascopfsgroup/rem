@@ -22,6 +22,7 @@
             <json:property name="politica" value="${p.tipoPolitica.descripcion}" />
             <json:property name="propuesta" value="${p.esPropuesta}" />
             <json:property name="vigente" value="${p.esVigente}" />
+            <json:property name="orden" value="${p.estadoItinerarioPolitica.orden}" />
         </json:object>
     </json:array>
 </fwk:json>  

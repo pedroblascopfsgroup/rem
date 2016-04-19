@@ -127,6 +127,18 @@
         ,cls:'cursor_pointer'
     });	
     
+    nivelCumplimientoGrid.on('rowdblclick',function(grid, rowIndex, e){
+    	var rec = grid.getStore().getAt(rowIndex);
+    	console.log(rec.get('descripcionRegla'));
+    	if(rec.get('descripcionRegla')=='Seleccionar propuesta de actuación'){
+    		console.log('dentro');
+    		console.log(getIdExpediente());
+    		console.log(entidad.get("data").cabecera.descripcion);
+    		app.abreExpedienteTab(getIdExpediente(), entidad.get("data").cabecera.descripcion, 'acuerdos');
+		}
+    });
+    
+    
 	nivelCumplimientoGrid.on('rowclick',function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		var idNivelCumplimiento = rec.get('idNivelCumplimiento');
@@ -207,7 +219,7 @@
 			//es una persona
 			var id = rec.get('idPersona');
     		var nombre_cliente=rec.get('apellidoNombre');
-    		app.abreCliente(id, nombre_cliente);	
+    		app.abreClienteTab(id, nombre_cliente, 'politicaPanel');	
 		}
 		if(rec.get('tipoObjetoEntidad')=='<fwk:const value="es.capgemini.pfs.expediente.ObjetoEntidadRegla.TIPO_CONTRATO" />'){
 			//es un contrato
@@ -240,6 +252,8 @@
 		var codigoCE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE" />';
 		var codigoRE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
 		var codigoDC = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
+		var codigoENSAN = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION" />';
+		var codigoSANC = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO" />';
 		var estadoExpediente = entidad.get("data").gestion.estadoItinerario;
 		if (estadoExpediente == codigoCE){
 			return ('Completar Expediente');
@@ -247,6 +261,10 @@
 			return ('Revisar Expediente');
 		}else if (estadoExpediente == codigoDC)	{
 			return ('Decisión de Comité');
+		}else if (estadoExpediente == codigoENSAN)	{
+			return ('En Sanción');
+		}else if (estadoExpediente == codigoSANC)	{
+			return ('Sancionado');
 		}
 		return estadoExpediente;
 	}
@@ -256,15 +274,22 @@
 		var codigoRE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
 		var codigoDC = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
 		var codigoFP = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
+		var codigoENSAN = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION" />';
 		var estadoExpediente = entidad.get("data").gestion.estadoItinerario;
 		if (estadoExpediente == codigoCE){
 			return ('Revisar Expediente');
 		}else if (estadoExpediente == codigoRE)	{
-			return ('Decisión de Comité');
+			if(entidad.get("data").toolbar.tipoExpediente == 'GESDEU'){
+				return ('En Sanción');
+			}else{
+				return ('Decisión de Comité');
+			}
 		}else if (estadoExpediente == codigoDC){
 			return ('Formalizar Propuesta');
 		}else if (estadoExpediente == codigoFP){
 			return ('Decisión de Comité');
+		}else if (estadoExpediente == codigoENSAN)	{
+			return ('Sancionado');
 		}
 		return '';
 	}

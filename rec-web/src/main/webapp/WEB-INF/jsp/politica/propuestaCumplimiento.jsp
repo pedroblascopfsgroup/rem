@@ -9,11 +9,9 @@
 	
 	var labelStyle = 'font-weight:bolder;width:100px';
 	
-	var resumen = ${objetivo.resumen};
-	
-	var resumenObjetivo = new Ext.form.TextArea({
+	 var resumenObjetivo = new Ext.form.TextArea({
 		fieldLabel: '<s:message code="objetivo.propuestaCumplimiento.resumenObjetivo" text="**Resumen del objetivo" />'
-		,value:'${objetivo.resumen}'
+		,value:'<s:message text="${objetivo.resumen}" javaScriptEscape="true" />'
 		,labelStyle: labelStyle
 		,style:'font-weight:bolder;margin-bottom:10px;'
 		,width: 570
@@ -22,6 +20,7 @@
 		,labelStyle: labelStyle
 		,readOnly: true
 	});
+	
 
 	var propuestaCumplimiento = new Ext.form.TextArea({
 		fieldLabel: '<s:message code="objetivo.propuestaCumplimiento.propuestaCumplimiento" text="**Propuesta cumplimiento" />'

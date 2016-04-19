@@ -1086,7 +1086,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
         	}else{
             	GestorDespacho gestorDespacho = null;
             	Order order = new Order(OrderType.ASC, "id");
-            	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.tipoDespacho.id", tipoDespachoDestinatario.getId()));
+            	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.tipoDespacho.id", tipoDespachoDestinatario.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
             	
             	if(usuariosDespacho.size()==1){
         			

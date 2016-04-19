@@ -26,8 +26,26 @@ public class EXTDtoAsunto extends DtoAsunto{
 	private Long idGestorConfeccionExpediente;
 	private Long idSupervisorConfeccionExpediente;
 	private String tipoDespacho;
-    private List<Map<String,Long>> listaGestoresId = new ArrayList<Map<String,Long>>();	
+    private List<Map<String,Long>> listaGestoresId = new ArrayList<Map<String,Long>>();
+    private String idGestorBorrado;
+    private String idTipoGestorBorrado;
+    
+    
 	
+	
+
+	public String getIdGestorBorrado() {
+		return idGestorBorrado;
+	}
+	public void setIdGestorBorrado(String idGestorBorrado) {
+		this.idGestorBorrado = idGestorBorrado;
+	}
+	public String getIdTipoGestorBorrado() {
+		return idTipoGestorBorrado;
+	}
+	public void setIdTipoGestorBorrado(String idTipoGestorBorrado) {
+		this.idTipoGestorBorrado = idTipoGestorBorrado;
+	}
 	public void setIdGestorConfeccionExpediente(
 			Long idGestorConfeccionExpediente) {
 		this.idGestorConfeccionExpediente = idGestorConfeccionExpediente;

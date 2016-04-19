@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
@@ -32,7 +33,6 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCO
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import org.apache.commons.lang.StringUtils;
 
 @Repository
 public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO, Long> implements ProcedimientoPCODao {
@@ -73,7 +73,6 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		return (Integer) query.uniqueResult();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<HashMap<String, Object>> busquedaProcedimientosPcoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		ProjectionList select = Projections.projectionList();
@@ -101,7 +100,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("procedimientoPco.fechaCancelado").as("fechaCancelado"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
-		query.setProjection(select);
+		query.setProjection(Projections.distinct(select));
 
 		addPaginationToQuery(filtro, query);
 		
@@ -118,6 +117,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param query
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private List<HashMap<String, Object>> completarDatosCalculados(Criteria query) {
 		List<HashMap<String, Object>> list = query.list();
 
@@ -747,6 +747,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	 * @param fechaFinalizado
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Integer obtenerDiasEnPreparacion(Long idProcedimientoPco, Date fechaCancelado, Date fechaFinalizado) {
 
 		// Obtener Fecha inicio estado en Estudio

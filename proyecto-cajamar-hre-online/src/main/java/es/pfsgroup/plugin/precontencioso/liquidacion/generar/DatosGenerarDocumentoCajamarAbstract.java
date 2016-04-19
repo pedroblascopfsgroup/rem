@@ -178,8 +178,12 @@ public abstract class DatosGenerarDocumentoCajamarAbstract {
 		String resultado = "";
 		try {
 			resultado = contrato.getNroContratoFormat();
-		} catch (NullPointerException e) {
-			resultado = noDisponible(nombreCampo);
+		} catch (Exception e) {
+			try {
+				resultado = contrato.getNroContrato();
+			} catch (Exception ee) {
+				resultado = noDisponible(nombreCampo);
+			}
 		}
 		return resultado;
 	}

@@ -571,7 +571,6 @@
 		<module>recovery-bi-plugin</module>
 		<module>recovery-procuradores-common</module>
 		<module>recovery-procuradores-plugin</module>
-		<module>recovery-gestordocumental-plugin</module>
 	</modules>
 
 	<profiles>

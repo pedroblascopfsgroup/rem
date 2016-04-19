@@ -1612,7 +1612,7 @@
 				</executions>
 				<configuration>
 					<container>${docker.container}</container>
-					<DB>${docker.DB}</DB>
+					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
 					<war>pfs-${project.version}</war>
 				</configuration>

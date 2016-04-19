@@ -92,9 +92,6 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionQuita/tramiteFormalizacionQuita.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionReestructuracionRefinanciacion/tramiteFormalizacionReestructuracionRefinanciacion.xml" p:version="-1"/>
 	
-	<!-- Cambios Kevin -->
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAdjudicacionTerceros/haya_tramiteAdjudicacionTerceros.xml" p:version="-1"/>
-	
 	<!-- Groovy's -->
   	<bean id="jbpmUtilHreSareb" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">

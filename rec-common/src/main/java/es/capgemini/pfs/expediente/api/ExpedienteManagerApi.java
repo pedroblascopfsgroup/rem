@@ -723,5 +723,13 @@ public interface ExpedienteManagerApi {
 	 */
 	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
 	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,String respuesta, Boolean isSupervisor);
+	
+	/**
+	 * Devuelve si la persona que se pasa como parámetro tiene expedientes de gestión de deuda activos.
+	 * @param idPersona id de una persona
+	 * @return boolean
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_GESTION_DEUDA)
+	public Boolean tieneExpedienteGestionDeuda(Long idPersona);
 
 }

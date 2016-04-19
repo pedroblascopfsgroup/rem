@@ -455,7 +455,7 @@ function(entidad,page){
 			,[creacionExpedienteSeguimientoButton, ((!data.tieneExpedienteSeguimiento) && data.tieneContratosActivos)] 
 			,[creacionExpedienteRecobroButton, (data.expedientePropuesto.isNull || !data.expedientePropuesto.seguimiento) 
 					&&  !(data.arquetipoPersona.isSeguimiento || !data.arquetipoPersona.isArquetipoGestion || !data.tieneContratosParaCliente)]
-			,[creacionExpedienteGestionDeudaButton, (data.tieneContratosActivos)]
+			,[creacionExpedienteGestionDeudaButton, (data.tieneContratosActivos) && !data.tieneExpedienteGestionDeuda]
 		];
 		
 		<%-- Si hay un expediente propuesto y es usuario supevisor, se cambio el menú para que indique que se va a activar el expediente --%>

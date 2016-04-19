@@ -21,6 +21,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.devon.utils.PropertyPlaceholderUtils;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Usuario;
 
@@ -133,5 +134,38 @@ public class UsuarioDaoImpl extends AbstractEntityDao/*AbstractMasterDao*/<Usuar
         }
         return list;
     }
+
+    @SuppressWarnings("unchecked")
+    public UsuarioSecurity getUsuarioSecurity(Long idUsuario) {
+    	String hql = "from UsuarioSecurity u where u.id = " + idUsuario;
+    	List<UsuarioSecurity> lista = getHibernateTemplate().find(hql);
+    	if (lista.size()>0) {
+    		return lista.get(0);
+    	} else {
+    		return null;
+    	}
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<GrantedAuthority> getAuthoritiesCambioEntidad(Long idUsuario) {
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+
+        final String authoritiesQueryCambioEntidad = 
+        		"select fun.FUN_descripcion from ${master.schema}.USU_USUARIOS usu, ${entity.schema}.PEF_PERFILES pef, ${entity.schema}.ZON_PEF_USU pu, ${entity.schema}.FUN_PEF fp, ${master.schema}.FUN_funciones fun " +
+        				"where usu.USU_ID = ? and usu.USU_ID = pu.USU_ID and pef.PEF_ID = pu.PEF_ID and pef.PEF_ID = fp.PEF_ID and fun.FUN_ID = fp.FUN_ID and pu.borrado = 0 group by fun.FUN_descripcion";
+
+        SQLQuery query = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(authoritiesQueryCambioEntidad);
+        query.setCacheable(true);
+        query.setLong(0, idUsuario);
+        List<String> authorityNames = query.list();
+
+        for (String name : authorityNames) {
+            GrantedAuthorityImpl a = new GrantedAuthorityImpl(name);
+            authorities.add(a);
+        }
+
+        return authorities;
+    }
+
 
 }

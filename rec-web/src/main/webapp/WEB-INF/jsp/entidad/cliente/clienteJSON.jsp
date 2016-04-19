@@ -21,6 +21,7 @@
 	</json:object>
 	<json:property name="tieneExpedienteSeguimiento" value="${tieneExpedienteSeguimiento}" />
 	<json:property name="tieneExpedienteRecuperacion" value="${tieneExpedienteRecuperacion}" />
+	<json:property name="tieneExpedienteGestionDeuda" value="${tieneExpedienteGestionDeuda}" />
 	<json:property name="tieneContratosParaCliente" value="${tieneContratos==true}" />
 	<json:property name="tieneContratosActivos" value="${tieneContratosActivos}" />
 	<json:property name="tieneContratosLibres" value="${tieneContratosLibres}" />

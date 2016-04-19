@@ -1,4 +1,4 @@
-package es.pfsgroup.tipoContenedor;
+package es.pfsgroup.tipoContenedor.model;
 
 import java.io.Serializable;
 

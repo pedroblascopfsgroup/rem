@@ -1,7 +1,7 @@
-package es.pfsgroup.tipoContenedor.Dao;
+package es.pfsgroup.tipoContenedor.dao;
 
 import es.capgemini.pfs.dao.AbstractDao;
-import es.pfsgroup.tipoContenedor.MapeoTipoContenedor;
+import es.pfsgroup.tipoContenedor.model.MapeoTipoContenedor;
 
 public interface MapeoTipoContenedorDao extends AbstractDao<MapeoTipoContenedor,Long> {
 	

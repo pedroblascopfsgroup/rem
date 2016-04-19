@@ -1,10 +1,10 @@
-package es.pfsgroup.tipoContenedor.Dao.impl;
+package es.pfsgroup.tipoContenedor.dao.impl;
 
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.pfsgroup.tipoContenedor.MapeoTipoContenedor;
-import es.pfsgroup.tipoContenedor.Dao.MapeoTipoContenedorDao;
+import es.pfsgroup.tipoContenedor.dao.MapeoTipoContenedorDao;
+import es.pfsgroup.tipoContenedor.model.MapeoTipoContenedor;
 
 @Repository("MapeoTipoContenedorDao")
 public class MapeoTipoContenedorDaoImpl extends AbstractEntityDao<MapeoTipoContenedor,Long> implements MapeoTipoContenedorDao {

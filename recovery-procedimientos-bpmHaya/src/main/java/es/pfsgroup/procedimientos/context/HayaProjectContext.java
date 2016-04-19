@@ -31,6 +31,4 @@ public interface HayaProjectContext {
 
 	public String getTareaInicioConcurso();
 	
-	public Map<String, String> getMapaClasesExpeGesDoc();
-
 }

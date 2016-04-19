@@ -74,8 +74,8 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.haya.contenedor.model.ContenedorGestorDocumental;
 import es.pfsgroup.recovery.haya.gestorDocumental.GestorDocToRecoveryAssembler;
-import es.pfsgroup.tipoContenedor.MapeoTipoContenedor;
-import es.pfsgroup.tipoContenedor.Dao.MapeoTipoContenedorDao;
+import es.pfsgroup.tipoContenedor.dao.MapeoTipoContenedorDao;
+import es.pfsgroup.tipoContenedor.model.MapeoTipoContenedor;
 
 @Component
 public class AdjuntoHayaManager {

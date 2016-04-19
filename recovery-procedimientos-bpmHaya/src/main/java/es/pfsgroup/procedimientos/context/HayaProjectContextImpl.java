@@ -1,7 +1,6 @@
 package es.pfsgroup.procedimientos.context;
 
 import java.util.List;
-import java.util.Map;
 
 public class HayaProjectContextImpl implements HayaProjectContext {
 	
@@ -21,8 +20,6 @@ public class HayaProjectContextImpl implements HayaProjectContext {
 	private String fechaDemandaHipotecario;
 	private String fechaDemandaMonitorio;
 	private String fechaDemandaOrdinario;
-	
-	private Map<String, String> mapaClasesExpeGesDoc;
 	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.procedimientos.context.HayaProjectContext#getTareasInicioConcursal()
@@ -153,12 +150,4 @@ public class HayaProjectContextImpl implements HayaProjectContext {
 		this.tareaInicioConcurso = tareaInicioConcurso;
 	}
 	
-	@Override
-	public Map<String, String> getMapaClasesExpeGesDoc() {
-		return mapaClasesExpeGesDoc;
-	}
-
-	public void setMapaClasesExpeGesDoc(Map<String, String> mapaClasesExpeGesDoc) {
-		this.mapaClasesExpeGesDoc = mapaClasesExpeGesDoc;
-	}
 }

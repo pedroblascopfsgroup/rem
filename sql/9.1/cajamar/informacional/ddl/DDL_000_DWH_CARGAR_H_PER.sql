@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160418
+--## FECHA_CREACION=20160419
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-3131
 --## PRODUCTO=NO
 --## 
---## Finalidad: SE MODIFICA LA CARGA DE  puntuacion
+--## Finalidad: SE MODIFICA el tramo de puntuación
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -22,7 +22,7 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
   -- Fecha creación:Septiembre 2015
   -- Responsable ultima modificacion: María Villanueva, PFS Group
   -- Fecha ultima modificacion: 18/04/2016
-  -- Motivos del cambio: SE MODIFICA LA CARGA DE  puntuacion
+  -- Motivos del cambio: SE MODIFICA el tramo de puntuación
   -- Cliente: Recovery BI CAJAMAR
   --
   -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -332,9 +332,12 @@ begin
                    on (per.PERSONA_ID = ale.PER_ID)
                    when matched then update
                    set per.TRAMO_PUNTUACION_ID = (case when PUNTUACION is null or  PUNTUACION = 0 then 1
-                                                       when PUNTUACION > 0  and PUNTUACION < 1000 then 2
-                                                       when PUNTUACION >= 1000 and PUNTUACION < 3000 then 3
-                                                       when PUNTUACION >= 3000 then 4
+                                                       when PUNTUACION > 0  and PUNTUACION < 100 then 2
+                                                       when PUNTUACION >= 100 and PUNTUACION <= 300 then 3
+                                                       when PUNTUACION > 300 and PUNTUACION <= 500 then 4
+                                                       when PUNTUACION > 500 and PUNTUACION <= 700 then 5
+                                                       when PUNTUACION > 700 and PUNTUACION <= 1000 then 6
+                                                       when PUNTUACION > 1000 then 7
                                                        else -1 end)
                    where per.DIA_ID = '''||fecha||'''';
 

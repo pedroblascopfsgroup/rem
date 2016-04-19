@@ -269,7 +269,7 @@
        
        
 	var toolbar = new Ext.Toolbar({
-		buttonAlign: 'center'
+		buttonAlign: 'left'
 	});
 	var procedimientosGrid = app.crearGrid(procedimientosStore,procedimientosCm,{
 		title:'<s:message code="asunto.tabcabecera.grid.titulo" text="**Procedimientos"/>'
@@ -287,7 +287,7 @@
 	procedimientosStore.on('load', function(procedimientosStore){
 		procedimientosGrid.getBottomToolbar().removeAll(true);
 		procedimientosGrid.getBottomToolbar().doLayout();
-		procedimientosGrid.getBottomToolbar().add(procedimientosStore.getTotalCount().toString());
+		procedimientosGrid.getBottomToolbar().add('Mostrando '+procedimientosStore.getTotalCount().toString()+' actuaciones');
 		procedimientosGrid.getBottomToolbar().doLayout();
 		procedimientosGrid.getBottomToolbar().setVisible(true);
 	

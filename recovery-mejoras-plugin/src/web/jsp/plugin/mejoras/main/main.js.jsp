@@ -118,6 +118,7 @@ var App= function(){
 			<json:property name="username" value="${usuario.username}" />
 			<json:property name="externo" value="${usuario.usuarioExterno}"/>
 			<json:property name="apellidoNombre" value="${usuario.apellidoNombre}"/>
+			<json:property name="codigoEntidad" value="${usuario.entidad.codigo}"/>
 			<json:array name="perfiles" items="${usuario.perfiles}" var="perf">
 				<json:object>
 					<json:property name="id" value="${perf.id}" />

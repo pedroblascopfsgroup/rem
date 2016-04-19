@@ -1,4 +1,3 @@
-
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2"
 	name="tramiteSubastaElectronica">
 
@@ -190,7 +189,7 @@
 	</state>
 
 	<decision name="P458_RegistrarPublicacionSubastaBOEDecision" expression="#{P458_RegistrarPublicacionSubastaBOEDecision}">
-		<transition to="P458_RegistrarResultadoDeLaSubasta" name="no"></transition>
+		<transition to="P458_RegistrarResultadoSubasta" name="no"></transition>
 		<transition to="P458_PedirCorreccionEdictoPublicacionBOE" name="si"></transition>
 	</decision>
 
@@ -267,13 +266,13 @@
 
 	<decision name="P458_RegistrarResultadoSubastaDecision" expression="#{P458_RegistrarResultadoSubastaDecision}">
 		<transition to="Decision1" name="suspension"></transition>
-		<transition to="P458_SolicitarAdjudicacionSegunInstruccionesEntidad" name="no"></transition>		
+		<transition to="P458_SolicitarAdjudicacionInstruccionesEntidad" name="no"></transition>		
 		<transition to="P458_BPMTramiteAdjudicacion" name="siSinRemate"></transition>
 		<transition to="P458_BPMTramiteCesionDeRemate" name="siConRemate"></transition>
 		<transition to="P458_BPMTramiteAdjudicacionTerceros" name="adjudicadoATerceros"></transition>
 	</decision>
 	
-	<state name="P458_SolicitarAdjudicacionSegunInstruccionesEntidad">
+	<state name="P458_SolicitarAdjudicacionInstruccionesEntidad">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
@@ -314,7 +313,7 @@
 		</event>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="P458_RegResulPresentacionEscrJuzgadoDecision" name="avanzaBPM"></transition>
-		<transition to="P458_SolicitarAdjudicacionSegunInstruccionesEntidad" name="vueltaAtras"></transition>
+		<transition to="P458_SolicitarAdjudicacionInstruccionesEntidad" name="vueltaAtras"></transition>
 	</state>
 	
 	<decision name="P458_RegResulPresentacionEscrJuzgadoDecision" expression="#{P458_RegResulPresentacionEscrJuzgadoDecision}">

@@ -689,6 +689,21 @@ public class Expediente implements Serializable, Auditable, Describible {
 
         
     }
+    
+    /**
+     * @return String: Código del itinerario del expediente
+     */
+    public String getCodigoTipoItinerario() {
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null && arquetipo.getItinerario().getdDtipoItinerario() != null){
+    		return arquetipo.getItinerario().getdDtipoItinerario().getCodigo();
+    	}
+    	else{
+    		return "";
+    	}
+
+        
+    }
 
     /**
      * @return the decisionComite

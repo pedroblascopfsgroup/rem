@@ -20,6 +20,7 @@ import es.capgemini.pfs.APPConstants;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.persona.model.Persona;
@@ -43,6 +44,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase con los métodos de negocio relativos a los Objetivos.
@@ -113,7 +115,11 @@ public class ObjetivoManager {
             if (compruebaValidezObjetivo(objetivo)) {
                 objetivoDao.save(objetivo);
             } else {
-                throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");
+            	if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida.gestion.deuda");
+            	}else{
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");	
+            	}
             }
 
             PlazoTareasDefault plazoPropuesta = (PlazoTareasDefault) executor.execute(
@@ -133,7 +139,11 @@ public class ObjetivoManager {
             if (compruebaValidezObjetivo(objetivo)) {
                 objetivoDao.saveOrUpdate(objetivo);
             } else {
-                throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");
+            	if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida.gestion.deuda");
+            	}else{
+            		throw new BusinessOperationException("editar.objetivo.error.politicaNoDefinida");	
+            	}
             }
 
             // Si es un alta de objetivo Y LA POLITICA ES VIGENTE creamos la tarea de propuesta
@@ -205,9 +215,14 @@ public class ObjetivoManager {
 
                     String tendencia = ((DDTendencia) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTendencia.class,
                             DDTendencia.TEN_DESCENDENTE)).getDescripcion();
-
-                    throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido", tendencia, tipoOperadorMenor
-                            .getDescripcion());
+                    
+                    if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido.restrictiva.gesdeu");
+                    }else{
+                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido", tendencia, tipoOperadorMenor
+                                .getDescripcion());	
+                    }
+                    
                 }
                 if (valor > getValorReferenciadoPoObjetivo(objetivo)) { throw new BusinessOperationException("editar.objetivo.error.montoInvalido",
                         tipoOperador.getCodigo().toLowerCase(), getValorReferenciadoPoObjetivo(objetivo)); }
@@ -219,8 +234,13 @@ public class ObjetivoManager {
                             DDTipoOperador.class, DDTipoOperador.ESTADO_MAYOR);
                     String tendencia = ((DDTendencia) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDTendencia.class,
                             DDTendencia.TEN_ASCENDENTE)).getDescripcion();
-                    throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido", tendencia, tipoOperadorMayor
-                            .getDescripcion());
+                    
+                    if(!Checks.esNulo(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(objetivo.getPolitica().getCicloMarcadoPolitica().getExpediente().getTipoExpediente().getCodigo())){
+                    	throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido.norestrictiva.gesdeu");
+                    }else{
+	                    throw new BusinessOperationException("editar.objetivo.error.politica.operadorInvalido", tendencia, tipoOperadorMayor
+	                            .getDescripcion());
+                    }
                 }
 
                 if (valor < getValorReferenciadoPoObjetivo(objetivo)) { throw new BusinessOperationException("editar.objetivo.error.montoInvalido",

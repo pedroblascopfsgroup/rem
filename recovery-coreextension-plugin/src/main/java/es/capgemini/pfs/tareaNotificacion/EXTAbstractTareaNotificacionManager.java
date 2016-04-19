@@ -109,21 +109,26 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		dto.setUsuarioLogado(usuarioLogado);
 		List listaRetorno = new ArrayList();
 
-		Page page;
+		Page page = null;
 		if (dto.getTraerGestionVencidos() != null && dto.getTraerGestionVencidos()) {
 			agregarTareasGestionVencidosSeguimiento(dto, listaRetorno, opcion);
 
 			if (proxyFactory.proxy(EXTOpcionesBusquedaTareasApi.class).tieneOpcion(EXTOpcionesBusquedaTareas.getBuzonesTareasOptimizados(), usuarioLogado))
 				informarCategoriaTarea(listaRetorno);
 
+			listaRetorno = removeTareasDuplicadas(listaRetorno);
+
 			page = new PageSql();
 			((PageSql) page).setResults(listaRetorno);
 			((PageSql) page).setTotalCount(listaRetorno.size());
 		} else {
-			page = obtenerTareasPendientes(dto, opcion, modelClass);
+			
+			if(perfiles.size() > 0 && zonas.size() > 0) {
+				page = obtenerTareasPendientes(dto, opcion, modelClass);
+			}
 			
 			if (page != null) {
-				listaRetorno.addAll(page.getResults());
+				listaRetorno.addAll(removeTareasDuplicadas(page.getResults()));
 				
 				if (proxyFactory.proxy(EXTOpcionesBusquedaTareasApi.class).tieneOpcion(EXTOpcionesBusquedaTareas.getBuzonesTareasOptimizados(), usuarioLogado))
 					informarCategoriaTarea(listaRetorno);
@@ -150,6 +155,25 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		//castToExtTareaNotificacion(page);
 		EventFactory.onMethodStop(this.getClass());
 		return page;
+	}
+
+	private List removeTareasDuplicadas(final List lista) {
+		final List listaRetorno = new ArrayList();
+		final List<Long> listaIds = new ArrayList<Long>();
+		for (Object tarea : lista) {
+			try {
+				Method metodoGet = tarea.getClass().getMethod("getId", null);
+				final Long tarId = (Long)metodoGet.invoke(tarea, null);
+				if(!listaIds.contains(tarId)){
+					listaIds.add(tarId);
+					listaRetorno.add(tarea);
+				}
+			}catch (final Exception e) {
+				logger.error(e.getMessage());
+				return lista;
+			}
+		}
+		return listaRetorno;
 	}
 
 	protected List<Long> obtenerCantidadDeTareasPendientesGenerico(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion) {

@@ -57,6 +57,7 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 		// Recuperar Expedientes
 		Criteria queryGetExpedientes = getSession().createCriteria(VListadoPreProyectadoExp.class, "e");
 		queryGetExpedientes.add(Restrictions.in("e.expId", expIds));
+		queryGetExpedientes.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 		List<VListadoPreProyectadoExp> listadoExpedientes = queryGetExpedientes.list();
 

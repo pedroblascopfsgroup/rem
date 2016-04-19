@@ -63,6 +63,9 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 	@Column(name = "CMP_VALORES_COMBO")
 	private String valoresCombo;
 	
+	@Column(name = "CMP_OBLIGATORIO")
+	private Boolean obligatorio;
+	
 	@Version
     private Integer version;
 
@@ -156,4 +159,13 @@ public class CamposTerminoTipoAcuerdo implements Serializable, Auditable{
 		
 		return result;
 	}
+
+	public Boolean getObligatorio() {
+		return obligatorio;
+	}
+
+	public void setObligatorio(Boolean obligatorio) {
+		this.obligatorio = obligatorio;
+	}
+	
 }

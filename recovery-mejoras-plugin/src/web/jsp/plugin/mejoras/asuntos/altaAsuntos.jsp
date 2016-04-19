@@ -589,9 +589,14 @@
    		borrar.setDisabled(true);
 	  }); 	
 	
+	
+	var idGestorBorrado=  '';
+	var idTipoGestorBorrado=  '';
 	var borrarFunction=function(){
 		var gestorSel = grid.getSelectionModel().getSelected();
 		if (gestorSel) {
+			idGestorBorrado=  gestorSel.get('idGestor') + ',' + idGestorBorrado ;
+			idTipoGestorBorrado= gestorSel.get('tipoGestorId') + ',' + idTipoGestorBorrado;
 			grid.getStore().remove(gestorSel);
 		}
 	}; 	
@@ -647,7 +652,10 @@
                     	,codigoEstadoAsunto: '${codigoEstadoAsunto}'
                     </c:if>
                     ,listaGestoresId: Ext.encode(getGestoresId())
-                    ,tipoDeAsunto: tipoDeAsunto.getValue()				
+                    ,tipoDeAsunto: tipoDeAsunto.getValue()
+                    ,idGestorBorrado: idGestorBorrado
+                    ,idTipoGestorBorrado: idTipoGestorBorrado
+                    				
 				}
 				,success :  function(){ 
                   				page.fireEvent(app.event.DONE);

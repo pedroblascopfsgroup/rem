@@ -2862,9 +2862,20 @@
         begin
 
         INSERT INTO REC_FICHERO_CONTRATOS_BAJAS
-        SELECT DISTINCT TMP.RCF_AGE_ID, CRC.CRC_ID_ENVIO AS ID_ENVIO
+        WITH CICLOS_BAJAS_TODOS
+          AS ( SELECT DISTINCT TMP.RCF_AGE_ID
+                    , CRC.CRC_ID_ENVIO AS ID_ENVIO
+                    , MOB.DD_MOB_CODIGO
+                    , ROW_NUMBER() OVER (PARTITION BY CRC.CRC_ID_ENVIO ORDER BY CRC.FECHAMODIFICAR DESC) AS ORDEN
+                 FROM TMP_REC_CONTRATOS_BAJA  TMP
+                    , CRC_CICLO_RECOBRO_CNT   CRC
+                    , ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB
+                WHERE TMP.ID_ENVIO  = CRC.CRC_ID_ENVIO
+                  AND CRC.DD_MOB_ID = MOB.DD_MOB_ID(+) )
+        SELECT TMP.RCF_AGE_ID
+             , TMP.ID_ENVIO
              , TRUNC(SYSDATE) AS FECHA_BAJA
-             , DECODE(MOB.DD_MOB_CODIGO
+             , DECODE(TMP.DD_MOB_CODIGO
                      ,'EXC' ,'EXC' --CNT EXCEPTUADO
                      ,'EXP' ,'EXC' --PER EXCEPTUADA
                      ,'CAN' ,'REG' --CANCELADO
@@ -2893,11 +2904,8 @@
              , NULL LCHAR_EXTRA3
              , NULL LCHAR_EXTRA4
              , NULL LCHAR_EXTRA5
-        FROM TMP_REC_CONTRATOS_BAJA  TMP
-             , CRC_CICLO_RECOBRO_CNT   CRC
-             , ${master.schema}.DD_MOB_MOTIVOS_BAJA MOB
-         WHERE TMP.ID_ENVIO  = CRC.CRC_ID_ENVIO
-           AND CRC.DD_MOB_ID = MOB.DD_MOB_ID(+);
+          FROM CICLOS_BAJAS_TODOS TMP
+         WHERE ORDEN = 1;
 
         COMMIT;
 

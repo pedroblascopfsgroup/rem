@@ -19,6 +19,7 @@
  	<bean id="subastaComprobarProcedeSubastaSuspendidaHandler" class="es.pfsgroup.procedimientos.subasta.SubastaComprobarProcedeSubastaSuspendidaHandler"></bean>
  	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.precontencioso.BCCPrecontenciosoLeaveActionHandler" />
  	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.costas.CostasProcuradorHandler"></bean>
+ 	<bean id="tramiteSubElectronicaLeaveActionHandler" class="es.pfsgroup.procedimientos.subastaElectronica.TramiteSubElectronicaLeaveActionHandler"></bean>
 
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -71,6 +72,10 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramitePosesionInterina/hcj_posesionInterina.xml" p:version="-1"/>
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEnvioDemanda/haya_tramiteEnvioDemanda.xml" p:version="-1"/>
+	
+	<!-- Subasta Electronica -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubastaElectronica/tramiteSubastaElectronica.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAdjudicacionTerceros/haya_tramiteAdjudicacionTerceros.xml" p:version="-1"/>
 	
 	<!-- 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
@@ -328,6 +333,16 @@
 					}
 					return
 				}
+				
+				def dameDecisionRegistrarResultadoSubasta = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.dameDecisionRegistrarResultadoSubasta(idProcedimiento);
+				}	
+				
+				def compruebaPostores = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.compruebaPostores(idProcedimiento);
+				}				
 
 				def validarHC103SolicitudFondos = {
 					if (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
@@ -342,6 +357,11 @@
 					}
 					return true;
 				}
+				
+				def compruebaRegResEscJuzgadoPOST = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.compruebaRegResEscJuzgadoPOST(idProcedimiento);
+				}				
 				
   			 ]]>
   			</value>

@@ -106,7 +106,7 @@ DECLARE
 	,T_TIPO_TFI('P457_ConfirmarRecivoEnvioMandamientoPago','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se ha de informar la fecha y el importe en la que nos han entregado los mandamientos de pago de la cantidad informada por un tercero en concepto de pago del bien o bienes adjudicados, así como la fecha de envío a HRE para su contabilización.<br><br>En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.<br><br>La siguiente tarea será "Recepción de mandamiento de pago".</p></div>',null,null,null,null,'0','PRODUCTO-1095')
         ,T_TIPO_TFI('P457_ConfirmarRecivoEnvioMandamientoPago','1','date','fechaRecepcion','Fecha Recepción','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-1095')
 	,T_TIPO_TFI('P457_ConfirmarRecivoEnvioMandamientoPago','2','date','fechaEnvio','Fecha Envío','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-1095')
-	,T_TIPO_TFI('P457_ConfirmarRecivoEnvioMandamientoPago','3','number','importe','Importe',null,null,null,null,'0','PRODUCTO-1095')
+	,T_TIPO_TFI('P457_ConfirmarRecivoEnvioMandamientoPago','3','number','importe','Importe','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-1095')
 	,T_TIPO_TFI('P457_ConfirmarRecivoEnvioMandamientoPago','4','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1095')
 
 

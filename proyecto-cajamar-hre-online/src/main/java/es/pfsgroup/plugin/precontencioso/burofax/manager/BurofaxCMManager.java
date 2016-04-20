@@ -46,6 +46,12 @@ import es.pfsgroup.recovery.geninformes.GENINFInformesManager;
 @Service
 public class BurofaxCMManager implements BurofaxCMApi {
 
+	private static final String BF_LEASING = "BF_LEASING";
+	private static final String BF_PRESTAMO_PERS = "BF_PRESTAMO_PERS";
+	private static final String BF_PRESTAMO_HIPO = "BF_PRESTAMO_HIPO";
+	private static final String BF_CARTERA = "BF_CARTERA";
+	private static final String BF_COMERCIO_EXTERIOR = "BF_COMERCIO_EXTERIOR";
+
 	private static final String INICIO_MARCA = "${";
 	private static final String FIN_MARCA = "}";
 
@@ -72,10 +78,19 @@ public class BurofaxCMManager implements BurofaxCMApi {
 	private static final String IMPCOMITELEG = "IMPCOMITELEG";
 	private static final String nombreNotario = "nombreNotario";
 
+	private static final String VENCIDOANTICIPADO = "VENCIDOANTICIPADO";
+	
 	private static final String NOMBRE_PLANTILLA_BUROFAX = "plantillaBurofaxCM.docx";
 	private static final String DIRECTORIO_PLANTILLAS_LIQUIDACION = "directorioPlantillasLiquidacion";
 	private static final String DIRECTORIO_PDF_BUROFAX_PCO = "directorioPdfBurofaxPCO";
 	private static final String DEVON_HOME = "DEVON_HOME";
+
+	private static final String FORMALIZADO = "FORMALIZADO";
+	private static final String CONCEDIDO_A = "CONCEDIDO A ";
+	private static final String CONCEDIDA_A = "CONCEDIDA A ";
+	private static final String CONCEDIDO = "CONCEDIDO";
+	private static final String CONCEDIDA = "CONCEDIDA";
+	private static final String MEDIANTE_ESCRITURA = "MEDIANTE_ESCRITURA";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -327,8 +342,64 @@ public class BurofaxCMManager implements BurofaxCMApi {
 			mapaVariables.put(nombreNotario, noDisponible(nombreNotario));
 		}
 		
+		
+		mapaVariables.put(VENCIDOANTICIPADO, obtenerTextoVencimientoAnticipado(liquidacion));
+		
+		mapaVariables.put(FORMALIZADO, obtenerFormalizado(envioBurofax));
+		
 		return mapaVariables;
 	
+	}
+
+	private String obtenerFormalizado(EnvioBurofaxPCO envioBurofax) {
+		
+		String resultado = noDisponible(FORMALIZADO);
+		
+		if (!Checks.esNulo(envioBurofax.getBurofax().getTipoIntervencion()))
+		{
+			//SI EL INTERVINIENTE ES AVALISTA
+			if(envioBurofax.getBurofax().getTipoIntervencion().getAvalista())
+			{	
+				//Si es de tipo Comercio exterior
+				String nom50 = "";
+				try {
+					nom50 = envioBurofax.getBurofax().getContrato().getPrimerTitular().getNom50();
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				}
+				if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_COMERCIO_EXTERIOR)) {
+					resultado = CONCEDIDA_A + nom50;
+				} else {
+					//Si es de tipo CARTERA
+					if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_CARTERA)) {
+						resultado = CONCEDIDA_A + nom50;
+					} else { //Para cualquier otro tipo
+						resultado = CONCEDIDO_A + nom50;
+					}
+				}	
+			}
+				
+			else	//SI EL INTERVINIENTE ES TITULAR
+			{	
+				//Si es de tipo prestamo hipotecario
+				if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_PRESTAMO_HIPO))
+					resultado = FORMALIZADO;
+				//Si es de tipo prestamos personal
+				if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_PRESTAMO_PERS))
+					resultado = CONCEDIDO;
+				//Si es de tipo Leasing
+				if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_LEASING))
+					resultado = FORMALIZADO;
+				//Si es de tipo Comercio exterior
+				if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_COMERCIO_EXTERIOR))
+					resultado = CONCEDIDA;
+				//Si es de tipo CARTERA
+				if(envioBurofax.getTipoBurofax().getCodigo().equals(BF_CARTERA))
+					resultado = CONCEDIDA;
+			}
+		}
+		
+		return resultado;
 	}
 
 	private String construyeNombre(boolean esManual, Persona persona, PersonaManual pmanual) {
@@ -455,7 +526,7 @@ public class BurofaxCMManager implements BurofaxCMApi {
 		String resultado = "";
 		try {
 			resultado = currencyInstance.format(liq.getTotal());
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			resultado = noDisponible(nombreCampo);
 		}
 		return resultado;
@@ -555,4 +626,16 @@ public class BurofaxCMManager implements BurofaxCMApi {
 		return  nombreFichero.replaceAll("docx", "pdf");
 	}
 
+	private String obtenerTextoVencimientoAnticipado(LiquidacionPCO liquidacion) {
+		String resultado = "";
+		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
+			StringBuffer sb = new StringBuffer("HEMOS DADO POR VENCIDA ACTICIPADAMENTE LA OBLIGACIÓN");
+			resultado = sb.toString();
+		} 
+		else {
+			StringBuffer sb = new StringBuffer("Y ENCONTRÁNDOSE LA MISMA VENCIDA HEMOS PROCEDIDO A DETERMINAR EL SALDO DEUDOR");
+			resultado = sb.toString();
+		}
+		return resultado;
+	}
 }

@@ -350,8 +350,7 @@
 			fechaActual.setSeconds(0);
 			
 			fechaActual = Date.parse(fechaActual);
-
-       		if(formulario.isValid() && detalleFieldSet.getForm().isValid() && comboBienes.isValid()){
+       		if(formulario.isValid() && detalleFieldSet.getForm().isValid()){
        			var dateSolucionPrevista = null;
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
@@ -390,6 +389,13 @@
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.planPago" text="**Este acuerdo ya tiene asignado un Plan de Pago" />',
 				   		buttons: Ext.Msg.OK
 					});       			
+       			}else if (comboBienes.getValue()== '' && bienesFieldSet.isVisible()){
+       				Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.bienesPropuesta" text="**Rellene el campo Bienes del asunto" />',
+				   		buttons: Ext.Msg.OK
+					});
+       				
        			}
        			else {
        		

@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160420
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3166
+--## PRODUCTO=NO
+--## 
+--## Finalidad: ambio  FECHA_PUBLICACION_BOE
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO_ESPEC (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
@@ -4720,3 +4738,5 @@ EXCEPTION
 end;
 
 END CARGAR_H_PROCEDIMIENTO_ESPEC;
+/
+EXIT

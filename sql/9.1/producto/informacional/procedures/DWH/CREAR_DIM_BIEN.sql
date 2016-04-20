@@ -2,9 +2,9 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion: Rafael Aracil, PFS Group
--- Fecha ultima modificacion: 04/08/2015
--- Motivos del cambio: 
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: Parametrización índices con esquema indices
 -- Cliente: Recovery BI PRODUCTO
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension SUBASTA.
@@ -40,85 +40,101 @@ BEGIN
 						  ''BIE_ID NUMBER(16,0) NOT NULL ENABLE,
                             BIE_DESC VARCHAR2(50 CHAR),
                             BIE_DESC_2 VARCHAR2(250 CHAR),
-                            BIE_DESC_3 VARCHAR2(50 CHAR),
-                            PRIMARY KEY (BIE_ID)'', 
+                            BIE_DESC_3 VARCHAR2(50 CHAR)'', 
                       :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_PK'', ''D_BIE (BIE_ID)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_BIE_TIPO_BIEN--------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_TIPO_BIEN'',
 						  ''TIPO_BIEN_ID NUMBER(16,0) NOT NULL ENABLE,
                             TIPO_BIEN_DESC VARCHAR2(50 CHAR),
-                            TIPO_BIEN_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_BIEN_ID)'', 
+                            TIPO_BIEN_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_TIPO_BIEN_PK'', ''D_BIE_TIPO_BIEN (TIPO_BIEN_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_BIE_SUBTIPO_BIEN --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_SUBTIPO_BIEN'',
                           ''SUBTIPO_BIEN_ID NUMBER(16,0) NOT NULL ENABLE,
                             SUBTIPO_BIEN_DESC VARCHAR2(50 CHAR),
-                            SUBTIPO_BIEN_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SUBTIPO_BIEN_ID)'', 
+                            SUBTIPO_BIEN_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_SUBTIPO_BIEN_PK'', ''D_BIE_SUBTIPO_BIEN (SUBTIPO_BIEN_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_BIE_POBLACION  --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_POBLACION'',
                           ''POBLACION_BIEN_ID NUMBER(16,0) NOT NULL ENABLE,
                             POBLACION_BIEN_DESC VARCHAR2(50 CHAR),
-                            POBLACION_BIEN_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (POBLACION_BIEN_ID)'', 
+                            POBLACION_BIEN_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_POBLACION_PK'', ''D_BIE_POBLACION (POBLACION_BIEN_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_BIE_ADJUDICADO --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_ADJUDICADO'',
                           ''BIEN_ADJUDICADO_ID NUMBER(16,0) NOT NULL ENABLE,
                             BIEN_ADJUDICADO_DESC VARCHAR2(50 CHAR),
-                            BIEN_ADJUDICADO_DESC_2 VARCHAR2(250 CHAR),
-                             PRIMARY KEY (BIEN_ADJUDICADO_ID)'', 
+                            BIEN_ADJUDICADO_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_ADJUDICADO_PK'', ''D_BIE_ADJUDICADO (BIEN_ADJUDICADO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_BIE_ADJ_CESION_REM --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_ADJ_CESION_REM'',
 						  ''ADJ_CESION_REM_BIEN_ID NUMBER(16,0) NOT NULL ENABLE,
                             ADJ_CESION_REM_BIEN_DESC VARCHAR2(50 CHAR),
-                            ADJ_CESION_REM_BIEN_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ADJ_CESION_REM_BIEN_ID)'', 
+                            ADJ_CESION_REM_BIEN_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_ADJ_CESION_REM_PK'', ''D_BIE_ADJ_CESION_REM (ADJ_CESION_REM_BIEN_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_BIE_CODIGO_ACTIVO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_CODIGO_ACTIVO'',
                           ''CODIGO_ACTIVO_BIEN_ID NUMBER(16,0) NOT NULL ENABLE,
                             CODIGO_ACTIVO_BIEN_DESC VARCHAR2(50 CHAR),
-                            CODIGO_ACTIVO_BIEN_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CODIGO_ACTIVO_BIEN_ID)'', 
+                            CODIGO_ACTIVO_BIEN_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_CODIGO_ACTIVO_PK'', ''D_BIE_CODIGO_ACTIVO (CODIGO_ACTIVO_BIEN_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_BIE_ENTIDAD_ADJUDICATARIA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_ENTIDAD_ADJUDICATARIA'',
                           ''ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0) NOT NULL ENABLE ,
                             ENTIDAD_ADJUDICATARIA_DESC VARCHAR2(50 CHAR),
-                            ENTIDAD_ADJUDICATARIA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENTIDAD_ADJUDICATARIA_ID)'', 
+                            ENTIDAD_ADJUDICATARIA_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_ENTIDAD_ADJUDICATARIA_PK'', ''D_BIE_ENTIDAD_ADJUDICATARIA (ENTIDAD_ADJUDICATARIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ----------------------------- D_BIE_FASE_ACTUAL_DETALLE --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_FASE_ACTUAL_DETALLE'',
                          '' BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0) NOT NULL,
                             BIE_FASE_ACTUAL_DETALLE_DESC VARCHAR2(100 CHAR),
-                            BIE_FASE_ACTUAL_DETALLE_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (BIE_FASE_ACTUAL_DETALLE_ID)'', 
+                            BIE_FASE_ACTUAL_DETALLE_DESC_2 VARCHAR2(250 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_BIE_FASE_ACTUAL_DETALLE_PK'', ''D_BIE_FASE_ACTUAL_DETALLE (BIE_FASE_ACTUAL_DETALLE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

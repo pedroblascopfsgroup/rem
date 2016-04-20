@@ -35,19 +35,16 @@ done
 if [ "$hora_actual" -ge "$hora_limite" ]
 then
    echo "$(basename $0) Error: Tiempo límite alcanzado: ficheros $ficheros no encontrados"
-   exit 1
+   exit 0
 else
    for fichero in $arrayFicheros
    do
 	mascaraSem=$DIR_INPUT_AUX/$fichero$mascara$extensionSem
         mascaraZip=$DIR_INPUT_AUX/$fichero$mascara$extensionZip
-
-	for ficheroSem in $mascaraSem
-	do
-		sed -i 's/ //g' $ficheroSem
-	done
+	ficheroSem=`ls -Art $mascaraSem | tail -n 1`
+        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 	
-	#mueve todos los ficheros que coincidan con la máscara
+	sed -i 's/ //g' $ficheroSem
 	mv $mascaraZip $DIR_DESTINO
 	mv $mascaraSem $DIR_DESTINO
    done
@@ -81,11 +78,6 @@ if [ -f $MAINSH ]; then
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
     exit $?
-
-estado=$?
-    if [ $estado == 1 ]; then
-        cat $filename >> abortsAUX.txt
-    fi
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1

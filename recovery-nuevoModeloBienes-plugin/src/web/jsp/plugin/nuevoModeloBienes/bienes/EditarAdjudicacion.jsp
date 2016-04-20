@@ -392,6 +392,20 @@
 			,labelStyle:labelStyle
 			,width: 100		
 	});
+
+	var postores = new Ext.form.ComboBox({
+			store: sinoStore
+			,mode:'local'
+			,displayField: 'descripcion'
+			,valueField: 'codigo'
+			,resizable: false
+			,triggerAction : 'all'
+			,name : 'postores'
+			,fieldLabel:'<s:message code="bienesAdjudicacion.postores" text="**Con postores"/>'
+			,value : '${NMBbien.adjudicacion.postores}' == '' ? '' : '${NMBbien.adjudicacion.postores}' == 'true' ? 'Si' : 'No'
+			,labelStyle:labelStyle
+			,width: 100		
+	});	
 	
 			
 	//selector persona
@@ -526,6 +540,8 @@
 		parametros.existeInquilino = existeInquilino.getValue() == '' ? null : existeInquilino.getValue() == 'Si' || existeInquilino.getValue() == '01' ? true : false ;
 		parametros.llavesNecesarias = llavesNecesarias.getValue() == '' ? null : llavesNecesarias.getValue() == 'Si' || llavesNecesarias.getValue() == '01' ? true : false ;
 		parametros.cesionRemate = cesionRemate.getValue() == '' ? null : cesionRemate.getValue() == 'Si' || cesionRemate.getValue() == '01' ? true : false ;
+		parametros.postores = postores.getValue() == '' ? null : postores.getValue() == 'Si' || postores.getValue() == '01' ? true : false ;
+		
 		
 		//selector persona
 		parametros.gestoriaAdjudicataria = gestoriaAdjudicataria.getValue();
@@ -563,7 +579,7 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion,fechaContabilidad]},
-				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
+				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate,postores]}
 				 ]
 	});
 	
@@ -730,6 +746,7 @@
 	txtImporteAdjudicacion.setDisabled(false);
 	cesionRemate.setDisabled(false);
 	importeCesionRemate.setDisabled(false);
+    postores.setDisabled(false);
     entidadAdjudicataria.setDisabled(false);
     fondo.setDisabled(true);
     fechaPresentacionRegistro.setDisabled(true);
@@ -775,7 +792,8 @@
 		txtImporteAdjudicacion.setDisabled(false);
 		cesionRemate.setDisabled(false);
 		importeCesionRemate.setDisabled(false);
-	    entidadAdjudicataria.setDisabled(false);
+	    postores.setDisabled(false);
+		entidadAdjudicataria.setDisabled(false);
 	    fondo.setDisabled(false);
 	    fechaPresentacionRegistro.setDisabled(false);
 	    fechaRecepcionTitulo.setDisabled(false);

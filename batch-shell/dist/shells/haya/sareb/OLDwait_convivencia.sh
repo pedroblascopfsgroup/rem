@@ -12,7 +12,7 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-        ficheroZip=$DIR_INPUT_CONV$fichero
+        ficheroZip=$DIR_INPUT_CONV/$fichero
 
         echo "$ficheroZip"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip ]; do

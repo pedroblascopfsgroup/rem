@@ -19,7 +19,7 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-        mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
+        mascaraZip=$DIR_INPUT_TR/$fichero$mascara$extensionZip
         ficheroZip=`ls -Art $mascaraZip | tail -n 1` 
         #ultFicheroZip=$ficheroZip
 

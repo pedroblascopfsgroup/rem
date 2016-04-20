@@ -20,21 +20,21 @@ export PATH=$PATH:$ORACLE_HOME/bin
 export ENTIDAD=2038
 
 # Shells
-export DIR_INPUT_AUX=$DIR_RAIZ/transferencia/sareb/aprov_auxiliar/
-export DIR_INPUT_TR=$DIR_RAIZ/transferencia/sareb/aprov_troncal/
-export DIR_DESTINO=$DIR_RAIZ/batch-server/sareb/control/etl/input/
-export DIR_CONTROL_OUTPUT=$DIR_RAIZ/batch-server/sareb/control/etl/output/
-export DIR_BACKUP=$DIR_RAIZ/batch-server/sareb/control/etl/backup/
-export DIR_HRE_OUTPUT=$DIR_RAIZ/batch-server/sareb/control/etl/output/aprov-haya/
+export DIR_INPUT_AUX=$DIR_RAIZ/transferencia/sareb/aprov_auxiliar
+export DIR_INPUT_TR=$DIR_RAIZ/transferencia/sareb/aprov_troncal
+export DIR_DESTINO=$DIR_RAIZ/batch-server/sareb/control/etl/input
+export DIR_CONTROL_OUTPUT=$DIR_RAIZ/batch-server/sareb/control/etl/output
+export DIR_BACKUP=$DIR_RAIZ/batch-server/sareb/control/etl/backup
+export DIR_HRE_OUTPUT=$DIR_RAIZ/batch-server/sareb/control/etl/output/aprov-haya
 export DIR_BASE_ETL=$DIR_RAIZ/batch-server/sareb/programas/etl
 export DIR_PROGRAMAS=$DIR_RAIZ/batch-server/sareb/programas
 export MAX_WAITING_MINUTES=10
 
 export DIR_SHELLS=$DIR_RAIZ/batch-server/sareb/shells
-export DIR_INPUT_CONV=$DIR_RAIZ/batch-server/sareb/control/etl/input/convivencia/
-export DIR_OUTPUT_CONV=$DIR_RAIZ/batch-server/sareb/control/etl/output/convivencia/
-export DIR_CONTROL_LOG=$DIR_RAIZ/batch-server/sareb/log/
-export DIR_CONTROL_ETL=$DIR_RAIZ/batch-server/sareb/etl/
+export DIR_INPUT_CONV=$DIR_RAIZ/batch-server/sareb/control/etl/input/convivencia
+export DIR_OUTPUT_CONV=$DIR_RAIZ/batch-server/sareb/control/etl/output/convivencia
+export DIR_CONTROL_LOG=$DIR_RAIZ/batch-server/sareb/log
+export DIR_CONTROL_ETL=$DIR_RAIZ/batch-server/sareb/etl
 
 # BUROFAX
 export ENVIO_DOCALIA=/sftp_docalia/burofax/envio

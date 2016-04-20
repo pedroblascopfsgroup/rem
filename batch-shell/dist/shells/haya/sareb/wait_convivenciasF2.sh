@@ -20,7 +20,7 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-	ficheroDat=$DIR_INPUT_TR$fichero$mascara$extension
+	ficheroDat=$DIR_INPUT_TR/$fichero$mascara$extension
 
         #echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroDat ]; do
@@ -37,7 +37,7 @@ then
 else
    for fichero in $arrayFicheros
    do
-	mascaraDat=$DIR_INPUT_TR$fichero$mascara$extension
+	mascaraDat=$DIR_INPUT_TR/$fichero$mascara$extension
         ficheroDat=`ls -Art $mascaraDat | tail -n 1`
 
 	mv $ficheroDat $DIR_INPUT_CONV

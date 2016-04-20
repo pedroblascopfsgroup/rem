@@ -61,21 +61,14 @@ function download_files {
 	DESTINO=$2
 	MASK=$3
 	BANDERA=$4
-        echo "Descargando ficheros desde SFTP (${HOST})..."
+    echo "Descargando ficheros desde SFTP (${HOST})..."
 	cd $DESTINO
 
-        echo "lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} -e ls"
+    echo "lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} -e ls"
 
 	echo "$ORIGEN  $DESTINO"
-
-lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $ORIGEN
-mget $MASK
-mget $BANDERA
-mrm -f $MASK
-mrm -f $BANDERA
-bye
-EOF
+	
+	./ftp/ftp_get_files.sh $ORIGEN $DESTINO $MASK $BANDERA
 
 }
 
@@ -87,7 +80,11 @@ function file_list {
 	for FMASK in ${FILES_DOWN[*]};
 	do
 		echo "$SFTP_DIR_BASE_BNK/out/aprovisionamiento/$TIPO $DIR_APROV_DES/$TIPO ${FMASK} $BANDERA"
-        	download_files $SFTP_DIR_BASE_BNK"/out/aprovisionamiento/$TIPO" $DIR_APROV_DES"/$TIPO" ${FMASK} $BANDERA
+		if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+			download_files $SFTP_DIR_BASE_BNK"/out/aprovisionamiento/$TIPO" $DIR_APROV_DES"/$TIPO" ${FMASK} $BANDERA
+		else
+			echo "Llamada sin parámetro SFTP. No mueve ficheros."
+		fi        
 	done
 }
 

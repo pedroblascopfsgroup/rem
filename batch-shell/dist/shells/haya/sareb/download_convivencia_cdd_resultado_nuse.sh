@@ -13,7 +13,7 @@ HORA=`date +%T`
 ESPERA=1
 
 echo "********************************************************"
-echo "**** DESCARGA DE FICHEROS CONVIVENCIA CDD RESILTADO NUSE $FECHA *******"
+echo "**** DESCARGA DE FICHEROS CONVIVENCIA CDD RESULTADO NUSE $FECHA *******"
 echo "********************************************************"
 
 FICHEROS=('rechazos.dat' 'rechazos.txt')
@@ -26,20 +26,14 @@ function download_files {
 
 	cd $ORIGEN
 	rm $MASK
+	
+	./ftp/ftp_get_conv_files.sh $ORIGEN $DESTINO $MASK $BANDERA_T
 
-lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-
-cd $DESTINO
-mget $MASK
-mrm -f $MASK
-mrm -f $BANDERA_T
-bye
-EOF
 	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_RECEPCION)"
-        $RM -f $DIR_SFT_HAYA_RECEPCION/$MASK
+    $RM -f $DIR_SFT_HAYA_RECEPCION/$MASK
 	$RM -rf -mtime +7 $DIR_SFT_HRE_RECEPCION
 	echo "Copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_RECEPCION)"
-        $CP $MASK $DIR_SFT_HAYA_RECEPCION
+    $CP $MASK $DIR_SFT_HAYA_RECEPCION
 	$MKDIR -p $DIR_SFT_HRE_RECEPCION/$FECHA
 	$CP $MASK $DIR_SFT_HRE_RECEPCION/$FECHA
 }
@@ -58,9 +52,13 @@ EOF`
 	if [ "$BANDERA_T" == "rechazos.txt" ]; then
 		for FMASK in "${FICHEROS[@]}";	
 		do
-			download_files $DIR_INPUT_CONV $SFTP_DIR_BNK_OUT_APR_TR ${FMASK}
+			if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+				download_files $DIR_INPUT_CONV $SFTP_DIR_BNK_OUT_APR_TR ${FMASK} $BANDERA_T
+			else
+				echo "Llamada sin parámetro SFTP. No mueve ficheros."
+			fi
 			$DIR_SHELLS/convivencia_cdd_resultado_nuse.sh >> $DIR_SHELLS/convivencia_cdd_resultado_nuse.log
-                        $DIR_SHELLS/nuseMail.sh >> $DIR_SHELLS/nuseMail.log
+            $DIR_SHELLS/nuseMail.sh >> $DIR_SHELLS/nuseMail.log
 			echo "Fin de la ejecucion!! $HORA"
 			exit 0
 		done

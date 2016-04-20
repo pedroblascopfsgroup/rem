@@ -24,11 +24,11 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
+	ficheroSem=$DIR_INPUT_TR/$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_TR/$fichero$mascara$extensionZip
 
         #echo "$ficheroSem"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
 	   #echo "$hora_actual"
@@ -44,8 +44,8 @@ fi
 for fichero in $arrayFicheros
 
 do
-	mascaraSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-        mascaraZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
+	mascaraSem=$DIR_INPUT_TR/$fichero$mascara$extensionSem
+        mascaraZip=$DIR_INPUT_TR/$fichero$mascara$extensionZip
         ficheroSem=`ls -Art $mascaraSem | tail -n 1`
         ficheroZip=`ls -Art $mascaraZip | tail -n 1`
 

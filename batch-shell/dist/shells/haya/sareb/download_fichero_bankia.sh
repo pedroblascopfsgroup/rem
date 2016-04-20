@@ -5,11 +5,10 @@ FILE=pfsreco_doc.zip
 
 cd $DIR_ORIGEN
 
-lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $SFTP_DIR_BNK_OUT_APR
-get $FILE
-bye
-EOF
- 
+if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+	./ftp/ftp_get_bk.sh $DIR_ORIGEN $fichero
+else
+	echo "Llamada sin parámetro SFTP. No mueve ficheros."
+fi
 
 exit 

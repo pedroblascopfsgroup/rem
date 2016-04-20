@@ -27,11 +27,8 @@ function download_files {
 
 	cd $ORIGEN
 
-lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $DESTINO
-mput $MASK
-bye
-EOF
+	./ftp/ftp_put.sh $ORIGEN $DESTINO $MASK
+
 	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_ENVIO)"
 	$RM -f $DIR_SFT_HAYA_ENVIO/$MASK
 	$RM -rf -mtime +7 $DIR_SFT_HRE_ENVIO
@@ -43,7 +40,11 @@ EOF
 if [ -f $BANDERA ]; then
 	for FMASK in "${FICHEROS[@]}";
 	do
-       		download_files $DIR_OUTPUT_CONV $SFTP_DIR_BNK_IN_APR_TR ${FMASK}
+       	if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+			download_files $DIR_OUTPUT_CONV $SFTP_DIR_BNK_IN_APR_TR ${FMASK}
+		else
+			echo "Llamada sin parámetro SFTP. No mueve ficheros."
+		fi
 	done
 	echo "Eliminando bandera de ORIGEN $BANDERA"
 	echo " "

@@ -7,7 +7,7 @@ mascara=????????
 extension=".txt"
 existe_fichero=""
 
-ficherotxt=$DIR_CONTROL_OUTPUT$ficheros$mascara$extension
+ficherotxt=$DIR_CONTROL_OUTPUT/$ficheros$mascara$extension
 ficherosalida=$DIR_OUTPUT
 
 existe_fichero=$(echo $ficherotxt | cut -d'_' -f3)

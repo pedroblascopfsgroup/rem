@@ -24,12 +24,7 @@ function download_files {
 
 	cd $ORIGEN
 
-lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $DESTINO
-mget $MASK
-mrm -f $MASK
-bye
-EOF
+	./ftp/ftp_get_dumps.sh $ORIGEN $DESTINO $MASK
 
 	rm -f $BANDERA
 }
@@ -38,7 +33,11 @@ if [ -f $BANDERA ]; then
 	echo "Ya se esta ejecutando"
 else
 	echo " " > $BANDERA
-	download_files $DIR_ORI $SFTP_DIR_BNK_OUT_APR $FICHERO
+	if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+		download_files $DIR_ORI $SFTP_DIR_BNK_OUT_APR $FICHERO
+	else
+		echo "Llamada sin parámetro SFTP. No mueve ficheros."
+	fi
 fi
 
 exit 0

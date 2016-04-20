@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=NOMBRE Luis Antonio Prato Paredes
---## FECHA_CREACION=20160407
+--## AUTOR=NOMBRE Fran G
+--## FECHA_CREACION=20160420
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=BKREC-2249
@@ -10,7 +10,7 @@
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.2 Versión corregida
+--##        0.3 Versión corregida por Joaquín Sánchez
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -673,8 +673,14 @@ from
 -- Carterizamos para el Supervisor de asignación de letrado SUP_ASIG_CONC.
 insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select #ESQUEMA#.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
-       (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'GRUPO - Despacho supervisores asignación letrados') usd_id,
-       (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'SUP_ASIG_CONC'), 'CONVIVE_F2', sysdate
+       (
+		select usd_id from #ESQUEMA#.usd_usuarios_despachos usd 
+			inner join #ESQUEMA#.DES_DESPACHO_EXTERNO des on des.des_id = usd.des_id where 
+			des.dd_tde_id = (SELECT tde.dd_TDE_ID from #ESQUEMA_MASTER#.DD_TDE_TIPO_DESPACHO tde where dd_tde_codigo ='SUP_ASIG_CONC' ) 
+			and des.DES_DESPACHO = 'Despacho supervisores asignación letrados'
+			and usd.USD_GESTOR_DEFECTO = 1
+	   ) usd_id,
+	   (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'SUP_ASIG_CONC'), 'CONVIVE_F2', sysdate
 from
  (
   select asu.asu_id
@@ -691,7 +697,13 @@ from
 
  insert into #ESQUEMA#.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
 select #ESQUEMA#.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,
-       (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'GRUPO - Despacho supervisores asignación letrados') usd_id,
+       (
+		select usd_id from #ESQUEMA#.usd_usuarios_despachos usd 
+			inner join #ESQUEMA#.DES_DESPACHO_EXTERNO des on des.des_id = usd.des_id where 
+			des.dd_tde_id = (SELECT tde.dd_TDE_ID from #ESQUEMA_MASTER#.DD_TDE_TIPO_DESPACHO tde where dd_tde_codigo ='SUP_ASIG_CONC' ) 
+			and des.DES_DESPACHO = 'Despacho supervisores asignación letrados'
+			and usd.USD_GESTOR_DEFECTO = 1
+	   ) usd_id,
        sysdate, (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'SUP_ASIG_CONC'), 'CONVIVE_F2', sysdate
 from
  (select asu_id
@@ -706,11 +718,16 @@ from
                     where tas.DD_TAS_CODIGO = '02' and pas.dd_pas_codigo = 'BANKIA')
  ) aux ;
  
- 
- -- Carterizamos para el Supervisor expediente judicial SUP_PCO
+-- Carterizamos para el Supervisor expediente judicial SUP_PCO
 insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select #ESQUEMA#.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
-       (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'GRSUPEXPJU') usd_id,
+       (
+		select usd_id from #ESQUEMA#.usd_usuarios_despachos usd 
+			inner join #ESQUEMA#.DES_DESPACHO_EXTERNO des on des.des_id = usd.des_id where 
+			des.dd_tde_id = (SELECT tde.dd_TDE_ID from #ESQUEMA_MASTER#.DD_TDE_TIPO_DESPACHO tde where dd_tde_codigo ='SUP_PCO' ) 
+			and des.DES_DESPACHO = 'Supervisor expedientes judiciales'
+			and usd.USD_GESTOR_DEFECTO = 1
+	   ) usd_id,
        (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'SUP_PCO'), 'CONVIVE_F2', sysdate
 from
  (
@@ -728,7 +745,13 @@ from
 
 insert into #ESQUEMA#.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
 select #ESQUEMA#.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,
-       (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'GRSUPEXPJU') usd_id,
+       (
+		select usd_id from #ESQUEMA#.usd_usuarios_despachos usd 
+			inner join #ESQUEMA#.DES_DESPACHO_EXTERNO des on des.des_id = usd.des_id where 
+			des.dd_tde_id = (SELECT tde.dd_TDE_ID from #ESQUEMA_MASTER#.DD_TDE_TIPO_DESPACHO tde where dd_tde_codigo ='SUP_PCO' ) 
+			and des.DES_DESPACHO = 'Supervisor expedientes judiciales'
+			and usd.USD_GESTOR_DEFECTO = 1	   
+	   ) usd_id,
        sysdate, (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'SUP_PCO'), 'CONVIVE_F2', sysdate
 from
  (select asu_id
@@ -741,11 +764,18 @@ from
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
 			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
                     where tas.DD_TAS_CODIGO = '02' and  pas.dd_pas_codigo = 'BANKIA')
- ) aux ; 
- -- Carterizamos para Gestor expediente judicial PREDOC
- insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
+ ) aux ;  
+
+-- Carterizamos para Gestor expediente judicial PREDOC
+insert into #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO (GAA_ID, ASU_ID, USD_ID, DD_TGE_ID, USUARIOCREAR, FECHACREAR)
 select #ESQUEMA#.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval, aux.asu_id,
-       (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'PREJUACCEN') usd_id,
+       (
+		select usd_id from #ESQUEMA#.usd_usuarios_despachos usd 
+			inner join #ESQUEMA#.DES_DESPACHO_EXTERNO des on des.des_id = usd.des_id where 
+			des.dd_tde_id = (SELECT tde.dd_TDE_ID from #ESQUEMA_MASTER#.DD_TDE_TIPO_DESPACHO tde where dd_tde_codigo ='PREDOC' ) 
+			and des.DES_DESPACHO = 'ACCENTURE - Prejudicial'
+			and usd.USD_GESTOR_DEFECTO = 1
+	   ) usd_id,
        (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'PREDOC'), 'CONVIVE_F2', sysdate
 from
  (
@@ -763,7 +793,13 @@ from
 
 insert into #ESQUEMA#.GAH_GESTOR_ADICIONAL_HISTORICO gah (gah.GAH_ID, gah.GAH_ASU_ID, gah.GAH_GESTOR_ID, gah.GAH_FECHA_DESDE, gah.GAH_TIPO_GESTOR_ID, usuariocrear, fechacrear)
 select #ESQUEMA#.s_GAH_GESTOR_ADIC_HISTORICO.nextval, aux.asu_id,
-       (select usd_id from #ESQUEMA#.usd_usuarios_despachos usd inner join #ESQUEMA_MASTER#.usu_usuarios usu on usu.usu_id = usd.usu_id where usu.usu_username = 'PREJUACCEN') usd_id,
+       (
+		select usd_id from #ESQUEMA#.usd_usuarios_despachos usd 
+			inner join #ESQUEMA#.DES_DESPACHO_EXTERNO des on des.des_id = usd.des_id where 
+			des.dd_tde_id = (SELECT tde.dd_TDE_ID from #ESQUEMA_MASTER#.DD_TDE_TIPO_DESPACHO tde where dd_tde_codigo ='PREDOC' ) 
+			and des.DES_DESPACHO = 'ACCENTURE - Prejudicial'
+			and usd.USD_GESTOR_DEFECTO = 1	   
+	   ) usd_id,
        sysdate, (select dd_tge_id from #ESQUEMA_MASTER#.dd_tge_tipo_gestor where dd_tge_codigo = 'PREDOC'), 'CONVIVE_F2', sysdate
 from
  (select asu_id
@@ -776,11 +812,7 @@ from
                          #ESQUEMA#.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id inner join
 			 #ESQUEMA_MASTER#.DD_TAS_TIPOS_ASUNTO tas on tas.dd_tas_id=asuu.dd_tas_id
                     where tas.DD_TAS_CODIGO = '02' and  pas.dd_pas_codigo = 'BANKIA')
- ) aux ; 
-
-
-
-
+ ) aux ;  
 
  EXCEPTION
 

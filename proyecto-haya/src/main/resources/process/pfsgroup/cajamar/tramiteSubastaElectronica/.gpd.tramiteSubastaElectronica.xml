@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteSubastaElectronica" width="1552" height="848">
+<root-container name="tramiteSubastaElectronica" width="1088" height="836">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

@@ -32,7 +32,7 @@ public class TramitesElectronicosManager implements TramitesElectronicosApi {
 	
 	@Override
 	public Boolean[] bpmGetValoresRamasRevisarDocumentacion(Procedimiento prc, TareaExterna tex){
-		Boolean[] resultado = {false, false, false};
+		Boolean[] resultado = {false, false, false, true};
 		
 		List<TareaExternaValor> listadoValores = new ArrayList<TareaExternaValor>();
 

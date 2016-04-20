@@ -316,7 +316,7 @@
 	<decision name="P458_RegResulPresentacionEscrJuzgadoDecision" expression="#{P458_RegResulPresentacionEscrJuzgadoDecision}">
 		<transition to="Fin" name="tramites"></transition>		
 		<transition to="P458_RegResulPresentacionEscrJuzgado" name="desfConRecurso"></transition>
-		<transition to="Decision1" name="desfSinRecurso"></transition>
+		<transition to="Decision3" name="desfSinRecurso"></transition>
 	</decision>
 
 	<state name="P458_BPMTramiteAdjudicacion">
@@ -413,7 +413,7 @@
 		<transition to="A" name="A"></transition>
 		<transition to="B" name="B"></transition>
 		<transition to="C" name="C"></transition>
-		<transition to="P458_PrepararInformeSubasta" name="prepararInformeSubasta"></transition>
+		<transition to="D" name="D"></transition>
 	</fork>
 
 	<decision name="A" expression="#{DecisionRama_1}">
@@ -429,6 +429,11 @@
 	<decision name="C" expression="#{DecisionRama_3}">
 		<transition to="Fin" name="no"></transition>
 		<transition to="P458_SolicitarInformeFiscal" name="si"></transition>
+	</decision>
+
+	<decision name="D" expression="#{DecisionRama_4}">
+		<transition to="Fin" name="no"></transition>
+		<transition to="P458_PrepararInformeSubasta" name="si"></transition>
 	</decision>
 	
 	<state name="P458_AdjuntarNotasSimples">
@@ -654,6 +659,13 @@
 	</node>
 
 	<node name="Decision2">
+		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        	<targetBean>genericUserDecisionActionHandler</targetBean>
+    	</action>
+		<transition to="Fin" name="Fin"></transition>
+	</node>
+
+	<node name="Decision3">
 		<action name="miTarea" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
         	<targetBean>genericUserDecisionActionHandler</targetBean>
     	</action>

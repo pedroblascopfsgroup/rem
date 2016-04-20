@@ -43,7 +43,7 @@ BEGIN
     
     -- Si existe la creamos
     IF V_NUM_TABLAS = 0 THEN 
-            V_SQL := 'CREATE TABLE '||v_esquema||'."APR_AUX_TEL_TELEFONOS_1" 
+            V_MSQL := 'CREATE TABLE '||v_esquema||'."APR_AUX_TEL_TELEFONOS_1" 
    (	"ATT_FECHA_EXTRACCION" DATE, 
 	"ATT_FECHA_DATO" DATE, 
 	"ATT_CODIGO_ENTIDAD" NUMBER(4,0), 
@@ -100,7 +100,7 @@ BEGIN
    EXECUTE IMMEDIATE V_MSQL;
    DBMS_OUTPUT.PUT_LINE('[INFO] Creada tabla '||v_esquema||'.APR_AUX_TEL_TELEFONOS_1.');   
    
-   V_SQL := 'CREATE TABLE '||v_esquema||'."APR_AUX_TEL_TELEFONOS_2" 
+   V_MSQL := 'CREATE TABLE '||v_esquema||'."APR_AUX_TEL_TELEFONOS_2" 
    (	"ATT_FECHA_EXTRACCION" DATE, 
 	"ATT_FECHA_DATO" DATE, 
 	"ATT_CODIGO_ENTIDAD" NUMBER(4,0), 

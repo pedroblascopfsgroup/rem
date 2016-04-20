@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160419
+--## FECHA_CREACION=20160420
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-3131
 --## PRODUCTO=NO
 --## 
---## Finalidad: SE MODIFICA el tramo de puntuación
+--## Finalidad: SE MODIFICA descripción de  tramo de puntuación
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace PROCEDURE CARGAR_DIM_PERSONA(O_ERROR_STATUS OUT VARCHAR2) AS
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion: María Villaueva, PFS Group
--- Fecha ultima modificacion: 19/04/2016
--- Motivos del cambio: SE MODIFICA el tramo de puntuación
+-- Fecha ultima modificacion: 20/04/2016
+-- Motivos del cambio: SE MODIFICA descripción de  tramo de puntuación
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Persona
@@ -203,14 +203,14 @@ BEGIN
  -- ----------------------------------------------------------------------------------------------
 --                                     D_PER_TRAMO_PUNTUACION
 -- ----------------------------------------------------------------------------------------------
-  SELECT COUNT(*) INTO V_NUM_ROW FROM D_PER_TRAMO_PUNTUACION WHERE TRAMO_PUNTUACION_ID = -1;
+ SELECT COUNT(*) INTO V_NUM_ROW FROM D_PER_TRAMO_PUNTUACION WHERE TRAMO_PUNTUACION_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-    INSERT INTO D_PER_TRAMO_PUNTUACION (TRAMO_PUNTUACION_ID, TRAMO_PUNTUACION_DESC) VALUES (-1 ,'Desconocido');
+    INSERT INTO D_PER_TRAMO_PUNTUACION (TRAMO_PUNTUACION_ID, TRAMO_PUNTUACION_DESC) VALUES (-1 ,'Sin Puntuación');
   END IF;
   
   SELECT COUNT(*) INTO V_NUM_ROW FROM D_PER_TRAMO_PUNTUACION WHERE TRAMO_PUNTUACION_ID = 1;
   IF (V_NUM_ROW = 0) THEN
-    INSERT INTO D_PER_TRAMO_PUNTUACION (TRAMO_PUNTUACION_ID, TRAMO_PUNTUACION_DESC) VALUES (1 ,'Sin Puntuación');
+    INSERT INTO D_PER_TRAMO_PUNTUACION (TRAMO_PUNTUACION_ID, TRAMO_PUNTUACION_DESC) VALUES (1 ,'Puntuación 0');
   END IF;
   SELECT COUNT(*) INTO V_NUM_ROW FROM D_PER_TRAMO_PUNTUACION WHERE TRAMO_PUNTUACION_ID = 2;
   IF (V_NUM_ROW = 0) THEN

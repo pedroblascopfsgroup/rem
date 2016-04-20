@@ -1615,6 +1615,8 @@
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
 					<war>pfs-${project.version}</war>
+					<dump>${dump-directory}</dump>
+					<tag>${tag}</tag>
 				</configuration>
 			</plugin>
 		</plugins>

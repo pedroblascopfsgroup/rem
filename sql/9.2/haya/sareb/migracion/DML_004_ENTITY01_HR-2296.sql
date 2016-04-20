@@ -20,6 +20,9 @@ DECLARE
     V_MSQL_RESULT VARCHAR(32000);
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#';-- Configuracion Esquema
     
+    err_num NUMBER; -- Numero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    
     TYPE T_TABLAS IS TABLE OF VARCHAR2(300);
     TYPE T_ARRAY_TABLAS IS TABLE OF T_TABLAS;
 --/*

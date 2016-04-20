@@ -59,6 +59,7 @@ DECLARE
 		,T_TIPO_TAP('P458','P458_RegistrarResDecision1',null,null,null,null,null,'0','Tarea toma de decisión','0','PRODUCTO-1093','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'814',null,'GCONGE',null)
 		,T_TIPO_TAP('P458','P458_SolicitarAdjudicacionInstruccionesEntidad',null,'existeAdjuntoUG(''ESADJ'', ''PRC'') ? null : existeAdjuntoUGMensaje(''ESADJ'',''PRC'')',null,null,null,'0','Solicitar adjudicación según instrucciones entidad','0','PRODUCTO-1093','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,'GCONGE',null)
 		,T_TIPO_TAP('P458','P458_RegResulPresentacionEscrJuzgado','plugin/cajamar/tramiteSubastaElectronica/registrarResultadoPresentacionEscritoJuzgado',null,'compruebaRegResEscJuzgadoPOST()','valores[''P458_RegResulPresentacionEscrJuzgado''][''comboResultado''] == ''DESF'' ? (valores[''P458_RegResulPresentacionEscrJuzgado''][''comboRecurso''] == DDSiNo.SI ? ''desfConRecurso'' : ''desfSinRecurso'') : ''tramites''' ,null,'0','Registrar resultado presentación escrito al juzgado','0','PRODUCTO-1093','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GCONGE',null)
+		,T_TIPO_TAP('P458','P458_RegResulJuzDecision3',null,null,null,null,null,'0','Tarea toma de decisión','0','PRODUCTO-1093','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'814',null,'GCONGE',null)
 		,T_TIPO_TAP('P458','P458_BPMTramiteAdjudicacion',null,null,null,null,null,'0','Se inicia el trámite adjudicación','0','PRODUCTO-1093','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
 		,T_TIPO_TAP('P458','P458_BPMTramiteCesionDeRemate',null,null,null,null,null,'0','Se inicia el trámite cesión de remate','0','PRODUCTO-1093','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
 		,T_TIPO_TAP('P458','P458_BPMTramiteAdjudicacionTerceros',null,null,null,null,null,'0','Se inicia el trámite de adjudicación de terceros','0','PRODUCTO-1093','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
@@ -190,6 +191,8 @@ DECLARE
 	,T_TIPO_TFI('P458_RegResulPresentacionEscrJuzgado','6','combo','comboRecurso','Recurso',null,null,null,'DDSiNo','0','PRODUCTO-1093')
 	,T_TIPO_TFI('P458_RegResulPresentacionEscrJuzgado','7','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1093')
 	
+	,T_TIPO_TFI('P458_RegResulJuzDecision3','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Debe acceder a la pestaña "Decisiones" para derivar en la actuaci&oacute;n que corresponda.</p></div>',null,null,null,null,'0','PRODUCTO-1093')
+	
 	,T_TIPO_TFI('P458_BPMTramiteAdjudicacion','0','label','titulo','<div style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Se inicia el Trámite Adjudicación.</p></div>',null,null,null,null,'0','PRODUCTO-1093')
 
 	,T_TIPO_TFI('P458_BPMTramiteCesionDeRemate','0','label','titulo','<div style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Se inicia el Trámite Cesión de Remate.</p></div>',null,null,null,null,'0','PRODUCTO-1093')
@@ -200,7 +203,7 @@ DECLARE
 	,T_TIPO_TFI('P458_RevisarDocumentacion','1','date','fecha','Fecha','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-1093')     
 	,T_TIPO_TFI('P458_RevisarDocumentacion','2','combo','comboNotaSimple','Solicita nota simple','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-1093')
 	,T_TIPO_TFI('P458_RevisarDocumentacion','3','combo','comboTasacion','Solicita tasación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-1093')
-	,T_TIPO_TFI('P458_RevisarDocumentacion','4','combo','comboFiscal','Solicita informe fiscal','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','PRODUCTO-1093')
+	,T_TIPO_TFI('P458_RevisarDocumentacion','4','combo','comboFiscal','Solicita informe fiscal',null,null,null,'DDSiNo','0','PRODUCTO-1093')
 	,T_TIPO_TFI('P458_RevisarDocumentacion','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1093')
 
 	,T_TIPO_TFI('P458_AdjuntarNotasSimples','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por terminada esta tarea deberá actualizar la información en la ficha del "Bien"  de cada uno de los bienes de la subasta.</p>En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','PRODUCTO-1093')

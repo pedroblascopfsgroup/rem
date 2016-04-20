@@ -120,26 +120,26 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-		" (SELECT MIN(dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion)" +
-		" FROM   pco_prc_hep_histor_est_prep " +
-		"       INNER JOIN pco_prc_procedimientos " +
-		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
-		"       INNER JOIN dd_pco_prc_estado_preparacion " +
-		"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
-		" WHERE  pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
-		"       AND pco_prc_procedimientos.borrado = 0 " +
-		"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
-		"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
-		"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
+	" (SELECT MIN(dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion)" +
+	" FROM   pco_prc_hep_histor_est_prep " +
+	"       INNER JOIN pco_prc_procedimientos " +
+	"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+	"       INNER JOIN dd_pco_prc_estado_preparacion " +
+	"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+	" WHERE pco_prc_procedimientos.borrado = 0 " +
+	//"       AND pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +//como se calculaba antes
+	"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
+	"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
+	"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
 	private String estadoActual;
 
 	@Formula(value = 
-		" (SELECT min(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +
+		" (SELECT max(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +
 		" FROM   pco_prc_hep_histor_est_prep " +
 		"       INNER JOIN pco_prc_procedimientos " +
 		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
-		" WHERE  pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
-		"       AND pco_prc_procedimientos.borrado = 0 " +
+		" WHERE  pco_prc_procedimientos.borrado = 0 " +
+		//"       AND pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +//como se calculaba antes
 		"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
 		"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
 	private Date fechaEstadoActual;

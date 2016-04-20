@@ -776,10 +776,12 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
-		,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
+		<sec:authorize ifAllGranted="ROLE_PUEDE_SUBIR_ADJUNTOS">
+			,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
 		</sec:authorize>
-		,height: 180
+		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+			,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
+		</sec:authorize>,height: 180
 		,collapsible:true
 		,autoWidth: true
 		,style:'padding-right:10px'

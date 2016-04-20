@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto B.
---## FECHA_CREACION=20160406
+--## FECHA_CREACION=20160412
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.1-cj-rc14
 --## INCIDENCIA_LINK= CMREC-2969
@@ -21,7 +21,8 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas  
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas  
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.  
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.     
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_MAX_ID NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 BEGIN	
@@ -32,8 +33,11 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     
     IF V_NUM_TABLAS = 0 THEN
+    	V_SQL := 'SELECT MAX(MTT_ID) +1 FROM MTT_MAP_ADJRECOVERY_ADJCM';
+    	EXECUTE IMMEDIATE V_SQL INTO V_MAX_ID;
+    	DBMS_OUTPUT.PUT_LINE(V_MAX_ID);
 	    --Lo relacionamos con el gestor documental
-	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM (MTT_ID,DD_TFA_ID,TFA_CODIGO_EXTERNO,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO) VALUES ('||V_ESQUEMA||'.S_MTT_METRICAS_TIPO.NEXTVAL,(SELECT DD_TFA_ID FROM '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO WHERE DD_TFA_CODIGO = ''TJC''),''00370'',''0'',''CMREC-2886'',SYSDATE ,null,null,null,null,''0'')';
+	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.MTT_MAP_ADJRECOVERY_ADJCM (MTT_ID,DD_TFA_ID,TFA_CODIGO_EXTERNO,VERSION,USUARIOCREAR,FECHACREAR,USUARIOMODIFICAR,FECHAMODIFICAR,USUARIOBORRAR,FECHABORRAR,BORRADO) VALUES ('||V_MAX_ID||',(SELECT DD_TFA_ID FROM '||V_ESQUEMA||'.DD_TFA_FICHERO_ADJUNTO WHERE DD_TFA_CODIGO = ''TJC''),''00370'',''0'',''CMREC-2886'',SYSDATE ,null,null,null,null,''0'')';
 	    DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('OK INSERTADO');

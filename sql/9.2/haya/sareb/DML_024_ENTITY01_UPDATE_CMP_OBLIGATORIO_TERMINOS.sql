@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=Luis Caballero
---## FECHA_CREACION=20160415
+--## AUTOR= Kevin Fernández
+--## FECHA_CREACION=20160420
 --## ARTEFACTO=producto
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1242
 --## PRODUCTO=SI
 --##
---## Finalidad: DDL Alterar la tabla ACU_CAMPOS_TIPO_ACUERDO y crear un nuevo campo CMP_OBLIGATORIO para comprobar la obligatoriedad de los campos de los términos
+--## Finalidad: Correccion obligatoriedad de los campos faltantes.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -26,13 +26,10 @@ DECLARE
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
-    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; -- Configuracion Indice
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     
 BEGIN
 
@@ -45,7 +42,7 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     -- Si NO existe la tabla no hacemos nada
     IF V_NUM_TABLAS = 0 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO... Tabla NO existe, imposible continuar');    
+            DBMS_OUTPUT.PUT_LINE('[ERROR] '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO... La tabla NO existe, no se puede continuar..');    
     ELSE
     
     	V_SQL := 'SELECT COUNT(1) FROM all_tab_columns WHERE TABLE_NAME = ''ACU_CAMPOS_TIPO_ACUERDO'' and owner = '''||V_ESQUEMA||''' and column_name = ''CMP_OBLIGATORIO''';
@@ -53,16 +50,14 @@ BEGIN
     	-- Si existe el campo lo actualizamos sino informamos
     	IF V_NUM_TABLAS = 1 THEN
         	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CAMPOS_TIPO_ACUERDO... Comienza la actualización');
-        	V_MSQL := 'update '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO SET CMP_OBLIGATORIO = 1 WHERE CMP_NOMBRE_CAMPO IN(''fechaSolucionPrevista'',''solicitarAlquiler'',''nombreCesionario'',''relacionCesionarioTitular'',''importeCesion'',''importeQuita'',''porcentajeQuita'')
-				or  (CMP_NOMBRE_CAMPO= ''fechaPrevistaFirma'' and DD_TPA_ID IN(SELECT DD_TPA_ID FROM ' || V_ESQUEMA || '.DD_TPA_TIPO_ACUERDO WHERE DD_TPA_CODIGO IN (''VEN_CRED'',''01'',''QUITA''))) ';
-        	DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        	V_MSQL := 'update '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO SET CMP_OBLIGATORIO = 1 WHERE CMP_NOMBRE_CAMPO = ''fechaPrevistaFirma'' AND DD_TPA_ID IN (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACUERDO WHERE DD_TPA_CODIGO IN (''01'', ''VEN_CRED''))';
         	EXECUTE IMMEDIATE V_MSQL; 
         	COMMIT;	
         	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CAMPOS_TIPO_ACUERDO... Actualizados los valores del campo CMP_OBLIGATORIO');
         	
     	ELSE
-       	 	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CAMPOS_TIPO_ACUERDO... CMP_OBLIGATORIO no existe');
-       	 	DBMS_OUTPUT.PUT_LINE('[INFO] Ejecute antes DDL_361_ENTITY01_ALTER_TABLE_CMP_OBLIGATORIO.sql para crea la columna');
+       	 	DBMS_OUTPUT.PUT_LINE('[ERROR] ' || V_ESQUEMA || '.ACU_CAMPOS_TIPO_ACUERDO... CMP_OBLIGATORIO no existe');
+       	 	DBMS_OUTPUT.PUT_LINE('[ERROR] Ejecute antes DDL_361_ENTITY01_ALTER_TABLE_CMP_OBLIGATORIO.sql para crea la columna');
     	END IF;
     
 	END IF;

@@ -526,7 +526,7 @@ public class BurofaxCMManager implements BurofaxCMApi {
 		String resultado = "";
 		try {
 			resultado = currencyInstance.format(liq.getTotal());
-		} catch (NullPointerException e) {
+		} catch (Exception e) {
 			resultado = noDisponible(nombreCampo);
 		}
 		return resultado;

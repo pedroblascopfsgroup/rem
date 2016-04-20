@@ -55,7 +55,7 @@ DECLARE
 	,T_TIPO_TAP('P457','P457_ConfirmarContabilidad',null,null,null,null,null,'0','Confirmar Contabilidad','0','PRODUCTO-1095','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'TGCON',null,'SCON',null)
 	,T_TIPO_TAP('P457','P457_ValorarLanzamientoTramiteSoliSolvPatr',null,null,null,'valores[''P457_ValorarLanzamientoTramiteSoliSolvPatr''][''comboTramiteSolicitudSolvPatrimonial'']==''01'' ? ''01'' : ''02''',null,'0','Valorar Lanzamiento Trámite de Solicitud de Solvencia Patrimonial','0','PRODUCTO-1095','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'TGCONGE',null,'SUCONGE',null)
     ,T_TIPO_TAP('P457','P457_BPMTramiteCesionRemate',null,null,null,null,'H006','0','Se inicia el trámite de cesión de remate.','0','PRODUCTO-1095','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,null,null)
-	,T_TIPO_TAP('P457','P457_BPMTramiteAdjudicacion',null,null,null,null,'H005','0','Se inicia el trámite de adjudicación.','0','PRODUCTO-1095','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,null,null)
+	,T_TIPO_TAP('P457','P457_BPMTramAdjudi',null,null,null,null,'H005','0','Se inicia el trámite de adjudicación.','0','PRODUCTO-1095','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,null,null)
 	,T_TIPO_TAP('P457','P457_BPMTramiteSolicitudSolvenciaPatrimonial',null,null,null,null,'HC104','0','Se inicia el trámite de solicitud de solvencia patrimonial.','0','PRODUCTO-1095','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
@@ -72,7 +72,7 @@ DECLARE
 	,T_TIPO_PLAZAS(null,null,'P457_ConfirmarContabilidad','5*24*60*60*1000L','0','0','PRODUCTO-1095')
 	,T_TIPO_PLAZAS(null,null,'P457_ValorarLanzamientoTramiteSoliSolvPatr','5*24*60*60*1000L','0','0','PRODUCTO-1095')
 	,T_TIPO_PLAZAS(null,null,'P457_BPMTramiteCesionRemate','300*24*60*60*1000L','0','0','PRODUCTO-1095')
-	,T_TIPO_PLAZAS(null,null,'P457_BPMTramiteAdjudicacion','300*24*60*60*1000L','0','0','PRODUCTO-1095')
+	,T_TIPO_PLAZAS(null,null,'P457_BPMTramAdjudi','300*24*60*60*1000L','0','0','PRODUCTO-1095')
 	,T_TIPO_PLAZAS(null,null,'P457_BPMTramiteSolicitudSolvenciaPatrimonial','300*24*60*60*1000L','0','0','PRODUCTO-1095')
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
@@ -130,7 +130,7 @@ DECLARE
 	,T_TIPO_TFI('P457_BPMTramiteCesionRemate','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se inicia el tr&aacute;mite de cesi&oacute;n de remate.</p></div>',null,null,null,null,'0','PRODUCTO-1095')
 	
 	
-	,T_TIPO_TFI('P457_BPMTramiteAdjudicacion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se inicia el tr&aacute;mite de adjudicaci&oacute;n.</p></div>',null,null,null,null,'0','PRODUCTO-1095')
+	,T_TIPO_TFI('P457_BPMTramAdjudi','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se inicia el tr&aacute;mite de adjudicaci&oacute;n.</p></div>',null,null,null,null,'0','PRODUCTO-1095')
 	
 	
 	,T_TIPO_TFI('P457_BPMTramiteSolicitudSolvenciaPatrimonial','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Se inicia el tr&aacute;mite de solicitud de solvencia patrimonial.</p></div>',null,null,null,null,'0','PRODUCTO-1095')

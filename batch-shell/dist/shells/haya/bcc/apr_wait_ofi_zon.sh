@@ -3,11 +3,17 @@
 
 ficheros=OFICINAS,ZONAS
 
-if [ -z ${DIR_DESTINO} ]; then
-    echo "$(basename $0) Error: DIR_DESTINO no definido. Compruebe invocación previa a setBatchEnv.sh"
+if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
     exit 1
 fi
 rm -f $DIR_DESTINO*
+
+if [[ -z ${DIR_BCC_INPUT} ]] || [[ ! -d ${DIR_BCC_INPUT} ]]; then
+    echo "$(basename $0) Error: DIR_BCC_INPUT no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+rm -f $DIR_BCC_INPUT*
 
 if [ -z "$1" ]; then
     echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."

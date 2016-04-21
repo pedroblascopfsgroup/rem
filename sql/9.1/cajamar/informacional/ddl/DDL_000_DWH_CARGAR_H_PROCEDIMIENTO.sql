@@ -1572,7 +1572,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                                                      when FASE_ACTUAL_DETALLE_ID IN (2543) then 7
                                                      when FASE_ACTUAL_DETALLE_ID IN (2544) then 8
                                                      when FASE_ACTUAL_DETALLE_ID IN (2450) then 9
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944) then 10
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750) then 10
                                                      when FASE_ACTUAL_DETALLE_ID IN (2375) then 11
                            when FASE_ACTUAL_DETALLE_ID IN (2842) then 15
                                                      when FASE_ACTUAL_DETALLE_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375) and ESTADO_FASE_ACTUAL_ID=3 then 13

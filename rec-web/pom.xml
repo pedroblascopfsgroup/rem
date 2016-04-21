@@ -1611,7 +1611,6 @@
 					</execution>
 				</executions>
 				<configuration>
-					<container>${docker.container}</container>
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
 					<war>pfs-${project.version}</war>
@@ -1649,7 +1648,6 @@
 		<profile>
 			<id>bankia</id>
 			<properties>
-				<docker.container>bankia-app-server</docker.container>
 				<docker.cliente>bankia</docker.cliente>
 			</properties>
 			<dependencies>
@@ -2086,7 +2084,6 @@
 		<profile>
 			<id>haya</id>
 			<properties>
-				<docker.container>haya-app-server</docker.container>
 				<docker.cliente>haya</docker.cliente>
 			</properties>
 			<dependencies>
@@ -2304,7 +2301,6 @@
 		<profile>
 			<id>cajamar</id>
 			<properties>
-				<docker.container>cajamar-app-server</docker.container>
 				<docker.cliente>cajamar</docker.cliente>
 			</properties>
 			<dependencies>

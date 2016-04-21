@@ -1,8 +1,11 @@
 package es.capgemini.pfs.politica.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.annotations.Check;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Projections;
@@ -19,6 +22,8 @@ import es.capgemini.pfs.politica.model.DDEstadoPolitica;
 import es.capgemini.pfs.politica.model.Objetivo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Implementación de la interfaz de acceso a datos para objetivos.
@@ -82,6 +87,25 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
 
         return getHibernateTemplate().findByCriteria(crit);
     }
+    
+    /**
+     * Busca los objetivos pendientes para el gestor.
+     * @param usuario el usuario en cuestión
+     * @return la lista de objetivos pendientes para ese usuario en esa zona.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Objetivo> buscarObjetivosPendientesGestor(Usuario usuario) {
+        
+    	String hql = armaHQLObjetivosPendientes(usuario);
+
+    	if(!Checks.esNulo(hql)){
+    		return getHibernateTemplate().find(hql);	
+    	}else{
+    		return null;
+    	}
+    	
+    }
 
     /**
      * Obtiene la cantidad de objetivos pendientes para el gestor.
@@ -94,6 +118,24 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
         DetachedCriteria crit = armarCriteriaObjetivosPendientes(usuario, zonas);
         crit.setProjection(Projections.rowCount());
         return (Integer) getHibernateTemplate().findByCriteria(crit).get(0);
+    }
+    
+    /**
+     * Obtiene la cantidad de objetivos pendientes para el gestor.
+     * @param usuario el usuario logado
+     * @return integer
+     */
+    @Override
+    public Long cantidadObjetivosPendientesGestor(Usuario usuario) {
+    	
+    	String hql = armaHQLObjetivosPendientesCount(usuario);
+
+    	if(!Checks.esNulo(hql)){
+            Query query = getSession().createQuery(hql);
+            return (Long) query.uniqueResult();	
+    	}else{
+    		return null;
+    	}
     }
 
     /**
@@ -112,6 +154,41 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
         crit.createCriteria("estadoObjetivo").add(Expression.eq("codigo", DDEstadoObjetivo.ESTADO_CONFIRMADO));
         crit.createCriteria("estadoCumplimiento").add(Expression.eq("codigo", DDEstadoCumplimiento.ESTADO_PENDIENTE));
         return crit;
+    }
+    
+    private String armaHQLObjetivosPendientes(Usuario usuario){
+    	String where = armaWhereHQLObjetivosPendientes(usuario);
+    	if(!Checks.esNulo(where)){
+    		return "from Objetivo obj "+where;
+    	}else{
+    		return null;
+    	}
+    }
+    
+    private String armaHQLObjetivosPendientesCount(Usuario usuario){
+    	String where = armaWhereHQLObjetivosPendientes(usuario);
+    	if(!Checks.esNulo(where)){
+    		return "select count(*) from Objetivo obj "+where;
+    	}else{
+    		return null;
+    	}
+    }
+    
+    private String armaWhereHQLObjetivosPendientes(Usuario usuario){
+    	boolean tieneZona = false;
+    	String hql = " where obj.auditoria.borrado AND obj.estadoCumplimiento.codigo = '"+DDEstadoCumplimiento.ESTADO_PENDIENTE+"' AND obj.estadoObjetivo.codigo = '"+DDEstadoObjetivo.ESTADO_CONFIRMADO+"' AND obj.politica.estadoPolitica.codigo = '"+DDEstadoPolitica.ESTADO_VIGENTE+"' AND (";
+    		for(ZonaUsuarioPerfil zpu : usuario.getZonaPerfil()){
+    			hql += "(obj.politica.perfilGestor.id = "+zpu.getPerfil().getId()+" and obj.politica.zonaGestor.codigo LIKE '"+zpu.getZona().getCodigo()+"%') OR";
+    			tieneZona = true;
+    		}
+    		hql = hql.substring(0, hql.length() - 2);
+    		hql += ")";
+    	
+    	if(tieneZona){
+    		return hql;	
+    	}else{
+    		return null;
+    	}
     }
 
     /**

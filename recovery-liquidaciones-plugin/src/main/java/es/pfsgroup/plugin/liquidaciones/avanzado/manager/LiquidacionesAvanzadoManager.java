@@ -284,11 +284,11 @@ public class LiquidacionesAvanzadoManager {
 			if (importeECRestante.compareTo(pendientes.getIntereses()) == 1) {
 				//Nos quedamos sin intereses
 				tramo.setIntereses(pendientes.getIntereses());
-				importeECRestante.subtract(tramo.getIntereses());
+				importeECRestante = importeECRestante.subtract(tramo.getIntereses());
 				pendientes.setIntereses(BigDecimal.ZERO);
 			} else {
 				//Reducimos parte de los intereses y nos quedamos sin importe en la entrega
-				tramo.setIntereses(pendientes.getIntereses().subtract(importeECRestante));
+				tramo.setIntereses(importeECRestante);
 				pendientes.setIntereses(pendientes.getIntereses().subtract(importeECRestante));
 				importeECRestante = BigDecimal.ZERO;
 			}
@@ -302,16 +302,20 @@ public class LiquidacionesAvanzadoManager {
 			//De la entrega segundo reducimos capital
 			if (importeECRestante.compareTo(pendientes.getSaldo()) == 1) {
 				//Nos quedamos sin capital
-				tramo.setSaldo(pendientes.getSaldo());
-				importeECRestante.subtract(tramo.getSaldo());
+				tramo.setEntregado(pendientes.getSaldo());
+				importeECRestante = importeECRestante.subtract(tramo.getEntregado());
 				pendientes.setSaldo(BigDecimal.ZERO);
+				//tramo.setSaldo(pendientes.getSaldo());
 			} else {
 				//Reducimos parte del capital y nos quedamos sin importe en la entrega
-				tramo.setSaldo(pendientes.getSaldo().subtract(importeECRestante));
+				tramo.setEntregado(importeECRestante);
 				pendientes.setSaldo(pendientes.getSaldo().subtract(importeECRestante));
+				//tramo.setSaldo(pendientes.getSaldo());
 				importeECRestante = BigDecimal.ZERO;
 			}
 		}
+		
+		tramo.setSaldo(pendientes.getSaldo());
 		
 		//Si todavia nos queda importe de la entrega
 		if (importeECRestante.compareTo(BigDecimal.ZERO) == 1) {

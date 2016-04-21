@@ -346,7 +346,6 @@
 			fechaActual.setSeconds(0);
 			
 			fechaActual = Date.parse(fechaActual);
-       		debugger;
        		if(formulario.isValid()){
        			var dateSolucionPrevista = null;
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {

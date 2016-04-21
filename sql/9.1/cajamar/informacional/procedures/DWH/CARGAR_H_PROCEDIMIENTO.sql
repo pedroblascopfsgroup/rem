@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificación: María Villanueva ., PFS Group
--- Fecha ultima modificación: 10-03-2016
--- Motivos del cambio: SE AÑADE PROCURADOR_PRC_ID
+-- Fecha ultima modificación: 21-04-2016
+-- Motivos del cambio: se modifica tipo de procedimiento agregado concursal
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripción�n: Procedimiento almancenado que carga las tablas hechos H_PRC.
@@ -1530,7 +1530,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                                                      when TIPO_PROCEDIMIENTO_DET_ID IN (2543) then 7
                                                      when TIPO_PROCEDIMIENTO_DET_ID IN (2544) then 8
                                                      when TIPO_PROCEDIMIENTO_DET_ID IN (2450) then 9
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944) then 10
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750) then 10
                                                      when TIPO_PROCEDIMIENTO_DET_ID IN (2375) then 11
                            when TIPO_PROCEDIMIENTO_DET_ID IN (2842) then 15
                                                      when TIPO_PROCEDIMIENTO_DET_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375) and ESTADO_FASE_ACTUAL_ID=3 then 13

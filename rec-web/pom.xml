@@ -1607,6 +1607,10 @@
 							<goal>update</goal>
 							<goal>ps</goal>
 							<goal>browser</goal>
+							<goal>db-create</goal>
+							<goal>db-start</goal>
+							<goal>db-stop</goal>
+							<goal>db-rm</goal>	
 						</goals>
 					</execution>
 				</executions>

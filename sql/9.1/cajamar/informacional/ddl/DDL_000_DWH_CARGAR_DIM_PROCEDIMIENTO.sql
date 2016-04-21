@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160408
+--## FECHA_CREACION=20160421
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=CMREC-2897
+--## INCIDENCIA_LINK=CMREC-3180
 --## PRODUCTO=NO
 --## 
---## Finalidad: se elimina el filtro de gaa.usuariocrear=SAG en la carga de GESTOR_PRC_ID en D_PRC
+--## Finalidad: se modifica tipo de procedimiento agregado concursal
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -16,13 +16,14 @@
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
+
 create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: María V., PFS Group
--- Fecha ultima modificacion: 08/04/2016
--- Motivos del cambio: se elimina el filtro de gaa.usuariocrear=SAG en la carga de GESTOR_PRC_ID en D_PRC
+-- Fecha ultima modificacion: 21/04/2016
+-- Motivos del cambio: se modifica tipo de procedimiento agregado concursal
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -396,7 +397,7 @@ select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
   -- 9-EJECUCION NOTARIAL
   UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 9 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2450);
   -- 10-CONCURSAL
-  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 10 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944);
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 10 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750);
   -- 11-PRE CONCURSO
   UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 11 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2375);
   -- 12-ACEPTACION Y DECISION
@@ -2671,7 +2672,7 @@ select count(1) into V_NUM_ROW from  D_PRC_COBRO_TIPO where TIPO_COBRO_ID = -1;
 */
 
 
-	EXECUTE IMMEDIATE
+  EXECUTE IMMEDIATE
   'INSERT INTO D_PRC_GESTOR_HAYA (
       GESTOR_PRC_HAYA_ID,
       GESTOR_PRC_HAYA_NOMBRE_COMPLET,
@@ -2682,19 +2683,19 @@ select count(1) into V_NUM_ROW from  D_PRC_COBRO_TIPO where TIPO_COBRO_ID = -1;
       DESPACHO_GESTOR_PRC_HAYA_ID
       )
   SELECT ROWNUM,
-		A.USUARIOCREAR, 
-		A.USUARIOCREAR, 
-		A.USUARIOCREAR, 
-		A.USUARIOCREAR, 
-		-1,
-		-1
-	FROM
-	(SELECT DISTINCT TEV.USUARIOCREAR
-		FROM '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR 
-				JOIN '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID AND TEX.TAP_ID IN (10000000003042,10000000003312) and tar.TAR_FECHA_FIN is not null
-				JOIN '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV ON TEX.TEX_ID = TEV.TEX_ID 
-	order by 1 asc
-	) A';
+    A.USUARIOCREAR, 
+    A.USUARIOCREAR, 
+    A.USUARIOCREAR, 
+    A.USUARIOCREAR, 
+    -1,
+    -1
+  FROM
+  (SELECT DISTINCT TEV.USUARIOCREAR
+    FROM '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR 
+        JOIN '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID AND TEX.TAP_ID IN (10000000003042,10000000003312) and tar.TAR_FECHA_FIN is not null
+        JOIN '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV ON TEX.TEX_ID = TEV.TEX_ID 
+  order by 1 asc
+  ) A';
 
 
   V_ROWCOUNT := sql%rowcount;
@@ -2714,8 +2715,8 @@ select count(1) into V_NUM_ROW from  D_PRC_COBRO_TIPO where TIPO_COBRO_ID = -1;
     ASUNTO_ID,
     JUZGADO_ID,
     TIPO_RECLAMACION_ID,
-	GESTOR_PRC_HAYA_ID,
-	CON_POSTORES_ID
+  GESTOR_PRC_HAYA_ID,
+  CON_POSTORES_ID
    )
   SELECT PRC_ID,
     NVL(PRC_COD_PROC_EN_JUZGADO, ''Desconocido''),
@@ -2723,8 +2724,8 @@ select count(1) into V_NUM_ROW from  D_PRC_COBRO_TIPO where TIPO_COBRO_ID = -1;
     ASU_ID,
     NVL(DD_JUZ_ID, -1),
     NVL(DD_TRE_ID, -1),
-	-1,
-	-1
+  -1,
+  -1
   FROM '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS
   WHERE PRC_PRC_ID IS NULL';
 
@@ -2781,32 +2782,32 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
   EXECUTE IMMEDIATE
   'MERGE INTO D_PRC a 
-	using (select asu_id, GESTOR_PRC_HAYA_ID
-			from
-			(select GESTOR_PRC_HAYA_ID, GESTOR_PRC_HAYA_NOMBRE_COMPLET from D_PRC_GESTOR_HAYA ) a,
-			(select tar.ASU_ID, max(tev.usuariocrear) usuariocrear
-				from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar 
-				join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.TAP_ID in (10000000003042,10000000003312) and tar.TAR_FECHA_FIN is not null
-				join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID 
-				group by tar.ASU_ID) b
-			WHERE A.GESTOR_PRC_HAYA_NOMBRE_COMPLET = B.usuariocrear
-		) c
-	on (c.ASU_ID = a.ASUNTO_ID)
+  using (select asu_id, GESTOR_PRC_HAYA_ID
+      from
+      (select GESTOR_PRC_HAYA_ID, GESTOR_PRC_HAYA_NOMBRE_COMPLET from D_PRC_GESTOR_HAYA ) a,
+      (select tar.ASU_ID, max(tev.usuariocrear) usuariocrear
+        from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar 
+        join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.TAP_ID in (10000000003042,10000000003312) and tar.TAR_FECHA_FIN is not null
+        join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID 
+        group by tar.ASU_ID) b
+      WHERE A.GESTOR_PRC_HAYA_NOMBRE_COMPLET = B.usuariocrear
+    ) c
+  on (c.ASU_ID = a.ASUNTO_ID)
     when matched then update set a.GESTOR_PRC_HAYA_ID = c.GESTOR_PRC_HAYA_ID';
     commit;
 
   EXECUTE IMMEDIATE
   'MERGE INTO D_PRC a 
-	using (select tar.ASU_ID, max(tev_valor) max_tev_valor
-			from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar 
-				join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.TAP_ID in (10000000003294, 10000000003050, 10000000003320) 
-				join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''comboPostores''
-				group by tar.ASU_ID) b
-	on (b.ASU_ID = a.ASUNTO_ID)
+  using (select tar.ASU_ID, max(tev_valor) max_tev_valor
+      from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar 
+        join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.TAP_ID in (10000000003294, 10000000003050, 10000000003320) 
+        join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''comboPostores''
+        group by tar.ASU_ID) b
+  on (b.ASU_ID = a.ASUNTO_ID)
     when matched then update set a.CON_POSTORES_ID = (case when b.max_tev_valor = ''02'' or b.max_tev_valor = ''2'' then 0
-														when b.max_tev_valor = ''01'' or b.max_tev_valor = ''1'' then 1 
-														else -1
-													end)';
+                            when b.max_tev_valor = ''01'' or b.max_tev_valor = ''1'' then 1 
+                            else -1
+                          end)';
     commit;
   
   

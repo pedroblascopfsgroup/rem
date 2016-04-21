@@ -4,8 +4,8 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: María V., PFS Group
--- Fecha ultima modificacion: 08/04/2016
--- Motivos del cambio: se elimina el filtro de gaa.usuariocrear=SAG en la carga de GESTOR_PRC_ID en D_PRC
+-- Fecha ultima modificacion: 21/04/2016
+-- Motivos del cambio: se modifica tipo de procedimiento agregado concursal
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -379,7 +379,7 @@ select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
   -- 9-EJECUCION NOTARIAL
   UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 9 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2450);
   -- 10-CONCURSAL
-  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 10 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944);
+  UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 10 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750);
   -- 11-PRE CONCURSO
   UPDATE D_PRC_TIPO_PROCEDIMIENTO_DET SET TIPO_PROCEDIMIENTO_AGR_ID = 11 WHERE TIPO_PROCEDIMIENTO_DET_ID IN (2375);
   -- 12-ACEPTACION Y DECISION

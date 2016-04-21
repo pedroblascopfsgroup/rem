@@ -38,6 +38,7 @@ export DIR_CONTROL_ETL=$DIR_RAIZ/batch-server/sareb/etl
 
 # BUROFAX
 export ENVIO_DOCALIA=/sftp_docalia/burofax/envio
+export RECEPCION_DOCALIA=/sftp_docalia/burofax/entrega
 
 # FTP
 export HOST=192.168.235.59

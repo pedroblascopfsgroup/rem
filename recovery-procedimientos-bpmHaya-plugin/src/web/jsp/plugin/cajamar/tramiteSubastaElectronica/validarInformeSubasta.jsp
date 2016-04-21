@@ -50,71 +50,39 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var campoDecision = items[1 + muestraBotonGuardar];
-var campoMotivo = items[2 + muestraBotonGuardar];
-var campoCoincidencia = items[3 + muestraBotonGuardar];
-var campoPostores = items[4 + muestraBotonGuardar];
-var campoDetalle = items[5 + muestraBotonGuardar];
-var campoObservaciones = items[6 + muestraBotonGuardar];
+var campoAceptacion = items[2 + muestraBotonGuardar];
+var campoAtribuciones = items[3 + muestraBotonGuardar];
+var campoMotivo = items[4 + muestraBotonGuardar];
 
+campoAtribuciones.setDisabled(true);
+campoAtribuciones.allowBlank = true;
 campoMotivo.setDisabled(true);
 campoMotivo.allowBlank = true;
-campoCoincidencia.setDisabled(true);
-campoCoincidencia.allowBlank = true;
-campoPostores.setDisabled(true);
-campoPostores.allowBlank = true;
-campoDetalle.setDisabled(true);
-campoDetalle.allowBlank = true;
 
-campoDecision.on('select', function(){	
-	if(campoResultado.getValue() == 'ENT' || campoResultado.getValue() == 'TER') {//entidad o terceros
-		campoCoincidencia.reset();
-		campoCoincidencia.setDisabled(true);
-		campoCoincidencia.allowBlank = true;
+campoAceptacion.on('select', function(){
+
+	if(campoAceptacion.getValue() == '01') { //si
+		campoAtribuciones.setDisabled(false);
+		campoAtribuciones.allowBlank = false;
+	}
+	else if(campoAceptacion.getValue() == '02') {//no
+		campoAtribuciones.reset();
+		campoAtribuciones.setDisabled(true);
+		campoAtribuciones.allowBlank = true;
+	}
+});	
+
+campoAtribuciones.on('select', function(){
+
+	if(campoAtribuciones.getValue() == '02') { //no
 		campoMotivo.setDisabled(false);
 		campoMotivo.allowBlank = false;
 	}
-	else if(campoResultado.getValue() == 'NO') {//suspension
+	else if(campoAtribuciones.getValue() == '01') {//si
 		campoMotivo.reset();
 		campoMotivo.setDisabled(true);
 		campoMotivo.allowBlank = true;
-		campoCoincidencia.setDisabled(false);
-		campoCoincidencia.allowBlank = false;
-	}		
-});	
-
-campoCoincidencia.on('select', function(){	
-		if(campoCoincidencia.getValue() == '01') {//si
-			campoPostores.setDisabled(false);
-			campoPostores.allowBlank = false;
-		}
-		else if(campoResultado.getValue() == '02') {//no
-			campoPostores.reset();
-			campoPostores.setDisabled(true);
-			campoPostores.allowBlank = true;
-		}
-});	
-	
-	
-campoPostores.on('select', function(){	
-		if(campoPostores.getValue() == '01') {//si
-			campoDetalle.setDisabled(false);
-			campoDetalle.allowBlank = false;	
-		}
-		else if(campoPostores.getValue() == '02') {//no
-			campoDetalle.reset();
-			campoDetalle.setDisabled(true);
-			campoDetalle.allowBlank = true;
-		}
-});
-
-campoDetalle.on('select', function(){	
-		if(campoDetalle.getValue() == 'OTR') {//si
-			campoObservaciones.allowBlank = false;	
-		}
-		else {
-			campoObservaciones.allowBlank = true;
-		}
+	}
 });
 
 </c:if>

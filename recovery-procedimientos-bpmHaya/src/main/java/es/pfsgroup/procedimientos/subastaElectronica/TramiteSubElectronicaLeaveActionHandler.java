@@ -73,7 +73,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	private UsuarioApi usuarioApi;
 
 	@Autowired
-	TramitesElectronicosApi tramitesElectronicos;
+	TramitesElectronicosApi tramitesElectronicosApi;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass,
@@ -193,9 +193,13 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	 */
 	protected Boolean[] getValoresRamas(ExecutionContext executionContext) {
 		Procedimiento proc = getProcedimiento(executionContext);
+		
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
 
-		Boolean[] valores = (Boolean[]) tramitesElectronicos.bpmGetValoresRamasRevisarDocumentacion(proc,
-				getTareaExterna(executionContext));
+		Boolean[] valores = (Boolean[]) tramitesElectronicosApi.bpmGetValoresRamasRevisarDocumentacion(proc,
+				getTareaExterna(executionContext), listado);
 
 		return valores;
 	}

@@ -1278,63 +1278,84 @@ BEGIN
 ------------------------------ D_CNT_MOTIVO_SALIDA_EXP -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_MOTIVO_SALIDA_EXP'', 
 						  ''MOTIVO_SALIDA_EXP_CNT_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_SALIDA_EXP_CNT_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (MOTIVO_SALIDA_EXP_CNT_ID)'', :error); END;'; 		 
+                            MOTIVO_SALIDA_EXP_CNT_DESC VARCHAR2(50 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_MOTIVO_SALIDA_EXP_PK'', ''D_CNT_MOTIVO_SALIDA_EXP (MOTIVO_SALIDA_EXP_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_MOTIVO_SALIDA_EXP');
    
 
     ------------------------------ D_CNT_TIPO_INCIDENCIA_EXP -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_INCIDENCIA_EXP'', 
 						  ''TIPO_INCIDENCIA_EXP_CNT_ID NUMBER(16,0) NOT NULL,
-                            TIPO_INCIDENCIA_EXP_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_INCIDENCIA_EXP_CNT_ID)'', :error); END;'; 		 
+                            TIPO_INCIDENCIA_EXP_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_INCIDENCIA_EXP_PK'', ''D_CNT_TIPO_INCIDENCIA_EXP (TIPO_INCIDENCIA_EXP_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_INCIDENCIA_EXP');
    
 
     ------------------------------ D_CNT_ESTADO_INCIDENCIA_EXP -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESTADO_INCIDENCIA_EXP'', 
 						  ''ESTADO_INCIDENCIA_EXP_CNT_ID NUMBER(16,0) NOT NULL,
-                            ESTADO_INCIDENCIA_EXP_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESTADO_INCIDENCIA_EXP_CNT_ID)'', :error); END;'; 		 
+                            ESTADO_INCIDENCIA_EXP_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESTADO_INCIDENCIA_EXP_PK'', ''D_CNT_ESTADO_INCIDENCIA_EXP (ESTADO_INCIDENCIA_EXP_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESTADO_INCIDENCIA_EXP');
    
 
     ------------------------------ D_CNT_T_SALDO_TOTAL -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_T_SALDO_TOTAL'', 
 						  ''T_SALDO_TOTAL_CNT_ID NUMBER(16,0) NOT NULL,
-                            T_SALDO_TOTAL_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_SALDO_TOTAL_CNT_ID)'', :error); END;'; 		 
+                            T_SALDO_TOTAL_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_T_SALDO_TOTAL_PK'', ''D_CNT_T_SALDO_TOTAL (T_SALDO_TOTAL_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_T_SALDO_TOTAL');
    
 
     ------------------------------ D_CNT_T_SALDO_IRREGULAR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_T_SALDO_IRREGULAR '', 
 						  ''T_SALDO_IRREGULAR_CNT_ID NUMBER(16,0) NOT NULL,
-                            T_SALDO_IRREGULAR_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_SALDO_IRREGULAR_CNT_ID)'', :error); END;'; 		 
+                            T_SALDO_IRREGULAR_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_T_SALDO_IRREGULAR_PK'', ''D_CNT_T_SALDO_IRREGULAR (T_SALDO_IRREGULAR_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_T_SALDO_IRREGULAR');
    
 
     ------------------------------ D_CNT_T_DEUDA_IRREGULAR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_T_DEUDA_IRREGULAR'', 
 						  ''T_DEUDA_IRREGULAR_CNT_ID NUMBER(16,0) NOT NULL,
-                            T_DEUDA_IRREGULAR_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_DEUDA_IRREGULAR_CNT_ID)'', :error); END;'; 		 
+                            T_DEUDA_IRREGULAR_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_T_DEUDA_IRREGULAR_PK'', ''D_CNT_T_DEUDA_IRREGULAR (T_DEUDA_IRREGULAR_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_T_DEUDA_IRREGULAR');
    
 
     ------------------------------ D_CNT_TIPO_COBRO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_COBRO'', 
 						  ''TIPO_COBRO_ID NUMBER(16,0) NOT NULL,
-                            TIPO_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_COBRO_ID)'', :error); END;'; 		 
+                            TIPO_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_COBRO_PK'', ''D_CNT_TIPO_COBRO (TIPO_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_COBRO');
    
 
@@ -1342,72 +1363,96 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_COBRO_DETALLE'', 
 						  ''TIPO_COBRO_DET_ID NUMBER(16,0) NOT NULL,
                             TIPO_COBRO_DET_DESC VARCHAR2(250 CHAR),
-                            TIPO_COBRO_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (TIPO_COBRO_DET_ID)'', :error); END;'; 		 
+                            TIPO_COBRO_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_COBRO_DETALLE_PK'', ''D_CNT_TIPO_COBRO_DETALLE (TIPO_COBRO_DET_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_COBRO_DETALLE');
    
     
     ------------------------------ D_CNT_COBRO_FACTURADO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_COBRO_FACTURADO'', 
 						  ''COBRO_FACTURADO_ID NUMBER(16,0) NOT NULL,
-                            COBRO_FACTURADO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (COBRO_FACTURADO_ID)'', :error); END;'; 		 
+                            COBRO_FACTURADO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_COBRO_FACTURADO_PK'', ''D_CNT_COBRO_FACTURADO (COBRO_FACTURADO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_COBRO_FACTURADO');
    
 
     ------------------------------ D_CNT_REMESA_FACTURA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_REMESA_FACTURA'', 
 						  ''REMESA_FACTURA_ID NUMBER(16,0) NOT NULL,
-                            REMESA_FACTURA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (REMESA_FACTURA_ID)'', :error); END;'; 		 
+                            REMESA_FACTURA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_REMESA_FACTURA_PK'', ''D_CNT_REMESA_FACTURA (REMESA_FACTURA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_REMESA_FACTURA');
    
 
     ------------------------------ D_CNT_CLASIFICACION --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CLASIFICACION'', 
 						  ''CLASIFICACION_CNT_ID NUMBER(16,0) NOT NULL,
-                            CLASIFICACION_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CLASIFICACION_CNT_ID)'', :error); END;'; 		 
+                            CLASIFICACION_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CLASIFICACION_PK'', ''D_CNT_CLASIFICACION (CLASIFICACION_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CLASIFICACION');
    
 
     ------------------------------ D_CNT_SEGMENTO_CARTERA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SEGMENTO_CARTERA'', 
 						  ''SEGMENTO_CARTERA_ID NUMBER(16,0) NOT NULL,
-                            SEGMENTO_CARTERA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SEGMENTO_CARTERA_ID)'', :error); END;'; 		 
+                            SEGMENTO_CARTERA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SEGMENTO_CARTERA_PK'', ''D_CNT_SEGMENTO_CARTERA (SEGMENTO_CARTERA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SEGMENTO_CARTERA');
    
     
     ------------------------------ D_CNT_ENVIADO_AGENCIA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ENVIADO_AGENCIA'', 
 						  ''ENVIADO_AGENCIA_CNT_ID NUMBER(16,0) NOT NULL,
-                            ENVIADO_AGENCIA_CNT_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENVIADO_AGENCIA_CNT_ID)'', :error); END;'; 		 
+                            ENVIADO_AGENCIA_CNT_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_PK'', ''D_CNT_ENVIADO_AGENCIA (ENVIADO_AGENCIA_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ENVIADO_AGENCIA');
    
     
     ------------------------------ D_CNT_ESQUEMA_COBRO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESQUEMA_COBRO'', 
 						  ''ESQUEMA_COBRO_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_COBRO_ID)'', :error); END;'; 		 
+                            ESQUEMA_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESQUEMA_COBRO_PK'', ''D_CNT_ESQUEMA_COBRO (ESQUEMA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESQUEMA_COBRO');
    
 
     ------------------------------ D_CNT_CARTERA_COBRO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CARTERA_COBRO'', 
 						  ''CARTERA_COBRO_ID NUMBER(16,0) NOT NULL,
-                            CARTERA_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CARTERA_COBRO_ID)'', :error); END;'; 		 
+                            CARTERA_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CARTERA_COBRO_PK'', ''D_CNT_CARTERA_COBRO (CARTERA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CARTERA_COBRO');
    
 
@@ -1415,18 +1460,24 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SUBCARTERA_COBRO'', 
 						  ''SUBCARTERA_COBRO_ID NUMBER(16,0) NOT NULL,
                             SUBCARTERA_COBRO_DESC VARCHAR2(250 CHAR),
-                            CARTERA_COBRO_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SUBCARTERA_COBRO_ID)'', :error); END;'; 		 
+                            CARTERA_COBRO_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SUBCARTERA_COBRO_PK'', ''D_CNT_SUBCARTERA_COBRO (SUBCARTERA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SUBCARTERA_COBRO');
    
 
     ------------------------------ D_CNT_AGENCIA_COBRO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_AGENCIA_COBRO'', 
 						  ''AGENCIA_COBRO_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (AGENCIA_COBRO_ID)'', :error); END;'; 		 
+                            AGENCIA_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_AGENCIA_COBRO_PK'', ''D_CNT_AGENCIA_COBRO (AGENCIA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_AGENCIA_COBRO');
    
 	
@@ -1434,9 +1485,12 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_PRODUCTO_COBRO'', 
 						  ''TIPO_PRODUCTO_COBRO_ID NUMBER(16,0) NOT NULL,
                             TIPO_PRODUCTO_COBRO_DESC VARCHAR2(50 CHAR),
-                            TIPO_PRODUCTO_COBRO_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_PRODUCTO_COBRO_ID)'', :error); END;'; 		 
+                            TIPO_PRODUCTO_COBRO_DESC_2 VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_PRODUCTO_COBRO_PK'', ''D_CNT_TIPO_PRODUCTO_COBRO (TIPO_PRODUCTO_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_PRODUCTO_COBRO');
    
 	
@@ -1445,9 +1499,12 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_GARANTIA_COBRO'', 
 						  ''GARANTIA_COBRO_ID NUMBER(16,0) NOT NULL,
                             GARANTIA_COBRO_DESC VARCHAR2(50 CHAR),
-                            GARANTIA_COBRO_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (GARANTIA_COBRO_ID)'', :error); END;'; 		 
+                            GARANTIA_COBRO_DESC_2 VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_GARANTIA_COBRO_PK'', ''D_CNT_GARANTIA_COBRO (GARANTIA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_GARANTIA_COBRO');
    
 	
@@ -1455,54 +1512,72 @@ BEGIN
     ------------------------------ D_CNT_SEGMENTO_CARTERA_COBRO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SEGMENTO_CARTERA_COBRO'', 
 						  ''SEGMENTO_CARTERA_COBRO_ID NUMBER(16,0) NOT NULL,
-                            SEGMENTO_CARTERA_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SEGMENTO_CARTERA_COBRO_ID)'', :error); END;'; 		 
+                            SEGMENTO_CARTERA_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SEGMENTO_CARTERA_COBRO_PK'', ''D_CNT_SEGMENTO_CARTERA_COBRO (SEGMENTO_CARTERA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SEGMENTO_CARTERA_COBRO');
    
 	
     ------------------------------ D_CNT_TD_IRREG_COBRO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TD_IRREG_COBRO'', 
 						  ''TD_IRREG_COBRO_ID NUMBER(16,0) NOT NULL,
-                            TD_IRREG_COBRO_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (TD_IRREG_COBRO_ID)'', :error); END;'; 		 
+                            TD_IRREG_COBRO_DESC VARCHAR2(50 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TD_IRREG_COBRO_PK'', ''D_CNT_TD_IRREG_COBRO (TD_IRREG_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TD_IRREG_COBRO');
    
     
     ------------------------------ D_CNT_T_DEUDA_IRREGULAR_COBRO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_T_DEUDA_IRREGULAR_COBRO'', 
 						  ''T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NOT NULL,
-                            T_DEUDA_IRREGULAR_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_DEUDA_IRREGULAR_COBRO_ID)'', :error); END;'; 		 
+                            T_DEUDA_IRREGULAR_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_T_DEUDA_IRREGULAR_COBRO_PK'', ''D_CNT_T_DEUDA_IRREGULAR_COBRO (T_DEUDA_IRREGULAR_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_T_DEUDA_IRREGULAR_COBRO');
    
     
     ------------------------------ D_CNT_ENVIADO_AGENCIA_COBRO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_COBRO'', 
 						  ''ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NOT NULL,
-                            ENVIADO_AGENCIA_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENVIADO_AGENCIA_COBRO_ID)'', :error); END;'; 		 
+                            ENVIADO_AGENCIA_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_COBRO_PK'', ''D_CNT_ENVIADO_AGENCIA_COBRO (ENVIADO_AGENCIA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ENVIADO_AGENCIA_COBRO');
    
 
     ------------------------------ D_CNT_FACTURA_COBRO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_FACTURA_COBRO'', 
 						  ''FACTURA_COBRO_ID NUMBER(16,0) NOT NULL,
-                            FACTURA_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (FACTURA_COBRO_ID)'', :error); END;'; 		 
+                            FACTURA_COBRO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_FACTURA_COBRO_PK'', ''D_CNT_FACTURA_COBRO (FACTURA_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_FACTURA_COBRO');
    
     
     ------------------------------ D_CNT_MOTIVO_BAJA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_MOTIVO_BAJA_CR'', 
 						  ''MOTIVO_BAJA_CR_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_BAJA_CR_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (MOTIVO_BAJA_CR_ID)'', :error); END;'; 		 
+                            MOTIVO_BAJA_CR_DESC VARCHAR2(50 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_MOTIVO_BAJA_CR_PK'', ''D_CNT_MOTIVO_BAJA_CR (MOTIVO_BAJA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_MOTIVO_BAJA_CR');
    
     
@@ -1510,18 +1585,24 @@ BEGIN
     ------------------------------ D_CNT_ESQUEMA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESQUEMA_CR'', 
 						  ''ESQUEMA_CR_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_CR_ID)'', :error); END;'; 		 
+                            ESQUEMA_CR_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESQUEMA_CR_PK'', ''D_CNT_ESQUEMA_CR (ESQUEMA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESQUEMA_CR');
    
 
     ------------------------------ D_CNT_CARTERA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CARTERA_CR'', 
 						  ''CARTERA_CR_ID NUMBER(16,0) NOT NULL,
-                            CARTERA_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CARTERA_CR_ID)'', :error); END;'; 		 
+                            CARTERA_CR_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CARTERA_CR_PK'', ''D_CNT_CARTERA_CR (CARTERA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CARTERA_CR');
    
 
@@ -1529,36 +1610,48 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SUBCARTERA_CR'', 
 						  ''SUBCARTERA_CR_ID NUMBER(16,0) NOT NULL,
                             SUBCARTERA_CR_DESC VARCHAR2(250 CHAR),
-                            CARTERA_CR_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SUBCARTERA_CR_ID)'', :error); END;'; 		 
+                            CARTERA_CR_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SUBCARTERA_CR_PK'', ''D_CNT_SUBCARTERA_CR (SUBCARTERA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+	
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SUBCARTERA_CR');
    
 
     ------------------------------ D_CNT_AGENCIA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_AGENCIA_CR'', 
 						  ''AGENCIA_CR_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (AGENCIA_CR_ID)'', :error); END;'; 		 
+                            AGENCIA_CR_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_AGENCIA_CR_PK'', ''D_CNT_AGENCIA_CR (AGENCIA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_AGENCIA_CR');
    
 
     ------------------------------ D_CNT_SEGMENTO_CARTERA_CR --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SEGMENTO_CARTERA_CR'', 
 						  ''SEGMENTO_CARTERA_CR_ID NUMBER(16,0) NOT NULL,
-                            SEGMENTO_CARTERA_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SEGMENTO_CARTERA_CR_ID)'', :error); END;'; 		 
+                            SEGMENTO_CARTERA_CR_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SEGMENTO_CARTERA_CR_PK'', ''D_CNT_SEGMENTO_CARTERA_CR (SEGMENTO_CARTERA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SEGMENTO_CARTERA_CR');
    
     
     ------------------------------ D_CNT_ENVIADO_AGENCIA_CR --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_CR'', 
 						  ''ENVIADO_AGENCIA_CR_ID NUMBER(16,0) NOT NULL,
-                            ENVIADO_AGENCIA_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENVIADO_AGENCIA_CR_ID)'', :error); END;'; 		 
+                            ENVIADO_AGENCIA_CR_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_CR_PK'', ''D_CNT_ENVIADO_AGENCIA_CR (ENVIADO_AGENCIA_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ENVIADO_AGENCIA_CR');
    
     
@@ -1566,45 +1659,60 @@ BEGIN
     ------------------------------ D_CNT_ESTADO_ACUERDO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESTADO_ACUERDO'', 
 						  ''ESTADO_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            ESTADO_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESTADO_ACUERDO_ID)'', :error); END;'; 		 
+                            ESTADO_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESTADO_ACUERDO_PK'', ''D_CNT_ESTADO_ACUERDO (ESTADO_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESTADO_ACUERDO');
    
     
     ------------------------------ D_CNT_SOLICITANTE_ACUERDO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SOLICITANTE_ACUERDO'', 
 						  ''SOLICITANTE_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            SOLICITANTE_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SOLICITANTE_ACUERDO_ID)'', :error); END;'; 		 
+                            SOLICITANTE_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SOLICITANTE_ACUERDO_PK'', ''D_CNT_SOLICITANTE_ACUERDO (SOLICITANTE_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SOLICITANTE_ACUERDO');
    
 
     ------------------------------ D_CNT_TIPO_ACUERDO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_ACUERDO'', 
 						  ''TIPO_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            TIPO_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_ACUERDO_ID)'', :error); END;'; 		 
+                            TIPO_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+       V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_ACUERDO_PK'', ''D_CNT_TIPO_ACUERDO (TIPO_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_ACUERDO');
    
 
     ------------------------------ D_CNT_ESQUEMA_ACUERDO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESQUEMA_ACUERDO'', 
 						  ''ESQUEMA_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_ACUERDO_ID)'', :error); END;'; 		 
+                            ESQUEMA_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESQUEMA_ACUERDO_PK'', ''D_CNT_ESQUEMA_ACUERDO (ESQUEMA_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESQUEMA_ACUERDO');
    
 
     ------------------------------ D_CNT_CARTERA_ACUERDO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CARTERA_ACUERDO'', 
 						  ''CARTERA_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            CARTERA_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CARTERA_ACUERDO_ID)'', :error); END;'; 		 
+                            CARTERA_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CARTERA_ACUERDO_PK'', ''D_CNT_CARTERA_ACUERDO (CARTERA_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CARTERA_ACUERDO');
    
 
@@ -1612,63 +1720,84 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SUBCARTERA_ACUERDO'', 
 						  ''SUBCARTERA_ACUERDO_ID NUMBER(16,0) NOT NULL,
                             SUBCARTERA_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            CARTERA_ACUERDO_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SUBCARTERA_ACUERDO_ID)'', :error); END;'; 		 
+                            CARTERA_ACUERDO_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SUBCARTERA_ACUERDO_PK'', ''D_CNT_SUBCARTERA_ACUERDO (SUBCARTERA_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SUBCARTERA_ACUERDO');
    
 
     ------------------------------ D_CNT_AGENCIA_ACUERDO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_AGENCIA_ACUERDO'', 
 						  ''AGENCIA_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (AGENCIA_ACUERDO_ID)'', :error); END;'; 		 
+                            AGENCIA_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_AGENCIA_ACUERDO_PK'', ''D_CNT_AGENCIA_ACUERDO (AGENCIA_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_AGENCIA_ACUERDO');
    
     
     ------------------------------ D_CNT_ENVIADO_AGENCIA_ACUERDO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_ACUERDO'', 
 						  ''ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NOT NULL,
-                            ENVIADO_AGENCIA_ACUERDO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENVIADO_AGENCIA_ACUERDO_ID)'', :error); END;'; 		 
+                            ENVIADO_AGENCIA_ACUERDO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_ACUERDO_PK'', ''D_CNT_ENVIADO_AGENCIA_ACUERDO (ENVIADO_AGENCIA_ACUERDO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ENVIADO_AGENCIA_ACUERDO');
    
 
     ------------------------------ D_CNT_TIPO_INCIDENCIA -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_INCIDENCIA'', 
 						  ''TIPO_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            TIPO_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_INCIDENCIA_ID)'', :error); END;'; 		 
+                            TIPO_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_INCIDENCIA_PK'', ''D_CNT_TIPO_INCIDENCIA (TIPO_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_INCIDENCIA');
    
     
     ------------------------------ D_CNT_SITUACION_INCIDENCIA -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SITUACION_INCIDENCIA'', 
 						  ''SITUACION_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            SITUACION_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SITUACION_INCIDENCIA_ID)'', :error); END;'; 		 
+                            SITUACION_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SITUACION_INCIDENCIA_PK'', ''D_CNT_SITUACION_INCIDENCIA (SITUACION_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SITUACION_INCIDENCIA');
    
     
     ------------------------------ D_CNT_ESQUEMA_INCIDENCIA -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESQUEMA_INCIDENCIA'', 
 						  ''ESQUEMA_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_INCIDENCIA_ID)'', :error); END;'; 		 
+                            ESQUEMA_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESQUEMA_INCIDENCIA_PK'', ''D_CNT_ESQUEMA_INCIDENCIA (ESQUEMA_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESQUEMA_INCIDENCIA');
    
 
     ------------------------------ D_CNT_CARTERA_INCIDENCIA -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CARTERA_INCIDENCIA'', 
 						  ''CARTERA_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            CARTERA_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CARTERA_INCIDENCIA_ID)'', :error); END;'; 		 
+                            CARTERA_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CARTERA_INCIDENCIA_PK'', ''D_CNT_CARTERA_INCIDENCIA (CARTERA_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CARTERA_INCIDENCIA');
    
 
@@ -1676,45 +1805,60 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SUBCARTERA_INCIDENCIA'', 
 						  ''SUBCARTERA_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
                             SUBCARTERA_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            CARTERA_INCIDENCIA_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SUBCARTERA_INCIDENCIA_ID)'', :error); END;'; 		 
+                            CARTERA_INCIDENCIA_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SUBCARTERA_INCIDENCIA_PK'', ''D_CNT_SUBCARTERA_INCIDENCIA (SUBCARTERA_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SUBCARTERA_INCIDENCIA');
    
 
     ------------------------------ D_CNT_AGENCIA_INCIDENCIA -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_AGENCIA_INCIDENCIA'', 
 						  ''AGENCIA_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (AGENCIA_INCIDENCIA_ID)'', :error); END;'; 		 
+                            AGENCIA_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_AGENCIA_INCIDENCIA_PK'', ''D_CNT_AGENCIA_INCIDENCIA (AGENCIA_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_AGENCIA_INCIDENCIA');
    
     
     ------------------------------ D_CNT_ENVIADO_AGENCIA_INCI --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_INCI'', 
 						  ''ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NOT NULL,
-                            ENVIADO_AGENCIA_INCI_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENVIADO_AGENCIA_INCI_ID)'', :error); END;'; 		 
+                            ENVIADO_AGENCIA_INCI_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ENVIADO_AGENCIA_INCI_PK'', ''D_CNT_ENVIADO_AGENCIA_INCI (ENVIADO_AGENCIA_INCI_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ENVIADO_AGENCIA_INCI');
    
 
     ------------------------------ D_CNT_ESQUEMA_ER -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESQUEMA_ER'', 
 						  ''ESQUEMA_ER_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_ER_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_ER_ID)'', :error); END;'; 		 
+                            ESQUEMA_ER_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESQUEMA_ER_PK'', ''D_CNT_ESQUEMA_ER (ESQUEMA_ER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESQUEMA_ER');
    
 
     ------------------------------ D_CNT_CARTERA_ER -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CARTERA_ER '', 
 						  ''CARTERA_ER_ID NUMBER(16,0) NOT NULL,
-                            CARTERA_ER_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CARTERA_ER_ID)'', :error); END;'; 		 
+                            CARTERA_ER_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CARTERA_ER_PK'', ''D_CNT_CARTERA_ER (CARTERA_ER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CARTERA_ER');
    
 
@@ -1722,37 +1866,48 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SUBCARTERA_ER'', 
 						  ''SUBCARTERA_ER_ID NUMBER(16,0) NOT NULL,
                             SUBCARTERA_ER_DESC VARCHAR2(250 CHAR),
-                            CARTERA_ER_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SUBCARTERA_ER_ID)'', :error); END;'; 		 
+                            CARTERA_ER_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SUBCARTERA_ER_PK'', ''D_CNT_SUBCARTERA_ER (SUBCARTERA_ER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SUBCARTERA_ER');
    
 
     ------------------------------ D_CNT_AGENCIA_ER -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_AGENCIA_ER '', 
 						  ''AGENCIA_ER_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_ER_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (AGENCIA_ER_ID)'', :error); END;'; 		 
+                            AGENCIA_ER_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_AGENCIA_ER_PK'', ''D_CNT_AGENCIA_ER (AGENCIA_ER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_AGENCIA_ER');
    
 
 	            ------------------------------ D_CNT_TRAMO_RIESGO -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TRAMO_RIESGO'', 
 						  ''TRAMO_RIESGO_CNT_ID NUMBER(16,0) NOT NULL,
-                            TRAMO_RIESGO_CNT_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (TRAMO_RIESGO_CNT_ID)'', :error); END;'; 		 
+                            TRAMO_RIESGO_CNT_DESC VARCHAR2(50 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TRAMO_RIESGO_PK'', ''D_CNT_TRAMO_RIESGO (TRAMO_RIESGO_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TRAMO_RIESGO');
    
 	
 	  ------------------------------ D_CNT_CALIF_FINAL_CREDITO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CALIF_FINAL_CREDITO'', 
 						  ''CALIFICACION_FINAL_ID NUMBER(16,0) NOT NULL,
-                            CALIFICACION_FINAL_DESC VARCHAR2(250),
-                         PRIMARY KEY (CALIFICACION_FINAL_ID)'', :error); END;'; 		 
+                            CALIFICACION_FINAL_DESC VARCHAR2(250)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
-						 
+
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CALIF_FINAL_CREDITO_PK'', ''D_CNT_CALIF_FINAL_CREDITO (CALIFICACION_FINAL_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
     DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CALIF_FINAL_CREDITO');
    
 	
@@ -1760,10 +1915,12 @@ BEGIN
 	 ------------------------------ D_CNT_CALIF_FINAL_CREDITO_INSI --------------------------
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CALIF_FINAL_CREDITO_INSI'', 
 						  ''CALIF_FINAL_CREDITO_ID NUMBER(16,0) NOT NULL,
-                            CALIF_FINAL_CREDITO_DESC VARCHAR2(250),
-                         PRIMARY KEY (CALIF_FINAL_CREDITO_ID)'', :error); END;'; 		 
+                            CALIF_FINAL_CREDITO_DESC VARCHAR2(250)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
-						 
+
+        V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CALIF_FINAL_CREDITO_INSI_PK'', ''D_CNT_CALIF_FINAL_CREDITO_INSI (CALIF_FINAL_CREDITO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CALIF_FINAL_CREDITO_INSI');
    
 
@@ -1775,9 +1932,12 @@ BEGIN
   ------------------------------ D_CNT_CALIF_INICIAL_CREDITO --------------------------
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CALIF_INICIAL_CREDITO'', 
 						  ''CALIFICACION_INICIAL_ID NUMBER(16,0) NOT NULL,
-                            CALIFICACION_INICIAL_DESC VARCHAR2(250),
-                         PRIMARY KEY (CALIFICACION_INICIAL_ID)'', :error); END;'; 		 
+                            CALIFICACION_INICIAL_DESC VARCHAR2(250)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CALIF_INICIAL_CREDITO_PK'', ''D_CNT_CALIF_INICIAL_CREDITO (CALIFICACION_INICIAL_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CALIF_INICIAL_CREDITO');
    
 
@@ -1787,9 +1947,12 @@ BEGIN
     ------------------------------ D_CNT_CALIF_GESTOR_CREDITO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_CALIF_GESTOR_CREDITO'', 
 						  ''CALIFICACION_GESTOR_ID NUMBER(16,0) NOT NULL,
-                            CALIFICACION_GESTOR_DESC VARCHAR2(250),
-                         PRIMARY KEY (CALIFICACION_GESTOR_ID)'', :error); END;'; 		 
+                            CALIFICACION_GESTOR_DESC VARCHAR2(250)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CALIF_GESTOR_CREDITO_PK'', ''D_CNT_CALIF_GESTOR_CREDITO (CALIFICACION_GESTOR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_CALIF_GESTOR_CREDITO');
    
 
@@ -1800,9 +1963,12 @@ BEGIN
  ------------------------------ D_CNT_ESTADO_INSI_CREDITO --------------------------
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ESTADO_INSI_CREDITO'', 
 						  ''ESTADO_INSI_CREDITO_ID NUMBER(16,0) NOT NULL,
-                            ESTADO_INSI_CREDITO_DESC VARCHAR2(250),
-                         PRIMARY KEY (ESTADO_INSI_CREDITO_ID)'', :error); END;'; 		 
+                            ESTADO_INSI_CREDITO_DESC VARCHAR2(250)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_ESTADO_INSI_CREDITO_PK'', ''D_CNT_ESTADO_INSI_CREDITO (ESTADO_INSI_CREDITO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ESTADO_INSI_CREDITO');
    
 
@@ -1814,9 +1980,12 @@ BEGIN
   ----------------------------- D_CNT_DESPACHO_GESTOR_CREDITO --------------------------
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_DESPACHO_GESTOR_CREDITO'', 
 						  ''DESPACHO_GESTOR_CREDITO_ID NUMBER(16,0) NOT NULL,
-                            DESPACHO_GESTOR_CREDITO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (DESPACHO_GESTOR_CREDITO_ID)'', :error); END;'; 		 
+                            DESPACHO_GESTOR_CREDITO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_DESPACHO_GESTOR_CREDITO_PK'', ''D_CNT_DESPACHO_GESTOR_CREDITO (DESPACHO_GESTOR_CREDITO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_DESPACHO_GESTOR_CREDITO');
    
 
@@ -1830,9 +1999,12 @@ BEGIN
                             GESTOR_CREDITO_NOMBRE VARCHAR2(250),
                             GESTOR_CREDITO_APELLIDO1 VARCHAR2(250),
                             GESTOR_CREDITO_APELLIDO2 VARCHAR2(250),
-                            DESPACHO_GESTOR_CREDITO_ID NUMBER(16,0),
-                            PRIMARY KEY (GESTOR_CREDITO_ID,DESPACHO_GESTOR_CREDITO_ID)'', :error); END;'; 		 
+                            DESPACHO_GESTOR_CREDITO_ID NUMBER(16,0)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_GESTOR_CREDITO_PK'', ''D_CNT_GESTOR_CREDITO (GESTOR_CREDITO_ID,DESPACHO_GESTOR_CREDITO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_GESTOR_CREDITO');
    
 
@@ -1842,9 +2014,12 @@ BEGIN
     ------------------------------ D_CNT_RESULTADO_GESTION --------------------------
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_RESULTADO_GESTION'', 
 						  ''RESULTADO_GESTION_ID NUMBER(16,0) NOT NULL,
-                            RESULTADO_GESTION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (RESULTADO_GESTION_ID)'', :error); END;'; 		 
+                            RESULTADO_GESTION_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_RESULTADO_GESTION_PK'', ''D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_RESULTADO_GESTION');
    
 
@@ -1856,9 +2031,12 @@ BEGIN
     ------------------------------ D_CNT_TIPO_ACCION --------------------------
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_ACCION'', 
 						  ''TIPO_ACCION_ID NUMBER(16,0) NOT NULL,
-                            TIPO_ACCION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_ACCION_ID)'', :error); END;'; 		 
+                            TIPO_ACCION_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_ACCION_PK'', ''D_CNT_TIPO_ACCION (TIPO_ACCION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_ACCION');
    
 	
@@ -1866,36 +2044,48 @@ BEGIN
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_GESTION_ESPECIAL'', 
 						  ''GESTION_ESPECIAL_ID NUMBER(16,0) NOT NULL,
                             GESTION_ESPECIAL_COD_ID VARCHAR2(50 CHAR),
-                            GESTION_ESPECIAL_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (GESTION_ESPECIAL_ID)'', :error); END;'; 		 
+                            GESTION_ESPECIAL_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_GESTION_ESPECIAL_PK'', ''D_CNT_GESTION_ESPECIAL (GESTION_ESPECIAL_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_GESTION_ESPECIAL');
    
 	
 	  ------------------------------ D_CNT_TA_FECHA_CREACION --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TA_FECHA_CREACION'', 
 						  ''TA_FECHA_CREACION_ID NUMBER(16,0) NOT NULL,
-                            TA_FECHA_CREACION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TA_FECHA_CREACION_ID)'', :error); END;'; 		 
+                            TA_FECHA_CREACION_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TA_FECHA_CREACION_PK'', ''D_CNT_TA_FECHA_CREACION (TA_FECHA_CREACION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TA_FECHA_CREACION');
    
 	
 		  ------------------------------ D_CNT_PERIMETRO_GESTION --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_GESTION'', 
 						  ''PERIMETRO_GESTION_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_GESTION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_GESTION_ID)'', :error); END;'; 		 
+                            PERIMETRO_GESTION_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_GESTION_PK'', ''D_CNT_PERIMETRO_GESTION (PERIMETRO_GESTION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GESTION');
    
 
 			  ------------------------------  D_CNT_MOTIVO_ALTA_DUDOSO --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_MOTIVO_ALTA_DUDOSO'', 
 						  ''MOTIVO_ALTA_DUDOSO_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_ALTA_DUDOSO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (MOTIVO_ALTA_DUDOSO_ID)'', :error); END;'; 		 
+                            MOTIVO_ALTA_DUDOSO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_MOTIVO_ALTA_DUDOSO_PK'', ''D_CNT_MOTIVO_ALTA_DUDOSO (MOTIVO_ALTA_DUDOSO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_MOTIVO_ALTA_DUDOSO');
     
 	
@@ -1904,18 +2094,24 @@ BEGIN
 			  ------------------------------  D_CNT_MOTIVO_BAJA_DUDOSO --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_MOTIVO_BAJA_DUDOSO'', 
 						  ''MOTIVO_BAJA_DUDOSO_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_BAJA_DUDOSO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (MOTIVO_BAJA_DUDOSO_ID)'', :error); END;'; 		 
+                            MOTIVO_BAJA_DUDOSO_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_MOTIVO_BAJA_DUDOSO_PK'', ''D_CNT_MOTIVO_BAJA_DUDOSO (MOTIVO_BAJA_DUDOSO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_MOTIVO_BAJA_DUDOSO');
     
 	 
 			  ------------------------------  D_CNT_T_ANTIGUEDAD_DEUDA --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_T_ANTIGUEDAD_DEUDA'', 
 						  ''TRAMO_ANTIGUEDAD_DEUDA_ID NUMBER(16,0) NOT NULL,
-                            TRAMO_ANTIGUEDAD_DEUDA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TRAMO_ANTIGUEDAD_DEUDA_ID)'', :error); END;'; 		 
+                            TRAMO_ANTIGUEDAD_DEUDA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_T_ANTIGUEDAD_DEUDA_PK'', ''D_CNT_T_ANTIGUEDAD_DEUDA (TRAMO_ANTIGUEDAD_DEUDA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_T_ANTIGUEDAD_DEUDA');
     
 	
@@ -1927,9 +2123,12 @@ BEGIN
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SIT_CART_DANADA'', 
 						  ''SIT_CART_DANADA_ID NUMBER(16,0) NOT NULL,
                             SIT_CART_DANADA_DESC VARCHAR2(250 CHAR),
-                            SIT_CART_DANADA_AGR_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SIT_CART_DANADA_ID)'', :error); END;'; 		 
+                            SIT_CART_DANADA_AGR_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SIT_CART_DANADA_PK'', ''D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SIT_CART_DANADA');
     
 	
@@ -1939,9 +2138,12 @@ BEGIN
     ------------------------------  D_CNT_SIT_CART_DANADA_AGR --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_SIT_CART_DANADA_AGR'', 
 						  ''SIT_CART_DANADA_AGR_ID NUMBER(16,0) NOT NULL,
-                            SIT_CART_DANADA_AGR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SIT_CART_DANADA_AGR_ID)'', :error); END;'; 		 
+                            SIT_CART_DANADA_AGR_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_SIT_CART_DANADA_AGR_PK'', ''D_CNT_SIT_CART_DANADA_AGR (SIT_CART_DANADA_AGR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_SIT_CART_DANADA_AGR');
     
 	
@@ -1951,9 +2153,12 @@ BEGIN
     ------------------------------  D_CNT_TIPO_GESTION_EXP --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_GESTION_EXP'', 
 						  ''TIPO_GESTION_EXP_ID NUMBER(16,0) NOT NULL,
-                            TIPO_GESTION_EXP_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_GESTION_EXP_ID)'', :error); END;'; 		 
+                            TIPO_GESTION_EXP_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_TIPO_GESTION_EXP_PK'', ''D_CNT_TIPO_GESTION_EXP (TIPO_GESTION_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_GESTION_EXP');
     
 	
@@ -1963,63 +2168,84 @@ BEGIN
     ------------------------------  D_CNT_PERIMETRO_SIN_GESTION --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_SIN_GESTION'', 
 						  ''PERIMETRO_SIN_GESTION_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_SIN_GESTION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_SIN_GESTION_ID)'', :error); END;'; 		 
+                            PERIMETRO_SIN_GESTION_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_SIN_GESTION_PK'', ''D_CNT_PERIMETRO_SIN_GESTION (PERIMETRO_SIN_GESTION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_SIN_GESTION');
     
 
     ------------------------------  D_CNT_PERIMETRO_EXP_SEG --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_EXP_SEG'', 
 						  ''PERIMETRO_EXP_SEG_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_EXP_SEG_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_EXP_SEG_ID)'', :error); END;'; 		 
+                            PERIMETRO_EXP_SEG_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_EXP_SEG_PK'', ''D_CNT_PERIMETRO_EXP_SEG (PERIMETRO_EXP_SEG_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_EXP_SEG');
 
 
     ------------------------------  D_CNT_PERIMETRO_EXP_REC --------------------------
 	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_EXP_REC'', 
 						  ''PERIMETRO_EXP_REC_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_EXP_REC_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_EXP_REC_ID)'', :error); END;'; 		 
+                            PERIMETRO_EXP_REC_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_EXP_REC_PK'', ''D_CNT_PERIMETRO_EXP_REC (PERIMETRO_EXP_REC_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_EXP_REC');
 
     
     ------------------------------  D_CNT_PERIMETRO_GES_EXTRA --------------------------
 	  	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_GES_EXTRA'', 
 						  ''PERIMETRO_GES_EXTRA_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_GES_EXTRA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_GES_EXTRA_ID)'', :error); END;'; 		 
+                            PERIMETRO_GES_EXTRA_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_GES_EXTRA_PK'', ''D_CNT_PERIMETRO_GES_EXTRA (PERIMETRO_GES_EXTRA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GES_EXTRA');
 
     
     ------------------------------  D_CNT_PERIMETRO_GES_PRE --------------------------
 	  	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_GES_PRE'', 
 						  ''PERIMETRO_GES_PRE_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_GES_PRE_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_GES_PRE_ID)'', :error); END;'; 		 
+                            PERIMETRO_GES_PRE_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_GES_PRE_PK'', ''D_CNT_PERIMETRO_GES_PRE (PERIMETRO_GES_PRE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GES_PRE');
     
         
     ------------------------------  D_CNT_PERIMETRO_GES_JUDI --------------------------
 	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_GES_JUDI'', 
 						  ''PERIMETRO_GES_JUDI_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_GES_JUDI_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_GES_JUDI_ID)'', :error); END;'; 		 
+                            PERIMETRO_GES_JUDI_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_GES_JUDI_PK'', ''D_CNT_PERIMETRO_GES_JUDI (PERIMETRO_GES_JUDI_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GES_JUDI');
 
         
     ------------------------------  D_CNT_PERIMETRO_GES_CONCU --------------------------
 	  	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_GES_CONCU'', 
 						  ''PERIMETRO_GES_CONCU_ID NUMBER(16,0) NOT NULL,
-                            PERIMETRO_GES_CONCU_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERIMETRO_GES_CONCU_ID)'', :error); END;'; 		 
+                            PERIMETRO_GES_CONCU_DESC VARCHAR2(250 CHAR)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
+ 
+         V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PERIMETRO_GES_CONCU_PK'', ''D_CNT_PERIMETRO_GES_CONCU (PERIMETRO_GES_CONCU_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error; 
+ 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GES_CONCU');
     
     ------------------------------ D_CNT --------------------------
@@ -2048,11 +2274,12 @@ BEGIN
                             SEXO_TITULAR_ID NUMBER(16,0),
                             TIPO_PERSONA_TITULAR_ID NUMBER(16,0),
                             CARTERA_CONTRATO_ID NUMBER(16,0),
-                            GESTION_ESPECIAL_ID NUMBER(16,0) NULL,
-                            CONSTRAINT D_CNT_PK PRIMARY KEY (CONTRATO_ID)'', :error); END;'; 		 
+                            GESTION_ESPECIAL_ID NUMBER(16,0) NULL'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
          DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT');
-    
+     
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_PK'', ''D_CNT (CONTRATO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;     
 	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_COD_CONTRATO_IX'', ''D_CNT (CONTRATO_COD_CONTRATO)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CCC_LITIGIO_IX'', ''D_CNT (CCC_LITIGIO)'', ''S'', '''', :error); END;';

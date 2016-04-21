@@ -3462,7 +3462,12 @@ calculado</text-property>
                         <property name="fontSize">6pt</property>
                         <property name="marginTop">0pt</property>
                         <property name="textAlign">right</property>
-                        <expression name="valueExpr">formatter.format(resumen.getTotalDeuda());</expression>
+                        <expression name="valueExpr">if (resumen.getEntregadoIntDemoraCalc().compareTo(BigDecimal.ZERO) == 1) {
+		formatter.format(resumen.getTotalDeuda()) + " - (" + formatter.format(resumen.getEntregadoIntDemoraCalc()) + ") = " +
+		formatter.format(resumen.getTotalDeuda().substract(resumen.getEntregadoIntDemoraCalc()));
+} else {
+	formatter.format(resumen.getTotalDeuda());
+}</expression>
                         <property name="contentType">html</property>
                     </text-data>
                 </cell>

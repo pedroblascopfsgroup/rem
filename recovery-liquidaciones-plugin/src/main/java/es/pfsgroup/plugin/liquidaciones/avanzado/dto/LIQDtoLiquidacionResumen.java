@@ -4,17 +4,25 @@ import java.math.BigDecimal;
 
 public class LIQDtoLiquidacionResumen {
 	private BigDecimal totalDeuda;
+	private BigDecimal entregadoIntDemoraCalc;
 	private BigDecimal impuestos;
 	private BigDecimal comisiones;
 	private BigDecimal costasLetrado;
 	private BigDecimal costasProcurador;
 	private BigDecimal otrosGastos;
 	private BigDecimal totalPagar;
+	
 	public BigDecimal getTotalDeuda() {
 		return totalDeuda;
 	}
 	public void setTotalDeuda(BigDecimal totalDeuda) {
 		this.totalDeuda = totalDeuda;
+	}
+	public BigDecimal getEntregadoIntDemoraCalc() {
+		return entregadoIntDemoraCalc;
+	}
+	public void setEntregadoIntDemoraCalc(BigDecimal entregadoIntDemoraCalc) {
+		this.entregadoIntDemoraCalc = entregadoIntDemoraCalc;
 	}
 	public BigDecimal getImpuestos() {
 		return impuestos;

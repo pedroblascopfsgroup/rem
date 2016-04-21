@@ -19,6 +19,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.ContratoManager;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.multigestor.EXTGestorAdicionalAsuntoManager;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
@@ -28,6 +29,7 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQReportTiposIntereses;
+import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
 
@@ -45,6 +47,9 @@ public class LiquidacionesAvanzadoManager {
 	
 	@Autowired
 	private LIQCobroPagoDao cobrosPagosDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;	
 	
 	public LIQDtoLiquidacionCabecera completarCabecera(LIQDtoReportRequest request) {
 		LIQDtoLiquidacionCabecera cabecera = new LIQDtoLiquidacionCabecera();
@@ -106,7 +111,7 @@ public class LiquidacionesAvanzadoManager {
 		return cabecera;
 	}
 
-	public List<LIQDtoTramoLiquidacion> obtenerLiquidaciones(LIQDtoReportRequest request) {
+	public List<LIQDtoTramoLiquidacion> obtenerLiquidaciones(LIQDtoReportRequest request, LIQTramoPendientes pendientes) {
 		List<LIQDtoTramoLiquidacion> cuerpo = new ArrayList<LIQDtoTramoLiquidacion>();
 		
 		Date fechaCierre;
@@ -119,34 +124,22 @@ public class LiquidacionesAvanzadoManager {
 		}
 		
 		//1.- Tramo inicial
-		BigDecimal saldo = request.getCapital();
-		BigDecimal intereses = request.getInteresesOrdinarios()!=null?request.getInteresesOrdinarios():BigDecimal.ZERO;
-		intereses = intereses.add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO);
-		
-		BigDecimal impuestos = request.getImpuestos();
-		BigDecimal comisiones = request.getComisiones();
-		BigDecimal gastos = request.getGastos()!=null?request.getGastos():BigDecimal.ZERO;
-		gastos = gastos.add(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO);
-		BigDecimal costasLetrado = request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO;
-		BigDecimal costasProcurador = request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO;
-		
 		Date fecha = fechaCierre;
 		Float tipoInt = request.getTipoDemoraCierre();
 		
 		LIQDtoTramoLiquidacion tramoInicial = new LIQDtoTramoLiquidacion();
 		tramoInicial.setFechaValor(DateFormat.toString(fecha));
 		tramoInicial.setDescripcion("Principal reclamado");
-		tramoInicial.setSaldo(saldo);
-		tramoInicial.setInteresesPendientes(intereses);
+		tramoInicial.setSaldo(pendientes.getSaldo());
+		tramoInicial.setInteresesPendientes(pendientes.getIntereses());
 		cuerpo.add(tramoInicial);
 		
 		//2. - Ahora van los diferentes tramos, que son las entregas a cuenta y los cambios de tipo de interés
-		//2.1 - Obtenemos las entregas a cuenta (DD_SCP_CODIGO = EC) en estado cobrado (DD_ECP_CODIGO = '04') para el contrato ordenado por fecha  
 		List<LIQCobroPago> entregasCuenta = cobrosPagosDao.findEntregasACuenta(request.getContrato(), fechaCierre, fechaCalculo);
 		
 		for (LIQCobroPago ec : entregasCuenta) {
 			//Obtenemos los cambios de tipos intermedios
-			Map<List<LIQDtoTramoLiquidacion>, Float> cambios = cambiosTipoEntreFechas(request, fecha, ec.getFecha(), saldo, intereses, tipoInt);
+			Map<List<LIQDtoTramoLiquidacion>, Float> cambios = cambiosTipoEntreFechas(request, fecha, ec.getFecha(), pendientes.getSaldo(), pendientes.getIntereses(), tipoInt);
 			//Agregamos los tramos y vamos avanzado la fecha y actualizando el tipo de interes
 			for (LIQDtoTramoLiquidacion cambio : cambios.keySet().iterator().next()) {
 				cuerpo.add(cambio);
@@ -160,59 +153,7 @@ public class LiquidacionesAvanzadoManager {
 			}
 			
 			//Ahora creamos el tramo para la entrega cuenta
-			LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
-			tramo.setFechaValor(DateFormat.toString(ec.getFechaValor()));
-			tramo.setDescripcion("Entrega");
-			if (!Checks.esNulo(ec.getImporte())) {
-				tramo.setImporte(new BigDecimal(ec.getImporte().toString()));
-			}
-			if (!Checks.esNulo(ec.getCapital()) || !Checks.esNulo(ec.getCapitalNoVencido())) {
-				BigDecimal entregado = BigDecimal.ZERO;
-				entregado = entregado.add(ec.getCapital()!=null?new BigDecimal(ec.getCapital().toString()):BigDecimal.ZERO);
-				entregado = entregado.add(ec.getCapitalNoVencido()!=null?new BigDecimal(ec.getCapitalNoVencido().toString()):BigDecimal.ZERO);
-				
-				tramo.setEntregado(entregado);
-			}
-			if (!Checks.esNulo(ec.getInteresesOrdinarios())) {
-				intereses = intereses.subtract(new BigDecimal(ec.getInteresesOrdinarios().toString()));
-				tramo.setIntereses(new BigDecimal(ec.getInteresesOrdinarios().toString()));
-			}
-			if (!Checks.esNulo(ec.getImpuestos())) {
-				impuestos = impuestos.subtract(new BigDecimal(ec.getImpuestos().toString()));
-				tramo.setImpuestos(new BigDecimal(ec.getImpuestos().toString()));
-			}
-			if (!Checks.esNulo(ec.getComisiones())) {
-				comisiones = comisiones.subtract(new BigDecimal(ec.getComisiones().toString()));
-				tramo.setComisiones(new BigDecimal(ec.getComisiones().toString()));
-			}
-			if (!Checks.esNulo(ec.getGastosOtros())) {
-				gastos = gastos.subtract(new BigDecimal(ec.getGastosOtros().toString()));
-				tramo.setGastos(new BigDecimal(ec.getGastosOtros().toString()));
-			}
-			if (!Checks.esNulo(ec.getGastosAbogado())) {
-				costasLetrado = costasLetrado.subtract(new BigDecimal(ec.getGastosAbogado().toString()));
-				tramo.setCostasLetrado(new BigDecimal(ec.getGastosAbogado().toString()));
-			}
-			if (!Checks.esNulo(ec.getGastosProcurador())) {
-				costasProcurador = costasProcurador.subtract(new BigDecimal(ec.getGastosProcurador().toString()));
-				tramo.setCostasProcurador(new BigDecimal(ec.getGastosProcurador().toString()));
-			}
-			tramo.setInteresesPendientes(intereses);
-			tramo.setImpuestosPendientes(impuestos);
-			tramo.setComisionesPendientes(comisiones);
-			tramo.setGastosPendientes(gastos);
-			tramo.setCostasLetradoPendientes(costasLetrado);
-			tramo.setCostasProcuradorPendientes(costasProcurador);
-			tramo.setDias(diferenciaDias(fecha, ec.getFechaValor()));
-			tramo.setTipoDemora(tipoInt);
-
-			tramo.setInteresesDemora(calcularInteresesDemora(saldo, tramo.getDias(), tipoInt, request.getBaseCalculo()));			
-			//Restar la parte de saldo
-			if (!Checks.esNulo(ec.getCapital())) {
-				saldo = saldo.subtract(new BigDecimal(ec.getCapital().toString()));
-			}
-			tramo.setSaldo(saldo);
-			
+			LIQDtoTramoLiquidacion tramo = generarTramoParaEntrega(ec, fecha, tipoInt, request.getBaseCalculo(), pendientes);
 			
 			// Y lo agregamos al cuerpo
 			cuerpo.add(tramo);
@@ -222,7 +163,7 @@ public class LiquidacionesAvanzadoManager {
 		}
 		
 		//Ahora insertamos los cambios de tipo entre la ultima entrega y la fecha de calculo
-		Map<List<LIQDtoTramoLiquidacion>, Float> cambios = cambiosTipoEntreFechas(request, fecha, fechaCalculo, saldo, intereses, tipoInt);
+		Map<List<LIQDtoTramoLiquidacion>, Float> cambios = cambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), tipoInt);
 		for (LIQDtoTramoLiquidacion cambio : cambios.keySet().iterator().next()) {
 			cuerpo.add(cambio);
 			try {
@@ -239,23 +180,149 @@ public class LiquidacionesAvanzadoManager {
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();
 		ultTramo.setFechaValor(request.getFechaDeLiquidacion());
 		ultTramo.setDescripcion("C\u00E1lculo deuda");
-		ultTramo.setSaldo(saldo);
-		ultTramo.setInteresesPendientes(intereses);
+		ultTramo.setSaldo(pendientes.getSaldo());
+		ultTramo.setInteresesPendientes(pendientes.getIntereses());
 		
-		ultTramo.setImpuestosPendientes(impuestos);
-		ultTramo.setComisionesPendientes(comisiones);
-		ultTramo.setGastosPendientes(gastos);
-		ultTramo.setCostasLetradoPendientes(costasLetrado);
-		ultTramo.setCostasProcuradorPendientes(costasProcurador);
+		ultTramo.setImpuestosPendientes(pendientes.getImpuestos());
+		ultTramo.setComisionesPendientes(pendientes.getComisiones());
+		ultTramo.setGastosPendientes(pendientes.getGastos());
+		ultTramo.setCostasLetradoPendientes(pendientes.getCostasLetrado());
+		ultTramo.setCostasProcuradorPendientes(pendientes.getCostasProcurador());
 		
 		ultTramo.setDias(diferenciaDias(fecha, fechaCalculo));
 		ultTramo.setTipoDemora(tipoInt);
-		ultTramo.setInteresesDemora(calcularInteresesDemora(saldo, ultTramo.getDias(), tipoInt, request.getBaseCalculo()));
+		ultTramo.setInteresesDemora(calcularInteresesDemora(pendientes.getSaldo(), ultTramo.getDias(), tipoInt, request.getBaseCalculo()));
 		
 		cuerpo.add(ultTramo);
 		
 		return cuerpo;
 	}
+	
+	private LIQDtoTramoLiquidacion generarTramoParaEntrega(LIQCobroPago ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
+		
+		Boolean entregaDesglosada = new Boolean(usuarioManager.getUsuarioLogado().getEntidad().configValue("CobrosDesglosados", "false"));
+		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
+
+		if (entregaDesglosada) {
+			tramo = tramoEntregaDesglosada(ec, fechaAnt, tipoInt, baseCalculo, pendientes);
+		} else {
+			tramo = tramoEntregaNoDesglosada(ec, fechaAnt, tipoInt, baseCalculo, pendientes);
+		}
+		
+		//Datos iguales de metodo desglosado o no
+		tramo.setFechaValor(DateFormat.toString(ec.getFechaValor()));
+		tramo.setDescripcion("Entrega");
+		if (!Checks.esNulo(ec.getImporte())) {
+			tramo.setImporte(new BigDecimal(ec.getImporte().toString()));
+		}
+		tramo.setInteresesPendientes(pendientes.getIntereses());
+		tramo.setImpuestosPendientes(pendientes.getImpuestos());
+		tramo.setComisionesPendientes(pendientes.getComisiones());
+		tramo.setGastosPendientes(pendientes.getGastos());
+		tramo.setCostasLetradoPendientes(pendientes.getCostasLetrado());
+		tramo.setCostasProcuradorPendientes(pendientes.getCostasProcurador());
+		tramo.setTipoDemora(tipoInt);
+		
+		return tramo;
+	}
+	
+	private LIQDtoTramoLiquidacion tramoEntregaDesglosada(LIQCobroPago ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
+		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
+		
+		if (!Checks.esNulo(ec.getCapital()) || !Checks.esNulo(ec.getCapitalNoVencido())) {
+			BigDecimal entregado = BigDecimal.ZERO;
+			entregado = entregado.add(ec.getCapital()!=null?new BigDecimal(ec.getCapital().toString()):BigDecimal.ZERO);
+			entregado = entregado.add(ec.getCapitalNoVencido()!=null?new BigDecimal(ec.getCapitalNoVencido().toString()):BigDecimal.ZERO);
+			
+			tramo.setEntregado(entregado);
+		}
+		if (!Checks.esNulo(ec.getInteresesOrdinarios())) {
+			pendientes.setIntereses(pendientes.getIntereses().subtract(new BigDecimal(ec.getInteresesOrdinarios().toString())));
+			tramo.setIntereses(new BigDecimal(ec.getInteresesOrdinarios().toString()));
+		}
+		if (!Checks.esNulo(ec.getImpuestos())) {
+			pendientes.setImpuestos(pendientes.getImpuestos().subtract(new BigDecimal(ec.getImpuestos().toString())));
+			tramo.setImpuestos(new BigDecimal(ec.getImpuestos().toString()));
+		}
+		if (!Checks.esNulo(ec.getComisiones())) {
+			pendientes.setComisiones(pendientes.getComisiones().subtract(new BigDecimal(ec.getComisiones().toString())));
+			tramo.setComisiones(new BigDecimal(ec.getComisiones().toString()));
+		}
+		if (!Checks.esNulo(ec.getGastosOtros())) {
+			pendientes.setGastos(pendientes.getGastos().subtract(new BigDecimal(ec.getGastosOtros().toString())));
+			tramo.setGastos(new BigDecimal(ec.getGastosOtros().toString()));
+		}
+		if (!Checks.esNulo(ec.getGastosAbogado())) {
+			pendientes.setCostasLetrado(pendientes.getCostasLetrado().subtract(new BigDecimal(ec.getGastosAbogado().toString())));
+			tramo.setCostasLetrado(new BigDecimal(ec.getGastosAbogado().toString()));
+		}
+		if (!Checks.esNulo(ec.getGastosProcurador())) {
+			pendientes.setCostasProcurador(pendientes.getCostasProcurador().subtract(new BigDecimal(ec.getGastosProcurador().toString())));
+			tramo.setCostasProcurador(new BigDecimal(ec.getGastosProcurador().toString()));
+		}
+		
+		tramo.setDias(diferenciaDias(fechaAnt, ec.getFechaValor()));
+		tramo.setInteresesDemora(calcularInteresesDemora(pendientes.getSaldo(), tramo.getDias(), tipoInt, baseCalculo));
+		
+		//Restar la parte de saldo
+		if (!Checks.esNulo(ec.getCapital())) {
+			pendientes.setSaldo(pendientes.getSaldo().subtract(new BigDecimal(ec.getCapital().toString())));
+		}
+		tramo.setSaldo(pendientes.getSaldo());
+		
+		return tramo;
+	}
+	
+	private LIQDtoTramoLiquidacion tramoEntregaNoDesglosada(LIQCobroPago ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
+		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
+		
+		BigDecimal importeECRestante = (!Checks.esNulo(ec.getImporte())?new BigDecimal(ec.getImporte().toString()):BigDecimal.ZERO); 
+		
+		//De la entrega primero reducimos de los intereses pendientes
+		if (pendientes.getIntereses().compareTo(BigDecimal.ZERO) == 1) {
+			//Si la entrega es superior a los intereses
+			if (importeECRestante.compareTo(pendientes.getIntereses()) == 1) {
+				//Nos quedamos sin intereses
+				tramo.setIntereses(pendientes.getIntereses());
+				importeECRestante.subtract(tramo.getIntereses());
+				pendientes.setIntereses(BigDecimal.ZERO);
+			} else {
+				//Reducimos parte de los intereses y nos quedamos sin importe en la entrega
+				tramo.setIntereses(pendientes.getIntereses().subtract(importeECRestante));
+				pendientes.setIntereses(pendientes.getIntereses().subtract(importeECRestante));
+				importeECRestante = BigDecimal.ZERO;
+			}
+		}
+		
+		tramo.setDias(diferenciaDias(fechaAnt, ec.getFechaValor()));
+		tramo.setInteresesDemora(calcularInteresesDemora(pendientes.getSaldo(), tramo.getDias(), tipoInt, baseCalculo));		
+		
+		//Si todavia nos queda importe de la entrega
+		if (importeECRestante.compareTo(BigDecimal.ZERO) == 1) {
+			//De la entrega segundo reducimos capital
+			if (importeECRestante.compareTo(pendientes.getSaldo()) == 1) {
+				//Nos quedamos sin capital
+				tramo.setSaldo(pendientes.getSaldo());
+				importeECRestante.subtract(tramo.getSaldo());
+				pendientes.setSaldo(BigDecimal.ZERO);
+			} else {
+				//Reducimos parte del capital y nos quedamos sin importe en la entrega
+				tramo.setSaldo(pendientes.getSaldo().subtract(importeECRestante));
+				pendientes.setSaldo(pendientes.getSaldo().subtract(importeECRestante));
+				importeECRestante = BigDecimal.ZERO;
+			}
+		}
+		
+		//Si todavia nos queda importe de la entrega
+		if (importeECRestante.compareTo(BigDecimal.ZERO) == 1) {
+			//Nos quedamos el restante para luego restarlo de los intereses demora calculados
+			pendientes.setSobranteEntrega(pendientes.getSobranteEntrega().add(importeECRestante));
+		}
+		
+		return tramo;
+	}
+	
+	
 	
 	private int diferenciaDias(Date fechaInicio, Date fechaFin) {
 		Calendar calInicio = Calendar.getInstance();

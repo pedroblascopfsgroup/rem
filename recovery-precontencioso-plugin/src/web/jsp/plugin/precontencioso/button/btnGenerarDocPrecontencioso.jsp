@@ -18,7 +18,21 @@ new Ext.Button({
 					,width: 900
 				});
 				w.on(app.event.DONE, function() {
-					refrescarDocumentosGrid();
+					w.close();
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+			}
+		},
+		{
+			text: '<s:message code="plugin.precontencioso.button.documento.instancia.canarias" text="**Documento de instancia al registro para Canarias" />',
+			icon:'/pfs/css/book_next.png',
+			handler: function() {
+				var w = app.openWindow({
+					flow: 'expedientejudicial/documentoInstanciaRegistroCanarias'
+					,title: '<s:message code="plugin.precontencioso.button.documento.instancia.canarias" text="**Documento de instancia al registro para Canarias" />'
+					,width: 900
+				});
+				w.on(app.event.DONE, function() {
 					w.close();
 				});
 				w.on(app.event.CANCEL, function(){ w.close(); });

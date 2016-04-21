@@ -259,7 +259,7 @@ public class MSVNotificacionDemandadosManagerTest {
 	@Test
 	public void testUpdateNotificacion() throws Exception{
 		
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat(MSVNotificacionDemandadosManager.DATE_FORMAT);
 		Random r = new Random();
 		MSVFechasNotificacionDto dto = new MSVFechasNotificacionDto();
 		dto.setId(r.nextLong());
@@ -296,8 +296,8 @@ public class MSVNotificacionDemandadosManagerTest {
 		
 		//Prueba 3
 		//Simulamos el caso normal de funcionamiento.
-		dto.setFechaResultado("2013-12-25T12:36:12");
-		dto.setFechaSolicitud("2012-10-22T17:27:17");
+		dto.setFechaResultado("25/12/2013");
+		dto.setFechaSolicitud("22/10/2012");
 
 		msvNotificacionDemandadosManager.updateNotificacion(dto);
 		
@@ -318,7 +318,7 @@ public class MSVNotificacionDemandadosManagerTest {
 	@Test
 	public void testInsertNotificacion() throws Exception{
 		
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		SimpleDateFormat df = new SimpleDateFormat(MSVNotificacionDemandadosManager.DATE_FORMAT);
 		Random r = new Random();
 		MSVFechasNotificacionDto dto = new MSVFechasNotificacionDto();
 		Long idProcedimiento = r.nextLong();
@@ -365,8 +365,8 @@ public class MSVNotificacionDemandadosManagerTest {
 		
 
 		//Simulamos el caso normal de funcionamiento.
-		dto.setFechaResultado("2013-12-25T12:36:12");
-		dto.setFechaSolicitud("2012-10-22T17:27:17");		
+		dto.setFechaResultado("25/12/2013");
+		dto.setFechaSolicitud("22/10/2012");		
 		MSVDireccionFechaNotificacion result = msvNotificacionDemandadosManager.insertNotificacion(dto);
 
 		//Comprobamos el resultado.

@@ -1926,6 +1926,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         	}else{
         		return Boolean.FALSE;
         	}
+        }else if(DDTipoExpediente.TIPO_EXPEDIENTE_BANKIA_RECUPERACION.equals(exp.getTipoExpediente().getCodigo())){
+        	return Boolean.TRUE;
         }else if(exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()){
         	///Comprobaciones para expedientes de recuperacion
         	if(exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
@@ -3886,6 +3888,33 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         return nExp.longValue() == 0;
 
+    }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_GESTION_DEUDA)
+    public Boolean tieneExpedienteGestionDeuda(Long idPersona){
+    	
+    	Boolean resultado = false;
+    	List<Expediente> expedientes = null;
+    	
+    	expedientes = expedienteDao.obtenerExpedientesDeUnaPersona(idPersona);
+    	
+    	for(Expediente e: expedientes){
+    		Arquetipo arquetipo = e.getArquetipo();
+    		
+    		//Si el arquetipo del expediente es de seguimiento
+    		//y
+    		//el expediente esta (Activo/Bloqueado/Congelado)
+    		if(arquetipo !=null && arquetipo.getItinerario()!=null && arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()
+    				&& (e.getEstaEstadoActivo() || e.getEstaBloqueado() || e.getEstaCongelado())) {
+    			resultado = true;
+    			break;
+    		}
+    	}
+    	
+    	return resultado;
     }
 
 }

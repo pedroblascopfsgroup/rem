@@ -21,6 +21,7 @@
 		,readOnly: true
 	});
 	
+
 	var propuestaCumplimiento = new Ext.form.TextArea({
 		fieldLabel: '<s:message code="objetivo.propuestaCumplimiento.propuestaCumplimiento" text="**Propuesta cumplimiento" />'
 		,labelStyle: labelStyle

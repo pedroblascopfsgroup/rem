@@ -55,6 +55,7 @@
 	var  existeInquilino = app.creaLabel('<s:message code="bienesAdjudicacion.existeInquilino" text="**existeInquilino"/>','${NMBbien.adjudicacion.existeInquilino != null ? NMBbien.adjudicacion.existeInquilino ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
 	var  llavesNecesarias = app.creaLabel('<s:message code="bienesAdjudicacion.llavesNecesarias" text="**llavesNecesarias"/>','${NMBbien.adjudicacion.llavesNecesarias != null ? NMBbien.adjudicacion.llavesNecesarias ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
 	var  cesionRemate = app.creaLabel('<s:message code="bienesAdjudicacion.cesionRemate" text="**cesionRemate"/>','${NMBbien.adjudicacion.cesionRemate != null ? NMBbien.adjudicacion.cesionRemate ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
+	var  postores = app.creaLabel('<s:message code="bienesAdjudicacion.postores" text="**Con postores"/>','${NMBbien.adjudicacion.postores != null ? NMBbien.adjudicacion.postores ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
 	
 	
 	//selector persona
@@ -90,10 +91,15 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion,txtImporteAdjudicacion,fechaContabilidad]},
-				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
+				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate,postores]}
 				 ]
 	});
 	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+	if(usuarioEntidad != 'CAJAMAR'){
+		datosAdjudicacion.add(postores);
+	}
+		
 	var datosPosesion = new Ext.form.FieldSet({
 		autoHeight:true
 		,width:770

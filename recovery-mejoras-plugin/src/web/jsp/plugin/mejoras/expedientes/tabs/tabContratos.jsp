@@ -167,6 +167,30 @@
 				</sec:authorize>  
 				]
 	});
+	
+	contratosExpedienteStore.on('load', function(contratosExpedienteStore){
+
+		var me = botonesTabla;
+        
+        if(me.displayItem){
+            var count = 0;
+            
+			for(var i = 0; i < me.store.data.length; i++) {
+            	if(!isNaN(me.store.data.items[i].id)) {
+            		count++;
+            	}
+            }
+            var msg = count == 0 ?
+                me.emptyMsg :
+                String.format(
+                    me.displayMsg,
+                    me.cursor+1, me.cursor+count, me.cursor+count
+                );
+                
+            me.displayItem.setText(msg);
+        }
+	});
+	
 
 	contratosExpedienteGrid.on('rowdblclick', function(grid, rowIndex, e) {
 	    	var rec = grid.getStore().getAt(rowIndex);

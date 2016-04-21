@@ -128,7 +128,7 @@
 		<!-- Inicio: para que funcionen los tests de los DAO -->
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
-			<artifactId>pfs-tesfwk</artifactId>
+			<artifactId>pfs-testfwk</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

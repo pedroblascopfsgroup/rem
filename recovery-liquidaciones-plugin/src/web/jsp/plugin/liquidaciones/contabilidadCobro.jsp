@@ -405,46 +405,46 @@
 	function refreshTotalEntrega(){
 		var sumaTotal = 0;
 	 	if(nominal.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(nominal.getValue());
+			sumaTotal = sumaTotal + parseFloat(nominal.getValue());
 		}
 		if(intereses.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(intereses.getValue());
+			sumaTotal = sumaTotal + parseFloat(intereses.getValue());
 		}
 		if(demoras.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(demoras.getValue());
+			sumaTotal = sumaTotal + parseFloat(demoras.getValue());
 		}
 		if(impuestos.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(impuestos.getValue());
+			sumaTotal = sumaTotal + parseFloat(impuestos.getValue());
 		}
 		if(gastosProcurador.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(gastosProcurador.getValue());
+			sumaTotal = sumaTotal + parseFloat(gastosProcurador.getValue());
 		}
 		if(gastosLetrado.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(gastosLetrado.getValue());
+			sumaTotal = sumaTotal + parseFloat(gastosLetrado.getValue());
 		}
 		if(otrosGastos.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(otrosGastos.getValue());
+			sumaTotal = sumaTotal + parseFloat(otrosGastos.getValue());
 		}
 		if(quitaNominal.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaNominal.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaNominal.getValue());
 		}
 		if(quitaIntereses.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaIntereses.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaIntereses.getValue());
 		}
 		if(quitaDemoras.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaDemoras.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaDemoras.getValue());
 		}
 		if(quitaImpuestos.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaImpuestos.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaImpuestos.getValue());
 		}
 		if(quitaGastosProcurador.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaGastosProcurador.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaGastosProcurador.getValue());
 		}
 		if(quitaGastosLetrado.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaGastosLetrado.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaGastosLetrado.getValue());
 		}
 		if(quitaOtrosGastos.getValue() != ''){
-			sumaTotal = sumaTotal + parseInt(quitaOtrosGastos.getValue());
+			sumaTotal = sumaTotal + parseFloat(quitaOtrosGastos.getValue());
 		}
 
 		totalEntrega.setValue(sumaTotal);
@@ -452,7 +452,7 @@
 	
 	<%-- Campo de Texto Numero Num Enlace --%>
 	var numEnlace  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Número Enlace" />'
+		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Nï¿½mero Enlace" />'
 		,labelStyle:labelStyle
 		,style:style
 		,width:135
@@ -465,7 +465,7 @@
 	
 	<%-- Campo de Texto Numero Num Mandamiento --%>
 	var numMandamiento  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Número Mandamiento" />'
+		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Nï¿½mero Mandamiento" />'
 		,labelStyle:labelStyle
 		,style:style
 		,width:135
@@ -478,7 +478,7 @@
 	
 	<%-- Campo de Texto Numero Num Cheque --%>
 	var numCheque  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Número Cheque" />'
+		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Nï¿½mero Cheque" />'
 		,labelStyle:labelStyle
 		,width:135
 		,height:21
@@ -493,7 +493,8 @@
 		fieldLabel:'<s:message code="contabilidad.observaciones" text="**Observaciones" />'
 		,width:550
 		,height:80
-		,maxLength:100
+		,maxLength:2000
+		,autoScroll: true
 		,style:style
 		,labelStyle:labelStyle
 	    ,name: 'contabilidadCobro.observaciones'
@@ -523,7 +524,7 @@
         	<c:if test="${contabilidadCobro.observaciones!=null}">
         	,value:'<s:message text="${contabilidadCobro.observaciones}" javaScriptEscape="true" />'
 			</c:if>
-			});
+			}); --%>
 	
 	<%-- CheckBox operaciones en tramite --%>
 	var opTramite = new Ext.form.CheckboxGroup({
@@ -534,7 +535,7 @@
     style:style,
 	labelStyle:labelStyle,
     items: [
-        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trámite" />'
+        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trï¿½mite" />'
         ,name: 'cb-1'
         ,style:style
 		,labelStyle:labelStyle
@@ -552,7 +553,7 @@
 		 totalEntrega.getValue() != 0 && totalEntrega.getValue() != "" && totalEntrega.getValue() != null){
 			return true;
 		} else {
-			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algún parámetro obligatorio" />');
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algï¿½n parï¿½metro obligatorio" />');
 			return false;
 		}
 	}

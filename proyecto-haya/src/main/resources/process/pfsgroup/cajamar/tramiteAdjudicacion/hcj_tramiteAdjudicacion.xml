@@ -150,6 +150,7 @@
 		<transition to="H005_RegistrarInscripcionDelTitulo" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H005_RegistrarPresentacionEnRegistro" name="activarAlerta"></transition>
+		<transition to="H005_RegistrarPresentacionHacienda" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="H005_RegistrarInscripcionDelTitulo">
@@ -233,7 +234,31 @@
 		<transition to="H005_BPMProvisionFondos" name="provisionFondos"></transition>
 		<transition to="conOcupantes" name="ocupantes"></transition>
 		<transition to="requiereComAdicional2" name="revComAdicional"></transition>
+		<transition to="H005_RegistrarPresentacionHacienda" name="registrarPresentacionHacienda"></transition>
 	</fork>
+
+	<state name="H005_RegistrarPresentacionHacienda">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="H005_RegistrarPresentacionEnRegistro" name="avanzaBPM"></transition>
+		<transition to="Fin2" name="fin"></transition>
+	</state>
 
 	<state name="H005_BPMTramiteDePosesion">
 		<event type="node-enter">
@@ -454,7 +479,62 @@
 		</event>	
 		<transition to="H005_RevisarInfoContable" name="activarAlerta"></transition>
 		<transition to="Fin3" name="Fin"></transition>
-		<transition to="H005_ConfirmarContabilidad" name="avanzaBPM"></transition>
+		<transition to="forkInfoContable" name="avanzaBPM"></transition>
+	</state>
+
+	<fork name="forkInfoContable">
+		<transition to="H005_ConfirmarContabilidad" name="confirmarContabilidad"></transition>
+		<transition to="H005_ValorarLanzamiento" name="valorarLanzamiento"></transition>
+	</fork>
+
+	<state name="H005_ValorarLanzamiento">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					adjudicacionHayaLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H005_ValorarLanzamientoDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="fin"></transition>
+	</state>
+
+	<decision name="H005_ValorarLanzamientoDecision" expression="#{H005_ValorarLanzamientoDecision}">
+		<transition to="Fin" name="No"></transition>
+		<transition to="H005_BPMTramiteSolicitudSolvenciaPatrimonial" name="Si"></transition>
+	</decision>
+
+	<state name="H005_BPMTramiteSolicitudSolvenciaPatrimonial">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="hcj_solicitudSolvenciaPatrimonial"></transition>
 	</state>
 
 	<state name="H005_NotifComAdicional">
@@ -500,9 +580,9 @@
 					genericLeaveActionHandler
 				</targetBean>
 			</action>
-		</event>	
-		<transition to="H005_RegistrarPresentacionEnRegistro" name="hcj_provisionFondos"></transition>
-		<transition to="Fin2" name="Fin"></transition>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin2" name="hcj_provisionFondos"></transition>
 	</state>
 
 	<state name="H005_BPMCertfLibertadArrendamiento">

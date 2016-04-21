@@ -44,7 +44,7 @@ public class GetListTipoDespachoDataTest extends AbstractCoreextensionController
 		
 		String resultado = coreextensionController.getListTipoDespachoData(modelMap, idTipoGestor, false, false,false, false);
 		
-		assertSame(modelMap.get("listadoDespachos"),listaDespachos);
+		assertEquals(modelMap.get("listadoDespachos"),listaDespachos);
 		assertEquals(resultado,"plugin/coreextension/asunto/tipoDespachoJSON");
 		
 	}

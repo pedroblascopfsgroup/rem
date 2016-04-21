@@ -25,6 +25,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDSituacionGestion;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -124,7 +125,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 						.length() > 0)
 				|| (dto.getApellido2() != null && dto.getApellido2().trim()
 						.length() > 0) || (dto.getDocumento() != null && dto
-				.getDocumento().trim().length() > 0) || dto.getSituacionGestion() != null);
+				.getDocumento().trim().length() > 0) || !Checks.esNulo(dto.getSituacionGestion()));
 		final boolean cruzaExpediente = (dto.getDescripcionExpediente() != null && dto
 				.getDescripcionExpediente().trim().length() > 0);
 		final boolean cruzaAsuntos = ((dto.getNombreAsunto() != null && dto
@@ -298,8 +299,14 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		}
 		// codigo de disposicion
 		if (!Checks.esNulo(dto.getCodDisposicion())) {
-			hql.append(" AND EXISTS (SELECT 1 FROM Disposicion disp WHERE c = disp.contrato AND disp.codigoDisposicion like '%"
-					+ dto.getCodDisposicion() + "%'))");
+			
+			if(esEntidadCajamar(usuLogado)) {
+				hql.append(" AND EXISTS (SELECT 1 FROM Disposicion disp WHERE c = disp.contrato AND disp.codigoDisposicion like '%"
+						+ dto.getCodDisposicion() + "%'))");
+			}
+			else {
+				hql.append(" AND c.condicionesEspeciales like '%" + dto.getCodDisposicion() + "%'))");
+			}
 		}
 		// codigo de recibo
 		if (!Checks.esNulo(dto.getCodRecibo())) {
@@ -363,7 +370,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				 // SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
 				 // CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
 				 // DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
-				 hql.append(" or c.id in (");
+				 hql.append(" or EXISTS (");
 				 hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 				 hql.append(")"); 
 				 hql.append(" ) "); 
@@ -386,7 +393,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				// SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL 
 				// CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA 
 				// DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO 
-				hql.append(" or c.id in (");
+				hql.append(" or EXISTS (");
 				hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 				hql.append(")"); 
 				hql.append(" ) "); 
@@ -394,7 +401,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 		} 
 		else {
 			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL // CONTRATO // DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO 
-			hql.append(" and c.id in ( ");
+			hql.append(" and EXISTS ( ");
 			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 			hql.append(" ) "); 
 		}
@@ -424,11 +431,11 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			Map<String, Object> params) {
 		StringBuffer hql = new StringBuffer();
 
-		hql.append(" select cnt.id from Contrato cnt , EXTGestorEntidad ge ");
+		hql.append(" select 1 from EXTGestorEntidad ge");
 
 		if (pasoDeVariables()) {
 
-			hql.append(" where cnt.id = ge.unidadGestionId and ge.tipoEntidad.codigo = :tipo_entidad_contrato ");
+			hql.append(" where c.id = ge.unidadGestionId and ge.tipoEntidad.codigo = :tipo_entidad_contrato ");
 			hql.append(" and ge.gestor.id = :usuario_logado ");
 
 			params.put("tipo_entidad_contrato",
@@ -436,7 +443,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			params.put("usuario_logado", usuLogado.getId());
 
 		} else {
-			hql.append(" where cnt.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '"
+			hql.append(" where c.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '"
 					+ DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO + "' ");
 			hql.append(" and ge.gestor.id = " + usuLogado.getId() + " ");
 		}
@@ -890,7 +897,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				// SE PONE ESTE FILTRO AQU�, DEBIDO A QUE PARA VISUALIZAR EL
 				// CONTRATO, PUEDE O BIEN PERTENECER A LA ZONA
 				// DEL USUARIO LOGEADO, O QUE ESTE SEA GESTOR DEL CONTRATO
-				hql.append(" or c.id in (");
+				hql.append(" or EXISTS (");
 				hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 				hql.append(")");
 				hql.append(" ) ");
@@ -900,7 +907,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			// EN CASO DE QUE NO TENGA ZONAS ASIGNADAS Y SEA GESTOR DEL
 			// CONTRATO
 			// DEBE PODER SEGUIR VISUALIZANDO EL CONTRATO
-			hql.append(" and c.id in ( ");
+			hql.append(" and EXISTS ( ");
 			hql.append(generaFiltroContratosPorGestor(usuLogado, params));
 			hql.append(" ) ");
 		}
@@ -1027,9 +1034,17 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				params.put("value2f2", value2f2);
 				params.put("value2f3", value2f3);
 			} else {
-				cadReturn = " and (" + campoBusqueda + " like '" + value2f1
-						+ "' or " + campoBusqueda + " like '" + value2f2
-						+ "' or " + campoBusqueda + " like '" + value2f3 + "')";
+				cadReturn = " and (" + campoBusqueda + " like '" + value2f1 + "'";
+				
+				if(!value2f2.equals(value2f1)) {
+					cadReturn += " or " + campoBusqueda + " like '" + value2f2 + "'";
+				}
+				
+				if(!value2f3.equals(value2f1)) {
+					cadReturn += "  or " + campoBusqueda + " like '" + value2f3 + "'";
+				}
+				
+				cadReturn += ")";
 			}
 		}
 		return cadReturn;
@@ -1154,4 +1169,9 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
         }
         return queryR.toString();
     }
+    
+    private boolean esEntidadCajamar(Usuario usuario)
+    {
+		return Entidad.CODIGO_CAJAMAR.equals(usuario.getEntidad().getCodigo());		
+	}
 }

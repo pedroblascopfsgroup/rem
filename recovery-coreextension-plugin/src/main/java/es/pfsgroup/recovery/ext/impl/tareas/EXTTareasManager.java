@@ -111,16 +111,24 @@ public class EXTTareasManager extends EXTAbstractTareaNotificacionManager
 	@Transactional
 	public Page buscarTareasPendientesDelegator(DtoBuscarTareaNotificacion dto) {
 		Usuario u = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		
+		/*
+		 * Solo funciona una de las dos condiciones.
+		 */
 		if (proxyFactory.proxy(EXTOpcionesBusquedaTareasApi.class).tieneOpcion(
 				EXTOpcionesBusquedaTareas.getBusquedaCarterizadaTareas(), u)) {
+			/*
+			 * Para entrar por esta implementación, tu usuario debe tener un perfil con la función OPTIMIZACION_BUZON_TAREAS.
+			 */
 			return proxyFactory.proxy(EXTTareasApi.class)
 					.buscarTareasPendientesConCarterizacion(dto);
 		} else {
-			 Page page = (Page) getExecutor().execute(
+			/*
+			 * Esta implementación ha quedado obsoleta y no funciona con el actual JSON.
+			 */
+			 return (Page) getExecutor().execute(
 					ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE,
 					dto);
-			 page.getResults();
-			 return page;
 		}
 	}
 

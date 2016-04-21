@@ -8,6 +8,7 @@ import org.springframework.security.GrantedAuthority;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.users.domain.Usuario;
 
 /**
@@ -59,5 +60,19 @@ public interface UsuarioDao extends AbstractDao<Usuario, Long> {
      * @return Listado de usuarios con email
      */
     List<Usuario> getUsuariosWithMail(Long idEntidad);
+
+    /**
+     * Recupera el objeto UsuarioSecurity a partir de su id
+     * @param idUsuario
+     * @return
+     */
+    UsuarioSecurity getUsuarioSecurity(Long idUsuario);
+    
+    /**
+     * Recupera la lista de grantedAuthorities de un usuario a partir de su id (usado en el cambio de entidad de usuario)
+     * @param idUsuario
+     * @return
+     */
+    Set<GrantedAuthority> getAuthoritiesCambioEntidad(Long idUsuario);
 
 }

@@ -291,7 +291,7 @@ public class ExcelManagerTest extends SampleBaseTestCase {
 	 * @throws Exception
 	 */
 	@Test(expected = RuntimeException.class)
-	public void testUploadFileExcepcionesEnValidador() throws Exception {
+	public void testUploadExcepcionesEnValidador() throws Exception {
 		// Variables del proceso
 		Long idProceso = r.nextLong();
 		Long idTipoOperacion = r.nextLong();

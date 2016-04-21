@@ -108,7 +108,7 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		cnt.setQuitaImpuestos(dto.getQuitaImpuestos());
 		cnt.setQuitaIntereses(dto.getQuitaIntereses());
 		cnt.setQuitaNominal(dto.getQuitaNominal());
-		cnt.setQuitaOtrosGastos(dto.getOtrosGastos());
+		cnt.setQuitaOtrosGastos(dto.getQuitaOtrosGastos());
 		cnt.setTipoEntrega((DDAdjContableTipoEntrega) tipoEntrega);
 		cnt.setTotalEntrega(dto.getTotalEntrega());
 		cnt.setOperacionesTramite(dto.getOperacionesTramite());

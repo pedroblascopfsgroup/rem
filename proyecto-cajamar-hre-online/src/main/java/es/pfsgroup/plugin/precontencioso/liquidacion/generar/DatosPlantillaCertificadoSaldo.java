@@ -203,7 +203,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
 			StringBuffer sb = new StringBuffer(", al haberse dado por vencido anticipadamente el crédito con fecha ");
 			sb.append(formateaFecha(liquidacion.getFechaCierre()));
-			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses y gastos ");
+			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses, impuestos y gastos ");
 			sb.append("correspondientes en virtud de lo pactado en  las CONDICIONES GENERALES,  Cláusula “8“, Apartado “A” de la referida póliza)");
 			resultado = sb.toString();
 		} 
@@ -215,7 +215,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
 			StringBuffer sb = new StringBuffer(", al haberse resuelto de pleno derecho con fecha ");
 			sb.append(formateaFecha(liquidacion.getFechaCierre()));
-			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses y gastos ");
+			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses, impuestos y gastos ");
 			sb.append("correspondientes en virtud de lo pactado en La Condición General Decimonovena, Apartado A del referido contrato.");
 			resultado = sb.toString();
 		} 

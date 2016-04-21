@@ -22,6 +22,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
@@ -51,6 +52,9 @@ public class BurofaxCMManager implements BurofaxCMApi {
 	private static final String BF_PRESTAMO_HIPO = "BF_PRESTAMO_HIPO";
 	private static final String BF_CARTERA = "BF_CARTERA";
 	private static final String BF_COMERCIO_EXTERIOR = "BF_COMERCIO_EXTERIOR";
+	private static final String BF_AVAL = "BF_AVAL";
+	private static final String BF_CREDITO = "BF_CREDITO";
+	private static final String BF_CUENTA_CORRIENTE = "BF_CUENTA_CORRIENTE";
 
 	private static final String INICIO_MARCA = "${";
 	private static final String FIN_MARCA = "}";
@@ -289,7 +293,7 @@ public class BurofaxCMManager implements BurofaxCMApi {
 		}
 
 		try {
-			mapaVariables.put(tipoIntervencion, envioBurofax.getBurofax().getTipoIntervencion().getDescripcion());
+			mapaVariables.put(tipoIntervencion, obtenerTipoIntervencion(envioBurofax.getBurofax().getTipoIntervencion(), envioBurofax.getTipoBurofax()));
 		} catch (NullPointerException npe) {
 			mapaVariables.put(tipoIntervencion, ERROR_NO_EXISTE_VALOR);
 		}
@@ -324,7 +328,7 @@ public class BurofaxCMManager implements BurofaxCMApi {
 		mapaVariables.put(IMPCER, obtenerImporteLiquidacion(liquidacion, IMPCER));
 
 		// LOCCRD
-		mapaVariables.put(LOCCRD, localidadFirma);
+		mapaVariables.put(LOCCRD, localidadFirma.toUpperCase());
 
 		// CAL_RUT_POLIZA
 		mapaVariables.put(CAL_RUT_POLIZA,obtenerImportePrestamo(liquidacion, CAL_RUT_POLIZA));
@@ -543,7 +547,7 @@ public class BurofaxCMManager implements BurofaxCMApi {
 	}
 	
 	private String formateaFecha(Date fecha) {
-		return formatFecha.format(fecha);
+		return formatFecha.format(fecha).toUpperCase();
 	}
 
 	private String noDisponible(String campo) {
@@ -561,7 +565,7 @@ public class BurofaxCMManager implements BurofaxCMApi {
 				resultado = resultado.replace(INICIO_MARCA + key + FIN_MARCA, mapeoVariables.get(key).toString());
 			}
 		}
-		return resultado;
+		return "<div style='text-align:justify'>" + resultado + "</div>";
 	}
 
 	private String obtenerNombreFichero(String tipoBurofax, Long idEnvio) {
@@ -638,4 +642,65 @@ public class BurofaxCMManager implements BurofaxCMApi {
 		}
 		return resultado;
 	}
+
+	private String obtenerTipoIntervencion(DDTipoIntervencion tipoInterv, DDTipoBurofaxPCO tipoBurofax) {
+		
+		final String TITULAR = "TITULAR";
+		final String ACREDITADO = "ACREDITADO";
+		final String ARRENDATARIO = "ARRENDATARIO";
+		final String PRESTATARIO = "PRESTATARIO";
+		final String AVALADO = "AVALADO";
+		final String GARANTE = "GARANTE";
+		final String FIADOR = "FIADOR";
+		final String AVALISTA = "AVALISTA";
+		
+		String tipoBurofaxCod = tipoBurofax.getCodigo();
+		Boolean esAvalista = tipoInterv.getAvalista();
+		String resultado = tipoInterv.getDescripcion();
+		
+		if (BF_CUENTA_CORRIENTE.equals(tipoBurofaxCod)) {
+			resultado = TITULAR;
+		} else if (BF_CREDITO.equals(tipoBurofaxCod)) {
+			resultado = ACREDITADO;
+		} else if (BF_COMERCIO_EXTERIOR.equals(tipoBurofaxCod)) {
+			if (esAvalista) {
+				resultado = GARANTE;
+			} else {
+				resultado = ACREDITADO; 
+			}
+		} else if (BF_LEASING.equals(tipoBurofaxCod)) {
+			if (esAvalista) {
+				resultado = FIADOR;
+			} else {
+				resultado = ARRENDATARIO; 
+			}
+		} else if (BF_CARTERA.equals(tipoBurofaxCod)) {
+			if (esAvalista) {
+				resultado = AVALISTA;
+			} else {
+				resultado = TITULAR; 
+			}
+		} else if (BF_PRESTAMO_HIPO.equals(tipoBurofaxCod)) {
+			if (esAvalista) {
+				resultado = AVALISTA;
+			} else {
+				resultado = PRESTATARIO; 
+			}
+		} else if (BF_PRESTAMO_PERS.equals(tipoBurofaxCod)) {
+			if (esAvalista) {
+				resultado = AVALISTA;
+			} else {
+				resultado = TITULAR; 
+			}
+		} else if (BF_AVAL.equals(tipoBurofaxCod)) {
+			if (esAvalista) {
+				resultado = FIADOR;
+			} else {
+				resultado = AVALADO; 
+			}
+		}
+		return resultado;
+	}
+
+
 }

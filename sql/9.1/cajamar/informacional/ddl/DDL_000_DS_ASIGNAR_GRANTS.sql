@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Pedro S.
+--## FECHA_CREACION=20160421
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-xxxx
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Grants a usuarios CM
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE ASIGNAR_GRANTS(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Diego Pérez, PFS Group
@@ -32,3 +50,7 @@ EXCEPTION
 
 
 END ASIGNAR_GRANTS;
+/
+EXIT
+
+

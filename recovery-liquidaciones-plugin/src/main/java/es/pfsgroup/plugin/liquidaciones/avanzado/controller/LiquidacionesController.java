@@ -45,9 +45,7 @@ public class LiquidacionesController {
 		
 		LIQDtoLiquidacionCabecera cabecera = liquidacionesManager.completarCabecera(request);
 		List<LIQDtoTramoLiquidacion> cuerpo = liquidacionesManager.obtenerLiquidaciones(request,pendientes);
-		LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo);
-		resumen.setEntregadoIntDemoraCalc(pendientes.getSobranteEntrega());
-		resumen.setTotalDeudaReal(resumen.getTotalDeuda().subtract(pendientes.getSobranteEntrega()));
+		LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo, pendientes);
 		
 		String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
 		String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();

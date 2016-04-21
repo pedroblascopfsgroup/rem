@@ -392,7 +392,7 @@ public class LiquidacionesAvanzadoManager {
 		return resultado;
 	}
 
-	public LIQDtoLiquidacionResumen crearResumen(LIQDtoReportRequest request, List<LIQDtoTramoLiquidacion> cuerpo) {
+	public LIQDtoLiquidacionResumen crearResumen(LIQDtoReportRequest request, List<LIQDtoTramoLiquidacion> cuerpo, LIQTramoPendientes pendientes) {
 		LIQDtoLiquidacionResumen resumen = new LIQDtoLiquidacionResumen();
 		LIQDtoTramoLiquidacion ultTramo = null;
 		
@@ -452,8 +452,12 @@ public class LiquidacionesAvanzadoManager {
 		}
 		resumen.setOtrosGastos(gastos);
 		
+		resumen.setEntregadoIntDemoraCalc(pendientes.getSobranteEntrega());
+		resumen.setTotalDeudaReal(resumen.getTotalDeuda().subtract(pendientes.getSobranteEntrega()));		
+		
 		//Total a pagar
 		BigDecimal totalPagar = BigDecimal.ZERO;
+		totalPagar = totalPagar.subtract(pendientes.getSobranteEntrega());
 		totalPagar = totalPagar.add(totalDeuda);
 		totalPagar = totalPagar.add(impuestos);
 		totalPagar = totalPagar.add(comisiones);

@@ -96,7 +96,7 @@
 	});
 	
 	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
-	if(usuarioEntidad != 'CAJAMAR'){
+	if(usuarioEntidad != 'HCJ'){
 		datosAdjudicacion.add(postores);
 	}
 		

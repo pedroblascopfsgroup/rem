@@ -346,7 +346,6 @@
 			fechaActual.setSeconds(0);
 			
 			fechaActual = Date.parse(fechaActual);
-       		
        		if(formulario.isValid()){
        			var dateSolucionPrevista = null;
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
@@ -362,7 +361,7 @@
 					
 					return false;
        			}
-       			if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
+       			<%--if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));
        				date = Ext.util.Format.date(date, "d/m/y");
 	       			Ext.Msg.show({
@@ -371,8 +370,8 @@
 				   		buttons: Ext.Msg.OK
 					});
 					return false;
-	       		}  
-	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid() ) {
+	       		}  --%>
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && isNaN(parseFloat(dateSolucionPrevista))) {
 	       			return false;
 	       		}else if(comboTipoAcuerdo.getValue() == idTipoAcuerdoRegulParcial && isNaN(parseFloat(dateSolucionPrevista))){
 	       			Ext.Msg.show({

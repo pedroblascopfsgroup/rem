@@ -281,7 +281,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 		if (clientes.getLimit() > 0) {
 			// Encapsularemos la query para poder paginar.
-			hql.append("select  per_id, totalRows from (select row_number() over (order by 1) n, per_id, totalRows from (");
+			hql.append("select DISTINCT per_id, totalRows from (select row_number() over (order by 1) n, per_id, totalRows from (");
 		}
 
 		// Devolvemos totalRows como parte del resultado de la query por si
@@ -363,7 +363,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			
 		// AÃƒÂ±ade la persona si es gestionada por el usuario
 		hql.append("(p.per_id in ( ");
-		hql.append(generaFiltroPersonaPorGestor(usuarioLogueado,
+		hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
 		parameters)); // hql.append(" ))");
 		
 		if ((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))) {
@@ -1417,6 +1417,30 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 		}
 		return filtroJerarquia;
+	}
+	
+	private String generaFiltroZonificacionGestor(MEJBuscarClientesDto clientes,Usuario usuLogado,
+			Map<String, Object> parameters) {
+		StringBuffer hql = new StringBuffer();
+		int cantZonas = Checks.estaVacio(clientes.getCodigoZonas()) ? 0
+				: clientes.getCodigoZonas().size();
+		String zonas = null;
+		if (cantZonas > 0) {
+			zonas = " and ( ";
+			for (String codigoZ : clientes.getCodigoZonas()) {
+				zonas += " zon.zon_cod like '" + codigoZ + "%' OR";
+
+			}
+			zonas = zonas.substring(0, zonas.length() - 2);
+
+			zonas += " ) ";
+		}
+		hql.append(" select p.per_id from per_personas p , ZON_ZONIFICACION zon ");
+
+		hql.append(" where p.ZON_ID = zon.ZON_ID and p.BORRADO = 0");
+		hql.append(zonas);
+
+		return hql.toString();
 	}
 	
 	private String generaFiltroPersonaPorGestor(Usuario usuLogado,

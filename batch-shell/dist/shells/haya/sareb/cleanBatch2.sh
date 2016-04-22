@@ -1,9 +1,9 @@
 #!/bin/bash
 
 function set_diag(){
-	$JAVA_HOME/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.common,$1
-	$JAVA_HOME/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos,$1
-	$JAVA_HOME/bin/java -jar /etl/HRE/shells/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos.engine,$1
+	$JAVA_HOME/bin/java -jar $DIR_SHELLS/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.common,$1
+	$JAVA_HOME/bin/java -jar $DIR_SHELLS/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos,$1
+	$JAVA_HOME/bin/java -jar $DIR_SHELLS/cmdline-jmxclient-0.10.3.jar jmx_admin:pfs_admin localhost:2099 devon:type=logger setLoggerLevel=es.capgemini.pfs.batch.revisar.arquetipos.engine,$1
 }
 
 reinicio=NO

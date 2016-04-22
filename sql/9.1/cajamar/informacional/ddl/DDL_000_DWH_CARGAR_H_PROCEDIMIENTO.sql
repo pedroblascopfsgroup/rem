@@ -21,7 +21,7 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificación: María Villanueva ., PFS Group
--- Fecha ultima modificación: 21-04-2016
+-- Fecha ultima modificación: 22-04-2016
 -- Motivos del cambio: se modifica tipo de procedimiento agregado concursal
 -- Cliente: Recovery BI Cajamar
 --
@@ -1551,7 +1551,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                                                      when TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750) then 10
                                                      when TIPO_PROCEDIMIENTO_DET_ID IN (2375) then 11
                            when TIPO_PROCEDIMIENTO_DET_ID IN (2842) then 15
-                                                     when TIPO_PROCEDIMIENTO_DET_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375) and ESTADO_FASE_ACTUAL_ID=3 then 13
+                                                     when TIPO_PROCEDIMIENTO_DET_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375,2372,2750) and ESTADO_FASE_ACTUAL_ID=3 then 13
                                                      when TIPO_PROCEDIMIENTO_DET_ID IS NULL then -1
                                                      else 14 end) where DIA_ID = fecha;
    
@@ -1575,7 +1575,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                                                      when FASE_ACTUAL_DETALLE_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750) then 10
                                                      when FASE_ACTUAL_DETALLE_ID IN (2375) then 11
                            when FASE_ACTUAL_DETALLE_ID IN (2842) then 15
-                                                     when FASE_ACTUAL_DETALLE_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375) and ESTADO_FASE_ACTUAL_ID=3 then 13
+                                                     when FASE_ACTUAL_DETALLE_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375,2372,2750) and ESTADO_FASE_ACTUAL_ID=3 then 13
                                                      else FASE_ACTUAL_AGR_ID end) where DIA_ID = fecha;
    
    

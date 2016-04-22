@@ -4,10 +4,10 @@
 --## FECHA_CREACION=20160422
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1271
+--## INCIDENCIA_LINK=CMREC-3180
 --## PRODUCTO=NO
 --## 
---## Finalidad:D_PRC_PROCURADOR
+--## Finalidad:se modifica tipo de procedimiento agregado concursal
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial

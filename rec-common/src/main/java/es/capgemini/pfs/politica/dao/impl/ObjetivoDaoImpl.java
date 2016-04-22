@@ -168,7 +168,7 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
     private String armaHQLObjetivosPendientesCount(Usuario usuario){
     	String where = armaWhereHQLObjetivosPendientes(usuario);
     	if(!Checks.esNulo(where)){
-    		return "select count(*) from Objetivo obj "+where;
+    		return "select count(obj) from Objetivo obj "+where;
     	}else{
     		return null;
     	}
@@ -176,7 +176,7 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
     
     private String armaWhereHQLObjetivosPendientes(Usuario usuario){
     	boolean tieneZona = false;
-    	String hql = " where obj.auditoria.borrado AND obj.estadoCumplimiento.codigo = '"+DDEstadoCumplimiento.ESTADO_PENDIENTE+"' AND obj.estadoObjetivo.codigo = '"+DDEstadoObjetivo.ESTADO_CONFIRMADO+"' AND obj.politica.estadoPolitica.codigo = '"+DDEstadoPolitica.ESTADO_VIGENTE+"' AND (";
+    	String hql = " where obj.auditoria.borrado = 0 AND obj.estadoCumplimiento.codigo = '"+DDEstadoCumplimiento.ESTADO_PENDIENTE+"' AND obj.estadoObjetivo.codigo = '"+DDEstadoObjetivo.ESTADO_CONFIRMADO+"' AND obj.politica.estadoPolitica.codigo = '"+DDEstadoPolitica.ESTADO_VIGENTE+"' AND (";
     		for(ZonaUsuarioPerfil zpu : usuario.getZonaPerfil()){
     			hql += "(obj.politica.perfilGestor.id = "+zpu.getPerfil().getId()+" and obj.politica.zonaGestor.codigo LIKE '"+zpu.getZona().getCodigo()+"%') OR";
     			tieneZona = true;

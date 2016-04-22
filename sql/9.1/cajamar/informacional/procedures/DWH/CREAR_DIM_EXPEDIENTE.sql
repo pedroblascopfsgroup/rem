@@ -3,9 +3,9 @@ create or replace PROCEDURE CREAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 
--- Responsable última modificación: María Villanueva, PFS Groupp
--- Fecha última modificación: 06/11/2015
--- Motivos del cambio: usuario propietario
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: Parametrización índices con esquema indices
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas de la dimension Expediente
@@ -93,12 +93,12 @@ declare
 
                           ''ACTITUD_ID NUMBER(16,0) NOT NULL,
                             ACTITUD_DESC VARCHAR2(50 CHAR),
-                            ACTITUD_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ACTITUD_ID)'', 
+                            ACTITUD_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ACTITUD_PK'', ''D_EXP_ACTITUD (ACTITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_AMBITO_EXPEDIENTE --------------------------
   
@@ -106,12 +106,12 @@ declare
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_AMBITO_EXPEDIENTE'', 
                           ''AMBITO_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             AMBITO_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                            AMBITO_EXPEDIENTE_DESC_2 VARCHAR2(500 CHAR),
-                            PRIMARY KEY (AMBITO_EXPEDIENTE_ID)'', 
+                            AMBITO_EXPEDIENTE_DESC_2 VARCHAR2(500 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_AMBITO_EXPEDIENTE_PK'', ''D_EXP_AMBITO_EXPEDIENTE (AMBITO_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_ARQUETIPO --------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ARQUETIPO'', 
@@ -120,12 +120,12 @@ declare
 
                           ''ARQUETIPO_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             ARQUETIPO_EXPEDIENTE_DESC VARCHAR2(100 CHAR),
-                            ITINERARIO_EXPEDIENTE_ID NUMBER(16,0),
-                            PRIMARY KEY (ARQUETIPO_EXPEDIENTE_ID)'', 
+                            ITINERARIO_EXPEDIENTE_ID NUMBER(16,0)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ARQUETIPO_PK'', ''D_EXP_ARQUETIPO (ARQUETIPO_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_CAUSA_IMPAGO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_CAUSA_IMPAGO'', 
@@ -134,12 +134,12 @@ declare
 
                           ''CAUSA_IMPAGO_ID NUMBER(16,0) NOT NULL,
                             CAUSA_IMPAGO_DESC VARCHAR2(50 CHAR),
-                            CAUSA_IMPAGO_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CAUSA_IMPAGO_ID)'', 
+                            CAUSA_IMPAGO_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_CAUSA_IMPAGO_PK'', ''D_EXP_CAUSA_IMPAGO (CAUSA_IMPAGO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_COMITE --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_COMITE'', 
@@ -148,12 +148,12 @@ declare
 
                               ''COMITE_ID NUMBER(16,0) NOT NULL,
                                 COMITE_DESC VARCHAR2(100 CHAR),
-                                ZONA_EXPEDIENTE_ID NUMBER(16,0),
-                                PRIMARY KEY (COMITE_ID)'', 
+                                ZONA_EXPEDIENTE_ID NUMBER(16,0)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_COMITE_PK'', ''D_EXP_COMITE (COMITE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_DECISION --------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_DECISION'', 
@@ -162,12 +162,12 @@ declare
 
                               ''DECISION_ID NUMBER(16,0) NOT NULL,
                                 DECISION_DESC VARCHAR2(100 CHAR),
-                                SESION_ID NUMBER(16,0),
-                                PRIMARY KEY (DECISION_ID)'', 
+                                SESION_ID NUMBER(16,0)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_DECISION_PK'', ''D_EXP_DECISION (DECISION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_ENTIDAD_INFORMACION --------------------------
 
@@ -175,12 +175,12 @@ declare
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ENTIDAD_INFORMACION'', 
                           ''ENTIDAD_INFORMACION_ID NUMBER(16,0) NOT NULL,
                             ENTIDAD_INFORMACION_DESC VARCHAR2(50 CHAR),
-                            ENTIDAD_INFORMACION_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENTIDAD_INFORMACION_ID)'', 
+                            ENTIDAD_INFORMACION_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ENTIDAD_INFORMACION_PK'', ''D_EXP_ENTIDAD_INFORMACION (ENTIDAD_INFORMACION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_ESTADO_EXPEDIENTE --------------------------
 
@@ -188,12 +188,12 @@ declare
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ESTADO_EXPEDIENTE'', 
                           ''ESTADO_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             ESTADO_EXPEDIENTE_DESC VARCHAR2(50 CHAR),
-                            ESTADO_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESTADO_EXPEDIENTE_ID)'', 
+                            ESTADO_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ESTADO_EXPEDIENTE_PK'', ''D_EXP_ESTADO_EXPEDIENTE (ESTADO_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_ESTADO_ITINERARIO --------------------------
  
@@ -202,12 +202,12 @@ declare
                           '' ESTADO_ITINERARIO_ID NUMBER(16,0) NOT NULL,
                             ESTADO_ITINERARIO_DESC VARCHAR2(50 CHAR),
                             ESTADO_ITINERARIO_DESC_2 VARCHAR2(250 CHAR),
-                            ENTIDAD_INFORMACION_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (ESTADO_ITINERARIO_ID)'', 
+                            ENTIDAD_INFORMACION_ID NUMBER(16,0) NULL'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ESTADO_ITINERARIO_PK'', ''D_EXP_ESTADO_ITINERARIO (ESTADO_ITINERARIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_ITINERARIO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ITINERARIO'', 
@@ -217,12 +217,12 @@ declare
                           ''ITINERARIO_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             ITINERARIO_EXPEDIENTE_DESC VARCHAR2(100 CHAR),
                             TIPO_ITINERARIO_EXP_ID NUMBER(16,0),
-                            AMBITO_EXPEDIENTE_ID NUMBER(16,0),
-                            PRIMARY KEY (ITINERARIO_EXPEDIENTE_ID)'', 
+                            AMBITO_EXPEDIENTE_ID NUMBER(16,0)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ITINERARIO_PK'', ''D_EXP_ITINERARIO (ITINERARIO_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_NIVEL --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_NIVEL'', 
@@ -231,12 +231,12 @@ declare
 
                           ''NIVEL_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             NIVEL_EXPEDIENTE_DESC VARCHAR2(50 CHAR),
-                            NIVEL_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (NIVEL_EXPEDIENTE_ID)'', 
+                            NIVEL_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_NIVEL_PK'', ''D_EXP_NIVEL (NIVEL_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_OFICINA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_OFICINA'', 
@@ -246,12 +246,12 @@ declare
                           ''OFICINA_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             OFICINA_EXPEDIENTE_DESC VARCHAR2(50 CHAR),
                             OFICINA_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
-                            PROVINCIA_EXPEDIENTE_ID NUMBER(16,0),
-                            PRIMARY KEY (OFICINA_EXPEDIENTE_ID)'', 
+                            PROVINCIA_EXPEDIENTE_ID NUMBER(16,0)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_OFICINA_PK'', ''D_EXP_OFICINA (OFICINA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_EXP_PROPUESTA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_PROPUESTA'', 
@@ -260,12 +260,12 @@ declare
 
                           ''PROPUESTA_ID NUMBER(16,0) NOT NULL,
                             PROPUESTA_DESC VARCHAR2(50 CHAR),
-                            PROPUESTA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PROPUESTA_ID)'', 
+                            PROPUESTA_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_PROPUESTA_PK'', ''D_EXP_PROPUESTA (PROPUESTA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_PROVINCIA --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_PROVINCIA'', 
@@ -274,12 +274,12 @@ declare
 
                           ''PROVINCIA_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                             PROVINCIA_EXPEDIENTE_DESC VARCHAR2(50 CHAR),
-                            PROVINCIA_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PROVINCIA_EXPEDIENTE_ID)'', 
+                            PROVINCIA_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_PROVINCIA_PK'', ''D_EXP_PROVINCIA (PROVINCIA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_SESION --------------------------
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SESION'', 
@@ -289,12 +289,12 @@ declare
                           ''SESION_ID NUMBER(16,0) NOT NULL,
                             SESION_FECHA_INICIO DATE,
                             SESION_FECHA_FIN DATE,
-                            COMITE_ID NUMBER(16,0),
-                            PRIMARY KEY (SESION_ID)'', 
+                            COMITE_ID NUMBER(16,0)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_SESION_PK'', ''D_EXP_SESION (SESION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_TIPO_ITINERARIO --------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_ITINERARIO'', 
@@ -303,12 +303,12 @@ declare
 
                               ''TIPO_ITINERARIO_EXP_ID NUMBER(16,0) NOT NULL,
                                 TIPO_ITINERARIO_EXP_DESC VARCHAR2(50 CHAR),
-                                TIPO_ITINERARIO_EXP_DESC_2 VARCHAR2(250 CHAR),
-                                PRIMARY KEY (TIPO_ITINERARIO_EXP_ID)'', 
+                                TIPO_ITINERARIO_EXP_DESC_2 VARCHAR2(250 CHAR)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_ITINERARIO_PK'', ''D_EXP_TIPO_ITINERARIO (TIPO_ITINERARIO_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_ZONA --------------------------
 
@@ -320,11 +320,12 @@ declare
                             ZONA_EXPEDIENTE_DESC VARCHAR2(50 CHAR),
                             ZONA_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
                             NIVEL_EXPEDIENTE_ID NUMBER(16,0),
-                            OFICINA_EXPEDIENTE_ID NUMBER(16,0),
-                            PRIMARY KEY (ZONA_EXPEDIENTE_ID)'', 
+                            OFICINA_EXPEDIENTE_ID NUMBER(16,0)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ZONA_PK'', ''D_EXP_ZONA (ZONA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_ESQUEMA --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ESQUEMA'', 
@@ -332,12 +333,12 @@ declare
 
 
                           ''ESQUEMA_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_EXPEDIENTE_ID)'', 
+                            ESQUEMA_EXPEDIENTE_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ESQUEMA_PK'', ''D_EXP_ESQUEMA (ESQUEMA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_CARTERA --------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_CARTERA'', 
@@ -345,12 +346,12 @@ declare
 
 
                               ''CARTERA_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
-                                CARTERA_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                                PRIMARY KEY (CARTERA_EXPEDIENTE_ID)'', 
+                                CARTERA_EXPEDIENTE_DESC VARCHAR2(250 CHAR)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_CARTERA_PK'', ''D_EXP_CARTERA (CARTERA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_SUBCARTERA --------------------------
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'', 
@@ -359,12 +360,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
                               ''SUBCARTERA_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                                 SUBCARTERA_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                                CARTERA_EXPEDIENTE_ID NUMBER(16,0),
-                                PRIMARY KEY (SUBCARTERA_EXPEDIENTE_ID)'', 
+                                CARTERA_EXPEDIENTE_ID NUMBER(16,0)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_SUBCARTERA_PK'', ''D_EXP_SUBCARTERA (SUBCARTERA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_AGENCIA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_AGENCIA'', 
@@ -372,12 +373,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''AGENCIA_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (AGENCIA_EXPEDIENTE_ID)'', 
+                            AGENCIA_EXPEDIENTE_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_AGENCIA_PK'', ''D_EXP_AGENCIA (AGENCIA_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
      ------------------------------ D_EXP_ENVIADO_AGENCIA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ENVIADO_AGENCIA'', 
@@ -385,12 +386,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                               ''ENVIADO_AGENCIA_EXP_ID NUMBER(16,0) NOT NULL,
-                                ENVIADO_AGENCIA_EXP_DESC VARCHAR2(250 CHAR),
-                                PRIMARY KEY (ENVIADO_AGENCIA_EXP_ID)'', 
+                                ENVIADO_AGENCIA_EXP_DESC VARCHAR2(250 CHAR)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ENVIADO_AGENCIA_PK'', ''D_EXP_ENVIADO_AGENCIA (ENVIADO_AGENCIA_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
    ------------------------------ D_EXP_T_SALDO_TOTAL --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_T_SALDO_TOTAL'', 
@@ -398,48 +399,48 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''T_SALDO_TOTAL_EXP_ID NUMBER(16,0) NOT NULL,
-                            T_SALDO_TOTAL_EXP_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_SALDO_TOTAL_EXP_ID)'', 
+                            T_SALDO_TOTAL_EXP_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_T_SALDO_TOTAL_PK'', ''D_EXP_T_SALDO_TOTAL (T_SALDO_TOTAL_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_T_SALDO_IRREGULAR --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_T_SALDO_IRREGULAR'', 
                               ''T_SALDO_IRREGULAR_EXP_ID NUMBER(16,0) NOT NULL,
-                                T_SALDO_IRREGULAR_EXP_DESC VARCHAR2(250 CHAR),
-                                PRIMARY KEY (T_SALDO_IRREGULAR_EXP_ID)'', 
+                                T_SALDO_IRREGULAR_EXP_DESC VARCHAR2(250 CHAR)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_T_SALDO_IRREGULAR_PK'', ''D_EXP_T_SALDO_IRREGULAR (T_SALDO_IRREGULAR_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_T_DEUDA_IRREGULAR --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_T_DEUDA_IRREGULAR'', 
                               ''T_DEUDA_IRREGULAR_EXP_ID NUMBER(16,0) NOT NULL,
-                                T_DEUDA_IRREGULAR_EXP_DESC VARCHAR2(250 CHAR),
-                                PRIMARY KEY (T_DEUDA_IRREGULAR_EXP_ID)'', 
+                                T_DEUDA_IRREGULAR_EXP_DESC VARCHAR2(250 CHAR)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_T_DEUDA_IRREGULAR_PK'', ''D_EXP_T_DEUDA_IRREGULAR (T_DEUDA_IRREGULAR_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
    ------------------------------ D_EXP_T_DEUDA_IRREGULAR_ENV --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_T_DEUDA_IRREGULAR_ENV'', 
                           ''T_DEUDA_IRREGULAR_ENV_EXP_ID NUMBER(16,0) NOT NULL,
-                            T_DEUDA_IRREGULAR_ENV_EXP_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_DEUDA_IRREGULAR_ENV_EXP_ID)'', 
+                            T_DEUDA_IRREGULAR_ENV_EXP_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_T_DEUDA_IRREGULAR_ENV_PK'', ''D_EXP_T_DEUDA_IRREGULAR_ENV (T_DEUDA_IRREGULAR_ENV_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
    
 /*
     ------------------------------ D_EXP_TIPO_COBRO --------------------------
@@ -478,12 +479,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                               ''TIPO_SALIDA_ID NUMBER(16,0) NOT NULL,
-                                TIPO_SALIDA_DESC VARCHAR2(250 CHAR),
-                                PRIMARY KEY (TIPO_SALIDA_ID)'', 
+                                TIPO_SALIDA_DESC VARCHAR2(250 CHAR)'', 
                               :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_SALIDA_PK'', ''D_EXP_TIPO_SALIDA (TIPO_SALIDA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_MOTIVO_SALIDA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_MOTIVO_SALIDA'', 
@@ -491,12 +492,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''MOTIVO_SALIDA_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_SALIDA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (MOTIVO_SALIDA_ID)'', 
+                            MOTIVO_SALIDA_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_MOTIVO_SALIDA_PK'', ''D_EXP_MOTIVO_SALIDA (MOTIVO_SALIDA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_TIPO_PALANCA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_PALANCA'', 
@@ -504,12 +505,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''TIPO_PALANCA_ID NUMBER(16,0) NOT NULL,
-                            TIPO_PALANCA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_PALANCA_ID)'', 
+                            TIPO_PALANCA_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_PALANCA_PK'', ''D_EXP_TIPO_PALANCA (TIPO_PALANCA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_ESTADO_PALANCA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ESTADO_PALANCA'', 
@@ -517,12 +518,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''ESTADO_PALANCA_ID NUMBER(16,0) NOT NULL,
-                            ESTADO_PALANCA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESTADO_PALANCA_ID)'', 
+                            ESTADO_PALANCA_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ESTADO_PALANCA_PK'', ''D_EXP_ESTADO_PALANCA (ESTADO_PALANCA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_TIPO_SANCION --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_SANCION'', 
@@ -530,12 +531,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''TIPO_SANCION_ID NUMBER(16,0) NOT NULL,
-                            TIPO_SANCION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_SANCION_ID)'', 
+                            TIPO_SANCION_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_SANCION_PK'', ''D_EXP_TIPO_SANCION (TIPO_SANCION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_TIPO_INCIDENCIA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_INCIDENCIA'', 
@@ -543,40 +544,44 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''TIPO_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            TIPO_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_INCIDENCIA_ID)'', 
+                            TIPO_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_INCIDENCIA_PK'', ''D_EXP_TIPO_INCIDENCIA (TIPO_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
      ------------------------------ D_EXP_ESTADO_INCIDENCIA --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ESTADO_INCIDENCIA'', 
                           ''ESTADO_INCIDENCIA_ID NUMBER(16,0) NOT NULL,
-                            ESTADO_INCIDENCIA_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESTADO_INCIDENCIA_ID)'', 
+                            ESTADO_INCIDENCIA_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ESTADO_INCIDENCIA_PK'', ''D_EXP_ESTADO_INCIDENCIA (ESTADO_INCIDENCIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_EXP_RESULTADO_GESTION --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_RESULTADO_GESTION'',
                             ''RESULTADO_GESTION_EXP_ID NUMBER(16,0) NOT NULL,
-							  RESULTADO_GESTION_EXP_DESC VARCHAR2(250 CHAR),
-                              PRIMARY KEY (RESULTADO_GESTION_EXP_ID)'',
+							  RESULTADO_GESTION_EXP_DESC VARCHAR2(250 CHAR)'',
 							:error); END;';
     execute immediate V_SQL USING OUT error;
-    
+
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_RESULTADO_GESTION_PK'', ''D_EXP_RESULTADO_GESTION (RESULTADO_GESTION_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_EXP_RESULTADO_GESTION_CNT --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_RESULTADO_GESTION_CNT'',
                             ''RESULTADO_GESTION_EXP_CNT_ID NUMBER(16,0) NOT NULL,
-                              RESULTADO_GESTION_EXP_CNT_DESC VARCHAR2(250 CHAR),
-                              PRIMARY KEY (RESULTADO_GESTION_EXP_CNT_ID)'',
+                              RESULTADO_GESTION_EXP_CNT_DESC VARCHAR2(250 CHAR)'',
 							:error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_RESULTADO_GESTION_CNT_PK'', ''D_EXP_RESULTADO_GESTION_CNT (RESULTADO_GESTION_EXP_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
 	
 	
@@ -588,55 +593,59 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''T_ROTACIONES_EXP_ID NUMBER(16,0) NOT NULL,
-                            T_ROTACIONES_EXP_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (T_ROTACIONES_EXP_ID)'', 
+                            T_ROTACIONES_EXP_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_T_ROTACIONES_PK'', ''D_EXP_T_ROTACIONES (T_ROTACIONES_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_TD_ENTRADA_GESTION --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TD_ENTRADA_GESTION'', 
                           ''TD_ENTRADA_GEST_EXP_ID NUMBER(16,0) NOT NULL,
-                            TD_ENTRADA_GEST_EXP_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TD_ENTRADA_GEST_EXP_ID)'', 
+                            TD_ENTRADA_GEST_EXP_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TD_ENTRADA_GESTION_PK'', ''D_EXP_TD_ENTRADA_GESTION (TD_ENTRADA_GEST_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
    ------------------------------ D_EXP_TD_CREACION_EXP_COBRO --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TD_CREACION_EXP_COBRO'', 
                           ''TD_CREACION_EXP_COBRO_ID NUMBER(16,0) NOT NULL,
-                            TD_CREACION_EXP_COBRO_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TD_CREACION_EXP_COBRO_ID)'', 
+                            TD_CREACION_EXP_COBRO_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
    execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TD_CREACION_EXP_COBRO_PK'', ''D_EXP_TD_CREACION_EXP_COBRO (TD_CREACION_EXP_COBRO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+   
     ------------------------------ D_EXP_TIPO_GESTION --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_GESTION'',
                             ''TIPO_GESTION_EXP_ID NUMBER(16,0) NOT NULL,
-                              TIPO_GESTION_EXP_DESC VARCHAR2(250 CHAR),
-                              PRIMARY KEY (TIPO_GESTION_EXP_ID)'',
+                              TIPO_GESTION_EXP_DESC VARCHAR2(250 CHAR)'',
                           :error); END;';
 
    execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_GESTION_PK'', ''D_EXP_TIPO_GESTION (TIPO_GESTION_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+   
     ------------------------------ D_EXP_TIPO_GESTION_CNT --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_GESTION_CNT'',
                            '' TIPO_GESTION_EXP_CNT_ID NUMBER(16,0) NOT NULL,
-                              TIPO_GESTION_EXP_CNT_DESC VARCHAR2(250 CHAR),
-                              PRIMARY KEY (TIPO_GESTION_EXP_CNT_ID)'',
+                              TIPO_GESTION_EXP_CNT_DESC VARCHAR2(250 CHAR)'',
                           :error); END;';
 
    execute immediate V_SQL USING OUT error;
    
-   
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_GESTION_CNT_PK'', ''D_EXP_TIPO_GESTION_CNT (TIPO_GESTION_EXP_CNT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
    
    
      ------------------------------ D_EXP --------------------------
@@ -655,25 +664,24 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
                             ESTADO_ITINERARIO_ID NUMBER(16,0),
                             OFICINA_EXPEDIENTE_ID NUMBER(16,0),
-                            PROPUESTA_ID NUMBER(16,0),
-                            PRIMARY KEY (EXPEDIENTE_ID)'', 
+                            PROPUESTA_ID NUMBER(16,0)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_PK'', ''D_EXP (EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 	
 	------------------------------ D_EXP_MODELOS_FACTURACION --------------------------
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_MODELOS_FACTURACION'', 
                           ''MODELOS_FACT_EXP_ID NUMBER(16,0) NOT NULL,
-                            MODELOS_FACT_EXP_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (MODELOS_FACT_EXP_ID)'', 
+                            MODELOS_FACT_EXP_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_MODELOS_FACTURACION_PK'', ''D_EXP_MODELOS_FACTURACION (MODELOS_FACT_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_MOTIVO_BAJA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_MOTIVO_BAJA_CR'', 
@@ -681,23 +689,25 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''MOTIVO_BAJA_EXP_CR_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_BAJA_EXP_CR_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (MOTIVO_BAJA_EXP_CR_ID)'', 
+                            MOTIVO_BAJA_EXP_CR_DESC VARCHAR2(50 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;    
 
-    
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_MOTIVO_BAJA_CR_PK'', ''D_EXP_MOTIVO_BAJA_CR (MOTIVO_BAJA_EXP_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
      ------------------------------ D_EXP_ESQUEMA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ESQUEMA_CR'', 
 
 
 
                           ''ESQUEMA_EXP_CR_ID NUMBER(16,0) NOT NULL,
-                            ESQUEMA_EXP_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESQUEMA_EXP_CR_ID)'', 
+                            ESQUEMA_EXP_CR_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ESQUEMA_CR_PK'', ''D_EXP_ESQUEMA_CR (ESQUEMA_EXP_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_CARTERA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_CARTERA_CR'', 
@@ -705,11 +715,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''CARTERA_EXP_CR_ID NUMBER(16,0) NOT NULL,
-                            CARTERA_EXP_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (CARTERA_EXP_CR_ID)'', 
+                            CARTERA_EXP_CR_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_CARTERA_CR_PK'', ''D_EXP_CARTERA_CR (CARTERA_EXP_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_SUBCARTERA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA_CR'', 
@@ -718,11 +729,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
                           ''SUBCARTERA_EXP_CR_ID NUMBER(16,0) NOT NULL,
                             SUBCARTERA_EXP_CR_DESC VARCHAR2(50 CHAR),
-                            CARTERA_EXP_CR_ID NUMBER(16,0) NULL,
-                            PRIMARY KEY (SUBCARTERA_EXP_CR_ID)'', 
+                            CARTERA_EXP_CR_ID NUMBER(16,0) NULL'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_SUBCARTERA_CR_PK'', ''D_EXP_SUBCARTERA_CR (SUBCARTERA_EXP_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
      ------------------------------ D_EXP_AGENCIA_CR -------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_AGENCIA_CR'', 
@@ -730,31 +742,37 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 
 
                           ''AGENCIA_EXP_CR_ID NUMBER(16,0) NOT NULL,
-                            AGENCIA_EXP_CR_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (AGENCIA_EXP_CR_ID)'', 
+                            AGENCIA_EXP_CR_DESC VARCHAR2(50 CHAR)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_AGENCIA_CR_PK'', ''D_EXP_AGENCIA_CR (AGENCIA_EXP_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_EXP_ENVIADO_AGENCIA_CR --------------------------
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_ENVIADO_AGENCIA_CR'', 
                           ''ENVIADO_AGENCIA_EXP_CR_ID NUMBER(16,0) NOT NULL,
-                            ENVIADO_AGENCIA_EXP_CR_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ENVIADO_AGENCIA_EXP_CR_ID)'', 
+                            ENVIADO_AGENCIA_EXP_CR_DESC VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
     execute immediate V_SQL USING OUT error;
+	
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_ENVIADO_AGENCIA_CR_PK'', ''D_EXP_ENVIADO_AGENCIA_CR (ENVIADO_AGENCIA_EXP_CR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_EXP_GESTOR --------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_GESTOR'',
                             ''GESTOR_EXP_ID NUMBER(16,0) NOT NULL,
                               GESTOR_EXP_NOMBRE_COMP VARCHAR2(250 CHAR),
                               GESTOR_EXP_NOMBRE VARCHAR2(250 CHAR),
                               GESTOR_EXP_APELLIDO1 VARCHAR2(250 CHAR),
-                              GESTOR_EXP_APELLIDO2 VARCHAR2(250 CHAR),
-                              PRIMARY KEY (GESTOR_EXP_ID)'', 
+                              GESTOR_EXP_APELLIDO2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
+    execute immediate V_SQL USING OUT error;
+	
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_GESTOR_PK'', ''D_EXP_GESTOR (GESTOR_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_EXP_GESTOR_COMITE --------------------------
@@ -763,46 +781,51 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
                               GESTOR_COMITE_EXP_NOMBRE_COMP VARCHAR2(250 CHAR),
                               GESTOR_COMITE_EXP_NOMBRE VARCHAR2(250 CHAR),
                               GESTOR_COMITE_EXP_APELLIDO1 VARCHAR2(250 CHAR),
-                              GESTOR_COMITE_EXP_APELLIDO2 VARCHAR2(250 CHAR),
-                              PRIMARY KEY (GESTOR_COMITE_EXP_ID)'', 
+                              GESTOR_COMITE_EXP_APELLIDO2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
     execute immediate V_SQL USING OUT error;
 
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_GESTOR_COMITE_PK'', ''D_EXP_GESTOR_COMITE (GESTOR_COMITE_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_EXP_SUPERVISOR --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUPERVISOR'',
                            ''SUPERVISOR_EXP_ID NUMBER(16,0) NOT NULL,
                               SUPERVISOR_EXP_NOMBRE_COMP VARCHAR2(250 CHAR),
                               SUPERVISOR_EXP_NOMBRE VARCHAR2(250 CHAR),
                               SUPERVISOR_EXP_APELLIDO1 VARCHAR2(250 CHAR),
-                              SUPERVISOR_EXP_APELLIDO2 VARCHAR2(250 CHAR),
-                              PRIMARY KEY (SUPERVISOR_EXP_ID)'', 
+                              SUPERVISOR_EXP_APELLIDO2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_SUPERVISOR_PK'', ''D_EXP_SUPERVISOR (SUPERVISOR_EXP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_EXP_FASE --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_FASE'',
                            ''FASE_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                              FASE_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                             FASE_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
-                             PRIMARY KEY (FASE_EXPEDIENTE_ID)'', 
+                             FASE_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
+    execute immediate V_SQL USING OUT error;
+	
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_FASE_PK'', ''D_EXP_FASE (FASE_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 
        ------------------------------ D_EXP_TIPO_EXPEDIENTE --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_EXPEDIENTE'',
                             ''TIPO_EXPEDIENTE_ID NUMBER(16,0) NOT NULL,
                               TIPO_EXPEDIENTE_DESC VARCHAR2(250 CHAR),
-                              TIPO_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR),
-                              PRIMARY KEY (TIPO_EXPEDIENTE_ID)'', 
+                              TIPO_EXPEDIENTE_DESC_2 VARCHAR2(250 CHAR)'', 
                           :error); END;';
 
     execute immediate V_SQL USING OUT error;
 
-
+	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_TIPO_EXPEDIENTE_PK'', ''D_EXP_TIPO_EXPEDIENTE (TIPO_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

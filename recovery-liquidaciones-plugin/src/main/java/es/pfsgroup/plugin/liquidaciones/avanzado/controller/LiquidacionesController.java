@@ -56,7 +56,7 @@ public class LiquidacionesController {
 				logo = "plugin/liquidaciones/logoSarebLiquidaciones.jpg";
 			}
 			
-			if (codigoEntidad.toUpperCase().equals("CAJAMAR")) {
+			if (codigoEntidad.toUpperCase().equals("HCJ")) {
 				logo = "plugin/liquidaciones/logoCajamarLiquidaciones.png";
 			}
 		}

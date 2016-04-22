@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RUBEN ROVIRA
---## FECHA_CREACION=20160421
+--## FECHA_CREACION=20160422
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=Ninguna
@@ -34,13 +34,13 @@ DECLARE
 BEGIN
     
     ---------------------
-    --   asu_asuntos   --
+    --   CIR_CIRBE   --
     ---------------------  
     
-			V_MSQL := 'update cm01.asu_asuntos set borrado=1 where usuariocrear =''ALTAASUNCM'' AND TRUNC(FECHACREAR) = ''21/04/16''';
-			EXECUTE IMMEDIATE V_MSQL;
+    DELETE FROM CM01.CIR_CIRBE WHERE TRUNC(CIR_FECHA_EXTRACCION)='29/02/16';
+			
 
-     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.ASU_ASUNTOS... UPDATE FIN');  
+     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.CIR_CIRBE... FECHA EXTRACION 29702716 BORRADOS...');  
     COMMIT;
      
 EXCEPTION

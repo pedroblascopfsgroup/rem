@@ -52,11 +52,11 @@ public class LiquidacionesController {
 		
 		if (!Checks.esNulo(codigoEntidad)) {
 			//Seleccionamos el logo según el codigo entidad
-			if (codigoEntidad.toUpperCase().equals("HCJ")) {
+			if (codigoEntidad.toUpperCase().equals("HAYA")) {
 				logo = "plugin/liquidaciones/logoSarebLiquidaciones.jpg";
 			}
 			
-			if (codigoEntidad.toUpperCase().equals("CAJAMAR")) {
+			if (codigoEntidad.toUpperCase().equals("HCJ")) {
 				logo = "plugin/liquidaciones/logoCajamarLiquidaciones.png";
 			}
 		}

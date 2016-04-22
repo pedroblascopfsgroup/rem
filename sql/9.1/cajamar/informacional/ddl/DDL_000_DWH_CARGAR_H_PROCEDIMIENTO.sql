@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=María Villanueva
---## FECHA_CREACION=20160322
+--## FECHA_CREACION=20160422
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=GC-1271

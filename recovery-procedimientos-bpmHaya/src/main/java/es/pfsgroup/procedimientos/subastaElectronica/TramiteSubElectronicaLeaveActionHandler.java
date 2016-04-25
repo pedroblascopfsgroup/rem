@@ -425,7 +425,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
 
 		// FIXME
-		crearNotificacionManualAdjudicacion(procPadre);
+		crearNotificacionManualAdjudicacion(procPadre, null);
 
 	}
 
@@ -450,7 +450,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		return null;
 	}
 	
-	private void crearNotificacionManualAdjudicacion(Procedimiento prc) {
+	private void crearNotificacionManualAdjudicacion(Procedimiento prc, TipoProcedimiento tipoProcedimiento) {
 		EXTTareaNotificacion notificacion = new EXTTareaNotificacion();
 		notificacion.setProcedimiento(prc);
 		notificacion.setAsunto(prc.getAsunto());
@@ -491,7 +491,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		TareaExterna tex = new TareaExterna();
 		tex.setAuditoria(audit);
 		tex.setTareaPadre(notificacion);
-		tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "P401_BPMTramiteAdjudicacionV4")));
+		tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "P458_BPMTramiteAdjudicacion")));
 		tex.setDetenida(false);
 		genericDao.save(TareaExterna.class, tex);
 

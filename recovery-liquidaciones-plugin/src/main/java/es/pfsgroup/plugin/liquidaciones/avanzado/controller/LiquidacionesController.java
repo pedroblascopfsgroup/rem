@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.liquidaciones.avanzado.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
+import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionesAvanzadoManager;
 
 @Controller
@@ -27,10 +29,23 @@ public class LiquidacionesController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openReport(ModelMap model, LIQDtoReportRequest request) {
+		LIQTramoPendientes pendientes = new LIQTramoPendientes();
+		
+		pendientes.setSaldo(request.getCapital());
+		pendientes.setIntereses(request.getInteresesOrdinarios()!=null?request.getInteresesOrdinarios():BigDecimal.ZERO);
+		pendientes.setIntereses(pendientes.getIntereses().add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO));
+		pendientes.setImpuestos(request.getImpuestos());
+		pendientes.setComisiones(request.getComisiones());
+		pendientes.setGastos(request.getGastos()!=null?request.getGastos():BigDecimal.ZERO);
+		pendientes.setGastos(pendientes.getGastos().add(request.getOtrosGastos()!=null?request.getOtrosGastos():BigDecimal.ZERO));
+		pendientes.setCostasLetrado(request.getCostasLetrado()!=null?request.getCostasLetrado():BigDecimal.ZERO);
+		pendientes.setCostasProcurador(request.getCostasProcurador()!=null?request.getCostasProcurador():BigDecimal.ZERO);
+		pendientes.setSobranteEntrega(BigDecimal.ZERO);
+		
 		
 		LIQDtoLiquidacionCabecera cabecera = liquidacionesManager.completarCabecera(request);
-		List<LIQDtoTramoLiquidacion> cuerpo = liquidacionesManager.obtenerLiquidaciones(request);
-		LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo);
+		List<LIQDtoTramoLiquidacion> cuerpo = liquidacionesManager.obtenerLiquidaciones(request,pendientes);
+		LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo, pendientes);
 		
 		String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
 		String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
@@ -41,7 +56,7 @@ public class LiquidacionesController {
 				logo = "plugin/liquidaciones/logoSarebLiquidaciones.jpg";
 			}
 			
-			if (codigoEntidad.toUpperCase().equals("CAJAMAR")) {
+			if (codigoEntidad.toUpperCase().equals("HCJ")) {
 				logo = "plugin/liquidaciones/logoCajamarLiquidaciones.png";
 			}
 		}

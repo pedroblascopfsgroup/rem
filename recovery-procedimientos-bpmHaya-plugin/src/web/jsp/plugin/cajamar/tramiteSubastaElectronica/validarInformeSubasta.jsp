@@ -50,23 +50,45 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var campo2 = items[2 + muestraBotonGuardar];
-var campo3 = items[3 + muestraBotonGuardar];
 
-campo3.setDisabled(true);
-campo3.allowBlank = true;
+var campoAceptacion = items[1 + muestraBotonGuardar];
+var campoAtribuciones = items[2 + muestraBotonGuardar];
+var campoMotivo = items[3 + muestraBotonGuardar];
 
-campo2.on('select', function(){	
-	if(campo2.getValue() == 'NPT') {//si no se paga la tasa
-		campo3.setDisabled(false);
-		campo3.allowBlank = false;
+campoAtribuciones.setDisabled(true);
+campoAtribuciones.allowBlank = true;
+campoMotivo.setDisabled(true);
+campoMotivo.allowBlank = true;
+
+campoAceptacion.on('select', function(){
+
+	if(campoAceptacion.getValue() == '01') { //si
+		campoAtribuciones.setDisabled(false);
+		campoAtribuciones.allowBlank = false;
 	}
-	else{//el resto
-		campo3.reset();
-		campo3.setDisabled(true);
-		campo3.allowBlank = true;
+	else if(campoAceptacion.getValue() == '02') {//no
+		campoAtribuciones.reset();
+		campoAtribuciones.setDisabled(true);
+		campoAtribuciones.allowBlank = true;
+
+		campoMotivo.reset();
+		campoMotivo.setDisabled(true);
+		campoMotivo.allowBlank = true;
 	}
 });	
+
+campoAtribuciones.on('select', function(){
+
+	if(campoAtribuciones.getValue() == '02') { //no
+		campoMotivo.setDisabled(false);
+		campoMotivo.allowBlank = false;
+	}
+	else if(campoAtribuciones.getValue() == '01') {//si
+		campoMotivo.reset();
+		campoMotivo.setDisabled(true);
+		campoMotivo.allowBlank = true;
+	}
+});
 
 </c:if>
 

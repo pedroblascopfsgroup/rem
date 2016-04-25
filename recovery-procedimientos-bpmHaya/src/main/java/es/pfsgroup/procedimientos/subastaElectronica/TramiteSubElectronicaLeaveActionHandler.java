@@ -73,7 +73,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	private UsuarioApi usuarioApi;
 
 	@Autowired
-	TramitesElectronicosApi tramitesElectronicos;
+	TramitesElectronicosApi tramitesElectronicosApi;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass,
@@ -193,9 +193,13 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	 */
 	protected Boolean[] getValoresRamas(ExecutionContext executionContext) {
 		Procedimiento proc = getProcedimiento(executionContext);
+		
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory
+				.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
 
-		Boolean[] valores = (Boolean[]) tramitesElectronicos.bpmGetValoresRamasRevisarDocumentacion(proc,
-				getTareaExterna(executionContext));
+		Boolean[] valores = (Boolean[]) tramitesElectronicosApi.bpmGetValoresRamasRevisarDocumentacion(proc,
+				getTareaExterna(executionContext), listado);
 
 		return valores;
 	}
@@ -211,6 +215,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 		Boolean comboPostores = false;
 		Boolean comboSubastaBienes = false;
+		Boolean suspension = true;
 
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
@@ -220,12 +225,22 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				else if ("comboSubastaBienes".equals(tev.getNombre())) {
 					comboSubastaBienes = ("01".equals(tev.getValor()));
 				}
+				else if ("comboDecision".equals(tev.getNombre())) {
+					if("NO".equals(tev.getValor())){
+						suspension = false;
+					}else{
+						suspension = true;
+					}
+				}
 			}
 		}
 
-		
-		modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores);
-		
+		if(suspension){
+			//Si suspendemos no hacemos nada
+		}else{
+			//Si no, continuamos
+			modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores);
+		}
 //		// primer paso
 //		// comprobamos valor postores en la tarea
 //		if (comboSubastaBienes) {
@@ -257,6 +272,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 		Boolean comboCoincidencia = false;
 		Boolean comboAdjudicacion = false;
+		String comboResultado = "";
 
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
@@ -266,11 +282,16 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				else if ("comboAdjudicacion".equals(tev.getNombre())) {
 					comboAdjudicacion = new Boolean(tev.getValor());
 				}
+				else if ("comboResultado".equals(tev.getNombre())) {
+					comboResultado = new String(tev.getValor());
+				}
 			}
 		}
-		
-		modificarYCrearDesdeEscJuzgado(sub, comboCoincidencia, comboAdjudicacion);
-
+		if("FAVC".equals(comboResultado) || "FAV".equals(comboResultado)){
+			modificarYCrearDesdeEscJuzgado(sub, comboCoincidencia, comboAdjudicacion);
+		}else{
+			
+		}
 	}
 
 	private void modificarYCrearDesdeSubasta(Subasta sub, Boolean coincidencia, Boolean comboPostores) {
@@ -404,7 +425,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		executor.execute(ExternaBusinessOperation.BO_PRC_MGR_SAVE_OR_UPDATE_PROCEDIMIMENTO, procHijo);
 
 		// FIXME
-		crearNotificacionManualAdjudicacion(procPadre);
+		crearNotificacionManualAdjudicacion(procPadre, null);
 
 	}
 
@@ -429,7 +450,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		return null;
 	}
 	
-	private void crearNotificacionManualAdjudicacion(Procedimiento prc) {
+	private void crearNotificacionManualAdjudicacion(Procedimiento prc, TipoProcedimiento tipoProcedimiento) {
 		EXTTareaNotificacion notificacion = new EXTTareaNotificacion();
 		notificacion.setProcedimiento(prc);
 		notificacion.setAsunto(prc.getAsunto());
@@ -470,7 +491,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		TareaExterna tex = new TareaExterna();
 		tex.setAuditoria(audit);
 		tex.setTareaPadre(notificacion);
-		tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "P401_BPMTramiteAdjudicacionV4")));
+		tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "P458_BPMTramiteAdjudicacion")));
 		tex.setDetenida(false);
 		genericDao.save(TareaExterna.class, tex);
 

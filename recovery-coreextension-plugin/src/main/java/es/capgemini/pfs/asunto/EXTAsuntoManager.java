@@ -61,7 +61,6 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
-import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
@@ -77,6 +76,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.registro.HistoricoAsuntoBuilder;
 import es.capgemini.pfs.registro.HistoricoAsuntoDto;
@@ -86,7 +86,6 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -101,6 +100,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -111,7 +111,6 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecis
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
-import es.pfsgroup.recovery.common.api.CommonProjectContext;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
@@ -200,15 +199,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	private AdjuntoApi adjuntosApi;
-	
-	@Autowired
-	private CommonProjectContext commonProjectContext;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
-
-	@Autowired
-	private GestorDespachoDao gestorDespachoDao;
 	
 	@Override
 	public String managerName() {
@@ -360,25 +350,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_ASU_MGR_GET)
 	public Asunto get(Long id) {
 		EventFactory.onMethodStart(this.getClass());
-		// Obtener asunto.
-    	Asunto asunto = asuntoDao.get(id);
-
-    	// Obtener usuarios por entidad y tipo de asunto del projectContext.
-    	Usuario usuGestor = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
-    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR)).get(0);
-    	
-    	Usuario usuSupervisor = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
-    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR)).get(0);
-    	
-    	// Obtener gestor despacho para gestor y supervisor en base a los usuarios gestor y supervisor.
-    	GestorDespacho gestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId()).get(0);
-    	GestorDespacho gestorSupervisor = gestorDespachoDao.getGestorDespachoByUsuId(usuSupervisor.getId()).get(0);
-    	
-    	// Asignar gestor despacho para gestor y supervisor al asunto.
-    	asunto.setGestor(gestorDespacho);
-    	asunto.setSupervisor(gestorSupervisor);
-    	
-        return asunto;
+		return parent().get(id);
 	}
 
 	private Collection<? extends HistoricoAsuntoInfo> getHistoricoProcedimiento(Procedimiento p) {

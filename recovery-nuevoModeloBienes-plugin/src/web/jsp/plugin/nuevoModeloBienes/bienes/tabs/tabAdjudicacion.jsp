@@ -96,6 +96,7 @@
 	});
 	
 	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+
 	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
 		datosAdjudicacion.items.items[1].add(postores);
         datosAdjudicacion.doLayout();

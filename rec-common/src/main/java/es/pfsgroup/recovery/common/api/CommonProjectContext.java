@@ -5,9 +5,6 @@ import java.util.Map;
 
 public interface CommonProjectContext {
 
-	public static String SELECCIONAR_GESTOR= "GESTOR";
-	public static String SELECCIONAR_SUPERVISOR= "SUPERVISOR";
-	
 	/**
      * Devuelve el código añadiendo espacios según el formato indicado 
      * @param formato Se debe indicar los caracteres en los que habrá
@@ -40,16 +37,4 @@ public interface CommonProjectContext {
 	 * @return String
 	 */
 	public String getTipoGestor(String tipoGestor);
-	
-	/**
-	 * Devuelve un mapa con el gestor y el supervisor que pertenecen a la entidad
-	 * y tipo de asunto especificados.
-	 * 
-	 * @param tipoAsunto
-	 * @param entidad
-	 * @return
-	 */
-	public Map<String, String> getGestorYSupervisorPorTipoAsuntoYEntidad(String tipoAsunto, String entidad);
-	
-	public void setGestorYSupervisorPorTipoAsuntoYEntidad(Map<String, Map<String, Map<String, String>>> m);
 }

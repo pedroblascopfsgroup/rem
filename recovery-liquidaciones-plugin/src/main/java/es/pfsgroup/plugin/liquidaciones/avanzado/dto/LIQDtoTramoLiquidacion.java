@@ -26,6 +26,7 @@ public class LIQDtoTramoLiquidacion extends WebDto {
     private BigDecimal gastosPendientes = null;
     private BigDecimal costasLetradoPendientes = null;
     private BigDecimal costasProcuradorPendientes = null;
+    private BigDecimal sobranteEntrega = null;
     private Integer dias = null;
     private Float tipoDemora = null;
     private BigDecimal interesesDemora = null;
@@ -131,6 +132,12 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	}
 	public void setCostasProcuradorPendientes(BigDecimal costasProcuradorPendientes) {
 		this.costasProcuradorPendientes = costasProcuradorPendientes;
+	}
+	public BigDecimal getSobranteEntrega() {
+		return sobranteEntrega;
+	}
+	public void setSobranteEntrega(BigDecimal sobranteEntrega) {
+		this.sobranteEntrega = sobranteEntrega;
 	}
 	public Integer getDias() {
 		return dias;

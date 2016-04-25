@@ -92,7 +92,7 @@
 	var contabilidadCobrosCm = new Ext.grid.ColumnModel([
 		{header : '<s:message code="contabilidad.fechaEntrega" text="**Fecha Entrega"/>', dataIndex : 'fechaEntrega'}
 		,{header : '<s:message code="contabilidad.fechaValor" text="**Fecha Valor"/>', dataIndex : 'fechaValor'}
-		,{header : '<s:message code="contabilidad.importe" text="**Importe"/>', dataIndex : 'importe'}
+		,{header : '<s:message code="contabilidad.importe" text="**Importe"/>', dataIndex : 'importe', hidden:true}
 		,{header : '<s:message code="contabilidad.tipoEntrega" text="**Tipo Entrega"/>', dataIndex : 'tipoEntrega'}
 		,{header : '<s:message code="contabilidad.conceptoEntrega" text="**Concepto Entrega"/>', dataIndex : 'conceptoEntrega'}
 		,{header : '<s:message code="contabilidad.nominal" text="**Nominal"/>', dataIndex : 'nominal'}

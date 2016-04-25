@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160425
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-2947
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Se modifica la carga de la fecha de decisión comité
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_H_EXPEDIENTE (DATE_START in date, DATE_END in date, O_ERROR_STATUS OUT VARCHAR2) AS 
 
 -- ===============================================================================================
@@ -1200,3 +1218,5 @@ EXCEPTION
 
 
 end CARGAR_H_EXPEDIENTE;
+/
+EXIT

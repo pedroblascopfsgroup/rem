@@ -50,9 +50,10 @@ var bottomBar = [];
 
 <c:if test="${form.errorValidacion==null}">
 
-var campoAceptacion = items[2 + muestraBotonGuardar];
-var campoAtribuciones = items[3 + muestraBotonGuardar];
-var campoMotivo = items[4 + muestraBotonGuardar];
+
+var campoAceptacion = items[1 + muestraBotonGuardar];
+var campoAtribuciones = items[2 + muestraBotonGuardar];
+var campoMotivo = items[3 + muestraBotonGuardar];
 
 campoAtribuciones.setDisabled(true);
 campoAtribuciones.allowBlank = true;
@@ -69,6 +70,10 @@ campoAceptacion.on('select', function(){
 		campoAtribuciones.reset();
 		campoAtribuciones.setDisabled(true);
 		campoAtribuciones.allowBlank = true;
+
+		campoMotivo.reset();
+		campoMotivo.setDisabled(true);
+		campoMotivo.allowBlank = true;
 	}
 });	
 

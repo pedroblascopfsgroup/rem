@@ -153,7 +153,7 @@
 	
 	<%-- PRODUCTO-671 Comprueba si la tarea es de tipo COMUNICACION y es dueño o destinatario de la misma *Para users de perfil solo consulta--%>		
 	var comprobacionComunicacionesYPerfil = function(tipoTareaCom, userCreador, userDestino) {
-		<sec:authorize ifAllGranted="SOLO_CONSULTA"> 
+		<sec:authorize ifAllGranted="ROLE_PUEDE_VER_TAREA_TIPO_COMUNICACION"> 
 			if(tipoTareaCom == '700' || tipoTareaCom == '701')
 			{ 
 				if( (userCreador == app.usuarioLogado.apellidoNombre || userDestino == app.usuarioLogado.apellidoNombre) ) {

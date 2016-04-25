@@ -327,7 +327,7 @@
 	<sec:authorize ifAllGranted="BOTON_MARCAR_EMBARGOS_MULTIPLE">
 		buttonBar.push(btnEditarMultiple);
 	</sec:authorize>
-	<sec:authorize ifNotGranted="SOLO_CONSULTA">
+	<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_EMBARGO_PROCEDIMIENTO">
 	buttonBar.push(btnAgregarBien);
 	buttonBar.push(btnExcluirBien);
 	buttonBar.push(btnEditar);

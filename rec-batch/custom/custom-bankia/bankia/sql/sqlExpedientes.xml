@@ -76,13 +76,15 @@
         <![CDATA[
             BEGIN
              --TRUNCATE TABLE TMP_EXP_REVISION
-             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_EXP_REVISION);
+             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_EXP_REVISION');
             END;
 
         ]]>
     </entry>
     <entry key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos.Oracle10gDialect">
         <![CDATA[
+        BEGIN
+
         INSERT INTO TMP_EXP_REVISION
         (
           SELECT e.exp_id EXP_ID, cex.cnt_id CNT_ID, cex.cex_pase PASE, e.EXP_PROCESS_BPM PROCESS_BPM, e.exp_manual MANUAL --Se deja el campo "MANUAL" por si lo necesitamos a posteriori, en ese caso quitar el filtro del where exp_manual=0
@@ -97,7 +99,11 @@
                   JOIN dd_tpe_tipo_prod_entidad t ON cnt.dd_tpe_id = t.dd_tpe_id
               WHERE e.borrado = 0  and e.exp_manual = 0 --Solo se revisan los expedientes automáticos
               AND NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE e.EXP_ID = EXR.EXP_ID)
-        )
+        );
+        COMMIT;
+
+        OPERACION_DDL.DDL_TABLE('STATS','TMP_EXP_REVISION');
+        END;
         ]]>
     </entry>
 
@@ -106,7 +112,7 @@
     <![CDATA[
         BEGIN
           --TRUNCATE TABLE TMP_MOV_REVISADOS_EXP
-          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_MOV_REVISADOS_EXP);
+          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_MOV_REVISADOS_EXP');
         END;
     ]]>
     </entry>
@@ -118,54 +124,59 @@
         -- TODO - y generar notificaciones
     *****************************************************/
 
+    BEGIN
+
     INSERT INTO TMP_MOV_REVISADOS_EXP
-(SELECT C.CNT_ID, tmp.exp_id, tmp.pase ES_PASE,
-CASE
-    WHEN e.dd_esc_codigo <> ${estadoContrato.Activo.codigo} --Cancelado es cualquier tipo que no sea activo, no solo el 7
-      THEN 1
-    ELSE 0
-  END Cancelado,
-CASE
-    WHEN (movAct.mov_deuda_irregular = 0)
-      THEN 1
-    ELSE 0
-  END SaldadoSinMovAnterior,
-CASE
-    WHEN (movAct.mov_deuda_irregular = 0 AND movAnt.mov_deuda_irregular  <> 0)
-      THEN 1
-    ELSE 0
-  END Saldado,
-  NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) Diferencia,
-  movAct.mov_deuda_irregular Importe,
-  movAnt.mov_deuda_irregular ImporteAnterior,
-  t.dd_tpe_activo activo,
-  movAnt.MOV_FECHA_POS_VENCIDA fechaVencido,
-  movAct.mov_fecha_extraccion fechaExtraccion
-FROM cnt_contratos c,
-  dd_tpe_tipo_prod_entidad t,
-  mov_movimientos movAct,
-  mov_movimientos movAnt,
-  ${master.schema}.dd_esc_estado_cnt e,
-  tmp_exp_revision tmp
-WHERE c.dd_tpe_id = t.dd_tpe_id
- -- AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)
-  AND c.dd_esc_id                 = e.dd_esc_id
-  AND movAct.cnt_id               = c.cnt_id
-  AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion
-  AND movAnt.cnt_id               = c.cnt_id
-  AND movAnt.MOV_FECHA_EXTRACCION =
-  (SELECT
-    CASE
-        WHEN MAX(mov_fecha_extraccion)IS NULL
-          THEN c.cnt_fecha_extraccion
-        ELSE MAX(mov_fecha_extraccion)
-    END
-  FROM mov_movimientos
-  WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion
-    AND CNT_ID                 = c.cnt_id
-)
-AND tmp.CNT_ID = C.CNT_ID
-)
+    (SELECT C.CNT_ID, tmp.exp_id, tmp.pase ES_PASE,
+        CASE
+            WHEN e.dd_esc_codigo <> ${estadoContrato.Activo.codigo} --Cancelado es cualquier tipo que no sea activo, no solo el 7
+              THEN 1
+            ELSE 0
+          END Cancelado,
+        CASE
+            WHEN (movAct.mov_deuda_irregular = 0)
+              THEN 1
+            ELSE 0
+          END SaldadoSinMovAnterior,
+        CASE
+            WHEN (movAct.mov_deuda_irregular = 0 AND movAnt.mov_deuda_irregular  <> 0)
+              THEN 1
+            ELSE 0
+          END Saldado,
+          NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) Diferencia,
+          movAct.mov_deuda_irregular Importe,
+          movAnt.mov_deuda_irregular ImporteAnterior,
+          t.dd_tpe_activo activo,
+          movAnt.MOV_FECHA_POS_VENCIDA fechaVencido,
+          movAct.mov_fecha_extraccion fechaExtraccion
+        FROM cnt_contratos c,
+          dd_tpe_tipo_prod_entidad t,
+          mov_movimientos movAct,
+          mov_movimientos movAnt,
+          ${master.schema}.dd_esc_estado_cnt e,
+          tmp_exp_revision tmp
+        WHERE c.dd_tpe_id = t.dd_tpe_id
+         -- AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)
+          AND c.dd_esc_id                 = e.dd_esc_id
+          AND movAct.cnt_id               = c.cnt_id
+          AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion
+          AND movAnt.cnt_id               = c.cnt_id
+          AND movAnt.MOV_FECHA_EXTRACCION =
+          (SELECT
+            CASE
+                WHEN MAX(mov_fecha_extraccion)IS NULL
+                  THEN c.cnt_fecha_extraccion
+                ELSE MAX(mov_fecha_extraccion)
+            END
+          FROM mov_movimientos
+          WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion
+            AND CNT_ID                 = c.cnt_id
+        )
+        AND tmp.CNT_ID = C.CNT_ID
+        );
+    COMMIT;
+    OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS_EXP');
+    END;
     ]]>
     </entry>
 
@@ -288,7 +299,7 @@ AND tmp.CNT_ID = C.CNT_ID
     <![CDATA[
         BEGIN
           --TRUNCATE TABLE TMP_EXP_A_CANCELAR
-          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_EXP_A_CANCELAR);
+          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_EXP_A_CANCELAR');
         END;
     ]]>
     </entry>

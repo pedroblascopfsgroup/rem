@@ -246,19 +246,24 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     mkdir -p $BASEDIR/tmp/package/DDL/scripts/
     mkdir -p $BASEDIR/tmp/package/DML/scripts/
     passtring=''
+    entities=0
     if [ "$MULTIENTIDAD" != "" ] ; then
         IFS=',' read -a entidades <<< "$MULTIENTIDAD"
         for index in "${!entidades[@]}"
         do
             passtring="$passtring ""entity0$((index+1))_pass@host:port\/sid"
+            entities=$(($entities + 1))
         done        
     else
         passtring="entity01_pass@host:port\/sid"
+        entities=$(($entities + 1))
     fi
     if [ $2 == 'BANKIA' ]; then
         cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     else
-        sed -e s/#ENTITY#/"${passtring}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+        entities=$(($entities + 1))
+        sed -e s/#NUMBER#/"${entities}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+        sed -e s/#ENTITY#/"${passtring}"/g -i $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     fi
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
     if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then

@@ -215,6 +215,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 		Boolean comboPostores = false;
 		Boolean comboSubastaBienes = false;
+		Boolean suspension = true;
 
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
@@ -224,12 +225,22 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				else if ("comboSubastaBienes".equals(tev.getNombre())) {
 					comboSubastaBienes = ("01".equals(tev.getValor()));
 				}
+				else if ("comboDecision".equals(tev.getNombre())) {
+					if("NO".equals(tev.getValor())){
+						suspension = false;
+					}else{
+						suspension = true;
+					}
+				}
 			}
 		}
 
-		
-		modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores);
-		
+		if(suspension){
+			//Si suspendemos no hacemos nada
+		}else{
+			//Si no, continuamos
+			modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores);
+		}
 //		// primer paso
 //		// comprobamos valor postores en la tarea
 //		if (comboSubastaBienes) {
@@ -261,6 +272,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 		Boolean comboCoincidencia = false;
 		Boolean comboAdjudicacion = false;
+		String comboResultado = "";
 
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
@@ -270,11 +282,16 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				else if ("comboAdjudicacion".equals(tev.getNombre())) {
 					comboAdjudicacion = new Boolean(tev.getValor());
 				}
+				else if ("comboResultado".equals(tev.getNombre())) {
+					comboResultado = new String(tev.getValor());
+				}
 			}
 		}
-		
-		modificarYCrearDesdeEscJuzgado(sub, comboCoincidencia, comboAdjudicacion);
-
+		if("FAVC".equals(comboResultado) || "FAV".equals(comboResultado)){
+			modificarYCrearDesdeEscJuzgado(sub, comboCoincidencia, comboAdjudicacion);
+		}else{
+			
+		}
 	}
 
 	private void modificarYCrearDesdeSubasta(Subasta sub, Boolean coincidencia, Boolean comboPostores) {

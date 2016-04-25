@@ -65,16 +65,24 @@ campoPostores.setDisabled(true);
 campoPostores.allowBlank = true;
 campoDetalle.setDisabled(true);
 campoDetalle.allowBlank = true;
+campoObservaciones.allowBlank = true;
 
 campoDecision.on('select', function(){	
-	if(campoResultado.getValue() == 'ENT' || campoResultado.getValue() == 'TER') {//entidad o terceros
+	if(campoDecision.getValue() == 'ENT' || campoDecision.getValue() == 'TER') {//entidad o terceros
+		campoPostores.reset();
+		campoPostores.setDisabled(true);
+		campoPostores.allowBlank = true;
 		campoCoincidencia.reset();
 		campoCoincidencia.setDisabled(true);
 		campoCoincidencia.allowBlank = true;
+		campoDetalle.reset();
+		campoDetalle.setDisabled(true);
+		campoDetalle.allowBlank = true;
 		campoMotivo.setDisabled(false);
 		campoMotivo.allowBlank = false;
 	}
-	else if(campoResultado.getValue() == 'NO') {//suspension
+	else if(campoDecision.getValue() == 'NO') {//suspension
+		campoPostores.reset();
 		campoMotivo.reset();
 		campoMotivo.setDisabled(true);
 		campoMotivo.allowBlank = true;
@@ -85,10 +93,11 @@ campoDecision.on('select', function(){
 
 campoCoincidencia.on('select', function(){	
 		if(campoCoincidencia.getValue() == '01') {//si
+			campoPostores.reset();
 			campoPostores.setDisabled(false);
 			campoPostores.allowBlank = false;
 		}
-		else if(campoResultado.getValue() == '02') {//no
+		else if(campoCoincidencia.getValue() == '02') {//no
 			campoPostores.reset();
 			campoPostores.setDisabled(true);
 			campoPostores.allowBlank = true;
@@ -109,6 +118,7 @@ campoPostores.on('select', function(){
 });
 
 campoDetalle.on('select', function(){	
+		debugger;
 		if(campoDetalle.getValue() == 'OTR') {//si
 			campoObservaciones.allowBlank = false;	
 		}

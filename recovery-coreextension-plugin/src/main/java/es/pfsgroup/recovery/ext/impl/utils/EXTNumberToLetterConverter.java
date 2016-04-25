@@ -13,10 +13,10 @@ import java.text.DecimalFormat;
 public class EXTNumberToLetterConverter {
 	private static final String[] UNIDADES = { "", "UN ", "DOS ", "TRES ",
         "CUATRO ", "CINCO ", "SEIS ", "SIETE ", "OCHO ", "NUEVE ", "DIEZ ",
-        "ONCE ", "DOCE ", "TRECE ", "CATORCE ", "QUINCE ", "DIECISEIS",
-        "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE" };
+        "ONCE ", "DOCE ", "TRECE ", "CATORCE ", "QUINCE ", "DIECISEIS ",
+        "DIECISIETE ", "DIECIOCHO ", "DIECINUEVE ", "VEINTE " };
 
-private static final String[] DECENAS = { "VENTI", "TREINTA ", "CUARENTA ",
+private static final String[] DECENAS = { "VEINTI", "TREINTA ", "CUARENTA ",
         "CINCUENTA ", "SESENTA ", "SETENTA ", "OCHENTA ", "NOVENTA ",
         "CIEN " };
 

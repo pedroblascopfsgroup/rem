@@ -28,15 +28,23 @@ DECLARE
     
 BEGIN
 	
+IF V_ESQUEMA = '' OR V_ESQUEMA_2 = '' THEN
+   DBMS_OUTPUT.put_line('No parece haber sido configurada la multientidad: ' || V_ESQUEMA || ', ' || V_ESQUEMA_2);
+ELSE 
    V_MSQL := 'GRANT SELECT ON ' || V_ESQUEMA || '.PEF_PERFILES TO ' || V_ESQUEMA_2;
    EXECUTE IMMEDIATE V_MSQL;
+   
 
    V_MSQL := 'GRANT SELECT ON ' || V_ESQUEMA || '.ZON_PEF_USU TO ' || V_ESQUEMA_2;
    EXECUTE IMMEDIATE V_MSQL;
 
    V_MSQL := 'GRANT SELECT ON ' || V_ESQUEMA || '.FUN_PEF TO ' || V_ESQUEMA_2;
    EXECUTE IMMEDIATE V_MSQL;
-    
+   
+   DBMS_OUTPUT.put_line('Permisos de acceso concedidos a las tablas.');
+END IF;
+
+
 EXCEPTION
      
     -- Opcional: Excepciones particulares que se quieran tratar

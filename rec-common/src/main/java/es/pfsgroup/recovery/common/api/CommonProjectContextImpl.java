@@ -16,7 +16,6 @@ public class CommonProjectContextImpl implements CommonProjectContext {
 
 	private Map<String, Map<String, String>> formatoNroContrato;
 	private Map<String, String> tipoGestores;
-	private Map<String, Map<String, Map<String, String>>> gestorYSupervisorPorTipoAsuntoYEntidad;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -129,17 +128,5 @@ public class CommonProjectContextImpl implements CommonProjectContext {
 		}
 		
 		return gestor;
-	}
-
-	@Override
-	public Map<String, String> getGestorYSupervisorPorTipoAsuntoYEntidad(
-			String tipoAsunto, String entidad) {
-		// Entidad > Asunto > Map con gestor y supervisor.
-		return this.gestorYSupervisorPorTipoAsuntoYEntidad.get(entidad).get(tipoAsunto);
-	}
-
-	@Override
-	public void setGestorYSupervisorPorTipoAsuntoYEntidad(Map<String, Map<String, Map<String, String>>> m) {
-		this.gestorYSupervisorPorTipoAsuntoYEntidad = m;
 	}
 }

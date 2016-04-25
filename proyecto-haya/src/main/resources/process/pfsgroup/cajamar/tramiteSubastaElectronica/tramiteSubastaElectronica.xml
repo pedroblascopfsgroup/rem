@@ -599,11 +599,11 @@
 		
 	<decision name="P458_ObtenerValidacionComiteDecision" expression="#{P458_ObtenerValidacionComiteDecision}">
 		<transition to="P458_PrepararInformeSubasta" name="rechazado"></transition>
-		<transition to="P458_PendienteConfirmacionPagoDeTasa" name="noPagarTasa"></transition>
+		<transition to="P458_PendienteConfirmacionPagoTasa" name="noPagarTasa"></transition>
 		<transition to="P458_DictarInstruccionesSubastaYPagoTasa" name="siPagarTasa"></transition>
 	</decision>
 
-	<state name="P458_PendienteConfirmacionPagoDeTasa">
+	<state name="P458_PendienteConfirmacionPagoTasa">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"

@@ -43,7 +43,7 @@
                     ';
                     execute immediate v_sql using v_codigo_extincion, v_codigo_pendiente_liberar, v_codigo_liberado;
 
-                   
+
                     COMMIT;
                     v_sql:='
                         UPDATE RCF_ESQ_ESQUEMA ESQ SET ESQ.RCF_DD_EES_ID = (SELECT EES1.RCF_DD_EES_ID
@@ -156,7 +156,7 @@
                      LEFT JOIN RCF_SUR_SUBCARTERA_RANKING SUR ON SCA.RCF_SCA_ID = SUR.RCF_SUR_ID AND SUR.BORRADO = 0
                      LEFT JOIN RCF_POA_POLITICA_ACUERDOS POA ON SCA.RCF_POA_ID = POA.RCF_POA_ID AND POA.BORRADO = 0
                      LEFT JOIN RCF_MOR_MODELO_RANKING MOR ON SCA.RCF_MOR_ID = MOR.RCF_MOR_ID
-                    WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.Inactivo.codigo}, ${ddEstadoEsquemas.Liberado.codigo}); 
+                    WHERE EES.RCF_DD_EES_CODIGO IN (${ddEstadoEsquemas.Inactivo.codigo}, ${ddEstadoEsquemas.Liberado.codigo});
 
               COMMIT;
 
@@ -284,13 +284,27 @@
         <![CDATA[
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
+               (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
+              SELECT cpe.cnt_id, cpe.per_id
+                   , 'NA' as cnt_per_tin
+                   , min(cpe.cpe_orden) as cnt_per_oin
+                   , max(decode(dd_tin_titular,1,1,0)) as cnt_per_arrastre
+                FROM CPE_CONTRATOS_PERSONAS cpe
+                 JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
+               WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 AND dd_tin_avalista <> 1)
+              GROUP BY cpe.cnt_id, cpe.per_id;
+
+
+            /*** Luis -> PREVIA EXP.INTEGRACION RECUPERACIONES
+              INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
               (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
               SELECT cpe.cnt_id, cpe.per_id, tin.dd_tin_codigo AS cnt_per_tin, cpe.cpe_orden AS cnt_per_oin
                    , tin.dd_tin_exp_recobro_sn as cnt_per_arrastre
-                FROM bank01.cpe_contratos_personas cpe
-                JOIN bank01.dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
+                FROM cpe_contratos_personas cpe
+                JOIN dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
                 -- Se incluyen todos  los obligados de cada contrato
-               WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 and dd_tin_avalista <> 1) ; 
+               WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 and dd_tin_avalista <> 1) ;
+            ***/
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_PER');
@@ -309,6 +323,9 @@
     <entry key="recobro.creacion.batch_datos_cnt.Oracle10gDialect">
         <![CDATA[
             Begin
+
+            /*** Se debe integrar con recuperaciones BATCH_SV_DATOS_CNT ***/
+
               INSERT /*+append*/ INTO BATCH_DATOS_CNT
               (cnt_id, ofi_id, cnt_riesgo)
               SELECT cnt.cnt_id
@@ -317,9 +334,9 @@
                 FROM cnt_contratos cnt
                 JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
                   JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
-               WHERE cnt.borrado = 0 AND esc.dd_esc_codigo = '0'; 
+               WHERE cnt.borrado = 0 AND esc.dd_esc_codigo = '0';
 
-              
+
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT');
             End;
@@ -338,6 +355,9 @@
         <![CDATA[
 
             Begin
+
+             /*** Fusionar con BATCH_SV_DATOS_CNT_PER **/
+
               INSERT /*+append*/ INTO BATCH_DATOS_PER
               (per_id, per_nombre, per_apellido1, per_apellido2
               ,per_deuda_irregular, per_riesgo_directo, per_riesgo_indirecto)
@@ -351,7 +371,7 @@
                 FROM per_personas
                WHERE borrado = 0;
 
-              
+
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER');
             End;
@@ -376,11 +396,13 @@
                   JOIN EXR_EXPEDIENTE_RECOBRO EXR ON CEX.EXP_ID = EXR.EXP_ID
                   JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
                   JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
+                  JOIN ${master.schema}.DD_TPX_TIPO_EXPEDIENTE TPX ON EXP.DD_TPX_ID = TPX.DD_TPX_ID
                  WHERE cex.borrado = 0
                    AND EEX.DD_EEX_CODIGO = '1'
+                   AND TPX.DD_TPX_CODIGO = 'REC'
                    AND EXP.BORRADO = 0;
- 
-             
+
+
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_EXP');
             End;
@@ -471,8 +493,11 @@
                   JOIN EXR_EXPEDIENTE_RECOBRO EXR ON PEX.EXP_ID = EXR.EXP_ID
                   JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
                   JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
+                  JOIN ${master.schema}.DD_TPX_TIPO_EXPEDIENTE EEX ON EXP.DD_TPX_ID = TPX.DD_TPX_ID
                  WHERE pex.borrado = 0
-                   AND EEX.DD_EEX_CODIGO = '1' AND EXP.BORRADO = 0; 
+                   AND EEX.DD_EEX_CODIGO = '1'
+                   AND TPX.DD_TPX_CODIGO = 'REC'
+                   AND EXP.BORRADO = 0;
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER_EXP');
@@ -540,7 +565,7 @@
          FROM exc_exceptuacion exc
           JOIN epe_exceptuacion_persona per ON exc.exc_id = per.exc_id
           LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
-         WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE); 
+         WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE);
 
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXCEPTUADOS');
@@ -578,8 +603,8 @@
               JOIN rcf_esc_esquema_carteras esc ON cre.rcf_esc_id = esc.rcf_esc_id
              WHERE exp.borrado = 0
                AND eex.dd_eex_codigo = '1'
-               AND exp.exp_manual = 1; 
-       
+               AND exp.exp_manual = 1;
+
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXP_MANUAL');
         End;
@@ -597,6 +622,9 @@
     <entry key="recobro.creacion.batch_datos_gcl.Oracle10gDialect">
         <![CDATA[
          Begin
+
+         /*** FUSIONAR CON BATCH_SV_DATOS_GCL ***/
+
            INSERT /*+append*/ INTO BATCH_DATOS_GCL
            (gcl_id, per_id)
            SELECT DISTINCT pgcl.gcl_id, pgcl.per_id
@@ -605,7 +633,7 @@
              JOIN batch_datos_per per ON pgcl.per_id = per.per_id
             WHERE pgcl.borrado = 0
               AND gcl.borrado = 0;
-         
+
            COMMIT;
            OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_GCL');
          End;

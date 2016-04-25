@@ -337,6 +337,9 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 					if ("costasLetrado".equals(tev.getNombre())) {
 						sub.setCostasLetrado(Float.parseFloat(tev.getValor()));
 					}
+					if ("costasProcurador".equals(tev.getNombre())) {
+						sub.setCostasProcurador(Float.parseFloat(tev.getValor()));
+					}
 				} catch (Exception e) {
 					logger.error("duplicaInfoSubasta: "+e);
 				}

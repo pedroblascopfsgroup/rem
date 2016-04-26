@@ -160,7 +160,6 @@ var formBusquedaContratos=function(){
 	</c:if>
 
     comboJerarquia.on('select',function(){
-		listadoCodigoZonas = [];
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
@@ -170,7 +169,6 @@ var formBusquedaContratos=function(){
 	});
 	
     comboJerarquiaAdministrativa.on('select',function(){
-		listadoCodigoZonasAdm = [];
 		if(comboJerarquiaAdministrativa.value != '') {
 			comboZonasAdm.setDisabled(false);
 			optionsZonasAdmStore.setBaseParam('idJerarquia', comboJerarquiaAdministrativa.getValue());

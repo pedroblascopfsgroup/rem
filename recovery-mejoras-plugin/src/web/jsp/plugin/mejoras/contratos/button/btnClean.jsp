@@ -44,6 +44,8 @@ new Ext.Button({
     				optionsZonasAdmStore.webflow({id:0});
     				zonasStore.removeAll();
     				zonasAdmStore.removeAll();
+    				listadoCodigoZonas = [];
+    				listadoCodigoZonasAdm = [];
         		} 
 			contratosGrid2.collapse(true);
 		}

@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.generar;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.direccion.model.Direccion;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -56,6 +59,8 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	public static final String INTERESINITELEG = "INTERESINITELEG";
 	public static final String COMIAPERTEL = "COMIAPERTEL";
 
+	public static final String DATOS_AVALISTA_SI_HAY = "DATOS_AVALISTA_SI_HAY";
+
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
@@ -99,6 +104,8 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(INTERESINITELEG, obtenerTipoInteresPrestamo(cnt, INTERESINITELEG));
 		datosDoc.put(COMIAPERTEL, obtenerTipoComisionApert(liquidacion, COMIAPERTEL));
 		datosDoc.put(NUMCUENTATELE, obtenerNumeroCuentaCompleto((EXTContrato) cnt, NUMCUENTATELE));
+
+		datosDoc.put(DATOS_AVALISTA_SI_HAY, obtenerDatosAvalista((EXTContrato) cnt));
 
 		return datosDoc;
 	}
@@ -171,10 +178,10 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		}
 		StringBuffer sb = new StringBuffer("");
 		if (isViviendaHabitual) {
-			sb.append("Se hace constar que esta Entidad considera, salvo error, que el bien hipotecado constituye la Vivienda Habitual del/los deudor/es, ");
+			sb.append("Se hace constar que esta Entidad considera, salvo error, que el bien hipotecado constituye la Vivienda Habitual del/os deudor/es, ");
 			sb.append("por lo que la presente liquidación se ha efectuado conforme a lo pactado por las partes y bajo el amparo de los límites establecidos ");
 			sb.append("en la Ley 1/2013 de 14 de Mayo de Medidas para Reforzar la Protección a los Deudores Hipotecarios, Reestructuración de Deuda y Alquiler Social, ");
-			sb.append("y en concreto por lo preceptuado en su Disposición Transitoria Segunda y en la nueva redacción del Art 114 de la Ley Hipotecaria.");			
+			sb.append("y en concreto por lo preceptuado en su Disposición Transitoria Segunda y en la nueva redacción del Art 114 de la Ley Hipotecaria.");
 		} else {
 			sb.append("Esta Entidad hace constar que, salvo error, el/los bien/es hipotecado/s no constituye/n la vivienda habitual del/los deudor/es.");
 		}
@@ -191,13 +198,25 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		return resultado;
 	}
 
-	private String obtenerTextoVencimientoAnticipado(LiquidacionPCO liquidacion, String campo) {
+	private String obtenerTextoVencimientoAnticipadoOld(LiquidacionPCO liquidacion, String campo) {
 		String resultado = "";
 		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
 			StringBuffer sb = new StringBuffer(", al haberse dado por vencido anticipadamente el crédito con fecha ");
 			sb.append(formateaFecha(liquidacion.getFechaCierre()));
-			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses y gastos ");
+			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses, impuestos y gastos ");
 			sb.append("correspondientes en virtud de lo pactado en  las CONDICIONES GENERALES,  Cláusula “8“, Apartado “A” de la referida póliza)");
+			resultado = sb.toString();
+		} 
+		return resultado;
+	}
+
+	private String obtenerTextoVencimientoAnticipado(LiquidacionPCO liquidacion, String campo) {
+		String resultado = "";
+		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
+			StringBuffer sb = new StringBuffer(", al haberse resuelto de pleno derecho con fecha ");
+			sb.append(formateaFecha(liquidacion.getFechaCierre()));
+			sb.append(", con reclamación del total de la deuda pendiente de pago, así como los intereses, impuestos y gastos ");
+			sb.append("correspondientes en virtud de lo pactado en La Condición General Decimonovena, Apartado A del referido contrato.");
 			resultado = sb.toString();
 		} 
 		return resultado;
@@ -343,6 +362,31 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 			resultado += " " + dir.getDomicilio_n().trim();
 		}
 		return resultado.trim().toUpperCase();
+	}
+
+
+	private String obtenerDatosAvalista(EXTContrato cnt) {
+		String resultado = "";
+		final String TEXTO_INICIO_AVALISTA = " y con la garantía solidaria de %s CIF %s, ";
+		final String TEXTO_CONECTOR_AVALISTA = " %s CIF %s, ";
+		final String TEXTO_FIN_AVALISTA = " y %s CIF %s, ";
+		List<ContratoPersona> listCP = new ArrayList<ContratoPersona>();
+		for (ContratoPersona cp : cnt.getContratoPersona()) {
+			if (cp.isAvalista()) {
+				listCP.add(cp);
+			}
+		}
+		for (int i=0; i<listCP.size(); i++) {
+			Persona p = listCP.get(i).getPersona();
+			if (i==0) {
+				resultado = String.format(TEXTO_INICIO_AVALISTA, p.getNom50(), p.getDocId());
+			} else if (i==(listCP.size()-1)) {
+				resultado = resultado + String.format(TEXTO_FIN_AVALISTA, p.getNom50(), p.getDocId());
+			} else {
+				resultado = resultado + String.format(TEXTO_CONECTOR_AVALISTA, p.getNom50(), p.getDocId());
+			}
+		}
+		return resultado;
 	}
 
 }

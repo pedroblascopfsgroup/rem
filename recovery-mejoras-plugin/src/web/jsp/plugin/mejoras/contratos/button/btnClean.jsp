@@ -42,6 +42,8 @@ new Ext.Button({
     				comboZonasAdm.reset();
     				comboJerarquiaAdministrativa.reset();
     				optionsZonasAdmStore.webflow({id:0});
+    				zonasStore.removeAll();
+    				zonasAdmStore.removeAll();
         		} 
 			contratosGrid2.collapse(true);
 		}

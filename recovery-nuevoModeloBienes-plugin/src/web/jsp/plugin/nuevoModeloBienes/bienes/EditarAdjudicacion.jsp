@@ -579,9 +579,15 @@
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
 	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion,fechaContabilidad]},
-				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate,postores]}
+				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
 				 ]
 	});
+	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+		datosAdjudicacion.items.items[1].add(postores);
+        datosAdjudicacion.doLayout();
+	}
 	
 	var datosPosesion = new Ext.form.FieldSet({
 		autoHeight:true

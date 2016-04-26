@@ -14,7 +14,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tools.ant.taskdefs.Filter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Service;
@@ -54,7 +53,6 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -120,6 +118,7 @@ public class AsuntosManager {
     
 	@Autowired
 	private GenericABMDao genericDao;
+
 
     /**
      * Actualiza el estado del asunto (abierto o cerrado) en función de sus procedimientos (abiertos o cerrados)

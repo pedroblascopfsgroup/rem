@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteAdjudicacionTerceros" width="1146" height="681">
+<root-container name="hcj_tramiteAdjudicacionTerceros" width="1186" height="960">
   <node name="inicio" x="0" y="0" width="132" height="36">
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-53" y="-2"/>
     </edge>
   </node>
-  <node name="P457_RegistrarDatosAdjudicacion" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P457_RegistrarDatosAdjudicacionDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P457_RegistrarDatosAdjudicacion" x="237" y="2" width="281" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -25,23 +14,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P457_ConfirmarConsignacion" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P457_ConfirmarConsignacionDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P457_SolicitarMandamientoPago" x="0" y="0" width="132" height="36">
+  <node name="P457_RegistrarDatosAdjudicacionDecision" x="33" y="69" width="288" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -52,10 +25,86 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P457_ConfirmarRecivoEnvioMandamientoPago" x="0" y="0" width="132" height="36">
+  <node name="P457_ConfirmarConsignacion" x="40" y="146" width="270" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="318" h1="57" w2="-575" h2="-511"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
+  </node>
+  <node name="P457_ConfirmarConsignacionDecision" x="47" y="235" width="309" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="192" h1="114" w2="17" h2="322"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P457_SolicitarMandamientoPago" x="20" y="333" width="266" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="43"/>
+      <bendpoint w1="-144" h1="-34" w2="-163" h2="119"/>
+      <bendpoint w1="-139" h1="-156" w2="-158" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P457_ConfirmarRecivoEnvioMandamientoPago" x="12" y="439" width="318" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-149" h1="-48" w2="-121" h2="44"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P457_RecepcionMandamientoPago" x="25" y="554" width="277" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-114" h1="-42" w2="-105" h2="48"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P457_ConfirmarContabilidad" x="15" y="654" width="360" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-149" h1="-41" w2="-118" h2="51"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P457_ValorarLanzamientoTramiteSoliSolvPatr" x="15" y="746" width="362" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-154" h1="-49" w2="-151" h2="46"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="P457_ValorarLanzamientoTramiteSoliSolvPatrDecision" x="23" y="827" width="344" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -63,61 +112,20 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P457_RecepcionMandamientoPago" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="P457_BPMTramiteSolicitudSolvenciaPatrimonial" x="30" y="922" width="342" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P457_ConfirmarContabilidad" x="0" y="0" width="132" height="36">
+  <node name="P457_BPMTramiteCesionRemate" x="635" y="145" width="245" height="36">
     <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
+      <label x="-79" y="1"/>
     </edge>
   </node>
-  <node name="P457_ValorarLanzamientoTramiteSoliSolvPatr" x="0" y="0" width="132" height="36">
+  <node name="P457_BPMTramiteAdjudicacion" x="888" y="61" width="222" height="36">
     <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
+      <label x="-72" y="-37"/>
     </edge>
   </node>
-  <node name="P457_ValorarLanzamientoTramiteSoliSolvPatrDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P457_BPMTramiteSolicitudSolvenciaPatrimonial" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P457_BPMTramiteCesionRemate" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P457_BPMTramiteAdjudicacion" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="Fin" x="0" y="0" width="132" height="36"/>
+  <node name="Fin" x="1000" y="708" width="132" height="36"/>
 </root-container>

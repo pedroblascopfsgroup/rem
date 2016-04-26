@@ -13,6 +13,75 @@
 		
 	<bean id="commonProjectContextDefault"
 		class="es.pfsgroup.recovery.common.api.CommonProjectContextImpl" abstract="true">
+		
+		<property name="gestorYSupervisorPorTipoAsuntoYEntidad">
+			<map> <!-- CODIGO ENTIDAD -->
+				<entry key="HAYA">
+					<map> <!-- CODIGO ASUNTO -->
+						<entry key="01"> <!-- LITIGIO -->
+							<map>
+								<entry key="SUPERVISOR" value="SUP"/>
+								<entry key="GESTOR" value="GEXT"/>
+							</map>
+						</entry>
+						<entry key="02"> <!-- CONCURSAL -->
+							<map>
+								<entry key="SUPERVISOR" value="SUP"/>
+								<entry key="GESTOR" value="GEXT"/>
+							</map>
+						</entry>
+					</map>
+				</entry>
+				<entry key="HCJ">
+					<map> <!-- CODIGO ASUNTO -->
+						<entry key="01"> <!-- LITIGIO -->
+							<map>
+								<entry key="SUPERVISOR" value="SUP"/>
+								<entry key="GESTOR" value="GEXT"/>
+							</map>
+						</entry>
+						<entry key="02"> <!-- CONCURSAL -->
+							<map>
+								<entry key="SUPERVISOR" value="SUP"/>
+								<entry key="GESTOR" value="GEXT"/>
+							</map>
+						</entry>
+					</map>
+				</entry>
+				<entry key="BANKIA">
+					<map> <!-- CODIGO ASUNTO -->
+						<entry key="01"> <!-- LITIGIO -->
+							<map>
+								<entry key="SUPERVISOR" value="SUP"/>
+								<entry key="GESTOR" value="GEXT"/>
+							</map>
+						</entry>
+						<entry key="02"> <!-- CONCURSAL -->
+							<map>
+								<entry key="SUPERVISOR" value="SUP"/>
+								<entry key="GESTOR" value="GEXT"/>
+							</map>
+						</entry>
+					</map>
+				</entry>
+				<entry key="CAJAMAR">
+					<map> <!-- CODIGO ASUNTO -->
+						<entry key="01"> <!-- LITIGIO -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="LETR"/>
+							</map>
+						</entry>
+						<entry key="02"> <!-- CONCURSAL -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="GESCON"/>
+							</map>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
 	</bean>
 	
 <!-- 	<bean id="precontenciosoProjectContextBANKIA" parent="precontenciosoProjectContextDefault"> -->

@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS PEREZ
---## FECHA_CREACION=20160411
+--## FECHA_CREACION=20160418
 --## ARTEFACTO=web
---## VERSION_ARTEFACTO=9.2.2-cj
---## INCIDENCIA_LINK=CMREC-2771
+--## VERSION_ARTEFACTO=9.2.2-cj-patch04
+--## INCIDENCIA_LINK=CMREC-3118
 --## PRODUCTO=NO
---## Finalidad: DDL PARA MODIFICAR EL REFRESCO DE LA VISTA Y OBTENER EL DD_TIPO_PROD_ENTIDAD DEL CONTRATO
+--## Finalidad: DDL PARA MODIFICAR EL REFRESCO DE LA VISTA
 --##           
 --## INSTRUCCIONES: ---
 --## VERSIONES:
@@ -46,7 +46,11 @@ DECLARE
         per_riesgo_ind,
         per_riesgo_dir_vencido,
         per_sexo,
-        per_empleado,
+        CASE
+		    WHEN PER_EMPLEADO = 1
+		    THEN DD_SI.DD_SIN_ID
+		    ELSE DD_NO.DD_SIN_ID
+		END PER_EMPLEADO,
         per.dd_cos_id,
         CASE WHEN per.DD_COS_ID = 20 THEN 0 ELSE 1 END AS colectivo_singular,
         per.dd_pnv_id,
@@ -79,7 +83,7 @@ DECLARE
         dd_gc1_id,
         cnt_fecha_esc,
         cnt_fecha_constitucion,
-        TRUNC (SYSDATE - mov.mov_cnt_fecha_ini_epi_irreg) AS dias_irregular,
+        TRUNC (SYSDATE - mov.MOV_FECHA_POS_VENCIDA) AS dias_irregular,
         mov_deuda_irregular,
         mov_saldo_dudoso,
         mov_provision,
@@ -279,6 +283,12 @@ DECLARE
         ,NVL(PER.PER_RIESGO_TOTAL,0) PER_RIESGO_TOTAL
         ,NVL(GCL.GCL_NOMBRE,''DESCONOCIDO'') GCL_NOMBRE
         ,(NVL(tmp_per.TMP_NUM_EXTRA3,0) - NVL(tmp_per.TMP_NUM_EXTRA6,0)) as PER_RIESGO_TOTAL_FALLIDO
+		,tmp_per.tmp_num_extra7 as DEUDA_IRREG_FALLIDOS
+		,CASE
+		    WHEN tmp_cnt.tmp_cnt_flag_extra7 = 1
+		    THEN DD_SI.DD_SIN_ID
+		    ELSE DD_NO.DD_SIN_ID
+		END PROD_ATENCION_SOCIAL
     FROM  ' || V_ESQUEMA || '.per_personas per
       LEFT JOIN  ' || V_ESQUEMA || '.cpe_contratos_personas cpe ON per.per_id = cpe.per_id --PER_CPE
       LEFT JOIN  ' || V_ESQUEMA || '.dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
@@ -294,6 +304,9 @@ DECLARE
       LEFT JOIN  ' || V_ESQUEMA || '.cnt_precalculo_arq cnt_arq ON cnt.cnt_contrato = cnt_arq.cnt_contrato
       LEFT JOIN  ' || V_ESQUEMA || '.acn_anteced_contratos acn ON acn.CNT_ID=cnt.CNT_ID
       LEFT JOIN  ' || V_ESQUEMA || '.tmp_per_personas tmp_per ON tmp_per.tmp_per_cod_persona = per.per_cod_cliente_entidad
+      LEFT JOIN  ' || V_ESQUEMA || '.tmp_cnt_contratos tmp_cnt ON tmp_cnt.tmp_cnt_id = cnt.cnt_id
+	  LEFT JOIN (SELECT DD_SIN_ID, DD_SIN_CODIGO FROM ' || V_ESQUEMA_M || '.DD_SIN_SINO) DD_SI ON DD_SI.DD_SIN_CODIGO = ''01''
+	  LEFT JOIN (SELECT DD_SIN_ID, DD_SIN_CODIGO FROM ' || V_ESQUEMA_M || '.DD_SIN_SINO) DD_NO ON DD_NO.DD_SIN_CODIGO = ''02''
       LEFT JOIN (select cnt_id,
                         zonN0.zon_id as zon_idN0, zonN0.zon_cod as zon_codN0, zonN0.zon_num_centro as zon_num_centroN0, zonN0.zon_descripcion as zon_descripcionN0, zonN0.zon_pid as zon_pidN0, nivN0.niv_id as niv_idN0, nivN0.niv_codigo as niv_codigoN0, nivN0.niv_descripcion as niv_descripcionN0,
                         zonN1.zon_id as zon_idN1, zonN1.zon_cod as zon_codN1, zonN1.zon_num_centro as zon_num_centroN1, zonN1.zon_descripcion as zon_descripcionN1, zonN1.zon_pid as zon_pidN1, nivN1.niv_id as niv_idN1, nivN1.niv_codigo as niv_codigoN1, nivN1.niv_descripcion as niv_descripcionN1,
@@ -474,7 +487,9 @@ BEGIN
             ,DD_TGL_ID
             ,PER_RIESGO_TOTAL
             ,GCL_NOMBRE
-            ,PER_RIESGO_TOTAL_FALLIDO)
+            ,PER_RIESGO_TOTAL_FALLIDO
+			,DEUDA_IRREG_FALLIDOS
+			,PROD_ATENCION_SOCIAL)
     VALUES
       (L_DATA(I).PER_ID
             ,L_DATA(I).PER_RIESGO
@@ -578,7 +593,9 @@ BEGIN
             ,L_DATA(I).DD_TGL_ID
             ,L_DATA(I).PER_RIESGO_TOTAL
             ,L_DATA(I).GCL_NOMBRE
-            ,L_DATA(I).PER_RIESGO_TOTAL_FALLIDO);
+            ,L_DATA(I).PER_RIESGO_TOTAL_FALLIDO
+			,L_DATA(I).DEUDA_IRREG_FALLIDOS
+			,L_DATA(I).PROD_ATENCION_SOCIAL);
     EXIT WHEN CUR%NOTFOUND;
 
   END LOOP;

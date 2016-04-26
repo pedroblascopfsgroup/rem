@@ -18,14 +18,15 @@ import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
 public class LIQCobroPagoDaoImpl extends AbstractEntityDao<LIQCobroPago, Long> implements LIQCobroPagoDao{
 
 	@Override
-	public List<LIQCobroPago> findEntregasACuenta(Long contrato,
-			Date fechaCierre, Date fechaLiquidacion) {
+	public List<LIQCobroPago> findEntregasACuenta(Long contrato, Date fechaCierre, Date fechaLiquidacion) {
+		//Se devuelven todos los cobros/pagos entre las fechas requeridas, independientemente de su tipo(EC entregas a cuenta) y estado (04 Cobrado)
+		
 		HQLBuilder b = new HQLBuilder("from LIQCobroPago cp");
 		b.appendWhere("cp.auditoria.borrado = false");
 		HQLBuilder.addFiltroIgualQue(b, "cp.contrato.id", contrato);
-		b.appendWhere("cp.subTipo.codigo = 'EC'");
+		//b.appendWhere("cp.subTipo.codigo = 'EC'");
 		HQLBuilder.addFiltroBetweenSiNotNull(b, "cp.fecha", fechaCierre, fechaLiquidacion);
-		b.appendWhere("cp.estado.codigo = '04'");
+		//b.appendWhere("cp.estado.codigo = '04'");
 		b.orderBy("cp.fechaValor", HQLBuilder.ORDER_ASC);
 		
 		return HibernateQueryUtils.list(this, b);

@@ -156,8 +156,7 @@
 		  
 	<bean p:entity="tabs.asunto.fast" p:name="tabTramiteSubastas" p:order="2100" 
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/tabs/tabSubastas.jsp" 
-		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		  p:permission="TAB_ADJUDICADOS"  />	
+		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>	
 		  
 	<bean p:entity="tabs.asunto.fast" p:name="tabAdjudicados" p:order="2200" 
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/adjudicacion/tabs/tabAdjudicados.jsp" 

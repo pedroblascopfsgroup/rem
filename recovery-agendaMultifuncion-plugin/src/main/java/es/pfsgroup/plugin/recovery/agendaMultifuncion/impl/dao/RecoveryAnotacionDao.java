@@ -21,13 +21,14 @@ public class RecoveryAnotacionDao extends AbstractEntityDao implements RecoveryA
 
         hql.append("from Usuario ");
         hql.append("where auditoria.borrado = 0 ");
-        hql.append("and upper(concat(username, ' ', nombre, ' ', apellido1, ' ', apellido2)) like '%|| :query ||%' ");
+        hql.append("and upper(concat(username, ' ', nombre, ' ', apellido1, ' ', apellido2)) like '%'|| :query ||'%'");
         params.put("query", query.toUpperCase());
 //        hql.append("and upper(concat(username, ' ', nombre, ' ', apellido1, ' ', apellido2)) like '%" + query.toUpperCase() + "%' ");
 
         hql.append("order by nombre, apellido1, apellido2");
 
         Query q = getSession().createQuery(hql.toString());
+        q.setParameter("query", query.toUpperCase());
         q.setMaxResults(20);
 
         return q.list();

@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -33,8 +32,6 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
-import es.capgemini.pfs.persona.model.PersonaFormulas;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
@@ -405,7 +402,11 @@ public class MEJAcuerdoController {
 			} 
 		}
 		
-		map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		if(!Checks.esNulo(fechaPaseMoraFormated)){
+			map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		} else {
+			map.put("fechaPaseMora", null);
+		}
 		
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
 		map.put("yaHayPlanPago", yaHayPlanPago);
@@ -572,7 +573,7 @@ public class MEJAcuerdoController {
 					} else {
 						//Buscamos el value del text enviado
 						for (List<String> value : campo.getArrayValoresCombo()) {
-							if (value.get(1).equals(request.getParameter(campo.getNombreCampo()))) {
+							if (value.get(0).equals(request.getParameter(campo.getNombreCampo()))) {
 								va.setValor(value.get(0));
 							}
 						}

@@ -1596,24 +1596,6 @@
 				<groupId>es.pfsgroup.maven</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
 				<version>1.0-SNAPSHOT</version>
-				<executions>
-					<execution>
-						<phase>docker</phase>
-						<goals>
-							<goal>run</goal>
-							<goal>start</goal>
-							<goal>stop</goal>
-							<goal>rm</goal>
-							<goal>update</goal>
-							<goal>ps</goal>
-							<goal>browser</goal>
-							<goal>db-create</goal>
-							<goal>db-start</goal>
-							<goal>db-stop</goal>
-							<goal>db-rm</goal>	
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>

@@ -314,7 +314,8 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 	
 	private RespuestaDocumentosExpedientes mantenerEsperaCrearContenedor(ServerRequest serverRequest, RespuestaDocumentosExpedientes respuesta) {
 		int mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
-		while(mantenerEspera >= 0) {
+		int vecesIntento = 0;
+		while(mantenerEspera >= 0 && vecesIntento < 5) {
 			try {
 				Thread.sleep(15000);
 			} catch (InterruptedException e) {
@@ -322,6 +323,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 			}
 			respuesta = (RespuestaDocumentosExpedientes) restClientApi.getResponse(serverRequest);
 			mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+			vecesIntento++;
 		}			
 		return respuesta;
 	}

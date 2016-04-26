@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160412
+--## FECHA_CREACION=20160413
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1093
@@ -240,7 +240,7 @@ DECLARE
 	,T_TIPO_TFI('P458_ObtenerValidacionComite','4','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1093')
 
 	,T_TIPO_TFI('P458_PendienteConfirmacionPagoTasa','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">A través de esta tarea y puesto que anteriormente la respuesta del Comité fue "No pagar tasa", usted deberá contactar con el Banco para preguntarle si pueden pagar la tasa o recibir nuevas instrucciones al respecto.<br>En función de la respuesta obtenida por el Banco deberá informar si se procede al pago de la tasa o no.<br>Si no ha obtenido respuesta, deberá autoprorrogarse esta tarea o paralizar el procedimiento durante el tiempo que le haya indicado la Entidad. </p>Una vez realizada esta tarea, se evaluará la información de la Resolución definitiva:<br>- Si se ha informado "Pagar tasa", la siguiente tarea será "Dictar instrucciones  de subasta y pago de tasa".<br>- Si se ha informado "No Pagar Tasa", saltará una toma de decisión.</p>En el campo Observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p></div>',null,null,null,null,'0','PRODUCTO-1093')
-	,T_TIPO_TFI('P458_PendienteConfirmacionPagoTasa','1','text','motivoImpago','Motivo de no pagar tasa',null,null,'(valores[''P458_ObtenerValidacionComite''] !=null && valores[''P458_ObtenerValidacionComite''][''comboMotivoImpago''] !=null) ? valores[''P458_ObtenerValidacionComite''][''comboMotivoImpago''] : null',null,'0','PRODUCTO-1093')	
+	,T_TIPO_TFI('P458_PendienteConfirmacionPagoTasa','1','combo','motivoImpago','Motivo de no pagar tasa',null,null,'(valores[''P458_ObtenerValidacionComite''] !=null && valores[''P458_ObtenerValidacionComite''][''comboMotivoImpago''] !=null) ? valores[''P458_ObtenerValidacionComite''][''comboMotivoImpago''] : null','DDMotivoNoPagarTasa','0','PRODUCTO-1093')	
 	,T_TIPO_TFI('P458_PendienteConfirmacionPagoTasa','2','combo','comboResolucionDefinitiva','Resolución definitiva','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDResolucionPagoTasa','0','PRODUCTO-1093')
 	,T_TIPO_TFI('P458_PendienteConfirmacionPagoTasa','3','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1093')
 

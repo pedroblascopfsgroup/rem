@@ -561,7 +561,8 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		if (saldovencido) {
 
 			if (EXTPersonaDao.BUSQUEDA_RIESGO_DIRECTO.equals(clientes
-					.getTipoRiesgo())) {
+					.getTipoRiesgo()) || EXTPersonaDao.BUSQUEDA_RIESGO_TOTAL.equals(clientes
+							.getTipoRiesgo())) {
 				final String filtro = addSubselectDispuestoVencido(
 						clientes.getMinSaldoVencido(),
 						clientes.getMaxSaldoVencido());
@@ -1456,28 +1457,6 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 		hql.append(" where p.ZON_ID = zon.ZON_ID and p.BORRADO = 0");
 		hql.append(zonas);
-
-		return hql.toString();
-	}
-	
-	private String generaFiltroPersonaPorGestor(Usuario usuLogado,
-			Map<String, Object> parameters) {
-		StringBuffer hql = new StringBuffer();
-		hql.append(" select p.per_id from per_personas p , GE_GESTOR_ENTIDAD ge ");
-
-		if (pasoDeVariables()) {
-			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = :codigo_entidad_cliente");
-			hql.append(" and ge.USU_ID = :usuario_logado");
-
-			parameters.put("usuario_logado", usuLogado.getId());
-			parameters.put("codigo_entidad_cliente",
-					DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
-
-		} else {
-			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = '"
-					+ DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE + "'");
-			hql.append(" and ge.USU_ID = " + usuLogado.getId() + " ");
-		}
 
 		return hql.toString();
 	}

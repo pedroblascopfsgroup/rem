@@ -100,7 +100,6 @@
 	var listadoCodigoZonas = [];
 	
 	comboJerarquia.on('select',function(){
-		listadoCodigoZonas = [];
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
@@ -651,6 +650,7 @@
 				}
 			}			
 			,limpiar: function() {
+			listadoCodigoZonas=[];
     		   app.resetCampos([      
 						comboJerarquia,
 						comboZonas

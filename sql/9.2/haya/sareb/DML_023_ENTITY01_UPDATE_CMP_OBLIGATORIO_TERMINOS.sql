@@ -54,7 +54,7 @@ BEGIN
     	IF V_NUM_TABLAS = 1 THEN
         	DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.ACU_CAMPOS_TIPO_ACUERDO... Comienza la actualización');
         	V_MSQL := 'update '||V_ESQUEMA||'.ACU_CAMPOS_TIPO_ACUERDO SET CMP_OBLIGATORIO = 1 WHERE CMP_NOMBRE_CAMPO IN(''fechaSolucionPrevista'',''solicitarAlquiler'',''nombreCesionario'',''relacionCesionarioTitular'',''importeCesion'',''importeQuita'',''porcentajeQuita'')
-				or  (CMP_NOMBRE_CAMPO= ''fechaPrevistaFirma'' and DD_TPA_ID IN(401,212,404)) ';
+				or  (CMP_NOMBRE_CAMPO= ''fechaPrevistaFirma'' and DD_TPA_ID IN(SELECT DD_TPA_ID FROM ' || V_ESQUEMA || '.DD_TPA_TIPO_ACUERDO WHERE DD_TPA_CODIGO IN (''VEN_CRED'',''01'',''QUITA''))) ';
         	DBMS_OUTPUT.PUT_LINE(V_MSQL);
         	EXECUTE IMMEDIATE V_MSQL; 
         	COMMIT;	

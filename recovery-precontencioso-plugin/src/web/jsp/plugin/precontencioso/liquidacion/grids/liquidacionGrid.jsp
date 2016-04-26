@@ -402,7 +402,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnConfirmar.setDisabled(false);
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
-			btnGenerar.setDisabled(true);
+			btnGenerar.setDisabled(false);
 			btnLiqGenDoc.setDisabled(true);
 			break;
 

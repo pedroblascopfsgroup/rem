@@ -342,6 +342,11 @@
 				def compruebaPostores = {
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.compruebaPostores(idProcedimiento);
+				}		
+				
+				def compruebaAdjudicatariaConPostores = {
+	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
+					return adjudicacionProcedimientoManager.compruebaAdjudicatariaConPostores(idProcedimiento);
 				}				
 
 				def validarHC103SolicitudFondos = {

@@ -29,8 +29,8 @@
 	</state>
 	
 	<decision name="P457_RegistrarDatosAdjudicacionDecision" expression="#{P457_RegistrarDatosAdjudicacionDecision}">
-		<transition to="P457_BPMTramiteAdjudicacion" name="sin"></transition> <!-- Entidad: Con cesion -->
-		<transition to="P457_BPMTramiteCesionRemate" name="con"></transition> <!-- Entidad: Sin cesion -->
+		<transition to="P457_BPMTramAdjudi" name="sin"></transition> <!-- Entidad: Sin cesion -->
+		<transition to="P457_BPMTramiteCesionRemate" name="con"></transition> <!-- Entidad: Con cesion -->
 		<transition to="P457_ConfirmarConsignacion" name="terceros"></transition> <!-- Terceros -->
 	</decision>
 	
@@ -219,7 +219,7 @@
 		<transition to="Fin" name="hcj_tramiteCesionRemate"></transition>
 	</state>
 
-	<state name="P457_BPMTramiteAdjudicacion">
+	<state name="P457_BPMTramAdjudi">
 		<event type="node-enter">
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"

@@ -5,9 +5,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
-
 //------------------------------------------------
-// Sobreescribe la funcion filter para IE8
+// Sobreescribe la función filter para IE8
 //------------------------------------------------
 
 function isIE () {

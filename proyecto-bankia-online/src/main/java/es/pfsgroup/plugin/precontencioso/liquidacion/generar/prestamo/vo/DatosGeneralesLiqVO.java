@@ -65,7 +65,14 @@ public class DatosGeneralesLiqVO {
 	}
 
 	public String IMDEUD() {
-		return NumberFormat.getInstance(new Locale("es", "ES")).format(DGC_IMDEUD);
+		//Comprobamos si el numero es negativo
+		if((DGC_IMDEUD).compareTo(BigDecimal.ZERO) < 0){
+			//Si lo es devolvemos el valor absoluto para mostrarlo positivamente
+			BigDecimal absNumero = DGC_IMDEUD.abs();
+			return NumberFormat.getInstance(new Locale("es", "ES")).format(absNumero);
+		}else{
+			return NumberFormat.getInstance(new Locale("es", "ES")).format(DGC_IMDEUD);
+		}
 	}
 
 	public String IMDEUD_LETRAS() {

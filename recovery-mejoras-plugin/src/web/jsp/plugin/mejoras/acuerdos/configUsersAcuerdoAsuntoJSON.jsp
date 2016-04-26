@@ -7,13 +7,12 @@
 
 <fwk:json>
 		<json:object name="tiposDespachosAcuerdoAsunto">
-			<json:property name="proponente" value="${map.proponente.id}"/>
-			<json:property name="validador" value="${map.validador.id}"/>
-			<json:property name="decisor" value="${map.decisor.id}"/>
+			<json:property name="esProponente" value="${esUsuarioProponente}"/>
+			<json:property name="esValidador" value="${esUsuarioValidador}"/>
+			<json:property name="esDecisor" value="${esUsuarioDecisor}"/>
 		</json:object>
 		<json:object name="userLogado">
 			<json:property name="id" value="${idUsuario}"/>
-			<json:property name="idTipoDespacho" value="${idTipoDespacho}"/>
 		</json:object>
 </fwk:json>			
 

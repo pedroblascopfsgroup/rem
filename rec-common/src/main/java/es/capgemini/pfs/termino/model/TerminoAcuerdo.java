@@ -318,5 +318,15 @@ public class TerminoAcuerdo implements Serializable, Auditable{
 	public void setValoresCampos(List<ValoresCamposTermino> valoresCampos) {
 		this.valoresCampos = valoresCampos;
 	}
+	
+	public ValoresCamposTermino getValorTermino(String nombreCampo){
+		for(ValoresCamposTermino vtc : valoresCampos){
+			if(vtc.getCampo().getNombreCampo().equals(nombreCampo)){
+				return vtc;
+			}
+		}
+		return null;
+	}
+	
 
 }

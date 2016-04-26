@@ -603,7 +603,6 @@
        v_impPivote  varchar2(200 char);
      BEGIN
 
-     --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_PER_ARQUETIPO_RECUPERACION', estimate_percent => 20);
      OPERACION_DDL.DDL_TABLE('STATS','TMP_PER_ARQUETIPO_RECUPERACION');
 
      Begin
@@ -697,9 +696,8 @@
                        and ccl.cnt_id = c.cnt_id
                   );
 
-         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
-         OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI_VCPE');
-         commit;
+     OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI_VCPE');
+     commit;
 
      Execute Immediate ('
         INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_MOV
@@ -711,7 +709,6 @@
             from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion
     ');
 
-    --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
     OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI_MOV');
     commit;
 
@@ -725,9 +722,7 @@
         from TMP_PER_ARQUETIPO_RECUPERACION tmp
           join TMP_CNT_NUEVOS_CLI_MOV mov on tmp.per_id = mov.per_id;
 
-
-          --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI', estimate_percent => 20);
-          OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI');
+    OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI');
     commit;
     END;
     ]]>
@@ -844,7 +839,6 @@
      <entry key="clientes.revisionClientes.marcarCliPerArq.Oracle10gDialect">
     <![CDATA[
     BEGIN
-
   /*************************************************
   Insertar los clientes activos, personas, sus respectivos arquetipos
   y si son de gestion en TMP_CLI_PER_ARQ
@@ -869,7 +863,6 @@
     OPERACION_DDL.DDL_TABLE('STATS','TMP_CLI_PER_ARQ');
 
     END;
-
   ]]>
   </entry>
 

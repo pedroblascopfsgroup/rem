@@ -275,7 +275,6 @@
         <![CDATA[
            BEGIN
               OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_PER');
-
            END;
         ]]>
     </entry>
@@ -283,19 +282,7 @@
     <entry key="recobro.creacion.batch_datos_cnt_per.Oracle10gDialect">
         <![CDATA[
             Begin
-              INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
-               (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
-              SELECT cpe.cnt_id, cpe.per_id
-                   , 'NA' as cnt_per_tin
-                   , min(cpe.cpe_orden) as cnt_per_oin
-                   , max(decode(dd_tin_titular,1,1,0)) as cnt_per_arrastre
-                FROM CPE_CONTRATOS_PERSONAS cpe
-                 JOIN DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id
-               WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 AND dd_tin_avalista <> 1)
-              GROUP BY cpe.cnt_id, cpe.per_id;
 
-
-            /*** Luis -> PREVIA EXP.INTEGRACION RECUPERACIONES
               INSERT /*+append*/ INTO BATCH_DATOS_CNT_PER
               (cnt_id, per_id, cnt_per_tin, cnt_per_oin, cnt_per_arrastre)
               SELECT cpe.cnt_id, cpe.per_id, tin.dd_tin_codigo AS cnt_per_tin, cpe.cpe_orden AS cnt_per_oin
@@ -304,7 +291,6 @@
                 JOIN dd_tin_tipo_intervencion tin ON cpe.dd_tin_id = tin.dd_tin_id
                 -- Se incluyen todos  los obligados de cada contrato
                WHERE cpe.borrado = 0 AND NOT (dd_tin_titular <> 1 and dd_tin_avalista <> 1) ;
-            ***/
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT_PER');
@@ -324,8 +310,6 @@
         <![CDATA[
             Begin
 
-            /*** Se debe integrar con recuperaciones BATCH_SV_DATOS_CNT ***/
-
               INSERT /*+append*/ INTO BATCH_DATOS_CNT
               (cnt_id, ofi_id, cnt_riesgo)
               SELECT cnt.cnt_id
@@ -335,7 +319,6 @@
                 JOIN ${master.schema}.dd_esc_estado_cnt esc ON cnt.dd_esc_id = esc.dd_esc_id
                   JOIN mov_movimientos mov ON cnt.cnt_id = mov.cnt_id AND cnt.cnt_fecha_extraccion = mov.mov_fecha_extraccion
                WHERE cnt.borrado = 0 AND esc.dd_esc_codigo = '0';
-
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_CNT');
@@ -353,10 +336,7 @@
 
     <entry key="recobro.creacion.batch_datos_per.Oracle10gDialect">
         <![CDATA[
-
             Begin
-
-             /*** Fusionar con BATCH_SV_DATOS_CNT_PER **/
 
               INSERT /*+append*/ INTO BATCH_DATOS_PER
               (per_id, per_nombre, per_apellido1, per_apellido2
@@ -370,7 +350,6 @@
                    , NVL (per_riesgo_ind, 0) AS per_riesgo_indirecto
                 FROM per_personas
                WHERE borrado = 0;
-
 
               COMMIT;
               OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_PER');
@@ -622,8 +601,6 @@
     <entry key="recobro.creacion.batch_datos_gcl.Oracle10gDialect">
         <![CDATA[
          Begin
-
-         /*** FUSIONAR CON BATCH_SV_DATOS_GCL ***/
 
            INSERT /*+append*/ INTO BATCH_DATOS_GCL
            (gcl_id, per_id)

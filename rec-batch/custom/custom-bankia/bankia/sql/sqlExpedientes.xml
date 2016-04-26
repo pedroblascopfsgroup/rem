@@ -98,7 +98,9 @@
                        OR ${estadoContrato.Cancelado.codigo} = (SELECT esc.dd_esc_codigo FROM ${master.schema}.dd_esc_estado_cnt esc WHERE cnt.dd_esc_id = esc.dd_esc_id))
                   JOIN dd_tpe_tipo_prod_entidad t ON cnt.dd_tpe_id = t.dd_tpe_id
               WHERE e.borrado = 0  and e.exp_manual = 0 --Solo se revisan los expedientes automáticos
+              -- No sean expedientes de recobro
               AND NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE e.EXP_ID = EXR.EXP_ID)
+              AND NOT EXISTS (SELECT 1 FROM dd_tpx_tipo_expediente TPX WHERE tpx.dd_tpx_codigo = 'REC' AND tpx.dd_tpx_id = e.dd_tpx_id)
         );
         COMMIT;
 
@@ -330,10 +332,8 @@
     **************************************/
     MERGE INTO TMP_EXP_A_CANCELAR TMP_EXP USING
         (
-          SELECT DISTINCT (TMP_MOV.EXP_ID)
+          SELECT DISTINCT (EXP_ID)
             FROM TMP_MOV_REVISADOS_EXP TMP_MOV
-            INNER JOIN EXP_EXPEDIENTES EXP ON TMP_MOV.EXP_ID = EXP.EXP_ID
-            INNER JOIN dd_tpx_tipo_expediente TPX ON TPX.DD_TPX_ID = EXP.DD_TPX_ID AND TPX.DD_TPX_CODIGO = ${ddTipoExpediente.Recuperacion.codigo}
           WHERE
           (TMP_MOV.CANCELADO = 0
           AND (

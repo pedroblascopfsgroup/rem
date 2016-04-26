@@ -172,7 +172,7 @@
                 Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
-               And tpx.dd_tpx_codigo in ('SEG','RECU','GESDEU')
+               And tpx.dd_tpx_codigo = 'RECU'
                And eex.borrado = 0
                And tpx.borrado = 0
                And cex.borrado = 0
@@ -236,7 +236,7 @@
                 Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
-               And tpx.dd_tpx_codigo in ('SEG','RECU','GESDEU')
+               And tpx.dd_tpx_codigo in ('SEG','GESDEU')
                And pex.borrado = 0
                And exp.borrado = 0
                And eex.borrado = 0
@@ -419,7 +419,6 @@
                          , BATCH_SV_DATOS_CNT_PER  cpe
                          , BATCH_SV_DATOS_CNT      cnt
                      Where cli.per_id = pex.per_id(+)
-                       And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                        And pex.exp_id is null  --libre
                        And cli.cli_id = ccl.cli_id
                        And ccl.cnt_id = cnt.cnt_id
@@ -497,7 +496,6 @@
              Where gui.PER_ID = gl1.PER_ID
                And gl1.GCL_ID = gl2.GCL_ID
                And gl2.PER_ID = pex.PER_ID(+) and pex.exp_id is null --libre
-               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And gl2.PER_ID =  cpe.PER_ID
                And gui.PER_ID <> cpe.PER_ID
                And cpe.CNT_ID = cnt.CNT_ID
@@ -556,7 +554,6 @@
              Where gui.CNT_ID =  cpe.CNT_ID
                And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
-               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
@@ -651,7 +648,6 @@
              Where gui.CNT_ID =  cpe.CNT_ID
                And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
-               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO = 'PSGRA'
@@ -899,7 +895,6 @@
                        , BATCH_SV_DATOS_CNT_PER  cpe
                        , BATCH_SV_DATOS_CNT      cnt
                    Where ccl.cnt_id = cex.cnt_id(+) and cex.exp_id is null  --libre
-                     And cex.dd_tpx_codigo(+) = 'RECU' --expediente de recuperacion
                      And cli.cli_id = ccl.cli_id
                      And ccl.cnt_id = cnt.cnt_id
                      And cli.per_id = cpe.per_id
@@ -1001,7 +996,6 @@
                          And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1 --contratos de las personas del grupo (solo si son titulares)
                          And cpe.CNT_ID = cnt.CNT_ID
                          And cnt.CNT_ID = cex.CNT_ID(+) and cex.EXP_ID is null --contratos libres
-                         And cex.DD_TPX_CODIGO(+) = 'RECU'
                          And gui.EXP_ID = pas.EXP_ID
                          And pas.CEX_PASE = 1 and pas.PEX_PASE = 1
                          And gui.DD_AEX_CODIGO in ('CG','CPGRA', 'CSGRA')
@@ -1038,7 +1032,7 @@
                  , BATCH_VEN_DATOS_SALIDA_GUIA pas
              WHERE gui.PER_ID =  cpe.PER_ID
                AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
-               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.EXP_ID is null --libres
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
                AND gui.ARRASTRE = 1 --solo de titulares
@@ -1135,7 +1129,7 @@
                  , BATCH_VEN_DATOS_SALIDA_GUIA pas
              WHERE gui.PER_ID =  cpe.PER_ID
                AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
-               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.EXP_ID is null --libres
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
                AND gui.ARRASTRE = 1 --solo de titulares

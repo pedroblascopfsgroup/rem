@@ -155,7 +155,8 @@
 	var listadoCodigoZonas = [];
 	
 	comboJerarquia.on('select',function(){
-		listadoCodigoZonas = [];
+		<%-- Se ha quitado, ya que cada vez que se elegia una jerarquia, elimina los centros (pero se siguen viendo en la vista)
+		listadoCodigoZonas = []; --%>
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
@@ -195,7 +196,7 @@
         ,disabled:true 
         ,allowBlank:true
         ,store:optionsZonasStore
-        ,width:240
+        ,width:220
         ,fieldLabel: '<s:message code="expedientes.listado.centros" text="**Centros"/>'
         ,tpl: zonasTemplate  
         ,forceSelection:true
@@ -260,6 +261,7 @@
 		text : '<s:message code="rec-web.direccion.form.incluir" text="Incluir" />'
 		,iconCls : 'icon_mas'
 		,disabled: true
+		,minWidth:60
 		,handler : function(){
 			incluirZona();
 			codZonaSel='';
@@ -282,6 +284,7 @@
 		text : '<s:message code="rec-web.direccion.form.excluir" text="Excluir" />'
 		,iconCls : 'icon_menos'
 		,disabled: true
+		,minWidth:60
 		,handler : function(){
 			if (zonaAExcluir >= 0) {
 				zonasStore.removeAt(zonaAExcluir);
@@ -1001,6 +1004,7 @@
 					,items: [comboJerarquia, comboZonas]
 				},{
 					layout:'form'
+					,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 					,items: [btnIncluir, btnExcluir]
 				},{
 					layout:'form'
@@ -1012,8 +1016,8 @@
 					anadirParametros(getParametrosJerarquia());
 				}
 			}			
-			,limpiar: function() {
-    		   app.resetCampos([      
+			,limpiar: function() {	
+    		   		app.resetCampos([      
 						comboJerarquia,
 						comboZonas,						
 	           ]); 
@@ -1022,6 +1026,7 @@
     		}
 		}
 	});
+	
 	filtrosTabJerarquia.on('activate',function(){
 		tabJerarquia=true;
 	});
@@ -1184,8 +1189,8 @@
 	    ,border: false
     });
     
-    <%-- PRODUCTO-1257 creada esta mini funcion para limpiar, ya que el btnReset esta en otro jsp, y no puede borrar el tipo de campo
-     zonasStore = page.getStore, por lo que localizo el boton del array de botones superior, y cuando se clickee, lo borramos. --%>
+    <%-- PRODUCTO-1257 creada esta mini funcion para limpiar, ya que el btnReset esta en otro jsp y es de los predefinidos, y no puede borrar el tipo de campo
+     zonasStore = page.getStore, ni usar el listener 'limpiar' del tabPanel  por lo que localizo el boton del array de botones superior, y cuando se clickee, lo borramos. --%>
     var posBtnLimpiar = -1;
 	for(var i=0; i < buttonsL.length ; i++) {
 		if(buttonsL[i].text == 'Limpiar')
@@ -1193,6 +1198,7 @@
 	}
 	buttonsL[posBtnLimpiar].on('click', function(){
 		zonasStore.removeAll();
+		listadoCodigoZonas = [];
 	});
 	
 	

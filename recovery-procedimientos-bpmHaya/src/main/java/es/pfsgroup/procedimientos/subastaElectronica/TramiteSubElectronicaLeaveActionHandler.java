@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
@@ -216,7 +217,8 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		Boolean comboPostores = false;
 		Boolean comboSubastaBienes = false;
 		Boolean suspension = true;
-
+		String comboDetalle = "";
+		
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
 				if ("comboPostores".equals(tev.getNombre())) {
@@ -232,6 +234,9 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 						suspension = true;
 					}
 				}
+				else if ("comboDetalle".equals(tev.getNombre())) {
+					comboDetalle = new String(tev.getValor());
+				}
 			}
 		}
 
@@ -239,7 +244,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 			//Si suspendemos no hacemos nada
 		}else{
 			//Si no, continuamos
-			modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores);
+			modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores, comboDetalle);
 		}
 //		// primer paso
 //		// comprobamos valor postores en la tarea
@@ -294,7 +299,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		}
 	}
 
-	private void modificarYCrearDesdeSubasta(Subasta sub, Boolean coincidencia, Boolean comboPostores) {
+	private void modificarYCrearDesdeSubasta(Subasta sub, Boolean coincidencia, Boolean comboPostores, String comboDetalle) {
 
 		if (!Checks.esNulo(sub)) {
 			List<LoteSubasta> listado = sub.getLotesSubasta();
@@ -305,18 +310,35 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 						for (Bien b : bienes) {
 							if (b instanceof NMBBien) {
 								NMBBien bi = (NMBBien) b;
-								if (bi.getAdjudicacion() != null) {
-									NMBAdjudicacionBien adju = bi.getAdjudicacion();
-									if (coincidencia) {
-										adju.setPostores(comboPostores);
-										genericDao.save(NMBAdjudicacionBien.class, adju);										
+								NMBAdjudicacionBien adju = bi.getAdjudicacion();
+								if (Checks.esNulo(adju)) {
+									adju = new NMBAdjudicacionBien();
+									adju.setBien(bi);
+									adju.setAuditoria(Auditoria.getNewInstance());
+								}
+								if (coincidencia) {
+									adju.setPostores(comboPostores);
+									if(!Checks.esNulo(comboDetalle)){
+										if("TER".equals(comboDetalle)){
+											adju.setEntidadAdjudicataria(genericDao.get(DDEntidadAdjudicataria.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAdjudicataria.TERCEROS)));
+											adju.setCesionRemate(false);
+										}
+										else if("ADJ".equals(comboDetalle)){
+											adju.setEntidadAdjudicataria(genericDao.get(DDEntidadAdjudicataria.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAdjudicataria.ENTIDAD)));
+											adju.setCesionRemate(false);
+										}
+										else if("ACR".equals(comboDetalle)){
+											adju.setEntidadAdjudicataria(genericDao.get(DDEntidadAdjudicataria.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAdjudicataria.ENTIDAD)));
+											adju.setCesionRemate(true);
+										}
 									}
-									if(adju.getPostores()){
-										creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
-									}
+									genericDao.save(NMBAdjudicacionBien.class, adju);
+								}
+								if (adju.getPostores()) {
+									creaProcedimientoAdjudicacion(sub.getProcedimiento(), bi);
 								}
 							}
-						}
+						}						
 					}
 				}
 			}
@@ -434,7 +456,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		if (adjudicacion != null) {
 			if (adjudicacion.getEntidadAdjudicataria() != null) {
 				if ("1".equals(adjudicacion.getEntidadAdjudicataria().getCodigo())) {
-					 if (!adjudicacion.getCesionRemate()){
+					 if (Checks.esNulo(adjudicacion.getCesionRemate()) || !adjudicacion.getCesionRemate()){
 						 return "H005";
 					 }
 					 else if(adjudicacion.getCesionRemate()){
@@ -447,6 +469,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		}
 
 		// FIXME No puede no devolver un resultado
+		// Activada validación POST antes de llegar aquí
 		return null;
 	}
 	

@@ -64,7 +64,6 @@ campoCoincidencia.allowBlank = true;
 campoPostores.setDisabled(true);
 campoPostores.allowBlank = true;
 campoDetalle.setDisabled(true);
-campoDetalle.allowBlank = true;
 campoObservaciones.allowBlank = true;
 
 campoDecision.on('select', function(){	
@@ -107,19 +106,17 @@ campoCoincidencia.on('select', function(){
 	
 campoPostores.on('select', function(){	
 		if(campoPostores.getValue() == '01') {//si
-			campoDetalle.setDisabled(false);
-			campoDetalle.allowBlank = false;	
+			campoDetalle.setDisabled(false);	
 		}
 		else if(campoPostores.getValue() == '02') {//no
 			campoDetalle.reset();
 			campoDetalle.setDisabled(true);
-			campoDetalle.allowBlank = true;
 		}
 });
 
-campoDetalle.on('select', function(){	
-		debugger;
-		if(campoDetalle.getValue() == 'OTR') {//si
+campoMotivo.on('select', function(){	
+		
+		if(campoMotivo.getValue() == 'OTR') {//si
 			campoObservaciones.allowBlank = false;	
 		}
 		else {

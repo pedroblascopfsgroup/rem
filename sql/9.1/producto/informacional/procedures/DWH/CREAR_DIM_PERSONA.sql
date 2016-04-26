@@ -2,9 +2,10 @@ create or replace PROCEDURE CREAR_DIM_PERSONA (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 21/01/2016
--- Motivos del cambio:D_PER_TIPO_GESTOR
+-- Responsable ultima modificacion: Pedro S., PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: Parametrización índices con esquema indices
+
 -- Cliente: Recovery BI Producto
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas de la dimension Persona
@@ -72,12 +73,14 @@ declare
     ------------------------------ D_PER_OFICINA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_OFICINA'',
 						  ''OFICINA_PERSONA_ID NUMBER(16,0) NOT NULL,
-                            OFICINA_PERSONA_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (OFICINA_PERSONA_ID)'', 
+                            OFICINA_PERSONA_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_OFICINA');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_OFICINA_PK'', ''D_PER_OFICINA (OFICINA_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     
 
@@ -85,376 +88,455 @@ declare
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_POLITICA'',
 						  ''POLITICA_PERSONA_ID NUMBER(16,0) NOT NULL,
                             POLITICA_PERSONA_DESC VARCHAR2(50 CHAR),
-                            POLITICA_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (POLITICA_PERSONA_ID)'', 
+                            POLITICA_PERSONA_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_POLITICA');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_POLITICA_PK'', ''D_PER_POLITICA (POLITICA_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_PER_POLITICA_ANTERIOR --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_POLITICA_ANTERIOR'',
 						  ''POLITICA_PERSONA_ANT_ID NUMBER(16,0) NOT NULL ENABLE,
                           POLITICA_PERSONA_ANT_DESC VARCHAR2(50 CHAR),
-                          POLITICA_PERSONA_ANT_DESC_2 VARCHAR2(250 CHAR),
-                          PRIMARY KEY (POLITICA_PERSONA_ANT_ID)'', 
+                          POLITICA_PERSONA_ANT_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_POLITICA_ANTERIOR');
      
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_POLITICA_ANTERIOR_PK'', ''D_PER_POLITICA_ANTERIOR (POLITICA_PERSONA_ANT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
     
     ------------------------------ D_PER_RATING_EXTERNO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_RATING_EXTERNO'',
 						  ''RATING_EXTERNO_ID NUMBER(16,0) NOT NULL,
                             RATING_EXTERNO_DESC VARCHAR2(50 CHAR),
-                            RATING_EXTERNO_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (RATING_EXTERNO_ID)'', 
+                            RATING_EXTERNO_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_RATING_EXTERNO');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_RATING_EXTERNO_PK'', ''D_PER_RATING_EXTERNO (RATING_EXTERNO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
 
     ------------------------------ D_PER_RATING_EXTERNO_ANTERIOR --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_RATING_EXTERNO_ANTERIOR'',
 						''RATING_ANT_ID NUMBER(16,0) NOT NULL ENABLE,
                         RATING_ANT_DESC VARCHAR2(50 CHAR),
-                        RATING_ANT_DESC_2 VARCHAR2(250 CHAR),
-                        PRIMARY KEY (RATING_ANT_ID)'', 
+                        RATING_ANT_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_RATING_EXTERNO_ANTERIOR');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_RATING_EXTERNO_ANTERIOR_PK'', ''D_PER_RATING_EXTERNO_ANTERIOR (RATING_ANT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
     
      ------------------------------ D_PER_TRAMO_PUNTUACION --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TRAMO_PUNTUACION'',
 			    ''TRAMO_PUNTUACION_ID NUMBER(16,0) NOT NULL ENABLE,
-                  TRAMO_PUNTUACION_DESC VARCHAR2(50 CHAR),
-                  PRIMARY KEY (TRAMO_PUNTUACION_ID)'', 
+                  TRAMO_PUNTUACION_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TRAMO_PUNTUACION');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TRAMO_PUNTUACION_PK'', ''D_PER_TRAMO_PUNTUACION (TRAMO_PUNTUACION_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
     
    ------------------------------ D_PER_GRUPO_ECONOMICO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_GRUPO_ECONOMICO'',
 			''GRUPO_ECONOMICO_ID NUMBER(16,0) NOT NULL ENABLE,
-              GRUPO_ECONOMICO_DESC VARCHAR2(50 CHAR),
-              PRIMARY KEY (GRUPO_ECONOMICO_ID)'', 
+              GRUPO_ECONOMICO_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
 DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_GRUPO_ECONOMICO');
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_GRUPO_ECONOMICO_PK'', ''D_PER_GRUPO_ECONOMICO (GRUPO_ECONOMICO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
     
     ------------------------------ D_PER_SEGMENTO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_SEGMENTO'',
 						  ''SEGMENTO_ID NUMBER(16,0) NOT NULL,
                             SEGMENTO_DESC VARCHAR2(50 CHAR),
-                            SEGMENTO_DEC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (SEGMENTO_ID)'', 
+                            SEGMENTO_DEC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_SEGMENTO');
-    
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_SEGMENTO_PK'', ''D_PER_SEGMENTO (SEGMENTO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
 
     ------------------------------ D_PER_SEGMENTO_DETALLE --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_SEGMENTO_DETALLE'',
 						  ''SEGMENTO_DETALLE_ID NUMBER(16,0) NOT NULL,
                             SEGMENTO_DETALLE_DESC VARCHAR2(50 CHAR),
                             SEGMENTO_DETALLE_DEC_2 VARCHAR2(250 CHAR),
-                            SEGMENTO_ID NUMBER(16,0),
-                            PRIMARY KEY (SEGMENTO_DETALLE_ID)'', 
+                            SEGMENTO_ID NUMBER(16,0)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_SEGMENTO_DETALLE');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_SEGMENTO_DETALLE_PK'', ''D_PER_SEGMENTO_DETALLE (SEGMENTO_DETALLE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  
 
-  
+
 
     ------------------------------ D_PER_TIPO_POLITICA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_POLITICA'',
 						  ''TIPO_POLITICA_PERSONA_ID NUMBER(16,0) NOT NULL,
                             TIPO_POLITICA_PERSONA_DESC VARCHAR2(50 CHAR),
                             TIPO_POLITICA_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            POLITICA_PERSONA_ID NUMBER(16,0),
-                            PRIMARY KEY (TIPO_POLITICA_PERSONA_ID)'', 
+                            POLITICA_PERSONA_ID NUMBER(16,0)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TIPO_POLITICA');
-    
+	  
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_POLITICA_PK'', ''D_PER_TIPO_POLITICA (TIPO_POLITICA_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  
+
 	  ------------------------------ D_PER_TIPO_POLITICA_ANT --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_POLITICA_ANT'',
 						  ''TIPO_POLITICA_PER_ANT_ID NUMBER(16,0) NOT NULL,
                             TIPO_POLITICA_PER_ANT_DESC VARCHAR2(50 CHAR),
-                            TIPO_POLITICA_PER_ANT_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_POLITICA_PER_ANT_ID)'', 
+                            TIPO_POLITICA_PER_ANT_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TIPO_POLITICA_ANT');
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_POLITICA_ANT_PK'', ''D_PER_TIPO_POLITICA_ANT (TIPO_POLITICA_PER_ANT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  
 
     ------------------------------ D_PER_ZONA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_ZONA'',
 						  ''ZONA_PERSONA_ID NUMBER(16,0) NOT NULL,
                             ZONA_PERSONA_DESC VARCHAR2(50 CHAR),
                             ZONA_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            OFICINA_PERSONA_ID NUMBER(16,0),
-                            PRIMARY KEY (ZONA_PERSONA_ID)'', 
+                            OFICINA_PERSONA_ID NUMBER(16,0)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_ZONA');
+	  
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_ZONA_PK'', ''D_PER_ZONA (ZONA_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  
     
     ------------------------------ D_PER_TRAMO_ALERTA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TRAMO_ALERTA'',
 			''TRAMO_ALERTA_ID NUMBER(16,0) NOT NULL ENABLE,
-              TRAMO_ALERTA_DESC VARCHAR2(50 CHAR),
-              PRIMARY KEY (TRAMO_ALERTA_ID)'', 
+              TRAMO_ALERTA_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TRAMO_ALERTA');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TRAMO_ALERTA_PK'', ''D_PER_TRAMO_ALERTA (TRAMO_ALERTA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  
     
-    
+
        ------------------------------ D_PER_TIPO_ALERTA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_ALERTA'',
 		''TIPO_ALERTA_ID NUMBER(16,0) NOT NULL ENABLE,
-          TIPO_ALERTA_DESC VARCHAR2(50 CHAR),
-          PRIMARY KEY (TIPO_ALERTA_ID)'', 
+          TIPO_ALERTA_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TIPO_ALERTA');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_ALERTA_PK'', ''D_PER_TIPO_ALERTA (TIPO_ALERTA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  
      
-     
+
        ------------------------------ D_PER_CALIFICACION_ALERTA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_CALIFICACION_ALERTA'',
 		''CALIFICACION_ALERTA_ID NUMBER(16,0) NOT NULL ENABLE,
-          CALIFICACION_ALERTA_DESC VARCHAR2(50 CHAR),
-          PRIMARY KEY (CALIFICACION_ALERTA_ID)'', 
+          CALIFICACION_ALERTA_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_CALIFICACION_ALERTA');
-         
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_CALIFICACION_ALERTA_PK'', ''D_PER_CALIFICACION_ALERTA (CALIFICACION_ALERTA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
     
         ------------------------------ D_PER_GESTION_ALERTA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_GESTION_ALERTA'',
 		''GESTION_ALERTA_ID NUMBER(16,0) NOT NULL ENABLE,
-          GESTION_ALERTA_DESC VARCHAR2(50 CHAR),
-          PRIMARY KEY (GESTION_ALERTA_ID)'', 
+          GESTION_ALERTA_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_GESTION_ALERTA');
         
-		
-		
-        ------------------------------ D_PER_ANOTACION_ENT_INF --------------------------
+
+
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_GESTION_ALERTA_PK'', ''D_PER_GESTION_ALERTA (GESTION_ALERTA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+
+
+
+
+
+    execute immediate V_SQL USING OUT error;  	  
+
+
+	        ------------------------------ D_PER_ANOTACION_ENT_INF --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_ANOTACION_ENT_INF'',
 		''ANOTACION_ENT_INF_ID NUMBER(16,0) NOT NULL ENABLE, 
 		  ANOTACION_ENT_INF_CODIGO VARCHAR2(10 CHAR) NOT NULL ENABLE, 
-		  ANOTACION_ENT_INF_DESC VARCHAR2(50 CHAR), 
-		  PRIMARY KEY (ANOTACION_ENT_INF_ID)'', 
+		  ANOTACION_ENT_INF_DESC VARCHAR2(50 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_ANOTACION_ENT_INF');
 	  
-	  
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_ANOTACION_ENT_INF_PK'', ''D_PER_ANOTACION_ENT_INF (ANOTACION_ENT_INF_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
 	  
 	            ------------------------------ D_PER_ANOTACION_TIPO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_ANOTACION_TIPO'',
 		''ANOTACION_TIPO_ID NUMBER(16,0) NOT NULL ENABLE,
 		ANOTACION_TIPO_CODIGO VARCHAR2(10 CHAR) NOT NULL ENABLE, 
-		  ANOTACION_TIPO_DESC VARCHAR2(50 CHAR), 
-		  PRIMARY KEY (ANOTACION_TIPO_ID)'', 
+		  ANOTACION_TIPO_DESC VARCHAR2(50 CHAR)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_ANOTACION_TIPO');		
-	
-	
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_ANOTACION_TIPO_PK'', ''D_PER_ANOTACION_TIPO (ANOTACION_TIPO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
+
 ------------------------------ D_PER_AMBITO_EXPEDIENTE --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_AMBITO_EXPEDIENTE'',
 						  ''AMBITO_EXPEDIENTE_PER_ID NUMBER(16,0) NOT NULL,
                             AMBITO_EXPEDIENTE_PER_DESC VARCHAR2(250 CHAR),
-                            AMBITO_EXPEDIENTE_PER_DESC_2 VARCHAR2(500 CHAR),
-                            PRIMARY KEY (AMBITO_EXPEDIENTE_PER_ID)'', 
+                            AMBITO_EXPEDIENTE_PER_DESC_2 VARCHAR2(500 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_AMBITO_EXPEDIENTE');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_AMBITO_EXPEDIENTE_PK'', ''D_PER_AMBITO_EXPEDIENTE (AMBITO_EXPEDIENTE_PER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_ARQUETIPO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_ARQUETIPO'',
 						  ''ARQUETIPO_PERSONA_ID NUMBER(16,0) NOT NULL,
                             ARQUETIPO_PERSONA_DESC VARCHAR2(100 CHAR),
-                            ITINERARIO_PERSONA_ID NUMBER(16,0),
-                            PRIMARY KEY (ARQUETIPO_PERSONA_ID)'', 
+                            ITINERARIO_PERSONA_ID NUMBER(16,0)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_ARQUETIPO');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_ARQUETIPO_PK'', ''D_PER_ARQUETIPO (ARQUETIPO_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_ESTADO_FINANCIERO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_ESTADO_FINANCIERO'',
 						  ''ESTADO_FINANCIERO_PER_ID NUMBER(16,0) NOT NULL,
                             ESTADO_FINANCIERO_PER_DESC VARCHAR2(50 CHAR),
-                            ESTADO_FINANCIERO_PER_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ESTADO_FINANCIERO_PER_ID)'', 
+                            ESTADO_FINANCIERO_PER_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_ESTADO_FINANCIERO');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_ESTADO_FINANCIERO_PK'', ''D_PER_ESTADO_FINANCIERO (ESTADO_FINANCIERO_PER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_GRUPO_GESTOR --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_GRUPO_GESTOR'',
 						  ''GRUPO_GESTOR_ID NUMBER(16,0) NOT NULL,
                             GRUPO_GESTOR_DESC VARCHAR2(50 CHAR),
-                            GRUPO_GESTOR_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (GRUPO_GESTOR_ID)'', 
+                            GRUPO_GESTOR_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_GRUPO_GESTOR');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_GRUPO_GESTOR_PK'', ''D_PER_GRUPO_GESTOR (GRUPO_GESTOR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_ITINERARIO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_ITINERARIO'',
 						  ''ITINERARIO_PERSONA_ID NUMBER(16,0) NOT NULL,
                             ITINERARIO_PERSONA_DESC VARCHAR2(100 CHAR),
                             TIPO_ITINERARIO_PERSONA_ID NUMBER(16,0),
-                            AMBITO_EXPEDIENTE_PER_ID NUMBER(16,0),
-                            PRIMARY KEY (ITINERARIO_PERSONA_ID)'', 
+                            AMBITO_EXPEDIENTE_PER_ID NUMBER(16,0)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_ITINERARIO');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_ITINERARIO_PK'', ''D_PER_ITINERARIO (ITINERARIO_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_NACIONALIDAD --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_NACIONALIDAD'',
 						  ''NACIONALIDAD_ID NUMBER(16,0) NOT NULL,
                             NACIONALIDAD_DESC VARCHAR2(50 CHAR),
-                            NACIONALIDAD_DEC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (NACIONALIDAD_ID)'', 
+                            NACIONALIDAD_DEC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_NACIONALIDAD');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_NACIONALIDAD_PK'', ''D_PER_NACIONALIDAD (NACIONALIDAD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_NIVEL --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_NIVEL'',
 						  ''NIVEL_PERSONA_ID NUMBER(16,0) NOT NULL,
                             NIVEL_PERSONA_DESC VARCHAR2(50 CHAR),
-                            NIVEL_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (NIVEL_PERSONA_ID)'', 
+                            NIVEL_PERSONA_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_NIVEL');
+	  
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_NIVEL_PK'', ''D_PER_NIVEL (NIVEL_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
     
 	
  ------------------------------ D_PER_PAIS_NACIMIENTO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_PAIS_NACIMIENTO'',
 						  ''PAIS_NACIMIENTO_ID NUMBER(16,0) NOT NULL,
                             PAIS_NACIMIENTO_DESC VARCHAR2(50 CHAR),
-                            PAIS_NACIMIENTO_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PAIS_NACIMIENTO_ID)'', 
+                            PAIS_NACIMIENTO_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_PAIS_NACIMIENTO');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_PAIS_NACIMIENTO_PK'', ''D_PER_PAIS_NACIMIENTO (PAIS_NACIMIENTO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  
+	
     ------------------------------ D_PER_PERFIL --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_PERFIL'',
 						  ''PERFIL_ID NUMBER(16,0) NOT NULL,
                             PERFIL_DESC VARCHAR2(50 CHAR),
-                            PERFIL_DEC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PERFIL_ID)';
+                            PERFIL_DEC_2 VARCHAR2(250 CHAR)'',
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_PERFIL');
-    
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_PERFIL_PK'', ''D_PER_PERFIL (PERFIL_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
 	
     ------------------------------ D_PER_PROVINCIA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_PROVINCIA'',
 						  ''PROVINCIA_PERSONA_ID NUMBER(16,0) NOT NULL,
                             PROVINCIA_PERSONA_DESC VARCHAR2(50 CHAR),
-                            PROVINCIA_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (PROVINCIA_PERSONA_ID)'', 
+                            PROVINCIA_PERSONA_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_PROVINCIA');
-    
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_PROVINCIA_PK'', ''D_PER_PROVINCIA (PROVINCIA_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
 
     ------------------------------ D_PER_RATING_AUXILIAR --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_RATING_AUXILIAR'',
 						  ''RATING_AUXILIAR_ID NUMBER(16,0) NOT NULL,
                             RATING_AUXILIAR_DESC VARCHAR2(50 CHAR),
-                            RATING_AUXILIAR_DEC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (RATING_AUXILIAR_ID)'', 
+                            RATING_AUXILIAR_DEC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_RATING_AUXILIAR');
     
-	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_RATING_AUXILIAR_PK'', ''D_PER_RATING_AUXILIAR (RATING_AUXILIAR_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
+
 	
     ------------------------------ D_PER_SEXO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_SEXO'',
 						  ''SEXO_ID NUMBER(16,0) NOT NULL,
-                            SEXO_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (SEXO_ID)'', 
+                            SEXO_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_SEXO');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_SEXO_PK'', ''D_PER_SEXO (SEXO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
+	
     ------------------------------ D_PER_TENDENCIA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TENDENCIA'',
 						  ''TENDENCIA_PERSONA_ID NUMBER(16,0) NOT NULL,
                             TENDENCIA_PERSONA_DESC VARCHAR2(50 CHAR),
-                            TENDENCIA_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TENDENCIA_PERSONA_ID)'', 
+                            TENDENCIA_PERSONA_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TENDENCIA');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TENDENCIA_PK'', ''D_PER_TENDENCIA (TENDENCIA_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  
+	
     ------------------------------ D_PER_TIPO_DOCUMENTO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_DOCUMENTO'',
 						  ''TIPO_DOCUMENTO_ID NUMBER(16,0) NOT NULL,
                             TIPO_DOCUMENTO_DESC VARCHAR2(50 CHAR),
-                            TIPO_DOCUMENTO_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_DOCUMENTO_ID)'', 
+                            TIPO_DOCUMENTO_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TIPO_DOCUMENTO');
-    
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_DOCUMENTO_PK'', ''D_PER_TIPO_DOCUMENTO (TIPO_DOCUMENTO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  	  
 
     ------------------------------ D_PER_TIPO_ITINERARIO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_ITINERARIO'',
 						  ''TIPO_ITINERARIO_PERSONA_ID NUMBER(16,0) NOT NULL,
                             TIPO_ITINERARIO_PERSONA_DESC VARCHAR2(50 CHAR),
-                            TIPO_ITINERARIO_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_ITINERARIO_PERSONA_ID)'', 
+                            TIPO_ITINERARIO_PERSONA_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TIPO_ITINERARIO');
-    
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_ITINERARIO_PK'', ''D_PER_TIPO_ITINERARIO (TIPO_ITINERARIO_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  	  
 
     ------------------------------ D_PER_TIPO_PERSONA --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_PERSONA'',
 						  ''TIPO_PERSONA_ID NUMBER(16,0) NOT NULL,
                             TIPO_PERSONA_DESC VARCHAR2(50 CHAR),
-                            TIPO_PERSONA_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_PERSONA_ID)'', 
+                            TIPO_PERSONA_DESC_2 VARCHAR2(250 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TIPO_PERSONA');
     
-
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_PERSONA_PK'', ''D_PER_TIPO_PERSONA (TIPO_PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  	  
+	
     ------------------------------ D_PER_TRAMO_VOLUMEN_RIESGO --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TRAMO_VOLUMEN_RIESGO'',
 						  ''TRAMO_VOLUMEN_RIESGO_ID NUMBER(16,0) NOT NULL,
-                            TRAMO_VOLUMEN_RIESGO_DESC VARCHAR2(50 CHAR),
-                            PRIMARY KEY (TRAMO_VOLUMEN_RIESGO_ID)'', 
+                            TRAMO_VOLUMEN_RIESGO_DESC VARCHAR2(50 CHAR)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_TRAMO_VOLUMEN_RIESGO');
-    
-    
-	
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TRAMO_VOLUMEN_RIESGO_PK'', ''D_PER_TRAMO_VOLUMEN_RIESGO (TRAMO_VOLUMEN_RIESGO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  	  	  
+
 	    ------------------------------ D_PER_TIPO_GESTOR--------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER_TIPO_GESTOR'', 
 
@@ -462,10 +544,13 @@ DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_GRUPO_ECONOMICO');
 
                             ''TIPO_GESTOR_PER_ID NUMBER(16,0) NOT NULL,
                               TIPO_GESTOR_PER_DESC VARCHAR2(50 CHAR),
-                              TIPO_GESTOR_PER_DESC_2 VARCHAR2(250 CHAR),
-                            PRIMARY KEY (TIPO_GESTOR_PER_ID)'', 
+                              TIPO_GESTOR_PER_DESC_2 VARCHAR2(250 CHAR)'', 
                             :error); END;';
     execute immediate V_SQL USING OUT error;
+
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_TIPO_GESTOR_PK'', ''D_PER_TIPO_GESTOR (TIPO_GESTOR_PER_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  	  	  
+	
    ------------------------------ D_PER --------------------------
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PER'',
 						  ''PERSONA_ID   NUMBER(16,0) NOT NULL ,
@@ -490,12 +575,14 @@ DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER_GRUPO_ECONOMICO');
                            SEXO_ID   NUMBER(16,0),
                            TIPO_DOCUMENTO_ID   NUMBER(16,0),
                            TIPO_PERSONA_ID   NUMBER(16,0),
-						   GRUPO_ECONOMICO_ID  NUMBER(16,0),
-                           CONSTRAINT D_PER_PK PRIMARY KEY (PERSONA_ID)'', 
+						               GRUPO_ECONOMICO_ID  NUMBER(16,0)'', 
+
                       :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PER');
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_PER_PK'', ''D_PER (PERSONA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;  	  	  	  	  
 
 
     --Log_Proceso

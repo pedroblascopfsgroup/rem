@@ -37,19 +37,20 @@ BEGIN
  V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' old
             USING ( 
 			select  sub_id, tev_valor from (
-			SELECT DISTINCT rank() over(partition by sub.sub_id order by tev.fechacrear desc) as ranking, sub.PRC_ID, sub.SUB_ID, sub.SUB_COSTAS_PROCURADOR,  TO_NUMBER(REPLACE(TEV.TEV_VALOR,''.'','','')) TEV_VALOR
+			SELECT DISTINCT rank() over(partition by sub.sub_id order by tev.fechacrear desc) as ranking, sub.PRC_ID, sub.SUB_ID, 
+			sub.SUB_COSTAS_PROCURADOR, TO_NUMBER(REPLACE(nvl(TEV.TEV_VALOR,0),'','',''.'')) TEV_VALOR
                       FROM '||V_ESQUEMA||'.SUB_SUBASTA sub
                       JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tar ON sub.PRC_ID = tar.PRC_ID
 		      JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex ON tar.TAR_ID = tex.TAR_ID
 		      JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap ON tex.TAP_ID = tap.TAP_ID
 		      JOIN '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS tfi ON tap.TAP_ID = tfi.TAP_ID
 		      JOIN '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR tev ON tex.TEX_ID = tev.TEX_ID
-                      WHERE (tap.TAP_CODIGO LIKE ''%SenyalamientoSubasta'') AND TFI_NOMBRE = ''costasProcurador'' AND tev.TEV_NOMBRE = ''costasProcurador'')
+                      WHERE (tap.TAP_CODIGO LIKE ''%SenyalamientoSubasta'') AND TFI_NOMBRE = ''costasProcurador'' AND tev.TEV_NOMBRE = ''costasProcurador'' and UPPER(TEV.TEV_VALOR) = LOWER(TEV.TEV_VALOR))
 			where ranking = 1)  new
             ON (old.SUB_ID = new.SUB_ID)
             WHEN MATCHED THEN UPDATE
             SET old.SUB_COSTAS_PROCURADOR = new.TEV_VALOR, old.USUARIOMODIFICAR = '''||V_USUARIO||''', old.FECHAMODIFICAR = Sysdate';
- 
+ 			 DBMS_OUTPUT.PUT_LINE(V_MSQL);
             DBMS_OUTPUT.PUT_LINE('[INFO] Finalizada la migración');
             
  EXECUTE IMMEDIATE V_MSQL;

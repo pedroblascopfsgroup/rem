@@ -12,7 +12,7 @@ var formBusquedaContratos=function(){
 	
 	var busquedaContratosMask = new Ext.LoadMask(Ext.getBody(), {msg:"Cargando ..."});
 	
-
+	
 	//numero contrato
 	var txtContrato = app.creaText('contrato1', '<s:message code="listadoContratos.numContrato" text="**Num. Contrato" />'); 
 	//codigo de recibo
@@ -130,10 +130,24 @@ var formBusquedaContratos=function(){
 	var mmDVencido = app.creaMinMax('<s:message code="menu.clientes.listado.filtro.dvencido" text="**D&iacute;as Vencido" />', 'dvencido',{width : 80, maxLength : "6"});
 	var zonas=<app:dict value="${zonas}" />;
 
+
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
-	var comboJerarquia = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name : 'jerarquia', fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
-	
+	var comboJerarquia = app.creaCombo({triggerAction: 'all',
+	 	data:jerarquia, 
+	 	value:jerarquia.diccionario[0].codigo, 
+	 	name : 'jerarquia', 
+	 	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
+
+	 	var comboJerarquiaAdministrativa = app.creaCombo({triggerAction: 'all',
+	 	data:jerarquia, 
+	 	value:jerarquia.diccionario[0].codigo, 
+	 	name : 'jerarquia', 
+	 	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquiaAdministrativa" text="**Jerarquia administrativa" />'});
+
+	var listadoCodigoZonas = [];
+	var listadoCodigoZonasAdm = [];
+
 	<c:if test="${busquedaOrInclusion=='inclusion'}">
 		//var dictTieneRiesgo = {diccionario:[{codigo:'',       descripcion:'---'}
 		//								    ,{codigo:'true',  descripcion:'<s:message code="mensajes.si" text="**Sí" />'}
@@ -145,68 +159,284 @@ var formBusquedaContratos=function(){
 		//	                                  ,fieldLabel: '<s:message code="menu.clientes.listado.filtro.tieneRiesgo" text="**Tiene riesgo" />'});
 	</c:if>
 
+    comboJerarquia.on('select',function(){
+		listadoCodigoZonas = [];
+		if(comboJerarquia.value != '') {
+			comboZonas.setDisabled(false);
+			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
+		}else{
+			comboZonas.setDisabled(true);
+		}
+	});
+	
+    comboJerarquiaAdministrativa.on('select',function(){
+		listadoCodigoZonasAdm = [];
+		if(comboJerarquiaAdministrativa.value != '') {
+			comboZonasAdm.setDisabled(false);
+			optionsZonasAdmStore.setBaseParam('idJerarquia', comboJerarquiaAdministrativa.getValue());
+		}else{
+			comboZonasAdm.setDisabled(true);
+		}
+	});
+	
+	var codZonaSel='';
+	var desZonaSel='';
+	
+	var codZonaSelAdm='';
+	var desZonaSelAdm='';
+
  	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
 	]);
-
+	
+	var zonasAdmRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	//Template para el combo de zonas
+    var zonasTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+        '</div></tpl>'
+    );
+    
+    //Template para el combo de zonas
+    var zonasAdmTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+        '</div></tpl>'
+    );
+ 	
     var optionsZonasStore = page.getStore({
-	       flow: 'clientes/buscarZonas'
+	       flow: 'mejexpediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
 	    }, zonasRecord)
 	       
 	});
-
-	var recargarComboZonas = function(){
-		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
-			optionsZonasStore.webflow({id:comboJerarquia.getValue()});
-		}else{
-			optionsZonasStore.webflow({id:0});
-		}
-	}
-
-    recargarComboZonas();
-
-    comboJerarquia.on('select',recargarComboZonas);
-
-	var comboZonas = app.creaDblSelect(zonas, '<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />',{store:optionsZonasStore, /*funcionReset:recargarComboZonas,*/ width:160});
-
-	var comboJerarquiaAdministrativa = app.creaCombo({triggerAction: 'all', data:jerarquia, value:jerarquia.diccionario[0].codigo, name : 'jerarquia', fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquiaAdministrativa" text="**Jerarquia administrativa" />'});
 	
- 	var zonasAdmRecord = Ext.data.Record.create([
-		 {name:'codigo'}
-		,{name:'descripcion'}
-	]);
-
-    var optionsZonasAdmStore = page.getStore({
-	       flow: 'clientes/buscarZonas'
+	 var optionsZonasAdmStore = page.getStore({
+	       flow: 'mejexpediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
 	    }, zonasAdmRecord)
 	       
 	});
 
-	var recargarComboZonasAdm = function(){
-		if (comboJerarquiaAdministrativa.getValue()!=null && comboJerarquiaAdministrativa.getValue()!=''){
-			optionsZonasAdmStore.webflow({id:comboJerarquiaAdministrativa.getValue()});
-		}else{
-			optionsZonasAdmStore.webflow({id:0});
-		}
-	}
-
-    recargarComboZonasAdm();
-
-    comboJerarquiaAdministrativa.on('select',recargarComboZonasAdm);
-	var comboZonasAdm = app.creaDblSelect(zonas, '<s:message code="menu.clientes.listado.filtro.centroAdministrativo" text="**Centro administrativo" />',{store:optionsZonasAdmStore, /*funcionReset:recargarComboZonasAdm,*/ width:160});
+  	//Combo de zonas
+    var comboZonas = new Ext.form.ComboBox({
+        name: 'comboZonas'
+        ,disabled:true 
+        ,allowBlank:true
+        ,store:optionsZonasStore
+        ,width:220
+        ,fieldLabel: '<s:message code="menu.clientes.listado.filtro.centro" text="**Centro"/>'
+        ,tpl: zonasTemplate  
+        ,forceSelection:true
+        ,style:'padding:0px;margin:0px;'
+        ,enableKeyEvents: true
+        ,typeAhead: false
+        ,hideTrigger:true     
+        ,minChars: 2 
+        ,hidden:false
+        ,maxLength:256 
+        ,itemSelector: 'div.search-item'
+        ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
+        ,onSelect: function(record) {
+        	btnIncluir.setDisabled(false);
+        	codZonaSel=record.data.codigo;
+        	desZonaSel=record.data.descripcion;
+         }
+    });	
+    
+ 	//Combo de zonas
+    var comboZonasAdm = new Ext.form.ComboBox({
+        name: 'comboZonasAdm'
+        ,disabled:true 
+        ,allowBlank:true
+        ,store:optionsZonasAdmStore
+        ,width:220
+        ,fieldLabel: '<s:message code="menu.clientes.listado.filtro.centroAdministrativo" text="**Centro administrativo"/>'
+        ,tpl: zonasAdmTemplate  
+        ,forceSelection:true
+        ,style:'padding:0px;margin:0px;'
+        ,enableKeyEvents: true
+        ,typeAhead: false
+        ,hideTrigger:true     
+        ,minChars: 2 
+        ,hidden:false
+        ,maxLength:256 
+        ,itemSelector: 'div.search-item'
+        ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
+        ,onSelect: function(record) {
+        	btnAdmIncluir.setDisabled(false);
+        	codZonaSelAdm=record.data.codigo;
+        	desZonaSelAdm=record.data.descripcion;
+         }
+    });	
+    
+  	var recordZona = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigoZona'},
+		{name: 'descripcionZona'}
+	]);
 	
+  	var recordAdmZona = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigoZona'},
+		{name: 'descripcionZona'}
+	]);
+	
+  	var zonasStore = page.getStore({
+		flow:''
+		,reader: new Ext.data.JsonReader({
+	  		root : 'data'
+		} 
+		, recordZona)
+	});
+	
+  	var zonasAdmStore = page.getStore({
+		flow:''
+		,reader: new Ext.data.JsonReader({
+	  		root : 'data'
+		} 
+		, recordAdmZona)
+	});
+ 
+      var zonasCM = new Ext.grid.ColumnModel([
+		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
+	]);
+	
+     var zonasAdmCM = new Ext.grid.ColumnModel([
+		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
+	]);
+	
+	var zonasGrid = new Ext.grid.EditorGridPanel({
+	    title : '<s:message code="expedientes.listado.centros" text="**Centros" />'
+	    ,cm: zonasCM
+	    ,store: zonasStore
+	    ,autoWidth: true
+	    ,height: 150
+	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+	    ,clicksToEdit: 1
+	});
+	
+	var zonasAdmGrid = new Ext.grid.EditorGridPanel({
+	    title : '<s:message code="expedientes.listado.centros" text="**Centros" />'
+	    ,cm: zonasAdmCM
+	    ,store: zonasAdmStore
+	    ,autoWidth: true
+	    ,height: 150
+	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+	    ,clicksToEdit: 1
+	});
+	
+	var incluirZona = function() {
+	    var zonaAInsertar = zonasGrid.getStore().recordType;
+   		var p = new zonaAInsertar({
+   			codigoZona: codZonaSel,
+   			descripcionZona: desZonaSel
+   		});
+		zonasStore.insert(0, p);
+		listadoCodigoZonas.push(codZonaSel);
+	}
+	
+	var incluirAdmZona = function() {
+	    var zonaAInsertar = zonasAdmGrid.getStore().recordType;
+   		var p = new zonaAInsertar({
+   			codigoZona: codZonaSelAdm,
+   			descripcionZona: desZonaSelAdm
+   		});
+		zonasAdmStore.insert(0, p);
+		listadoCodigoZonasAdm.push(codZonaSelAdm);
+	}
+	
+	var btnIncluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.incluir" text="Incluir" />'
+		,iconCls : 'icon_mas'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			incluirZona();
+			codZonaSel='';
+   			desZonaSel='';
+   			btnIncluir.setDisabled(true);
+			comboZonas.focus();
+		}
+	});
+
+	var btnAdmIncluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.incluir" text="Incluir" />'
+		,iconCls : 'icon_mas'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			incluirAdmZona();
+			codZonaSelAdm='';
+   			desZonaSelAdm='';
+   			btnAdmIncluir.setDisabled(true);
+			comboZonasAdm.focus();
+		}
+	});
+		
+	var zonaAExcluir = -1;
+	var codZonaExcluir = '';
+	
+	var zonaAExcluirAdm = -1;
+	var codZonaExcluirAdm = '';
+	
+	zonasGrid.on('cellclick', function(grid, rowIndex, columnIndex, e) {
+   		codZonaExcluir = grid.selModel.selections.get(0).data.codigoZona;
+   		zonaAExcluir = rowIndex;
+   		btnExcluir.setDisabled(false);
+	});
+	
+	zonasAdmGrid.on('cellclick', function(grid, rowIndex, columnIndex, e) {
+   		codZonaExcluirAdm = grid.selModel.selections.get(0).data.codigoZona;
+   		zonaAExcluirAdm = rowIndex;
+   		btnAdmExcluir.setDisabled(false);
+	});
+	
+	var btnExcluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.excluir" text="Excluir" />'
+		,iconCls : 'icon_menos'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			if (zonaAExcluir >= 0) {
+				zonasStore.removeAt(zonaAExcluir);
+				listadoCodigoZonas.remove(codZonaExcluir);
+			}
+			zonaAExcluir = -1;
+	   		btnExcluir.setDisabled(true);
+		}
+	});
+	
+	var btnAdmExcluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.excluir" text="Excluir" />'
+		,iconCls : 'icon_menos'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			if (zonaAExcluirAdm >= 0) {
+				zonasAdmStore.removeAt(zonaAExcluirAdm);
+				listadoCodigoZonasAdm.remove(codZonaExcluirAdm);
+			}
+			zonaAExcluirAdm = -1;
+	   		btnAdmExcluir.setDisabled(true);
+		}
+	});
+<%--
 	var limpiarYRecargar = function(){
 		app.resetCampos([comboZonas]);
 		//recargarComboZonas();
 	}
-	
-	comboJerarquia.on('select',limpiarYRecargar);
-
+ 
+	comboJerarquia.on('select',limpiarYRecargar);--%>	
 
 	//diccionario de tiposProducto
 	
@@ -264,12 +494,12 @@ var formBusquedaContratos=function(){
 				p.maxDiasVencidos=mmDVencido.max.getValue();
         	}
         	if (tabJerarquia){
-        		p.codigoZona=comboZonas.getValue();
-    			p.jerarquia=comboJerarquia.getValue();
-    			p.codigoZonaAdm =comboZonasAdm.getValue();
-    			p.jerarquiaAdm=comboJerarquiaAdministrativa.getValue();
-    			
+        		p.jerarquia=comboJerarquia.getValue();
+				p.codigoZona=listadoCodigoZonas.toString();
+				p.jerarquiaAdm=comboJerarquiaAdministrativa.getValue();
+				p.codigoZonaAdm=listadoCodigoZonasAdm.toString();	
         	}
+
 		<c:if test="${busquedaOrInclusion=='inclusion'}">
         	//,tieneRiesgo:comboTieneRiesgo.getValue()
         </c:if>
@@ -425,10 +655,7 @@ var formBusquedaContratos=function(){
 		}
 		busquedaContratosMask.hide();
 	});
-
-
-    
-
+	
 
 
 	<%--*************PESTAÑA DE DATOS DEL CONTRATO***************************************** --%>
@@ -501,15 +728,27 @@ var formBusquedaContratos=function(){
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
 		,layoutConfig:{columns:2}
-		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,defaults : { border : false , layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;margin-right:40px'}
 		,items:[{
-					layout:'form'
-					,items: [comboJerarquia,comboZonas]
+					layout:'table'
+                    ,layoutConfig:{columns:2}
+                    ,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form'}
+					,items: [{items:[comboJerarquia,comboZonas]}, {autoWidth: true,items:[btnIncluir,btnExcluir]}]
 				},{
-					layout :'form'
-					,items:[comboJerarquiaAdministrativa,comboZonasAdm]
+					layout:'table'
+                    ,layoutConfig:{columns:2}
+                    ,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form'}
+					,items: [{items:[comboJerarquiaAdministrativa,comboZonasAdm]}, {autoWidth: true,items:[btnAdmIncluir,btnAdmExcluir]}]
+				},{
+					layout:'form'
+					,items: [zonasGrid]
+				},{
+					layout:'form'
+					,items: [zonasAdmGrid]
 				}]
 	});
+	
+	
 	filtrosTabJerarquia.on('activate',function(){
 		tabJerarquia=true;
 	}); 
@@ -704,8 +943,6 @@ var formBusquedaContratos=function(){
 	    };
 	    
 	contratosGrid2.addListener('rowdblclick', contratosGridListener);
-	
-	
 	
 	
 	var mainPanel = new Ext.Panel({

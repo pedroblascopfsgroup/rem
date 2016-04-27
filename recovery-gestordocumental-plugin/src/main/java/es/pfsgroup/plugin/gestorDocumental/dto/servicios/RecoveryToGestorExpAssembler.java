@@ -3,8 +3,8 @@ package es.pfsgroup.plugin.gestorDocumental.dto.servicios;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 
 public class RecoveryToGestorExpAssembler {
 

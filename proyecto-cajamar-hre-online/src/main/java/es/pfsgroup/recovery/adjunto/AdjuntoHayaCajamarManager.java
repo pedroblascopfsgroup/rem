@@ -74,8 +74,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosContratosAsu(id);
 		}else if(esEntidadHaya()){
-//			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
-			return super.getAdjuntosContratosAsu(id);
+			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
+//			return super.getAdjuntosContratosAsu(id);
 		}
 		return super.getAdjuntosContratosAsu(id);
 	}

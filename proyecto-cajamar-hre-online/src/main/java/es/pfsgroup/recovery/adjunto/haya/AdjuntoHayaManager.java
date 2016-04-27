@@ -51,6 +51,16 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroActivosApi;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioDocumentosApi;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioExpedientesApi;
+import es.pfsgroup.plugin.gestorDocumental.dto.InputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.OutputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearPropuestaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -60,13 +70,6 @@ import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocume
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
 import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpediente;
-import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioDocumentosApi;
-import es.pfsgroup.plugin.gestordocumental.api.GestorDocumentalServicioExpedientesApi;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.RecoveryToGestorDocAssembler;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.context.CajamarHreProjectContext;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
@@ -93,6 +96,9 @@ public class AdjuntoHayaManager {
 	
 	@Autowired
 	private GestorDocumentalServicioExpedientesApi gestorDocumentalServicioExpedientesApi;
+	
+	@Autowired(required=false)
+	private GestorDocumentalMaestroActivosApi gestorDocumentalMaestroActivosApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -178,6 +184,12 @@ public class AdjuntoHayaManager {
 	}
 	
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
+		
+		InputDto input = new InputDto();
+		input.setIdActivoOrigen("24284620");
+		input.setIdOrigen("NOS");
+		OutputDto output = gestorDocumentalMaestroActivosApi.ejecutar(input);
+		
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 

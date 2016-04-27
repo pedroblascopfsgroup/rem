@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.gestordocumental.dto.documentos;
+package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
 import java.io.File;
 

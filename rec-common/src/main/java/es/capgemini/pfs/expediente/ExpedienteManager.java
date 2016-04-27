@@ -903,7 +903,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         		expediente.setOficina(persona.getOficinaCliente());
         	}
         }
-        if(!Checks.esNulo(expediente.getOficina())){     	
+        if(Checks.esNulo(expediente.getOficina())){     	
 	        // VRE
 	        //Long oficina = obtenerMayorVRE(idContrato);
 	        Contrato cnt = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);

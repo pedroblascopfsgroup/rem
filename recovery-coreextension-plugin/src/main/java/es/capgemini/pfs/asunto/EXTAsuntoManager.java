@@ -363,20 +363,33 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		// Obtener asunto.
     	Asunto asunto = asuntoDao.get(id);
 
+    	// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+    	List<Usuario> usuGestList = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
+    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR));
+    	if(!Checks.estaVacio(usuGestList)){
+    		Usuario usuGestor = usuGestList.get(0);
+    		// Obtener gestor despacho para el gestor en base a los usuarios gestor y supervisor.
+    		List<GestorDespacho> gestDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId());
+    		if(!Checks.estaVacio(gestDespachoList)){
+    			GestorDespacho gestorDespacho = gestDespachoList.get(0);
+            	// Asignar gestor despacho para el gestor al asunto.
+            	asunto.setGestor(gestorDespacho);
+    		}
+    	}
+    	
     	// Obtener usuarios por entidad y tipo de asunto del projectContext.
-    	Usuario usuGestor = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
-    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR)).get(0);
-    	
-    	Usuario usuSupervisor = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
-    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR)).get(0);
-    	
-    	// Obtener gestor despacho para gestor y supervisor en base a los usuarios gestor y supervisor.
-    	GestorDespacho gestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId()).get(0);
-    	GestorDespacho gestorSupervisor = gestorDespachoDao.getGestorDespachoByUsuId(usuSupervisor.getId()).get(0);
-    	
-    	// Asignar gestor despacho para gestor y supervisor al asunto.
-    	asunto.setGestor(gestorDespacho);
-    	asunto.setSupervisor(gestorSupervisor);
+    	List<Usuario> usuSupList = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
+    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR));
+    	if(!Checks.estaVacio(usuSupList)){
+	    	Usuario usuSupervisor = usuSupList.get(0);
+	    	// Obtener gestor despacho para el supervisor en base a los usuarios gestor y supervisor.
+	    	List<GestorDespacho> supDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuSupervisor.getId());
+	    	if(!Checks.estaVacio(supDespachoList)){
+	    	GestorDespacho gestorSupervisor = supDespachoList.get(0);
+	    	// Asignar gestor despacho para el supervisor al asunto.
+	    	asunto.setSupervisor(gestorSupervisor);
+    	}
+    	}
     	
         return asunto;
 	}

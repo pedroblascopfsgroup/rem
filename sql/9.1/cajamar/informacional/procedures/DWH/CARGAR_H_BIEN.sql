@@ -5,7 +5,7 @@ create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE,
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 
 -- Fecha ultima modificacion: 27/04/2016
--- Motivos del cambio: CMREC-3085 - Se elimina FECHA_LANZAMIENTO_BIEN de los merges de lanzamientos
+-- Motivos del cambio: CMREC-3085 - se añaden distinct en los merges de lanzamientos
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de Bien
@@ -596,7 +596,7 @@ BEGIN
         -- 06 - Lanzamiento Suspendido (por el Juzgado) - Por RD 27/2012-Ley 01/2013
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, ASU.ASU_ID
+            SELECT distinct PRB.BIE_ID, ASU.ASU_ID
             FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
             AND PRB.PRC_ID = PRC.PRC_ID
@@ -774,7 +774,7 @@ BEGIN
         -- 10 - Lanzamiento Suspendido (por la Entidad) – Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, ASU.ASU_ID
+            SELECT distinct PRB.BIE_ID, ASU.ASU_ID
             FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
             AND PRB.PRC_ID = PRC.PRC_ID
@@ -795,7 +795,7 @@ BEGIN
         -- 11 - Lanzamiento Suspendido (por el Juzgado) – Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, ASU.ASU_ID
+            SELECT  distinct PRB.BIE_ID, ASU.ASU_ID
             FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
             AND PRB.PRC_ID = PRC.PRC_ID

@@ -283,11 +283,17 @@
 	});
 	
 	
-	
 	procedimientosStore.on('load', function(procedimientosStore){
 		procedimientosGrid.getBottomToolbar().removeAll(true);
 		procedimientosGrid.getBottomToolbar().doLayout();
-		procedimientosGrid.getBottomToolbar().add('Mostrando '+procedimientosStore.getTotalCount().toString()+' actuaciones');
+		var count = 0;
+            
+			for(var i = 0; i < procedimientosStore.data.length; i++) {
+            	if(!isNaN(procedimientosStore.data.items[i].id)) {
+            		count++;
+            	}
+            }
+		procedimientosGrid.getBottomToolbar().add('Mostrando '+count+' actuaciones');
 		procedimientosGrid.getBottomToolbar().doLayout();
 		procedimientosGrid.getBottomToolbar().setVisible(true);
 	

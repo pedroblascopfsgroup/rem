@@ -696,10 +696,14 @@
 				store.on('load', function(){  
 					for (var i=0; i < store.data.length; i++) {
 						datos = store.getAt(i);
-						
 						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
 							if(Boolean(estadoVigente)){
 								btnCumplimientoAcuerdo.setVisible(true);
+							}
+							if (panel != null){
+								if(cumplimientoAcuerdo != null){
+									terminosTab.remove(cumplimientoAcuerdo);
+								}
 							}
 							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
 							terminosTab.add(cumplimientoAcuerdo);

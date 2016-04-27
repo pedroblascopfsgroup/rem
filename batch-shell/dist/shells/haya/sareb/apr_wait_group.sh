@@ -2,12 +2,7 @@
  
 ficheros=GCL
 
-if [ -z "$1" ]; then
-    echo "$(basename $0) Error: parámetro de entrada YYYYMMDD no definido."
-    exit 1
-fi
-
-mascara='-'$ENTIDAD'-'$1
+mascara='-'$ENTIDAD'-'????????
 extensionSem=".sem"
 extensionZip=".zip"
 
@@ -22,8 +17,8 @@ echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
+	ficheroSem=$DIR_INPUT_TR/$fichero$mascara$extensionSem
+    ficheroZip=$DIR_INPUT_TR/$fichero$mascara$extensionZip
 
     echo "$ficheroSem"
 	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
@@ -40,8 +35,8 @@ then
 else
    for fichero in $arrayFicheros
    do
-	    ficheroSem=$DIR_INPUT_TR$fichero$mascara$extensionSem
-        ficheroZip=$DIR_INPUT_TR$fichero$mascara$extensionZip
+	    ficheroSem=$DIR_INPUT_TR/$fichero$mascara$extensionSem
+        ficheroZip=$DIR_INPUT_TR/$fichero$mascara$extensionZip
 	
         sed -i 's/ //g' $ficheroSem
         mv $ficheroZip $DIR_DESTINO

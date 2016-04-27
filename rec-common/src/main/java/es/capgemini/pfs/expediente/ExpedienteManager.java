@@ -1930,7 +1930,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         	}else{
         		return Boolean.FALSE;
         	}
-        }else if(DDTipoExpediente.TIPO_EXPEDIENTE_BANKIA_RECUPERACION.equals(exp.getTipoExpediente().getCodigo())){
+        }else if(!Checks.esNulo(exp.getTipoExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_BANKIA_RECUPERACION.equals(exp.getTipoExpediente().getCodigo())){
         	return Boolean.TRUE;
         }else if(exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()){
         	///Comprobaciones para expedientes de recuperacion

@@ -50,7 +50,7 @@ public class DatosDescubiertoDaoImpl implements DatosDescubiertoDao {
 		plainQueryRecibosLiq.append(" SELECT * ");
 		plainQueryRecibosLiq.append(" FROM CPL_CAPTACION_EXTRACT_LIQ ");
 		plainQueryRecibosLiq.append(" WHERE BORRADO = 0 ");
-		plainQueryRecibosLiq.append("  AND CPL_PCO_LIQ_ID = :idLiquidacion ORDER BY CPL_NUSEAH");
+		plainQueryRecibosLiq.append("  AND CPL_PCO_LIQ_ID = :idLiquidacion ORDER BY CPL_FEISAH , CPL_NUSEAH");
 
 		return plainQueryRecibosLiq.toString();
 	}

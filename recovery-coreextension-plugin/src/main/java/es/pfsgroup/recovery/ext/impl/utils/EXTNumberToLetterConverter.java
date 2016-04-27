@@ -13,10 +13,10 @@ import java.text.DecimalFormat;
 public class EXTNumberToLetterConverter {
 	private static final String[] UNIDADES = { "", "UN ", "DOS ", "TRES ",
         "CUATRO ", "CINCO ", "SEIS ", "SIETE ", "OCHO ", "NUEVE ", "DIEZ ",
-        "ONCE ", "DOCE ", "TRECE ", "CATORCE ", "QUINCE ", "DIECISEIS",
-        "DIECISIETE", "DIECIOCHO", "DIECINUEVE", "VEINTE" };
+        "ONCE ", "DOCE ", "TRECE ", "CATORCE ", "QUINCE ", "DIECISEIS ",
+        "DIECISIETE ", "DIECIOCHO ", "DIECINUEVE ", "VEINTE " };
 
-private static final String[] DECENAS = { "VENTI", "TREINTA ", "CUARENTA ",
+private static final String[] DECENAS = { "VEINTI", "TREINTA ", "CUARENTA ",
         "CINCUENTA ", "SESENTA ", "SETENTA ", "OCHENTA ", "NOVENTA ",
         "CIEN " };
 
@@ -72,8 +72,13 @@ public static String convertNumberToLetter(double doubleNumber)
                 "El numero es mayor de 999'999.999, "
                         + "no es posible convertirlo");
 
-    if (doubleNumber < 0)
-        throw new NumberFormatException("El numero debe ser positivo");
+    if (doubleNumber < 0){
+    	//Se pasa el numero a positivo y se anexa la palabra MENOS a la frase a mostrar
+    	doubleNumber = doubleNumber * (-1);
+    	converted.append("MENOS ");
+    	//Trato antiguo a los numeros negativos
+        //throw new NumberFormatException("El numero debe ser positivo");
+    }
 
     String splitNumber[] = String.valueOf(doubleNumber).replace('.', '#')
             .split("#");

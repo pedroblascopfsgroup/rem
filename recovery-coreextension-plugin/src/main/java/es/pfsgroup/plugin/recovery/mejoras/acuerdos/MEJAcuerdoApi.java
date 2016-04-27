@@ -18,6 +18,7 @@ import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.termino.model.TerminoBien;
 import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.termino.model.TerminoOperaciones;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
@@ -163,5 +164,7 @@ public interface MEJAcuerdoApi {
 	
 	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_FECHA_PASE_MORA)
 	public String getFechaPaseMora(Long idContrato);
+	
+	public boolean usuarioEstaEnGAA(Usuario user, Long idAsunto, String codTipoGestor);
 
 }

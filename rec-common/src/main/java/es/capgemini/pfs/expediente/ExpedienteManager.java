@@ -883,23 +883,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         //Seteo el arquetipo del expediente
         Arquetipo arq = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo);
         expediente.setArquetipo(arq);
-        // VRE
-        //Long oficina = obtenerMayorVRE(idContrato);
-        Contrato cnt = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
-
-        if (cnt != null) {
-            Oficina ofi = cnt.getOficina();
-            expediente.setOficina(ofi);
-        } else {
-            //No existe el cliente aun, tomo la oficina del contrato
-            Contrato contrato = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
-            expediente.setOficina(contrato.getOficina());
-        }
-        //TODO Revisar la forma de obtener el nombre del expediente para igualarlo al nuevo batch
-        //Le seteamos el nombre ya que ahora no se obtiene a trav�s de una f�rmula
-        setearNombreExpediente(expediente);
         
-        // Seteamos el tipo de expediente
+     // Seteamos el tipo de expediente
         DDTipoExpediente tipo = null;
         if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
         	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
@@ -911,6 +896,25 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         	}
         }
         expediente.setTipoExpediente(tipo); 
+        
+        //Seteamos la oficina
+        if(DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(expediente.getTipoExpediente()) || DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO.equals(expediente.getTipoExpediente())){
+        	if(!Checks.esNulo(persona) && !Checks.esNulo(persona.getOficinaCliente())){
+        		expediente.setOficina(persona.getOficinaCliente());
+        	}
+        }
+        if(Checks.esNulo(expediente.getOficina())){     	
+	        // VRE
+	        //Long oficina = obtenerMayorVRE(idContrato);
+	        Contrato cnt = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
+	
+	        if (cnt != null) {
+	            expediente.setOficina(cnt.getOficina());
+	        } 
+        }
+        //TODO Revisar la forma de obtener el nombre del expediente para igualarlo al nuevo batch
+        //Le seteamos el nombre ya que ahora no se obtiene a trav�s de una f�rmula
+        setearNombreExpediente(expediente);
 		
 		saveOrUpdate(expediente);
 

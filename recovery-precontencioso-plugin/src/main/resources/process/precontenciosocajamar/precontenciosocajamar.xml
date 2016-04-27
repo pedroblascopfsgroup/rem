@@ -126,14 +126,9 @@
 			<targetBean>precontenciosoGestorProcuradorHandler
 			</targetBean>
 		</action>
-		<transition to="forkOk" name="avanza"></transition>
+		<transition to="PCO_IniciarProcJudicial" name="avanza"></transition>
 		<transition to="forkOkConProcu" name="avanzaConProcu"></transition>
 	</node>
-	
-	<fork name="forkOk">		
-		<transition to="PCO_IniciarProcJudicial" name="iniciarProcJudicial"></transition>
-		<transition to="PCO_BPMTramiteEnvioDemanda" name="tramiteEnvioDemanda"></transition>
-	</fork>
 	
 	<fork name="forkOkConProcu">		
 		<transition to="PCO_IniciarProcJudicial" name="iniciarProcJudicial"></transition>

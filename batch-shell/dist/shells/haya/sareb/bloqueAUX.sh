@@ -113,7 +113,7 @@ lanzarParalelo apr_main_phones.sh apr_main_assets.sh
 
 lanzarParalelo apr_main_drafts_per.sh apr_main_drafts_cnt.sh
 
-lanzar apr_main_CIRBE.sh
+#lanzar apr_main_CIRBE.sh
 
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 

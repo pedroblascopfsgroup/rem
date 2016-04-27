@@ -3,8 +3,8 @@ export DIR_RAIZ=/recovery/haya
 #/recovery/iap031 	[INTE] 
 #/recovery/haya 	[RSI, PRE Y PRO]
 export JAVA_HOME=/usr/java/jdk1.6.0_27
-#/usr/java/jdk1.6.0_07	[INTE]   
-#/usr/java/jdk1.6.0_27	[VAL01, PRE Y PRO]
+#/usr/java/jdk1.6.0_07	[INTE Y VAL01]   
+#/usr/java/jdk1.6.0_27	[PRE Y PRO]
 export PATH=$JAVA_HOME/bin:$PATH
 export BATCH_INSTALL_DIR=$DIR_RAIZ/batch-server/sareb/programas/batch 
 export BATCH_USER=ops-haya

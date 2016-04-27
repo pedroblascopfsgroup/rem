@@ -100,11 +100,8 @@ function lanzarParaleloSinEsperar () {
 
 # BLOQUE GCL #
 
-lanzar apr_wait_group.sh 
-lanzar apr_main_grupos.sh
-lanzar apr_main_grupos_prod.sh
-#rera_hist_mov.sh  > Planificado los domingos a las 15:00 hrs
-lanzarSinFinalizarPorError rera_precalculo.sh
+lanzar rera_hist_mov.sh
+lanzar carga_bi.sh
 
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 

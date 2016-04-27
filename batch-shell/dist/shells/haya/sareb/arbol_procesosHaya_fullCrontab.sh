@@ -1,12 +1,14 @@
 #!/bin/bash
 
-######################################
-#            BLOQUE GCL              #
-######################################
+###################################################
+#   06/Julio/2015                                 #
+#   ARBOL PROCESOS RECOVERY HAYA                  #
+#                                                 #
+###################################################
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="$DIR_CONTROL_LOG/bloqueGCL.log"
+LOG="$DIR_CONTROL_LOG/simulador.log"
 DIR=$DIR_SHELLS
 #DIR=./
 source $DIR/setBatchEnv.sh
@@ -98,13 +100,32 @@ function lanzarParaleloSinEsperar () {
 }
 
 
-# BLOQUE GCL #
+# BLOQUE PCR #
 
-lanzar apr_wait_group.sh 
-lanzar apr_main_grupos.sh
-lanzar apr_main_grupos_prod.sh
-#rera_hist_mov.sh  > Planificado los domingos a las 15:00 hrs
-lanzarSinFinalizarPorError rera_precalculo.sh
+lanzar bloquePCR.sh
+
+# BLOQUE CONVIVENCIAS F2 - BLOQUE GCL - BLOQUE AUX #
+
+lanzarParalelo bloqueConvivencias.sh bloqueAUX.sh bloqueGCL.sh
+
+#Añadida la ejecución del resto de procesos que se lanzan en algún momento.
+lanzar bloqueAdresses.sh
+lanzar bloqueConvivenciasF2.sh
+lanzar sftp.download.files.sh
+lanzar sftp.upload.files.UVEM.sh
+lanzar proc_convivencia_cierre_deudas.sh
+#lanzar upload_proc_convivencia_cierre_deudas.sh
+lanzar proc_convivencia_contratos_litios.sh
+lanzar upload_proc_convivencia_contratos_litios.sh
+lanzar download_convivencia_cdd_resultado_nuse.sh 
+#lanzar convivencia_cdd_resultado_nuse.sh
+lanzar apr_gen_tdx_haya.sh
+#lanzar apr_gen_burofax.sh
+#lanzar apr_rec_burofax.sh
+lanzar bloqueHISTyBI.sh
+#Fin resto de procesos
+
+
 
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 
@@ -113,5 +134,7 @@ echo "                                                  " >> $LOG
 echo "EXPLOTACION FINALIZADA: `date`			" >> $LOG
 echo "Comprueba log de ejecucion batch                  " >> $LOG
 echo "***************************************************" >> $LOG
+
+lanzar sendMail.sh
 
 exit 0

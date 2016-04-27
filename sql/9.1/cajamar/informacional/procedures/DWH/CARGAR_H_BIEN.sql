@@ -4,8 +4,8 @@ create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE,
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 
--- Fecha ultima modificacion: 14/04/2016
--- Motivos del cambio: CMREC-3085 - Se añade la carga del atributo vivienda habitual
+-- Fecha ultima modificacion: 27/04/2016
+-- Motivos del cambio: CMREC-3085 - Se elimina FECHA_LANZAMIENTO_BIEN de los merges de lanzamientos
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de Bien
@@ -460,14 +460,13 @@ BEGIN
         -- 01 - Entrega Voluntaria - Dacion en Pago
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT DISTINCT BIE_ID, TRUNC(BIE_TEA.FECHACREAR) AS FECHA_LANZAMIENTO_BIEN
+            SELECT DISTINCT BIE_ID
             FROM '||V_DATASTAGE||'. BIE_TEA, '||V_DATASTAGE||'.TEA_TERMINOS_ACUERDO TEA
             WHERE BIE_TEA.TEA_ID = TEA.TEA_ID
             AND TEA.DD_TPA_ID = 1 --Dacion en Pago
             AND TRUNC(BIE_TEA.FECHACREAR) <= ''' || fecha || ''') BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 1,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA_LANZAMIENTO_BIEN';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 1';
                                      
         V_ROWCOUNT := sql%rowcount;
               
@@ -597,7 +596,7 @@ BEGIN
         -- 06 - Lanzamiento Suspendido (por el Juzgado) - Por RD 27/2012-Ley 01/2013
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, ASU.ASU_ID, DPR.FECHACREAR AS FECHA
+            SELECT PRB.BIE_ID, ASU.ASU_ID
             FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
             AND PRB.PRC_ID = PRC.PRC_ID
@@ -607,8 +606,7 @@ BEGIN
             AND DPR.FECHACREAR <= ''' || fecha || '''
             ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 6,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 6';
 
         V_ROWCOUNT := sql%rowcount;
               
@@ -776,7 +774,7 @@ BEGIN
         -- 10 - Lanzamiento Suspendido (por la Entidad) – Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, ASU.ASU_ID, DPR.FECHACREAR AS FECHA
+            SELECT PRB.BIE_ID, ASU.ASU_ID
             FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
             AND PRB.PRC_ID = PRC.PRC_ID
@@ -786,8 +784,7 @@ BEGIN
             AND DPR.FECHACREAR <= ''' || fecha || '''
             ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 10,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 10';
 
         V_ROWCOUNT := sql%rowcount;
               
@@ -798,7 +795,7 @@ BEGIN
         -- 11 - Lanzamiento Suspendido (por el Juzgado) – Otros
         EXECUTE IMMEDIATE'
         MERGE INTO TMP_H_BIE TMP USING(
-            SELECT PRB.BIE_ID, ASU.ASU_ID, DPR.FECHACREAR AS FECHA
+            SELECT PRB.BIE_ID, ASU.ASU_ID
             FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR, '||V_DATASTAGE||'.PRB_PRC_BIE PRB, '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_DATASTAGE||'.ASU_ASUNTOS ASU
             WHERE DPR.PRC_ID = PRB.PRC_ID
             AND PRB.PRC_ID = PRC.PRC_ID
@@ -808,8 +805,7 @@ BEGIN
             AND DPR.FECHACREAR <= ''' || fecha || '''
             ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 11,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 11';
 
         V_ROWCOUNT := sql%rowcount;
               

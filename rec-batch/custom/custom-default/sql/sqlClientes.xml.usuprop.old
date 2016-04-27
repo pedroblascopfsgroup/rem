@@ -248,10 +248,7 @@
 
    <entry key="clientes.creacionClientes.01.truncateTmpPER.Oracle9iDialect">
     <![CDATA[
-        BEGIN
-          --TRUNCATE TABLE TMP_PER_ARQUETIPO_RECUPERACION
-          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_PER_ARQUETIPO_RECUPERACION');
-        END;
+        TRUNCATE TABLE TMP_PER_ARQUETIPO_RECUPERACION
     ]]>
   </entry>
 
@@ -583,16 +580,10 @@
    <entry key="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI.Oracle9iDialect">
     <![CDATA[
     BEGIN
-        /*
         EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI';
         EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI_DES';
         EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI_VCPE';
         EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI_MOV';
-        */
-        OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_NUEVOS_CLI');
-        OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_NUEVOS_CLI_DES');
-        OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_NUEVOS_CLI_VCPE');
-        OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_NUEVOS_CLI_MOV');
     END;
     ]]>
   </entry>
@@ -603,7 +594,7 @@
        v_impPivote  varchar2(200 char);
      BEGIN
 
-     OPERACION_DDL.DDL_TABLE('STATS','TMP_PER_ARQUETIPO_RECUPERACION');
+     DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_PER_ARQUETIPO_RECUPERACION', estimate_percent => 20);
 
      Begin
          EXECUTE IMMEDIATE 'Select PEN_VALOR From PEN_PARAM_ENTIDAD Where PEN_PARAM = ''importePivoteRecuperaciones'''
@@ -696,8 +687,8 @@
                        and ccl.cnt_id = c.cnt_id
                   );
 
-     OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI_VCPE');
-     commit;
+         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_VCPE', estimate_percent => 20);
+         commit;
 
      Execute Immediate ('
         INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI_MOV
@@ -709,7 +700,7 @@
             from TMP_CNT_NUEVOS_CLI_VCPE vcpe inner join mov_movimientos row_mov on vcpe.cnt_id = row_mov.cnt_id  AND row_mov.mov_fecha_extraccion = vcpe.cnt_fecha_extraccion
     ');
 
-    OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI_MOV');
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI_MOV', estimate_percent => 20);
     commit;
 
     INSERT /*+append*/ INTO TMP_CNT_NUEVOS_CLI
@@ -722,7 +713,8 @@
         from TMP_PER_ARQUETIPO_RECUPERACION tmp
           join TMP_CNT_NUEVOS_CLI_MOV mov on tmp.per_id = mov.per_id;
 
-    OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_NUEVOS_CLI');
+
+          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_NUEVOS_CLI', estimate_percent => 20);
     commit;
     END;
     ]]>
@@ -829,16 +821,14 @@
 
   <entry key="clientes.revisionClientes.limpiarTMPCliPerArq.Oracle9iDialect">
     <![CDATA[
-        BEGIN
-         --TRUNCATE TABLE TMP_CLI_PER_ARQ
-         OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CLI_PER_ARQ');
-        END;
+        TRUNCATE TABLE TMP_CLI_PER_ARQ
     ]]>
     </entry>
 
      <entry key="clientes.revisionClientes.marcarCliPerArq.Oracle9iDialect">
     <![CDATA[
     BEGIN
+
   /*************************************************
   Insertar los clientes activos, personas, sus respectivos arquetipos
   y si son de gestion en TMP_CLI_PER_ARQ
@@ -859,19 +849,16 @@
       WHERE cli.BORRADO = 0
     );
 
-    --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_PER_ARQ', estimate_percent => 20);
-    OPERACION_DDL.DDL_TABLE('STATS','TMP_CLI_PER_ARQ');
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_PER_ARQ', estimate_percent => 20);
 
     END;
+
   ]]>
   </entry>
 
   <entry key="clientes.revisionClientes.limpiarTMPCliACancelar.Oracle9iDialect">
   <![CDATA[
-      BEGIN
-        --TRUNCATE TABLE TMP_CLI_A_CANCELAR
-        OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CLI_A_CANCELAR');
-      END;
+      TRUNCATE TABLE TMP_CLI_A_CANCELAR
   ]]>
   </entry>
 
@@ -888,9 +875,7 @@
         FROM TMP_CLI_PER_ARQ
       WHERE ARQ_CLIENTE <> ARQ_PERSONA AND ES_ARQ_GESTION = 0);
 
-     --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
-     OPERACION_DDL.DDL_TABLE('STATS','TMP_CLI_A_CANCELAR');
-     COMMIT;
+     DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
 
     END;
      ]]>
@@ -1024,10 +1009,7 @@
 
     <entry key="clientes.revisionClientes.limpiarTMPMovRevisados.Oracle9iDialect">
     <![CDATA[
-        BEGIN
-          --TRUNCATE TABLE TMP_MOV_REVISADOS
-          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_MOV_REVISADOS');
-        END;
+        TRUNCATE TABLE TMP_MOV_REVISADOS
     ]]>
     </entry>
 
@@ -1098,8 +1080,7 @@ WHERE c.dd_tpe_id = t.dd_tpe_id
 AND V.CNT_ID = C.CNT_ID
 );
 
---DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS', estimate_percent => 20);
-OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS');
+DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS', estimate_percent => 20);
 
     END;
     ]]>
@@ -1250,8 +1231,7 @@ OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS');
     <![CDATA[
     BEGIN
 
-    --EXECUTE IMMEDIATE'TRUNCATE TABLE TMP_CNT_CLI_DES';
-    OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_CLI_DES');
+    EXECUTE IMMEDIATE'TRUNCATE TABLE TMP_CNT_CLI_DES';
 
     Insert /*+append*/ into TMP_CNT_CLI_DES
     /* Litigios: todos los contratos */
@@ -1309,8 +1289,7 @@ OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS');
       and eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo});
     COMMIT;
 
-    --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_CLI_DES', estimate_percent => 20);
-    OPERACION_DDL.DDL_TABLE('STATS','TMP_CNT_CLI_DES');
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CNT_CLI_DES', estimate_percent => 20);
 
     INSERT INTO ccl_contratos_cliente
         (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
@@ -1413,8 +1392,7 @@ OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS');
             NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE EXR.EXP_ID = EXP.EXP_ID))
     );
 
-    --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
-    OPERACION_DDL.DDL_TABLE('STATS','TMP_CLI_A_CANCELAR');
+    DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_CLI_A_CANCELAR', estimate_percent => 20);
     END;
     ]]>
     </entry>

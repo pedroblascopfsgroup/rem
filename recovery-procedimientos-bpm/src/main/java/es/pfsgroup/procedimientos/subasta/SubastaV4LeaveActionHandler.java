@@ -3,11 +3,11 @@ package es.pfsgroup.procedimientos.subasta;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
@@ -52,6 +52,9 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
+
+    @Autowired
+    private SubastaProcedimientoApi subastaProcedimientoApi;
 	
     @Autowired
     private IntegracionBpmService bpmIntegracionService;
@@ -117,6 +120,7 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.PIN);
 				duplicaInfoSubasta(executionContext, sub);
+				subastaProcedimientoApi.determinarTipoSubasta(sub);
 			}
 		} else if (executionContext.getNode().getName().contains("AdjuntarInformeSubasta")) {
 
@@ -128,7 +132,6 @@ public class SubastaV4LeaveActionHandler extends PROGenericLeaveActionHandler {
 
 			if (!Checks.esNulo(sub)) {
 				cambiaEstadoSubasta(sub, DDEstadoSubasta.PCO);
-				subastaCalculoManager.determinarTipoSubastaTrasPropuesta(sub);
 				cambiaEstadoLotesSubasta(sub);
 			}
 		} else if (executionContext.getNode().getName().contains("ValidarPropuesta")) {

@@ -69,6 +69,9 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
     
+    @Autowired
+    private SubastaProcedimientoApi subastaProcedimientoApi;
+    
         
 	/**
 	 * Control de la transicion a la que ir despues de crearse la tarea.
@@ -138,10 +141,21 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 			Procedimiento procedimiento=getProcedimiento(executionContext);
 			if (Checks.esNulo(sub)) {
 				subastaCalculoManager.crearSubasta(procedimiento);
+				Subasta subasta = subastaProcedimientoApi.obtenerSubastaByPrcId(procedimiento.getId());
+				if (!Checks.esNulo(subasta)) {
+					subastaProcedimientoApi.determinarTipoSubasta(subasta);
+				}
+				
 			}
 			else{
 				//Reseteamos la fecha de solicitud, ya que la tarea ha sido cancelada
 				sub.setFechaSolicitud(null);
+			}
+		}
+		else if (executionContext.getNode().getName().contains("PrepararPropuestaSubasta")) {
+			// personalización del handler: determinar tipo de subasta
+			if (!Checks.esNulo(sub)) {
+				subastaProcedimientoApi.determinarTipoSubasta(sub);
 			}
 		}
 

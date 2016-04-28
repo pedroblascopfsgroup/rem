@@ -32,29 +32,35 @@ echo "****************************************"
 echo "**** DESCARGA DE FICHEROS $FECHA *******"
 echo "****************************************"
 
-FICHEROS_T=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/troncal
-dir
-bye
-EOF`
+if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
 
-FICHEROS_A=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/auxiliar
-dir
-bye
-EOF`
+	FICHEROS_T=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
+	cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/troncal
+	dir
+	bye
+	EOF`
 
-FICHEROS_T_PR=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/troncal_PR
-dir
-bye
-EOF`
+	FICHEROS_A=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
+	cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/auxiliar
+	dir
+	bye
+	EOF`
 
-FICHEROS_A_PR=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/auxiliar_PR
-dir
-bye
-EOF`
+	FICHEROS_T_PR=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
+	cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/troncal_PR
+	dir
+	bye
+	EOF`
+
+	FICHEROS_A_PR=`lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
+	cd $SFTP_DIR_BASE_BNK/out/aprovisionamiento/auxiliar_PR
+	dir
+	bye
+	EOF`
+
+else
+	echo "Llamada sin parámetro SFTP. No mueve ficheros."
+fi 
 
 function download_files {
 	ORIGEN=$1
@@ -80,11 +86,7 @@ function file_list {
 	for FMASK in ${FILES_DOWN[*]};
 	do
 		echo "$SFTP_DIR_BASE_BNK/out/aprovisionamiento/$TIPO $DIR_APROV_DES/$TIPO ${FMASK} $BANDERA"
-		if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
-			download_files $SFTP_DIR_BASE_BNK"/out/aprovisionamiento/$TIPO" $DIR_APROV_DES"/$TIPO" ${FMASK} $BANDERA
-		else
-			echo "Llamada sin parámetro SFTP. No mueve ficheros."
-		fi        
+		download_files $SFTP_DIR_BASE_BNK"/out/aprovisionamiento/$TIPO" $DIR_APROV_DES"/$TIPO" ${FMASK} $BANDERA
 	done
 }
 
@@ -98,6 +100,7 @@ function file_copy {
 	mv *.* backup/
 }
 
+if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
 
 BANDERA_T=(`echo "$FICHEROS_T" | awk '{print $9}' | grep haya.txt`)
 
@@ -259,6 +262,10 @@ done
 #echo "Copia de ficheros a directorio ETL"
 #file_copy recepcion aprovisionamiento auxiliar
 #file_copy recepcion aprovisionamiento troncal
+
+else
+	echo "Llamada sin parámetro SFTP. No mueve ficheros."
+fi 
 
 exit 0
                                              

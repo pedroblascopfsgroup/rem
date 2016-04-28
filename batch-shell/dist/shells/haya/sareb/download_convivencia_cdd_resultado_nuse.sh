@@ -38,6 +38,7 @@ function download_files {
 	$CP $MASK $DIR_SFT_HRE_RECEPCION/$FECHA
 }
 
+if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
 
 while [ `date +%H` -ne 21 ]; do
 
@@ -52,11 +53,7 @@ EOF`
 	if [ "$BANDERA_T" == "rechazos.txt" ]; then
 		for FMASK in "${FICHEROS[@]}";	
 		do
-			if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
-				download_files $DIR_INPUT_CONV $SFTP_DIR_BNK_OUT_APR_TR ${FMASK} $BANDERA_T
-			else
-				echo "Llamada sin parámetro SFTP. No mueve ficheros."
-			fi
+			download_files $DIR_INPUT_CONV $SFTP_DIR_BNK_OUT_APR_TR ${FMASK} $BANDERA_T
 			$DIR_SHELLS/convivencia_cdd_resultado_nuse.sh >> $DIR_SHELLS/convivencia_cdd_resultado_nuse.log
             $DIR_SHELLS/nuseMail.sh >> $DIR_SHELLS/nuseMail.log
 			echo "Fin de la ejecucion!! $HORA"
@@ -68,7 +65,9 @@ EOF`
 
 done
 
-
+else
+	echo "Llamada sin parámetro SFTP. No mueve ficheros."
+fi
 
 
 

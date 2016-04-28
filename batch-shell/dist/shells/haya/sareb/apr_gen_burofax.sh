@@ -27,7 +27,8 @@ if [ -f $MAINSH ]; then
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
      result=$?
     if [ $result -eq 0 ]; then
-        mv $DIR_CONTROL_OUTPUT/*$NOM_ETL.txt $ENVIO_DOCALIA
+		cp $DIR_CONTROL_OUTPUT/*$NOM_ETL.txt $ENVIO_DOCALIA
+        mv $DIR_CONTROL_OUTPUT/*$NOM_ETL.txt $DIR_BACKUP
         exit $result
     else
         exit $result

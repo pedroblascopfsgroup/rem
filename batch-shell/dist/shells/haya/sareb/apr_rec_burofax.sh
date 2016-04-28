@@ -21,9 +21,9 @@ fi
 cd $DIR_ETL
 
 if [ -f $MAINSH ]; then
-    mv $RECEPCION_DOCALIA/*$NOM_ETL.txt $DIR_DESTINO
-    mv $RECEPCION_DOCALIA/*.pdf $DIR_DESTINO
-    mv $RECEPCION_DOCALIA/*.tif $DIR_DESTINO
+    mv $RECEPCION_DOCALIA/*$NOM_ETL.txt $DIR_DESTINO/burofax
+    mv $RECEPCION_DOCALIA/*.pdf $DIR_DESTINO/burofax
+    mv $RECEPCION_DOCALIA/*.tif $DIR_DESTINO/burofax
         
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`

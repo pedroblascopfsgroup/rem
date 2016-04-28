@@ -20,14 +20,6 @@ FECHAYYYYMMDD=`date +%Y%m%d`
 FECHA_PR=`date +%Y%m%d --date="1 day ago"`
 LOG=$DIR_LOG/sftp_download_files-$FECHAYYYYMMDD.log
 
-TIPO_ORI=envio
-DIR_SFTP_ORI=/sftp_haya/$TIPO_ORI
-DIR_APROV_ORI=$DIR_SFTP_ORI/aprovisionamiento
-
-TIPO_DES=recepcion
-DIR_SFTP_DES=/sftp_haya/$TIPO_DES
-DIR_APROV_DES=$DIR_SFTP_DES/aprovisionamiento
-
 echo "****************************************"
 echo "**** DESCARGA DE FICHEROS $FECHA *******"
 echo "****************************************"
@@ -85,8 +77,8 @@ function file_list {
 	
 	for FMASK in ${FILES_DOWN[*]};
 	do
-		echo "$SFTP_DIR_BASE_BNK/out/aprovisionamiento/$TIPO $DIR_APROV_DES/$TIPO ${FMASK} $BANDERA"
-		download_files $SFTP_DIR_BASE_BNK"/out/aprovisionamiento/$TIPO" $DIR_APROV_DES"/$TIPO" ${FMASK} $BANDERA
+		echo "$SFTP_DIR_BASE_BNK/out/aprovisionamiento/$TIPO $DIR_SFT_HAYA_RECEPCION_APR/$TIPO ${FMASK} $BANDERA"
+		download_files $SFTP_DIR_BASE_BNK"/out/aprovisionamiento/$TIPO" $DIR_SFT_HAYA_RECEPCION_APR"/$TIPO" ${FMASK} $BANDERA
 	done
 }
 
@@ -95,8 +87,8 @@ function file_copy {
 	TIPO2=$2
 	TIPO3=$3
 	echo "Copiando $TIPO3...."
-	cd $DIR_APROV_DES/$TIPO3
-	cp *.* $DIR_CONTROL_ETL/$TIPO/$TIPO2/$TIPO3
+	cd $DIR_SFT_HAYA_RECEPCION_APR/$TIPO3
+	cp *.* $DIR_RAIZ/$TIPO/$TIPO2/aprov_$TIPO3
 	mv *.* backup/
 }
 
@@ -109,22 +101,22 @@ do
                 if [ "${i}" = "apr_env_pcr_haya.txt" ]; then
 			FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(PCR|OFICINAS|ZONAS)'`)
 			file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_pcr_haya.txt"
-                	file_copy recepcion aprovisionamiento troncal
+                	file_copy transferencia sareb troncal
                 fi
                 if [ "${i}" == "apr_env_convF2_proc_haya.txt" ]; then
 			FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(ALTA_PROCEDIMIENTOS_2|ALTA_PROCEDIMIENTOS_CONTRATOS|ALTA_PROCEDIMIENTOS_PERSONAS)'`)
 			file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_convF2_proc_haya.txt"
-                        file_copy recepcion aprovisionamiento troncal
+                        file_copy transferencia sareb troncal
                 fi
                 if [ "${i}" == "apr_env_convF2_bien_haya.txt" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(ALTA_PROCEDIMIENTOS_BIENES)'`)
 			file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_convF2_bien_haya.txt"
-                        file_copy recepcion aprovisionamiento troncal
+                        file_copy transferencia sareb troncal
                 fi
 		if [ "${i}" == "apr_env_grupos_haya.txt" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(GCL)'`)
                         file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_grupos_haya.txt"
-                        file_copy recepcion aprovisionamiento troncal
+                        file_copy transferencia sareb troncal
                 fi
 done
 
@@ -135,42 +127,42 @@ do
                 if [ "${i}" = "apr_env_bien_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(BIEN)'`)
 			file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_bien_haya.txt"
-                	file_copy recepcion aprovisionamiento auxiliar
+                	file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "apr_env_cirbe_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(CIRBE)'`)
 			file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_cirbe_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "apr_env_cobros_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(COBROS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_cobros_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
 		if [ "${i}" = "apr_env_dir_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(DIRECCIONES)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_dir_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "apr_env_efec_cnt_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(EFECTOS_CONTRATOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_efec_cnt_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "apr_env_efec_per_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(EFECTOS_PERSONAS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_efec_per_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
 		if [ "${i}" = "apr_env_rec_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(RECIBOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_rec_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
 		if [ "${i}" = "apr_env_tlf_haya.txt" ]; then
 			FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(TELEFONOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_tlf_haya.txt"
-                        file_copy recepcion aprovisionamiento auxiliar
+                        file_copy transferencia sareb auxiliar
                 fi
 done
 
@@ -260,8 +252,8 @@ done
 #file_list $FILES_DOWN_AT troncal
 
 #echo "Copia de ficheros a directorio ETL"
-#file_copy recepcion aprovisionamiento auxiliar
-#file_copy recepcion aprovisionamiento troncal
+#file_copy transferencia sareb auxiliar
+#file_copy transferencia sareb troncal
 
 else
 	echo "Llamada sin parámetro SFTP. No mueve ficheros."

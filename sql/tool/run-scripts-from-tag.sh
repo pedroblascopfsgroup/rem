@@ -172,7 +172,7 @@ if [ "$1" != "null" ]; then
         for entidad in "${entidades[@]}"
         do
             SUBENTITY=`echo $entidad | tr '[:upper:]' '[:lower:]'`
-            for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/*.sql`
+            for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/$DIRECTORIO*.sql`
             do
                 connectionParam=`getConnectionParam $file ${!entidad} $3`
                 registerSQLScript $file $BASEDIR/tmp/customer-list-from-tag.txt $connectionParam

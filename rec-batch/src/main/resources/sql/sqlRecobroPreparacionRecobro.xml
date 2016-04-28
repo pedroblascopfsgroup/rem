@@ -472,7 +472,7 @@
                   JOIN EXR_EXPEDIENTE_RECOBRO EXR ON PEX.EXP_ID = EXR.EXP_ID
                   JOIN EXP_EXPEDIENTES EXP ON EXR.EXP_ID = EXP.EXP_ID
                   JOIN ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX ON EXP.DD_EEX_ID = EEX.DD_EEX_ID
-                  JOIN DD_TPX_TIPO_EXPEDIENTE EEX ON EXP.DD_TPX_ID = TPX.DD_TPX_ID
+                  JOIN DD_TPX_TIPO_EXPEDIENTE TPX ON EXP.DD_TPX_ID = TPX.DD_TPX_ID
                  WHERE pex.borrado = 0
                    AND EEX.DD_EEX_CODIGO = '1'
                    AND TPX.DD_TPX_CODIGO = 'REC'

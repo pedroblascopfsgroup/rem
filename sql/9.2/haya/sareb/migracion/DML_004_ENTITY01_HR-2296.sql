@@ -1,11 +1,11 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALBERT PEREZ
---## FECHA_CREACION=20160420
+--## FECHA_CREACION=20160428
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2.2
---## INCIDENCIA_LINK= HR-2296
---## PRODUCTO=NO
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HR-2296
+--## PRODUCTO=SI
 --## 
 --## Finalidad: Borrado contratos Migración PCO
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
@@ -465,27 +465,73 @@ ON ( A.BIE_ID=B.BIE_ID ) WHEN MATCHED THEN UPDATE SET BORRADO=1, USUARIOBORRAR='
   
   EXECUTE IMMEDIATE  'DELETE FROM '||V_ESQUEMA||'.PRC_PER WHERE (PRC_ID, PER_ID) IN 
     (
-      SELECT DISTINCT
-        PRC_PER_BK.PRC_ID, PRC_PER_BK.PER_ID
-      FROM 
-        '||V_ESQUEMA||'.CNT_CONTRATOS CNT
-      INNER JOIN
-        '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX
-        ON CEX.CNT_ID = CNT.CNT_ID AND CEX.USUARIOCREAR = ''MIGRAPCO''
-      INNER JOIN
-        '||V_ESQUEMA||'.PRC_CEX
-        ON PRC_CEX.CEX_ID = CEX.CEX_ID
-      INNER JOIN
-        '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
-        ON PRC.PRC_ID = PRC_CEX.PRC_ID
-      INNER JOIN
-        '||V_ESQUEMA||'.PRC_PER PRC_PER_BK
-        ON PRC_PER_BK.PRC_ID = PRC.PRC_ID
-      INNER JOIN
-        '||V_ESQUEMA||'.CPE_CONTRATOS_PERSONAS CPE
-        ON CPE.CNT_ID = CNT.CNT_ID AND CPE.PER_ID = PRC_PER_BK.PER_ID
-      WHERE
-        CNT.BORRADO = 1 AND CNT.USUARIOBORRAR = ''HR-2296''
+        SELECT 
+          PRC_ID
+          , PER_ID 
+        FROM
+        ( 
+          SELECT DISTINCT
+            PRC_PER_BK.PRC_ID
+            , PRC_PER_BK.PER_ID
+            , CNT.CNT_ID
+            , CPE.BORRADO
+          FROM 
+            '||V_ESQUEMA||'.CNT_CONTRATOS CNT
+          INNER JOIN
+            '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX
+            ON CEX.CNT_ID = CNT.CNT_ID AND CEX.USUARIOCREAR = ''MIGRAPCO''
+          INNER JOIN
+            '||V_ESQUEMA||'.ASU_ASUNTOS ASU
+            ON CEX.EXP_ID = ASU.EXP_ID
+          INNER JOIN
+            '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+            ON PRC.ASU_ID = ASU.ASU_ID
+          INNER JOIN
+            '||V_ESQUEMA||'.PRC_PER PRC_PER_BK
+            ON PRC_PER_BK.PRC_ID = PRC.PRC_ID
+          INNER JOIN
+            '||V_ESQUEMA||'.CPE_CONTRATOS_PERSONAS CPE
+            ON CPE.CNT_ID = CNT.CNT_ID AND CPE.PER_ID = PRC_PER_BK.PER_ID
+        ) 
+        WHERE 
+          BORRADO = 1 
+        GROUP BY 
+          PRC_ID
+          , PER_ID
+        MINUS
+        SELECT 
+          PRC_ID
+          , PER_ID 
+        FROM
+        ( 
+          SELECT DISTINCT
+            PRC_PER_BK.PRC_ID
+            , PRC_PER_BK.PER_ID
+            , CNT.CNT_ID
+            , CPE.BORRADO
+          FROM 
+            '||V_ESQUEMA||'.CNT_CONTRATOS CNT
+          INNER JOIN
+            '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX
+            ON CEX.CNT_ID = CNT.CNT_ID AND CEX.USUARIOCREAR = ''MIGRAPCO''
+          INNER JOIN
+            '||V_ESQUEMA||'.ASU_ASUNTOS ASU
+            ON CEX.EXP_ID = ASU.EXP_ID
+          INNER JOIN
+            '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+            ON PRC.ASU_ID = ASU.ASU_ID
+          INNER JOIN
+            '||V_ESQUEMA||'.PRC_PER PRC_PER_BK
+            ON PRC_PER_BK.PRC_ID = PRC.PRC_ID
+          INNER JOIN
+            '||V_ESQUEMA||'.CPE_CONTRATOS_PERSONAS CPE
+            ON CPE.CNT_ID = CNT.CNT_ID AND CPE.PER_ID = PRC_PER_BK.PER_ID
+        ) 
+        WHERE 
+          BORRADO = 0
+        GROUP BY 
+          PRC_ID
+          , PER_ID
     )';
   
   EXECUTE IMMEDIATE '

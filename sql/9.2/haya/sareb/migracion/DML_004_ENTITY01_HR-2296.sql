@@ -5,7 +5,7 @@
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-2296
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --## 
 --## Finalidad: Borrado contratos Migración PCO
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE

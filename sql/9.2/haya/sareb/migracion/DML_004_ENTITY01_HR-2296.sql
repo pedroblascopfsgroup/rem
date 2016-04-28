@@ -686,6 +686,106 @@ ON ( A.BIE_ID=B.BIE_ID ) WHEN MATCHED THEN UPDATE SET BORRADO=1, USUARIOBORRAR='
                               , T1.USUARIOBORRAR = ''HR-2296''
                     ';
   
+  EXECUTE IMMEDIATE  '
+                      MERGE INTO 
+                        '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE T1
+                      USING
+                      (
+                        SELECT
+                          ASU.ASU_NOMBRE
+                          , CNT.CNT_ID
+                          , MOV.MOV_POS_VIVA_NO_VENCIDA + MOV.MOV_POS_VIVA_VENCIDA POSICION_VIVA
+                          , CEX.CEX_ID
+                          , CEX.CEX_PASE
+                          , ROW_NUMBER() OVER(PARTITION BY ASU.ASU_NOMBRE ORDER BY MOV.MOV_POS_VIVA_NO_VENCIDA + MOV.MOV_POS_VIVA_VENCIDA DESC, MOV.CNT_ID ASC) NUMERO
+                        FROM 
+                          '||V_ESQUEMA||'.ASU_ASUNTOS ASU
+                        INNER JOIN
+                          '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                          ON PRC.ASU_ID = ASU.ASU_ID
+                        INNER JOIN
+                          '||V_ESQUEMA||'.PRC_CEX
+                          ON PRC_CEX.PRC_ID = PRC.PRC_ID
+                        INNER JOIN
+                          '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX
+                          ON PRC_CEX.CEX_ID = CEX.CEX_ID AND CEX.USUARIOCREAR = ''MIGRAPCO''
+                        INNER JOIN
+                          '||V_ESQUEMA||'.CNT_CONTRATOS CNT
+                          ON CNT.CNT_ID = CEX.CNT_ID AND CNT.BORRADO = 0
+                        INNER JOIN
+                          '||V_ESQUEMA||'.MOV_MOVIMIENTOS MOV
+                          ON MOV.CNT_ID = CNT.CNT_ID AND MOV.MOV_FECHA_EXTRACCION = CNT.CNT_FECHA_EXTRACCION
+                        WHERE 
+                          ASU.ASU_ID IN 
+                          (
+                            SELECT ASU_ID FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS WHERE PRC_ID IN (SELECT PRC_ID FROM '||V_ESQUEMA||'.PRC_CEX WHERE CEX_ID IN (SELECT CEX_ID FROM '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE WHERE BORRADO = 1 AND USUARIOBORRAR = ''HR-2296''))
+                          )
+                        ORDER BY
+                          ASU.ASU_NOMBRE
+                      ) T2
+                      ON
+                      (
+                        T1.CEX_ID = T2.CEX_ID AND T2.NUMERO = 1
+                      )
+                      WHEN MATCHED
+                        THEN UPDATE
+                          SET CEX_PASE = 1
+                      ';
+  
+  EXECUTE IMMEDIATE '
+                      MERGE INTO 
+                        '||V_ESQUEMA||'.PEX_PERSONAS_EXPEDIENTE T1
+                      USING
+                      (
+                        SELECT
+                          ASU.ASU_NOMBRE
+                          , PRC.PRC_ID
+                          , CEX.EXP_ID
+                          , PEX.PEX_ID
+                          , ROW_NUMBER() OVER(PARTITION BY ASU.ASU_NOMBRE ORDER BY CPE.CPE_ORDEN ASC, CPE.DD_TIN_ID ASC) NUMERO
+                        FROM 
+                          '||V_ESQUEMA||'.ASU_ASUNTOS ASU
+                        INNER JOIN
+                          '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                          ON PRC.ASU_ID = ASU.ASU_ID
+                        INNER JOIN
+                          '||V_ESQUEMA||'.PRC_CEX
+                          ON PRC_CEX.PRC_ID = PRC.PRC_ID
+                        INNER JOIN
+                          '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX
+                          ON PRC_CEX.CEX_ID = CEX.CEX_ID AND CEX.USUARIOCREAR = ''MIGRAPCO'' AND CEX.CEX_PASE = 1
+                        INNER JOIN
+                          '||V_ESQUEMA||'.CNT_CONTRATOS CNT
+                          ON CNT.CNT_ID = CEX.CNT_ID AND CNT.BORRADO = 0
+                        INNER JOIN
+                          '||V_ESQUEMA||'.CPE_CONTRATOS_PERSONAS CPE
+                          ON CPE.CNT_ID = CNT.CNT_ID AND CPE.BORRADO = 0
+                        INNER JOIN
+                          '||V_ESQUEMA||'.DD_TIN_TIPO_INTERVENCION TIN
+                          ON TIN.DD_TIN_TITULAR = 1 AND TIN.DD_TIN_ID = CPE.DD_TIN_ID
+                        INNER JOIN
+                          '||V_ESQUEMA||'.PER_PERSONAS PER
+                          ON PER.PER_ID = CPE.PER_ID AND PER.BORRADO = 0
+                        INNER JOIN
+                          '||V_ESQUEMA||'.PEX_PERSONAS_EXPEDIENTE PEX
+                          ON PEX.PER_ID = PER.PER_ID AND PEX.EXP_ID = CEX.EXP_ID
+                        WHERE 
+                          ASU.ASU_ID IN 
+                          (
+                            SELECT ASU_ID FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS WHERE PRC_ID IN (SELECT PRC_ID FROM '||V_ESQUEMA||'.PRC_CEX WHERE CEX_ID IN (SELECT CEX_ID FROM '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE WHERE BORRADO = 1 AND USUARIOBORRAR = ''HR-2296''))
+                          )
+                        ORDER BY
+                          ASU.ASU_NOMBRE
+                      ) T2
+                      ON
+                      (
+                        T1.PEX_ID = T2.PEX_ID AND T2.NUMERO = 1
+                      )
+                      WHEN MATCHED
+                        THEN UPDATE
+                          SET PEX_PASE = 1
+                    ';
+
   EXECUTE IMMEDIATE  'DELETE FROM '||V_ESQUEMA||'.PRC_CEX WHERE CEX_ID IN ( SELECT CEX_ID FROM '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE WHERE BORRADO = 1 AND USUARIOBORRAR = ''HR-2296'' )';
   
   DBMS_OUTPUT.PUT_LINE( 'FIN DEL PROCESO' );

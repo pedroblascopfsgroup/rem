@@ -234,11 +234,11 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			mapaVariables.put(ENTIDAD_ORIGEN,ERROR_NO_EXISTE_VALOR);
 		}
 		
-		Filter filtro = null;
 		LiquidacionPCO liquidacion = null;
 		try {
-			filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId());
-			List<LiquidacionPCO> liquidaciones = genericDao.getList(LiquidacionPCO.class, filtro); ///Por si existe en algún caso mas de una
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId());
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "procedimientoPCO.id", envioBurofax.getBurofax().getProcedimientoPCO().getId());
+			List<LiquidacionPCO> liquidaciones = genericDao.getList(LiquidacionPCO.class, filtro, filtro2);
 			if(!Checks.estaVacio(liquidaciones)){
 				liquidacion = liquidaciones.get(0);
 			}

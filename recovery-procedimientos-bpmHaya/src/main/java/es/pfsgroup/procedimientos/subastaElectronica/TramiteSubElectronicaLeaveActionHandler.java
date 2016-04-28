@@ -19,10 +19,12 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
+import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
@@ -31,10 +33,14 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionHandlerDelegateApi;
+import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
@@ -56,7 +62,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
 	private final String SALIDA_SI = "si";
 	private final String SALIDA_NO = "no";
-	private final String CODIGO_STA_LETRADO = "814";
+	private final String CODIGO_TGE_LETRADO = "GEXT";
 
 	@Autowired
 	private Executor executor;
@@ -66,12 +72,18 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 	@Autowired
 	private JBPMProcessManager jbpmUtil;
-
+	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 
 	@Autowired
+	private TareaNotificacionApi tareaNotificacionApi;
+
+	@Autowired
 	private UsuarioApi usuarioApi;
+	
+	@Autowired
+    private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	TramitesElectronicosApi tramitesElectronicosApi;
@@ -110,81 +122,41 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 			String variableName = String.format(SALIDA_ETIQUETA, i + 1);
 			String valor = (valoresRamas[i]) ? SALIDA_SI : SALIDA_NO;
 			executionContext.setVariable(variableName, valor);
+			
 		}
 	}
 
 	private void estableceNotificacion(ExecutionContext executionContext) {
+		
 		Procedimiento prc = getProcedimiento(executionContext);
-		String nombreTarea = executionContext.getNode().getName();
-		crearNotificacionManual(prc, nombreTarea,
-				"Se han dictado instrucciones y la autorización para proceder al pago de la tasa", CODIGO_STA_LETRADO);
-	}
+		String asunto = "Notificación";
+		String textoNotificacion = "Se han dictado instrucciones y la autorización para proceder al pago de la tasa";
+        
+        List<Usuario> lUsuario = proxyFactory.proxy(
+				GestorAdicionalAsuntoApi.class).findGestoresByAsunto(
+						prc.getAsunto().getId(),
+						CODIGO_TGE_LETRADO);
+		if (!Checks.estaVacio(lUsuario)) {
+			List<Long> listIdUsuarioGestor = new ArrayList<Long>();
+			for (Usuario usu : lUsuario) {
+				listIdUsuarioGestor.add(usu.getId());
+			}
+			
+        DtoCrearAnotacion crearAnotacion = DtoCrearAnotacion
+				.crearAnotacionDTO(
+						listIdUsuarioGestor,
+						false, true, null,asunto,
+						textoNotificacion,
+						prc.getAsunto().getId(),
+						DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO,
+						"A");
 
-	private void crearNotificacionManual(Procedimiento prc, String nombreTarea, String descripcion,
-			String codigoGestor) {
-
-		EXTTareaNotificacion notificacion = new EXTTareaNotificacion();
-		notificacion.setProcedimiento(prc);
-		notificacion.setAsunto(prc.getAsunto());
-		notificacion.setEstadoItinerario(genericDao.get(DDEstadoItinerario.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoItinerario.ESTADO_ASUNTO)));
-
-		SubtipoTarea subtipoTarea = genericDao.get(SubtipoTarea.class,
-				genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", codigoGestor));
-
-		if (subtipoTarea == null) {
-			throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", codigoGestor);
+		proxyFactory.proxy(
+				AdjudicacionHandlerDelegateApi.class)
+				.createAnotacion(crearAnotacion);
 		}
-
-		notificacion.setEspera(Boolean.FALSE);
-		notificacion.setAlerta(Boolean.FALSE);
-		notificacion.setTarea(descripcion);
-		notificacion.setDescripcionTarea(descripcion);
-		notificacion.setCodigoTarea(subtipoTarea.getTipoTarea().getCodigoTarea());
-		notificacion.setSubtipoTarea(subtipoTarea);
-
-		DDTipoEntidad tipoEntidad = (DDTipoEntidad) diccionarioApi.dameValorDiccionarioByCod(DDTipoEntidad.class,
-				DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
-
-		notificacion.setTipoEntidad(tipoEntidad);
-
-		Date ahora = new Date(System.currentTimeMillis());
-
-		notificacion.setFechaInicio(ahora);
-		notificacion.setFechaVenc(ahora);
-		notificacion.setFechaVencReal(ahora);
-		notificacion.setFechaFin(ahora);
-		notificacion.setTareaFinalizada(true);
-		notificacion.setEmisor(usuarioApi.getUsuarioLogado().getApellidoNombre());
-
-		Auditoria audit = new Auditoria();
-		audit.setUsuarioCrear(usuarioApi.getUsuarioLogado().getApellidoNombre());
-		audit.setFechaCrear(ahora);
-		audit.setFechaBorrar(ahora);
-		audit.setUsuarioBorrar(usuarioApi.getUsuarioLogado().getApellidoNombre());
-		audit.setBorrado(true);
-
-		notificacion.setAuditoria(audit);
-		notificacion = genericDao.save(EXTTareaNotificacion.class, notificacion);
-
-		TareaExterna tex = new TareaExterna();
-		tex.setAuditoria(audit);
-		tex.setTareaPadre(notificacion);
-
-		if (!Checks.esNulo(nombreTarea)) {
-			tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", nombreTarea)));
-		} else {
-			tex.setTareaProcedimiento(genericDao.get(TareaProcedimiento.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigo", "P458_DictarInstruccionesSubastaYPagoTasa")));
-		}
-
-		tex.setDetenida(false);
-
-		genericDao.save(TareaExterna.class, tex);
-
 	}
-
+	
 	/**
 	 * Este método consultará todos los datos para determinar que
 	 * caracteristicas tiene, y así devolver la rama correspondiente A, B, C

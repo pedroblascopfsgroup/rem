@@ -1,13 +1,12 @@
 package es.pfsgroup.plugin.recovery.mejoras.cliente;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.annotation.Resource;
@@ -608,7 +607,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			srtbuilder.append("SELECT 1 FROM V_PER_PERSONAS_FORMULAS v WHERE v.PER_ID = p.PER_ID AND v.DISPUESTO_VENCIDO IS NOT NULL ");
 						
 			if (!StringUtils.isBlank(minValue)) {
-				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 4, '0'), ',', '.')) >= ");
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 50, '0'), ',', '.')) >= ");
 				
 				try {
 					Float valor = Float.parseFloat(minValue);
@@ -619,7 +618,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			
 			
 			if (!StringUtils.isBlank(maxValue)) {
-				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 4, '0'), ',', '.')) <= ");
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 50, '0'), ',', '.')) <= ");
 				
 				try {
 					Float valor = Float.parseFloat(maxValue);

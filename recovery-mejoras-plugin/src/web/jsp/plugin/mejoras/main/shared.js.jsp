@@ -42,7 +42,6 @@ if (isIE () && isIE () <= 9) {
 	}
 }
 
-
 //------------------------------------------------
 // Extendemos un nuevo tipo de combo que permite con
 // la propiedad listAlignOffsets setearle unas dimensiones

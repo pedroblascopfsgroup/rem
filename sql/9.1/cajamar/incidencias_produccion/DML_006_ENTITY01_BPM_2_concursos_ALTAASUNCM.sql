@@ -73,7 +73,9 @@ EXECUTE IMMEDIATE('INSERT INTO CM01.TEX_TAREA_EXTERNA(tex_id, tar_id, tap_id, te
 SELECT CM01.s_tex_tarea_externa.NEXTVAL tex_id, tar.tar_id, tmp.tap_id, NULL tex_token_id_bpm, 0 tex_detenida, 0 VERSION,''ALTAASUNCM'' usuariocrear, SYSDATE fechacrear, 0 borrado,
 ''EXTTareaExterna'' dtype, tmp.t_referencia
 FROM CM01.tmp_ugaspfs_bpm_input_con1 tmp JOIN CM01.tar_tareas_notificaciones tar
-ON tmp.t_referencia = tar.t_referencia');
+ON tmp.t_referencia = tar.t_referencia
+where not exists (select 1 from cm01.TEX_TAREA_EXTERNA TEX where tex.tar_id = tar.tar_id)
+');
 
 
 DBMS_OUTPUT.put_line('[INFO] STEP: 6');

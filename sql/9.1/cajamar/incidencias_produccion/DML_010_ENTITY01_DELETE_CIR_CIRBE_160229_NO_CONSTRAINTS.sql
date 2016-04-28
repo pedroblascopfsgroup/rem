@@ -1,3 +1,19 @@
+--/*
+--##########################################
+--## AUTOR=LORENZO LERATE
+--## FECHA_CREACION=20160428
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=NO
+--## PRODUCTO=NO
+--## Finalidad: DML
+--##
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
@@ -11,7 +27,7 @@ DECLARE
     
     cursor c1 is
      select * from cm01.cir_cirbe 
-     where CIR_FECHA_EXTRACCION = '29/02/16';
+     where CIR_FECHA_EXTRACCION = TO_DATE('29/2/16', 'dd/mm/yy');
 
 BEGIN
   FOR c IN

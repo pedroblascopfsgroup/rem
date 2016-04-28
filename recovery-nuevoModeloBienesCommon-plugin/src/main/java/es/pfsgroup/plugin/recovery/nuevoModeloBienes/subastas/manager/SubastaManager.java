@@ -133,6 +133,9 @@ public class SubastaManager implements SubastaApi {
 	
 	@Autowired
 	UtilDiccionarioApi diccionarioApi;
+	
+	@Autowired
+	SubastaProcedimientoApi subastaProcedimientoApi;
 
 	@Autowired
 	NMBProjectContext projectContext;
@@ -317,6 +320,9 @@ public class SubastaManager implements SubastaApi {
 			}
 			loteSubasta.setDeudaJudicial(Checks.esNulo(dto.getDeudaJudicial()) ? null : Float.parseFloat(dto.getDeudaJudicial()));
 			genericDao.update(LoteSubasta.class, loteSubasta);
+			
+			//Calculamos el tipo de subasta en este momento
+			subastaProcedimientoApi.determinarTipoSubasta(loteSubasta.getSubasta());
 		}
 	}
 

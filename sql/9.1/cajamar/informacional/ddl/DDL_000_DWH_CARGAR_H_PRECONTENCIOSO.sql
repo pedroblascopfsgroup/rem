@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=María V.
---## FECHA_CREACION=20160426
+--## FECHA_CREACION=20160428
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-3200
 --## PRODUCTO=NO
 --## 
---## Finalidad: SE cargan los plazos de precontencioso en H_PRE
+--## Finalidad: Se modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_PREPARADO_PRE
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_EN
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María V, PFS Group
--- Fecha ultima modificacion:26/04/16
--- Motivos del cambio: SE cargan los plazos de precontencioso en H_PRE
+-- Fecha ultima modificacion:28/04/16
+-- Motivos del cambio: Se modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_PREPARADO_PRE
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de PreContencioso
@@ -32,7 +32,7 @@ DECLARE
 -- ===============================================================================================
 
 -- ===============================================================================================
---                  									Declaracación de variables
+--                                    Declaracación de variables
 -- ===============================================================================================
   V_NUM_ROW NUMBER(10);
   V_DATASTAGE VARCHAR2(100);
@@ -110,7 +110,7 @@ BEGIN
               TRAMO_AVANCE_DOCUMENTO_ID,
               TRAMO_AVANCE_LIQUIDACION_ID,
               TRAMO_AVANCE_BUROFAX_ID,
-			  ESTADO_PREPARACION_ID
+        ESTADO_PREPARACION_ID
               )
       select '''||fecha||''',
              '''||fecha||''',
@@ -126,7 +126,7 @@ BEGIN
              -1,
              -1,
              -1,
-			 -1
+       -1
       from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS 
       where trunc(FECHACREAR) <= '''||fecha||''' and BORRADO = 0';
       
@@ -140,8 +140,8 @@ BEGIN
     -- Crear indices TMP_H_PRE
   
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRE_IX'', ''TMP_H_PRE (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-	execute immediate V_SQL USING OUT O_ERROR_STATUS;
-		
+  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+    
     commit;    
     
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRE_FECHA_ESTADO'', '''', :O_ERROR_STATUS); END;';
@@ -266,7 +266,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     update TMP_H_PRE set P_PRE_INICIO_PREPARADO =  trunc(FECHA_PREPARADO_PRE) - trunc(FECHA_INICIO_PRE);
     update TMP_H_PRE set P_PRE_PREPARADO_ENV_LET =  trunc(FECHA_ENV_LET_PRE) - trunc(FECHA_PREPARADO_PRE);
     update TMP_H_PRE set P_PRE_ENV_LET_FINALIZADO =  trunc(FECHA_FINALIZADO_PRE) - trunc(FECHA_ENV_LET_PRE);
-    update TMP_H_PRE set P_PRE_INICIO_FINALIZADO =  trunc(FECHA_FINALIZADO_PRE) - trunc(FECHA_INICIO_PRE);                   
+    update TMP_H_PRE set P_PRE_INICIO_FINALIZADO =  trunc(FECHA_FINALIZADO_PRE) - trunc(FECHA_PREPARADO_PRE);                   
     commit;
 
     --GESTOR_DOC_ID
@@ -426,10 +426,10 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
 
     V_ROWCOUNT := sql%rowcount;
     commit;
-	
+  
     update h_pre set gestor_pre_id=-1 where gestor_pre_id is null
-	and dia_id=fecha;
-	commit;
+  and dia_id=fecha;
+  commit;
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 

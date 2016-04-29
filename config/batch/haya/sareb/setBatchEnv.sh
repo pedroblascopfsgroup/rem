@@ -1,5 +1,5 @@
 # Conf. Entorno
-export DIR_RAIZ=/recovery/haya 
+export DIR_RAIZ=/recovery/map012 
 #/recovery/iap031 	[INTE] 
 #/recovery/haya 	[RSI, PRE Y PRO]
 export JAVA_HOME=/usr/java/jdk1.6.0_07

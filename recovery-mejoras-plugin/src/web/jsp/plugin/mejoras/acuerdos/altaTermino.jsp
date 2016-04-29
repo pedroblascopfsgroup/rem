@@ -580,8 +580,11 @@
 		       	});
 	       	}
 	       	
-	       	if("${termino.informeLetrado}"!=null && "${termino.informeLetrado}"!=''){
-	       		informeLetrado.setValue("${termino.informeLetrado}");
+	       	
+	       	var informeLetrado = '<s:message text="${termino.informeLetrado}" javaScriptEscape="true" />';
+	       	
+	       	if(informeLetrado !=null && informeLetrado !=''){
+	       		informeLetrado.setValue(informeLetrado);
 	       	}
 	       	
 	       	comboTipoAcuerdo.setDisabled(false);

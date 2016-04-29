@@ -8550,20 +8550,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_BURO_SOLICITUD_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_SOLICITUD_DIA_PK'', ''D_F_BURO_SOLICITUD_DIA (DIA_BURO_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_BURO_ENVIO_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ENVIO_ANIO'',
 						  ''ANIO_BURO_ENVIO_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_BURO_ENVIO_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
+	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ENVIO_ANIO_PK'', ''D_F_BURO_ENVIO_ANIO (ANIO_BURO_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_BURO_ENVIO_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ENVIO_TRIMESTRE'',
 						  ''TRIMESTRE_BURO_ENVIO_ID INTEGER NOT NULL,
@@ -8576,11 +8581,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_BURO_ENVIO_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ENVIO_TRIMESTRE_PK'', ''D_F_BURO_ENVIO_TRIMESTRE (TRIMESTRE_BURO_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_BURO_ENVIO_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ENVIO_MES_ANIO'',
 						  ''MES_ANIO_BURO_ENVIO_ID INTEGER NOT NULL,
@@ -8588,9 +8595,11 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_BURO_ENVIO_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ENVIO_MES_ANIO_PK'', ''D_F_BURO_ENVIO_MES_ANIO (MES_ANIO_BURO_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 
    ------------------------------ D_F_BURO_ENVIO_MES ------------------------------
@@ -8608,11 +8617,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_BURO_ENVIO_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ENVIO_MES_PK'', ''D_F_BURO_ENVIO_MES (MES_BURO_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_BURO_ENVIO_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ENVIO_DIA_SEMANA'',
 						  ''DIA_SEMANA_BURO_ENVIO_ID INTEGER NOT NULL,
@@ -8620,11 +8631,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_BURO_ENVIO_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ENVIO_DIA_SEMANA_PK'', ''D_F_BURO_ENVIO_DIA_SEMANA (DIA_SEMANA_BURO_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_BURO_ENVIO_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ENVIO_DIA'',
 						  ''DIA_BURO_ENVIO_ID DATE NOT NULL,
@@ -8635,21 +8648,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_BURO_ENVIO_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ENVIO_DIA_PK'', ''D_F_BURO_ENVIO_DIA (DIA_BURO_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_BURO_ACUSE_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ACUSE_ANIO'',
 						  ''ANIO_BURO_ACUSE_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_BURO_ACUSE_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ACUSE_ANIO_PK'', ''D_F_BURO_ACUSE_ANIO (ANIO_BURO_ACUSE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_BURO_ACUSE_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ACUSE_TRIMESTRE'',
 						  ''TRIMESTRE_BURO_ACUSE_ID INTEGER NOT NULL,
@@ -8662,11 +8679,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_BURO_ACUSE_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ACUSE_TRIMESTRE_PK'', ''D_F_BURO_ACUSE_TRIMESTRE (TRIMESTRE_BURO_ACUSE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_BURO_ACUSE_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ACUSE_MES_ANIO'',
 						  ''MES_ANIO_BURO_ACUSE_ID INTEGER NOT NULL,
@@ -8674,11 +8693,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_BURO_ACUSE_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ACUSE_MES_ANIO_PK'', ''D_F_BURO_ACUSE_MES_ANIO (MES_ANIO_BURO_ACUSE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_BURO_ACUSE_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ACUSE_MES'',
 						  ''MES_BURO_ACUSE_ID INTEGER NOT NULL,
@@ -8694,11 +8715,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_BURO_ACUSE_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ACUSE_MES_PK'', ''D_F_BURO_ACUSE_MES (MES_BURO_ACUSE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_BURO_ACUSE_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ACUSE_DIA_SEMANA'',
 						  ''DIA_SEMANA_BURO_ACUSE_ID INTEGER NOT NULL,
@@ -8706,11 +8729,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_BURO_ACUSE_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ACUSE_DIA_SEMANA_PK'', ''D_F_BURO_ACUSE_DIA_SEMANA (DIA_SEMANA_BURO_ACUSE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_BURO_ACUSE_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_BURO_ACUSE_DIA'',
 						  ''DIA_BURO_ACUSE_ID DATE NOT NULL,
@@ -8721,21 +8746,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_BURO_ACUSE_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_BURO_ACUSE_DIA_PK'', ''D_F_BURO_ACUSE_DIA (DIA_BURO_ACUSE_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_SOLICITUD_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_SOLICITUD_ANIO'',
 						  ''ANIO_DOC_SOLICITUD_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_DOC_SOLICITUD_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_SOLICITUD_ANIO_PK'', ''D_F_DOC_SOLICITUD_ANIO (ANIO_DOC_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_DOC_SOLICITUD_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_SOLICITUD_TRIMESTRE'',
 						  ''TRIMESTRE_DOC_SOLICITUD_ID INTEGER NOT NULL,
@@ -8748,11 +8777,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_DOC_SOLICITUD_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_SOLICITUD_TRIMESTRE_PK'', ''D_F_DOC_SOLICITUD_TRIMESTRE (TRIMESTRE_DOC_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_SOLICITUD_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_SOLICITUD_MES_ANIO'',
 						  ''MES_ANIO_DOC_SOLICITUD_ID INTEGER NOT NULL,
@@ -8760,11 +8791,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_DOC_SOLICITUD_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_SOLICITUD_MES_ANIO_PK'', ''D_F_DOC_SOLICITUD_MES_ANIO (MES_ANIO_DOC_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_SOLICITUD_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_SOLICITUD_MES'',
 						  ''MES_DOC_SOLICITUD_ID INTEGER NOT NULL,
@@ -8780,11 +8813,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_DOC_SOLICITUD_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_SOLICITUD_MES_PK'', ''D_F_DOC_SOLICITUD_MES (MES_DOC_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_SOLICITUD_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_SOLICITUD_DIA_SEMANA'',
 						  ''DIA_SEMANA_DOC_SOLICITUD_ID INTEGER NOT NULL,
@@ -8792,11 +8827,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_DOC_SOLICITUD_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_SOLICITUD_DIA_SEMANA_PK'', ''D_F_DOC_SOLICITUD_DIA_SEMANA (DIA_SEMANA_DOC_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_SOLICITUD_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_SOLICITUD_DIA'',
 						  ''DIA_DOC_SOLICITUD_ID DATE NOT NULL,
@@ -8807,21 +8844,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_DOC_SOLICITUD_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_SOLICITUD_DIA_PK'', ''D_F_DOC_SOLICITUD_DIA (DIA_DOC_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_ENVIO_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_ENVIO_ANIO'',
 						  ''ANIO_DOC_ENVIO_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_DOC_ENVIO_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_ENVIO_ANIO_PK'', ''D_F_DOC_ENVIO_ANIO (ANIO_DOC_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_DOC_ENVIO_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_ENVIO_TRIMESTRE'',
 						  ''TRIMESTRE_DOC_ENVIO_ID INTEGER NOT NULL,
@@ -8834,11 +8875,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_DOC_ENVIO_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_ENVIO_TRIMESTRE_PK'', ''D_F_DOC_ENVIO_TRIMESTRE (TRIMESTRE_DOC_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_ENVIO_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_ENVIO_MES_ANIO'',
 						  ''MES_ANIO_DOC_ENVIO_ID INTEGER NOT NULL,
@@ -8846,11 +8889,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_DOC_ENVIO_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_ENVIO_MES_ANIO_PK'', ''D_F_DOC_ENVIO_MES_ANIO (MES_ANIO_DOC_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_BURO_ENVIO_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_ENVIO_MES'',
 						  ''MES_DOC_ENVIO_ID INTEGER NOT NULL,
@@ -8866,11 +8911,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_DOC_ENVIO_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_ENVIO_MES_PK'', ''D_F_DOC_ENVIO_MES (MES_DOC_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_ENVIO_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_ENVIO_DIA_SEMANA'',
 						  ''DIA_SEMANA_DOC_ENVIO_ID INTEGER NOT NULL,
@@ -8878,11 +8925,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_DOC_ENVIO_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_ENVIO_DIA_SEMANA_PK'', ''D_F_DOC_ENVIO_DIA_SEMANA (DIA_SEMANA_DOC_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_ENVIO_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_ENVIO_DIA'',
 						  ''DIA_DOC_ENVIO_ID DATE NOT NULL,
@@ -8893,21 +8942,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_DOC_ENVIO_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_ENVIO_DIA_PK'', ''D_F_DOC_ENVIO_DIA (DIA_DOC_ENVIO_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_RESULT_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RESULT_ANIO'',
 						  ''ANIO_DOC_RESULT_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_DOC_RESULT_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RESULT_ANIO_PK'', ''D_F_DOC_RESULT_ANIO (ANIO_DOC_RESULT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_DOC_RESULT_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RESULT_TRIMESTRE'',
 						  ''TRIMESTRE_DOC_RESULT_ID INTEGER NOT NULL,
@@ -8920,11 +8973,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_DOC_RESULT_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RESULT_TRIMESTRE_PK'', ''D_F_DOC_RESULT_TRIMESTRE (TRIMESTRE_DOC_RESULT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_RESULT_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RESULT_MES_ANIO'',
 						  ''MES_ANIO_DOC_RESULT_ID INTEGER NOT NULL,
@@ -8932,11 +8987,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_DOC_RESULT_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RESULT_MES_ANIO_PK'', ''D_F_DOC_RESULT_MES_ANIO (MES_ANIO_DOC_RESULT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_RESULT_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RESULT_MES'',
 						  ''MES_DOC_RESULT_ID INTEGER NOT NULL,
@@ -8952,11 +9009,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_DOC_RESULT_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RESULT_MES_PK'', ''D_F_DOC_RESULT_MES (MES_DOC_RESULT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_RESULT_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RESULT_DIA_SEMANA'',
 						  ''DIA_SEMANA_DOC_RESULT_ID INTEGER NOT NULL,
@@ -8964,11 +9023,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_DOC_RESULT_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RESULT_DIA_SEMANA_PK'', ''D_F_DOC_RESULT_DIA_SEMANA (DIA_SEMANA_DOC_RESULT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_RESULT_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RESULT_DIA'',
 						  ''DIA_DOC_RESULT_ID DATE NOT NULL,
@@ -8979,21 +9040,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_DOC_RESULT_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RESULT_DIA_PK'', ''D_F_DOC_RESULT_DIA (DIA_DOC_RESULT_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_RECEP_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RECEP_ANIO'',
 						  ''ANIO_DOC_RECEP_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_DOC_RECEP_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RECEP_ANIO_PK'', ''D_F_DOC_RECEP_ANIO (ANIO_DOC_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_DOC_RECEP_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RECEP_TRIMESTRE'',
 						  ''TRIMESTRE_DOC_RECEP_ID INTEGER NOT NULL,
@@ -9006,11 +9071,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_DOC_RECEP_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RECEP_TRIMESTRE_PK'', ''D_F_DOC_RECEP_TRIMESTRE (TRIMESTRE_DOC_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_RECEP_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RECEP_MES_ANIO'',
 						  ''MES_ANIO_DOC_RECEP_ID INTEGER NOT NULL,
@@ -9018,11 +9085,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_DOC_RECEP_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RECEP_MES_ANIO_PK'', ''D_F_DOC_RECEP_MES_ANIO (MES_ANIO_DOC_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_RECEP_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RECEP_MES'',
 						  ''MES_DOC_RECEP_ID INTEGER NOT NULL,
@@ -9038,11 +9107,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_DOC_RECEP_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RECEP_MES_PK'', ''D_F_DOC_RECEP_MES (MES_DOC_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_DOC_RECEP_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RECEP_DIA_SEMANA'',
 						  ''DIA_SEMANA_DOC_RECEP_ID INTEGER NOT NULL,
@@ -9050,11 +9121,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_DOC_RECEP_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RECEP_DIA_SEMANA_PK'', ''D_F_DOC_RECEP_DIA_SEMANA (DIA_SEMANA_DOC_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
    ------------------------------ D_F_DOC_RECEP_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_DOC_RECEP_DIA'',
 						  ''DIA_DOC_RECEP_ID DATE NOT NULL,
@@ -9065,21 +9138,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_DOC_RECEP_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_DOC_RECEP_DIA_PK'', ''D_F_DOC_RECEP_DIA (DIA_DOC_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_LIQ_SOLICITUD_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_SOLICITUD_ANIO'',
 						  ''ANIO_LIQ_SOLICITUD_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_LIQ_SOLICITUD_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_SOLICITUD_ANIO_PK'', ''D_F_LIQ_SOLICITUD_ANIO (ANIO_LIQ_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
   ------------------------------ D_F_LIQ_SOLICITUD_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_SOLICITUD_TRIMESTRE'',
 						  ''TRIMESTRE_LIQ_SOLICITUD_ID INTEGER NOT NULL,
@@ -9092,11 +9169,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_LIQ_SOLICITUD_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_SOLICITUD_TRIMESTRE_PK'', ''D_F_LIQ_SOLICITUD_TRIMESTRE (TRIMESTRE_LIQ_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
     ------------------------------ D_F_LIQ_SOLICITUD_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_SOLICITUD_MES_ANIO'',
 						  ''MES_ANIO_LIQ_SOLICITUD_ID INTEGER NOT NULL,
@@ -9104,11 +9183,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_LIQ_SOLICITUD_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_SOLICITUD_MES_ANIO_PK'', ''D_F_LIQ_SOLICITUD_MES_ANIO (MES_ANIO_LIQ_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
    ------------------------------ D_F_LIQ_SOLICITUD_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_SOLICITUD_MES'',
 						  ''MES_LIQ_SOLICITUD_ID INTEGER NOT NULL,
@@ -9124,11 +9205,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_LIQ_SOLICITUD_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_SOLICITUD_MES_PK'', ''D_F_LIQ_SOLICITUD_MES (MES_LIQ_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
     ------------------------------ D_F_LIQ_SOLICITUD_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_SOLICITUD_DIA_SEMANA'',
 						  ''DIA_SEMANA_LIQ_SOLICITUD_ID INTEGER NOT NULL,
@@ -9136,11 +9219,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_LIQ_SOLICITUD_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_SOLICITUD_DIA_SEMANA_PK'', ''D_F_LIQ_SOLICITUD_DIA_SEMANA (DIA_SEMANA_LIQ_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
    ------------------------------ D_F_LIQ_SOLICITUD_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_SOLICITUD_DIA'',
 						  ''DIA_LIQ_SOLICITUD_ID DATE NOT NULL,
@@ -9151,21 +9236,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_LIQ_SOLICITUD_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_SOLICITUD_DIA_PK'', ''D_F_LIQ_SOLICITUD_DIA (DIA_LIQ_SOLICITUD_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
     ------------------------------ D_F_LIQ_RECEP_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_RECEP_ANIO'',
 						  ''ANIO_LIQ_RECEP_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_LIQ_RECEP_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_RECEP_ANIO_PK'', ''D_F_LIQ_RECEP_ANIO (ANIO_LIQ_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
   ------------------------------ D_F_LIQ_RECEP_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_RECEP_TRIMESTRE'',
 						  ''TRIMESTRE_LIQ_RECEP_ID INTEGER NOT NULL,
@@ -9178,11 +9267,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_LIQ_RECEP_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_RECEP_TRIMESTRE_PK'', ''D_F_LIQ_RECEP_TRIMESTRE (TRIMESTRE_LIQ_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
     ------------------------------ D_F_LIQ_RECEP_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_RECEP_MES_ANIO'',
 						  ''MES_ANIO_LIQ_RECEP_ID INTEGER NOT NULL,
@@ -9190,11 +9281,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_LIQ_RECEP_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_RECEP_MES_ANIO_PK'', ''D_F_LIQ_RECEP_MES_ANIO (MES_ANIO_LIQ_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
    ------------------------------ D_F_LIQ_RECEP_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_RECEP_MES'',
 						  ''MES_LIQ_RECEP_ID INTEGER NOT NULL,
@@ -9210,11 +9303,13 @@ BEGIN
                             MES_DESC_EN VARCHAR2(45),
                             MES_DESC_DE VARCHAR2(45),
                             MES_DESC_FR VARCHAR2(45),
-                            MES_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_LIQ_RECEP_ID)'', 
+                            MES_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_RECEP_MES_PK'', ''D_F_LIQ_RECEP_MES (MES_LIQ_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;	
+	
     ------------------------------ D_F_LIQ_RECEP_DIA_SEMANA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_RECEP_DIA_SEMANA'',
 						  ''DIA_SEMANA_LIQ_RECEP_ID INTEGER NOT NULL,
@@ -9222,11 +9317,13 @@ BEGIN
                             DIA_SEMANA_DESC_EN VARCHAR2(45),
                             DIA_SEMANA_DESC_DE VARCHAR2(45),
                             DIA_SEMANA_DESC_FR VARCHAR2(45),
-                            DIA_SEMANA_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (DIA_SEMANA_LIQ_RECEP_ID)'', 
+                            DIA_SEMANA_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_RECEP_DIA_SEMANA_PK'', ''D_F_LIQ_RECEP_DIA_SEMANA (DIA_SEMANA_LIQ_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;		
+	
    ------------------------------ D_F_LIQ_RECEP_DIA ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_RECEP_DIA'',
 						  ''DIA_LIQ_RECEP_ID DATE NOT NULL,
@@ -9237,21 +9334,25 @@ BEGIN
                             DIA_ANT_ID DATE,
                             DIA_ULT_MES_ID DATE,
                             DIA_ULT_TRIMESTRE_ID DATE,
-                            DIA_ULT_ANIO_ID DATE,
-                            PRIMARY KEY (DIA_LIQ_RECEP_ID)'', 
+                            DIA_ULT_ANIO_ID DATE'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
     
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_RECEP_DIA_PK'', ''D_F_LIQ_RECEP_DIA (DIA_LIQ_RECEP_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;		
+	
     ------------------------------ D_F_LIQ_CONFIRM_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_CONFIRM_ANIO'',
 						  ''ANIO_LIQ_CONFIRM_ID INTEGER NOT NULL,
                             ANIO_FECHA DATE,
                             ANIO_DURACION INTEGER,
-                            ANIO_ANT_ID INTEGER,
-                            PRIMARY KEY (ANIO_LIQ_CONFIRM_ID)'', 
+                            ANIO_ANT_ID INTEGER'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_CONFIRM_ANIO_PK'', ''D_F_LIQ_CONFIRM_ANIO (ANIO_LIQ_CONFIRM_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;		
+	
   ------------------------------ D_F_LIQ_CONFIRM_TRIMESTRE ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_CONFIRM_TRIMESTRE'',
 						  ''TRIMESTRE_LIQ_CONFIRM_ID INTEGER NOT NULL,
@@ -9264,11 +9365,13 @@ BEGIN
                             TRIMESTRE_DESC_EN VARCHAR2(45),
                             TRIMESTRE_DESC_DE VARCHAR2(45),
                             TRIMESTRE_DESC_FR VARCHAR2(45),
-                            TRIMESTRE_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (TRIMESTRE_LIQ_CONFIRM_ID)'', 
+                            TRIMESTRE_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_CONFIRM_TRIMESTRE_PK'', ''D_F_LIQ_CONFIRM_TRIMESTRE (TRIMESTRE_LIQ_CONFIRM_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;		
+	
     ------------------------------ D_F_LIQ_CONFIRM_MES_ANIO ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_CONFIRM_MES_ANIO'',
 						  ''MES_ANIO_LIQ_CONFIRM_ID INTEGER NOT NULL,
@@ -9276,11 +9379,13 @@ BEGIN
                             MES_ANIO_DESC_EN VARCHAR2(45),
                             MES_ANIO_DESC_DE VARCHAR2(45),
                             MES_ANIO_DESC_FR VARCHAR2(45),
-                            MES_ANIO_DESC_IT VARCHAR2(45),
-                            PRIMARY KEY (MES_ANIO_LIQ_CONFIRM_ID)'', 
+                            MES_ANIO_DESC_IT VARCHAR2(45)'', 
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_LIQ_CONFIRM_MES_ANIO_PK'', ''D_F_LIQ_CONFIRM_MES_ANIO (MES_ANIO_LIQ_CONFIRM_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;		
+	
    ------------------------------ D_F_LIQ_CONFIRM_MES ------------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_F_LIQ_CONFIRM_MES'',
 						  ''MES_LIQ_CONFIRM_ID INTEGER NOT NULL,

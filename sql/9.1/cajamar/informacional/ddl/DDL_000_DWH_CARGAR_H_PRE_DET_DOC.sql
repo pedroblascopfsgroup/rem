@@ -1,3 +1,19 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160429
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3200
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Se corrige la carga de la tmp_h_pre_det_doc, se estaba insertando PROCEDIMIENTO_ID, en SOLICITUD_DOCUMENTO_ID y viceversa.
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
 create or replace PROCEDURE CARGAR_H_PRE_DET_DOC(DATE_START IN date, DATE_END IN date, O_ERROR_STATUS OUT VARCHAR2) AS 
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
@@ -979,3 +995,5 @@ close c_semana;
   execute immediate 'BEGIN insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;           
     end;
 END CARGAR_H_PRE_DET_DOC;
+/
+EXIT

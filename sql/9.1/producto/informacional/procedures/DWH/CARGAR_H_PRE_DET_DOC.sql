@@ -212,8 +212,8 @@ DECLARE
                   )
           select   '''||fecha||''',
                    '''||fecha||''',
-                   sol.PCO_DOC_DSO_ID,
                    PRC_ID,
+				   sol.PCO_DOC_DSO_ID,
                    doc.PCO_DOC_PDD_ID,
                    NVL(SOL.DD_PCO_DSR_ID,-1),
                    NVL(DD_PCO_DSA_ID,-1),

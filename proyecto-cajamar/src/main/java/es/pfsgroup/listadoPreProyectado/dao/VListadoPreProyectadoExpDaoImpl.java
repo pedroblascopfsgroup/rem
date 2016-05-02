@@ -322,7 +322,7 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			}
 
 		} catch (ParseException e) {
-			logger.error(e.getLocalizedMessage());
+			parseDateAlternativeFormat(field, dateFrom, dateTo);
 			return where;
 		}
 
@@ -342,4 +342,40 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 
 		return where;
 	}
+	
+	private List<Criterion> parseDateAlternativeFormat(String field, String dateFrom, String dateTo) {
+		List<Criterion> where = new ArrayList<Criterion>();
+
+		SimpleDateFormat formatoFechaFiltroWeb2 = new SimpleDateFormat("EEE MMM dd yyyy");
+
+		try {
+			if (!StringUtils.isBlank(dateFrom)) {
+				where.add(Restrictions.ge(field, formatoFechaFiltroWeb2.parse(dateFrom)));
+			}
+
+			if (!StringUtils.isBlank(dateTo)) {
+				where.add(Restrictions.le(field, formatoFechaFiltroWeb2.parse(dateTo)));
+			}
+
+		} catch (ParseException ex) {
+			formatoFechaFiltroWeb2 = new SimpleDateFormat("dd/MM/yyyy");
+
+			try {
+				if (!StringUtils.isBlank(dateFrom)) {
+					where.add(Restrictions.ge(field, formatoFechaFiltroWeb2.parse(dateFrom)));
+				}
+
+				if (!StringUtils.isBlank(dateTo)) {
+					where.add(Restrictions.le(field, formatoFechaFiltroWeb2.parse(dateTo)));
+				}
+
+			} catch (ParseException e) {
+				logger.error(e.getLocalizedMessage());
+				return where;
+			}
+		}
+
+		return where;
+	}
+
 }

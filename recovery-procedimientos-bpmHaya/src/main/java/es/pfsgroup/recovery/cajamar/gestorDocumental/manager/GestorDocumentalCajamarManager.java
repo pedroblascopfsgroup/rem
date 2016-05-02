@@ -147,6 +147,14 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 					new Object[] { getFileExtension(uploadForm.getFileItem()) },
 					MessageUtils.DEFAULT_LOCALE);
 		}
+		String nombreFichero = uploadForm.getFileItem().getFileName();
+		
+		if(nombreFichero.length() > 100){
+			
+			AbstractMessageSource ms = MessageUtils.getMessageSource();
+			return ms.getMessage("fichero.tamanyo",new Object[] {(int) 100},
+					MessageUtils.DEFAULT_LOCALE);
+		}
 		
 		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
 
@@ -159,6 +167,8 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 				}
 			}
 		}
+		
+		
 				
 		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
 				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
@@ -297,6 +307,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			String nombreFichero = uploadForm.getFileItem().getFileName();
 			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
 			inputDto.setDescripcion(nombreFichero);
+			
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {

@@ -220,12 +220,12 @@ public class BurofaxController {
 						dto.setCliente(burofax.getDemandadoManual().getApellidoNombre());
 						dto.setTienePersona(true);
 						if(!Checks.esNulo(per.getDirecciones()) && per.getDirecciones().size()>0){
-							new DireccionPersonaManualId();  
-							Filter filtro1 = genericDao.createFilter(FilterType.EQUALS,"id.pemId",burofax.getDemandadoManual().getId());
+							new DireccionPersonaId();  
+							Filter filtro1 = genericDao.createFilter(FilterType.EQUALS,"id.perId",per.getId());
 							Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-							ArrayList<DireccionPersonaManual> listaDirPers=(ArrayList<DireccionPersonaManual>) genericDao.getList(DireccionPersonaManual.class,filtro1, filtro2); //original
+							ArrayList<DireccionPersona> listaDirPers=(ArrayList<DireccionPersona>) genericDao.getList(DireccionPersona.class,filtro1, filtro2); //original
 							
-							for (DireccionPersonaManual dirPer : listaDirPers){
+							for (DireccionPersona dirPer : listaDirPers){
 								Filter filter3 = genericDao.createFilter(FilterType.EQUALS, "id", dirPer.getId().getDirId());
 								Direccion direc = genericDao.get(Direccion.class, filter3);
 								direcciones.add(direc);

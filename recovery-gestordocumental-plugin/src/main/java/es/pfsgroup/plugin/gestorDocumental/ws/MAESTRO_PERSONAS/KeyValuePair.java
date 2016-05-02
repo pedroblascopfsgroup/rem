@@ -1,5 +1,5 @@
 
-package es.pfsgroup.plugin.gestorDocumental.ws.wsWS;
+package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

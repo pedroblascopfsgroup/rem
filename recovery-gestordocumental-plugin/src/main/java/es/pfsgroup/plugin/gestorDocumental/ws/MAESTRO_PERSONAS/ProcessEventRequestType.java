@@ -1,5 +1,5 @@
 
-package es.pfsgroup.plugin.gestorDocumental.ws.wsWS;
+package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +10,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for processEventResponseType complex type.
+ * <p>Java class for processEventRequestType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="processEventResponseType">
+ * &lt;complexType name="processEventRequestType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="resultCode" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="resultDescription" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="parameters" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
@@ -32,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
+ *         &lt;element name="eventTrigger" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,76 +40,25 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "processEventResponseType", propOrder = {
-    "resultCode",
-    "resultDescription",
-    "parameters"
+@XmlType(name = "processEventRequestType", propOrder = {
+    "parameters",
+    "eventTrigger"
 })
-public class ProcessEventResponseType {
+public class ProcessEventRequestType {
 
+    protected ProcessEventRequestType.Parameters parameters;
     @XmlElement(required = true)
-    protected String resultCode;
-    @XmlElement(required = true)
-    protected String resultDescription;
-    protected ProcessEventResponseType.Parameters parameters;
-
-    /**
-     * Gets the value of the resultCode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getResultCode() {
-        return resultCode;
-    }
-
-    /**
-     * Sets the value of the resultCode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setResultCode(String value) {
-        this.resultCode = value;
-    }
-
-    /**
-     * Gets the value of the resultDescription property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getResultDescription() {
-        return resultDescription;
-    }
-
-    /**
-     * Sets the value of the resultDescription property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setResultDescription(String value) {
-        this.resultDescription = value;
-    }
+    protected String eventTrigger;
 
     /**
      * Gets the value of the parameters property.
      * 
      * @return
      *     possible object is
-     *     {@link ProcessEventResponseType.Parameters }
+     *     {@link ProcessEventRequestType.Parameters }
      *     
      */
-    public ProcessEventResponseType.Parameters getParameters() {
+    public ProcessEventRequestType.Parameters getParameters() {
         return parameters;
     }
 
@@ -119,11 +67,35 @@ public class ProcessEventResponseType {
      * 
      * @param value
      *     allowed object is
-     *     {@link ProcessEventResponseType.Parameters }
+     *     {@link ProcessEventRequestType.Parameters }
      *     
      */
-    public void setParameters(ProcessEventResponseType.Parameters value) {
+    public void setParameters(ProcessEventRequestType.Parameters value) {
         this.parameters = value;
+    }
+
+    /**
+     * Gets the value of the eventTrigger property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEventTrigger() {
+        return eventTrigger;
+    }
+
+    /**
+     * Sets the value of the eventTrigger property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEventTrigger(String value) {
+        this.eventTrigger = value;
     }
 
 

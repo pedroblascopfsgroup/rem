@@ -1,9 +1,10 @@
 package es.pfsgroup.plugin.gestorDocumental.assembler;
 
-import es.pfsgroup.plugin.gestorDocumental.dto.InputDto;
-import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.KeyValuePair;
-import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.ProcessEventRequestType;
-import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.ProcessEventRequestType.Parameters;
+import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.KeyValuePair;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType.Parameters;
 
 
 /**
@@ -13,13 +14,7 @@ import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.ProcessEventRequestType.Param
  */
 public class GestorDocumentalInputAssembler {
 
-	/**
-	 * Convierte una entidad liquidacionPCO a un DTO
-	 * 
-	 * @param liquidacionesPCO entity
-	 * @return liquidacionDTO DTO
-	 */
-	public static ProcessEventRequestType dtoToInput (InputDto inputDto) {
+	public static ProcessEventRequestType dtoToInputActivo (ActivoInputDto inputDto) {
 
 		if (inputDto == null) {
 			return null;
@@ -32,9 +27,22 @@ public class GestorDocumentalInputAssembler {
 		return input;
 	}
 	
-	private static Parameters getParameters(InputDto inputDto) {
+	public static ProcessEventRequestType dtoToInputPersona (PersonaInputDto inputDto) {
+
+		if (inputDto == null) {
+			return null;
+		}
+
+		ProcessEventRequestType input = new ProcessEventRequestType();
+		input.setEventName(inputDto.getEvent());
+		input.setParameters(getParametersPersona(inputDto));
+		
+		return input;
+	}
+	
+	private static Parameters getParameters(ActivoInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
-		if(InputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN.equals(inputDto.getEvent())) {
+		if(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN.equals(inputDto.getEvent())) {
 			parameters.getParameter().add(getActivoOrigen(inputDto.getIdActivoOrigen()));
 			parameters.getParameter().add(getOrigen(inputDto.getIdOrigen()));
 		}
@@ -42,26 +50,53 @@ public class GestorDocumentalInputAssembler {
 		return parameters;
 	}
 	
+	private static Parameters getParametersPersona(PersonaInputDto inputDto) {
+		ProcessEventRequestType.Parameters parameters = new Parameters();
+		if(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_CLIENTE.equals(inputDto.getEvent())) {
+			parameters.getParameter().add(getPersonaCliente(inputDto.getIdPersonaCliente()));
+			parameters.getParameter().add(getPersonaCliente2(inputDto.getIdCliente()));
+		}
+//		parameters.getParameter().add(getActivoHaya(inputDto.getIdActivoHaya()));
+		return parameters;
+	}
+	
+	private static KeyValuePair getPersonaCliente(String idActivoOrigen) {
+		KeyValuePair activoOrigen = new KeyValuePair();
+		activoOrigen.setCode(PersonaInputDto.ID_PERSONA_CLIENTE);
+		activoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
+		activoOrigen.setValue(idActivoOrigen);
+		return activoOrigen;
+	}
+	
+	private static KeyValuePair getPersonaCliente2(String idActivoOrigen) {
+		KeyValuePair activoOrigen = new KeyValuePair();
+		activoOrigen.setCode(PersonaInputDto.ID_CLIENTE);
+		activoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
+		activoOrigen.setValue(idActivoOrigen);
+		return activoOrigen;
+	}
+	
+	
 	private static KeyValuePair getActivoOrigen(String idActivoOrigen) {
 		KeyValuePair activoOrigen = new KeyValuePair();
-		activoOrigen.setCode(InputDto.ID_ACTIVO_ORIGEN);
-		activoOrigen.setFormat(InputDto.FORMATO_STRING);
+		activoOrigen.setCode(ActivoInputDto.ID_ACTIVO_ORIGEN);
+		activoOrigen.setFormat(ActivoInputDto.FORMATO_STRING);
 		activoOrigen.setValue(idActivoOrigen);
 		return activoOrigen;
 	}
 	
 	private static KeyValuePair getOrigen(String idOrigen) {
 		KeyValuePair origen = new KeyValuePair();
-		origen.setCode(InputDto.ID_ORIGEN);
-		origen.setFormat(InputDto.FORMATO_STRING);
+		origen.setCode(ActivoInputDto.ID_ORIGEN);
+		origen.setFormat(ActivoInputDto.FORMATO_STRING);
 		origen.setValue(idOrigen);
 		return origen;
 	}
 	
 	private static KeyValuePair getActivoHaya(String idActivoHaya) {
 		KeyValuePair activoHaya = new KeyValuePair();
-		activoHaya.setCode(InputDto.ID_ACTIVO_HAYA);
-		activoHaya.setFormat(InputDto.FORMATO_STRING);
+		activoHaya.setCode(ActivoInputDto.ID_ACTIVO_HAYA);
+		activoHaya.setFormat(ActivoInputDto.FORMATO_STRING);
 		activoHaya.setValue(idActivoHaya);
 		return activoHaya;
 	}

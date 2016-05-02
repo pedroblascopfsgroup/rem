@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.gestorDocumental.dto;
 
-public class InputDto {
+public class ActivoInputDto {
 
 	public static final String ID_ACTIVO_ORIGEN = "ID_ACTIVO_ORIGEN";
 	public static final String ID_ORIGEN = "ID_ORIGEN";

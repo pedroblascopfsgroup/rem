@@ -17,8 +17,8 @@ public abstract class BaseWS {
 		return appProperties.getProperty(String.format("ws.namespace"));
 	}
 
-	public String getWSURL() {
-		return appProperties.getProperty(String.format("ws.%s.location", getWSName()));
+	public String getWSURL(String wS) {
+		return appProperties.getProperty(String.format("ws.%s.location", wS));
 	}
 
 }

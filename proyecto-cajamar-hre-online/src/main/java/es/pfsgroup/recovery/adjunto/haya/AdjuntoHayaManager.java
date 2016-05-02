@@ -51,11 +51,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroActivosApi;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroPersonasApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioExpedientesApi;
-import es.pfsgroup.plugin.gestorDocumental.dto.InputDto;
-import es.pfsgroup.plugin.gestorDocumental.dto.OutputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
@@ -98,7 +101,7 @@ public class AdjuntoHayaManager {
 	private GestorDocumentalServicioExpedientesApi gestorDocumentalServicioExpedientesApi;
 	
 	@Autowired(required=false)
-	private GestorDocumentalMaestroActivosApi gestorDocumentalMaestroActivosApi;
+	private GestorDocumentalMaestroApi gestorDocumentalMaestroActivosApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -241,6 +244,9 @@ public class AdjuntoHayaManager {
 	}
 
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
+		
+		documentosExpediente(getIdClienteHaya(), null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, "clase");
+		
 		List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
 
@@ -666,16 +672,31 @@ public class AdjuntoHayaManager {
 	 private Long getIdActivoHaya() {
 			
 			//TODO Borrar, son datos para probar WS
-			InputDto input = new InputDto();
-			input.setEvent(InputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
+			ActivoInputDto input = new ActivoInputDto();
+			input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
 			input.setIdActivoOrigen("24284620");
 			input.setIdOrigen("NOS");
 			
-			OutputDto output = gestorDocumentalMaestroActivosApi.ejecutar(input);
+			ActivoOutputDto output = gestorDocumentalMaestroActivosApi.ejecutarActivo(input);
 			
 			// *********************************************
 			Long idActivoHaya = new Long(output.getIdActivoHaya());
 			return idActivoHaya;
 	 }
 	 
+	 
+	 private Long getIdClienteHaya() {
+			
+			//TODO Borrar, son datos para probar WS
+			PersonaInputDto input = new PersonaInputDto();
+			input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_CLIENTE);
+			input.setIdPersonaCliente("72500");
+			input.setIdCliente("SAREB");
+			
+			PersonaOutputDto output = gestorDocumentalMaestroActivosApi.ejecutarPersona(input);
+			
+			// *********************************************
+			Long idActivoHaya = new Long(output.getIdPersonaHaya());
+			return idActivoHaya;
+	 }
 }

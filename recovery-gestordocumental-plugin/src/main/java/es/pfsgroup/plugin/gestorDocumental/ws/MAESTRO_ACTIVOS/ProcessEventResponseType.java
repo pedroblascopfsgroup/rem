@@ -1,5 +1,5 @@
 
-package es.pfsgroup.plugin.gestorDocumental.ws.wsWS;
+package es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,15 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for processEventRequestType complex type.
+ * <p>Java class for processEventResponseType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="processEventRequestType">
+ * &lt;complexType name="processEventResponseType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="resultCode" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="resultDescription" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="parameters" minOccurs="0">
  *           &lt;complexType>
  *             &lt;complexContent>
@@ -30,7 +32,6 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
- *         &lt;element name="eventName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,25 +41,76 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "processEventRequestType", propOrder = {
-    "parameters",
-    "eventName"
+@XmlType(name = "processEventResponseType", propOrder = {
+    "resultCode",
+    "resultDescription",
+    "parameters"
 })
-public class ProcessEventRequestType {
+public class ProcessEventResponseType {
 
-    protected ProcessEventRequestType.Parameters parameters;
     @XmlElement(required = true)
-    protected String eventName;
+    protected String resultCode;
+    @XmlElement(required = true)
+    protected String resultDescription;
+    protected ProcessEventResponseType.Parameters parameters;
+
+    /**
+     * Gets the value of the resultCode property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getResultCode() {
+        return resultCode;
+    }
+
+    /**
+     * Sets the value of the resultCode property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setResultCode(String value) {
+        this.resultCode = value;
+    }
+
+    /**
+     * Gets the value of the resultDescription property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getResultDescription() {
+        return resultDescription;
+    }
+
+    /**
+     * Sets the value of the resultDescription property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setResultDescription(String value) {
+        this.resultDescription = value;
+    }
 
     /**
      * Gets the value of the parameters property.
      * 
      * @return
      *     possible object is
-     *     {@link ProcessEventRequestType.Parameters }
+     *     {@link ProcessEventResponseType.Parameters }
      *     
      */
-    public ProcessEventRequestType.Parameters getParameters() {
+    public ProcessEventResponseType.Parameters getParameters() {
         return parameters;
     }
 
@@ -67,35 +119,11 @@ public class ProcessEventRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link ProcessEventRequestType.Parameters }
+     *     {@link ProcessEventResponseType.Parameters }
      *     
      */
-    public void setParameters(ProcessEventRequestType.Parameters value) {
+    public void setParameters(ProcessEventResponseType.Parameters value) {
         this.parameters = value;
-    }
-
-    /**
-     * Gets the value of the eventName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getEventName() {
-        return eventName;
-    }
-
-    /**
-     * Sets the value of the eventName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setEventName(String value) {
-        this.eventName = value;
     }
 
 

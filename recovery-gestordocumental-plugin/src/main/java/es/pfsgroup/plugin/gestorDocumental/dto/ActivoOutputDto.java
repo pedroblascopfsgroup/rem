@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.gestorDocumental.dto;
 
-public class OutputDto {
+public class ActivoOutputDto {
 
 	private String resultCode;
 	private String resultDescription;

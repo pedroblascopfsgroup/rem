@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 
 import java.math.BigDecimal;
@@ -252,4 +254,38 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
 	    	getSession().createSQLQuery(hql).executeUpdate();
     	}
     }
+
+	@Override
+	public ZonaUsuarioPerfil getZonaPerfilUsuarioPrimerNivelExistente(Long idPerfil, String codigoZona) {
+		
+		String sql = " select  * from("
+						+" select zpu.* from zon_pef_usu zpu"
+						+" inner join "
+							+"("
+								
+								+" select zz.ZON_ID,zz.ZON_DESCRIPCION, zz.ZON_PID, level as nivel from ZON_ZONIFICACION zz"
+								+" WHERE zz.borrado = 0"
+								+" START WITH zz.ZON_COD = '"+codigoZona+"'"
+								+" CONNECT BY NOCYCLE PRIOR zz.ZON_PID = zz.ZON_ID"
+							  
+								+" UNION"
+							  
+								+" select zz3.ZON_ID,zz3.ZON_DESCRIPCION, zz3.ZON_PID, nivel+1 as nivel from ZON_ZONIFICACION zz3"
+								+" inner join ("
+									+" select zz4.ZON_PID, level as nivel from ZON_ZONIFICACION zz4"
+									+" WHERE   CONNECT_BY_ISCYCLE  = 1 AND zz4.borrado = 0"
+									+" START WITH zz4.ZON_COD = '"+codigoZona+"'"
+									+" CONNECT BY NOCYCLE PRIOR zz4.ZON_PID = zz4.ZON_ID"
+								+")zz5 ON zz3.ZON_ID = zz5.ZON_PID"
+						  
+							+")zz2 ON zz2.zon_id = zpu.zon_id"
+							
+						+" WHERE zpu.PEF_ID = "+idPerfil+" AND zpu.borrado = 0"
+						+" ORDER BY zz2.nivel ASC"
+					+")"
+					+" where rownum <= 1";
+		
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		return (ZonaUsuarioPerfil) sqlQuery.addEntity(ZonaUsuarioPerfil.class).uniqueResult();
+	}
 }

@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
@@ -27,6 +30,7 @@ public interface coreextensionApi {
 	String GET_LIST_ALL_TIPO_DESPACHO = "plugin.recovery.coreextension.api.getListAllDespachos";	
 	String GET_LIST_USUARIOS = "plugin.recovery.coreextension.api.getListUsuariosData";
 	String GET_LIST_ALL_USUARIOS = "plugin.recovery.coreextension.api.getListAllUsuariosData";
+	String GET_LIST_ALL_USUARIOS_POR_DEFECTO = "plugin.recovery.coreextension.api.getListAllUsuariosPorDefectoData";
 	String GET_LIST_USUARIOS_PAGINATED = "plugin.recovery.coreextension.api.getListUsuariosPaginatedData";
 	String GET_LIST_HISTORICO_GESTORES_ADICIONALES = "plugin.recovery.coreextension.api.getListGestorAdicionalAsuntoHistoricosData";
 	String SAVE_GESTOR = "plugin.recovery.coreextension.api.insertarGestor";
@@ -39,7 +43,13 @@ public interface coreextensionApi {
 	String GET_LIST_TIPO_GESTOR_DE_USUARIO = "plugin.recovery.coreextension.api.getLisTipoGestorDeUsuario";
 	String GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO = "plugin.recovery.coreextension.api.getListTipoProcedimientoByPropiedadAsunto";
 	String GET_LIST_USUARIOS_DEFECTO_PAGINATED = "plugin.recovery.coreextension.api.getListUsuariosDefectoPaginatedData";
-	
+	String GET_LIST_TIPO_GESTOR_ADICIONAL_POR_ASUNTO= "plugin.recovery.coreextension.api.getListTipoGestorAdicionalPorAsunto";
+	String GET_USUARIO_GESTOR_OFICINA_EXPEDIENTE= "plugin.recovery.coreextension.api.getUsuarioGestorOficinaExpedienteGestorDeuda";
+	String GET_LIST_PERFILES_GESTORES_ESPECIALES= "plugin.recovery.coreextension.api.getListPerfilesGestoresEspeciales";
+	String GET_SUPERVISOR_GESTOR_ADICIONAL_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getSupervisorPorAsuntoEntidad";
+	String GET_TIPO_GESTOR_SUPERVISOR_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getTipoGestorSupervisorPorAsuntoEntidad";
+	String GET_DESPACHO_SUPERVISOR_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getDespachoSupervisorPorAsuntoEntidad";
+
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
 	List<EXTDDTipoGestor> getList(String ugCodigo);
@@ -73,8 +83,22 @@ public interface coreextensionApi {
 	@BusinessOperationDefinition(GET_LIST_ALL_TIPO_DESPACHO)
 	List<DespachoExterno> getListAllDespachos(Long idTipoGestor, Boolean incluirBorrados);
 	
-
-
+	
+	@BusinessOperationDefinition(GET_LIST_PERFILES_GESTORES_ESPECIALES)
+	HashMap<String,Set<String>> getListPerfilesGestoresEspeciales(String codigoEntidadUsuario);
+	
+	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR_ADICIONAL_POR_ASUNTO)
+	List<EXTDDTipoGestor> getListTipoGestorAdicionalPorAsunto(String idTipoAsunto);
+	
+	@BusinessOperationDefinition(GET_SUPERVISOR_GESTOR_ADICIONAL_POR_CODIGO_ENTIDAD)
+	Usuario getSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto);
+	
+	@BusinessOperationDefinition(GET_TIPO_GESTOR_SUPERVISOR_POR_CODIGO_ENTIDAD)
+	EXTDDTipoGestor getTipoGestorSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto);
+	
+	@BusinessOperationDefinition(GET_DESPACHO_SUPERVISOR_POR_CODIGO_ENTIDAD)
+	DespachoExterno getDespachoSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto);
+	
 	/**
 	 * Funci�n de negocio que devuelve el listado de usuarios para un tipo de despacho dado.
 	 * Ordenado por {@link Usuario#getApellidoNombre()}
@@ -105,6 +129,19 @@ public interface coreextensionApi {
 	 * @param usuarioDto dto con los par�metros de b�squeda y paginaci�n. {@link UsuarioDto}
 	 * @return P�gina de usuarios obtenida.
 	 */
+	
+	@BusinessOperationDefinition(GET_USUARIO_GESTOR_OFICINA_EXPEDIENTE)
+	List<Usuario> getUsuarioGestorOficinaExpedienteGestorDeuda(long idExpediente, String codigoPerfil);
+	/**
+	 * Funci�n de negocio que devuelve el usuario para un expediente y un codigo de perfil.
+	 * 
+	 * @param idExpediente id del expediente
+	 * @param codigoPerfil codigo del perfil
+	 * @return Usuario
+	 */
+	
+	
+	
 	@BusinessOperationDefinition(GET_LIST_USUARIOS_PAGINATED)
 	Page getListUsuariosPaginatedData(UsuarioDto usuarioDto);
 	
@@ -195,5 +232,8 @@ public interface coreextensionApi {
 
 	@BusinessOperationDefinition(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)
 	List<TipoProcedimiento> getListTipoProcedimientosPorTipoActuacionByPropiedadAsunto(String codigoTipoAct, Long prcId);
+	
+	@BusinessOperationDefinition(GET_LIST_ALL_USUARIOS_POR_DEFECTO)
+	List<Usuario> getListAllUsuariosPorDefectoData(long idTipoDespacho, boolean incluirBorrados);
 	
 }

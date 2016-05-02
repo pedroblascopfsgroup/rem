@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 
 /**
@@ -247,6 +249,16 @@ public class ZonaManager {
         	}
         }
         return null;
+    }
+    
+    
+    /**
+     * Devuelve la primera zona usuario perfil existe dado un perfil y una zona. Navegando en el árbol desde el nodo que se le pasa hacia los padres, comprobando que tengan dicho perfil
+     * @param idPerfil
+     * @param codigoZona
+     */
+    public ZonaUsuarioPerfil getZonaPerfilUsuarioPrimerNivelExistente(Long idPerfil, String codigoZona){
+    	return zonaDao.getZonaPerfilUsuarioPrimerNivelExistente(idPerfil, codigoZona);
     }
 
 }

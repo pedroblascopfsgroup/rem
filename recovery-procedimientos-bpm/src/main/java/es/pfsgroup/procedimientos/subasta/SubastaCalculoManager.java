@@ -542,6 +542,9 @@ public class SubastaCalculoManager {
 		if (!Checks.esNulo(subasta.getCostasProcurador())){
 			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(BigDecimal.valueOf(subasta.getCostasProcurador()));
 		}
+		if (!Checks.esNulo(subasta.getCostasProcurador())){
+			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasProcurador());
+		}
 		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
 		
 		loguear("Condicion 5 - numero de contratos: " + contratos.size(), subasta.getId());

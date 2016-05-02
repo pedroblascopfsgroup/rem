@@ -82,7 +82,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 		mejFinalizarAsuntoManager.paralizaAsunto(asunto, fechaParalizacion);
 		
 		//Comprobaciones.
-		this.verificaComportamientoProcedimientos(cantidadProcedimientos);
+		this.verificaComportamientoAsunto();
 
 	}
 	
@@ -101,7 +101,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 		mejFinalizarAsuntoManager.paralizaAsunto(asunto, fechaParalizacion);
 		
 		//Comprobaciones.
-		this.verificaComportamientoProcedimientos(0);
+		this.verificaComportamientoAsunto();
 
 	}
 	
@@ -120,7 +120,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 		mejFinalizarAsuntoManager.paralizaAsunto(asunto, fechaParalizacion);
 		
 		//Comprobaciones.
-		this.verificaComportamientoProcedimientos(0);
+		this.verificaComportamientoAsunto();
 
 	}
 	
@@ -139,8 +139,7 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 		mejFinalizarAsuntoManager.paralizaAsunto(asunto, fechaParalizacion);
 		
 		//Comprobaciones.
-		verify(mockJBPMProcessManager, never()).aplazarProcesosBPM(idProcessBPM, fechaParalizacion);
-		verify(mockGenericDao, times(cantidadProcedimientos)).save(MEJProcedimiento.class, mejProcedimiento);
+		this.verificaComportamientoAsunto();
 
 	}
 	
@@ -182,13 +181,11 @@ public class ParalizaAsuntoTest  extends AbstractMEJFinalizarAsuntoManagerTests{
 	}
 	
 	/**
-	 * Comprobamos que se guardan los procedimientos.
-	 * @param veces veces que se lanza el m�todo guardar procedimiento.
+	 * Comprobamos que se paraliza el asunto
 	 */
-	private void verificaComportamientoProcedimientos(int veces) {
+	private void verificaComportamientoAsunto() {
 		
-		verify(mockJBPMProcessManager, times(veces)).aplazarProcesosBPM(idProcessBPM, fechaParalizacion);
-		verify(mockGenericDao, times(veces)).save(MEJProcedimiento.class, mejProcedimiento);
+		verify(mockExtAsuntoApi, times(1)).paralizaAsunto(asunto, fechaParalizacion);
 	}
 
 }

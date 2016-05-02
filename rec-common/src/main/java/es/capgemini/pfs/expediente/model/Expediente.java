@@ -183,7 +183,12 @@ public class Expediente implements Serializable, Auditable, Describible {
     @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
            + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
            + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
-           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "') )")
+           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "','" + SubtipoTarea.CODIGO_TAREA_EN_SANCION + "','" + SubtipoTarea.CODIGO_TAREA_SANCIONADO + "') "
+           + " and tar.fechacrear = (select max(tar.fechacrear) from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
+           + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
+           + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
+           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "','" + SubtipoTarea.CODIGO_TAREA_EN_SANCION + "','" + SubtipoTarea.CODIGO_TAREA_SANCIONADO + "')) "
+           + ")")
     
    /* @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
     		+ " FROM mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt "
@@ -685,6 +690,21 @@ public class Expediente implements Serializable, Auditable, Describible {
     	}
     	else{
     		return null;
+    	}
+
+        
+    }
+    
+    /**
+     * @return String: Código del itinerario del expediente
+     */
+    public String getCodigoTipoItinerario() {
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null && arquetipo.getItinerario().getdDtipoItinerario() != null){
+    		return arquetipo.getItinerario().getdDtipoItinerario().getCodigo();
+    	}
+    	else{
+    		return "";
     	}
 
         

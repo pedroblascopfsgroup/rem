@@ -20,4 +20,9 @@ public interface GenerarDocumentoApi {
 			String localidadNotario, String numProtocolo, String fechaEscritura, 
 			String localidadRegProp, String numeroRegProp);
 	
+	public FileItem generarDocumentoBienesCanarias(Long idProcedimiento, String idsBien, String localidad, 
+			String nombreNotario, String numProtocolo, String fechaEscritura, 
+			String nombreNotario2, String numProtocolo2, String fechaEscritura2, 
+			String localidadRegProp, String numeroRegProp);
+	
 }

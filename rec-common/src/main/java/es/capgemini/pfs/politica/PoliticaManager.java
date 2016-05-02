@@ -26,7 +26,9 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
+import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedientePersona;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
@@ -93,6 +95,9 @@ public class PoliticaManager {
     
     @Autowired
     private ExpedienteManagerApi expedienteManager;
+    
+    @Autowired
+    private ExpedienteDao expedienteDao;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -680,25 +685,53 @@ public class PoliticaManager {
             } else {
                 String sEstadoItinerario = expedienteOrigen.getEstadoItinerario().getCodigo();
 
-                // *** Si está en CE ***
-                if (DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE.equals(sEstadoItinerario)) {
-                    estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                            DDEstadoItinerarioPolitica.class, DDEstadoItinerarioPolitica.ESTADO_REVISAR_EXPEDIENTE);
-                    estadoNuevaPolitica = (DDEstadoPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                            DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_PROPUESTA);
-                    estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class, DDEstadoObjetivo.ESTADO_PROPUESTO);
-                } else {
-                    // *** Si está en RE ***
-                    if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(sEstadoItinerario)) {
-                        estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(
-                                ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoItinerarioPolitica.class,
-                                DDEstadoItinerarioPolitica.ESTADO_DECISION_COMITE);
+                if(!Checks.esNulo(expedienteOrigen.getTipoExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(expedienteOrigen.getTipoExpediente().getCodigo())){
+                	// *** Si está en CE ***
+                	 if (DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE.equals(sEstadoItinerario)) {
+                         estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                                 DDEstadoItinerarioPolitica.class, DDEstadoItinerarioPolitica.ESTADO_REVISAR_EXPEDIENTE);
+                         estadoNuevaPolitica = (DDEstadoPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                                 DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_PROPUESTA);
+                         estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class, DDEstadoObjetivo.ESTADO_PROPUESTO);
+                     }else if(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(sEstadoItinerario)){
+                         estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(
+                                 ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoItinerarioPolitica.class,
+                                 DDEstadoItinerarioPolitica.ESTADO_EN_SANCION);
+                         estadoNuevaPolitica = (DDEstadoPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                                 DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_PROPUESTA);
+                         estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class,
+                                 DDEstadoObjetivo.ESTADO_PROPUESTO);
+                     }else if(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(sEstadoItinerario)){
+                         estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(
+                                 ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoItinerarioPolitica.class,
+                                 DDEstadoItinerarioPolitica.ESTADO_SANCIONADO);
+                         estadoNuevaPolitica = (DDEstadoPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                                 DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_PROPUESTA);
+                         estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class,
+                                 DDEstadoObjetivo.ESTADO_PROPUESTO);
+                     }
+                }else{
+                    // *** Si está en CE ***
+                    if (DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE.equals(sEstadoItinerario)) {
+                        estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                                DDEstadoItinerarioPolitica.class, DDEstadoItinerarioPolitica.ESTADO_REVISAR_EXPEDIENTE);
                         estadoNuevaPolitica = (DDEstadoPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                                 DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_PROPUESTA);
-                        estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class,
-                                DDEstadoObjetivo.ESTADO_PROPUESTO);
-                    }
+                        estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class, DDEstadoObjetivo.ESTADO_PROPUESTO);
+                    } else {
+                        // *** Si está en RE ***
+                        if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(sEstadoItinerario)) {
+                            estadoItinerarioNuevaPolitica = (DDEstadoItinerarioPolitica) executor.execute(
+                                    ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoItinerarioPolitica.class,
+                                    DDEstadoItinerarioPolitica.ESTADO_DECISION_COMITE);
+                            estadoNuevaPolitica = (DDEstadoPolitica) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+                                    DDEstadoPolitica.class, DDEstadoPolitica.ESTADO_PROPUESTA);
+                            estadoNuevoObjetivo = (DDEstadoObjetivo) dictionaryManager.getByCode(DDEstadoObjetivo.class,
+                                    DDEstadoObjetivo.ESTADO_PROPUESTO);
+                        }
+                    }	
                 }
+                
             }
 
             //Se copian y actualizan las políticas
@@ -804,7 +837,7 @@ public class PoliticaManager {
                 Boolean isValida = false;
 
                 //Si el expediente está en Decisión de Comité, directamente las políticas del expediente son vigentes
-                if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(sEstadoItinerario)) {
+                if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(sEstadoItinerario) || DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(sEstadoItinerario)) {
                     isValida = true;
                 }
 
@@ -1209,21 +1242,28 @@ public class PoliticaManager {
     public void deshacerUltimasPoliticas(Long idExpediente) {
         List<CicloMarcadoPolitica> listadoCiclos = cicloMarcadoPoliticaDao.getCiclosMarcadoExpediente(idExpediente);
 
+        Expediente exp = expedienteDao.get(idExpediente);
+        
         for (CicloMarcadoPolitica cmp : listadoCiclos) {
             List<Politica> listadoPoliticas = cmp.getPoliticas();
             
             Collections.sort(listadoPoliticas, new Politica().getEstadoItinerarioComparator());
+            Collections.reverse(listadoPoliticas);
             
             if (listadoPoliticas.size()>1) {
-	            Politica politicaBorrar = listadoPoliticas.get(listadoPoliticas.size() - 1);
-	            Politica politicaProponer = listadoPoliticas.get(listadoPoliticas.size() - 2);
-	
-	            DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,
-	                    DDEstadoPolitica.ESTADO_PROPUESTA);
-	            politicaProponer.setEstadoPolitica(estadoPropuesta);
-	
-	            politicaDao.delete(politicaBorrar);
-	            politicaDao.update(politicaProponer);
+            	
+            	for(Politica p :listadoPoliticas){
+            		
+            		if(p.getEstadoItinerarioPolitica().getCodigo().equals(exp.getEstadoItinerario().getCodigo())){
+            			DDEstadoPolitica estadoPropuesta = (DDEstadoPolitica) dictionaryManager.getByCode(DDEstadoPolitica.class,DDEstadoPolitica.ESTADO_PROPUESTA);
+        	            p.setEstadoPolitica(estadoPropuesta);
+            			break;
+            		}else{
+            			politicaDao.delete(p);
+            		}
+            		
+            	}
+            	
             }
         }
     }

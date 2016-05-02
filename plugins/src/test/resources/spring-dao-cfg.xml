@@ -40,6 +40,7 @@
 		<value>es.capgemini.pfs.acuerdo.model.DDConclusionTituloAcuerdo
 		</value>
 		<value>es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo</value>
+		<value>es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo</value>
 		<value>es.capgemini.pfs.acuerdo.model.DDPeriodicidadAcuerdo</value>
 		<value>es.capgemini.pfs.acuerdo.model.DDResultadoAcuerdoActuacion
 		</value>
@@ -53,6 +54,8 @@
 		<value>es.capgemini.pfs.acuerdo.model.DDTipoSolucionAmistosa</value>
 		<value>es.capgemini.pfs.acuerdo.model.DDValoracionActuacionAmistosa
 		</value>
+		<value>es.capgemini.pfs.acuerdo.model.RecobroDDSubtipoPalanca</value>
+		<value>es.capgemini.pfs.acuerdo.model.RecobroDDTipoPalanca</value>
 		<value>es.capgemini.pfs.adjunto.model.Adjunto</value>
 		<value>es.capgemini.pfs.alerta.model.Alerta</value>
 		<value>es.capgemini.pfs.alerta.model.GrupoAlerta</value>
@@ -77,6 +80,7 @@
 		<value>es.capgemini.pfs.asunto.model.DDEstadoProcedimiento</value>
 		<value>es.capgemini.pfs.asunto.model.DDTipoActuacion</value>
 		<value>es.capgemini.pfs.asunto.model.DDTipoReclamacion</value>
+		<value>es.capgemini.pfs.asunto.model.DDTiposAsunto</value>
 		<value>es.capgemini.pfs.asunto.model.FichaAceptacion</value>
 		<value>es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto</value>
 		<value>es.capgemini.pfs.asunto.model.ObservacionAceptacion</value>
@@ -113,23 +117,35 @@
 		<value>es.capgemini.pfs.contrato.model.AdjuntoContrato</value>
 		<value>es.capgemini.pfs.contrato.model.Contrato</value>
 		<value>es.capgemini.pfs.contrato.model.ContratoPersona</value>
+		<value>es.capgemini.pfs.contrato.model.DDAplicativoOrigen</value>
 		<value>es.capgemini.pfs.contrato.model.DDCatalogo1</value>
 		<value>es.capgemini.pfs.contrato.model.DDCatalogo2</value>
 		<value>es.capgemini.pfs.contrato.model.DDCatalogo3</value>
 		<value>es.capgemini.pfs.contrato.model.DDCatalogo4</value>
 		<value>es.capgemini.pfs.contrato.model.DDCatalogo5</value>
 		<value>es.capgemini.pfs.contrato.model.DDCatalogo6</value>
+		<value>es.capgemini.pfs.contrato.model.DDCondicionesRemuneracion
+		</value>
 		<value>es.capgemini.pfs.contrato.model.DDEstadoContrato</value>
 		<value>es.capgemini.pfs.contrato.model.DDEstadoFinanciero</value>
 		<value>es.capgemini.pfs.contrato.model.DDFinalidadContrato</value>
 		<value>es.capgemini.pfs.contrato.model.DDFinalidadOficial</value>
 		<value>es.capgemini.pfs.contrato.model.DDGarantiaContable</value>
 		<value>es.capgemini.pfs.contrato.model.DDGarantiaContrato</value>
+		<value>es.capgemini.pfs.contrato.model.DDGestionEspecial</value>
 		<value>es.capgemini.pfs.contrato.model.DDMoneda</value>
+		<value>es.capgemini.pfs.contrato.model.DDMotivoRenumeracion</value>
+		<value>es.capgemini.pfs.contrato.model.DDSistemaAmortizContrato
+		</value>
+		<value>es.capgemini.pfs.contrato.model.DDTipoInteres</value>
 		<value>es.capgemini.pfs.contrato.model.DDTipoIntervencion</value>
 		<value>es.capgemini.pfs.contrato.model.DDTipoProducto</value>
 		<value>es.capgemini.pfs.contrato.model.DDTipoProductoEntidad</value>
 		<value>es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecision
+		</value>
+		<value>es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar
+		</value>
+		<value>es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionParalizar
 		</value>
 		<value>es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision
 		</value>
@@ -139,6 +155,7 @@
 		</value>
 		<value>es.capgemini.pfs.despachoExterno.model.DespachoExterno</value>
 		<value>es.capgemini.pfs.despachoExterno.model.GestorDespacho</value>
+		<value>es.capgemini.pfs.direccion.model.DDComunidadAutonoma</value>
 		<value>es.capgemini.pfs.direccion.model.DDProvincia</value>
 		<value>es.capgemini.pfs.direccion.model.DDTipoVia</value>
 		<value>es.capgemini.pfs.direccion.model.Direccion</value>
@@ -152,18 +169,22 @@
 		<value>es.capgemini.pfs.expediente.model.AdjuntoExpediente</value>
 		<value>es.capgemini.pfs.expediente.model.DDAmbitoExpediente</value>
 		<value>es.capgemini.pfs.expediente.model.DDEstadoExpediente</value>
+		<value>es.capgemini.pfs.expediente.model.DDDecisionSancion</value>
 		<value>es.capgemini.pfs.expediente.model.DDMotivoExpedienteManual
 		</value>
+		<value>es.capgemini.pfs.expediente.model.DDTipoExpediente</value>
 		<value>es.capgemini.pfs.expediente.model.Expediente</value>
 		<value>es.capgemini.pfs.expediente.model.ExpedienteContrato</value>
 		<value>es.capgemini.pfs.expediente.model.ExpedientePersona</value>
 		<value>es.capgemini.pfs.expediente.model.PropuestaExpedienteManual
 		</value>
+		<value>es.capgemini.pfs.expediente.model.Sancion</value>
 		<value>es.capgemini.pfs.expediente.model.SolicitudCancelacion</value>
 		<value>es.capgemini.pfs.favoritos.model.Favoritos</value>
 		<value>es.capgemini.pfs.fichero.model.FicheroCargado</value>
 		<value>es.capgemini.pfs.fichero.model.TipoFichero</value>
 		<value>es.capgemini.pfs.grupoCliente.model.DDTipoGrupoCliente</value>
+		<value>es.capgemini.pfs.grupoCliente.model.DDTipoRelacionGrupo</value>
 		<value>es.capgemini.pfs.grupoCliente.model.GrupoCliente</value>
 		<value>es.capgemini.pfs.grupoCliente.model.PersonaGrupo</value>
 		<value>es.capgemini.pfs.ingreso.model.DDTipoIngreso</value>
@@ -194,15 +215,22 @@
 		<value>es.capgemini.pfs.oficina.model.Oficina</value>
 		<value>es.capgemini.pfs.parametrizacion.model.Parametrizacion</value>
 		<value>es.capgemini.pfs.persona.model.AdjuntoPersona</value>
+		<value>es.capgemini.pfs.persona.model.DDAreaGestion</value>
+		<value>es.capgemini.pfs.persona.model.DDColectivoSingular</value>
 		<value>es.capgemini.pfs.persona.model.DDGrupoGestor</value>
+		<value>es.capgemini.pfs.persona.model.DDOrigenTelefono</value>
 		<value>es.capgemini.pfs.persona.model.DDPersonaExtra3</value>
 		<value>es.capgemini.pfs.persona.model.DDPersonaExtra4</value>
 		<value>es.capgemini.pfs.persona.model.DDPolitica</value>
+		<value>es.capgemini.pfs.persona.model.DDPropietario</value>
 		<value>es.capgemini.pfs.persona.model.DDRatingAuxiliar</value>
 		<value>es.capgemini.pfs.persona.model.DDRatingExterno</value>
 		<value>es.capgemini.pfs.persona.model.DDSexo</value>
+		<value>es.capgemini.pfs.persona.model.DDSituacConcursal</value>
 		<value>es.capgemini.pfs.persona.model.DDTipoDocumento</value>
+		<value>es.capgemini.pfs.persona.model.DDTipoGestorEntidad</value>
 		<value>es.capgemini.pfs.persona.model.DDTipoPersona</value>
+		<value>es.capgemini.pfs.persona.model.DDTipoPersonaNivel</value>
 		<value>es.capgemini.pfs.persona.model.DDTipoTelefono</value>
 		<value>es.capgemini.pfs.persona.model.HistoricoPrepoliticaPersona
 		</value>
@@ -293,6 +321,8 @@
 		<value>es.capgemini.pfs.subfase.model.Subfase</value>
 		<value>es.capgemini.pfs.tareaNotificacion.model.ComunicacionBPM
 		</value>
+		<value>es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo
+		</value>
 		<value>es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad</value>
 		<value>es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault
 		</value>
@@ -305,6 +335,8 @@
 		<value>es.capgemini.pfs.telecobro.model.EstadoTelecobro</value>
 		<value>es.capgemini.pfs.telecobro.model.ProveedorTelecobro</value>
 		<value>es.capgemini.pfs.telecobro.model.SolicitudExclusionTelecobro
+		</value>
+		<value>es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad
 		</value>
 		<value>es.capgemini.pfs.titulo.model.DDSituacion</value>
 		<value>es.capgemini.pfs.titulo.model.DDTipoTitulo</value>
@@ -319,14 +351,23 @@
 		<value>es.capgemini.pfs.zona.model.ZonaUsuarioPerfil</value>
 		<value>es.pfsgroup.plugins.domain.EntidadPlugin</value>
 		<value>es.pfsgroup.plugins.domain.PluginConfig</value>
+
+		<value>es.pfsgroup.recovery.ext.impl.visibilidad.model.EXTDDTipoVisibilidad
+		</value>
+		<value>es.pfsgroup.recovery.ext.impl.visibilidad.model.EXTVisibilidad
+		</value>
 	</util:list>
 
 	<bean id="sessionFactory" parent="abstractSessionFactory">
-		<!--
-			<property name="packagesToScan"> <list>
-			<value>com/test/**/model</value> </list> </property>
-		-->
-		<property name="annotatedClasses" ref="clasesAnotadas" />
+		
+		<property name="packagesToScan">
+			<list>
+				<value>**.*</value>
+			</list>
+		</property>
+		
+		<!-- <property name="annotatedClasses" ref="clasesAnotadas" /> -->
+		
 	</bean>
 
 	<bean id="transactionManager" parent="abstractTransactionManager">

@@ -45,7 +45,7 @@ public class GetListUsuariosDataTest extends AbstractCoreextensionControllerTest
 		
 		String resultado = coreextensionController.getListUsuariosData(modelMap, idTipoDespacho, false);
 		
-		assertSame(modelMap.get("listadoUsuarios"),listaUsuarios);
+		assertEquals(modelMap.get("listadoUsuarios"),listaUsuarios);
 		assertEquals(resultado,"plugin/coreextension/asunto/tipoUsuarioJSON");
 		
 	}

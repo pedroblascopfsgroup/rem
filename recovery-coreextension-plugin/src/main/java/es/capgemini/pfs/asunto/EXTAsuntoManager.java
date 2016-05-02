@@ -976,9 +976,43 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			gaah.setTipoGestor(gaa.getTipoGestor());
 			gaah.setFechaDesde(new Date());
 			
-			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+			Boolean existe= false;
+			Boolean existeConFechaHasta= false;
+			Boolean existeConFechaHastaVacio= false;
+			List<String> gestoresBorrados= Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
+			List<String> tipogestoresBorrados= Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+			for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+				
+				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
+					existe= true;
+					if(ges.getFechaHasta()!=null){
+						existeConFechaHasta= true;
+					}
+					if(ges.getFechaHasta()==null){
+						existeConFechaHastaVacio= true;
+					}
+				}
+				
+				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
+					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+					
+				}
+				
+				if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
+					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
+				}
+				
+				
+			}
+			
+			
+			if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
 				gestorAdicionalAsuntoHistoricoDao.save(gaah);
 			}
+			
+//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+//			}
 			
 			
 			gestorAdicionalAsuntoDao.save(gaa);

@@ -1,10 +1,13 @@
 package es.pfsgroup.listadoPreProyectado.dao;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -175,20 +178,20 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				
 		
 		if (!Checks.esNulo(dto.getFechaPrevRegularizacion())) {
-			sb.append(" and f.fechaPrevReguCnt >= TO_DATE('" + dto.getFechaPrevRegularizacion().substring(0, 10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPrevReguCnt >= TO_DATE('" + parseDate(dto.getFechaPrevRegularizacion()) + "','yyyy-MM-dd') ");
 			
 		}
 		
 		if (!Checks.esNulo(dto.getFechaPrevRegularizacionHasta())) {
-			sb.append(" and f.fechaPrevReguCnt <= TO_DATE('" + dto.getFechaPrevRegularizacionHasta().substring(0,10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPrevReguCnt <= TO_DATE('" + parseDate(dto.getFechaPrevRegularizacionHasta()) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getPaseMoraDesde())) {
-			sb.append(" and f.fechaPaseAMoraCnt >= TO_DATE('" + dto.getPaseMoraDesde().substring(0,10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPaseAMoraCnt >= TO_DATE('" + parseDate(dto.getPaseMoraDesde()) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getPaseMoraHasta())) {
-			sb.append(" and f.fechaPaseAMoraCnt <= TO_DATE('" + dto.getPaseMoraHasta().substring(0,10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPaseAMoraCnt <= TO_DATE('" + parseDate(dto.getPaseMoraHasta()) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getZonasCto())) {
@@ -225,8 +228,29 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		return sb;
 	}
-	
-	
+		
+	private String parseDate(String fechaSinFormato) {
+		
+		SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			formatoFechaFiltroWeb.parse(StringUtils.substring(fechaSinFormato, 0, 10));
+			return StringUtils.substring(fechaSinFormato, 0, 10);
+		}
+		catch(Exception e) {
+			SimpleDateFormat formatoFechaFiltroWeb2 = new SimpleDateFormat("EEE MMM dd yyyy");
+			try {
+				Date fecha = formatoFechaFiltroWeb2.parse(fechaSinFormato);
+				return formatoFechaFiltroWeb.format(fecha);
+			} 
+			catch (ParseException e1) {
+				logger.error("Error en el método parseDate: " + e.getLocalizedMessage());
+			}					
+		}
+		
+		return null;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCnt(ListadoPreProyectadoDTO dto) {
@@ -361,5 +385,4 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		return resultado;
 	}
-
 }

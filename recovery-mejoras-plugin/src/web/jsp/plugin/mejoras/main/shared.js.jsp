@@ -1843,5 +1843,3 @@ app.promptPw=function(title,msg,handler){
 		        }
 		    }
 	});
-
-

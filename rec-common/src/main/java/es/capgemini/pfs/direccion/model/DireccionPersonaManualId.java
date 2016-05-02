@@ -69,4 +69,8 @@ public class DireccionPersonaManualId implements Serializable {
 		this.pemId = pemId;
 	}
 
+	public DireccionPersonaManualId() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

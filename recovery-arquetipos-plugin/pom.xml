@@ -94,7 +94,7 @@
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup</groupId>
-			<artifactId>pfs-tesfwk</artifactId>
+			<artifactId>pfs-testfwk</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

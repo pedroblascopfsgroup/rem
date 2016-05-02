@@ -29,7 +29,7 @@ app.abreExpedienteFast = function(id,nombre,params){
 		if(!app.expediente){
 			app.expediente = new app.entidad('expediente', expedienteTabs, expedienteToolbar, '/pfs/expedientes/consultaExpedienteFast.htm', 'icon_expedientes');
 		}
-		app.expediente.abrir(id,nombre);
+		app.expediente.abrir(id,nombre,nombreTab);
 	}
 	this.addFavorite(id, nombre, this.constants.FAV_TIPO_EXPEDIENTE);
 }

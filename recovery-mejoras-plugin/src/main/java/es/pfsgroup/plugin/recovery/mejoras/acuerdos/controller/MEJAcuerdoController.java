@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -33,8 +32,7 @@ import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
-import es.capgemini.pfs.persona.model.PersonaFormulas;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.termino.TerminoOperacionesManager;
 import es.capgemini.pfs.termino.dto.ListadoTerminosAcuerdoDto;
@@ -159,58 +157,19 @@ public class MEJAcuerdoController {
      */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-    public String getConfigUsersAcuerdoAsunto(ModelMap model, Long idTipoDespachoProponente, Long idAsunto) {
+    public String getConfigUsersAcuerdoAsunto(ModelMap model, Long idAsunto) {
 
-		model.put("map",mejAcuerdoApi.getTiposDespachoAcuerdoAsunto(idTipoDespachoProponente));
-		
 		Usuario user = usuarioManager.getUsuarioLogado();
 		model.put("idUsuario",user.getId());
 		
-//		List<EXTGestorAdicionalAsunto> gestoresAsunto = genericDao.getList(EXTGestorAdicionalAsunto.class, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",idAsunto));
-//		
-//		if(gestoresAsunto.size()==1){
-//			
-//			model.put("tipoGestorAsunto",gestoresAsunto.get(0).getTipoGestor());
-//			
-//		}else if(gestoresAsunto.size()>1){
-//			
-//			EXTGestorAdicionalAsunto gestorAsunto = gestoresAsunto.get(0);
-//			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
-//				if(gaa.getGestor().getGestorPorDefecto()){
-//					gestorAsunto = gaa;
-//					break;
-//				}
-//			}
-//			model.put("tipoGestorAsunto",gestorAsunto.getTipoGestor());
-//		}
+		///Comprobamos si el usuario logado esta como proponente
+		model.put("esUsuarioProponente",mejAcuerdoApi.usuarioEstaEnGAA(user,idAsunto,EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));
 		
-    	GestorDespacho gestorDespacho = null;
-    	Order order = new Order(OrderType.ASC, "id");
-    	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
-    	
-    	if(usuariosDespacho.size()==1){
-			
-    		gestorDespacho = usuariosDespacho.get(0);
-			
-		}else if(usuariosDespacho.size()>1){
-			
-			gestorDespacho = usuariosDespacho.get(0);
-			
-			for(GestorDespacho gesDes : usuariosDespacho){
-				if(gesDes.getGestorPorDefecto()){
-					gestorDespacho = gesDes;
-					break;
-				}
-			}
-			
-		}
-    	
-    	if(gestorDespacho != null){
-    		model.put("idTipoDespacho",gestorDespacho.getDespachoExterno().getTipoDespacho().getId());
-    	}
+		///Comprobamos si el usuario logado esta como validador
+		model.put("esUsuarioValidador",mejAcuerdoApi.usuarioEstaEnGAA(user, idAsunto,EXTDDTipoGestor.CODIGO_TIPO_GESTOR_VALIDADOR_ACUERDO));
 		
-		
-		
+		///Comprobamos si el usuario logado esta como decisor
+		model.put("esUsuarioDecisor",mejAcuerdoApi.usuarioEstaEnGAA(user, idAsunto,EXTDDTipoGestor.CODIGO_TIPO_GESTOR_DECISOR_ACUERDO));
 		
 		return JSON_CONFIG_USERS_ACUERDO_ASUNTOS;
 	}
@@ -405,7 +364,11 @@ public class MEJAcuerdoController {
 			} 
 		}
 		
-		map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		if(!Checks.esNulo(fechaPaseMoraFormated)){
+			map.put("fechaPaseMora", fechaPaseMoraFormated.getTime());
+		} else {
+			map.put("fechaPaseMora", null);
+		}
 		
 		map.put("idTipoAcuerdoPlanPago", tipoAcuerdoPlanPago.getId());
 		map.put("yaHayPlanPago", yaHayPlanPago);
@@ -572,7 +535,7 @@ public class MEJAcuerdoController {
 					} else {
 						//Buscamos el value del text enviado
 						for (List<String> value : campo.getArrayValoresCombo()) {
-							if (value.get(1).equals(request.getParameter(campo.getNombreCampo()))) {
+							if (value.get(0).equals(request.getParameter(campo.getNombreCampo()))) {
 								va.setValor(value.get(0));
 							}
 						}

@@ -109,7 +109,7 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
             final BatchExecutionData result = manager.getExecutionInfo(entity, jobName, lastTime);
 
-            assert_RUNNING_NoErrors_NotExecuted(result);
+            assert_NotRunning_NoErrors_EXECUTED(result);
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqué producir
@@ -156,7 +156,7 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
             final BatchExecutionData result = manager.getExecutionInfo(entity, jobName, lastTime);
 
-            assert_RUNNING_NoErrors_EXECUTED(result);
+            assert_NotRunning_NoErrors_EXECUTED(result);
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqué producir

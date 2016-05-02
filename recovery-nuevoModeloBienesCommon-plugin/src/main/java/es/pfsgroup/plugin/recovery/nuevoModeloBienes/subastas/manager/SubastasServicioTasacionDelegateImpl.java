@@ -106,5 +106,10 @@ public class SubastasServicioTasacionDelegateImpl implements SubastasServicioTas
 		return null;
 	}
 	
-
+	@Override
+	@BusinessOperation(BO_UVEM_SOLICITUD_TASACION_CON_RESPUESTA)
+	@Transactional(readOnly = false)
+	public String solicitarTasacionConRespuesta(Long arg0) {
+		return null;
+	}
 }

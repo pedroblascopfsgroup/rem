@@ -185,7 +185,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	@JoinColumn(name="DD_QCI_ID")
 	private DDimpuestoCompra impuestoCompra;
 	
-	@Column(name = "BIE_SAREB_ID")
+	@Column(name = "BIE_ENTIDAD_ID")
     private String sarebId;
 	
 	@ManyToOne

@@ -40,9 +40,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
-import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
-import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.cm.arq.tda.tiposdedatosbase.CantidadDecimal15;
@@ -98,12 +96,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	@Resource
 	private Properties appProperties;
-
-	
+		
 	private static final String DEVON_HOME_BANKIA = "datos/usuarios/recovecp";
 	private static final String DEVON_HOME = "DEVON_HOME";
 	private static final String DEVON_PROPERTIES = "devon.properties";
 	private static final String UVEM_URL = "uvem.url";
+
 	private String URL = "http://midtr2epd.cm.es:31485/bisa/endpoint";
 	
 	boolean uvemInstalado = false;
@@ -181,6 +179,11 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 		solicitarTasacion(idBien, prcId);
 	}
 	
+	@BusinessOperation(overrides = BO_UVEM_SOLICITUD_TASACION_CON_RESPUESTA)
+	@Transactional(readOnly = false,propagation = Propagation.REQUIRES_NEW)
+	public String solicitarTasacionConRespuesta(Long bienId){
+		return solicitarTasacion(bienId, null);
+	}	
 	
 	/**
 	 * Método que solicita el numero de activo de un bien a UVEM
@@ -230,7 +233,6 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			EXTGestorAdicionalAsunto gestorAsunto = null;
 			
 			EXTTipoJuzgado juzgado = null;
-			EXTContrato contrato = null;
 			
 			if(!Checks.esNulo(prcId)){
 				procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
@@ -251,20 +253,6 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			Asunto asuntoAux = procedimiento.getAsunto();
 			asunto = genericDao.get(EXTAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", asuntoAux.getId()));
 			System.out.println("Asunto obtenido.");
-			
-			List<ExpedienteContrato> expedienteContratos = asunto.getExpediente().getContratos();
-			if(expedienteContratos != null && expedienteContratos.size() > 0){
-				contrato = (EXTContrato) expedienteContratos.get(0).getContrato();
-				System.out.println("Contrato obtenido.");
-			}
-			
-			//Gestión: haya, bankia
-			String gestion = null;
-			if(!Checks.esNulo(asunto)){
-				if(asunto instanceof EXTAsunto){
-					gestion = ((EXTAsunto) asunto).getGestionAsunto().getCodigo();
-				}
-			}
 			
 			//validaciones
 			if(asunto != null && procedimiento != null && bien != null) {
@@ -288,7 +276,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			
 			System.out.println("Inicialización del endpoint de MidTR. Se realiza una única vez para todos los servicios. La url de MidTR debe estar parametrizada pues varía en cada entorno");
 			System.out.println("URL: " + URL);
-			Hashtable htInitParams = new Hashtable();
+			Hashtable<String, String> htInitParams = new Hashtable<String, String>();
 			htInitParams.put(WIService.WORFLOW_PARAM, URL);
 			htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
 			WIService.init(htInitParams);
@@ -733,6 +721,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				System.out.println("STACKTRACE: " + wi.getStackTrace());
 				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
 				System.out.println("URL: " + wi.getUrl());
+				
 				return wi.getMessage();
 			} 
 			e.printStackTrace();
@@ -754,7 +743,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 	
 	//@ManagedOperation(description ="Método que solicita la tasacion de un bien a UVEM")
 	//@ManagedOperationParameter(name="bienId", description= "id del bien.") 
-	private void solicitarTasacion(Long bienId, Long prcId){
+	private String solicitarTasacion(Long bienId, Long prcId){
 		
 		try {
 			
@@ -768,10 +757,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			System.out.println("Bien encontrado.");
 			EXTAsunto asunto = null;
 			MEJProcedimiento procedimiento = null;
-			EXTGestorAdicionalAsunto procuradorAsunto = null;
 			EXTGestorAdicionalAsunto gestorAsunto = null;
-			EXTTipoJuzgado juzgado = null;
-			EXTContrato contrato = null;
 			
 			if(!Checks.esNulo(prcId)){
 				procedimiento = genericDao.get(MEJProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
@@ -799,22 +785,12 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 				}
 			}
 			
-			List<ExpedienteContrato> expedienteContratos = asunto.getExpediente().getContratos();
-			if(expedienteContratos != null && expedienteContratos.size() > 0){
-				contrato = (EXTContrato) expedienteContratos.get(0).getContrato();
-				System.out.println("Contrato obtenido.");
-			}			
-			
 			//validaciones
 			if(asunto != null && procedimiento != null && bien != null) {
 				System.out.println("Unidades de gestion no nulas.");
 				List<EXTGestorAdicionalAsunto> gestores = asunto.getGestoresAsunto();
 				if(gestores != null && gestores.size() > 0){
 					for(EXTGestorAdicionalAsunto gestor : gestores){
-						if (EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROCURADOR.compareTo( gestor.getTipoGestor().getCodigo()) == 0){
-							procuradorAsunto = gestor;
-							System.out.println("Procurador recuperado");
-						}
 						if (EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO.compareTo( gestor.getTipoGestor().getCodigo()) == 0){
 							gestorAsunto = gestor;
 							System.out.println("Gestor recuperado.");
@@ -826,7 +802,7 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 			}
 			
 		System.out.println("Inicialización del endpoint de MidTR. Se realiza una única vez para todos los servicios. La url de MidTR debe estar parametrizada pues varía en cada entorno");
-		Hashtable htInitParams = new Hashtable();
+		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
 		htInitParams.put(WIService.WORFLOW_PARAM, URL);
 		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
 		WIService.init(htInitParams);
@@ -1018,122 +994,39 @@ public class UvemDelegateManager implements SubastasServicioTasacionDelegateApi 
 
 		
 		
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-	}
+		} 
+		catch (Exception e) {
+			if  (e instanceof WIException){
+				WIException wi = ((WIException)e);
+				System.out.println("ALIAS: " + wi.getAlias());
+				System.out.println("CAUSE: " + wi.getCause());
+				System.out.println("CONFIGURATIONVERSION: " + wi.getConfigurationVersion());
+				System.out.println("CLASS: " + wi.getClass());
+				System.out.println("ERRORCODE: " +wi.getErrorCode());
+				System.out.println("ERRORCODECOMMUNICATION: " + wi.getErrorCodeCommunication());
+				System.out.println("ERRORTYPE: " + wi.getErrorType());
+				System.out.println("INFODEBUG: " +wi.getInfoDebug());
+				System.out.println("LOCALIZEDMESSAGE: " + wi.getLocalizedMessage());
+				System.out.println("MAQUINAEJECUCION: " + wi.getMaquinaEjecucion());
+				System.out.println("MESSAGE: " + wi.getMessage());
+				System.out.println("OPERATION: " + wi.getOperationId());
+				System.out.println("PROVEEDOR: " + wi.getProveedor());
+				System.out.println("SERVICE_MODULE: " + wi.getService_module());
+				System.out.println("SERVICE_NAME: " + wi.getService_name());
+				System.out.println("SERVICE_VERSION: " + wi.getService_version());
+				System.out.println("STACKTRACE: " + wi.getStackTrace());
+				System.out.println("SUBSYSTEM: " + wi.getSubsystem());
+				System.out.println("URL: " + wi.getUrl());
+				
+				logger.error(String.format("Error en la ejecución del WS de Alta Tasación: [%s]", wi.getMessage()));
 
-	
-	/**
-	 * Método que cancela una peticion de tasacion de un bien a UVEM
-	 * 
-	 * @param prcId
-	 * @return
-	 */
-	/*
-	@Override
-	@BusinessOperation(overrides=BO_UVEM_CANCELAR_SOLICITUD_TASACION)
-	@ManagedOperation(description ="Método que cancela una peticion de tasacion de un bien a UVEM (NO IMPLEMENTADO)")
-	public void cancelarTasacion(Long bienId){
-		
-		try {
-			
-		//Inicialización del endpoint de MidTR. Se realiza una única vez para todos los servicios. La url de MidTR debe estar parametrizada pues varía en cada entorno
-		Hashtable htInitParams = new Hashtable();
-		htInitParams.put(WIService.WORFLOW_PARAM, "http://midtr2epd.cm.es:31485/bisa/endpoint");
-		htInitParams.put(WIService.TRANSPORT_TYPE, WIService.TRANSPORT_HTTP);
-		WIService.init(htInitParams);
-		 
-		//Instanciación del servicio
-		//TODO  este no es el servicio falta un cliente GMPETS11
-		GMPETS07_INS servicioGMPETS07_INS = new GMPETS07_INS();
-		
-		es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraFuncionalPeticion cabeceraFuncional = new es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraFuncionalPeticion();
-		es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraTecnica();                   
-		StructCabeceraAplicacionGMPETS07_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPETS07_INS();
-		
-		servicioGMPETS07_INS.setcabeceraAplicacion(cabeceraAplicacion);    
-		servicioGMPETS07_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
-		servicioGMPETS07_INS.setcabeceraTecnica(cabeceraTecnica);
-		
-		//PROGRAMA	GMPETS11	
-		
-		//COACCA 	longitud="1"	 Código de acción	siempre A
-		//LNUITA 	"NUMERICO_9" longitud="10"	Número de tasación	
-		//LCODTA	"NUMERICO_4" longitud="5"	Código de tasación	siempre 0
-		//LCODFA	"NUMERICO_4" longitud="5"	Código factura	siempre 0
-		//INANUL	longitud="1"	Indicador de anulación	siempre S
-		//INFAVI	longitud="1"	INDICADOR DE FACTURAR VISITA	
-		
-		//Identificación de la aplicación que ejecuta el servicio
-		servicioGMPETS07_INS.setAlias("GM");
-				 
-		servicioGMPETS07_INS.execute();
-				 
-		//Se recuperan los datos de vuelta del servicio
-		
-		//RESPUESTA OK
-		//PROGRAMA	GMPETS11	
-		
-		//RCSLON	"NUMERICO_9" longitud="10"	LONGITUD MENSAJE DE SALIDA    	
-		//NUOCPR	"NUMERICO_4" longitud="5"	NUMERO DE OCURRENCIAS PROCESAD	
-		//LNUITA	"NUMERICO_9" longitud="10"	NUMERO IDENTIFICADOR DE TASACI	
-		//NUMOGT	Repetición veces="20"	NUMERO DE OCURRENCIAS         	TABLA
-		//LCODTA	"NUMERICO_4" longitud="5"	CODIGO DE TASACION            	
-		//LCODFA	"NUMERICO_4" longitud="5"	CODIGO DE FACTURA             	
-		//LFEALT	"NUMERICO_9" longitud="10"	FECHA DE ALTA                 	
-		//LNUFAT	"NUMERICO_9" longitud="10"	NUMERO FACTURA TASACION       	
-		//NUFPRO	longitud="20"	NUMERO FACTURA PROVEEDOR      	
-		//LFEFAC	"NUMERICO_9" longitud="10"	FECHA DE factura              	
-		//LIMPOX	"CantidadDecimal15	IMPORTE OPERACION             	
-		//LIMPOP	"NUMERICO_15" longitud="16"	IMPORTE OPERACION             	
-		//CADC02	longitud="2"	CANTIDAD DE DECIMALES COLAB.  	
-		
-		//RESPUESTA KO
-		//PROGRAMA	GMPETS11	
-		
-		//RCSLON	"NUMERICO_9" longitud="10"	LONGITUD MENSAJE DE SALIDA    	
-		//MSTXAH	longitud="80"	TEXTO EXPLICATIVO DE CODIGO RETORNO	
-
-
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		
-	};
-	*/
-	
-
-	private String quitaTildes(String str) {
-
-		
-		StringBuilder sb = new StringBuilder();
-		try {
-			String ejemplo = str.replaceAll("Ñ", "!");	
-			String proc = java.text.Normalizer.normalize(ejemplo,
-					java.text.Normalizer.Form.NFD);
-			//proc.replace("N~","Ñ");
-			for (char c : proc.toCharArray()) {
-				if (Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BASIC_LATIN) {
-					sb.append(c);
-				}
+				return wi.getMessage();
 			}
-						
-		} catch (Exception e) {
-			logger.error("quitaTildes: " + e);
+			
+			e.printStackTrace();
+			return "-1";
 		}
-
-		return sb.toString().replaceAll("!", "Ñ");
-
+		
+		return "1";
 	}
-
-	
-	
-
 }

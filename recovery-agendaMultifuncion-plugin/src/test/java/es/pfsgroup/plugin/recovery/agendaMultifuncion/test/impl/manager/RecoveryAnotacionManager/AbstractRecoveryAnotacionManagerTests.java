@@ -27,8 +27,6 @@ public abstract class AbstractRecoveryAnotacionManagerTests {
     @InjectMocks
     protected RecoveryAnotacionManagerParaTestear  manager;
     
-    protected RecoveryAnotacionManagerParaTestear spyManager;
-    
     @Mock
     protected ApiProxyFactory mockProxyFactory;
     
@@ -52,7 +50,6 @@ public abstract class AbstractRecoveryAnotacionManagerTests {
         verificador = new VerificadorInteraccionesRecoveryAnotacionManager(mockEmailContentUtil);
         random = new Random();
         mockAppProperties = initRandomMockProperties("agendaMultifuncion.mail.from");
-        spyManager = creaYConfiguraSpyManger(manager);
         
         simular().inicializaProxyFactory();
         simular().seObtieneUsuarioLogado();
@@ -86,7 +83,6 @@ public abstract class AbstractRecoveryAnotacionManagerTests {
         simulador = null;
         verificador = null;
         random = null;
-        spyManager = null;
     }
     
     public abstract void childAfter();
@@ -99,8 +95,8 @@ public abstract class AbstractRecoveryAnotacionManagerTests {
         return this.verificador;
     }
     
-    private RecoveryAnotacionManagerParaTestear creaYConfiguraSpyManger(RecoveryAnotacionManagerParaTestear pManager) {
-        RecoveryAnotacionManagerParaTestear spyObject = spy(pManager);
+    protected RecoveryAnotacionManagerParaTestear creaYConfiguraSpyManger() {
+        RecoveryAnotacionManagerParaTestear spyObject = spy(this.manager);
         try {
             doReturn(random.nextLong()).when(spyObject).crearTarea(any(Long.class), any(String.class), any(String.class), any(Long.class), any(Boolean.class), any(String.class), any(Date.class));
             doNothing().when(spyObject).enviarMailConAdjuntos(any(List.class), any(String.class),any(List.class), any(String.class), any(String.class), any(List.class));

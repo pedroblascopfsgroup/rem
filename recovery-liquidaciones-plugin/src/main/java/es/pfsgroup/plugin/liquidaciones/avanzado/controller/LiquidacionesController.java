@@ -52,7 +52,7 @@ public class LiquidacionesController {
 		
 		if (!Checks.esNulo(codigoEntidad)) {
 			//Seleccionamos el logo según el codigo entidad
-			if (codigoEntidad.toUpperCase().equals("HAYA")) {
+			if (codigoEntidad.toUpperCase().equals("HCJ")) {
 				logo = "plugin/liquidaciones/logoSarebLiquidaciones.jpg";
 			}
 			

@@ -156,7 +156,7 @@
   			entidad.setLabel('odFlagExtra5', d.flagextra5);
   		}
   		if(d.flagextra6 != null && d.flagextra6 != ''){
-  			if(d.flagextra6 != 0){
+  			if(d.flagextra6 != 'N'){
   				entidad.setLabel('odFlagExtra6', 'SI');
   			}else{
   				entidad.setLabel('odFlagExtra6', 'NO Promotores');

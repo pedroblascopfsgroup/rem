@@ -11,7 +11,7 @@
 	<groupId>es.pfsgroup</groupId>
 	<artifactId>pfs-testfwk</artifactId>
 	<packaging>jar</packaging>
-	<name>pfs-tesfwk</name>
+	<name>pfs-testfwk</name>
 
 	<dependencies>
 		<dependency>

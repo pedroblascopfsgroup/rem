@@ -15,15 +15,15 @@ import es.pfsgroup.plugin.gestorDocumental.assembler.GestorDocumentalInputAssemb
 import es.pfsgroup.plugin.gestorDocumental.assembler.GestorDocumentalOutputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.InputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.OutputDto;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.INPUT;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.MAESTROACTIVOS;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.MAESTROACTIVOSType;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.OUTPUT;
+import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.ProcessEventRequestType;
+import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.ProcessEventResponseType;
+import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.WsPort;
+import es.pfsgroup.plugin.gestorDocumental.ws.wsWS.WsWS;
 
 @Component
 public class GestorDocumentalMaestroActivosManager extends BaseWS implements GestorDocumentalMaestroActivosApi {
 
-	private static final String WEB_SERVICE_NAME = "MAESTROACTIVOS";
+	private static final String WEB_SERVICE_NAME = "wsWS";
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -46,21 +46,22 @@ public class GestorDocumentalMaestroActivosManager extends BaseWS implements Ges
 			
 			QName qName = new QName(targetNamespace, name);
 			
-			INPUT input = GestorDocumentalInputAssembler.dtoToInput(inputDto); 
+			ProcessEventRequestType input = GestorDocumentalInputAssembler.dtoToInput(inputDto); 
 			logger.info("LLamando al WS...MAESTRO DE ACTIVOS");
 	
-			logger.info("Parametros de entrada..."+input.getIdActivoOrigen()+"...");
-			logger.info(String.format("APLICACION_"+input.getIdOrigen()+": %s"));
-			logger.info(String.format("CLAVEASOCIACION_"+input.getIdActivoHaya()+": %s"));
-				
-			MAESTROACTIVOS service = new MAESTROACTIVOS(wsdlLocation, qName);
+			logger.info("Parametros de entrada...");
+//			logger.info("ID_ACTIVO_ORIGEN: " + input.getIdActivoOrigen());
+//			logger.info("ID_ORIGEN: " +input.getIdOrigen());
+//			logger.info("ID_ACTIVO_HAYA: " + input.getIdActivoHaya());
 			
-			MAESTROACTIVOSType servicePort = service.getSMGESTIONDOCUMENTALPort();
-			OUTPUT output = servicePort.mAESTROACTIVOS(input);
+			WsWS service = new WsWS(wsdlLocation, qName);
+			
+			WsPort servicePort = service.getWs();
+			ProcessEventResponseType output = servicePort.processEvent(input);
 			logger.info("WS invocado! Valores de respuesta del MAESTRO DE ACTIVOS: ");
 			
-			logger.info(String.format("ESTADO_MAESTRO_ACTVO: %s", output.getResultCode()));
-			logger.info(String.format("DESC_ESTADO_MAESTRO_ACTVO: %s", output.getResultDescription()));
+//			logger.info("RESULTADO_COD_MAESTRO_ACTVO: " + output.getResultCode());
+//			logger.info("RESULTADO_DESCRIPCION_MAESTRO_ACTVO: " + output.getResultDescription());
 
 			out = GestorDocumentalOutputAssembler.outputToDto(output);
 

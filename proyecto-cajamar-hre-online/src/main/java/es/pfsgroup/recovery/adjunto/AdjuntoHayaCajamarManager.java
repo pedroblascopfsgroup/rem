@@ -85,8 +85,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonaAsu(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosPersonaAsu(id);
-//			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
+			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
+//			return super.getAdjuntosPersonaAsu(id);
 		}
 		return super.getAdjuntosPersonaAsu(id);
 	}
@@ -140,8 +140,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosCntConBorrado(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosCntConBorrado(id);
-//			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
+			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
+//			return super.getAdjuntosCntConBorrado(id);
 		}
 		return super.getAdjuntosCntConBorrado(id);
 	}
@@ -151,8 +151,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonaConBorrado(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosPersonaConBorrado(id);
-//			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
+			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
+//			return super.getAdjuntosPersonaConBorrado(id);
 		}
 		return super.getAdjuntosPersonaConBorrado(id);
 	}
@@ -177,8 +177,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			if(esEntidadCajamar()){
 				return adjuntoCajamarManager.uploadPersona(uploadForm);
 			}else if(esEntidadHaya()){
-				return super.uploadPersona(uploadForm);
-//				return adjuntoHayaManager.uploadPersona(uploadForm);
+				return adjuntoHayaManager.uploadPersona(uploadForm);
+//				return super.uploadPersona(uploadForm);
 			}
 			return super.uploadPersona(uploadForm);
 		}else{
@@ -207,8 +207,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			if(esEntidadCajamar()){
 				return adjuntoCajamarManager.uploadContrato(uploadForm);
 			}else if(esEntidadHaya()){
-				return super.uploadContrato(uploadForm);
-//				return adjuntoHayaManager.uploadContrato(uploadForm);
+				return adjuntoHayaManager.uploadContrato(uploadForm);
+//				return super.uploadContrato(uploadForm);
 			}
 			return super.uploadContrato(uploadForm);
 		}else{
@@ -242,8 +242,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 		}else if(esEntidadHaya()){
-			return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
-//			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+//			return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 		}
 		return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 	}
@@ -253,8 +253,8 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 		}else if(esEntidadHaya()){
-			return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
-			//			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+//			return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 		}
 		return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 	}

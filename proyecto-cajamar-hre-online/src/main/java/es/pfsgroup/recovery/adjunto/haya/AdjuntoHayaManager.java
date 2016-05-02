@@ -131,7 +131,7 @@ public class AdjuntoHayaManager {
 		}
    		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
-			adjuntosAsunto = documentosExpediente(id, null, claseExpediente);
+			adjuntosAsunto = documentosExpediente(id, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
 		}
 		return adjuntosAsunto;
 	}
@@ -140,7 +140,7 @@ public class AdjuntoHayaManager {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
 		crearPropuesta(prc);
 		String claseExpediente = getClaseExpedienteByProcedimientoPadre(prc);
-		return documentosExpediente(prc.getAsunto().getId(), prcId, claseExpediente);
+		return documentosExpediente(prc.getAsunto().getId(), prcId, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
 	}
 	
 	private void crearPropuesta(Procedimiento prc) {
@@ -159,11 +159,11 @@ public class AdjuntoHayaManager {
 		}
 	}
 	
-	private List<EXTAdjuntoDto> documentosExpediente(Long idAsunto, Long idPrc, String claseExpediente) {
+	private List<EXTAdjuntoDto> documentosExpediente(Long idAsunto, Long idPrc, String tipoExpediente, String claseExpediente) {
 		List<Integer> idsDocumento = new ArrayList<Integer>();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
 
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
+		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), tipoExpediente, claseExpediente);
 		DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
 		try {
 			RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
@@ -184,11 +184,8 @@ public class AdjuntoHayaManager {
 	}
 	
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
-		
-		InputDto input = new InputDto();
-		input.setIdActivoOrigen("24284620");
-		input.setIdOrigen("NOS");
-		OutputDto output = gestorDocumentalMaestroActivosApi.ejecutar(input);
+
+		documentosExpediente(getIdActivoHaya(), null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, "clase");
 		
 		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
 		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
@@ -296,12 +293,13 @@ public class AdjuntoHayaManager {
 	}
 
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id){
-		return documentosExpediente(id, id, "");
+		documentosExpediente(getIdActivoHaya(), null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, "clase");
+		return documentosExpediente(id, id, "", "");
 		//		return super.getAdjuntosCntConBorrado(id);
 	}
 
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
-		return documentosExpediente(id, id, "");
+		return documentosExpediente(id, id, "", "");
 //		return super.getAdjuntosPersonaConBorrado(id);
 	}
 
@@ -664,5 +662,20 @@ public class AdjuntoHayaManager {
 			return result;
 		}	
 		 
+
+	 private Long getIdActivoHaya() {
+			
+			//TODO Borrar, son datos para probar WS
+			InputDto input = new InputDto();
+			input.setEvent(InputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
+			input.setIdActivoOrigen("24284620");
+			input.setIdOrigen("NOS");
+			
+			OutputDto output = gestorDocumentalMaestroActivosApi.ejecutar(input);
+			
+			// *********************************************
+			Long idActivoHaya = new Long(output.getIdActivoHaya());
+			return idActivoHaya;
+	 }
 	 
 }

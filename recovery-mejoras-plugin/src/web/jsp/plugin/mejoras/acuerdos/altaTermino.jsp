@@ -11,7 +11,6 @@
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
-	//var labelStyleDescripcion = 'width:185x;height:60px;font-weight:bolder",width:700';
 	var labelStyleTextArea = 'font-weight:bolder",width:500';
 	
 	var arrayCampos = new Array();
@@ -97,7 +96,6 @@
 					cmpRgt.el.remove();
 			   	}
 				
-				//var camposDynamics = Ext.util.JSON.decode(result.responseText);
 				var camposDynamics = result;
 		
 				var dinamicElementsLeft = [];
@@ -401,12 +399,6 @@
        		
 	       		var params = detalleFieldSet.getForm().getValues();
 	       		
-	       		/*
-				for (var i = 0; i < detalleFieldSet.getForm().items.length; i++) {
-					if (detalleFieldSet.getForm().items.items[0].getValue()!='') {
-						Ext.apply(params)
-					}
-				}*/
 	       		
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
@@ -580,11 +572,11 @@
 		       	});
 	       	}
 	       	
+	       	debugger;
+	       	var informLetrado = '<s:message text="${termino.informeLetrado}" javaScriptEscape="true" />';
 	       	
-	       	var informeLetrado = '<s:message text="${termino.informeLetrado}" javaScriptEscape="true" />';
-	       	
-	       	if(informeLetrado !=null && informeLetrado !=''){
-	       		informeLetrado.setValue(informeLetrado);
+	       	if(informLetrado !=null && informLetrado !=''){
+	       		informeLetrado.setValue(informLetrado);
 	       	}
 	       	
 	       	comboTipoAcuerdo.setDisabled(false);

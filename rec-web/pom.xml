@@ -1603,6 +1603,7 @@
 					<dumpsDir>${dump-directory}</dumpsDir>
 					<directory>${directory}</directory>
 					<tag>${tag}</tag>
+					<container>${container}</container>
 				</configuration>
 			</plugin>
 		</plugins>

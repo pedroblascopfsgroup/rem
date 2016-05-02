@@ -130,6 +130,8 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO = "expedienteManager.devolverExpedienteDeFPaSANC";
     public static final String BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_EN_SANCION = "expedienteManager.devolverExpedienteDeSANCaENSAN";
     public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_GESTION_DEUDA = "expedienteManager.tieneExpedienteGestionDeuda";
+    public static final String BO_EXP_MGR_ES_GESTOR_DE_LA_FASE_ACTUAL = "expedienteManager.esGestorDeLaFaseDelExpediente";
+    public static final String BO_EXP_MGR_ES_SUPERVISOR_DE_LA_FASE_ACTUAL = "expedienteManager.esSupervisorDeLaFaseDelExpediente";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

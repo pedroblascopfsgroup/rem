@@ -77,6 +77,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.registro.HistoricoAsuntoBuilder;
 import es.capgemini.pfs.registro.HistoricoAsuntoDto;
@@ -2065,7 +2066,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				boolean cumplido = false;
 				//Comprobamos el cumplimiento
 				if(!Checks.esNulo(dto.getCumplidoSelect())){
-					if(dto.getCumplidoSelect().charAt(0) == 'S'){
+					if(DDSiNo.SI.equals(dto.getCumplidoSelect())){
 						cumplido = true;
 					}
 				}

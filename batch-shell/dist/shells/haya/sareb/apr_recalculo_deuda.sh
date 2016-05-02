@@ -2,8 +2,6 @@
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
 exit 0
- 
-#DIR_BASE_ETL=/aplicaciones/ops-haya/programas/etl
 #
 #filename=$(basename $0)
 #nameETL="${filename%.*}"
@@ -28,5 +26,5 @@ exit 0
 #else
 #    echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
 #    exit 1
-3fi
+#fi
 

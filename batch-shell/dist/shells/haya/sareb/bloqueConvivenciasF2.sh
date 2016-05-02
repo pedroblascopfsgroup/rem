@@ -6,8 +6,8 @@
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="/home/ops-haya/bloqueSalidaConvivenciasF2.log"
-DIR=/etl/HRE/shells
+LOG="$DIR_CONTROL_LOG/bloqueSalidaConvivenciasF2.log"
+DIR=$DIR_SHELLS
 
 TESTIGO=testigoConvF2.sem
 #DIR=./

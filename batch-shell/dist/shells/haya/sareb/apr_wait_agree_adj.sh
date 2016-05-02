@@ -2,7 +2,6 @@
 # Generado automaticamente a las vie jun 27 10:51:06 CEST 2014
  
 ENTIDAD=2038
-DIR_INPUT=/datos/usuarios/ops-haya/transferencia/interfaces
 MAX_WAITING_MINUTES=720
 ficheros=ACUERDOS,ADECUACIONES
 
@@ -23,10 +22,10 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-	ficheroSem=$DIR_INPUT$fichero$mascara$extensionSem
-	ficheroZip=$DIR_INPUT$fichero$mascara$extensionZip
+	ficheroSem=$DIR_INPUT_AUX/$fichero$mascara$extensionSem
+	ficheroZip=$DIR_INPUT_AUX/$fichero$mascara$extensionZip
         #echo "$ficheroSem"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
 	   #echo "$hora_actual"

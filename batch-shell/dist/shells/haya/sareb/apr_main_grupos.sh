@@ -1,8 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-DIR_BASE_ETL=/etl/HRE/programas/etl
-
 filename=$(basename $0)
 nameETL="${filename%.*}"
 
@@ -11,14 +9,11 @@ export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
 
-echo "Nombre del directorio= $DIR_ETL"
-
-if [ ! -d $DIR_ETL ] ; then
-	echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
-	exit 1
+cd "$DIR_ETL" &> /dev/null
+if [ $? -ne 0 ] ; then
+   echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
+   exit 1
 fi
-
-cd $DIR_ETL
 
 if [ -f $MAINSH ]; then
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
@@ -30,5 +25,4 @@ else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1
 fi
-
 

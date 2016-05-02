@@ -10,21 +10,13 @@ CP=`which cp`
 FECHA=`date +%G%m%e`
 MKDIR=`which mkdir`
 
-HOST=192.168.235.59
-USER=ftpsocpart
-PASS=tempo.99
-PORT=2153
-SFTP_DIR_BNK=/mnt/fs_servicios/socpart/SGPAR/RecoveryHaya/in/aprovisionamiento/troncal
-DIR_ORI=/data/etl/HRE/recepcion/aprovisionamiento/convivencia/salida
-BANDERA=$DIR_ORI/CNV_CDDD.txt
-DIR_SFT_HAYA=/sftp_haya/envio/convivencia
-DIR_SFT_HRE=/sftp_hre/envio
+BANDERA=$DIR_OUTPUT_CONV/CNV_CDDD.txt
 
 echo "************************************************"
 echo "**** ENVIO DE FICHEROS CNV CDDD $FECHA *******"
 echo "************************************************"
 
-FICHEROS_PREV=`ls -l $DIR_ORI`
+FICHEROS_PREV=`ls -l $DIR_OUTPUT_CONV`
 FICHEROS=(`echo "$FICHEROS_PREV" | awk '{print $9}' | grep conv_ccdd`)
 
 function download_files {
@@ -35,23 +27,24 @@ function download_files {
 
 	cd $ORIGEN
 
-lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} <<EOF
-cd $DESTINO
-mput $MASK
-bye
-EOF
-	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA)"
-	$RM -f $DIR_SFT_HAYA/$MASK
-	$RM -rf -mtime +7 $DIR_SFT_HRE
-	$CP $MASK $DIR_SFT_HAYA
-	$MKDIR -p $DIR_SFT_HRE/$FECHA
-	$CP $MASK $DIR_SFT_HRE/$FECHA
+	./ftp/ftp_put.sh $ORIGEN $DESTINO $MASK
+
+	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_ENVIO)"
+	$RM -f $DIR_SFT_HAYA_ENVIO/$MASK
+	$RM -rf -mtime +7 $DIR_SFT_HRE_ENVIO
+	$CP $MASK $DIR_SFT_HAYA_ENVIO
+	$MKDIR -p $DIR_SFT_HRE_ENVIO/$FECHA
+	$CP $MASK $DIR_SFT_HRE_ENVIO/$FECHA
 }
 
 if [ -f $BANDERA ]; then
 	for FMASK in "${FICHEROS[@]}";
 	do
-       		download_files $DIR_ORI $SFTP_DIR_BNK ${FMASK}
+       	if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+			download_files $DIR_OUTPUT_CONV $SFTP_DIR_BNK_IN_APR_TR ${FMASK}
+		else
+			echo "Llamada sin parámetro SFTP. No mueve ficheros."
+		fi
 	done
 	echo "Eliminando bandera de ORIGEN $BANDERA"
 	echo " "

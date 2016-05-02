@@ -1,14 +1,10 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-DIR_BASE_ETL=/etl/HRE/programas/etl
-
 filename=$(basename $0)
 nameETL="${filename%.*}"
 
-NOM_ETL=ENVIO_BUROFAX_
-ENVIO_DOCALIA=/sftp_docalia/burofax/envio
-DIR_DESTINO=/home/ops-haya/etl/output
+NOM_ETL=_ENVIO
 
 export DIR_ETL=$DIR_BASE_ETL/$nameETL
 export DIR_CONFIG=$DIR_BASE_ETL/config/
@@ -31,7 +27,8 @@ if [ -f $MAINSH ]; then
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
      result=$?
     if [ $result -eq 0 ]; then
-        mv $DIR_DESTINO/$NOM_ETL*.txt $ENVIO_DOCALIA
+		cp $DIR_CONTROL_OUTPUT/*$NOM_ETL.txt $ENVIO_DOCALIA
+        mv $DIR_CONTROL_OUTPUT/*$NOM_ETL.txt $DIR_BACKUP
         exit $result
     else
         exit $result

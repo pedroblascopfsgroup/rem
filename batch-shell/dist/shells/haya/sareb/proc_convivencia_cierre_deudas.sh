@@ -1,8 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-DIR_BASE_ETL=/etl/HRE/programas/etl
-
 filename=$(basename $0)
 nameETL="${filename%.*}"
 
@@ -10,10 +8,9 @@ export DIR_ETL=$DIR_BASE_ETL/$nameETL
 export DIR_CONFIG=$DIR_BASE_ETL/config/
 export CFG_FILE=config.ini
 export MAINSH="$nameETL"_run.sh
-DIR=/etl/HRE/shells
 TESTIGO=testigoCDD.sem
 
-rm -f $DIR/$TESTIGO
+rm -f $DIR_SHELLS/$TESTIGO
 
 
 echo "Nombre del directorio= $DIR_ETL"
@@ -32,9 +29,15 @@ if [ -f $MAINSH ]; then
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
     RESULTADO=$?
     if [ $RESULTADO -eq 0 ]; then
-	echo $RESULTADO > /data/etl/HRE/recepcion/aprovisionamiento/convivencia/salida/CNV_CDDD.txt
-        /etl/HRE/shells/upload_proc_convivencia_cierre_deudas.sh >> /etl/HRE/shells/upload_proc_convivencia_cierre_deudas.log 
-        touch $DIR/$TESTIGO
+		echo $RESULTADO > $DIR_OUTPUT_CONV/CNV_CDDD.txt
+		
+		if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+			$DIR_SHELLS/upload_proc_convivencia_cierre_deudas.sh -ftp >> $DIR_SHELLS/upload_proc_convivencia_cierre_deudas.log
+		else
+			$DIR_SHELLS/upload_proc_convivencia_cierre_deudas.sh >> $DIR_SHELLS/upload_proc_convivencia_cierre_deudas.log
+		fi		
+         
+        touch $DIR_SHELLS/$TESTIGO
         exit 0
     else
 	exit $RESULTADO

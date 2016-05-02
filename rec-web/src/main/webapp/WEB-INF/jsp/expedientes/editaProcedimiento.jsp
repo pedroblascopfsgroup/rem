@@ -422,6 +422,7 @@
 
 	if ('${procedimiento.tipoActuacion.codigo}' != '')
 	{
+		debugger;
 		optionsTipoProcedimientoStore.load({
 			params:{codigo:'${procedimiento.tipoActuacion.codigo}'}
 			,callback: function()
@@ -429,11 +430,20 @@
 				if ('${procedimiento.tipoProcedimiento.codigo}' != '')
 				{
 					comboTipoProcedimiento.setValue('${procedimiento.tipoProcedimiento.codigo}');
+					if('${procedimiento.tipoProcedimiento.codigo}' == "NOLIT"){
+						var el = Ext.getCmp("tmp");
+						el.setVisible(true);
+						fieldSetLitigar.show();
+					}
+				}
+				if('${procedimiento.tipoActuacion.codigo}' == "PCO"){
+					var el = Ext.getCmp("tmp");
+					el.setVisible(true);
+					fieldSetPco.show();
 				}
 			}
 		});
 	}
-
 	
 	//Si no puede modificar el valor pq no está en conformación lo revertimos
 	comboTipoProcedimiento.on('change', function(){
@@ -750,6 +760,333 @@
 			
 		]
 	});
+	
+	<%--DESARROLLO PRODUCTO 1089------------------------------%>
+	
+	var prioridadRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name : 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var prioridadStore = page.getStore({
+		flow: 'expedientejudicial/getDiccionarioPrioridad',
+		reader: new Ext.data.JsonReader({
+			root: 'prioridad'
+		}, prioridadRecord)
+	});
+
+	var comboPrioridad = new Ext.form.ComboBox({
+		name:'prioridad',
+	    hiddenName:'prioridad',
+		store: prioridadStore,
+		displayField: 'descripcion',
+		mode: 'local',
+		triggerAction: 'all',
+		valueField: 'codigo',
+		emptyText:'----',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		autoSelect: true,
+		fieldLabel: '<s:message code="procedimientos.edicion.prioridad" text="**Prioridad" />'
+		<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.prioridad.descripcion}'
+		</c:if>
+		});
+		
+	
+	comboPrioridad.on('afterrender', function(combo) {
+		prioridadStore.webflow();
+		debugger;
+	});
+	prioridadStore.on('load',function(ds,records,o){
+		<c:if test="${procedimientoPco == null}" >
+			comboPrioridad.setValue(records[2].data.codigo);
+		</c:if>
+   	});
+
+	
+	var preparacionRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name : 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var preparacionStore = page.getStore({
+		flow: 'expedientejudicial/getDiccionarioPreparacion',
+		reader: new Ext.data.JsonReader({
+			root: 'preparacion'
+		}, preparacionRecord)
+	});
+
+	var comboPreparacion = new Ext.form.ComboBox({
+		name:'preparacion',
+	    hiddenName:'preparacion',
+		store: preparacionStore,
+		displayField: 'descripcion',
+		mode: 'local',
+		triggerAction: 'all',
+		valueField: 'codigo',
+		emptyText:'----',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		fieldLabel: '<s:message code="procedimientos.edicion.preparacion" text="**Preparacion" />'
+		<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoPreparacion.descripcion}'
+		</c:if>
+	});
+	
+	comboPreparacion.on('afterrender', function(combo) {
+		preparacionStore.webflow();
+	}); 
+	
+	preparacionStore.on('load',function(ds,records,o){
+		<c:if test="${procedimientoPco == null}" >
+			comboPreparacion.setValue(records[2].data.codigo);
+		</c:if>
+   	});
+	
+	var comboTipoAccionPropuestaAIniciar = new Ext.form.ComboBox({
+	    name:'tipoAccionPropuesta'
+	    ,hiddenName:'tipoAccionPropuesta'
+	    ,store: optionsTipoActuacionStore
+	    ,displayField:'descripcion'
+	    ,mode: 'local'
+	    ,triggerAction: 'all'
+	    ,emptyText:'----'
+	    ,valueField: 'codigo'
+	    ,labelStyle:labelStyle
+	    ,allowBlank: true
+		,fieldLabel : '<s:message code="procedimientos.edicion.accionPropuesta" text="**Tipo acción propuesta a iniciar" />'
+		
+	});
+	
+	var tipoProcedimientoRecord2 = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var optionsTipoProcedimientoIniciarStore =	page.getStore({
+	       flow: 'procedimientos/buscarTiposProcedimiento'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tiposProcedimiento'
+	    }, tipoProcedimientoRecord)
+	       
+	});
+	
+	comboTipoAccionPropuestaAIniciar.on('select',function(){
+		var codigo=comboTipoAccionPropuestaAIniciar.getValue();
+		optionsTipoProcedimientoIniciarStore.webflow({codigo:codigo})
+		comboTipoActuacionPropuestaAIniciar.reset();
+		comboTipoActuacionPropuestaAIniciar.enable();
+	});
+	
+	var comboTipoActuacionPropuestaAIniciar = new Ext.form.ComboBox({
+	    name:'tipoActuacionPropuesta',
+	    hiddenName:'tipoActuacionPropuesta',
+	    store: optionsTipoProcedimientoIniciarStore,
+	    displayField: 'descripcion',
+	    mode: 'local',
+	    triggerAction: 'all',
+	    emptyText:'----',
+		valueField: 'codigo',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		fieldLabel : '<s:message code="procedimientos.edicion.actuacionPropuesta" text="**Tipo actuación propuesta a iniciar" />'
+	});
+	
+    var chkBoxPreturnado = new Ext.form.Checkbox({
+    	name:'preturnado'
+    	,labelStyle:labelStyle
+        ,fieldLabel:'<s:message code="procedimientos.edicion.preTurnado" text="**Pre-turnar letrado" />'
+        <c:if test="${procedimientoPco!=null}" >
+        	<c:if test="${procedimientoPco.preturnado == true}" >
+        			,checked:true
+			</c:if>
+		</c:if>
+    });
+	
+	var chkBoxOrdinario = new Ext.form.Checkbox({
+		name:'turnadoOrdinario'
+		,labelStyle:labelStyle
+        ,fieldLabel:'<s:message code="procedimientos.edicion.turnadoOrdinario" text="**Turnado ordinario" />'
+        <c:if test="${procedimientoPco!=null}" >
+        	<c:if test="${procedimientoPco.preturnado != true}" >
+        			,checked:true
+			</c:if>
+		</c:if>
+    });
+    
+	var fieldSetPco =new Ext.form.FieldSet({
+		title:'<s:message code="procedimientos.edicion.adicionalPCO" text="**Adicional PCO" />'
+		//,autoHeight:true
+		,hidden:true
+		,height:280
+		,autoShow:true
+		,bodyStyle:'padding:5px;cellspacing:20px;'
+		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+		,items:[{
+				layout:'form'
+				,bodyStyle:'padding:5px;cellspacing:20px;margin-right:5px;'
+				,autoHeight:true
+				,autoWidth:true
+				,items:
+				[
+					comboPrioridad
+					,comboPreparacion
+					,comboTipoAccionPropuestaAIniciar
+					,comboTipoActuacionPropuestaAIniciar
+					,chkBoxOrdinario
+					,chkBoxPreturnado
+				]
+				,style : 'margin-right:10px'
+			}
+		]
+	});
+	
+	var motivoRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name : 'codigo'},
+		{name: 'descripcion'}
+	]);
+	
+	var motivoStore = page.getStore({
+		flow: 'mejactuacion/getDiccionarioMotivos',
+		reader: new Ext.data.JsonReader({
+			root: 'motivos'
+		}, motivoRecord)
+	});
+
+	var comboMotivo = new Ext.form.ComboBox({
+		name:'motivo',
+	    hiddenName:'motivo',
+		store: motivoStore,
+		displayField: 'descripcion',
+		mode: 'local',
+		triggerAction: 'all',
+		valueField: 'codigo',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		fieldLabel: '<s:message code="procedimientos.edicion.motivo" text="**Motivo" />'
+		<c:if test="${procedimiento!=null}" >
+			,value:'${procedimiento.motivoNoLitigar.descripcion}'
+		</c:if>	
+	});
+	
+	comboMotivo.on('afterrender', function(combo) {
+		motivoStore.webflow();
+	});
+	
+	var observaciones = new Ext.form.TextArea({
+		name:'observaciones',
+		hideLabel:true
+		,labelSeparator: ''
+		,fieldLabel:''
+		,width: 400
+		,height: 100
+		,maxLength: 100
+		,maxLengthText:  2500
+		,readOnly: false
+		,labelStyle: ''
+		,value:''
+		,allowBlank:true
+		<c:if test="${procedimiento!=null}" >
+			,value:'${procedimiento.observacionesNoLitigar}'
+		</c:if>	
+	});
+	
+		var fieldSetLitigar =new Ext.form.FieldSet({
+		title:'<s:message code="procedimientos.edicion.adicionalLitigar" text="**Adicional no litigar" />'
+		//,autoHeight:true
+		,height:180
+		,hidden:true
+		,autoShow:true
+		,bodyStyle:'padding:5px;cellspacing:20px;'
+		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+		,items:[{
+				layout:'form'
+				,bodyStyle:'padding:5px;cellspacing:20px;margin-right:5px;'
+				,autoHeight:true
+				,autoWidth:true
+				,items:
+				[
+					comboMotivo
+					,observaciones
+				]
+				,style : 'margin-right:10px'
+				
+			}
+			
+		]
+	});
+	
+	tipoActuacion.on('select',function(){
+		var codigo=tipoActuacion.getValue();
+		optionsTipoProcedimientoStore.webflow({codigo:codigo})
+		comboTipoProcedimiento.reset();
+		comboMotivo.reset();
+		observaciones.reset();
+		comboPrioridad.reset();
+		comboPreparacion.reset();
+		comboTipoAccionPropuestaAIniciar.reset();
+		comboTipoActuacionPropuestaAIniciar.reset();
+		chkBoxOrdinario.reset();
+		chkBoxPreturnado.reset();
+		var el = Ext.getCmp("tmp");
+		fieldSetLitigar.hide();
+		if(tipoActuacion.getValue() == "PCO"){
+			el.setVisible(true);
+			fieldSetPco.setVisible(true);
+			fieldSetPco.show();
+		}else{
+			el.setVisible(false);
+			fieldSetPco.hide();
+		}
+	});
+	
+	comboTipoProcedimiento.on('select',function(){
+		var codigo=comboTipoProcedimiento.getValue();
+		var el = Ext.getCmp("tmp");
+		if(comboTipoProcedimiento.getValue() == "NOLIT"){
+			el.setVisible(true);
+			fieldSetLitigar.show();
+		}else{
+			if(tipoActuacion.getValue() != "PCO"){
+				el.setVisible(false);
+				comboMotivo.reset();
+			}
+			fieldSetLitigar.hide();
+			observaciones.reset();
+		}
+	});
+	
+	var seleccionado = chkBoxOrdinario.getValue();
+	if(seleccionado){
+		debugger;
+		chkBoxPreturnado.disable();
+		chkBoxPreturnado.reset();
+	} 
+	chkBoxOrdinario.on('check',function(){
+		debugger;
+		if (chkBoxOrdinario.getValue()== true)
+		{
+			chkBoxPreturnado.disable();
+			chkBoxPreturnado.setValue(null);
+		}else{
+			chkBoxPreturnado.enable();
+		}
+	});
+	chkBoxPreturnado.on('check',function(){
+		debugger;
+		if (chkBoxPreturnado.getValue()== true)
+		{
+			chkBoxOrdinario.setValue(null);
+			chkBoxOrdinario.disable();
+		}else{
+			chkBoxOrdinario.enable();
+		}
+	});
+	<%----------------------------------------------------- --%>
 
 	var fieldSetActuacion =new Ext.form.FieldSet({
 		title:'<s:message code="procedimientos.edicion.tipoactuacion" text="**Tipo Actuacion" />'
@@ -862,9 +1199,8 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-
+			debugger;
 			//habilitaComponentes(true);
-			
 			//VALIDACIONES
 			var errores="";
 			if(!comboTipoProcedimiento.validate())
@@ -886,6 +1222,7 @@
 					}
 				}
 			}
+			
 			if(errores!=""){
 				Ext.Msg.alert("Errores",errores);
 				return;
@@ -895,7 +1232,9 @@
 			page.submit({
 				eventName : 'updateProcedimiento'
 				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.DONE) }
+				,success : function(){ 
+						page.fireEvent(app.event.DONE)
+					 }
 			});
 
 			//habilitaComponentes(false);
@@ -933,9 +1272,17 @@
 						 ,width:370 
 						 ,border:false
 					}
-					
+					,{
+						border:false
+						,width:480
+						,items:[fieldSetPco, fieldSetLitigar]
+						,hidden:true
+						,id:'tmp'
+						,autoHeight:true
+					} 
 				]
-			},{
+			}
+			,{
 				border:false
 				,items:contratosGrid
 			}

@@ -18,9 +18,9 @@ import es.capgemini.devon.bpm.ProcessManager;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.devon.web.DynamicElementManager;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDMotivoNoLitigar;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
-import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.asunto.dao.EstadoProcedimientoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
@@ -61,6 +61,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.MEJConstantes;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
@@ -72,7 +73,6 @@ import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.recurso.Dao.MEJRecursoDao;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
-import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoDto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
@@ -132,6 +132,9 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 
 	@Autowired
 	private PropuestaApi propuestaApi;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 
 	
 	@BusinessOperation("procedimiento.buttons")
@@ -343,6 +346,24 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 			p.setSaldoOriginalNoVencido(dto.getSaldoOriginalNoVencido());
 		}
 
+		//GUARDAMOS LA NUEVA INFORMACION PRODCUTO-1089
+		if(!Checks.esNulo(dto.getTipoProcedimiento())){
+			if(dto.getTipoProcedimiento().equals("NOLIT")){
+				//estamos en un procemiento de no litigar, guardamos motivo y observaciones
+				if(!Checks.esNulo(dto.getMotivo())){
+					DDMotivoNoLitigar ddMotivo;
+					ddMotivo = (DDMotivoNoLitigar) diccionarioApi.dameValorDiccionarioByCod(DDMotivoNoLitigar.class, dto.getMotivo());
+					if(Checks.esNulo(ddMotivo)){
+						ddMotivo = (DDMotivoNoLitigar) diccionarioApi.dameValorDiccionarioByDes(DDMotivoNoLitigar.class, dto.getMotivo());
+					}
+					p.setMotivoNoLitigar(ddMotivo);
+				}
+				if(!Checks.esNulo(dto.getObservaciones())){
+					p.setObservacionesNoLitigar(dto.getObservaciones());
+				}
+			}
+		}
+		//------------------------------------------------------
 		procedimientoDao.saveOrUpdate(p);
 		return p;
 	}

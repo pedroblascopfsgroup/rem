@@ -6,6 +6,7 @@
 
 	<end-state id="borrar" view="default">
 		<on-entry>
+			<evaluate expression="executor.execute('plugin.precontencioso.borrarProcedimientoPCO',id)"/>
 			<evaluate expression="executor.execute('procedimientoManager.borrarProcedimiento', id)" />
 		</on-entry>
 	</end-state>

@@ -572,7 +572,6 @@
 		       	});
 	       	}
 	       	
-	       	debugger;
 	       	var informLetrado = '<s:message text="${termino.informeLetrado}" javaScriptEscape="true" />';
 	       	
 	       	if(informLetrado !=null && informLetrado !=''){

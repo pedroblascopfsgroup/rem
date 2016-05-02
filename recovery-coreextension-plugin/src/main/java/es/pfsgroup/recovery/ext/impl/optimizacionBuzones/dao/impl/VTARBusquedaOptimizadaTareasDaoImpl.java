@@ -23,6 +23,7 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
@@ -47,6 +48,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
     @Autowired
     private UsuarioDao usuarioDao;
+    
+    @Autowired
+    private ZonaDao zonaDao;
 
     @Override
     public Long obtenerCantidadDeTareasPendientes(final DtoBuscarTareaNotificacion dto, final boolean conCarterizacion, final Usuario usuarioLogado) {
@@ -284,7 +288,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         if(!Checks.estaVacio(dto.getUsuarioLogado().getZonaPerfil())){
         	hb.append(" ((");
         	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
-        		hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");	
+        		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
+        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");	
+        		}
         	}
         	
         	hb.deleteCharAt(hb.length() - 1);

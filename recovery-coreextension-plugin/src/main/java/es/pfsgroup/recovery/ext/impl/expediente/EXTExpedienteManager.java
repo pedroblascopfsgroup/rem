@@ -530,12 +530,15 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	private boolean usuarioLogadoEsPrimerDeLaZonaPerfil(Long idPerfil, String codigoZona){
 		
 		if(!Checks.esNulo(idPerfil) && !Checks.esNulo(codigoZona)){
-			ZonaUsuarioPerfil zup = zonaManager.getZonaPerfilUsuarioPrimerNivelExistente(idPerfil, codigoZona);
-			if(!Checks.esNulo(zup) && zup.getUsuario().equals(usuarioManager.getUsuarioLogado())){
-				return true;
-			}else{
-				return false;
+			List<ZonaUsuarioPerfil> zups = zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(idPerfil, codigoZona);
+			for(ZonaUsuarioPerfil zup : zups){
+				if(!Checks.esNulo(zup) && zup.getUsuario().equals(usuarioManager.getUsuarioLogado())){
+					return true;
+				}
 			}
+			
+			return false;
+			
 		}else{
 			return false;	
 		}

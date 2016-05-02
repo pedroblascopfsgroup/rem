@@ -48,6 +48,8 @@
 		<json:property name='comitesDelegarLen' value="${fn:length(comitesDelegar)==0}"/>
 		<json:property name='puedeMostrarSolapaMarcadoPoliticas' value="${puedeMostrarSolapaMarcadoPoliticas}"/>
 		<json:property name='puedeMostrarSolapaDecisionComite' value="${puedeMostrarSolapaDecisionComite}"/>
+		<json:property name='esPrimerGestorFaseActual' value="${esPrimerGestorFaseActual}"/>
+		<json:property name='esPrimerSupervisorFaseActual' value="${esPrimerSupervisorFaseActual}"/>
 	</json:object>
 	<json:object name="cabecera">
 		<json:property name="codExpediente" value="${expediente.id}" />
@@ -87,6 +89,7 @@
 		<json:property name='telefono2' value="${expediente.oficina.telefono2}" />
 		<json:property name='domicilio' value="${expediente.oficina.domicilio}" />
 		<json:property name='domicilioPlaza' value="${expediente.oficina.domicilioPlaza}" />
+		<json:property name='idZona' value="${expediente.oficina.zona.id}" />
 	</json:object>
 	<json:object name="clientes">
 		<json:array name="clientes" items="${expediente.personas}" var="expedientePersona">	

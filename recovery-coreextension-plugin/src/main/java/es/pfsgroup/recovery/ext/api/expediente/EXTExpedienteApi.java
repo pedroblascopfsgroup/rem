@@ -117,6 +117,17 @@ public interface EXTExpedienteApi extends ExpedienteApi{
 	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
 	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,String respuesta, Boolean isSupervisor);
 	
-	 
+	/**
+	 * Devolver true o false si el usuario logueado es el primero de la jerarquia de zona usuario perfil para la zona del expediente y el perfil del gestor de la fase actual del expediente
+	 * @param idExpediente
+	 */ 
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ES_GESTOR_DE_LA_FASE_ACTUAL)
+	public boolean esGestorDeLaFaseDelExpediente(Long idExpediente);
 	
+	/**
+	 * Devolver true o false si el usuario logueado es el primero de la jerarquia de zona usuario perfil para la zona del expediente y el perfil del supervisor de la fase actual del expediente
+	 * @param idExpediente
+	 */ 
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_ES_SUPERVISOR_DE_LA_FASE_ACTUAL)
+	public boolean esSupervisorDeLaFaseDelExpediente(Long idExpediente);
 }

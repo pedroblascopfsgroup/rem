@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +28,7 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.manager.SubastaProcedimientoManager;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
@@ -39,7 +39,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.DDGestionAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SubastaCalculoManagerTest {
+public class SubastaProcedimientoManagerTest {
 
 	@Mock
 	private UtilDiccionarioApi mockUtilDiccionarioApi;
@@ -48,7 +48,7 @@ public class SubastaCalculoManagerTest {
 	private GenericABMDao genericDao;
 
 	@InjectMocks
-	private SubastaCalculoManager subastaCalculoManager;
+	private SubastaProcedimientoManager subastaProcedimientoManager;
 
 	@Before
 	public void initialize() {
@@ -56,29 +56,29 @@ public class SubastaCalculoManagerTest {
 		mockDameValorDiccionarioByCod(DDTipoSubasta.NDE);
 	}
 
-	@Test
-	public void testDeterminarTipoSubastaConSubastaTipoNoDelegada() {
-		// Subasta to test
-		DDTipoSubasta tipoNoDelegada = new DDTipoSubasta();
-		tipoNoDelegada.setCodigo(DDTipoSubasta.NDE);
-
-		Subasta subastaNoDelegada = new Subasta();
-		subastaNoDelegada.setTipoSubasta(tipoNoDelegada);
-		subastaNoDelegada.setId(1L);
-
-		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaNoDelegada);
-
-		// verify never call update
-		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
-	}
+//	@Test
+//	public void testDeterminarTipoSubastaConSubastaTipoNoDelegada() {
+//		// Subasta to test
+//		DDTipoSubasta tipoNoDelegada = new DDTipoSubasta();
+//		tipoNoDelegada.setCodigo(DDTipoSubasta.NDE);
+//
+//		Subasta subastaNoDelegada = new Subasta();
+//		subastaNoDelegada.setTipoSubasta(tipoNoDelegada);
+//		subastaNoDelegada.setId(1L);
+//
+//		// Method to test
+//		subastaProcedimientoManager.determinarTipoSubastaTrasPropuesta(subastaNoDelegada);
+//
+//		// verify never call update
+//		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
+//	}
 
 	@Test
 	public void testDeterminarTipoSubastaConSubastaQueNoCumpleCondicionesParaTipoNoDelegada() {
 		Subasta subastaToTest = newSubastaToTest();
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
@@ -100,7 +100,7 @@ public class SubastaCalculoManagerTest {
 		subastaToTest.setAsunto(asuntoSubasta);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
@@ -120,7 +120,7 @@ public class SubastaCalculoManagerTest {
 		subastaToTest.setAsunto(asuntoSubasta);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
@@ -134,7 +134,7 @@ public class SubastaCalculoManagerTest {
 		subastaToTest.setCargasAnteriores("1000");
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
@@ -151,7 +151,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoActivo);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
@@ -168,7 +168,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoActivo);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		comprobarSiLaSubastaNoHaSidoModificadaANoDelegada();
 	}
@@ -189,7 +189,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTestDeudaMayor1Millon(deudaIrregular, posVivaNoVencida, estadoNoRecibido);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
@@ -215,7 +215,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores, costasLetrado, costasProcurador);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		comprobarSiLaSubastaHaSidoModificadaANoDelegada();
 	}
@@ -242,7 +242,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores, costasLetrado, costasProcurador);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
@@ -270,7 +270,7 @@ public class SubastaCalculoManagerTest {
 		Subasta subastaToTest = newSubastaToTestRiesgoDeConsignacionSuperaUmbral(deudaIrregular, posVivaNoVencida, insPujasSinPostores, costasLetrado, costasProcurador);
 
 		// Method to test
-		subastaCalculoManager.determinarTipoSubastaTrasPropuesta(subastaToTest);
+		subastaProcedimientoManager.determinarTipoSubasta(subastaToTest);
 
 		// verify never call update
 		verify(genericDao, never()).update(eq(Subasta.class), any(Subasta.class));
@@ -323,11 +323,11 @@ public class SubastaCalculoManagerTest {
 
 		List<LoteSubasta> loteSubasta = new ArrayList<LoteSubasta>();
 		loteSubasta.add(lote);
-
+		
 		Subasta subastaToTest = newSubastaToTest();
 		subastaToTest.setId(1L);
 		subastaToTest.setLotesSubasta(loteSubasta);
-
+		
 		return subastaToTest;
 	}
 	

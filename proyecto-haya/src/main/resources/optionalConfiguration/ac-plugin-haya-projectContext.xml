@@ -116,8 +116,150 @@
 			<value>reportPropuestaCancelacionCargasHaya.jrxml</value>
 		</property>
 	</bean>
-
+	
+<!-- INICIO Asignación de gestores automáticos al crear asuntos desde el expediente -->
 	<bean id="coreProjectContextHAYA" parent="coreProjectContextDefault">
+	
+		<property name="tiposAsuntosTiposGestores">
+			<map>
+				<entry key="HAYA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="01">	<!-- Tipo de Asunto (Litigio) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>GULI</value>
+								<value>GSUB</value>
+								<value>GSDE</value>
+								<value>UCON</value>
+								<value>UFIS</value>
+								<value>GAREO</value>								
+							</set>
+						</entry>
+						
+						<entry key="02">	<!-- Tipo de Asunto (Concursal) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>SSUBC</value>
+								<value>GSUBC</value>
+								<value>GUCO</value>
+								<value>DIRCON</value>
+								<value>GSDE</value>
+								<value>UCON</value>
+								<value>UFIS</value>
+								<value>GAREO</value>
+							</set>
+						</entry>
+						
+						<entry key="21">	<!-- Tipo de Asunto (Acuerdo) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>GULI</value>
+								<value>GSUB</value>
+								<value>GSDE</value>
+								<value>UCON</value>
+								<value>UFIS</value>
+								<value>GAREO</value>								
+							</set>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
+		
+		<property name="perfilesGestoresEspeciales">
+			<map>
+				<entry key="HAYA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="GSDE">	<!-- Tipo de Gestores -->
+							<set>
+								<value>HAYASAREB</value>	<!-- Perfil -->
+							</set>
+						</entry>
+						<entry key="GDEU">
+							<set>
+								<value>FPFCARTERIZ</value>
+							</set>
+						</entry>
+					</map>
+				
+				</entry>
+			</map>
+		</property>
+		
+		<property name="supervisorAsunto">
+			<map>
+				<entry key="HAYA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="01">	<!-- Tipo de Asunto (Litigio) -->
+							<set>
+								<value>GSUPLI</value>	<!-- Username Usuario Supervisor  -->
+							</set>
+						</entry>
+						<entry key="02">	<!-- Tipo de Asunto (Concursal) -->
+							<set>
+								<value>bcaballero</value>
+							</set>
+						</entry>
+						<entry key="21">	<!-- Tipo de Asunto (Acuerdo) -->
+							<set>
+								<value>GSUPLI</value>
+							</set>
+						</entry>
+					</map>
+				
+				</entry>
+			</map>
+		</property>
+		
+		<property name="despachoSupervisorAsunto">
+			<map>
+				<entry key="HAYA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="01">	<!-- Tipo de Asunto (Concursal) -->
+							<set>
+								<!-- <value>Unidad de concursos</value> -->
+								<value>Unidad de litigios/subastas</value>
+							</set>
+						</entry>
+						
+						<entry key="02">	<!-- Tipo de Asunto (Concursal) -->
+							<set>
+								<!-- <value>Unidad de concursos</value> -->
+								<value>Unidad de concursos</value>
+							</set>
+						</entry>
+						
+						<entry key="21">	<!-- Tipo de Asunto (Concursal) -->
+							<set>
+								<!-- <value>Unidad de concursos</value> -->
+								<value>Unidad de litigios/subastas</value>
+							</set>
+						</entry>
+					</map>
+				
+				</entry>
+			</map>
+		</property>
+		
+		<property name="tipoGestorSupervisorAsunto">
+			<map>
+				<entry key="HAYA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="01">	<!-- Tipo de Asunto (Litigio) -->
+							<value>SUP</value>	<!-- Tipo de Gestor -->
+						</entry>
+						
+						<entry key="02">	<!-- Tipo de Asunto (Concursal) -->
+							<value>SUP</value>	<!-- Tipo de Gestor -->
+						</entry>
+						
+						<entry key="21">	<!-- Tipo de Asunto (Acuerdo) -->
+							<value>SUP</value>	<!-- Tipo de Gestor -->
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
+		
+<!-- FIN Asignación de gestores automáticos al crear asuntos desde el expediente -->
+	
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">

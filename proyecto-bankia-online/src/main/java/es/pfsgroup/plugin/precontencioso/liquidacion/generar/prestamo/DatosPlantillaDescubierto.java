@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosDescubiertoDao;
@@ -65,7 +66,11 @@ public class DatosPlantillaDescubierto extends DatosPlantillaPrestamoAbstract im
 		datosLiquidacion.put("FECHA_FIRMA", datosGenerales.get(0).FEVACM());
 		datosLiquidacion.put("CIUDAD_FIRMA", "Madrid");
 		//AÑADIDO PARA EL DESCUBIERTO
+		//Trato especial para el numero de sucursal
+		String cocaah = "";
 		datosLiquidacion.put("NUM_SUCURSAL", descubiertoLiquidacion.get(0).COCAAH());
+		cocaah = descubiertoLiquidacion.get(0).COCAAH();
+		
 		datosLiquidacion.put("SALDO_ANTERIOR", descubiertoLiquidacion.get(0).SAANAH());
 		datosLiquidacion.put("SALDO_POSTERIOR", descubiertoLiquidacion.get(descubiertoLiquidacion.size()-1).SAPOAH());
 		
@@ -77,9 +82,9 @@ public class DatosPlantillaDescubierto extends DatosPlantillaPrestamoAbstract im
              datosLiquidacion.put("N_CUENTA", "");
              return datosLiquidacion;
 		}
+		
 		//VALORES DEL Nº DE CUENTA
 		String coeaah = descubiertoLiquidacion.get(0).COEAAH();
-		String cocaah = descubiertoLiquidacion.get(0).COCAAH();
 		String nudcah = descubiertoLiquidacion.get(0).NUDCAH();
 		String nuctah = descubiertoLiquidacion.get(0).NUCTAH();
 		//DATOS DE LA CUENTA CONCATENADOS

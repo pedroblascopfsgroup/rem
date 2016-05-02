@@ -1,7 +1,11 @@
 package es.capgemini.pfs.politica.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
@@ -20,7 +24,9 @@ import es.capgemini.pfs.politica.model.DDEstadoCumplimiento;
 import es.capgemini.pfs.politica.model.DDEstadoObjetivo;
 import es.capgemini.pfs.politica.model.DDEstadoPolitica;
 import es.capgemini.pfs.politica.model.Objetivo;
+import es.capgemini.pfs.politica.model.Politica;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
@@ -35,6 +41,9 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
 
     @Autowired
     private DDEstadoCumplimientoDao estadoCumplimientoDao;
+    
+    @Autowired
+    private ZonaDao zonaDao;
 
     /**
      * Devuelve la lista de objetivos pendientes.
@@ -100,7 +109,44 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
     	String hql = armaHQLObjetivosPendientes(usuario);
 
     	if(!Checks.esNulo(hql)){
-    		return getHibernateTemplate().find(hql);	
+    		
+    		List<Objetivo> todosObjetivosPorGerarquiaZona = getHibernateTemplate().find(hql);	
+    		List<Objetivo> objetivosQuePuedeVer = new ArrayList<Objetivo>();
+    		
+    		/*Agrupamos los objetivos en un map con la key politica*/
+    		Map<Politica, List<Objetivo>> map = new HashMap<Politica, List<Objetivo>>();
+    		for(Objetivo obj : todosObjetivosPorGerarquiaZona){
+    			
+    			if(!Checks.esNulo(map.get(obj.getPolitica()))){
+    				map.get(obj.getPolitica()).add(obj);	
+    			}else{
+    				List<Objetivo> lisobj = new ArrayList<Objetivo>();
+    				lisobj.add(obj);
+    				map.put(obj.getPolitica(), lisobj);
+    			}
+    			
+    		}
+    		
+    		/*Comprobamos si el usuario esta en la zon_pef_usu de nivel mas bajo existente*/
+    		Iterator it = map.entrySet().iterator();
+    		while (it.hasNext()) {
+     	        Map.Entry politicaObjs = (Map.Entry)it.next();
+     	        ///Obtenemos las zon pef usu del nivel mas bajo 
+     	        Politica pol = (Politica) politicaObjs.getKey();
+     	        List<ZonaUsuarioPerfil> zpusDeLaPol = zonaDao.getZonasPerfilesUsuariosPrimerNivelExistente(pol.getPerfilGestor().getId(), pol.getZonaGestor().getCodigo());
+     	        
+     	        List<Usuario> usuariosPuedenVer = new ArrayList<Usuario>();
+     	        for(ZonaUsuarioPerfil zpu : zpusDeLaPol){
+     	        	usuariosPuedenVer.add(zpu.getUsuario());
+     	        }
+     	        
+     	        if(usuariosPuedenVer.contains(usuario)){
+     	        	objetivosQuePuedeVer.addAll((Collection<? extends Objetivo>) politicaObjs.getValue());
+     	        }
+     	        
+     	    }
+    		
+    		return objetivosQuePuedeVer;
     	}else{
     		return null;
     	}
@@ -128,13 +174,12 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
     @Override
     public Long cantidadObjetivosPendientesGestor(Usuario usuario) {
     	
-    	String hql = armaHQLObjetivosPendientesCount(usuario);
+    	List<Objetivo> objs = buscarObjetivosPendientesGestor(usuario);
 
-    	if(!Checks.esNulo(hql)){
-            Query query = getSession().createQuery(hql);
-            return (Long) query.uniqueResult();	
+    	if(!Checks.estaVacio(objs)){
+            return (long) objs.size();	
     	}else{
-    		return null;
+    		return (long) 0;
     	}
     }
 
@@ -160,15 +205,6 @@ public class ObjetivoDaoImpl extends AbstractEntityDao<Objetivo, Long> implement
     	String where = armaWhereHQLObjetivosPendientes(usuario);
     	if(!Checks.esNulo(where)){
     		return "from Objetivo obj "+where;
-    	}else{
-    		return null;
-    	}
-    }
-    
-    private String armaHQLObjetivosPendientesCount(Usuario usuario){
-    	String where = armaWhereHQLObjetivosPendientes(usuario);
-    	if(!Checks.esNulo(where)){
-    		return "select count(obj) from Objetivo obj "+where;
     	}else{
     		return null;
     	}

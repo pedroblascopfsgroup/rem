@@ -257,8 +257,8 @@ public class ZonaManager {
      * @param idPerfil
      * @param codigoZona
      */
-    public ZonaUsuarioPerfil getZonaPerfilUsuarioPrimerNivelExistente(Long idPerfil, String codigoZona){
-    	return zonaDao.getZonaPerfilUsuarioPrimerNivelExistente(idPerfil, codigoZona);
+    public List<ZonaUsuarioPerfil> getZonasPerfilesUsuariosPrimerNivelExistente(Long idPerfil, String codigoZona){
+    	return zonaDao.getZonasPerfilesUsuariosPrimerNivelExistente(idPerfil, codigoZona);
     }
 
 }

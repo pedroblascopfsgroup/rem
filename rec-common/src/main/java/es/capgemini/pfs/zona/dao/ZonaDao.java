@@ -105,5 +105,12 @@ public interface ZonaDao extends AbstractDao<DDZona, Long> {
      * @param idPerfil
      * @param codigoZona
      */
-    public ZonaUsuarioPerfil getZonaPerfilUsuarioPrimerNivelExistente(Long idPerfil, String codigoZona);
+    public List<ZonaUsuarioPerfil> getZonasPerfilesUsuariosPrimerNivelExistente(Long idPerfil, String codigoZona);
+    
+    
+    /**
+     * Devuelve true o false según si la zon pef usu que se le pasa es la de nivel más bajo dado el perfil y la zona
+     * @param zonPefUsu
+     */
+    public boolean userEstaEnElNivelMasBajoZonaPerfil(ZonaUsuarioPerfil zonPefUsu);
 }

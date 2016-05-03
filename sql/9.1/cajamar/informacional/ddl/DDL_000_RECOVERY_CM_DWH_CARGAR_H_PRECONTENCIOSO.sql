@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160503
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=GC-3200
+--## PRODUCTO=NO
+--## 
+--## Finalidad: e modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_INICIO_PRE
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
@@ -931,3 +949,6 @@ EXCEPTION
 end;
 
 END CARGAR_H_PRECONTENCIOSO;
+/
+EXIT
+

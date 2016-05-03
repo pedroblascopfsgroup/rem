@@ -120,9 +120,15 @@ public class AdjuntoHayaManager {
 	
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
     	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
-   		for(Procedimiento prc : asun.getProcedimientos()) {
-			crearPropuesta(prc);
+   		boolean creando = false;
+    	for(Procedimiento prc : asun.getProcedimientos()) {
+    		if(crearPropuesta(prc)) {
+    			creando = true;
+    		}
 		}
+    	if(creando) {
+    		return null;
+    	}
    		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
 			adjuntosAsunto = documentosExpediente(id, null, claseExpediente);
@@ -132,12 +138,16 @@ public class AdjuntoHayaManager {
 	
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
-		crearPropuesta(prc);
+		boolean creando = crearPropuesta(prc);
 		String claseExpediente = getClaseExpedienteByProcedimientoPadre(prc);
-		return documentosExpediente(prc.getAsunto().getId(), prcId, claseExpediente);
+		if(creando) {
+			return null;
+		}
+		return documentosExpediente(prc.getAsunto().getId(), prcId, claseExpediente);			
 	}
 	
-	private void crearPropuesta(Procedimiento prc) {
+	private boolean crearPropuesta(Procedimiento prc) {
+		boolean creando = false;
 		if(buscarTPRCsinContenedor(prc)) {
 			String idAsunto=prc.getAsunto().getId().toString();
 			String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
@@ -147,10 +157,12 @@ public class AdjuntoHayaManager {
 			try {
 				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
 				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
+				creando = true;
 			} catch (GestorDocumentalException e) {
 				e.printStackTrace();
 			}		
 		}
+		return creando;
 	}
 	
 	private List<EXTAdjuntoDto> documentosExpediente(Long idAsunto, Long idPrc, String claseExpediente) {

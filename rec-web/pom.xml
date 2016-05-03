@@ -1600,10 +1600,11 @@
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
 					<war>pfs-${project.version}</war>
-					<dumpsDir>${dump-directory}</dumpsDir>
+					<dumpsDir>${dumpsDir}</dumpsDir>
 					<directory>${directory}</directory>
 					<tag>${tag}</tag>
 					<container>${container}</container>
+					<port>${port}</port>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=LORENZO LERATE
+--## AUTOR=RUBEN ROVIRA
 --## FECHA_CREACION=20160502
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1
@@ -16,20 +16,16 @@
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
-SET DEFINE OFF;
+
 
 DECLARE
 
     ERR_NUM        NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG        VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    NUM_CIRBE   NUMBER(25):=1; -- Vble. para validar la existencia de una columna. 
     
-    loop_cycle   NUMBER(25); -- Vble. para validar la existencia de una columna. 
-    
-    cursor c1 is
-     select * from cm01.cir_cirbe 
-     where CIR_FECHA_EXTRACCION = TO_DATE('29/2/16', 'dd/mm/yy');
-
 BEGIN
+
   FOR c IN
     (SELECT c.owner, c.table_name, c.constraint_name
     FROM user_constraints c
@@ -40,20 +36,15 @@ BEGIN
   LOOP
     dbms_utility.exec_ddl_statement('alter table "' || c.owner || '"."' || c.table_name || '" disable constraint ' || c.constraint_name);
   END LOOP;
-            
-    loop_cycle := 0;
-
-   FOR cirbe_rec in c1
-   LOOP
+    
+      SELECT COUNT(1) INTO NUM_CIRBE FROM CIR_CIRBE WHERE CIR_FECHA_EXTRACCION = TO_DATE('29/02/16', 'dd/mm/yy');
+ WHILE NUM_CIRBE>0           
+LOOP 
+      DELETE FROM cm01.cir_cirbe WHERE CIR_FECHA_EXTRACCION = TO_DATE('29/02/16', 'dd/mm/yy') AND ROWNUM < 10000;
+      COMMIT;
+       SELECT COUNT (1)INTO NUM_CIRBE FROM CIR_CIRBE WHERE CIR_FECHA_EXTRACCION = TO_DATE('29/02/16', 'dd/mm/yy');
+END LOOP;
   
-      DELETE FROM cm01.cir_cirbe WHERE CIR_ID = cirbe_rec.CIR_ID;
-      loop_cycle := loop_cycle + 1;
-     IF MOD(loop_cycle, 1000 ) = 0 THEN
-        COMMIT;
-      END IF;
-   END LOOP;
-  
-  DBMS_OUTPUT.put_line('Eliminados '||loop_cycle||' registros de CIR_CIRBE con fecha extracción 29/02/16.');
 
  FOR c IN
     (SELECT c.owner, c.table_name, c.constraint_name

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileException;
@@ -28,6 +29,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.ContratoPersonaManualDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
@@ -45,6 +47,7 @@ import es.capgemini.pfs.persona.model.DDPropietario;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.persona.model.PersonaManual;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -75,6 +78,9 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 @Service
 public class BurofaxManager implements BurofaxApi {
 
+	@Autowired
+	private Executor executor;
+	
 	@Autowired
 	private BurofaxDao burofaxDao;
 
@@ -524,6 +530,8 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_SOLICITADO);
 			DDResultadoBurofaxPCO resultado=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
 			
+			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			
 			for(EnvioBurofaxPCO envioBurofax : listaEnvioBurofaxPCO){
 				
 				String contenidoParseadoIntermedio = "";
@@ -541,7 +549,7 @@ public class BurofaxManager implements BurofaxApi {
 				String contenidoParseadoFinal = docBurManager.parseoFinalBurofax(contenidoParseadoIntermedio, mapeoVariables);
 				
 				envioBurofax.setContenidoBurofax(contenidoParseadoFinal);
-				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
+				//genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 				
 				BurofaxEnvioIntegracionPCO envioIntegracion=new BurofaxEnvioIntegracionPCO();
 				envioIntegracion.setEnvioId(envioBurofax.getId());
@@ -584,11 +592,17 @@ public class BurofaxManager implements BurofaxApi {
 					envioIntegracion.setNombreFichero(nombreFicheroPdf);
 					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 					
+					//rellenamos la referencia externa del burofax nombre pdf + usuario logado
+					String refExternaEnvio = nombreFicheroPdf +" - "+usuarioLogado.getUsername();
+					
+					envioBurofax.setRefExternaEnvio(refExternaEnvio);
+					
 				} else {
 					envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 				}
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
+				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 			}
 		} catch (Exception e) {
 			logger.error("guardarEnvioBurofax: " + e);

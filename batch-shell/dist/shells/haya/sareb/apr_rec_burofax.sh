@@ -29,6 +29,9 @@ if [ -f $MAINSH ]; then
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"
     java -Xms512M -Xmx1536M -Dconfig.dir=$DIR_CONFIG -Dconfig.file.mask=$CFG_FILE -Duser.country=ES -Duser.language=es -cp $CLASS2 $CLASEINICIO --context=Default "$@"
+
+    mv $DIR_DESTINO/burofax/rechazos/*.pdf $RECEPCION_DOCALIA/rechazos
+
 else
     echo "$(basename $0) Error en $filename: no se ha encontrado  $MAINSH"
     exit 1

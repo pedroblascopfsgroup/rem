@@ -779,6 +779,40 @@ function(entidad,page){
 	});
 
 	toolbar.add(botonResponder);
+	
+	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_CAMBIO_OFICINA">
+	var btnCambioOficina = new Ext.Button({
+    text:'<s:message code="plugin.coreextension.cambioOficina.descripcion" text="**Cambio de Oficina"/>'
+    ,handler: function() {
+        w = new Ext.Window({
+            autoLoad: {
+                    url : app.resolveFlow('plugin.core.expedientes.cambioOficina')
+                    ,scripts : true
+                    ,params : {id:data.id}
+            }
+            ,width:600
+            ,title : '<s:message code="plugin.coreextension.cambioOficina.descripcion" text="**Cambio de Oficina" />'
+            ,autoHeight:true
+            ,closable:false
+            ,resizable: true
+            ,modal:true
+            ,layout:'fit'
+            ,autoShow:true    
+            ,x:250
+            ,y:0
+            ,bodyBorder : false
+        });
+        
+        w.on(app.event.DONE, function(){
+            w.close();
+            entidad.refrescar();
+        });
+        w.on(app.event.CANCEL, function(){ w.close(); });
+        w.show();
+    }
+	});
+	toolbar.add(btnCambioOficina);
+	</sec:authorize>
 
 	<sec:authorize ifAllGranted="EXPORTAR_PDF_EXPEDIENTE">
 	var botonPDF = new Ext.Button({

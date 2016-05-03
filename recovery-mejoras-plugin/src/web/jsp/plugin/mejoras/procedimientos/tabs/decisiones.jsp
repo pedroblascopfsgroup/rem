@@ -219,7 +219,7 @@
 		title:'<s:message code="procedimiento.listadoDecisiones.titulo" text="**DecisionProcedimiento" />'
 		,height : 400
 		,style:'padding-right:10px'
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_DECISIONES">
 		,bbar:buttonBar
 		</sec:authorize>
 	});

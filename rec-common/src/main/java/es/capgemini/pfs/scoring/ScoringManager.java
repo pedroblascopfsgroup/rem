@@ -293,7 +293,7 @@ public class ScoringManager {
         // ************************************************************ //
         for (PuntuacionParcial pp : listadoPuntuaciones) {
             String codigoGrupo = pp.getAlerta().getTipoAlerta().getGrupoAlerta().getCodigo() + " - " + pp.getAlerta().getTipoAlerta().getGrupoAlerta().getDescripcion();
-            String codigoAlerta = pp.getAlerta().getTipoAlerta().getCodigo()  + " - " + pp.getAlerta().getTipoAlerta().getDescripcion();
+            String codigoAlerta = pp.getAlerta().getTipoAlerta().getCodigo()  + " - " + pp.getAlerta().getTipoAlerta().getDescripcionLarga();
             Long puntuacionAlerta = pp.getPuntuacion();
             String codigoGravedad = pp.getAlerta().getNivelGravedad().getCodigo()  + " - " + pp.getAlerta().getNivelGravedad().getDescripcion();
 

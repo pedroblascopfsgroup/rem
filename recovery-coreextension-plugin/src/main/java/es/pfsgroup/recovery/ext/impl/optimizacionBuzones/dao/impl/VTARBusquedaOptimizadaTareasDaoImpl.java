@@ -118,7 +118,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			@Override
 			public Page getPage(AbstractHibernateDao ldao,
 					HQLBuilder lhqlbuilder, WebDto ldto) {
-				return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+				return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass, "vtar.id ASC");
 			}
 		};
         
@@ -140,7 +140,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			@Override
     		public Page getPage(AbstractHibernateDao ldao,
     				HQLBuilder lhqlbuilder, WebDto ldto) {
-    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass, null);
     		}
     	};
     	
@@ -222,9 +222,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     }
    
     @SuppressWarnings("rawtypes")
-	private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) 
+	private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz, String additionalOrder) 
     {
-		PageTransformHibernateFAKE page = new PageTransformHibernateFAKE(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz);
+		PageTransformHibernateFAKE page = new PageTransformHibernateFAKE(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz, additionalOrder);
 		dao.getHibernateTemplate().executeFind(page);
 		return page;
 
@@ -289,7 +289,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         	hb.append(" ((");
         	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
         		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
-        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");	
+        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo = '"+zpu.getZona().getCodigo()+"') OR");	
         		}
         	}
         	

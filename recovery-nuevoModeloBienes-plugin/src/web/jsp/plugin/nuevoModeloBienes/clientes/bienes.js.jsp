@@ -151,7 +151,7 @@
 		epigrafeIAE_valor = '${NMBbien.adicional.codIAE}';
 		descripcionIAE_valor = '${NMBbien.adicional.desIAE}';
 		
-		entidad_valor = '${NMBbien.adicional.entidad}';
+		entidad_valor = '<s:message text="${NMBbien.adicional.entidad}" javaScriptEscape="true" />';
 		nCuenta_valor = '${NMBbien.adicional.numCuenta}';
 		if (nCuenta_valor.length==20) {
 			nCuenta_entidad_valor = nCuenta_valor.substring(0,4);
@@ -173,7 +173,7 @@
 			/* AUTOMATICO */
 			/*
 			CPI - 14/11/2015
-			Se permite modificar bienes automaticos por tener la pestaï¿½a datos_entidad
+			Se permite modificar bienes automaticos por tener la pestaña datos_entidad
 			bloquearCampos = 1;
 			*/			 
 			bloquearCampos = 2; 
@@ -364,6 +364,7 @@
 			,name:'descripcion'
 			,width:240		
 			,height:150
+			,maxLength:250
 			,labelStyle:labelStyleTextArea
 		});
 		
@@ -1135,12 +1136,17 @@
 		
 		var validaTab = function(tab) {
 			msgError='';
-			if (pestanaPrincipal == tab) {				
+			if (pestanaPrincipal == tab) {		
 				if(NMBparticipacion.getActiveError() != '') {
 					msgError=NMBparticipacion.getActiveError();
 					focusError(pestanaPrincipal,NMBparticipacion);
 					return false;
 				}
+				else if(!descripcionNMB.validate()) {
+					msgError=descripcionNMB.getActiveError();
+					focusError(pestanaPrincipal, descripcionNMB);
+					return false;
+				}				
 			}
 			if (pestanaValoraciones == tab) {
 			
@@ -2188,14 +2194,14 @@
 	   
     <c:forEach items="${tabs}" var="entry">
 		var lista = [];
-		<%-- Es posible que algunas de las pestaï¿½as existentes en la configuraciï¿½n no estï¿½n definidas en la jsp, por eso filtramos la lista. --%>
+		<%-- Es posible que algunas de las pestañas existentes en la configuración no están definidas en la jsp, por eso filtramos la lista. --%>
 		<c:forEach items = "${entry.value.listaTabs}" var="tab">
 			try{
 				if(${tab}){
 					lista[lista.length] = ${tab};
 				}
 			}catch(e){
-				<%-- Si la pestaï¿½a no se ha creado, no se intenta aï¿½adir. --%>		
+				<%-- Si la pestaña no se ha creado, no se intenta añadir. --%>		
 			}	
 		</c:forEach>
 		listaTabs[listaTabs.length] = new objTabs('${entry.key}',lista);

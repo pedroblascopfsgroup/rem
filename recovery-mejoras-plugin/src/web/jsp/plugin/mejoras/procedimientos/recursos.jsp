@@ -199,7 +199,7 @@
 	var bottomBar = [];
 	
 	<c:if test="${recurso.fechaResolucion == null && !isConsulta}">
-		<sec:authorize ifNotGranted="SOLO_CONSULTA"> 
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_RECURSOS_GUARDAR_REVISADO"> 
 			bottomBar.push(btnGuardar);
 			bottomBar.push(btnRevisado);
 		</sec:authorize> 

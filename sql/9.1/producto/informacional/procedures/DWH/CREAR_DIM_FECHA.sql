@@ -181,7 +181,7 @@ BEGIN
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
- 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_MTD_PK'', ''D_F_MTD (DIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_MTD_PK'', ''D_F_MTD (DIA_ID,MTD_DIA)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_F_QTD ------------------------------
@@ -191,7 +191,7 @@ BEGIN
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
- 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_QTD_PK'', ''D_F_QTD (DIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_QTD_PK'', ''D_F_QTD (DIA_ID,QTD_DIA)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_F_YTD ------------------------------
@@ -201,7 +201,7 @@ BEGIN
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
- 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_YTD_PK'', ''D_F_YTD (DIA_ID)'', ''S'', ''UNIQUE'', :error); END;';
+ 	V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_YTD_PK'', ''D_F_YTD (DIA_ID,YTD_DIA)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
 	
     ------------------------------ D_F_ULT_6_MESES ------------------------------
@@ -211,7 +211,7 @@ BEGIN
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 	
-	V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_ULT_6_MESES_IX'', ''D_F_ULT_6_MESES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+	V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_ULT_6_MESES_IX'', ''D_F_ULT_6_MESES (MES_ID,ULT_6_MESES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
 	execute immediate V_SQL USING OUT error;
      
 
@@ -222,7 +222,7 @@ BEGIN
                           :error); END;';
     execute immediate V_SQL USING OUT error;
 
-	V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_ULT_12_MESES_IX'', ''D_F_ULT_12_MESES (MES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+	V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_F_ULT_12_MESES_IX'', ''D_F_ULT_12_MESES (MES_ID,ULT_12_MESES_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
 	execute immediate V_SQL USING OUT error;
       
     --Log_Proceso

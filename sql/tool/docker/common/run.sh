@@ -39,7 +39,7 @@ OPTION_PITERDEBUG=no
 OPTION_FLASHBACK_MODE=no
 OPTION_SCRIPTS_MODE=no
 OPTION_STATISTICS=no
-OPTION_PORT=1521
+OPTION_PORT=1525
 
 DOCKER_INNER_ERROR_LOG=/tmp/scriptslog/error.log
 VAR_OUTTER_ERROR_LOG=""
@@ -504,7 +504,7 @@ else
 		verify_workspace
 		echo "[INFO] Empaquetando y ejecutando scripts DDL y DML"
 		package_sql $STARTING_TAG $CLIENTE
-		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG
+		$(pwd)/execute-scripts.sh $CONTAINER_NAME $DOCKER_INNER_ERROR_LOG $CUSTOM_NLS_LANG
         if [[ $? != 0 ]]; then
             exit 1
         fi

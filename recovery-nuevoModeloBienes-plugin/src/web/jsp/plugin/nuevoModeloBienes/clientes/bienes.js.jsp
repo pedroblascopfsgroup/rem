@@ -151,7 +151,7 @@
 		epigrafeIAE_valor = '${NMBbien.adicional.codIAE}';
 		descripcionIAE_valor = '${NMBbien.adicional.desIAE}';
 		
-		entidad_valor = '${NMBbien.adicional.entidad}';
+		entidad_valor = '<s:message text="${NMBbien.adicional.entidad}" javaScriptEscape="true" />';
 		nCuenta_valor = '${NMBbien.adicional.numCuenta}';
 		if (nCuenta_valor.length==20) {
 			nCuenta_entidad_valor = nCuenta_valor.substring(0,4);

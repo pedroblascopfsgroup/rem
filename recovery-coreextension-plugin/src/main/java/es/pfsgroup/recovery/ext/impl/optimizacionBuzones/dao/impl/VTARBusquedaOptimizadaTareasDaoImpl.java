@@ -118,7 +118,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			@Override
 			public Page getPage(AbstractHibernateDao ldao,
 					HQLBuilder lhqlbuilder, WebDto ldto) {
-				return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+				return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass, "vtar.id ASC");
 			}
 		};
         
@@ -140,7 +140,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			@Override
     		public Page getPage(AbstractHibernateDao ldao,
     				HQLBuilder lhqlbuilder, WebDto ldto) {
-    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass, null);
     		}
     	};
     	
@@ -222,9 +222,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     }
    
     @SuppressWarnings("rawtypes")
-	private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) 
+	private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz, String additionalOrder) 
     {
-		PageTransformHibernateFAKE page = new PageTransformHibernateFAKE(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz);
+		PageTransformHibernateFAKE page = new PageTransformHibernateFAKE(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz, additionalOrder);
 		dao.getHibernateTemplate().executeFind(page);
 		return page;
 

@@ -73,8 +73,9 @@ public static String convertNumberToLetter(double doubleNumber)
                         + "no es posible convertirlo");
 
     if (doubleNumber < 0){
-    	//Se pasa el numero a positivo
+    	//Se pasa el numero a positivo y se anexa la palabra MENOS a la frase a mostrar
     	doubleNumber = doubleNumber * (-1);
+    	converted.append("MENOS ");
     	//Trato antiguo a los numeros negativos
         //throw new NumberFormatException("El numero debe ser positivo");
     }

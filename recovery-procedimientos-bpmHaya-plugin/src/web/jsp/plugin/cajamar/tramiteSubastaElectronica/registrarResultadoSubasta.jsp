@@ -64,17 +64,24 @@ campoCoincidencia.allowBlank = true;
 campoPostores.setDisabled(true);
 campoPostores.allowBlank = true;
 campoDetalle.setDisabled(true);
-campoDetalle.allowBlank = true;
+campoObservaciones.allowBlank = true;
 
-comboDecision.on('select', function(){	
-	if(campoResultado.getValue() == 'ENT' || 'TER') {//entidad o terceros
+campoDecision.on('select', function(){	
+	if(campoDecision.getValue() == 'ENT' || campoDecision.getValue() == 'TER') {//entidad o terceros
+		campoPostores.reset();
+		campoPostores.setDisabled(true);
+		campoPostores.allowBlank = true;
 		campoCoincidencia.reset();
 		campoCoincidencia.setDisabled(true);
 		campoCoincidencia.allowBlank = true;
+		campoDetalle.reset();
+		campoDetalle.setDisabled(true);
+		campoDetalle.allowBlank = true;
 		campoMotivo.setDisabled(false);
 		campoMotivo.allowBlank = false;
 	}
-	else if(campoResultado.getValue() == 'NO') {//suspension
+	else if(campoDecision.getValue() == 'NO') {//suspension
+		campoPostores.reset();
 		campoMotivo.reset();
 		campoMotivo.setDisabled(true);
 		campoMotivo.allowBlank = true;
@@ -85,10 +92,11 @@ comboDecision.on('select', function(){
 
 campoCoincidencia.on('select', function(){	
 		if(campoCoincidencia.getValue() == '01') {//si
+			campoPostores.reset();
 			campoPostores.setDisabled(false);
 			campoPostores.allowBlank = false;
 		}
-		else if(campoResultado.getValue() == '02') {//no
+		else if(campoCoincidencia.getValue() == '02') {//no
 			campoPostores.reset();
 			campoPostores.setDisabled(true);
 			campoPostores.allowBlank = true;
@@ -98,18 +106,17 @@ campoCoincidencia.on('select', function(){
 	
 campoPostores.on('select', function(){	
 		if(campoPostores.getValue() == '01') {//si
-			campoDetalle.setDisabled(false);
-			campoDetalle.allowBlank = false;	
+			campoDetalle.setDisabled(false);	
 		}
 		else if(campoPostores.getValue() == '02') {//no
 			campoDetalle.reset();
 			campoDetalle.setDisabled(true);
-			campoDetalle.allowBlank = true;
 		}
 });
 
-campoDetalle.on('select', function(){	
-		if(campoDetalle.getValue() == 'OTR') {//si
+campoMotivo.on('select', function(){	
+		
+		if(campoMotivo.getValue() == 'OTR') {//si
 			campoObservaciones.allowBlank = false;	
 		}
 		else {

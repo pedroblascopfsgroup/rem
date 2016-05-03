@@ -1923,7 +1923,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     private Boolean puedeMostrarSolapasDecision(Long idExpediente, boolean solapaRecuperacion) {
         Expediente exp = expedienteDao.get(idExpediente);   
         
-        if(DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(exp.getArquetipo().getItinerario().getdDtipoItinerario().getCodigo())){
+        if(!Checks.esNulo(exp.getArquetipo().getItinerario()) && DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(exp.getArquetipo().getItinerario().getdDtipoItinerario().getCodigo())){
         	////Comprobaciones para los expedientes de Gestión de deuda
         	if(!Checks.esNulo(exp.getEstadoItinerario()) && (exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) || exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO))){
         		return Boolean.TRUE;
@@ -1932,7 +1932,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         	}
         }else if(!Checks.esNulo(exp.getTipoExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_BANKIA_RECUPERACION.equals(exp.getTipoExpediente().getCodigo())){
         	return Boolean.TRUE;
-        }else if(exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()){
+        }else if(!Checks.esNulo(exp.getArquetipo().getItinerario()) && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()){
         	///Comprobaciones para expedientes de recuperacion
         	if(exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
             	

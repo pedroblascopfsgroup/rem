@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
+import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
 
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
@@ -49,6 +50,8 @@ public class coreextensionController {
 	private static final String JSON_LIST_TIPO_PROCEDIMIENTO = "procedimientos/listadoTiposProcedimientoJSON";
 	private static final String TIPO_USUARIO_DEFECTO_JSON = "plugin/coreextension/asunto/tipoUsuarioGestorDefectoJSON";
 	private static final String GESTORES_DESPACHOS_USUARIO_AUTO_JSON = "plugin/coreextension/asunto/listadoUsuariosAutomaticosJSON";
+	private static final String LISTADO_BUSQUEDA_ACUERDOS = "plugin/coreextension/acuerdo/listadoAcuerdosJSON";
+
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -386,5 +389,20 @@ public class coreextensionController {
 		model.put("pagina", page);
 		
 		return TIPO_USUARIO_DEFECTO_JSON;
+	}
+	
+	/**
+	 * Controlador que devuelve un JSON con la lista de acuerdos en base a los filtros utilizados en el buscador de acuerdos
+	 * @param model
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String listBusquedaAcuerdos(ModelMap model, BusquedaAcuerdosDTO busquedaAcuerdosDTO){
+		
+		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(busquedaAcuerdosDTO);
+		model.put("pagina", page);
+		
+		return LISTADO_BUSQUEDA_ACUERDOS;
 	}
 }

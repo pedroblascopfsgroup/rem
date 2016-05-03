@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	
+	<!-- renderiza el formulario -->
+    <end-state id="listado" view="plugin/coreextension/acuerdo/listadoBusquedaAcuerdos" >
+	   <on-entry>
+            <evaluate expression="executor.execute('mejacuerdomanager.getListTiposSolicitante')" result="flowScope.tiposSolicitante"/>
+            <evaluate expression="executor.execute('mejacuerdomanager.getListEstadosAcuerdo')" result="flowScope.estadosAcuerdo"/>	
+            <evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('mejacuerdo.getNiveles')" result="flowScope.niveles" />	
+			<evaluate expression="executor.execute('mejacuerdomanager.getListEntidadAcuerdo')" result="flowScope.listadoEntidadAcuerdo" />	
+         
+	    </on-entry>
+    </end-state> 	
+    
+</flow>

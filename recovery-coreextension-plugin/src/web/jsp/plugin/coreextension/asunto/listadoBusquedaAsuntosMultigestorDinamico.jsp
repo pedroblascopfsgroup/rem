@@ -275,7 +275,6 @@
     	       apellidosNombreStr = apellidosNombreStr + nombreStr;
     	    }
     	    
-    	    debugger;
     	    <%-- Si el nombre o apellidos contienen el carácter "-", debemos terminar de recorrer el vector. --%>
     	    if(separa.length > 3){
     	    	for(var i=3; i< separa.length; i++){

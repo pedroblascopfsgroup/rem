@@ -15,13 +15,19 @@ import java.util.TreeMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.security.SecurityUtils;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dao.DDEstadoAcuerdoDao;
+import es.capgemini.pfs.acuerdo.dao.DDSolicitanteDao;
 import es.capgemini.pfs.acuerdo.dao.DDTipoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -37,11 +43,14 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -50,6 +59,7 @@ import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.tareaNotificacion.dao.TareaNotificacionDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
@@ -71,7 +81,13 @@ import es.capgemini.pfs.termino.model.TerminoOperaciones;
 import es.capgemini.pfs.termino.model.ValoresCamposTermino;
 import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.dao.PerfilDao;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.NivelDao;
+import es.capgemini.pfs.zona.dao.ZonaDao;
+import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -109,7 +125,11 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TERMINOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoTerminosAcuerdoByAcuId";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO = "mejacuerdo.getListTipoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_PRODUCTO = "mejacuerdo.getListTipoProducto";	
+	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE= "mejacuerdomanager.getListTiposSolicitante";
+	public static final String BO_ACUERDO_MGR_GET_LISTADO_ESTADOS_ACUERDO= "mejacuerdomanager.getListEstadosAcuerdo";
+	public static final String BO_ACUERDO_MGR_GET_LISTADO_ENTIDAD_ACUERDO="mejacuerdomanager.getListEntidadAcuerdo";
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_ACUERDO = "mejacuerdo.saveTerminoAcuerdo";	
+	public static final String BO_ACUERDO_MGR_GET_LISTADO_NIVELES= "mejacuerdo.getNiveles";
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_CONTRATO = "mejacuerdo.saveTerminoContrato";	
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_BIEN = "mejacuerdo.saveTerminoBien";		
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_BIENES_ASUNTO = "mejacuerdo.obtenerListadoBienesAcuerdoByAsuId";	
@@ -125,6 +145,14 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_SAVE_ACTUACION_REALIZADA_EXPEDIENTE = "mejacuerdoManager.saveActuacionesRealizadasExpediente";
     public static final String BO_ACUERDO_MGR_ACTUALIZACIONES_REALIZADAS_EXPEDIENTE = "mejacuerdoManager.getActuacionExpediente";
 	
+	public static final String USER_SESSION_KEY = "user_login";
+	@Autowired
+	private UsuarioDao usuarioDao;
+	@Autowired
+	private PerfilDao perfilDao;
+	@Autowired(required = false)
+	@Qualifier("securityDefaultUserId")
+	private Long defaultUserId;
 		
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -162,11 +190,26 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	DDTipoAcuerdoDao tipoAcuerdoDao;
 	
 	@Autowired
+	DespachoExternoDao despachoExternoDao;
+	
+	@Autowired
+	DDSolicitanteDao solicitanteDao;
+	
+	@Autowired
+	DDEstadoAcuerdoDao estadosAcuerdoDao;
+	
+	@Autowired
 	CoreProjectContext coreProjectContext;
 	
 	@Autowired
 	EXTGestorAdicionalAsuntoDao gestorAdicionalAsuntoDao;
 		
+	@Autowired
+	NivelDao nivelDao;
+
+	@Autowired
+	ZonaDao zonaDao;
+	
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
 	 * 
@@ -469,6 +512,117 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		return listado;
 	}   
 	
+	/**
+     * 
+     * Obtiene el listado de los tipos de solicitante de acuerdos
+     * 
+     * @return
+     */
+	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE)
+	public List<DDSolicitante> getListTiposSolicitante() {
+
+		List<DDSolicitante> listado = solicitanteDao.getListTiposSolicitante();
+		
+		return listado;
+	}
+	
+	/**
+     * 
+     * Obtiene el listado de estados de acuerdo
+     * 
+     * @return
+     */
+	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_ESTADOS_ACUERDO)
+	public List<DDEstadoAcuerdo> getListEstadosAcuerdo() {
+
+		List<DDEstadoAcuerdo> listado = estadosAcuerdoDao.getListEstadosAcuerdo();
+		
+		return listado;
+	}
+	
+    /**
+     * obtiene todos los niveles.
+     * @return niveles
+     */
+    @BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_NIVELES)
+    public List<Nivel> getNiveles() {
+        Long maximoNivel = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO)).getMaximoNivelZona();
+        List<Nivel> niveles = nivelDao.getList();
+        niveles = filtrarPermisosNivel(niveles, maximoNivel);
+        return niveles;
+    }
+    
+    @BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_ENTIDAD_ACUERDO)
+    public List<DDEntidadAcuerdo> getListEntidadAcuerdo() {
+    	
+    	List<DDEntidadAcuerdo> listEntidadAcuerdo = acuerdoDao.getListEntidadAcuerdo();
+    	
+        return listEntidadAcuerdo;
+    }
+    
+    
+    /**
+     * filtra los niveles a los que no tengo acceso.
+     * @param niveles niveles
+     * @param maximoNivel maximo acceso
+     * @return nuevos niveles
+     */
+    private List<Nivel> filtrarPermisosNivel(List<Nivel> niveles, Long maximoNivel) {
+        List<Nivel> nuevoNivel = new ArrayList<Nivel>();
+        for (Nivel n : niveles) {
+            if (n.getId().longValue() >= maximoNivel.longValue()) {
+                nuevoNivel.add(n);
+            }
+        }
+        return nuevoNivel;
+    }
+    
+    /**
+	 * Retorna las zonas del usuario logueado.
+	 * 
+	 * @return List
+	 */
+	@BusinessOperation
+	public List<DDZona> getZonasUsuarioLogado() {
+		return new ArrayList<DDZona>(getUsuarioLogado().getZonas());
+	}
+	
+	/**
+	 * Recupera el usuario logeado. Y si no hay el usuario por defecto.
+	 * 
+	 * @return usuario
+	 */
+	
+	@Transactional
+	public Usuario getUsuarioLogado() {
+		EventFactory.onMethodStart(this.getClass());
+		Usuario loggedUser = null;
+
+		if (RequestContextHolder.getRequestAttributes() != null
+				&& RequestContextHolder.getRequestAttributes().getAttribute(
+						USER_SESSION_KEY, RequestAttributes.SCOPE_SESSION) != null) {
+			return (Usuario) RequestContextHolder.getRequestAttributes()
+					.getAttribute(USER_SESSION_KEY,
+							RequestAttributes.SCOPE_SESSION);
+		}
+
+		if (SecurityUtils.getCurrentUser() == null && defaultUserId != null) {
+			loggedUser = usuarioManager.get(defaultUserId);
+		} else {
+			loggedUser = usuarioManager.get(((UsuarioSecurity) SecurityUtils.getCurrentUser())
+					.getId());
+		}
+
+		loggedUser.initialize();
+
+		if (RequestContextHolder.getRequestAttributes() != null)
+			RequestContextHolder.getRequestAttributes().setAttribute(
+					USER_SESSION_KEY, loggedUser,
+					RequestAttributes.SCOPE_SESSION);
+		EventFactory.onMethodStop(this.getClass());
+		return loggedUser;
+	}
+	
     /**
      * 
      * Obtiene el listado de los subtipos de acuerdo
@@ -484,6 +638,18 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		return listado;
 	} 
 	
+	 
+	 /**
+	     * Devuelve la lista de gestores de un despacho.
+	     * @param idDespacho el id del despacho.
+	     * @return la lista de gestores.
+	     */
+	    @BusinessOperation
+	    public List<GestorDespacho> getGestoresDespacho(Long idDespacho) {
+	        return despachoExternoDao.buscarGestoresDespacho(idDespacho);
+	    }
+	    
+	 
 	   /**
      * 
      * Obtiene el listado de los tipos de acuerdo

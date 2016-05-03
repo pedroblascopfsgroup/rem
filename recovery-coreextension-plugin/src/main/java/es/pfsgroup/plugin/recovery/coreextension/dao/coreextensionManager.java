@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.despachoExterno.EXTDespachoExternoComparator;
@@ -103,6 +105,9 @@ public class coreextensionManager implements coreextensionApi {
 	
 	@Autowired
 	private EntidadManager entidadManager;
+	
+	@Autowired
+	private AcuerdoDao acuerdoDao;
 	 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
@@ -833,5 +838,12 @@ public class coreextensionManager implements coreextensionApi {
 		
 		return ranking;
 	}*/
+	
+	@BusinessOperation(GET_LIST_BUSQUEDA_ACUERDOS)
+	public Page listBusquedaAcuerdosData(BusquedaAcuerdosDTO dto) {
+		return acuerdoDao.buscarAcuerdos(dto);
+		//return gestoresDao.getGestoresByDespachoDefecto(usuarioDto);
+	//	return this.colocarGestorDefectoPrimeraPosicion((List<Usuario>) page.getResults(),usuarioDto.getIdTipoDespacho(),page.getTotalCount());
+	}
 
 }

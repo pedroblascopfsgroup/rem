@@ -1,11 +1,13 @@
 package es.capgemini.pfs.acuerdo.dao;
 
-import java.util.Date;
 import java.util.List;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
 
 /**
  * @author maruiz
@@ -13,6 +15,7 @@ import es.capgemini.pfs.users.domain.Usuario;
  */
 public interface AcuerdoDao extends AbstractDao<Acuerdo, Long> {
 
+	
     /**
      * Busca Acuerdos de un asunto.
      * @param idAsunto id del asunto
@@ -52,4 +55,13 @@ public interface AcuerdoDao extends AbstractDao<Acuerdo, Long> {
     
     
     String getFechaPaseMora(Long idContrato);
+    
+    /**
+     * Devuelve los tipos de entidad acuerdo
+     * @return
+     */
+    List<DDEntidadAcuerdo> getListEntidadAcuerdo();
+
+	Page buscarAcuerdos(BusquedaAcuerdosDTO dto);
+    
 }

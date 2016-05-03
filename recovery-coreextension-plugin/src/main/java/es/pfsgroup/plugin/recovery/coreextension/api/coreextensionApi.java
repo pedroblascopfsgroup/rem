@@ -17,6 +17,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
 
 //FIXME Hay que eliminar esta clase o renombrarla
 // No a�adir nueva funcionalidad
@@ -49,6 +50,8 @@ public interface coreextensionApi {
 	String GET_SUPERVISOR_GESTOR_ADICIONAL_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getSupervisorPorAsuntoEntidad";
 	String GET_TIPO_GESTOR_SUPERVISOR_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getTipoGestorSupervisorPorAsuntoEntidad";
 	String GET_DESPACHO_SUPERVISOR_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getDespachoSupervisorPorAsuntoEntidad";
+	
+	String GET_LIST_BUSQUEDA_ACUERDOS = "plugin.recovery.coreextension.api.listBusquedaAcuerdosData";
 
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
@@ -235,5 +238,10 @@ public interface coreextensionApi {
 	
 	@BusinessOperationDefinition(GET_LIST_ALL_USUARIOS_POR_DEFECTO)
 	List<Usuario> getListAllUsuariosPorDefectoData(long idTipoDespacho, boolean incluirBorrados);
+	
+	
+	@BusinessOperationDefinition(GET_LIST_BUSQUEDA_ACUERDOS)
+	Page listBusquedaAcuerdosData(BusquedaAcuerdosDTO busquedaAcuerdosDTO);
+	
 	
 }

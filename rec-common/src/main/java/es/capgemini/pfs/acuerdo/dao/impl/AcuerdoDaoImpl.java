@@ -5,14 +5,22 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.hibernate.pagination.PaginationManager;
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 
@@ -23,6 +31,9 @@ import es.pfsgroup.commons.utils.Checks;
 @Repository("AcuerdoDao")
 public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements AcuerdoDao {
 
+	@Resource
+	private PaginationManager paginationManager;
+	
     /**
      * Busca Acuerdos de un asunto.
      * @param idAsunto id del asunto
@@ -123,5 +134,44 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	    SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(query.toString());
 	    return (String) sqlQuery.uniqueResult();
     }
+	
+	 public List<DDEntidadAcuerdo> getListEntidadAcuerdo(){
+		 
+	       	String hql = "from DDEntidadAcuerdo where auditoria.borrado = 0";
+	   		List<DDEntidadAcuerdo> lista = getHibernateTemplate().find(hql);
+		 	List<DDEntidadAcuerdo> lista2= null;
+		 	/*
+		 	for(int i=0;i<=lista.size();i++)
+		 	{
+		 		if(lista.get(i).getCodigo().equals(lista.get(i).CODIGO_ENTIDAD_ASUNTO)){
+			 	lista2.add(lista.get(i));
+		 		}
+		 		else{
+		 			if(lista.get(i).getCodigo().equals(lista.get(i).CODIGO_ENTIDAD_EXPEDIENTE)){
+					 	lista2.add(lista.get(i));
+				 		}
+		 		}
+		 	}
+	   			*/	
+		 	
+		 	for(int i=0;i<lista.size();i++)
+		 	{
+		 		if(!lista.get(i).getCodigo().equals(lista.get(i).CODIGO_ENTIDAD_ASUNTO) && !lista.get(i).getCodigo().equals(lista.get(i).CODIGO_ENTIDAD_EXPEDIENTE)){
+		 			lista.remove(i);
+				 }
+		 	}
+		 	
+	   		return lista;
+	    }
+
+	public Page buscarAcuerdos(BusquedaAcuerdosDTO dto) {
+		return paginationManager.getHibernatePage(getHibernateTemplate(),generarHQLBuscarAcuerdos(dto), (PaginationParams) dto);
+	}
+	
+	private String generarHQLBuscarAcuerdos(BusquedaAcuerdosDTO dto) {
+		
+		return null;
+		
+	}
 
 }

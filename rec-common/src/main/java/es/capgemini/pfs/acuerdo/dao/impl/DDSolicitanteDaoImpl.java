@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.acuerdo.dao.DDSolicitanteDao;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 
 /**
@@ -29,4 +30,19 @@ public class DDSolicitanteDaoImpl extends AbstractEntityDao<DDSolicitante, Long>
 		}
 		return tipos.get(0);
 	}
+    
+    @SuppressWarnings("unchecked")
+	@Override
+	public List<DDSolicitante> getListTiposSolicitante() {
+		//StringBuilder sb = new StringBuilder();
+    	String hql = "from DDSolicitante where auditoria.borrado = 0";
+		//sb.append("Select * from DDSolicitante sol ");
+		//sb.append("where sol.auditoria.borrado = 0 ");
+		
+		List<DDSolicitante> lista = getHibernateTemplate().find(hql);
+				
+		return lista;
+	}
+    
+   
 }

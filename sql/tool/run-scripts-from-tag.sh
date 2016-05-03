@@ -251,25 +251,25 @@ else
     done    
 fi
     
-if [ -f $BASEDIR/tmp/product-list-from-tag-SPs.txt ] ; then
-    cat $BASEDIR/tmp/product-list-from-tag-SPs.txt | sort > $BASEDIR/tmp/list-from-tag.txt
-fi
 if [ -f $BASEDIR/tmp/product-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/product-list-from-tag.txt | sort > $BASEDIR/tmp/list-from-tag.txt
 fi
-
-if [ -f $BASEDIR/tmp/customer-list-from-tag-SPs.txt ] ; then
-    cat $BASEDIR/tmp/customer-list-from-tag-SPs.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
+if [ -f $BASEDIR/tmp/product-list-from-tag-SPs.txt ] ; then
+    cat $BASEDIR/tmp/product-list-from-tag-SPs.txt | sort > $BASEDIR/tmp/list-from-tag.txt
 fi
+
 if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/customer-list-from-tag.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
-
-if [ -f $BASEDIR/tmp/customer-chapter-list-from-tag-SPs.txt ] ; then
-    cat $BASEDIR/tmp/customer-chapter-list-from-tag-SPs.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
+if [ -f $BASEDIR/tmp/customer-list-from-tag-SPs.txt ] ; then
+    cat $BASEDIR/tmp/customer-list-from-tag-SPs.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
+
 if [ -f $BASEDIR/tmp/customer-chapter-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/customer-chapter-list-from-tag.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
+fi
+if [ -f $BASEDIR/tmp/customer-chapter-list-from-tag-SPs.txt ] ; then
+    cat $BASEDIR/tmp/customer-chapter-list-from-tag-SPs.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
 
 if [ ! -f $BASEDIR/tmp/list-from-tag.txt ] ; then

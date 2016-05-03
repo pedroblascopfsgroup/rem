@@ -10,7 +10,7 @@
 --## Finalidad: D_EXP_DIR_TERRITORIAL
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 VersiÃ³n inicial
 --##########################################
 --*/
 
@@ -20,8 +20,8 @@ create or replace PROCEDURE TRUNCAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
--- Responsable última modificación: María Villanueva, PFS Groupp
--- Fecha última modificación:02/05/2016
+-- Responsable Ãºltima modificaciÃ³n: MarÃ­a Villanueva, PFS Groupp
+-- Fecha Ãºltima modificaciÃ³n:02/05/2016
 -- Motivos del cambio:  D_EXP_DIR_TERRITORIAL
 -- Cliente: Recovery BI CAJAMAR
 --

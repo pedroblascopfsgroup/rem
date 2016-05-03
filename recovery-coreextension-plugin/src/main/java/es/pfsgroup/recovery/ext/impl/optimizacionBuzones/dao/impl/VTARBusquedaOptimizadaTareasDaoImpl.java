@@ -289,7 +289,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         	hb.append(" ((");
         	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
         		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
-        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");	
+        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo = '"+zpu.getZona().getCodigo()+"') OR");	
         		}
         	}
         	

@@ -46,5 +46,7 @@ do
     chmod -fR a+rwx ${directory}
 done
 rm *.zip
-#cd $LOCAL_PATH
-#cp scripts/batch/*.sh /recovery/batch-server/programas/
+cd $LOCAL_PATH
+cp scripts/batch/*.sh $DIR_BASE/batch-server/
+chmod a+rx $DIR_BASE/batch-server/*.sh
+cp jar/batch-shell*.jar $DIR_BASE/batch-server/sareb/shells/batch-shell.jar

@@ -422,7 +422,6 @@
 
 	if ('${procedimiento.tipoActuacion.codigo}' != '')
 	{
-		debugger;
 		optionsTipoProcedimientoStore.load({
 			params:{codigo:'${procedimiento.tipoActuacion.codigo}'}
 			,callback: function()
@@ -797,7 +796,6 @@
 	
 	comboPrioridad.on('afterrender', function(combo) {
 		prioridadStore.webflow();
-		debugger;
 	});
 	prioridadStore.on('load',function(ds,records,o){
 		<c:if test="${procedimientoPco == null}" >
@@ -858,6 +856,9 @@
 	    ,labelStyle:labelStyle
 	    ,allowBlank: true
 		,fieldLabel : '<s:message code="procedimientos.edicion.accionPropuesta" text="**Tipo acción propuesta a iniciar" />'
+		<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoProcPropuesto.tipoActuacion.descripcion}'
+		</c:if>
 		
 	});
 	
@@ -893,6 +894,9 @@
 		labelStyle:labelStyle,
 		allowBlank: true,
 		fieldLabel : '<s:message code="procedimientos.edicion.actuacionPropuesta" text="**Tipo actuación propuesta a iniciar" />'
+		<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoProcPropuesto.descripcion}'
+		</c:if>
 	});
 	
     var chkBoxPreturnado = new Ext.form.Checkbox({
@@ -1062,12 +1066,10 @@
 	
 	var seleccionado = chkBoxOrdinario.getValue();
 	if(seleccionado){
-		debugger;
 		chkBoxPreturnado.disable();
 		chkBoxPreturnado.reset();
 	} 
 	chkBoxOrdinario.on('check',function(){
-		debugger;
 		if (chkBoxOrdinario.getValue()== true)
 		{
 			chkBoxPreturnado.disable();
@@ -1077,7 +1079,6 @@
 		}
 	});
 	chkBoxPreturnado.on('check',function(){
-		debugger;
 		if (chkBoxPreturnado.getValue()== true)
 		{
 			chkBoxOrdinario.setValue(null);
@@ -1199,7 +1200,6 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			debugger;
 			//habilitaComponentes(true);
 			//VALIDACIONES
 			var errores="";
@@ -1226,6 +1226,33 @@
 			if(errores!=""){
 				Ext.Msg.alert("Errores",errores);
 				return;
+			}
+			<%--validacion producto 1089 --%>
+			var letras="abcdefghyjklmnñopqrstuvwxyz";
+			var comparar = comboTipoActuacionPropuestaAIniciar.getValue();
+			var hayMinuscula = false;
+			for(var i=0; i < comparar.length; i++){
+				if (letras.indexOf(comparar.charAt(i),0)!=-1){
+         			<%--hay minusculas, por tanto es una descripcion precargada--%>
+         			hayMinuscula=true;
+         			break;
+      			}
+			}
+			if(hayMinuscula){
+				comboTipoActuacionPropuestaAIniciar.setValue('${procedimientoPco.tipoProcPropuesto.codigo}');
+			}
+			
+			var comparar2=comboTipoAccionPropuestaAIniciar.getValue();
+			var hayMinuscula2 = false;
+			for(var i=0; i < comparar2.length; i++){
+				if (letras.indexOf(comparar.charAt(i),0)!=-1){
+         			<%--hay minusculas, por tanto es una descripcion precargada--%>
+         			hayMinuscula2=true;
+         			break;
+      			}
+			}
+			if(hayMinuscula2){
+				comboTipoAccionPropuestaAIniciar.setValue('${procedimientoPco.tipoProcPropuesto.tipoActuacion.codigo}');
 			}
 			//FIN VALIDACIONES
 			

@@ -69,4 +69,7 @@ public class DireccionPersonaId implements Serializable {
 		this.perId = perId;
 	}
 
+	public DireccionPersonaId() {
+	}
+
 }

@@ -144,15 +144,156 @@
 
 
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
+
+	 var comboJerarquia = app.creaCombo({data:jerarquia, 
+    									triggerAction: 'all', 
+    									value:jerarquia.diccionario[0].id, 
+    									name : 'jerarquia', 
+    									fieldLabel : '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
+    									<app:test id="idComboJerarquia" addComa="true"/>	
+    								});
+	var listadoCodigoZonas = [];
 	
-	var comboJerarquia = app.creaCombo({triggerAction: 'all'
-		<app:test id="jerarquiaCombo" addComa="true" />
-		,data:jerarquia
-   		,value:jerarquia.diccionario[0].codigo
-		,name : 'jerarquia'
-		,width : 175
-		,fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'
+	comboJerarquia.on('select',function(){
+		<%-- Se ha quitado, ya que cada vez que se elegia una jerarquia, elimina los centros (pero se siguen viendo en la vista)
+		listadoCodigoZonas = []; --%>
+		if(comboJerarquia.value != '') {
+			comboZonas.setDisabled(false);
+			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
+			
+		}else{
+			comboZonas.setDisabled(true);
+		}
 	});
+	
+	var codZonaSel='';
+	var desZonaSel='';
+	
+	var zonasRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	//Template para el combo de zonas
+    var zonasTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+        '</div></tpl>'
+    );
+    
+    
+    var optionsZonasStore = page.getStore({
+	       flow: 'mejexpediente/getZonasInstant'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'zonas'
+	    }, zonasRecord)
+	       
+	});
+    
+    //Combo de zonas
+    var comboZonas = new Ext.form.ComboBox({
+        name: 'comboZonas'
+        ,disabled:true 
+        ,allowBlank:true
+        ,store:optionsZonasStore
+        ,width:220
+        ,fieldLabel: '<s:message code="expedientes.listado.centros" text="**Centros"/>'
+        ,tpl: zonasTemplate  
+        ,forceSelection:true
+        ,style:'padding:0px;margin:0px;'
+        ,enableKeyEvents: true
+        ,typeAhead: false
+        ,hideTrigger:true     
+        ,minChars: 2 
+        ,hidden:false
+        ,maxLength:256 
+        ,itemSelector: 'div.search-item'
+        ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
+        ,onSelect: function(record) {
+        	btnIncluir.setDisabled(false);
+        	codZonaSel=record.data.codigo;
+        	desZonaSel=record.data.descripcion;
+         }
+    });	
+    
+    var recordZona = Ext.data.Record.create([
+		{name: 'id'},
+		{name: 'codigoZona'},
+		{name: 'descripcionZona'}
+	]);
+    
+    
+   	var zonasStore = page.getStore({
+		flow:''
+		,reader: new Ext.data.JsonReader({
+	  		root : 'data'
+		} 
+		, recordZona)
+	});
+    
+    
+    var zonasCM = new Ext.grid.ColumnModel([
+		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:200}
+	]);
+	
+	var zonasGrid = new Ext.grid.EditorGridPanel({
+	    title : '<s:message code="expedientes.listado.centros" text="**Centros" />'
+	    ,cm: zonasCM
+	    ,store: zonasStore
+	    ,width: 300
+	    ,height: 150
+	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+	    ,clicksToEdit: 1
+	});
+
+	var incluirZona = function() {
+	    var zonaAInsertar = zonasGrid.getStore().recordType;
+   		var p = new zonaAInsertar({
+   			codigoZona: codZonaSel,
+   			descripcionZona: desZonaSel
+   		});
+		zonasStore.insert(0, p);
+		listadoCodigoZonas.push(codZonaSel);
+	}
+
+	var btnIncluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.incluir" text="Incluir" />'
+		,iconCls : 'icon_mas'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			incluirZona();
+			codZonaSel='';
+   			desZonaSel='';
+   			btnIncluir.setDisabled(true);
+			comboZonas.focus();
+		}
+	});
+
+	var zonaAExcluir = -1;
+	var codZonaExcluir = '';
+	
+	zonasGrid.on('cellclick', function(grid, rowIndex, columnIndex, e) {
+   		codZonaExcluir = grid.selModel.selections.get(0).data.codigoZona;
+   		zonaAExcluir = rowIndex;
+   		btnExcluir.setDisabled(false);
+	});
+
+	var btnExcluir = new Ext.Button({
+		text : '<s:message code="rec-web.direccion.form.excluir" text="Excluir" />'
+		,iconCls : 'icon_menos'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			if (zonaAExcluir >= 0) {
+				zonasStore.removeAt(zonaAExcluir);
+				listadoCodigoZonas.remove(codZonaExcluir);
+			}
+			zonaAExcluir = -1;
+	   		btnExcluir.setDisabled(true);
+		}
+	}); 								
 	              
 	var tiposPersona = <app:dict value="${tiposPersona}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
@@ -246,24 +387,14 @@
                                          ,'<s:message code="menu.clientes.listado.filtro.situacionFinancieraContrato" text="**Situacion contrato" />');    
 
 
-    var zonasRecord = Ext.data.Record.create([
-		 {name:'codigo'}
-		,{name:'descripcion'}
-	]);
-    
-    var optionsZonasStore = page.getStore({
-	       flow: 'clientes/buscarZonas'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'zonas'
-	    }, zonasRecord)
-	       
-	});
-	
+
+
 	<c:if test="${appProperties.runInSelenium==false}">
 		// Si estamos corriendo tests selenium esta funciï¿½n debe ser global para que
 		// pueda ser llamada desde el JUnit 
-		var
-	</c:if> recargarComboZonas = function(){
+		
+	</c:if>
+<%--   var recargarComboZonas = function(){
 		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
 			optionsZonasStore.webflow({id:comboJerarquia.getValue()});
 		}else{
@@ -280,19 +411,16 @@
 	
 	comboJerarquia.on('select',limpiarYRecargar);
     
-    //comboJerarquia.on('select',recargarComboZonas);
+    //comboJerarquia.on('select',recargarComboZonas); --%>
     
     var comboSegmentos = app.creaDblSelect(segmentos, '<s:message code="menu.clientes.listado.filtro.segmento" text="**Segmento" />');
 	<c:if test="${appProperties.runInSelenium==false}">
 		// Si estamos corriendo tests selenium esta objeto debe ser global para que
 		// pueda ser llamada desde el JUnit 
-		var
-	</c:if> comboZonas = app.creaDblSelect(zonas
-                                       ,'<s:message code="menu.clientes.listado.filtro.centro" text="**Centro" />'
-                                       ,{store:optionsZonasStore
-                                         <app:test id="zonasCombo" addComa="true" />
-                                         ,funcionReset:recargarComboZonas});
- 
+		
+	</c:if> 
+	
+
     var comboTipoPersona = app.creaCombo({
 		data:tiposPersona
     	,name : 'tipopersona'
@@ -605,12 +733,17 @@
 			if (comboIntervencion.getValue() != '' ){
 				return true;
 			}
-			if (comboJerarquia.getValue()!= '' ){
-				return true;
-			}
 			if (comboGestion.getValue()!='') {
 				return true;
 			}			
+		}
+		if (tabJerarquia){
+			if (comboJerarquia.getValue() != '' ){
+				return true;
+			}
+			if (listadoCodigoZonas.length > 0 ){
+				return true;
+			}	
 		}	
 		return false;	
 	}
@@ -762,6 +895,10 @@
 			p.jerarquia=comboJerarquia.getValue();
 			p.codigoGestion=comboGestion.getValue();			
     	}
+    	if (tabJerarquia){
+    		p.codigoEntidad=comboJerarquia.getValue();
+			p.codigoZona=listadoCodigoZonas.toString();
+    	}
     	return p;
     }
 	
@@ -842,20 +979,64 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [comboEstados,comboGestion,comboEstadosFinancieros, comboColectivoSingular, comboNominaPension]
+					,items: [comboEstados,comboGestion,comboEstadosFinancieros ]
 				},{
 					layout:'form'
-					,items: [comboEstadosFinancierosContrato<c:if test="${!isGestionVencidos  && !isGestionSeguimientoSistematico && !isGestionSeguimientoSintomatico}">,comboIntervencion</c:if>, comboJerarquia, comboZonas, comboPropietario]
+					,items: [comboColectivoSingular, comboNominaPension, comboEstadosFinancierosContrato<c:if test="${!isGestionVencidos  && !isGestionSeguimientoSistematico && !isGestionSeguimientoSintomatico}">,comboIntervencion</c:if>, comboPropietario]
 				}]
 	});
 	filtrosTabGestion.on('activate',function(){
 		tabGestion=true;
 	});
+	
+	<%-- PRODUCTO-1257 *************PESTANYA JERARQUIA ***************************************** --%>
+	
+	var tabJerarquia=false;
+	var filtrosTabJerarquia = new Ext.Panel({
+		title: '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
+		,autoHeight:true
+		,bodyStyle:'padding: 10px'
+		,layout:'table'
+		,layoutConfig:{columns:3}
+		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,items:[{
+					layout:'form'
+					,items: [comboJerarquia, comboZonas]
+				},{
+					layout:'form'
+					,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+					,items: [btnIncluir, btnExcluir]
+				},{
+					layout:'form'
+					,items: [zonasGrid]
+				}]
+		,listeners:{
+			getParametros: function(anadirParametros, hayError) {
+				if (buscarFunc()){
+					anadirParametros(getParametrosJerarquia());
+				}
+			}			
+			,limpiar: function() {	
+    		   		app.resetCampos([      
+						comboJerarquia,
+						comboZonas						
+	           ]); 
+	          
+	           zonasStore.removeAll();
+    		}
+		}
+	});
+	
+	filtrosTabJerarquia.on('activate',function(){
+		tabJerarquia=true;
+	});
+	
+	
 	<%--*************************************************************************************
 	*************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS****************************************
 	**************************************************************************************** --%>
 	var filtroTabPanel=new Ext.TabPanel({
-		items:[filtrosTabDatosCliente, filtrosTabRiesgoCliente , filtrosTabGestion]
+		items:[filtrosTabDatosCliente, filtrosTabRiesgoCliente , filtrosTabGestion, filtrosTabJerarquia]
 		,id:'idTabFiltrosContrato'
 		,layoutOnTabChange:true 
 		,autoScroll:true
@@ -1008,6 +1189,19 @@
 	    ,border: false
     });
     
+    <%-- PRODUCTO-1257 creada esta mini funcion para limpiar, ya que el btnReset esta en otro jsp y es de los predefinidos, y no puede borrar el tipo de campo
+     zonasStore = page.getStore, ni usar el listener 'limpiar' del tabPanel  por lo que localizo el boton del array de botones superior, y cuando se clickee, lo borramos. --%>
+    var posBtnLimpiar = -1;
+	for(var i=0; i < buttonsL.length ; i++) {
+		if(buttonsL[i].text == 'Limpiar')
+			posBtnLimpiar = i
+	}
+	buttonsL[posBtnLimpiar].on('click', function(){
+		zonasStore.removeAll();
+		listadoCodigoZonas = [];
+	});
+	
+	
 	
 	//aï¿½adimos al padre y hacemos el layout
 	page.add(compuesto);  

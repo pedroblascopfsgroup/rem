@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 
 import java.math.BigDecimal;
@@ -252,4 +254,104 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
 	    	getSession().createSQLQuery(hql).executeUpdate();
     	}
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ZonaUsuarioPerfil> getZonasPerfilesUsuariosPrimerNivelExistente(Long idPerfil, String codigoZona) {
+		
+		String sql =" WITH zz2 AS ( "
+									+" SELECT zz.ZON_ID, "
+											+" zz.ZON_DESCRIPCION, "
+											+" zz.ZON_PID, "
+											+" level AS nivel "
+									+" FROM ZON_ZONIFICACION zz "
+									+" WHERE zz.borrado = 0 "
+									+" START WITH zz.ZON_COD = '"+codigoZona+"' "
+									+" CONNECT BY NOCYCLE PRIOR zz.ZON_PID = zz.ZON_ID "
+									
+									+" UNION "
+									
+									+" SELECT zz3.ZON_ID, "
+											+" zz3.ZON_DESCRIPCION, "
+											+" zz3.ZON_PID, "
+											+" nivel+1 AS nivel "
+									+" FROM ZON_ZONIFICACION zz3 "
+									+" INNER JOIN "
+									+" (SELECT zz4.ZON_PID, "
+												+" level AS nivel "
+									  +" FROM ZON_ZONIFICACION zz4 "
+									  +" WHERE CONNECT_BY_ISCYCLE = 1 "
+									  +" AND zz4.borrado = 0 "
+									  +" START WITH zz4.ZON_COD = '"+codigoZona+"' "
+									  +" CONNECT BY NOCYCLE PRIOR zz4.ZON_PID = zz4.ZON_ID "
+									  +" )zz5 "
+									  +" ON zz3.ZON_ID = zz5.ZON_PID "
+    		  				+" ), "
+
+					+" zonasPerfil AS ( "
+										+" SELECT zpu.*, nivel "
+										  +" FROM zon_pef_usu zpu "
+								    		+" INNER JOIN zz2 ON zz2.zon_id = zpu.zon_id "
+								    		+" WHERE zpu.PEF_ID = "+idPerfil+" "
+								    		+" AND zpu.borrado  = 0 "
+								    +" ) "
+
+		+" SELECT * FROM zonasPerfil WHERE nivel = (SELECT MIN(nivel) from zonasPerfil) ";
+		
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		return sqlQuery.addEntity(ZonaUsuarioPerfil.class).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean userEstaEnElNivelMasBajoZonaPerfil(ZonaUsuarioPerfil zonPefUsu){
+		
+				String sql =" WITH zz2 AS ( "
+						+" SELECT zz.ZON_ID, "
+								+" zz.ZON_DESCRIPCION, "
+								+" zz.ZON_PID, "
+								+" level AS nivel "
+						+" FROM ZON_ZONIFICACION zz "
+						+" WHERE zz.borrado = 0 "
+						+" START WITH zz.ZON_COD = '"+zonPefUsu.getZona().getCodigo()+"' "
+						+" CONNECT BY NOCYCLE PRIOR zz.ZON_PID = zz.ZON_ID "
+						
+						+" UNION "
+						
+						+" SELECT zz3.ZON_ID, "
+								+" zz3.ZON_DESCRIPCION, "
+								+" zz3.ZON_PID, "
+								+" nivel+1 AS nivel "
+						+" FROM ZON_ZONIFICACION zz3 "
+						+" INNER JOIN "
+						+" (SELECT zz4.ZON_PID, "
+									+" level AS nivel "
+						  +" FROM ZON_ZONIFICACION zz4 "
+						  +" WHERE CONNECT_BY_ISCYCLE = 1 "
+						  +" AND zz4.borrado = 0 "
+						  +" START WITH zz4.ZON_COD = '"+zonPefUsu.getZona().getCodigo()+"' "
+						  +" CONNECT BY NOCYCLE PRIOR zz4.ZON_PID = zz4.ZON_ID "
+						  +" )zz5 "
+						  +" ON zz3.ZON_ID = zz5.ZON_PID "
+					+" ), "
+		
+		+" zonasPerfil AS ( "
+							+" SELECT zpu.*, nivel "
+							  +" FROM zon_pef_usu zpu "
+					    		+" INNER JOIN zz2 ON zz2.zon_id = zpu.zon_id "
+					    		+" WHERE zpu.PEF_ID = "+zonPefUsu.getPerfil().getId()+" "
+					    		+" AND zpu.USU_ID = "+zonPefUsu.getUsuario().getId()+" "
+					    		+" AND zpu.borrado  = 0 "
+					    +" ) "
+		
+		+" SELECT * FROM zonasPerfil WHERE nivel = (SELECT MIN(nivel) from zonasPerfil) ";
+		
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		List<ZonaUsuarioPerfil> results = sqlQuery.addEntity(ZonaUsuarioPerfil.class).list();
+		if(results.size() > 0){
+			return true;
+		}else{
+			return false;	
+		}
+	}
 }

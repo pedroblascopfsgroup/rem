@@ -1,10 +1,8 @@
 package es.pfsgroup.procedimientos.subasta;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -21,32 +19,24 @@ import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBienCargas;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.procedimientos.context.api.ProcedimientosProjectContext;
-import es.pfsgroup.recovery.ext.impl.asunto.model.DDGestionAsunto;
-import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 /**
@@ -59,20 +49,12 @@ import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 public class SubastaCalculoManager {
 
 	protected final Log logger = LogFactory.getLog(getClass());
-	private final BigDecimal MILLON = new BigDecimal("1000000");
-	private final BigDecimal FIFTEEN_THOUSAND = new BigDecimal("15000");
 	
 	@Autowired
 	private ProcedimientosProjectContext procedimientosProjectContext;
 
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-
-	@Autowired
 	private GenericABMDao genericDao;
-
-	@Autowired
-	private SubastaDao subastaDao;	
 	
 	@Autowired
 	private Executor executor;
@@ -84,7 +66,7 @@ public class SubastaCalculoManager {
     private IntegracionBpmService bpmIntegracionService;
     
     @Autowired
-    private UtilDiccionarioApi utilDiccionario;
+    private SubastaProcedimientoApi subastaProcedimientoApi;
 
 	/**
 	 * Actualiza la subasta con los datos del procedimiento, crea la subasta si no existe.
@@ -139,7 +121,7 @@ public class SubastaCalculoManager {
 
 		if (condicion2) {
 			// duplicamos toda la información
-			Subasta subastaOrigen = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prcPadre.getId());
+			Subasta subastaOrigen = subastaProcedimientoApi.obtenerSubastaByPrcId(prcPadre.getId());
 			subastaDuplicada.setTipoSubasta(subastaOrigen.getTipoSubasta());
 
 			subastaDuplicada.setProcedimiento(procedimiento);
@@ -149,9 +131,9 @@ public class SubastaCalculoManager {
 			subastaDuplicada.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.PIN)));
 
-			subastaDuplicada.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
-					genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
-
+			//subastaDuplicada.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
+			subastaProcedimientoApi.determinarTipoSubasta(subastaDuplicada);
+			
 			subastaDuplicada = genericDao.save(Subasta.class, subastaDuplicada);
 
 			// Ahora recorremos los lotes y bienes y asignamos a la nueva
@@ -235,7 +217,7 @@ public class SubastaCalculoManager {
 
 			genericDao.save(Subasta.class, subastaDuplicada);
 			
-			actualizarTipoSubasta(procedimiento);
+			//actualizarTipoSubasta(procedimiento);
 			bpmIntegracionService.enviarDatos(subastaDuplicada);
 			
 		}
@@ -249,12 +231,10 @@ public class SubastaCalculoManager {
 	 * @param procedimiento
 	 */
 	public void actualizarTipoSubasta(Procedimiento procedimiento) {
-		Subasta subasta = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(procedimiento.getId());
+		Subasta subasta = subastaProcedimientoApi.obtenerSubastaByPrcId(procedimiento.getId());
 		
-		subasta.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
-				genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
+		subastaProcedimientoApi.determinarTipoSubasta(subasta);
 		
-		genericDao.save(Subasta.class, subasta);
 	}
 	
 
@@ -266,6 +246,8 @@ public class SubastaCalculoManager {
 	 * @param prc
 	 * @return
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	private String determinarTipoSubasta(Procedimiento prc) {
 
 		// TODO: Quitar si las subastas sareb no deben cambiar el tipo de subasta
@@ -275,7 +257,7 @@ public class SubastaCalculoManager {
 		// ------
 		
 		Asunto asunto = prc.getAsunto();
-		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
+		Subasta sub = subastaProcedimientoApi.obtenerSubastaByPrcId(prc.getId());
 		@SuppressWarnings("unchecked")
 		List<Bien> listadoBienes = (List<Bien>)executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getBienes", sub.getId());
 		DDTiposAsunto tipoAsu = asunto.getTipoAsunto();
@@ -415,148 +397,5 @@ public class SubastaCalculoManager {
 		return acumulado;
 		
 	}
-
-	/**
-	 * Determina el tipo de subasta tras la propuesta de lotes de subasta 
-	 * 
-	 * PRODUCTO-700 -> Logica para determinar si una subasta es delegada o no delegada.
-	 * 
-	 * @param prc
-	 * @return
-	 */
-	public void determinarTipoSubastaTrasPropuesta(Subasta subasta) {
-
-		// Las NO DELEGADAS no hace nada.
-		if (subasta.getTipoSubasta() != null && DDTipoSubasta.NDE.equals(subasta.getTipoSubasta().getCodigo())) {
-			return;
-		}
-
-		EXTAsunto asuntoSubasta = (EXTAsunto) subasta.getAsunto();
-
-		// Si la gestión del asunto donde está la subasta es Haya.
-		if (asuntoSubasta.getGestionAsunto() != null && DDGestionAsunto.HAYA.equals(asuntoSubasta.getGestionAsunto().getCodigo())) {
-			modificarTipoSubastaNoDelegada(subasta);
-			return;
-		}
-
-		// Si el asunto donde está la subasta es un concurso.
-		if (asuntoSubasta.getTipoAsunto() != null && DDTiposAsunto.CONCURSAL.equals(asuntoSubasta.getTipoAsunto().getCodigo())) {
-			modificarTipoSubastaNoDelegada(subasta);
-			return;
-		}
-
-		// Si existe algún bien en la subasta que tenga cargas anteriores.
-		if (!"0".equals(subasta.getCargasAnteriores())) {
-			modificarTipoSubastaNoDelegada(subasta);
-			return;
-		}
-
-		// Si la deuda de las operaciones relacionadas con los bienes/garantías es mayor a 1 millon de €.
-		if (deudaOperacionesRelacionadasMayor1M(subasta)) {
-			modificarTipoSubastaNoDelegada(subasta);
-			return;
-		}
-
-		// Si el riesgo de consignación supera el umbral.
-		if (riesgoConsignacionSuperaUmbral(subasta)) {
-			modificarTipoSubastaNoDelegada(subasta);
-			return;
-		}
-	}
-
-	/**
-	 * Cambia el tipo de subasta a no delegada
-	 * @param subasta
-	 */
-	private void modificarTipoSubastaNoDelegada(Subasta subasta) {
-		DDTipoSubasta tipoSubastaNoDelegada = (DDTipoSubasta) utilDiccionario.dameValorDiccionarioByCod(DDTipoSubasta.class, DDTipoSubasta.NDE);
-
-		subasta.setTipoSubasta(tipoSubastaNoDelegada);
-		genericDao.update(Subasta.class, subasta);
-	}
-
-	/**
-	 * Si la deuda de las operaciones relacionadas con los bienes/garantías de la subasta es mayor a 1 millon de €.
-	 * 
-	 *		Sacamos todos los bienes de los lotes de la subasta.
-	 *		Buscamos los contratos relacionados con los bienes anteriores, cuyo estado sea distinto de "No recibido".
-	 *		Sumamos el importe de deuda irregular + capital no vencido de cada uno de esos contratos.
-	 * 
-	 * @param subasta
-	 * @return
-	 */
-	private boolean deudaOperacionesRelacionadasMayor1M(Subasta subasta) {
-		List<Bien> bienesSubasta = new ArrayList<Bien>();
-
-		for (LoteSubasta lote : subasta.getLotesSubasta()) {
-			bienesSubasta.addAll(lote.getBienes());
-		}
-
-		List<Contrato> contratos = new ArrayList<Contrato>();
-		for (Bien bien : bienesSubasta) {
-			for (NMBContratoBien contratoBien : ((NMBBien) bien).getContratos()) {
-				Contrato contrato = contratoBien.getContrato();
-
-				// cuyo estado sea distinto de "No recibido".
-				if (!DDEstadoContrato.ESTADO_CONTRATO_NORECIBIDO.equals(contrato.getEstadoContrato().getCodigo())) {
-					contratos.add(contrato);
-				}
-			}
-		}
-
-		BigDecimal sumatorioDeuda = BigDecimal.ZERO;
-		for (Contrato contrato : contratos) {
-			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
-			BigDecimal deudaIrregular = new BigDecimal(Float.toString(ultimoMovimiento.getDeudaIrregular()));
-			BigDecimal capitalNoVencido = new BigDecimal(Float.toString(ultimoMovimiento.getPosVivaNoVencida()));
-
-			sumatorioDeuda = sumatorioDeuda.add(deudaIrregular.add(capitalNoVencido));
-		}
-
-		return sumatorioDeuda.compareTo(MILLON) > 0;
-	}
-
-	private boolean riesgoConsignacionSuperaUmbral(Subasta subasta) {
-		// Deuda entidad = vencido (deuda irregular) + no vencido de todas las operaciones del procedimiento + costas de letrado y procurador
-		BigDecimal sumatorioDeudaEntidad = BigDecimal.ZERO;
-		if (!Checks.esNulo(subasta.getCostasLetrado())){
-			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasLetrado());
-		}
-		if (!Checks.esNulo(subasta.getCostasProcurador())){
-			sumatorioDeudaEntidad = BigDecimal.valueOf(subasta.getCostasProcurador());
-		}
-		Set<Contrato> contratos = subasta.getProcedimiento().getAsunto().getContratos();
-		for (Contrato contrato : contratos) {
-			Movimiento ultimoMovimiento = contrato.getLastMovimiento();
-
-			BigDecimal deudaIrregular = BigDecimal.valueOf(ultimoMovimiento.getDeudaIrregular());
-			BigDecimal capitalNoVencido = BigDecimal.valueOf(ultimoMovimiento.getPosVivaNoVencida());
-
-			sumatorioDeudaEntidad = sumatorioDeudaEntidad.add(deudaIrregular.add(capitalNoVencido));
-		}
-		BigDecimal pujaSinPostores = BigDecimal.ZERO;
-		for (LoteSubasta lote : subasta.getLotesSubasta()) {
-			if(!Checks.esNulo(lote.getInsPujaSinPostores())){
-				pujaSinPostores = BigDecimal.valueOf(lote.getInsPujaSinPostores());
-			}
-			// Donde Riesgo de Consignación = Puja sin postores - Deuda entidad
-			BigDecimal riesgodeConsignacion = pujaSinPostores.subtract(sumatorioDeudaEntidad);
-
-			// 10% deuda entidad
-			BigDecimal tenPercentDeudaEntidad = sumatorioDeudaEntidad.multiply(new BigDecimal("0.1"));
-
-			if (lote.getRiesgoConsignacion() 
-					&& !isNegative(riesgodeConsignacion)
-					&& (riesgodeConsignacion.compareTo(tenPercentDeudaEntidad) > 0  
-							|| riesgodeConsignacion.compareTo(FIFTEEN_THOUSAND) > 0)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-    private boolean isNegative(BigDecimal b) {
-        return b.signum() == -1;
-    }
+	
 }

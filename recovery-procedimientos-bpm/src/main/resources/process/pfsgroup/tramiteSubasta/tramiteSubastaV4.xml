@@ -181,7 +181,7 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericEnterActionHandler
+				<targetBean>subastaV4EnterActionHandler
 				</targetBean>
 			</action>
 		</event>

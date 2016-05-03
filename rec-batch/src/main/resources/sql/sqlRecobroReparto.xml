@@ -54,15 +54,16 @@
            BEGIN
            INSERT INTO TMP_REC_EXP_REPARTO_CAR_VRE  (EXP_ID, CAR_ID, VRE)
             SELECT TMP.EXP_ID, TMP.CAR_ID, SUM(NVL(CNT.CNT_RIESGO, 0)) VRE
-                FROM TMP_REC_EXP_REPARTO_CAR TMP
-                    JOIN BATCH_DATOS_CNT_EXP CEX ON TMP.EXP_ID = CEX.EXP_ID
-                    JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
-                GROUP BY TMP.EXP_ID, TMP.CAR_ID
-                UNION
-                SELECT N.EXP_ID, N.ARQ_ID, SUM(NVL(CNT.CNT_RIESGO, 0)) VRE
-                FROM BATCH_DATOS_SALIDA N
-                    JOIN BATCH_DATOS_CNT CNT ON N.CNT_ID = CNT.CNT_ID
-                GROUP BY N.EXP_ID, N.ARQ_ID;
+              FROM TMP_REC_EXP_REPARTO_CAR TMP
+              JOIN BATCH_DATOS_CNT_EXP CEX ON TMP.EXP_ID = CEX.EXP_ID
+              JOIN BATCH_DATOS_CNT CNT ON CEX.CNT_ID = CNT.CNT_ID
+            GROUP BY TMP.EXP_ID, TMP.CAR_ID
+            UNION
+            SELECT EXP_ID, ARQ_ID, SUM(NVL(CNT_RIESGO,0)) VRE
+              FROM (Select distinct N.EXP_ID, N.ARQ_ID, N.CNT_ID, CNT.CNT_RIESGO
+                    From BATCH_DATOS_SALIDA N
+                    Join BATCH_DATOS_CNT CNT ON N.CNT_ID = CNT.CNT_ID)
+            GROUP BY EXP_ID, ARQ_ID;
 
             OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_REPARTO_CAR_VRE');
            END;
@@ -108,7 +109,7 @@
 
               -- Subcarteras
               C_SUBCARTERAS SYS_REFCURSOR;
-
+1
             BEGIN
               OPEN C_CARTERAS;
 

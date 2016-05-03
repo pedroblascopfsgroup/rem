@@ -38,6 +38,13 @@ public interface ObjetivoDao extends AbstractDao<Objetivo, Long> {
      * @return lista de objetivos
      */
     List<Objetivo> buscarObjetivosPendientesGestor(Usuario usuario, List<DDZona> zonas);
+    
+    /**
+     * Busca los objetivos pendientes para el gestor.
+     * @param usuario usuario
+     * @return lista de objetivos
+     */
+    List<Objetivo> buscarObjetivosPendientesGestor(Usuario usuario);
 
     /**
      * Obtiene la cantidad de objetivos pendientes para el gestor.
@@ -46,6 +53,13 @@ public interface ObjetivoDao extends AbstractDao<Objetivo, Long> {
      * @return integer
      */
     Integer cantidadObjetivosPendientesGestor(Usuario usuario, List<DDZona> zonas);
+    
+    /**
+     * Obtiene la cantidad de objetivos pendientes para el gestor.
+     * @param usuario Usuario
+     * @return integer
+     */
+    Long cantidadObjetivosPendientesGestor(Usuario usuario);
 
     /**
      * Devuelve los objetivos activos (confirmados, propuestos) de una política dada

@@ -737,8 +737,8 @@ function(entidad,page){
 				,params : {
 					idEntidad: entidad.getData('id')
 					,codigoTipoEntidad: '2'
-					,tienePerfilGestor: permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idGestorActual')) || false
-					,tienePerfilSupervisor: permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idSupervisorActual')) || false
+					,tienePerfilGestor:  toolbar.isGestor() || false
+					,tienePerfilSupervisor: toolbar.isSupervisor() || false
 				}
 			});
 			w.on(app.event.DONE, function(){
@@ -779,6 +779,40 @@ function(entidad,page){
 	});
 
 	toolbar.add(botonResponder);
+	
+	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_CAMBIO_OFICINA">
+	var btnCambioOficina = new Ext.Button({
+    text:'<s:message code="plugin.coreextension.cambioOficina.descripcion" text="**Cambio de Oficina"/>'
+    ,handler: function() {
+        w = new Ext.Window({
+            autoLoad: {
+                    url : app.resolveFlow('plugin.core.expedientes.cambioOficina')
+                    ,scripts : true
+                    ,params : {id:data.id}
+            }
+            ,width:600
+            ,title : '<s:message code="plugin.coreextension.cambioOficina.descripcion" text="**Cambio de Oficina" />'
+            ,autoHeight:true
+            ,closable:false
+            ,resizable: true
+            ,modal:true
+            ,layout:'fit'
+            ,autoShow:true    
+            ,x:250
+            ,y:0
+            ,bodyBorder : false
+        });
+        
+        w.on(app.event.DONE, function(){
+            w.close();
+            entidad.refrescar();
+        });
+        w.on(app.event.CANCEL, function(){ w.close(); });
+        w.show();
+    }
+	});
+	toolbar.add(btnCambioOficina);
+	</sec:authorize>
 
 	<sec:authorize ifAllGranted="EXPORTAR_PDF_EXPEDIENTE">
 	var botonPDF = new Ext.Button({
@@ -864,23 +898,16 @@ function(entidad,page){
 		var data = entidad.get("data");
 		return data.id;
 	}
+	
 	toolbar.isSupervisor = function(){
 		var data = entidad.get("data");
 		var d = data.toolbar;
-		
-		if(permisosVisibilidadGestorSupervisor(d.idSupervisorActual)) 
-			return true;
-		else 
-			return false;
+		return d.esPrimerSupervisorFaseActual
 	}
 	toolbar.isGestor = function(){
 		var data = entidad.get("data");
 		var d = data.toolbar;
-		
-		if(permisosVisibilidadGestorSupervisor(d.idGestorActual)) 
-			return true;
-		else 
-			return false;
+		return d.esPrimerGestorFaseActual
 	}
 	
 	toolbar.getValue = function(){};
@@ -900,23 +927,16 @@ function(entidad,page){
 		if (d.tipoExpediente=='REC') { iconClass = 'icon_expedientes_R2'; }
 
 		if (iconClass!='') Ext.getCmp('expediente-'+entidad.getData('id')).setIconClass(iconClass); 
-	  
-		var perfilGestor = d.idGestorActual;
-		var perfilSupervisor = d.idSupervisorActual;
 		
-		var permisosGestor = permisosVisibilidadGestorSupervisor(perfilGestor);
-		var permisosSupervisor = permisosVisibilidadGestorSupervisor(perfilSupervisor);
-		var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+		var permisosGestor = toolbar.isGestor();
+		var permisosSupervisor = toolbar.isSupervisor();
+		var esGestorSupervisorDeFase = permisosGestor || permisosSupervisor;
 
 		var solicitud = d.solicitudCancelacion;
 
 		var solicitudYPermisos = (solicitud == null || solicitud=='') && (permisosGestor ||  permisosSupervisor);
 		
 		var subMenusVisibles = 0;
-		
-		var permiteElevar = false;
-		var permiteDevolver = false;
-		var mostrarRec = false;
 		
 		
 		function showHide(action, elements___){
@@ -982,17 +1002,14 @@ function(entidad,page){
 						}
 						if(permEle && permDevo){
 							<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-								if(d.esRecuperacion){
-									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
-								}else{
+								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+								if(!d.esRecuperacion){
 									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion9-aceptarPropuesta','expediente-accion2-devolverRevision');
 								}
-								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
 							</sec:authorize>
+						}else if(!permEle && permDevo){
+							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 						}
-					}
-					if(!permiteElevar && permiteDevolver){
-						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 					}
 					break;
 				
@@ -1045,13 +1062,7 @@ function(entidad,page){
 					showHide(estadoExpediente == EXP_CONGELADO, 'expediente-accion2-devolverRevision' );
 			}
 		}
-		if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
-			if (solicitud==null || solicitud==""){	
-				showHide(true, 'expediente-accion4-solicitarCancelacion');
-			}else{
-				showHide(false, 'expediente-accion4-solicitarCancelacion');
-			}
-		}
+
 		
 		if ( permisosSupervisor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0)  ){
 			if (solicitud!=null && solicitud!=""){	
@@ -1059,16 +1070,14 @@ function(entidad,page){
 			}else{
 				showHide(true, 'expediente-accion6-cancelacionExpediente');
 			}
-			<%-- Si el usuario es supervisor deshabilitar la opcion de solicitar cancelacion --%>
-			showHide(false, 'expediente-accion4-solicitarCancelacion');
-		}
-		if (entidad.getData('esSupervisor')  && ([EXP_ACTIVO, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0) ){
-			if (solicitud!=null && solicitud!=""){	
-				showHide(true, 'expediente-accion5-verCancelacion');
+		}else if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
+			if (solicitud==null || solicitud==""){	
+				showHide(true, 'expediente-accion4-solicitarCancelacion');
 			}else{
-				showHide(true, 'expediente-accion6-cancelacionExpediente');
+				showHide(false, 'expediente-accion4-solicitarCancelacion');
 			}
 		}
+		
 
 		showHide( subMenusVisibles>0, 'expediente-menu-menuAcciones');
 

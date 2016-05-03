@@ -11,7 +11,6 @@
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
-	//var labelStyleDescripcion = 'width:185x;height:60px;font-weight:bolder",width:700';
 	var labelStyleTextArea = 'font-weight:bolder",width:500';
 	
 	var arrayCampos = new Array();
@@ -97,7 +96,6 @@
 					cmpRgt.el.remove();
 			   	}
 				
-				//var camposDynamics = Ext.util.JSON.decode(result.responseText);
 				var camposDynamics = result;
 		
 				var dinamicElementsLeft = [];
@@ -350,8 +348,7 @@
 			fechaActual.setSeconds(0);
 			
 			fechaActual = Date.parse(fechaActual);
-
-       		if(formulario.isValid() && detalleFieldSet.getForm().isValid() && comboBienes.isValid()){
+       		if(formulario.isValid() && detalleFieldSet.getForm().isValid()){
        			var dateSolucionPrevista = null;
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
@@ -366,7 +363,7 @@
 					
 					return false;
        			}
-       			if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
+       			<%--if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));
        				date = Ext.util.Format.date(date, "d/m/y");
 	       			Ext.Msg.show({
@@ -375,8 +372,8 @@
 				   		buttons: Ext.Msg.OK
 					});
 					return false;
-	       		}  
-	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid() ) {
+	       		}  --%>
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && isNaN(parseFloat(dateSolucionPrevista))) {
 	       			return false;
 	       		}else if(comboTipoAcuerdo.getValue() == idTipoAcuerdoRegulParcial && isNaN(parseFloat(dateSolucionPrevista))){
 	       			Ext.Msg.show({
@@ -390,17 +387,18 @@
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.planPago" text="**Este acuerdo ya tiene asignado un Plan de Pago" />',
 				   		buttons: Ext.Msg.OK
 					});       			
+       			}else if (comboBienes.getValue()== '' && bienesFieldSet.isVisible()){
+       				Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.bienesPropuesta" text="**Rellene el campo Bienes del asunto" />',
+				   		buttons: Ext.Msg.OK
+					});
+       				
        			}
        			else {
        		
 	       		var params = detalleFieldSet.getForm().getValues();
 	       		
-	       		/*
-				for (var i = 0; i < detalleFieldSet.getForm().items.length; i++) {
-					if (detalleFieldSet.getForm().items.items[0].getValue()!='') {
-						Ext.apply(params)
-					}
-				}*/
 	       		
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
@@ -574,8 +572,10 @@
 		       	});
 	       	}
 	       	
-	       	if("${termino.informeLetrado}"!=null && "${termino.informeLetrado}"!=''){
-	       		informeLetrado.setValue("${termino.informeLetrado}");
+	       	var informLetrado = '<s:message text="${termino.informeLetrado}" javaScriptEscape="true" />';
+	       	
+	       	if(informLetrado !=null && informLetrado !=''){
+	       		informeLetrado.setValue(informLetrado);
 	       	}
 	       	
 	       	comboTipoAcuerdo.setDisabled(false);

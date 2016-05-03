@@ -32,6 +32,11 @@ public interface EXTGestoresDao extends AbstractDao<Usuario, Long>{
 	 * @param usuarioDto usuarioDto dto con los datos de b�squeda. {@link UsuarioDto}
 	 * @return p�gina con el resultado de la b�squeda.
 	 */
+	
+	List<Usuario> getGestoresPorDefectoByDespacho(long idTipoDespacho, boolean incluirBorrados);
+	
+	List<Usuario> getGestorOficinaExpedienteGestorDeuda(long idExpediente, String codigoPerfil);
+	
 	Page getGestoresByDespacho(UsuarioDto usuarioDto);
 	
 	/**

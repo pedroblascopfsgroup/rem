@@ -1,4 +1,18 @@
-WHENEVER SQLERROR EXIT SQL.SQLCODE;
+--/*
+--##########################################
+--## AUTOR=Jaime
+--## FECHA_CREACION=20160503
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=hr-2444
+--## PRODUCTO=NO
+--## Finalidad: DML
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON
 set timing ON
 set linesize 2000

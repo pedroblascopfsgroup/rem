@@ -56,30 +56,7 @@ EXECUTE IMMEDIATE('update CM01.TMP_UGASPFS_BPM_INPUT_CON1 set t_referencia = prc
 
 DBMS_OUTPUT.put_line('[INFO] STEP: 4');
 
-EXECUTE IMMEDIATE('INSERT INTO CM01.TAR_TAREAS_NOTIFICACIONES(tar_id, asu_id,dd_est_id,dd_ein_id, dd_sta_id, tar_codigo,tar_tarea, tar_descripcion,tar_fecha_fin, tar_fecha_ini, tar_en_espera,tar_alerta, tar_tarea_finalizada, tar_emisor, VERSION, USUARIOCREAR, FECHACREAR,BORRADO, PRC_ID, dtype,nfa_tar_revisada, t_referencia)
-select CM01.s_tar_tareas_notificaciones.NEXTVAL tar_id, prc.asu_id, 6 dd_est_id,5 dd_ein_id, NVL(tap.dd_sta_id,39) dd_sta_id, 1 tar_codigo,tap.tap_descripcion tar_tarea, tap.tap_descripcion tar_descripcion,
-NULL tar_fecha_fin, SYSDATE tar_fecha_ini, 0 tar_en_espera,
-0 tar_alerta, NULL tar_tarea_finalizada, ''AUTOMATICA'' tar_emisor, 0 VERSION,
-''ALTAASUNCM'' USUARIOCREAR, SYSDATE FECHACREAR, 0 BORRADO, prc.prc_id PRC_ID, ''EXTTareaNotificacion'' dtype,
-0 nfa_tar_revisada, tmp.t_referencia
-FROM CM01.tmp_ugaspfs_bpm_input_con1 tmp JOIN CM01.tap_tarea_procedimiento tap
-ON tmp.tap_id = tap.tap_id
-JOIN CM01.prc_procedimientos prc ON tmp.prc_id = prc.prc_id');
-
-
 DBMS_OUTPUT.put_line('[INFO] STEP: 5');
-
-EXECUTE IMMEDIATE('INSERT INTO CM01.TEX_TAREA_EXTERNA(tex_id, tar_id, tap_id, tex_token_id_bpm,tex_detenida,VERSION,usuariocrear, fechacrear, borrado,dtype, t_referencia)
-SELECT CM01.s_tex_tarea_externa.NEXTVAL tex_id, tar.tar_id, tmp.tap_id, NULL tex_token_id_bpm, 0 tex_detenida, 0 VERSION,''ALTAASUNCM'' usuariocrear, SYSDATE fechacrear, 0 borrado,
-''EXTTareaExterna'' dtype, tmp.t_referencia
-FROM CM01.tmp_ugaspfs_bpm_input_con1 tmp JOIN CM01.tar_tareas_notificaciones tar ON tmp.t_referencia = tar.t_referencia
-where not exists (select 1 from cm01.TEX_TAREA_EXTERNA TEX where tex.tar_id = tar.tar_id)
-');
-
-/*SELECT CM01.s_tex_tarea_externa.NEXTVAL tex_id, tar.tar_id, tmp.tap_id, NULL tex_token_id_bpm, 0 tex_detenida, 0 VERSION,'ALTAASUNCM' usuariocrear, SYSDATE fechacrear, 0 borrado,
-'EXTTareaExterna' dtype, tmp.t_referencia
-FROM CM01.tmp_ugaspfs_bpm_input_con1 tmp
-JOIN CM01.tar_tareas_notificaciones tar ON tmp.t_referencia = tar.t_referencia;*/
 
 DBMS_OUTPUT.put_line('[INFO] STEP: 6');
 

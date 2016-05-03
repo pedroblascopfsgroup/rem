@@ -585,6 +585,7 @@ public class BurofaxManager implements BurofaxApi {
 					
 					// Obtener nombre de fichero
 					String nombreFichero = obtenerNombreFichero();
+					
 					//Generar documento a partir de la plantilla y de los campos HTML cabecera y contenido
 										
 					String nombreFicheroPdf = generarBurofaxPDF(envioBurofax, nombreFichero).getFileName();
@@ -593,7 +594,7 @@ public class BurofaxManager implements BurofaxApi {
 					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 					
 					//rellenamos la referencia externa del burofax nombre pdf + usuario logado
-					String refExternaEnvio = nombreFichero +" - "+usuarioLogado.getUsername();
+					String refExternaEnvio = obtenerNombreFicheroSinExt(nombreFichero) +" - "+usuarioLogado.getUsername();
 					
 					envioBurofax.setRefExternaEnvio(refExternaEnvio);
 					
@@ -650,6 +651,10 @@ public class BurofaxManager implements BurofaxApi {
 	private String obtenerNombreFichero() {
 		Long secuencia = burofaxDao.obtenerSecuenciaFicheroDocBurofax();
 		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
+	}
+	
+	private String obtenerNombreFicheroSinExt(String nombreFicheroDoc) {
+		return  nombreFicheroDoc.replaceAll(".docx", "");
 	}
 	
 	/*

@@ -263,7 +263,7 @@
 		,cls:'cursor_pointer'
 		,width : 700
 		,height : 400
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_TAREAS_PROCEDIMIENTO">
 		,bbar:btnBar
 		</sec:authorize>
     });

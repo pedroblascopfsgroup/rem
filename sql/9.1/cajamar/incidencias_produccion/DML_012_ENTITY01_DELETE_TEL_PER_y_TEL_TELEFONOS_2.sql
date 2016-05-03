@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pepe Tamarit
---## FECHA_CREACION=20160502
+--## FECHA_CREACION=20160503
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-3091

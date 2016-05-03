@@ -593,7 +593,7 @@ public class BurofaxManager implements BurofaxApi {
 					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 					
 					//rellenamos la referencia externa del burofax nombre pdf + usuario logado
-					String refExternaEnvio = nombreFicheroPdf +" - "+usuarioLogado.getUsername();
+					String refExternaEnvio = nombreFichero +" - "+usuarioLogado.getUsername();
 					
 					envioBurofax.setRefExternaEnvio(refExternaEnvio);
 					

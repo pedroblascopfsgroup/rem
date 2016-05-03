@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=Maria V.
+--## FECHA_CREACION=20160502
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3282
+--## PRODUCTO=NO
+--## 
+--## Finalidad: D_EXP_DIR_TERRITORIAL
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE TRUNCAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
@@ -183,3 +201,5 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_EXP_TIPO_GESTION_CNT'
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
   
 END TRUNCAR_DIM_EXPEDIENTE;
+/ 
+EXIT;

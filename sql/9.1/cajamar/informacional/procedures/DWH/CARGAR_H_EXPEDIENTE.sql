@@ -4,15 +4,15 @@ create or replace PROCEDURE CARGAR_H_EXPEDIENTE (DATE_START in date, DATE_END in
 -- Autor: Fran Gutiérrez, PFS group
 -- Fecha creación: Julio 2014
 -- Responsable ultima modificacion: María Villanueva, PFS group
--- Fecha última modificación:25/04/2015
--- Motivos del cambio: Se modifica la carga de la fecha de decisión comité
+-- Fecha última modificación:03/05/2016
+-- Motivos del cambio: Se añade dir_territorial_id
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_EXP
 -- ===============================================================================================
  
 -- ===============================================================================================
---                  									Declaracación de variables
+--                                    Declaracación de variables
 -- ===============================================================================================
   V_NOMBRE VARCHAR2(50) := 'CARGAR_H_EXPEDIENTE';
   V_ROWCOUNT NUMBER;
@@ -108,7 +108,7 @@ BEGIN
     
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_H_EXP'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	
+  
     execute immediate 'insert into TMP_H_EXP
         (DIA_ID,
         FECHA_CARGA_DATOS, 
@@ -138,7 +138,7 @@ BEGIN
     -- Crear indices TMP_H_EXP
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_EXP_IX'', ''TMP_H_EXP (DIA_ID, EXPEDIENTE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	
+  
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_EXP_CNT_IX'', ''TMP_H_EXP (EXPEDIENTE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;        
@@ -191,7 +191,7 @@ BEGIN
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EXP_CNT_CNT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EXP_CNT_CEX_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EXP_CNT_CEX_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     
@@ -199,8 +199,8 @@ BEGIN
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_EXP_CNT. Termina Borrado de Indices', 4;
     
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_EXP_CNT'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
-	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
+  
     -- Fecha de analisis en H_MOV_MOVIMIENTOS (fecha menor que el ultimno día de H_MOV_MOVIMIENTOS o mayor que este, pero menor que el penúltimo dia de MOV_MOVIMIENTOS)
     if((fecha <= max_dia_h) or ((fecha > max_dia_h) and (fecha < penult_dia_mov))) then
       execute immediate 'select max(TRUNC(MOV_FECHA_EXTRACCION)) from ' || V_CM01 || '.H_MOV_MOVIMIENTOS where TRUNC(MOV_FECHA_EXTRACCION) <= to_date('''||fecha||''')' into max_dia_con_contratos;  
@@ -284,13 +284,13 @@ BEGIN
     -- Crear indices TMP_EXP_CNT  
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EXP_CNT_IX'', ''TMP_EXP_CNT (EXPEDIENTE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	
+  
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EXP_CNT_CNT_IX'', ''TMP_EXP_CNT (CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	
+  
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EXP_CNT_CEX_IX'', ''TMP_EXP_CNT (CEX_ID, CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	
+  
     commit;  
     
     --Log_Proceso
@@ -359,7 +359,7 @@ BEGIN
         set a.FECHA_INICIO_CE = b.FECHA_INICIO_CE
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_INI) AS FECHA_INICIO_RE, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
            where DD_EST_ID = 4 AND DD_STA_ID = 3 AND DD_EIN_ID = 2
@@ -369,7 +369,7 @@ BEGIN
         set a.FECHA_INICIO_RE = b.FECHA_INICIO_RE
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_INI) AS FECHA_INICIO_DC, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
            where DD_EST_ID = 5 AND DD_STA_ID = 4 AND DD_EIN_ID = 2
@@ -379,7 +379,7 @@ BEGIN
         set a.FECHA_INICIO_DC = b.FECHA_INICIO_DC
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_INI) AS FECHA_INICIO_FP, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
            where DD_EST_ID = 3 AND DD_STA_ID = 988 AND DD_EIN_ID = 2
@@ -389,7 +389,7 @@ BEGIN
         set a.FECHA_INICIO_FP = b.FECHA_INICIO_FP
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_FIN) AS FECHA_FIN_CE, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
            where DD_EST_ID = 3 AND DD_STA_ID = 2 AND DD_EIN_ID = 2
@@ -399,7 +399,7 @@ BEGIN
         set a.FECHA_FIN_CE = b.FECHA_FIN_CE
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_FIN) AS FECHA_FIN_RE, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
            where DD_EST_ID = 4 AND DD_STA_ID = 3 AND DD_EIN_ID = 2
@@ -409,7 +409,7 @@ BEGIN
         set a.FECHA_FIN_RE = b.FECHA_FIN_RE
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_FIN) AS FECHA_FIN_DC, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
     where DD_EST_ID = 5 AND DD_STA_ID = 4 AND DD_EIN_ID = 2
@@ -419,7 +419,7 @@ BEGIN
         set a.FECHA_FIN_DC = b.FECHA_FIN_DC
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+  
     execute immediate 'merge into TMP_H_EXP a
     using (select min(TAR_FECHA_FIN) AS FECHA_FIN_FP, EXP_ID from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES
     where DD_EST_ID = 3 AND DD_STA_ID = 988 AND DD_EIN_ID = 2
@@ -429,7 +429,35 @@ BEGIN
         set a.FECHA_FIN_FP = b.FECHA_FIN_FP
         where DIA_ID = '''||fecha||'''';
     commit;
-	
+
+
+        -- DIR_TERRITORIAL_ID
+    EXECUTE IMMEDIATE '
+    MERGE INTO TMP_H_EXP TMP USING(
+            WITH ZONAS_NIVELES AS (
+                    SELECT DISTINCT ZON1.NIV_ID, ZON1.ZON_ID, ZON1.ZON_PID, ZON1.OFI_ID
+                    FROM '||V_DATASTAGE||'.ZON_ZONIFICACION ZON1, '||V_DATASTAGE||'.ZON_ZONIFICACION ZON2
+                    WHERE ZON2.ZON_PID = ZON1.ZON_ID
+                    AND ZON1.NIV_ID IN (4)
+                    UNION
+                    SELECT DISTINCT ZON.NIV_ID, ZON.ZON_ID, ZON.ZON_PID, ZON.OFI_ID
+                    FROM '||V_DATASTAGE||'.ZON_ZONIFICACION ZON
+                    WHERE NIV_ID = 5)
+            SELECT ZON4.ZON_ID, EXP.EXP_ID
+            FROM '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP, ZONAS_NIVELES ZN, '||V_DATASTAGE||'.ZON_ZONIFICACION ZON3, '||V_DATASTAGE||'.ZON_ZONIFICACION ZON4
+            WHERE EXP.OFI_ID = ZN.OFI_ID
+            AND ZN.ZON_PID = ZON3.ZON_ID
+            AND ZON3.ZON_PID = ZON4.ZON_ID) DIR_TERR
+    ON (TMP.EXPEDIENTE_ID = DIR_TERR.EXP_ID)
+    WHEN MATCHED THEN UPDATE SET DIR_TERRITORIAL_ID = DIR_TERR.ZON_ID';
+    COMMIT;
+
+     UPDATE TMP_H_CNT
+       SET DIR_TERRITORIAL_ID = -1
+    WHERE DIR_TERRITORIAL_ID IS NULL;
+
+    COMMIT;
+  
   
     update TMP_H_EXP set
       NUM_DIAS_COMPLETAR_A_REVISION=(FECHA_INICIO_RE - FECHA_INICIO_CE),
@@ -470,8 +498,8 @@ BEGIN
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,		
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,    
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -488,7 +516,7 @@ BEGIN
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -499,7 +527,8 @@ BEGIN
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID    
         )
     select DIA_ID,
          FECHA_CARGA_DATOS,
@@ -511,8 +540,8 @@ BEGIN
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,		
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,    
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -529,7 +558,7 @@ BEGIN
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -540,7 +569,8 @@ BEGIN
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
     from TMP_H_EXP where DIA_ID = fecha;
     
     V_ROWCOUNT := sql%rowcount;     
@@ -572,8 +602,8 @@ BEGIN
 -- ----------------------------------------------------------------------------------------------
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
-	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
+  
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -631,8 +661,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,		
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,    
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -649,7 +679,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -660,7 +690,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS     
+         GASTOS,
+         DIR_TERRITORIAL_ID      
         )
     select semana, 
          max_dia_semana,
@@ -672,8 +703,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,		
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,    
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -690,7 +721,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -701,7 +732,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS
+         GASTOS,
+         DIR_TERRITORIAL_ID 
     from H_EXP where DIA_ID = max_dia_semana;
     commit;
     V_ROWCOUNT := sql%rowcount;     
@@ -730,8 +762,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
 -- ----------------------------------------------------------------------------------------------
    -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
-	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
+  
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
@@ -780,8 +812,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,			
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,      
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -798,7 +830,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -809,7 +841,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
         )
     select mes, 
          max_dia_mes,
@@ -821,8 +854,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,			
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,      
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -839,7 +872,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -850,7 +883,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
     from H_EXP where DIA_ID = max_dia_mes;
 
     V_ROWCOUNT := sql%rowcount;     
@@ -865,7 +899,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
   -- Crear indices H_EXP_MES
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_MES_IX'', ''H_EXP_MES (MES_ID, EXPEDIENTE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	
+  
 
   commit;
   
@@ -881,8 +915,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
-	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
+  
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
@@ -933,8 +967,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,			
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,      
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -951,7 +985,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -962,7 +996,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
         )
     select trimestre, 
          max_dia_trimestre,
@@ -974,8 +1009,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,			
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,      
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -992,7 +1027,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -1003,7 +1038,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
     from H_EXP where DIA_ID = max_dia_trimestre;
     
     V_ROWCOUNT := sql%rowcount;     
@@ -1032,8 +1068,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
 -- ----------------------------------------------------------------------------------------------
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
-	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
+  
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
@@ -1081,7 +1117,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
+         FECHA_FIN_DC,    
          FECHA_FIN_FP,
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
@@ -1099,7 +1135,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -1110,7 +1146,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
         )
     select anio,   
          max_dia_anio,
@@ -1122,8 +1159,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          FECHA_INICIO_FP,
          FECHA_FIN_CE,
          FECHA_FIN_RE,
-         FECHA_FIN_DC,		
-         FECHA_FIN_FP,			
+         FECHA_FIN_DC,    
+         FECHA_FIN_FP,      
          GESTOR_EXP_ID,
          GESTOR_COMITE_EXP_ID,
          SUPERVISOR_EXP_ID,
@@ -1140,7 +1177,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          NUM_DIAS_DECISION_A_FORMALIZAR,
          NUM_DIAS_ACTUAL_A_COMPLETAR,
          NUM_DIAS_ACTUAL_A_REVISION,
-         NUM_DIAS_ACTUAL_A_DECISION,		
+         NUM_DIAS_ACTUAL_A_DECISION,    
          NUM_DIAS_ACTUAL_A_FORMALIZAR,
          SALDO_VENCIDO,
          SALDO_NO_VENCIDO,
@@ -1151,7 +1188,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          INTERESES_REMUNERATORIOS,
          INTERESES_MORATORIOS,
          COMISIONES,
-         GASTOS    
+         GASTOS,
+         DIR_TERRITORIAL_ID     
     from H_EXP where DIA_ID = max_dia_anio;
 
     V_ROWCOUNT := sql%rowcount;     

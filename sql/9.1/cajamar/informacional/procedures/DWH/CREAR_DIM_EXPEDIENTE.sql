@@ -3,9 +3,9 @@ create or replace PROCEDURE CREAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 14/04/2016
--- Motivos del cambio: Parametrización índices con esquema indices
+-- Responsable ultima modificacion: María V., PFS Group
+-- Fecha ultima modificacion: 02/05/16
+-- Motivos del cambio: DIR_TERRITORIAL_ID
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas de la dimension Expediente
@@ -71,6 +71,7 @@ create or replace PROCEDURE CREAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
     -- D_EXP_SUPERVISOR
     -- D_EXP_FASE
     -- D_EXP_TIPO_EXPEDIENTE
+    -- D_EXP_DIR_TERRITORIAL
 
     
 BEGIN
@@ -814,6 +815,21 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_SUBCARTERA'',
 	
 	 V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_EXP_FASE_PK'', ''D_EXP_FASE (FASE_EXPEDIENTE_ID)'', ''S'', ''UNIQUE'', :error); END;';
     execute immediate V_SQL USING OUT error;
+
+
+        ------------------------------ D_EXP_DIR_TERRITORIAL --------------------------
+
+ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_DIR_TERRITORIAL'',
+                           ''DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL,
+                             DIR_TERRITORIAL_DESC VARCHAR2(50 CHAR),
+                             DIR_TERRITORIAL_DESC_2 VARCHAR2(250 CHAR)'', 
+                          :error); END;';
+
+    execute immediate V_SQL USING OUT error;
+  
+   V_SQL := 'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''DIR_TERRITORIAL_PK'', ''D_EXP_DIR_TERRITORIAL (DIR_TERRITORIAL_ID)'', ''S'', ''UNIQUE'', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
 
        ------------------------------ D_EXP_TIPO_EXPEDIENTE --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_EXP_TIPO_EXPEDIENTE'',

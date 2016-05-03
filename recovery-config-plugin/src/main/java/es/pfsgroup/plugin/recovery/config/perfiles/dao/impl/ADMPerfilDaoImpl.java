@@ -46,6 +46,10 @@ public class ADMPerfilDaoImpl extends AbstractEntityDao<EXTPerfil, Long> impleme
 
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "f.funcion.id", Conversiones
 				.createLongCollection(dto.getFunciones(), ","));
+		
+		if(!Checks.esNulo(dto.getSort())){
+			dto.setSort("p." + dto.getSort());
+		}
 
 		return paginationManager.getHibernatePage(getHibernateTemplate(), hb
 				.toString(), dto, hb.getParameters());

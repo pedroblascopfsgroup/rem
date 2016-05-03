@@ -204,18 +204,27 @@ if [[ $PACKAGE == 0 ]]; then
     rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
 fi
 
-if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
-    echo ""
-    echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"
-    echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
-    exit 1
-fi
-grep -Fqi "WHENEVER SQLERROR" $FICHERO
-if [[ $? != 0 ]] ; then
-    echo ""
-    echo "El script no contiene la primera línea de control de errores: WHENEVER SQLERROR ..."
-    echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
-    exit 1
+if [[ ! $FICHERO =~ ^.*procs_y_vistas.*$ ]] ; then
+    if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
+        echo ""
+        echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"
+        echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
+        exit 1
+    fi
+    grep -Fqi "WHENEVER SQLERROR" $FICHERO
+    if [[ $? != 0 ]] ; then
+        echo ""
+        echo "El script no contiene la primera línea de control de errores: WHENEVER SQLERROR ..."
+        echo "Consulta sql/tool/templates para ver un ejemplo de plantilla"
+        exit 1
+    fi
+else
+    if [[ ! $nombreFicheroSinDir =~ ^DDL_[0-9]+_[^_]+_(SP|MV|VI)_[^\.]+\.sql$ ]] ; then
+        echo "ERROR"
+        echo "El nombre del script $nombreFicheroSinDir no sigue la nomenclatura definida"
+        echo "  DDL_xxx_ENTITY01_[SP|MV|VI]_nombreObjetoBBDD.sql"
+        exit 1
+    fi
 fi
 
 if [ ! -f $BASEDIR/tmp/$nombreSetEnv ] ; then

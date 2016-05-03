@@ -52,7 +52,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
-import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroPersonasApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
@@ -101,7 +100,7 @@ public class AdjuntoHayaManager {
 	private GestorDocumentalServicioExpedientesApi gestorDocumentalServicioExpedientesApi;
 	
 	@Autowired(required=false)
-	private GestorDocumentalMaestroApi gestorDocumentalMaestroActivosApi;
+	private GestorDocumentalMaestroApi gestorDocumentalMaestroApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -677,7 +676,7 @@ public class AdjuntoHayaManager {
 			input.setIdActivoOrigen("24284620");
 			input.setIdOrigen("NOS");
 			
-			ActivoOutputDto output = gestorDocumentalMaestroActivosApi.ejecutarActivo(input);
+			ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
 			
 			// *********************************************
 			Long idActivoHaya = new Long(output.getIdActivoHaya());
@@ -693,7 +692,7 @@ public class AdjuntoHayaManager {
 			input.setIdPersonaCliente("72500");
 			input.setIdCliente("SAREB");
 			
-			PersonaOutputDto output = gestorDocumentalMaestroActivosApi.ejecutarPersona(input);
+			PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 			
 			// *********************************************
 			Long idActivoHaya = new Long(output.getIdPersonaHaya());

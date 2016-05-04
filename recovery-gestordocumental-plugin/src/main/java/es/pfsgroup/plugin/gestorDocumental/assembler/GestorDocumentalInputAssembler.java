@@ -21,24 +21,24 @@ public class GestorDocumentalInputAssembler {
 		}
 
 		ProcessEventRequestType input = new ProcessEventRequestType();
-		input.setEventName(inputDto.getEvent());
+		input.setEventTrigger(inputDto.getEvent());
 		input.setParameters(getParameters(inputDto));
 		
 		return input;
 	}
 	
-	public static ProcessEventRequestType dtoToInputPersona (PersonaInputDto inputDto) {
-
-		if (inputDto == null) {
-			return null;
-		}
-
-		ProcessEventRequestType input = new ProcessEventRequestType();
-		input.setEventName(inputDto.getEvent());
-		input.setParameters(getParametersPersona(inputDto));
-		
-		return input;
-	}
+//	public static ProcessEventRequestType dtoToInputPersona (PersonaInputDto inputDto) {
+//
+//		if (inputDto == null) {
+//			return null;
+//		}
+//
+//		ProcessEventRequestType input = new ProcessEventRequestType();
+//		input.setEventName(inputDto.getEvent());
+//		input.setParameters(getParametersPersona(inputDto));
+//		
+//		return input;
+//	}
 	
 	private static Parameters getParameters(ActivoInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();

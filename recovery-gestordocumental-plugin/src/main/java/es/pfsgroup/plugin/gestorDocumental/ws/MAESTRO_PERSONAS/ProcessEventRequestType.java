@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
- *         &lt;element name="eventTrigger" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="eventName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -42,13 +42,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "processEventRequestType", propOrder = {
     "parameters",
-    "eventTrigger"
+    "eventName"
 })
 public class ProcessEventRequestType {
 
     protected ProcessEventRequestType.Parameters parameters;
     @XmlElement(required = true)
-    protected String eventTrigger;
+    protected String eventName;
 
     /**
      * Gets the value of the parameters property.
@@ -75,27 +75,27 @@ public class ProcessEventRequestType {
     }
 
     /**
-     * Gets the value of the eventTrigger property.
+     * Gets the value of the eventName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getEventTrigger() {
-        return eventTrigger;
+    public String getEventName() {
+        return eventName;
     }
 
     /**
-     * Sets the value of the eventTrigger property.
+     * Sets the value of the eventName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setEventTrigger(String value) {
-        this.eventTrigger = value;
+    public void setEventName(String value) {
+        this.eventName = value;
     }
 
 

@@ -48,12 +48,13 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 
 	@Override
 	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
-		ProcessEventRequestType input = GestorDocumentalInputAssembler.dtoToInputPersona(dto);
+//		ProcessEventRequestType input = GestorDocumentalInputAssembler.dtoToInputPersona(dto);
 		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada...");
 //		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
 //		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
 //		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
-		return GestorDocumentalOutputAssembler.outputToDtoPersona(ejecutar(input, WEB_SERVICE_PERSONAS));
+		return null;
+//		return GestorDocumentalOutputAssembler.outputToDtoPersona(ejecutar(input, WEB_SERVICE_PERSONAS));
 	}
 	
 	private ProcessEventResponseType ejecutar(ProcessEventRequestType input, String ws) {

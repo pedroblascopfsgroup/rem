@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=María V.
---## FECHA_CREACION=20160428
+--## FECHA_CREACION=20160503
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=CMREC-3200
+--## INCIDENCIA_LINK=GC-3200
 --## PRODUCTO=NO
 --## 
---## Finalidad: Se modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_PREPARADO_PRE
+--## Finalidad: e modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_INICIO_PRE
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_EN
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María V, PFS Group
--- Fecha ultima modificacion:28/04/16
--- Motivos del cambio: Se modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_PREPARADO_PRE
+-- Fecha ultima modificacion:03/05/16
+-- Motivos del cambio: Se modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_INICIO_PRE
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de PreContencioso
@@ -266,7 +266,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
     update TMP_H_PRE set P_PRE_INICIO_PREPARADO =  trunc(FECHA_PREPARADO_PRE) - trunc(FECHA_INICIO_PRE);
     update TMP_H_PRE set P_PRE_PREPARADO_ENV_LET =  trunc(FECHA_ENV_LET_PRE) - trunc(FECHA_PREPARADO_PRE);
     update TMP_H_PRE set P_PRE_ENV_LET_FINALIZADO =  trunc(FECHA_FINALIZADO_PRE) - trunc(FECHA_ENV_LET_PRE);
-    update TMP_H_PRE set P_PRE_INICIO_FINALIZADO =  trunc(FECHA_FINALIZADO_PRE) - trunc(FECHA_PREPARADO_PRE);                   
+    update TMP_H_PRE set P_PRE_INICIO_FINALIZADO =  trunc(FECHA_FINALIZADO_PRE) - trunc(FECHA_INICIO_PRE);                   
     commit;
 
     --GESTOR_DOC_ID
@@ -951,3 +951,4 @@ end;
 END CARGAR_H_PRECONTENCIOSO;
 /
 EXIT
+

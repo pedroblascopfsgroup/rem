@@ -719,7 +719,7 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 								NMBBien bi = (NMBBien) b;
 								if (bi.getAdjudicacion() != null) {
 									NMBAdjudicacionBien adju = bi.getAdjudicacion();
-									if (!adju.getPostores()) {
+									if (Checks.esNulo(adju.getPostores()) || !adju.getPostores()) {
 										return true;
 									}
 								}
@@ -784,13 +784,11 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 								NMBBien bi = (NMBBien) b;
 								if (bi.getAdjudicacion() != null) {
 									NMBAdjudicacionBien adju = bi.getAdjudicacion();
-									if(Checks.esNulo(adju.getEntidadAdjudicataria())){
+									if (Checks.esNulo(adju.getEntidadAdjudicataria())) {
 										return "Existe al menos un bien en la subasta con el campo entidad adjudicataria sin informar.";
-									}
-									else if("2".equals(adju.getEntidadAdjudicataria().getCodigo())){
+									} else if ("2".equals(adju.getEntidadAdjudicataria().getCodigo())) {
 										return "Existe al menos un bien en la subasta con el campo entidad adjudicataria a terceros.";
-									}
-									else if(Checks.esNulo(adju.getCesionRemate())){
+									} else if (Checks.esNulo(adju.getCesionRemate())) {
 										return "Existe al menos un bien en la subasta con el campo cesión de remate sin informar.";
 									}
 								}
@@ -831,6 +829,36 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		}
 
 		return null;
+	}
+
+	public Boolean compruebaAdjudicatariaConPostores(Long idProcedimiento) {
+
+		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(idProcedimiento);
+
+		if (!Checks.esNulo(sub)) {
+			List<LoteSubasta> listado = sub.getLotesSubasta();
+			if (!Checks.estaVacio(listado)) {
+				for (LoteSubasta ls : listado) {
+					List<Bien> bienes = ls.getBienes();
+					if (!Checks.estaVacio(bienes)) {
+						for (Bien b : bienes) {
+							if (b instanceof NMBBien) {
+								NMBBien bi = (NMBBien) b;
+								if (!Checks.esNulo(bi.getAdjudicacion())) {
+									if (Checks.esNulo(bi.getAdjudicacion().getEntidadAdjudicataria())) {
+										return false;
+									}
+								} else {
+									return false;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 }

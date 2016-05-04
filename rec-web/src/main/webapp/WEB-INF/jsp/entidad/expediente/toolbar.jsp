@@ -938,10 +938,6 @@ function(entidad,page){
 		
 		var subMenusVisibles = 0;
 		
-		var permiteElevar = false;
-		var permiteDevolver = false;
-		var mostrarRec = false;
-		
 		
 		function showHide(action, elements___){
 			for(var i=1;i< arguments.length;i++){
@@ -1006,14 +1002,12 @@ function(entidad,page){
 						}
 						if(permEle && permDevo){
 							<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-								if(d.esRecuperacion){
-									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
-								}else{
+								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+								if(!d.esRecuperacion){
 									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion9-aceptarPropuesta','expediente-accion2-devolverRevision');
 								}
-								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
 							</sec:authorize>
-						}else if(!permiteElevar && permiteDevolver){
+						}else if(!permEle && permDevo){
 							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 						}
 					}

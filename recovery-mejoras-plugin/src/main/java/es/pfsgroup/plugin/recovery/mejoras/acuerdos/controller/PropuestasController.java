@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,12 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
-import com.tc.aspectwerkz.transform.inlining.compiler.CompilationInfo.Model;
-
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
-import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -29,7 +24,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 
 @Controller
@@ -199,6 +193,7 @@ public class PropuestasController {
     public String getContratosByExpedienteId(Long idExpediente,ModelMap model) {
 		
 		model.put("listadoContratosAsuntos",propuestaApi.listadoContratosByExpedienteId(idExpediente));
+		model.put("codEntorno", usuarioManager.getUsuarioLogado().getEntidad().getCodigo());
 		
 		return JSON_LISTADO_CONTRATOS;
 	}
@@ -260,7 +255,7 @@ public class PropuestasController {
 	
 	
 	/**
-	 * Obtiene un listado de los contratos que estan incluidos en los términos de la propuesta 
+	 * Obtiene un listado de los contratos que estan incluidos en los tï¿½rminos de la propuesta 
 	 * 
 	 */
 	@SuppressWarnings("unchecked")

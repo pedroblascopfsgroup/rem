@@ -53,7 +53,7 @@ var bottomBar = [];
 var campoTasacion = items[3 + muestraBotonGuardar];
 var campoFiscal = items[4 + muestraBotonGuardar];
 
-campoFiscal.setDisable(true);
+campoFiscal.setDisabled(true);
 campoFiscal.allowBlank = true;
 
 campoTasacion.on('select', function(){	

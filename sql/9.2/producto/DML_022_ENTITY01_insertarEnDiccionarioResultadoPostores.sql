@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=20160414
+--## FECHA_CREACION=20160415
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1093
@@ -46,9 +46,9 @@ DECLARE
     TYPE T_TIPO IS TABLE OF VARCHAR2(4000 CHAR);
     TYPE T_ARRAY IS TABLE OF T_TIPO;
     V_TIPO T_ARRAY := T_ARRAY(
-      T_TIPO('ADJ', 'Adjudicación', 'Adjudicación')
+      T_TIPO('ADJ', 'Entidad', 'Entidad')
      ,T_TIPO('TER', 'Terceros', 'Terceros')
-     ,T_TIPO('ACR', 'Adjudicación con cesión de remate', 'Adjudicación con cesión de remate')
+     ,T_TIPO('ACR', 'Entidad con cesión de remate', 'Entidad con cesión de remate')
     ); 
     V_TMP_TIPO T_TIPO;
 

@@ -183,7 +183,12 @@ public class Expediente implements Serializable, Auditable, Describible {
     @Formula(value = "(select tar.tar_fecha_venc from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
            + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
            + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
-           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "','" + SubtipoTarea.CODIGO_TAREA_EN_SANCION + "','" + SubtipoTarea.CODIGO_TAREA_SANCIONADO + "') )")
+           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "','" + SubtipoTarea.CODIGO_TAREA_EN_SANCION + "','" + SubtipoTarea.CODIGO_TAREA_SANCIONADO + "') "
+           + " and tar.fechacrear = (select max(tar.fechacrear) from tar_tareas_notificaciones tar, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE dd_sta "
+           + " where tar.exp_id = exp_id and tar.borrado = 0 and tar.DD_STA_ID = dd_sta.DD_STA_ID " + " and dd_sta.dd_sta_codigo in ('"
+           + SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE + "','" + SubtipoTarea.CODIGO_REVISAR_EXPEDIENE + "','" + SubtipoTarea.CODIGO_DECISION_COMITE
+           + "','" + SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA + "','" + SubtipoTarea.CODIGO_TAREA_EN_SANCION + "','" + SubtipoTarea.CODIGO_TAREA_SANCIONADO + "')) "
+           + ")")
     
    /* @Formula(value = "(SELECT min(M.MOV_FECHA_POS_VENCIDA) "
     		+ " FROM mov_movimientos m, cex_contratos_expediente cex, cnt_contratos cnt "
@@ -391,7 +396,11 @@ public class Expediente implements Serializable, Auditable, Describible {
      */
     public Long getIdGestorActual() {
         Long idEstado = null;
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        Estado estadoActual = null;
+        if(arquetipo != null && arquetipo.getItinerario() != null){
+        	estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        }
+        
         if (estadoActual != null && estadoActual.getGestorPerfil() != null) {
             idEstado = estadoActual.getGestorPerfil().getId();
         }
@@ -403,7 +412,10 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return supervisor actual
      */
     public String getSupervisorActual() {
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        Estado estadoActual = null;
+        if(arquetipo != null && arquetipo.getItinerario() != null){
+        	estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());	
+        }
         if (estadoActual != null && estadoActual.getSupervisor() != null) { return estadoActual.getSupervisor().getDescripcion(); }
         return "";
     }
@@ -414,7 +426,10 @@ public class Expediente implements Serializable, Auditable, Describible {
      */
     public Long getIdSupervisorActual() {
         Long idEstado = null;
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        Estado estadoActual = null;
+        if(arquetipo != null && arquetipo.getItinerario() != null){
+        	estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        }
         if (estadoActual != null && estadoActual.getSupervisor() != null) {
             idEstado = estadoActual.getSupervisor().getId();
         }

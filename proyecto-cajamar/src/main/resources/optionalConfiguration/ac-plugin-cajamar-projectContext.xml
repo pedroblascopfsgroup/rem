@@ -393,6 +393,33 @@
 				<entry key="CODIGO_TIPO_GESTOR_EXTERNO" value="GESCON" />
 				<entry key="CODIGO_TIPO_GESTOR_SUPERVISOR" value="SUCON" />
 			</map>
+		</property>
+		
+		<property name="gestorYSupervisorPorTipoAsuntoYEntidad">
+			<map> <!-- CODIGO ENTIDAD -->
+				<entry key="CAJAMAR">
+					<map> <!-- CODIGO ASUNTO -->
+						<entry key="01"> <!-- LITIGIO -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="LETR"/>
+							</map>
+						</entry>
+						<entry key="02"> <!-- CONCURSAL -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="GESCON"/>
+							</map>
+						</entry>
+						<entry key="ACU"> <!-- ACUERDOS -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="LETR"/>
+							</map>
+						</entry>
+					</map>
+				</entry>
+			</map>
 		</property>		
 
 	</bean>

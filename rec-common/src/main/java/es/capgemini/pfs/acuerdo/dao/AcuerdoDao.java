@@ -7,7 +7,7 @@ import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 
 /**
  * @author maruiz
@@ -62,6 +62,6 @@ public interface AcuerdoDao extends AbstractDao<Acuerdo, Long> {
      */
     List<DDEntidadAcuerdo> getListEntidadAcuerdo();
 
-	Page buscarAcuerdos(BusquedaAcuerdosDTO dto);
+	Page buscarAcuerdos(DTOTerminosFiltro dto);
     
 }

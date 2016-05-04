@@ -800,7 +800,7 @@
 	var pagingBar=fwk.ux.getPaging(acuerdosStore);
 	pagingBar.hide();
 	
-	<%-- 
+	 
 	var gridAcuerdos=app.crearGrid(acuerdosStore,acuerdosCm,{
 		title: '<s:message code="acuerdos.grid.titulo" text="**Acuerdos" />'	
 		//,style:'padding:10px'
@@ -808,10 +808,10 @@
 		,iconCls : 'icon_asuntos'
 		,height:175
 		//,autoWidth : true
-		,bbar : [ botonesTabla  ]
-		<app:test id="listaAsuntos" addComa="true"/>
+		//,bbar : [ botonesTabla  ]
+		<app:test id="listaAcuerdos" addComa="true"/>
 	});
-	--%>
+	
 	
 	var mainPanel = new Ext.Panel({
 		items : [
@@ -821,9 +821,12 @@
 				,border:false
 				,bodyStyle:'margin:10px;padding:5px;cellspacing:10px;margin-bottom:0px'
 				,items:[panelFiltros]
-			}
-			//Añadir aquí grid de Acuerdos
-    	]
+			},{
+					bodyStyle:'padding:5px;cellspacing:10px'
+					,border:false
+					,defaults : {xtype:'panel' ,cellCls : 'vtop'}
+					,items : [gridAcuerdos]
+				  }]
 	    //,bodyStyle:'padding:10px'
 	    ,autoHeight : true
 	    ,border: false

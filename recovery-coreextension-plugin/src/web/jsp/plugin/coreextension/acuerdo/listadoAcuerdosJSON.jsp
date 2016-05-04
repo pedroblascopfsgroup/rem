@@ -9,15 +9,15 @@
 	<json:array name="acuerdos" items="${pagina.results}" var="acu">
 		<json:object>
 			<json:property name="id" value="${acu.id}"/>
-			<json:property name="nroContrato" value="${acu.nroContrato}"/>
-			<json:property name="nroCliente" value="${acu.nroCliente}"/>
-			<json:property name="solicitante" value="${acu.solicitante}"/>
-			<json:property name="tipoSolicitante" value="${acu.tipoSolicitante}"/>
-			<json:property name="tipoAcuerdo" value="${acu.tipoAcuerdo}"/>
-			<json:property name="estado" value="${acu.estado}"/>
-			<json:property name="fechaAlta" value="${acu.fechaAlta}"/>
+			<json:property name="nroContrato" value="${acu.contratosString}"/>
+			<json:property name="nroCliente" value="${acu.contratosString}"/>
+			<json:property name="solicitante" value="${acu.solicitante.descripcion}"/>
+			<json:property name="tipoSolicitante" value="${acu.solicitante.descripcion}"/>
+			<json:property name="tipoAcuerdo" value="${acu.tipoAcuerdo.descripcion}"/>
+			<json:property name="estado" value="${acu.estadoAcuerdo.descripcion}"/>
+			<json:property name="fechaAlta" value="${acu.fechaPropuesta}"/>
 			<json:property name="fechaEstado" value="${acu.fechaEstado}"/>
-			<json:property name="fechaVigencia" value="${acu.fechaVigencia}"/>
+			<json:property name="fechaVigencia" value="${acu.fechaLimite}"/>
 		</json:object>
 	</json:array>
 </fwk:json>	 		 

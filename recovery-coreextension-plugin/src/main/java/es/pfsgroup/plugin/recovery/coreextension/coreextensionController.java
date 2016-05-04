@@ -34,7 +34,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
-import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
@@ -398,9 +398,9 @@ public class coreextensionController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String listBusquedaAcuerdos(ModelMap model, BusquedaAcuerdosDTO busquedaAcuerdosDTO){
+	public String listBusquedaAcuerdos(ModelMap model, DTOTerminosFiltro dtoTerminosFiltro){
 		
-		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(busquedaAcuerdosDTO);
+		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(dtoTerminosFiltro);
 		model.put("pagina", page);
 		
 		return LISTADO_BUSQUEDA_ACUERDOS;

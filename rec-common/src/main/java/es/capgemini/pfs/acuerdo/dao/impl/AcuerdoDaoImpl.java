@@ -15,7 +15,7 @@ import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
-import es.capgemini.pfs.acuerdo.dto.BusquedaAcuerdosDTO;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
@@ -164,14 +164,41 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	   		return lista;
 	    }
 
-	public Page buscarAcuerdos(BusquedaAcuerdosDTO dto) {
-		return paginationManager.getHibernatePage(getHibernateTemplate(),generarHQLBuscarAcuerdos(dto), (PaginationParams) dto);
+	public Page buscarAcuerdos(DTOTerminosFiltro dto) {
+		Page page = paginationManager.getHibernatePage(getHibernateTemplate(), generarHQLBuscarAcuerdos(dto), dto);
+		return page;
 	}
 	
-	private String generarHQLBuscarAcuerdos(BusquedaAcuerdosDTO dto) {
+	private String generarHQLBuscarAcuerdos(DTOTerminosFiltro dto) {
 		
-		return null;
+		StringBuffer hql = new StringBuffer();
+
+	
+	
+		// LAS TABLAS QUE NECESITO
+		hql.append("from Acuerdo acu ");
+		hql.append(", AcuerdoContrato acuCnt, Contrato cnt, ContratoPersona cntPer, Persona per");
+	
+		hql.append(" where 1=1 ");
+/*
+		// *** LOS CRUCES CON LAS TABLAS ***
+		if (cruzaContratos) {
+			hql.append(" and acuCon.contrato = ");
+		}
+		*/
+		// *** LOS CRUCES CON LAS TABLAS ***
 		
+
+		// *** LAS CONDICIONES ***
+	/*
+		// Numero de contrato
+		if (dto.getNroContrato() != null
+				&& dto.getNroContrato().trim().length() > 0) {
+				hql.append(" and c.nroContrato like '%"
+							+ dto.getNroContrato().trim() + "%'");
+			}
+*/		
+		return hql.toString();
 	}
 
 }

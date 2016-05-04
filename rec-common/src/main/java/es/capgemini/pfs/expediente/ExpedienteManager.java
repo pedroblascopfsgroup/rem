@@ -899,8 +899,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         
         //Seteamos la oficina
         if(DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(expediente.getTipoExpediente()) || DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO.equals(expediente.getTipoExpediente())){
-        	if(!Checks.esNulo(persona) && !Checks.esNulo(persona.getOficinaCliente())){
-        		expediente.setOficina(persona.getOficinaCliente());
+        	if(!Checks.esNulo(persona) && !Checks.esNulo(persona.getOficinaGestora())){
+        		expediente.setOficina(persona.getOficinaGestora());
         	}
         }
         if(Checks.esNulo(expediente.getOficina())){     	

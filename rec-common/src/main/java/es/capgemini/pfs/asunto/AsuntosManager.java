@@ -591,11 +591,13 @@ public class AsuntosManager {
         Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         for (TareaNotificacion tarea : asunto.getTareas()) {
             SubtipoTarea subtipo = tarea.getSubtipoTarea();
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
-                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
-            }
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
-                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+            if(subtipo != null){
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
+	            }
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+	            }
             }
         }
         return false;

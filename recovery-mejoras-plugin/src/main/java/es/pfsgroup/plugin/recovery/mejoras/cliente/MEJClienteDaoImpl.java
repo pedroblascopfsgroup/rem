@@ -561,12 +561,13 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		if (saldovencido) {
 
 			if (EXTPersonaDao.BUSQUEDA_RIESGO_DIRECTO.equals(clientes
-					.getTipoRiesgo())) {
+					.getTipoRiesgo()) || EXTPersonaDao.BUSQUEDA_RIESGO_TOTAL.equals(clientes
+							.getTipoRiesgo())) {
 				final String filtro = addSubselectDispuestoVencido(
 						clientes.getMinSaldoVencido(),
 						clientes.getMaxSaldoVencido());
 				if (!Checks.esNulo(filtro)) {
-					hql.append("and EXISTS (");
+					hql.append(" AND EXISTS (");
 					hql.append(filtro);
 					hql.append(")");
 				}
@@ -587,6 +588,8 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 						hql.append(filtroFinal);
 					} catch (NumberFormatException nfe) {}
 				}
+				
+				hql.append(String.format(" AND (%s IS NOT NULL and %s!=%s)", campoBusqueda, campoBusqueda, "0"));
 			}
 		}
 	}
@@ -607,7 +610,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			srtbuilder.append("SELECT 1 FROM V_PER_PERSONAS_FORMULAS v WHERE v.PER_ID = p.PER_ID AND v.DISPUESTO_VENCIDO IS NOT NULL ");
 						
 			if (!StringUtils.isBlank(minValue)) {
-				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 50, '0'), ',', '.')) >= ");
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(NVL(v.DISPUESTO_VENCIDO, 0), ',', '.'), LPAD('.99', 50, '9')) >= ");
 				
 				try {
 					Float valor = Float.parseFloat(minValue);
@@ -618,14 +621,16 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			
 			
 			if (!StringUtils.isBlank(maxValue)) {
-				srtbuilder.append(" AND TO_NUMBER(REPLACE(LPAD(v.DISPUESTO_VENCIDO, 50, '0'), ',', '.')) <= ");
+				srtbuilder.append(" AND TO_NUMBER(REPLACE(NVL(v.DISPUESTO_VENCIDO, 0), ',', '.'), LPAD('.99', 50, '9')) <= ");
 				
 				try {
 					Float valor = Float.parseFloat(maxValue);
 					String filtroFinal = String.format("%s", valor);
 					srtbuilder.append(filtroFinal);
 				} catch (NumberFormatException nfe) {}
-			}		
+			}	
+			
+			srtbuilder.append(" AND TO_NUMBER(REPLACE(NVL(v.DISPUESTO_VENCIDO, 0), ',', '.'), LPAD('.99', 50, '9')) != 0 ");
 			
 			return srtbuilder.toString();
 		} 
@@ -670,18 +675,31 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 	private void filtroFechas(MEJBuscarClientesDto clientes,
 			String fechaMinima, String fechaMaxima, FiltroPersonaBuilder fpb) {
 
-		if (StringUtils.isBlank(fechaMinima) || StringUtils.isBlank(fechaMaxima)) {
-			return;
+		if (StringUtils.isBlank(fechaMinima)) {
+			fechaMinima = "1";
+		}
+		
+		if	(StringUtils.isBlank(fechaMaxima)) {
+			fechaMaxima = String.valueOf(Integer.MAX_VALUE);
+		}
+		
+		String campoBusqueda = "DIAS_VENCIDO";
+		
+		if(EXTPersonaDao.BUSQUEDA_RIESGO_INDIRECTO.equals(clientes.getTipoRiesgo())) {
+			campoBusqueda = "DIAS_VENC_RIESGO_INDIRECTO";
+		}
+		else if(EXTPersonaDao.BUSQUEDA_RIESGO_DIRECTO.equals(clientes.getTipoRiesgo())) {
+			campoBusqueda = "DIAS_VENC_RIESGO_DIRECTO";
 		}
 		
 		StringBuilder filtro = new StringBuilder();
-		filtro.append("SELECT PER_ID FROM V_PER_PERSONAS_FORMULAS WHERE NVL(V_PER_PERSONAS_FORMULAS.DIAS_VENCIDO, 0) BETWEEN ");
+		filtro.append("SELECT PER_ID FROM V_PER_PERSONAS_FORMULAS WHERE NVL(V_PER_PERSONAS_FORMULAS." + campoBusqueda +", 0) BETWEEN ");
 		
 		if (!StringUtils.isBlank(fechaMinima)) {
 			filtro.append(fechaMinima);
 		}
 		else {
-			filtro.append("0");
+			filtro.append("1");
 		}
 		
 		filtro.append(" AND ");
@@ -1439,28 +1457,6 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 		hql.append(" where p.ZON_ID = zon.ZON_ID and p.BORRADO = 0");
 		hql.append(zonas);
-
-		return hql.toString();
-	}
-	
-	private String generaFiltroPersonaPorGestor(Usuario usuLogado,
-			Map<String, Object> parameters) {
-		StringBuffer hql = new StringBuffer();
-		hql.append(" select p.per_id from per_personas p , GE_GESTOR_ENTIDAD ge ");
-
-		if (pasoDeVariables()) {
-			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = :codigo_entidad_cliente");
-			hql.append(" and ge.USU_ID = :usuario_logado");
-
-			parameters.put("usuario_logado", usuLogado.getId());
-			parameters.put("codigo_entidad_cliente",
-					DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
-
-		} else {
-			hql.append(" where p.per_id = ge.ug_ID and ge.DD_EIN_ID = '"
-					+ DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE + "'");
-			hql.append(" and ge.USU_ID = " + usuLogado.getId() + " ");
-		}
 
 		return hql.toString();
 	}

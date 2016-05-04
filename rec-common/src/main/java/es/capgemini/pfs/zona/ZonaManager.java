@@ -1,6 +1,7 @@
 package es.capgemini.pfs.zona;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
+import es.capgemini.pfs.diccionarios.comparator.IDictionaryComparator;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -97,7 +100,12 @@ public class ZonaManager {
         if (idNivel == null || idNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
         Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
                 .getCodigoZonas();
-        return zonaDao.buscarZonasPorCodigoNivel(idNivel, codigoZonasUsuario);
+        
+        IDictionaryComparator dictionaryComparator = DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION);
+        List<DDZona> zonas = zonaDao.buscarZonasPorCodigoNivel(idNivel, codigoZonasUsuario);
+        Collections.sort(zonas, dictionaryComparator);
+        
+        return zonas; 
     }
 
     /**

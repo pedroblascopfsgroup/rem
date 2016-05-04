@@ -270,6 +270,16 @@ var reloadEstados = function(idCicloMarcadoPolitica, idExpediente, panel) {
 				panelEstado['<fwk:const value="es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica.ESTADO_VIGENTE" />'] = politicaFin;
 				
 				panel.doLayout();
+				 objetivosStore.removeAll();
+    
+			    page.webflow({
+			      flow: 'politica/listadoEstadosPolitica', 
+			      params: {idCicloMarcadoPolitica: idCicloMarcadoPolitica},
+			      success: function(data, config) {
+			          setearDatos(data);
+			          panel.items.get(posicionPanel).getEl().unmask();
+			      }
+			    });
 			}
 		});
 	
@@ -312,20 +322,18 @@ var reloadEstados = function(idCicloMarcadoPolitica, idExpediente, panel) {
 				panelEstado['<fwk:const value="es.capgemini.pfs.politica.model.DDEstadoItinerarioPolitica.ESTADO_VIGENTE" />'] = politicaFin;
 				
 				panel.doLayout();
+				 objetivosStore.removeAll();
+    
+			    page.webflow({
+			      flow: 'politica/listadoEstadosPolitica', 
+			      params: {idCicloMarcadoPolitica: idCicloMarcadoPolitica},
+			      success: function(data, config) {
+			          setearDatos(data);
+			          panel.items.get(posicionPanel).getEl().unmask();
+			      }
+			    });
 	}
 
-
-
-    objetivosStore.removeAll();
-    
-    page.webflow({
-      flow: 'politica/listadoEstadosPolitica', 
-      params: {idCicloMarcadoPolitica: idCicloMarcadoPolitica},
-      success: function(data, config) {
-          setearDatos(data);
-          panel.items.get(posicionPanel).getEl().unmask();
-      }
-    });
 };
 
 var setearDatos = function(data) {

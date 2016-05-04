@@ -12,7 +12,14 @@
 			<json:property name="incluir" value="${false}" />		
             <json:property name="cc" value="${contrato.codigoContrato}" />                 
             <json:property name="tipo" value="${contrato.tipoProducto.descripcion}" />
-            <json:property name="saldoIrregular" value="${contrato.lastMovimiento.posVivaVencidaAbsoluta}" />
+<c:choose>            
+	<c:when test="${codEntorno != null && 'CAJAMAR' == codEntorno}">
+			<json:property name="saldoIrregular" value="${contrato.lastMovimiento.deudaIrregular}" />
+	</c:when>
+	<c:otherwise>
+			<json:property name="saldoIrregular" value="${contrato.lastMovimiento.posVivaVencidaAbsoluta}" />
+	</c:otherwise>		
+</c:choose>            
             <json:property name="saldoNoVencido" value="${contrato.lastMovimiento.posVivaNoVencidaAbsoluta}" />
             <json:property name="diasIrregular" value="${contrato.diasIrregular}" /> 
             <json:property name="otrosint" value="${contrato.contratoPersonaOrdenado[0].persona.apellidoNombre}" />

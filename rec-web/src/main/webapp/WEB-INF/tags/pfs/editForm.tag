@@ -83,7 +83,6 @@
 							,{id:'${tab_type}'+result.${tab_paramValue}<c:if test="${tab_iconCls != null}">,iconCls:'${tab_iconCls}'</c:if>});
 						page.fireEvent(app.event.DONE);
 					}
-	
 				});
 			}
 			else{
@@ -101,6 +100,23 @@
 			* con el valor tabGenericoConMsgGuardando, para que les salga el mensaje de Guardando... mientras se resuelve la petición.
 			*/ --%> 
 	<c:when test="${onSuccessMode == 'tabGenericoConMsgGuardando'}">
+	
+		var maskPanel;
+		var maskAll=function(){
+			if(maskPanel==null){
+				maskPanel=new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>'});
+			}
+			maskPanel.show();
+		};
+		
+		var unmaskAll=function(){
+			if(maskPanel!=null)
+				maskPanel.hide();
+				
+			btnGuardar.setDisabled(false);
+       		btnCancelar.setDisabled(false);
+		};
+	
 		var ${name}_handler =  function() {
 			var p = ${parameters}();
 			
@@ -117,12 +133,13 @@
 			}					
 			
 			if(p.permiteGuardar == null || p.permiteGuardar) {
-				new Ext.LoadMask(panelEdicion.body, {msg:'<s:message code="fwk.ui.form.guardando" text="**Guardando.."/>'}).show();
+				maskAll();
 		
 				page.webflow({
 					flow: '${saveOrUpdateFlow}'
 					,params: ${parameters}
 					,success : ${name}_onsuccess
+					,error:  ${name}_onerror
 				});
 			}
 			else{
@@ -134,10 +151,13 @@
 		var ${name}_onsuccess = function(){ 
 			page.fireEvent(app.event.DONE); 
 		};
+		
+		var ${name}_onerror = function(){ 
+			unmaskAll(); 
+		};
 	</c:when>
 	
 	<c:otherwise>
-	
 		var ${name}_handler =  function() {
 						page.webflow({
 							flow: '${saveOrUpdateFlow}'

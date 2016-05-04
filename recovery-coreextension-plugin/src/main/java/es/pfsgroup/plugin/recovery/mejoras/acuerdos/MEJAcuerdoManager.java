@@ -50,7 +50,6 @@ import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -127,7 +126,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TERMINOS_ACUERDO_ASUNTO = "mejacuerdo.obtenerListadoTerminosAcuerdoByAcuId";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO = "mejacuerdo.getListTipoAcuerdo";	
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_PRODUCTO = "mejacuerdo.getListTipoProducto";	
-	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE= "mejacuerdomanager.getListTiposSolicitante";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_ESTADOS_ACUERDO= "mejacuerdomanager.getListEstadosAcuerdo";
 	public static final String BO_ACUERDO_MGR_GET_LISTADO_ENTIDAD_ACUERDO="mejacuerdomanager.getListEntidadAcuerdo";
 	public static final String BO_ACUERDO_MGR_SAVE_TERMINO_ACUERDO = "mejacuerdo.saveTerminoAcuerdo";	
@@ -538,10 +536,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
      */
 	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE)
 	public List<DDSolicitante> getListTiposSolicitante() {
-
-		List<DDSolicitante> listado = solicitanteDao.getListTiposSolicitante();
-		
-		return listado;
+		return solicitanteDao.getList();
 	}
 	
 	/**
@@ -1196,7 +1191,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	    	Calendar calendar = new GregorianCalendar();
 	    	calendar.add(Calendar.DAY_OF_MONTH, 15);
 
-	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Revisión del acuerdo aceptado "+acuerdo.getId(), gestorDespachoDecisor.getUsuario().getId(), true, SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO, calendar.getTime());
+	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Revisiï¿½n del acuerdo aceptado "+acuerdo.getId(), gestorDespachoDecisor.getUsuario().getId(), true, SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO, calendar.getTime());
 
 	        acuerdo.setIdJBPM(idJBPM);
 	        acuerdoDao.save(acuerdo);

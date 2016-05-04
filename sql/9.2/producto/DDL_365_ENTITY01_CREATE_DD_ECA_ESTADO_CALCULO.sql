@@ -80,11 +80,11 @@ DECLARE
 					  DD_ECA_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
 					  DD_ECA_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
 					  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,
-					  USUARIOCREAR              VARCHAR2(10 CHAR)   NOT NULL,
+					  USUARIOCREAR              VARCHAR2(50 CHAR)   NOT NULL,
 					  FECHACREAR                TIMESTAMP(6)        NOT NULL,
-					  USUARIOMODIFICAR          VARCHAR2(10 CHAR),
+					  USUARIOMODIFICAR          VARCHAR2(50 CHAR),
 					  FECHAMODIFICAR            TIMESTAMP(6),
-					  USUARIOBORRAR             VARCHAR2(10 CHAR),
+					  USUARIOBORRAR             VARCHAR2(50 CHAR),
 					  FECHABORRAR               TIMESTAMP(6),
 					  BORRADO                   NUMBER(1)           DEFAULT 0                     NOT NULL
 					)';

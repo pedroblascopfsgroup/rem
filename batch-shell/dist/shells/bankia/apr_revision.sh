@@ -9,7 +9,7 @@ JMX_TYPE=BatchRecuperaciones
 JMX_ADMIN=jmx_admin
 JMX_PW=IMYzS4aO1q6jg1q1cXFevw==46794765
 JMX_HOST=localhost
-#JMX_PORT=2099
+JMX_PORT=2099
 BASEDIR=$(dirname $0)
 
 cd $BASEDIR

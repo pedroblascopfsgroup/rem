@@ -779,7 +779,7 @@
 		<sec:authorize ifAllGranted="ROLE_PUEDE_SUBIR_ADJUNTOS">
 			,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
 		</sec:authorize>
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS">
 			,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
 		</sec:authorize>,height: 180
 		,collapsible:true
@@ -831,7 +831,7 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS_PER">
 		,bbar : [subirAdjuntoPersona,editarDescripcionAdjuntoPersona]
 		</sec:authorize>
 		,height: gridHeight
@@ -883,7 +883,7 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS_EXPE">
 		,bbar : [subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente]
 		</sec:authorize>
 		,height: gridHeight
@@ -935,7 +935,7 @@
 	
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS_CNT">
 		,bbar : [subirAdjuntoContrato,editarDescripcionAdjuntoContrato]
 		</sec:authorize>
 		,height: gridHeight

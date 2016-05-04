@@ -54,14 +54,17 @@ var campo2 = items[2 + muestraBotonGuardar];
 var campo3 = items[3 + muestraBotonGuardar];
 
 campo3.setDisabled(true);
+campo3.allowBlank = true;
 
 campo2.on('select', function(){	
-	if(campo2.getValue() == '01') {//MODIFICAR
+	if(campo2.getValue() == 'NPT') {//si no se paga la tasa
 		campo3.setDisabled(false);
+		campo3.allowBlank = false;
 	}
-	else if(campo2.getValue() == '02') {//MODIFICAR
+	else{//el resto
 		campo3.reset();
 		campo3.setDisabled(true);
+		campo3.allowBlank = true;
 	}
 });	
 

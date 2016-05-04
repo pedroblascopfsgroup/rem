@@ -220,7 +220,7 @@
 		,style:'padding: 10px;'
 		,autoHeight : true
 		,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-		<sec:authorize ifNotGranted="SOLO_CONSULTA">,bbar : [btAddConvenio, btEditConvenio, btRemoveConvenio]</sec:authorize>
+		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_CONCURSO_CONVENIO">,bbar : [btAddConvenio, btEditConvenio, btRemoveConvenio]</sec:authorize>
 	};
 	
 	var conveniosGrid = app.crearGrid(conveniosDS,convenioCM,grid_cfg);

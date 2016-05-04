@@ -452,7 +452,7 @@
 	
 	<%-- Campo de Texto Numero Num Enlace --%>
 	var numEnlace  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Nï¿½mero Enlace" />'
+		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Número Enlace" />'
 		,labelStyle:labelStyle
 		,style:style
 		,width:135
@@ -465,7 +465,7 @@
 	
 	<%-- Campo de Texto Numero Num Mandamiento --%>
 	var numMandamiento  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Nï¿½mero Mandamiento" />'
+		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Número Mandamiento" />'
 		,labelStyle:labelStyle
 		,style:style
 		,width:135
@@ -478,7 +478,7 @@
 	
 	<%-- Campo de Texto Numero Num Cheque --%>
 	var numCheque  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Nï¿½mero Cheque" />'
+		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Número Cheque" />'
 		,labelStyle:labelStyle
 		,width:135
 		,height:21
@@ -535,7 +535,7 @@
     style:style,
 	labelStyle:labelStyle,
     items: [
-        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trï¿½mite" />'
+        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trámite" />'
         ,name: 'cb-1'
         ,style:style
 		,labelStyle:labelStyle
@@ -553,7 +553,7 @@
 		 totalEntrega.getValue() != 0 && totalEntrega.getValue() != "" && totalEntrega.getValue() != null){
 			return true;
 		} else {
-			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algï¿½n parï¿½metro obligatorio" />');
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algún parámetro obligatorio" />');
 			return false;
 		}
 	}

@@ -11,6 +11,7 @@
 		<json:property name="procedimiento" value="${rec.procedimiento.nombreProcedimiento}"/>
 		<json:property name="estado" value="${rec.estado.descripcion}"/>
 		<json:property name="tipoGenerico" value="Genérico"/>
+		<json:property name="tipoCobro" value="${rec.tipoCobroPago.descripcion}"/>
 		<json:property name="subTipo" value="${rec.subTipo.descripcion}"/>
 		<json:property name="importe" value="${rec.importe}"/>
 		<json:property name="fecha" >

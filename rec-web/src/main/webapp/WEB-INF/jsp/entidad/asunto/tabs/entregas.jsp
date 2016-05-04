@@ -33,6 +33,7 @@
 			,{name:"fecha"}
 			,{name:"fechaValor"}
 			,{name:"tipoEntrega"}
+			,{name: "tipoCobro"}
 			,{name:"conceptoEntrega"}
 			,{name:"origenCobro"}
 			,{name:"nominal"}
@@ -64,22 +65,22 @@
 		,{header : '<s:message code="entregas.codigoCobro" text="**Codigo Cobro"/>', dataIndex : 'codigoCobro'}
 		,{header : '<s:message code="entregas.fechaEntrega" text="**Fecha Entrega"/>', dataIndex : 'fecha'}
 		,{header : '<s:message code="entregas.fechaValor" text="**Fecha Valor"/>', dataIndex : 'fechaValor'}
-		,{header : '<s:message code="entregas.tipoEntrega" text="**Tipo Entrega"/>', dataIndex : 'tipoEntrega'}
+		,{header : '<s:message code="entregas.tipoEntrega" text="**Tipo Entrega"/>', dataIndex : 'tipoCobro'}
 		,{header : '<s:message code="entregas.origenEntrega" text="**Origen Entrega"/>', dataIndex : 'origenCobro'}
-		,{header : '<s:message code="entregas.nominal" text="**Nominal"/>', dataIndex : 'nominal'}
-		,{header : '<s:message code="entregas.intereses" text="**Intereses"/>', dataIndex : 'interesesOrdinarios'}
-		,{header : '<s:message code="entregas.demoras" text="**Demoras"/>', dataIndex : 'interesesMoratorios'}
-		,{header : '<s:message code="entregas.impuestos" text="**Impuestos"/>', dataIndex : 'impuestos'}
-		,{header : '<s:message code="entregas.gastosProcurador" text="**Gastos Procurador"/>', dataIndex : 'gastosProcurador'}
-		,{header : '<s:message code="entregas.gastosAbogado" text="**Gastos Abogado"/>', dataIndex : 'gastosAbogado'}
-		,{header : '<s:message code="entregas.otrosGastos" text="**Otros Gastos"/>', dataIndex : 'gastosOtros'}
-		,{header : '<s:message code="entregas.totalGastos" text="**Total Gastos "/>', dataIndex : 'gastos'}
-		,{header : '<s:message code="entregas.comisiones" text="**Comisiones"/>', dataIndex : 'comisiones'}
+		,{header : '<s:message code="entregas.nominal" text="**Nominal"/>', dataIndex : 'nominal', hidden:true}
+		,{header : '<s:message code="entregas.intereses" text="**Intereses"/>', dataIndex : 'interesesOrdinarios', hidden:true}
+		,{header : '<s:message code="entregas.demoras" text="**Demoras"/>', dataIndex : 'interesesMoratorios', hidden:true}
+		,{header : '<s:message code="entregas.impuestos" text="**Impuestos"/>', dataIndex : 'impuestos', hidden:true}
+		,{header : '<s:message code="entregas.gastosProcurador" text="**Gastos Procurador"/>', dataIndex : 'gastosProcurador', hidden:true}
+		,{header : '<s:message code="entregas.gastosAbogado" text="**Gastos Abogado"/>', dataIndex : 'gastosAbogado', hidden:true}
+		,{header : '<s:message code="entregas.otrosGastos" text="**Otros Gastos"/>', dataIndex : 'gastosOtros', hidden:true}
+		,{header : '<s:message code="entregas.totalGastos" text="**Total Gastos "/>', dataIndex : 'gastos', hidden:true}
+		,{header : '<s:message code="entregas.comisiones" text="**Comisiones"/>', dataIndex : 'comisiones', hidden:true}
 		,{header : '<s:message code="entregas.totalEntrega" text="**Total Entrega "/>', dataIndex : 'importe'}
 		
 	]);
 	 
-	var btnNuevo = new Ext.Button({
+	<%-- var btnNuevo = new Ext.Button({
 		 text: '<s:message code="app.agregar" text="**Agregar" />'
 		 ,iconCls : 'icon_mas'
 		 ,cls: 'x-btn-text-icon'
@@ -122,15 +123,15 @@
 				});
 				w.on(app.event.CANCEL, function(){ w.close(); });
 		}
-	});
+	});--%>
 	
 
 	var entregaGrid = app.crearGrid(entregaStore,entregaCm,{
 		title:'<s:message code="entregas.grid.titulo" text="**Entregas" />'
 		,height : 420
 		,style:'padding-right:10px'
-		,bbar:[ 
-			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOT_AGREGAR_ENTREGA">btnNuevo
+		<%--,bbar:[ 
+			 <sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOT_AGREGAR_ENTREGA">btnNuevo
 				<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOT_MODIFICAR_ENTREGA">,btnEditar</sec:authorize>
 			</sec:authorize>
 			
@@ -138,10 +139,10 @@
 				<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOT_MODIFICAR_ENTREGA">btnEditar</sec:authorize>
 			</sec:authorize>
 		
-		]
+		]--%>
 	});
 	  
-	entregaGrid.on('rowdblclick',function(grid, rowIndex, e){
+	<%-- entregaGrid.on('rowdblclick',function(grid, rowIndex, e){
 		if(!panel.puedeEditar()) return; 
 		if ( !(panel.esGestor() || panel.esSupervisor())) return;
 	   	var rec = grid.getSelectionModel().getSelected();
@@ -159,7 +160,7 @@
 			entregaStore.webflow({id:panel.getAsuntoId()});
 	    });
 	    w.on(app.event.CANCEL, function(){ w.close(); });
-	});
+	});--%>
 
 	panel.add(entregaGrid);
 

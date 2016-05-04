@@ -105,7 +105,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	if (dto.getAmbitoTarea().equals("1")) {
         		hb = buscarTareasGrupo(hb, dto);
         	} else {
-        		hb = buscarTareasIndividual(dto);
+        		hb = buscarTareasIndividual(hb, dto);
         	}
         }
         
@@ -604,21 +604,24 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
 		return resultado.substring(0, resultado.length()-2).toString();
 	}
 	
-	public HQLBuilder buscarTareasIndividual(final BTADtoBusquedaTareas dto) {
+	public HQLBuilder buscarTareasIndividual(HQLBuilder hb, final BTADtoBusquedaTareas dto) {
 		HQLBuilder hb2;
 		StringBuffer hql = new StringBuffer();
 		String idTarea = dto.getComboTipoTarea();
 		String idActuacion = dto.getComboTipoActuacion();
   		String idProcedimiento = dto.getComboTipoProcedimiento();
-  		
-		
+  		String comboGestor = dto.getComboGestor();
+  		 
+  		if (!Checks.esNulo(comboGestor) && !Checks.esNulo(idTarea)){
+		hql.append(" tar in (");
 		hql.append("select DISTINCT vtar from VTARTareaVsUsuario vtar, TareaProcedimiento tarea"); // Base.
 		//hql.append(" inner join TareaNotificacion as tar on tar.tarea = vtar.nombreTarea"); // Filtro por tareas.
 		//hql.append(" inner join vtar.nombreTarea tar"); // Filtro por tareas.
 		hql.append(" where tarea.descripcion = vtar.nombreTarea and (vtar.usuarioPendiente = " + dto.getComboGestor()); // Filtro usuario.
 		hql.append(" or vtar.usuarioPendiente in (select egu.grupo from EXTGrupoUsuarios egu where egu.grupo = " + dto.getComboGestor() + ")"); // Filtro grupo usuario.
-        hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + "))"); // Filtro por entidad.
-        
+       
+		hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + "))"); // Filtro por entidad.
+  		
   		if(idActuacion != null && idActuacion != ""){
   			hql.append(" and vtar.idActuacion = " + dto.getComboTipoActuacion()); // Filtro por actuacion.
   		}
@@ -629,10 +632,12 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
   			//hql.append(" and tar.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
   			hql.append(" and tarea.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
   		}
-        
-		hb2 = new HQLBuilder(hql.toString());
+  		hb.appendWhere(hql.toString());
+  		
+  		}
 		
-		return hb2;
+		
+		return hb;
 	}
 	
 	

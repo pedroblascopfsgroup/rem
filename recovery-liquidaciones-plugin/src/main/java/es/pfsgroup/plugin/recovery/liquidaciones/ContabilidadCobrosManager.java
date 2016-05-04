@@ -68,20 +68,14 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 	@Override
 	@Transactional(readOnly=false)
 	public void saveContabilidadCobro(DtoContabilidadCobros dto) {
-		// Obtener los diccionarios por su columna 'CODIGO'.
-		Dictionary tipoEntrega = dictionary.getByCode(DDAdjContableTipoEntrega.class, dto.getTipoEntrega());
-		Dictionary conceptoEntrega = dictionary.getByCode(DDAdjContableConceptoEntrega.class, dto.getConceptoEntrega());
-	
 		ContabilidadCobros cnt = new ContabilidadCobros();
 		
+		/**Seteamos los valores de los campos**/
+		// Comprobar si ya existe un registro e importarlo para modificar su contenido.
 		if(!Checks.esNulo(dto.getId())){
 			cnt = contabilidadCobrosDao.get(dto.getId());
 		}
-		
-		/**Seteamos los valores de los campos**/
-		cnt.setAsunto(asuntoDao.get(dto.getAsunto()));
-		cnt.setConceptoEntrega((DDAdjContableConceptoEntrega) conceptoEntrega);
-		cnt.setDemoras(dto.getDemoras());
+		// Obtener fechas y asignar al modelo.
 		try {
 			Date sqlFE = new java.sql.Date(DateFormat.toDate(dto.getFechaEntrega()).getTime());
 			cnt.setFechaEntrega(sqlFE);
@@ -91,9 +85,20 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		// Obtener los diccionarios por su columna 'CODIGO' y asignar al modelo.
+		if(dto.getTipoEntrega() != null && !dto.getTipoEntrega().equals("")){
+			Dictionary tipoEntrega = dictionary.getByCode(DDAdjContableTipoEntrega.class, dto.getTipoEntrega());
+			cnt.setTipoEntrega((DDAdjContableTipoEntrega) tipoEntrega);
+		}
+		if(dto.getConceptoEntrega() != null && !dto.getConceptoEntrega().equals("")){
+			Dictionary conceptoEntrega = dictionary.getByCode(DDAdjContableConceptoEntrega.class, dto.getConceptoEntrega());
+			cnt.setConceptoEntrega((DDAdjContableConceptoEntrega) conceptoEntrega);
+		}
+		// Asignar resto de datos al modelo.
+		cnt.setAsunto(asuntoDao.get(dto.getAsunto()));
+		cnt.setDemoras(dto.getDemoras());
 		cnt.setGastosLetrado(dto.getGastosLetrado());
 		cnt.setGastosProcurador(dto.getGastosProcurador());
-		cnt.setImporte(dto.getImporte());
 		cnt.setImpuestos(dto.getImpuestos());
 		cnt.setIntereses(dto.getIntereses());
 		cnt.setNominal(dto.getNominal());
@@ -109,10 +114,13 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		cnt.setQuitaIntereses(dto.getQuitaIntereses());
 		cnt.setQuitaNominal(dto.getQuitaNominal());
 		cnt.setQuitaOtrosGastos(dto.getQuitaOtrosGastos());
-		cnt.setTipoEntrega((DDAdjContableTipoEntrega) tipoEntrega);
 		cnt.setTotalEntrega(dto.getTotalEntrega());
 		cnt.setOperacionesTramite(dto.getOperacionesTramite());
+		cnt.setOperacionesEnTramite(dto.getOperacionesEnTramite());
+		cnt.setQuitaOperacionesEnTramite(dto.getQuitaOperacionesEnTramite());
+		cnt.setTotalQuita(dto.getTotalQuita());
 
+		// Guardar en la DB.
 		genericDao.save(ContabilidadCobros.class, cnt);
 	}
 

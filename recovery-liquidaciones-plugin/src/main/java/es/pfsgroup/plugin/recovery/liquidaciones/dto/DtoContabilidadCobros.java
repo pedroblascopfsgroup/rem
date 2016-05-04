@@ -15,7 +15,6 @@ public class DtoContabilidadCobros extends WebDto {
 	private String fechaEntrega;
 	private String fechaValor;
 	private Float valor;
-	private Float importe;
 	private String tipoEntrega;
 	private String conceptoEntrega;
 	private Float nominal;
@@ -39,6 +38,9 @@ public class DtoContabilidadCobros extends WebDto {
 	private String observaciones;
 	private Long asunto;
 	private Boolean operacionesTramite;
+	private Float quitaOperacionesEnTramite;
+	private Float operacionesEnTramite;
+	private Float totalQuita;
 
 	public DtoContabilidadCobros() {
 	}
@@ -246,14 +248,6 @@ public class DtoContabilidadCobros extends WebDto {
 		this.observaciones = observaciones;
 	}
 
-	public Float getImporte() {
-		return importe;
-	}
-
-	public void setImporte(Float importe) {
-		this.importe = importe;
-	}
-
 	public Long getAsunto() {
 		return asunto;
 	}
@@ -268,6 +262,30 @@ public class DtoContabilidadCobros extends WebDto {
 
 	public void setOperacionesTramite(Boolean operacionesTramite) {
 		this.operacionesTramite = operacionesTramite;
+	}
+
+	public Float getQuitaOperacionesEnTramite() {
+		return quitaOperacionesEnTramite;
+	}
+
+	public void setQuitaOperacionesEnTramite(Float quitaOperacionesEnTramite) {
+		this.quitaOperacionesEnTramite = quitaOperacionesEnTramite;
+	}
+
+	public Float getOperacionesEnTramite() {
+		return operacionesEnTramite;
+	}
+
+	public void setOperacionesEnTramite(Float operacionesEnTramite) {
+		this.operacionesEnTramite = operacionesEnTramite;
+	}
+
+	public Float getTotalQuita() {
+		return totalQuita;
+	}
+
+	public void setTotalQuita(Float totalQuita) {
+		this.totalQuita = totalQuita;
 	}
 
 }

@@ -10,7 +10,6 @@
 		<json:property name="id" value="${rec.id}"/>
 		<json:property name="fechaEntrega" value="${rec.fechaEntrega}"/>
 		<json:property name="fechaValor" value="${rec.fechaValor}"/>
-		<json:property name="importe" value="${rec.importe}"/>
 		<json:property name="tipoEntrega" value="${rec.tipoEntrega.descripcion}"/>
 		<json:property name="conceptoEntrega" value="${rec.conceptoEntrega.descripcion}"/>
 		<json:property name="nominal" value="${rec.nominal}"/>
@@ -35,6 +34,9 @@
 		<json:property name="asunto" value="${rec.asunto}"/>
 		<json:property name="operacionesTramite" value="${rec.operacionesTramite}"/>
 		<json:property name="usuarioCrear" value="${rec.auditoria.usuarioCrear}"/>
+		<json:property name="totalQuita" value="${rec.totalQuita}"/>
+		<json:property name="quitaOperacionesEnTramite" value="${rec.quitaOperacionesEnTramite}"/>
+		<json:property name="operacionesEnTramite" value="${rec.operacionesEnTramite}"/>
 		
 	</json:object>
 	</json:array>

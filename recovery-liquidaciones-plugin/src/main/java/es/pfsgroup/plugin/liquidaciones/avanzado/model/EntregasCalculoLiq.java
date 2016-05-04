@@ -35,7 +35,7 @@ public class EntregasCalculoLiq implements Auditable, Serializable{
 	private static final long serialVersionUID = -4502479621786306745L;
 	
 	@Id
-    @Column(name = "CAL_ID")
+    @Column(name = "ENT_CAL_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "EntregasCalculoLiqGenerator")
     @SequenceGenerator(name = "EntregasCalculoLiqGenerator", sequenceName = "S_ENT_CAL_LIQUIDACION")
 	private Long id;

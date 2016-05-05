@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Lorenzo Lerate 
---## FECHA_CREACION=20160426
+--## FECHA_CREACION=20160505
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-3043

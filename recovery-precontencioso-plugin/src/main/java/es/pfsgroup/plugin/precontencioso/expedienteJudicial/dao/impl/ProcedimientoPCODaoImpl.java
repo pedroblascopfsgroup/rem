@@ -314,10 +314,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		}
 
 		if (!StringUtils.isBlank(filtro.getProCodigosEstado())) {
-			query.createCriteria("estadosPreparacionProc", "estadosPreparacionProc");
-			query.createCriteria("estadosPreparacionProc.estadoPreparacion", "estadoPreparacion");
-
-			where.add(Restrictions.in("estadoPreparacion.codigo", filtro.getProCodigosEstado().split(",")));
+			where.add(Restrictions.in("procedimientoPco.codigoEstadoActual", filtro.getProCodigosEstado().split(",")));
 			//where.add(Restrictions.isNull("estadosPreparacionProc.fechaFin"));
 		}
 		

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PEDROBLASCO
---## FECHA_CREACION=20150505
+--## FECHA_CREACION=20160505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=NOITEM

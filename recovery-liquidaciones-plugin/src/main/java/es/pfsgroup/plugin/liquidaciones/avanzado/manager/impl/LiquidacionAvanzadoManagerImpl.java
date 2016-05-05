@@ -22,7 +22,9 @@ import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
@@ -456,7 +458,15 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return calculo;
 	}
 	
-	private List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
+	@Override
+	public List<CalculoLiquidacion> obtenerCalculosLiquidacionesAsunto(Long idAsunto)  {
+		Order orden = new Order(OrderType.ASC, "id");
+		List<CalculoLiquidacion> listaCalculos = genericDao.getListOrdered(CalculoLiquidacion.class, orden, genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+		return listaCalculos;
+	}
+	
+	@Override
+	public List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
 		return genericDao.getList(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion", idCalculo));
 	}
 	

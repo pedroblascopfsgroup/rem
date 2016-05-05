@@ -7,25 +7,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
-import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
-import es.capgemini.pfs.externa.ExternaBusinessOperation;
-import es.pfsgroup.commons.utils.Assertions;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionesAvanzadoManager;
+import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
+import es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoManagerImpl;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.LIQCobroPagoEntregasManager;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
-import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPago;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPagoEntregas;
-import es.pfsgroup.plugin.recovery.liquidaciones.model.DDOrigenCobro;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
-import es.pfsgroup.recovery.hrebcc.model.DDAdjContableConceptoEntrega;
-import es.pfsgroup.recovery.hrebcc.model.DDAdjContableTipoEntrega;
 
 @Controller
 public class EntregasController{
@@ -41,7 +33,10 @@ public class EntregasController{
 	private LIQCobroPagoEntregasManager liqCobroPagoEntregasManager;
 	
 	@Autowired
-	LiquidacionesAvanzadoManager liqAvanzadasManager;
+	LiquidacionAvanzadoManagerImpl liqAvanzadasManager;
+	
+	@Autowired 
+	LiquidacionAvanzadoApi liquidacionesManager;
 	
 	@Autowired
 	LIQCobroPagoDao cobroPagoDao;
@@ -77,9 +72,9 @@ public class EntregasController{
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListbyAsuntoId(Long id, ModelMap model) {
+	public String getListbyCalculoId(Long id, ModelMap model) {
 		// TODO Auto-generated method stub
-		List<LIQCobroPago> lista = cobroPagoDao.getByIdAsuntoContrato(id); 
+		List<EntregaCalculoLiq> lista =  liqAvanzadasManager.getEntregasCalculo(id);
 		model.put("listado", lista);
         
 		return LISTADO_COBRO_PAGO_JSON; 

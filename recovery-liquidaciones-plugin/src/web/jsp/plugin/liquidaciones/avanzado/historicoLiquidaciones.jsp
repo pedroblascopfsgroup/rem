@@ -10,34 +10,33 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page,entidad){
-
 <%-- Inicio Grid de  Historico de liquidaciones --%>
 	var recordHistoricoLiquidacion = Ext.data.Record.create([
           {name : 'nombre'}
          ,{name : 'contrato'}
          ,{name : 'fecha'}
          ,{name : 'importe'}
-         ,{name : 'estado'}
+         <%-- ,{name : 'estado'} --%>
          ,{name : 'idLiquidacion'}
 
       ]);
       
     var historicoLiquidacionesStore = page.getStore({
-        flow: ''
+        flow: 'liquidaciones/obtenerCalculosLiquidacionesAsunto'
         ,storeId : 'historicoLiquidacionesStore'
         ,reader : new Ext.data.JsonReader(
-            {root:'historicoLiquidaiones'}
+            {root:'historicoLiquidaciones'}
             , recordHistoricoLiquidacion
         )
     }); 
 
 	var cmHistoricoLiquidaciones = new Ext.grid.ColumnModel([
-       {header : '<s:message code="acuerdos.codigo" text="**Nombre" />', dataIndex : 'nombre',width: 45}
-      ,{header : '<s:message code="acuerdos.fechaPropuesta" text="**Contrato" />', dataIndex : 'contrato',width: 75}
-      ,{header : '<s:message code="acuerdos.solicitante" text="**Fecha" />', dataIndex : 'fecha',width: 35}
-      ,{header : '<s:message code="acuerdos.estado" text="**Importe" />', dataIndex : 'importe',width: 35}
-      ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55}
-      ,{header : '<s:message code="acuerdos.codigo.idTipoAcuerdo" text="**id Liquidacion" />',dataIndex : 'idLiquidacion', hidden:true}
+       {header : '<s:message code="liquidacion.nombre" text="**Nombre" />', dataIndex : 'nombre',width: 45}
+      ,{header : '<s:message code="liquidacion.contrato" text="**Contrato" />', dataIndex : 'contrato',width: 75}
+      ,{header : '<s:message code="liquidacion.fecha" text="**Fecha" />', dataIndex : 'fecha',width: 35}
+      ,{header : '<s:message code="liquidacion.importe" text="**Importe" />', dataIndex : 'importe',width: 35}
+<%--       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55}
+ --%>      ,{dataIndex : 'idLiquidacion', hidden:true}
     ]);
     
     var btnNuevaLiquidacion = new Ext.Button({
@@ -139,7 +138,8 @@
       ]);
       
     var entregasLiquidacionStore = page.getStore({
-        flow: ''
+        flow: 'entregas/getListbyCalculoId'
+        ,params: {id: 19}
         ,storeId : 'entregasLiquidacionStore'
         ,reader : new Ext.data.JsonReader(
             {root:'entregas'}
@@ -232,7 +232,10 @@
 		return true;
 	}
 	
-	panel.setValue = function(){}
+	panel.setValue = function(){
+		var data = entidad.get("data");
+        historicoLiquidacionesStore.webflow({idAsunto: data.id});
+	}
 	
 	panel.getIdAsunto = function(){
 		return data.id;

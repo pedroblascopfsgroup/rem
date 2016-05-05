@@ -25,6 +25,7 @@ public class LiquidacionesController {
 	
 	private static final String DEFAULT = "default";
 	private static final String JSP_ALTA_NUEVA_LIQUIDACION =  "plugin/liquidaciones/avanzado/introducirdatos";
+	private static final String JSP_LISTADO_CALCULOS_LIQUIDACIONES= "plugin/liquidaciones/avanzado/calculosLiquidacionesJSON";
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
@@ -109,5 +110,16 @@ public class LiquidacionesController {
 	public String guardaCalculoLiquidacion(DtoCalculoLiquidacion dtoCalcLiq){
 		return DEFAULT;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String obtenerCalculosLiquidacionesAsunto(ModelMap model, Long idAsunto){
+		
+		List<CalculoLiquidacion> listado= liquidacionesManager.obtenerCalculosLiquidacionesAsunto(idAsunto);
+		model.put("historicoLiquidaciones", listado);
+		return JSP_LISTADO_CALCULOS_LIQUIDACIONES;
+		
+	}
+	
 
 }

@@ -7,6 +7,7 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 
 public interface LiquidacionAvanzadoApi {
 
@@ -18,5 +19,9 @@ public interface LiquidacionAvanzadoApi {
 
 
 	public CalculoLiquidacion getCalculoById(Long calculoId);
+
+	List<CalculoLiquidacion> obtenerCalculosLiquidacionesAsunto(Long idAsunto);
+
+	List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo);
 
 }

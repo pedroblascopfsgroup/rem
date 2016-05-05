@@ -13,6 +13,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoManagerImpl;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.LIQCobroPagoEntregasManager;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
@@ -89,11 +90,14 @@ public class EntregasController{
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
 		
-
+		CalculoLiquidacion calculo= liqAvanzadasManager.getCalculoById(idCalculo);
+		
 		
 		model.put("tipoEntrega", tipoEntrega);
 		model.put("idCalculo", idCalculo);
 		model.put("conceptoEntrega", conceptoEntrega);
+		model.put("fechaCierre", calculo.getFechaCierre());
+		model.put("fechaLiquidacion", calculo.getFechaLiquidacion());
 //		model.put("procedimientos", procedimientos);
 //		model.put("idAsunto", idAsunto);
         
@@ -102,36 +106,32 @@ public class EntregasController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String editarEntrega(Long idAsunto, ModelMap model, Long id) {
+	public String editarEntrega(Long idCalculo, ModelMap model, Long idEntrega) {
 		// TODO Auto-generated method stub
 		
 		
 		
-		List<Procedimiento>procedimientos= procedimientoDao.getProcedimientosAsunto(idAsunto);
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
+		List<EntregaCalculoLiq> listaEntregas=  liqAvanzadasManager.getEntregasCalculo(idCalculo);
 		
-		List<LIQCobroPago> lista = cobroPagoDao.getByIdAsuntoContrato(idAsunto);
+		EntregaCalculoLiq entrega= null;
 		
-		LIQCobroPago LIQCP= null;
-		
-		for(LIQCobroPago lc: lista){
-			if(lc.getId().equals(id)){
-				LIQCP= lc;
+		for(EntregaCalculoLiq e: listaEntregas){
+			if(e.getId().equals(idEntrega)){
+				entrega=e;
 			}
 		}
 		
-		
-		//model.put("tipo", LIQCP.getTipoCobroPago());
-		model.put("liqCobroPago.fecha", LIQCP.getFecha());
-		model.put("liqCobroPago.fechaValor", LIQCP.getFechaValor());
-		
-		
-		model.put("tipoEntrega", tipoEntrega);
-		model.put("conceptoEntrega", conceptoEntrega);
-		model.put("procedimientos", procedimientos);
-		model.put("idAsunto", idAsunto);
-        model.put("liqCobroPago", LIQCP);
+		model.put("fechaCobro", entrega.getFechaEntrega());
+		model.put("fechaValor", entrega.getFechaValor());
+		model.put("codigoTipoEntrega", entrega.getTipoEntrega().getCodigo());
+		model.put("codigoConceptoEntrega", entrega.getConceptoEntrega().getCodigo());
+		model.put("gastosProcurados", entrega.getGastosProcurador());
+		model.put("gastosLetrado", entrega.getGastosLetrado());
+		model.put("otrosGastos", entrega.getOtrosGastos());
+		model.put("totalEntrega", entrega.getTotalEntrega());
+				
 		
 		return NUEVA_ENTREGA; 
 	}

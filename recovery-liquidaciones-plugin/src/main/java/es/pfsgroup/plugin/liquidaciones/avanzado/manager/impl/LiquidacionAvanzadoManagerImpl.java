@@ -581,7 +581,11 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	
 	@Override
 	public List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
-		return genericDao.getList(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion.id", idCalculo));
+
+		Order orden = new Order(OrderType.ASC, "id");
+		List<EntregaCalculoLiq> listaEntregas = genericDao.getListOrdered(EntregaCalculoLiq.class, orden, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion.id", idCalculo));
+
+		return listaEntregas;
 	}
 	
 	/**

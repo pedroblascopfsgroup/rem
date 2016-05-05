@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
-
-DIR_INPUT=/recovery/transferencia/aprov_auxiliar/
-MAX_WAITING_MINUTES=10
 ficheros=ALERTAS
 
 
@@ -25,8 +21,8 @@ do
 	ficheroSem=$DIR_INPUT$fichero$mascara$extensionSem
         ficheroZip=$DIR_INPUT$fichero$mascara$extensionZip
 
-        echo "$ficheroSem"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -a ! -e $ficheroZip ]; do
+    echo "$ficheroSem"
+	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
 	   #echo "$hora_actual"

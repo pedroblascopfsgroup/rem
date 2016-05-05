@@ -43,11 +43,14 @@ BEGIN
                                           , '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP
                                           , '||V_ESQUEMA||'.ASU_ASUNTOS asu
                                           , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc
+                                          , '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
+                                          , '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP est
                                        where exp.CD_EXPEDIENTE_NUSE  = cab.cd_expediente
                                          and exp.exp_id              = asu.exp_id 
                                          and asu.asu_id              = prc.asu_id
-                                         and cab.fecha_paralizacion is not null
-                                         and cab.motivo_paralizacion = ''PARALIZADO''
+                                         and pco.prc_id              = prc.prc_id
+                                         and est.pco_prc_id          = pco.pco_prc_id
+                                         and est.DD_PCO_PEP_ID = (SELECT DD_PCO_PEP_ID FROM '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'')
                                          and exp.usuariocrear        = '''||USUARIO_C||''') S
              ON (prc.PRC_ID = S.PRC_ID)
              WHEN MATCHED THEN UPDATE SET prc.USUARIOMODIFICAR =  '''||USUARIO_M||'''
@@ -97,14 +100,18 @@ BEGIN
                 0 as dpr_finaliza, 
                 1 as dpr_paraliza, 
                 (select DD_DPA_ID from  '||V_ESQUEMA||'.DD_DPA_DECISION_PARALIZAR      where DD_DPA_CODIGO = ''RD'') as dd_dpa_id,    --> Causa de decisión PDTE RESOLUCIÓN OTRAS OPERACIONES
-                (select DD_EDE_ID from  '||V_ESQUEMA_MASTER||'.DD_EDE_ESTADOS_DECISION where DD_EDE_CODIGO = ''02'')   as dd_ede_id,  --> Estado ACEPTADO
+                (select DD_EDE_ID from  '||V_ESQUEMA_MASTER||'.DD_EDE_ESTADOS_DECISION where DD_EDE_CODIGO = ''02'') as dd_ede_id,  --> Estado ACEPTADO
                 NULL dpr_process_bpm, 
-                 systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
-                ''PDTE RESOLUCIÓN OTRAS OPERACIONES'',
+                systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
+		(nvl(cab.MOTIVO_PARALIZACION, ''PDTE RESOLUCIÓN OTRAS OPERACIONES'')||''. Operación Vinculada:[''||nvl(replace(lpad(cab.OPERACION_PARALIZACION_VINCUL,16,''0''), ''0000000000000000'', ''''), ''Sin Informar'')||'']''),
                 '''||USUARIO_C||''', 
                 systimestamp
-            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC 
-                WHERE USUARIOMODIFICAR = '''||USUARIO_M||'''';
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+		inner join '||V_ESQUEMA||'.PRC_CEX PCEX ON PCEX.PRC_ID = PRC.PRC_ID
+		INNER JOIN '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CEX_ID = PCEX.CEX_ID
+		INNER JOIN '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP ON EXP.EXP_ID = CEX.EXP_ID
+		INNER JOIN '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA cab ON exp.CD_EXPEDIENTE_NUSE  = cab.cd_expediente 
+           WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
 
      EXECUTE IMMEDIATE V_SQL;
 
@@ -137,227 +144,171 @@ BEGIN
      DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);      
                 
     
--- INSERTAMOS LOS PARALIZADOS EN PCO_PRC_HEP_HISTOR_EST_PREP
-
-/*************************************/
-/** INSERTAR ESTADO PARALIZADO         **/
-/*************************************/
-
-       V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO_PEP_ID, PCO_PRC_HEP_FECHA_INCIO, USUARIOCREAR, FECHACREAR, SYS_GUID)
-                                SELECT '||V_ESQUEMA||'.S_PCO_PRC_HEP_HIST_EST_PREP.NEXTVAL, 
-                                           PCO_PRC_ID,
-                                           (SELECT DD_PCO_PEP_ID FROM  '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'') ,-- PARALIZADO
-                                           PRC_FECHA_PARALIZADO AS PRC_HEP_FECHA_INICIO,
-                                           '''||USUARIO_C||''' AS USUARIOCREAR,
-                                           SYSDATE, SYS_GUID() AS SYS_GUID
-                                FROM(
-                                     SELECT PCO.PCO_PRC_ID, PRC.PRC_FECHA_PARALIZADO
-                                     FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
-                                        , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
-                                        , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
-                                     WHERE PCO.PRC_ID = PRC.PRC_ID
-                                       AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-                                       AND NOT EXISTS(SELECT 1
-                                               FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-                                               WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-                                       AND EXP.FECHA_PARALIZACION IS NOT NULL
-                                       AND EXP.MOTIVO_PARALIZACION = ''PARALIZADO'')';
-
-      EXECUTE IMMEDIATE V_SQL;
-      
-      DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
-
-      
-/**********************************************************************/
-/*******   ACTUALIZAMOS FECHA FIN EN ESTADOS ANTERIORES A PARALIZADO  */
-/**********************************************************************/                                      
-
-      v_SQL:= 'MERGE INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP pco
-               USING (SELECT PCO.PCO_PRC_ID, PRC.PRC_FECHA_PARALIZADO
-                                                    FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
-                                                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
-                                                       , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
-                                                    WHERE PCO.PRC_ID = PRC.PRC_ID
-                                                      AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-                                                      AND NOT EXISTS(SELECT 1
-                                                              FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-                                                              WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-                                                      AND EXP.FECHA_PARALIZACION IS NOT NULL
-                                                      AND EXP.MOTIVO_PARALIZACION = ''PARALIZADO'') S
-                  ON (pco.PCO_PRC_ID = S.PCO_PRC_ID)                 
-                  WHEN MATCHED THEN UPDATE SET pco.PCO_PRC_HEP_FECHA_FIN = S.PRC_FECHA_PARALIZADO
-                  where pco.DD_PCO_PEP_ID <> (SELECT DD_PCO_PEP_ID FROM  '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'')' ;
-                                                                              
-
-      EXECUTE IMMEDIATE V_SQL;
-      
-      DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                                       
-
       
  -- CREAMOS LAS VARIABLES DEL BMP (SOLO SE CREARAN PARA LAS TAREAS NO FICTICIAS)
 
 -- 1
 
 
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''L'',
---                0,
---                ''idP01_AutoDespachandoEjecucion'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                TEX.TEX_ID
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
-----                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                                   
----- 2
---
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''L'',
---                0,
---                ''DB_ID'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                1
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
-----                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
---     
----- 3
---    
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''L'',
---                0,
---                ''procedimientoTareaExterna'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                PRC.PRC_ID
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
-----                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
---                
----- 4
---    
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''L'',
---                1,
---                ''bpmParalizado'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                1
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
---                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
---                
----- 5
---    
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, DATEVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''D'',
---                0,
---                ''fechaAplazamientoTareas'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                DPR.DPR_FECHA_PARA
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.DPR_DECISIONES_PROCEDIMIENTOS DPR ON PRC.PRC_ID = DPR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
---                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
---     
----- 6
---    
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, STRINGVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''S'',
---                0,
---                ''NOMBRE_NODO_SALIENTE'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                TAP_CODIGO
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
---                JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TEX.TAP_ID = TAP.TAP_ID
---                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
---     
----- 7
---    
---   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
---               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, DATEVALUE_)
---            SELECT
---                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
---                ''D'',
---                0,
---                ''PROfechaParalizacionTareas'',
---                TEX.TEX_TOKEN_ID_BPM,
---                null, --MAP.ID_,
---                PRC.PRC_PROCESS_BPM,
---                TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
---            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
---                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
---                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
---                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
---                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
---
---     EXECUTE IMMEDIATE V_SQL;
---
---     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                                   
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''L'',
+                0,
+                ''idP01_AutoDespachandoEjecucion'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                TEX.TEX_ID
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                                   
+-- 2
+
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''L'',
+                0,
+                ''DB_ID'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                1
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
+     
+-- 3
+    
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''L'',
+                0,
+                ''procedimientoTareaExterna'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                PRC.PRC_ID
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
+                
+-- 4
+    
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''L'',
+                1,
+                ''bpmParalizado'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                1
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
+                
+-- 5
+    
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, DATEVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''D'',
+                0,
+                ''fechaAplazamientoTareas'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                DPR.DPR_FECHA_PARA
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.DPR_DECISIONES_PROCEDIMIENTOS DPR ON PRC.PRC_ID = DPR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
+     
+-- 6
+    
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, STRINGVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''S'',
+                0,
+                ''NOMBRE_NODO_SALIENTE'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                TAP_CODIGO
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO TAP ON TEX.TAP_ID = TAP.TAP_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                   
+     
+-- 7
+    
+   V_SQL:= 'INSERT INTO '||V_ESQUEMA_MASTER||'.JBPM_VARIABLEINSTANCE
+               (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, DATEVALUE_)
+            SELECT
+                '||V_ESQUEMA_MASTER||'.hibernate_sequence.nextval,
+                ''D'',
+                0,
+                ''PROfechaParalizacionTareas'',
+                TEX.TEX_TOKEN_ID_BPM,
+                MAP.ID_,
+                PRC.PRC_PROCESS_BPM,
+                TO_TIMESTAMP(sysdate,''DD/MM/YYYY fmHH24fm:MI:SS.FF'')
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+                JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON PRC.PRC_ID = TAR.PRC_ID
+                JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEX ON TAR.TAR_ID = TEX.TAR_ID
+                JOIN '||V_ESQUEMA_MASTER||'.JBPM_TOKENVARIABLEMAP MAP ON TEX.TEX_TOKEN_ID_BPM = MAP.TOKEN_
+                WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
+
+     EXECUTE IMMEDIATE V_SQL;
+
+     DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                                   
 
   COMMIT;
   

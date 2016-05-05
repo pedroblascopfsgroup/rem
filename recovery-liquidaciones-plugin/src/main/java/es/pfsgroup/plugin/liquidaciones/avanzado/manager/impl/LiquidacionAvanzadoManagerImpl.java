@@ -144,6 +144,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		tramoInicial.setFechaValor(DateFormat.toString(fecha));
 		tramoInicial.setDescripcion("Principal reclamado");
 		tramoInicial.setSaldo(pendientes.getSaldo());
+		tramoInicial.setIntDemoraCierrePend(pendientes.getIntDemoraCierre());
 		tramoInicial.setInteresesPendientes(pendientes.getIntereses());
 		cuerpo.add(tramoInicial);
 		
@@ -173,8 +174,9 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		ultTramo.setFechaValor(DateFormat.toString(request.getFechaLiquidacion()));
 		ultTramo.setDescripcion("C\u00E1lculo deuda");
 		ultTramo.setSaldo(pendientes.getSaldo());
+		ultTramo.setIntDemoraCierrePend(pendientes.getIntDemoraCierre());
 		ultTramo.setInteresesPendientes(pendientes.getIntereses());
-		
+
 		ultTramo.setImpuestosPendientes(pendientes.getImpuestos());
 		ultTramo.setComisionesPendientes(pendientes.getComisiones());
 		ultTramo.setGastosPendientes(pendientes.getGastos());
@@ -207,6 +209,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		if (!Checks.esNulo(ec.getTotalEntrega())) {
 			tramo.setImporte(ec.getTotalEntrega());
 		}
+		tramo.setIntDemoraCierre(pendientes.getIntDemoraCierre());
 		tramo.setInteresesPendientes(pendientes.getIntereses());
 		tramo.setImpuestosPendientes(pendientes.getImpuestos());
 		tramo.setComisionesPendientes(pendientes.getComisiones());
@@ -272,19 +275,36 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		BigDecimal importeECRestante = (!Checks.esNulo(ec.getTotalEntrega())?ec.getTotalEntrega():BigDecimal.ZERO); 
 		
-		//De la entrega primero reducimos de los intereses pendientes
-		if (pendientes.getIntereses().compareTo(BigDecimal.ZERO) == 1) {
-			//Si la entrega es superior a los intereses
-			if (importeECRestante.compareTo(pendientes.getIntereses()) == 1) {
-				//Nos quedamos sin intereses
-				tramo.setIntereses(pendientes.getIntereses());
-				importeECRestante = importeECRestante.subtract(tramo.getIntereses());
-				pendientes.setIntereses(BigDecimal.ZERO);
-			} else {
-				//Reducimos parte de los intereses y nos quedamos sin importe en la entrega
-				tramo.setIntereses(importeECRestante);
-				pendientes.setIntereses(pendientes.getIntereses().subtract(importeECRestante));
-				importeECRestante = BigDecimal.ZERO;
+		//De la entrega primero reducimos de los intereses demora cierre pendientes
+		if (pendientes.getIntDemoraCierre().compareTo(BigDecimal.ZERO) == 1) {
+			//Si la entrega es superior a los intereses demora cierre
+			tramo.setIntDemoraCierre(pendientes.getIntDemoraCierre());
+			importeECRestante = importeECRestante.subtract(tramo.getIntDemoraCierre());
+			pendientes.setIntDemoraCierre(BigDecimal.ZERO);
+		} else {
+			//Reducimos parte de los intereses demora cierre
+			tramo.setIntDemoraCierre(importeECRestante);
+			pendientes.setIntDemoraCierre(pendientes.getIntDemoraCierre().subtract(importeECRestante));
+			importeECRestante = BigDecimal.ZERO;
+		}
+		
+		
+		//Si todavia nos queda importe de la entrega
+		if (importeECRestante.compareTo(BigDecimal.ZERO) == 1) {
+			//Reducimos de los intereses pendientes
+			if (pendientes.getIntereses().compareTo(BigDecimal.ZERO) == 1) {
+				//Si la entrega es superior a los intereses
+				if (importeECRestante.compareTo(pendientes.getIntereses()) == 1) {
+					//Nos quedamos sin intereses
+					tramo.setIntereses(pendientes.getIntereses());
+					importeECRestante = importeECRestante.subtract(tramo.getIntereses());
+					pendientes.setIntereses(BigDecimal.ZERO);
+				} else {
+					//Reducimos parte de los intereses y nos quedamos sin importe en la entrega
+					tramo.setIntereses(importeECRestante);
+					pendientes.setIntereses(pendientes.getIntereses().subtract(importeECRestante));
+					importeECRestante = BigDecimal.ZERO;
+				}
 			}
 		}
 		
@@ -316,6 +336,21 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 			//Nos quedamos el restante para luego restarlo de los intereses demora calculados
 			pendientes.setSobranteEntrega(pendientes.getSobranteEntrega().add(importeECRestante));
 		}
+		
+		//Gastos
+		if (!Checks.esNulo(ec.getOtrosGastos())) {
+			pendientes.setGastos(pendientes.getGastos().subtract(ec.getOtrosGastos()));
+			tramo.setGastos(ec.getOtrosGastos());
+		}
+		if (!Checks.esNulo(ec.getGastosLetrado())) {
+			pendientes.setCostasLetrado(pendientes.getCostasLetrado().subtract(ec.getGastosLetrado()));
+			tramo.setCostasLetrado(ec.getGastosLetrado());
+		}
+		if (!Checks.esNulo(ec.getGastosProcurador())) {
+			pendientes.setCostasProcurador(pendientes.getCostasProcurador().subtract(ec.getGastosProcurador()));
+			tramo.setCostasProcurador(ec.getGastosProcurador());
+		}
+		
 		
 		return tramo;
 	}
@@ -395,6 +430,8 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		if (ultTramo!= null) {
 			//Cogemos el último saldo
 			totalDeuda = totalDeuda.add(ultTramo.getSaldo());
+			//Y le sumamos los intereses demora al cierre por pagar
+			totalDeuda = totalDeuda.add(ultTramo.getIntDemoraCierrePend());
 			//Y le sumamos los intereses pendientes por pagar
 			totalDeuda = totalDeuda.add(ultTramo.getInteresesPendientes());
 			// Y le sumamos todos los intereses demora calculados
@@ -544,7 +581,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	
 	@Override
 	public List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
-		return genericDao.getList(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion", idCalculo));
+		return genericDao.getList(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion.id", idCalculo));
 	}
 	
 	/**

@@ -91,7 +91,11 @@
        <app:test id="btnCalcularLiquidacion" addComa="true" />
        ,iconCls : 'icon_ok'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       		if (historicoLiquidacionesGrid.getSelectionModel().getSelected()!=undefined) {
+       			app.downloadFile({flow: 'liquidaciones/openReport', params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}});
+       		}
+       }
    	});
    	
    	var btnModificarLiquidacion = new Ext.Button({

@@ -48,8 +48,9 @@ public class LiquidacionesController {
 			LIQTramoPendientes pendientes = new LIQTramoPendientes();
 			
 			pendientes.setSaldo(request.getCapital());
+			pendientes.setIntDemoraCierre(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO);
 			pendientes.setIntereses(request.getInteresesOrdinarios()!=null?request.getInteresesOrdinarios():BigDecimal.ZERO);
-			pendientes.setIntereses(pendientes.getIntereses().add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO));
+			//pendientes.setIntereses(pendientes.getIntereses().add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO));
 			pendientes.setImpuestos(request.getImpuestos());
 			pendientes.setComisiones(request.getComisiones());
 			pendientes.setGastos(request.getGastos()!=null?request.getGastos():BigDecimal.ZERO);

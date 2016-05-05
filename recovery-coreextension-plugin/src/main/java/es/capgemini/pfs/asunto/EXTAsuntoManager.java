@@ -363,37 +363,59 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		EventFactory.onMethodStart(this.getClass());
 		// Obtener asunto.
     	Asunto asunto = asuntoDao.get(id);
-
-    	// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
-    	List<Usuario> usuGestList = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
-    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR));
-    	if(!Checks.estaVacio(usuGestList)){
-    		Usuario usuGestor = usuGestList.get(0);
-    		// Obtener gestor despacho para el gestor en base a los usuarios gestor y supervisor.
-    		List<GestorDespacho> gestDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId());
-    		if(!Checks.estaVacio(gestDespachoList)){
-    			GestorDespacho gestorDespacho = gestDespachoList.get(0);
-            	// Asignar gestor despacho para el gestor al asunto.
-            	asunto.setGestor(gestorDespacho);
-    		}
-    	}
-    	
-    	// Obtener usuarios por entidad y tipo de asunto del projectContext.
-    	List<Usuario> usuSupList = gestorAdicionalAsuntoDao.findGestoresByAsunto(asunto.getId(), 
-    			commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR));
-    	if(!Checks.estaVacio(usuSupList)){
-	    	Usuario usuSupervisor = usuSupList.get(0);
-	    	// Obtener gestor despacho para el supervisor en base a los usuarios gestor y supervisor.
-	    	List<GestorDespacho> supDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuSupervisor.getId());
-	    	if(!Checks.estaVacio(supDespachoList)){
-	    	GestorDespacho gestorSupervisor = supDespachoList.get(0);
-	    	// Asignar gestor despacho para el supervisor al asunto.
-	    	asunto.setSupervisor(gestorSupervisor);
-    	}
-    	}
-    	
         return asunto;
 	}
+	
+	@Override
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_GESTORASUNTO)
+	public GestorDespacho getGestorDespachoGestorAsunto(Long idAsunto){
+		GestorDespacho gestorDespacho = null;
+		Asunto asunto = asuntoDao.get(idAsunto);
+		
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+			String tipoGestor = commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR);
+			if(!Checks.esNulo(tipoGestor)){
+	    		return this.getGestorDespachoAsunto(idAsunto,tipoGestor);
+	    	}
+	    	
+		}
+		return gestorDespacho;		
+	}
+	
+	@Override
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_SUPERVISORASUNTO)
+	public GestorDespacho getGestorDespachoSupervisorAsunto(Long idAsunto){
+		GestorDespacho gestorDespacho = null;
+		Asunto asunto = asuntoDao.get(idAsunto);
+		
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+			String tipoGestor = commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR);
+	    	if(!Checks.esNulo(tipoGestor)){
+	    		return this.getGestorDespachoAsunto(idAsunto,tipoGestor);
+	    	}
+	    	
+		}
+		return gestorDespacho;		
+	}
+	
+	public GestorDespacho getGestorDespachoAsunto(Long idAsunto, String tipoGestor){
+		GestorDespacho gestorDespacho = null;
+		
+		// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+    	List<Usuario> usuGestList = gestorAdicionalAsuntoDao.findGestoresByAsunto(idAsunto, tipoGestor);
+    	if(!Checks.estaVacio(usuGestList)){
+    		Usuario usuGestor = usuGestList.get(0);
+    		// Obtener gestor despacho para el gestor 
+    		List<GestorDespacho> gestDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId());
+    		if(!Checks.estaVacio(gestDespachoList)){
+    			gestorDespacho = gestDespachoList.get(0);
+    		}
+    	}
+		return gestorDespacho;		
+	}
+
 
 	private Collection<? extends HistoricoAsuntoInfo> getHistoricoProcedimiento(Procedimiento p) {
 

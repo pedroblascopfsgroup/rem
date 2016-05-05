@@ -35,6 +35,8 @@ public interface EXTAsuntoApi  {
 	public static final String EXT_BO_MSG_ERROR_ENVIO_CDD = "asuntosManager.getMsgErrorEnvioCDD";
     public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE = "asuntosManager.getMsgErrorEnvioCDDNuse";
     public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_ASUNTO = "asuntosManager.getMsgErrorEnvioCDDCabecera";
+    public static final String EXT_MGR_ASUNTO_GET_GESTORDESPACHO_GESTORASUNTO = "asuntosManager.getGestorDespachoGestorAsunto";
+    public static final String EXT_MGR_ASUNTO_GET_GESTORDESPACHO_SUPERVISORASUNTO = "asuntosManager.getGestorDespachoSupervisorAsunto";
 
 	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES)
 	public List<GestorDespacho> getGestoresAsunto(Long idAsunto);
@@ -117,6 +119,12 @@ public interface EXTAsuntoApi  {
 
 	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORES_ADICIONALES_ASUNTO)
 	List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto);
+	
+	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_GESTORASUNTO)
+	public GestorDespacho getGestorDespachoGestorAsunto(Long idAsunto);
+	
+	@BusinessOperationDefinition(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_SUPERVISORASUNTO)
+	public GestorDespacho getGestorDespachoSupervisorAsunto(Long idAsunto);
 	
 	/**
 	 * Finaliza un asunto.

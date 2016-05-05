@@ -1190,6 +1190,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 //		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como preparador del expediente judicial
 		Usuario usuario = usuarioManager.getUsuarioLogado();
 		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		
+		if(!Checks.esNulo(procedimiento) && !procedimiento.getEsPrecontencioso()){
+			return false;
+		}
+		
 		List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
 		
 		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), PREDOC)) {

@@ -2,18 +2,14 @@ package es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.ContratoManager;
@@ -28,16 +24,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
-import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
-import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQReportTiposIntereses;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
+import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.ActualizacionTipoCalculoLiq;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
-import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
-import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
 
 @Service
 public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
@@ -208,6 +201,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return tramo;
 	}
 	
+	/*
 	private LIQDtoTramoLiquidacion tramoEntregaDesglosada(LIQCobroPago ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
 		
@@ -254,6 +248,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		return tramo;
 	}
+	*/
 	
 	private LIQDtoTramoLiquidacion tramoEntregaNoDesglosada(EntregaCalculoLiq ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
@@ -448,13 +443,14 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return resumen;
 	}
 	
+	@Override
 	public CalculoLiquidacion getCalculoById(Long calculoId)  {
 		CalculoLiquidacion calculo = genericDao.get(CalculoLiquidacion.class, genericDao.createFilter(FilterType.EQUALS, "id", calculoId));
 		
 		return calculo;
 	}
 	
-	public List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
+	private List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
 		return genericDao.getList(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion", idCalculo));
 	}
 	
@@ -465,7 +461,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	 * @param lTiposInteres Lista con los cambios de tipo de interes
 	 * @return un cambio encontrado o null
 	 */
-	public ActualizacionTipoCalculoLiq getPrimerCambioEntreFechas(Date desde, Date hasta, List<ActualizacionTipoCalculoLiq> lTiposInteres) {
+	private ActualizacionTipoCalculoLiq getPrimerCambioEntreFechas(Date desde, Date hasta, List<ActualizacionTipoCalculoLiq> lTiposInteres) {
 		Calendar c = Calendar.getInstance();
 		
 		Date fecha = desde;
@@ -484,5 +480,5 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		return null;
 	}
-	
+
 }

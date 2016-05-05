@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=MANUEL MEJIAS
---## FECHA_CREACION=20160421
+--## AUTOR=PEDRO BLASCO
+--## FECHA_CREACION=20160505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.8-hy-rc01
 --## INCIDENCIA_LINK=PRODUCTO-1253
@@ -19,6 +19,7 @@ DECLARE
     V_MSQL_1 VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas  
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas  
+    V_ESQUEMA_2 VARCHAR2(25 CHAR):= '#ESQUEMA02#'; -- Configuracion Esquema 02
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.  
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.     
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
@@ -32,18 +33,25 @@ BEGIN
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
 	IF V_NUM_TABLAS > 0 THEN    
-	
-		DBMS_OUTPUT.PUT_LINE('Se elimina la relacion función_perfil SOLO_CONSULTA.');
-	
 		V_MSQL_1:= 'DELETE '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION= ''SOLO_CONSULTA'')';
 		EXECUTE IMMEDIATE V_MSQL_1;
-
+		DBMS_OUTPUT.PUT_LINE('Eliminada la relacion función_perfil SOLO_CONSULTA.');
 	ELSE
-	
 		DBMS_OUTPUT.PUT_LINE('[INFO] No existe SOLO_CONSULTA en FUN_FUNCIONES.');
-	
 	END IF;
 	
+	IF V_ESQUEMA_2 = '' OR NVL(INSTR(V_ESQUEMA_2, 'ESQUEMA02'),0)>0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] No hay multientidad.');
+	ELSE
+		V_MSQL_1:= 'DELETE '||V_ESQUEMA_2||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION= ''SOLO_CONSULTA'')';
+		EXECUTE IMMEDIATE V_MSQL_1;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Eliminada la relacion función_perfil SOLO_CONSULTA en la segunda entidad.');
+	END IF;
+	
+	V_MSQL_1:= 'DELETE FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION= ''SOLO_CONSULTA'' ';
+	EXECUTE IMMEDIATE V_MSQL_1;
+	DBMS_OUTPUT.PUT_LINE('[INFO] Eliminada la función SOLO_CONSULTA.');
+
 	COMMIT;
 	    
     DBMS_OUTPUT.PUT_LINE('[INFO] Fin.');

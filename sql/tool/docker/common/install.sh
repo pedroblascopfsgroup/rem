@@ -30,7 +30,6 @@ fi
 CONTAINER_SETUP_DIR=/setup
 INNER_DUMP_DIRECTORY=/DUMP
 
-
 # OUTSIDE DOCKER
 DUMP_FILE_OUT_DOCKER=DUMP/$CURRENT_DUMP_NAME
 if [[ "x$(hostname)" != "x$CONTAINER_NAME" ]]; then
@@ -41,6 +40,14 @@ fi
 
 # INSIDE DOCKER
 touch /setup/.test
+
+if [[ -f /setup/SQL-SCRIPTS/listener.ora ]]; then
+	cp /setup/SQL-SCRIPTS/listener.ora  /home/oracle/app/oracle/product/11.2.0/dbhome_2/network/admin/listener.ora
+else
+	echo "<Docker [$CONTAINER_NAME]>:[ERROR] Falta el script /setup/SQL-SCRIPTS/listener.ora. No se puede continuar."
+	exit 1
+fi
+
 if [[ $? -ne 0 ]]; then
 	echo "<Docker [$CONTAINER_NAME]>: ERROR no se puede escribir en el WORKSPACE"
 	echo -e "\t\t Tool Version = $(cat /setup/version.txt)"

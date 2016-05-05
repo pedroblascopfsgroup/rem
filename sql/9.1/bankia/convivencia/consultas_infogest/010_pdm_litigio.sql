@@ -565,3 +565,31 @@ WHEN MATCHED THEN
 UPDATE SET  PDM.CENTRO_RECUP = SRC.centro_recuperaciones;
 
 COMMIT;
+
+
+
+
+
+
+
+
+
+merge into MINIREC.RCV_GEST_PDM_LITIGIO rcv
+using (
+select PCO_PRC_HEP_FECHA_INCIO,PCO_PRC_ID from BANK01.PCO_PRC_HEP_HISTOR_EST_PREP where DD_PCO_PEP_ID in ( select DD_PCO_PEP_ID from BANK01.DD_PCO_PRC_ESTADO_PREPARACION where dd_pco_pep_codigo='EN') ) CAMBIO
+ON ( RCV.ID_PROCEDI_RCV=CAMBIO.PCO_PRC_ID)
+WHEN MATCHED THEN UPDATE SET RCV.FECHA_FIN_HITO_PRELITIGIO=CAMBIO.PCO_PRC_HEP_FECHA_INCIO;
+
+commit;
+
+merge into MINIREC.RCV_GEST_PDM_LITIGIO rcv
+using (
+select to_date(tev_valor,'YYYY-MM-DD') FECHA,tar.prc_id from BANK01.TEV_TAREA_EXTERNA_VALOR tev 
+inner join BANK01.TEX_TAREA_EXTERNA tex on tex.TEX_ID = tev.TEX_ID
+inner join BANK01.TAR_TAREAS_NOTIFICACIONES tar on tex.TAR_ID = tar.TAR_ID and tar_tarea='Registrar toma de decisión'
+where tev_nombre='fecha'
+and tev.tex_id in( select tex_id from BANK01.TEV_TAREA_EXTERNA_VALOR where tev_nombre='comboDocCompleta' and tev_valor='01' ) ) CAMBIO
+ON ( RCV.ID_PROCEDI_RCV=CAMBIO.PRC_ID)
+WHEN MATCHED THEN UPDATE SET RCV.FECHA_ACEPTACION=CAMBIO.FECHA;
+
+commit;

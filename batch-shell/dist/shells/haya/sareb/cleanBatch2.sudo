@@ -10,6 +10,6 @@
 ##############################################################
 
 ##Comando de ejeuci▒n:
-sudo -u ops-haya /aplicaciones/ops-haya/shells/cleanBatch2.sh
+sudo -u ops-haya $DIR_SHELLS/cleanBatch2.sh
 
 ##Fin

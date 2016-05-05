@@ -190,7 +190,7 @@
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
 	<json:property name="esGestor" value="${esGestor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
-	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
+	<json:property name="esGestorSupervisorActual" value="${esPrimerGestorFaseActual || esPrimerSupervisorFaseActual}"/>
 	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">
 		<json:object>
 			<json:property name = "id" value = "${est.estadoItinerario.id }"/>

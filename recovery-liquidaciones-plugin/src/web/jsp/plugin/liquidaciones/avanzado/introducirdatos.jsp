@@ -48,7 +48,7 @@
 		/>
 		
 
-	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
+	<pfsforms:textfield name="nombrePersona" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
 	<pfsforms:textfield name="dni" labelKey="plugin.liquidaciones.introducirdatos.control.dni" label="**D.N.I." value="" obligatory="true"/>
 		 
 	actuaciones.on('select',function (){
@@ -74,7 +74,7 @@
 			,success: function (result, request){
 				var r = Ext.util.JSON.decode(result.responseText);
 				if (r.persona != undefined) {
-					nombre.setValue(r.persona.nombre);
+					nombrePersona.setValue(r.persona.nombre);
 					dni.setValue(r.persona.docid);
 				}
 				if (r.liquidacion != undefined) {
@@ -96,8 +96,8 @@
 	<pfs:defineParameters name="parametros" paramId=""
 		actuacion="actuaciones"
 		contrato="contratos"
-		nombre="nombre"
-		dni="dni"
+		nombrePersona="nombrePersona"
+		documentoId="dni"
 		
 		capital="capital"
 		interesesOrdinarios="interesesOrdinarios"
@@ -105,17 +105,16 @@
 		comisiones="comisiones"
 		gastos="gastos"
 		impuestos="impuestos"
-		tipoInteres="tipoInteres"
-		fechaCierre_date="fechaCierre"
-		fechaVencimiento="fechaVencimiento"
+		fechaCierre="fechaCierre"
 	
 		costasLetrado="costasLetrado"
 		costasProcurador="costasProcurador"
 		otrosGastos="otrosGastos"
 	
 		baseCalculo="baseCalculo"
-		fechaDeLiquidacion_date="fechaDeLiquidacion"
-		tipoDemoraCierre="tipoDemoraCierre"
+		fechaLiquidacion="fechaDeLiquidacion"
+		tipoMoraCierre="tipoDemoraCierre"
+		nombre="nombre"
 	/>
 	
 	<%-- tiposInteres="tiposInteresStore" --%>
@@ -144,8 +143,13 @@
 				
 				p.tiposIntereses = tiposInteresesData;
 				
-				app.downloadFile({flow: 'liquidaciones/openReport', params: p});
-				page.fireEvent(app.event.DONE);
+				page.webflow({
+	      			flow:'liquidaciones/guardaCalculoLiquidacion'
+	      			,params: p
+	      			,success: function(){
+						page.fireEvent(app.event.DONE);
+	           		}	
+		      	});
 				
 			} else {
 				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
@@ -186,9 +190,11 @@
 	fechaDeLiquidacion.setValue(new Date());
 	<pfsforms:numberfield name="tipoDemoraCierre" labelKey="plugin.liquidaciones.introducirdatos.control.tipoDemoraCierre" label="**Tipo Demora al Cierre" value="" 
 		obligatory="true" allowDecimals="true" allowNegative="false" />
+	
+	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="150"/>
 
 	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="280" height="260"
-		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre" />
+		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre,nombre" />
 
 	var fieldImportes = new Ext.Panel({
 		autoHeight : true
@@ -341,7 +347,7 @@
 				,border:false
 				,bodyStyle:'padding:5px;cellspacing:5px;'
 				,defaults : {xtype : 'fieldset',autoWidth : true, autoHeight : true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:5px'}
-				,items:[{items: [advertencia,{html: '&nbsp;',border:false},actuaciones,contratos,nombre,dni,fieldImportes,gridTiposInteres]}
+				,items:[{items: [advertencia,{html: '&nbsp;',border:false},actuaciones,contratos,nombrePersona,dni,fieldImportes,gridTiposInteres]}
 				]
 			}
 		]
@@ -358,7 +364,7 @@
 		if (!contratos.isValid())
 			return false;
 		
-		if (!nombre.isValid())
+		if(!nombrePersona.isValid())
 			return false;
 			
 		if (!dni.isValid())
@@ -401,6 +407,9 @@
 			return false;
 			
 		if (!tipoDemoraCierre.isValid())
+			return false;
+			
+		if (!nombre.isValid())
 			return false;
 						
 		return true;

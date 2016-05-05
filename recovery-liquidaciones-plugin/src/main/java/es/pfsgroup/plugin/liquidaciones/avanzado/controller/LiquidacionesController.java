@@ -8,23 +8,32 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.liquidaciones.avanzado.dto.DtoCalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
-import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionesAvanzadoManager;
+import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
 
 @Controller
 public class LiquidacionesController {
+	
+	private static final String DEFAULT = "default";
+	private static final String JSP_ALTA_NUEVA_LIQUIDACION =  "plugin/liquidaciones/avanzado/introducirdatos";
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
 	@Autowired 
-	private LiquidacionesAvanzadoManager liquidacionesManager;
+	private LiquidacionAvanzadoApi liquidacionesManager;
+	
+	@Autowired
+	private AsuntoApi asuntoApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -69,6 +78,27 @@ public class LiquidacionesController {
 		return "reportPDF/plugin/liquidaciones/avanzado/liquidaciones";
 	}
 	
+    /**
+     * Abre la ventana para crear una nueva liquidacion.
+     * @param idAsunto
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String abreCrearLiquidacion(ModelMap model,Long idAsunto) {
+		
+		model.put("actuaciones", asuntoApi.obtenerActuacionesAsunto(idAsunto));
+		
+		return JSP_ALTA_NUEVA_LIQUIDACION;
+	}
 	
+	/**
+	 * Guarda un registro de tipo CalculoLiquidacion
+	 * @param calcLiq
+	 * @return
+	 */
+	@RequestMapping
+	public String guardaCalculoLiquidacion(DtoCalculoLiquidacion dtoCalcLiq){
+		return DEFAULT;
+	}
 
 }

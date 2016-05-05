@@ -45,7 +45,22 @@
        <app:test id="btnNuevaLiquidacion" addComa="true" />
        ,iconCls : 'icon_mas'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       			var w = app.openWindow({
+		       	   flow : 'liquidaciones/abreCrearLiquidacion'
+		          ,closable:true
+		          ,width : 1000
+		          ,title : '<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Liquidaciones" />'
+		          ,params : {idAsunto:panel.getIdAsunto()}
+		       	});
+		       	w.on(app.event.DONE, function(){
+					w.close();
+		   		 	historicoLiquidacionesStore.webflow({idAsunto:panel.getIdAsunto()});
+		       	});
+		       	w.on(app.event.CANCEL, function(){
+		        	w.close();
+		       	});
+       }
    	});
    	
    	var btnEditarLiquidacion = new Ext.Button({
@@ -206,6 +221,10 @@
 	}
 	
 	panel.setValue = function(){}
+	
+	panel.getIdAsunto = function(){
+		return data.id;
+	}
 
 	return panel;
 })

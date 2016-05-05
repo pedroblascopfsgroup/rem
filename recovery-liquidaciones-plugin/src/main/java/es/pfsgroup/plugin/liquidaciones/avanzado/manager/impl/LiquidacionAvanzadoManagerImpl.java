@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.liquidaciones.avanzado.manager;
+package es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,11 +30,12 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQReportTiposIntereses;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
+import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
 
 @Service
-public class LiquidacionesAvanzadoManager {
+public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	
 	@Autowired
 	private EXTGestorAdicionalAsuntoManager gestorAdicionalAsuntoManager;	
@@ -51,6 +52,10 @@ public class LiquidacionesAvanzadoManager {
 	@Autowired
 	private UsuarioManager usuarioManager;	
 	
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#completarCabecera(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest)
+	 */
+	@Override
 	public LIQDtoLiquidacionCabecera completarCabecera(LIQDtoReportRequest request) {
 		LIQDtoLiquidacionCabecera cabecera = new LIQDtoLiquidacionCabecera();
 
@@ -111,6 +116,10 @@ public class LiquidacionesAvanzadoManager {
 		return cabecera;
 	}
 
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#obtenerLiquidaciones(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest, es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes)
+	 */
+	@Override
 	public List<LIQDtoTramoLiquidacion> obtenerLiquidaciones(LIQDtoReportRequest request, LIQTramoPendientes pendientes) {
 		List<LIQDtoTramoLiquidacion> cuerpo = new ArrayList<LIQDtoTramoLiquidacion>();
 		
@@ -392,6 +401,10 @@ public class LiquidacionesAvanzadoManager {
 		return resultado;
 	}
 
+	/* (non-Javadoc)
+	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#crearResumen(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest, java.util.List, es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes)
+	 */
+	@Override
 	public LIQDtoLiquidacionResumen crearResumen(LIQDtoReportRequest request, List<LIQDtoTramoLiquidacion> cuerpo, LIQTramoPendientes pendientes) {
 		LIQDtoLiquidacionResumen resumen = new LIQDtoLiquidacionResumen();
 		LIQDtoTramoLiquidacion ultTramo = null;

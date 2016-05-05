@@ -27,7 +27,7 @@ import es.pfsgroup.recovery.hrebcc.model.DDAdjContableTipoEntrega;
 @Entity
 @Table(name = "ENT_CAL_LIQUIDACION", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
-public class EntregasCalculoLiq implements Auditable, Serializable{
+public class EntregaCalculoLiq implements Auditable, Serializable{
 	
 	/**
 	 * 

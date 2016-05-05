@@ -24,7 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 @Entity
 @Table(name = "ATI_ACTUALIZA_TIPO_INTERES_CAL", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
-public class ActualizacionesTipoCalculoLiq implements Auditable, Serializable{
+public class ActualizacionTipoCalculoLiq implements Auditable, Serializable{
 	
 	/**
 	 * 

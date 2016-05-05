@@ -24,13 +24,18 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQReportTiposIntereses;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.ActualizacionTipoCalculoLiq;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
 
@@ -50,43 +55,38 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	private LIQCobroPagoDao cobrosPagosDao;
 	
 	@Autowired
-	private UsuarioManager usuarioManager;	
+	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private GenericABMDao genericDao;
+
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#completarCabecera(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest)
 	 */
-	@Override
-	public LIQDtoLiquidacionCabecera completarCabecera(LIQDtoReportRequest request) {
+	@Override	
+	public LIQDtoLiquidacionCabecera completarCabecera(CalculoLiquidacion request) {
 		LIQDtoLiquidacionCabecera cabecera = new LIQDtoLiquidacionCabecera();
 
+		Assertions.assertNotNull(request.getActuacion(), "plugin.liquidaciones.error.procedimiento.null");
+		Assertions.assertNotNull(request.getContrato(), "plugin.liquidaciones.error.contrato.null");
+		Procedimiento proc = procedimientoManager.getProcedimiento(request.getActuacion().getId());
+		Contrato cont = contratoManager.get(request.getContrato().getId());
 		
-		Procedimiento proc = procedimientoManager.getProcedimiento(request.getActuacion());
-		Contrato cont = contratoManager.get(request.getContrato());
-		Assertions.assertNotNull(proc, "plugin.liquidaciones.error.procedimiento.null");
-		Assertions.assertNotNull(cont, "plugin.liquidaciones.error.contrato.null");
-		
-		Date fechaCierre;
-		Date fechaCalculo;
-		Date fechaVencimiento;
-		try {
-			fechaCierre = DateFormat.toDate(request.getFechaCierre());
-			fechaCalculo = DateFormat.toDate(request.getFechaDeLiquidacion());
-			fechaVencimiento = DateFormat.toDate(request.getFechaVencimiento());
-		} catch (ParseException e) {
-			throw new BusinessOperationException("plugin.liquidaciones.error.date.format");
-		}
+		Date fechaCierre = request.getFechaCierre();
+		Date fechaCalculo = request.getFechaLiquidacion();
+		Date fechaVencimiento = request.getContrato().getFechaVencimiento();
 		
 		cabecera.setFechaCalculo(fechaCalculo);
 		
 		cabecera.setNumCuenta(cont.getNroContratoFormat());
-		cabecera.setNombre(request.getNombre());
-		cabecera.setDni(request.getDni());
+		cabecera.setNombre(request.getNombrePersona());
+		cabecera.setDni(request.getDocumentoId());
 		
 		cabecera.setCapital(new BigDecimal(cont.getLimiteInicial().toString()));
 		cabecera.setFechaVencimiento(fechaVencimiento);
 		cabecera.setInteres(request.getInteresesOrdinarios());
-		cabecera.setTipoInteres(request.getTipoInteres());
-		cabecera.setTipoIntDemora(request.getTipoDemoraCierre());
+		cabecera.setTipoInteres(request.getContrato().getTipoInteres());
+		cabecera.setTipoIntDemora(request.getTipoMoraCierre());
 		
 		cabecera.setFechaCertifDeuda(fechaCierre);
 		cabecera.setPrincipalCertif(request.getCapital());
@@ -120,21 +120,15 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#obtenerLiquidaciones(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest, es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes)
 	 */
 	@Override
-	public List<LIQDtoTramoLiquidacion> obtenerLiquidaciones(LIQDtoReportRequest request, LIQTramoPendientes pendientes) {
+	public List<LIQDtoTramoLiquidacion> obtenerLiquidaciones(CalculoLiquidacion request, LIQTramoPendientes pendientes) {
 		List<LIQDtoTramoLiquidacion> cuerpo = new ArrayList<LIQDtoTramoLiquidacion>();
 		
-		Date fechaCierre;
-		Date fechaCalculo;
-		try {
-			fechaCierre = DateFormat.toDate(request.getFechaCierre());
-			fechaCalculo = DateFormat.toDate(request.getFechaDeLiquidacion());
-		} catch (ParseException e) {
-			throw new BusinessOperationException("plugin.liquidaciones.error.date.format");
-		}
+		Date fechaCierre = request.getFechaCierre();
+		Date fechaCalculo = request.getFechaLiquidacion();
 		
 		//1.- Tramo inicial
 		Date fecha = fechaCierre;
-		Float tipoInt = request.getTipoDemoraCierre();
+		Float tipoInt = request.getTipoMoraCierre();
 		
 		LIQDtoTramoLiquidacion tramoInicial = new LIQDtoTramoLiquidacion();
 		tramoInicial.setFechaValor(DateFormat.toString(fecha));
@@ -144,22 +138,12 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		cuerpo.add(tramoInicial);
 		
 		//2. - Ahora van los diferentes tramos, que son las entregas a cuenta y los cambios de tipo de interés
-		List<LIQCobroPago> entregasCuenta = cobrosPagosDao.findEntregasACuenta(request.getContrato(), fechaCierre, fechaCalculo);
+		//List<LIQCobroPago> entregasCuenta = cobrosPagosDao.findEntregasACuenta(request.getContrato(), fechaCierre, fechaCalculo);
+		List<EntregaCalculoLiq> entregasCuenta = this.getEntregasCalculo(request.getId());
 		
-		for (LIQCobroPago ec : entregasCuenta) {
-			//Obtenemos los cambios de tipos intermedios
-			Map<List<LIQDtoTramoLiquidacion>, Float> cambios = cambiosTipoEntreFechas(request, fecha, ec.getFecha(), pendientes.getSaldo(), pendientes.getIntereses(), tipoInt);
-			//Agregamos los tramos y vamos avanzado la fecha y actualizando el tipo de interes
-			for (LIQDtoTramoLiquidacion cambio : cambios.keySet().iterator().next()) {
-				cuerpo.add(cambio);
-				try {
-					fecha = DateFormat.toDate(cambio.getFechaValor());
-				} catch (ParseException e) {}
-			}
-			if (cambios.keySet().iterator().next()!=null) {
-				//Actualizamos el útlimo tipo interes demora
-				tipoInt = cambios.get(cambios.keySet().iterator().next());
-			}
+		for (EntregaCalculoLiq ec : entregasCuenta) {
+			//Agregamos los cambios de tipos intermedios y se actualiza el tipo de interes
+			this.AgregarcambiosTipoEntreFechas(request, fecha, ec.getFechaValor(), pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
 			
 			//Ahora creamos el tramo para la entrega cuenta
 			LIQDtoTramoLiquidacion tramo = generarTramoParaEntrega(ec, fecha, tipoInt, request.getBaseCalculo(), pendientes);
@@ -168,26 +152,15 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 			cuerpo.add(tramo);
 			
 			//Avanzamos fecha
-			fecha = ec.getFecha();
+			fecha = ec.getFechaValor();
 		}
 		
 		//Ahora insertamos los cambios de tipo entre la ultima entrega y la fecha de calculo
-		Map<List<LIQDtoTramoLiquidacion>, Float> cambios = cambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), tipoInt);
-		for (LIQDtoTramoLiquidacion cambio : cambios.keySet().iterator().next()) {
-			cuerpo.add(cambio);
-			try {
-				fecha = DateFormat.toDate(cambio.getFechaValor());
-			} catch (ParseException e) {}				
-		}
-		if (cambios.keySet().iterator().next()!=null) {		
-			//Actualizamos el útlimo tipo interes demora
-			tipoInt = cambios.get(cambios.keySet().iterator().next());
-		}
-	
+		this.AgregarcambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);		
 		
 		//3.- Por último el tramo del Calculo de Deuda, desde la última fecha hasta la fecha Calculo
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();
-		ultTramo.setFechaValor(request.getFechaDeLiquidacion());
+		ultTramo.setFechaValor(DateFormat.toString(request.getFechaLiquidacion()));
 		ultTramo.setDescripcion("C\u00E1lculo deuda");
 		ultTramo.setSaldo(pendientes.getSaldo());
 		ultTramo.setInteresesPendientes(pendientes.getIntereses());
@@ -207,22 +180,22 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return cuerpo;
 	}
 	
-	private LIQDtoTramoLiquidacion generarTramoParaEntrega(LIQCobroPago ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
+	private LIQDtoTramoLiquidacion generarTramoParaEntrega(EntregaCalculoLiq ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
 		
-		Boolean entregaDesglosada = new Boolean(usuarioManager.getUsuarioLogado().getEntidad().configValue("CobrosDesglosados", "false"));
+		//Boolean entregaDesglosada = new Boolean(usuarioManager.getUsuarioLogado().getEntidad().configValue("CobrosDesglosados", "false"));
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
 
-		if (entregaDesglosada) {
+		/*if (entregaDesglosada) {
 			tramo = tramoEntregaDesglosada(ec, fechaAnt, tipoInt, baseCalculo, pendientes);
-		} else {
+		} else {*/
 			tramo = tramoEntregaNoDesglosada(ec, fechaAnt, tipoInt, baseCalculo, pendientes);
-		}
+		//}
 		
 		//Datos iguales de metodo desglosado o no
 		tramo.setFechaValor(DateFormat.toString(ec.getFechaValor()));
 		tramo.setDescripcion("Entrega");
-		if (!Checks.esNulo(ec.getImporte())) {
-			tramo.setImporte(new BigDecimal(ec.getImporte().toString()));
+		if (!Checks.esNulo(ec.getTotalEntrega())) {
+			tramo.setImporte(ec.getTotalEntrega());
 		}
 		tramo.setInteresesPendientes(pendientes.getIntereses());
 		tramo.setImpuestosPendientes(pendientes.getImpuestos());
@@ -282,10 +255,10 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return tramo;
 	}
 	
-	private LIQDtoTramoLiquidacion tramoEntregaNoDesglosada(LIQCobroPago ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
+	private LIQDtoTramoLiquidacion tramoEntregaNoDesglosada(EntregaCalculoLiq ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
 		
-		BigDecimal importeECRestante = (!Checks.esNulo(ec.getImporte())?new BigDecimal(ec.getImporte().toString()):BigDecimal.ZERO); 
+		BigDecimal importeECRestante = (!Checks.esNulo(ec.getTotalEntrega())?ec.getTotalEntrega():BigDecimal.ZERO); 
 		
 		//De la entrega primero reducimos de los intereses pendientes
 		if (pendientes.getIntereses().compareTo(BigDecimal.ZERO) == 1) {
@@ -357,21 +330,17 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return resultado;
 	}
 	
-	private HashMap<List<LIQDtoTramoLiquidacion>, Float> cambiosTipoEntreFechas(LIQDtoReportRequest request, Date fechaDesde, Date fechaHasta, BigDecimal saldo, BigDecimal intereses, Float tipoInt) {
+	private void AgregarcambiosTipoEntreFechas(CalculoLiquidacion request, Date fechaDesde, Date fechaHasta, BigDecimal saldo, BigDecimal intereses, List<LIQDtoTramoLiquidacion> cuerpo, Float tipoInt) {
 		Calendar c = Calendar.getInstance();
-		List<LIQDtoTramoLiquidacion> tramos = new ArrayList<LIQDtoTramoLiquidacion>();
 		Date fecha = fechaDesde;
 		Float tipo = tipoInt; 
 		
 		//Mientras tengamos cambios de interes entre la fecha y la entregaCuenta
-		LIQReportTiposIntereses cambioTipoInteres;
+		ActualizacionTipoCalculoLiq cambioTipoInteres;
 		do {
-			cambioTipoInteres = request.getPrimerCambioEntreFechas(fecha, fechaHasta);
+			cambioTipoInteres = this.getPrimerCambioEntreFechas(fecha, fechaHasta, request.getActualizacionesTipo());
 			if (cambioTipoInteres!=null) {
-				Date fechaCambio =  null;
-				try {
-					fechaCambio = DateFormat.toDate(cambioTipoInteres.getFecha());
-				} catch (ParseException e) {}
+				Date fechaCambio =  cambioTipoInteres.getFecha();
 				//Creamos una línea de tipo de Cambio de Tipo de Interes
 				
 				LIQDtoTramoLiquidacion tramoCambioTipo = new LIQDtoTramoLiquidacion();
@@ -391,21 +360,17 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 				fecha = c.getTime();				
 				tipo = cambioTipoInteres.getTipoInteres();
 				
-				tramos.add(tramoCambioTipo);
+				cuerpo.add(tramoCambioTipo);
+				tipoInt = tipo;
 			}
 		} while (cambioTipoInteres !=null);		
-		
-		HashMap<List<LIQDtoTramoLiquidacion>,Float> resultado = new HashMap<List<LIQDtoTramoLiquidacion>, Float>();
-		resultado.put(tramos, tipo);
-		
-		return resultado;
 	}
 
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#crearResumen(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest, java.util.List, es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes)
 	 */
 	@Override
-	public LIQDtoLiquidacionResumen crearResumen(LIQDtoReportRequest request, List<LIQDtoTramoLiquidacion> cuerpo, LIQTramoPendientes pendientes) {
+	public LIQDtoLiquidacionResumen crearResumen(CalculoLiquidacion request, List<LIQDtoTramoLiquidacion> cuerpo, LIQTramoPendientes pendientes) {
 		LIQDtoLiquidacionResumen resumen = new LIQDtoLiquidacionResumen();
 		LIQDtoTramoLiquidacion ultTramo = null;
 		
@@ -481,6 +446,43 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		resumen.setTotalPagar(totalPagar);
 		
 		return resumen;
+	}
+	
+	public CalculoLiquidacion getCalculoById(Long calculoId)  {
+		CalculoLiquidacion calculo = genericDao.get(CalculoLiquidacion.class, genericDao.createFilter(FilterType.EQUALS, "id", calculoId));
+		
+		return calculo;
+	}
+	
+	public List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
+		return genericDao.getList(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion", idCalculo));
+	}
+	
+	/**
+	 * Encuentra el primer cambio de tipo de interes entre las fechas
+	 * @param desde
+	 * @param hasta
+	 * @param lTiposInteres Lista con los cambios de tipo de interes
+	 * @return un cambio encontrado o null
+	 */
+	public ActualizacionTipoCalculoLiq getPrimerCambioEntreFechas(Date desde, Date hasta, List<ActualizacionTipoCalculoLiq> lTiposInteres) {
+		Calendar c = Calendar.getInstance();
+		
+		Date fecha = desde;
+		while (fecha.compareTo(hasta)<=0) {
+			for (ActualizacionTipoCalculoLiq tipo : lTiposInteres) {
+				if (DateFormat.toString(fecha).equals(tipo.getFecha())) {
+					return tipo;
+				}
+			}
+
+			//Avanzamos un día
+			c.setTime(fecha); 
+			c.add(Calendar.DATE, 1);
+			fecha = c.getTime();
+		}
+		
+		return null;
 	}
 	
 }

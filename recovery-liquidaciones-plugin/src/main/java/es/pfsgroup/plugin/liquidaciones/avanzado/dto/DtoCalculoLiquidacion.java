@@ -34,6 +34,7 @@ public class DtoCalculoLiquidacion extends WebDto{
 	private String fechaLiquidacion;
 	private Float tipoMoraCierre;
 	private BigDecimal totalCaculo;
+	private Long estadoCalculo;
 
 
 	public Long getId() {
@@ -202,6 +203,14 @@ public class DtoCalculoLiquidacion extends WebDto{
 
 	public void setTotalCaculo(BigDecimal totalCaculo) {
 		this.totalCaculo = totalCaculo;
+	}
+	
+	public Long getEstadoCalculo() {
+		return estadoCalculo;
+	}
+
+	public void setEstadoCalculo(Long estadoCalculo) {
+		this.estadoCalculo = estadoCalculo;
 	}
 	
 }

@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.ContratoManager;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.EXTContrato;
 import es.capgemini.pfs.multigestor.EXTGestorAdicionalAsuntoManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -22,9 +26,11 @@ import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.liquidaciones.avanzado.dto.DtoCalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
@@ -32,9 +38,12 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.ActualizacionTipoCalculoLiq;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.DDEstadoCalculo;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPagoEntregas;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableConceptoEntrega;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableTipoEntrega;
 
@@ -450,6 +459,74 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		return resumen;
 	}
+
+	@Override
+	public CalculoLiquidacion convertDtoCalculoLiquidacionTOCalculoLiquidacion(DtoCalculoLiquidacion dto) {
+		
+		CalculoLiquidacion calcLiq = new CalculoLiquidacion();
+		
+		if(!Checks.esNulo(dto)){
+			
+			if(!Checks.esNulo(dto.getId())){
+				Filter filter = genericDao.createFilter(FilterType.EQUALS,"id", dto.getId());
+				calcLiq = genericDao.get(CalculoLiquidacion.class, filter);
+			}
+			
+		}
+
+		calcLiq.setNombre(dto.getNombre());
+		calcLiq.setNombrePersona(dto.getNombrePersona());
+		calcLiq.setDocumentoId(dto.getDocumentoId());
+		calcLiq.setCapital(dto.getCapital());
+		calcLiq.setInteresesOrdinarios(dto.getInteresesOrdinarios());
+		calcLiq.setInteresesDemora(dto.getInteresesDemora());
+		calcLiq.setComisiones(dto.getComisiones());
+		calcLiq.setImpuestos(dto.getImpuestos());
+		calcLiq.setGastos(dto.getGastos());
+		calcLiq.setCostasLetrado(dto.getCostasLetrado());
+		calcLiq.setCostasProcurador(dto.getCostasProcurador());
+		calcLiq.setOtrosGastos(dto.getOtrosGastos());
+		calcLiq.setBaseCalculo(dto.getBaseCalculo());
+		calcLiq.setTipoMoraCierre(dto.getTipoMoraCierre());
+		calcLiq.setTotalCaculo(dto.getTotalCaculo());
+		
+		
+		SimpleDateFormat frmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		
+		try {
+			calcLiq.setFechaCierre(frmt.parse(dto.getFechaCierre()));
+			calcLiq.setFechaLiquidacion(frmt.parse(dto.getFechaLiquidacion()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		
+		
+		if(!Checks.esNulo(dto.getAsunto())){
+			Filter filter = genericDao.createFilter(FilterType.EQUALS,"id", dto.getAsunto());
+			EXTAsunto asunto = genericDao.get(EXTAsunto.class, filter);
+			calcLiq.setAsunto(asunto);
+		}
+		
+		if(!Checks.esNulo(dto.getActuacion())){
+			Filter filter = genericDao.createFilter(FilterType.EQUALS,"id", dto.getActuacion());
+			MEJProcedimiento actuacion = genericDao.get(MEJProcedimiento.class, filter);
+			calcLiq.setActuacion(actuacion);
+		}
+		
+		if(!Checks.esNulo(dto.getContrato())){
+			Filter filter = genericDao.createFilter(FilterType.EQUALS,"id", dto.getContrato());
+			EXTContrato contrato = genericDao.get(EXTContrato.class, filter);
+			calcLiq.setContrato(contrato);
+		}
+		
+		if(!Checks.esNulo(dto.getEstadoCalculo())){
+			Filter filter = genericDao.createFilter(FilterType.EQUALS,"codigo", dto.getEstadoCalculo());
+			DDEstadoCalculo estadoCalculo = genericDao.get(DDEstadoCalculo.class, filter);
+			calcLiq.setEstadoCalculo(estadoCalculo);
+		}
+
+		return calcLiq;
+	}
 	
 	@Override
 	public CalculoLiquidacion getCalculoById(Long calculoId)  {
@@ -500,7 +577,8 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	
 	@SuppressWarnings("null")
 	@Transactional(readOnly = false)
-	 public void createOrUpdateEntCalLiquidacion(LIQDtoCobroPagoEntregas dto){
+	@Override
+	public void createOrUpdateEntCalLiquidacion(LIQDtoCobroPagoEntregas dto){
 		
 		Long idCalculo= dto.getId();
 		String tipoEntrega= dto.getTipoEntrega();//Codigo CAN
@@ -584,6 +662,19 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		
 		
+		
+	}
+
+	@Transactional(readOnly = false)
+	@Override
+	public void saveCalculoLiquidacionAvanzado(CalculoLiquidacion cl) {
+		Auditoria auditoria = Auditoria.getNewInstance();
+		cl.setAuditoria(auditoria);
+		try{
+			genericDao.save(CalculoLiquidacion.class, cl);
+		}catch(Exception e){
+			System.out.println(e);
+		}
 		
 	}
 		

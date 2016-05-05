@@ -163,7 +163,19 @@
        <app:test id="btnNuevaEntrega" addComa="true" />
        ,iconCls : 'icon_mas'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       		var w = app.openWindow({
+					flow : 'entregas/nuevaEntrega'
+					,width:700
+					,title : '<s:message code="entregas.alta" text="**Alta Entrega" />' 
+					,params : {idCalculo: 19}
+			});
+			w.on(app.event.DONE, function(){
+				w.close();
+				<%--  entregaStore.webflow({id:panel.getAsuntoId()}); --%>
+			});
+			w.on(app.event.CANCEL, function(){ w.close(); });
+       }
    	});
    	
    	var btnModificarEntrega = new Ext.Button({

@@ -16,6 +16,7 @@ public interface LiquidacionAvanzadoApi {
 
 	public LIQDtoLiquidacionResumen crearResumen(CalculoLiquidacion request, List<LIQDtoTramoLiquidacion> cuerpo, LIQTramoPendientes pendientes);
 
+
 	public CalculoLiquidacion getCalculoById(Long calculoId);
 
 }

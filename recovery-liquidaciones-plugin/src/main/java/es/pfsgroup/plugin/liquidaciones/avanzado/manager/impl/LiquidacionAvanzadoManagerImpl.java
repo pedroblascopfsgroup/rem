@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -31,6 +32,10 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.model.ActualizacionTipoCalculoL
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
+import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPagoEntregas;
+import es.pfsgroup.recovery.hrebcc.model.DDAdjContableConceptoEntrega;
+import es.pfsgroup.recovery.hrebcc.model.DDAdjContableTipoEntrega;
+
 
 @Service
 public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
@@ -58,6 +63,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	 */
 	@Override	
 	public LIQDtoLiquidacionCabecera completarCabecera(CalculoLiquidacion request) {
+
 		LIQDtoLiquidacionCabecera cabecera = new LIQDtoLiquidacionCabecera();
 
 		Assertions.assertNotNull(request.getActuacion(), "plugin.liquidaciones.error.procedimiento.null");
@@ -481,4 +487,95 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return null;
 	}
 
+	
+	@SuppressWarnings("null")
+	@Transactional(readOnly = false)
+	 public void createOrUpdateEntCalLiquidacion(LIQDtoCobroPagoEntregas dto){
+		
+		Long idCalculo= dto.getId();
+		String tipoEntrega= dto.getTipoEntrega();//Codigo CAN
+		String conceptoEntrega= dto.getConceptoEntrega();//Concepto Entrega
+		String fechaEntrega= dto.getFechaEntrega();
+		String fechaValor= dto.getFechaValor();
+		BigDecimal gastosProcurador = null;
+		BigDecimal gastosAbogado = null;
+		BigDecimal gastosOtros = null;
+		BigDecimal totalEntrega = null;
+
+
+
+		
+		if(dto.getGastosAbogado()!=null){
+			gastosAbogado = new BigDecimal(dto.getGastosAbogado());
+		}
+		if(dto.getGastosProcurador()!=null){
+			gastosProcurador = new BigDecimal(dto.getGastosProcurador());
+		}
+		if(dto.getOtrosGastos()!=null){
+			gastosOtros = new BigDecimal(dto.getOtrosGastos());
+		}
+		if(dto.getTotalEntrega()!=null){
+			totalEntrega = new BigDecimal(dto.getTotalEntrega());
+		}
+
+		
+		EntregaCalculoLiq entregasCalculo= new EntregaCalculoLiq();
+		
+		
+		if(idCalculo != null){
+			CalculoLiquidacion calliq = genericDao.get(CalculoLiquidacion.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "id", idCalculo));
+			Assertions.assertNotNull(idCalculo, "No existe");
+			entregasCalculo.setCalculoLiquidacion(calliq);
+		}
+	
+		if(fechaEntrega != null && fechaEntrega != ""){
+			try {
+				java.sql.Date sqlFE = new java.sql.Date(DateFormat.toDate(dto.getFechaEntrega()).getTime());
+				entregasCalculo.setFechaEntrega(sqlFE);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Assertions.assertNotNull(fechaEntrega, "Fecha no valida");
+		}
+		
+		if(fechaValor != null && fechaValor != ""){
+			try {
+				java.sql.Date sqlFV = new java.sql.Date(DateFormat.toDate(dto.getFechaValor()).getTime());
+				entregasCalculo.setFechaValor(sqlFV);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Assertions.assertNotNull(fechaValor, "Fecha no valida");
+
+		}
+		
+		if(tipoEntrega != null && tipoEntrega!= ""){
+			DDAdjContableTipoEntrega ddTipoEntrega = genericDao.get(DDAdjContableTipoEntrega.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "codigo", tipoEntrega));
+			Assertions.assertNotNull(ddTipoEntrega, "Tipo no valido");
+			entregasCalculo.setTipoEntrega(ddTipoEntrega);
+		}
+		
+		if(conceptoEntrega != null && conceptoEntrega!= ""){
+			DDAdjContableConceptoEntrega ddConceptoEntrega = genericDao.get(DDAdjContableConceptoEntrega.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "codigo", conceptoEntrega));
+			Assertions.assertNotNull(ddConceptoEntrega, "Concepto no valido");
+			entregasCalculo.setConceptoEntrega(ddConceptoEntrega);
+		}
+		
+		
+		entregasCalculo.setGastosProcurador(gastosProcurador);
+		entregasCalculo.setGastosLetrado(gastosAbogado);
+		entregasCalculo.setOtrosGastos(gastosOtros);
+		entregasCalculo.setTotalEntrega(totalEntrega);
+		
+		
+		genericDao.save(EntregaCalculoLiq.class, entregasCalculo);
+		
+		
+		
+		
+	}
+		
+	
 }

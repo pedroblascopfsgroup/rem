@@ -17,6 +17,7 @@ import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionesAvanzadoManager;
 import es.pfsgroup.plugin.recovery.liquidaciones.LIQCobroPagoEntregasManager;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPago;
@@ -32,12 +33,15 @@ public class EntregasController{
 	
 	
 	static final String LISTADO_COBRO_PAGO_JSON= "plugin/liquidaciones/listadoEntregasJSON";
-	static final String NUEVA_ENTREGA= "plugin/liquidaciones/override/entregas";
+	static final String NUEVA_ENTREGA= "plugin/liquidaciones/avanzado/entregas";
 	private static final String DEFAULT= "default";
 
 	
 	@Autowired
 	private LIQCobroPagoEntregasManager liqCobroPagoEntregasManager;
+	
+	@Autowired
+	LiquidacionesAvanzadoManager liqAvanzadasManager;
 	
 	@Autowired
 	LIQCobroPagoDao cobroPagoDao;
@@ -55,8 +59,8 @@ public class EntregasController{
 	@RequestMapping
 	public String saveEntrega(ModelMap model,LIQDtoCobroPagoEntregas dto) {
 		
-		
-		liqCobroPagoEntregasManager.createOrUpdate(dto);
+		liqAvanzadasManager.createOrUpdateEntCalLiquidacion(dto);
+		//liqCobroPagoEntregasManager.createOrUpdate(dto);
 		return DEFAULT;
 		
 		// TODO Auto-generated method stub
@@ -83,19 +87,20 @@ public class EntregasController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String nuevaEntrega(Long idAsunto, ModelMap model) {
+	public String nuevaEntrega(Long idCalculo, ModelMap model) {
 		// TODO Auto-generated method stub
 
-		List<Procedimiento>procedimientos= procedimientoDao.getProcedimientosAsunto(idAsunto);
+//		List<Procedimiento>procedimientos= procedimientoDao.getProcedimientosAsunto(idAsunto);
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
 		
 
 		
 		model.put("tipoEntrega", tipoEntrega);
+		model.put("idCalculo", idCalculo);
 		model.put("conceptoEntrega", conceptoEntrega);
-		model.put("procedimientos", procedimientos);
-		model.put("idAsunto", idAsunto);
+//		model.put("procedimientos", procedimientos);
+//		model.put("idAsunto", idAsunto);
         
 		return NUEVA_ENTREGA; 
 	}

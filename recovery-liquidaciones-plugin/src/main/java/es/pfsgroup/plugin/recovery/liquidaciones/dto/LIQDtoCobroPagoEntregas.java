@@ -32,6 +32,8 @@ public class LIQDtoCobroPagoEntregas {
 	private	Long contrato;
 	private	DDOrigenCobro origenCobro;
 	private	DDModalidadCobro modalidadCobro;
+	private Float totalEntrega;
+	
 	public Long getId() {
 		return id;
 	}
@@ -176,6 +178,13 @@ public class LIQDtoCobroPagoEntregas {
 	public void setModalidadCobro(DDModalidadCobro modalidadCobro) {
 		this.modalidadCobro = modalidadCobro;
 	}
+	public Float getTotalEntrega() {
+		return totalEntrega;
+	}
+	public void setTotalEntrega(Float totalEntrega) {
+		this.totalEntrega = totalEntrega;
+	}
+	
 	
 	
 	

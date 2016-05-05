@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- PASO 1 - PARTE COMUN A TODOS LOS BATCH. FUSIONAR EN EL FUTURO TAMBIEN RECOBRO AGENCIAS sqlRecobroPreparacionRecobro-->
-    <entry key="comunes.idxdrop.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxdrop.PreparaGeneracionExpedientes">
         <![CDATA[
         BEGIN
 
@@ -12,7 +12,7 @@
         END;
         ]]>
     </entry>
-    <entry key="comunes.truncate.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.truncate.PreparaGeneracionExpedientes">
         <![CDATA[
         BEGIN
          Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT');
@@ -22,7 +22,7 @@
         END;
         ]]>
     </entry>
-    <entry key="comunes.create.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.create.PreparaGeneracionExpedientes">
         <![CDATA[
         Declare
 
@@ -92,7 +92,7 @@
         End;
         ]]>
     </entry>
-    <entry key="comunes.idxcreate.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxcreate.PreparaGeneracionExpedientes">
         <![CDATA[
         BEGIN
          Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_GCL');
@@ -103,7 +103,7 @@
         ]]>
     </entry>
     <!-- PASO 2 - PARTE COMUN A SEGUIMIENTO Y VENCIDOS -->
-    <entry key="comunes.idxdrop.jobGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxdrop.jobGeneracionExpedientes">
         <![CDATA[
         BEGIN
          Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_EXP');
@@ -113,7 +113,7 @@
         END;
         ]]>
     </entry>
-     <entry key="comunes.truncate.jobGeneracionExpedientes.Oracle9iDialect">
+     <entry key="comunes.truncate.jobGeneracionExpedientes">
         <![CDATA[
         BEGIN
 
@@ -132,7 +132,7 @@
         END;
         ]]>
     </entry>
-     <entry key="comunes.create.jobGeneracionExpedientes.Oracle9iDialect">
+     <entry key="comunes.create.jobGeneracionExpedientes">
         <![CDATA[
         DECLARE
 
@@ -322,7 +322,7 @@
         END;
         ]]>
     </entry>
-    <entry key="comunes.idxcreate.jobGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxcreate.jobGeneracionExpedientes">
         <![CDATA[
         BEGIN
          Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_EXP');
@@ -342,7 +342,7 @@
         ]]>
     </entry>
     <!-- PASO 3 - GENERAMOS EXPEDIENTES DE SEGUIMIENTO -->
-    <entry key="seguimiento.truncate.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="seguimiento.truncate.GeneracionExpedientes">
         <![CDATA[
         Begin
 
@@ -378,7 +378,7 @@
         End;
         ]]>
     </entry>
-    <entry key="seguimiento.create.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="seguimiento.create.GeneracionExpedientes">
         <![CDATA[
         DECLARE
 
@@ -821,7 +821,7 @@
         ]]>
     </entry>
     <!-- PASO 4 - GENERAMOS EXPEDIENTES DE RECUPERACION -->
-    <entry key="recuperacion.truncate.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="recuperacion.truncate.GeneracionExpedientes">
         <![CDATA[
         Begin
 
@@ -856,7 +856,7 @@
         End;
         ]]>
     </entry>
-    <entry key="recuperacion.create.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="recuperacion.create.GeneracionExpedientes">
         <![CDATA[
         DECLARE
 
@@ -1307,7 +1307,7 @@
         ]]>
     </entry>
     <!-- PASO 5 - PERSISTENCIA DE EXPEDIENTES -->
-    <entry key="vencidos.persistencia.expedientes.Oracle9iDialect">
+    <entry key="vencidos.persistencia.expedientes">
         <![CDATA[
         DECLARE
 
@@ -1464,7 +1464,7 @@
         END;
         ]]>
     </entry>
-    <entry key="vencidos.persistencia.clientes.Oracle9iDialect">
+    <entry key="vencidos.persistencia.clientes">
         <![CDATA[
         DECLARE
 
@@ -1505,7 +1505,7 @@
         END;
         ]]>
     </entry>
-    <entry key="vencidos.persistencia.politicas.Oracle9iDialect">
+    <entry key="vencidos.persistencia.politicas">
         <![CDATA[
         DECLARE
 
@@ -1613,7 +1613,7 @@
         END;
         ]]>
     </entry>
-    <entry key="vencidos.persistencia.expedientesbpm.Oracle9iDialect">
+    <entry key="vencidos.persistencia.expedientesbpm">
         <![CDATA[
         DECLARE
 

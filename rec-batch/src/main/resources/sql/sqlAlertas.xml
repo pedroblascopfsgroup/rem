@@ -7,7 +7,7 @@
           FROM tmp_ale_alertas WHERE tmp_ale_cod_entidad <> ?
       ]]>
     </entry>
-    <entry key="ale-02.loadDateValidator.Oracle10gDialect">
+    <entry key="ale-02.loadDateValidator">
       <![CDATA[
              SELECT tmp_ale_cod_alerta AS ERROR_FIELD, (tmp_ale_cod_entidad || tmp_ale_cod_cliente_entidad) AS ENTITY_CODE
               FROM tmp_ale_alertas where TMP_ALE_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')
@@ -135,7 +135,7 @@
            SET ale_activo = 0
           ]]>
    </entry>
-   <entry key="alertas.insert.Oracle10gDialect">
+   <entry key="alertas.insert">
     <![CDATA[
             INSERT INTO ale_alertas(
                 ale_id,
@@ -224,7 +224,7 @@
     ]]>
     </entry>
 
-    <entry key="scoring.crearRegistrosEnTablasTotales.Oracle10gDialect">
+    <entry key="scoring.crearRegistrosEnTablasTotales">
     <![CDATA[
     INSERT ALL
     INTO pto_puntuacion_total (
@@ -249,7 +249,7 @@
                WHERE ale_activo = 1
     ]]>
     </entry>
-    <entry key="scoring.crearRegistrosEnTablasParciales.Oracle10gDialect">
+    <entry key="scoring.crearRegistrosEnTablasParciales">
     <![CDATA[
         INSERT ALL
             INTO PPA_puntuacion_PARCIAL (
@@ -363,7 +363,7 @@
         ]]>
      </entry>
 
-     <entry key="scoring.calcularRango.Oracle10gDialect">
+     <entry key="scoring.calcularRango">
      <![CDATA[
         -- Mucho cuidado con esta query
         -- 25 = ASCII ('Z') - ASCII ('A')  -- Cantidad de letras

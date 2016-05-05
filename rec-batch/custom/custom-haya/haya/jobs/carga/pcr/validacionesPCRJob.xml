@@ -200,7 +200,7 @@
     <bean id="cnt-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="cnt-02.loadDateValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="cnt-02.loadDateValidator" />
         </property>
         <property name="bindings" value="fileName=csvFileContratos" />
         <property name="message" value="cnt-02.loadDateValidator" />
@@ -704,7 +704,7 @@
     <bean id="per-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="per-02.loadDateValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="per-02.loadDateValidator" />
         </property>
         <property name="bindings" value="fileName=csvFilePersonas" />
         <property name="message" value="per-02.loadDateValidator" />
@@ -1339,7 +1339,7 @@
     <bean id="cnt-per-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="cnt-per-02.loadDateValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="cnt-per-02.loadDateValidator" />
         </property>
         <property name="bindings" value="fileName=csvFileRelacion" />
         <property name="message" value="cnt-per-02.loadDateValidator" />
@@ -1372,7 +1372,7 @@
     <bean id="cnt-per-04.integridadValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="cnt-per-04.integridadValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="cnt-per-04.integridadValidator" />
         </property>
         <property name="expectedNumber" value="0" />
         <property name="message" value="cnt-per-04.integridadValidator" />
@@ -1383,7 +1383,7 @@
     <bean id="cnt-per-05.ProductTypeValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="cnt-per-05.ProductTypeValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="cnt-per-05.ProductTypeValidator" />
         </property>
         <property name="expectedNumber" value="0" />
         <property name="message" value="cnt-per-05.ProductTypeValidator" />
@@ -1393,7 +1393,7 @@
     <bean id="cnt-per-06.integridadValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="cnt-per-06.integridadValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="cnt-per-06.integridadValidator" />
         </property>
         <property name="expectedNumber" value="0" />
         <property name="message" value="cnt-per-06.integridadValidator" />
@@ -1403,7 +1403,7 @@
     <bean id="cnt-per-07.integridadCodOficinaValidator" class="es.capgemini.pfs.batch.common.BatchValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="cnt-per-07.integridadCodOficinaValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="cnt-per-07.integridadCodOficinaValidator" />
         </property>
         <property name="expectedNumber" value="0" />
         <property name="message" value="cnt-per-07.integridadCodOficinaValidator" />
@@ -1435,7 +1435,7 @@
     <bean id="dir-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="dir-02.loadDateValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="dir-02.loadDateValidator" />
         </property>
         <property name="bindings" value="fileName=csvFileDirecciones" />
         <property name="message" value="dir-02.loadDateValidator" />

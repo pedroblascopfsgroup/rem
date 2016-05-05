@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="recobro.control.proceso.produccion.Oracle10gDialect">
+    <entry key="recobro.control.proceso.produccion">
         <![CDATA[
         UPDATE BATCH_RERA_CONTROL_PROC SET RERA_MODE = 'PROD',LAST_UPDATE = SYSDATE
         ]]>
@@ -8,7 +8,7 @@
 
 
     <!-- COMPROBAMOS SI HAY ESQUEMAS PENDIENTES DE LIBERAR Y REALIZAMOS LOS CAMBOS CORRESPONDIENTES EN CASO AFIRMATIVO -->
-    <entry key="recobro.gestion.esquemas.Oracle10gDialect">
+    <entry key="recobro.gestion.esquemas">
         <![CDATA[
             declare
                 v_result NUMBER;
@@ -61,14 +61,14 @@
         ]]>
     </entry>
     <!-- VOLVEMOS A GENERAR DATOS BATCH_RCF_ENTRADA -->
-    <entry key="recobro.borrado.batch_rcf_entrada.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_rcf_entrada">
         <![CDATA[
            BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
            END;
         ]]>
     </entry>
-    <entry key="recobro.creacion.batch_rcf_entrada.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_rcf_entrada">
         <![CDATA[
             Begin
               INSERT /*+append*/ INTO BATCH_RCF_ENTRADA
@@ -165,7 +165,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.carga.data_rule_engine_cnt_niv.Oracle10gDialect">
+    <entry key="recobro.carga.data_rule_engine_cnt_niv">
         <![CDATA[
             DECLARE
                 query_body varchar (30048);
@@ -214,7 +214,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.carga.data_rule_engine_per_niv.Oracle10gDialect">
+    <entry key="recobro.carga.data_rule_engine_per_niv">
         <![CDATA[
             DECLARE
                 query_body varchar (30048);
@@ -263,7 +263,7 @@
     </entry>
 
 
-    <entry key="recobro.insert.data_rule_engine.Oracle10gDialect">
+    <entry key="recobro.insert.data_rule_engine">
         <![CDATA[
             BEGIN
                REFRESH_DATA_RULE_ENGINE();
@@ -271,7 +271,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_cnt_per.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_cnt_per">
         <![CDATA[
            BEGIN
               OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_PER');
@@ -279,7 +279,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_cnt_per.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_cnt_per">
         <![CDATA[
             Begin
 
@@ -298,7 +298,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_cnt.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_cnt">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT');
@@ -306,7 +306,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_cnt.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_cnt">
         <![CDATA[
             Begin
 
@@ -326,7 +326,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_per.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_per">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_PER');
@@ -334,7 +334,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_per.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_per">
         <![CDATA[
             Begin
 
@@ -357,7 +357,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_cnt_exp.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_cnt_exp">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_EXP');
@@ -365,7 +365,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_cnt_exp.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_cnt_exp">
         <![CDATA[
 
             Begin
@@ -388,7 +388,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_exp.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_exp">
         <![CDATA[
            BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXP');
@@ -396,7 +396,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_exp.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_exp">
         <![CDATA[
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_EXP
@@ -426,7 +426,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_cnt_info.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_cnt_info">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CNT_INFO');
@@ -434,7 +434,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_cnt_info.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_cnt_info">
         <![CDATA[
 
             Begin
@@ -455,7 +455,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_per_exp.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_per_exp">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_PER_EXP');
@@ -463,7 +463,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_per_exp.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_per_exp">
         <![CDATA[
             Begin
               INSERT /*+append*/ INTO BATCH_DATOS_PER_EXP
@@ -484,7 +484,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_cli.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_cli">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_CLI');
@@ -492,7 +492,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_cli.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_cli">
         <![CDATA[
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_CLI
@@ -509,7 +509,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_exceptuados.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_exceptuados">
         <![CDATA[
             BEGIN
               OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXCEPTUADOS');
@@ -517,7 +517,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_exceptuados.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_exceptuados">
         <![CDATA[
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXCEPTUADOS
@@ -552,7 +552,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_exp_manual.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_exp_manual">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_EXP_MANUAL');
@@ -560,7 +560,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_exp_manual.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_exp_manual">
         <![CDATA[
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXP_MANUAL
@@ -590,7 +590,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.batch_datos_gcl.Oracle10gDialect">
+    <entry key="recobro.borrado.batch_datos_gcl">
         <![CDATA[
             BEGIN
                  OPERACION_DDL.DDL_TABLE ('TRUNCATE','BATCH_DATOS_GCL');
@@ -598,7 +598,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.creacion.batch_datos_gcl.Oracle10gDialect">
+    <entry key="recobro.creacion.batch_datos_gcl">
         <![CDATA[
          Begin
 

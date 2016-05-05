@@ -359,7 +359,7 @@
     ]]>
   </entry>
 
-  <entry key="personas.historizarArquetiposPersonas.insert.Oracle9iDialect">
+  <entry key="personas.historizarArquetiposPersonas.insert">
     <![CDATA[
         INSERT INTO H_ARR_ARQ_RECUPERACION_PERSONA
         SELECT * FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < (select trunc(nvl(max(execu.START_TIME),sysdate-10))
@@ -370,7 +370,7 @@ where ins.JOB_NAME = 'procesoArquetipadoRecuperacionesJob'
     ]]>
   </entry>
 
-  <entry key="personas.historizarArquetiposPersonas.delete.Oracle9iDialect">
+  <entry key="personas.historizarArquetiposPersonas.delete">
     <![CDATA[
         DELETE FROM ARR_ARQ_RECUPERACION_PERSONA arr WHERE trunc(arr.ARQ_DATE) < (select trunc(nvl(max(execu.START_TIME),sysdate-10))
 from ${master.schema}.BATCH_JOB_INSTANCE ins

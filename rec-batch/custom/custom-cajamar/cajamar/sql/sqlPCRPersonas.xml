@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-	<entry key="pcr.preDropIndex.personas.Oracle9iDialect">
+	<entry key="pcr.preDropIndex.personas">
     <![CDATA[
     	BEGIN
 			EXECUTE IMMEDIATE('ALTER TABLE PER_PERSONAS ENABLE ROW MOVEMENT');
@@ -13,7 +13,7 @@
     ]]>
 	</entry> 
 	
-	<entry key="pcr.dropIndex.personas.Oracle9iDialect">
+	<entry key="pcr.dropIndex.personas">
     <![CDATA[
     	BEGIN
 		
@@ -34,7 +34,7 @@
     ]]>
 	</entry> 
 	
-	<entry key="pcr.postDropIndex.personas.Oracle9iDialect">
+	<entry key="pcr.postDropIndex.personas">
     <![CDATA[
     	BEGIN
 		   EXECUTE IMMEDIATE('ANALYZE TABLE PER_PERSONAS COMPUTE STATISTICS');
@@ -43,7 +43,7 @@
     ]]>
 	</entry> 		
 
-	<entry key="pcr.insert.personas.Oracle9iDialect">
+	<entry key="pcr.insert.personas">
         <![CDATA[
 		INSERT /*+ APPEND PARALLEL(PER_PERSONAS, 16) PQ_DISTRIBUTE(PER_PERSONAS, NONE) */ INTO PER_PERSONAS(
 		   PER_ID,
@@ -180,7 +180,7 @@
 		                 )
 		]]>
 	</entry>
-	<entry key="pcr.createIndex.personas.Oracle9iDialect">
+	<entry key="pcr.createIndex.personas">
     <![CDATA[
 		DECLARE
 		    -- Vble. para validar la existencia de las Tablas.
@@ -223,7 +223,7 @@
 		END;			
         ]]>
 	</entry>  	
-	<entry key="pcr.update.personas.Oracle9iDialect">
+	<entry key="pcr.update.personas">
         <![CDATA[
 			UPDATE per_personas p 
 				SET (
@@ -360,7 +360,7 @@
         ]]>
 	</entry>
 
-	<entry key="pcr.insert.telTelefonosDePersonas.Oracle9iDialect">
+	<entry key="pcr.insert.telTelefonosDePersonas">
         <![CDATA[
 		INSERT /*+ APPEND PARALLEL(TEL_TELEFONOS, 16) PQ_DISTRIBUTE(TEL_TELEFONOS, NONE) */ INTO TEL_TELEFONOS (TEL_ID,
 								   TEL_TELEFONO,
@@ -389,7 +389,7 @@
 		]]>
 	</entry>
 
-	<entry key="pcr.insert.telPer.Oracle9iDialect">
+	<entry key="pcr.insert.telPer">
         <![CDATA[
 			INSERT /*+ APPEND PARALLEL(TEL_PER, 16) PQ_DISTRIBUTE(TEL_PER, NONE) */ INTO TEL_PER(TEL_ID,
 								PER_ID,
@@ -411,7 +411,7 @@
 		]]>
 	</entry>
 
-	<entry key="pcr.update.telTelefonosDePersonas.Oracle9iDialect">
+	<entry key="pcr.update.telTelefonosDePersonas">
         <![CDATA[
 			UPDATE TEL_TELEFONOS tt
 			   SET (TEL_CONSENTIMIENTO,
@@ -435,7 +435,7 @@
          ]]>
 	</entry>
 
-	<entry key="pcr.insert.telPer.Oracle9iDialect">
+	<entry key="pcr.insert.telPer">
         <![CDATA[
 			UPDATE TEL_PER tp
 				SET (TEL_ID,
@@ -473,7 +473,7 @@
 				FROM TMP_PER_PERSONAS tp WHERE tmp_per_cod_entidad <> ?
 		]]>
 	</entry>
-	<entry key="per-02.loadDateValidator.Oracle9iDialect"><![CDATA[SELECT (''||tp.TMP_PER_FECHA_EXTRACCION) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE TMP_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]></entry>
+	<entry key="per-02.loadDateValidator"><![CDATA[SELECT (''||tp.TMP_PER_FECHA_EXTRACCION) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE TMP_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]></entry>
 	<entry key="per-03.personTypeValidator"><![CDATA[SELECT (''||tp.TMP_PER_TIPO_PERSONA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT 1 FROM ${master.schema}.DD_TPE_TIPO_PERSONA tpe WHERE trim(tp.TMP_PER_TIPO_PERSONA) = trim(tpe.DD_TPE_CODIGO))]]></entry>
 	
 	<entry key="per-04.insertDocumentTypeValidator">

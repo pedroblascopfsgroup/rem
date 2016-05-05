@@ -19,7 +19,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_rec_exp_rearquetipado.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_rec_exp_rearquetipado" />
 										</entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_rearquetipado" />
 										<entry key="severidad" value="error" />
@@ -28,7 +28,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_rec_exp_rotacion.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_rec_exp_rotacion" />
 										</entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_rotacion" />
 										<entry key="severidad" value="error" />
@@ -37,7 +37,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_rec_exp_desnormalizado_arq.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_rec_exp_desnormalizado_arq" />
 										</entry>
 										<entry key="message"
 											value="recobro.borrado.tmp_rec_exp_desnormalizado_arq" />
@@ -47,7 +47,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_rec_exp_asig_cartera.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_rec_exp_asig_cartera" />
 										</entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_asig_cartera" />
 										<entry key="severidad" value="error" />
@@ -56,7 +56,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.recompile.tmp_rec_per_data_rule_engine.${entity.dialect}" />
+												p:key="recobro.recompile.tmp_rec_per_data_rule_engine" />
 										</entry>
 										<entry key="message"
 											value="recobro.recompile.tmp_rec_per_data_rule_engine" />
@@ -148,7 +148,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_rec_exp_desnormalizado_arq.${entity.dialect}" />
+												p:key="recobro.insert.tmp_rec_exp_desnormalizado_arq" />
 										</entry>
 										<entry key="message"
 											value="recobro.insert.tmp_rec_exp_desnormalizado_arq" />
@@ -169,7 +169,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.create.tmp_arq_recobro.${entity.dialect}" />
+												p:key="recobro.create.tmp_arq_recobro" />
 										</entry>
 										<entry key="message"
 											value="recobro.create.tmp_arq_recobro" />
@@ -178,7 +178,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_rec_exp_rearquetipado.${entity.dialect}" />
+												p:key="recobro.insert.tmp_rec_exp_rearquetipado" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_rec_exp_rearquetipado" />
 										<entry key="severidad" value="error" />
@@ -186,7 +186,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.drop.tmp_arq_recobro.${entity.dialect}" />
+												p:key="recobro.drop.tmp_arq_recobro" />
 										</entry>
 										<entry key="message"
 											value="recobro.drop.tmp_arq_recobro" />
@@ -197,7 +197,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_rec_exp_rotacion.${entity.dialect}" />
+												p:key="recobro.insert.tmp_rec_exp_rotacion" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_rec_exp_rotacion" />
 										<entry key="severidad" value="error" />
@@ -205,7 +205,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_rec_exp_asig_cartera.${entity.dialect}" />
+												p:key="recobro.insert.tmp_rec_exp_asig_cartera" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_rec_exp_asig_cartera" />
 										<entry key="severidad" value="error" />

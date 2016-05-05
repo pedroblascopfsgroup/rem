@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="pcr.insert.contratos.Oracle9iDialect">
+    <entry key="pcr.insert.contratos">
     <![CDATA[
             insert into cnt_contratos(
                 CNT_ID, CNT_FECHA_EXTRACCION,CNT_COD_ENTIDAD,OFI_ID,CNT_COD_OFICINA,
@@ -65,7 +65,7 @@
                   and c.borrado = 0 )
         ]]>
     </entry>
-    <entry key="pcr.update.contratos.Oracle9iDialect">
+    <entry key="pcr.update.contratos">
   <!-- Agregar fix de oracle para que actualice el campo dd_esc_id  -->
     <![CDATA[
         UPDATE cnt_contratos c
@@ -151,7 +151,7 @@
         AND (c.cnt_contrato, c.cnt_cod_oficina) IN (SELECT tmp_cnt_contrato, TMP_CNT_COD_OFICINA FROM tmp_cnt_contratos)
       ]]>
     </entry>
-    <entry key="pcr.insert.movimientos.Oracle9iDialect">
+    <entry key="pcr.insert.movimientos">
     <![CDATA[       
                 insert into mov_movimientos (
                     MOV_ID, 
@@ -264,7 +264,7 @@
       ]]>
     </entry>
    
-    <entry key="cnt-02.loadDateValidator.Oracle9iDialect">
+    <entry key="cnt-02.loadDateValidator">
       <![CDATA[
          SELECT TMP_CNT_FECHA_EXTRACCION AS ERROR_FIELD,
         (TMP_CNT_COD_ENTIDAD ||'-'|| TMP_CNT_COD_OFICINA ||'-'|| TMP_CNT_CONTRATO) AS ENTITY_CODE

@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="esquemas-01.unicoEsquemaLiberadoValidator.Oracle10gDialect">
+    <entry key="esquemas-01.unicoEsquemaLiberadoValidator">
         <![CDATA[
         SELECT 'NO EXISTE UN ÚNICO ESQUEMA CON ESTADO LIBERADO' AS ERROR_FIELD,
             ESQ.RCF_ESQ_ID AS ENTITY_CODE

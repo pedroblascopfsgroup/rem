@@ -16,88 +16,88 @@
 									<!-- Paso 1 - Truncado de las tablas temporales -->
 									<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR -->
 									<map>
-										<entry key="sql"><bean parent="sql"	p:key="recobro.borrado.tmp_rec_exp_reparto_car.${entity.dialect}" /></entry>
+										<entry key="sql"><bean parent="sql"	p:key="recobro.borrado.tmp_rec_exp_reparto_car" /></entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_reparto_car" />
 										<entry key="severidad" value="error" />
 									</map>
 									<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR_VRE -->
 									<map>
-										<entry key="sql"><bean parent="sql"	p:key="recobro.borrado.tmp_rec_exp_reparto_car_vre.${entity.dialect}" /></entry>
+										<entry key="sql"><bean parent="sql"	p:key="recobro.borrado.tmp_rec_exp_reparto_car_vre" /></entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_reparto_car_vre" />
 										<entry key="severidad" value="error" />
 									</map>
 									<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_SUB -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_reparto_sub.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_reparto_sub"/></entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_reparto_sub"/>
 										<entry key="severidad" value="error" />
 									</map>
 									<!-- Truncado de la tabla TMP_REC_EXP_REPARTO_AGENCIAS -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_reparto_agencias.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_reparto_agencias"/></entry>
 										<entry key="message" value="recobro.borrado.tmp_rec_exp_reparto_agencias"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 2 - Juntar los expedientes de TMP_REC_EXP_ASIG_CARTERA y BATCH_DATOS_SALIDA en TMP_REC_EXP_REPARTO_CAR -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_reparto_car.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_reparto_car"/></entry>
 										<entry key="message" value="recobro.insert.tmp_rec_exp_reparto_car"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 3 - Calcular el VRE de los expedientes para reparto  -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_reparto_car_vre.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_reparto_car_vre"/></entry>
 										<entry key="message" value="recobro.insert.tmp_rec_exp_reparto_car_vre"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 4 - Reparto de los expedientes en subcarteras -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.reparto_expedientes_subcarteras.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.reparto_expedientes_subcarteras"/></entry>
 										<entry key="message" value="recobro.reparto_expedientes_subcarteras"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 5 - Validar que se han repartido todos los expedientes en subcarteras  -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_sub.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_sub"/></entry>
 										<entry key="message" value="recobro.validate.tmp_rec_exp_reparto_sub"/>
 										<entry key="severidad" value="error" />
 									</map>
 									
 									<!-- Paso 6 - Validar que no existe un expediente repartido sin subcarpeta asignada -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id"/></entry>
 										<entry key="message" value="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id"/>
 										<entry key="severidad" value="error" />
 									</map>
 									
 									<!-- Paso 7 - Copiamos los expedientes de rotación en la tabla de consolidación del reparto -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_reparto_sub.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_reparto_sub"/></entry>
 										<entry key="message" value="recobro.insert.tmp_rec_exp_reparto_sub"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 8 - Reparto de las subcarteras en agencias -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.reparto_subcarteras_agencias.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.reparto_subcarteras_agencias"/></entry>
 										<entry key="message" value="recobro.reparto_subcarteras_agencias"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 9 - Validar que se han repartido todos los expedientes en agencias -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_agencias.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_agencias"/></entry>
 										<entry key="message" value="recobro.validate.tmp_rec_exp_reparto_agencias"/>
 										<entry key="severidad" value="error"/>
 									</map>
 									
 									<!-- Paso 10 - Validar que no existe un expediente repartido sin subcarpeta asignada ni agencia asignada -->
 									<map>
-										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id.${entity.dialect}"/></entry>
+										<entry key="sql"><bean parent="sql" p:key="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id"/></entry>
 										<entry key="message" value="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id"/>
 										<entry key="severidad" value="error"/>
 									</map>									

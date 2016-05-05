@@ -168,7 +168,7 @@
     ]]>
   </entry>
 
-  <entry key="clientes.insertarNuevosContratosVencidos.Oracle9iDialect">
+  <entry key="clientes.insertarNuevosContratosVencidos">
     <![CDATA[
       INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli_id, 0,  '${procesoRevisionJobClientesUser}', sysdate
@@ -209,7 +209,7 @@
   </entry>
 
 
-  <entry key="clientes.insertarNuevosContratos.Oracle9iDialect">
+  <entry key="clientes.insertarNuevosContratos">
     <![CDATA[
       INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli_id, 0,  '${procesoRevisionJobClientesUser}', sysdate
@@ -243,13 +243,13 @@
     ]]>
   </entry>
 
-   <entry key="clientes.creacionClientes.01.truncateTmpPER.Oracle9iDialect">
+   <entry key="clientes.creacionClientes.01.truncateTmpPER">
     <![CDATA[
         TRUNCATE TABLE TMP_PER_ARQUETIPO_RECUPERACION
     ]]>
   </entry>
 
-  <entry key="clientes.creacionClientes.02.insertTmpPER_Recuperacion.Oracle9iDialect">
+  <entry key="clientes.creacionClientes.02.insertTmpPER_Recuperacion">
   <![CDATA[
        /**************************************
       Buscar clientes activos de recuperacion
@@ -402,7 +402,7 @@
         )
   ]]></entry>
 
-    <entry key="clientes.creacionClientes.02.insertTmpPER_Seguimiento.Oracle9iDialect">
+    <entry key="clientes.creacionClientes.02.insertTmpPER_Seguimiento">
     <![CDATA[
        /**************************************
       Buscar clientes activos de seguimiento
@@ -572,7 +572,7 @@
   </entry>
 
 
-   <entry key="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI.Oracle9iDialect">
+   <entry key="clientes.creacionClientes.03.truncateTmpCNTnuevosCLI">
     <![CDATA[
     BEGIN
         EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_CNT_NUEVOS_CLI';
@@ -583,7 +583,7 @@
     ]]>
   </entry>
 
-   <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI.Oracle9iDialect">
+   <entry key="clientes.creacionClientes.04.insertTmpCNTnuevosCLI">
     <![CDATA[
      DECLARE
        v_impPivote  varchar2(200 char);
@@ -714,7 +714,7 @@
   </entry>
 
 
-   <entry key="clientes.creacionClientes.05.insertCLIENTES.Oracle9iDialect">
+   <entry key="clientes.creacionClientes.05.insertCLIENTES">
     <![CDATA[
         INSERT INTO CLI_CLIENTES
           (
@@ -744,7 +744,7 @@
     ]]>
   </entry>
 
-   <entry key="clientes.creacionClientes.06.insertCONTRATOS_CLIENTE.Oracle9iDialect">
+   <entry key="clientes.creacionClientes.06.insertCONTRATOS_CLIENTE">
     <![CDATA[
         INSERT INTO CCL_CONTRATOS_CLIENTE
         (CCL_ID, CLI_ID, CNT_ID, CCL_PASE,VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
@@ -761,7 +761,7 @@
 
 
 
-  <entry key="clientes.carenciaToGestionVencidos.Oracle9iDialect">
+  <entry key="clientes.carenciaToGestionVencidos">
       <![CDATA[
       MERGE INTO CLI_CLIENTES CLI USING
         ( WITH fechasEstados AS
@@ -811,13 +811,13 @@
       ]]>
   </entry>
 
-  <entry key="clientes.revisionClientes.limpiarTMPCliPerArq.Oracle9iDialect">
+  <entry key="clientes.revisionClientes.limpiarTMPCliPerArq">
     <![CDATA[
         TRUNCATE TABLE TMP_CLI_PER_ARQ
     ]]>
     </entry>
 
-     <entry key="clientes.revisionClientes.marcarCliPerArq.Oracle9iDialect">
+     <entry key="clientes.revisionClientes.marcarCliPerArq">
     <![CDATA[
     BEGIN
 
@@ -848,13 +848,13 @@
   ]]>
   </entry>
 
-  <entry key="clientes.revisionClientes.limpiarTMPCliACancelar.Oracle9iDialect">
+  <entry key="clientes.revisionClientes.limpiarTMPCliACancelar">
   <![CDATA[
       TRUNCATE TABLE TMP_CLI_A_CANCELAR
   ]]>
   </entry>
 
-    <entry key="clientes.revisionClientes.marcarClientesSinGestion.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.marcarClientesSinGestion">
     <![CDATA[
     BEGIN
     /*********************************************
@@ -873,7 +873,7 @@
      ]]>
      </entry>
 
-    <entry key="clientes.revisionClientes.asignarNuevosArquetipos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.asignarNuevosArquetipos">
     <![CDATA[
     /*************************************************
       Asignar nuevo arquetipo al cliente
@@ -892,7 +892,7 @@
      ]]>
      </entry>
 
-    <entry key="clientes.revisionClientes.carenciaToGestionVencidos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.carenciaToGestionVencidos">
     <![CDATA[
     MERGE INTO CLI_CLIENTES CLI USING
         (
@@ -945,7 +945,7 @@
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.gestionVencidosToCarencia.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.gestionVencidosToCarencia">
     <![CDATA[
      MERGE INTO CLI_CLIENTES CLI USING
         (
@@ -999,13 +999,13 @@
     </entry>
 
 
-    <entry key="clientes.revisionClientes.limpiarTMPMovRevisados.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.limpiarTMPMovRevisados">
     <![CDATA[
         TRUNCATE TABLE TMP_MOV_REVISADOS
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.revisarMovimientos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.revisarMovimientos">
     <![CDATA[
     BEGIN
     /***************************************************
@@ -1078,12 +1078,12 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.informarContratosReducidos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.informarContratosReducidos">
     <![CDATA[
     /******************************************
     Inserta en rec_recuperaciones la variación de saldo
     --TODO - Modificar este insert y hacerlo lo más parecido a:
-    "expedientes.recuperacion.revisionExpedientes.informarContratosReducidos.Oracle9iDialect"
+    "expedientes.recuperacion.revisionExpedientes.informarContratosReducidos"
     ******************************************/
 
     INSERT INTO REC_RECUPERACIONES (REC_ID, CNT_ID, REC_FECHA_ENTREGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
@@ -1104,7 +1104,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.antecedentes.incrementar.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.antecedentes.incrementar">
     <![CDATA[
     /***************************
     SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES
@@ -1143,7 +1143,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.antecedentes.actualizar.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.antecedentes.actualizar">
     <![CDATA[
     MERGE INTO AIN_ANTECEDENTEINTERNOS AIN USING (
     SELECT DISTINCT TMP_MOV.CNT_ID, tmp_mov.fechaextraccion-TMP_MOV.FECHAVENCIDO DIAS_DESCUBIERTO, TMP_MOV.IMPORTEANTERIOR, TMP_MOV.FECHAEXTRACCION
@@ -1167,7 +1167,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.revisarContratosPase.cancelados.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.revisarContratosPase.cancelados">
     <![CDATA[
      /***********************************
     CONTRATOS CANCELADOS DE PASE - Se cancelan siempre todos los clientes
@@ -1189,7 +1189,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.revisarContratosPase.saldados.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.revisarContratosPase.saldados">
     <![CDATA[
      /**************************************
     CONTRATOS SALDADOS DE PASE - Cancelamos los clientes que
@@ -1218,7 +1218,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.insertarNuevosContratosCliente.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.insertarNuevosContratosCliente">
     <![CDATA[
     BEGIN
 
@@ -1309,7 +1309,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.insertarNuevosContratosCliente_Old.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.insertarNuevosContratosCliente_Old">
     <![CDATA[
     INSERT INTO ccl_contratos_cliente (CCL_ID, CNT_ID, CLI_ID, CCL_PASE, USUARIOCREAR, FECHACREAR)
       SELECT s_ccl_contratos_cliente.nextVal, cpe.cnt_id, cli.cli_id, 0,  'REV-JOB', sysdate
@@ -1356,7 +1356,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.eliminarCliConCntsEnExp.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.eliminarCliConCntsEnExp">
     <![CDATA[
     BEGIN
 
@@ -1387,7 +1387,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.cancelarClientes.borrarContratos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.cancelarClientes.borrarContratos">
     <![CDATA[
     UPDATE CCL_CONTRATOS_CLIENTE CCL
       SET BORRADO    =1,
@@ -1398,7 +1398,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.cancelarClientes.borrarClientes.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.cancelarClientes.borrarClientes">
     <![CDATA[
     UPDATE CLI_CLIENTES CLI
       SET BORRADO    =1,
@@ -1413,7 +1413,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
     ]]>
     </entry>
 
-    <entry key="clientes.revisionClientes.cancelarContratos.Oracle9iDialect">
+    <entry key="clientes.revisionClientes.cancelarContratos">
     <![CDATA[
     MERGE INTO CCL_CONTRATOS_CLIENTE CCL USING
         (

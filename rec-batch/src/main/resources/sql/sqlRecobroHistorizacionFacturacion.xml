@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-  <entry key="recobro.facturacion.historizar_tablas.recobro_detalle_factura.Oracle10gDialect">
+  <entry key="recobro.facturacion.historizar_tablas.recobro_detalle_factura">
     <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('STATS','TMP_RECOBRO_DETALLE_FACTURA');
@@ -15,7 +15,7 @@
     ]]>
   </entry>
 
-    <entry key="recobro.facturacion.historizar_tablas.recobro_detalle_factura_co.Oracle10gDialect">
+    <entry key="recobro.facturacion.historizar_tablas.recobro_detalle_factura_co">
     <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('STATS','TMP_RECOBRO_DETALLE_FACTURA_CO');
@@ -28,7 +28,7 @@
     ]]>
   </entry>
 
-    <entry key="recobro.facturacion.historizar_tablas.rdf_recobro_detalle_factura.Oracle10gDialect">
+    <entry key="recobro.facturacion.historizar_tablas.rdf_recobro_detalle_factura">
     <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('STATS','RDF_RECOBRO_DETALLE_FACTURA');

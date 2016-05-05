@@ -1,19 +1,19 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="recobro.control.proceso.simulacion.Oracle10gDialect">
+    <entry key="recobro.control.proceso.simulacion">
         <![CDATA[
         UPDATE BATCH_RERA_CONTROL_PROC SET RERA_MODE = 'SIMU',LAST_UPDATE = SYSDATE
         ]]>
     </entry>
     <!-- BORRAMOS TABLA BATCH_DATOS_EXP -->
-    <entry key="recobro.simulacion.borrado.batch_datos_exp.Oracle10gDialect">
+    <entry key="recobro.simulacion.borrado.batch_datos_exp">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_EXP');
             END;
         ]]>
     </entry>
-    <entry key="recobro.simulacion.creacion.batch_datos_exp.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.batch_datos_exp">
         <![CDATA[
            Begin
               --De momento la queremos vacia.
@@ -22,14 +22,14 @@
         ]]>
     </entry>
     <!-- BORRAMOS TABLA BATCH_DATOS_CNT_EXP -->
-    <entry key="recobro.simulacion.borrado.batch_datos_cnt_exp.Oracle10gDialect">
+    <entry key="recobro.simulacion.borrado.batch_datos_cnt_exp">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_CNT_EXP');
             END;
         ]]>
     </entry>
-    <entry key="recobro.simulacion.creacion.batch_datos_cnt_exp.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.batch_datos_cnt_exp">
         <![CDATA[
             Begin
               --De momento la queremos vacia.
@@ -39,14 +39,14 @@
     </entry>
 
     <!-- BORRAMOS TABLA BATCH_DATOS_PER_EXP -->
-    <entry key="recobro.simulacion.borrado.batch_datos_per_exp.Oracle10gDialect">
+    <entry key="recobro.simulacion.borrado.batch_datos_per_exp">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_PER_EXP');
             END;
         ]]>
     </entry>
-    <entry key="recobro.simulacion.creacion.batch_datos_per_exp.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.batch_datos_per_exp">
         <![CDATA[
             Begin
               --De momento la queremos vacia.
@@ -56,14 +56,14 @@
     </entry>
 
     <!-- BORRAMOS TABLA BATCH_DATOS_EXP_MANUAL -->
-    <entry key="recobro.simulacion.borrado.batch_datos_exp_manual.Oracle10gDialect">
+    <entry key="recobro.simulacion.borrado.batch_datos_exp_manual">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_EXP_MANUAL');
             END;
         ]]>
     </entry>
-    <entry key="recobro.simulacion.creacion.batch_datos_exp_manual.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.batch_datos_exp_manual">
         <![CDATA[
             Begin
               --De momento la queremos vacia.
@@ -73,7 +73,7 @@
     </entry>
 
     <!-- OBSOLETO. LO DEJAMOS PREPARADO PARA NUEVOS INDICES O ESTADISTICAS -->
-    <entry key="recobro.simulacion.creacion.indices.vistas.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.indices.vistas">
          <![CDATA[
          select 1 from dual
         ]]>
@@ -81,14 +81,14 @@
 
 
     <!-- VOLVEMOS A GENERAR LA VISTA DE BATCH_RCF_ENTRADA -->
-    <entry key="recobro.simulacion.borrado.batch_rcf_entrada.Oracle10gDialect">
+    <entry key="recobro.simulacion.borrado.batch_rcf_entrada">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
             END;
         ]]>
     </entry>
-    <entry key="recobro.simulacion.creacion.batch_rcf_entrada.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.batch_rcf_entrada">
         <![CDATA[
             Begin
 

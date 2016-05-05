@@ -31,7 +31,7 @@
             where exp_id = ? and borrado = 0
   		]]>
   	</entry>
-  	<entry key="expedientes.recuperacion.clientesParaExpedimentar.Oracle9iDialect">
+  	<entry key="expedientes.recuperacion.clientesParaExpedimentar">
   		<![CDATA[
 		WITH fechasEstados AS (
 			  SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha, --Sumamos los días
@@ -72,12 +72,12 @@
 		  ORDER BY arq_prioridad 		
   		]]>
   	</entry>
-  	<entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision.Oracle9iDialect">
+  	<entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision">
   		<![CDATA[
   			TRUNCATE TABLE TMP_EXP_REVISION
   		]]>
   	</entry>
-  	<entry key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos.Oracle9iDialect">
+  	<entry key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos">
   		<![CDATA[
   		INSERT INTO TMP_EXP_REVISION
 		(
@@ -98,13 +98,13 @@
   	</entry>
   	
   	
-  	<entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados.Oracle9iDialect">
+  	<entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados">
     <![CDATA[	     
   		TRUNCATE TABLE TMP_MOV_REVISADOS_EXP
   	]]>
   	</entry>
   	
-  	<entry key="expedientes.recuperacion.revisionExpedientes.revisarMovimientos.Oracle9iDialect">
+  	<entry key="expedientes.recuperacion.revisionExpedientes.revisarMovimientos">
     <![CDATA[
     /***************************************************
   		Revisar movimientos e insertarlo en tabla temporal para tratar a continuación
@@ -162,7 +162,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-     <entry key="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos.Oracle9iDialect">
+     <entry key="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos">
     <![CDATA[
     /******************************************
     Inserta en rec_recuperaciones la variación de saldo
@@ -212,7 +212,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar">
     <![CDATA[
     /***************************
 	SI LOS CONTRATOS ESTÁN SALDADOS SE ACTUALIZAN LOS ANTECEDENTES
@@ -252,7 +252,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar">
     <![CDATA[
     MERGE INTO AIN_ANTECEDENTEINTERNOS AIN USING (
     SELECT DISTINCT TMP_MOV.CNT_ID, tmp_mov.fechaextraccion-TMP_MOV.FECHAVENCIDO DIAS_DESCUBIERTO, TMP_MOV.IMPORTEANTERIOR, TMP_MOV.FECHAEXTRACCION
@@ -277,13 +277,13 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar">
     <![CDATA[	     
   		TRUNCATE TABLE TMP_EXP_A_CANCELAR
   	]]>
   	</entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados">
     <![CDATA[
      /***********************************
     CONTRATOS CANCELADOS DE PASE - Se cancelan siempre todos los expedientes    
@@ -301,7 +301,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados">
     <![CDATA[
      /**************************************
     CONTRATOS SALDADOS DE PASE - Cancelamos los EXPEDIENTES que 
@@ -327,7 +327,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM">
     <![CDATA[   
        INSERT INTO ${master.schema}.JBPM_JOB (ID_, CLASS_, VERSION_, DUEDATE_, TASKINSTANCE_, ISSUSPENDED_, ISEXCLUSIVE_,
                LOCKOWNER_, LOCKTIME_, EXCEPTION_, RETRIES_, NAME_, REPEAT_, TRANSITIONNAME_, ACTION_, GRAPHELEMENTTYPE_, GRAPHELEMENT_, NODE_, PROCESSINSTANCE_, TOKEN_)
@@ -339,7 +339,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-     <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas.Oracle9iDialect">
+     <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas">
     <![CDATA[
 	   update tar_tareas_notificaciones 
 	   		set tar_tarea_finalizada = 1,
@@ -352,7 +352,7 @@ AND tmp.CNT_ID = C.CNT_ID
       </entry>
     
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos">
     <![CDATA[   
     UPDATE cex_contratos_expediente CEX
       SET BORRADO    =1,        
@@ -363,7 +363,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
     
-    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes">
     <![CDATA[   
       UPDATE EXP_EXPEDIENTES EXP      
       SET BORRADO    =1,        
@@ -379,7 +379,7 @@ AND tmp.CNT_ID = C.CNT_ID
     ]]>
     </entry>
 
-    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion.Oracle9iDialect">
+    <entry key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion">
     <![CDATA[   
 		INSERT INTO tar_tareas_notificaciones
 		  (

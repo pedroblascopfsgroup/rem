@@ -20,26 +20,26 @@
 							<!-- Paso 1 -->
 							<!-- Truncado de la tabla TMP_REC_EXP_DESNORMALIZADO -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_desnormalizado.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_desnormalizado"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_desnormalizado"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Truncado de la tabla TMP_REC_EXP_MARCADO_RA -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_marcado_ra.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_marcado_ra"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_marcado_ra"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Paso 2 -->
 							<!-- Obtenemos los expedientes marcados para rearquetipar por sus BPMs -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_marcado_ra.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_marcado_ra"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_marcado_ra"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Paso 3 Juntar los expedientes obtenidos en la tabla TMP_REC_EXP_DESNORMALIZADO -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_desnormalizado.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_desnormalizado"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_desnormalizado"/>
 								<entry key="severidad" value="error"/>
 							</map>

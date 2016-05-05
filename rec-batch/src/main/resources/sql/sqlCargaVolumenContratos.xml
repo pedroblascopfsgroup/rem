@@ -50,7 +50,7 @@
                         'DATALOAD', sysdate())
         ]]>
     </entry>
-    <entry key="validacion.cargaContratosVolumenValidator.insertValidacion.Oracle10gDialect">
+    <entry key="validacion.cargaContratosVolumenValidator.insertValidacion">
         <![CDATA[
         INSERT INTO vca_validacion_carga_anterior (
                         VCA_ID,
@@ -89,7 +89,7 @@
           from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA < 0) vivoPasivo
         ]]>
     </entry>
-    <entry key="validacion.cargaContratosVolumenValidator.estadisticas.Oracle10gDialect">
+    <entry key="validacion.cargaContratosVolumenValidator.estadisticas">
         <![CDATA[
     select * from
        (select count(*) activoLineas, nvl(sum(TMP_CNT_POS_VIVA_VENCIDA),0) activoPosicionVencida

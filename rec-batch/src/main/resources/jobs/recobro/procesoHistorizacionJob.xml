@@ -18,22 +18,22 @@
 						<!-- Lista de scripts SQL ha ejecutar -->
 						<list>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.historizar_tablas.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.historizar_tablas" /></entry>
 								<entry key="message" value="recobro.recobro.historizar_tablas" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado_data_rule_engine_anterior.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado_data_rule_engine_anterior" /></entry>
 								<entry key="message" value="recobro.borrado_data_rule_engine_anterior" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion_data_rule_engine_anterior.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion_data_rule_engine_anterior" /></entry>
 								<entry key="message" value="recobro.creacion_data_rule_engine_anterior" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.mantenimiento_arp_arq_recobro_persona.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.mantenimiento_arp_arq_recobro_persona" /></entry>
 								<entry key="message" value="recobro.mantenimiento_arp_arq_recobro_persona" />
 								<entry key="severidad" value="error"/>
 							</map>																					

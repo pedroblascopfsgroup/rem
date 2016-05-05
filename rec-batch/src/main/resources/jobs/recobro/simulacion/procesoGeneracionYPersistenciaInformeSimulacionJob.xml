@@ -18,176 +18,176 @@
 						<list>
 						<!-- Lista de scripts SQL ha ejecutar -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.idxdrop.jobPersistenciaPreviaEnvio.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxdrop.jobPersistenciaPreviaEnvio" /></entry>
 								<entry key="message" value="recobro.idxdrop.jobPersistenciaPreviaEnvio" />
 								<entry key="severidad" value="error"/>
 							</map>					
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_contratos_cons_baja.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_contratos_cons_baja" /></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_contratos_cons_baja" />
 								<entry key="severidad" value="error"/>
 							</map>		
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_fichero_contratos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_fichero_contratos"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_fichero_contratos" />
 								<entry key="severidad" value="error"/>
 							</map>					
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar_sub.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar_sub"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_age_mar_sub" />
 								<entry key="severidad" value="error"/>
 							</map>		
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_age_mar" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar_exc.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar_exc"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_age_mar_exc" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar_ges.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_mar_ges" /></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_age_mar_ges" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_cnt.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_cnt"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_age_cnt" />
 								<entry key="severidad" value="error"/>
 							</map>								
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_cnt_exc.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_age_cnt_exc"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_age_cnt_exc" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_gae_gager.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_gae_gager"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_gae_gager" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_sager_info.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_sager_info"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_sager_info" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_ciclos_recobro_ptes.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_ciclos_recobro_ptes"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_ciclos_recobro_ptes" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_cre_nuevos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_cre_nuevos"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_cre_nuevos" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_crc_nuevos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_crc_nuevos"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_crc_nuevos" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_crp_nuevos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_crp_nuevos"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_crp_nuevos" />
 								<entry key="severidad" value="error"/>
 							</map>
 								
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_contratos_cons_baja.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_contratos_cons_baja"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_contratos_cons_baja" />
 								<entry key="severidad" value="error"/>
 							</map>
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_contratos_cons_baja.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_contratos_cons_baja"/></entry>
 								<entry key="message" value="recobro.idxcreate.tmp_rec_contratos_cons_baja" />
 								<entry key="severidad" value="error"/>
 							</map>
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_1.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_1"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar_sub_1" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_2.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_2"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar_sub_2" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_3.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_3"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar_sub_3" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_4.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_sub_4"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar_sub_4" />
 								<entry key="severidad" value="error"/>
 							</map>
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar" />
 								<entry key="severidad" value="error"/>
 							</map>
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_exp_age_mar.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_exp_age_mar"/></entry>
 								<entry key="message" value="recobro.idxcreate.tmp_rec_exp_age_mar" />
 								<entry key="severidad" value="error"/>
 							</map>
 								
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_exc.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_exc"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar_exc" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_exp_age_mar_exc.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_exp_age_mar_exc"/></entry>
 								<entry key="message" value="recobro.idxcreate.tmp_rec_exp_age_mar_exc" />
 								<entry key="severidad" value="error"/>
 							</map>	
 																				
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_ges.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_mar_ges"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_mar_ges" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_exp_age_mar_ges.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.idxcreate.tmp_rec_exp_age_mar_ges"/></entry>
 								<entry key="message" value="recobro.idxcreate.tmp_rec_exp_age_mar_ges" />
 								<entry key="severidad" value="error"/>
 							</map>
 								
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_cnt.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_cnt"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_cnt" />
 								<entry key="severidad" value="error"/>
 							</map>	
 								
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_cnt_exc.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_age_cnt_exc"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_age_cnt_exc" />
 								<entry key="severidad" value="error"/>
 							</map>			
 
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_rcf_entrada_final.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_rcf_entrada_final"/></entry>
 								<entry key="message" value="recobro.simulacion.borrado.batch_rcf_entrada_final" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_rcf_entrada_final.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_rcf_entrada_final"/></entry>
 								<entry key="message" value="recobro.simulacion.creacion.batch_rcf_entrada_final" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.carga.detalle_simulacion.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.carga.detalle_simulacion"/></entry>
 								<entry key="message" value="recobro.simulacion.carga.detalle_simulacion" />
 								<entry key="severidad" value="error"/>
 							</map>	

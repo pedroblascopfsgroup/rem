@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="recobro.idxdrop.jobGeneracionExpedientes.Oracle10gDialect">
+    <entry key="recobro.idxdrop.jobGeneracionExpedientes">
         <![CDATA[
             DECLARE
               A_TABLES DBMS_SQL.VARCHAR2_TABLE;
@@ -27,34 +27,34 @@
     </entry>
 
     <!-- PASO 1 - TRUNCADO DE TABLAS TEMPORALES Y DE INTERFACES DE SALIDA -->
-    <entry key="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext.Oracle10gDialect">
+    <entry key="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_ARQ_REC_EXT'); END;
         ]]>
     </entry>
-    <entry key="recobro.truncate.batch_datos_salida.Oracle10gDialect">
+    <entry key="recobro.truncate.batch_datos_salida">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_DATOS_SALIDA'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_per_arquetipo.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_per_arquetipo">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_PER_ARQUETIPO'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_per_filtradas.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_per_filtradas">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_PER_FILTRADAS'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_cnt_per_validas.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_cnt_per_validas">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CNT_PER_VALIDAS'); END;
         ]]>
     </entry>
 
     <!-- PASO 2 - CARGAMOS LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC_EXT A PARTIR DE LA TABLA TMP_REC_CNT_LIBRES_ARQ_REC -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext">
         <![CDATA[
             INSERT INTO TMP_REC_CNT_LIBRES_ARQ_REC_EXT
                 (ORD_ID,CNT_ID,PER_ID,ARQ_ID,OFI_ID,MOV_RIESGO,PER_NOMBRE,PER_APELLIDO1,PER_APELLIDO2,DD_TIN_CODIGO,CPE_ORDEN,RCF_DD_AER_CODIGO,CNT_PER_ARRASTRE)
@@ -80,7 +80,7 @@
         ]]>
     </entry>
 
-        <entry key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext.Oracle10gDialect">
+        <entry key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext">
         <![CDATA[
             BEGIN
               OPERACION_DDL.DDL_INDEX('CREATE','IDX_CNT_LIBRES_ARQ_REC_EXT_1'); --rebuild
@@ -92,7 +92,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_per_arquetipo.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_per_arquetipo">
         <![CDATA[
             DECLARE
               CURSOR C_PROD IS SELECT DISTINCT PER_ID, ARQ_ID FROM (
@@ -146,7 +146,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_per_filtradas.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_per_filtradas">
         <![CDATA[
             INSERT INTO TMP_PER_FILTRADAS
             SELECT DISTINCT PER_ID FROM (
@@ -165,7 +165,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_per_filtradas.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_per_filtradas">
         <![CDATA[
             BEGIN
               OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_PER_FILTRADAS_1'); --rebuild
@@ -174,7 +174,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_cnt_per_validas.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_cnt_per_validas">
         <![CDATA[
             INSERT INTO TMP_CNT_PER_VALIDAS (CNT_ID, PER_ID, CNT_PER_TIN, CNT_PER_OIN, CNT_PER_ARRASTRE)
             SELECT DISTINCT CPE.CNT_ID, CPE.PER_ID, CPE.CNT_PER_TIN, CPE.CNT_PER_OIN, CPE.CNT_PER_ARRASTRE
@@ -187,7 +187,7 @@
     </entry>
 
 
-    <entry key="recobro.idxcreate.tmp_cnt_per_validas.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_cnt_per_validas">
         <![CDATA[
             BEGIN
               OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_CNT_PER_VALIDAS_1'); --rebuild
@@ -199,7 +199,7 @@
     </entry>
 
     <!-- PASO 3 - EJECUTAMOS EL PL/SQL DEL PROCESO DE CREACIÓN DE EXPEDIENTES -->
-    <entry key="recobro.insert.batch_datos_salida.Oracle10gDialect">
+    <entry key="recobro.insert.batch_datos_salida">
         <![CDATA[
             DECLARE
               /*
@@ -603,7 +603,7 @@
         ]]>
     </entry>
 
-            <entry key="recobro.idxcreate.batch_datos_salida.Oracle10gDialect">
+            <entry key="recobro.idxcreate.batch_datos_salida">
         <![CDATA[
             BEGIN
               OPERACION_DDL.DDL_TABLE('STATS','BATCH_DATOS_SALIDA'); --estimate

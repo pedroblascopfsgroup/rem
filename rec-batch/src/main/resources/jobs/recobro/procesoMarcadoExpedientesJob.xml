@@ -20,52 +20,52 @@
 							<!-- Paso 1 -->
 							<!-- Truncado de la tabla TMP_REC_EXP_ACTIVOS -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_activos.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_activos" /></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_activos" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Truncado de la tabla TMP_REC_EXP_EXTINCION -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_extincion" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Truncado de la tabla TMP_REC_EXP_EXTINCION_RU -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion_ru.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion_ru"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_extincion_ru" />
 								<entry key="severidad" value="error" />
 							</map>
 							<!-- Truncado de la tabla TMP_REC_EXP_EXTINCION_RA -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion_ra.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_extincion_ra"/></entry>
 								<entry key="message" value="recobro.borrado.tmp_rec_exp_extincion_ra" />
 								<entry key="severidad" value="error" />
 							</map>
 							<!-- Paso 2 -->
 							<!-- Obtencion expedientes activos -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_activos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_activos"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_activos"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Paso 3 -->
 							<!-- Obtencion expedientes activos con un esquema inactivo y que el fin de vigencia de este es hoy -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_extincion"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Paso 4 -->
 							<!-- OBTENEMOS LOS EXPEDIENTES CUYA CONFIGURACIÓN MARCA DEBEN SER ROTOS -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion_ru.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion_ru"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_extincion_ru"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- OBTENEMOS LOS EXPEDIENTES CUYA CONFIGURACIÓN MARCA DEBEN SER REARQUETIPADOS -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion_ra.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_extincion_ra"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_extincion_ra"/>
 								<entry key="severidad" value="error"/>
 							</map>

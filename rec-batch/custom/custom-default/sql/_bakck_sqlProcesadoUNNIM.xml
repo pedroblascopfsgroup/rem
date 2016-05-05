@@ -1,11 +1,11 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="pcr.unnim-procesado.step1.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step1">
     <![CDATA[
 		update per_personas set per_extra_1 = null
 	]]>
     </entry>	
-    <entry key="pcr.unnim-procesado.step2.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step2">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 3 
 	where pper.per_extra_1 is null
@@ -23,7 +23,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step3.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step3">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 1 
 	where pper.per_extra_1 is null
@@ -78,7 +78,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step4.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step4">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 15 
 	where pper.per_extra_1 is null
@@ -141,7 +141,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step5.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step5">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 16 
 	where pper.per_extra_1 is null 
@@ -188,7 +188,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step6.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step6">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 2 
 	where pper.per_extra_1 is null  
@@ -235,7 +235,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step7.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step7">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 18 
 	where pper.per_extra_1 is null
@@ -255,7 +255,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step8.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step8">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 19
 	where pper.per_extra_1 is null
@@ -293,7 +293,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step9.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step9">
     <![CDATA[
 	update per_personas pper set pper.PER_EXTRA_1 = 21 
 	where pper.per_extra_1 is null
@@ -334,7 +334,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step11.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step11">
     <![CDATA[
 	update per_personas pp set pp.PER_DOC_ID = lpad('*',10,'*'), pp.PER_TELEFONO_1 = lpad('*',10,'*'), 
 							   pp.PER_TELEFONO_2 =lpad('*',10,'*'), pp.PER_EMAIL = lpad('*',10,'*'),
@@ -356,7 +356,7 @@
 	)
     ]]>
     </entry>
-    <entry key="pcr.unnim-procesado.step12.Oracle9iDialect">
+    <entry key="pcr.unnim-procesado.step12">
     <![CDATA[
 	update mov_movimientos mov 
 	set mov.MOV_FECHA_POS_VENCIDA = null, mov.USUARIOMODIFICAR = 'SAG', mov.FECHAMODIFICAR = sysdate

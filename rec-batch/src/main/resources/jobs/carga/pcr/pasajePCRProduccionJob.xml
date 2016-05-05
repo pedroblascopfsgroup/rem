@@ -19,7 +19,7 @@
               		<!-- inserto los contratos que no estan en produccion  -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="pcr.insert.contratos.${entity.dialect}" />
+              				<bean parent="sql" p:key="pcr.insert.contratos" />
               			</entry>
               			<entry key="message" value="cargaContratos.insertNuevos"/>
               			<entry key="severidad" value="error"/>
@@ -27,7 +27,7 @@
               		<!-- actualizo los contratos que ya están en producción con la última data  -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="pcr.update.contratos.${entity.dialect}" />
+              				<bean parent="sql" p:key="pcr.update.contratos" />
               			</entry>
               			<entry key="message" value="cargaContratos.updateDatos"/>
               			<entry key="severidad" value="error"/>
@@ -35,7 +35,7 @@
               		<!-- paso los saldos a la tabla de movimientos -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="pcr.insert.movimientos.${entity.dialect}" />
+              				<bean parent="sql" p:key="pcr.insert.movimientos" />
               			</entry>
               			<entry key="message" value="cargaContratos.insertMovimientos" />
               			<entry key="severidad" value="error"/>
@@ -43,7 +43,7 @@
               		<!-- Se inserta en la tabla de personas de producción -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="pcr.insert.personas.${entity.dialect}" />
+              				<bean parent="sql" p:key="pcr.insert.personas" />
               			</entry>
               			<entry key="message" value="cargaPersonas.insertNuevos"/>
               			<entry key="severidad" value="error"/>
@@ -51,7 +51,7 @@
               		<!-- Se actualiza las personas que ya están en producción con la última data  -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="pcr.update.personas.${entity.dialect}" />
+              				<bean parent="sql" p:key="pcr.update.personas" />
               			</entry>
               			<entry key="message" value="cargaPersonas.updateDatos"/>
               			<entry key="severidad" value="error"/>
@@ -75,7 +75,7 @@
               		<!-- Se inserta en la tabla de direcciones de producción -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="insertDirecciones.${entity.dialect}" />
+              				<bean parent="sql" p:key="insertDirecciones" />
               			</entry>
               			<entry key="message" value="cargaDirecciones.insertNuevos"/>
               			<entry key="severidad" value="error"/>
@@ -85,7 +85,7 @@
               		<!-- 
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="updateDirecciones.${entity.dialect}" />
+              				<bean parent="sql" p:key="updateDirecciones" />
               			</entry>
               			<entry key="message" value="cargaDirecciones.updateDatos"/>
               			<entry key="severidad" value="error"/>
@@ -94,7 +94,7 @@
               		<!--   insertar RELACIONES personas - direcciones   -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="insertRelacionDireccionPersona.${entity.dialect}" />
+              				<bean parent="sql" p:key="insertRelacionDireccionPersona" />
               			</entry>
               			<entry key="message" value="cargaDirecciones.insertRelaciones"/>
               			<entry key="severidad" value="error"/>
@@ -110,7 +110,7 @@
               		<!--   insertar RELACIONES personas - contratos   -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="pcr.insert.relaciones.${entity.dialect}" />
+              				<bean parent="sql" p:key="pcr.insert.relaciones" />
               			</entry>
               			<entry key="message" value="cargaRelaciones.insertRelaciones"/>
               			<entry key="severidad" value="error"/>

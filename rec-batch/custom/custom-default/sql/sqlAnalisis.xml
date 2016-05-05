@@ -8,19 +8,19 @@
     ]]>
   </entry>
   
-  <entry key="analisis.borrarResumenClientes.Oracle9iDialect">
+  <entry key="analisis.borrarResumenClientes">
     <![CDATA[
      DELETE FROM ans_mgb_mapa_global_oficinas WHERE fecha_extraccion = to_date(?,'YYYY-MM-DD')
     ]]>
   </entry>
 
-  <entry key="analisis.borrarResumenExterna.Oracle9iDialect">
+  <entry key="analisis.borrarResumenExterna">
     <![CDATA[
      DELETE FROM ane_analisis_externa WHERE ANE_FECHA_EXTRACCION = to_date(?,'YYYY-MM-DD')
     ]]>
   </entry>
 
-  <entry key="analisis.realizarResumenExterna.Oracle9iDialect">
+  <entry key="analisis.realizarResumenExterna">
     <![CDATA[
       INSERT INTO ANE_ANALISIS_EXTERNA (
          ANE_ID, ANE_FECHA_EXTRACCION, DD_TPO_ID, 
@@ -138,7 +138,7 @@
   </entry> 
  
  
-  <entry key="analisis.realizarResumenClientes.Oracle9iDialect">
+  <entry key="analisis.realizarResumenClientes">
     <![CDATA[
          INSERT INTO ans_mgb_mapa_global_oficinas(ANS_MGB_ID, FECHA_EXTRACCION,DD_SMG_ID, OFI_ID, ZON_ID, DD_SCL_ID, DD_TPR_ID, ANS_MGB_CLIENTES, ANS_MGB_CONTRATOS, ANS_MGB_SUM_POS_VENCIDA, ANS_MGB_SUM_POS_VIVA, USUARIOCREAR, FECHACREAR)
         select s_ans_mgb_mapa_global_oficinas.nextVal, todo.* from  

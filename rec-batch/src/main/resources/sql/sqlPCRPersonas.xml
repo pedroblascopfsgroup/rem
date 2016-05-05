@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="pcr.insert.personas.Oracle10gDialect">
+    <entry key="pcr.insert.personas">
         <![CDATA[
                 INSERT INTO PER_PERSONAS(
                     PER_ID,
@@ -126,7 +126,7 @@
         ]]>
     </entry>
 
-    <entry key="pcr.update.personas.Oracle10gDialect">
+    <entry key="pcr.update.personas">
         <![CDATA[
                 UPDATE per_personas p
                 SET (p.DD_TPE_ID, p.DD_TDI_ID, p.PER_DOC_ID, p.PER_NOMBRE, p.DD_SCE_ID,
@@ -228,7 +228,7 @@
                 FROM TMP_PER_PERSONAS tp WHERE tmp_per_cod_entidad <> ?
                 ]]>
     </entry>
-    <entry key="per-02.loadDateValidator.Oracle10gDialect"><![CDATA[SELECT (''||tp.TMP_PER_FECHA_EXTRACCION) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE TMP_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]></entry>
+    <entry key="per-02.loadDateValidator"><![CDATA[SELECT (''||tp.TMP_PER_FECHA_EXTRACCION) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE TMP_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]></entry>
     <entry key="per-03.personTypeValidator"><![CDATA[SELECT (''||tp.TMP_PER_TIPO_PERSONA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT * FROM ${master.schema}.DD_TPE_TIPO_PERSONA tpe WHERE trim(tp.TMP_PER_TIPO_PERSONA) = trim(tpe.DD_TPE_CODIGO))]]></entry>
     <entry key="per-04.documentTypeValidator"><![CDATA[SELECT (''||tp.TMP_PER_TIPO_DOCUMENTO) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT * FROM DD_TDI_TIPO_DOCUMENTO_ID tdi WHERE trim(tp.TMP_PER_TIPO_DOCUMENTO) = trim(tdi.DD_TDI_CODIGO))]]></entry>
     <entry key="per-05.segmentValidator"><![CDATA[SELECT (''||trim(tp.TMP_PER_SEGMENTO)) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_CLIENTE_ENTIDAD) as ENTITY_CODE FROM TMP_PER_PERSONAS tp WHERE NOT EXISTS (SELECT * FROM DD_SCE_SEGTO_CLI_ENTIDAD s WHERE s.DD_SCE_CODIGO = trim(tp.TMP_PER_SEGMENTO))]]></entry>

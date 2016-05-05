@@ -18,7 +18,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.truncate.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.truncate.PreparaGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.truncate.PreparaGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -26,7 +26,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.idxdrop.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.idxdrop.PreparaGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.idxdrop.PreparaGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -34,7 +34,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.create.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.create.PreparaGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="recobro.create.PreparaGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -42,7 +42,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.idxcreate.PreparaGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.idxcreate.PreparaGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.idxcreate.PreparaGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -51,7 +51,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.truncate.jobGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.truncate.jobGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.truncate.jobGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -59,7 +59,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.idxdrop.jobGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.idxdrop.jobGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.idxdrop.jobGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -67,7 +67,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.create.jobGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.create.jobGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.create.jobGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -75,7 +75,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="comunes.idxcreate.jobGeneracionExpedientes.${entity.dialect}" />
+                                                p:key="comunes.idxcreate.jobGeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="comunes.idxcreate.jobGeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -84,7 +84,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="seguimiento.truncate.GeneracionExpedientes.${entity.dialect}" />
+                                                p:key="seguimiento.truncate.GeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="seguimiento.truncate.GeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -92,7 +92,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="seguimiento.create.GeneracionExpedientes.${entity.dialect}" />
+                                                p:key="seguimiento.create.GeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="seguimiento.create.GeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -102,7 +102,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="recuperacion.truncate.GeneracionExpedientes.${entity.dialect}" />
+                                                p:key="recuperacion.truncate.GeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="recuperacion.truncate.GeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -110,7 +110,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="recuperacion.create.GeneracionExpedientes.${entity.dialect}" />
+                                                p:key="recuperacion.create.GeneracionExpedientes" />
                                         </entry>
                                         <entry key="message" value="recuperacion.create.GeneracionExpedientes" />
                                         <entry key="severidad" value="error" />
@@ -119,7 +119,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="vencidos.persistencia.expedientes.${entity.dialect}" />
+                                                p:key="vencidos.persistencia.expedientes" />
                                         </entry>
                                         <entry key="message" value="vencidos.persistencia.expedientes" />
                                         <entry key="severidad" value="error" />
@@ -127,7 +127,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="vencidos.persistencia.clientes.${entity.dialect}" />
+                                                p:key="vencidos.persistencia.clientes" />
                                         </entry>
                                         <entry key="message" value="vencidos.persistencia.clientes" />
                                         <entry key="severidad" value="error" />
@@ -135,7 +135,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="vencidos.persistencia.politicas.${entity.dialect}" />
+                                                p:key="vencidos.persistencia.politicas" />
                                         </entry>
                                         <entry key="message" value="vencidos.persistencia.politicas" />
                                         <entry key="severidad" value="error" />
@@ -143,7 +143,7 @@
                                     <map>
                                         <entry key="sql">
                                             <bean parent="sql"
-                                                p:key="vencidos.persistencia.expedientesbpm.${entity.dialect}" />
+                                                p:key="vencidos.persistencia.expedientesbpm" />
                                         </entry>
                                         <entry key="message" value="vencidos.persistencia.expedientesbpm" />
                                         <entry key="severidad" value="error" />

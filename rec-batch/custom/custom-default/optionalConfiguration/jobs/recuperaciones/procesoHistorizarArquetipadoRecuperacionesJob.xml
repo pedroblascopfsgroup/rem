@@ -19,7 +19,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="personas.historizarArquetiposPersonas.insert.${entity.dialect}" />
+												p:key="personas.historizarArquetiposPersonas.insert" />
 										</entry>
 										<entry key="message" value="personas.historizarArquetiposPersonas.insert" />
 										<entry key="severidad" value="error" />
@@ -27,7 +27,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="personas.historizarArquetiposPersonas.delete.${entity.dialect}" />
+												p:key="personas.historizarArquetiposPersonas.delete" />
 										</entry>
 										<entry key="message" value="personas.historizarArquetiposPersonas.delete" />
 										<entry key="severidad" value="error" />

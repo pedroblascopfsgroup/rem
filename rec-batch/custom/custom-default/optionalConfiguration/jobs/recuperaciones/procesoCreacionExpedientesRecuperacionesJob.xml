@@ -13,7 +13,7 @@
 				    <bean id="recuperaciones.creacionExpedientesTask" class="es.pfsgroup.recovery.batch.recuperaciones.expedientes.CreacionExpedientesRecuperacionTasklet" scope="prototype">
 				        <property name="dataSource" ref="entityDataSource" />
 				        <property name="query">
-				            <bean parent="sql" p:key="expedientes.recuperacion.clientesParaExpedimentar.${entity.dialect}" />
+				            <bean parent="sql" p:key="expedientes.recuperacion.clientesParaExpedimentar" />
 				        </property>
 				        <property name="message" value="recuperaciones.creacionExpedientes" />
 				        <property name="severidad" value="error" />

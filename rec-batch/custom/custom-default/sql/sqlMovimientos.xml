@@ -21,7 +21,7 @@
     ]]>
   </entry>
   
-  <entry key="movimientos.buscarDiasPosVencida.Oracle9iDialect">
+  <entry key="movimientos.buscarDiasPosVencida">
     <![CDATA[
       SELECT sysdate - MOV_FECHA_POS_VENCIDA FROM mov_movimientos WHERE MOV_ID = ?
     ]]>

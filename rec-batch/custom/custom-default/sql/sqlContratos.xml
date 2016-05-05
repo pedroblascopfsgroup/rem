@@ -127,7 +127,7 @@
     ]]>
   </entry>
   
-  <entry key="contratos.registrarRecuperacion.Oracle9iDialect">
+  <entry key="contratos.registrarRecuperacion">
     <![CDATA[
       INSERT into rec_recuperaciones
         (REC_ID, 
@@ -178,7 +178,7 @@
       SELECT rec_id FROM rec_recuperaciones WHERE cnt_id = ? AND rec_fecha_entrega = ?
     ]]>
   </entry>
-  <entry key="contratos.buscarIdRecuperaciones.Oracle9iDialect">
+  <entry key="contratos.buscarIdRecuperaciones">
     <![CDATA[
       SELECT rec_id FROM rec_recuperaciones WHERE cnt_id = ? AND rec_fecha_entrega = to_date(?, 'yyyy-MM-dd')
     ]]>
@@ -197,7 +197,7 @@
       FROM rec_recuperaciones WHERE cnt_id = ? AND rec_fecha_entrega = ?
     ]]>
   </entry>
-  <entry key="contratos.buscarRecuperaciones.Oracle9iDialect">
+  <entry key="contratos.buscarRecuperaciones">
     <![CDATA[
       SELECT
         REC_ID id,

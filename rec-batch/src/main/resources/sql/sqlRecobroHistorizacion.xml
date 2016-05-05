@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-  <entry key="recobro.historizar_tablas.Oracle10gDialect">
+  <entry key="recobro.historizar_tablas">
     <![CDATA[
         -- SET SERVEROUTPUT ON;
         DECLARE
@@ -60,7 +60,7 @@
   </entry>
 
   <!-- Renombramos la tabla de ARP_ARQ_RECOBRO_PERSONA de hoy a la del dia anterior -->
-  <entry key="recobro.mantenimiento_arp_arq_recobro_persona.Oracle10gDialect">
+  <entry key="recobro.mantenimiento_arp_arq_recobro_persona">
     <![CDATA[
             DELETE FROM ARP_ARQ_RECOBRO_PERSONA WHERE ARP_ID IN (
             WITH ARP AS (

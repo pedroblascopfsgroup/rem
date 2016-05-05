@@ -18,151 +18,151 @@
 						<!-- Lista de scripts SQL ha ejecutar -->
 						<list>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.control.proceso.produccion.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.control.proceso.produccion" /></entry>
 								<entry key="message" value="recobro.control.proceso.produccion" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- COMPROBAMOS SI HAY ESQUEMAS PENDIENTES DE LIBERAR Y REALIZAMOS LOS CAMBOS CORRESPONDIENTES EN CASO AFIRMATIVO -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.gestion.esquemas.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.gestion.esquemas" /></entry>
 								<entry key="message" value="recobro.gestion.esquemas" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- VOLVEMOS A GENERAR LA VISTA DE BATCH_RCF_ENTRADA -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_rcf_entrada.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_rcf_entrada" /></entry>
 								<entry key="message" value="recobro.borrado.batch_rcf_entrada" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_rcf_entrada.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_rcf_entrada" /></entry>
 								<entry key="message" value="recobro.creacion.batch_rcf_entrada" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- 
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.carga.data_rule_engine_cnt_niv.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.carga.data_rule_engine_cnt_niv" /></entry>
 								<entry key="message" value="recobro.carga.data_rule_engine_cnt_niv" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.carga.data_rule_engine_per_niv.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.carga.data_rule_engine_per_niv" /></entry>
 								<entry key="message" value="recobro.carga.data_rule_engine_per_niv" />
 								<entry key="severidad" value="error"/>
 							</map>
 							 -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.data_rule_engine.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.data_rule_engine" /></entry>
 								<entry key="message" value="recobro.creacion.data_rule_engine" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt_per.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt_per" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_cnt_per" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt_per.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt_per" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_cnt_per" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_cnt" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_cnt" />
 								<entry key="severidad" value="error"/>
 							</map>			
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_per.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_per" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_per" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_per.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_per" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_per" />
 								<entry key="severidad" value="error"/>
 							</map>															
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt_exp" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_cnt_exp" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt_exp" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_cnt_exp" />
 								<entry key="severidad" value="error"/>
 							</map>			
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_exp" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_exp" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_exp" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_exp" />
 								<entry key="severidad" value="error"/>
 							</map>		
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt_info.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cnt_info" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_cnt_info" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt_info.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cnt_info" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_cnt_info" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_per_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_per_exp" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_per_exp" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_per_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_per_exp" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_per_exp" />
 								<entry key="severidad" value="error"/>
 							</map>														
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cli.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_cli" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_cli" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cli.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_cli" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_cli" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_exceptuados.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_exceptuados" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_exceptuados" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_exceptuados.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_exceptuados" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_exceptuados" />
 								<entry key="severidad" value="error"/>
 							</map>			
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_exp_manual.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_exp_manual" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_exp_manual" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_exp_manual.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_exp_manual" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_exp_manual" />
 								<entry key="severidad" value="error"/>
 							</map>					
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_gcl.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.borrado.batch_datos_gcl" /></entry>
 								<entry key="message" value="recobro.borrado.batch_datos_gcl" />
 								<entry key="severidad" value="error"/>
 							</map>									
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_gcl.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.creacion.batch_datos_gcl" /></entry>
 								<entry key="message" value="recobro.creacion.batch_datos_gcl" />
 								<entry key="severidad" value="error"/>
 							</map>			

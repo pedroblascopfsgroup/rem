@@ -25,7 +25,7 @@
                     <!-- Cargar alertas a produccion -->
               		<map>
               			<entry key="sql">
-              				<bean parent="sql" p:key="alertas.insert.${entity.dialect}" />
+              				<bean parent="sql" p:key="alertas.insert" />
               			</entry>
               			<entry key="message" value="ale-20.insertar"/>
               			<entry key="severidad" value="error"/>

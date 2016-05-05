@@ -41,7 +41,7 @@
     ]]>
   </entry>
   
-  <entry key="antecedentes.insertarNuevoAntecedente.Oracle9iDialect">
+  <entry key="antecedentes.insertarNuevoAntecedente">
     <![CDATA[
      INSERT INTO ant_antecedentes (ANT_ID, ANT_OBSERVACIONES, ANT_FECHA_VERIFICACION, ANT_REINCIDENCIA_INTERNOS, USUARIOCREAR, FECHACREAR)
      VALUES (s_ant_antecedentes.nextVal, null, null, 0, '${procesoRevisionJobUser}', ${sql.function.now})
@@ -60,7 +60,7 @@
     ]]>
   </entry>
 
-  <entry key="antecedentes.insertarNuevoAntecedenteInterno.Oracle9iDialect">
+  <entry key="antecedentes.insertarNuevoAntecedenteInterno">
     <![CDATA[
       INSERT INTO ain_antecedenteinternos (AIN_ID, CNT_ID, AIN_POS_IRREGULAR_MAX, AIN_DIAS_MAX_IRREGULAR, AIN_FECHA_ULT_REGULARIZACION, USUARIOCREAR, FECHACREAR)
       values (s_ain_antecedenteinternos.nextVal, ?, ?, ?, to_date(?, 'yyyy-MM-dd'), '${procesoRevisionJobUser}', ${sql.function.now}) 
@@ -85,7 +85,7 @@
     ]]>
   </entry>
 
-  <entry key="antecedentes.updateAntecedenteInterno.Oracle9iDialect">
+  <entry key="antecedentes.updateAntecedenteInterno">
     <![CDATA[
       UPDATE ain_antecedenteinternos
       SET AIN_POS_IRREGULAR_MAX=CASE WHEN(ABS(AIN_POS_IRREGULAR_MAX ) > ABS(?)) THEN AIN_POS_IRREGULAR_MAX ELSE ? END,

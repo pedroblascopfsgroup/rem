@@ -17,7 +17,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision" />
 										<entry key="severidad" value="error" />
@@ -25,7 +25,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos" />
 										<entry key="severidad" value="error" />
@@ -33,7 +33,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados" />
 										<entry key="severidad" value="error" />
@@ -41,7 +41,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.revisarMovimientos.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.revisarMovimientos" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarMovimientos" />
 										<entry key="severidad" value="error" />
@@ -49,7 +49,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos" />
 										<entry key="severidad" value="error" />
@@ -57,7 +57,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar" />
 										<entry key="severidad" value="error" />
@@ -65,7 +65,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar" />
 										<entry key="severidad" value="error" />
@@ -73,7 +73,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar" />
 										<entry key="severidad" value="error" />
@@ -81,7 +81,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados" />
 										<entry key="severidad" value="error" />
@@ -89,7 +89,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados" />
 										<entry key="severidad" value="error" />
@@ -97,7 +97,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM" />
 										<entry key="severidad" value="error" />
@@ -105,7 +105,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas" />
 										<entry key="severidad" value="error" />
@@ -113,7 +113,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos" />
 										<entry key="severidad" value="error" />
@@ -121,7 +121,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes" />
 										<entry key="severidad" value="error" />
@@ -129,7 +129,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion.${entity.dialect}" />
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion" />
 										</entry>
 										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion" />
 										<entry key="severidad" value="error" />

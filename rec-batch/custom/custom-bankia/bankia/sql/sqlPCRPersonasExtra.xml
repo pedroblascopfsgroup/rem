@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-<entry key="pcr.ext.personas.insert.numextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra1">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -24,7 +24,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra2">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -47,7 +47,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra3">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -70,7 +70,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra4">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -93,7 +93,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra7">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -116,7 +116,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra8">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -139,7 +139,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra9">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -162,7 +162,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra10">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -185,7 +185,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra1">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -208,7 +208,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra2">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -231,7 +231,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra3">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -254,7 +254,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra4">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -277,7 +277,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra5">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -300,7 +300,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra6">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -323,7 +323,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra7">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -346,7 +346,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra8">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -369,7 +369,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra9">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -392,7 +392,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.dateextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.dateextra10">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -415,7 +415,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra1">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -438,7 +438,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra2">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -461,7 +461,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra3">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -484,7 +484,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra4">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -507,7 +507,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra5">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -530,7 +530,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra6">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -553,7 +553,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra7">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -576,7 +576,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra8">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -599,7 +599,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra9">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -622,7 +622,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.flagextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.flagextra10">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -645,7 +645,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra1">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -668,7 +668,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra2">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -691,7 +691,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra3">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -714,7 +714,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra4">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -737,7 +737,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra5">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -760,7 +760,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra6">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -783,7 +783,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra7">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -806,7 +806,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra8">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -829,7 +829,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra9">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -852,7 +852,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.charextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.charextra10">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -875,7 +875,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra1">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -898,7 +898,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra2">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -921,7 +921,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra3">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -944,7 +944,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra4">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -967,7 +967,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra5">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -990,7 +990,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra6">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1013,7 +1013,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra7">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1036,7 +1036,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra8">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1059,7 +1059,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra9">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1082,7 +1082,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.lcharextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.lcharextra10">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1105,7 +1105,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra1">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA1) extra_valor, ICC.ICC_ID
@@ -1124,7 +1124,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra2">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA2) extra_valor, ICC.ICC_ID
@@ -1143,7 +1143,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra3">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA3) extra_valor, ICC.ICC_ID
@@ -1162,7 +1162,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra4">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA4) extra_valor, ICC.ICC_ID
@@ -1181,7 +1181,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra7">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA7) extra_valor, ICC.ICC_ID
@@ -1200,7 +1200,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra8">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA8) extra_valor, ICC.ICC_ID
@@ -1219,7 +1219,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra9">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA9) extra_valor, ICC.ICC_ID
@@ -1238,7 +1238,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra10">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA10) extra_valor, ICC.ICC_ID
@@ -1257,7 +1257,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra1">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA1, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1276,7 +1276,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra2">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA2, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1295,7 +1295,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra3">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA3, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1314,7 +1314,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra4">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA4, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1333,7 +1333,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra5">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA5, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1352,7 +1352,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra6">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA6, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1371,7 +1371,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra7">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA7, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1390,7 +1390,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra8">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA8, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1409,7 +1409,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra9">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA9, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1428,7 +1428,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.dateextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.dateextra10">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT to_char(TMP_PER_DATE_EXTRA10, 'DDMMYYYY') extra_valor, ICC.ICC_ID
@@ -1447,7 +1447,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra1">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA1) extra_valor, ICC.ICC_ID
@@ -1466,7 +1466,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra2">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA2) extra_valor, ICC.ICC_ID
@@ -1485,7 +1485,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra3">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA3) extra_valor, ICC.ICC_ID
@@ -1504,7 +1504,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra4">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA4) extra_valor, ICC.ICC_ID
@@ -1523,7 +1523,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra5">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA5) extra_valor, ICC.ICC_ID
@@ -1542,7 +1542,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra6">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA6) extra_valor, ICC.ICC_ID
@@ -1561,7 +1561,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra7">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA7) extra_valor, ICC.ICC_ID
@@ -1580,7 +1580,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra8">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA8) extra_valor, ICC.ICC_ID
@@ -1599,7 +1599,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra9">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA9) extra_valor, ICC.ICC_ID
@@ -1618,7 +1618,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.flagextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.flagextra10">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_FLAG_EXTRA10) extra_valor, ICC.ICC_ID
@@ -1637,7 +1637,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra1">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA1) extra_valor, ICC.ICC_ID
@@ -1656,7 +1656,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra2">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA2) extra_valor, ICC.ICC_ID
@@ -1675,7 +1675,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra3">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA3) extra_valor, ICC.ICC_ID
@@ -1694,7 +1694,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra4">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA4) extra_valor, ICC.ICC_ID
@@ -1713,7 +1713,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra5">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA5) extra_valor, ICC.ICC_ID
@@ -1732,7 +1732,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra6">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA6) extra_valor, ICC.ICC_ID
@@ -1751,7 +1751,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra7">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA7) extra_valor, ICC.ICC_ID
@@ -1770,7 +1770,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra8">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA8) extra_valor, ICC.ICC_ID
@@ -1789,7 +1789,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra9">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA9) extra_valor, ICC.ICC_ID
@@ -1808,7 +1808,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.charextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.charextra10">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_CHAR_EXTRA10) extra_valor, ICC.ICC_ID
@@ -1827,7 +1827,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra1.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra1">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA1) extra_valor, ICC.ICC_ID
@@ -1846,7 +1846,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra2.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra2">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA2) extra_valor, ICC.ICC_ID
@@ -1865,7 +1865,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra3.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra3">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA3) extra_valor, ICC.ICC_ID
@@ -1884,7 +1884,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra4.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra4">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA4) extra_valor, ICC.ICC_ID
@@ -1903,7 +1903,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra5.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra5">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA5) extra_valor, ICC.ICC_ID
@@ -1922,7 +1922,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra6.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra6">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA6) extra_valor, ICC.ICC_ID
@@ -1941,7 +1941,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra7.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra7">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA7) extra_valor, ICC.ICC_ID
@@ -1960,7 +1960,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra8.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra8">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA8) extra_valor, ICC.ICC_ID
@@ -1979,7 +1979,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra9.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra9">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA9) extra_valor, ICC.ICC_ID
@@ -1998,7 +1998,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.lcharextra10.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.lcharextra10">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_LCHAR_EXTRA10) extra_valor, ICC.ICC_ID
@@ -2017,7 +2017,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra11.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra11">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2040,7 +2040,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra12.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra12">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2063,7 +2063,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra13.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra13">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2086,7 +2086,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra14.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra14">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2109,7 +2109,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.numextra15.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.numextra15">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2132,7 +2132,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra11.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra11">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA11) extra_valor, ICC.ICC_ID
@@ -2151,7 +2151,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra12.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra12">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA12) extra_valor, ICC.ICC_ID
@@ -2170,7 +2170,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra13.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra13">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA13) extra_valor, ICC.ICC_ID
@@ -2189,7 +2189,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra14.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra14">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA14) extra_valor, ICC.ICC_ID
@@ -2208,7 +2208,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.numextra15.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.numextra15">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_NUM_EXTRA15) extra_valor, ICC.ICC_ID
@@ -2227,7 +2227,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.Servicio_Nomina_Pension.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.Servicio_Nomina_Pension">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2249,7 +2249,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
             AND IFX.DD_IFX_CODIGO ='SERV_NOMINA_PENSION' 
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.Servicio_Nomina_Pension.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.Servicio_Nomina_Pension">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP_PER_SERV_NOMINA_PENSION) extra_valor, ICC.ICC_ID
@@ -2268,7 +2268,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.Ultima_Actuacion.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.Ultima_Actuacion">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2291,7 +2291,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.Ultima_Actuacion.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.Ultima_Actuacion">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP.TMP_PER_ULTIMA_ACTUACION) extra_valor, ICC.ICC_ID
@@ -2310,7 +2310,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.Cod_Ent_Ofi_Gestora.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.Cod_Ent_Ofi_Gestora">
 <![CDATA[
 	INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2333,7 +2333,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.Cod_Ent_Ofi_Gestora.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.Cod_Ent_Ofi_Gestora">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP.TMP_PER_COD_ENT_OFI_GESTORA) extra_valor, ICC.ICC_ID
@@ -2352,7 +2352,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.Cod_Ofi_Gestora.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.Cod_Ofi_Gestora">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2375,7 +2375,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.Cod_Ofi_Gestora.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.Cod_Ofi_Gestora">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP.TMP_PER_COD_OFICINA_GESTORA) extra_valor, ICC.ICC_ID
@@ -2394,7 +2394,7 @@ UPDATE SET icc_for_update.icc_value = icc_new.extra_valor
            ,icc_for_update.fechamodificar = systimestamp
 ]]>
 </entry>
-<entry key="pcr.ext.personas.insert.Cod_Subsec_Ofi_Gestora.Oracle10gDialect">
+<entry key="pcr.ext.personas.insert.Cod_Subsec_Ofi_Gestora">
 <![CDATA[
 INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
     SELECT
@@ -2417,7 +2417,7 @@ INSERT INTO EXT_ICC_INFO_EXTRA_CLI (ICC_ID,DD_IFX_ID,PER_ID,ICC_VALUE,USUARIOCRE
     )
 ]]>
 </entry>
-<entry key="pcr.ext.personas.update.Cod_Subsec_Ofi_Gestora.Oracle10gDialect">
+<entry key="pcr.ext.personas.update.Cod_Subsec_Ofi_Gestora">
 <![CDATA[
 merge into EXT_ICC_INFO_EXTRA_CLI icc_for_update
 using (SELECT trim(TMP.TMP_PER_COD_SUBSEC_OFI_GESTORA) extra_valor, ICC.ICC_ID

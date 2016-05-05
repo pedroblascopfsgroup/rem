@@ -17,7 +17,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.limpiarTMPCliPerArq.${entity.dialect}" />
+												p:key="clientes.revisionClientes.limpiarTMPCliPerArq" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.limpiarTMPCliPerArq" />
 										<entry key="severidad" value="error" />
@@ -25,7 +25,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.marcarCliPerArq.${entity.dialect}" />
+												p:key="clientes.revisionClientes.marcarCliPerArq" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.marcarCliPerArq" />
 										<entry key="severidad" value="error" />
@@ -33,7 +33,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.limpiarTMPCliACancelar.${entity.dialect}" />
+												p:key="clientes.revisionClientes.limpiarTMPCliACancelar" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.limpiarTMPCliACancelar" />
 										<entry key="severidad" value="error" />
@@ -41,7 +41,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.marcarClientesSinGestion.${entity.dialect}" />
+												p:key="clientes.revisionClientes.marcarClientesSinGestion" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.marcarClientesSinGestion" />
 										<entry key="severidad" value="error" />
@@ -49,7 +49,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.asignarNuevosArquetipos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.asignarNuevosArquetipos" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.asignarNuevosArquetipos" />
 										<entry key="severidad" value="error" />
@@ -60,7 +60,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.carenciaToGestionVencidos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.carenciaToGestionVencidos" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.carenciaToGestionVencidos" />
 										<entry key="severidad" value="error" />
@@ -68,7 +68,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.gestionVencidosToCarencia.${entity.dialect}" />
+												p:key="clientes.revisionClientes.gestionVencidosToCarencia" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.gestionVencidosToCarencia" />
 										<entry key="severidad" value="error" />
@@ -79,7 +79,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.limpiarTMPMovRevisados.${entity.dialect}" />
+												p:key="clientes.revisionClientes.limpiarTMPMovRevisados" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.limpiarTMPMovRevisados" />
 										<entry key="severidad" value="error" />
@@ -87,7 +87,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.revisarMovimientos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.revisarMovimientos" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.revisarMovimientos" />
 										<entry key="severidad" value="error" />
@@ -95,7 +95,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.informarContratosReducidos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.informarContratosReducidos" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.informarContratosReducidos" />
 										<entry key="severidad" value="error" />
@@ -103,7 +103,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.antecedentes.incrementar.${entity.dialect}" />
+												p:key="clientes.revisionClientes.antecedentes.incrementar" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.antecedentes.incrementar" />
 										<entry key="severidad" value="error" />
@@ -111,7 +111,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.antecedentes.actualizar.${entity.dialect}" />
+												p:key="clientes.revisionClientes.antecedentes.actualizar" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.antecedentes.actualizar" />
 										<entry key="severidad" value="error" />
@@ -119,7 +119,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.revisarContratosPase.cancelados.${entity.dialect}" />
+												p:key="clientes.revisionClientes.revisarContratosPase.cancelados" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.revisarContratosPase.cancelados" />
 										<entry key="severidad" value="error" />
@@ -127,7 +127,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.revisarContratosPase.saldados.${entity.dialect}" />
+												p:key="clientes.revisionClientes.revisarContratosPase.saldados" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.revisarContratosPase.saldados" />
 										<entry key="severidad" value="error" />
@@ -135,7 +135,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.insertarNuevosContratosCliente.${entity.dialect}" />
+												p:key="clientes.revisionClientes.insertarNuevosContratosCliente" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.insertarNuevosContratosCliente" />
 										<entry key="severidad" value="error" />
@@ -143,7 +143,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.eliminarCliConCntsEnExp.${entity.dialect}" />
+												p:key="clientes.revisionClientes.eliminarCliConCntsEnExp" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.eliminarCliConCntsEnExp" />
 										<entry key="severidad" value="error" />
@@ -151,7 +151,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.cancelarClientes.borrarContratos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.cancelarClientes.borrarContratos" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.cancelarClientes.borrarContratos" />
 										<entry key="severidad" value="error" />
@@ -159,7 +159,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.cancelarClientes.borrarClientes.${entity.dialect}" />
+												p:key="clientes.revisionClientes.cancelarClientes.borrarClientes" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.cancelarClientes.borrarClientes" />
 										<entry key="severidad" value="error" />
@@ -167,7 +167,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="clientes.revisionClientes.cancelarContratos.${entity.dialect}" />
+												p:key="clientes.revisionClientes.cancelarContratos" />
 										</entry>
 										<entry key="message" value="clientes.revisionClientes.cancelarContratos" />
 										<entry key="severidad" value="error" />

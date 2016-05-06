@@ -2,23 +2,23 @@ package es.pfsgroup.plugin.gestorDocumental.dto;
 
 public class PersonaInputDto {
 
-	 public static final String ID_CLIENTE = "ID_CLIENTE";
-	 public static final String ID_PERSONA_CLIENTE = "ID_PERSONA_CLIENTE";
-	 public static final String ID_PERSONA_ORIGEN = "ID_PERSONA_ORIGEN";
-	 public static final String ID_ORIGEN = "ID_ORIGEN";
-	 public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
-	 public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
-	 public static final String FORMATO_STRING = "STRING";
-	 public static final String EVENTO_IDENTIFICADOR_PERSONA_CLIENTE = "ConsultaIdPersonaPorCliente";
-	 public static final String EVENTO_IDENTIFICADOR_PERSONA_ORIGEN = "ConsultaIdPersonaPorOrigen";
-	 public static final String EVENTO_CONSULTA_TIPO_PERSONA = "ConsultaTiposPersona";
+	public static final String ID_CLIENTE = "ID_CLIENTE";
+	public static final String ID_PERSONA_CLIENTE = "ID_INTERVINIENTE_CLIENTE";
+	public static final String ID_PERSONA_ORIGEN = "ID_PERSONA_ORIGEN";
+	public static final String ID_ORIGEN = "ID_ORIGEN";
+	public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
+	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
+	public static final String FORMATO_STRING = "STRING";
+	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE = "ConsultaIdIntervinientePorCliente";
+	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN = "ConsultaIdIntervinientePorOrigen";
+	public static final String EVENTO_CONSULTA_TIPO_INTERVINIENTE = "ConsultaTiposInterviniente";
 
 	private String idCliente;
-	private String idPersonaCliente;
-	private String idPersonaOrigen;
+	private String idIntervinienteCliente;
+	private String idIntervinienteOrigen;
 	private String idOrigen;
-	private String idTipoPersona;
-	private String idPersonaHaya;
+	private String idTipoInterviniente;
+	private String idIntervinienteHaya;
 	private String event;
 
 	public String getIdCliente() {
@@ -29,20 +29,20 @@ public class PersonaInputDto {
 		this.idCliente = idCliente;
 	}
 
-	public String getIdPersonaCliente() {
-		return idPersonaCliente;
+	public String getIdIntervinienteCliente() {
+		return idIntervinienteCliente;
 	}
 
-	public void setIdPersonaCliente(String idPersonaCliente) {
-		this.idPersonaCliente = idPersonaCliente;
+	public void setIdIntervinienteCliente(String idIntervinienteCliente) {
+		this.idIntervinienteCliente = idIntervinienteCliente;
 	}
 
-	public String getIdPersonaOrigen() {
-		return idPersonaOrigen;
+	public String getIdIntervinienteOrigen() {
+		return idIntervinienteOrigen;
 	}
 
-	public void setIdPersonaOrigen(String idPersonaOrigen) {
-		this.idPersonaOrigen = idPersonaOrigen;
+	public void setIdIntervinienteOrigen(String idIntervinienteOrigen) {
+		this.idIntervinienteOrigen = idIntervinienteOrigen;
 	}
 
 	public String getIdOrigen() {
@@ -53,20 +53,20 @@ public class PersonaInputDto {
 		this.idOrigen = idOrigen;
 	}
 
-	public String getIdTipoPersona() {
-		return idTipoPersona;
+	public String getIdTipoInterviniente() {
+		return idTipoInterviniente;
 	}
 
-	public void setIdTipoPersona(String idTipoPersona) {
-		this.idTipoPersona = idTipoPersona;
+	public void setIdTipoInterviniente(String idTipoInterviniente) {
+		this.idTipoInterviniente = idTipoInterviniente;
 	}
 
-	public String getIdPersonaHaya() {
-		return idPersonaHaya;
+	public String getIdIntervinienteHaya() {
+		return idIntervinienteHaya;
 	}
 
-	public void setIdPersonaHaya(String idPersonaHaya) {
-		this.idPersonaHaya = idPersonaHaya;
+	public void setIdIntervinienteHaya(String idIntervinienteHaya) {
+		this.idIntervinienteHaya = idIntervinienteHaya;
 	}
 
 	public String getEvent() {

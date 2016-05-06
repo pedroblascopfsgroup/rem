@@ -4,7 +4,7 @@ public class PersonaOutputDto {
 
 	private String resultCode;
 	private String resultDescription;
-	private String idPersonaHaya;
+	private String idIntervinienteHaya;
 
 	public String getResultCode() {
 		return resultCode;
@@ -22,11 +22,12 @@ public class PersonaOutputDto {
 		this.resultDescription = resultDescription;
 	}
 	
-	public String getIdPersonaHaya() {
-		return idPersonaHaya;
+	public String getIdIntervinienteHaya() {
+		return idIntervinienteHaya;
 	}
-	public void setIdPersonaHaya(String idPersonaHaya) {
-		this.idPersonaHaya = idPersonaHaya;
+	
+	public void setIdIntervinienteHaya(String idIntervinienteHaya) {
+		this.idIntervinienteHaya = idIntervinienteHaya;
 	}
 
 }

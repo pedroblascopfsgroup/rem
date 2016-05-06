@@ -75,7 +75,6 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			return adjuntoCajamarManager.getAdjuntosContratosAsu(id);
 		}else if(esEntidadHaya()){
 			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
-//			return super.getAdjuntosContratosAsu(id);
 		}
 		return super.getAdjuntosContratosAsu(id);
 	}
@@ -86,7 +85,6 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			return adjuntoCajamarManager.getAdjuntosPersonaAsu(id);
 		}else if(esEntidadHaya()){
 			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
-//			return super.getAdjuntosPersonaAsu(id);
 		}
 		return super.getAdjuntosPersonaAsu(id);
 	}
@@ -118,8 +116,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonasExp(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosPersonasExp(id);
-//			return adjuntoHayaManager.getAdjuntosPersonasExp(id);
+			return adjuntoHayaManager.getAdjuntosPersonasExp(id);
 		}
 		return super.getAdjuntosPersonasExp(id);
 	}
@@ -129,8 +126,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosContratoExp(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosContratoExp(id);
-//			return adjuntoHayaManager.getAdjuntosContratoExp(id);
+			return adjuntoHayaManager.getAdjuntosContratoExp(id);
 		}
 		return super.getAdjuntosContratoExp(id);
 	}
@@ -141,7 +137,6 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			return adjuntoCajamarManager.getAdjuntosCntConBorrado(id);
 		}else if(esEntidadHaya()){
 			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
-//			return super.getAdjuntosCntConBorrado(id);
 		}
 		return super.getAdjuntosCntConBorrado(id);
 	}
@@ -152,7 +147,6 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 			return adjuntoCajamarManager.getAdjuntosPersonaConBorrado(id);
 		}else if(esEntidadHaya()){
 			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
-//			return super.getAdjuntosPersonaConBorrado(id);
 		}
 		return super.getAdjuntosPersonaConBorrado(id);
 	}

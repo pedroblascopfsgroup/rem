@@ -67,6 +67,9 @@ public class AdjuntoPersona implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DD_TAE_ID")
     private DDTipoAdjuntoEntidad tipoAdjuntoEntidad;
+    
+    @Column(name = "SERVICER_ID")
+    private Long servicerId;
 
 	@Version
     private Integer version;
@@ -264,5 +267,13 @@ public class AdjuntoPersona implements Serializable, Auditable {
 	
 	public void setNombreTipoDoc(String nombreTipoDoc) {
 		this.nombreTipoDoc = nombreTipoDoc;
+	}
+	
+	public Long getServicerId() {
+		return servicerId;
+	}
+	
+	public void setServicerId(Long servicerId) {
+		this.servicerId = servicerId;
 	}
 }

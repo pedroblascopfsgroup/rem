@@ -8,7 +8,7 @@ import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.KeyValuePair;
 import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType;
 
 
-public class GestorDocumentalOutputAssembler {
+public class GDActivoOutputAssembler {
 
 	public static ActivoOutputDto outputToDtoActivo(ProcessEventResponseType output) {
 
@@ -46,7 +46,7 @@ public class GestorDocumentalOutputAssembler {
 		if(output.getParameters() != null) {
 			for(KeyValuePair param : output.getParameters().getParameter()) {
 				if(PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode())) {
-					dto.setIdPersonaHaya(param.getValue());
+					dto.setIdIntervinienteHaya(param.getValue());
 				}
 			}
 		}

@@ -11,16 +11,14 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.gestorDocumental.api.BaseWS;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
-import es.pfsgroup.plugin.gestorDocumental.assembler.GestorDocumentalInputAssembler;
-import es.pfsgroup.plugin.gestorDocumental.assembler.GestorDocumentalOutputAssembler;
+import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoInputAssembler;
+import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoOutputAssembler;
+import es.pfsgroup.plugin.gestorDocumental.assembler.GDPersonaInputAssembler;
+import es.pfsgroup.plugin.gestorDocumental.assembler.GDPersonaOutputAssembler;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsPort;
-import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS;
 
 @Component
 public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocumentalMaestroApi {
@@ -38,47 +36,58 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 
 	@Override
 	public ActivoOutputDto ejecutarActivo(ActivoInputDto dto) {
-		ProcessEventRequestType input = GestorDocumentalInputAssembler.dtoToInputActivo(dto);
+		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType output = null;
+		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventRequestType input = GDActivoInputAssembler.dtoToInputActivo(dto);
 		logger.info("LLamando al WS MAESTRO_ACTIVOS...Parametros de entrada...");
 		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
 		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
 		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
-		return GestorDocumentalOutputAssembler.outputToDtoActivo(ejecutar(input, WEB_SERVICE_ACTIVOS));
-	}
-
-	@Override
-	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
-//		ProcessEventRequestType input = GestorDocumentalInputAssembler.dtoToInputPersona(dto);
-		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada...");
-//		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
-//		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
-//		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
-		return null;
-//		return GestorDocumentalOutputAssembler.outputToDtoPersona(ejecutar(input, WEB_SERVICE_PERSONAS));
-	}
-	
-	private ProcessEventResponseType ejecutar(ProcessEventRequestType input, String ws) {
-		ProcessEventResponseType output = null;
 		try {	
-			String urlWSDL = getWSURL(ws);
+			String urlWSDL = getWSURL(WEB_SERVICE_ACTIVOS);
 			String targetNamespace = getWSNamespace();
 			String name = getWSName();
 			
 			URL wsdlLocation = new URL(urlWSDL);
 			QName qName = new QName(targetNamespace, name);
-			
-			WsWS service = new WsWS(wsdlLocation, qName);
-			WsPort servicePort = service.getWs();
+			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsWS(wsdlLocation, qName);
+			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.WsPort servicePort = service.getWs();
 			output = servicePort.processEvent(input);
-			
 			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
 			logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
 			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
-		
-		return output;
+		return GDActivoOutputAssembler.outputToDtoActivo(output);
+	}
+
+	@Override
+	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
+		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
+		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada...");
+		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
+		try {	
+			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
+			String targetNamespace = getWSNamespace();
+			String name = getWSName();
+			
+			URL wsdlLocation = new URL(urlWSDL);
+			QName qName = new QName(targetNamespace, name);
+			
+			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS(wsdlLocation, qName);
+			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsPort servicePort = service.getWs();
+			output = servicePort.processEvent(input);
+			
+			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
+			logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
+			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+//		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
+//		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
+//		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
+		} catch (MalformedURLException e) {
+			logger.error("Error en el método al invocarServicio", e);
+		}
+		return GDPersonaOutputAssembler.outputToDtoPersona(output);
 	}
 
 }

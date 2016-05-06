@@ -22,11 +22,13 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
+import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -34,13 +36,17 @@ import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
 import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
+import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
+import es.capgemini.pfs.persona.dao.AdjuntoPersonaDao;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
@@ -107,12 +113,18 @@ public class AdjuntoHayaManager {
 	
 	@Autowired
     private PersonaDao personaDao;
+	
+	@Autowired
+    private AdjuntoPersonaDao adjuntoPersonaDao;
     
 	@Autowired
     private ExpedienteDao expedienteDao;
     
 	@Autowired
     private ContratoDao contratoDao;
+	
+	@Autowired
+    private AdjuntoContratoDao adjuntoContratoDao;
 	
 	@Autowired
 	private CajamarHreProjectContext cajamarHreProjectContext;    
@@ -126,32 +138,305 @@ public class AdjuntoHayaManager {
     @Resource
     Properties appProperties;
 	
+    // Adjuntos del ASUNTO
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
     	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
-   		boolean creando = false;
     	for(Procedimiento prc : asun.getProcedimientos()) {
     		if(crearPropuesta(prc)) {
-    			creando = true;
+    			return null;
     		}
 		}
-    	if(creando) {
-    		return null;
-    	}
-   		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
+    	List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
-			adjuntosAsunto = documentosExpediente(id, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
+			getAdjuntoAsunto(id, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente, adjuntosAsunto);
 		}
 		return adjuntosAsunto;
 	}
 	
+	// Adjuntos del PROCEDIMIENTO
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
-		boolean creando = crearPropuesta(prc);
+		if(crearPropuesta(prc)){
+			return null;			
+		}
 		String claseExpediente = getClaseExpedienteByProcedimientoPadre(prc);
-		if(creando) {
+		return getAdjuntoAsunto(prc.getAsunto().getId(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente, new ArrayList<EXTAdjuntoDto>());
+	}
+	
+	private List<EXTAdjuntoDto> getAdjuntoAsunto(Long id, String tipoExp, String claseExp, List<EXTAdjuntoDto> adjuntosAsunto) {
+		List<Integer> idsDocumento = documentosExpediente(id, tipoExp, claseExp);
+		Set<AdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByIdDocumentoAndPrcId(idsDocumento, null);
+		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		adjuntosAsunto.addAll(creaObjetosEXTAsuntos(list, usuario, false));
+		return adjuntosAsunto;
+	}
+	
+	// Adjuntos CONTRATO del Asunto
+	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
+		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		contratos.addAll(asunto.getContratos());
+		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+		for (Contrato cnt : contratos) {
+			adjuntosMapeados.add(getExtAdjuntoGenericoDtoContratoInterfaz(cnt));
+		}
+		return adjuntosMapeados;
+	}
+		
+	// Adjuntos del CONTRATO en el Expediente
+	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id) {
+		List<ExpedienteContrato> listExpCnt = genericDao.getList(ExpedienteContrato.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", id));
+		List<ExtAdjuntoGenericoDto> adjuntosMapeado = new ArrayList<ExtAdjuntoGenericoDto>();
+		for (ExpedienteContrato expCnt : listExpCnt) {
+			adjuntosMapeado.add(getExtAdjuntoGenericoDtoContratoDto(expCnt.getContrato()));
+		}
+		return adjuntosMapeado;
+	}
+
+	// Adjuntos del CONTRATO en Contrato
+	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id){
+		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
+		List<AdjuntoContrato> adjuntos = adjuntoContratoDao.getAdjuntoContratoByIdDocumento(idsDocumento);
+		
+		Collections.sort(adjuntos, comparatorAdjuntoContrato());
+		for (final AdjuntoContrato aa : adjuntos) {
+			AdjuntoDto dto = new AdjuntoDto() {
+				@Override
+				public Boolean getPuedeBorrar() {
+					return false;
+				}
+
+				@Override
+				public Object getAdjunto() {
+					return aa;
+				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
+				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					return aa.getTipoAdjuntoEntidad().getDescripcion();
+				}
+			};
+			adjuntosConBorrado.add(dto);
+		}
+		
+		return adjuntosConBorrado;
+	}
+	
+	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtoContratoInterfaz(final Contrato cnt) {
+		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+		
+		final List<AdjuntoContrato> adjuntos = adjuntoContratoDao.getAdjuntoContratoByIdDocumento(idsDocumento);
+		Collections.sort(adjuntos, comparatorAdjuntoContrato());
+		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+			@Override
+			public Long getId() {
+				return cnt.getId();
+			}
+			
+			@Override
+			public String getDescripcion() {
+				return cnt.getDescripcion();
+			}
+
+			@Override
+			public List getAdjuntosAsList() {
+				return adjuntos;
+			}
+
+			@Override
+			public List getAdjuntos() {
+				return adjuntos;
+			}
+		};
+		return dto;
+	}
+	
+	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtoContratoDto(Contrato cnt) {
+		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+		List<AdjuntoContrato> adjuntos = adjuntoContratoDao.getAdjuntoContratoByIdDocumento(idsDocumento);
+	
+		Collections.sort(adjuntos, comparatorAdjuntoContrato());
+		ExtAdjuntoGenericoDtoImpl dto = new ExtAdjuntoGenericoDtoImpl();
+		dto.setId(cnt.getId());
+		dto.setDescripcion(cnt.getDescripcion());
+		dto.setAdjuntosAsList(adjuntos);
+		dto.setAdjuntos(adjuntos);
+		return dto;
+	}
+	
+	private Comparator<AdjuntoContrato> comparatorAdjuntoContrato () {
+		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
+			@Override
+			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
+				if(Checks.esNulo(o1)&& Checks.esNulo(o2)){
+					return 0;
+				}
+				else if (Checks.esNulo(o1)) {
+					return -1;
+				}
+				else if (Checks.esNulo(o2)) {
+					return 1;				
+				}
+				else{
+					return o2.getAuditoria().getFechaCrear().compareTo(
+						o1.getAuditoria().getFechaCrear());
+				}	
+			}
+		};
+		return comparador;
+	}
+	
+	// Adjuntos PERSONA del Asunto
+	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
+		List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
+		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
+		for (Persona per : personas) {
+			adjuntosMapeados.add(getExtAdjuntoGenericoDtoPersonaInterfaz(per, getClaseExpPersona(per)));
+		}
+		return adjuntosMapeados;
+	}
+	
+	// Adjuntos de PERSONAS en el Expediente
+	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonasExp(Long id) {	
+		List<Persona> personas = expedienteDao.findPersonasContratosExpediente(id);
+		List<ExtAdjuntoGenericoDto> adjuntosMapeado = new ArrayList<ExtAdjuntoGenericoDto>();
+		for (Persona per : personas) {
+			adjuntosMapeado.add(getExtAdjuntoGenericoDtopersonaDto(per, getClaseExpPersona(per)));
+		}
+		return adjuntosMapeado;
+	}
+
+	// Adjuntos de la PERSONA en Persona
+	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
+		Persona persona = proxyFactory.proxy(PersonaApi.class).get(id);
+		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(persona.getCodClienteEntidad()), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, getClaseExpPersona(persona));
+		final List<AdjuntoPersona> adjuntosPersona = adjuntoPersonaDao.getAdjuntoPersonaByIdDocumento(idsDocumento);
+		
+		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
+
+		Collections.sort(adjuntosPersona, comparatorAdjuntoPersona());
+		for (final AdjuntoPersona aa : adjuntosPersona) {
+			AdjuntoDto dto = new AdjuntoDto() {
+				@Override
+				public Boolean getPuedeBorrar() {
+					return false;
+				}
+
+				@Override
+				public Object getAdjunto() {
+					return aa;
+				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
+				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					return aa.getTipoAdjuntoEntidad().getDescripcion();
+				}
+			};
+			adjuntosConBorrado.add(dto);
+		}
+		return adjuntosConBorrado;
+	}
+	
+	private String getClaseExpPersona(Persona per) {
+		String claseExpe = "";
+		if(DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(per.getTipoPersona().getCodigo())) {
+			claseExpe = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PERSONA_FISICA;
+		}else{
+			claseExpe = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PERSONA_JURIDICA;
+		}
+		return claseExpe;
+	}
+	
+	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtoPersonaInterfaz(final Persona per, String claseExpe) {
+		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(per.getCodClienteEntidad()), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe);
+		final List<AdjuntoPersona> adjuntos = adjuntoPersonaDao.getAdjuntoPersonaByIdDocumento(idsDocumento);
+		Collections.sort(adjuntos, comparatorAdjuntoPersona());
+		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
+
+			@Override
+			public Long getId() {
+				return per.getId();
+			}
+
+			@Override
+			public String getDescripcion() {
+				return per.getDescripcion();
+			}
+
+			@Override
+			public List getAdjuntosAsList() {
+				return adjuntos;
+			}
+
+			@Override
+			public List getAdjuntos() {
+				return adjuntos;
+			}
+		};
+		return dto;
+	}
+	
+	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtopersonaDto(Persona per, String claseExp) {
+		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(per.getCodClienteEntidad()), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExp);
+		List<AdjuntoPersona> adjuntos = adjuntoPersonaDao.getAdjuntoPersonaByIdDocumento(idsDocumento);
+	
+		Collections.sort(adjuntos, comparatorAdjuntoPersona());
+		ExtAdjuntoGenericoDtoImpl dto = new ExtAdjuntoGenericoDtoImpl();
+		dto.setId(per.getId());
+		dto.setDescripcion(per.getDescripcion());
+		dto.setAdjuntosAsList(adjuntos);
+		dto.setAdjuntos(adjuntos);
+		return dto;
+	}
+	
+	private Comparator<AdjuntoPersona> comparatorAdjuntoPersona() {
+		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
+			@Override
+			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
+				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
+					return 0;
+				} else if (Checks.esNulo(o1)) {
+					return -1;
+				} else if (Checks.esNulo(o2)) {
+					return 1;
+				} else {
+					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
+				}
+			}
+		};
+		return comparador;
+	}	
+	
+	private List<Integer> documentosExpediente(Long id, String tipoExpediente, String claseExpediente) {
+		List<Integer> idsDocumento = new ArrayList<Integer>();
+		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
+
+		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(id.toString(), tipoExpediente, claseExpediente);
+		DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
+		try {
+			RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
+			for(IdentificacionDocumento idenDoc : respuesta.getDocumentos()) {
+				idsDocumento.add(idenDoc.getIdentificadorNodo());
+			}
+		} catch (GestorDocumentalException e) {
+			logger.error("getAdjuntosConBorradoByPrcId error: " + e);
+		}
+		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
 			return null;
 		}
-		return documentosExpediente(prc.getAsunto().getId(), prcId, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpediente);
+		return idsDocumento;
 	}
 	
 	private boolean crearPropuesta(Procedimiento prc) {
@@ -171,153 +456,6 @@ public class AdjuntoHayaManager {
 			}		
 		}
 		return creando;
-	}
-	
-	private List<EXTAdjuntoDto> documentosExpediente(Long idAsunto, Long idPrc, String tipoExpediente, String claseExpediente) {
-		List<Integer> idsDocumento = new ArrayList<Integer>();
-		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
-
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), tipoExpediente, claseExpediente);
-		DocumentosExpedienteDto docExpDto = RecoveryToGestorDocAssembler.getDocumentosExpedienteDto(usuPass);
-		try {
-			RespuestaDocumentosExpedientes respuesta = gestorDocumentalServicioDocumentosApi.documentosExpediente(cabecera, docExpDto);
-			for(IdentificacionDocumento idenDoc : respuesta.getDocumentos()) {
-				idsDocumento.add(idenDoc.getIdentificadorNodo());
-			}
-		} catch (GestorDocumentalException e) {
-			logger.error("getAdjuntosConBorradoByPrcId error: " + e);
-		}
-		if(Checks.esNulo(idsDocumento) || Checks.estaVacio(idsDocumento)) {
-			return null;
-		}
-		Set<AdjuntoAsunto> list = extAdjuntoAsuntoDao.getAdjuntoAsuntoByIdDocumentoAndPrcId(idsDocumento, idPrc);
-		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
-		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		adjuntosAsunto.addAll(creaObjetosEXTAsuntos(list, usuario, false));
-		return adjuntosAsunto;
-	}
-	
-	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
-
-		documentosExpediente(getIdActivoHaya(), null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, "clase");
-		
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
-			@Override
-			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-		if (!Checks.esNulo(asunto)) {
-			List<Contrato> contratos = new ArrayList<Contrato>();
-			contratos.addAll(asunto.getContratos());
-			for (final Contrato c : contratos) {
-				final List<AdjuntoContrato> adjuntos = c.getAdjuntosAsList();
-				Collections.sort(adjuntos, comparador);
-				ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-					@Override
-					public Long getId() {
-						return c.getId();
-					}
-
-					@Override
-					public String getDescripcion() {
-						return c.getDescripcion();
-					}
-
-					@Override
-					public List getAdjuntosAsList() {
-						return adjuntos;
-					}
-
-					@Override
-					public List getAdjuntos() {
-						return adjuntos;
-					}
-				};
-				adjuntosMapeados.add(dto);
-			}
-		}
-		return adjuntosMapeados;
-//		return documentosExpediente(id, id, "");
-//		return super.getAdjuntosContratosAsu(id);
-	}
-
-	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
-		
-		documentosExpediente(getIdClienteHaya(), null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, "clase");
-		
-		List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
-			@Override
-			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-
-		for (final Persona p : personas) {
-			final List<AdjuntoPersona> adjuntos = p.getAdjuntosAsList();
-			Collections.sort(adjuntos, comparador);
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return p.getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return p.getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return adjuntos;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return adjuntos;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-
-		return adjuntosMapeados;
-//		return documentosExpediente(id, id, "");
-//		return super.getAdjuntosPersonaAsu(id);
-	}
-
-	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id){
-		documentosExpediente(getIdActivoHaya(), null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, "clase");
-		return documentosExpediente(id, id, "", "");
-		//		return super.getAdjuntosCntConBorrado(id);
-	}
-
-	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
-		return documentosExpediente(id, id, "", "");
-//		return super.getAdjuntosPersonaConBorrado(id);
 	}
 
     private void insertarContenedor(Integer idExpediente, Asunto asun, String claseExp) {
@@ -696,18 +834,18 @@ public class AdjuntoHayaManager {
 	 }
 	 
 	 
-	 private Long getIdClienteHaya() {
+	 private Long getIdClienteHaya(Long idClienteEntidad) {
 			
 			//TODO Borrar, son datos para probar WS
 			PersonaInputDto input = new PersonaInputDto();
-			input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_CLIENTE);
-			input.setIdPersonaCliente("72500");
-			input.setIdCliente("SAREB");
+			input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE);
+			input.setIdIntervinienteCliente(idClienteEntidad.toString());
+			input.setIdCliente(GestorDocumentalConstants.CODIGO_ID_CLIENTE);
 			
 			PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 			
 			// *********************************************
-			Long idActivoHaya = new Long(output.getIdPersonaHaya());
+			Long idActivoHaya = new Long(output.getIdIntervinienteHaya());
 			return idActivoHaya;
 	 }
 }

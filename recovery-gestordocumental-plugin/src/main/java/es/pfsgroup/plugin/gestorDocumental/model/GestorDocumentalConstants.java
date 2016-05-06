@@ -12,9 +12,14 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_TIPO_EXPEDIENTE_OPERACIONES = "OP";
 	public static final String CODIGO_TIPO_EXPEDIENTE_PROPUESTAS = "PR";
 	
+	public static final String CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO = "01";
+	public static final String CODIGO_CLASE_EXPEDIENTE_PERSONA_FISICA = "01";
+	public static final String CODIGO_CLASE_EXPEDIENTE_PERSONA_JURIDICA = "02";	
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROYECTO = "01";
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";
 	public static final String CODIGO_CLASE_EXPEDIENTE_ACTIVO = "03";
+	
+	public static final String CODIGO_ID_CLIENTE = "SAREB";
 	
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";

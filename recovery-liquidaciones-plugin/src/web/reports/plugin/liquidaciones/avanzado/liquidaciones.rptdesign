@@ -371,13 +371,17 @@ return true;]]></method>
                 <property name="width">4.104166666666667in</property>
             </column>
             <row id="381">
+                <property name="suppressDuplicates">false</property>
+                <property name="canShrink">false</property>
                 <cell id="382">
                     <property name="fontSize">8pt</property>
                     <property name="verticalAlign">bottom</property>
                     <image name="logotipo" id="380">
+                        <property name="height">72px</property>
+                        <property name="width">225px</property>
                         <property name="size">size-to-image</property>
-                        <property name="source">url</property>
-                        <expression name="uri">params["img_src"].value+logo</expression>
+                        <property name="source">file</property>
+                        <expression name="uri">params["img_real"].value+"/"+logo</expression>
                     </image>
                 </cell>
                 <cell id="383"/>

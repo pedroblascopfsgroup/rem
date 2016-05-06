@@ -123,9 +123,16 @@ public class EntregasController{
 				entrega=e;
 			}
 		}
+		CalculoLiquidacion calculo= liqAvanzadasManager.getCalculoById(idCalculo);
 		
+		model.put("idEntrega", idEntrega);
+		model.put("idCalculo", idCalculo);
+		model.put("tipoEntrega", tipoEntrega);
+		model.put("conceptoEntrega", conceptoEntrega);
 		model.put("fechaCobro", entrega.getFechaEntrega());
 		model.put("fechaValor", entrega.getFechaValor());
+		model.put("fechaCierre", calculo.getFechaCierre());
+		model.put("fechaLiquidacion", calculo.getFechaLiquidacion());
 		model.put("codigoTipoEntrega", entrega.getTipoEntrega().getCodigo());
 		model.put("codigoConceptoEntrega", entrega.getConceptoEntrega().getCodigo());
 		model.put("gastosProcurados", entrega.getGastosProcurador());

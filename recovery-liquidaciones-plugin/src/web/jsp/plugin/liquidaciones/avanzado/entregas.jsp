@@ -30,8 +30,8 @@
 		,fieldLabel : '<s:message code="entregas.tipo" text="**Tipo Entrega"/>'
 		,width : 550
 		,editable : true
-		<c:if test="${liqCobroPago.tipoEntrega!=null}" >
-			,value:'${liqCobroPago.tipoEntrega.codigo}'
+		<c:if test="${codigoTipoEntrega!=null}" >
+			,value:'${codigoTipoEntrega}'
 		</c:if>
 	});
 	
@@ -50,8 +50,8 @@
 		,fieldLabel : '<s:message code="entregas.concepto" text="**Concepto Entrega"/>'
 		,width : 550
 		,editable : true
-		<c:if test="${liqCobroPago.conceptoEntrega!=null}" >
-			,value:'${liqCobroPago.conceptoEntrega.codigo}'
+		<c:if test="${codigoConceptoEntrega!=null}" >
+			,value:'${codigoConceptoEntrega}'
 		</c:if>
 	});
 	console.log('${conceptoEntrega}');
@@ -175,9 +175,10 @@
 	};
 	
 	var validarFechas= function(){
-
-	   	dtfechaCierre = Date.parseDate('${fechaCierre}', "Y-m-d");
-	   	dtfechaLiquidacion = Date.parseDate('${fechaLiquidacion}', "Y-m-d");
+		fc= '${fechaCierre}'.split(' ');
+		fl= '${fechaLiquidacion}'.split(' ');
+	   	dtfechaCierre = Date.parseDate(fc[0], "Y-m-d");
+	   	dtfechaLiquidacion = Date.parseDate(fl[0], "Y-m-d");
 	   	
 	   	if(fechaValor.getValue().between(dtfechaCierre,dtfechaLiquidacion)){
 	   	
@@ -199,7 +200,8 @@
 			Ext.Ajax.request({
                		url: page.resolveUrl('entregas/saveEntrega')
                		,params: {
-               			id: '${idCalculo}'
+               			idCalculo: '${idCalculo}'
+               			,id: '${idEntrega}'
 						,tipoEntrega: comboDDAdjContableTipoEntrega.getValue()
 						,conceptoEntrega: comboDDAdjContableConceptoEntrega.getValue()
 						,fechaEntrega: fechaEntrega.getRawValue()

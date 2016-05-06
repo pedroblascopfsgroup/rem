@@ -212,9 +212,9 @@
 			});
 			w.on(app.event.DONE, function(){
 				w.close();
-				<%-- var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+				var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
 				var idCalculo = rec.get("idLiquidacion");
-				entregasLiquidacionStore.webflow({idCalculo: idCalculo}); --%>
+				entregasLiquidacionStore.webflow({idCalculo: idCalculo});
 			});
 			w.on(app.event.CANCEL, function(){ w.close(); });
        		

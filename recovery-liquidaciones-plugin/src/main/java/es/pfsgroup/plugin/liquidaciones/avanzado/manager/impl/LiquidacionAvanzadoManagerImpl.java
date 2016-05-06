@@ -621,7 +621,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	@Override
 	public void createOrUpdateEntCalLiquidacion(LIQDtoCobroPagoEntregas dto){
 		
-		Long idCalculo= dto.getId();
+		Long idCalculo= dto.getIdCalculo();
 		String tipoEntrega= dto.getTipoEntrega();//Codigo CAN
 		String conceptoEntrega= dto.getConceptoEntrega();//Concepto Entrega
 		String fechaEntrega= dto.getFechaEntrega();
@@ -631,7 +631,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		BigDecimal gastosOtros = null;
 		BigDecimal totalEntrega = null;
 
-
+		
 
 		
 		if(dto.getGastosAbogado()!=null){
@@ -650,6 +650,12 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		EntregaCalculoLiq entregasCalculo= new EntregaCalculoLiq();
 		
+		if(dto.getId() != null){
+			entregasCalculo=  genericDao.get(EntregaCalculoLiq.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+		}
+		else{
+//			entregasCalculo= getInstance(idAsunto);
+		}
 		
 		if(idCalculo != null){
 			CalculoLiquidacion calliq = genericDao.get(CalculoLiquidacion.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "id", idCalculo));

@@ -121,6 +121,7 @@
        			app.downloadFile({flow: 'liquidaciones/openReport' 
        								,params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}
        								,succesFunction: function() { historicoLiquidacionesGrid.getStore().reload(); }
+       								,tiempoSuccess: 12000 //2 Segundos
        							 });
        		}
        }

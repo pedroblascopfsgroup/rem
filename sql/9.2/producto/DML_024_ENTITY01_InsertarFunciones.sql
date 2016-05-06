@@ -26,7 +26,8 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FP NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
@@ -129,11 +130,16 @@ BEGIN
 	 			FETCH TABLES_CURSOR INTO PEF_ID;
 	 			EXIT WHEN TABLES_CURSOR%NOTFOUND;
 	 			
-	 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (FUN_ID,PEF_ID,FP_ID,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('|| V_ENTIDAD_ID ||', '||PEF_ID||', '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, ''PR-1253'',SYSDATE,''0'')';
-				
-	 			DBMS_OUTPUT.PUT_LINE('V_MSQL >>' || V_MSQL);
-				EXECUTE IMMEDIATE V_MSQL;
-				DBMS_OUTPUT.PUT_LINE('OK INSERTADO');
+	 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '|| V_ENTIDAD_ID ||' AND PEF_ID = '||PEF_ID||' ';
+        		EXECUTE IMMEDIATE V_SQL INTO V_NUM_FP;
+	 			IF V_NUM_FP > 0 THEN				
+          			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.FUN_PEF... Ya existe el FUN_PEF CON FUN_DESCRIPCION '|| TRIM(V_TMP_FUN_FUNCIONES(2)) ||' Y CON PEF_ID '||PEF_ID||'');
+        		ELSE
+	 				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (FUN_ID,PEF_ID,FP_ID,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('|| V_ENTIDAD_ID ||', '||PEF_ID||', '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, ''PR-1253'',SYSDATE,''0'')';
+	 				DBMS_OUTPUT.PUT_LINE('V_MSQL >>' || V_MSQL);
+					EXECUTE IMMEDIATE V_MSQL;
+					DBMS_OUTPUT.PUT_LINE('OK INSERTADO');
+				END IF;
 				V_NUM_TABLAS := V_NUM_TABLAS + 1;
 				
 			END LOOP;

@@ -71,6 +71,42 @@
 				</entry>
 			</map>
 		</property>
+		<property name="mapaContratoVigor">
+			<map>
+				<entry key="0" value="Histórico Caja"/>
+				<entry key="1" value="Acuerdo 2011"/>
+				<entry key="2" value="2014"/>
+				<entry key="3" value="2015"/>
+			</map>
+		</property>
+		<property name="mapaClasificacionDespachoPerfil">
+			<map>
+				<entry key="0" value="A"/>
+				<entry key="1" value="B"/>
+				<entry key="2" value="C"/>
+			</map>
+		</property>
+		<property name="mapaRelacionBankia">
+			<map>
+				<entry key="0" value="En desvinculación"/>
+				<entry key="1" value="Sin turno"/>
+				<entry key="2" value="Sin acceso (a Recovery)"/>
+				<entry key="3" value="Turno activo"/>
+				<entry key="4" value="Histórico"/>
+			</map>
+		</property>
+		<property name="mapaDescripcionIVA">
+			<map>
+				<entry key="0" value="IGIC"/>
+				<entry key="1" value="IVA"/>
+			</map>
+		</property>
+		<property name="mapaCodEstAse">
+			<map>
+				<entry key="0" value="Alta"/>
+				<entry key="1" value="Baja"/>
+			</map>
+		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->

@@ -29,6 +29,7 @@ import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.multigestor.dao.EXTTipoGestorPropiedadDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
@@ -44,6 +45,11 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMGestorDespachoD
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMTipoDespachoExternoDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoBusquedaDespachoExterno;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoDespachoExterno;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExternoExtrasDao;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dto.DespachoExternoExtrasDto;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
@@ -88,6 +94,12 @@ public class ADMDespachoExternoManager {
 	
 	@Autowired
 	private EsquemaTurnadoDao esquemaTurnadoDao;
+	
+	@Autowired
+	private DespachoExternoExtrasDao despachoExtrasDao;
+	
+	@Autowired
+	private EXTGestoresDao gestoresDao;
 
 	public ADMDespachoExternoManager() {
 
@@ -641,5 +653,43 @@ public class ADMDespachoExternoManager {
 	public void guardarAmbitoActuacion(DespachoAmbitoActuacion despachoAmbitoActuacion)
 	{
 		despachoAmbitoActuacionDao.saveOrUpdate(despachoAmbitoActuacion);
+	}
+	
+	@BusinessOperation("ADMDespachoExternoManager.dameDespachoExtras")
+	public DespachoExternoExtrasDto dameDespachoExtras(Long idDespacho) {
+		
+		return despachoExtrasDao.getDtoDespachoExtras(idDespacho);
+	}
+	
+	/**
+	 * Devuelve una lista de usuarios externos, y que no existen ya en el despacho
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getGestoresExtList")
+	public List<Usuario> getGestoresExtList(Long idDespacho) {
+		List<Usuario> listaUsuarios = genericDao.getList(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "usuarioExterno", true));
+		List<Usuario> listaUsuariosExistentes = gestoresDao.getGestoresByDespacho(idDespacho);
+		
+		listaUsuarios.removeAll(listaUsuariosExistentes);
+		
+		return listaUsuarios;
+	}
+	
+	@Transactional(readOnly = false)
+	public void guardarGestorDespacho(GestorDespacho gestor) {
+		gestorDespachoDao.saveOrUpdate(gestor);
+	}
+	
+	/** 
+	 * PRODUCTO-1272
+	 * Devuelve el listado de las provincias del despacho
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.dameAmbitoDespachoExtras")
+	public List<DDProvincia> dameAmbitoDespachoExtras(Long idDespacho) {
+		
+		return despachoExtrasDao.getProvinciasDespachoExtras(idDespacho);
 	}
 }

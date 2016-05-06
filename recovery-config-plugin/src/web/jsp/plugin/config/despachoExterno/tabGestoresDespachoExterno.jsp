@@ -88,7 +88,37 @@
 				,'plugin/config/usuarios/ADMconsultarUsuario'
 				,{id:rec.get('idusuario')}
 				,{id:'Usuario'+rec.get('idusuario'), iconCls:'icon_usuario'});
-	};		
+	};
+	
+	<%-- PRODUCTO-1272 Nuevo boton para agregar gestores --%>		
+	 var btnAgregar = new Ext.Button({
+		text : '<s:message code="plugin.config.despachoExterno.consultadespacho.gestoresdespacho.btnAgregarGestor.text" text="**Agregar Gestor" />'
+		,iconCls : 'icon_mas'
+		,cls: 'x-btn-text-icon'
+		,handler:function(){
+			nuevoGestor(${despacho.id});
+		}
+	});
+	
+	//Funcion encargada de abrir el popup para añadir un nuevo gestor.
+	var nuevoGestor = function(idDespacho){
+		
+		win = app.openWindow({			
+			flow:'plugin/config/despachoExterno/ADMagregarNuevoGestor', 
+			title : '<s:message code="plugin.coreextension.multigestor.nuevoGestor.titulo" text="**Nuevo gestor" />',
+			params: {idDespacho:idDespacho},
+			width: 750
+		});
+		
+		win.on(app.event.CANCEL, function(){
+			win.close();
+		});
+		
+		win.on(app.event.DONE, function(){
+			win.close();
+			recargar();
+		});
+	};
 	
 	<%--<pfshandler:editgridrow flow="plugin/config/usuarios/ADMconsultarUsuario" 
 			titleField="username" tabId="Usuario" paramId="idusuario" name="opengestor"/>--%>
@@ -99,7 +129,7 @@
 			title="**Gestores Asignados" 
 			collapsible="false" 
 			titleKey="plugin.config.despachoExterno.consultadespacho.gestoresdespacho.control.grid"
-			bbar="btCambia" iconCls="icon_usuario" rowdblclick="opengestor"/>
+			bbar="btCambia, btnAgregar" iconCls="icon_usuario" rowdblclick="opengestor"/>
 	
 	<pfsforms:textfield labelKey="plugin.config.despachoExterno.consultadespacho.gestoresdespacho.control.desdef" label="**Gestor por defecto" name="gesDef" value="${gestorDefecto.usuario.nombre!=null?gestorDefecto.usuario.apellidoNombre:gestorDefecto.usuario.username}" readOnly="true" labelWidth="150" />
 	

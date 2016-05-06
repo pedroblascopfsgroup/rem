@@ -138,5 +138,18 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 		HQLBuilder.addFiltroIgualQue(hb, "u.username", username);
 		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Usuario> getListByExternosAndNombre(String filtro) {
+		
+		filtro = filtro.toUpperCase();
+		String hql = " from Usuario u where u.auditoria.borrado = 0 and u.usuarioExterno = true and (upper(u.nombre) like '%";
+		hql += filtro+"%' or upper(u.apellido1) like '%";
+		hql += filtro+"%' or upper(u.apellido2) like '%";
+		hql += filtro+"%')";
+		
+		return getHibernateTemplate().find(hql);
+	}
 
 }

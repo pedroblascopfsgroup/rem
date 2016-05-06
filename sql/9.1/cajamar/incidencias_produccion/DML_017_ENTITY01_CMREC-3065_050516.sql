@@ -3,7 +3,7 @@
 --## AUTOR=Joaquín Sánchez Valverde
 --## FECHA_CREACION=20160505
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=
+--## VERSION_ARTEFACTO=9.1.3
 --## INCIDENCIA_LINK=CMREC-3065_050516 ZON USUARIO
 --## PRODUCTO=NO
 --## Finalidad: DML que crea el despacho apoderado y los apoderados, son usuarios sin acceso a recovery

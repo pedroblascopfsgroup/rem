@@ -123,6 +123,12 @@ public class ContabilidadCobros implements Auditable, Serializable{
 	@Column(name = "CCO_OPERACIONES_EN_TRAMITE")
 	private Float operacionesEnTramite;
 	
+	@Column(name = "TAR_ID")
+	private Long tarID;
+	
+	@Column(name = "CCO_CONTABILIZADO")
+	private Boolean contabilizado;
+	
 	@ManyToOne
 	@JoinColumn(name = "ASU_ID")
 	private Asunto asunto;
@@ -462,6 +468,26 @@ public class ContabilidadCobros implements Auditable, Serializable{
 
 	public void setOperacionesEnTramite(Float operacionesEnTramite) {
 		this.operacionesEnTramite = operacionesEnTramite;
+	}
+
+
+	public Long getTarID() {
+		return tarID;
+	}
+
+
+	public void setTarID(Long tarID) {
+		this.tarID = tarID;
+	}
+
+
+	public Boolean getContabilizado() {
+		return contabilizado;
+	}
+
+
+	public void setContabilizado(Boolean contabilizado) {
+		this.contabilizado = contabilizado;
 	}
 
 }

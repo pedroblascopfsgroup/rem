@@ -637,11 +637,7 @@
 			return false;
 		}
 	}
-	
-	Ext.onReady(function () {
-	    refreshTotalEntrega();
-	});
-	
+
 	<%-- Botones Ventana --%>
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -752,6 +748,49 @@
 			btnGuardar, btnCancelar
 		]
 	});
-
+	
+	<%-- Funcion para preparar la ventana en modo 'EDITAR' o 'VER' --%>
+	function establecerModoVentana(){
+		var puedeEditar = ${puedeEditar};
+		
+		if(!puedeEditar){
+			<%-- Si el usuario actual NO es quien lo ha creado o NO es el supervisor del asunto --%>
+			btnGuardar.hide();
+			btnCancelar.setText('<s:message code="app.cerrarVentana" text="**Cerrar Ventana" />');
+			fechaEntrega.setReadOnly(true);
+			fechaValor.setReadOnly(true);
+			comboDDTipoEntrega.setReadOnly(true);
+			comboDDConceptoEntrega.setReadOnly(true);
+			nominal.setReadOnly(true);
+			intereses.setReadOnly(true);
+			demoras.setReadOnly(true);
+			impuestos.setReadOnly(true);
+			gastosProcurador.setReadOnly(true);
+			gastosLetrado.setReadOnly(true);
+			otrosGastos.setReadOnly(true);
+			quitaNominal.setReadOnly(true);
+			quitaIntereses.setReadOnly(true);
+			quitaDemoras.setReadOnly(true);
+			quitaImpuestos.setReadOnly(true);
+			quitaGastosProcurador.setReadOnly(true);
+			quitaGastosLetrado.setReadOnly(true);
+			quitaOtrosGastos.setReadOnly(true);
+			observaciones.setReadOnly(true);
+			numEnlace.setReadOnly(true);
+			numMandamiento.setReadOnly(true);
+			numCheque.setReadOnly(true);
+			opTramite.setDisabled(true);
+			quitaOperacionesEnTramite.setReadOnly(true);
+			operacionesEnTramite.setReadOnly(true);
+		}
+	}
+	
+	<%-- Funcion pagina lista --%>
+	Ext.onReady(function () {
+	    refreshTotalEntrega();
+	    refreshTotalQuita();
+	    establecerModoVentana();
+	});
+	
 	page.add(panelEdicion);
 </fwk:page>

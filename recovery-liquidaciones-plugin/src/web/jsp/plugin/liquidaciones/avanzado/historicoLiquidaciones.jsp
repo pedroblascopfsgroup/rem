@@ -207,7 +207,7 @@
        		var w = app.openWindow({
 					flow : 'entregas/editarEntrega'
 					,width:700
-					,title : '<s:message code="entregas.alta" text="**Alta Entrega" />' 
+					,title : '<s:message code="entregas.modifica" text="**Modifica Entrega" />' 
 					,params : {idCalculo: idCalculo,idEntrega: idEntrega}
 			});
 			w.on(app.event.DONE, function(){

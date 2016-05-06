@@ -150,30 +150,30 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
     	// Descripcion Entidad Informacion y Nombre Tarea
         if (dto.getDescripcionTarea() != null && !"".equals(dto.getDescripcionTarea())) {
           	 String sql = "";
-
-        	if (!Checks.esNulo(dto.getAmbitoTarea())){
-             	if (dto.getAmbitoTarea().equals("2")) {
-            // Asunto
-             	sql += " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO
-                    + "' and upper (tar.asuDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-            // Procedimiento
-             	sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
-                    + "' and upper (tar.asuDesc||tar.tipoPrcDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+          	
+          	 if (!Checks.esNulo(dto.getAmbitoTarea())){
+          		 //Ambito grupo
+          		 if (dto.getAmbitoTarea().equals("1")) {
+	         		// Cliente
+	         		sql += " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE
+	                    + "' and upper (tar.nombreCliente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+	                
+	                 // Expediente
+	                sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
+	                	+ "' and upper (tar.tarea.expediente.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+     		 	}
+          		//Ambito individual
+             	else if (dto.getAmbitoTarea().equals("2")) {
+	             	// Asunto
+	         		sql += " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO
+	                    + "' and upper (tar.asuDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+	             	// Procedimiento
+	             	sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
+	                    + "' and upper (tar.asuDesc||tar.tipoPrcDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";             	
              	}
-             	
-             	else if (dto.getAmbitoTarea().equals("1")) {
-             	
-            // Cliente
-            sql += " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE
-                    + "' and upper (tar.nombreCliente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-            
-            // Expediente
-            sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
-                    + "' and upper (tar.tarea.expediente.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-        	 }
         	 }	
 
-            hb.appendWhere(sql);
+          	 hb.appendWhere(sql);
         }
         
 

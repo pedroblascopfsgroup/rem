@@ -67,7 +67,7 @@
         ,items:[{layout: 'form',items: [observaciones], border: false}]
         ,autoHeight:true
         ,autoWidth:true
-        <sec:authorize ifNotGranted="SOLO_CONSULTA">
+        <sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTON_MODIFICAR_ANALISIS_ASUNTO">
         ,bbar: [btModificar]
         </sec:authorize>
     });

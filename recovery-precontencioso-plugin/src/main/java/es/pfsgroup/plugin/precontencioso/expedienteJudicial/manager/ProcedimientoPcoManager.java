@@ -28,9 +28,14 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDMotivoNoLitigar;
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDPrioridad;
 import es.capgemini.pfs.asunto.AsuntosManager;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
+import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
+import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
+import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -89,6 +94,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPC
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
@@ -183,6 +189,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	
 	@Autowired
     private BienDao bienDao;
+	
+	@Autowired
+	private TipoProcedimientoDao tipoProcedimientoDao;
 	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
@@ -1181,6 +1190,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 //		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como preparador del expediente judicial
 		Usuario usuario = usuarioManager.getUsuarioLogado();
 		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
+		
+		if(!Checks.esNulo(procedimiento) && !procedimiento.getEsPrecontencioso()){
+			return false;
+		}
+		
 		List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
 		
 		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), PREDOC)) {
@@ -1350,6 +1364,89 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			faltaDatos = faltaDatos.append(String.format(FALTA_DATOS_REGISTRALES, idBien));
 		}
 		return faltaDatos.toString();
+	}
+
+	//DESARROLLO PRODUCTO-1089
+	@BusinessOperation(BO_PCO_PROCEDIMIENTO_SALVAR)
+	@Override
+	@Transactional(readOnly = false)
+	public Long salvarProcedimientoPCO(ProcedimientoDto dto, Long id) {
+		MEJProcedimiento p;
+		ProcedimientoPCO prcPco;
+		Long idTmp = null;
+		if(!Checks.esNulo(id)){
+			//si es nulo, no entramos y no guardamos nada, porque quiere decir que ha fallado al guardar en PRC_PROCEDIMIENTOS
+			if(dto.getActuacion().equals("PCO")){
+				//quiere decir que estamos en precontencioso, por tanto tenemos que guardar
+				p = (MEJProcedimiento) procedimientoDao.get(id);
+				DDPrioridad ddprioridad;
+				ddprioridad = (DDPrioridad) diccionarioApi.dameValorDiccionarioByCod(DDPrioridad.class, dto.getPrioridad());
+				if(Checks.esNulo(ddprioridad)){
+					ddprioridad = (DDPrioridad) diccionarioApi.dameValorDiccionarioByDes(DDPrioridad.class, dto.getPrioridad());
+				}
+				DDTipoPreparacionPCO ddpreparacion;
+				ddpreparacion = (DDTipoPreparacionPCO) diccionarioApi.dameValorDiccionarioByCod(DDTipoPreparacionPCO.class, dto.getPreparacion());
+				if(Checks.esNulo(ddpreparacion)){
+					ddpreparacion = (DDTipoPreparacionPCO) diccionarioApi.dameValorDiccionarioByDes(DDTipoPreparacionPCO.class, dto.getPreparacion());
+				}
+				
+				if(!Checks.esNulo(procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(id))){
+					//si no es nulo, es que ya existe. Por tanto hay que updatear
+					prcPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(id);
+				}else{
+					//si no, lo creamos nuevo
+					prcPco = new ProcedimientoPCO();
+				}
+				prcPco.setProcedimiento(p);
+				prcPco.setPrioridad(ddprioridad);
+				prcPco.setTipoPreparacion(ddpreparacion);
+				if(!Checks.esNulo(dto.getPreturnado())){
+					prcPco.setPreturnado(true);
+				}else{
+					prcPco.setPreturnado(false);
+				}
+				
+				prcPco.setTipoProcPropuesto(tipoProcedimientoDao.getByCodigo(dto.getTipoActuacionPropuesta()));
+				procedimientoPcoDao.saveOrUpdate(prcPco);
+				if(Checks.esNulo(prcPco.getId())){
+					//quiere decir que no se ha guardado bien el procedimiento pco, por tanto hay que borrar el procedimiento normal
+					procedimientoDao.deleteById(id);
+				}else{
+					idTmp = prcPco.getId();
+				}
+			}
+		}
+
+		return idTmp;
+	}
+
+	//DESARROLLO PRODUCTO-1089
+	@BusinessOperation(BO_PCO_PROCEDIMIENTO_BORRAR)
+	@Override
+	@Transactional(readOnly = false)
+	public void borrarProcedimientoPCO(Long id) {
+		// OJO, EL ID QUE LLEGA ES DE PRC_PROCEDIMIENTOS
+		Procedimiento p = procedimientoDao.get(id);
+		ProcedimientoPCO prcPco;
+		if(!Checks.esNulo(p)){
+			prcPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(id);
+			if(!Checks.esNulo(prcPco)){
+				procedimientoPcoDao.delete(prcPco);
+			}
+		}
+	}
+
+	//DESARROLLO PRODUCTO-1089
+	@BusinessOperation(BO_PCO_PROCEDIMIENTO_DEVOLVER)
+	@Override
+	public ProcedimientoPCO devolverProcedimientoPCO(Long id) {
+		Procedimiento p = procedimientoDao.get(id);
+		ProcedimientoPCO prcPco;
+		if(!Checks.esNulo(p)){
+			prcPco = procedimientoPcoDao.getProcedimientoPcoPorIdProcedimiento(id);
+			return prcPco;
+		}
+		return null;
 	}
 	
 }

@@ -15,6 +15,7 @@
  Si NO recibimos la marca de agencia, y TAMPOCO recibimos información de expediente de precontencioso
          Confirmar con BCC que hay que lanzar una actuación de preparación de expediente judicial, completar la tarea de "estudio", indicando que se marca como "sin gestión" y finalizar la actuación o si se trata de un error
 
+         GMN 2060401: Se añade el filtro para crear asuntos solo a contratos activos. (TMP_ESTADO_CONTRATO = 0)
 *********************************************************/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON
@@ -61,6 +62,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
 
     --** Conjunto base de contratos HRE
     ----------------------------------------------
+/*
     v_sql:='Create table '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE nologging as
         select distinct g.cnt_id, g.cnt_cod_entidad, g.cnt_cod_oficina, g.cnt_cod_centro, g.cnt_contrato
              , eop.cd_expediente as cod_recovery
@@ -68,11 +70,42 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
              , ''AGE'' as cdTipoAct -- Gestion Externa
           from '||v_esquema||'.cnt_contratos g
              , '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
+             , '||v_esquema||'.MIG_EXPEDIENTES_CABECERA cab
              , '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
          where tmp.tmp_cnt_remu_gest_especial = ''EX''
            and g.cnt_contrato = eop.numero_contrato
            and g.cnt_contrato = tmp.tmp_cnt_contrato
+           and eop.cd_Expediente = cab.cd_expediente 
+           and cab.fecha_asignacion is not null
            ';
+*/
+
+    --** Conjunto base de contratos HRE
+    ----------------------------------------------
+    v_sql:='Create table '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE nologging as
+	    select distinct g.cnt_id, g.cnt_cod_entidad, g.cnt_cod_oficina, g.cnt_cod_centro, g.cnt_contrato
+		, eop.cd_expediente as cod_recovery
+		, tmp.tmp_cnt_char_extra7
+		, ''AGE'' as cdTipoAct -- Gestion Externa
+	    from '||v_esquema||'.cnt_contratos g
+		, '||v_esquema||'.MIG_EXPEDIENTES_OPERACIONES eop
+		, '||v_esquema||'.MIG_EXPEDIENTES_CABECERA cab
+		, '||v_esquema||'.TMP_CNT_CONTRATOS           tmp
+--	    where tmp.tmp_cnt_remu_gest_especial = ''EX''
+            where tmp.tmp_cnt_char_extra7 is not null         
+		and g.cnt_contrato = eop.numero_contrato
+		and g.cnt_contrato = tmp.tmp_cnt_contrato
+		and eop.cd_Expediente = cab.cd_expediente
+		and cab.fecha_asignacion is not null
+		and tmp.TMP_CNT_COD_GESTION_ESPECIAL = ''HAYA''
+		and tmp.TMP_ESTADO_CONTRATO = 0
+		and NOT EXISTS(SELECT 1
+			     FROM '||v_esquema||'.MIG_PROCEDIMIENTOS_CABECERA C
+			     WHERE C.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE) -- LOS QUE EVOLUCIONAN A PROCEDIMIENTOS NO SE MIGRAN COMO PRECONTENCIOSOS.
+	';  
+
+
+
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla temporal '||v_esquema||'.TMP_GUIA_CONTRATOS_HRE creada. '||SQL%ROWCOUNT||' Filas');
 
@@ -295,7 +328,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                                '''||USUARIO||''' AS usuariocrear,
                                SYSDATE AS fechacrear,
                                0 AS borrado,
-                              (select dd_epr_id from '||v_esquema_master||'.dd_epr_estado_procedimiento WHERE dd_epr_codigo = ''CERRADO'') AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO  ---lrc
+                              (select dd_epr_id from '||v_esquema_master||'.dd_epr_estado_procedimiento WHERE dd_epr_codigo = ''03'') AS dd_epr_id, -- ESTADO PROCEDIMIENTO = ACEPTADO  ---lrc
                                ''MEJProcedimiento'' AS dtype,
                                SYS_GUID() AS SYS_GUID
                     FROM  '||v_esquema||'.TMP_EXP_EXPEDIENTES_HRE TMP
@@ -482,11 +515,18 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , tex.tex_id
                      , tev.tev_nombre
                      , decode( tev.tev_nombre
-                             , ''fecha_fin_revision'', to_char(sysdate,''yyyy-mm-dd'')
+                             , ''fecha_fin_revision'', to_char(NVL(FECHA_REALIZ_ESTUDIO_SOLV,sysdate),''yyyy-mm-dd'')
                              , ''gestion'', decode(tmp.cdTipoAct,''AGE'',''AGENCIA_EXTERNA''
                                                                 ,''PCO'',''SIN_GESTION''
                                                                 ,''GES'',''SIN_GESTION'')
-                             , ''proc_iniciar'', null
+                             , ''proc_iniciar'', CASE CAB.TIPO_PROCEDIMIENTO
+                                                  WHEN ''P01'' THEN ''H001''
+                                                  WHEN ''P02'' THEN ''H022''
+                                                  WHEN ''P03'' THEN ''H020''
+                                                  WHEN ''P06'' THEN ''H016''
+                                                  WHEN ''P07'' THEN ''H024''
+                                                  WHEN ''P08'' THEN ''H026''
+                                               END
                              , ''observaciones'', null
                              ) as tev_valor
                      , 0 as version
@@ -499,6 +539,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                      , '||v_esquema||'.TAR_TAREAS_NOTIFICACIONES  TAR
                      , '||v_esquema||'.TAP_TAREA_PROCEDIMIENTO    TAP
                      , '||v_esquema||'.TEX_TAREA_EXTERNA          TEX
+		     , '||v_esquema||'.MIG_EXPEDIENTES_CABECERA   CAB
                      --** Obtenemos valores por producto cartesiano
                      , (Select ''fecha_fin_revision'' as tev_nombre from dual
                         union all
@@ -512,7 +553,8 @@ DBMS_OUTPUT.PUT_LINE('[INICIO] CAJAMAR MIGRACION CONTRATOS MARCA HAYA');
                     AND tar.tar_tarea = tap.tap_codigo
                     AND tar.tar_id = tex.tar_id
                     AND tap.tap_id = tex.tap_id
-             ';
+		    AND TMP.CD_EXPEDIENTE_NUSE = CAB.CD_EXPEDIENTE';
+
     execute immediate v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - Tabla '||v_esquema||'.TEV_TAREA_EXTERNA_VALOR cargada. '||SQL%ROWCOUNT||' Filas');
     Commit;

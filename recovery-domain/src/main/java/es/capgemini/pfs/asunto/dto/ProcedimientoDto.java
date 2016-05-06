@@ -80,11 +80,11 @@ public class ProcedimientoDto extends WebDto {
             }
             if (tipoReclamacion == null || "".equals(tipoReclamacion)) {
                 context.addMessage(new MessageBuilder().code(TIPO_RECLAMACION_NULO).error().source("").defaultText(
-                        "**Debe seleccionar un tipo de reclamación.").build());
+                        "**Debe seleccionar un tipo de reclamaciï¿½n.").build());
             }
             if (actuacion == null || "".equals(actuacion)) {
                 context.addMessage(new MessageBuilder().code(TIPO_ACTUACION_NULO).error().source("").defaultText(
-                        "**Debe seleccionar un tipo de Actuación.").build());
+                        "**Debe seleccionar un tipo de Actuaciï¿½n.").build());
             }
             if (saldorecuperar == null) {
                 context.addMessage(new MessageBuilder().code(SALDO_RECUPERAR_NULO).error().source("").defaultText(
@@ -92,11 +92,11 @@ public class ProcedimientoDto extends WebDto {
             }
             if (recuperacion == null) {
                 context.addMessage(new MessageBuilder().code(PORCENTAJE_RECUPERACION_NULO).error().source("").defaultText(
-                        "**Debe introducir un porcentaje de recuperación.").build());
+                        "**Debe introducir un porcentaje de recuperaciï¿½n.").build());
             }
             if (plazo == null) {
                 context.addMessage(new MessageBuilder().code(PLAZO_NULO).error().source("")
-                        .defaultText("**Debe introducir un plazo de recuperación.").build());
+                        .defaultText("**Debe introducir un plazo de recuperaciï¿½n.").build());
             }
             if (seleccionPersonas == null || "".equals(seleccionPersonas)) {
                 context.addMessage(new MessageBuilder().code(PERSONAS_SELECCIONADAS_NULO).error().source("").defaultText(

@@ -1019,7 +1019,7 @@
 			,limpiar: function() {	
     		   		app.resetCampos([      
 						comboJerarquia,
-						comboZonas,						
+						comboZonas						
 	           ]); 
 	          
 	           zonasStore.removeAll();

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="precontenciosocajamar" width="981" height="687">
+<root-container name="precontenciosocajamar" width="765" height="582">
   <node name="Inicio" x="21" y="16" width="132" height="36">
     <edge>
       <label x="-35" y="-17"/>
@@ -40,9 +40,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
   </node>
   <node name="PCO_PreasignarProcurador" x="0" y="0" width="132" height="36">
     <edge>
@@ -76,8 +73,160 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+  </node>
+  <node name="nodeConfirmarProcurador" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="forkOkConProcu" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_ConfirmarProcurador" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarSubsanacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarSubsanacionDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_SubsanarIncidenciaExp" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_ValidarCambioProc" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_SubsanarCambioProc" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_ValidarCambioProcDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_BPMTramiteEnvioDemanda" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RegResultadoExped" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_RecepcionExped" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_RegResultadoDoc" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_RegEnvioDoc" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_RecepcionDoc" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_AdjuntarDoc" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_GenerarLiq" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_ConfirmarLiq" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_EnviarBurofax" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_AcuseReciboBurofax" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_DecTipoProcAutomaticaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RegResultadoDocG" x="0" y="0" width="132" height="36"/>
+  <node name="PCO_PrepararExpedienteDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpDigCONC" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpDigCONCDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_ResolverIncidenciaExpCONC" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_DecTipoProcAutomatica" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_IniciarProcJudicial" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpedientePreparar" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_AsignarGestorLiquidacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpedienteAsignarLetrado" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpedientePrepararDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="PCO_RevisarExpedienteAsignarLetradoDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="0" y="0" width="132" height="36"/>
 </root-container>

@@ -29,7 +29,7 @@
         SELECT p.ant_id FROM cpe_contratos_personas cpe, per_personas p , dd_tin_tipo_intervencion tin
         WHERE p.per_id = cpe.per_id
         AND tin.DD_TIN_ID = cpe.DD_TIN_ID
-        and tin.DD_TIN_TITULAR = 1
+        and tin.DD_TIN_TITULAR = 1 
         AND cpe.cnt_id IN(?))
     ]]>
   </entry>
@@ -40,7 +40,7 @@
      VALUES (null, null, 0, '${procesoRevisionJobUser}', ${sql.function.now})
     ]]>
   </entry>
-
+  
   <entry key="antecedentes.insertarNuevoAntecedente">
     <![CDATA[
      INSERT INTO ant_antecedentes (ANT_ID, ANT_OBSERVACIONES, ANT_FECHA_VERIFICACION, ANT_REINCIDENCIA_INTERNOS, USUARIOCREAR, FECHACREAR)
@@ -63,7 +63,7 @@
   <entry key="antecedentes.insertarNuevoAntecedenteInterno">
     <![CDATA[
       INSERT INTO ain_antecedenteinternos (AIN_ID, CNT_ID, AIN_POS_IRREGULAR_MAX, AIN_DIAS_MAX_IRREGULAR, AIN_FECHA_ULT_REGULARIZACION, USUARIOCREAR, FECHACREAR)
-      values (s_ain_antecedenteinternos.nextVal, ?, ?, ?, to_date(?, 'yyyy-MM-dd'), '${procesoRevisionJobUser}', ${sql.function.now})
+      values (s_ain_antecedenteinternos.nextVal, ?, ?, ?, to_date(?, 'yyyy-MM-dd'), '${procesoRevisionJobUser}', ${sql.function.now}) 
     ]]>
   </entry>
 
@@ -75,7 +75,7 @@
 
   <entry key="antecedentes.updateAntecedenteInterno.MySQLDialect">
     <![CDATA[
-      UPDATE ain_antecedenteinternos
+      UPDATE ain_antecedenteinternos 
       SET AIN_POS_IRREGULAR_MAX=IF(ABS(AIN_POS_IRREGULAR_MAX ) > ABS(?), AIN_POS_IRREGULAR_MAX ,?),
           AIN_DIAS_MAX_IRREGULAR=IF(AIN_DIAS_MAX_IRREGULAR  > ?, AIN_DIAS_MAX_IRREGULAR ,?),
           AIN_FECHA_ULT_REGULARIZACION = ?,

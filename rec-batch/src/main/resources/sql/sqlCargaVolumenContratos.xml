@@ -1,106 +1,106 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="validacion.cargaContratosVolumenValidator.ultimaValidacion">
-        <![CDATA[
-        SELECT MAX(VCA_ID)
-          FROM vca_validacion_carga_anterior
-         WHERE TMP_PER_FECHA_EXTRACCION = (SELECT MAX(TMP_PER_FECHA_EXTRACCION)
-                                             FROM vca_validacion_carga_anterior)
+	<entry key="validacion.cargaContratosVolumenValidator.ultimaValidacion">
+		<![CDATA[
+		SELECT MAX(VCA_ID)
+		  FROM vca_validacion_carga_anterior
+		 WHERE TMP_PER_FECHA_EXTRACCION = (SELECT MAX(TMP_PER_FECHA_EXTRACCION)
+		                                     FROM vca_validacion_carga_anterior)
         ]]>
-    </entry>
+	</entry>
 
 
-    <!--  Querys para un registro en particular de la tabla vca_validacion_carga_anterior -->
+	<!--  Querys para un registro en particular de la tabla vca_validacion_carga_anterior -->
+	
 
-
-    <entry key="validacion.cargaContratosVolumenValidator.validacionAnterior">
-        <![CDATA[
-        SELECT VCA_ACT_LINEAS    activoLineas,
-               VCA_ACT_POS_VDA   activoPosicionVencida,
-               VCA_PAS_LINEAS    pasivoLineas,
-               VCA_PAS_POS_VDA   pasivoPosicionVencida,
-               VCA_ACT_POS_VIVA  activoPosicionViva,
-               VCA_PAS_POS_VIVA  pasivoPosicionViva
-        FROM vca_validacion_carga_anterior
-        WHERE VCA_ID = ?
+	<entry key="validacion.cargaContratosVolumenValidator.validacionAnterior">
+		<![CDATA[
+		SELECT VCA_ACT_LINEAS    activoLineas,
+		       VCA_ACT_POS_VDA   activoPosicionVencida,
+		       VCA_PAS_LINEAS    pasivoLineas,
+		       VCA_PAS_POS_VDA   pasivoPosicionVencida,
+		       VCA_ACT_POS_VIVA  activoPosicionViva,
+		       VCA_PAS_POS_VIVA  pasivoPosicionViva
+		FROM vca_validacion_carga_anterior
+		WHERE VCA_ID = ?
         ]]>
-    </entry>
+	</entry>
 
 
-    <!--  Query de carga  -->
+	<!--  Query de carga  -->
 
-    <entry key="validacion.cargaContratosVolumenValidator.insertValidacion.MySQLDialect">
-        <![CDATA[
-        INSERT INTO vca_validacion_carga_anterior (
-                        TMP_PER_FECHA_EXTRACCION,
-                        TMP_PER_FICHERO_CARGA,
-                        VCA_ACT_LINEAS, VCA_ACT_POS_VDA,
-                        VCA_ACT_POS_VIVA, VCA_PAS_LINEAS,
-                        VCA_PAS_POS_VDA, VCA_PAS_POS_VIVA,
-                        USUARIOCREAR, FECHACREAR)
-              VALUES   (str_to_date(?, '%Y-%m-%d'),
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        'DATALOAD', sysdate())
+	<entry key="validacion.cargaContratosVolumenValidator.insertValidacion.MySQLDialect">
+		<![CDATA[
+		INSERT INTO vca_validacion_carga_anterior (
+		                TMP_PER_FECHA_EXTRACCION,
+						TMP_PER_FICHERO_CARGA,
+						VCA_ACT_LINEAS, VCA_ACT_POS_VDA,
+						VCA_ACT_POS_VIVA, VCA_PAS_LINEAS,
+						VCA_PAS_POS_VDA, VCA_PAS_POS_VIVA,
+						USUARIOCREAR, FECHACREAR)
+		      VALUES   (str_to_date(?, '%Y-%m-%d'),
+			            ?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						'DATALOAD', sysdate())
         ]]>
-    </entry>
-    <entry key="validacion.cargaContratosVolumenValidator.insertValidacion">
-        <![CDATA[
-        INSERT INTO vca_validacion_carga_anterior (
-                        VCA_ID,
-                        TMP_PER_FECHA_EXTRACCION,
-                        TMP_PER_FICHERO_CARGA,
-                        VCA_ACT_LINEAS, VCA_ACT_POS_VDA,
-                        VCA_ACT_POS_VIVA, VCA_PAS_LINEAS,
-                        VCA_PAS_POS_VDA, VCA_PAS_POS_VIVA,
-                        USUARIOCREAR, FECHACREAR)
-               VALUES  (S_VCA_VALIDACION_CARGA_ANTE.nextVal,
-                        to_date(?, 'YYYY-MM-DD'),
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        '${validacionesPCRJobUser}', sysdate)
+	</entry>
+	<entry key="validacion.cargaContratosVolumenValidator.insertValidacion">
+		<![CDATA[
+		INSERT INTO vca_validacion_carga_anterior (
+						VCA_ID,
+		                TMP_PER_FECHA_EXTRACCION,
+						TMP_PER_FICHERO_CARGA,
+						VCA_ACT_LINEAS, VCA_ACT_POS_VDA,
+						VCA_ACT_POS_VIVA, VCA_PAS_LINEAS,
+						VCA_PAS_POS_VDA, VCA_PAS_POS_VIVA,
+						USUARIOCREAR, FECHACREAR)
+		       VALUES  (S_VCA_VALIDACION_CARGA_ANTE.nextVal,
+		       			to_date(?, 'YYYY-MM-DD'),
+			            ?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						?,
+						'${validacionesPCRJobUser}', sysdate)
         ]]>
-    </entry>
+	</entry>
 
 
-    <!--  Querys estadísticas de la tabla temporal de contratos  -->
+	<!--  Querys estadísticas de la tabla temporal de contratos  -->
 
-    <entry key="validacion.cargaContratosVolumenValidator.estadisticas.MySQLDialect">
-        <![CDATA[
-    select * from
-       (select count(*) activoLineas, ifnull(sum(TMP_CNT_POS_VIVA_VENCIDA),0) activoPosicionVencida
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA >= 0) vencidoActivo,
-       (select count(*) pasivoLineas, ifnull(sum(TMP_CNT_POS_VIVA_VENCIDA) * -1,0) pasivoPosicionVencida
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA < 0) vencidoPasivo,
-       (select ifnull(sum(TMP_CNT_POS_VIVA_NO_VENCIDA),0) activoPosicionViva
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA >= 0) vivoActivo,
-       (select ifnull(sum(TMP_CNT_POS_VIVA_NO_VENCIDA) * -1,0) pasivoPosicionViva
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA < 0) vivoPasivo
+	<entry key="validacion.cargaContratosVolumenValidator.estadisticas.MySQLDialect">
+		<![CDATA[
+	select * from
+	   (select count(*) activoLineas, ifnull(sum(TMP_CNT_POS_VIVA_VENCIDA),0) activoPosicionVencida
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA >= 0) vencidoActivo,
+	   (select count(*) pasivoLineas, ifnull(sum(TMP_CNT_POS_VIVA_VENCIDA) * -1,0) pasivoPosicionVencida
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA < 0) vencidoPasivo,
+	   (select ifnull(sum(TMP_CNT_POS_VIVA_NO_VENCIDA),0) activoPosicionViva
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA >= 0) vivoActivo,
+	   (select ifnull(sum(TMP_CNT_POS_VIVA_NO_VENCIDA) * -1,0) pasivoPosicionViva
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA < 0) vivoPasivo
         ]]>
-    </entry>
-    <entry key="validacion.cargaContratosVolumenValidator.estadisticas">
-        <![CDATA[
-    select * from
-       (select count(*) activoLineas, nvl(sum(TMP_CNT_POS_VIVA_VENCIDA),0) activoPosicionVencida
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA >= 0) vencidoActivo,
-       (select count(*) pasivoLineas, nvl(sum(TMP_CNT_POS_VIVA_VENCIDA) * -1,0) pasivoPosicionVencida
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA < 0) vencidoPasivo,
-       (select nvl(sum(TMP_CNT_POS_VIVA_NO_VENCIDA),0) activoPosicionViva
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA >= 0) vivoActivo,
-       (select nvl(sum(TMP_CNT_POS_VIVA_NO_VENCIDA) * -1,0) pasivoPosicionViva
-          from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA < 0) vivoPasivo
+	</entry>
+	<entry key="validacion.cargaContratosVolumenValidator.estadisticas">
+		<![CDATA[
+	select * from
+	   (select count(*) activoLineas, nvl(sum(TMP_CNT_POS_VIVA_VENCIDA),0) activoPosicionVencida
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA >= 0) vencidoActivo,
+	   (select count(*) pasivoLineas, nvl(sum(TMP_CNT_POS_VIVA_VENCIDA) * -1,0) pasivoPosicionVencida
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_VENCIDA < 0) vencidoPasivo,
+	   (select nvl(sum(TMP_CNT_POS_VIVA_NO_VENCIDA),0) activoPosicionViva
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA >= 0) vivoActivo,
+	   (select nvl(sum(TMP_CNT_POS_VIVA_NO_VENCIDA) * -1,0) pasivoPosicionViva
+	      from tmp_cnt_contratos where TMP_CNT_POS_VIVA_NO_VENCIDA < 0) vivoPasivo
         ]]>
-    </entry>
+	</entry>
 
 </properties>

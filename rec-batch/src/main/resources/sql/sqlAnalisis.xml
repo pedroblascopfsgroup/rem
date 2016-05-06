@@ -7,7 +7,7 @@
      DELETE FROM ans_mgb_mapa_global_oficinas WHERE fecha_extraccion = ?
     ]]>
   </entry>
-
+  
   <entry key="analisis.borrarResumenClientes">
     <![CDATA[
      DELETE FROM ans_mgb_mapa_global_oficinas WHERE fecha_extraccion = to_date(?,'YYYY-MM-DD')
@@ -23,34 +23,34 @@
   <entry key="analisis.realizarResumenExterna">
     <![CDATA[
       INSERT INTO ANE_ANALISIS_EXTERNA (
-         ANE_ID, ANE_FECHA_EXTRACCION, DD_TPO_ID,
-         DES_ID, USU_ID, GAS_ID,
-         DD_FAP_ID, DD_PAC_ID, ANE_PRC_ACTIVO,
-         ANE_N_PROCEDIMIENTO, ANE_N_ASUNTOS, ANE_PRINCIPAL,
-         ANE_COBROSPAGOS, ANE_IMPORTE_RECUP, ANE_IMP_MENOR_MENOS24,
-         ANE_IMP_MENOR_MENOS12, ANE_IMP_MENOR_MENOS6, ANE_IMP_MENOR_MENOS3,
-         ANE_IMP_MENOR_MENOS0, ANE_IMP_MENOR_3, ANE_IMP_MENOR_6,
+         ANE_ID, ANE_FECHA_EXTRACCION, DD_TPO_ID, 
+         DES_ID, USU_ID, GAS_ID, 
+         DD_FAP_ID, DD_PAC_ID, ANE_PRC_ACTIVO, 
+         ANE_N_PROCEDIMIENTO, ANE_N_ASUNTOS, ANE_PRINCIPAL, 
+         ANE_COBROSPAGOS, ANE_IMPORTE_RECUP, ANE_IMP_MENOR_MENOS24, 
+         ANE_IMP_MENOR_MENOS12, ANE_IMP_MENOR_MENOS6, ANE_IMP_MENOR_MENOS3, 
+         ANE_IMP_MENOR_MENOS0, ANE_IMP_MENOR_3, ANE_IMP_MENOR_6, 
          ANE_IMP_MENOR_12, ANE_IMP_MENOR_24, ANE_IMP_MAYOR_24, USUARIOCREAR, FECHACREAR, BORRADO)
          select S_ANE_ANALISIS_EXTERNA.nextval, to_date(?,'YYYY-MM-DD'), t.*, '${analisisUser}', current_date , 0
          FROM
-         (
+         ( 
          select c.dd_tpo_id, c.des_id, c.usu_id, c.gas_id, c.dd_fap_id, c.plazoAceptacion, c.activo
              , count(distinct p.asu_id) as nAsuntos --El nº de asuntos distintos
              , count(distinct p.prc_id) as nProcedimientos --Solo contamos los procedimientos padres
              , sum(p.prc_saldo_recuperacion) as principal
              --Extraemos los cobros pagos de los procedimientos padres, sumándoles los cobros pagos de sus hijos hasta el 2º nivel
-             , sum(NVL((select SUM(CASE WHEN dd_tcp_codigo = ? THEN cpa_importe ELSE -cpa_importe END) as importe
-                         from CPA_COBROS_PAGOS cpa
-                         JOIN DD_SCP_SUBTIPO_COBRO_PAGO scp ON cpa.dd_scp_id = scp.dd_scp_id
-                         JOIN dd_tcp_tipo_cobro_pago tcp ON scp.dd_tcp_id = tcp.dd_tcp_id
-                         WHERE cpa.prc_id IN
+             , sum(NVL((select SUM(CASE WHEN dd_tcp_codigo = ? THEN cpa_importe ELSE -cpa_importe END) as importe 
+                         from CPA_COBROS_PAGOS cpa 
+                         JOIN DD_SCP_SUBTIPO_COBRO_PAGO scp ON cpa.dd_scp_id = scp.dd_scp_id 
+                         JOIN dd_tcp_tipo_cobro_pago tcp ON scp.dd_tcp_id = tcp.dd_tcp_id 
+                         WHERE cpa.prc_id IN 
                              (
-                              select prc_id from prc_procedimientos where prc_prc_id = p.prc_id
+                              select prc_id from prc_procedimientos where prc_prc_id = p.prc_id 
                               UNION select prc_id from prc_procedimientos where prc_prc_id IN (select prc_id from prc_procedimientos where prc_prc_id = p.prc_id)
                               UNION select p.prc_id from dual
                              )
                         ), 0)) as cobrosPagos
-             --Extraemos la suma del importe recuperado en contratos de los procedimientos (mucho cuidado con los contratos duplicados en procedimientos)
+             --Extraemos la suma del importe recuperado en contratos de los procedimientos (mucho cuidado con los contratos duplicados en procedimientos) 
              , SUM(NVL((SELECT SUM(r.rec_importe_recuperado)
                               FROM PRC_PROCEDIMIENTOS prc
                               JOIN PRC_CEX pc ON pc.prc_id = prc.prc_id
@@ -62,16 +62,16 @@
                                                   SELECT MIN(prc_id)
                                                   FROM PRC_CEX p
                                                   JOIN CEX_CONTRATOS_EXPEDIENTE c ON p.cex_id = c.cex_id
-                                                  WHERE c.cnt_id = cex.cnt_id
+                                                  WHERE c.cnt_id = cex.cnt_id 
                                               )
                                  AND prc.prc_id IN
                                          (
-                                          select prc_id from prc_procedimientos where prc_prc_id = p.prc_id
+                                          select prc_id from prc_procedimientos where prc_prc_id = p.prc_id 
                                           UNION select prc_id from prc_procedimientos where prc_prc_id IN (select prc_id from prc_procedimientos where prc_prc_id = p.prc_id)
                                           UNION select p.prc_id from dual
-                                         )
+                                         )             
                             )
-                      , 0)) as importeRecuperado
+                      , 0)) as importeRecuperado 
              , SUM (CASE WHEN c.plazoFalta = 1 THEN (p.prc_saldo_recuperacion * (p.prc_porcentaje_recuperacion / 100)) ELSE 0 END) as importe_menor_menos_24
              , SUM (CASE WHEN c.plazoFalta = 2 THEN (p.prc_saldo_recuperacion * (p.prc_porcentaje_recuperacion / 100)) ELSE 0 END) as importe_menor_menos_12
              , SUM (CASE WHEN c.plazoFalta = 3 THEN (p.prc_saldo_recuperacion * (p.prc_porcentaje_recuperacion / 100)) ELSE 0 END) as importe_menor_menos_6
@@ -86,16 +86,16 @@
              (
                  select c.prc_id, c.dd_tpo_id, c.des_id, c.usu_id, c.gas_id, c.dd_fap_id, c.activo
                       --Calculamos el plazo en base a los meses agrupados
-                     ,(CASE WHEN c.meses < 3 THEN (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) ELSE
+                     ,(CASE WHEN c.meses < 3 THEN (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) ELSE 
                          (CASE WHEN c.meses >= 3 AND c.meses < 6 THEN (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) ELSE
                              (CASE WHEN c.meses >= 6 AND c.meses < 12 THEN (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) ELSE
-                                 (CASE WHEN c.meses >= 12 AND c.meses < 24 THEN (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) ELSE
-                                     (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?)
+                                 (CASE WHEN c.meses >= 12 AND c.meses < 24 THEN (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) ELSE 
+                                     (select dd_pac_id from ${master.schema}.DD_PAC_PLAZO_ACEPTACION where dd_pac_codigo = ?) 
                                  END)
                               END)
                           END)
-                      END) as plazoAceptacion
-                     ,(CASE WHEN c.mesesFaltan < -24 THEN 1 ELSE
+                      END) as plazoAceptacion 
+                     ,(CASE WHEN c.mesesFaltan < -24 THEN 1 ELSE 
                          (CASE WHEN c.mesesFaltan >= -24 AND c.mesesFaltan < -12 THEN 2 ELSE
                              (CASE WHEN c.mesesFaltan >= -12 AND c.mesesFaltan < -6 THEN 3 ELSE
                                  (CASE WHEN c.mesesFaltan >= -6 AND c.mesesFaltan < -3 THEN 4 ELSE
@@ -111,9 +111,9 @@
                                   END)
                               END)
                           END)
-                      END) as plazoFalta
+                      END) as plazoFalta              
                      from
-                     (
+                     (    
                          select p.prc_id, p.dd_tpo_id, gas.des_id, sup.usu_id, gas.usu_id as gas_id
                              , tap.dd_fap_id, FLOOR(MONTHS_BETWEEN(current_date, afa.fechamodificar)) as meses
                              , FLOOR(MONTHS_BETWEEN(ADD_MONTHS(afa.fechamodificar, p.PRC_PLAZO_RECUPERACION),afa.fechamodificar)) as mesesFaltan
@@ -122,8 +122,8 @@
                              JOIN asu_asuntos a on p.asu_id = a.asu_id
                              JOIN afa_ficha_aceptacion afa on afa.asu_id = a.asu_id and afa.afa_aceptado = 1
                              JOIN usd_usuarios_despachos gas ON a.gas_id = gas.usd_id
-                             JOIN usd_usuarios_despachos sup ON a.sup_id = sup.usd_id
-                             JOIN TAR_TAREAS_NOTIFICACIONES tar ON tar.prc_id = p.prc_id and tar.borrado = 0
+                             JOIN usd_usuarios_despachos sup ON a.sup_id = sup.usd_id   
+                             JOIN TAR_TAREAS_NOTIFICACIONES tar ON tar.prc_id = p.prc_id and tar.borrado = 0 
                              JOIN TEX_TAREA_EXTERNA tex ON tex.tar_id = tar.tar_id and tex.borrado = 0 --Con tareas externas
                              JOIN TAP_TAREA_PROCEDIMIENTO tap ON tex.tap_id = tap.tap_id and dd_fap_id is not null
                      ) c
@@ -135,27 +135,27 @@
              GROUP BY c.dd_tpo_id, c.des_id, c.usu_id, c.gas_id, c.dd_fap_id, c.plazoAceptacion, c.activo
          ) t
     ]]>
-  </entry>
-
-
+  </entry> 
+ 
+ 
   <entry key="analisis.realizarResumenClientes">
     <![CDATA[
          INSERT INTO ans_mgb_mapa_global_oficinas(ANS_MGB_ID, FECHA_EXTRACCION,DD_SMG_ID, OFI_ID, ZON_ID, DD_SCL_ID, DD_TPR_ID, ANS_MGB_CLIENTES, ANS_MGB_CONTRATOS, ANS_MGB_SUM_POS_VENCIDA, ANS_MGB_SUM_POS_VIVA, USUARIOCREAR, FECHACREAR)
-        select s_ans_mgb_mapa_global_oficinas.nextVal, todo.* from
+        select s_ans_mgb_mapa_global_oficinas.nextVal, todo.* from  
         (SELECT total.mov_fecha_extraccion as FECHA_EXTRACCION,
               (SELECT subfase.DD_SMG_ID FROM ${master.schema}.dd_smg_subfases_mapa_global subfase WHERE total.retraso = subfase.DD_SMG_CODIGO) as DD_SMG_ID,
               total.ofi_id as OFI_ID,
               total.zon_id  as ZON_ID,
               total.DD_SCL_ID as DD_SCL_ID,
-              total.DD_TPR_ID as DD_TPR_ID,
+              total.DD_TPR_ID as DD_TPR_ID,            
               COUNT(total.per_id) total_personas,
               COUNT(total.cnt_id) total_contratos,
               SUM(ABS(total.MOV_POS_VIVA_NO_VENCIDA)) posicion_viva_no_vencida,
               SUM(ABS(total.MOV_POS_VIVA_VENCIDA)) posicion_viva_vencida,
               '${analisisUser}',
               CURRENT_DATE
-        FROM (
-        /* clientes */
+        FROM (  
+        /* clientes */    
          SELECT distinct datos.mov_fecha_extraccion, datos.per_id, datos.cnt_id, datos.codigo,
             datos.ofi_id, datos.ZON_ID, datos.DD_TPR_ID,datos.DD_SCL_ID, datos.MOV_POS_VIVA_NO_VENCIDA, datos.MOV_POS_VIVA_VENCIDA,
             (case  WHEN time_dif <0 THEN ?
@@ -163,9 +163,9 @@
              WHEN time_dif <=( (SELECT PEN_VALOR FROM PEN_PARAM_ENTIDAD WHERE PEN_PARAM='rango.GV1')+datos.plazo_car) THEN ?
              WHEN time_dif BETWEEN ( (SELECT PEN_VALOR FROM PEN_PARAM_ENTIDAD WHERE PEN_PARAM='rango.GV1')+1+datos.plazo_car) AND ( (SELECT PEN_VALOR FROM PEN_PARAM_ENTIDAD WHERE PEN_PARAM='rango.GV2')+datos.plazo_car) THEN ?
              WHEN time_dif BETWEEN ( (SELECT PEN_VALOR FROM PEN_PARAM_ENTIDAD WHERE PEN_PARAM='rango.GV2')+1+datos.plazo_car) AND ((SELECT PEN_VALOR FROM PEN_PARAM_ENTIDAD WHERE PEN_PARAM='rango.GV3')+datos.plazo_car) THEN ?
-             else ? end) retraso
+             else ? end) retraso 
          FROM
-            (
+            (                
                 SELECT DISTINCT mov.mov_fecha_extraccion, per.per_id, cpe.cnt_id,
                        NVL (est.dd_est_codigo, ?) codigo, cnt.ofi_id, cnt.zon_id,
                        cnt.dd_tpr_id, per.dd_scl_id, mov.mov_pos_viva_no_vencida,
@@ -198,32 +198,32 @@
                    AND cpe.per_id = per.per_id
                    AND cpe.cnt_id = cnt.cnt_id
                    AND mov.cnt_id = cnt.cnt_id
-                   AND mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion
-                   AND cnt.dd_tpe_id = t.dd_tpe_id AND ((t.dd_tpe_activo = 1) OR (t.dd_tpe_activo = 0 AND mov.mov_pos_viva_vencida < 0))
+                   AND mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion    
+                   AND cnt.dd_tpe_id = t.dd_tpe_id AND ((t.dd_tpe_activo = 1) OR (t.dd_tpe_activo = 0 AND mov.mov_pos_viva_vencida < 0))        
             ) datos
-            WHERE
+            WHERE 
             /* no este en expediente */
             datos.per_id NOT IN (
-                 SELECT DISTINCT cpe.per_id
+                 SELECT DISTINCT cpe.per_id 
                  FROM cex_contratos_expediente cex, cpe_contratos_personas cpe, ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE dd_eex, exp_expedientes exp
                  WHERE cex.cnt_id = cpe.cnt_id
                  AND exp.exp_id = cex.exp_id
                  AND exp.dd_eex_id = dd_eex.dd_eex_id
-                 AND cex.borrado = 0
+                 AND cex.borrado = 0 
                  AND cpe.borrado = 0
                  AND exp.borrado = 0
-                 AND dd_eex.dd_eex_codigo in ('1','2','4') -- Activo, Congelado, Bloqueado
+                 AND dd_eex.dd_eex_codigo in ('1','2','4') -- Activo, Congelado, Bloqueado    
                  )
             /* no este en asunto */
            and datos.per_id NOT IN (
                 SELECT DISTINCT prp.per_id
                 FROM prc_procedimientos prc, prc_per prp, ${master.schema}.dd_epr_estado_procedimiento dd_epr
                 where prc.prc_id = prp.prc_id
-                and prc.dd_epr_id = dd_epr.dd_epr_id
+                and prc.dd_epr_id = dd_epr.dd_epr_id                  
                 AND prc.borrado = 0
                 and dd_epr.dd_epr_codigo in ('01','02','03') -- Propuesto, Confirmado, Aceptado
            )
-            ) total
+            ) total      
         GROUP BY total.mov_fecha_extraccion, total.codigo, total.ofi_id, total.ZON_ID,
         total.DD_TPR_ID,total.DD_SCL_ID,total.retraso
       UNION (
@@ -233,13 +233,13 @@
         exp.ofi_id as OFI_ID,
         zon.zon_id as ZON_ID,
         per.DD_SCL_ID as DD_SCL_ID,
-        cnt.DD_TPR_ID as DD_TPR_ID,
+        cnt.DD_TPR_ID as DD_TPR_ID,            
         COUNT(distinct cpe.per_id) total_personas,
         COUNT(distinct cnt.cnt_id) total_contratos,
         SUM(ABS(mov.MOV_POS_VIVA_NO_VENCIDA)) posicion_viva_no_vencida,
         SUM(ABS(mov.MOV_POS_VIVA_VENCIDA)) posicion_viva_vencida,
         '${analisisUser}',
-        CURRENT_DATE
+        CURRENT_DATE       
         FROM exp_expedientes exp,
              cex_contratos_expediente cex,
              ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE dd_eex,
@@ -264,9 +264,9 @@
           AND exp.exp_id = cex.exp_id
           AND cpe.cnt_id = cex.cnt_id
           AND exp.dd_eex_id = dd_eex.dd_eex_id
-          AND dd_eex.dd_eex_codigo in ('1','2','4')
+          AND dd_eex.dd_eex_codigo in ('1','2','4') 
           AND cpe.DD_TIN_ID = tin.DD_TIN_ID
-          and tin.DD_TIN_TITULAR = 1
+          and tin.DD_TIN_TITULAR = 1 
           AND cpe.CPE_ORDEN = 1
           AND cpe.cnt_id = cnt.cnt_id
           AND cnt.cnt_id = mov.cnt_id
@@ -287,13 +287,13 @@
         cnt.ofi_id as OFI_ID,
         zon.zon_id as ZON_ID,
         per.DD_SCL_ID as DD_SCL_ID,
-        cnt.DD_TPR_ID as DD_TPR_ID,
+        cnt.DD_TPR_ID as DD_TPR_ID,            
         COUNT(DISTINCT cpe.per_id) total_personas,
         COUNT(DISTINCT cnt.cnt_id) total_contratos,
         SUM(ABS(mov.MOV_POS_VIVA_NO_VENCIDA)) posicion_viva_no_vencida,
         SUM(ABS(mov.MOV_POS_VIVA_VENCIDA)) posicion_viva_vencida,
         '${analisisUser}',
-        CURRENT_DATE
+        CURRENT_DATE       
         FROM prc_procedimientos prc,
              ${master.schema}.dd_epr_estado_procedimiento dd_epr,
              cpe_contratos_personas cpe,
@@ -314,16 +314,16 @@
           AND cnt.borrado = 0
           AND mov.borrado = 0
           AND ofi.borrado = 0
-          AND zon.borrado = 0
+          AND zon.borrado = 0        
           and prc.prc_id = prp.prc_id
           AND prp.per_id = per.per_id
-          and prc.dd_epr_id = dd_epr.dd_epr_id
+          and prc.dd_epr_id = dd_epr.dd_epr_id        
           and dd_epr.dd_epr_codigo in ('01','02','03')
           AND prc_cex.prc_id = prc.prc_id
           AND cex.cex_id = prc_cex.cex_id
           AND cpe.cnt_id = cex.cnt_id
           AND cpe.DD_TIN_ID = tin.DD_TIN_ID
-          and tin.DD_TIN_TITULAR = 1
+          and tin.DD_TIN_TITULAR = 1 
           AND cpe.CPE_ORDEN = 1
           AND cpe.cnt_id = cnt.cnt_id
           AND cnt.cnt_id = mov.cnt_id
@@ -336,9 +336,9 @@
           AND cnt.dd_tpe_id = t.dd_tpe_id AND ((t.dd_tpe_activo = 1) OR (t.dd_tpe_activo = 0 AND mov.mov_pos_viva_vencida < 0))
         GROUP BY mov.mov_fecha_extraccion, subfase.DD_SMG_ID,
         cnt.ofi_id, zon.zon_id, per.DD_SCL_ID, cnt.DD_TPR_ID
-      )
-    ) todo
+      )                
+    ) todo        
    ]]>
   </entry>
-
+  
 </properties>

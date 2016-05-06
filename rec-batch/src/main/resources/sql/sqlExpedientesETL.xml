@@ -1250,7 +1250,7 @@
                From BATCH_VEN_DISTRIBUCION ko, BATCH_VEN_DISTRIBUCION ok
               Where ko.cnt_id = ok.cnt_id
                 And ko.exp_id > ok.exp_id
-                And ok.num_cnt <= v_limit_cnt;    --15
+                And ok.num_cnt <= v_limit_cnt;
 
              v_count := SQL%ROWCOUNT;
 

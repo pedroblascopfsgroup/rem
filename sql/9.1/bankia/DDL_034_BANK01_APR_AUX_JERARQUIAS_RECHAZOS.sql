@@ -1,6 +1,6 @@
 /*
 --##########################################
---## AUTOR=Alejandro I�igo
+--## AUTOR=Alejandro Iñigo
 --## FECHA_CREACION=20160210
 --## ARTEFACTO=ETL
 --## VERSION_ARTEFACTO=1.00

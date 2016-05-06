@@ -8,8 +8,8 @@
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="/home/ops-haya/simulador.log"
-DIR=/etl/HRE/shells
+LOG="$DIR_CONTROL_LOG/simulador.log"
+DIR=$DIR_SHELLS
 #DIR=./
 source $DIR/setBatchEnv.sh
 
@@ -109,11 +109,6 @@ lanzar bloquePCR.sh
 lanzarParalelo bloqueConvivencias.sh bloqueAUX.sh bloqueGCL.sh
 
 
-# BLOQUE SALIDA CONVIVENCIA (FASE2) #
-
-lanzar bloqueConvivenciasF2.sh
-
-
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 
 
@@ -121,5 +116,7 @@ echo "                                                  " >> $LOG
 echo "EXPLOTACION FINALIZADA: `date`			" >> $LOG
 echo "Comprueba log de ejecucion batch                  " >> $LOG
 echo "***************************************************" >> $LOG
+
+lanzar sendMail.sh
 
 exit 0

@@ -7,7 +7,6 @@ Telefonos
 Cobros
 Bienes
 Recibos
-Cirbe
 Efectos
 Ingresos
 Vencidos

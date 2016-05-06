@@ -101,7 +101,7 @@
 	});	
 	
 	var tareasGrid=app.crearGrid(tareasStore,tareasCm,{
-		title:'<s:message code="plugin.procuradores.tareas.gridcolumn.tituloGrid" text="**Tareas Pendientes" />'
+		title:'<s:message code="plugin.procuradores.tareas.gridcolumn.tituloGrid" text="**Tareas pendientes de validar" />'
 		,style : 'margin-bottom:10px;padding-right:10px'
         ,autoWidth: true
         ,height:350
@@ -228,7 +228,7 @@
 	
 	
 	var panelFiltros = new Ext.Panel({
-		title : '<s:message code="plugin.procuradores.tareas.busqueda" text="**Buscar Tareas Pendientes"/>'
+		title : '<s:message code="plugin.procuradores.tareas.busqueda" text="**Buscar tareas pendientes de validar"/>'
 		,collapsible : true
 		,titleCollapse : true
 		,layout:'table'

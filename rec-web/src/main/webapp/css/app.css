@@ -824,3 +824,8 @@ button.icon_checkbox_on, .icon_checkbox_on {
 	background-repeat: no-repeat;
 	background-position: right;
 }
+
+.icon_pendientes_validar{
+  background: transparent url('icon_pendientes_validar_tab.png') no-repeat !important;
+  margin-left : 0px;
+}

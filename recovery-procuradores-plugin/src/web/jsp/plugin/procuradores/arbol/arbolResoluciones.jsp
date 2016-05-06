@@ -9,8 +9,8 @@
         ,listeners:{click: function() {
         							var node = tree.getNodeById('arbol_tareas_nodo_resoluciones');
         							node.setText(node.getUI().getTextEl().innerHTML.replace(/<.?b>/g,""));
-        							app.openTab('<s:message code="plugin.procuradores.listadoResoluciones.title" text="**Listado de Tareas Pendientes de Validar"/>',
-        							"procuradores/getPanelListadoTareasPendientes",{},{id:'tareas_resoluciones_panel'});
+        							app.openTab('<s:message code="plugin.procuradores.listadoResoluciones.title" text="**Listado de tareas pendientes de validar"/>',
+        							"procuradores/getPanelListadoTareasPendientes",{},{id:'tareas_resoluciones_panel',iconCls:'icon_pendientes_validar'});
         							}
         }
         ,init: function(){
@@ -49,8 +49,8 @@
 															        			,listeners:{click: function() {
 														        							//var node = tree.getNodeById('arbol_tareas_nodo_resoluciones');
 														        							//node.setText(node.getUI().getTextEl().innerHTML.replace(/<.?b>/g,""));
-														        							app.openTab('<s:message code="plugin.procuradores.listadoResoluciones.title" text="**Listado de Tareas Pendientes de Validar"/>',
-														        							"procuradores/getPanelListadoTareasPendientes",{idCategoria:this.attributes.idCategoria},{id:'tareas_resoluciones_panel'});
+														        							app.openTab('<s:message code="plugin.procuradores.listadoResoluciones.title" text="**Listado de tareas pendientes de validar"/>',
+														        							"procuradores/getPanelListadoTareasPendientes",{idCategoria:this.attributes.idCategoria,iconCls:'icon_pendientes_validar'},{id:'tareas_resoluciones_panel'});
 														        							}
 														        				}
 												}]);

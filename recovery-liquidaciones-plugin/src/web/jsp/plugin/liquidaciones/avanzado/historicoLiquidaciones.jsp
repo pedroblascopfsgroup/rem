@@ -216,7 +216,7 @@
        		var w = app.openWindow({
 					flow : 'entregas/editarEntrega'
 					,width:700
-					,title : '<s:message code="entregas.modifica" text="**Modifica Entrega" />' 
+					,title : '<s:message code="entregas.editar" text="**Modifica Entrega" />' 
 					,params : {idCalculo: idCalculo,idEntrega: idEntrega}
 			});
 			w.on(app.event.DONE, function(){
@@ -235,7 +235,30 @@
        <app:test id="btnEliminarEntrega" addComa="true" />
        ,iconCls : 'icon_menos'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       		Ext.Msg.show({
+   				title:'<s:message code="plugin.liquidaciones.entrega.grid.eliminar" text="**Eliminar Entrega" />',
+   				msg: '<s:message code="plugin.liquidaciones.entrega.grid.eliminar.confirmar" text="**¿Desea borrar esta entrega?" />',
+   				buttons: Ext.Msg.YESNO,
+   				fn: function(btn,text){
+   					if (btn == 'yes'){
+	       				var recEntregas =  entregasLiquidacionGrid.getSelectionModel().getSelected();
+	       				var idEntrega = recEntregas.get("idEntrega");
+	       				var recLiquidaciones =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+						var idCalculo = recLiquidaciones.get("idLiquidacion");
+	       				Ext.Ajax.request({
+							url: page.resolveUrl('entregas/eliminarEntrega')
+							,params: {idEntrega: idEntrega}
+							,method: 'POST'
+							,success: function (result, request){
+								entregasLiquidacionStore.webflow({idCalculo: idCalculo});
+							}
+						});
+					}
+				}
+			});
+       		
+       }
    	});
     
     var entregasLiquidacionGrid = app.crearGrid(entregasLiquidacionStore,cmEntregasLiquidacion,{

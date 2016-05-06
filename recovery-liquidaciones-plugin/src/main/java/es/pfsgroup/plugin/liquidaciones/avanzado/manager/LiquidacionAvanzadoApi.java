@@ -37,4 +37,6 @@ public interface LiquidacionAvanzadoApi {
 	@Transactional(readOnly = false)
 	public void creaTiposInteresParaCalculoLiquidacion(List<String> tiposInteres, CalculoLiquidacion calculoLiquidacion);
 
+	void eliminarEntregaCalLiquidacion(Long idEntrega);
+
 }

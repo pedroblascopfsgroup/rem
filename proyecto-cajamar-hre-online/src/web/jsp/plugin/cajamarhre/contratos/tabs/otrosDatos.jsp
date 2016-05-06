@@ -23,7 +23,7 @@
  	var odCharExtra10 = label('odCharExtra10','<s:message code="contrato.consulta.tabOtrosDatos.charExtra10" text="**Estado del Contrato Cajamar"/>');
  	var odFlagExtra4 = label('odFlagExtra4','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra4" text="**Operación Reestructurada"/>');
  	var odFlagExtra5 = label('odFlagExtra5','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra5" text="**Licencia Primera Ocupaci&oacute;n"/>');
- 	var odFlagExtra6 = label('odFlagExtra6','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra6" text="**Certificado fin obra"/>');
+ 	var odFlagExtra7 = label('odFlagExtra7','<s:message code="contrato.consulta.tabOtrosDatos.flagExtra6" text="**Certificado fin obra"/>');
  	var odDateExtra2 = label('odDateExtra2','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra2" text="**Fecha de Entrada Actual en Gestión especial"/>');
  	var odDateExtra3 = label('odDateExtra3','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra3" text="**Fecha Próxima Amortización"/>');
  	var odDateExtra9 = label('odDateExtra9','<s:message code="contrato.consulta.tabOtrosDatos.dateExtra9" text="**Fecha Próxima Revisión"/>');
@@ -60,7 +60,7 @@
  	odDateExtra6.autoHeight = true;
  	odDateExtra7.autoHeight = true;
  	odFlagExtra5.autoHeight = true;
- 	odFlagExtra6.autoHeight = true;
+ 	odFlagExtra7.autoHeight = true;
  	
  	riesgoOperacional.autoHeight = true;
  	tipoVencido.autoHeight = true;
@@ -107,7 +107,7 @@
 		,title:''
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400, style:'padding:10px; margin:10px'}
 		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra4,odDateExtra6, odNumExtra4, odNumExtra6, odNumExtra8, riesgoOperacional,tipoVencido]}
-				, {items:[odCharExtra7, odCharExtra10, odFlagExtra5, odFlagExtra6, odDateExtra2, odDateExtra9, odDateExtra5, odDateExtra7, odNumExtra5, odNumExtra7, tramoPrevio]}]
+				, {items:[odCharExtra7, odCharExtra10, odFlagExtra5, odFlagExtra7, odDateExtra2, odDateExtra9, odDateExtra5, odDateExtra7, odNumExtra5, odNumExtra7, tramoPrevio]}]
 	});
 	  
 	//Panel propiamente dicho...
@@ -155,14 +155,14 @@
   		}else{
   			entidad.setLabel('odFlagExtra5', d.flagextra5);
   		}
-  		if(d.flagextra6 != null && d.flagextra6 != ''){
-  			if(d.flagextra6 != 'N'){
-  				entidad.setLabel('odFlagExtra6', 'SI');
+  		if(d.flagextra7 != null && d.flagextra7 != ''){
+  			if(d.flagextra7 != 'N'){
+  				entidad.setLabel('odFlagExtra7', 'SI');
   			}else{
-  				entidad.setLabel('odFlagExtra6', 'NO Promotores');
+  				entidad.setLabel('odFlagExtra7', 'NO Promotores');
   			}
   		}else{
-  			entidad.setLabel('odFlagExtra6', d.flagextra6);
+  			entidad.setLabel('odFlagExtra7', d.flagextra7);
   		}
 		
 		if(d.numextra5 != null && d.numextra5 != ''){

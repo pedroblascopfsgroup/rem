@@ -8,8 +8,8 @@
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="/home/ops-haya/bloquePCR.log"
-DIR=/etl/HRE/shells
+LOG="$DIR_CONTROL_LOG/bloquePCR.log"
+DIR=$DIR_SHELLS
 #DIR=./
 source $DIR/setBatchEnv.sh
 
@@ -105,9 +105,9 @@ function lanzarParaleloSinEsperar () {
 
 # BLOQUE PCR #
 
-lanzar apr_wait_ofi_zon.sh
-lanzar apr_main_ofi_zon.sh
-lanzarSinFinalizarPorError apr_refresh_zpu_1.0.2.sh
+#lanzar apr_wait_ofi_zon.sh
+#lanzar apr_main_ofi_zon.sh
+#lanzarSinFinalizarPorError apr_refresh_zpu_1.0.2.sh
 #apr_wait_users.sh apr_main_users.sh
 
 lanzar extract_pcr.sh
@@ -117,6 +117,7 @@ lanzarParalelo apr_pcr_contract.sh apr_pcr_person.sh
 lanzarParalelo apr_pcr_mov.sh apr_pcr_relation.sh
 lanzarParalelo rera_precal_arquet.sh apr_precalculo_pcr.sh
 lanzar apr_recalculo_deuda.sh
+lanzarSinFinalizarPorError apr_pcr_precal_per.sh
 
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"
 echo "Comprueba el LOG en $LOG y el Batch               " 

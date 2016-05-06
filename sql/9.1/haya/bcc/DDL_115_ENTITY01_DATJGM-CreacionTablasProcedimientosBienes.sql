@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JUAN GALLEGO MOLERO
---## FECHA_CREACION=20151001
+--## FECHA_CREACION=20160330
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-868
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 GMN Añadimos FECHA_TESTIMONIO_SUBASTA
 --##########################################
 --*/
 
@@ -108,6 +109,8 @@ BEGIN
 	  IMPORTE_ADJUDICACION           NUMBER(16,2),
 	  ADJUDICACION                   NUMBER(1),               
 	  TIPO_SUBASTA                   NUMBER(16,2) ,
+	  FECHA_TESTIMONIO_DECRETO       DATE,	  	  
+	  FECHA_CONTABILIDAD             DATE,	  	  	  
 	  CONSTRAINT "PK_ID_PROC_BIENES" PRIMARY KEY ("ID_PROC_BIENES") 
 	  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 NOCOMPRESS LOGGING
 	  TABLESPACE '||ITABLE_SPACE||'  ENABLE

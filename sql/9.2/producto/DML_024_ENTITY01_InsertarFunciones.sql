@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MANUEL MEJIAS
---## FECHA_CREACION=20160422
+--## FECHA_CREACION=20160506
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=PRODUCTO-1253
@@ -26,7 +26,8 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_FP NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
@@ -92,7 +93,7 @@ BEGIN
 	
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.FUN_FUNCIONES... Empezando a insertar datos en FUN_FUNCIONES');
     FOR I IN V_FUN_FUNCIONES.FIRST .. V_FUN_FUNCIONES.LAST
-      LOOP
+    LOOP
         V_TMP_FUN_FUNCIONES := V_FUN_FUNCIONES(I);
         --Comprobamos el dato a insertar
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUN_FUNCIONES(2))||'''';
@@ -110,34 +111,43 @@ BEGIN
 					  ','''||V_TMP_FUN_FUNCIONES(6)||''', '''||V_TMP_FUN_FUNCIONES(7)||''''||
 					  ','''||V_TMP_FUN_FUNCIONES(8)||''', '''||V_TMP_FUN_FUNCIONES(9)||''''||
 					  ','''||V_TMP_FUN_FUNCIONES(10)||''' FROM DUAL';
-              DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_FUN_FUNCIONES(2)||'''');
+          DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_FUN_FUNCIONES(2)||'''');
           EXECUTE IMMEDIATE V_MSQL;          
+      	END IF;
           
-          FOR I IN V_TIPO_COLUMN.FIRST .. V_TIPO_COLUMN.LAST
-		      LOOP
-		        V_TMP_TIPO_COLUMN := V_TIPO_COLUMN(I);
-				V_NUM_TABLAS := 0;
-			
-		        OPEN TABLES_CURSOR FOR 'SELECT DISTINCT PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF MINUS SELECT DISTINCT PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''SOLO_CONSULTA'')';
+      	
+      	V_SQL := 'SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_FUN_FUNCIONES(2))||'''';
+      	EXECUTE IMMEDIATE V_SQL INTO V_ENTIDAD_ID;
+     	
+      	FOR I IN V_TIPO_COLUMN.FIRST .. V_TIPO_COLUMN.LAST
+		LOOP
+	        V_TMP_TIPO_COLUMN := V_TIPO_COLUMN(I);
+			V_NUM_TABLAS := 0;
+		
+	        OPEN TABLES_CURSOR FOR 'SELECT DISTINCT PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF MINUS SELECT DISTINCT PEF_ID FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''SOLO_CONSULTA'')';
 
-		 		LOOP
-		 			FETCH TABLES_CURSOR INTO PEF_ID;
-		 			EXIT WHEN TABLES_CURSOR%NOTFOUND;
-		 			
-		 			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (FUN_ID,PEF_ID,FP_ID,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('|| V_ENTIDAD_ID ||', '||PEF_ID||', '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, ''PR-1253'',SYSDATE,''0'')';
-					
-		 			DBMS_OUTPUT.PUT_LINE('V_MSQL >>' || V_MSQL);
+	 		LOOP
+	 			FETCH TABLES_CURSOR INTO PEF_ID;
+	 			EXIT WHEN TABLES_CURSOR%NOTFOUND;
+	 			
+	 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '|| V_ENTIDAD_ID ||' AND PEF_ID = '||PEF_ID||' ';
+        		EXECUTE IMMEDIATE V_SQL INTO V_NUM_FP;
+	 			IF V_NUM_FP > 0 THEN				
+          			DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA_M || '.FUN_PEF... Ya existe el FUN_PEF CON FUN_DESCRIPCION '|| TRIM(V_TMP_FUN_FUNCIONES(2)) ||' Y CON PEF_ID '||PEF_ID||'');
+        		ELSE
+	 				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.FUN_PEF (FUN_ID,PEF_ID,FP_ID,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ('|| V_ENTIDAD_ID ||', '||PEF_ID||', '||V_ESQUEMA||'.S_FUN_PEF.NEXTVAL, ''PR-1253'',SYSDATE,''0'')';
+	 				DBMS_OUTPUT.PUT_LINE('V_MSQL >>' || V_MSQL);
 					EXECUTE IMMEDIATE V_MSQL;
 					DBMS_OUTPUT.PUT_LINE('OK INSERTADO');
-					V_NUM_TABLAS := V_NUM_TABLAS + 1;
-					
-				END LOOP;
-				CLOSE TABLES_CURSOR;
-				DBMS_OUTPUT.PUT_LINE('Modificados el tamanyo de los campos para las columnas ' ||V_TMP_TIPO_COLUMN(1)||' de '||V_NUM_TABLAS||' tablas.');
+				END IF;
+				V_NUM_TABLAS := V_NUM_TABLAS + 1;
+				
 			END LOOP;
-          
-        END IF;
-      END LOOP;
+			CLOSE TABLES_CURSOR;
+			DBMS_OUTPUT.PUT_LINE('Modificados el tamanyo de los campos para las columnas ' ||V_TMP_TIPO_COLUMN(1)||' de '||V_NUM_TABLAS||' tablas.');
+		END LOOP;
+  	END LOOP;
+      	
     COMMIT;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.FUN_FUNCIONES... Datos de la función insertados');
     

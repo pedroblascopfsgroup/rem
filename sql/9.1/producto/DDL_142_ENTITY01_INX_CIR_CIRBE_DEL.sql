@@ -37,7 +37,7 @@ BEGIN
     --------------------- 
     
     --** Comprobamos si existe la tabla   
-    V_SQL := 'SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME = ''INX_CIR_CIRBE_DEL''  and owner = '''||v_esquema||'''';
+    V_SQL := 'SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME = ''INX_CIR_CIRBE_DEL''  and owner = upper('''||v_esquema||''')';
     EXECUTE IMMEDIATE v_sql INTO v_num_tablas;
     IF V_NUM_TABLAS = 0 THEN 
     --**Guardamos en una tabla temporal los valores del campo ven_id

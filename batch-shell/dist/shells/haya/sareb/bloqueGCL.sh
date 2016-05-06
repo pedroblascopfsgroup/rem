@@ -6,8 +6,8 @@
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="/home/ops-haya/bloqueGCL.log"
-DIR=/etl/HRE/shells
+LOG="$DIR_CONTROL_LOG/bloqueGCL.log"
+DIR=$DIR_SHELLS
 #DIR=./
 source $DIR/setBatchEnv.sh
 
@@ -100,8 +100,9 @@ function lanzarParaleloSinEsperar () {
 
 # BLOQUE GCL #
 
-lanzar apr_load_group.sh 
-#rera_hist_mov.sh  > Planificado los domingos a las 15:00 hrs
+lanzar apr_wait_group.sh 
+lanzar apr_main_grupos.sh
+lanzar apr_main_grupos_prod.sh
 lanzarSinFinalizarPorError rera_precalculo.sh
 
 echo "HA FINALIZADO LA EJECUCION DE LOS PROCESOS: `date`"

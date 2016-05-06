@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=PEDROBLASCO
---## FECHA_CREACION=20150425
+--## FECHA_CREACION=20160505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=NOITEM
@@ -28,7 +28,7 @@ DECLARE
     
 BEGIN
 	
-IF V_ESQUEMA = '' OR V_ESQUEMA_2 = '' THEN
+IF V_ESQUEMA_2 = '' OR NVL(INSTR(V_ESQUEMA_2, 'ESQUEMA02'),0)>0 THEN
    DBMS_OUTPUT.put_line('No parece haber sido configurada la multientidad: ' || V_ESQUEMA || ', ' || V_ESQUEMA_2);
 ELSE 
    V_MSQL := 'GRANT SELECT ON ' || V_ESQUEMA || '.PEF_PERFILES TO ' || V_ESQUEMA_2;

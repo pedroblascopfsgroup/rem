@@ -116,6 +116,12 @@ public class EXTContrato extends Contrato  {
   			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
   			+ APPConstants.FLAG_EXTRA6 + "'))")
   	private String flagextra6;
+  	
+  	@Formula("(select iac.iac_value from ext_iac_info_add_contrato iac where iac.cnt_id = cnt_id "
+  			+ "  and iac.dd_ifc_id = ("
+  			+ "select ifc.dd_ifc_id from ext_dd_ifc_info_contrato ifc where ifc.dd_ifc_codigo = '"
+  			+ APPConstants.FLAG_EXTRA7 + "'))")
+  	private String flagextra7;
 
 	/**
 	 * @return the contratoPadreNivel2
@@ -317,6 +323,14 @@ public class EXTContrato extends Contrato  {
 
 	public void setFlagextra6(String flagextra6) {
 		this.flagextra6 = flagextra6;
+	}
+	
+	public String getFlagextra7() {
+		return flagextra7;
+	}
+
+	public void setFlagextra7(String flagextra7) {
+		this.flagextra7 = flagextra7;
 	}
 
 	public String getDateextra9() {

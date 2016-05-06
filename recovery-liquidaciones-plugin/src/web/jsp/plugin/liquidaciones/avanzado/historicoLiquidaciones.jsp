@@ -35,8 +35,8 @@
       ,{header : '<s:message code="liquidacion.contrato" text="**Contrato" />', dataIndex : 'contrato',width: 75}
       ,{header : '<s:message code="liquidacion.fecha" text="**Fecha" />', dataIndex : 'fecha',width: 35}
       ,{header : '<s:message code="liquidacion.importe" text="**Importe" />', dataIndex : 'importe',width: 35}
-<%--       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55}
- --%>      ,{dataIndex : 'idLiquidacion', hidden:true}
+<%--       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55} --%>
+      ,{dataIndex : 'idLiquidacion', hidden:true}
     ]);
     
     var btnNuevaLiquidacion = new Ext.Button({
@@ -93,7 +93,10 @@
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
        		if (historicoLiquidacionesGrid.getSelectionModel().getSelected()!=undefined) {
-       			app.downloadFile({flow: 'liquidaciones/openReport', params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}});
+       			app.downloadFile({flow: 'liquidaciones/openReport' 
+       								,params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}
+       								,succesFunction: function() { historicoLiquidacionesGrid.getStore().reload(); }
+       							 });
        		}
        }
    	});

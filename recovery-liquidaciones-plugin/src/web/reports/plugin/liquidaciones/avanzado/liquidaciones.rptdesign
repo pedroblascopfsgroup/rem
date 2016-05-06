@@ -1945,6 +1945,12 @@ calculado</text-property>
                             <property name="pageBreakInside">auto</property>
                             <property name="showIfBlank">false</property>
                             <property name="canShrink">false</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">row["intDemoraCierre"]==0</expression>
+                                </structure>
+                            </list-property>
                             <property name="resultSetColumn">intDemoraCierre</property>
                         </data>
                     </cell>

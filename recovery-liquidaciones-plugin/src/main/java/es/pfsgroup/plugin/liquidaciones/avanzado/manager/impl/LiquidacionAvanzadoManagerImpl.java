@@ -723,23 +723,25 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		for(String tipo : tiposInteres){
 			
-			String fecha = tipo.split("#")[0];
-			String tipoInteres = tipo.split("#")[1]; 
-			Auditoria auditoria = Auditoria.getNewInstance();
-			
-			ActualizacionTipoCalculoLiq actTipCalc = new ActualizacionTipoCalculoLiq();
-			
-			actTipCalc.setCalculoLiquidacion(calculoLiquidacion);
-			actTipCalc.setTipoInteres(Float.parseFloat(tipoInteres));
-			actTipCalc.setAuditoria(auditoria);
-			
-			try {
-				actTipCalc.setFecha(frmt.parse(fecha));
-			} catch (ParseException e) {
-				e.printStackTrace();
+			if(!tipo.equals("") && tipo.contains("#")){
+				String fecha = tipo.split("#")[0];
+				String tipoInteres = tipo.split("#")[1]; 
+				Auditoria auditoria = Auditoria.getNewInstance();
+				
+				ActualizacionTipoCalculoLiq actTipCalc = new ActualizacionTipoCalculoLiq();
+				
+				actTipCalc.setCalculoLiquidacion(calculoLiquidacion);
+				actTipCalc.setTipoInteres(Float.parseFloat(tipoInteres));
+				actTipCalc.setAuditoria(auditoria);
+				
+				try {
+					actTipCalc.setFecha(frmt.parse(fecha));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				genericDao.save(ActualizacionTipoCalculoLiq.class, actTipCalc);
 			}
-			
-			genericDao.save(ActualizacionTipoCalculoLiq.class, actTipCalc);
 		}
 		
 	}

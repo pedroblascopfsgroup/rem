@@ -35,8 +35,9 @@ public class EntregasController{
 	@Autowired
 	LiquidacionAvanzadoManagerImpl liqAvanzadasManager;
 	
-	@Autowired 
-	LiquidacionAvanzadoApi liquidacionesManager;
+	@Autowired
+	LiquidacionAvanzadoApi liqAvanzadasApi;
+
 	
 	@Autowired
 	LIQCobroPagoDao cobroPagoDao;
@@ -54,7 +55,7 @@ public class EntregasController{
 	@RequestMapping
 	public String saveEntrega(ModelMap model,LIQDtoCobroPagoEntregas dto) {
 		
-		liqAvanzadasManager.createOrUpdateEntCalLiquidacion(dto);
+		liqAvanzadasApi.createOrUpdateEntCalLiquidacion(dto);
 		//liqCobroPagoEntregasManager.createOrUpdate(dto);
 		return DEFAULT;
 		

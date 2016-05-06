@@ -15,10 +15,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_ECA_ESTADO_CALCULO", schema = "${entity.schema}")
 public class DDEstadoCalculo implements Auditable, Dictionary{
     
-	/**
-	 *  
-	 */
+
 	private static final long serialVersionUID = 6488409119873054777L;
+	
+	public static final String CODIGO_ESTADO_PENDIENTE = "PTE";
+	public static final String CODIGO_ESTADO_CALCULADA = "CAL";
 
 	@Id
     @Column(name = "DD_ECA_ID")

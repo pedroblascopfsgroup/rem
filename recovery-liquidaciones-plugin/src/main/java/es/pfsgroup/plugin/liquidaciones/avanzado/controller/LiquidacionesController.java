@@ -36,6 +36,11 @@ public class LiquidacionesController {
 	@Autowired
 	private AsuntoApi asuntoApi;
 	
+	@Autowired
+	private LiquidacionAvanzadoApi liquidacionApi;
+	
+	
+	
 	
 	
 	@SuppressWarnings("unchecked")
@@ -97,6 +102,7 @@ public class LiquidacionesController {
     public String abreCrearLiquidacion(ModelMap model,Long idAsunto) {
 		
 		model.put("actuaciones", asuntoApi.obtenerActuacionesAsunto(idAsunto));
+		model.put("idAsunto", idAsunto);
 		
 		return JSP_ALTA_NUEVA_LIQUIDACION;
 	}
@@ -108,6 +114,13 @@ public class LiquidacionesController {
 	 */
 	@RequestMapping
 	public String guardaCalculoLiquidacion(DtoCalculoLiquidacion dtoCalcLiq){
+		
+		CalculoLiquidacion calaLiq = liquidacionApi.convertDtoCalculoLiquidacionTOCalculoLiquidacion(dtoCalcLiq);
+		calaLiq = liquidacionApi.saveCalculoLiquidacionAvanzado(calaLiq);
+		if(!Checks.esNulo(dtoCalcLiq.getTiposIntereses()) && dtoCalcLiq.getTiposIntereses().size()>0){
+			liquidacionApi.creaTiposInteresParaCalculoLiquidacion(dtoCalcLiq.getTiposIntereses(), calaLiq);
+		}
+		
 		return DEFAULT;
 	}
 	

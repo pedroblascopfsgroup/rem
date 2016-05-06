@@ -28,10 +28,13 @@ public interface LiquidacionAvanzadoApi {
 	public void createOrUpdateEntCalLiquidacion(LIQDtoCobroPagoEntregas dto);
 	
 	@Transactional(readOnly = false)
-	public void saveCalculoLiquidacionAvanzado(CalculoLiquidacion cl);
+	public CalculoLiquidacion saveCalculoLiquidacionAvanzado(CalculoLiquidacion cl);
 
 	List<CalculoLiquidacion> obtenerCalculosLiquidacionesAsunto(Long idAsunto);
 
 	List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo);
+	
+	@Transactional(readOnly = false)
+	public void creaTiposInteresParaCalculoLiquidacion(List<String> tiposInteres, CalculoLiquidacion calculoLiquidacion);
 
 }

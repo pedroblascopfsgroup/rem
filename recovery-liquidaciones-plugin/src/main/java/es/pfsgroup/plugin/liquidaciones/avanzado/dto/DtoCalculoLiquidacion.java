@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.liquidaciones.avanzado.dto;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
 
@@ -34,7 +35,8 @@ public class DtoCalculoLiquidacion extends WebDto{
 	private String fechaLiquidacion;
 	private Float tipoMoraCierre;
 	private BigDecimal totalCaculo;
-	private Long estadoCalculo;
+	private String estadoCalculo; 
+	private List<String> tiposIntereses;
 
 
 	public Long getId() {
@@ -205,12 +207,20 @@ public class DtoCalculoLiquidacion extends WebDto{
 		this.totalCaculo = totalCaculo;
 	}
 	
-	public Long getEstadoCalculo() {
+	public String getEstadoCalculo() {
 		return estadoCalculo;
 	}
 
-	public void setEstadoCalculo(Long estadoCalculo) {
+	public void setEstadoCalculo(String estadoCalculo) {
 		this.estadoCalculo = estadoCalculo;
+	}
+	
+	public List<String> getTiposIntereses() {
+		return tiposIntereses;
+	}
+
+	public void setTiposIntereses(List<String> tiposIntereses) {
+		this.tiposIntereses = tiposIntereses;
 	}
 	
 }

@@ -10,11 +10,10 @@
 
 <fwk:page>
 	var labelStyle='font-weight:bolder;width:100';
-	var advertencia = new Ext.form.Label({
-		text: '<s:message code="plugin.liquidaciones.introducirdatos.message.advertencia" text="**Advertencia" />'
-		,style:labelStyle + ';font-size:0.8em; margin:20px'
-		,autoWidth: true
-	});
+	
+	<pfs:hidden name="idAsunto" value="${idAsunto}" />
+	<%-- Como no se quiere utilizar el estado calculo, de momento, le pasamos siempre como pendiente --%>
+	<pfs:hidden name="estadoCalculo" value='PTE' />
 	
 	var actuacionesAsunto = {"actuaciones" :<json:array name="actuaciones" items="${actuaciones}" var="a">
 		<json:object>
@@ -94,6 +93,7 @@
 	});
 	
 	<pfs:defineParameters name="parametros" paramId=""
+		asunto="idAsunto"
 		actuacion="actuaciones"
 		contrato="contratos"
 		nombrePersona="nombrePersona"
@@ -115,6 +115,8 @@
 		fechaLiquidacion="fechaDeLiquidacion"
 		tipoMoraCierre="tipoDemoraCierre"
 		nombre="nombre"
+		
+		estadoCalculo="estadoCalculo"
 	/>
 	
 	<%-- tiposInteres="tiposInteresStore" --%>
@@ -126,6 +128,9 @@
 			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
 		} else {
 			if (validarForm()) {
+
+				fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
+					
 				var p=parametros();
 				
 				var storeList = tiposInteresStore.data.items;
@@ -168,7 +173,6 @@
 	<pfs:hidden name="fechaVencimiento" value="" />
 	<pfsforms:datefield name="fechaCierre" labelKey="plugin.liquidaciones.introducirdatos.control.fechaCierre" label="**Fecha Cierre" obligatory="true"/>
 	fechaCierre.on('render', function() {this.validate();});
-	
 
 	<pfsforms:fieldset name="fieldDatosCierre" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.datoscierre" border="true" width="280" height="260"
 		items="capital,interesesOrdinarios,interesesDemora,comisiones,gastos,impuestos,tipoInteres,fechaCierre" />
@@ -347,7 +351,7 @@
 				,border:false
 				,bodyStyle:'padding:5px;cellspacing:5px;'
 				,defaults : {xtype : 'fieldset',autoWidth : true, autoHeight : true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:5px'}
-				,items:[{items: [advertencia,{html: '&nbsp;',border:false},actuaciones,contratos,nombrePersona,dni,fieldImportes,gridTiposInteres]}
+				,items:[{items: [actuaciones,contratos,nombrePersona,dni,fieldImportes,gridTiposInteres]}
 				]
 			}
 		]

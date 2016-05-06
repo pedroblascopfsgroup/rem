@@ -29,6 +29,10 @@
             , recordHistoricoLiquidacion
         )
     }); 
+    
+    historicoLiquidacionesStore.on('load', function () {
+		habilitarDeshabilitarBotonesGrid();
+	});
 
 	var cmHistoricoLiquidaciones = new Ext.grid.ColumnModel([
        {header : '<s:message code="liquidacion.nombre" text="**Nombre" />', dataIndex : 'nombre',width: 45}
@@ -70,13 +74,13 @@
        ,handler:function(){}
    	});
    	
-   	var btnCopiarLiquidacion = new Ext.Button({
+   	<%--var btnCopiarLiquidacion = new Ext.Button({
        text:  '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.btn.copiar" text="**Copiar" />'
        <app:test id="btnCopiarLiquidacion" addComa="true" />
        ,iconCls : 'icon_edit'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){}
-   	});
+   	}); --%>
    	
     var btnEliminarLiquidacion = new Ext.Button({
        text:  '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.btn.eliminar" text="**Eliminar" />'
@@ -98,13 +102,13 @@
        }
    	});
    	
-   	var btnModificarLiquidacion = new Ext.Button({
+   	<%-- var btnModificarLiquidacion = new Ext.Button({
        text:  '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.btn.modificar" text="**Modificar" />'
        <app:test id="btnModificarLiquidacion" addComa="true" />
        ,iconCls : 'icon_edit'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){}
-   	});
+   	});--%>
 
 	var historicoLiquidacionesGrid = app.crearGrid(historicoLiquidacionesStore,cmHistoricoLiquidaciones,{
          title : '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.title" text="**Histórico de Liquidaciones" />'
@@ -115,10 +119,10 @@
          ,bbar : [
         	 btnNuevaLiquidacion
         	,btnEditarLiquidacion
-        	,btnCopiarLiquidacion
+        	<%-- ,btnCopiarLiquidacion--%>
         	,btnEliminarLiquidacion
         	,btnCalcularLiquidacion
-        	,btnModificarLiquidacion
+        	<%-- ,btnModificarLiquidacion--%>
 	      ]
 
 	}); 
@@ -128,6 +132,7 @@
 		var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
 		var idCalculo = rec.get("idLiquidacion");
 		entregasLiquidacionStore.webflow({idCalculo: idCalculo});
+		habilitarDeshabilitarBotonesGrid();
 	
 	});
 	
@@ -155,6 +160,10 @@
             , recordEntregasLiquidacion
         )
     }); 
+    
+   	entregasLiquidacionStore.on('load', function () {
+		habilitarDeshabilitarBotonesGrid();
+	});
 
 	var cmEntregasLiquidacion = new Ext.grid.ColumnModel([
        {header : '<s:message code="plugin.liquidaciones.entrega.grid.fechaEntrega" text="**Fecha entrega" />', dataIndex : 'fechaEntrega',width: 55}
@@ -238,19 +247,45 @@
 	}); 
 	
 	entregasLiquidacionGrid.on('rowclick', function(grid, rowIndex, e) {
-	
-		
-	
-	
+		habilitarDeshabilitarBotonesGrid();
 	});
 	
 <%-- Fin grid entregas --%>
 
 <%-- Funcion que habilita y deshabilita los botones de los dos grids --%>
 	var habilitarDeshabilitarBotonesGrid = function(){
-
+		
+		rowsSelectedHistorico = historicoLiquidacionesGrid.getSelectionModel().getSelections();
+		rowsSelectedEntregas = entregasLiquidacionGrid.getSelectionModel().getSelections();
+		
+		if(rowsSelectedHistorico.length > 0){
+			btnEditarLiquidacion.setDisabled(false);
+			btnEliminarLiquidacion.setDisabled(false);
+			btnCalcularLiquidacion.setDisabled(false);
+			btnNuevaEntrega.setDisabled(false);
+		}else{
+			btnEditarLiquidacion.setDisabled(true);
+			btnEliminarLiquidacion.setDisabled(true);
+			btnCalcularLiquidacion.setDisabled(true);
+			btnNuevaEntrega.setDisabled(true);
+			btnModificarEntrega.setDisabled(true);
+			btnEliminarEntrega.setDisabled(true);
+		}
+		
+		if(rowsSelectedEntregas > 0 && rowsSelectedHistorico.length > 0){
+			btnModificarEntrega.setDisabled(true);
+			btnEliminarEntrega.setDisabled(true);
+		}else{
+			btnModificarEntrega.setDisabled(true);
+			btnEliminarEntrega.setDisabled(true);
+		}
+		
 	}
 
+	
+	Ext.onReady(function () {
+		habilitarDeshabilitarBotonesGrid();
+	});
 	
 	var panel=new Ext.Panel({
 		title : '<s:message code="plugin.liquidaciones.historicoLiquidaciones.panel.title" text="**Histórico de Liquidaciones"/>'

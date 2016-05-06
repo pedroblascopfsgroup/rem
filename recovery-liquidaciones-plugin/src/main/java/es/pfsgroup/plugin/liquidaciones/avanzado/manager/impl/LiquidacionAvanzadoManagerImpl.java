@@ -751,6 +751,54 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		}
 		
 	}
+
+	@Override
+	public CalculoLiquidacion getCalculoLiquidacion(Long idCalcLiq) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS,"id", idCalcLiq);
+		return genericDao.get(CalculoLiquidacion.class, filter);
+	}
+
+	@Override
+	public DtoCalculoLiquidacion convertCalculoLiquidacionTODtoCalculoLiquidacion(CalculoLiquidacion calcLiq) {
+		
+		SimpleDateFormat frmt = new SimpleDateFormat("dd/MM/yyyy");
+		
+		DtoCalculoLiquidacion dto = new DtoCalculoLiquidacion();
+		
+		dto.setId(calcLiq.getId());
+		dto.setNombre(calcLiq.getNombre());
+		dto.setNombrePersona(calcLiq.getNombrePersona());
+		dto.setDocumentoId(calcLiq.getDocumentoId());
+		dto.setCapital(calcLiq.getCapital());
+		dto.setInteresesOrdinarios(calcLiq.getInteresesOrdinarios());
+		dto.setInteresesDemora(calcLiq.getInteresesDemora());
+		dto.setComisiones(calcLiq.getComisiones());
+		dto.setImpuestos(calcLiq.getImpuestos());
+		dto.setGastos(calcLiq.getGastos());
+		dto.setCostasLetrado(calcLiq.getCostasLetrado());
+		dto.setCostasProcurador(calcLiq.getCostasProcurador());
+		dto.setOtrosGastos(calcLiq.getOtrosGastos());
+		dto.setBaseCalculo(calcLiq.getBaseCalculo());
+		dto.setTipoMoraCierre(calcLiq.getTipoMoraCierre());
+		dto.setTotalCaculo(calcLiq.getTotalCaculo());
+		dto.setFechaCierre(frmt.format(calcLiq.getFechaCierre()));
+		dto.setFechaLiquidacion(frmt.format(calcLiq.getFechaLiquidacion()));
+		if(!Checks.esNulo(calcLiq.getAsunto())) dto.setAsunto(calcLiq.getAsunto().getId());
+		if(!Checks.esNulo(calcLiq.getActuacion())) dto.setActuacion(calcLiq.getActuacion().getId());
+		if(!Checks.esNulo(calcLiq.getContrato())) dto.setContrato(calcLiq.getContrato().getId());
+		if(!Checks.esNulo(calcLiq.getEstadoCalculo())) dto.setEstadoCalculo(calcLiq.getEstadoCalculo().getCodigo());
+		
+		List<String> actualizaciones = new ArrayList<String>();
+		for(ActualizacionTipoCalculoLiq acTipCalLiq : calcLiq.getActualizacionesTipo()){
+			actualizaciones.add(acTipCalLiq.getFecha().toString()+"#"+acTipCalLiq.getTipoInteres().toString());
+		}
+		
+		if(!Checks.estaVacio(actualizaciones)){
+			dto.setTiposIntereses(actualizaciones);
+		}
+		
+		return dto;
+	}
 		
 	
 	

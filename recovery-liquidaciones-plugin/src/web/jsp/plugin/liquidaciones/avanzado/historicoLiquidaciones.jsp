@@ -71,7 +71,28 @@
        <app:test id="btnEditarLiquidacion" addComa="true" />
        ,iconCls : 'icon_edit'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       
+       			var recLiquidaciones =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+				var idCalcLiq = recLiquidaciones.get("idLiquidacion");
+       
+              	var w = app.openWindow({
+		       	   flow : 'liquidaciones/abreEditarLiquidacion'
+		          ,closable:true
+		          ,width : 1000
+		          ,title : '<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Liquidaciones" />'
+		          ,params : {
+		          				idCalculoLiquidacion:idCalcLiq
+		          			}
+		       	});
+		       	w.on(app.event.DONE, function(){
+					w.close();
+		   		 	historicoLiquidacionesStore.webflow({idAsunto:panel.getIdAsunto()});
+		       	});
+		       	w.on(app.event.CANCEL, function(){
+		        	w.close();
+		       	});
+       }
    	});
    	
    	<%--var btnCopiarLiquidacion = new Ext.Button({

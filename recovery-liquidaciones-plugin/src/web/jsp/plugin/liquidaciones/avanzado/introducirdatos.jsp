@@ -12,6 +12,7 @@
 	var labelStyle='font-weight:bolder;width:100';
 	
 	<pfs:hidden name="idAsunto" value="${idAsunto}" />
+	<pfs:hidden name="isEdit" value="${isEdit}" />
 	<%-- Como no se quiere utilizar el estado calculo, de momento, le pasamos siempre como pendiente --%>
 	<pfs:hidden name="estadoCalculo" value='PTE' />
 	
@@ -49,9 +50,15 @@
 
 	<pfsforms:textfield name="nombrePersona" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
 	<pfsforms:textfield name="dni" labelKey="plugin.liquidaciones.introducirdatos.control.dni" label="**D.N.I." value="" obligatory="true"/>
+	
+	contratos_Store.on('load',function (){
+		if(isEdit.getValue()){
+			contratos.setValue("${dtoCalculoLiquidacion.contrato}");
+		}
+	});
 		 
 	actuaciones.on('select',function (){
-		contratos.reload(true)
+		contratos.reload(true);
 		<%--
 		Ext.Ajax.request({
 			url: page.resolveUrl('plugin.liquidaciones.getprocedimiento')
@@ -361,6 +368,28 @@
 	});	
 	page.add(panelEdicion);
 	
+	
+	var rellenarCampos = function(){
+		actuaciones.setValue("${dtoCalculoLiquidacion.actuacion}");
+		contratos.reload(true);
+		nombrePersona.setValue("${dtoCalculoLiquidacion.nombrePersona}");
+		dni.setValue("${dtoCalculoLiquidacion.documentoId}");
+		capital.setValue("${dtoCalculoLiquidacion.interesesOrdinarios}");
+		interesesOrdinarios.setValue("${dtoCalculoLiquidacion.interesesOrdinarios}");
+		interesesDemora.setValue("${dtoCalculoLiquidacion.interesesDemora}");
+		comisiones.setValue("${dtoCalculoLiquidacion.comisiones}");
+		gastos.setValue("${dtoCalculoLiquidacion.gastos}");
+		impuestos.setValue("${dtoCalculoLiquidacion.impuestos}");
+		fechaCierre.setValue("${dtoCalculoLiquidacion.fechaCierre}");
+		costasLetrado.setValue("${dtoCalculoLiquidacion.costasLetrado}");
+		costasProcurador.setValue("${dtoCalculoLiquidacion.costasProcurador}");
+		otrosGastos.setValue("${dtoCalculoLiquidacion.otrosGastos}");
+		baseCalculo.setValue("${dtoCalculoLiquidacion.baseCalculo}");
+		fechaDeLiquidacion.setValue("${dtoCalculoLiquidacion.fechaLiquidacion}");
+		tipoDemoraCierre.setValue("${dtoCalculoLiquidacion.interesesDemora}");
+		nombre.setValue("${dtoCalculoLiquidacion.nombre}");
+	}
+	
 	var validarForm = function() {
 		if (!actuaciones.isValid())
 			return false;
@@ -418,5 +447,10 @@
 						
 		return true;
 	}		
+	
+	if(isEdit.getValue()){
+		rellenarCampos();
+	}
+
 
 </fwk:page>

@@ -298,7 +298,7 @@ public class CalculoLiquidacion implements Auditable, Serializable{
 		this.estadoCalculo = estadoCalculo;
 	}
 
-	public List<ActualizacionTipoCalculoLiq> getActualizacionesTipo() {
+	public List<ActualizacionTipoCalculoLiq> getActualizacionesTipo() { 
 		return actualizacionesTipo;
 	}
 

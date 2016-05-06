@@ -150,5 +150,23 @@ public class LiquidacionesController {
 		return JSP_LISTADO_ENTREGAS_LIQUIDACIONES;
 	}
 	
+    /**
+     * Abre la ventana para editar una nueva liquidacion.
+     * @param idAsunto
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String abreEditarLiquidacion(ModelMap model,Long idCalculoLiquidacion) {
+		
+		CalculoLiquidacion calcLiq = liquidacionesManager.getCalculoLiquidacion(idCalculoLiquidacion);
+		DtoCalculoLiquidacion dto = liquidacionesManager.convertCalculoLiquidacionTODtoCalculoLiquidacion(calcLiq);
+		model.put("actuaciones", asuntoApi.obtenerActuacionesAsunto(dto.getAsunto()));
+		model.put("idAsunto", dto.getAsunto());
+		model.put("dtoCalculoLiquidacion", dto);
+		model.put("isEdit", true);
+		
+		return JSP_ALTA_NUEVA_LIQUIDACION;
+	}
+	
 
 }

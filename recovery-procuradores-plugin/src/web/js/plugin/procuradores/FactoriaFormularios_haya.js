@@ -3388,13 +3388,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
 	                      ]);
 	
-	//id: 250-449 : TRAMITE OCUPANTES: Registrar resolución tiene derecho
+	//id: 449 : TRAMITE OCUPANTES: Registrar resolución tiene derecho
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","value":"01",filtrar:true,"fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]); 
 	
-	//id: 251-450 : TRAMITE OCUPANTES: Registrar resolución no tiene derecho
+	//id: 450 : TRAMITE OCUPANTES: Registrar resolución no tiene derecho
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","value":"02",filtrar:true,"fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}

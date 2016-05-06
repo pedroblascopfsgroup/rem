@@ -583,7 +583,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	public List<EntregaCalculoLiq> getEntregasCalculo(Long idCalculo) {
 
 		Order orden = new Order(OrderType.ASC, "id");
-		List<EntregaCalculoLiq> listaEntregas = genericDao.getListOrdered(EntregaCalculoLiq.class, orden, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion.id", idCalculo));
+		List<EntregaCalculoLiq> listaEntregas = genericDao.getListOrdered(EntregaCalculoLiq.class, orden, genericDao.createFilter(FilterType.EQUALS, "calculoLiquidacion.id", idCalculo), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 
 		return listaEntregas;
 	}
@@ -799,7 +799,11 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		return dto;
 	}
-		
 	
-	
+	@Transactional(readOnly = false)
+	@Override
+	public void eliminarEntregaCalLiquidacion(Long idEntrega){
+		genericDao.deleteById(EntregaCalculoLiq.class, idEntrega);
+	}
+
 }

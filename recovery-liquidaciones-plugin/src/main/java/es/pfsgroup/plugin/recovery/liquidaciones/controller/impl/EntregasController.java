@@ -33,8 +33,6 @@ public class EntregasController{
 	@Autowired
 	private LIQCobroPagoEntregasManager liqCobroPagoEntregasManager;
 	
-	@Autowired
-	LiquidacionAvanzadoManagerImpl liqAvanzadasManager;
 	
 	@Autowired
 	LiquidacionAvanzadoApi liqAvanzadasApi;
@@ -66,7 +64,10 @@ public class EntregasController{
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String deleteEntregas(Long id) {
+	public String eliminarEntrega(Long idEntrega) {
+		
+		liqAvanzadasApi.eliminarEntregaCalLiquidacion(idEntrega);
+		
 		return DEFAULT;
 		// TODO Auto-generated method stub
 		
@@ -76,7 +77,7 @@ public class EntregasController{
 	@RequestMapping
 	public String getListbyCalculoId(Long id, ModelMap model) {
 		// TODO Auto-generated method stub
-		List<EntregaCalculoLiq> lista =  liqAvanzadasManager.getEntregasCalculo(id);
+		List<EntregaCalculoLiq> lista =  liqAvanzadasApi.getEntregasCalculo(id);
 		model.put("listado", lista);
         
 		return LISTADO_COBRO_PAGO_JSON; 
@@ -91,7 +92,7 @@ public class EntregasController{
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
 		
-		CalculoLiquidacion calculo= liqAvanzadasManager.getCalculoById(idCalculo);
+		CalculoLiquidacion calculo= liqAvanzadasApi.getCalculoById(idCalculo);
 		
 		
 		model.put("tipoEntrega", tipoEntrega);
@@ -114,7 +115,7 @@ public class EntregasController{
 		
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
-		List<EntregaCalculoLiq> listaEntregas=  liqAvanzadasManager.getEntregasCalculo(idCalculo);
+		List<EntregaCalculoLiq> listaEntregas=  liqAvanzadasApi.getEntregasCalculo(idCalculo);
 		
 		EntregaCalculoLiq entrega= null;
 		
@@ -123,7 +124,7 @@ public class EntregasController{
 				entrega=e;
 			}
 		}
-		CalculoLiquidacion calculo= liqAvanzadasManager.getCalculoById(idCalculo);
+		CalculoLiquidacion calculo= liqAvanzadasApi.getCalculoById(idCalculo);
 		
 		model.put("idEntrega", idEntrega);
 		model.put("idCalculo", idCalculo);

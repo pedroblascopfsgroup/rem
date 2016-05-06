@@ -158,7 +158,7 @@
 			return true;
 		}
 		else{
-			Ext.MessageBox.alert('Error', 'Falta un parámetro obligatorio');
+			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.parametrosObligatorios" text="**Falta un parámetro obligatorio" />');
 			return false;
 		}
 	};
@@ -169,12 +169,13 @@
 			return true;
 		}
 		else{
-			Ext.MessageBox.alert('Error', 'Al menos un campo debe estar informado con una cantidad positiva');
+			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.SumaCamposNumericos" text="**Al menos un campo debe estar informado con una cantidad positiva" />');
 			return false;
 		}
 	};
 	
 	var validarFechas= function(){
+	debugger;
 		fc= '${fechaCierre}'.split(' ');
 		fl= '${fechaLiquidacion}'.split(' ');
 	   	dtfechaCierre = Date.parseDate(fc[0], "Y-m-d");
@@ -185,7 +186,10 @@
 	   		return true;
 	   	}
 	   	else{
-			Ext.MessageBox.alert('Error', 'La fecha Valor debe estar entre la Fecha de Cierre y Fecha Liquidación');
+			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**La fecha Valor debe estar entre la Fecha de Cierre" /> ' + 
+											dtfechaCierre.getDay() +'/'+dtfechaCierre.getMonth() + '/' + dtfechaCierre.getUTCFullYear() + 
+											' <s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="**y Fecha Liquidación" /> ' + 
+											dtfechaLiquidacion.getDay() +'/'+dtfechaLiquidacion.getMonth() + '/' + dtfechaLiquidacion.getUTCFullYear());
 			return false;
 		}
 		

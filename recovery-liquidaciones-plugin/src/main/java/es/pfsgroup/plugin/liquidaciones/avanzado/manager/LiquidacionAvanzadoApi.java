@@ -41,4 +41,6 @@ public interface LiquidacionAvanzadoApi {
 	
 	public DtoCalculoLiquidacion convertCalculoLiquidacionTODtoCalculoLiquidacion(CalculoLiquidacion calcLiq);
 
+	void eliminarEntregaCalLiquidacion(Long idEntrega);
+
 }

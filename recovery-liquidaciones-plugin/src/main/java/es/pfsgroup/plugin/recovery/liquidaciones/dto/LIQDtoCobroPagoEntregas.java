@@ -10,6 +10,7 @@ public class LIQDtoCobroPagoEntregas {
 	
 	private Long id;
 	private Long idAsunto;
+	private Long idCalculo;
    	private String subtipo;
 	private String estado;
 	private String tipoEntrega;
@@ -184,6 +185,13 @@ public class LIQDtoCobroPagoEntregas {
 	public void setTotalEntrega(Float totalEntrega) {
 		this.totalEntrega = totalEntrega;
 	}
+	public Long getIdCalculo() {
+		return idCalculo;
+	}
+	public void setIdCalculo(Long idCalculo) {
+		this.idCalculo = idCalculo;
+	}
+	
 	
 	
 	

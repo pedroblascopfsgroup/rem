@@ -123,15 +123,34 @@ public class EntregasController{
 				entrega=e;
 			}
 		}
+		CalculoLiquidacion calculo= liqAvanzadasManager.getCalculoById(idCalculo);
 		
-		model.put("fechaCobro", entrega.getFechaEntrega());
-		model.put("fechaValor", entrega.getFechaValor());
-		model.put("codigoTipoEntrega", entrega.getTipoEntrega().getCodigo());
-		model.put("codigoConceptoEntrega", entrega.getConceptoEntrega().getCodigo());
-		model.put("gastosProcurados", entrega.getGastosProcurador());
-		model.put("gastosLetrado", entrega.getGastosLetrado());
-		model.put("otrosGastos", entrega.getOtrosGastos());
-		model.put("totalEntrega", entrega.getTotalEntrega());
+		model.put("idEntrega", idEntrega);
+		model.put("idCalculo", idCalculo);
+		model.put("tipoEntrega", tipoEntrega);
+		model.put("conceptoEntrega", conceptoEntrega);
+		if(entrega!=null){
+			model.put("fechaCobro", entrega.getFechaEntrega());
+			model.put("fechaValor", entrega.getFechaValor());
+			if(entrega.getTipoEntrega()!=null){
+				model.put("codigoTipoEntrega", entrega.getTipoEntrega().getCodigo());
+			}
+			if(entrega.getConceptoEntrega()!=null){
+				model.put("codigoConceptoEntrega", entrega.getConceptoEntrega().getCodigo());
+			}
+			model.put("gastosProcurados", entrega.getGastosProcurador());
+			model.put("gastosLetrado", entrega.getGastosLetrado());
+			model.put("otrosGastos", entrega.getOtrosGastos());
+			model.put("totalEntrega", entrega.getTotalEntrega());
+		}
+		
+		if(calculo!=null){
+			model.put("fechaCierre", calculo.getFechaCierre());
+			model.put("fechaLiquidacion", calculo.getFechaLiquidacion());
+		}
+		
+		
+		
 				
 		
 		return NUEVA_ENTREGA; 

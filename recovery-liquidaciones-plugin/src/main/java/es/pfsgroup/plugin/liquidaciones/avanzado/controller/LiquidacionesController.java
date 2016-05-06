@@ -71,6 +71,11 @@ public class LiquidacionesController {
 			List<LIQDtoTramoLiquidacion> cuerpo = liquidacionesManager.obtenerLiquidaciones(request,pendientes);
 			LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo, pendientes);
 			
+			//Actualizamos total calculo y estado
+			request.setTotalCaculo(resumen.getTotalPagar());
+			//request.setEstadoCalculo(estadoCalculo);
+			liquidacionesManager.saveCalculoLiquidacionAvanzado(request);
+			
 			String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
 			String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 			

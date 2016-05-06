@@ -39,8 +39,8 @@
       ,{header : '<s:message code="liquidacion.contrato" text="**Contrato" />', dataIndex : 'contrato',width: 75}
       ,{header : '<s:message code="liquidacion.fecha" text="**Fecha" />', dataIndex : 'fecha',width: 35}
       ,{header : '<s:message code="liquidacion.importe" text="**Importe" />', dataIndex : 'importe',width: 35}
-<%--       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55}
- --%>      ,{dataIndex : 'idLiquidacion', hidden:true}
+<%--       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55} --%>
+      ,{dataIndex : 'idLiquidacion', hidden:true}
     ]);
     
     var btnNuevaLiquidacion = new Ext.Button({
@@ -97,7 +97,10 @@
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
        		if (historicoLiquidacionesGrid.getSelectionModel().getSelected()!=undefined) {
-       			app.downloadFile({flow: 'liquidaciones/openReport', params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}});
+       			app.downloadFile({flow: 'liquidaciones/openReport' 
+       								,params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}
+       								,succesFunction: function() { historicoLiquidacionesGrid.getStore().reload(); }
+       							 });
        		}
        }
    	});
@@ -213,14 +216,14 @@
        		var w = app.openWindow({
 					flow : 'entregas/editarEntrega'
 					,width:700
-					,title : '<s:message code="entregas.alta" text="**Alta Entrega" />' 
+					,title : '<s:message code="entregas.modifica" text="**Modifica Entrega" />' 
 					,params : {idCalculo: idCalculo,idEntrega: idEntrega}
 			});
 			w.on(app.event.DONE, function(){
 				w.close();
-				<%-- var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+				var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
 				var idCalculo = rec.get("idLiquidacion");
-				entregasLiquidacionStore.webflow({idCalculo: idCalculo}); --%>
+				entregasLiquidacionStore.webflow({idCalculo: idCalculo});
 			});
 			w.on(app.event.CANCEL, function(){ w.close(); });
        		

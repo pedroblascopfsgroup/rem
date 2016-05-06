@@ -105,7 +105,7 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
         	if (dto.getAmbitoTarea().equals("1")) {
         		hb = buscarTareasGrupo(hb, dto);
         	} else {
-        		hb = buscarTareasIndividual(dto);
+        		hb = buscarTareasIndividual(hb, dto);
         	}
         }
         
@@ -149,23 +149,31 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
     	
     	// Descripcion Entidad Informacion y Nombre Tarea
         if (dto.getDescripcionTarea() != null && !"".equals(dto.getDescripcionTarea())) {
+          	 String sql = "";
+          	
+          	 if (!Checks.esNulo(dto.getAmbitoTarea())){
+          		 //Ambito grupo
+          		 if (dto.getAmbitoTarea().equals("1")) {
+	         		// Cliente
+	         		sql += " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE
+	                    + "' and upper (tar.nombreCliente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+	                
+	                 // Expediente
+	                sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
+	                	+ "' and upper (tar.tarea.expediente.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+     		 	}
+          		//Ambito individual
+             	else if (dto.getAmbitoTarea().equals("2")) {
+	             	// Asunto
+	         		sql += " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO
+	                    + "' and upper (tar.asuDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
+	             	// Procedimiento
+	             	sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
+	                    + "' and upper (tar.asuDesc||tar.tipoPrcDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";             	
+             	}
+        	 }	
 
-            // Asunto
-            String sql = " (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO
-                    + "' and upper (tar.asuDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-            // Procedimiento
-            sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO
-                    + "' and upper (tar.asuDesc||tar.tipoPrcDesc) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-            
-            // Cliente
-            sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE
-                    + "' and upper (tar.nombreCliente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-            
-            // Expediente
-            sql += " or (tar.tarea.tipoEntidad.codigo like '" + DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
-                    + "' and upper (tar.tarea.expediente.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%') ";
-
-            hb.appendWhere(sql);
+          	 hb.appendWhere(sql);
         }
         
 
@@ -604,35 +612,35 @@ public class BTATareaNotificacionDaoImpl extends AbstractEntityDao<BTATareaEncon
 		return resultado.substring(0, resultado.length()-2).toString();
 	}
 	
-	public HQLBuilder buscarTareasIndividual(final BTADtoBusquedaTareas dto) {
-		HQLBuilder hb2;
+	public HQLBuilder buscarTareasIndividual(HQLBuilder hb, final BTADtoBusquedaTareas dto) {
 		StringBuffer hql = new StringBuffer();
 		String idTarea = dto.getComboTipoTarea();
 		String idActuacion = dto.getComboTipoActuacion();
   		String idProcedimiento = dto.getComboTipoProcedimiento();
-  		
+  		String comboGestor = dto.getComboGestor();
+  		 
+  		if (!Checks.esNulo(comboGestor)){
+  			hql.append(" tar in (");
+  			hql.append("select DISTINCT vtar from VTARTareaVsUsuario vtar, TareaProcedimiento tarea"); // Base.
+  			hql.append(" where tarea.descripcion = vtar.nombreTarea and (vtar.usuarioPendiente = " + dto.getComboGestor()); // Filtro usuario.
+  			hql.append(" or vtar.usuarioPendiente in (select egu.grupo from EXTGrupoUsuarios egu where egu.grupo = " + dto.getComboGestor() + ")"); // Filtro grupo usuario.
+  			hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + "))"); // Filtro por entidad.
+
+  			if(idActuacion != null && idActuacion != ""){
+  				hql.append(" and vtar.idActuacion = " + dto.getComboTipoActuacion()); // Filtro por actuacion.
+  			}
+  			if(idProcedimiento != null && idProcedimiento != ""){
+  				hql.append(" and vtar.idProcedimiento   = " + dto.getComboTipoProcedimiento()); // Filtro por procedimiento.
+  			}
+  			if(idTarea != null && idTarea != ""){
+  				hql.append(" and tarea.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
+  			}
+  			hql.append(")");
+  			hb.appendWhere(hql.toString());
+
+  		}
 		
-		hql.append("select DISTINCT vtar from VTARTareaVsUsuario vtar, TareaProcedimiento tarea"); // Base.
-		//hql.append(" inner join TareaNotificacion as tar on tar.tarea = vtar.nombreTarea"); // Filtro por tareas.
-		//hql.append(" inner join vtar.nombreTarea tar"); // Filtro por tareas.
-		hql.append(" where tarea.descripcion = vtar.nombreTarea and (vtar.usuarioPendiente = " + dto.getComboGestor()); // Filtro usuario.
-		hql.append(" or vtar.usuarioPendiente in (select egu.grupo from EXTGrupoUsuarios egu where egu.grupo = " + dto.getComboGestor() + ")"); // Filtro grupo usuario.
-        hql.append(" or vtar.usuarioPendiente in (" + obtenerListaGrupoIDDeUsuarioYEntidad(dto.getComboGestor()) + "))"); // Filtro por entidad.
-        
-  		if(idActuacion != null && idActuacion != ""){
-  			hql.append(" and vtar.idActuacion = " + dto.getComboTipoActuacion()); // Filtro por actuacion.
-  		}
-  		if(idProcedimiento != null && idProcedimiento != ""){
-  			hql.append(" and vtar.idProcedimiento   = " + dto.getComboTipoProcedimiento()); // Filtro por procedimiento.
-  		}
-  		if(idTarea != null && idTarea != ""){
-  			//hql.append(" and tar.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
-  			hql.append(" and tarea.id = " + dto.getComboTipoTarea()); // Filtro por tareas.
-  		}
-        
-		hb2 = new HQLBuilder(hql.toString());
-		
-		return hb2;
+		return hb;
 	}
 	
 	

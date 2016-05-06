@@ -275,9 +275,9 @@
 			btnEliminarEntrega.setDisabled(true);
 		}
 		
-		if(rowsSelectedEntregas > 0 && rowsSelectedHistorico.length > 0){
-			btnModificarEntrega.setDisabled(true);
-			btnEliminarEntrega.setDisabled(true);
+		if(rowsSelectedEntregas.length > 0 && rowsSelectedHistorico.length > 0){
+			btnModificarEntrega.setDisabled(false);
+			btnEliminarEntrega.setDisabled(false);
 		}else{
 			btnModificarEntrega.setDisabled(true);
 			btnEliminarEntrega.setDisabled(true);

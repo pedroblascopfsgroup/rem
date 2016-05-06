@@ -91,7 +91,11 @@
        <app:test id="btnCalcularLiquidacion" addComa="true" />
        ,iconCls : 'icon_ok'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       		if (historicoLiquidacionesGrid.getSelectionModel().getSelected()!=undefined) {
+       			app.downloadFile({flow: 'liquidaciones/openReport', params: {idCalculo: historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion')}});
+       		}
+       }
    	});
    	
    	var btnModificarLiquidacion = new Ext.Button({
@@ -120,6 +124,11 @@
 	}); 
 	
 	historicoLiquidacionesGrid.on('rowclick', function(grid, rowIndex, e) {
+	
+		var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+		var idCalculo = rec.get("idLiquidacion");
+		entregasLiquidacionStore.webflow({idCalculo: idCalculo});
+	
 	});
 	
 <%-- Fin grid histórico de liquidaciones --%>
@@ -131,6 +140,7 @@
          ,{name : 'fechaValor'}
          ,{name : 'tipoEntrega'}
          ,{name : 'conceptoEntrega'}
+         ,{name : 'totalEntrega'}
          ,{name : 'gastosProcurador'}
          ,{name : 'gastosLetrado'}
          ,{name : 'idEntrega'}
@@ -138,8 +148,7 @@
       ]);
       
     var entregasLiquidacionStore = page.getStore({
-        flow: 'entregas/getListbyCalculoId'
-        ,params: {id: 19}
+        flow: 'liquidaciones/obtenerEntregasCalculoLiquidacion'
         ,storeId : 'entregasLiquidacionStore'
         ,reader : new Ext.data.JsonReader(
             {root:'entregas'}
@@ -164,15 +173,19 @@
        ,iconCls : 'icon_mas'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
+       		var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+			var idCalculo = rec.get("idLiquidacion");
        		var w = app.openWindow({
 					flow : 'entregas/nuevaEntrega'
 					,width:700
 					,title : '<s:message code="entregas.alta" text="**Alta Entrega" />' 
-					,params : {idCalculo: 19}
+					,params : {idCalculo: idCalculo}
 			});
 			w.on(app.event.DONE, function(){
 				w.close();
-				<%--  entregaStore.webflow({id:panel.getAsuntoId()}); --%>
+				var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+				var idCalculo = rec.get("idLiquidacion");
+				entregasLiquidacionStore.webflow({idCalculo: idCalculo});
 			});
 			w.on(app.event.CANCEL, function(){ w.close(); });
        }
@@ -183,7 +196,26 @@
        <app:test id="btnModificarEntrega" addComa="true" />
        ,iconCls : 'icon_edit'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+       		var recEntregas =  entregasLiquidacionGrid.getSelectionModel().getSelected();
+       		var idEntrega = recEntregas.get("idEntrega");
+       		var recLiquidaciones =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+			var idCalculo = recLiquidaciones.get("idLiquidacion");
+       		var w = app.openWindow({
+					flow : 'entregas/editarEntrega'
+					,width:700
+					,title : '<s:message code="entregas.alta" text="**Alta Entrega" />' 
+					,params : {idCalculo: idCalculo,idEntrega: idEntrega}
+			});
+			w.on(app.event.DONE, function(){
+				w.close();
+				<%-- var rec =  historicoLiquidacionesGrid.getSelectionModel().getSelected();
+				var idCalculo = rec.get("idLiquidacion");
+				entregasLiquidacionStore.webflow({idCalculo: idCalculo}); --%>
+			});
+			w.on(app.event.CANCEL, function(){ w.close(); });
+       		
+       }
    	});
    	
    	var btnEliminarEntrega = new Ext.Button({
@@ -206,6 +238,10 @@
 	}); 
 	
 	entregasLiquidacionGrid.on('rowclick', function(grid, rowIndex, e) {
+	
+		
+	
+	
 	});
 	
 <%-- Fin grid entregas --%>

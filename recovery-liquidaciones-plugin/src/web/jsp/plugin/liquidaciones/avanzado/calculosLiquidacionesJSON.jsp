@@ -12,6 +12,8 @@
 			<fwk:date value="${rec.fechaLiquidacion}"/>
 		</json:property>
 		<json:property name="importe" value="${rec.totalCaculo}"/>
+		<json:property name="idLiquidacion" value="${rec.id}"/>
+		
 		
 		
 	</json:object>

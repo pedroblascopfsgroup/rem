@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoTramoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQTramoPendientes;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
+import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 
 @Controller
 public class LiquidacionesController {
@@ -26,6 +27,7 @@ public class LiquidacionesController {
 	private static final String DEFAULT = "default";
 	private static final String JSP_ALTA_NUEVA_LIQUIDACION =  "plugin/liquidaciones/avanzado/introducirdatos";
 	private static final String JSP_LISTADO_CALCULOS_LIQUIDACIONES= "plugin/liquidaciones/avanzado/calculosLiquidacionesJSON";
+	private static final String JSP_LISTADO_ENTREGAS_LIQUIDACIONES= "plugin/liquidaciones/avanzado/entregasCalculoLiquidacionJSON";
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
@@ -53,8 +55,9 @@ public class LiquidacionesController {
 			LIQTramoPendientes pendientes = new LIQTramoPendientes();
 			
 			pendientes.setSaldo(request.getCapital());
+			pendientes.setIntDemoraCierre(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO);
 			pendientes.setIntereses(request.getInteresesOrdinarios()!=null?request.getInteresesOrdinarios():BigDecimal.ZERO);
-			pendientes.setIntereses(pendientes.getIntereses().add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO));
+			//pendientes.setIntereses(pendientes.getIntereses().add(request.getInteresesDemora()!=null?request.getInteresesDemora():BigDecimal.ZERO));
 			pendientes.setImpuestos(request.getImpuestos());
 			pendientes.setComisiones(request.getComisiones());
 			pendientes.setGastos(request.getGastos()!=null?request.getGastos():BigDecimal.ZERO);
@@ -132,6 +135,14 @@ public class LiquidacionesController {
 		model.put("historicoLiquidaciones", listado);
 		return JSP_LISTADO_CALCULOS_LIQUIDACIONES;
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String obtenerEntregasCalculoLiquidacion(ModelMap model, Long idCalculo){
+		List<EntregaCalculoLiq> listado= liquidacionesManager.getEntregasCalculo(idCalculo);
+		model.put("entregas", listado);
+		return JSP_LISTADO_ENTREGAS_LIQUIDACIONES;
 	}
 	
 

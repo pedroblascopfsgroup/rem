@@ -14,12 +14,14 @@ public class LIQDtoTramoLiquidacion extends WebDto {
     private BigDecimal importe = null;
     private BigDecimal entregado = null;
     private BigDecimal intereses = null;
+    private BigDecimal intDemoraCierre = null;
     private BigDecimal impuestos = null;
     private BigDecimal comisiones = null;
     private BigDecimal gastos = null;
     private BigDecimal costasLetrado = null;
     private BigDecimal costasProcurador = null;
     private BigDecimal saldo = null;
+    private BigDecimal intDemoraCierrePend = null;
     private BigDecimal interesesPendientes = null;
     private BigDecimal impuestosPendientes = null;
     private BigDecimal comisionesPendientes = null;
@@ -61,6 +63,12 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	public void setIntereses(BigDecimal intereses) {
 		this.intereses = intereses;
 	}
+	public BigDecimal getIntDemoraCierre() {
+		return intDemoraCierre;
+	}
+	public void setIntDemoraCierre(BigDecimal intDemoraCierre) {
+		this.intDemoraCierre = intDemoraCierre;
+	}
 	public BigDecimal getImpuestos() {
 		return impuestos;
 	}
@@ -96,6 +104,12 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	}
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+	public BigDecimal getIntDemoraCierrePend() {
+		return intDemoraCierrePend;
+	}
+	public void setIntDemoraCierrePend(BigDecimal intDemoraCierrePend) {
+		this.intDemoraCierrePend = intDemoraCierrePend;
 	}
 	public BigDecimal getInteresesPendientes() {
 		return interesesPendientes;

@@ -54,7 +54,7 @@
 			,value:'${liqCobroPago.conceptoEntrega.codigo}'
 		</c:if>
 	});
-	
+	console.log('${conceptoEntrega}');
 
 	var fechaEntrega = new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="entregas.fecha" text="**Fecha Cobro" />'
@@ -62,7 +62,7 @@
 		,style:'margin:0px'
 		,labelStyle:labelStyle
 		,allowBlank: false
-		,value: '<fwk:date value="${liqCobroPago.fecha}" />'
+		,value: '<fwk:date value="${fechaCobro}" />'
 	});
 	
 	var fechaValor = new Ext.ux.form.XDateField({
@@ -71,22 +71,22 @@
 		,style:'margin:0px'
 		,labelStyle:labelStyle
 		,allowBlank: false
-		,value: '<fwk:date value="${liqCobroPago.fechaValor}" />'
+		,value: '<fwk:date value="${fechaValor}" />'
 	});
 	
 
 	
  	var gastosProcurador  = app.creaNumber('liqCobroPago.gastosProcurador',
 		'<s:message code="entregas.gastosProcurador" text="**Gastos Procurador" />',
-		'${liqCobroPago.gastosProcurador}',
+		'${gastosProcurados}',
 		{
 			labelStyle:labelStyle
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
 			,maxLength:13
-			<c:if test="${liqCobroPago.gastosProcurador!=null}" >
-			,value:'${liqCobroPago.gastosProcurador}'
+			<c:if test="${gastosProcurados!=null}" >
+			,value:'${gastosProcurados}'
 			</c:if>
 			,listeners : {
 				change : function(){
@@ -97,15 +97,15 @@
 	
 	var gastosAbogado  = app.creaNumber('liqCobroPago.gastosAbogado',
 		'<s:message code="entregas.gastosAbogado" text="**Gastos Abogado" />',
-		'${liqCobroPago.gastosAbogado}',
+		'${gastosLetrado}',
 		{
 			labelStyle:labelStyle
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
 			,maxLength:13
-			<c:if test="${liqCobroPago.gastosAbogado!=null}" >
-			,value:'${liqCobroPago.gastosAbogado}'
+			<c:if test="${gastosLetrado!=null}" >
+			,value:'${gastosLetrado}'
 			</c:if>
 			,listeners : {
 				change : function(){
@@ -116,15 +116,15 @@
 	
 	var otrosGastos  = app.creaNumber('liqCobroPago.gastosOtros',
 		'<s:message code="entregas.otrosGastos" text="**Otros Gastos" />',
-		'${liqCobroPago.gastosOtros}',
+		'${otrosGastos}',
 		{
 			labelStyle:labelStyle
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
 			,maxLength:13
-			<c:if test="${liqCobroPago.gastosOtros!=null}" >
-			,value:'${liqCobroPago.gastosOtros}'
+			<c:if test="${otrosGastos!=null}" >
+			,value:'${otrosGastos}'
 			</c:if>
 			,listeners : {
 				change : function(){
@@ -137,15 +137,15 @@
 	
  	var totalEntrega  = app.creaNumber('liqCobroPago.importe',
 		'<s:message code="entregas.totalEntrega" text="**Total Entrega" />',
-		'${liqCobroPago.totalEntrega}',
+		'${totalEntrega}',
 		{
 			labelStyle:labelStyle
 			,style:style
 			,allowDecimals: true
 			,allowNegative: false
 			,maxLength:13
-			<c:if test="${liqCobroPago.importe!=null}" >
-			,value:'${liqCobroPago.totalEntrega}'
+			<c:if test="${totalEntrega!=null}" >
+			,value:'${totalEntrega}'
 			</c:if>
 		}
 	);
@@ -175,20 +175,27 @@
 	};
 	
 	var validarFechas= function(){
+
+	   	dtfechaCierre = Date.parseDate('${fechaCierre}', "Y-m-d");
+	   	dtfechaLiquidacion = Date.parseDate('${fechaLiquidacion}', "Y-m-d");
+	   	
+	   	if(fechaValor.getValue().between(dtfechaCierre,dtfechaLiquidacion)){
+	   	
+	   		return true;
+	   	}
+	   	else{
+			Ext.MessageBox.alert('Error', 'La fecha Valor debe estar entre la Fecha de Cierre y Fecha Liquidación');
+			return false;
+		}
 		
-		
-			
 	};
-	
-console.log('id: '+ '${idCalculo}');
-	
 
 	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-		if(validarParametrosObligatorios() && validarSumaCamposNumericos()){
+		if(validarParametrosObligatorios() && validarSumaCamposNumericos() && validarFechas()){
 			Ext.Ajax.request({
                		url: page.resolveUrl('entregas/saveEntrega')
                		,params: {

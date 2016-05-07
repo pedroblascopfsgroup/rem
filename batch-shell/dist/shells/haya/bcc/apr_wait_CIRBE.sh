@@ -1,5 +1,5 @@
 #!/bin/bash
- 
+
 ficheros=CIRBE
 
 mascara='_'$ENTIDAD'_'????????
@@ -38,8 +38,8 @@ else
    do
 	    mascaraSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
         mascaraZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+        ficheroSem=`ls $mascaraSem | sort | tail -n 1`
+        ficheroZip=`ls $mascaraZip | sort | tail -n 1`
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO
@@ -48,4 +48,3 @@ else
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi
-

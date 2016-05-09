@@ -46,7 +46,7 @@
 		,hideHeaders: true
 		,autoWidth:true
 		,height: 150
-		,width: 200
+		,width: 250
 		,autoExpandColumn: true
 		,titleCollapse : true
 		,style:'padding-left:50px;padding-bottom:10px'

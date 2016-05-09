@@ -3445,6 +3445,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype": 'combo', "store": this.storeDDPositivoNegativo, "name": "d_resultado", "fieldLabel": "Resultado", allowBlank: true, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_resultado' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
         ,{"xtype": 'numberfield', "name": "d_cuantiaCargasPrevias", "fieldLabel": "Cuantía cargas previas", allowBlank: true, filtrar: true, id: 'd_cuantiaCargasPrevias' + this.idFactoria}
     ]);
+    
+    //id: 454 : P. DE DEPOSITO: Aceptacion cargo depositario
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'textfield',"name":"d_nombreDepositario","fieldLabel":"Informar del nombre del depositario",allowBlank:false,id:'d_nombreDepositario'+this.idFactoria}
+	                       	]);
 	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

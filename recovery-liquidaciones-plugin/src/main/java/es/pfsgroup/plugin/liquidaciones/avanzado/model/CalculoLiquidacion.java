@@ -32,6 +32,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 @Entity
 @Table(name = "CAL_CALCULO_LIQUIDACION", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause= Auditoria.UNDELETED_RESTICTION)
 public class CalculoLiquidacion implements Auditable, Serializable{
 	
 	/**

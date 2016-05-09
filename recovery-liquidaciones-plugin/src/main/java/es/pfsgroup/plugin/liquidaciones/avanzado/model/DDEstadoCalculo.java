@@ -7,12 +7,15 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Where;
+
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 @Entity
 @Table(name = "DD_ECA_ESTADO_CALCULO", schema = "${entity.schema}")
+@Where(clause= Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoCalculo implements Auditable, Dictionary{
     
 

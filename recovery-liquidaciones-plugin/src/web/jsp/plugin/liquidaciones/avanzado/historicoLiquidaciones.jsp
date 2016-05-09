@@ -109,7 +109,28 @@
        <app:test id="btnEliminarLiquidacion" addComa="true" />
        ,iconCls : 'icon_menos'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
+       ,handler:function(){
+          	if (historicoLiquidacionesGrid.getSelectionModel().getSelected()!=undefined) {
+	       		Ext.Msg.show({
+	   				title:'<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.eliminar" text="**Eliminar Calculo Liquidación" />',
+	   				msg: '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.eliminar.confirmar" text="**¿Desea borrar este Calculo de Liquidación?" />',
+	   				buttons: Ext.Msg.YESNO,
+	   				fn: function(btn,text){
+						if (btn == 'yes'){
+							var idLiquidacion = historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion');						   					
+		       				Ext.Ajax.request({
+								url: page.resolveUrl('liquidaciones/eliminarLiquidacion')
+								,params: {idCalculoLiquidacion: idLiquidacion}
+								,method: 'POST'
+								,success: function (result, request){
+									historicoLiquidacionesGrid.getStore().reload();
+								}
+							});
+						}
+					}
+				});
+			}
+		}       
    	});
    	
    	var btnCalcularLiquidacion = new Ext.Button({

@@ -3,11 +3,7 @@ package es.pfsgroup.plugin.liquidaciones.avanzado.controller;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-
-import javax.annotation.Resource;
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -186,5 +182,11 @@ public class LiquidacionesController {
 		return JSP_ALTA_NUEVA_LIQUIDACION;
 	}
 	
+	@RequestMapping
+	public String eliminarLiquidacion(ModelMap model, Long idCalculoLiquidacion) {
+		liquidacionesManager.eliminarLiquidacion(idCalculoLiquidacion);
+		
+		return DEFAULT;
+	}
 
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=OSCAR DORADO
---## FECHA_CREACION=20160503
+--## FECHA_CREACION=20160505
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-2954

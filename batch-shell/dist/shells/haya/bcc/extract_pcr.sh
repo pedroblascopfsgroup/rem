@@ -28,12 +28,6 @@ do
         hora_actual=`date +%Y%m%d%H%M%S`
         if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
             ./ftp/ftp_get_tr_files.sh $1 $fichero
-            if [ -e $ficheroZip ]; then
-                zip -T $ficheroZip
-                if [ $? -ne 0 ] ; then
-                    rm $ficheroZip
-                fi
-            fi
         fi
     done
 done

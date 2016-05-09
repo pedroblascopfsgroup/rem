@@ -1,19 +1,18 @@
 --/*
 --##########################################
 --## AUTOR=RUBEN ROVIRA
---## FECHA_CREACION=20160229
+--## FECHA_CREACION=20160506
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=CMREC-2336
---## PRODUCTO=SI
---## 
---## Finalidad: CREA INDICE EN CIR_CIRBE
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=CMREC-3273
+--## PRODUCTO=NO
+--## Finalidad: DDL
+--##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
@@ -30,28 +29,22 @@ DECLARE
 
     V_TEXT1        VARCHAR2(2400 CHAR); -- Vble. auxiliar
     
+
 BEGIN
     
-    ---------------------
-    --  CIR_CIRBE   --
-    --------------------- 
+    ----------------------------
+    --   cir_cirbe   --
+    ----------------------------   
     
-    --** Comprobamos si existe la tabla   
-    V_SQL := 'SELECT COUNT(1) FROM ALL_INDEXES WHERE INDEX_NAME = ''INX_CIR_CIRBE_DEL''  and owner = upper('''||v_esquema||''')';
-    EXECUTE IMMEDIATE v_sql INTO v_num_tablas;
-    IF V_NUM_TABLAS = 0 THEN 
-    --**Guardamos en una tabla temporal los valores del campo ven_id
-    V_MSQL := 'CREATE INDEX '||v_esquema||'.INX_CIR_CIRBE_DEL ON
-               CIR_CIRBE (PER_ID,CIR_FECHA_EXTRACCION)';        
+
+   
+    --** Creamos la tabla
+    V_MSQL := 'ALTER TABLE '||v_esquema||'.cir_cirbe DISABLE CONSTRAINT FK_CIR_CIR';
+		
     EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.cir_cirbe... Tabla alterada');
     
-     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.INX_CIR_CIRBE_DEL INDICE CREADO');
-     ELSE
-       DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.INX_CIR_CIRBE_DEL YA EXISTIA....');
-	END IF;
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.CIR_CIRBE... FIN CREACION INDICE');
-
-
+    
 EXCEPTION
   WHEN OTHERS THEN
     ERR_NUM := SQLCODE;

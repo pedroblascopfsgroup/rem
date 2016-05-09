@@ -16,17 +16,16 @@ hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
-do
-	ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-
-    echo "$ficheroSem"
-    ./ftp/ftp_get_aux_files.sh $1 $fichero
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
-	   sleep 10
-	   hora_actual=`date +%Y%m%d%H%M%S`
-	   ./ftp/ftp_get_aux_files.sh $1 $fichero
-	   #echo "$hora_actual"
+do	
+	./ftp/ftp_get_aux_monthly_files.sh $fichero
+	numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
+	numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
+	while [ "$hora_actual" -lt "$hora_limite" -a $numFicherosSem -eq 0 -o $numFicherosZip -eq 0 ]; do
+		sleep 10
+		hora_actual=`date +%Y%m%d%H%M%S`
+		./ftp/ftp_get_aux_monthly_files.sh $fichero
+		numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
+		numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
 	done
 done
 
@@ -39,8 +38,8 @@ else
    do
 	    mascaraSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
         mascaraZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+        ficheroSem=`ls $mascaraSem | sort | tail -n 1`
+        ficheroZip=`ls $mascaraZip | sort | tail -n 1`
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RUBEN ROVIRA
---## FECHA_CREACION=20160502
+--## FECHA_CREACION=20160505
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=NO

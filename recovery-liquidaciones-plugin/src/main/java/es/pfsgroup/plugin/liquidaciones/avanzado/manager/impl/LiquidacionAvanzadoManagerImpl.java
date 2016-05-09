@@ -873,4 +873,17 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		}
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public void eliminarLiquidacion(Long idCalculoLiquidacion) {
+		//Borramos todas sus entregas
+		List<EntregaCalculoLiq> entregas = this.getEntregasCalculo(idCalculoLiquidacion);
+		for (EntregaCalculoLiq entrega : entregas) {
+			this.eliminarEntregaCalLiquidacion(entrega.getId());
+		}
+		
+		//Borramos el cálculo
+		genericDao.deleteById(CalculoLiquidacion.class, idCalculoLiquidacion);
+	}
+
 }

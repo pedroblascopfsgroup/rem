@@ -53,4 +53,6 @@ public interface LiquidacionAvanzadoApi {
 	@Transactional(readOnly = false)
 	public void createEntCalLicFomCobrosPago(CalculoLiquidacion calcLiq, Long contratoId, Date fechaCierre, Date fechaLiquidacion);
 
+	@Transactional(readOnly = false)
+	void eliminarLiquidacion(Long idCalculoLiquidacion);
 }

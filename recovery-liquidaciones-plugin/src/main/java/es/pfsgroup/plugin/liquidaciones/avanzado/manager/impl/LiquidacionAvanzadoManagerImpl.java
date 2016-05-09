@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.cobropago.dao.CobroPagoDao;
+import es.capgemini.pfs.cobropago.model.CobroPago;
 import es.capgemini.pfs.contrato.ContratoManager;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
@@ -42,6 +44,7 @@ import es.pfsgroup.plugin.liquidaciones.avanzado.model.DDEstadoCalculo;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.LIQCobroPagoDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.LIQDtoCobroPagoEntregas;
+import es.pfsgroup.plugin.recovery.liquidaciones.model.LIQCobroPago;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableConceptoEntrega;
@@ -68,6 +71,9 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private LIQCobroPagoDao LiqCobroPagoDao;
 
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#completarCabecera(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest)
@@ -837,6 +843,34 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		creaTiposInteresParaCalculoLiquidacion(tiposInteres, calculoLiquidacion);
 		
+	}
+	
+	@Transactional(readOnly = false)
+	@Override
+	public void createEntCalLicFomCobrosPago(CalculoLiquidacion calcLiq, Long contratoId, Date fechaCierre, Date fechaLiquidacion){
+		List<LIQCobroPago> cobrosPago =  LiqCobroPagoDao.findEntregasACuenta(contratoId, fechaCierre, fechaLiquidacion);
+		
+		for(LIQCobroPago cobro : cobrosPago){
+			
+			EntregaCalculoLiq entCal = new EntregaCalculoLiq();
+			
+			entCal.setCalculoLiquidacion(calcLiq);
+			entCal.setFechaEntrega(cobro.getFecha());
+			entCal.setFechaValor(cobro.getFechaValor());
+			entCal.setTipoEntrega(cobro.getTipoEntrega());
+			entCal.setConceptoEntrega(cobro.getConceptoEntrega());
+			if(!Checks.esNulo(cobro.getImporte())) entCal.setTotalEntrega(BigDecimal.valueOf(cobro.getImporte()));
+			if(!Checks.esNulo(cobro.getGastosProcurador())) entCal.setGastosProcurador(BigDecimal.valueOf(cobro.getGastosProcurador()));
+			if(!Checks.esNulo(cobro.getGastosAbogado())) entCal.setGastosLetrado(BigDecimal.valueOf(cobro.getGastosAbogado()));
+			if(!Checks.esNulo(cobro.getGastosOtros())) entCal.setOtrosGastos(BigDecimal.valueOf(cobro.getGastosOtros()));
+			entCal.setAuditoria(Auditoria.getNewInstance());
+			try{
+				genericDao.save(EntregaCalculoLiq.class, entCal);	
+			}catch(Exception e){
+				System.out.println(e);
+			}
+			
+		}
 	}
 
 }

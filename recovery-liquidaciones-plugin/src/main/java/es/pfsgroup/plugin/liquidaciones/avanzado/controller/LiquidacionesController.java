@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.liquidaciones.avanzado.controller;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -142,6 +143,7 @@ public class LiquidacionesController {
 			}else{
 				calaLiq = liquidacionApi.saveCalculoLiquidacionAvanzado(calaLiq);
 				liquidacionApi.creaTiposInteresParaCalculoLiquidacion(dtoCalcLiq.getTiposIntereses(), calaLiq);	
+				liquidacionApi.createEntCalLicFomCobrosPago(calaLiq,calaLiq.getContrato().getId(), calaLiq.getFechaCierre(), calaLiq.getFechaLiquidacion());
 			}
 		}
 		

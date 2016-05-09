@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.liquidaciones.avanzado.manager;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -48,5 +49,8 @@ public interface LiquidacionAvanzadoApi {
 	
 	@Transactional(readOnly = false)
 	public void updateTiposInteresParaCalculoLiquidacion(List<String> tiposInteres, CalculoLiquidacion calculoLiquidacion); 
+	
+	@Transactional(readOnly = false)
+	public void createEntCalLicFomCobrosPago(CalculoLiquidacion calcLiq, Long contratoId, Date fechaCierre, Date fechaLiquidacion);
 
 }

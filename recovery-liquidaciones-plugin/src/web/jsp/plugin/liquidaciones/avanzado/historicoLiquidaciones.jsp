@@ -35,10 +35,10 @@
 	});
 
 	var cmHistoricoLiquidaciones = new Ext.grid.ColumnModel([
-       {header : '<s:message code="liquidacion.nombre" text="**Nombre" />', dataIndex : 'nombre',width: 45}
-      ,{header : '<s:message code="liquidacion.contrato" text="**Contrato" />', dataIndex : 'contrato',width: 75}
-      ,{header : '<s:message code="liquidacion.fecha" text="**Fecha" />', dataIndex : 'fecha',width: 35}
-      ,{header : '<s:message code="liquidacion.importe" text="**Importe" />', dataIndex : 'importe',width: 35}
+       {header : '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.liquidacion.nombre" text="**Nombre" />', dataIndex : 'nombre',width: 45}
+      ,{header : '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.liquidacion.contrato" text="**Contrato" />', dataIndex : 'contrato',width: 75}
+      ,{header : '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.liquidacion.fecha" text="**Fecha" />', dataIndex : 'fecha',width: 35}
+      ,{header : '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.liquidacion.importe" text="**Importe" />', dataIndex : 'importe',width: 35}
 <%--       ,{header : '<s:message code="acuerdos.codigo.estado" text="**Estado" />',dataIndex : 'estado',  width: 55} --%>
       ,{dataIndex : 'idLiquidacion', hidden:true}
     ]);

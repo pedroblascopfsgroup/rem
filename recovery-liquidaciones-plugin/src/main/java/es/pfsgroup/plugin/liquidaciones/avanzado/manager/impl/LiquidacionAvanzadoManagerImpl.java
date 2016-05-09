@@ -805,5 +805,24 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	public void eliminarEntregaCalLiquidacion(Long idEntrega){
 		genericDao.deleteById(EntregaCalculoLiq.class, idEntrega);
 	}
+	
+	@Transactional(readOnly = false)
+	@Override
+	public CalculoLiquidacion updateCalculoLiquidacionAvanzado(CalculoLiquidacion cl) {
+		genericDao.update(CalculoLiquidacion.class, cl);
+		return cl;
+	}
+	
+	@Transactional(readOnly = false)
+	@Override
+	public void updateTiposInteresParaCalculoLiquidacion(List<String> tiposInteres, CalculoLiquidacion calculoLiquidacion) {
+		
+		for(ActualizacionTipoCalculoLiq actTipCal : calculoLiquidacion.getActualizacionesTipo()){
+			genericDao.deleteById(ActualizacionTipoCalculoLiq.class, actTipCal.getId());
+		}
+		
+		creaTiposInteresParaCalculoLiquidacion(tiposInteres, calculoLiquidacion);
+		
+	}
 
 }

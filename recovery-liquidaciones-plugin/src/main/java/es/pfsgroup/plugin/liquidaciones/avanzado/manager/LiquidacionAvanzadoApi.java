@@ -42,5 +42,11 @@ public interface LiquidacionAvanzadoApi {
 	public DtoCalculoLiquidacion convertCalculoLiquidacionTODtoCalculoLiquidacion(CalculoLiquidacion calcLiq);
 
 	void eliminarEntregaCalLiquidacion(Long idEntrega);
+	
+	@Transactional(readOnly = false)
+	public CalculoLiquidacion updateCalculoLiquidacionAvanzado(CalculoLiquidacion cl);
+	
+	@Transactional(readOnly = false)
+	public void updateTiposInteresParaCalculoLiquidacion(List<String> tiposInteres, CalculoLiquidacion calculoLiquidacion); 
 
 }

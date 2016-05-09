@@ -124,9 +124,14 @@ public class LiquidacionesController {
 	public String guardaCalculoLiquidacion(DtoCalculoLiquidacion dtoCalcLiq){
 		
 		CalculoLiquidacion calaLiq = liquidacionApi.convertDtoCalculoLiquidacionTOCalculoLiquidacion(dtoCalcLiq);
-		calaLiq = liquidacionApi.saveCalculoLiquidacionAvanzado(calaLiq);
 		if(!Checks.esNulo(dtoCalcLiq.getTiposIntereses()) && dtoCalcLiq.getTiposIntereses().size()>0){
-			liquidacionApi.creaTiposInteresParaCalculoLiquidacion(dtoCalcLiq.getTiposIntereses(), calaLiq);
+			if(!Checks.esNulo(calaLiq.getId())){
+				calaLiq = liquidacionApi.updateCalculoLiquidacionAvanzado(calaLiq);
+				liquidacionApi.updateTiposInteresParaCalculoLiquidacion(dtoCalcLiq.getTiposIntereses(), calaLiq);
+			}else{
+				calaLiq = liquidacionApi.saveCalculoLiquidacionAvanzado(calaLiq);
+				liquidacionApi.creaTiposInteresParaCalculoLiquidacion(dtoCalcLiq.getTiposIntereses(), calaLiq);	
+			}
 		}
 		
 		return DEFAULT;

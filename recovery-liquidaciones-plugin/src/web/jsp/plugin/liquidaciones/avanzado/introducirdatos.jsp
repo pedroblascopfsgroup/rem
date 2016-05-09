@@ -155,6 +155,10 @@
 				
 				p.tiposIntereses = tiposInteresesData;
 				
+				if(isEdit.getValue()){
+					p.id = "${dtoCalculoLiquidacion.id}";
+				}
+				
 				page.webflow({
 	      			flow:'liquidaciones/guardaCalculoLiquidacion'
 	      			,params: p
@@ -173,9 +177,9 @@
 	<pfsforms:numberfield name="capital" labelKey="plugin.liquidaciones.introducirdatos.control.capital" label="**Capital" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="interesesOrdinarios" labelKey="plugin.liquidaciones.introducirdatos.control.interesesOrdinarios" label="**Intereses Ordinarios" value="" obligatory="false" allowDecimals="true"/>
 	<pfsforms:numberfield name="interesesDemora" labelKey="plugin.liquidaciones.introducirdatos.control.interesesDemora" label="**Intereses Demora" value="" obligatory="false" allowDecimals="true"/>
-	<pfsforms:numberfield name="comisiones" labelKey="plugin.liquidaciones.introducirdatos.control.comisiones" label="**Comisiones" value="" obligatory="true" allowDecimals="true"/>
-	<pfsforms:numberfield name="gastos" labelKey="plugin.liquidaciones.introducirdatos.control.gastos" label="**Gastos" value="" obligatory="true" allowDecimals="true"/>
-	<pfsforms:numberfield name="impuestos" labelKey="plugin.liquidaciones.introducirdatos.control.impuestos" label="**Impuestos" value="" obligatory="true" allowDecimals="true"/>
+	<pfsforms:numberfield name="comisiones" labelKey="plugin.liquidaciones.introducirdatos.control.comisiones" label="**Comisiones" value="" allowDecimals="true"/>
+	<pfsforms:numberfield name="gastos" labelKey="plugin.liquidaciones.introducirdatos.control.gastos" label="**Gastos" value="" allowDecimals="true"/>
+	<pfsforms:numberfield name="impuestos" labelKey="plugin.liquidaciones.introducirdatos.control.impuestos" label="**Impuestos" value="" allowDecimals="true"/>
 	<pfs:hidden name="tipoInteres" value="" />
 	<pfs:hidden name="fechaVencimiento" value="" />
 	<pfsforms:datefield name="fechaCierre" labelKey="plugin.liquidaciones.introducirdatos.control.fechaCierre" label="**Fecha Cierre" obligatory="true"/>
@@ -318,11 +322,45 @@
 	
 	<pfsforms:gridpanel name="gridTiposInteres" store="tiposInteresStore" columnModel="tiposInteresCM" width="500" bbar="[btnAddTipoInteres,btnDelTipoInteres]"
 		title="**Actualización de tipos de interés" titleKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres" />
-
+ 
+ 	
+ 	gridTiposInteres.on('render', function() {
+ 		if(isEdit.getValue()){
+ 		
+ 			var strTipsInt = '${dtoCalculoLiquidacion.tiposIntereses}'; 
+ 			
+ 			if(strTipsInt.length > 0){
+ 				var tiposInteres = strTipsInt.substring(1,strTipsInt.length - 1).split(',');
+	 			var newTipoInteresRecord = tiposInteresStore.recordType;
+	 			
+	 			for(i=0;i < tiposInteres.length; i++){
+	 				
+	 				var partesTipInt = tiposInteres[i].split('#');
+	 				var f = new Date(partesTipInt[0]);
+	 				var ti = parseFloat(partesTipInt[1]);
+	 			
+	 				var t = new newTipoInteresRecord({
+		   				fecha: convertDate(f),
+		   				tipoInteres: ti
+		   			});
+					tiposInteresStore.insert(0,t);
+	 			}
+ 			}
+ 		}
+ 	});
+ 	
+ 	function convertDate(inputFormat) {
+	  function pad(s) { return (s < 10) ? '0' + s : s; }
+	  var d = new Date(inputFormat);
+	  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+	}
+ 
+ 
 	//LabelStyle
 	actuaciones.labelStyle=labelStyle;
 	contratos.labelStyle=labelStyle;
 	nombre.labelStyle=labelStyle;
+	nombrePersona.labelStyle=labelStyle;
 	dni.labelStyle=labelStyle;
 	
 	capital.labelStyle=labelStyle;
@@ -374,7 +412,7 @@
 		contratos.reload(true);
 		nombrePersona.setValue("${dtoCalculoLiquidacion.nombrePersona}");
 		dni.setValue("${dtoCalculoLiquidacion.documentoId}");
-		capital.setValue("${dtoCalculoLiquidacion.interesesOrdinarios}");
+		capital.setValue("${dtoCalculoLiquidacion.capital}");
 		interesesOrdinarios.setValue("${dtoCalculoLiquidacion.interesesOrdinarios}");
 		interesesDemora.setValue("${dtoCalculoLiquidacion.interesesDemora}");
 		comisiones.setValue("${dtoCalculoLiquidacion.comisiones}");
@@ -386,7 +424,7 @@
 		otrosGastos.setValue("${dtoCalculoLiquidacion.otrosGastos}");
 		baseCalculo.setValue("${dtoCalculoLiquidacion.baseCalculo}");
 		fechaDeLiquidacion.setValue("${dtoCalculoLiquidacion.fechaLiquidacion}");
-		tipoDemoraCierre.setValue("${dtoCalculoLiquidacion.interesesDemora}");
+		tipoDemoraCierre.setValue("${dtoCalculoLiquidacion.tipoMoraCierre}");
 		nombre.setValue("${dtoCalculoLiquidacion.nombre}");
 	}
 	

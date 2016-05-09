@@ -3439,6 +3439,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
+	//id: 453 : PROCEDIMIENTO HIPOTECARIO (CAJAMAR): Registrar resolución Juzgado 1156
+    this.arrayCampos.push([
+        {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype": 'combo', "store": this.storeDDPositivoNegativo, "name": "d_resultado", "fieldLabel": "Resultado", allowBlank: true, "autoload": true, mode: 'local', triggerAction: 'all', resizable: true, id: 'd_resultado' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'numberfield', "name": "d_cuantiaCargasPrevias", "fieldLabel": "Cuantía cargas previas", allowBlank: true, filtrar: true, id: 'd_cuantiaCargasPrevias' + this.idFactoria}
+    ]);
+	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

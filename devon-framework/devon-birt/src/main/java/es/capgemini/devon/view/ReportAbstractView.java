@@ -70,6 +70,7 @@ public abstract class ReportAbstractView extends InternalResourceView {
             loadFlowParameters(map, task);
             //Add image src parameter
             //task.setParameterValue("img_src", sc.getRealPath("img"));
+            task.setParameterValue("img_real", sc.getRealPath("img"));
             task.setParameterValue("img_src", getImgPath(req));
 
             //run report

@@ -951,14 +951,16 @@ app.downloadFile = function(config){
      el.action = form.url;
      el.submit();     
     
-    //Si en el config tenemos una función success la ejecutamos a los 100 milisegundos después del submit
+    var tiempo = config.tiempoSuccess || 100;
+    
+    //Si en el config tenemos una función success la ejecutamos a los x milisegundos después del submit
     Ext.defer(function(){
         //fp.close();
         debugger;
         if (config.succesFunction) {
      		config.succesFunction();
      	}
-    }, 100);
+    }, tiempo);
 }	
 
 /**

@@ -41,6 +41,8 @@ public class DtoContabilidadCobros extends WebDto {
 	private Float quitaOperacionesEnTramite;
 	private Float operacionesEnTramite;
 	private Float totalQuita;
+	private Long tarID;
+	private Boolean contabilizado;
 
 	public DtoContabilidadCobros() {
 	}
@@ -286,6 +288,22 @@ public class DtoContabilidadCobros extends WebDto {
 
 	public void setTotalQuita(Float totalQuita) {
 		this.totalQuita = totalQuita;
+	}
+
+	public Long getTarID() {
+		return tarID;
+	}
+
+	public void setTarID(Long tarID) {
+		this.tarID = tarID;
+	}
+
+	public Boolean getContabilizado() {
+		return contabilizado;
+	}
+
+	public void setContabilizado(Boolean contabilizado) {
+		this.contabilizado = contabilizado;
 	}
 
 }

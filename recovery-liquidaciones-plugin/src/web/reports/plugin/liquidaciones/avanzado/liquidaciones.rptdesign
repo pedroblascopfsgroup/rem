@@ -371,13 +371,17 @@ return true;]]></method>
                 <property name="width">4.104166666666667in</property>
             </column>
             <row id="381">
+                <property name="suppressDuplicates">false</property>
+                <property name="canShrink">false</property>
                 <cell id="382">
                     <property name="fontSize">8pt</property>
                     <property name="verticalAlign">bottom</property>
                     <image name="logotipo" id="380">
+                        <property name="height">72px</property>
+                        <property name="width">225px</property>
                         <property name="size">size-to-image</property>
-                        <property name="source">url</property>
-                        <expression name="uri">params["img_src"].value+logo</expression>
+                        <property name="source">file</property>
+                        <expression name="uri">params["img_real"].value+"/"+logo</expression>
                     </image>
                 </cell>
                 <cell id="383"/>
@@ -854,7 +858,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
             <property name="fontSize">9pt</property>
             <property name="marginTop">0pt</property>
             <property name="height">1.28125in</property>
-            <property name="width">13.28125in</property>
+            <property name="width">100%</property>
             <property name="dataSet">cuerpo</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -1025,22 +1029,22 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
             </list-property>
             <property name="pageBreakInterval">0</property>
             <column id="71">
-                <property name="width">0.6145833333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="135">
-                <property name="width">2.125in</property>
+                <property name="width">15.4%</property>
             </column>
             <column id="72">
-                <property name="width">0.7083333333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="75">
-                <property name="width">0.5729166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="418">
-                <property name="width">0.5833333333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="595">
-                <property name="width">0.6875in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="425">
                 <property name="width">0.6875in</property>
@@ -1070,27 +1074,28 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                 </list-property>
             </column>
             <column id="447">
-                <property name="width">0.4895833333333333in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="601">
-                <property name="width">0.9479166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="451">
-                <property name="width">0.9479166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="77">
-                <property name="width">0.2916666666666667in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="291">
-                <property name="width">0.6354166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="297">
-                <property name="width">0.9895833333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <header>
                 <row id="28">
                     <property name="backgroundColor">gray</property>
                     <cell id="29">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1111,6 +1116,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="132">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1131,6 +1137,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="31">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1152,6 +1159,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="37">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1173,6 +1181,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="416">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1194,6 +1203,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="592">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1259,6 +1269,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="423">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1280,6 +1291,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="437">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1301,6 +1313,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="441">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1322,6 +1335,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="445">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1343,6 +1357,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="598">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1408,6 +1423,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="449">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1429,6 +1445,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="41">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1450,6 +1467,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="287">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1472,6 +1490,7 @@ Demora</text-property>
                         </label>
                     </cell>
                     <cell id="293">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1543,6 +1562,7 @@ calculado</text-property>
             <detail>
                 <row id="45">
                     <cell id="46">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1595,6 +1615,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="133">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1659,6 +1680,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="48">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1733,6 +1755,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="54">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1807,6 +1830,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="417">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1881,6 +1905,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="593">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1955,6 +1980,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="424">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2029,6 +2055,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="438">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2099,6 +2126,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="442">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2173,6 +2201,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="446">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2241,6 +2270,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="599">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2309,6 +2339,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="450">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2377,6 +2408,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="58">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2447,6 +2479,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="288">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2521,6 +2554,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="294">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2605,6 +2639,7 @@ calculado</text-property>
                     <cell id="461">
                         <property name="colSpan">2</property>
                         <property name="rowSpan">1</property>
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2669,6 +2704,7 @@ calculado</text-property>
                         </label>
                     </cell>
                     <cell id="463">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2737,6 +2773,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="464">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2805,6 +2842,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="465">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2873,6 +2911,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="594">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2941,6 +2980,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="466">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3009,6 +3049,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="467">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3077,6 +3118,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="468">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3145,6 +3187,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="469">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3218,7 +3261,7 @@ calculado</text-property>
                         <property name="backgroundPositionY">0%</property>
                         <property name="backgroundRepeat">repeat</property>
                         <property name="fontFamily">"Verdana"</property>
-                        <property name="fontSize">9pt</property>
+                        <property name="fontSize">100%</property>
                         <property name="fontWeight">normal</property>
                         <property name="fontStyle">normal</property>
                         <property name="fontVariant">normal</property>
@@ -3321,6 +3364,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="470">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3389,6 +3433,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="471">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3403,6 +3448,7 @@ calculado</text-property>
                         <property name="borderTopWidth">thin</property>
                     </cell>
                     <cell id="472">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -3417,6 +3463,7 @@ calculado</text-property>
                         <property name="borderTopWidth">thin</property>
                     </cell>
                     <cell id="473">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>

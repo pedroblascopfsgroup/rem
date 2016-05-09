@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.liquidaciones.avanzado.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,8 +44,8 @@ public class LiquidacionesController {
 	@Autowired
 	private LiquidacionAvanzadoApi liquidacionApi;
 	
-	
-	
+	@Resource
+	private Properties appProperties;
 	
 	
 	@SuppressWarnings("unchecked")
@@ -80,14 +83,21 @@ public class LiquidacionesController {
 			String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 			
 			if (!Checks.esNulo(codigoEntidad)) {
+				/*String logoEspecial = appProperties.getProperty("logoliquidacion" + codigoEntidad);
+				if (!Checks.esNulo(logoEspecial)) {
+					logo = logoEspecial;
+				}*/
+				
+				
 				//Seleccionamos el logo según el codigo entidad
-				if (codigoEntidad.toUpperCase().equals("HCJ")) {
-					logo = "plugin/liquidaciones/logoSarebLiquidaciones.jpg";
+				if (codigoEntidad.toUpperCase().equals("HAYA")) {
+					logo = "plugin/liquidaciones/logoSareb.jpg";
 				}
 				
 				if (codigoEntidad.toUpperCase().equals("HCJ")) {
-					logo = "plugin/liquidaciones/logoCajamarLiquidaciones.png";
+					logo = "plugin/liquidaciones/logoCajamar.png";
 				}
+				
 			}
 			
 			model.put("logo", logo);
@@ -148,6 +158,24 @@ public class LiquidacionesController {
 		List<EntregaCalculoLiq> listado= liquidacionesManager.getEntregasCalculo(idCalculo);
 		model.put("entregas", listado);
 		return JSP_LISTADO_ENTREGAS_LIQUIDACIONES;
+	}
+	
+    /**
+     * Abre la ventana para editar una nueva liquidacion.
+     * @param idAsunto
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String abreEditarLiquidacion(ModelMap model,Long idCalculoLiquidacion) {
+		
+		CalculoLiquidacion calcLiq = liquidacionesManager.getCalculoLiquidacion(idCalculoLiquidacion);
+		DtoCalculoLiquidacion dto = liquidacionesManager.convertCalculoLiquidacionTODtoCalculoLiquidacion(calcLiq);
+		model.put("actuaciones", asuntoApi.obtenerActuacionesAsunto(dto.getAsunto()));
+		model.put("idAsunto", dto.getAsunto());
+		model.put("dtoCalculoLiquidacion", dto);
+		model.put("isEdit", true);
+		
+		return JSP_ALTA_NUEVA_LIQUIDACION;
 	}
 	
 

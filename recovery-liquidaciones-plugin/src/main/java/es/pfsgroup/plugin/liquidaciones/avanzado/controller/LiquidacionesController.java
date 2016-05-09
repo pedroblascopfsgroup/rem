@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,9 +46,8 @@ public class LiquidacionesController {
 	@Autowired
 	private LiquidacionAvanzadoApi liquidacionApi;
 	
-	@Resource
-	private Properties appProperties;
-	
+	@Autowired
+	private ServletContext context;	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -88,7 +89,6 @@ public class LiquidacionesController {
 					logo = logoEspecial;
 				}*/
 				
-				
 				//Seleccionamos el logo según el codigo entidad
 				if (codigoEntidad.toUpperCase().equals("HAYA")) {
 					logo = "plugin/liquidaciones/logoSareb.jpg";
@@ -100,6 +100,7 @@ public class LiquidacionesController {
 				
 			}
 			
+			model.put("img_real", context.getRealPath("img"));
 			model.put("logo", logo);
 			model.put("usuario", usuarioManager.getUsuarioLogado());
 			model.put("cabecera", cabecera);

@@ -381,7 +381,7 @@ return true;]]></method>
                         <property name="width">225px</property>
                         <property name="size">size-to-image</property>
                         <property name="source">file</property>
-                        <expression name="uri">params["img_real"].value+"/"+logo</expression>
+                        <expression name="uri">img_real+"/"+logo</expression>
                     </image>
                 </cell>
                 <cell id="383"/>

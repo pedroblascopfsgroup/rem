@@ -99,7 +99,7 @@
                     AND (mov.mov_fecha_extraccion = cnt.cnt_fecha_extraccion OR ${estadoContrato.Cancelado.codigo} = (SELECT esc.dd_esc_codigo FROM ${master.schema}.dd_esc_estado_cnt esc WHERE cnt.dd_esc_id = esc.dd_esc_id))
                   JOIN dd_tpe_tipo_prod_entidad t ON cnt.dd_tpe_id = t.dd_tpe_id
                   JOIN dd_tpx_tipo_expediente tpx ON tpx.dd_tpx_id = e.dd_tpx_id
-                    AND tpx.dd_tpx_codigo in ('SEG','REC')  --Solo se revisan los expedientes de seguimiento y recuperaciones. Recobro tiene su propio proceso
+                    AND tpx.dd_tpx_codigo = 'RECU'  --Solo se revisan los expedientes de recuperaciones. Recobro tiene su propio proceso y seguimiento no se deben cerrar.
               WHERE e.borrado = 0  and e.exp_manual = 0 --Solo se revisan los expedientes automáticos
               -- No sean expedientes de recobro
               AND NOT EXISTS (SELECT 1 FROM exr_expediente_recobro EXR WHERE e.EXP_ID = EXR.EXP_ID)
@@ -131,46 +131,41 @@
     BEGIN
 
     INSERT INTO TMP_MOV_REVISADOS_EXP
-    (SELECT C.CNT_ID, tmp.EXP_ID, tmp.pase as ES_PASE,
-          CASE
-            WHEN e.dd_esc_codigo <> ${estadoContrato.Activo.codigo} --Cancelado es cualquier tipo que no sea activo, no solo el 7
-              THEN 1
-            ELSE 0
-          END as Cancelado,
-          CASE
-            WHEN (movAct.mov_deuda_irregular = 0)
-              THEN 1
-            ELSE 0
-          END as SaldadoSinMovAnterior,
-          CASE
-            WHEN (movAct.mov_deuda_irregular = 0 AND movAnt.mov_deuda_irregular  <> 0)
-              THEN 1
-            ELSE 0
-          END  as Saldado,
-          NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) as Diferencia,
-          movAct.mov_deuda_irregular as Importe,
-          movAnt.mov_deuda_irregular as ImporteAnterior,
-          t.dd_tpe_activo  as Activo,
-          movAnt.MOV_FECHA_POS_VENCIDA as fechaVencido,
-          movAct.mov_fecha_extraccion  as fechaExtraccion
-        FROM cnt_contratos c,
-          dd_tpe_tipo_prod_entidad t,
-          mov_movimientos movAct,
-          mov_movimientos movAnt,
-          ${master.schema}.dd_esc_estado_cnt e,
-          tmp_exp_revision tmp
-        WHERE c.dd_tpe_id = t.dd_tpe_id
-         -- AND C.CNT_ID IN (SELECT CNT_ID FROM vTMP_CNT)
-          AND c.dd_esc_id                 = e.dd_esc_id
-          AND movAct.cnt_id               = c.cnt_id
-          AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion
-          AND movAnt.cnt_id               = c.cnt_id
-          AND movAnt.MOV_FECHA_EXTRACCION = (SELECT CASE WHEN MAX(mov_fecha_extraccion)IS NULL THEN c.cnt_fecha_extraccion ELSE MAX(mov_fecha_extraccion) END
-                                             FROM mov_movimientos
-                                             WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion
+    SELECT /*+ USE_NL(TMP,E,MOVANT,MOVACT) */ C.CNT_ID,
+           tmp.EXP_ID,
+           tmp.pase as ES_PASE,
+           CASE WHEN e.dd_esc_codigo <> 1 --Cancelado es cualquier tipo que no sea activo, no solo el 7
+                                          THEN 1
+                ELSE 0 END as Cancelado,
+           CASE WHEN movAct.mov_deuda_irregular = 0 THEN 1
+                ELSE 0 END as SaldadoSinMovAnterior,
+           CASE WHEN movAct.mov_deuda_irregular = 0
+       AND movAnt.mov_deuda_irregular <> 0 THEN 1
+                ELSE 0 END as Saldado,
+           NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) as Diferencia,
+           movAct.mov_deuda_irregular as Importe,
+           movAnt.mov_deuda_irregular as ImporteAnterior,
+           t.dd_tpe_activo as Activo,
+           movAnt.MOV_FECHA_POS_VENCIDA as fechaVencido,
+           movAct.mov_fecha_extraccion as fechaExtraccion
+      FROM cnt_contratos c,
+           dd_tpe_tipo_prod_entidad t,
+           mov_movimientos movAct,
+           mov_movimientos movAnt,
+           ${master.schema}.dd_esc_estado_cnt e,
+           tmp_exp_revision tmp
+     WHERE c.dd_tpe_id = t.dd_tpe_id
+       AND c.dd_esc_id = e.dd_esc_id
+       AND movAct.cnt_id = c.cnt_id
+       AND movAct.MOV_FECHA_EXTRACCION = c.cnt_fecha_extraccion
+       AND movAnt.cnt_id = c.cnt_id
+       AND movAnt.MOV_FECHA_EXTRACCION = (SELECT CASE WHEN MAX(mov_fecha_extraccion) IS NULL THEN c.cnt_fecha_extraccion
+                                                      ELSE MAX(mov_fecha_extraccion) END
+                                            FROM mov_movimientos
+                                           WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion
                                              AND CNT_ID = c.cnt_id)
-          AND tmp.CNT_ID = C.CNT_ID
-        );
+       AND tmp.CNT_ID = C.CNT_ID
+     ORDER BY C.CNT_COD_ENTIDAD;
     COMMIT;
 
     OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS_EXP');
@@ -339,7 +334,7 @@
           SELECT DISTINCT (TMP_MOV.EXP_ID)
             FROM TMP_MOV_REVISADOS_EXP TMP_MOV
              INNER JOIN EXP_EXPEDIENTES EXP ON TMP_MOV.EXP_ID = EXP.EXP_ID
-             INNER JOIN DD_TPX_TIPO_EXPEDIENTE TPX ON TPX.DD_TPX_ID = EXP.DD_TPX_ID AND TPX.DD_TPX_CODIGO IN ('RECU','SEG','GESDEU')
+             INNER JOIN DD_TPX_TIPO_EXPEDIENTE TPX ON TPX.DD_TPX_ID = EXP.DD_TPX_ID AND TPX.DD_TPX_CODIGO = 'RECU'
           WHERE
           (TMP_MOV.CANCELADO = 0
           AND (

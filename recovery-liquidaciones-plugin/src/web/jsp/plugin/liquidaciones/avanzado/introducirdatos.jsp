@@ -140,7 +140,7 @@
 			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
 		} else {
 			if (validarForm()) {
-				if(anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y")){
+				if(isEdit.getValue() && (anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y"))){
 					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidación" />');
 				}else{
 					

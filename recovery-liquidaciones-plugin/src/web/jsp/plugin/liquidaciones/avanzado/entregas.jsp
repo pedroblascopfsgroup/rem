@@ -181,18 +181,25 @@
 	   	dtfechaCierre = Date.parseDate(fc[0], "Y-m-d");
 	   	dtfechaLiquidacion = Date.parseDate(fl[0], "Y-m-d");
 	   	
-	   	if(fechaValor.getValue().between(dtfechaCierre,dtfechaLiquidacion)){
+	   	if(dtfechaLiquidacion >= dtfechaCierre){
 	   	
-	   		return true;
-	   	}
-	   	else{
-			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**La fecha Valor debe estar entre la Fecha de Cierre" /> ' + 
-											dtfechaCierre.getDay() +'/'+dtfechaCierre.getMonth() + '/' + dtfechaCierre.getUTCFullYear() + 
-											' <s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="**y Fecha Liquidación" /> ' + 
-											dtfechaLiquidacion.getDay() +'/'+dtfechaLiquidacion.getMonth() + '/' + dtfechaLiquidacion.getUTCFullYear());
-			return false;
+		   	if(fechaValor.getValue().between(dtfechaCierre,dtfechaLiquidacion)){
+		   	
+		   		return true;
+		   	}
+		   	else{
+				Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**La fecha Valor debe estar entre la Fecha de Cierre" /> ' + 
+												dtfechaCierre.getDay() +'/'+dtfechaCierre.getMonth() + '/' + dtfechaCierre.getUTCFullYear() + 
+												' <s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="**y Fecha Liquidación" /> ' + 
+												dtfechaLiquidacion.getDay() +'/'+dtfechaLiquidacion.getMonth() + '/' + dtfechaLiquidacion.getUTCFullYear());
+				return false;
+			}
 		}
-		
+		else{
+			Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.entrega.grid.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre no puede ser mayor que la Fecha de Liquidación" />');
+			return false;
+			
+		}
 	};
 
 	

@@ -154,7 +154,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		for (EntregaCalculoLiq ec : entregasCuenta) {
 			//Agregamos los cambios de tipos intermedios y se actualiza el tipo de interes
-			this.AgregarcambiosTipoEntreFechas(request, fecha, ec.getFechaValor(), pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
+			tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, ec.getFechaValor(), pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
 			
 			//Ahora creamos el tramo para la entrega cuenta
 			LIQDtoTramoLiquidacion tramo = generarTramoParaEntrega(ec, fecha, tipoInt, request.getBaseCalculo(), pendientes);
@@ -167,7 +167,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		}
 		
 		//Ahora insertamos los cambios de tipo entre la ultima entrega y la fecha de calculo
-		this.AgregarcambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);		
+		tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);		
 		
 		//3.- Por último el tramo del Calculo de Deuda, desde la última fecha hasta la fecha Calculo
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();
@@ -206,10 +206,10 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		//Datos iguales de metodo desglosado o no
 		tramo.setFechaValor(DateFormat.toString(ec.getFechaValor()));
 		tramo.setDescripcion("Entrega");
-		if (!Checks.esNulo(ec.getTotalEntrega())) {
-			tramo.setImporte(ec.getTotalEntrega());
+		if (!Checks.esNulo(ec.getSumaEntrega())) {
+			tramo.setImporte(ec.getSumaEntrega());
 		}
-		tramo.setIntDemoraCierre(pendientes.getIntDemoraCierre());
+		tramo.setIntDemoraCierrePend(pendientes.getIntDemoraCierre());
 		tramo.setInteresesPendientes(pendientes.getIntereses());
 		tramo.setImpuestosPendientes(pendientes.getImpuestos());
 		tramo.setComisionesPendientes(pendientes.getComisiones());
@@ -276,7 +276,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		BigDecimal importeECRestante = (!Checks.esNulo(ec.getTotalEntrega())?ec.getTotalEntrega():BigDecimal.ZERO); 
 		
 		//De la entrega primero reducimos de los intereses demora cierre pendientes
-		if (pendientes.getIntDemoraCierre().compareTo(BigDecimal.ZERO) == 1) {
+		if (importeECRestante.compareTo(pendientes.getIntDemoraCierre()) == 1) {
 			//Si la entrega es superior a los intereses demora cierre
 			tramo.setIntDemoraCierre(pendientes.getIntDemoraCierre());
 			importeECRestante = importeECRestante.subtract(tramo.getIntDemoraCierre());
@@ -377,7 +377,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		return resultado;
 	}
 	
-	private void AgregarcambiosTipoEntreFechas(CalculoLiquidacion request, Date fechaDesde, Date fechaHasta, BigDecimal saldo, BigDecimal intereses, List<LIQDtoTramoLiquidacion> cuerpo, Float tipoInt) {
+	private Float AgregarcambiosTipoEntreFechas(CalculoLiquidacion request, Date fechaDesde, Date fechaHasta, BigDecimal saldo, BigDecimal intereses, List<LIQDtoTramoLiquidacion> cuerpo, Float tipoInt) {
 		Calendar c = Calendar.getInstance();
 		Date fecha = fechaDesde;
 		Float tipo = tipoInt; 
@@ -408,9 +408,11 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 				tipo = cambioTipoInteres.getTipoInteres();
 				
 				cuerpo.add(tramoCambioTipo);
-				tipoInt = tipo;
 			}
 		} while (cambioTipoInteres !=null);		
+		
+		//Devolvemos el tipo actualizado
+		return tipo;
 	}
 
 	/* (non-Javadoc)
@@ -598,10 +600,10 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	private ActualizacionTipoCalculoLiq getPrimerCambioEntreFechas(Date desde, Date hasta, List<ActualizacionTipoCalculoLiq> lTiposInteres) {
 		Calendar c = Calendar.getInstance();
 		
-		Date fecha = desde;
+		Date fecha = this.NormalizarFechas(desde);
 		while (fecha.compareTo(hasta)<=0) {
 			for (ActualizacionTipoCalculoLiq tipo : lTiposInteres) {
-				if (DateFormat.toString(fecha).equals(tipo.getFecha())) {
+				if (fecha.compareTo(this.NormalizarFechas(tipo.getFecha()))==0) {
 					return tipo;
 				}
 			}
@@ -613,6 +615,18 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		}
 		
 		return null;
+	}
+	
+	private Date NormalizarFechas(Date fecha) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(fecha);
+		
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		
+		return c.getTime();
 	}
 
 	

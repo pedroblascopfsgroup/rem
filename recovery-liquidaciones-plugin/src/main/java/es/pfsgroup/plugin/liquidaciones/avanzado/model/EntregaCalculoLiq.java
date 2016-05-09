@@ -173,4 +173,14 @@ public class EntregaCalculoLiq implements Auditable, Serializable{
 		this.version = version;
 	}
 	
+	public BigDecimal getSumaEntrega() {
+		BigDecimal suma = BigDecimal.ZERO;
+		suma = suma.add(this.getTotalEntrega()!=null?this.getTotalEntrega():BigDecimal.ZERO);
+		suma = suma.add(this.getGastosProcurador()!=null?this.getGastosProcurador():BigDecimal.ZERO);
+		suma = suma.add(this.getGastosLetrado()!=null?this.getGastosLetrado():BigDecimal.ZERO);
+		suma = suma.add(this.getOtrosGastos()!=null?this.getOtrosGastos():BigDecimal.ZERO);
+		
+		return suma;
+	}
+	
 }

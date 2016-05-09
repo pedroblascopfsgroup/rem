@@ -2249,7 +2249,22 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 309 : P. CAMBIARIO: Registrar demanda oposición
 	this.arrayCampos.push([
-	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboOposicion","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOposicion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboOposicion","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOposicion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',
+	                    	   listeners: {
+		                  			 select: function(combo) { 
+		                  				 var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fecha');	                  				 
+		                  				 debugger;
+		                  				 if(combo.getValue()=='SI'){
+		                  					 fecha.allowBlank = false;				 
+		                  				 }
+		                  				 else if(combo.getValue()=='NO'){
+		                  					 fecha.allowBlank = true;
+		                  				 }   
+		                  			 }
+		                     	 }      
+		                       
+		                       }   
+	                       
 	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha oposición",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'datefield',"name":"d_fechaVista","fieldLabel":"Fecha vista",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);

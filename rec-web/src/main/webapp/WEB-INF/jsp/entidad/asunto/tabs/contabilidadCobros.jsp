@@ -319,13 +319,9 @@
 		,autoScroll: true
 		,minColumnWidth: 200
 		,bbar:[btnEditarVer
-			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">,btnNuevo,btnBorrar
+			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">,btnNuevo,btnBorrar</sec:authorize>
+
 			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_ENVIAR_CONTABILIDAD_COBRO">,btnEnviarContabilidad</sec:authorize>
-			</sec:authorize>
-			
-			<sec:authorize ifNotGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">
-			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_ENVIAR_CONTABILIDAD_COBRO">,btnEnviarContabilidad,btnContabilizar</sec:authorize>
-			</sec:authorize>
 			
 			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_CONTABILIZAR_COBROS">,btnContabilizar</sec:authorize>
 		]

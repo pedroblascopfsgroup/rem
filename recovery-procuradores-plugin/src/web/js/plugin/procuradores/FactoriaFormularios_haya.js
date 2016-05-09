@@ -2388,7 +2388,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		           				}
 	                        }
 	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdmisionDemanda","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAdmisionDemanda'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",filtradoProcurador:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_bienesEmbargables","fieldLabel":"Existen bienes embargables",filtradoProcurador:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_bienesEmbargables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]); 
 	
 	//id: 322 : T. EJECUCIÓN TÍTULO NO JUDICIAL: Auto despachando ejecucion - marcado de bienes decreto embargo (clausulas abusivas)
@@ -3356,7 +3356,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype":'datefield', "name":"d_fechaNuevoTest", "fieldLabel":"Fecha nuevo testimoio", allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
     
-  //id: 443 : PROCEDIMIENTO MONITORIO: Interposición de la demanda
+    //id: 443 : PROCEDIMIENTO MONITORIO: Interposición de la demanda
 	this.arrayCampos.push([
 	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store": this.dsPlazas,allowBlank:false, "name":"d_plazaJuzgado","hiddenName":"d_plazaJuzgado",fieldLabel:"Plaza del juzgado",triggerAction: 'all',resizable:true, id:'d_plazaJuzgado'+this.idFactoria
@@ -3402,7 +3402,43 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"value":"", "name":"d_comboResultado","fieldLabel":"Resultado notificación","autoload":true,	mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
 	                      ]);
-
+	
+	//id: 449 : TRAMITE OCUPANTES: Registrar resolución tiene derecho
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","value":"01",filtrar:true,"fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]); 
+	
+	//id: 450 : TRAMITE OCUPANTES: Registrar resolución no tiene derecho
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","value":"02",filtrar:true,"fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 451 : T. EJECUCIÓN TÍTULO JUDICIAL: Auto despachando ejecucion
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nProc","fieldLabel":"Nº de procedimiento",allowBlank:true,id:'d_nProc'+this.idFactoria
+		           				,validator : function(v) {
+		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		           				}
+	                        }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
+	//id: 452 : T. EJECUCIÓN TÍTULO JUDICIAL: Auto despachando ejecucion clausulas abusivas
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nProc","fieldLabel":"Nº de procedimiento",allowBlank:false,id:'d_nProc'+this.idFactoria
+		           				,validator : function(v) {
+		           						return /[0-9]{5}\/[0-9]{4}$/.test(v)? true : "Debe introducir un n&uacute;mero con formato xxxxx/xxxx";
+		           				}
+	                        }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSiNo","fieldLabel":"Admisión",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSiNo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienesRegistrables","fieldLabel":"Existen bienes registrables",allowBlank:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboBienesRegistrables'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                      ]);
+	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

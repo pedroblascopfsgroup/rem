@@ -32,6 +32,7 @@
     
     historicoLiquidacionesStore.on('load', function () {
 		habilitarDeshabilitarBotonesGrid();
+		entregasLiquidacionStore.removeAll();
 	});
 
 	var cmHistoricoLiquidaciones = new Ext.grid.ColumnModel([
@@ -354,7 +355,10 @@
 	panel.setValue = function(){
 		var data = entidad.get("data");
         historicoLiquidacionesStore.webflow({idAsunto: data.id});
+        
 	}
+	
+	
 	
 	panel.getIdAsunto = function(){
 		return data.id;

@@ -13,6 +13,11 @@
 	
 	<pfs:hidden name="idAsunto" value="${idAsunto}" />
 	<pfs:hidden name="isEdit" value="${isEdit}" />
+	
+	<pfs:hidden name="anteriorContrato" value="${dtoCalculoLiquidacion.contrato}" />
+	<pfs:hidden name="anteriorFechaCierre" value="${dtoCalculoLiquidacion.fechaCierre}" />
+	<pfs:hidden name="anteriorFechaLiquidacion" value="${dtoCalculoLiquidacion.fechaLiquidacion}" />
+	
 	<%-- Como no se quiere utilizar el estado calculo, de momento, le pasamos siempre como pendiente --%>
 	<pfs:hidden name="estadoCalculo" value='PTE' />
 	
@@ -135,37 +140,44 @@
 			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
 		} else {
 			if (validarForm()) {
-
-				fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
+				if(anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y")){
+					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidación" />');
+				}else{
 					
-				var p=parametros();
-				
-				var storeList = tiposInteresStore.data.items;
-				if (storeList.length > 0) {
-					var tiposInteresesData = [];
+					fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
 					
-					var i;
-					for (i=0;i < storeList.length;i++) {
-						var reg = storeList[i].data;
-						var tipo = '';
-						tipo = reg.fecha + '#' + reg.tipoInteres;
-						tiposInteresesData.push(tipo);
+					var p=parametros();
+					
+					var storeList = tiposInteresStore.data.items;
+					if (storeList.length > 0) {
+						var tiposInteresesData = [];
+						
+						var i;
+						for (i=0;i < storeList.length;i++) {
+							var reg = storeList[i].data;
+							var tipo = '';
+							tipo = reg.fecha + '#' + reg.tipoInteres;
+							tiposInteresesData.push(tipo);
+						}
 					}
+					
+					p.tiposIntereses = tiposInteresesData;
+					
+					if(isEdit.getValue()){
+						p.id = "${dtoCalculoLiquidacion.id}";
+					}
+					
+					page.webflow({
+		      			flow:'liquidaciones/guardaCalculoLiquidacion'
+		      			,params: p
+		      			,success: function(){
+							page.fireEvent(app.event.DONE);
+		           		}	
+			      	});
+			      	
 				}
-				
-				p.tiposIntereses = tiposInteresesData;
-				
-				if(isEdit.getValue()){
-					p.id = "${dtoCalculoLiquidacion.id}";
-				}
-				
-				page.webflow({
-	      			flow:'liquidaciones/guardaCalculoLiquidacion'
-	      			,params: p
-	      			,success: function(){
-						page.fireEvent(app.event.DONE);
-	           		}	
-		      	});
+
+
 				
 			} else {
 				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');

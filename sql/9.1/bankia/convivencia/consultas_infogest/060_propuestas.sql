@@ -43,7 +43,9 @@ SELECT DISTINCT
  ,TAR_F_ENVIO.TEV_VALOR FECHA_ENVIO
   ,DECODE(TSU.DD_TSU_CODIGO,'DEL',TAR_F_ENVIO.TEV_VALOR,'NDE',TAR_F_APROB.TEV_VALOR) FECHA_ACEPTACION
   ,DECODE(TSU.DD_TSU_CODIGO,'DEL',TAR_F_ENVIO.TEV_VALOR,'NDE',TAR_F_APROB.TEV_VALOR) FECHA_APROBACION
-  ,SUB.FECHAMODIFICAR FECHA_INICIO_SITUACION
+ ,TRUNC(SUB.SUB_FECHA_SOLICITUD)  FECHA_INICIO_SITUACION
+
+
 FROM  (
 select DISTINCT TAR.ASU_ID,tev.tev_nombre, TO_DATE(tev.tev_valor,'YYYY-MM-DD') AS TEV_VALOR
  from BANK01.tar_tareas_notificaciones tar
@@ -92,4 +94,66 @@ WHERE SUB.ASU_ID             = A.ID_ASUNTO_RCV
 COMMIT;
 
 
+-- MERGE APR
+
+MERGE INTO 	MINIREC.RCV_GEST_PROPUESTA RCV
+USING
+(
+select prc.asu_id, prc.prc_id,tev.tev_nombre, tev.tev_valor
+    from BANK01.TEV_TAREA_EXTERNA_VALOR tev
+    inner join BANK01.TEX_TAREA_EXTERNA tex on tex.TEX_ID = tev.TEX_ID
+    inner join BANK01.TAR_TAREAS_NOTIFICACIONES tar on tar.tar_id = tex.tar_id
+    inner join BANK01.TAP_TAREA_PROCEDIMIENTO tap on tap.tap_id = tex.tap_id
+    inner join BANK01.PRC_PROCEDIMIENTOS prc on prc.prc_id = tar.prc_id
+    where (UPPER(tap.TAP_CODIGO) LIKE 'P401%' OR UPPER(tap.TAP_CODIGO) LIKE 'P409%')
+    and tev.tev_nombre = 'fechaSolicitud'
+) TMP
+    on (RCV.ID_PROPUESTA_RCV = TMP.PRC_ID)
+    WHEN MATCHED THEN
+    UPDATE SET RCV.FECHA_INICIO_SITUACION = TO_DATE(TMP.TEV_VALOR, 'YYYY-MM-DD')
+    where TMP.TEV_NOMBRE = 'fechaSolicitud'
+    and RCV.SITUACION_ACTUAL = 'APR';
+    COMMIT;
+    
+-- MERGE FIN
+
+MERGE INTO MINIREC.RCV_GEST_PROPUESTA RCV
+USING
+(
+select prc.asu_id, prc.prc_id,tev.tev_nombre, tev.tev_valor
+    from BANK01.TEV_TAREA_EXTERNA_VALOR tev
+    inner join BANK01.TEX_TAREA_EXTERNA tex on tex.TEX_ID = tev.TEX_ID
+    inner join BANK01.TAR_TAREAS_NOTIFICACIONES tar on tar.tar_id = tex.tar_id
+    inner join BANK01.TAP_TAREA_PROCEDIMIENTO tap on tap.tap_id = tex.tap_id
+    inner join BANK01.PRC_PROCEDIMIENTOS prc on prc.prc_id = tar.prc_id
+    where (UPPER(tap.TAP_CODIGO) LIKE 'P401%' OR UPPER(tap.TAP_CODIGO) LIKE 'P409%')
+    and tev.tev_nombre = 'fechaAnuncio'
+) TMP
+    on (RCV.ID_PROPUESTA_RCV = TMP.PRC_ID)
+    WHEN MATCHED THEN
+    UPDATE SET RCV.FECHA_INICIO_SITUACION = TO_DATE(TMP.TEV_VALOR, 'YYYY-MM-DD')
+    where TMP.TEV_NOMBRE = 'fechaAnuncio'
+    and RCV.SITUACION_ACTUAL = 'FIN';
+    COMMIT;
+    
+-- MERGE ANU
+
+MERGE INTO MINIREC.RCV_GEST_PROPUESTA RCV
+USING
+(
+select prc.asu_id, prc.prc_id,tev.tev_nombre, tev.tev_valor
+    from BANK01.TEV_TAREA_EXTERNA_VALOR tev
+    inner join BANK01.TEX_TAREA_EXTERNA tex on tex.TEX_ID = tev.TEX_ID
+    inner join BANK01.TAR_TAREAS_NOTIFICACIONES tar on tar.tar_id = tex.tar_id
+    inner join BANK01.TAP_TAREA_PROCEDIMIENTO tap on tap.tap_id = tex.tap_id
+    inner join BANK01.PRC_PROCEDIMIENTOS prc on prc.prc_id = tar.prc_id
+    where (UPPER(tap.TAP_CODIGO) LIKE 'P401%' OR UPPER(tap.TAP_CODIGO) LIKE 'P409%')
+    and tev.tev_nombre = 'fechaSuspension'
+) TMP
+    on (RCV.ID_PROPUESTA_RCV = TMP.PRC_ID)
+    WHEN MATCHED THEN
+    UPDATE SET RCV.FECHA_INICIO_SITUACION = TO_DATE(TMP.TEV_VALOR, 'YYYY-MM-DD')
+    where TMP.TEV_NOMBRE = 'fechaSuspension'
+    and RCV.SITUACION_ACTUAL = 'ANU';
+    COMMIT;   
 

@@ -45,6 +45,14 @@ public class DecisionProcedimientoPayloadRegexRule extends TypePayloadRegexRule<
 		DataContainerPayload payload = message.getPayload();
 		DecisionProcedimientoPayload decisionProc = new DecisionProcedimientoPayload(payload);
 
+		// Se comprueba el tipo de procedimiento que se deriva
+		if (!Checks.esNulo(codigoTiposProcedimientoDerivados)) {
+			boolean matches = match(codigoTiposProcedimientoDerivados, decisionProc.getProcedimiento().getTipoProcedimiento());
+			if (!matches) {
+				return false;
+			}
+		}
+		
 		// comprueba los tipos de procedimientos a los que se está derivando
 		List<ProcedimientoDerivadoPayload> procDerivados = decisionProc.getProcedimientoDerivado();
 		if (!Checks.esNulo(codigoTiposProcedimientoDerivados) && procDerivados != null) {

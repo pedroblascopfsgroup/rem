@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Joaquín Sánchez Valverde
---## FECHA_CREACION=20160505
+--## FECHA_CREACION=20160510
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.3
 --## INCIDENCIA_LINK=CMREC-3065_050516 ZON USUARIO
@@ -240,9 +240,7 @@ BEGIN
 		ELSE 
 			DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto, NO se ejecutara de nuevo otra vez.');				
 		END IF;	 			
-	ELSE 
-		DBMS_OUTPUT.PUT_LINE('El  Procedimiento ' || V_USUARIO_EJECUTA || ' ya se ejecuto, NO se ejecutara de nuevo otra vez.');				
-	END IF;	 	
+	
 	
 	EXCEPTION
   WHEN OTHERS THEN

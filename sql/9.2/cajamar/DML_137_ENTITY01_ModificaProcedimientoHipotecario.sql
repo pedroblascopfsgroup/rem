@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-1316
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Modificación Trámite de Notificacion Personal
+--## Finalidad: BPM - Modificación procedimiento hipotecario
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -39,7 +39,6 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('HC108','T. notificación personal - HCJ','T. notificación personal',null,'hcj_tramiteNotificacionPersonal','0','PRODUCTO-1316','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -47,7 +46,8 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('HC108','HC108_GestionarNotificaciones',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones','0','PRODUCTO-1316','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,'814',null)
+    	T_TIPO_TAP('H001','H001_AutoDespachandoEjecucion','plugin/procedimientos-bpmHaya-plugin/procedimientoHipotecario/autoDespachandoEjecucion','comprobarExisteDocumentoADEH() ? null : ''Es necesario adjuntar el documento Auto despachando ejecuci&oacute;n.''',null,'valores[''H001_AutoDespachandoEjecucion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_DemandaCertificacionCargas''][''comboNotificacion''] == DDSiNo.SI ? ''notificaPersonal'' : ''SI'') : ''NO''',null,'0','Auto despachando ejecución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,null,null,null,null),
+        T_TIPO_TAP('H001','H001_BPMTramiteNotificacionPersonal',null,null,null,null,'HC108','0','Se inicia el trámite de notificación personal','0','PRODUCTO-1316','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
@@ -55,54 +55,41 @@ DECLARE
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-       T_TIPO_PLAZAS(null,null,'HC108_GestionarNotificaciones','60*24*60*60*1000L','0','0','PRODUCTO-1316')
-    ); 
+      T_TIPO_PLAZAS(null,null,'H001_BPMTramiteNotificacionPersonal','300*24*60*60*1000L','0','0','PRODUCTO-1316')
+     ,T_TIPO_PLAZAS(null,null,'H001_ConfirmarSiExisteOposicion','(valores[''H001_ConfirmarNotificacionReqPago''] != null && valores[''H001_ConfirmarNotificacionReqPago''][''fecha''] != null) ? damePlazo(valores[''H001_ConfirmarNotificacionReqPago''][''fecha'']) + 10*24*60*60*1000L : 10*24*60*60*1000L','0','0','PRODUCTO-1316')
+     
+      ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
     
     --Insertando valores en TFI_TAREAS_FORM_ITEMS
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
-    V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-         T_TIPO_TFI('HC108_GestionarNotificaciones','0','label','titulo','<div align="justify" style="margin-bottom: 30px;"><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Dado que se ha iniciado un trámite de notificación con el objeto de notificar a todos los demandados en el procedimiento, esta tarea seguirá pendiente mientras no se haya conseguido notificar a todos los demandados o en su caso, haber marcado la casilla Descartado en aquellos demandados que no se pudiera o considere su notificación.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Para gestionar las notificaciones de los demandados en el procedimiento, deberá abrir la ficha de procedimiento correspondiente y registrar las gestiones realizadas en la pestaña Notificación demandados.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">En el momento que &nbsp;queden todos los demandados notificados o en su caso descartados, el sistema completará esta tarea de forma automática dando así por finalizada esta actuación.&nbsp;</span></p><p><span style="font-size: 10.6666669845581px;">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</span></font></p></div>',null,null,null,null,'0','PRODUCTO-1316')
-        ,T_TIPO_TFI('HC108_GestionarNotificaciones','1','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1316')
-        ); 
+    V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(    
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Informar fecha de presentación de la demanda con solicitud de certificación de cargas e indíquese la plaza del juzgado.</p><p style="margin-bottom: 10px">Se ha de indicar la fecha de cierre de la deuda junto con el principal de la demanda, el capital vencido, capital no vencido, juntos con los intereses ordinarios, de demora que se han generado en el cierre y el crédito supletorio. RESPONSABILIDAD HIPOTECARIA: por capital, por intereses remuneratorios, por demora y por costas y gastos.</p><p style="margin-bottom: 10px">Para dar por finalizada la tarea deberá adjuntar el escrito de demanda completo así como la primera hoja sellada por el juzgado.</p><p style="margin-bottom: 10px">En el campo "Solicitar provisión de fondos" deberá indicar va a solicitar o no provisión de fondos.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Auto despachando ejecución" y paralelamente se lanzará el "trámite de provisión de fondos" si ha indicado que solicita provisión de fondos.</p></div>',null,null,null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','1','date','fechaPresentacionDemanda','Fecha presentación','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','2','combo','plazaJuzgado','Plaza del juzgado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','damePlaza()','TipoPlaza','0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','3','date','fechaCierreDeuda','Fecha cierre de la deuda','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','4','currency','principalDeLaDemanda','Principal de la demanda','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','5','currency','capitalVencidoEnElCierre','Capital vencido (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','6','currency','capitalNoVencidoEnElCierre','Capital no vencido (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','7','currency','interesesOrdinariosEnElCierre','Intereses ordinarios (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','8','currency','interesesDeDemoraEnElCierre','Intereses de demora (en el cierre)','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','9','currency','respHipCap','Responsabilidad hipotecaria máxima por capital','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','10','currency','respHipIntRem','Responsabilidad hipotecaria máxima por intereses remuneratorios','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','11','currency','respHipDem','Responsabilidad hipotecaria máxima por demora','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','12','currency','respHipCosGas','Responsabilidad hipotecaria máxima por costas y gastos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','13','currency','creditoSupl','Crédito supletorio','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','14','combo','provisionFondos','Provisión Fondos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','15','combo','comboNotificacion','Notificación personal','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','16','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
+     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
 BEGIN   
     
     -- LOOP Insertando valores en DD_TPO_TIPO_PROCEDIMIENTO
-    VAR_TABLENAME := 'DD_TPO_TIPO_PROCEDIMIENTO';
-    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar TIPO DE PROCEDIMIENTO');
-    FOR I IN V_TIPO_TPO.FIRST .. V_TIPO_TPO.LAST
-      LOOP
-        V_TMP_TIPO_TPO := V_TIPO_TPO(I);
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||TRIM(V_TMP_TIPO_TPO(1))||'''';
-        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;          
-        IF V_NUM_TABLAS > 0 THEN                
-          DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_TPO_TIPO_PROCEDIMIENTO... Ya existe el procedimiento '''|| TRIM(V_TMP_TIPO_TPO(1)) ||'''');
-        ELSE
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.' || VAR_TABLENAME || ' (' ||
-                    'DD_TPO_ID,DD_TPO_CODIGO,DD_TPO_DESCRIPCION,DD_TPO_DESCRIPCION_LARGA,' ||
-                    'DD_TPO_HTML,DD_TPO_XML_JBPM,VERSION,USUARIOCREAR,' ||
-                    'FECHACREAR,BORRADO,DD_TAC_ID,DD_TPO_SALDO_MIN,'||
-                    'DD_TPO_SALDO_MAX,FLAG_PRORROGA,DTYPE,FLAG_DERIVABLE,FLAG_UNICO_BIEN) ' ||
-                    'SELECT '||V_ESQUEMA ||'.S_DD_TPO_TIPO_PROCEDIMIENTO.NEXTVAL, ' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(1)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TPO(2)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(3)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TPO(4)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(5)),'''','''''') || ''',''' || REPLACE(TRIM(V_TMP_TIPO_TPO(6)),'''','''''') || ''',' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(7)),'''','''''') || ''',sysdate,' ||
-                    '''' || REPLACE(TRIM(V_TMP_TIPO_TPO(8)),'''','''''') || ''',' ||
-                    '(SELECT DD_TAC_ID FROM '|| V_ESQUEMA ||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO=''' || TRIM(V_TMP_TIPO_TPO(9)) || '''),' ||
-                    '''' || TRIM(V_TMP_TIPO_TPO(10)) || ''',''' || TRIM(V_TMP_TIPO_TPO(11)) || ''',''' || TRIM(V_TMP_TIPO_TPO(12)) || ''',' ||
-                    '''' || TRIM(V_TMP_TIPO_TPO(13)) || ''',''' || TRIM(V_TMP_TIPO_TPO(14)) || ''',''' || TRIM(V_TMP_TIPO_TPO(15)) || ''' FROM DUAL'; 
-            DBMS_OUTPUT.PUT_LINE('INSERTANDO: ''' || V_TMP_TIPO_TPO(1) ||''','''||TRIM(V_TMP_TIPO_TPO(2))||'''');
-            DBMS_OUTPUT.PUT_LINE(V_MSQL);
-            EXECUTE IMMEDIATE V_MSQL;
-        END IF;
-    END LOOP;
-    DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Procedimiento');
-    
+    	
     -- LOOP Insertando valores en TAP_TAREA_PROCEDIMIENTO
     VAR_TABLENAME := 'TAP_TAREA_PROCEDIMIENTO';
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar TAREAS');
@@ -157,7 +144,7 @@ BEGIN
 
 
     -- LOOP Insertando valores en DD_PTP_PLAZOS_TAREAS_PLAZAS
-    VAR_TABLENAME := 'DD_PTP_PLAZOS_TAREAS_PLAZAS';
+   VAR_TABLENAME := 'DD_PTP_PLAZOS_TAREAS_PLAZAS';
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar PLAZOS');
     FOR I IN V_TIPO_PLAZAS.FIRST .. V_TIPO_PLAZAS.LAST
       LOOP
@@ -187,7 +174,7 @@ BEGIN
         END IF;
       END LOOP;
     DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Plazos');
-
+    
     -- LOOP Insertando valores en TFI_TAREAS_FORM_ITEMS
     VAR_TABLENAME := 'TFI_TAREAS_FORM_ITEMS';
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.' || VAR_TABLENAME || '... Empezando a insertar Campos de tareas');

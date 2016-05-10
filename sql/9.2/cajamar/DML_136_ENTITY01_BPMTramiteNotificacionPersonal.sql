@@ -39,7 +39,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('HC108','T. notificación personal - HCJ','T. notificación personal',null,'hcj_tramiteNotificacionPersonal','0','PRODUCTO-1316','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('HC108','T. notificación personal - HCJ','T. notificación personal',null,'hcj_tramiteNotificacionPersonal','0','PRODUCTO-1316','0','TR_REM',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -47,7 +47,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-       T_TIPO_TAP('HC108','HC108_GestionarNotificaciones',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones','0','PRODUCTO-1316','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,'814',null)
+       T_TIPO_TAP('HC108','HC108_GestionarNotificaciones',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones','0','PRODUCTO-1316','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
 

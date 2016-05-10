@@ -29,30 +29,6 @@
         '</div></tpl>'
     );
     
-    
-    <%-- --------------- 
-   
-	var dicListaGestores =
-		<json:object name="dicListaGestores">
-			<json:array name="gestores" items="${listaGestores}" var="ges">
-					<json:object>
-						<json:property name="id" value="${ges.id}" />
-						<json:property name="nombre" value="${ges.nombre}" />
-						<json:property name="apellido1" value="${ges.apellido1}" />
-						<json:property name="apellido2" value="${ges.apellido2}" />
-						<json:property name="username" value="${ges.username}" />
-					</json:object>
-			</json:array>
-		</json:object>;
-    
-    var optionsUsuariosStore = new Ext.data.JsonStore({
-	       fields: ['id', 'nombre', 'apellido1', 'apellido2', 'username']
-	       ,data : dicListaGestores
-	       ,root: 'gestores'
-	});
-    debugger;--%>
-     <%-- ---------------  --%>
-    
     var listadocodigoUsuarios = [];
     
     var optionsUsuariosStore = page.getStore({
@@ -148,6 +124,7 @@
    			usernameSel='';
    			btnIncluir.setDisabled(true);
 			comboUsuarios.focus();
+			btnGuardar.setDisabled(false);
 		}
 	});
 
@@ -172,6 +149,9 @@
 			}
 			usuarioAExcluir = -1;
 	   		btnExcluir.setDisabled(true);
+	   		if(listadocodigoUsuarios.length == 0) {
+	   			btnGuardar.setDisabled(true);
+	   		}
 		}
 	});
 	
@@ -180,12 +160,13 @@
 	<pfs:defineParameters name="parametros" paramId="${idDespacho}" 
 		listaUsuariosId="listadoUsuariosId"
 	/>
-	debugger;
+	
 	<pfs:editForm saveOrUpdateFlow="admdespachoexterno/guardarGestores"
 		leftColumFields="comboUsuarios, btnIncluir, btnExcluir"
 		rightColumFields="zonasGrid"
 		parameters="parametros"  />
 		
+	btnGuardar.setDisabled(true);
 	
 	btnGuardar.on('click',function() {
 		for(var i=0 ; i < listadocodigoUsuarios.length ; i++) {

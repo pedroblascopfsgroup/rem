@@ -3,11 +3,11 @@ create or replace PROCEDURE TRUNCAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 03/11/2015
--- Motivos del cambio: Usuario propietario
+-- Fecha ultima modificacion: 09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
--- Descripción: Procedimiento almancenado que trunca las tablas de la dimensión Asunto.
+-- Descripción: Procedimiento almancenado que trunca las tablas de la dimensión BIEN.
 -- ===============================================================================================
 
 V_NOMBRE VARCHAR2(50) := 'TRUNCAR_DIM_BIEN';
@@ -37,7 +37,24 @@ BEGIN
  execute immediate V_SQL USING OUT error;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_FASE_ACTUAL_DETALLE'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
-
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_DESC_LANZAMIENTOS'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_PRIMER_TITULAR'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_NUM_OPERACION'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_ZONA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_OFICINA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_ENTIDAD'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE_AGR'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_BIE_VIVIENDA_HABITUAL'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
   commit;
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

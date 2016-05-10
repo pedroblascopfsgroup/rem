@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_DIM_CONTRATO (error OUT VARCHAR2) AS
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 27/11/2015
--- Motivos del cambio: Usuario Propietario
+-- Fecha ultima modificacion: 09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas de la dimension Contrato
@@ -165,14 +165,24 @@ create or replace PROCEDURE CREAR_DIM_CONTRATO (error OUT VARCHAR2) AS
     -- D_CNT_T_ANTIGUEDAD_DEUDA
     -- D_CNT_SITUACION_CARTERA_DANADA
     -- D_CNT_TIPO_GESTION_EXP
+    -- D_CNT_TIPO_VENCIDO
+    -- D_CNT_TRAMO_CAP_VIVO
+    -- D_CNT_DIR_TERRITORIAL
+    -- D_CNT_ENTIDAD
+    -- D_CNT_PERIMETRO_GESTION_CM
+    -- D_CNT_MOTIVO_COBRO
+	-- D_CNT_APLICATIVO_ORIGEN
     -- D_CNT
-    -- D_CNT_PERIMETRO_SIN_GESTION, 
+	-- D_CNT_PERIMETRO_SIN_GESTION, 
 	-- D_CNT_PERIMETRO_EXP_SEG, 
 	-- D_CNT_PERIMETRO_EXP_REC, 
 	-- D_CNT_PERIMETRO_GES_EXTRA, 
 	-- D_CNT_PERIMETRO_GES_PRE, 
 	-- D_CNT_PERIMETRO_GES_JUDI, 
 	-- D_CNT_PERIMETRO_GES_CONCU
+    -- D_CNT_TITULAR
+    -- D_CNT_TIPO_SOL_PREVISTA
+    
 
 
 BEGIN
@@ -1701,6 +1711,73 @@ BEGIN
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
     
+    ------------------------------  D_CNT_TIPO_VENCIDO --------------------------
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_VENCIDO'', 
+						  ''TIPO_VENCIDO_ID NUMBER(16,0) NOT NULL,
+                            TIPO_VENCIDO_DESC VARCHAR2(50 CHAR),
+                            TIPO_VENCIDO_DESC_2 VARCHAR2(250 CHAR),
+                            PRIMARY KEY (TIPO_VENCIDO_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_VENCIDO');
+      
+
+    ------------------------------  D_CNT_TRAMO_CAP_VIVO --------------------------
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TRAMO_CAP_VIVO'', 
+						  ''TRAMO_CAP_VIVO_ID NUMBER(16,0) NOT NULL,
+                            TRAMO_CAP_VIVO_DESC VARCHAR2(50 CHAR),
+                            PRIMARY KEY (TRAMO_CAP_VIVO_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TRAMO_CAP_VIVO');
+      
+      
+    ------------------------------  D_CNT_DIR_TERRITORIAL --------------------------
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_DIR_TERRITORIAL'', 
+						  ''DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL,
+                            DIR_TERRITORIAL_DESC VARCHAR2(50 CHAR),
+                            DIR_TERRITORIAL_DESC_2 VARCHAR2(250 CHAR),
+                            PRIMARY KEY (DIR_TERRITORIAL_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_DIR_TERRITORIAL');  
+      
+      
+    ------------------------------  D_CNT_ENTIDAD --------------------------
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_ENTIDAD'', 
+						  ''CONTRATO_ENTIDAD_ID NUMBER(16,0) NOT NULL,
+                            CONTRATO_ENTIDAD_DESC VARCHAR2(50 CHAR),
+                            CONTRATO_ENTIDAD_DESC_2 VARCHAR2(250 CHAR),
+                            PRIMARY KEY (CONTRATO_ENTIDAD_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ENTIDAD');      
+    
+
+    ------------------------------  D_CNT_PERIMETRO_GESTION_CM --------------------------
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_GESTION_CM'', 
+						  ''PERIMETRO_GESTION_CM_ID NUMBER(16,0) NOT NULL,
+                            PERIMETRO_GESTION_CM_DESC VARCHAR2(250 CHAR),
+                            PRIMARY KEY (PERIMETRO_GESTION_CM_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GESTION_CM'); 
+      
+    ------------------------------  D_CNT_MOTIVO_COBRO --------------------------
+	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_MOTIVO_COBRO'', 
+						  ''MOTIVO_COBRO_ID NUMBER(16,0) NOT NULL,
+                            MOTIVO_COBRO_DESC VARCHAR2(50 CHAR),
+                            MOTIVO_COBRO_DESC_2 VARCHAR2(250 CHAR),
+                            PRIMARY KEY (MOTIVO_COBRO_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_MOTIVO_COBRO');    
+	  
+	   ------------------------------ D_CNT_APLICATIVO_ORIGEN --------------------------
+	 
+     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_APLICATIVO_ORIGEN'',
+		''APLICATIVO_ORIGEN_CNT_ID NUMBER(16,0) NOT NULL ENABLE, 
+	APLICATIVO_ORIGEN_CNT_DESC VARCHAR2(50 CHAR),
+	APLICATIVO_ORIGEN_CNT_DESC2 VARCHAR2(250 CHAR),
+	PRIMARY KEY (APLICATIVO_ORIGEN_CNT_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_APLICATIVO_ORIGEN');
+      
     ------------------------------  D_CNT_PERIMETRO_SIN_GESTION --------------------------
 	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_PERIMETRO_SIN_GESTION'', 
 						  ''PERIMETRO_SIN_GESTION_ID NUMBER(16,0) NOT NULL,
@@ -1762,6 +1839,30 @@ BEGIN
                             PRIMARY KEY (PERIMETRO_GES_CONCU_ID)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_PERIMETRO_GES_CONCU');
+          
+    ------------------------------  D_CNT_TITULAR --------------------------
+     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TITULAR'', 
+
+
+
+                            ''CNT_TITULAR_ID NUMBER(16,0) NOT NULL,
+                              CNT_TITULAR_DOCUMENTO_ID VARCHAR2(20),
+                              CNT_TITULAR_NOMBRE VARCHAR2(100 CHAR),
+                              CNT_TITULAR_APELLIDO_1 VARCHAR2(100 CHAR),
+                              CNT_TITULAR_APELLIDO_2 VARCHAR2(100 CHAR),
+                              
+                            PRIMARY KEY (CNT_TITULAR_ID)'', 
+                            :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TITULAR');      
+
+    ------------------------------ D_CNT_TIPO_SOL_PREVISTA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT_TIPO_SOL_PREVISTA'', 
+						  ''TIPO_SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                            TIPO_SOL_PREVISTA_DESC VARCHAR2(250 CHAR),
+                            PRIMARY KEY (TIPO_SOL_PREVISTA_ID)'', :error); END;'; 		 
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_TIPO_SOL_PREVISTA');
 	  
     ------------------------------ D_CNT --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_CNT'', 
@@ -1790,6 +1891,8 @@ BEGIN
                             TIPO_PERSONA_TITULAR_ID NUMBER(16,0),
                             CARTERA_CONTRATO_ID NUMBER(16,0),
                             GESTION_ESPECIAL_ID NUMBER(16,0) NULL,
+                            CNT_TITULAR_ID NUMBER(16,0),
+							APLICATIVO_ORIGEN_CNT_ID NUMBER(16,0)
                             CONSTRAINT D_CNT_PK PRIMARY KEY (CONTRATO_ID)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
          DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT');
@@ -1803,7 +1906,8 @@ BEGIN
       
       DBMS_OUTPUT.PUT_LINE('---- Creacion indices de la tabla D_CNT');
    
-
+    --Log_Proceso
+    execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;    
     
   end;
 END CREAR_DIM_CONTRATO;

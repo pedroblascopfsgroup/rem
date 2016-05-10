@@ -3,8 +3,8 @@ create or replace PROCEDURE TRUNCAR_DIM_CONTRATO (error OUT VARCHAR2) AS
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion:Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 23/11/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que trunca las tablas de la dimension Persona
@@ -326,19 +326,37 @@ BEGIN
  execute immediate V_SQL USING OUT error;
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_TIPO_GESTION_EXP'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_SIN_GESTION'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_TIPO_VENCIDO'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_EXP_SEG'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_TRAMO_CAP_VIVO'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_EXP_REC'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_DIR_TERRITORIAL'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_EXTRA'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_ENTIDAD'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_PRE'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GESTION_CM'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_JUDI'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_MOTIVO_COBRO'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
- V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_CONCU'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_SIN_GESTION'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_EXP_SEG'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_EXP_REC'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_EXTRA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_PRE'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_JUDI'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_PERIMETRO_GES_CONCU'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_TITULAR'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error; 
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_APLICATIVO_ORIGEN'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT_TIPO_SOL_PREVISTA'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_CNT'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;

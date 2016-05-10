@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_H_TAREA (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 03/02/2016
--- Motivos del cambio: ESTADO_PRORROGA_ID
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI HAYA
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Tarea
@@ -50,7 +50,6 @@ BEGIN
                               CARTERA_PROCEDIMIENTO_ID NUMBER(16,0)  ,
                               GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0)  ,
                               CUMPLIMIENTO_TAREA_ID NUMBER(16,0)  ,
-							  ESTADO_PRORROGA_ID NUMBER(16,0),
                               -- Metricas
                               NUM_TAREAS INTEGER ,
                               NUM_DIAS_VENCIDO INTEGER
@@ -97,14 +96,9 @@ BEGIN
                               CARTERA_PROCEDIMIENTO_ID NUMBER(16,0)  ,
                               GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0)  ,
                               CUMPLIMIENTO_TAREA_ID NUMBER(16,0)  ,
-							  ESTADO_PRORROGA_ID NUMBER(16,0),
-
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER)
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501)
+                              NUM_DIAS_VENCIDO INTEGER
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_TAR_SEMANA');
@@ -139,15 +133,10 @@ BEGIN
                               TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0) ,
                               CARTERA_PROCEDIMIENTO_ID NUMBER(16,0)  ,
                               GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0)  ,
-                              CUMPLIMIENTO_TAREA_ID NUMBER(16,0) ,
-							  ESTADO_PRORROGA_ID NUMBER(16,0),
-
+                              CUMPLIMIENTO_TAREA_ID NUMBER(16,0)  ,
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501)
+                              NUM_DIAS_VENCIDO INTEGER
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
 		 
@@ -184,14 +173,9 @@ BEGIN
                               CARTERA_PROCEDIMIENTO_ID NUMBER(16,0)  ,
                               GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0)  ,
                               CUMPLIMIENTO_TAREA_ID NUMBER(16,0)  ,
-							  ESTADO_PRORROGA_ID NUMBER(16,0),
-
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501)
+                              NUM_DIAS_VENCIDO INTEGER
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_TAR_TRIMESTRE');
@@ -227,14 +211,9 @@ BEGIN
                               CARTERA_PROCEDIMIENTO_ID NUMBER(16,0)  ,
                               GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0)  ,
                               CUMPLIMIENTO_TAREA_ID NUMBER(16,0)  ,
-							  ESTADO_PRORROGA_ID NUMBER(16,0),
-
                               -- M?tricas
                               NUM_TAREAS INTEGER ,
-                              NUM_DIAS_VENCIDO INTEGER)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015)
+                              NUM_DIAS_VENCIDO INTEGER
                                '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_TAR_ANIO');

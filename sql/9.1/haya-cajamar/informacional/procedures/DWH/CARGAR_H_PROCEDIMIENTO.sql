@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificación: María Villanueva ., PFS Group
--- Fecha ultima modificación: 02/02/2016
--- Motivos del cambio: Finalizaciones
+-- Fecha ultima modificación: 09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 
 -- Cliente: Recovery BI Haya
 --
@@ -13,14 +13,14 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 BEGIN
 DECLARE
 -- ===============================================================================================
---                  									Declaracación de variables
+--                                    Declaracación de variables
 -- ===============================================================================================
   v_num_row NUMBER(10);
   V_SQL VARCHAR2(16000);
   V_DATASTAGE VARCHAR2(100);
-  V_haya02 VARCHAR2(100);
+  V_HAYA02 VARCHAR2(100);
+
   V_NUMBER  NUMBER(16,0);
-  V_HAYAMASTER VARCHAR2(100);
 
   max_dia_con_contratos date;
   min_dia_semana date;
@@ -82,8 +82,8 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); end;' USING IN V_NOMBRE, 'Empieza ' || V_NOMBRE, 2;
   select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA_DATASTAGE'; 
-    select valor into V_haya02 from PARAMETROS_ENTORNO where parametro = 'ORIGEN_01';
-select valor into V_HAYAMASTER from PARAMETROS_ENTORNO where parametro = 'ORIGEN_02';
+    select valor into V_HAYA02 from PARAMETROS_ENTORNO where parametro = 'ORIGEN_01';
+
 
 -- ----------------------------------------------------------------------------------------------
 --                                      H_PRC
@@ -96,6 +96,8 @@ select valor into V_HAYAMASTER from PARAMETROS_ENTORNO where parametro = 'ORIGEN
 -- ------------------------------- PRIORIDADES PROCEDIMIENTOS ----------------------------------- 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_CODIGO_PRIORIDAD'', '''', :O_ERROR_STATUS); END;';
              execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   --insert into TMP_PRC_CODIGO_PRIORIDAD (DD_TIPO_CODIGO, PRIORIDAD) values ('P198', 3);
   --insert into TMP_PRC_CODIGO_PRIORIDAD (DD_TIPO_CODIGO, PRIORIDAD) values ('P199', 3);
   insert into TMP_PRC_CODIGO_PRIORIDAD (DD_TIPO_CODIGO, PRIORIDAD) values ('H036', 3);
@@ -126,17 +128,21 @@ select valor into V_HAYAMASTER from PARAMETROS_ENTORNO where parametro = 'ORIGEN
   -- Borrado �ndices TMP_PRC_JERARQUIA
  
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_JERARQUIA_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_JERARQUIA_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_JERARQUIA_ULT_FASE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;    
       
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
              execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
   commit;
   
   -- Si DATE_START no existe en PRC_PROCEDIMIENTOS_JERARQUIA cogemos la última anterior que haya en PRC_PROCEDIMIENTOS_JERARQUIA
@@ -258,14 +264,29 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_JERARQUIA_ITER_IX''
 
 
   -- Crear indices TMP_PRC_JERARQUIA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_JERARQUIA_ITER_IX'', ''TMP_PRC_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;  
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_JERARQUIA_FASE_ACT_IX'', ''TMP_PRC_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;  
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_JERARQUIA_ULT_FASE_IX'', ''TMP_PRC_JERARQUIA (DIA_ID, ULTIMA_FASE)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
 
   commit;  
     
@@ -275,6 +296,8 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_JERARQUIA_ITER_IX''
   -- Tabla temporal de cobros asociados a contratos
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_COBROS'', '''', :O_ERROR_STATUS); END;';
              execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   
   execute immediate
   'insert into TMP_PRC_COBROS (FECHA_COBRO, CONTRATO, IMPORTE, REFERENCIA)
@@ -288,27 +311,34 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_JERARQUIA_ITER_IX''
   
   -- Borrado �ndices TMP_PRC_CARTERA
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_CARTERA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;   
   
   -- Tabla temporal con relaci�n contrato-cartera a la que pertenece
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_CARTERA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
   
   execute immediate 'insert into TMP_PRC_CARTERA (CONTRATO, CARTERA)
                       select CNT.CNT_ID, (case IAC_VALUE when ''2038'' then 0
-                                                         when ''0240'' then 1
-
+                                                         when ''05074'' then 1
                                                          else -1 end)                                                       
                       from '||V_DATASTAGE||'.CNT_CONTRATOS cnt 
                       join '||V_DATASTAGE||'.EXT_IAC_INFO_ADD_CONTRATO iac on cnt.CNT_ID = iac.CNT_ID
-                      where cnt.BORRADO = 0 and iac.DD_IFC_ID = 1';
+                      where cnt.BORRADO = 0 and iac.DD_IFC_ID = 31';
   V_ROWCOUNT := sql%rowcount;     
   commit;
 
   -- Crear indices TMP_PRC_CARTERA
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_CARTERA_IX'', ''TMP_PRC_CARTERA (CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
   commit;    
   
    --Log_Proceso
@@ -316,6 +346,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   /*
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   
   execute immediate
   'insert into TMP_PRC_EXTRAS_RECOVERY_BI(FECHA_VALOR, TIPO_ENTIDAD, UNIDAD_GESTION, DD_IFB_ID, VALOR)
@@ -330,6 +362,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   -- Tabla temporal con relaci�n contrato-fecha contable de litigio
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_FECHA_CONTABLE_LITIGIO'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   
   execute immediate
   'insert into TMP_PRC_FECHA_CONTABLE_LITIGIO (CONTRATO, FECHA_CONTABLE_LITIGIO)
@@ -357,6 +391,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   -- Tabla temporal con relaci�n contrato-primer titular del contrato con pase
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TITULAR'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
   
   execute immediate 'insert into TMP_PRC_TITULAR (PROCEDIMIENTO, CONTRATO, TITULAR_PROCEDIMIENTO)
                       select PRC_ID, cex.CNT_ID, p.PER_ID 
@@ -364,7 +399,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                       join '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS cpe on p.PER_ID = cpe.PER_ID
                       join '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex on cpe.CNT_ID = cex.CNT_ID
                       join '||V_DATASTAGE||'.PRC_CEX prcex on prcex.CEX_ID = cex.CEX_ID
-                      where DD_TIN_ID = 41 and CPE_ORDEN = 1 and cex.CEX_PASE = 1
+                      JOIN '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN ON TIN.DD_TIN_ID = CPE.DD_TIN_ID
+                      where DD_TIN_TITULAR = 1 and CPE_ORDEN = 1 and cex.CEX_PASE = 1
                       group by PRC_ID, cex.CNT_ID, p.PER_ID';
   
   V_ROWCOUNT := sql%rowcount;     
@@ -377,12 +413,14 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   -- Tabla temporal con relaci�n de los contratos asociados al procedimiento en el que el/los demandados intervienen como 1er o 2� titular
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_DEMANDADO'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
   
   execute immediate 'insert into TMP_PRC_DEMANDADO (PROCEDIMIENTO, CONTRATO, DEMANDADO)
                       select PRCPER.PRC_ID, CNT_ID, PRCPER.PER_ID 
                       from '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE
                       join '||V_DATASTAGE||'.PRC_PER PRCPER on CPE.PER_ID = PRCPER.PER_ID 
-                      where (CPE.DD_TIN_ID = 41 OR CPE.DD_TIN_ID = 42) and (CPE_ORDEN = 1 OR CPE_ORDEN = 2)';
+                      JOIN '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN ON TIN.DD_TIN_ID = CPE.DD_TIN_ID
+                      where DD_TIN_TITULAR = 1 and CPE_ORDEN = 1';
   V_ROWCOUNT := sql%rowcount;     
   commit;
 
@@ -405,40 +443,56 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- TMP_PRC_DETALLE - Tabla auxiliar con el detalle diario. Reinicio para cada d�a
     -- Borrado �ndices TMP_PRC_DETALLE
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_DETALLE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
     
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_DETALLE'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     execute immediate 'insert into TMP_PRC_DETALLE(ITER) select distinct ITER from TMP_PRC_JERARQUIA where DIA_ID = '''||fecha||'''';    
     commit;
     
     -- Crear indices TMP_PRC_DETALLE
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_DETALLE_IX'', ''TMP_PRC_DETALLE (ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
     commit;    
 
     
 
     -- -------------------------------------------- FASE MAX PRIORIDAD -------------------------------------------- -------------------------------------
     --29/04/2015 --- se pasa al SP CREAR_H_PROCEDIMIENTO --> 24/11/2015.
+
    -- select count(*) into nCount  from user_tables where table_name = 'TMP_PRC_ITER_JERARQUIA';
   --  if nCount = 0 then execute immediate 'CREATE TABLE TMP_PRC_ITER_JERARQUIA (iter NUMBER(16,0), MAX_PRIORIDAD NUMBER(16,0), MAX_FASE_ACTUAL NUMBER(16,0), NUM_FASES NUMBER(16,0), CANCELADO_FASE  NUMBER(16,0))'; end if;
    -- commit;
 
     -- Borrar indices TMP_PRC_ITER_JERARQUIA
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_ITER_JERARQUIA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
   
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_ITER_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     execute immediate 'insert into TMP_PRC_ITER_JERARQUIA(ITER, MAX_PRIORIDAD, MAX_FASE_ACTUAL, NUM_FASES, CANCELADO_FASE) select ITER,  MAX(PRIORIDAD_FASE), MAX(FASE_ACTUAL), count(*), SUM(CANCELADO_FASE) from TMP_PRC_JERARQUIA group by ITER';    
     commit;
 
     -- Crear indices TMP_PRC_MAX_JERARQUIA
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_ITER_JERARQUIA_IX'', ''TMP_PRC_ITER_JERARQUIA (iter)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS; 
+
+
+
 
     --Merge TMP_PRC_DETALLE
     execute immediate 'merge into TMP_PRC_DETALLE t1 using TMP_PRC_ITER_JERARQUIA t2 on (t1.ITER = t2.ITER) when matched then update set t1.MAX_PRIORIDAD = t2.MAX_PRIORIDAD, t1.NUM_FASES = t2.NUM_FASES, t1.CANCELADO_FASE = t2.CANCELADO_FASE';      
@@ -450,11 +504,11 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 --    execute immediate 'update TMP_PRC_DETALLE pd set MAX_PRIORIDAD = (select MAX(PRIORIDAD_FASE) from TMP_PRC_JERARQUIA pj where pj.DIA_ID = '''||fecha||'''  and pj.ITER = pd.ITER)';      
 --    commit;
     -- Asignamos la prioridad a todos las actuaciones del procedimiento.
-    execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.PRIORIDAD_PROCEDIMIENTO = t2.MAX_PRIORIDAD where DIA_ID = '''||fecha||''''; 	
+    execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.PRIORIDAD_PROCEDIMIENTO = t2.MAX_PRIORIDAD where DIA_ID = '''||fecha||'''';  
     commit;
     execute immediate 'merge into TMP_PRC_DETALLE t1 using (select MAX(FASE_ACTUAL) MAX_FASE_ACTUAL, ITER from TMP_PRC_JERARQUIA where DIA_ID = '''||fecha||''' and PRIORIDAD_PROCEDIMIENTO = PRIORIDAD_FASE group by ITER) t2 on (t1.ITER = t2.ITER) when matched then update set t1.FASE_MAX_PRIORIDAD = t2.MAX_FASE_ACTUAL';      
     commit;
-    execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.FASE_MAX_PRIORIDAD = t2.FASE_MAX_PRIORIDAD where DIA_ID = '''||fecha||''''; 	
+    execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.FASE_MAX_PRIORIDAD = t2.FASE_MAX_PRIORIDAD where DIA_ID = '''||fecha||'''';  
     commit;
     
      --Log_Proceso
@@ -462,7 +516,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       
     -- -------------------------------------------- PROCEDIMIENTO CANCELADO -----------------------------------------------------------------------------
-	-- Fechas EXT_IAB_INFO_ADD_BI_H / EXT_IAB_INFO_ADD_BI
+  -- Fechas EXT_IAB_INFO_ADD_BI_H / EXT_IAB_INFO_ADD_BI
     execute immediate 'select max(TRUNC(IAB_FECHA_VALOR)) from '||V_DATASTAGE||'.EXT_IAB_INFO_ADD_BI_H where TRUNC(IAB_FECHA_VALOR) <= '''||fecha||'''' into max_dia_add_bi_h;
     execute immediate 'select max(TRUNC(IAB_FECHA_VALOR)) from '||V_DATASTAGE||'.EXT_IAB_INFO_ADD_BI' into max_dia_add_bi;
 
@@ -493,7 +547,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
     -- Asignamos cancelado (1) o no Cancelado (0) a todos las actuaciones del procedimiento y Calculamos n�mero de fases
     execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.CANCELADO_PROCEDIMIENTO = t2.CANCELADO_PROCEDIMIENTO, t1.NUM_FASES = t2.NUM_FASES where DIA_ID = '''||fecha||''''; 
-	commit;
+  commit;
     
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); end;' USING IN V_NOMBRE, 'TMP_PRC_DETALLE y TMP_PRC_JERARQUIA. Update 2', 5;
@@ -503,11 +557,13 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- Borrado �ndices TMP_PRC_TAREA
    
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_TAREA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TAREA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
       
     execute immediate 'insert into TMP_PRC_TAREA(ITER, FASE, TAREA, FECHA_INI, FECHA_FIN, DESCRIPCION_TAREA) 
       select pj.ITER, pj.FASE_ACTUAL, tar.TAR_ID, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN, tar.TAR_TAREA 
@@ -520,6 +576,12 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
      -- Crear indices TMP_PRC_TAREA
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_TAREA_IX'', ''TMP_PRC_TAREA (ITER, TAREA)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
     commit;    
   
      --Log_Proceso
@@ -527,6 +589,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
        
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_AUTO_PRORROGAS'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
     execute immediate 'insert into TMP_PRC_AUTO_PRORROGAS (TAREA, FECHA_AUTO_PRORROGA) 
                         select tex.TAR_ID, trunc(mej.FECHACREAR)
@@ -582,11 +645,11 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     
       
     -- Actualizamos TMP_PRC_JERARQUIA
-	execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.ULT_TAR_CREADA = t2.ULT_TAR_CREADA, t1.FECHA_ULT_TAR_CREADA = t2.FECHA_ULT_TAR_CREADA, t1.ULT_TAR_FIN = t2.ULT_TAR_FIN, t1.FECHA_ULT_TAR_FIN = t2.FECHA_ULT_TAR_FIN, t1.ULTIMA_TAREA_ACTUALIZADA = t2.ULTIMA_TAREA_ACTUALIZADA, t1.FECHA_ULTIMA_TAREA_ACTUALIZADA = t2.FECHA_ULTIMA_TAREA_ACTUALIZADA, t1.ULT_TAR_PEND = t2.ULT_TAR_PEND, t1.FECHA_ULT_TAR_PEND = t2.FECHA_ULT_TAR_PEND where DIA_ID = '''||fecha||''''; 
+  execute immediate 'merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t1.ITER = t2.ITER) when matched then update set t1.ULT_TAR_CREADA = t2.ULT_TAR_CREADA, t1.FECHA_ULT_TAR_CREADA = t2.FECHA_ULT_TAR_CREADA, t1.ULT_TAR_FIN = t2.ULT_TAR_FIN, t1.FECHA_ULT_TAR_FIN = t2.FECHA_ULT_TAR_FIN, t1.ULTIMA_TAREA_ACTUALIZADA = t2.ULTIMA_TAREA_ACTUALIZADA, t1.FECHA_ULTIMA_TAREA_ACTUALIZADA = t2.FECHA_ULTIMA_TAREA_ACTUALIZADA, t1.ULT_TAR_PEND = t2.ULT_TAR_PEND, t1.FECHA_ULT_TAR_PEND = t2.FECHA_ULT_TAR_PEND where DIA_ID = '''||fecha||''''; 
     commit;
       
     -- Fase actual = Fase que tiene la �ltima tarea creada. Si no tiene tarea la obtenemos por el prc_id. 
-	execute immediate 'merge into TMP_PRC_DETALLE t1 using TMP_PRC_TAREA t2 on (t1.ITER = t2.ITER and t2.TAREA = t1.ULT_TAR_CREADA) when matched then update set t1.FASE_ACTUAL = t2.FASE'; 
+  execute immediate 'merge into TMP_PRC_DETALLE t1 using TMP_PRC_TAREA t2 on (t1.ITER = t2.ITER and t2.TAREA = t1.ULT_TAR_CREADA) when matched then update set t1.FASE_ACTUAL = t2.FASE'; 
     commit;
     execute immediate 'merge into TMP_PRC_DETALLE t1 using (select max(FASE_ACTUAL) MAX_FASE_ACTUAL, ITER from TMP_PRC_JERARQUIA where DIA_ID = '''||fecha||''' group by ITER) t2 on (t1.ITER = t2.ITER) when matched then update set t1.FASE_ACTUAL = t2.MAX_FASE_ACTUAL WHERE FASE_ACTUAL is null'; 
     commit;
@@ -601,6 +664,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- Fecha Interposici�n demanda - Truncamos y volvemos a usar la tabla TMP_PRC_TAREA para las demandas
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TAREA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
       
     execute immediate
       'insert into TMP_PRC_TAREA (ITER, FASE, TAREA, FECHA_INI, FECHA_FIN, DESCRIPCION_TAREA, TAP_ID, TEX_ID, DESCRIPCION_FORMULARIO, FECHA_FORMULARIO) 
@@ -624,6 +688,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- Fecha Aceptaci�n - Fecha de Tr�mite de aceptaci�n y decisi�n (Fecha final de la tarea "Registrar toma de decisi�n")
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TAREA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
       
     execute immediate
       'insert into TMP_PRC_TAREA (ITER, FASE, TAREA, FECHA_INI, FECHA_FIN, DESCRIPCION_TAREA, TAP_ID, TEX_ID, DESCRIPCION_FORMULARIO, FECHA_FORMULARIO) 
@@ -646,6 +711,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TAREA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
     execute immediate      
       'insert into TMP_PRC_TAREA (ITER, FASE, TAREA, FECHA_INI, FECHA_FIN, DESCRIPCION_TAREA) 
       select Tpj.ITER, Tpj.FASE_ACTUAL, TAR.TAR_ID, TAR.TAR_FECHA_INI, NVL(TAR.TAR_FECHA_FIN, ''0000-00-00 00:00:00''), TAR.TAR_TAREA
@@ -665,6 +731,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TAREA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
+
     execute immediate      
       'insert into TMP_PRC_TAREA (ITER, FASE, TAREA, FECHA_INI, FECHA_FIN, DESCRIPCION_TAREA) 
       select Tpj.ITER, Tpj.FASE_ACTUAL, TAR.TAR_ID, TAR.TAR_FECHA_INI, NVL(TAR.TAR_FECHA_FIN, ''0000-00-00 00:00:00''), TAR.TAR_TAREA
@@ -683,6 +751,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- Fecha recepci�n documentaci�n completa - (Fecha introducida por pantalla en la 2� tarea del Tr�mite de aceptaci�n y decisi�n)
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_TAREA'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     
     execute immediate  
       'insert into TMP_PRC_TAREA (ITER, FASE, TAREA, FECHA_INI, FECHA_FIN, DESCRIPCION_TAREA, TAP_ID, TEX_ID, DESCRIPCION_FORMULARIO, FECHA_FORMULARIO) 
@@ -707,25 +776,28 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- ----------------------------------------------------------------------------------------------
     -- Borrado �ndices TMP_PRC_CONTRATO
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_CONTRATO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_CONTRATO_CEX_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_CONTRATO'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     
     -- Fecha de analisis en H_MOV_MOVIMIENTOS (fecha menor que el ultimno d�a de H_MOV_MOVIMIENTOS o mayor que este, pero menor que el pen�ltimo dia de MOV_MOVIMIENTOS)
     if((fecha <= max_dia_h) or ((fecha > max_dia_h) and (fecha < penult_dia_mov))) then
-      execute immediate 'select max(TRUNC(MOV_FECHA_EXTRACCION)) from ' || V_haya02 || '.H_MOV_MOVIMIENTOS where TRUNC(MOV_FECHA_EXTRACCION) <= to_date(''' || fecha || ''')' into max_dia_con_contratos;  
+      execute immediate 'select max(TRUNC(MOV_FECHA_EXTRACCION)) from ' || V_HAYA02 || '.H_MOV_MOVIMIENTOS where TRUNC(MOV_FECHA_EXTRACCION) <= to_date(''' || fecha || ''')' into max_dia_con_contratos;  
     
       execute immediate 'insert into TMP_PRC_CONTRATO (ITER, CONTRATO, CEX_ID, SALDO_VENCIDO, SALDO_NO_VENCIDO, INGRESOS_PENDIENTES_APLICAR, FECHA_POS_VENCIDA)
                           select prc.PRC_ID, hmov.CNT_ID, cex.CEX_ID, hmov.MOV_POS_VIVA_VENCIDA, hmov.MOV_POS_VIVA_NO_VENCIDA, hmov.MOV_EXTRA_1, hmov.MOV_FECHA_POS_VENCIDA 
                                from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc
                                join '||V_DATASTAGE||'.ASU_ASUNTOS asu on prc.ASU_ID = asu.ASU_ID 
                                join '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex on asu.EXP_ID = cex.EXP_ID
-                               join '||V_haya02||'.H_MOV_MOVIMIENTOS hmov on cex.CNT_ID = hmov.CNT_ID
+                               join '||V_HAYA02||'.H_MOV_MOVIMIENTOS hmov on cex.CNT_ID = hmov.CNT_ID
                           where MOV_FECHA_EXTRACCION = :max_dia_con_contratos' USING max_dia_con_contratos;
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -787,22 +859,32 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
       
     -- Crear indices TMP_PRC_CONTRATO
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_CONTRATO_IX'', ''TMP_PRC_CONTRATO (ITER, CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
     commit;
+
+
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_CONTRATO_CEX_IX'', ''TMP_PRC_CONTRATO (CEX_ID, CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
     commit;    
         
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); end;' USING IN V_NOMBRE, 'TMP_PRC_CONTRATO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 5;    
 
     /*  
-    execute immediate 'merge into TMP_PRC_CONTRATO t1 using (select max(MOV_ID) MAX_MOV_ID, CNT_ID from '||V_haya02||'.H_MOV_MOVIMIENTOS group by CNT_ID) t2 on (t1.CONTRATO = t2.CNT_ID) when matched then update set t1.MAX_MOV_ID = t2.MAX_MOV_ID WHERE CEX_ID is null';
+    execute immediate 'merge into TMP_PRC_CONTRATO t1 using (select max(MOV_ID) MAX_MOV_ID, CNT_ID from '||V_HAYA02||'.H_MOV_MOVIMIENTOS group by CNT_ID) t2 on (t1.CONTRATO = t2.CNT_ID) when matched then update set t1.MAX_MOV_ID = t2.MAX_MOV_ID WHERE CEX_ID is null';
     -- Si alg�n contrato no se encuentra en H_MOV_MOVIMIENTOS lo borramos
     execute immediate 'delete from TMP_PRC_CONTRATO where CEX_ID is null and MAX_MOV_ID is null';
     -- Excepciones - Rellenar
-    execute immediate 'merge into TMP_PRC_CONTRATO t1 using '||V_haya02||'.H_MOV_MOVIMIENTOS t2 on (t2.MOV_ID = t1.MAX_MOV_ID and t2.CNT_ID = t1.CONTRATO) when matched then update set t1.SALDO_VENCIDO = t2.MOV_POS_VIVA_VENCIDA, t1.SALDO_NO_VENCIDO = t2.MOV_POS_VIVA_NO_VENCIDA, t1.INGRESOS_PENDIENTES_APLICAR = t2.MOV_EXTRA_1, t1.FECHA_POS_VENCIDA = t2.MOV_FECHA_POS_VENCIDA where CEX_ID is null'; 
+    execute immediate 'merge into TMP_PRC_CONTRATO t1 using '||V_HAYA02||'.H_MOV_MOVIMIENTOS t2 on (t2.MOV_ID = t1.MAX_MOV_ID and t2.CNT_ID = t1.CONTRATO) when matched then update set t1.SALDO_VENCIDO = t2.MOV_POS_VIVA_VENCIDA, t1.SALDO_NO_VENCIDO = t2.MOV_POS_VIVA_NO_VENCIDA, t1.INGRESOS_PENDIENTES_APLICAR = t2.MOV_EXTRA_1, t1.FECHA_POS_VENCIDA = t2.MOV_FECHA_POS_VENCIDA where CEX_ID is null'; 
     commit;
     */
       --Log_Proceso
@@ -814,7 +896,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     update TMP_PRC_CONTRATO tpc set GARANTIA_CONTRATO = (case when GARANTIA_CONTRATO IN (10, 1, 2, 6, 3, 4, 8, 9, 5, 22, 7, 24, 11, 12, 13) then 1 else 0 end); 
     commit;
-  	merge into TMP_PRC_DETALLE t1 using (select SUM(GARANTIA_CONTRATO) SUM_GARANTIA_CONTRATO, ITER from TMP_PRC_CONTRATO group by ITER) t2 on (t2.ITER = t1.FASE_ACTUAL) when matched then update set t1.GARANTIA_CONTRATO = t2.SUM_GARANTIA_CONTRATO;
+    merge into TMP_PRC_DETALLE t1 using (select SUM(GARANTIA_CONTRATO) SUM_GARANTIA_CONTRATO, ITER from TMP_PRC_CONTRATO group by ITER) t2 on (t2.ITER = t1.FASE_ACTUAL) when matched then update set t1.GARANTIA_CONTRATO = t2.SUM_GARANTIA_CONTRATO;
     commit;
     update TMP_PRC_DETALLE pd set GARANTIA_CONTRATO = (case when GARANTIA_CONTRATO >=1 then 1 else 0 end);
     commit;
@@ -828,6 +910,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- Saldos Concursos (contratos asociados a procedimientos en los que el/los demandados intervienen como 1er o 2� titular)
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_CONCURSO_CONTRATO'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
       
     insert into TMP_PRC_CONCURSO_CONTRATO(ITER, CONTRATO, SALDO_CONCURSOS_VENCIDO, SALDO_CONCURSOS_NO_VENCIDO, DEMANDADO)
     select ITER, pc.CONTRATO, SALDO_VENCIDO, SALDO_NO_VENCIDO, pd.DEMANDADO
@@ -848,10 +931,11 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     merge into TMP_PRC_DETALLE t1 using (select MIN(FECHA_POS_VENCIDA) MIN_FECHA_POS_VENCIDA, ITER from TMP_PRC_CONTRATO group by ITER) t2 on (t2.ITER = t1.FASE_ACTUAL) when matched then update set t1.FECHA_ULTIMA_POSICION_VENCIDA = t2.MIN_FECHA_POS_VENCIDA;
     merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t2.ITER = t1.ITER) when matched then update set t1.FECHA_ULTIMA_POSICION_VENCIDA = t2.FECHA_ULTIMA_POSICION_VENCIDA where DIA_ID = fecha;
     commit;
-	
+  
     -- FECHA_ULTIMA_ESTIMACION
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_ESTIMACION'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
    
     execute immediate 'insert into TMP_PRC_ESTIMACION (ITER, FASE, FECHA_ESTIMACION, IRG_CLAVE, IRG_VALOR)
                         select Tpj.ITER, Tpj.FASE_ACTUAL, INFO.FECHACREAR, IRG_CLAVE, IRG_VALOR
@@ -861,7 +945,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                         where DIA_ID =  :fecha and trunc(INFO.FECHACREAR) <= :fecha 
                         and DD_TRG_ID = 3 and IRG_CLAVE IN (''estNew'', ''estNew'', ''estOld'', ''plaNew'', ''plaOld'',''pplNew'', ''pplOld'')'  USING fecha, fecha;
       
-   	merge into TMP_PRC_DETALLE t1 using (select trunc(max(FECHA_ESTIMACION)) MAX_FECHA_ESTIMACION, ITER from TMP_PRC_ESTIMACION where trunc(FECHA_ESTIMACION) <= fecha group by ITER) t2 on (t2.ITER = t1.ITER) when matched then update set t1.FECHA_ULTIMA_ESTIMACION = t2.MAX_FECHA_ESTIMACION;
+    merge into TMP_PRC_DETALLE t1 using (select trunc(max(FECHA_ESTIMACION)) MAX_FECHA_ESTIMACION, ITER from TMP_PRC_ESTIMACION where trunc(FECHA_ESTIMACION) <= fecha group by ITER) t2 on (t2.ITER = t1.ITER) when matched then update set t1.FECHA_ULTIMA_ESTIMACION = t2.MAX_FECHA_ESTIMACION;
     merge into TMP_PRC_JERARQUIA t1 using TMP_PRC_DETALLE t2 on (t2.ITER = t1.ITER) when matched then update set t1.FECHA_ULTIMA_ESTIMACION = t2.FECHA_ULTIMA_ESTIMACION where DIA_ID = fecha;
       
     -- CARTERA_PROCEDIMIENTO - 0 Haya / 1 SAREB / 2 Compartida    
@@ -890,20 +974,24 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
     -- Borrado �ndices TMP_H_PRC
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_PRC_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_PRC_FASE_ACTUAL_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_H_PRC'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     commit;
 
  -- add  by MAria falta probar
       
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_DECISION'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     execute immediate '
    insert into TMP_PRC_DECISION (FASE_ACTUAL, FASE_PARALIZADA, FASE_FINALIZADA, FECHA_HASTA,MOTIVO_PARALIZACION_ID)
   select PRC_ID, DPR_PARALIZA, DPR_FINALIZA,  max(trunc(DPR_FECHA_PARA)),DD_DPA_ID
@@ -913,55 +1001,6 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
     V_ROWCOUNT := sql%rowcount;
     commit;
-	
-	 -- FINALIZACION-------------------------
-
-
-execute immediate '
- merge into TMP_PRC_DECISION t1
-   using (Select max(t2.Fecha_finalizar)as Fecha_finalizar, t2.PRC_ID from (SELECT  PRC.PRC_ID,
-       CASE WHEN trunc(dpr.fechamodificar) is not null THEN dpr.fechamodificar
-       ELSE dpr.fechacrear END Fecha_finalizar
-FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
-   , '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_HAYAMASTER||'.DD_EDE_ESTADOS_DECISION EDE
-WHERE DPR.PRC_ID = PRC.PRC_ID AND DPR.DD_EDE_ID = EDE.DD_EDE_ID AND EDE.DD_EDE_CODIGO = ''02'' AND DPR_FINALIZA=1  and trunc(DPR.FECHACREAR) <= '''||fecha||'''
-  )t2
-  group by t2.PRC_ID)t3
-on (t1.FASE_ACTUAL=t3.PRC_ID)
-when matched then update set t1.FECHA_FINALIZACION=t3.Fecha_finalizar';
-
-V_ROWCOUNT := sql%rowcount;
- commit;
-
-execute immediate '
- insert into  TMP_PRC_DECISION ( fase_actual, fecha_finalizacion)
-  Select  t2.PRC_ID ,max(t2.Fecha_finalizar) from (SELECT PRC.PRC_ID,
-       CASE WHEN trunc(dpr.fechamodificar) is not null THEN dpr.fechamodificar
-       ELSE dpr.fechacrear END Fecha_finalizar
-FROM '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
-   , '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC, '||V_HAYAMASTER||'.DD_EDE_ESTADOS_DECISION EDE
-WHERE DPR.PRC_ID = PRC.PRC_ID AND DPR.DD_EDE_ID = EDE.DD_EDE_ID AND EDE.DD_EDE_CODIGO = ''02'' AND DPR.DPR_FINALIZA=1 AND DPR.DPR_PARALIZA=0 and trunc(DPR.FECHACREAR) <= '''||fecha||'''
-   AND PRC.PRC_ID NOT IN (SELECT DISTINCT FASE_ACTUAL FROM TMP_PRC_DECISION))t2
-  group by t2.PRC_ID' ;
-    
-  V_ROWCOUNT := sql%rowcount;
-commit;
-  
-  execute immediate '
-  merge into  TMP_PRC_DECISION t1 
-  using (Select distinct DPR.PRC_ID,DPR.DD_DFI_ID,
-  CASE WHEN trunc(dpr.fechamodificar) is not null THEN dpr.fechamodificar
-       ELSE dpr.fechacrear END Fecha_finalizar
-	   from '||V_DATASTAGE||'.DPR_DECISIONES_PROCEDIMIENTOS DPR
-	   WHERE trunc(DPR.FECHACREAR) <='''||fecha||'''
-   ) t2
-	   on(t1.fase_actual=t2.prc_id and t1.fecha_finalizacion=t2.Fecha_finalizar)
-	   when matched then update set t1.motivo_finalizacion_id=t2.DD_DFI_ID, t1.fase_finalizada =1,t1.fase_PARALIZADA =0
-	   where  t1.motivo_finalizacion_id is null';
-
-V_ROWCOUNT := sql%rowcount;
- commit;
-
  --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_PRC_DECISION. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
@@ -972,12 +1011,6 @@ on (b.FASE_ACTUAL = a.FASE_ACTUAL and  a.DIA_ID<= b.FECHA_HASTA)
 when matched then update set a.FASE_PARALIZADA = 1, a.FECHA_PARALIZACION=b.FECHA_HASTA,a.MOTIVO_PARALIZACION_ID=b.MOTIVO_PARALIZACION_ID;
 commit;
 
-
-merge into TMP_PRC_JERARQUIA a
-using (select distinct FECHA_FINALIZACION, FASE_ACTUAL,MOTIVO_FINALIZACION_ID from TMP_PRC_DECISION where FASE_FINALIZADA = 1) b
-on (b.FASE_ACTUAL = a.FASE_ACTUAL and  a.DIA_ID>= b.FECHA_FINALIZACION)
-when matched then update set a.FASE_FINALIZADA = 1, a.FECHA_FINALIZACION=b.FECHA_FINALIZACION,a.MOTIVO_FINALIZACION_ID=b.MOTIVO_FINALIZACION_ID;
-commit;
 --- Fin add  Maria SIN PROBAR
 
     -- Insertamos en TMP_H_PRC s�lo el registro que tiene la �ltima actuaci�n
@@ -1023,13 +1056,7 @@ commit;
        DURACION_ULT_TAREA_PENDIENTE,           -- Duraci�n tarea en d�as (Fecha inicio hasta fecha fin o fecha actual)
        PRC_PARALIZADO_ID,
         FECHA_PARALIZACION,
-       MOTIVO_PARALIZACION_ID,           
-       PRC_FINALIZADO_ID,
-        FECHA_FINALIZACION,
-       MOTIVO_FINALIZACION_ID
-
-
-
+       MOTIVO_PARALIZACION_ID
       )
       select DIA_ID,   
        DIA_ID,   
@@ -1072,23 +1099,28 @@ commit;
        to_date(fecha, 'DD/MM/YY') - trunc(FECHA_ULT_TAR_PEND),
         NVL(FASE_PARALIZADA,0),
          FECHA_PARALIZACION,
-       MOTIVO_PARALIZACION_ID,
-       NVL(FASE_FINALIZADA,0),
-       trunc(FECHA_FINALIZACION),
-       NVL(MOTIVO_FINALIZACION_ID,-1)
-
-
-
+       MOTIVO_PARALIZACION_ID
       from TMP_PRC_JERARQUIA where DIA_ID = fecha and FASE_ACTUAL = ULTIMA_FASE;
       commit;
       
       -- Crear indices TMP_H_PRC
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_IX'', ''TMP_H_PRC (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
       commit;    
+
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_FASE_ACTUAL_IX'', ''TMP_H_PRC (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
-			
+      
+
+
+
       commit;    
 
     -- CAMBIO A PETICI�N DE UGAS (recovery BI v7 03/06/2013)
@@ -1145,11 +1177,13 @@ commit;
     
     -- Borrado �ndices TMP_H_PRC_DET_CONTRATO
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_PRC_DET_CONTRATO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_H_PRC_DET_CONTRATO'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
     commit;
     -- Detalle Contratos
     execute immediate
@@ -1172,8 +1206,13 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
       -- Crear indices TMP_H_PRC_DET_CONTRATO
+
+
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_DET_CONTRATO_IX'', ''TMP_H_PRC_DET_CONTRATO (DIA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
       commit;          
 
 -- ------------------------------------------------------------------ UPDATES H_PRC -----------------------------------------------------------------
@@ -1478,43 +1517,81 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
      update TMP_H_PRC tmph set tmph.SUBTOTAL = (select tpe.VALOR from TMP_PRC_EXTRAS_RECOVERY_BI tpe where tmph.DIA_ID = fecha and tmph.FASE_ACTUAL = tpe.UNIDAD_GESTION and tpe.FECHA_VALOR = fecha and TIPO_ENTIDAD = 5 and DD_IFB_ID = 1);
      commit;  
      -- FASE_ACTUAL_AGR_ID
-     update TMP_H_PRC set FASE_ACTUAL_AGR_ID = (case when TIPO_PROCEDIMIENTO_DET_ID IN (2382) then 1
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2378) then 2
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2353) then 3
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2381) then 4
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2154,2542,2357,2446,2356,2371,2385,2370,2373,2358,2384,2351,2374,2449,2372,2369) then 5
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2377) then 6
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IS NULL then 7
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2452) then 8
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2156,2742) then 9
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2544) then 10
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2450) then 11
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2543) then 12
-                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2375) then 13
-                                                     else 7 end) where DIA_ID = fecha;
+  
+  /* merge into TMP_H_PRC t1 using D_PRC_TIPO_PROCEDIMIENTO_DET t2 on(t1.TIPO_PROCEDIMIENTO_DET_ID=t2.TIPO_PROCEDIMIENTO_DET_ID)
+   when matched then update set t1.FASE_ACTUAL_AGR_ID=t2.TIPO_PROCEDIMIENTO_AGR_ID
+     where t1.DIA_ID =fecha;*/
+   
+   update TMP_H_PRC set FASE_ACTUAL_AGR_ID = (case when TIPO_PROCEDIMIENTO_DET_ID IN (2452) then 1
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2377) then 2
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2378) then 3
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2353) then 4
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2382) then 5
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2381) then 6
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2543) then 7
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2544) then 8
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2450) then 9
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750) then 10
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IN (2375) then 11
+                           when TIPO_PROCEDIMIENTO_DET_ID IN (2842) then 15
+                                                     when TIPO_PROCEDIMIENTO_DET_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375,2372,2750) and ESTADO_FASE_ACTUAL_ID=3 then 13
+                                                     when TIPO_PROCEDIMIENTO_DET_ID IS NULL then -1
+                                                     else 14 end) where DIA_ID = fecha;
+   
+   
+ 
     commit;                                                     
-     update TMP_H_PRC set FASE_ACTUAL_AGR_ID = (case when FASE_ACTUAL_DETALLE_ID IN (2382) then 1
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2378) then 2
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2353) then 3
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2381) then 4
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2154,2542,2357,2446,2356,2371,2385,2370,2373,2358,2384,2351,2374,2449,2372,2369) then 5
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2377) then 6
-                                                     when FASE_ACTUAL_DETALLE_ID IS NULL then FASE_ACTUAL_AGR_ID
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2452) then 8
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2156,2742) then 9
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2544) then 10
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2450) then 11
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2543) then 12
-                                                     when FASE_ACTUAL_DETALLE_ID IN (2375) then 13
+    
+  /* merge into TMP_H_PRC t1 using D_PRC_FASE_ACTUAL_DETALLE t2 on(t1.FASE_ACTUAL_DETALLE_ID=t2.FASE_ACTUAL_DETALLE_ID)
+   when matched then update set t1.FASE_ACTUAL_AGR_ID=t2.FASE_ACTUAL_AGR_ID
+     where t1.DIA_ID =fecha;  */
+   
+    update TMP_H_PRC set FASE_ACTUAL_AGR_ID = (case when FASE_ACTUAL_DETALLE_ID IN (2452) then 1
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2377) then 2
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2378) then 3
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2353) then 4
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2382) then 5
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2381) then 6
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2543) then 7
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2544) then 8
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2450) then 9
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2372,2750) then 10
+                                                     when FASE_ACTUAL_DETALLE_ID IN (2375) then 11
+                           when FASE_ACTUAL_DETALLE_ID IN (2842) then 15
+                                                     when FASE_ACTUAL_DETALLE_ID NOT IN (2542,2357,2446,2356,2370,2373,2358,2384,2351,2374,2449,2943,2944,2375,2372,2750) and ESTADO_FASE_ACTUAL_ID=3 then 13
                                                      else FASE_ACTUAL_AGR_ID end) where DIA_ID = fecha;
-    commit;                                                     
+   
+   
+   
+    commit;     
+
+    ---- procurador -----------------------------------------------------------------------------------------------------------------------------
+
+     execute immediate 'merge into TMP_H_PRC t1 using 
+    (select prc.PRC_ID, usu.USU_ID
+                from '||V_DATASTAGE||'.USD_USUARIOS_DESPACHOS usd 
+                join '||V_DATASTAGE||'.USU_USUARIOS usu on usd.USU_ID = usu.USU_ID     
+                join '||V_DATASTAGE||'.GAH_GESTOR_ADICIONAL_HISTORICO gah on gah.GAH_GESTOR_ID = usd.USD_ID
+                join '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR tges on gah.GAH_TIPO_GESTOR_ID = tges.DD_TGE_ID
+                join '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc on gah.GAH_ASU_ID = prc.ASU_ID
+                where tges.DD_TGE_DESCRIPCION = ''Procurador'' and trunc(gah.GAH_FECHA_DESDE) <='''||fecha||''') t2
+        on(t1.PROCEDIMIENTO_ID=t2.PRC_ID)
+                 when matched then update set t1.PROCURADOR_PRC_ID=t2.USU_ID
+                 where t1.DIA_ID = '''||fecha||'''';
+    commit;
+    ---- fin procurador -------------------------------------------------------------------------------------------------------------------------
+
+                                                    
 -- ----------------------------------------------------------- FIN UPDATES TMP_H_PRC ------------------------------------------------------------
 
     -- Borrado �ndices H_PRC
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
     commit;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_FASE_ACTUAL_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
   
@@ -1632,12 +1709,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
         FECHA_PARALIZACION,
         MOTIVO_PARALIZACION_ID,
         FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
-
-
-
+    PROCURADOR_PRC_ID
       )
     select * from TMP_H_PRC where DIA_ID = fecha;
   
@@ -1648,6 +1720,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     -- Borrado �ndices H_PRC
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
     commit;
     
     -- Borrado del d�a a insertar
@@ -1672,15 +1746,32 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   -- Crear indices H_PRC
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_IX'', ''H_PRC (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
   commit;      
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_FASE_ACTUAL_IX'', ''H_PRC (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
   commit;    
     
   
   -- Crear indices H_PRC_DET_CONTRATO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_IX'', ''H_PRC_DET_CONTRATO (DIA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;      
 
   --Log_Proceso
@@ -1704,6 +1795,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
 
   insert into TMP_FECHA_AUX (SEMANA_AUX) select distinct SEMANA_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
   -- Insert max d�a anterior al periodo de carga - Periodo anterior de date_start 
@@ -1729,6 +1822,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
     
     -- Borrado indices H_PRC_SEMANA 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
      
     -- Borrado de las semanas a insertar
@@ -1843,12 +1937,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
-
-
-
+    PROCURADOR_PRC_ID
           )
       select semana, 
           max_dia_semana,
@@ -1957,19 +2046,19 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
-
-
-
+    PROCURADOR_PRC_ID
       from H_PRC where DIA_ID = max_dia_semana;
       V_ROWCOUNT := sql%rowcount;     
       commit;
       
       -- Crear indices H_PRC_SEMANA    
+
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_SEMANA_IX'', ''H_PRC_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
       commit;          
 
       -- Si no tiene tareas asociadas actualizo a la fecha de creaci�n de la �ltima fase
@@ -1979,10 +2068,11 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                                                                   when NUM_DIAS_ULT_ACTUALIZACION > 30 and NUM_DIAS_ULT_ACTUALIZACION <= 60 then 1
                                                                   when NUM_DIAS_ULT_ACTUALIZACION > 60 and NUM_DIAS_ULT_ACTUALIZACION <= 90 then 2
                                                                   when NUM_DIAS_ULT_ACTUALIZACION > 60 and NUM_DIAS_ULT_ACTUALIZACION > 90 then 3
-															  else -1 end) where TD_ULT_ACTUALIZACION_PRC_ID is null;
+                                else -1 end) where TD_ULT_ACTUALIZACION_PRC_ID is null;
      
     -- Borrado indices H_PRC_DET_CONTRATO_SEMANA 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
      
     -- Borrado de las semanas a insertar
@@ -2013,8 +2103,13 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   close c_semana; 
   
   -- Crear indices H_PRC_DET_CONTRATO_SEMANA   
-			  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_SEMANA_IX'', ''H_PRC_DET_CONTRATO_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+        V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_SEMANA_IX'', ''H_PRC_DET_CONTRATO_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;    
   
   --Log_Proceso
@@ -2035,6 +2130,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   
   insert into TMP_FECHA_AUX (MES_AUX) select distinct MES_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
   -- Insert max d�a anterior al periodo de carga - Periodo anterior de date_start 
@@ -2057,6 +2154,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
       -- Borrado indices H_PRC_MES
      
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrado de los meses a insertar
@@ -2172,12 +2270,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_MES_IX'', '''', ''S''
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
-
-
-
+    PROCURADOR_PRC_ID
           )
       select mes, 
           max_dia_mes,
@@ -2286,12 +2379,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_MES_IX'', '''', ''S''
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
-
-
-
+    PROCURADOR_PRC_ID
       from H_PRC where DIA_ID = max_dia_mes;
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -2302,6 +2390,12 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_MES_IX'', '''', ''S''
       -- Crear indices H_PRC_MES 
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_MES_IX'', ''H_PRC_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
+
+
+
       commit;    
     
       -- Si no tiene tareas asociadas actualizo a la fecha de creaci�n de la �ltima fase
@@ -2317,6 +2411,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_MES_IX'', '''', ''S''
       -- Borrado indices H_PRC_DET_CONTRATO_MES
      
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrado de los meses a insertar
@@ -2377,8 +2472,13 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_MES_IX''
   close c_mes;
 
   -- Crear indices H_PRC_DET_CONTRATO_MES    
-  	  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_MES_IX'', ''H_PRC_DET_CONTRATO_MES (MES_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_MES_IX'', ''H_PRC_DET_CONTRATO_MES (MES_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;    
 
   --Log_Proceso
@@ -2397,6 +2497,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   
   insert into TMP_FECHA_AUX (TRIMESTRE_AUX) select distinct TRIMESTRE_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
   -- Insert max d�a anterior al periodo de carga - Periodo anterior de date_start 
@@ -2418,6 +2520,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrar indices H_PRC_TRIMESTRE
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrado de los trimestres a insertar
@@ -2532,10 +2635,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
-
+    PROCURADOR_PRC_ID
           )
       select trimestre, 
           max_dia_trimestre,
@@ -2644,9 +2744,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
+    PROCURADOR_PRC_ID
       from H_PRC where DIA_ID = max_dia_trimestre;
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -2655,8 +2753,13 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_TRIMESTRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
   
       -- Crear indices H_PRC_TRIMESTRE      
+
+
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_TRIMESTRE_IX'', ''H_PRC_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
       commit;    
 
       -- Si no tiene tareas asociadas actualizo a la fecha de creaci�n de la �ltima fase
@@ -2670,6 +2773,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
        
       -- Borrado indices H_PRC_DET_CONTRATO_TRIMESTRE
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_TRI_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrado de los trimestres a insertar
@@ -2726,8 +2830,13 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
   close c_trimestre;
 
   -- Crear indices H_PRC_DET_CONTRATO_TRIMESTRE     
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_TRI_IX'', ''H_PRC_DET_CONTRATO_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;      
 
   --Log_Proceso
@@ -2745,6 +2854,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
 execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
   
   insert into TMP_FECHA_AUX (ANIO_AUX) select distinct ANIO_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
   -- Insert max d�a anterior al periodo de carga - Periodo anterior de date_start 
@@ -2767,6 +2878,7 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
       -- Crear indices H_PRC_ANIO
     
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrado de los a�s a insertar
@@ -2880,9 +2992,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_ANIO_IX'', '''', ''S'
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
+    PROCURADOR_PRC_ID
           )
       select anio,   
           max_dia_anio,
@@ -2991,9 +3101,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_ANIO_IX'', '''', ''S'
           FECHA_PARALIZACION,
           MOTIVO_PARALIZACION_ID,
           FASE_ACTUAL_AGR_ID,
-        MOTIVO_FINALIZACION_ID,
- 	PRC_FINALIZADO_ID,
-	FECHA_FINALIZACION
+    PROCURADOR_PRC_ID
       from H_PRC where DIA_ID = max_dia_anio;
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -3002,8 +3110,13 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_ANIO_IX'', '''', ''S'
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_ANIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
   
       -- Crear indices H_PRC_ANIO   
+
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_ANIO_IX'', ''H_PRC_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
       commit;    
 
       -- Si no tiene tareas asociadas actualizo a la fecha de creaci�n de la �ltima fase
@@ -3019,6 +3132,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_ANIO_IX'', '''', ''S'
      -- Borrado indices H_PRC_DET_CONTRATO_ANIO
      
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
       
       -- Borrado de los a�os a insertar
@@ -3074,8 +3188,13 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_CONTRATO_ANIO_IX'
   close c_anio;
   
   -- Crear indices H_PRC_DET_CONTRATO_ANIO     
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_ANIO_IX'', ''H_PRC_DET_CONTRATO_ANIO (ANIO_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
+
   commit;      
 
   --Log_Proceso

@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
 -- Autor: María Villanueva, PFS Group
 -- Fecha creacion: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 23/11/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 09/05/16
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension contrato
@@ -131,7 +131,7 @@ create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
   -- D_CNT_ESTADO_ACUERDO
   -- D_CNT_SOLICITANTE_ACUERDO
   -- D_CNT_TIPO_ACUERDO
-	-- D_CNT_ESQUEMA_ACUERDO
+  -- D_CNT_ESQUEMA_ACUERDO
   -- D_CNT_CARTERA_ACUERDO
   -- D_CNT_SUBCARTERA_ACUERDO
   -- D_CNT_AGENCIA_ACUERDO
@@ -168,6 +168,15 @@ create or replace PROCEDURE CARGAR_DIM_CONTRATO(O_ERROR_STATUS OUT VARCHAR2) AS
   -- D_CNT_T_ANTIGUEDAD_DEUDA
   -- D_CNT_SITUACION_CARTERA_DANADA
   -- D_CNT_TIPO_GESTION_EXP
+  -- D_CNT_TIPO_VENCIDO
+  -- D_CNT_TRAMO_CAP_VIVO
+  -- D_CNT_DIR_TERRITORIAL
+  -- D_CNT_ENTIDAD
+  -- D_CNT_PERIMETRO_GESTION_CM
+  -- D_CNT_MOTIVO_COBRO
+  -- D_CNT_TITULAR
+  -- D_CNT_APLICATIVO_ORIGEN
+  -- D_CNT_TIPO_SOL_PREVISTA
   -- D_CNT;
   
 BEGIN
@@ -182,6 +191,7 @@ PRAGMA EXCEPTION_INIT(INSERT_NULL, -1400);
 PRAGMA EXCEPTION_INIT(PARAMETERS_NUMBER, -909);
 
 V_NUM_ROW NUMBER(10);
+
 V_DATASTAGE VARCHAR2(100);
 V_DESCONOCIDO VARCHAR(25) := 'Desconocido';
 V_SQL VARCHAR2(4000);
@@ -562,16 +572,16 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_GARANTIA_CONTRATO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
   -- Incluimos GARANTIA_CONTRATO_AGR_ID
-  -- 0 - Hipotecario
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 0 where GARANTIA_CONTRATO_ID IN (1,2,3,4,5,6,7);
-  -- 1 - Resto Garantía Real
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 1 where GARANTIA_CONTRATO_ID IN (8,9,11,12,13);
-  -- 2 - Formal
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 2 where GARANTIA_CONTRATO_ID IN (10,15,16,17,18,19,20,21);
+  -- 0 - Real Hipotecaria
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 0 where GARANTIA_CONTRATO_ID IN (2,3,4,5,1,6,7,8,9,11,10,35);
+  -- 1 - Resto
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 1 where GARANTIA_CONTRATO_ID IN (33,32,31,30,29,27,26,25,28);
+  -- 2 - Real Pignoraticias
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 2 where GARANTIA_CONTRATO_ID IN (13,12,17,21,20,19,18,16,15,23,22,14,24);
   -- 3 - Personal
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 3 where GARANTIA_CONTRATO_ID IN (14,22,23,24);
-  -- 4 - Resto
-  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 4 where GARANTIA_CONTRATO_AGR_ID is null;
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 3 where GARANTIA_CONTRATO_ID IN (34);
+  -- 1 - Resto (sin identificar)
+  update D_CNT_GARANTIA_CONTRATO SET GARANTIA_CONTRATO_AGR_ID = 1 where GARANTIA_CONTRATO_AGR_ID is null;
 
   commit;
 
@@ -649,8 +659,8 @@ BEGIN
   end if;
 
   execute immediate
-    'insert into D_CNT_OFICINA(OFICINA_CONTRATO_ID, OFICINA_CONTRATO_DESC, PROVINCIA_CONTRATO_ID)
-    select OFI_ID, OFI_NOMBRE, DD_PRV_ID from '||V_DATASTAGE||'.OFI_OFICINAS';
+    'insert into D_CNT_OFICINA(OFICINA_CONTRATO_ID, OFICINA_CONTRATO_DESC, OFICINA_CONTRATO_DESC_2, PROVINCIA_CONTRATO_ID)
+    select OFI_ID, OFI_NOMBRE, OFI_CODIGO_OFICINA, DD_PRV_ID from '||V_DATASTAGE||'.OFI_OFICINAS';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -722,7 +732,10 @@ BEGIN
 
   execute immediate
     'insert into D_CNT_ZONA(ZONA_CONTRATO_ID, ZONA_CONTRATO_DESC, ZONA_CONTRATO_DESC_2, NIVEL_CONTRATO_ID, OFICINA_CONTRATO_ID)
-     select ZON_ID, ZON_DESCRIPCION, ZON_DESCRIPCION_LARGA, NIV_ID, OFI_ID from '||V_DATASTAGE||'.ZON_ZONIFICACION';
+     select distinct zon2.zon_id, Zon2.Zon_Descripcion, ofi.ofi_codigo_oficina, zon2.niv_id, ofi.ofi_id
+     from  '||V_DATASTAGE||'.ofi_oficinas ofi 
+     left join '||V_DATASTAGE||'.Zon_Zonificacion zon1 on ofi.ofi_id=zon1.ofi_id
+     left join '||V_DATASTAGE||'.Zon_Zonificacion zon2 on zon1.zon_pid=zon2.zon_id';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -1081,15 +1094,13 @@ BEGIN
   if (V_NUM_ROW = 0) then
     insert into D_CNT_CARTERA (CARTERA_CONTRATO_ID, CARTERA_CONTRATO_DESC) values (-1 ,'Desconocido');
   end if;
-
-  select count(*) into V_NUM_ROW from D_CNT_CARTERA where CARTERA_CONTRATO_ID = 0;
-  if (V_NUM_ROW = 0) then
-    insert into D_CNT_CARTERA (CARTERA_CONTRATO_ID, CARTERA_CONTRATO_DESC) values (0 ,'Bankia');
-  end if;
-
   select count(*) into V_NUM_ROW from D_CNT_CARTERA where CARTERA_CONTRATO_ID = 1;
   if (V_NUM_ROW = 0) then
     insert into D_CNT_CARTERA (CARTERA_CONTRATO_ID, CARTERA_CONTRATO_DESC) values (1 ,'HAYA');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_CARTERA where CARTERA_CONTRATO_ID = 2;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_CARTERA (CARTERA_CONTRATO_ID, CARTERA_CONTRATO_DESC) values (2 ,'CAJAMAR');
   end if;
 
   commit;
@@ -1494,23 +1505,19 @@ BEGIN
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 0;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (0 ,'Hipotecaria');
+    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (0 ,'Real Hipotecaria');
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 1;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (1 ,'Resto Garantía Real');
+    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (1 ,'Resto');
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 2;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (2 ,'Formal');
+    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (2 ,'Real Pignoraticias');
   end if;
   select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 3;
   if (V_NUM_ROW = 0) then
     insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (3 ,'Personal');
-  end if;
-  select count(*) into V_NUM_ROW from D_CNT_GARANTIA_CONTRATO_AGR where GARANTIA_CONTRATO_AGR_ID = 4;
-  if (V_NUM_ROW = 0) then
-    insert into D_CNT_GARANTIA_CONTRATO_AGR (GARANTIA_CONTRATO_AGR_ID, GARANTIA_CONTRATO_AGR_DESC) values (4 ,'Resto');
   end if;
 
   commit;
@@ -2609,7 +2616,7 @@ BEGIN
 
   execute immediate
     'insert into D_CNT_AGENCIA (AGENCIA_CONTRATO_ID, AGENCIA_CONTRATO_DESC)
-    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF	where not exists (select 1 from D_CNT_AGENCIA EXP where EXP.AGENCIA_CONTRATO_ID = RCF.RCF_AGE_ID)';
+    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF where not exists (select 1 from D_CNT_AGENCIA EXP where EXP.AGENCIA_CONTRATO_ID = RCF.RCF_AGE_ID)';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -2822,14 +2829,14 @@ BEGIN
 
 select count(1) into V_NUM_ROW from D_CNT_TIPO_COBRO where TIPO_COBRO_ID = -1;
   if (V_NUM_ROW = 0) then
-	V_SQL := 'insert into D_CNT_TIPO_COBRO (TIPO_COBRO_ID, TIPO_COBRO_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_TIPO_COBRO (TIPO_COBRO_ID, TIPO_COBRO_DESC) values (-1 ,''Desconocido'')';
    execute immediate(V_SQL);
   end if;
 
-	V_SQL :=  'insert into D_CNT_TIPO_COBRO (TIPO_COBRO_ID, TIPO_COBRO_DESC)
+  V_SQL :=  'insert into D_CNT_TIPO_COBRO (TIPO_COBRO_ID, TIPO_COBRO_DESC)
     select DD_TCP_ID, DD_TCP_DESCRIPCION from ' || V_DATASTAGE || '.DD_TCP_TIPO_COBRO_PAGO tcp
-	where not exists (select 1 from D_CNT_TIPO_COBRO cnt where cnt.TIPO_COBRO_ID = tcp.DD_TCP_ID)';
-	execute immediate (V_SQL);
+  where not exists (select 1 from D_CNT_TIPO_COBRO cnt where cnt.TIPO_COBRO_ID = tcp.DD_TCP_ID)';
+  execute immediate (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -2843,17 +2850,22 @@ select count(1) into V_NUM_ROW from D_CNT_TIPO_COBRO where TIPO_COBRO_ID = -1;
 -- ----------------------------------------------------------------------------------------------
 select count(1) into V_NUM_ROW from D_CNT_TIPO_COBRO_DETALLE where TIPO_COBRO_ID = -1;
   if (V_NUM_ROW = 0) then
-	V_SQL := 'insert into D_CNT_TIPO_COBRO_DETALLE (TIPO_COBRO_DET_ID, TIPO_COBRO_DET_DESC, TIPO_COBRO_ID) values (-1 ,''Desconocido'', -1)';
+  V_SQL := 'insert into D_CNT_TIPO_COBRO_DETALLE (TIPO_COBRO_DET_ID, TIPO_COBRO_DET_DESC, TIPO_COBRO_ID) values (-1 ,''Desconocido'', -1)';
    execute immediate(V_SQL);
   end if;
 
-	V_SQL :=  'insert into D_CNT_TIPO_COBRO_DETALLE (TIPO_COBRO_DET_ID, TIPO_COBRO_DET_DESC, TIPO_COBRO_ID)
-    select DD_SCP_ID, DD_SCP_DESCRIPCION, DD_TCP_ID from ' || V_DATASTAGE || '.DD_SCP_SUBTIPO_COBRO_PAGO scp
-	where not exists (select 1 from D_CNT_TIPO_COBRO_DETALLE cnt where cnt.TIPO_COBRO_DET_ID = scp.DD_SCP_ID)';
-	execute immediate (V_SQL);
+  V_SQL :=  'insert into D_CNT_TIPO_COBRO_DETALLE (TIPO_COBRO_DET_ID, TIPO_COBRO_DET_DESC)
+   select DD_TCP_ID, DD_TCP_DESCRIPCION from ' || V_DATASTAGE || '.DD_TCP_TIPO_COBRO_PAGO tcp
+  where not exists (select 1 from D_CNT_TIPO_COBRO_DETALLE cnt where cnt.TIPO_COBRO_DET_ID = tcp.DD_TCP_ID)';
+  execute immediate (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
+
+  V_SQL :=  'update D_CNT_TIPO_COBRO_DETALLE set tipo_cobro_id= tipo_cobro_det_id';
+  execute immediate (V_SQL);
+  commit;
+
 
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_TIPO_COBRO_DETALLE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
@@ -2882,14 +2894,14 @@ select count(1) into V_NUM_ROW from D_CNT_TIPO_COBRO_DETALLE where TIPO_COBRO_ID
 
 select count(1) into V_NUM_ROW from D_CNT_REMESA_FACTURA where REMESA_FACTURA_ID = -1;
   if (V_NUM_ROW = 0) then
-	V_SQL := 'insert into D_CNT_REMESA_FACTURA (REMESA_FACTURA_ID, REMESA_FACTURA_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_REMESA_FACTURA (REMESA_FACTURA_ID, REMESA_FACTURA_DESC) values (-1 ,''Desconocido'')';
    execute immediate(V_SQL);
   end if;
 
-	V_SQL :=  'insert into D_CNT_REMESA_FACTURA (REMESA_FACTURA_ID, REMESA_FACTURA_DESC)
+  V_SQL :=  'insert into D_CNT_REMESA_FACTURA (REMESA_FACTURA_ID, REMESA_FACTURA_DESC)
     select PRF_ID, PRF_NOMBRE from ' || V_DATASTAGE || '.PRF_PROCESO_FACTURACION PRF
-	where not exists (select 1 from D_CNT_REMESA_FACTURA EXP where EXP.REMESA_FACTURA_ID = PRF.PRF_ID)';
-	execute immediate (V_SQL);
+  where not exists (select 1 from D_CNT_REMESA_FACTURA EXP where EXP.REMESA_FACTURA_ID = PRF.PRF_ID)';
+  execute immediate (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -2926,14 +2938,14 @@ select count(1) into V_NUM_ROW from D_CNT_REMESA_FACTURA where REMESA_FACTURA_ID
 
 select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA where SEGMENTO_CARTERA_ID = -1;
   if (V_NUM_ROW = 0) then
-	V_SQL := 'insert into D_CNT_SEGMENTO_CARTERA (SEGMENTO_CARTERA_ID, SEGMENTO_CARTERA_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_SEGMENTO_CARTERA (SEGMENTO_CARTERA_ID, SEGMENTO_CARTERA_DESC) values (-1 ,''Desconocido'')';
    execute immediate(V_SQL);
   end if;
 
-	V_SQL :=  'insert into D_CNT_SEGMENTO_CARTERA (SEGMENTO_CARTERA_ID, SEGMENTO_CARTERA_DESC)
+  V_SQL :=  'insert into D_CNT_SEGMENTO_CARTERA (SEGMENTO_CARTERA_ID, SEGMENTO_CARTERA_DESC)
     select DD_SEC_ID, DD_SEC_DESCRIPCION from ' || V_DATASTAGE || '.DD_SEC_SEGMENTO_CARTERA
-	where not exists (select 1 from D_CNT_SEGMENTO_CARTERA where SEGMENTO_CARTERA_ID = DD_SEC_ID)';
-	execute immediate (V_SQL);
+  where not exists (select 1 from D_CNT_SEGMENTO_CARTERA where SEGMENTO_CARTERA_ID = DD_SEC_ID)';
+  execute immediate (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3038,7 +3050,7 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA where SEGMENTO_CARTER
 
   execute immediate
     'insert into D_CNT_AGENCIA_COBRO (AGENCIA_COBRO_ID, AGENCIA_COBRO_DESC)
-    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF	where not exists (select 1 from D_CNT_AGENCIA_COBRO EXP where EXP.AGENCIA_COBRO_ID = RCF.RCF_AGE_ID)';
+    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF where not exists (select 1 from D_CNT_AGENCIA_COBRO EXP where EXP.AGENCIA_COBRO_ID = RCF.RCF_AGE_ID)';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3092,14 +3104,14 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA where SEGMENTO_CARTER
 
 select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_COBRO where SEGMENTO_CARTERA_COBRO_ID = -1;
   if (V_NUM_ROW = 0) then
-	V_SQL := 'insert into D_CNT_SEGMENTO_CARTERA_COBRO (SEGMENTO_CARTERA_COBRO_ID, SEGMENTO_CARTERA_COBRO_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_SEGMENTO_CARTERA_COBRO (SEGMENTO_CARTERA_COBRO_ID, SEGMENTO_CARTERA_COBRO_DESC) values (-1 ,''Desconocido'')';
    execute immediate(V_SQL);
   end if;
 
-	V_SQL :=  'insert into D_CNT_SEGMENTO_CARTERA_COBRO (SEGMENTO_CARTERA_COBRO_ID, SEGMENTO_CARTERA_COBRO_DESC)
+  V_SQL :=  'insert into D_CNT_SEGMENTO_CARTERA_COBRO (SEGMENTO_CARTERA_COBRO_ID, SEGMENTO_CARTERA_COBRO_DESC)
     select DD_SEC_ID, DD_SEC_DESCRIPCION from ' || V_DATASTAGE || '.DD_SEC_SEGMENTO_CARTERA
-	where not exists (select 1 from D_CNT_SEGMENTO_CARTERA_COBRO where SEGMENTO_CARTERA_COBRO_ID = DD_SEC_ID)';
-	execute immediate (V_SQL);
+  where not exists (select 1 from D_CNT_SEGMENTO_CARTERA_COBRO where SEGMENTO_CARTERA_COBRO_ID = DD_SEC_ID)';
+  execute immediate (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3328,7 +3340,7 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_COBRO where SEGMENTO_
 
   execute immediate
     'insert into D_CNT_AGENCIA_CR (AGENCIA_CR_ID, AGENCIA_CR_DESC)
-    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF	where not exists (select 1 from D_CNT_AGENCIA_CR EXP where EXP.AGENCIA_CR_ID = RCF.RCF_AGE_ID)';
+    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF where not exists (select 1 from D_CNT_AGENCIA_CR EXP where EXP.AGENCIA_CR_ID = RCF.RCF_AGE_ID)';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3342,14 +3354,14 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_COBRO where SEGMENTO_
 
 select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CARTERA_CR_ID = -1;
   if (V_NUM_ROW = 0) then
-	V_SQL := 'insert into D_CNT_SEGMENTO_CARTERA_CR (SEGMENTO_CARTERA_CR_ID, SEGMENTO_CARTERA_CR_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_SEGMENTO_CARTERA_CR (SEGMENTO_CARTERA_CR_ID, SEGMENTO_CARTERA_CR_DESC) values (-1 ,''Desconocido'')';
    execute immediate(V_SQL);
   end if;
 
-	V_SQL :=  'insert into D_CNT_SEGMENTO_CARTERA_CR (SEGMENTO_CARTERA_CR_ID, SEGMENTO_CARTERA_CR_DESC)
+  V_SQL :=  'insert into D_CNT_SEGMENTO_CARTERA_CR (SEGMENTO_CARTERA_CR_ID, SEGMENTO_CARTERA_CR_DESC)
     select DD_SEC_ID, DD_SEC_DESCRIPCION from ' || V_DATASTAGE || '.DD_SEC_SEGMENTO_CARTERA
-	where not exists (select 1 from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CARTERA_CR_ID = DD_SEC_ID)';
-	execute immediate (V_SQL);
+  where not exists (select 1 from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CARTERA_CR_ID = DD_SEC_ID)';
+  execute immediate (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3514,7 +3526,7 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CAR
 
   execute immediate
     'insert into D_CNT_AGENCIA_ACUERDO (AGENCIA_ACUERDO_ID, AGENCIA_ACUERDO_DESC)
-    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF	where not exists (select 1 from D_CNT_AGENCIA_ACUERDO EXP where EXP.AGENCIA_ACUERDO_ID = RCF.RCF_AGE_ID)';
+    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF where not exists (select 1 from D_CNT_AGENCIA_ACUERDO EXP where EXP.AGENCIA_ACUERDO_ID = RCF.RCF_AGE_ID)';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3659,7 +3671,7 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CAR
 
   execute immediate
     'insert into D_CNT_AGENCIA_INCIDENCIA (AGENCIA_INCIDENCIA_ID, AGENCIA_INCIDENCIA_DESC)
-    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF	where not exists (select 1 from D_CNT_AGENCIA_INCIDENCIA EXP where EXP.AGENCIA_INCIDENCIA_ID = RCF.RCF_AGE_ID)';
+    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF where not exists (select 1 from D_CNT_AGENCIA_INCIDENCIA EXP where EXP.AGENCIA_INCIDENCIA_ID = RCF.RCF_AGE_ID)';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3764,7 +3776,7 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CAR
 
   execute immediate
     'insert into D_CNT_AGENCIA_ER (AGENCIA_ER_ID, AGENCIA_ER_DESC)
-    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF	where not exists (select 1 from D_CNT_AGENCIA_ER EXP where EXP.AGENCIA_ER_ID = RCF.RCF_AGE_ID)';
+    select RCF_AGE_ID, RCF_AGE_NOMBRE from ' || V_DATASTAGE || '.RCF_AGE_AGENCIAS RCF where not exists (select 1 from D_CNT_AGENCIA_ER EXP where EXP.AGENCIA_ER_ID = RCF.RCF_AGE_ID)';
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3781,20 +3793,20 @@ select count(1) into V_NUM_ROW from D_CNT_SEGMENTO_CARTERA_CR where SEGMENTO_CAR
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_RESULTADO_GESTION WHERE RESULTADO_GESTION_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID, RESULTADO_GESTION_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID, RESULTADO_GESTION_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_RESULTADO_GESTION WHERE RESULTADO_GESTION_ID = -2;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID, RESULTADO_GESTION_DESC) values (-2 ,''Sin Gestión'')';
+  V_SQL := 'insert into D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID, RESULTADO_GESTION_DESC) values (-2 ,''Sin Gestión'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL :=  'insert into D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID, RESULTADO_GESTION_DESC)
+  V_SQL :=  'insert into D_CNT_RESULTADO_GESTION (RESULTADO_GESTION_ID, RESULTADO_GESTION_DESC)
     select DD_RGT_ID, DD_RGT_DESCRIPCION from ' || V_DATASTAGE || '.DD_RGT_RESULT_GESTION_TEL rgt
-	where rgt.DD_RGT_ID is not null and not exists (select 1 from D_CNT_RESULTADO_GESTION RG WHERE RG.RESULTADO_GESTION_ID = rgt.DD_RGT_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where rgt.DD_RGT_ID is not null and not exists (select 1 from D_CNT_RESULTADO_GESTION RG WHERE RG.RESULTADO_GESTION_ID = rgt.DD_RGT_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3808,14 +3820,14 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_RESULTADO_GESTION WHERE RESULTADO_GEST
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_TIPO_ACCION WHERE TIPO_ACCION_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_TIPO_ACCION (TIPO_ACCION_ID, TIPO_ACCION_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_TIPO_ACCION (TIPO_ACCION_ID, TIPO_ACCION_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL :=  'insert into D_CNT_TIPO_ACCION (TIPO_ACCION_ID, TIPO_ACCION_DESC)
+  V_SQL :=  'insert into D_CNT_TIPO_ACCION (TIPO_ACCION_ID, TIPO_ACCION_DESC)
     select  DD_TGE_ID, DD_TGE_DESCRIPCION from ' || V_DATASTAGE || '.DD_TGE_TIPO_GESTION tge
-	where not exists (select 1 from D_CNT_TIPO_ACCION TA WHERE TA.TIPO_ACCION_ID = tge.DD_TGE_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where not exists (select 1 from D_CNT_TIPO_ACCION TA WHERE TA.TIPO_ACCION_ID = tge.DD_TGE_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
 
   V_ROWCOUNT := sql%rowcount;
   commit;
@@ -3872,14 +3884,14 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_TIPO_ACCION WHERE TIPO_ACCION_ID = -1;
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_DESPACHO_GESTOR_CREDITO WHERE DESPACHO_GESTOR_CREDITO_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_DESPACHO_GESTOR_CREDITO (DESPACHO_GESTOR_CREDITO_ID, DESPACHO_GESTOR_CREDITO_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_DESPACHO_GESTOR_CREDITO (DESPACHO_GESTOR_CREDITO_ID, DESPACHO_GESTOR_CREDITO_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL := 'insert into D_CNT_DESPACHO_GESTOR_CREDITO (DESPACHO_GESTOR_CREDITO_ID, DESPACHO_GESTOR_CREDITO_DESC)
+  V_SQL := 'insert into D_CNT_DESPACHO_GESTOR_CREDITO (DESPACHO_GESTOR_CREDITO_ID, DESPACHO_GESTOR_CREDITO_DESC)
     select DES_ID, DES_DESPACHO from ' || V_DATASTAGE || '.DES_DESPACHO_EXTERNO des
-	where not exists (select 1 from D_CNT_DESPACHO_GESTOR_CREDITO dgc WHERE dgc.DESPACHO_GESTOR_CREDITO_ID = des.DES_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where not exists (select 1 from D_CNT_DESPACHO_GESTOR_CREDITO dgc WHERE dgc.DESPACHO_GESTOR_CREDITO_ID = des.DES_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
   commit;
 
@@ -3892,14 +3904,14 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_DESPACHO_GESTOR_CREDITO WHERE DESPACHO
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_ESTADO_INSI_CREDITO WHERE ESTADO_INSI_CREDITO_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_ESTADO_INSI_CREDITO (ESTADO_INSI_CREDITO_ID, ESTADO_INSI_CREDITO_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_ESTADO_INSI_CREDITO (ESTADO_INSI_CREDITO_ID, ESTADO_INSI_CREDITO_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL := 'insert into D_CNT_ESTADO_INSI_CREDITO (ESTADO_INSI_CREDITO_ID, ESTADO_INSI_CREDITO_DESC)
+  V_SQL := 'insert into D_CNT_ESTADO_INSI_CREDITO (ESTADO_INSI_CREDITO_ID, ESTADO_INSI_CREDITO_DESC)
     select STD_CRE_ID, STD_CRE_DESCRIP from ' || V_DATASTAGE || '.DD_STD_CREDITO std
-	where not exists (select 1 from D_CNT_ESTADO_INSI_CREDITO est WHERE est.ESTADO_INSI_CREDITO_ID = std.STD_CRE_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where not exists (select 1 from D_CNT_ESTADO_INSI_CREDITO est WHERE est.ESTADO_INSI_CREDITO_ID = std.STD_CRE_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
   commit;
    --Log_Proceso
@@ -3911,14 +3923,14 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_ESTADO_INSI_CREDITO WHERE ESTADO_INSI_
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_INICIAL_CREDITO WHERE CALIFICACION_INICIAL_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_CALIF_INICIAL_CREDITO (CALIFICACION_INICIAL_ID, CALIFICACION_INICIAL_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_CALIF_INICIAL_CREDITO (CALIFICACION_INICIAL_ID, CALIFICACION_INICIAL_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL := 'insert into D_CNT_CALIF_INICIAL_CREDITO (CALIFICACION_INICIAL_ID, CALIFICACION_INICIAL_DESC)
+  V_SQL := 'insert into D_CNT_CALIF_INICIAL_CREDITO (CALIFICACION_INICIAL_ID, CALIFICACION_INICIAL_DESC)
     select CRE_ID, CRE_DESCRIP from ' || V_DATASTAGE || '.DD_TPO_CREDITO tpo
-	where not exists (select 1 from D_CNT_CALIF_INICIAL_CREDITO cal WHERE cal.CALIFICACION_INICIAL_ID = tpo.CRE_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where not exists (select 1 from D_CNT_CALIF_INICIAL_CREDITO cal WHERE cal.CALIFICACION_INICIAL_ID = tpo.CRE_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
   commit;
    --Log_Proceso
@@ -3930,14 +3942,14 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_INICIAL_CREDITO WHERE CALIFICACI
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_GESTOR_CREDITO WHERE CALIFICACION_GESTOR_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_CALIF_GESTOR_CREDITO (CALIFICACION_GESTOR_ID, CALIFICACION_GESTOR_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_CALIF_GESTOR_CREDITO (CALIFICACION_GESTOR_ID, CALIFICACION_GESTOR_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL := 'insert into D_CNT_CALIF_GESTOR_CREDITO (CALIFICACION_GESTOR_ID, CALIFICACION_GESTOR_DESC)
+  V_SQL := 'insert into D_CNT_CALIF_GESTOR_CREDITO (CALIFICACION_GESTOR_ID, CALIFICACION_GESTOR_DESC)
     select CRE_ID, CRE_DESCRIP from ' || V_DATASTAGE || '.DD_TPO_CREDITO tpo
-	where not exists (select 1 from D_CNT_CALIF_GESTOR_CREDITO cal WHERE cal.CALIFICACION_GESTOR_ID = tpo.CRE_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where not exists (select 1 from D_CNT_CALIF_GESTOR_CREDITO cal WHERE cal.CALIFICACION_GESTOR_ID = tpo.CRE_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
   commit;
    --Log_Proceso
@@ -3949,14 +3961,14 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_GESTOR_CREDITO WHERE CALIFICACIO
 -- ----------------------------------------------------------------------------------------------
 SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION_FINAL_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-	V_SQL := 'insert into D_CNT_CALIF_FINAL_CREDITO (CALIFICACION_FINAL_ID, CALIFICACION_FINAL_DESC) values (-1 ,''Desconocido'')';
+  V_SQL := 'insert into D_CNT_CALIF_FINAL_CREDITO (CALIFICACION_FINAL_ID, CALIFICACION_FINAL_DESC) values (-1 ,''Desconocido'')';
     EXECUTE IMMEDIATE (V_SQL);
   END IF;
 
-	V_SQL := 'insert into D_CNT_CALIF_FINAL_CREDITO (CALIFICACION_FINAL_ID, CALIFICACION_FINAL_DESC)
+  V_SQL := 'insert into D_CNT_CALIF_FINAL_CREDITO (CALIFICACION_FINAL_ID, CALIFICACION_FINAL_DESC)
     select CRE_ID, CRE_DESCRIP from ' || V_DATASTAGE || '.DD_TPO_CREDITO tpo
-	where not exists (select 1 from D_CNT_CALIF_FINAL_CREDITO cal WHERE cal.CALIFICACION_FINAL_ID = tpo.CRE_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  where not exists (select 1 from D_CNT_CALIF_FINAL_CREDITO cal WHERE cal.CALIFICACION_FINAL_ID = tpo.CRE_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
   commit;
    --Log_Proceso
@@ -4223,11 +4235,19 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
     insert into D_CNT_MOTIVO_BAJA_DUDOSO (MOTIVO_BAJA_DUDOSO_ID, MOTIVO_BAJA_DUDOSO_DESC) values (-1 ,'Desconocido');
   end if;
   
-  
-  commit;  
+  V_SQL := 'insert into D_CNT_MOTIVO_BAJA_DUDOSO (MOTIVO_BAJA_DUDOSO_ID, MOTIVO_BAJA_DUDOSO_DESC)
+    select DD_MBD_ID, DD_MBD_DESCRIPCION from ' || V_DATASTAGE || '.DD_MBD_MOTIVO_BAJA_DUDOSO MBD
+  where not exists (select 1 from D_CNT_MOTIVO_BAJA_DUDOSO CNT WHERE CNT.MOTIVO_BAJA_DUDOSO_ID = MBD.DD_MBD_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
+  V_ROWCOUNT := sql%rowcount;
+  commit;
+ 
+
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_MOTIVO_BAJA_DUDOSO. Realizados INSERTS', 3;  
+  
+  
 -- ----------------------------------------------------------------------------------------------
 --                                      D_CNT_MOTIVO_ALTA_DUDOSO
 -- ----------------------------------------------------------------------------------------------
@@ -4235,6 +4255,13 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
   if (V_NUM_ROW = 0) then
     insert into D_CNT_MOTIVO_ALTA_DUDOSO (MOTIVO_ALTA_DUDOSO_ID, MOTIVO_ALTA_DUDOSO_DESC) values (-1 ,'Desconocido');
   end if;
+  
+  V_SQL := 'insert into D_CNT_MOTIVO_ALTA_DUDOSO (MOTIVO_ALTA_DUDOSO_ID, MOTIVO_ALTA_DUDOSO_DESC)
+    select DD_MAD_ID, DD_MAD_DESCRIPCION from ' || V_DATASTAGE || '.DD_MAD_MOTIVO_ALTA_DUDOSO MAD
+  where not exists (select 1 from D_CNT_MOTIVO_ALTA_DUDOSO CNT WHERE CNT.MOTIVO_ALTA_DUDOSO_ID = MAD.DD_MAD_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
+  V_ROWCOUNT := sql%rowcount;
+  commit;
   
   
   commit;  
@@ -4289,25 +4316,50 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
   end if;
   select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 1;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (1 ,'Vencidos', 1);
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (1 ,'Situación Normal', 0);
   end if;
   select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 2;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (2 ,'Morosos', 1);
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (2 ,'Vencido/Excedido', 1);
   end if;
   select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 3;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (3 ,'Subestándar', 2);
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (3 ,'Dudoso No Vencido', 2);
   end if;
   select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 4;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (4 ,'Dudoso Por Dudosidad', 2);
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (4 ,'Dudoso Vencido', 2);
   end if;
   select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 5;
   if (V_NUM_ROW = 0) then
-    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (5 ,'No Dudoso de Dudoso', 2);
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (5 ,'Moroso 3-6 Meses', 1);
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 6;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (6 ,'Moroso 6-12 Meses', 1);
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 7;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (7 ,'Moroso 12-18 Meses', 1);
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 8;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (8 ,'Moroso 18-21 Meses', 1);
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 9;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (9 ,'Moroso más de 21 Meses', 1);
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 10;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (10 ,'Suspenso', 9);
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_SIT_CART_DANADA where SIT_CART_DANADA_ID = 11;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_SIT_CART_DANADA (SIT_CART_DANADA_ID, SIT_CART_DANADA_DESC, SIT_CART_DANADA_AGR_ID) values (11 ,'Subestandar', 2);
   end if;
   commit;  
+
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_SITUACION_CARTERA_DANADA. Realizados INSERTS', 3;  
@@ -4332,11 +4384,16 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
   if (V_NUM_ROW = 0) then
     insert into D_CNT_SIT_CART_DANADA_AGR (SIT_CART_DANADA_AGR_ID, SIT_CART_DANADA_AGR_DESC) values (2 ,'Dañada Subjetiva');
   end if;  
+
+
+
+
   commit;  
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_SITUACION_CARTERA_DANADA_AGR. Realizados INSERTS', 3;
   
+/*
 
 -- ----------------------------------------------------------------------------------------------
 --                                      D_CNT_TIPO_GESTION_EXP
@@ -4346,27 +4403,253 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
     insert into D_CNT_TIPO_GESTION_EXP (TIPO_GESTION_EXP_ID, TIPO_GESTION_EXP_DESC) values (-1 ,'Desconocido');
   end if;
 
-  	V_SQL := 'insert into D_CNT_TIPO_GESTION_EXP (TIPO_GESTION_EXP_ID, TIPO_GESTION_EXP_DESC)
+    V_SQL := 'insert into D_CNT_TIPO_GESTION_EXP (TIPO_GESTION_EXP_ID, TIPO_GESTION_EXP_DESC)
               select DD_TPX_ID, DD_TPX_DESCRIPCION from ' || V_DATASTAGE || '.DD_TPX_TIPO_EXPEDIENTE tpo
                where not exists (select 1 from D_CNT_TIPO_GESTION_EXP cal WHERE cal.TIPO_GESTION_EXP_ID = tpo.DD_TPX_ID)';
-	EXECUTE IMMEDIATE (V_SQL);
+  EXECUTE IMMEDIATE (V_SQL);
   V_ROWCOUNT := sql%rowcount;
   commit;
   
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_TIPO_GESTION_EXP. Realizados INSERTS', 3;  
+ */ 
+  
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_CNT_TIPO_VENCIDO
+
+-- ----------------------------------------------------------------------------------------------
   
   
+  V_SQL := 'insert into D_CNT_TIPO_VENCIDO (TIPO_VENCIDO_ID, TIPO_VENCIDO_DESC, TIPO_VENCIDO_DESC_2)
+    select DD_TVE_ID, DD_TVE_DESCRIPCION, DD_TVE_DESCRIPCION_LARGA from ' || V_DATASTAGE || '.DD_TVE_TIPO_VENCIDO TVE
+  where not exists (select 1 from D_CNT_TIPO_VENCIDO CNT WHERE CNT.TIPO_VENCIDO_ID = TVE.DD_TVE_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
+  V_ROWCOUNT := sql%rowcount;
+  commit;
+ 
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_TIPO_VENCIDO. Realizados INSERTS', 3;    
+  
+
+  
+-- ----------------------------------------------------------------------------------------------
+--                                      D_CNT_TRAMO_CAP_VIVO
+-- ----------------------------------------------------------------------------------------------
+  select count(*) into V_NUM_ROW from D_CNT_TRAMO_CAP_VIVO where TRAMO_CAP_VIVO_ID = 1;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_TRAMO_CAP_VIVO (TRAMO_CAP_VIVO_ID, TRAMO_CAP_VIVO_DESC) values (1 ,'< 6.000 €');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_TRAMO_CAP_VIVO where TRAMO_CAP_VIVO_ID = 2;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_TRAMO_CAP_VIVO (TRAMO_CAP_VIVO_ID, TRAMO_CAP_VIVO_DESC) values (2,'>= 6.000€ a 59.999€');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_TRAMO_CAP_VIVO where TRAMO_CAP_VIVO_ID = 3;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_TRAMO_CAP_VIVO (TRAMO_CAP_VIVO_ID, TRAMO_CAP_VIVO_DESC) values (3 ,'>= 60.000€ a 299.999€');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_TRAMO_CAP_VIVO where TRAMO_CAP_VIVO_ID = 4;
+
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_TRAMO_CAP_VIVO (TRAMO_CAP_VIVO_ID, TRAMO_CAP_VIVO_DESC) values (4 ,'>= 300.000€');
+
+  end if;  
+  commit;  
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_TRAMO_CAP_VIVO. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_CNT_DIR_TERRITORIAL
+-- ----------------------------------------------------------------------------------------------
+  select count(*) into V_NUM_ROW from D_CNT_DIR_TERRITORIAL where DIR_TERRITORIAL_ID = -1;
+
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_DIR_TERRITORIAL (DIR_TERRITORIAL_ID, DIR_TERRITORIAL_DESC, DIR_TERRITORIAL_DESC_2) values (-1 ,'Desconocido','Desconocido');
+
+  end if;
+  
+  V_SQL := 'insert into D_CNT_DIR_TERRITORIAL (DIR_TERRITORIAL_ID, DIR_TERRITORIAL_DESC, DIR_TERRITORIAL_DESC_2)
+    select ZON_ID, ZON_DESCRIPCION, OFI.OFI_CODIGO_OFICINA from ' || V_DATASTAGE || '.ZON_ZONIFICACION ZON, ' || V_DATASTAGE || '.OFI_OFICINAS OFI 
+  where ZON.NIV_ID = 3 AND OFI.OFI_ID = ZON.OFI_ID --(DT)
+  AND not exists (select 1 from D_CNT_DIR_TERRITORIAL CNT WHERE CNT.DIR_TERRITORIAL_ID = ZON.ZON_ID)';
+  EXECUTE IMMEDIATE (V_SQL);
+  V_ROWCOUNT := sql%rowcount;
+  commit;
+ 
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_DIR_TERRITORIAL. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                           D_CNT_ENTIDAD
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_CNT_ENTIDAD WHERE CONTRATO_ENTIDAD_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_CNT_ENTIDAD (CONTRATO_ENTIDAD_ID, CONTRATO_ENTIDAD_DESC, CONTRATO_ENTIDAD_DESC_2)
+    VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+      'INSERT INTO D_CNT_ENTIDAD (CONTRATO_ENTIDAD_ID, CONTRATO_ENTIDAD_DESC, CONTRATO_ENTIDAD_DESC_2)
+       SELECT DISTINCT ENP.DD_ENP_ID, ENP.DD_ENP_DESCRIPCION, ENP.DD_ENP_DESCRIPCION_LARGA
+       FROM '||V_DATASTAGE||'.DD_ENP_ENTIDADES_PROPIETARIAS ENP
+       WHERE NOT EXISTS(SELECT 1 FROM D_CNT_ENTIDAD CNT WHERE CNT.CONTRATO_ENTIDAD_ID = ENP.DD_ENP_ID)
+       ORDER BY 1'; 
+
+
+
+
+        
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_ENTIDAD. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_CNT_PERIMETRO_GESTION_CM
+-- ----------------------------------------------------------------------------------------------
+  select count(*) into V_NUM_ROW from D_CNT_PERIMETRO_GESTION_CM where PERIMETRO_GESTION_CM_ID = 1;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_PERIMETRO_GESTION_CM (PERIMETRO_GESTION_CM_ID, PERIMETRO_GESTION_CM_DESC) values (1 ,'Oficina (+120 días): contratos con más de 120 días impagado y que no esté en HRE (HAYA)');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_PERIMETRO_GESTION_CM where PERIMETRO_GESTION_CM_ID = 2;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_PERIMETRO_GESTION_CM (PERIMETRO_GESTION_CM_ID, PERIMETRO_GESTION_CM_DESC) values (2, 'Pendotraoperación (trámite paralizado con motivo otra operación)');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_PERIMETRO_GESTION_CM where PERIMETRO_GESTION_CM_ID = 3;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_PERIMETRO_GESTION_CM (PERIMETRO_GESTION_CM_ID, PERIMETRO_GESTION_CM_DESC) values (3 ,'Precontencioso');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_PERIMETRO_GESTION_CM where PERIMETRO_GESTION_CM_ID = 4;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_PERIMETRO_GESTION_CM (PERIMETRO_GESTION_CM_ID, PERIMETRO_GESTION_CM_DESC) values (4 ,'Contencioso');
+  end if;
+   select count(*) into V_NUM_ROW from D_CNT_PERIMETRO_GESTION_CM where PERIMETRO_GESTION_CM_ID = 5;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_PERIMETRO_GESTION_CM (PERIMETRO_GESTION_CM_ID, PERIMETRO_GESTION_CM_DESC) values (5 ,'Concurso');
+  end if;
+  select count(*) into V_NUM_ROW from D_CNT_PERIMETRO_GESTION_CM where PERIMETRO_GESTION_CM_ID = 6;
+
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_PERIMETRO_GESTION_CM (PERIMETRO_GESTION_CM_ID, PERIMETRO_GESTION_CM_DESC) values (6 ,'Insolvente (en Empresa externa, no gestionado por vía Judicial)');
+
+  end if;    
+  commit;  
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_PERIMETRO_GESTION_CM. Realizados INSERTS', 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                           D_CNT_MOTIVO_COBRO
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_CNT_MOTIVO_COBRO WHERE MOTIVO_COBRO_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_CNT_MOTIVO_COBRO (MOTIVO_COBRO_ID, MOTIVO_COBRO_DESC, MOTIVO_COBRO_DESC_2)
+    VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+      'INSERT INTO D_CNT_MOTIVO_COBRO (MOTIVO_COBRO_ID, MOTIVO_COBRO_DESC, MOTIVO_COBRO_DESC_2)
+       SELECT DISTINCT MC.DD_MC_ID, MC.DD_MC_DESCRIPCION, MC.DD_MC_DESCRIPCION_LARGA
+       FROM '||V_DATASTAGE||'.DD_MC_MOTIVO_COBRO MC
+       WHERE NOT EXISTS(SELECT 1 FROM D_CNT_MOTIVO_COBRO CNT WHERE CNT.MOTIVO_COBRO_ID = MC.DD_MC_ID)
+       ORDER BY 1';
+        
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_MOTIVO_COBRO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+-- ----------------------------------------------------------------------------------------------
+--                           D_CNT_TITULAR
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_CNT_TITULAR WHERE CNT_TITULAR_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_CNT_TITULAR (CNT_TITULAR_ID, CNT_TITULAR_DOCUMENTO_ID, CNT_TITULAR_NOMBRE, CNT_TITULAR_APELLIDO_1, CNT_TITULAR_APELLIDO_2)
+    VALUES (-1 ,'Desconocido', 'Desconocido','Desconocido','Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+      'INSERT INTO D_CNT_TITULAR (CNT_TITULAR_ID, CNT_TITULAR_DOCUMENTO_ID, CNT_TITULAR_NOMBRE, CNT_TITULAR_APELLIDO_1, CNT_TITULAR_APELLIDO_2)
+       SELECT MAX(AUX_TITULARES.PER_ID) PER_ID, AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2
+        FROM(
+         SELECT DISTINCT PER.PER_ID, PER.PER_DOC_ID, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, CNT.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking
+         FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT,'||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+                WHERE CNT.CNT_ID = CPE.CNT_ID
+                AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+                AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0 AND CNT.BORRADO = 0
+                ) AUX_TITULARES
+         WHERE AUX_TITULARES.RANKING = 1
+         GROUP BY AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2
+         ORDER BY 1';
+        
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_TITULAR. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+
+
+   -- ----------------------------------------------------------------------------------------------
+--                                      D_CNT_APLICATIVO_ORIGEN
+-- ----------------------------------------------------------------------------------------------
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_CNT_APLICATIVO_ORIGEN WHERE APLICATIVO_ORIGEN_CNT_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_CNT_APLICATIVO_ORIGEN (APLICATIVO_ORIGEN_CNT_ID, APLICATIVO_ORIGEN_CNT_DESC, APLICATIVO_ORIGEN_CNT_DESC2) VALUES (-1 ,'Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_CNT_APLICATIVO_ORIGEN(APLICATIVO_ORIGEN_CNT_ID,APLICATIVO_ORIGEN_CNT_DESC,APLICATIVO_ORIGEN_CNT_DESC2)
+     SELECT DD_APO_ID,DD_APO_DESCRIPCION,DD_APO_DESCRIPCION_LARGA FROM '||V_DATASTAGE||'.DD_APO_APLICATIVO_ORIGEN';   
+     
+
+  V_ROWCOUNT := sql%rowcount;     
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_APLICATIVO_ORIGEN. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+-- ----------------------------------------------------------------------------------------------
+--                                      D_CNT_TIPO_SOL_PREVISTA
+-- ----------------------------------------------------------------------------------------------
+  select count(*) into V_NUM_ROW from D_CNT_TIPO_SOL_PREVISTA where TIPO_SOL_PREVISTA_ID = -1;
+  if (V_NUM_ROW = 0) then
+    insert into D_CNT_TIPO_SOL_PREVISTA (TIPO_SOL_PREVISTA_ID, TIPO_SOL_PREVISTA_DESC) values (-1 ,'Desconocido');
+  end if;
+
+  execute immediate
+    'INSERT INTO D_CNT_TIPO_SOL_PREVISTA (TIPO_SOL_PREVISTA_ID, TIPO_SOL_PREVISTA_DESC)
+     select DD_TPA_ID, DD_TPA_DESCRIPCION from  '||V_DATASTAGE||'.DD_TPA_TIPO_ACUERDO';
+
+  V_ROWCOUNT := sql%rowcount;
+  commit;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT_TIPO_SOL_PREVISTA. Realizados INSERTS', 3;  
+
 -- ----------------------------------------------------------------------------------------------
 --                                    D_CNT
 -- ----------------------------------------------------------------------------------------------
 
- 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''ALTER'', ''D_CNT'', ''DISABLE CONSTRAINT D_CNT_PK'', :O_ERROR_STATUS); END;';
    execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
    
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''D_CNT_COD_CONTRATO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''D_CNT_CCC_LITIGIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -4391,7 +4674,8 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
       ZONA_CONTRATO_ID,
       OFICINA_CONTRATO_ID,
       CATALOGO_DETALLE_6_ID,
-      CARTERA_CONTRATO_ID
+      CARTERA_CONTRATO_ID,
+    APLICATIVO_ORIGEN_CNT_ID
       )
     select distinct cnt.CNT_ID,
       NVL(TO_CHAR(CNT_COD_ENTIDAD), '''||V_DESCONOCIDO||'''),
@@ -4408,15 +4692,12 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
       NVL(ZON_ID, -1),
       NVL(ofi.OFI_ID, -1),
       NVL(DD_CT6_ID, -1),
-      -- 0 - Bankia / 1 - SAREB
-      decode(to_char(IAC_VALUE), ''2038'', 0, ''0240'', 1, -1)
+      NVL(CNT.DD_GES_ID,-1) AS CARTERA_CONTRATO_ID,
+    NVL(CNT.DD_APO_ID,-1) AS APLICATIVO_ORIGEN_CNT_ID
+    
       from '||V_DATASTAGE||'.CNT_CONTRATOS cnt
-      join '||V_DATASTAGE||'.EXT_IAC_INFO_ADD_CONTRATO iac on cnt.CNT_ID = iac.CNT_ID
-
       left join '||V_DATASTAGE||'.ofi_oficinas ofi on cnt.ofi_id_admin = ofi.ofi_id      
-     
-      
-      where cnt.BORRADO = 0 and IAC.DD_IFC_ID = 1';
+      where cnt.BORRADO = 0';
       
 --      left join '||V_DATASTAGE||'.ZONA_JERARQUIA zon on cnt.CNT_COD_OFICINA = zon.NIVEL_0
 
@@ -4426,7 +4707,34 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
+  -- CARGAR el TITULAR del CONTRATO --> CNT_TITULAR_ID
+  EXECUTE IMMEDIATE 'MERGE INTO D_CNT USING (
+                      SELECT MAX(AUX_TITULARES.PER_ID) PER_ID, AUX_TITULARES.CNT_ID
+                      FROM(
+                         SELECT DISTINCT PER.PER_ID, CNT.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking
+                         FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT,'||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+                                WHERE CNT.CNT_ID = CPE.CNT_ID
+                                AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+                                AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0 AND CNT.BORRADO = 0
+                                ) AUX_TITULARES
+                      WHERE AUX_TITULARES.RANKING = 1
+                      GROUP BY AUX_TITULARES.CNT_ID) CNT_TITULARES
+                    ON (D_CNT.CONTRATO_ID = CNT_TITULARES.CNT_ID)
+                    WHEN MATCHED THEN UPDATE SET CNT_TITULAR_ID = CNT_TITULARES.PER_ID';
 
+  V_ROWCOUNT := sql%rowcount;
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT. Registros Mergeados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  
+  UPDATE D_CNT
+    SET CNT_TITULAR_ID = -1
+   WHERE CNT_TITULAR_ID IS NULL;
+   
+   COMMIT;
+
+  V_ROWCOUNT := sql%rowcount;
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_CNT. Contratos sin Titular: ' || TO_CHAR(V_ROWCOUNT), 3;
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''ALTER'', ''D_CNT'', ''DISABLE CONSTRAINT D_CNT_PK'', :O_ERROR_STATUS); END;';
    execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -4434,12 +4742,16 @@ SELECT COUNT(1) INTO V_NUM_ROW FROM D_CNT_CALIF_FINAL_CREDITO WHERE CALIFICACION
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''ANALYZE'', ''D_CNT'', ''COMPUTE STATISTICS'', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_COD_CONTRATO_IX'', ''D_CNT (CONTRATO_COD_CONTRATO)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_CCC_LITIGIO_IX'', ''D_CNT (CCC_LITIGIO)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''D_CNT_NUC_IX'', ''D_CNT (NUC_LITIGIO)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
+
+
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PRC_DET_ACUERDO(DATE_START IN date, DATE_EN
 -- Autor: María Villanueva, PFS Group
 -- Fecha creación: Julio 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 24/11/2015
--- Motivos del cambio:USUARIO PORPIETARIO
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio:Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI HAYA
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_PRC_DET_ACUERDO.
@@ -18,10 +18,12 @@ DECLARE
   V_ROWCOUNT NUMBER;
   
   V_NUM_ROW NUMBER(10);
+
   V_DATASTAGE VARCHAR2(100);
   V_NUMBER  NUMBER(16,0);
   nCount NUMBER;
   V_SQL VARCHAR2(16000);
+
 
    formato_fecha VARCHAR2(100);
 
@@ -82,6 +84,8 @@ DECLARE
 
     ---------------------- CARGA ACUERDOS ----------------------    
     -- Borrando indices TMP_H_PRC_DET_ACUERDO
+
+
 	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_PRC_DET_ACUERDO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
@@ -118,7 +122,7 @@ select  ''' || fecha || ''',
          prc.PROCEDIMIENTO_ID,
          TRUNC(acu.ACU_FECHA_PROPUESTA),
          prc.TIPO_PROCEDIMIENTO_DET_ID,
-          acu.DD_TPA_ID,
+         acu.RCF_TPP_ID,
          -1,
          -1,
          -1,
@@ -137,7 +141,12 @@ select  ''' || fecha || ''',
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_PRC_DET_ACUERDO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;    
     
     -- Crear indices TMP_H_PRC_DET_ACUERDO
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_DET_ACUERDO_IX'', ''TMP_H_PRC_DET_ACUERDO (DIA_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
    merge into TMP_H_PRC_DET_ACUERDO acu
@@ -159,6 +168,8 @@ select  ''' || fecha || ''',
         commit;  
     
     -- Borrando indices H_PRC_DET_ACUERDO
+
+
 	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_ACUERDO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
@@ -205,7 +216,12 @@ INTO H_PRC_DET_ACUERDO
   
   
     -- Crear indices H_PRC_DET_ACUERDO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_IX'', ''H_PRC_DET_ACUERDO (DIA_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;     
   
@@ -221,6 +237,8 @@ INTO H_PRC_DET_ACUERDO
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_SEMANA. Empieza bucle', 3;
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -261,6 +279,8 @@ INTO H_PRC_DET_ACUERDO
     select min(DIA_H) into min_dia_semana from TMP_FECHA where SEMANA_H = semana;
     
     -- Borrado indices H_PRC_DET_ACUERDO_SEMANA
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_ACUERDO_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     commit;
@@ -314,7 +334,12 @@ FROM H_PRC_DET_ACUERDO  where DIA_ID = max_dia_semana;
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_SEMANA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
  
     -- Crear indices H_PRC_DET_ACUERDO_SEMANA      
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_SEMANA_IX'', ''H_PRC_DET_ACUERDO_SEMANA (SEMANA_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     commit;   
@@ -331,6 +356,8 @@ close c_semana;
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_MES. Empieza bucle', 3;
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -370,6 +397,8 @@ close c_semana;
       select min(DIA_H) into min_dia_mes from TMP_FECHA where MES_H = mes;
 
     -- Borrado indices H_PRC_DET_ACUERDO_MES
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_ACUERDO_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     commit;    
@@ -424,7 +453,12 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_mes;
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_MES. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     
     -- Crear indices H_PRC_DET_ACUERDO_MES
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_MES_IX'', ''H_PRC_DET_ACUERDO_MES (MES_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
 
@@ -441,6 +475,8 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_mes;
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_TRIMESTRE. Empieza bucle', 3;
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -476,6 +512,8 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_mes;
     select min(DIA_H) into min_dia_trimestre from TMP_FECHA where TRIMESTRE_H = trimestre;
 
     -- Borrado indices H_PRC_DET_ACUERDO_TRIMESTRE
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_ACUERDO_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     commit;
@@ -531,7 +569,12 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_trimestre;
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_TRIMESTRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     
     -- Crear indices H_PRC_DET_ACUERDO_TRIMESTRE
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_TRIMESTRE_IX'', ''H_PRC_DET_ACUERDO_TRIMESTRE (TRIMESTRE_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
         
@@ -548,6 +591,7 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_trimestre;
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_ANIO. Empieza bucle', 3;
   
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -583,6 +627,8 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_trimestre;
     select min(DIA_H) into min_dia_anio from TMP_FECHA where ANIO_H = anio;
         
     -- Borrado indices H_PRC_DET_ACUERDO_ANIO
+
+
 	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_ACUERDO_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
@@ -638,7 +684,12 @@ FROM H_PRC_DET_ACUERDO  where DIA_ID = max_dia_anio;
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_ACUERDO_ANIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     
     -- Crear indices H_PRC_DET_ACUERDO_ANIO
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_ANIO_IX'', ''H_PRC_DET_ACUERDO_ANIO (ANIO_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
     

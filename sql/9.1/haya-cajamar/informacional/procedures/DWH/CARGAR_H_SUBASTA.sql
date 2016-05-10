@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_SUBASTA (DATE_START IN DATE, DATE_END IN DA
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable última modificación: María Villanueva, PFS Group
--- Fecha ultima modificacion: 05/11/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 
 -- Cliente: Recovery BI Haya
 --
@@ -101,6 +101,7 @@ BEGIN
                     IMP_PUJA_CON_POSTORES_HASTA,
                     IMP_VALOR_SUBASTA,
                     IMP_DEUDA_JUDICIAL,
+                    IMP_DEUDA_JUDICIAL_SUB,
                     P_ANUNCIO_SOLICITUD,
                     P_SENYALAMIENTO_ANUNCIO,
                     P_SENYALAMIENTO_SOLICITUD,
@@ -128,14 +129,15 @@ BEGIN
                      NVL(LOS.LOS_PUJA_POSTORES_HASTA,0),
                      NVL(LOS_VALOR_SUBASTA,0),
                      NVL(LOS.LOS_DEUDA_JUDICIAL,0),
+                     NVL(SUB.DEUDA_JUDICIAL_MIG,0),
                      (NVL(TRUNC(SUB_FECHA_ANUNCIO), TRUNC(SYSDATE)) - TRUNC(SUB_FECHA_SOLICITUD)) AS P_ANUNCIO_SOLICITUD,
                      (NVL(TRUNC(SUB_FECHA_SENYALAMIENTO), TRUNC(SYSDATE)) - TRUNC(SUB_FECHA_ANUNCIO)) AS P_SENYALAMIENTO_ANUNCIO,
                      (NVL(TRUNC(SUB_FECHA_SENYALAMIENTO), TRUNC(SYSDATE)) - TRUNC(SUB_FECHA_SOLICITUD)) AS P_SENYALAMIENTO_SOLICITUD,
                      1 AS NUM_PROCEDIMIENTO
             FROM '||V_DATASTAGE||'.SUB_SUBASTA SUB, '||V_DATASTAGE||'.LOS_LOTE_SUBASTA LOS, '||V_DATASTAGE||'.LOB_LOTE_BIEN LOB,
-            (select ASU_ID, max(NVL(SUB_NUM_AUTOS,0)) SUB_NUM_AUTOS from '||V_DATASTAGE||'.SUB_SUBASTA where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR) group by ASU_ID) SUB2
-            WHERE LOS.SUB_ID(+) = SUB.SUB_ID
-            AND SUB.ASU_ID = SUB2.ASU_ID(+)
+            (select distinct ASU_ID, NVL(PRC_COD_PROC_EN_JUZGADO,0) SUB_NUM_AUTOS  from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR)) SUB2
+            WHERE LOS.SUB_ID = SUB.SUB_ID
+            AND SUB.ASU_ID = SUB2.ASU_ID
             AND (SUB.BORRADO = 0 AND LOS.BORRADO(+) = 0 and ''' || fecha || ''' >= trunc(SUB.FECHACREAR) and ''' || fecha || ''' >= trunc(LOS.FECHACREAR(+)))
             AND LOB.LOS_ID(+) = LOS.LOS_ID';
 
@@ -224,6 +226,7 @@ BEGIN
                             IMP_PUJA_CON_POSTORES_HASTA,
                             IMP_VALOR_SUBASTA,
                             IMP_DEUDA_JUDICIAL,
+                            IMP_DEUDA_JUDICIAL_SUB,
                             P_ANUNCIO_SOLICITUD,
                             P_SENYALAMIENTO_ANUNCIO,
                             P_SENYALAMIENTO_SOLICITUD,
@@ -253,6 +256,7 @@ BEGIN
                   IMP_PUJA_CON_POSTORES_HASTA,
                   IMP_VALOR_SUBASTA,
                   IMP_DEUDA_JUDICIAL,
+                  IMP_DEUDA_JUDICIAL_SUB,
                   P_ANUNCIO_SOLICITUD,
                   P_SENYALAMIENTO_ANUNCIO,
                   P_SENYALAMIENTO_SOLICITUD,
@@ -338,6 +342,7 @@ BEGIN
                             IMP_PUJA_CON_POSTORES_HASTA,
                             IMP_VALOR_SUBASTA,
                             IMP_DEUDA_JUDICIAL,
+                            IMP_DEUDA_JUDICIAL_SUB,
                             P_ANUNCIO_SOLICITUD,
                             P_SENYALAMIENTO_ANUNCIO,
                             P_SENYALAMIENTO_SOLICITUD,
@@ -367,6 +372,7 @@ BEGIN
             IMP_PUJA_CON_POSTORES_HASTA,
             IMP_VALOR_SUBASTA,
             IMP_DEUDA_JUDICIAL,
+            IMP_DEUDA_JUDICIAL_SUB,
             P_ANUNCIO_SOLICITUD,
             P_SENYALAMIENTO_ANUNCIO,
             P_SENYALAMIENTO_SOLICITUD,
@@ -451,6 +457,7 @@ BEGIN
                   IMP_PUJA_CON_POSTORES_HASTA,
                   IMP_VALOR_SUBASTA,
                   IMP_DEUDA_JUDICIAL,
+                  IMP_DEUDA_JUDICIAL_SUB,
                   P_ANUNCIO_SOLICITUD,
                   P_SENYALAMIENTO_ANUNCIO,
                   P_SENYALAMIENTO_SOLICITUD,
@@ -480,6 +487,7 @@ BEGIN
             IMP_PUJA_CON_POSTORES_HASTA,
             IMP_VALOR_SUBASTA,
             IMP_DEUDA_JUDICIAL,
+            IMP_DEUDA_JUDICIAL_SUB,
             P_ANUNCIO_SOLICITUD,
             P_SENYALAMIENTO_ANUNCIO,
             P_SENYALAMIENTO_SOLICITUD,
@@ -561,6 +569,7 @@ BEGIN
                   IMP_PUJA_CON_POSTORES_HASTA,
                   IMP_VALOR_SUBASTA,
                   IMP_DEUDA_JUDICIAL,
+                  IMP_DEUDA_JUDICIAL_SUB,
                   P_ANUNCIO_SOLICITUD,
                   P_SENYALAMIENTO_ANUNCIO,
                   P_SENYALAMIENTO_SOLICITUD,
@@ -590,6 +599,7 @@ BEGIN
             IMP_PUJA_CON_POSTORES_HASTA,
             IMP_VALOR_SUBASTA,
             IMP_DEUDA_JUDICIAL,
+            IMP_DEUDA_JUDICIAL_SUB,
             P_ANUNCIO_SOLICITUD,
             P_SENYALAMIENTO_ANUNCIO,
             P_SENYALAMIENTO_SOLICITUD,
@@ -672,6 +682,7 @@ BEGIN
                   IMP_PUJA_CON_POSTORES_HASTA,
                   IMP_VALOR_SUBASTA,
                   IMP_DEUDA_JUDICIAL,
+                  IMP_DEUDA_JUDICIAL_SUB,
                   P_ANUNCIO_SOLICITUD,
                   P_SENYALAMIENTO_ANUNCIO,
                   P_SENYALAMIENTO_SOLICITUD,
@@ -701,6 +712,7 @@ BEGIN
             IMP_PUJA_CON_POSTORES_HASTA,
             IMP_VALOR_SUBASTA,
             IMP_DEUDA_JUDICIAL,
+            IMP_DEUDA_JUDICIAL_SUB,
             P_ANUNCIO_SOLICITUD,
             P_SENYALAMIENTO_ANUNCIO,
             P_SENYALAMIENTO_SOLICITUD,

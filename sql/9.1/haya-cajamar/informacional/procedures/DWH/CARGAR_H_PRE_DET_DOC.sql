@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PRE_DET_DOC(DATE_START IN date, DATE_END IN
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 16/11/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_PRE_DET_DOC
@@ -212,8 +212,8 @@ DECLARE
                   )
           select   '''||fecha||''',
                    '''||fecha||''',
-                   sol.PCO_DOC_DSO_ID,
                    PRC_ID,
+                   sol.PCO_DOC_DSO_ID,
                    doc.PCO_DOC_PDD_ID,
                    NVL(SOL.DD_PCO_DSR_ID,-1),
                    NVL(DD_PCO_DSA_ID,-1),

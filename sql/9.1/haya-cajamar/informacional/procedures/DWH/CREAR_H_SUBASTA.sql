@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_H_SUBASTA (error OUT VARCHAR2) AS
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 11/11/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas del Hecho SUBASTA.
@@ -55,6 +55,7 @@ BEGIN
                               IMP_PUJA_CON_POSTORES_HASTA NUMBER(16,2),
                               IMP_VALOR_SUBASTA NUMBER(16,2),
                               IMP_DEUDA_JUDICIAL NUMBER(16,2),
+                              IMP_DEUDA_JUDICIAL_SUB NUMBER(16,2),                              
                               P_ANUNCIO_SOLICITUD INTEGER, 
                               P_SENYALAMIENTO_ANUNCIO INTEGER,
                               P_SENYALAMIENTO_SOLICITUD INTEGER,
@@ -97,12 +98,12 @@ BEGIN
                               IMP_PUJA_CON_POSTORES_HASTA NUMBER(16,2),
                               IMP_VALOR_SUBASTA NUMBER(16,2),
                               IMP_DEUDA_JUDICIAL NUMBER(16,2),
+                              IMP_DEUDA_JUDICIAL_SUB NUMBER(16,2),
                               P_ANUNCIO_SOLICITUD INTEGER, 
                               P_SENYALAMIENTO_ANUNCIO INTEGER,
                               P_SENYALAMIENTO_SOLICITUD INTEGER,
                               NUM_PROCEDIMIENTO INTEGER)
 					SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "recovery_haya02_DWH" 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -143,15 +144,14 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_IX'', ''H_SUB (DIA_
                                 IMP_PUJA_CON_POSTORES_HASTA NUMBER(16,2),
                                 IMP_VALOR_SUBASTA NUMBER(16,2),
                                 IMP_DEUDA_JUDICIAL NUMBER(16,2),
+                                IMP_DEUDA_JUDICIAL_SUB NUMBER(16,2),                                
                                 P_ANUNCIO_SOLICITUD INTEGER, 
                                 P_SENYALAMIENTO_ANUNCIO INTEGER,
                                 P_SENYALAMIENTO_SOLICITUD INTEGER,
                                 NUM_PROCEDIMIENTO INTEGER)
 			    SEGMENT CREATION IMMEDIATE NOLOGGING
-                            TABLESPACE "recovery_haya02_DWH"   
                             PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501) 
-                           TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                           (PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
 
 	execute immediate V_SQL USING OUT error;
 	  DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_SUB_SEMANA');
@@ -189,15 +189,14 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_IX'', ''H_SUB (DIA_
                               IMP_PUJA_CON_POSTORES_HASTA NUMBER(16,2),
                               IMP_VALOR_SUBASTA NUMBER(16,2),
                               IMP_DEUDA_JUDICIAL NUMBER(16,2),
+                              IMP_DEUDA_JUDICIAL_SUB NUMBER(16,2),                              
                               P_ANUNCIO_SOLICITUD INTEGER, 
                               P_SENYALAMIENTO_ANUNCIO INTEGER,
                               P_SENYALAMIENTO_SOLICITUD INTEGER,
                               NUM_PROCEDIMIENTO INTEGER)
                 		    SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
                            	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                           	(PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
 		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_MES_IX'', ''H_SUB_MES (MES_ID,ASUNTO_ID, PROCEDIMIENTO_ID, SUBASTA_ID,LOTE_ID)'', ''S'', '''', :error); END;';
@@ -232,15 +231,14 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_IX'', ''H_SUB (DIA_
                               IMP_PUJA_CON_POSTORES_HASTA NUMBER(16,2),
                               IMP_VALOR_SUBASTA NUMBER(16,2),
                               IMP_DEUDA_JUDICIAL NUMBER(16,2),
+                              IMP_DEUDA_JUDICIAL_SUB NUMBER(16,2),                              
                               P_ANUNCIO_SOLICITUD INTEGER, 
                               P_SENYALAMIENTO_ANUNCIO INTEGER,
                               P_SENYALAMIENTO_SOLICITUD INTEGER,
                               NUM_PROCEDIMIENTO INTEGER)
                             	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
                             	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                            	(PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
 		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_TRIMESTRE_IX'', ''H_SUB_TRIMESTRE (TRIMESTRE_ID,ASUNTO_ID, PROCEDIMIENTO_ID, SUBASTA_ID,LOTE_ID)'', ''S'', '''', :error); END;';
@@ -276,19 +274,18 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_IX'', ''H_SUB (DIA_
                             IMP_PUJA_CON_POSTORES_HASTA NUMBER(16,2),
                             IMP_VALOR_SUBASTA NUMBER(16,2),
                             IMP_DEUDA_JUDICIAL NUMBER(16,2),
+                            IMP_DEUDA_JUDICIAL_SUB NUMBER(16,2),                            
                             P_ANUNCIO_SOLICITUD INTEGER, 
                             P_SENYALAMIENTO_ANUNCIO INTEGER,
                             P_SENYALAMIENTO_SOLICITUD INTEGER,
                             NUM_PROCEDIMIENTO INTEGER)
                             	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            TABLESPACE "recovery_haya02_DWH"   
                             PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (2015) 
-                           TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                           (PARTITION "P1" VALUES LESS THAN (2015)'', :error); END;';
 
 							execute immediate V_SQL USING OUT error;
 
-			V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_ANIO_IX'', ''H_SUB_ANIO (ANIO_ID,ASUNTO_ID, PROCEDIMIENTO_ID, SUBASTA_ID,LOTE_ID)'', ''S'', '''', :error); END;';
+			V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_GSUB_ANIO_IX'', ''H_GSUB_ANIO (ANIO_ID,ASUNTO_ID, PROCEDIMIENTO_ID, SUBASTA_ID,LOTE_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla  H_SUB_ANIO');

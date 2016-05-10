@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_H_BIEN (error OUT VARCHAR2) AS
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 11/11/2015
--- Motivos del cambio: Usuario propietario
+-- Fecha ultima modificacion:09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas del hecho BIEN.
@@ -31,29 +31,37 @@ BEGIN
     ------------------------------ TMP_H_BIE --------------------------
     	V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_H_BIE'', 
                               ''DIA_ID DATE NOT NULL, 
-				FECHA_CARGA_DATOS DATE NOT NULL,
-				ASUNTO_ID NUMBER(16,0), 
-				LOTE_ID NUMBER(16,0) NOT NULL, 
-				BIE_ID NUMBER(16,0) NOT NULL, 
-				TIPO_BIEN_ID NUMBER(16,0),
-				SUBTIPO_BIEN_ID NUMBER(16,0),
-				POBLACION_BIEN_ID NUMBER(16,0),
-				BIEN_ADJUDICADO_ID NUMBER(16,0),
-				ADJ_CESION_REM_BIEN_ID NUMBER(16,0),
-				CODIGO_ACTIVO_BIEN_ID NUMBER(16,0),
-				ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0),
-				 PROCEDIMIENTO_ID NUMBER(16,0),
-				FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
-				 TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0),
-				FASE_ACTUAL_AGR_ID NUMBER(16,0),
-				TITULAR_PROCEDIMIENTO_ID NUMBER(16,0),
-				IMP_VALOR_BIEN NUMBER(16,2),
-				IMP_ADJUDICADO NUMBER(16,2),
-				IMP_CESION_REMATE NUMBER(16,2),
-				IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
-				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
-				BIE_ESTADO_FASE_ACTUAL_ID NUMBER(16,0),
-				BIE_FASE_ACTUAL NUMBER(16,0)
+                                FECHA_CARGA_DATOS DATE NOT NULL,
+                                ASUNTO_ID NUMBER(16,0), 
+                                LOTE_ID NUMBER(16,0) NOT NULL, 
+                                BIE_ID NUMBER(16,0) NOT NULL, 
+                                TIPO_BIEN_ID NUMBER(16,0),
+                                SUBTIPO_BIEN_ID NUMBER(16,0),
+                                POBLACION_BIEN_ID NUMBER(16,0),
+                                BIEN_ADJUDICADO_ID NUMBER(16,0),
+                                ADJ_CESION_REM_BIEN_ID NUMBER(16,0),
+                                CODIGO_ACTIVO_BIEN_ID NUMBER(16,0),
+                                ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0),
+                                PROCEDIMIENTO_ID NUMBER(16,0),
+                                FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                                TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0),
+                                FASE_ACTUAL_AGR_ID NUMBER(16,0),
+                                TITULAR_PROCEDIMIENTO_ID NUMBER(16,0),
+                                IMP_VALOR_BIEN NUMBER(16,2),
+                                IMP_ADJUDICADO NUMBER(16,2),
+                                IMP_CESION_REMATE NUMBER(16,2),
+                                IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
+                                BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                                DESC_LANZAMIENTO_ID NUMBER(16,0),
+                                PRIMER_TITULAR_BIE_ID NUMBER(16,0),
+                                NUM_OPERACION_BIEN_ID NUMBER(16,0),
+                                ZONA_BIEN_ID NUMBER(16,0),
+                                OFICINA_BIEN_ID NUMBER(16,0),
+                                ENTIDAD_BIEN_ID NUMBER(16,0),
+                                FECHA_LANZAMIENTO_BIEN DATE,
+                                BIE_ESTADO_FASE_ACTUAL_ID NUMBER(16),
+                                BIE_FASE_ACTUAL NUMBER(16),
+								FECHA_INTERP_DEM_HIP DATE
          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
  DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_BIE');
@@ -85,9 +93,16 @@ BEGIN
 				IMP_ADJUDICADO NUMBER(16,2),
 				IMP_CESION_REMATE NUMBER(16,2),
 				IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
-				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0))
+				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+				DESC_LANZAMIENTO_ID NUMBER(16,0),
+				PRIMER_TITULAR_BIE_ID NUMBER(16,0),
+				NUM_OPERACION_BIEN_ID NUMBER(16,0),
+				ZONA_BIEN_ID NUMBER(16,0),
+				OFICINA_BIEN_ID NUMBER(16,0),
+				ENTIDAD_BIEN_ID NUMBER(16,0),
+				FECHA_LANZAMIENTO_BIEN DATE),
+				FECHA_INTERP_DEM_HIP DATE
 				SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "recovery_haya02_DWH" 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -123,12 +138,19 @@ BEGIN
 				IMP_ADJUDICADO NUMBER(16,2),
 				IMP_CESION_REMATE NUMBER(16,2),
 				IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
-				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0))
+				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+				DESC_LANZAMIENTO_ID NUMBER(16,0),
+				PRIMER_TITULAR_BIE_ID NUMBER(16,0),
+				NUM_OPERACION_BIEN_ID NUMBER(16,0),
+				ZONA_BIEN_ID NUMBER(16,0),
+				OFICINA_BIEN_ID NUMBER(16,0),
+				ENTIDAD_BIEN_ID NUMBER(16,0),
+				FECHA_LANZAMIENTO_BIEN DATE),
+				FECHA_INTERP_DEM_HIP DATE
 			    SEGMENT CREATION IMMEDIATE NOLOGGING
-                            TABLESPACE "recovery_haya02_DWH"   
                             PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
                            (PARTITION "P1" VALUES LESS THAN (201501) 
-                           TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                           '', :error); END;';
 
 
 	execute immediate V_SQL USING OUT error;
@@ -162,12 +184,19 @@ BEGIN
                                 IMP_ADJUDICADO NUMBER(16,2),
                                 IMP_CESION_REMATE NUMBER(16,2),
                                 IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
-				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0))
+                                BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                                DESC_LANZAMIENTO_ID NUMBER(16,0),
+                                PRIMER_TITULAR_BIE_ID NUMBER(16,0),
+                                NUM_OPERACION_BIEN_ID NUMBER(16,0),
+                                ZONA_BIEN_ID NUMBER(16,0),
+                                OFICINA_BIEN_ID NUMBER(16,0),
+                                ENTIDAD_BIEN_ID NUMBER(16,0),
+                                FECHA_LANZAMIENTO_BIEN DATE),
+								FECHA_INTERP_DEM_HIP DATE
                 		SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
                            	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                           	'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla  H_BIE_MES');
@@ -181,32 +210,39 @@ BEGIN
     ------------------------------ H_BIE_TRIMESTRE  --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_BIE_TRIMESTRE'', 
               		      ''TRIMESTRE_ID NUMBER(16,0) NOT NULL, -- PK ID del trimestre de análisis
-				FECHA_CARGA_DATOS DATE NOT NULL,-- PK ID del ultimo dia cargado
-				LOTE_ID NUMBER(16,0) NOT NULL, -- PK ID del lote
-				BIE_ID NUMBER(16,0) NOT NULL, -- PK ID del bien
-				TIPO_BIEN_ID NUMBER(16,0),
-				SUBTIPO_BIEN_ID NUMBER(16,0),
-				POBLACION_BIEN_ID NUMBER(16,0),
-				BIEN_ADJUDICADO_ID NUMBER(16,0),
-				ADJ_CESION_REM_BIEN_ID NUMBER(16,0),
-				CODIGO_ACTIVO_BIEN_ID NUMBER(16,0),
-				ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0),
-        			PROCEDIMIENTO_ID NUMBER(16,0),
-       				FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
-        			TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0),
-        			FASE_ACTUAL_AGR_ID NUMBER(16,0),
-        			TITULAR_PROCEDIMIENTO_ID NUMBER(16,0),
-				-- Metricas
-				IMP_VALOR_BIEN NUMBER(16,2),
-				IMP_ADJUDICADO NUMBER(16,2),
-				IMP_CESION_REMATE NUMBER(16,2),
-        			IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
-				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0))
+                          FECHA_CARGA_DATOS DATE NOT NULL,-- PK ID del ultimo dia cargado
+                          LOTE_ID NUMBER(16,0) NOT NULL, -- PK ID del lote
+                          BIE_ID NUMBER(16,0) NOT NULL, -- PK ID del bien
+                          TIPO_BIEN_ID NUMBER(16,0),
+                          SUBTIPO_BIEN_ID NUMBER(16,0),
+                          POBLACION_BIEN_ID NUMBER(16,0),
+                          BIEN_ADJUDICADO_ID NUMBER(16,0),
+                          ADJ_CESION_REM_BIEN_ID NUMBER(16,0),
+                          CODIGO_ACTIVO_BIEN_ID NUMBER(16,0),
+                          ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0),
+                          PROCEDIMIENTO_ID NUMBER(16,0),
+                          FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                          TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0),
+                          FASE_ACTUAL_AGR_ID NUMBER(16,0),
+                          TITULAR_PROCEDIMIENTO_ID NUMBER(16,0),
+                          -- Metricas
+                          IMP_VALOR_BIEN NUMBER(16,2),
+                          IMP_ADJUDICADO NUMBER(16,2),
+                          IMP_CESION_REMATE NUMBER(16,2),
+                          IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
+                          BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                          DESC_LANZAMIENTO_ID NUMBER(16,0),
+                          PRIMER_TITULAR_BIE_ID NUMBER(16,0),
+                          NUM_OPERACION_BIEN_ID NUMBER(16,0),
+                          ZONA_BIEN_ID NUMBER(16,0),
+                          OFICINA_BIEN_ID NUMBER(16,0),
+                          ENTIDAD_BIEN_ID NUMBER(16,0),
+                          FECHA_LANZAMIENTO_BIEN DATE),
+						  FECHA_INTERP_DEM_HIP DATE
                             	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
                             	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                            	'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
        DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_BIE_TRIMESTRE');
@@ -220,32 +256,39 @@ BEGIN
     ------------------------------  H_BIE_ANIO --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_BIE_ANIO'', 
               		      ''ANIO_ID NUMBER(16,0) NOT NULL, -- PK ID del año de análisis
-				FECHA_CARGA_DATOS DATE NOT NULL,-- PK ID del ultimo dia cargado
-				LOTE_ID NUMBER(16,0) NOT NULL, -- PK ID del lote
-				BIE_ID NUMBER(16,0) NOT NULL, -- PK ID del bien
-				TIPO_BIEN_ID NUMBER(16,0),
-				SUBTIPO_BIEN_ID NUMBER(16,0),
-				POBLACION_BIEN_ID NUMBER(16,0),
-				BIEN_ADJUDICADO_ID NUMBER(16,0),
-				ADJ_CESION_REM_BIEN_ID NUMBER(16,0),
-				CODIGO_ACTIVO_BIEN_ID NUMBER(16,0),
-				ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0),
-        			PROCEDIMIENTO_ID NUMBER(16,0),
-        			FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
-        			TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0),
-        			FASE_ACTUAL_AGR_ID NUMBER(16,0),
-        			TITULAR_PROCEDIMIENTO_ID NUMBER(16,0),
-				-- Metricas
-				IMP_VALOR_BIEN NUMBER(16,2),
-				IMP_ADJUDICADO NUMBER(16,2),
-				IMP_CESION_REMATE NUMBER(16,2),
-        			IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
-				BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0))
+                          FECHA_CARGA_DATOS DATE NOT NULL,-- PK ID del ultimo dia cargado
+                          LOTE_ID NUMBER(16,0) NOT NULL, -- PK ID del lote
+                          BIE_ID NUMBER(16,0) NOT NULL, -- PK ID del bien
+                          TIPO_BIEN_ID NUMBER(16,0),
+                          SUBTIPO_BIEN_ID NUMBER(16,0),
+                          POBLACION_BIEN_ID NUMBER(16,0),
+                          BIEN_ADJUDICADO_ID NUMBER(16,0),
+                          ADJ_CESION_REM_BIEN_ID NUMBER(16,0),
+                          CODIGO_ACTIVO_BIEN_ID NUMBER(16,0),
+                          ENTIDAD_ADJUDICATARIA_ID NUMBER(16,0),
+                          PROCEDIMIENTO_ID NUMBER(16,0),
+                          FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                          TIPO_PROCEDIMIENTO_DET_ID NUMBER(16,0),
+                          FASE_ACTUAL_AGR_ID NUMBER(16,0),
+                          TITULAR_PROCEDIMIENTO_ID NUMBER(16,0),
+                          -- Metricas
+                          IMP_VALOR_BIEN NUMBER(16,2),
+                          IMP_ADJUDICADO NUMBER(16,2),
+                          IMP_CESION_REMATE NUMBER(16,2),
+                          IMP_BIE_TIPO_SUBASTA NUMBER(16,2),
+                          BIE_FASE_ACTUAL_DETALLE_ID NUMBER(16,0),
+                          DESC_LANZAMIENTO_ID NUMBER(16,0),
+                          PRIMER_TITULAR_BIE_ID NUMBER(16,0),
+                          NUM_OPERACION_BIEN_ID NUMBER(16,0),
+                          ZONA_BIEN_ID NUMBER(16,0),
+                          OFICINA_BIEN_ID NUMBER(16,0),
+                          ENTIDAD_BIEN_ID NUMBER(16,0),
+                          FECHA_LANZAMIENTO_BIEN DATE),
+						  FECHA_INTERP_DEM_HIP DATE
                             	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
                             	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                            	'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla  H_BIE_ANIO');

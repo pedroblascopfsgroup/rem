@@ -129,7 +129,7 @@ BEGIN
          cpa.CNT_ID,
          cpa.CPA_ID,
          trunc(cpa.CPA_FECHA_VALOR),
-         nvl(cpa.DD_TCP_ID,-1)
+         nvl(cpa.DD_TCP_ID,-1),
          0,
 
          1,

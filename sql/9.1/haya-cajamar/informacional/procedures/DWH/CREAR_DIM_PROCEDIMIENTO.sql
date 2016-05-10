@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 02/02/2015
--- Motivos del cambio: Finalizaciones
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas de la dimension Procedimiento
@@ -105,10 +105,6 @@ create or replace PROCEDURE CREAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
     -- TMP_PRC_SUPERVISOR
     -- D_PRC_PARALIZADO
     -- D_PRC_MOTIVO_PARALIZACION
-    -- D_PRC_FINALIZADO 
-    -- D_PRC_MOTIVO_FINALIZACION
-
-
     -- D_PRC_TIPO_ACUERDO
     -- D_PRC_ESTADO_ACUERDO
     -- D_PRC_TIPO_GESTOR
@@ -143,6 +139,12 @@ create or replace PROCEDURE CREAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
     -- D_PRC_ENT_CEDENTE
     -- D_PRC_PROP_SAREB
 
+    -- D_PRC_TIPO_SOL_PREVISTA
+    -- D_PRC_PROCURADOR
+	-- D_PRC_DESPACHO_GESTOR_HAYA
+	-- D_PRC_DESPACHO_GESTOR
+	-- D_PRC_CON_POSTORES
+    
 BEGIN
 
 declare
@@ -288,7 +290,7 @@ declare
                             ESTADO_PROCEDIMIENTO_DESC VARCHAR2(50 CHAR),
                             PRIMARY KEY (ESTADO_PROCEDIMIENTO_ID)'', 
                             :error); END;';
-    execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_ESTADO_PROCEDIMIENTO');
     
 
@@ -759,9 +761,7 @@ declare
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_ZONA_NIVEL_1'', 
                           ''ZONA_NIVEL_1_ID NUMBER(16,0) NOT NULL,
                             ZONA_NIVEL_1_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (ZONA_NIVEL_1_ID)'', 
-                            :error); END;';
-    execute immediate V_SQL USING OUT error;
+                            PRIMARY KEY (ZONA_NIVEL_1_ID)';
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_ZONA_NIVEL_1');
     
     
@@ -864,9 +864,9 @@ declare
                             ZONA_NIVEL_6_ID NUMBER(16,0) NULL,
                             ZONA_NIVEL_7_ID NUMBER(16,0) NULL,
                             ZONA_NIVEL_8_ID NUMBER(16,0) NULL,
-                            ZONA_NIVEL_9_ID NUMBER(16,0) NULL,  
-							PROCEDIMIENTO_DESC VARCHAR2(50 CHAR),                          
-
+                            ZONA_NIVEL_9_ID NUMBER(16,0) NULL,
+                            GESTOR_PRC_HAYA_ID NUMBER(16,0),
+							CON_POSTORES_ID NUMBER(16,0),
                             PRIMARY KEY (PROCEDIMIENTO_ID)'', 
                             :error); END;';
     execute immediate V_SQL USING OUT error;
@@ -907,9 +907,9 @@ declare
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_TD_ULTIMA_ACTUALIZACION'', 
                           ''TD_ULT_ACTUALIZACION_PRC_ID NUMBER(16,0) NOT NULL,
                             TD_ULT_ACTUALIZACION_PRC_DESC VARCHAR2(255 CHAR),
-                            PRIMARY KEY (TD_ULT_ACTUALIZACION_PRC_ID)'', 
+                            PRIMARY KEY (TD_ULT_ACTUALIZACION_PRC_ID)'',
                             :error); END;';
-    execute immediate V_SQL USING OUT error;
+    execute immediate V_SQL USING OUT error;    
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TD_ULTIMA_ACTUALIZACION');
     
 
@@ -957,7 +957,7 @@ declare
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_TD_ACEPT_ASU_INTERP_DEM'', 
                           ''TD_ACEPT_ASU_INTERP_DEM_ID NUMBER(16,0) NOT NULL,
                             TD_ACEPT_ASU_INTERP_DEM_DESC VARCHAR2(255 CHAR),
-                            PRIMARY KEY (TD_ACEPT_ASU_INTERP_DEM_ID)'', 
+                            PRIMARY KEY (TD_ACEPT_ASU_INTERP_DEM_ID)'',
                             :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TD_ACEPT_ASU_INTERP_DEM');
@@ -1173,7 +1173,7 @@ declare
     
 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_GESTOR_IX'', ''TMP_PRC_GESTOR (PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
             execute immediate V_SQL USING OUT error;
-			
+            
     
 
     ----------------------------- TMP_PRC_SUPERVISOR --------------------------
@@ -1198,18 +1198,6 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_PARALIZADO');
     
 
-
-
-     ----------------------------- D_PRC_FINALIZADO --------------------------
-    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_FINALIZADO'', 
-                          ''PRC_FINALIZADO_ID NUMBER(16,0) NOT NULL,
-                            PRC_FINALIZADO_DESC VARCHAR2(20 CHAR),
-                            PRIMARY KEY (PRC_FINALIZADO_ID)'', 
-                            :error); END;';
-    execute immediate V_SQL USING OUT error;
-      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_FINALIZADO');
-    
-
         ----------------------------- D_PRC_MOTIVO_PARALIZACION --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_MOTIVO_PARALIZACION'', 
                           ''MOTIVO_PARALIZACION_ID NUMBER(16,0) NOT NULL,
@@ -1219,26 +1207,6 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_MOTIVO_PARALIZACION');
     
-
-
-       ----------------------------- D_PRC_MOTIVO_FINALIZACION --------------------------
-    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_MOTIVO_FINALIZACION'', 
-                          ''MOTIVO_FINALIZACION_ID NUMBER(16,0) NOT NULL,
-                            MOTIVO_FINALIZACION_DESC VARCHAR2(250 CHAR),
-                            PRIMARY KEY (MOTIVO_FINALIZACION_ID)'', 
-                            :error); END;';
-    execute immediate V_SQL USING OUT error;
-      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_MOTIVO_FINALIZACION');
-    
-
-
-
-
-
-
-
-
-
 
       ----------------------------- D_PRC_TIPO_ACUERDO -------------------------- 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_TIPO_ACUERDO'', 
@@ -1274,16 +1242,16 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TIPO_GESTOR');
     
-	
-	----------------------------- D_PRC_FASE_SUBASTA_CONCURSAL --------------------------
+    
+    ----------------------------- D_PRC_FASE_SUBASTA_CONCURSAL --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_FASE_SUBASTA_CONCURSAL'', 
                           ''FASE_SUBASTA_CONCURSAL_ID NUMBER(16,0) NOT NULL,
-							FASE_SUBASTA_CONCURSAL_DESC VARCHAR2(250 CHAR),
-							PRIMARY KEY (FASE_SUBASTA_CONCURSAL_ID)'', 
+                            FASE_SUBASTA_CONCURSAL_DESC VARCHAR2(250 CHAR),
+                            PRIMARY KEY (FASE_SUBASTA_CONCURSAL_ID)'', 
                             :error); END;';
     execute immediate V_SQL USING OUT error;
-	  DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_FASE_SUBASTA_CONCURSAL');
-	
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_FASE_SUBASTA_CONCURSAL');
+    
   
     ------------------------------ D_PRC_PROPIETARIO--------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_PROPIETARIO'', 
@@ -1400,7 +1368,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
                             :error); END;';
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_ESTADO_DOCUMENTO');
-	  
+      
 
         
 
@@ -1537,7 +1505,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_ENT_CEDENTE');
         
-	
+    
     ------------------------------ D_PRC_PROP_SAREB--------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_PROP_SAREB'', 
                           ''PROP_SAREB_ID NUMBER(16,0) NOT NULL,
@@ -1547,8 +1515,64 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_SUPER_IX'', ''TMP
     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_PROP_SAREB');
         
+    ------------------------------ D_PRC_TIPO_SOL_PREVISTA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_TIPO_SOL_PREVISTA'', 
+                          ''TIPO_SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                            TIPO_SOL_PREVISTA_DESC VARCHAR2(250 CHAR),
+                            PRIMARY KEY (TIPO_SOL_PREVISTA_ID)'', :error); END;';        
+ execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_TIPO_SOL_PREVISTA');
+
+    ------------------------------ D_PRC_PROCURADOR --------------------------
+
+           V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_PROCURADOR'', 
+                          ''PROCURADOR_PRC_ID NUMBER(16,0) NOT NULL,
+                            PROCURADOR_PRC_NOMBRE_COMPLETO VARCHAR2(250 CHAR),
+                            PROCURADOR_PRC_NOMBRE VARCHAR2(250 CHAR),
+                            PROCURADOR_PRC_APELLIDO1 VARCHAR2(250 CHAR),
+                            PROCURADOR_PRC_APELLIDO2 VARCHAR2(250 CHAR),
+                            PRIMARY KEY (PROCURADOR_PRC_ID)'', 
+                            :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_PROCURADOR');
+        
+    ----------------------------- D_PRC_GESTOR_HAYA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_GESTOR_HAYA'', 
+                          ''GESTOR_PRC_HAYA_ID NUMBER(16,0) NOT NULL,
+                            GESTOR_PRC_HAYA_NOMBRE_COMPLET VARCHAR2(250),
+                            GESTOR_PRC_HAYA_NOMBRE VARCHAR2(250),
+                            GESTOR_PRC_HAYA_APELLIDO1 VARCHAR2(250),
+                            GESTOR_PRC_HAYA_APELLIDO2 VARCHAR2(250),
+                            ENTIDAD_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            DESPACHO_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            GESTOR_EN_RECOVERY_PRC_ID NUMBER(16,0),
+                            PRIMARY KEY (GESTOR_PRC_HAYA_ID,DESPACHO_GESTOR_PRC_HAYA_ID)'', 
+                            :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_GESTOR_HAYA');
+
+    ----------------------------- D_PRC_DESPACHO_GESTOR_HAYA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_DESPACHO_GESTOR_HAYA'', 
+                          ''DESPACHO_GESTOR_PRC_HAYA_ID NUMBER(16,0) NOT NULL,
+                            DESPACHO_GESTOR_PRC_HAYA_DESC VARCHAR2(250 CHAR),
+                            TIPO_DESP_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            ZONA_DESP_GESTOR_PRC_HAYA_ID NUMBER(16,0),
+                            PRIMARY KEY (DESPACHO_GESTOR_PRC_HAYA_ID)'', 
+                            :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_DESPACHO_GESTOR_HAYA');
     
-    --Log_Proceso
+
+    ----------------------------- D_PRC_CON_POSTORES --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_PRC_CON_POSTORES'', 
+                          ''CON_POSTORES_ID NUMBER(16,0) NOT NULL,
+                            CON_POSTORES_DESC VARCHAR2(255 CHAR),
+                            PRIMARY KEY (CON_POSTORES_ID)'', 
+                            :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_PRC_CON_POSTORES');	  
+
+	  --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
 
  end;

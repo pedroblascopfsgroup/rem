@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_DIM_TAREA(O_ERROR_STATUS OUT VARCHAR2) AS
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 03/02/2016
--- Motivos del cambio: ESTADO_PRORROGA_ID
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI HAYA
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Tarea.
@@ -152,11 +152,6 @@ select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
   SELECT COUNT(*) INTO V_NUM_ROW FROM D_TAR_ESTADO_PRORROGA WHERE ESTADO_PRORROGA_ID = 1;
   IF (V_NUM_ROW = 0) THEN
     INSERT INTO D_TAR_ESTADO_PRORROGA (ESTADO_PRORROGA_ID, ESTADO_PRORROGA_DESC) VALUES (1, 'Respondido');
-  END IF;
-
-SELECT COUNT(*) INTO V_NUM_ROW FROM D_TAR_ESTADO_PRORROGA WHERE ESTADO_PRORROGA_ID = 2;
-  IF (V_NUM_ROW = 0) THEN
-    INSERT INTO D_TAR_ESTADO_PRORROGA (ESTADO_PRORROGA_ID, ESTADO_PRORROGA_DESC) VALUES (2, 'No hay prórroga');
   END IF;
 
   COMMIT;  
@@ -638,7 +633,7 @@ SELECT COUNT(*) INTO V_NUM_ROW FROM D_TAR_ESTADO_PRORROGA WHERE ESTADO_PRORROGA_
   
   V_MSQL := 'SELECT DISTINCT TAR_TAREA 
     FROM '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES 
-    WHERE PRC_ID IS NOT NULL ORDER BY 1';
+    ORDER BY 1';
     
   OPEN C_TAREA_DESC FOR V_MSQL;
   LOOP
@@ -741,8 +736,7 @@ SELECT COUNT(*) INTO V_NUM_ROW FROM D_TAR_ESTADO_PRORROGA WHERE ESTADO_PRORROGA_
           WHEN trunc(TAR_FECHA_VENC) IS NULL THEN -2
           ELSE -1 END)                                                                           
  FROM '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TN
- JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON TN.PRC_ID = PRC.PRC_ID
- JOIN D_TAR_DESCRIPCION TD ON TN.TAR_TAREA = TD.DESCRIPCION_TAREA_DESC WHERE PRC.BORRADO = 0';
+ JOIN D_TAR_DESCRIPCION TD ON TN.TAR_TAREA = TD.DESCRIPCION_TAREA_DESC';
 
   V_ROWCOUNT := sql%rowcount;     
   commit;

@@ -1013,7 +1013,7 @@ BEGIN
     -- PLAZO_AUTO_FASE_COMUN_A_REG_RESOL_APERTURA_LIQUIDACION_CONVENIO -> Procedimiento que pasa por T. fase convenio (2384)
     execute immediate 'update H_CONCU set P_AUTO_FC_REG_RESOL_APER_LIQ_C = null 
     where DIA_ID = :fecha and PROCEDIMIENTO_ID not in (select  tpj.ITER from TMP_CONCU_JERARQUIA tpj 
-                                   join recovery_CM_datastage.PRC_PROCEDIMIENTOS prc on tpj.FASE_ACTUAL = prc.PRC_ID
+                                   join '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc on tpj.FASE_ACTUAL = prc.PRC_ID
                                    where  DIA_ID = :fecha and  TRUNC(prc.FECHACREAR) <= :fecha  and prc.DD_TPO_ID = 2384 and prc.BORRADO=0)' using fecha, fecha, fecha;
     
     commit;

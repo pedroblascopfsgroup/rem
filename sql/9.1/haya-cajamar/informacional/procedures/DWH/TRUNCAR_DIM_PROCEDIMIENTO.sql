@@ -3,8 +3,8 @@ create or replace PROCEDURE TRUNCAR_DIM_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 02/02/2016
--- Motivos del cambio: D_PRC_FINALIZADO Y D_PRC_MOTIVO_FINALIZACION
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que trunca las tablas de la dimension Procedimiento
@@ -269,17 +269,16 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_ULT_TAR_PEND_DESC
  execute immediate V_SQL USING OUT error;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_ENT_CEDENTE'', '''', :O_ERROR_STATUS); END;';  
  execute immediate V_SQL USING OUT error;
-
-
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_FINALIZADO'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT error;
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_MOTIVO_FINALIZACION'', '''', :O_ERROR_STATUS); END;';
-  execute immediate V_SQL USING OUT error;
-  
-
-
-
- 
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_TIPO_SOL_PREVISTA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_PROCURADOR'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_GESTOR_HAYA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_DESPACHO_GESTOR_HAYA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_CON_POSTORES'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
   commit;
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
@@ -287,4 +286,3 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_PRC_ULT_TAR_PEND_DESC
 
 
 END TRUNCAR_DIM_PROCEDIMIENTO;
-

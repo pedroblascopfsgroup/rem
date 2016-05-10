@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_CNT_DET_COBRO (DATE_START IN date, DATE_END
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Mayo 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 23/11/2015
--- Motivos del cambio:usuario propietario
+-- Fecha ultima modificacion: 09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI HAYA
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_CNT_DET_COBRO.
@@ -123,7 +123,7 @@ BEGIN
          cpa.CNT_ID,
          cpa.CPA_ID,
          trunc(cpa.CPA_FECHA_VALOR),
-         cpa.DD_SCP_ID,
+         nvl(cpa.DD_TCP_ID,-1),
          0,
 
          1,

@@ -5,8 +5,8 @@ as
 	-- Autor: María Villanueva, PFS Group
 	-- Fecha creacion: Septiembre 2015
 	-- Responsable ultima modificacion: María Villanueva, PFS Group
-	-- Fecha �ltima modificaci�n: 11/11/2015
-	-- Motivos del cambio:Usuario propietario
+	-- Fecha ultima modificacion: 09/05/2016
+	-- Motivos del cambio:Se actualiza con los cambios realizados en Cajamar
 	-- Cliente: Recovery BI Haya
 	--
 	-- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Contrato
@@ -84,6 +84,12 @@ as
     -- TMP_DET_COBROS_PAGOS
     -- TMP_CNT_ACCIONES
     -- TMP_CNT_GESTOR_CREDITO
+    -- H_CNT_DET_ACUERD_SOL
+    -- TMP_CNT_DET_ACUERD_SOL
+    -- H_CNT_DET_ACUERD_SOL_SEMANA
+    -- H_CNT_DET_ACUERD_SOL_MES
+    -- H_CNT_DET_ACUERD_SOL_TRIMESTRE
+    -- H_CNT_DET_ACUERD_SOL_ANIO
     
 BEGIN
 
@@ -233,6 +239,12 @@ BEGIN
                               DEUDA_EXIGIBLE NUMBER(14,2) DEFAULT NULL,
                               CAPITAL_FALLIDO NUMBER(16,2) DEFAULT NULL,
                               CAPITAL_VIVO NUMBER(16,2) DEFAULT NULL,
+                              -- Informes Específicos CajaMar
+                              TIPO_VENCIDO_ID NUMBER(16,0),
+                              TRAMO_CAP_VIVO_ID NUMBER(16,0),
+                              DIR_TERRITORIAL_ID NUMBER(16,0),
+                              CONTRATO_ENTIDAD_ID NUMBER(16,0),
+                              PERIMETRO_GESTION_CM_ID NUMBER(16,0),
                               IMPORTE_PTE_DIFER NUMBER(16,2) DEFAULT NULL,
                               -- Recobro
                               NUM_DPS INTEGER,
@@ -261,9 +273,12 @@ BEGIN
                               IMP_RIESGO_PREV_MANUAL NUMBER(14,2),
                               IMP_RIESGO_PREV_FINAL NUMBER(14,2),
                               -- Acciones
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              -- Informes Específicos CajaMAr
+                              IMP_INICIAL NUMBER(16,2), 
+                              IMP_DIF_ACTUAL_INICIAL NUMBER(16,2))
 			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -412,6 +427,12 @@ BEGIN
                               DEUDA_EXIGIBLE NUMBER(14,2) DEFAULT NULL,
                               CAPITAL_FALLIDO NUMBER(16,2) DEFAULT NULL,
                               CAPITAL_VIVO NUMBER(16,2) DEFAULT NULL,
+                              -- Informes Específicos CajaMar
+                              TIPO_VENCIDO_ID NUMBER(16,0),
+                              TRAMO_CAP_VIVO_ID NUMBER(16,0),
+                              DIR_TERRITORIAL_ID NUMBER(16,0),
+                              CONTRATO_ENTIDAD_ID NUMBER(16,0),
+                              PERIMETRO_GESTION_CM_ID NUMBER(16,0),
                               IMPORTE_PTE_DIFER NUMBER(16,2) DEFAULT NULL,
                               -- Recobro
                               NUM_DPS INTEGER,
@@ -440,14 +461,17 @@ BEGIN
                               IMP_RIESGO_PREV_MANUAL NUMBER(14,2),
                               IMP_RIESGO_PREV_FINAL NUMBER(14,2),
                               -- Acciones
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              -- Informes Específicos CajaMAr
+                              IMP_INICIAL NUMBER(16,2), 
+                              IMP_DIF_ACTUAL_INICIAL NUMBER(16,2)
                               '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
         	 DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_CNT');
 
 	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_CNT_IX'', ''TMP_H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
-	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TTMP_H_CNT_CNT_IX'', ''TTMP_H_CNT (CONTRATO_ID)'', ''S'', '''', :error); END;';
+	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TTMP_H_CNT_CNT_IX'', ''TMP_H_CNT (CONTRATO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion INDICES en TMP_H_CNT');
@@ -587,6 +611,12 @@ BEGIN
                               DEUDA_EXIGIBLE NUMBER(14,2) DEFAULT NULL,
                               CAPITAL_FALLIDO NUMBER(16,2) DEFAULT NULL,
                               CAPITAL_VIVO NUMBER(16,2) DEFAULT NULL,
+                              -- Informes Específicos CajaMar
+                              TIPO_VENCIDO_ID NUMBER(16,0),
+                              TRAMO_CAP_VIVO_ID NUMBER(16,0),
+                              DIR_TERRITORIAL_ID NUMBER(16,0),
+                              CONTRATO_ENTIDAD_ID NUMBER(16,0),
+                              PERIMETRO_GESTION_CM_ID NUMBER(16,0),                              
                               IMPORTE_PTE_DIFER NUMBER(16,2) DEFAULT NULL,
                               -- Recobro
                               NUM_DPS INTEGER,
@@ -615,12 +645,15 @@ BEGIN
                               IMP_RIESGO_PREV_MANUAL NUMBER(14,2),
                               IMP_RIESGO_PREV_FINAL NUMBER(14,2),
                               -- Acciones
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              -- Informes Específicos CajaMAr
+                              IMP_INICIAL NUMBER(16,2), 
+                              IMP_DIF_ACTUAL_INICIAL NUMBER(16,2))
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            TABLESPACE "RECOVERY_HAYA02_DWH"   
+                               
                             PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
                            (PARTITION "P1" VALUES LESS THAN (201501) 
-                           TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                           '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_SEMANA');
@@ -766,6 +799,12 @@ BEGIN
                               DEUDA_EXIGIBLE NUMBER(14,2) DEFAULT NULL,
                               CAPITAL_FALLIDO NUMBER(16,2) DEFAULT NULL,
                               CAPITAL_VIVO NUMBER(16,2) DEFAULT NULL,
+                              -- Informes Específicos CajaMar
+                              TIPO_VENCIDO_ID NUMBER(16,0),
+                              TRAMO_CAP_VIVO_ID NUMBER(16,0),
+                              DIR_TERRITORIAL_ID NUMBER(16,0),
+                              CONTRATO_ENTIDAD_ID NUMBER(16,0),
+                              PERIMETRO_GESTION_CM_ID NUMBER(16,0),                              
                               IMPORTE_PTE_DIFER NUMBER(16,2) DEFAULT NULL,
                               -- Recobro
                               NUM_DPS INTEGER,
@@ -794,12 +833,15 @@ BEGIN
                               IMP_RIESGO_PREV_MANUAL NUMBER(14,2),
                               IMP_RIESGO_PREV_FINAL NUMBER(14,2),
                               -- Acciones
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              -- Informes Específicos CajaMAr
+                              IMP_INICIAL NUMBER(16,2), 
+                              IMP_DIF_ACTUAL_INICIAL NUMBER(16,2))
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_HAYA02_DWH"   
+                           	   
                            	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                           	'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_MES');
@@ -945,6 +987,12 @@ BEGIN
                               DEUDA_EXIGIBLE NUMBER(14,2) DEFAULT NULL,
                               CAPITAL_FALLIDO NUMBER(16,2) DEFAULT NULL,
                               CAPITAL_VIVO NUMBER(16,2) DEFAULT NULL,
+                              -- Informes Específicos CajaMar
+                              TIPO_VENCIDO_ID NUMBER(16,0),
+                              TRAMO_CAP_VIVO_ID NUMBER(16,0),
+                              DIR_TERRITORIAL_ID NUMBER(16,0),
+                              CONTRATO_ENTIDAD_ID NUMBER(16,0),
+                              PERIMETRO_GESTION_CM_ID NUMBER(16,0),                              
                               IMPORTE_PTE_DIFER NUMBER(16,2) DEFAULT NULL,
                               -- Recobro
                               NUM_DPS INTEGER,
@@ -973,12 +1021,15 @@ BEGIN
                               IMP_RIESGO_PREV_MANUAL NUMBER(14,2),
                               IMP_RIESGO_PREV_FINAL NUMBER(14,2),
                               -- Acciones
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              -- Informes Específicos CajaMAr
+                              IMP_INICIAL NUMBER(16,2), 
+                              IMP_DIF_ACTUAL_INICIAL NUMBER(16,2))
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"   
+                            	   
                             	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                            	'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_TRIMESTRE');
@@ -1124,6 +1175,12 @@ BEGIN
                               DEUDA_EXIGIBLE NUMBER(14,2) DEFAULT NULL,
                               CAPITAL_FALLIDO NUMBER(16,2) DEFAULT NULL,
                               CAPITAL_VIVO NUMBER(16,2) DEFAULT NULL,
+                              -- Informes Específicos CajaMar
+                              TIPO_VENCIDO_ID NUMBER(16,0),
+                              TRAMO_CAP_VIVO_ID NUMBER(16,0),
+                              DIR_TERRITORIAL_ID NUMBER(16,0),
+                              CONTRATO_ENTIDAD_ID NUMBER(16,0),
+                              PERIMETRO_GESTION_CM_ID NUMBER(16,0),                              
                               IMPORTE_PTE_DIFER NUMBER(16,2) DEFAULT NULL,
                               -- Recobro
                               NUM_DPS INTEGER,
@@ -1152,12 +1209,15 @@ BEGIN
                               IMP_RIESGO_PREV_MANUAL NUMBER(14,2),
                               IMP_RIESGO_PREV_FINAL NUMBER(14,2),
                               -- Acciones
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              -- Informes Específicos CajaMAr
+                              IMP_INICIAL NUMBER(16,2), 
+                              IMP_DIF_ACTUAL_INICIAL NUMBER(16,2))
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"   
+                            	   
                             	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                            	'', :error); END;';
       execute immediate V_SQL USING OUT error;
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_ANIO');
@@ -1193,6 +1253,7 @@ BEGIN
                               T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NULL,
                               FACTURA_COBRO_ID NUMBER(16,0) NULL,
+                              MOTIVO_COBRO_ID NUMBER(16,0),
                               -- Metricas
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(16,2) ,
@@ -1215,7 +1276,7 @@ BEGIN
                               COMISIONES_FACTURA NUMBER(16,2) ,
                               GASTOS_FACTURA NUMBER(16,2))
                            SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -1257,6 +1318,7 @@ BEGIN
                               T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NULL,
                               FACTURA_COBRO_ID NUMBER(16,0) NULL,
+                              MOTIVO_COBRO_ID NUMBER(16,0),
                               -- Metricas
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(16,2) ,
@@ -1319,6 +1381,7 @@ BEGIN
                               T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NULL,
                               FACTURA_COBRO_ID NUMBER(16,0) NULL,
+                              MOTIVO_COBRO_ID NUMBER(16,0),
                               -- Metricas
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(16,2) ,
@@ -1339,10 +1402,7 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2))
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501)
+                              GASTOS_FACTURA NUMBER(16,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1379,6 +1439,7 @@ BEGIN
                               T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NULL,
                               FACTURA_COBRO_ID NUMBER(16,0) NULL,
+                              MOTIVO_COBRO_ID NUMBER(16,0),
                               -- Metricas
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(16,2) ,
@@ -1399,10 +1460,7 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501)
+                              GASTOS_FACTURA NUMBER(16,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1438,6 +1496,7 @@ BEGIN
                               T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NULL,
                               FACTURA_COBRO_ID NUMBER(16,0) NULL,
+                              MOTIVO_COBRO_ID NUMBER(16,0),
                               -- Metricas
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(16,2) ,
@@ -1458,10 +1517,7 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501)
+                              GASTOS_FACTURA NUMBER(16,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1496,6 +1552,7 @@ BEGIN
                               T_DEUDA_IRREGULAR_COBRO_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_COBRO_ID NUMBER(16,0) NULL,
                               FACTURA_COBRO_ID NUMBER(16,0) NULL,
+                              MOTIVO_COBRO_ID NUMBER(16,0),
                               -- Metricas
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(16,2) ,
@@ -1516,10 +1573,7 @@ BEGIN
                               INT_REMUNERATORIOS_FACTURA NUMBER(16,2) ,
                               INT_MORATORIOS_FACTURA NUMBER(16,2) ,
                               COMISIONES_FACTURA NUMBER(16,2) ,
-                              GASTOS_FACTURA NUMBER(16,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015)
+                              GASTOS_FACTURA NUMBER(16,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1556,7 +1610,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
                               DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))  
                               SEGMENT CREATION IMMEDIATE 
-			      TABLESPACE "RECOVERY_HAYA02_DWH" 
+			       
                               PARTITION BY RANGE ("DIA_ID")
                               INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                               (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -1629,10 +1683,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_CICLO_REC_SEMANA');
@@ -1667,10 +1718,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1704,10 +1752,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1743,10 +1788,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               COMISIONES_CICLO_REC NUMBER(16,2) ,
                               GASTOS_CICLO_REC NUMBER(16,2) ,
                               IMPUESTOS_CICLO_REC NUMBER(16,2),
-                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015)
+                              DEUDA_IRREGULAR_CICLO_REC NUMBER(14,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1792,11 +1834,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               RIESGO_GARANTIA_INI_CAMP_REC NUMBER(14,2)  ,
                               SALDO_EXCE_INI_CAMP_REC NUMBER(14,2)  ,
                               -- Recobro
-                              IMPORTE_RECLAMAR_INI_CAMP_REC NUMBER(14,2))
-                    SEGMENT CREATION IMMEDIATE NOLOGGING
-                    PARTITION BY RANGE ("FECHA_INICIO_CAMPANA_RECOBRO")
-                    INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
-                    (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))
+                              IMPORTE_RECLAMAR_INI_CAMP_REC NUMBER(14,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1833,7 +1871,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               IMPORTE_PAGO NUMBER(16,2) 
                              )
                            SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -1895,10 +1933,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_CICLO_REC'',
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2))
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501)
+                              IMPORTE_PAGO NUMBER(16,2)
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1927,10 +1962,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
+                              IMPORTE_PAGO NUMBER(16,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1959,10 +1991,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
+                              IMPORTE_PAGO NUMBER(16,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -1991,10 +2020,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               ENVIADO_AGENCIA_ACUERDO_ID NUMBER(16,0) NULL,
                               -- Metricas
                               NUM_ACUERDOS INTEGER ,
-                              IMPORTE_PAGO NUMBER(16,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
+                              IMPORTE_PAGO NUMBER(16,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2024,7 +2050,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERDO_SEMANA_
                               NUM_INCIDENCIAS INTEGER
                              )
                            SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -2078,10 +2104,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_IX'', '' H
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER)
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501) 
+                              NUM_INCIDENCIAS INTEGER 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2109,10 +2132,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
+                              NUM_INCIDENCIAS INTEGER 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2139,10 +2159,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
+                              NUM_INCIDENCIAS INTEGER 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2169,10 +2186,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               AGENCIA_INCIDENCIA_ID NUMBER(16,0) NULL,
                               ENVIADO_AGENCIA_INCI_ID NUMBER(16,0) NULL,
                               -- Metricas
-                              NUM_INCIDENCIAS INTEGER)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
+                              NUM_INCIDENCIAS INTEGER 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2198,7 +2212,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2)
                              )
                            SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -2246,10 +2260,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_EFICACIA_SEMANA');
@@ -2273,10 +2284,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_EFICACIA_MES');
@@ -2299,10 +2307,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2326,10 +2331,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                               -- Metricas
                               ER_IMPORTE_COBRO NUMBER(14,2),
                               ER_DEUDA_IRREGULAR_STOCK_INI NUMBER(14,2),
-                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2))
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
+                              ER_DEUDA_IRREGULAR_ENTRADAS NUMBER(14,2) 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
 
@@ -2359,7 +2361,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   PRINCIPAL_FINAL NUMBER(16,2) NULL
                                   )
                            SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -2420,10 +2422,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501) 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -2450,10 +2449,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -2479,10 +2475,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -2509,10 +2502,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
                                   NUM_CREDITO_INSINUADO NUMBER NULL,
                                   PRINCIPAL_INICIAL NUMBER(16,2) NULL,
                                   PRINCIPAL_GESTOR NUMBER(16,2) NULL,
-                                  PRINCIPAL_FINAL NUMBER(16,2) NULL)
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
+                                  PRINCIPAL_FINAL NUMBER(16,2) NULL 
                             '', :error); END;';
 	execute immediate V_SQL USING OUT error;
  
@@ -3248,7 +3238,150 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_INCI_SEMANA_IX'
 
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion indice en TMP_CNT_GESTOR_CREDITO');
+
+   ------------------------------ H_CNT_DET_ACUERD_SOL --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_ACUERD_SOL'', 
+              		    ''DIA_ID DATE NOT NULL,
+                          FECHA_CARGA_DATOS DATE NOT NULL,
+                          ACUERDO_ID NUMBER(16,0) NOT NULL,
+                          CONTRATO_ID NUMBER(16,0) NOT NULL,
+                          SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                          FECHA_SOL_PREVISTA_CNT DATE ,
+                          -- Dimensiones
+                          TIPO_SOL_PREVISTA_ID NUMBER(16,0),
+                          -- Metricas
+                          NUM_SOL_PREVISTA INTEGER
+                          )
+                          SEGMENT CREATION IMMEDIATE 
+                    PARTITION BY RANGE ("DIA_ID")
+                    INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
+                    (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
+	 execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_ACUERD_SOL');
+
+
+    	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERD_SOL_IX'', ''H_CNT_DET_ACUERD_SOL (DIA_ID, FECHA_SOL_PREVISTA_CNT, CONTRATO_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en H_CNT_DET_ACUERD_SOL');
+
+
+   ------------------------------ TMP_CNT_DET_ACUERD_SOL --------------------------
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_CNT_DET_ACUERD_SOL'', 
+              		    ''DIA_ID DATE NOT NULL,
+                          FECHA_CARGA_DATOS DATE NOT NULL,
+                          ACUERDO_ID NUMBER(16,0) NOT NULL,
+                          CONTRATO_ID NUMBER(16,0) NOT NULL,
+                          SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                          FECHA_SOL_PREVISTA_CNT DATE ,
+                          -- Dimensiones
+                          TIPO_SOL_PREVISTA_ID NUMBER(16,0),
+                          -- Metricas
+                          NUM_SOL_PREVISTA INTEGER
+                            '', :error); END;';
+	execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_CNT_DET_ACUERD_SOL');
+
+    	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_CNT_DET_ACUERD_SOL_IX'', ''TMP_CNT_DET_ACUERD_SOL (DIA_ID, FECHA_SOL_PREVISTA_CNT, CONTRATO_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en TMP_CNT_DET_ACUERD_SOL');
   
+
+   ------------------------------ H_CNT_DET_ACUERD_SOL_SEMANA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_ACUERD_SOL_SEMANA'', 
+              		    ''SEMANA_ID NUMBER(16,0) NOT NULL,
+                              FECHA_CARGA_DATOS DATE NOT NULL,
+                              ACUERDO_ID NUMBER(16,0) NOT NULL,
+                              CONTRATO_ID NUMBER(16,0) NOT NULL,
+                              SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                              FECHA_SOL_PREVISTA_CNT DATE ,
+                              -- Dimensiones
+                              TIPO_SOL_PREVISTA_ID NUMBER(16,0),
+                              -- Metricas
+                              NUM_SOL_PREVISTA INTEGER
+                            '', :error); END;';
+	execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_ACUERD_SOL_SEMANA');
+
+V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERD_SOL_SEMANA_IX'', '' H_CNT_DET_ACUERD_SOL_SEMANA (SEMANA_ID, FECHA_SOL_PREVISTA_CNT, CONTRATO_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+      
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en H_CNT_DET_ACUERD_SOL_SEMANA');
+    
+   ------------------------------ H_CNT_DET_ACUERD_SOL_MES --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_ACUERD_SOL_MES'', 
+              		    ''MES_ID NUMBER(16,0) NOT NULL,
+                              FECHA_CARGA_DATOS DATE NOT NULL,
+                              ACUERDO_ID NUMBER(16,0) NOT NULL,
+                              CONTRATO_ID NUMBER(16,0) NOT NULL,
+                              SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                              FECHA_SOL_PREVISTA_CNT DATE ,
+                              -- Dimensiones
+                              TIPO_SOL_PREVISTA_ID NUMBER(16,0),
+                              -- Metricas
+                              NUM_SOL_PREVISTA INTEGER
+                            '', :error); END;';
+	execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_ACUERD_SOL_MES');
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERD_SOL_MES_IX'', '' H_CNT_DET_ACUERD_SOL_MES (MES_ID, FECHA_SOL_PREVISTA_CNT, CONTRATO_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en H_CNT_DET_ACUERD_SOL_MES');
+
+
+   ------------------------------ H_CNT_DET_ACUERD_SOL_TRIMESTRE --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_ACUERD_SOL_TRIMESTRE'', 
+              		    ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
+                              FECHA_CARGA_DATOS DATE NOT NULL,
+                              ACUERDO_ID NUMBER(16,0) NOT NULL,
+                              CONTRATO_ID NUMBER(16,0) NOT NULL,
+                              SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                              FECHA_SOL_PREVISTA_CNT DATE ,
+                              -- Dimensiones
+                              TIPO_SOL_PREVISTA_ID NUMBER(16,0),
+                              -- Metricas
+                              NUM_SOL_PREVISTA INTEGER
+                            '', :error); END;';
+	execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_ACUERD_SOL_TRIMESTRE');
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERD_SOL_TRIMESTRE_IX'', '' H_CNT_DET_ACUERD_SOL_TRIMESTRE (TRIMESTRE_ID, FECHA_SOL_PREVISTA_CNT, CONTRATO_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en H_CNT_DET_ACUERD_SOL_TRIMESTRE');
+  
+
+   ------------------------------ H_CNT_DET_ACUERD_SOL_ANIO --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_CNT_DET_ACUERD_SOL_ANIO'', 
+              		    ''ANIO_ID NUMBER(16,0) NOT NULL,
+                              FECHA_CARGA_DATOS DATE NOT NULL,
+                              ACUERDO_ID NUMBER(16,0) NOT NULL,
+                              CONTRATO_ID NUMBER(16,0) NOT NULL,
+                              SOL_PREVISTA_ID NUMBER(16,0) NOT NULL,
+                              FECHA_SOL_PREVISTA_CNT DATE ,
+                              -- Dimensiones
+                              TIPO_SOL_PREVISTA_ID NUMBER(16,0),
+                              -- Metricas
+                              NUM_SOL_PREVISTA INTEGER
+                            '', :error); END;';
+	execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_CNT_DET_ACUERD_SOL_ANIO');
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_DET_ACUERD_SOL_ANIO_IX'', '' H_CNT_DET_ACUERD_SOL_ANIO (ANIO_ID, FECHA_SOL_PREVISTA_CNT, CONTRATO_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en H_CNT_DET_ACUERD_SOL_ANIO');
+		
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
     

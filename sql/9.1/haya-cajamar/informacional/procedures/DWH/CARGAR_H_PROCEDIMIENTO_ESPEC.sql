@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO_ESPEC (DATE_START IN DATE, DA
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificación: María Villanueva, PFS Group
--- Fecha ultima modificación: 24/11/2015
--- Motivos del cambio: Usuario propietario
+-- Fecha ultima modificación: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 
 -- Cliente: Recovery BI Haya
 --
@@ -27,6 +27,8 @@ DECLARE
 --                  									Declaración de variables
 -- ===============================================================================================
   V_NUM_ROW NUMBER(10);
+
+
   V_DATASTAGE VARCHAR2(100);
   V_SQL VARCHAR2(16000);
   max_dia_semana date;
@@ -67,7 +69,6 @@ BEGIN
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Empieza ' || V_NOMBRE, 2;
-
   select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA_DATASTAGE'; 
 
 -- ------------------------------- PRIORIDADES PROCEDIMIENTOS -----------------------------------
@@ -102,12 +103,17 @@ BEGIN
 
 
   -- Borrado índices TMP_PRC_ESPECIFICO_JERARQUIA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_ESPEC_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRC_ESPEC_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
 
  	   
@@ -129,9 +135,6 @@ BEGIN
       CODIGO_FASE_ACTUAL,
       PRIORIDAD_FASE,
       ASUNTO
-
-
-
     ) 
   select '''||DATE_START||''',
       PJ_PADRE,
@@ -140,15 +143,15 @@ BEGIN
       PATH_DERIVACION,
       PRC_TPO,
       NVL(PRIORIDAD, 0),
-
       ASU_ID
-
   from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS_JERARQUIA
   left join TMP_PRC_CODIGO_PRIORIDAD on PRC_TPO = DD_TIPO_CODIGO
   where FECHA_PROCEDIMIENTO = '''||max_dia_pre_start||'''';
   commit;
   end if;
-  
+
+
+
   execute immediate
     'insert into TMP_PRC_ESPECIFICO_JERARQUIA (
         DIA_ID,
@@ -173,14 +176,12 @@ BEGIN
     where FECHA_PROCEDIMIENTO between '''||DATE_START||''' and '''||DATE_END||'''';
     commit;
 
-
    -- Rellenar los días que no tienen entradas de procedimientos. No ha existido ningún movimiento. La foto es la del día anterior.
 
   open c_fecha_rellenar;
   loop --RELLENAR_LOOP
     fetch c_fecha_rellenar into fecha_rellenar;
     exit when c_fecha_rellenar%NOTFOUND;
-
       -- Si un día no ha habido movimiento copiamos dia anterior
       select COUNT(DIA_ID)
       into V_NUM_ROW
@@ -188,7 +189,6 @@ BEGIN
       where DIA_ID = fecha_rellenar;
 
       if(V_NUM_ROW = 0) then
-
         insert into TMP_PRC_ESPECIFICO_JERARQUIA(
             DIA_ID,
             ITER,
@@ -221,6 +221,8 @@ BEGIN
 
     -- Update fase actual paralizada, fase finalizada en función de las decisiones asociadas
     -- Fase Actual Paralizada
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRC_ESPECIFICO_DECISION'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     execute immediate '
@@ -246,9 +248,19 @@ BEGIN
   close c_fecha_rellenar;
 
   -- Crear indices TMP_PRC_ESPECIFICO_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_ESPEC_JRQ_ITER_IX'', ''TMP_PRC_ESPECIFICO_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_ESPEC_JRQ_FASE_ACT_IX'', ''TMP_PRC_ESPECIFICO_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -307,6 +319,10 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU. Empieza Carga', 3;
 
   -- Borrado índices TMP_CONCU_JERARQUIA
+
+
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CONCU_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CONCU_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
@@ -335,10 +351,20 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_CONCU_JERARQUIA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
   -- Crear indices TMP_CONCU_JERARQUIA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_CONCU_JRQ_ITER_IX'', ''TMP_CONCU_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_CONCU_JRQ_FASE_ACT_IX'', ''TMP_CONCU_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -354,12 +380,15 @@ BEGIN
 
 
     -- Borrado índices TMP_CONCU_DETALLE
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_CONCU_DETALLE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
 
     -- Calculo las fechas de los hitos a medir
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_DETALLE'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;	
 
@@ -368,7 +397,12 @@ BEGIN
     commit;
 
     -- Crear indices TMP_CONCU_DETALLE
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_CONCU_DETALLE_IX'', ''TMP_CONCU_DETALLE (ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -376,6 +410,7 @@ BEGIN
     -- TAP_ID: 411 P23_registrarPublicacionBOE  FASE: T. fase común ordinario / TAP_ID: 419 P24_registrarPublicacionBOE  FASE: T. fase común abreviado
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_AUTO_FASE_COMUN', 5;
+
 
     	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
@@ -404,6 +439,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_LIQUIDACION', 5;
 
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -427,6 +463,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_PUBLICACION_BOE', 5;
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -438,7 +475,7 @@ BEGIN
     from TMP_CONCU_JERARQUIA tpj
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on tpj.FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null and TRUNC(tar.TAR_FECHA_FIN) <= :fecha
     join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000003080)
-    join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fechaAuto''
+    join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fecha''
     where  DIA_ID = :fecha' using fecha, fecha; --20150421
     --and tex.tap_id in (411, 419)';
     commit;
@@ -454,6 +491,7 @@ BEGIN
     -- TAP_ID: 1102	P23_registrarFinFaseComun FASE: Registrar resolución finalización fase común / TAP_ID: 1106	P24_registrarFinFaseComun FASE: Registrar resolución finalización fase común
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_INSINUACION_FINAL_CRED', 5;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -481,6 +519,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_AUTO_APERTURA_CONVENIO', 5;
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -489,7 +528,7 @@ BEGIN
     select  tpj.ITER, tpj.FASE_ACTUAL, tar.TAR_ID, tar.TAR_TAREA, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN ,TAP_ID,tar.TAR_ID,tex.TEX_ID, TEV_NOMBRE, TO_date(TEV_VALOR,''YYYY-MM-DD'')
     from TMP_CONCU_JERARQUIA tpj
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on tpj.FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null and TRUNC(tar.TAR_FECHA_FIN) <= :fecha
-    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000003269)
+    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000004111)
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fechaFase''
     where  DIA_ID = :fecha  ' using fecha, fecha; -- 20150421
     --and tex.tap_id in (449)';
@@ -504,6 +543,7 @@ BEGIN
     -- TAP_ID: 416 P23_informeAdministracionConcursal  FASE: Registrar informe administración concursal TAP_ID: 424 P24_informeAdministracionConcursal
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_REGISTRAR_IAC', 5;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -531,6 +571,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_INTERPOSICION_DEMANDA', 5;
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -556,6 +597,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_JUNTA_ACREEDORES', 5;
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -565,7 +607,7 @@ BEGIN
     select  tpj.ITER, tpj.FASE_ACTUAL, tar.TAR_ID, tar.TAR_TAREA, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN ,TAP_ID,tar.TAR_ID,tex.TEX_ID, TEV_NOMBRE, TO_date(TEV_VALOR,''YYYY-MM-DD'')
     from TMP_CONCU_JERARQUIA tpj
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on tpj.FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null  and TRUNC(tar.TAR_FECHA_FIN) <= :fecha
-    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000003274)
+    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000004112)
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fechaJunta''
     where  DIA_ID = :fecha   ' using fecha, fecha; --20150421
     --and tex.tap_id in (456)';
@@ -581,6 +623,7 @@ BEGIN
     -- TAP_ID: 456 P31_aperturaFase  FASE: T. fase liquidación
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_REG_RESOL_APERTURA_LIQ', 5;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -607,6 +650,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'ESTADO_CONVENIO', 5;
 
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -622,6 +666,7 @@ BEGIN
     --and tex.tap_id in (1134)'; --20150421
     commit;
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_AUX'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -634,6 +679,7 @@ BEGIN
     on (b.ITER = a.ITER)
     when matched then update set a.MAX_FECHA_INI = b.FECHA_INI;
     commit;
+
 
    	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_CONVENIO'', '''', :O_ERROR_STATUS); END;';
@@ -676,6 +722,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'CUANTIA_CONVENIO', 5;
 
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;	
     commit;
@@ -689,6 +736,8 @@ BEGIN
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''cuanti''
     where  DIA_ID = :fecha  ' using fecha, fecha;
     commit;
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_CONVENIO'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;	
     commit;
@@ -712,6 +761,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'QUITA_CONVENIO', 5;
 
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -725,6 +775,7 @@ BEGIN
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''quita''
     where  DIA_ID = :fecha   ' using fecha, fecha;
     commit;
+
 
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_CONVENIO'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -748,6 +799,7 @@ BEGIN
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'SEGUIMIENTO_CONVENIO', 5;
 
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -763,6 +815,7 @@ BEGIN
     commit;
 
 
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_AUX'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -776,6 +829,7 @@ BEGIN
     on (b.ITER = a.ITER)
     when matched then update set a.MAX_FECHA_INI = b.FECHA_INI;
     commit;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_CONVENIO'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -800,6 +854,7 @@ BEGIN
     -- GARANTIA_CONCURSO
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'GARANTIA_CONCURSO', 5;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_CONCU_CONTRATO'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -841,16 +896,15 @@ BEGIN
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FASE SUBASTA', 5;
     merge into TMP_CONCU_DETALLE a
-    using (select ITER,  MAX( CASE WHEN CODIGO_FASE_ACTUAL = 'P404' THEN 1
-								   WHEN CODIGO_FASE_ACTUAL IN ('H021','H043') THEN 2
-								   WHEN CODIGO_FASE_ACTUAL IN ('H009','H023','H025','H029','H019') THEN 3
-								   WHEN CODIGO_FASE_ACTUAL IN ('H017','H031','H029','H041','H037','H025') THEN 4
-								   WHEN CODIGO_FASE_ACTUAL IN ('H033','H029','H019','H025') THEN 5
-								   WHEN CODIGO_FASE_ACTUAL = 'H035' THEN 6
-								   WHEN CODIGO_FASE_ACTUAL = 'H039' THEN 7
-								   WHEN CODIGO_FASE_ACTUAL = 'H027' THEN 8
-								   WHEN CODIGO_FASE_ACTUAL = 'H003' THEN 9
-								   ELSE -1 
+    using (select ITER,  MAX( CASE WHEN CODIGO_FASE_ACTUAL IN ('H021', 'H043') THEN 1
+								   WHEN CODIGO_FASE_ACTUAL IN ('H009', 'H023', 'H025', 'H029', 'H019') THEN 2
+								   WHEN CODIGO_FASE_ACTUAL IN ('H017', 'H031', 'H029', 'H041', 'H037', 'H025') THEN 3
+								   WHEN CODIGO_FASE_ACTUAL IN ('H033', 'H029', 'H019', 'H025') THEN 4
+								   WHEN CODIGO_FASE_ACTUAL = 'H035' THEN 5
+								   WHEN CODIGO_FASE_ACTUAL = 'H039' THEN 6
+								   WHEN CODIGO_FASE_ACTUAL = 'H027' THEN 7
+								   WHEN CODIGO_FASE_ACTUAL = 'H003' THEN 8
+								   ELSE 9 
 							END) as FASE_SUBASTA_CONCURSAL 
 		   from TMP_CONCU_JERARQUIA 
 		   group by ITER) b
@@ -859,6 +913,8 @@ BEGIN
     commit;
 
     -- Borrar Indices H_CONCU
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -934,7 +990,12 @@ BEGIN
 
 
     -- Crear indices H_CONCU
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_IX'', ''H_CONCU (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -992,9 +1053,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_SEMANA. Empieza Carga', 3;
 
     -- Borrar Indices H_CONCU_MES
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1086,7 +1150,12 @@ BEGIN
     end loop;
 
     -- Crear indices H_CONCU_SEMANA
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_SEMANA_IX'', ''H_CONCU_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -1101,9 +1170,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_MES. Empieza Carga', 3;
 
     -- Borrar Indices H_CONCU_MES
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1194,7 +1266,12 @@ BEGIN
   end loop;
 
     -- Crear indices H_CONCU_MES_IX
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_MES_IX'', ''H_CONCU_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -1210,6 +1287,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_TRIMESTRE. Empieza Carga', 3;
 
     -- Borrar Indices H_CONCU_TRIMESTRE
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -1291,7 +1370,12 @@ BEGIN
     end loop;
 
     -- Crear indices H_CONCU_TRIMESTRE
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_TRIMESTRE_IX'', ''H_CONCU_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -1306,6 +1390,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CONCU_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_CONCU_ANIO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_CONCU_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1386,7 +1472,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_CONCU_ANIO_IX
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CONCU_ANIO_IX'', ''H_CONCU_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1420,9 +1511,12 @@ BEGIN
     -- Calculo las fechas de los hitos a medir
 
     -- Borrar Indices TMP_DECL_DETALLE
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_DECL_DETALLE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
+
 
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_DECL_DETALLE'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1433,13 +1527,19 @@ BEGIN
     commit;
 
     -- Crear indices TMP_DECL_DETALLE
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_DECL_DETALLE_IX'', ''TMP_DECL_DETALLE (ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
 
     -- FECHA_INTERP_DEM_DECLARATIVO
     -- TAP_ID: 301	P03_InterposicionDemanda (P. ordinario) / TAP_ID: 256	P04_InterposicionDemanda (P. verbal)
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_DECL_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -1465,6 +1565,7 @@ BEGIN
 
     -- FECHA_RESOLUCION_FIRME
     -- TAP_ID: 308	P03_ResolucionFirme (P. ordinario) / TAP_ID: 262	P04_ResolucionFirme (P. verbal)
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_DECL_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -1487,6 +1588,8 @@ BEGIN
     commit;
 
     -- Borrar Indices H_DECL
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -1515,7 +1618,12 @@ BEGIN
     commit;
 
     -- Crear indices H_DECL
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_IX'', ''H_DECL (DIA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -1547,6 +1655,7 @@ BEGIN
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_SEMANA. Empieza Carga', 3;
 
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1562,6 +1671,8 @@ BEGIN
   commit;
 
   -- Borrar Indices H_DECL_SEMANA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1597,7 +1708,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_DECL_SEMANA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_SEMANA_IX'', ''H_DECL_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1611,6 +1727,7 @@ BEGIN
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_MES. Empieza Carga', 3;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1627,6 +1744,8 @@ BEGIN
   commit;
 
   -- Borrar Indices H_DECL_MES
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1663,7 +1782,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_DECL_MES
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_MES_IX'', ''H_DECL_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1678,6 +1802,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_TRIMESTRE. Empieza Carga', 3;
 
   -- Borrar Indices H_DECL_TRIMESTRE
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1713,7 +1839,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_DECL_TRIMESTRE
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_TRIMESTRE_IX'', ''H_DECL_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1728,6 +1859,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_DECL_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_DECL_TRIMESTRE
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_DECL_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1765,7 +1898,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_DECL_ANIO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_DECL_ANIO_IX'', ''H_DECL_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1780,15 +1918,19 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD. Empieza Carga', 3;
 
 -- Borrar Indices TMP_EJEC_ORD_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EJEC_ORD_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EJEC_ORD_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_EJEC_ORD_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
  
+
   commit;
   execute immediate '
   insert into TMP_EJEC_ORD_JERARQUIA
@@ -1806,15 +1948,27 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_EJEC_ORD_JERARQUIA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
   -- Crear indices TMP_EJEC_ORD_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EJEC_ORD_JRQ_ITER_IX'', ''TMP_EJEC_ORD_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EJEC_ORD_JRQ_FASE_ACT_IX'', ''TMP_EJEC_ORD_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
 
   -- Borrar Indices H_EJEC_ORD
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -1834,6 +1988,7 @@ BEGIN
 
     -- FECHA_INTERP_DEM_EJEC_ORD
     -- TAP_ID:229	P16_InterposicionDemanda (P. Ej. de Título Judicial) / TAP_ID: 270	P15_InterposicionDemandaMasBienes (P. Ej. de título no judicial)
+
 		 V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_EJEC_ORD_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -1858,6 +2013,7 @@ BEGIN
 
     -- FECHA_INICIO_APREMIO
     -- Fecha de inicio de la fase T. certificación de cargas y revisión (DD_TPO_ID=2359)
+
    	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_EJEC_ORD_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -1906,7 +2062,12 @@ BEGIN
 
 
   -- Crear indices H_EJEC_ORD
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_IX'', ''H_EJEC_ORD (DIA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -1936,9 +2097,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_SEMANA. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_ORD_SEMANA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -1987,7 +2151,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_ORD_SEMANA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_SEMANA_IX'', ''H_EJEC_ORD_SEMANA (SEMANA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2002,9 +2171,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_MES. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_ORD_MES
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2053,7 +2225,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_ORD_MES
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_MES_IX'', ''H_EJEC_ORD_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2068,6 +2245,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_TRIMESTRE. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_ORD_TRIMESTRE
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -2105,7 +2284,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_ORD_TRIMESTRE
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_TRIMESTRE_IX'', ''H_EJEC_ORD_TRIMESTRE (TRIMESTRE_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2120,6 +2304,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_ORD_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_ORD_ANIO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_ORD_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -2157,7 +2343,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_ORD_ANIO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_ORD_ANIO_IX'', ''H_EJEC_ORD_ANIO (ANIO_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
   commit;
@@ -2173,11 +2364,17 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO. Empieza Carga', 3;
 
   -- Borrar Indices H_HIPO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_HIPO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
 -- Borrar Indices TMP_HIPO_JERARQUIA
+
+
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_HIPO_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_HIPO_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
@@ -2205,9 +2402,19 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_HIPO_JERARQUIA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
   -- Crear indices TMP_HIPO_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_HIPO_JRQ_ITER_IX'', ''TMP_HIPO_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_HIPO_JRQ_FASE_ACT_IX'', ''TMP_HIPO_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2215,6 +2422,7 @@ BEGIN
   for l in c_fecha loop
     -- ------------------ TAREAS ASOCIADAS -----------------------------
     -- Calculo las fechas de los hitos a medir
+
 
 	  	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_DETALLE'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2233,6 +2441,7 @@ BEGIN
 
     -- FECHA_INTERP_DEM_HIP
     -- TAP_ID: 240	P01_DemandaCertificacionCargas (P. hipotecario)
+
   
 		  	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2243,7 +2452,7 @@ BEGIN
     select  tpj.ITER, tpj.FASE_ACTUAL, tar.TAR_ID, tar.TAR_TAREA, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN ,TAP_ID,tar.TAR_ID,tex.TEX_ID, TEV_NOMBRE, TO_date(TEV_VALOR,''YYYY-MM-DD'')
     from TMP_HIPO_JERARQUIA tpj
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on tpj.FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null and TRUNC(tar.TAR_FECHA_FIN) <= '''||l.DIA_ID||'''
-    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000003016)
+    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000004049)
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE in (''fechaPresentacionDemanda'')
     where  DIA_ID = '''||l.DIA_ID||'''
     and tpj.FASE_FINALIZADA is null
@@ -2259,6 +2468,7 @@ BEGIN
 
     -- FECHA_CESION_REMATE
     -- TAP_ID: 10000000002429 fecha
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2284,6 +2494,7 @@ BEGIN
 
     -- FECHA_SUBASTA_SOLICITADA
     -- TAP_ID: 208	29	P11_SolicitudSubasta
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2309,6 +2520,7 @@ BEGIN
 
     -- FECHA_SUBASTA (SEÑALAMIENTO)
     -- TAP_ID: 10000000002830 y 10000000002632	T. Subasta Haya + T. Subasta Sareb
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2333,6 +2545,7 @@ BEGIN
     commit;
 
     -- FECHA CELEBRACION SUBASTA (COMBOCELEBRADA) Y SEÑALAMIENTO DE SUBASTA 10000000002632,10000000002830 fechaSenyalamiento, 10000000002837, 10000000002639 comboCelebrada ='SI'
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2358,6 +2571,7 @@ BEGIN
 	
     -- FECHA_SOL_DECRETO_ADJ
     -- TAP_ID: 255 P05_RegistrarAutoAdjudicacion
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2383,6 +2597,7 @@ BEGIN
 
     -- FECHA_RECEP_TESTIMONIO
     -- TAP_ID: 10000000003011 fechaTestimonio
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2392,7 +2607,7 @@ BEGIN
     select  tpj.ITER, tpj.FASE_ACTUAL, tar.TAR_ID, tar.TAR_TAREA, tar.TAR_FECHA_INI, tar.TAR_FECHA_FIN ,TAP_ID,tar.TAR_ID,tex.TEX_ID, TEV_NOMBRE, TO_date(TEV_VALOR,''YYYY-MM-DD'')
     from TMP_HIPO_JERARQUIA tpj
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on tpj.FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null and TRUNC(tar.TAR_FECHA_FIN) <= '''||l.DIA_ID||'''
-    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000003011)
+    join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000004465)
     join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fechaTestimonio''
     where  DIA_ID = '''||l.DIA_ID||'''
     and tpj.FASE_FINALIZADA is null
@@ -2408,6 +2623,7 @@ BEGIN
 
     -- FECHA_DECRETO_ADJ
     -- TAP_ID: 10000000003007 fechaPresentacion
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2432,6 +2648,7 @@ BEGIN
     commit;
 
     -- FASE SUBASTA
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_HIPO_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -2476,29 +2693,32 @@ BEGIN
     commit;
 
 
-    -- 1. Pendiente Interposición : 10000000003016;
-    -- 2. Demanda Presentada: 10000000003017, 10000000003020, 10000000003018, 10000000003019, 10000000003021, 10000000003022, 10000000003023, 10000000003024;
-    -- 3. subasta Solicitada: 10000000003032, 10000000003640, 10000000003040, 1000000000000001, 1000000000000004;
-    -- 4. Subasta Señalada: 1000000000000002, 10000000003034, 10000000003035, 10000000003041, 10000000003042, 10000000003043, 10000000003049, 10000000003050, 10000000003036, 10000000003037, 10000000003038, 10000000003039, 10000000003380, 10000000003381, 10000000003383, 10000000003382;
-    -- 5. Subasta Suspendida: 10000000003039;
-    -- 6. Subasta Celebrada: Pte Cesión Remate: 10000000003027, 10000000003030;
-    -- 7. Subasta Celebrada: con Cesión Remate: 10000000003029, 10000000003031;
-    -- 8. Subasta Celebrada: Pte Adjudicacion: 10000000003051, 10000000003052, 10000000003053, 10000000003044, 10000000003045, 10000000003038, 10000000003012, 10000000003010;
-    -- 9. Adjudicación: 10000000003009, 10000000003009, 10000000003013, 10000000003004, 10000000003006, 10000000003007, 10000000003005, 10000000003345, 10000000003346;
-    -- 10. Pendiente Posesión: 10000000002963, 10000000002966, 10000000002965;
-    -- 11. Posesión: 10000000002966, 10000000002967, 10000000002968
-    update TMP_HIPO_DETALLE set FASE_SUBASTA = (case when TAP_ID_ULT_TAR_CREADA in (10000000003016) then 1
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003017, 10000000003020, 10000000003018, 10000000003019, 10000000003021, 10000000003022, 10000000003023, 10000000003024) then 2
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003032, 10000000003640, 10000000003040, 1000000000000001, 1000000000000004) then 3
-                                                            when TAP_ID_ULT_TAR_CREADA in (1000000000000002, 10000000003034, 10000000003035, 10000000003041, 10000000003042, 10000000003043, 10000000003049, 10000000003050, 10000000003036, 10000000003037, 10000000003038, 10000000003039, 10000000003380, 10000000003381, 10000000003383, 10000000003382) then 4
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003039) then 5
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003027, 10000000003030) then 6
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003029, 10000000003031) then 7
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003051, 10000000003052, 10000000003053, 10000000003044, 10000000003045, 10000000003038, 10000000003012, 10000000003010) then 8
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003009, 10000000003009, 10000000003013, 10000000003004, 10000000003006, 10000000003007, 10000000003005, 10000000003345, 10000000003346) then 9
-                                                            when TAP_ID_ULT_TAR_CREADA in (10000000002963, 10000000002966, 10000000002965) then 10
+     -- 1. Pendiente Interposición : 10000000004049;
+    -- 2. Demanda Presentada: 10000000003017, 10000000004051, 10000000003019, 10000000004052, 10000000004053, 10000000004054, 10000000004055, 10000000004055, 10000000003022, 10000000003023, 10000000003024,10000000004039,10000000004040,10000000004041,10000000004042,10000000004043,10000000004044,10000000004045;
+     -- 3. subasta Solicitada: 10000000003032,10000000003034;
+    -- 4. Subasta Señalada:  10000000004339, 10000000004340, 10000000004341, 10000000004342, 10000000004343, 10000000003042, 10000000004344, 10000000004345, 10000000003049, 10000000004346, 10000000004347 10000000004349,10000000003050;
+    -- 5. Subasta Suspendida: 10000000004348;
+    -- 6. Subasta Celebrada: Pte Cesión Remate: 10000000003027,10000000003030;
+    -- 7. Subasta Celebrada: con Cesión Remate: 10000000003029,10000000004064,10000000004065,10000000004066,10000000004067,10000000004069,10000000004070;
+    -- 8. Subasta Celebrada: Pte Adjudicacion: 10000000003051,10000000003052,10000000004351,10000000004352,10000000003038,10000000004464,10000000003010;
+    -- 9. Adjudicación: 10000000003009,10000000004465,10000000004469,10000000004470,10000000004466,10000000004467,10000000003007,10000000003005,10000000003345,10000000003346;
+    -- 10. Pendiente Posesión: 10000000004090,10000000004091,10000000002963,10000000002964,10000000002965;
+    -- 11. Posesión: 10000000002966,10000000002967,10000000002968;
+    -- 12. Alquiler social:10000000004092,10000000004093,10000000004519,10000000004094,10000000004520;
+
+    update TMP_HIPO_DETALLE set FASE_SUBASTA = (case when TAP_ID_ULT_TAR_CREADA in (10000000004049) then 1
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003017,10000000004051,10000000003019,10000000004052,10000000004053,10000000004054,10000000004055,10000000004055,10000000003022,10000000003023,10000000003024,10000000004039,10000000004040,10000000004041,10000000004042,10000000004043,10000000004044,10000000004045) then 2
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003032,10000000003034) then 3
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000004339,10000000004340,10000000004341,10000000004342,10000000004343,10000000003042,10000000004344,10000000004345,10000000003049,10000000004346,10000000004347,10000000004349,10000000003050) then 4
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000004348) then 5
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003027,10000000003030) then 6
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003029,10000000004064,10000000004065,10000000004066,10000000004067,10000000004069,10000000004070) then 7
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003051,10000000003052,10000000004351,10000000004352,10000000003038,10000000004464,10000000003010) then 8
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000003009,10000000004465,10000000004469,10000000004470,10000000004466,10000000004467,10000000003007,10000000003005,10000000003345,10000000003346) then 9
+                                                            when TAP_ID_ULT_TAR_CREADA in (10000000004090,10000000004091,10000000002963,10000000002964,10000000002965) then 10
                                                             when TAP_ID_ULT_TAR_CREADA in (10000000002966, 10000000002967, 10000000002968) then 11
-                                                            else 12
+															when TAP_ID_ULT_TAR_CREADA in (10000000004092,10000000004093,10000000004519,10000000004094,10000000004520) then 12
+                                                            else 13
                                                       end);
     commit;
     -- Borrado de los días a insertar
@@ -2565,7 +2785,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_HIPO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_IX'', ''H_HIPO (DIA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2633,9 +2858,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_SEMANA. Empieza Carga', 3;
 
   -- Borrar Indices H_HIPO_SEMANA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_HIPO_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2728,7 +2956,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_HIPO_SEMANA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_SEMANA_IX'', ''H_HIPO_SEMANA (SEMANA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2743,9 +2976,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_MES. Empieza Carga', 3;
 
   -- Borrar Indices H_HIPO_MES
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_HIPO_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -2838,7 +3074,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_HIPO_MES
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_MES_IX'', ''H_HIPO_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2853,6 +3094,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_TRIMESTRE. Empieza Carga', 3;
 
   -- Borrar Indices H_HIPO_TRIMESTRE
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_HIPO_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -2935,7 +3178,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_HIPO_TRIMESTRE
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_TRIMESTRE_IX'', ''H_HIPO_TRIMESTRE (TRIMESTRE_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -2950,6 +3198,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_HIPO_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_HIPO_ANIO
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''INDEX H_HIPO_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -3034,7 +3284,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_HIPO_ANIO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_HIPO_ANIO_IX'', ''H_HIPO_ANIO (ANIO_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3049,16 +3304,23 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON. Empieza Carga', 3;
 
   -- Borrar Indices H_MON
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
 -- Borrar Indices TMP_MON_JERARQUIA
+
+
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_MON_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_MON_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_MON_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -3077,9 +3339,19 @@ BEGIN
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_MON_JERARQUIA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     -- Crear indices TMP_MON_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_MON_JRQ_ITER_IX'', ''TMP_MON_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_MON_JRQ_FASE_ACT_IX'', ''TMP_MON_JERARQUIA (DIA_ID,FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3088,6 +3360,7 @@ BEGIN
 
       -- ------------------ TAREAS ASOCIADAS -----------------------------
       -- Calculo las fechas de los hitos a medir
+
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_MON_DETALLE'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
@@ -3098,6 +3371,7 @@ BEGIN
 
       -- FECHA_INTERP_DEM_MON
       -- TAP_ID: 318 P02_InterposicionDemanda
+
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_MON_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
@@ -3121,6 +3395,7 @@ BEGIN
 
       -- FECHA_DECRETO_FINALIZACION
       -- TAP_ID: 321	P02_RegAutodespachandoEjecucion
+
       	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_MON_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
@@ -3168,7 +3443,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_MON
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_IX'', ''H_MON (DIA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3198,9 +3478,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_SEMANA. Empieza Carga', 3;
 
   -- Borrar Indices H_MON_SEMANA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -3249,7 +3532,12 @@ BEGIN
 
 
   -- Crear indices H_MON_SEMANA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_SEMANA_IX'', ''H_MON_SEMANA (SEMANA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3264,9 +3552,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_MES. Empieza Carga', 3;
 
   -- Borrar Indices H_MON_MES
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -3314,7 +3605,12 @@ BEGIN
 
 
   -- Crear indices H_MON_MES
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_MES_IX'', ''H_MON_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3329,6 +3625,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_TRIMESTRE. Empieza Carga', 3;
 
   -- Borrar Indices H_MON_TRIMESTRE
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -3365,7 +3663,12 @@ BEGIN
   END loop;
 
   -- Crear indices H_MON_TRIMESTRE
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_TRIMESTRE_IX'', ''H_MON_TRIMESTRE (TRIMESTRE_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3380,6 +3683,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_MON_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_MON_ANIO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_MON_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -3415,7 +3720,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_MON_ANIO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_MON_ANIO_IX'', ''H_MON_ANIO (ANIO_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3430,14 +3740,19 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_NOT
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
   -- Borrar Indices TMP_EJEC_NOT_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EJEC_NOT_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EJEC_NOT_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3457,9 +3772,19 @@ BEGIN
       --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_EJEC_NOT_JERARQUIA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     -- Crear indices TMP_MON_JERARQUIA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EJEC_NOT_JRQ_ITER_IX'', ''TMP_EJEC_NOT_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EJEC_NOT_JRQ_FASE_ACT_IX'', ''TMP_EJEC_NOT_JERARQUIA (DIA_ID, FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3479,6 +3804,7 @@ BEGIN
 
       -- FECHA_SUBASTA_EJEC_NOT (SEÑALAMIENTO)
       -- TAP_ID: 10000000002830 y 10000000002632	(T. Subasta Haya + T. Subasta Sareb)
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_EJEC_NOT_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
@@ -3505,6 +3831,7 @@ BEGIN
       commit;
 
       -- FASE SUBASTA - 0	Demanda Presentada - 1 Subasta Solicitada - 2 Subasta Señalada -3 Subasta Celebrada: Pendiente Cesión de remate - 4 Subasta Celebrada: Con Cesión de Remate - 5 Subasta Celebrada: Pendiente Adjudicación - 6 Otros
+
          V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_EJEC_NOT_TAREA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;
@@ -3580,7 +3907,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_NOT
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_IX'', ''H_EJEC_NOT (DIA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3601,9 +3933,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_SEMANA. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_NOT_SEMANA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -3647,7 +3982,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_NOT_SEMANA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_SEMANA_IX'', ''H_EJEC_NOT_SEMANA (SEMANA_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3662,9 +4002,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_MES. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_NOT_MES
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -3708,7 +4051,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_NOT_MES
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_MES_IX'', ''H_EJEC_NOT_MES (MES_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3723,6 +4071,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_TRIMESTRE. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_NOT_TRIMESTRE
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -3756,7 +4106,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_EJEC_NOT_TRIMESTRE
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_TRIMESTRE_IX'', ''H_EJEC_NOT_TRIMESTRE (TRIMESTRE_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3771,6 +4126,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EJEC_NOT_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_EJEC_NOT_ANIO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_EJEC_NOT_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -3805,7 +4162,12 @@ BEGIN
 
 
   -- Crear indices H_EJEC_NOT_ANIO
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EJEC_NOT_ANIO_IX'', ''H_EJEC_NOT_ANIO (ANIO_ID,PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3819,11 +4181,15 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE_CONCU. Empieza Carga', 3;
 
   -- Borrado índices TMP_PRE_CONCU_JERARQUIA
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRE_CONCU_JRQ_ITER_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_PRE_CONCU_JRQ_FASE_ACT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
+
 
 
   	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRE_CONCU_JERARQUIA'', '''', :O_ERROR_STATUS); END;';
@@ -3834,7 +4200,7 @@ BEGIN
                       select a.* from TMP_PRC_ESPECIFICO_JERARQUIA a,
                                 (select distinct DD_TPO_ID
 								from '||V_DATASTAGE||'.DD_TPO_TIPO_PROCEDIMIENTO tp
-								where DD_TPO_DESCRIPCION = ''T. Homologación de acuerdo - HCJ'' or DD_TPO_DESCRIPCION = ''T. Elevacion Propuesta Sareb Litigios - HCJ'') b
+								where DD_TPO_DESCRIPCION = ''T. Homologación de acuerdo - CJ'' or DD_TPO_DESCRIPCION = ''T. Elevacion Propuesta Sareb Litigios - HCJ'') b
                       where a.TIPO_PROCEDIMIENTO_DET = b.DD_TPO_ID';
 
   V_ROWCOUNT := sql%rowcount;
@@ -3844,10 +4210,20 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_PRE_CONCU_JERARQUIA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
   -- Crear indices TMP_PRE_CONCU_JERARQUIA
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRE_CONCU_JRQ_ITER_IX'', ''TMP_PRE_CONCU_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRE_CONCU_JRQ_FASE_ACT_IX'', ''TMP_PRE_CONCU_JERARQUIA (DIA_ID,FASE_ACTUAL)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 
@@ -3863,6 +4239,8 @@ BEGIN
 
 
     -- Borrado índices TMP_PRE_CONCU_DETALLE
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''MP_PRE_CONCU_DETALLE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -3877,7 +4255,12 @@ BEGIN
     commit;
 
     -- Crear indices TMP_PRE_CONCU_DETALLE
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRE_CONCU_DETALLE_IX'', ''TMP_PRE_CONCU_DETALLE (ITER)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -3932,7 +4315,7 @@ BEGIN
     commit;
 
     -- FECHA_ULT_PROPUESTA
-	-- Tarea: TAP ID: 10000000002973	Campo: “fecha”
+	-- Tarea: TAP ID: 10000000002973	Campo: fecha
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'FECHA_ULT_PROPUESTA', 5;
 
@@ -3984,6 +4367,8 @@ BEGIN
     commit;
 	
     -- Borrar Indices H_PRE_CONCU
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRE_CONCU_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -4023,7 +4408,12 @@ BEGIN
 
 
     -- Crear indices H_PRE_CONCU
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_CONCU_IX'', ''H_PRE_CONCU (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -4046,9 +4436,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE_CONCU_SEMANA. Empieza Carga', 3;
 
     -- Borrar Indices H_PRE_CONCU_SEMANA
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRE_CONCU_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
+
 
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -4098,7 +4491,12 @@ BEGIN
     end loop;
 
     -- Crear indices H_PRE_CONCU_SEMANA
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_CONCU_SEMANA_IX'', ''H_PRE_CONCU_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -4113,9 +4511,12 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE_CONCU_MES. Empieza Carga', 3;
 
     -- Borrar Indices H_PRE_CONCU_MES
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRE_CONCU_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
+
 
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -4164,7 +4565,12 @@ BEGIN
   end loop;
 
     -- Crear indices H_PRE_CONCU_MES_IX
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_CONCU_MES_IX'', ''H_PRE_CONCU_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
 
@@ -4180,6 +4586,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE_CONCU_TRIMESTRE. Empieza Carga', 3;
 
     -- Borrar Indices H_PRE_CONCU_TRIMESTRE
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRE_CONCU_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;
@@ -4219,7 +4627,12 @@ BEGIN
     end loop;
 
     -- Crear indices H_PRE_CONCU_TRIMESTRE
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_CONCU_TRIMESTRE_IX'', ''H_PRE_CONCU_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     commit;
@@ -4235,6 +4648,8 @@ BEGIN
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE_CONCU_ANIO. Empieza Carga', 3;
 
   -- Borrar Indices H_PRE_CONCU_ANIO
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRE_CONCU_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
@@ -4273,7 +4688,12 @@ BEGIN
   end loop;
 
   -- Crear indices H_PRE_CONCU_ANIO_IX
+
+
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_CONCU_ANIO_IX'', ''H_PRE_CONCU_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
 

@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_TAREA (DATE_START in DATE, DATE_END in DATE
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 03/02/2016
--- Motivos del cambio: ESTADO_PRORROGA_ID
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 10/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 
 
 -- Cliente: Recovery BI HAYA
@@ -169,10 +169,7 @@ BEGIN
                                ESTADO_TAREA_ID,
                                RESPONSABLE_TAREA_ID,
                                NUM_TAREAS, 
-                               NUM_DIAS_VENCIDO,
-							   ESTADO_PRORROGA_ID
-
-
+                               NUM_DIAS_VENCIDO
                                )
                         select ''' || fecha || ''',
                                ''' || fecha || ''', 
@@ -188,15 +185,12 @@ BEGIN
                                TAP_SUPERVISOR, 
                                1, 
                                trunc(TAR_FECHA_VENC) - trunc(TAR_FECHA_FIN)
-							   2
-
                         from '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar 
                         left join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID
                         left join '||V_DATASTAGE||'.TAP_TAREA_PROCEDIMIENTO tap on tex.TAP_ID = tap.TAP_ID
                         where trunc(TAR.TAR_FECHA_INI) <= ''' || fecha || '''';
     commit; 
     
-
     -- Crear indices H_TAR   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_TAR_IX'', ''H_TAR (DIA_ID, TAREA_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -219,8 +213,6 @@ BEGIN
       on (tar.DIA_ID = fecha and tar.FASE_ACTUAL_PROCEDIMIENTO = ttj.FASE_ACTUAL)   
       when matched then update set tar.PROCEDIMIENTO_ID = ttj.ITER where tar.DIA_ID = fecha;
     commit;
-
-
     -- Borramos las tareas de procedimientos borrados (No existen en Recovery)
     execute immediate 'delete from H_TAR where DIA_ID = ''' || fecha || ''' and FASE_ACTUAL_PROCEDIMIENTO in (select PRC_ID from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS where BORRADO = 1)';
     commit;
@@ -252,22 +244,6 @@ BEGIN
     -- update H_TAR tar set GESTOR_EN_RECOVERY_PRC_ID = (select GESTOR_EN_RECOVERY_PRC_ID from D_PRC prc join D_PRC_GESTOR ges on prc.GESTOR_PRC_ID = ges.GESTOR_PRC_ID where tar.PROCEDIMIENTO_ID = prc.PROCEDIMIENTO_ID) where tar.DIA_ID = fecha;
     -- commit; 
     
-	-- PRÓRROGA ----------------------------------------------------------
-	
-   	execute immediate'
-merge  into h_tar tar using 
-(SELECT T1.TAR_ID, (Case when dd_rpr_id is null then 0 else 1 end )as estado_prorroga_id FROM '||V_DATASTAGE||'.SPR_SOLICITUD_PRORROGA T1
-JOIN
-(SELECT TAR_ID,MAX(PR.FECHACREAR) AS FECHA_CREAR FROM '||V_DATASTAGE||'.SPR_SOLICITUD_PRORROGA PR
-JOIN H_TAR TAR ON TAR.TAREA_ID=PR.TAR_ID
-GROUP BY TAR_ID)T2
-
-ON T1.TAR_ID=T1.TAR_ID AND T1.FECHACREAR=T2.FECHA_CREAR)pro
-on (tar.TAREA_ID=pro.TAR_ID)
-when matched then update set tar.estado_prorroga_id=pro.estado_prorroga_id
-where tar.CUMPLIMIENTO_TAREA_ID=1 and tar.dia_id=''' || fecha || '''';
-commit;
-
   end loop;
   close c_fecha;
 
@@ -358,10 +334,7 @@ commit;
              GESTOR_EN_RECOVERY_PRC_ID,
              CUMPLIMIENTO_TAREA_ID,
              NUM_TAREAS,
-             NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
-
+             NUM_DIAS_VENCIDO
              )
       select semana, 
              max_dia_semana, 
@@ -380,9 +353,7 @@ commit;
              CARTERA_PROCEDIMIENTO_ID,
              GESTOR_EN_RECOVERY_PRC_ID, 
              CUMPLIMIENTO_TAREA_ID,
-
-             NUM_TAREAS, NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
+             NUM_TAREAS, NUM_DIAS_VENCIDO
       from H_TAR  where DIA_ID = max_dia_semana;     
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -482,9 +453,7 @@ commit;
              GESTOR_EN_RECOVERY_PRC_ID,
              CUMPLIMIENTO_TAREA_ID,
              NUM_TAREAS,
-             NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
+             NUM_DIAS_VENCIDO
              )
       select mes, 
              max_dia_mes, 
@@ -503,9 +472,7 @@ commit;
              CARTERA_PROCEDIMIENTO_ID,
              GESTOR_EN_RECOVERY_PRC_ID, 
              CUMPLIMIENTO_TAREA_ID,
-             NUM_TAREAS, NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
+             NUM_TAREAS, NUM_DIAS_VENCIDO
       from H_TAR where DIA_ID = max_dia_mes;
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -604,9 +571,7 @@ commit;
              GESTOR_EN_RECOVERY_PRC_ID,
              CUMPLIMIENTO_TAREA_ID,
              NUM_TAREAS,
-             NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
+             NUM_DIAS_VENCIDO
              )
       select trimestre, 
              max_dia_trimestre, 
@@ -625,9 +590,7 @@ commit;
              CARTERA_PROCEDIMIENTO_ID,
              GESTOR_EN_RECOVERY_PRC_ID, 
              CUMPLIMIENTO_TAREA_ID,
-             NUM_TAREAS, NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
+             NUM_TAREAS, NUM_DIAS_VENCIDO
       from H_TAR where DIA_ID = max_dia_trimestre;
       V_ROWCOUNT := sql%rowcount;     
       commit;
@@ -728,9 +691,7 @@ commit;
              GESTOR_EN_RECOVERY_PRC_ID,
              CUMPLIMIENTO_TAREA_ID,
              NUM_TAREAS,
-             NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
+             NUM_DIAS_VENCIDO
              )
       select anio, 
              max_dia_anio, 
@@ -749,9 +710,7 @@ commit;
              CARTERA_PROCEDIMIENTO_ID,
              GESTOR_EN_RECOVERY_PRC_ID, 
              CUMPLIMIENTO_TAREA_ID,
-             NUM_TAREAS, NUM_DIAS_VENCIDO,
-			 ESTADO_PRORROGA_ID
-
+             NUM_TAREAS, NUM_DIAS_VENCIDO
       from H_TAR where DIA_ID = max_dia_anio;
       commit;
   

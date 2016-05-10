@@ -2,12 +2,12 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion: Rafael Aracil, PFS Group
--- Fecha ultima modificacion: 04/08/2015
--- Motivos del cambio: 
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 09/05/2016
+-- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
 -- Cliente: Recovery BI Haya
 --
--- Descripcion: Procedimiento almancenado que carga las tablas de la dimension SUBASTA.
+-- Descripcion: Procedimiento almancenado que carga las tablas de la dimension BIEN.
 -- ===============================================================================================
 
 -- -------------------------------------------- INDICE -------------------------------------------
@@ -21,6 +21,16 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
     -- D_BIE_CODIGO_ACTIVO
     -- D_BIE_ENTIDAD_ADJUDICATARIA
     -- D_BIE_FASE_ACTUAL_DETALLE
+    -- D_BIE_DESC_LANZAMIENTOS
+    -- D_BIE_PRIMER_TITULAR
+    -- D_BIE_NUM_OPERACION
+    -- D_BIE_ZONA
+    -- D_BIE_OFICINA
+    -- D_BIE_ENTIDAD
+	-- D_BIE_GARANTIA_NUM_OPE_BIE_AGR
+	-- D_BIE_GARANTIA_NUM_OPE_BIE
+  -- -- D_BIE_VIVIENDA_HABITUAL
+    
 
 BEGIN
   declare
@@ -119,7 +129,91 @@ BEGIN
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
-	
+    ----------------------------- D_BIE_DESC_LANZAMIENTOS --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_DESC_LANZAMIENTOS'',
+                         '' DESC_LANZAMIENTO_ID NUMBER(16,0) NOT NULL,
+                            DESC_LANZAMIENTO_DESC VARCHAR2(50 CHAR),
+                            DESC_LANZAMIENTO_DESC_2 VARCHAR2(250 CHAR),
+                        PRIMARY KEY (DESC_LANZAMIENTO_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+    ----------------------------- D_BIE_PRIMER_TITULAR --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_PRIMER_TITULAR'',
+                         '' PRIMER_TITULAR_BIE_ID   NUMBER(16,0) NOT NULL ,
+                            PRIMER_TITULAR_BIE_DOCUMENT_ID  VARCHAR2(20),
+                            PRIMER_TITULAR_BIE_NOMBRE  VARCHAR2(100 CHAR),
+                            PRIMER_TITULAR_BIE_APELLIDO_1  VARCHAR2(100 CHAR),
+                            PRIMER_TITULAR_BIE_APELLIDO_2  VARCHAR2(100 CHAR),
+                        PRIMARY KEY (PRIMER_TITULAR_BIE_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+    ----------------------------- D_BIE_NUM_OPERACION --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_NUM_OPERACION'',
+                         '' NUM_OPERACION_BIEN_ID NUMBER(16,0) NOT NULL,
+                            NUM_OPERACION_BIEN_DESC VARCHAR2(50 CHAR),
+                            NUM_OPERACION_BIEN_DESC_2 VARCHAR2(250 CHAR),
+							GARANTIA_NUM_OPE_BIE_ID NUMBER(16,0),
+                        PRIMARY KEY (NUM_OPERACION_BIEN_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+    ----------------------------- D_BIE_ZONA --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_ZONA'',
+                         '' ZONA_BIEN_ID NUMBER(16,0) NOT NULL,
+                            ZONA_BIEN_DESC VARCHAR2(50 CHAR),
+                            ZONA_BIEN_DESC_2 VARCHAR2(250 CHAR),
+                        PRIMARY KEY (ZONA_BIEN_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+    
+   ----------------------------- D_BIE_OFICINA --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_OFICINA'',
+                         '' OFICINA_BIEN_ID NUMBER(16,0) NOT NULL,
+                            OFICINA_BIEN_DESC VARCHAR2(50 CHAR),
+                            OFICINA_BIEN_DESC_2 VARCHAR2(250 CHAR),
+                        PRIMARY KEY (OFICINA_BIEN_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+   ----------------------------- D_BIE_ENTIDAD --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_ENTIDAD'',
+                         '' ENTIDAD_BIEN_ID NUMBER(16,0) NOT NULL,
+                            ENTIDAD_BIEN_DESC VARCHAR2(50 CHAR),
+                            ENTIDAD_BIEN_DESC_2 VARCHAR2(250 CHAR),
+                        PRIMARY KEY (ENTIDAD_BIEN_ID)'', 
+                      :error); END;';
+    execute immediate V_SQL USING OUT error;
+
+	------------------------------ D_BIE_GARANTIA_NUM_OPE_BIE_AGR -------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE_AGR'', 
+						  ''GARANTIA_NUM_OPE_BIE_AGR_ID NUMBER(16,0) NOT NULL,
+                            GARANTIA_NUM_OPE_BIE_AGR_DESC VARCHAR2(50 CHAR),
+                            PRIMARY KEY (GARANTIA_NUM_OPE_BIE_AGR_ID)'', :error); END;'; 		 
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_GARANTIA_NUM_OPE_BIE_AGR');
+	  
+	  
+    ------------------------------ D_BIE_GARANTIA_NUM_OPE_BIE --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE'', 
+						  ''GARANTIA_NUM_OPE_BIE_ID NUMBER(16,0) NOT NULL,
+                            GARANTIA_NUM_OPE_BIE_DESC VARCHAR2(50 CHAR),
+                            GARANTIA_NUM_OPE_BIE_DESC_2 VARCHAR2(250 CHAR),
+                            GARANTIA_NUM_OPE_BIE_AGR_ID NUMBER(16,0),
+                            PRIMARY KEY (GARANTIA_NUM_OPE_BIE_ID)'', :error); END;'; 		 
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_GARANTIA_NUM_OPE_BIE');
+
+
+     ------------------------------ D_BIE_VIVIENDA_HABITUAL --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_VIVIENDA_HABITUAL'', 
+              ''VIVIENDA_HABITUAL_ID NUMBER(16,0) NOT NULL,
+                            VIVIENDA_HABITUAL_DESC VARCHAR2(50) ,
+                            PRIMARY KEY (VIVIENDA_HABITUAL_ID)'', :error); END;';     
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_VIVIENDA_HABITUAL');
+   
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
     

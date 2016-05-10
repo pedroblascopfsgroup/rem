@@ -3452,6 +3452,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	,{"xtype":'textfield',"name":"d_nombreDepositario","fieldLabel":"Informar del nombre del depositario",allowBlank:false,id:'d_nombreDepositario'+this.idFactoria}
 	                       	]);
 	
+	//id: 455 : T. Posesión interina (CAJAMAR): HC105_AlegacionesDisconformidad
+    this.arrayCampos.push([
+        {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAlegaciones","fieldLabel":"Presenta Alegaciones",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAlegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+    ]);
+	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

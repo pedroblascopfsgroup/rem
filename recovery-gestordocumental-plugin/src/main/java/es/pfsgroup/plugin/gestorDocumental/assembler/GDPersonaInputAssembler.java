@@ -28,9 +28,9 @@ public class GDPersonaInputAssembler {
 		
 	private static Parameters getParametersPersona(PersonaInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
-		if(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE.equals(inputDto.getEvent())) {
-			parameters.getParameter().add(getPersonaCliente(inputDto.getIdIntervinienteCliente()));
-			parameters.getParameter().add(getPersonaCliente2(inputDto.getIdCliente()));
+		if(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN.equals(inputDto.getEvent())) {
+			parameters.getParameter().add(getPersonaCliente(inputDto.getIdIntervinienteOrigen()));
+			parameters.getParameter().add(getPersonaCliente2(inputDto.getIdOrigen()));
 		}
 		parameters.getParameter().add(getActivoHaya(inputDto.getIdIntervinienteHaya()));
 		return parameters;
@@ -38,7 +38,7 @@ public class GDPersonaInputAssembler {
 	
 	private static KeyValuePair getPersonaCliente(String idActivoOrigen) {
 		KeyValuePair activoOrigen = new KeyValuePair();
-		activoOrigen.setCode(PersonaInputDto.ID_PERSONA_CLIENTE);
+		activoOrigen.setCode(PersonaInputDto.ID_PERSONA_ORIGEN);
 		activoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
 		activoOrigen.setValue(idActivoOrigen);
 		return activoOrigen;
@@ -46,7 +46,7 @@ public class GDPersonaInputAssembler {
 	
 	private static KeyValuePair getPersonaCliente2(String idActivoOrigen) {
 		KeyValuePair activoOrigen = new KeyValuePair();
-		activoOrigen.setCode(PersonaInputDto.ID_CLIENTE);
+		activoOrigen.setCode(PersonaInputDto.ID_ORIGEN);
 		activoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
 		activoOrigen.setValue(idActivoOrigen);
 		return activoOrigen;

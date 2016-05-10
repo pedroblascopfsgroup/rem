@@ -36,22 +36,26 @@ public class EXTAdjuntoAsuntoDaoImpl extends AbstractEntityDao<EXTAdjuntoAsunto,
 	@Override
 	public Set<AdjuntoAsunto> getAdjuntoAsuntoByIdDocumentoAndPrcId(List<Integer> idsDocumento, Long idPrc) {
 		StringBuilder listToString = new StringBuilder();
-		for ( int i = 0; i< idsDocumento.size(); i++){
-			listToString.append(idsDocumento.get(i));
-			if ( i != idsDocumento.size()-1){
-				listToString.append(", ");
+		if(!Checks.estaVacio(idsDocumento)) {
+			for ( int i = 0; i< idsDocumento.size(); i++){
+				listToString.append(idsDocumento.get(i));
+				if ( i != idsDocumento.size()-1){
+					listToString.append(", ");
+				}
+		    }
+			StringBuffer hql = new StringBuffer();
+			hql.append(" select aa from AdjuntoAsunto aa where aa.auditoria.borrado = false ");
+			if(!Checks.esNulo(idPrc)) {
+				hql.append(" and aa.procedimiento.id = ");
+				hql.append(idPrc);
 			}
-	    }
-		StringBuffer hql = new StringBuffer();
-		hql.append(" select aa from AdjuntoAsunto aa where aa.auditoria.borrado = false ");
-		if(!Checks.esNulo(idPrc)) {
-			hql.append(" and aa.procedimiento.id = ");
-			hql.append(idPrc);
+			hql.append(" and aa.servicerId in( ");
+			hql.append(listToString);
+			hql.append(")");
+			return new HashSet<AdjuntoAsunto>(getSession().createQuery(hql.toString()).list());
 		}
-		hql.append(" and aa.servicerId in( ");
-		hql.append(listToString);
-		hql.append(")");
-		return new HashSet<AdjuntoAsunto>(getSession().createQuery(hql.toString()).list());
+		return new HashSet<AdjuntoAsunto>();
+		
 	}
 	
 	@SuppressWarnings("unchecked")

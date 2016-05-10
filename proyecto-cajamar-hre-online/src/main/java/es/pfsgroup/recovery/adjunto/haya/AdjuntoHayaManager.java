@@ -868,9 +868,9 @@ public class AdjuntoHayaManager {
 			
 			if(contenedor == null) {
 				PersonaInputDto input = new PersonaInputDto();
-				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE);
-				input.setIdIntervinienteCliente(persona.getDocId());
-				input.setIdCliente(GestorDocumentalConstants.CODIGO_ID_CLIENTE);
+				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
+				input.setIdIntervinienteOrigen(persona.getDocId());
+				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
 				
 				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 				

@@ -195,8 +195,12 @@ public class AdjuntoHayaManager {
 
 	// Adjuntos del CONTRATO en Contrato
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id){
-		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+		Contrato contrato = contratoDao.get(id);
+		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(contrato), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
 		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
+		if(Checks.estaVacio(idsDocumento)) { 
+			return null;
+		}
 		List<AdjuntoContrato> adjuntos = adjuntoContratoDao.getAdjuntoContratoByIdDocumento(idsDocumento);
 		
 		Collections.sort(adjuntos, comparatorAdjuntoContrato());
@@ -214,7 +218,10 @@ public class AdjuntoHayaManager {
 
 				@Override
 				public String getRefCentera() {
-					return null;
+					if(Checks.esNulo(aa.getServicerId())) {
+						return null;
+					}
+					return aa.getServicerId().toString();
 				}
 
 				@Override
@@ -229,9 +236,12 @@ public class AdjuntoHayaManager {
 	}
 	
 	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtoContratoInterfaz(final Contrato cnt) {
-		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
-		
+		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(cnt), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+
 		final List<AdjuntoContrato> adjuntos = adjuntoContratoDao.getAdjuntoContratoByIdDocumento(idsDocumento);
+		for(AdjuntoContrato adjCnt : adjuntos) {
+			adjCnt.setRefCentera(adjCnt.getServicerId().toString());
+		}
 		Collections.sort(adjuntos, comparatorAdjuntoContrato());
 		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
 
@@ -259,7 +269,7 @@ public class AdjuntoHayaManager {
 	}
 	
 	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtoContratoDto(Contrato cnt) {
-		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+		List<Integer> idsDocumento = documentosExpediente(getIdActivoHaya(cnt), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
 		List<AdjuntoContrato> adjuntos = adjuntoContratoDao.getAdjuntoContratoByIdDocumento(idsDocumento);
 	
 		Collections.sort(adjuntos, comparatorAdjuntoContrato());
@@ -316,7 +326,7 @@ public class AdjuntoHayaManager {
 	// Adjuntos de la PERSONA en Persona
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
 		Persona persona = proxyFactory.proxy(PersonaApi.class).get(id);
-		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(persona.getCodClienteEntidad()), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, getClaseExpPersona(persona));
+		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(persona), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, getClaseExpPersona(persona));
 		final List<AdjuntoPersona> adjuntosPersona = adjuntoPersonaDao.getAdjuntoPersonaByIdDocumento(idsDocumento);
 		
 		List<AdjuntoDto> adjuntosConBorrado = new ArrayList<AdjuntoDto>();
@@ -336,7 +346,10 @@ public class AdjuntoHayaManager {
 
 				@Override
 				public String getRefCentera() {
-					return null;
+					if(Checks.esNulo(aa.getServicerId())) {
+						return null;
+					}
+					return aa.getServicerId().toString();
 				}
 
 				@Override
@@ -360,8 +373,11 @@ public class AdjuntoHayaManager {
 	}
 	
 	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtoPersonaInterfaz(final Persona per, String claseExpe) {
-		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(per.getCodClienteEntidad()), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe);
+		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(per), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe);
 		final List<AdjuntoPersona> adjuntos = adjuntoPersonaDao.getAdjuntoPersonaByIdDocumento(idsDocumento);
+		for(AdjuntoPersona adjPer : adjuntos) {
+			adjPer.setRefCentera(adjPer.getServicerId().toString());
+		}
 		Collections.sort(adjuntos, comparatorAdjuntoPersona());
 		ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
 
@@ -389,7 +405,7 @@ public class AdjuntoHayaManager {
 	}
 	
 	private ExtAdjuntoGenericoDto getExtAdjuntoGenericoDtopersonaDto(Persona per, String claseExp) {
-		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(per.getCodClienteEntidad()), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExp);
+		List<Integer> idsDocumento = documentosExpediente(getIdClienteHaya(per), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExp);
 		List<AdjuntoPersona> adjuntos = adjuntoPersonaDao.getAdjuntoPersonaByIdDocumento(idsDocumento);
 	
 		Collections.sort(adjuntos, comparatorAdjuntoPersona());
@@ -420,6 +436,9 @@ public class AdjuntoHayaManager {
 	}	
 	
 	private List<Integer> documentosExpediente(Long id, String tipoExpediente, String claseExpediente) {
+		if(Checks.esNulo(id)) {
+			return null;
+		}
 		List<Integer> idsDocumento = new ArrayList<Integer>();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), null);
 
@@ -449,7 +468,7 @@ public class AdjuntoHayaManager {
 			
 			try {
 				RespuestaCrearExpediente respuesta = gestorDocumentalServicioExpedientesApi.crearPropuesta(crearPropuesta);
-				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), claseExpe);
+				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), null, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe);
 				creando = true;
 			} catch (GestorDocumentalException e) {
 				e.printStackTrace();
@@ -458,16 +477,6 @@ public class AdjuntoHayaManager {
 		return creando;
 	}
 
-    private void insertarContenedor(Integer idExpediente, Asunto asun, String claseExp) {
-    	ContenedorGestorDocumental contenedor = new ContenedorGestorDocumental();
-		contenedor.setIdExterno(new Long(idExpediente));
-		contenedor.setAsunto(asun);
-		contenedor.setCodigoTipo(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS);
-		contenedor.setCodigoClase(claseExp);
-		Auditoria.save(contenedor);
-		genericDao.save(ContenedorGestorDocumental.class, contenedor);
-    }
-    
     private List<String> getDistinctTipoProcedimientoFromAsunto(Asunto asun) {
     	List<String> listTipoProcedimiento = new ArrayList<String>();
     	for (Procedimiento prc : asun.getProcedimientos()) {
@@ -505,7 +514,7 @@ public class AdjuntoHayaManager {
 		
 		for(String claseExpe : listaContenedores) {
 			if(!Checks.esNulo(claseExpe)) {
-				RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
+				RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, uploadForm.getParameter("comboTipoFichero"));
 				if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getIdDocumento())) {
 					contenedorEncontrado = true;
 					break;
@@ -531,7 +540,7 @@ public class AdjuntoHayaManager {
 		//Se va a comprobar la claseExp encontrada por el prc (o por los padres del prc), con los contenedores existentes en el asunto, y debe haber uno que coincida.
 		for(String claseExpExistente : listaContenedores) {
 			if(!Checks.esNulo(claseExpExistente) && claseExpExistente.equals(claseExp) ){
-				RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, claseExp, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
+				RespuestaCrearDocumento respuesta = uploadGestorDoc(idAsunto, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExp, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, uploadForm.getParameter("comboTipoFichero"));
 				if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getIdDocumento())) {
 					contenedorEncontrado = true;
 					break;
@@ -546,27 +555,38 @@ public class AdjuntoHayaManager {
 	}
 	
 	public String uploadPersona(WebFileItem uploadForm) {
-		uploadGestorDoc(1L, "clase", uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA);
+		Persona persona = personaDao.get(Long.parseLong(uploadForm.getParameter("id")));
+		
+		String claseExpe = "";
+		if(DDTipoPersona.CODIGO_TIPO_PERSONA_FISICA.equals(persona.getTipoPersona().getCodigo())) {
+			claseExpe = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PERSONA_FISICA;
+		}else{
+			claseExpe = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PERSONA_JURIDICA;
+		}
+
+		uploadGestorDoc(getIdClienteHaya(persona), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, uploadForm.getParameter("comboTipoDoc"));
+
 		return null;
 	}
 
 	public String uploadExpediente(WebFileItem uploadForm) {
-		uploadGestorDoc(1L, "clase", uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
+		uploadGestorDoc(1L, "tipo", "clase", uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, uploadForm.getParameter("comboTipoDoc"));
 		return null;
 	}
 
 	public String uploadContrato(WebFileItem uploadForm) {
-		uploadGestorDoc(1L, "clase", uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO);
+		Contrato contrato = contratoDao.get(Long.parseLong(uploadForm.getParameter("id")));
+		uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));
 		return null;
 	}
 
 	
-	private RespuestaCrearDocumento uploadGestorDoc(Long idAsunto, String claseExp, WebFileItem uploadForm, String tipoEntidad) {
+	private RespuestaCrearDocumento uploadGestorDoc(Long idAsunto,String tipoExp, String claseExp, WebFileItem uploadForm, String tipoEntidad, String tipoFichero) {
 		RespuestaCrearDocumento respuesta = null;
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExp);	
+		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), tipoExp, claseExp);	
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
-		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExp, uploadForm.getParameter("comboTipoFichero")));
+		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
 		try {
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
 			uploadDoc(tipoEntidad, uploadForm, new Long(respuesta.getIdDocumento()));
@@ -707,16 +727,19 @@ public class AdjuntoHayaManager {
 			if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad)) {
 				Expediente expediente = expedienteDao.get(Long.parseLong(uploadForm.getParameter("id")));
 				AdjuntoExpediente adjuntoexp = new AdjuntoExpediente(uploadForm.getFileItem(), tpoAdjEnt);
+//				adjuntoexp.setServicerId(idDocumento);
 				adjuntoexp.setExpediente(expediente);
 				genericDao.save(AdjuntoExpediente.class, adjuntoexp);
 			} else if (DDTipoEntidad.CODIGO_ENTIDAD_PERSONA.equals(tipoEntidad)) {
 				Persona persona = personaDao.get(Long.parseLong(uploadForm.getParameter("id")));
 				AdjuntoPersona adjPers = new AdjuntoPersona(uploadForm.getFileItem(),tpoAdjEnt);
+				adjPers.setServicerId(idDocumento);
 				adjPers.setPersona(persona);
 				genericDao.save(AdjuntoPersona.class, adjPers);
 			} else if (DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO.equals(tipoEntidad)) {
 				Contrato contrato = contratoDao.get(Long.parseLong(uploadForm.getParameter("id")));
 				AdjuntoContrato adjCnt = new AdjuntoContrato(uploadForm.getFileItem(),tpoAdjEnt);
+				adjCnt.setServicerId(idDocumento);
 				adjCnt.setContrato(contrato);
 				genericDao.save(AdjuntoContrato.class, adjCnt);
 			}
@@ -816,36 +839,60 @@ public class AdjuntoHayaManager {
 			}
 			return result;
 		}	
-		 
 
-	 private Long getIdActivoHaya() {
+	 private Long getIdActivoHaya(Contrato contrato) {
+			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId()));
+
+			if(contenedor == null) {
+				ActivoInputDto input = new ActivoInputDto();
+				input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
+				input.setIdActivoOrigen(contrato.getNroContrato().substring(17, 27));
+				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
+				
+				ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
+				
+				if(output.getIdActivoHaya() == null) {
+					return null;
+				}
+				insertarContenedor(Integer.valueOf(output.getIdActivoHaya()), null, contrato, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
+				return new Long(output.getIdActivoHaya());
+			}
+			return contenedor.getIdExterno();
 			
-			//TODO Borrar, son datos para probar WS
-			ActivoInputDto input = new ActivoInputDto();
-			input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
-			input.setIdActivoOrigen("24284620");
-			input.setIdOrigen("NOS");
-			
-			ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
-			
-			// *********************************************
-			Long idActivoHaya = new Long(output.getIdActivoHaya());
-			return idActivoHaya;
 	 }
 	 
 	 
-	 private Long getIdClienteHaya(Long idClienteEntidad) {
+	 private Long getIdClienteHaya(Persona persona) {
+
+			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", persona.getId()));
 			
-			//TODO Borrar, son datos para probar WS
-			PersonaInputDto input = new PersonaInputDto();
-			input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE);
-			input.setIdIntervinienteCliente(idClienteEntidad.toString());
-			input.setIdCliente(GestorDocumentalConstants.CODIGO_ID_CLIENTE);
-			
-			PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
-			
-			// *********************************************
-			Long idActivoHaya = new Long(output.getIdIntervinienteHaya());
-			return idActivoHaya;
+			if(contenedor == null) {
+				PersonaInputDto input = new PersonaInputDto();
+				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE);
+				input.setIdIntervinienteCliente(persona.getDocId());
+				input.setIdCliente(GestorDocumentalConstants.CODIGO_ID_CLIENTE);
+				
+				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
+				
+				if(output.getIdIntervinienteHaya() == null) {
+					return null;
+				}
+				insertarContenedor(Integer.valueOf(output.getIdIntervinienteHaya()), null, null, persona, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, getClaseExpPersona(persona));
+				return new Long(output.getIdIntervinienteHaya());
+			}
+			return contenedor.getIdExterno();
 	 }
+	 
+	 private void insertarContenedor(Integer idExpediente, Asunto asun, Contrato contrato, Persona persona, String tipoExp, String claseExp) {
+	    	ContenedorGestorDocumental contenedor = new ContenedorGestorDocumental();
+			contenedor.setIdExterno(new Long(idExpediente));
+			contenedor.setAsunto(asun);
+			contenedor.setPersona(persona);
+			contenedor.setContrato(contrato);
+			contenedor.setCodigoTipo(tipoExp);
+			contenedor.setCodigoClase(claseExp);
+			Auditoria.save(contenedor);
+			genericDao.save(ContenedorGestorDocumental.class, contenedor);
+	    } 
+	
 }

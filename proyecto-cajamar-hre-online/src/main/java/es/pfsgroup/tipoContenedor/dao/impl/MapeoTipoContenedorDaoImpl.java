@@ -20,7 +20,11 @@ public class MapeoTipoContenedorDaoImpl extends AbstractEntityDao<MapeoTipoConte
 		hql.append(tipoFichero);
 		hql.append("' and mtc.auditoria.borrado = false");
 		
-		MapeoTipoContenedor mapeo = (MapeoTipoContenedor) getHibernateTemplate().find(hql.toString()).get(0);
+		MapeoTipoContenedor mapeo =  null;
+		
+		if(getHibernateTemplate().find(hql.toString()).size() > 0) {
+			mapeo = (MapeoTipoContenedor) getHibernateTemplate().find(hql.toString()).get(0);			
+		}
 		
 		return mapeo;
 	}

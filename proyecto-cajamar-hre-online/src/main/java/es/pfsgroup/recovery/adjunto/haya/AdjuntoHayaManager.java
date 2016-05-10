@@ -58,6 +58,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
+import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroPersonaApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
@@ -107,6 +108,9 @@ public class AdjuntoHayaManager {
 	
 	@Autowired(required=false)
 	private GestorDocumentalMaestroApi gestorDocumentalMaestroApi;
+	
+	@Autowired(required=false)
+	private GestorDocumentalMaestroPersonaApi gestorDocumentalMaestroPersonaApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -872,7 +876,7 @@ public class AdjuntoHayaManager {
 				input.setIdIntervinienteOrigen(persona.getDocId());
 				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
 				
-				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
+				PersonaOutputDto output = gestorDocumentalMaestroPersonaApi.ejecutarPersona(input);
 				
 				if(output.getIdIntervinienteHaya() == null) {
 					return null;

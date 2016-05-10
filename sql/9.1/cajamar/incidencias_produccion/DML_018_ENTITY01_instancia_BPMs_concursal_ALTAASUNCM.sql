@@ -1,6 +1,6 @@
 --##########################################
 --## AUTOR=GUSTAVO MORA NAVARRO
---## FECHA_CREACION=20160905
+--## FECHA_CREACION=20160509
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-3043

@@ -9,7 +9,7 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExterno.field.telefono2" label="**Telefono 2" name="telefono2" value="${despacho.telefono2}" readOnly="true" width="350" labelWidth="150"/>
 	
 	
-	<%-- PRODUCTO-1272 Campos visibles solo para BANKIA por ahora --%>
+	<%-- PRODUCTO-1272 Nuevos campos, aprovisionados en Bankia, y que los demás clientes podrán modificar para darles valor --%>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.cp" label="**CP" name="codigoPostal" value="${despacho.codigoPostal}" readOnly="true" width="350" labelWidth="150"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fax" label="**Fax" name="fax" value="${despachoExtras.fax}" readOnly="true" width="350" labelWidth="150"/>	
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fechaAlta" label="**Fecha alta" name="fechaAlta" value="${despachoExtras.fechaAlta}" readOnly="true" width="350" labelWidth="150"/>
@@ -88,19 +88,13 @@
 			windowTitle="**Modificar despacho" 
 			defaultWidth="800"
 			on_success="recargar" />
-			
-	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.cabecera.control.datos" name="datos" columns="4" collapsible="" title="**Datos Despacho" bbar="btModificar" >
-		<pfs:items items="despacho, tipoDespacho, tiposGestorGrid"/>
-		<pfs:items items="tipoVia, domicilio, domicilioPlaza, personaContacto, telefono1, telefono2"/>		
-	</pfs:panel>
 	
-	<%--PRODUCTO-1272 Para Bankia se mostraran los nuevos campos --%>
-	<c:if test="${usuarioEntidad == 'BANKIA'}">
-		<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.cabecera.control.datos" name="datos" columns="4" collapsible="" title="**Datos Despacho" bbar="btModificar" >
-			<pfs:items items="despacho, tipoDespacho, tiposGestorGrid, tipoDocumento, documentoCif, fechaAlta"/>
-			<pfs:items items="tipoVia, domicilio, domicilioPlaza, codigoPostal, personaContacto, telefono1,telefono2, fax, correoElectronico"/>		
-		</pfs:panel>
-	</c:if>
+	<%-- Agregando al panel todos lso elementos que de mostraran --%>		
+	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.cabecera.control.datos" name="datos" columns="4" collapsible="" title="**Datos Despacho" bbar="btModificar" >
+		<pfs:items items="despacho, tipoDespacho, tiposGestorGrid, tipoDocumento, documentoCif, fechaAlta"/>
+		<pfs:items items="tipoVia, domicilio, domicilioPlaza, codigoPostal, personaContacto, telefono1,telefono2, fax, correoElectronico"/>		
+	</pfs:panel>
+
 
 	<pfs:buttonedit name="btModificarZonificacion"
 			flow="plugin/config/despachoExterno/ADMmodificarZonificacionDespachoExterno"  

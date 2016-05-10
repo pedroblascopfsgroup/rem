@@ -46,9 +46,6 @@ public class ContabilidadCobros implements Auditable, Serializable{
 	@Column(name = "CCO_FECHA_VALOR")
 	private Date fechaValor;
 	
-	@Column(name = "CCO_IMPORTE")
-	private Float importe;
-	
 	@ManyToOne
 	@JoinColumn(name = "DD_ATE_ID")
 	private DDAdjContableTipoEntrega tipoEntrega;
@@ -116,6 +113,21 @@ public class ContabilidadCobros implements Auditable, Serializable{
 	
 	@Column(name = "CCO_OPERACIONES_TRAMITE")
 	private Boolean operacionesTramite;
+	
+	@Column(name = "CCO_QUITA_OPERACION_EN_TRAMITE")
+	private Float quitaOperacionesEnTramite;
+	
+	@Column(name = "CCO_TOTAL_QUITA")
+	private Float totalQuita;
+	
+	@Column(name = "CCO_OPERACIONES_EN_TRAMITE")
+	private Float operacionesEnTramite;
+	
+	@Column(name = "TAR_ID")
+	private Long tarID;
+	
+	@Column(name = "CCO_CONTABILIZADO")
+	private Boolean contabilizado;
 	
 	@ManyToOne
 	@JoinColumn(name = "ASU_ID")
@@ -372,16 +384,6 @@ public class ContabilidadCobros implements Auditable, Serializable{
 	}
 
 
-	public Float getImporte() {
-		return importe;
-	}
-
-
-	public void setImporte(Float importe) {
-		this.importe = importe;
-	}
-
-
 	public Float getQuitaGastosLetrado() {
 		return quitaGastosLetrado;
 	}
@@ -436,6 +438,56 @@ public class ContabilidadCobros implements Auditable, Serializable{
 
 	public void setOperacionesTramite(Boolean operacionesTramite) {
 		this.operacionesTramite = operacionesTramite;
+	}
+
+
+	public Float getQuitaOperacionesEnTramite() {
+		return quitaOperacionesEnTramite;
+	}
+
+
+	public void setQuitaOperacionesEnTramite(Float quitaOperacionesEnTramite) {
+		this.quitaOperacionesEnTramite = quitaOperacionesEnTramite;
+	}
+
+
+	public Float getTotalQuita() {
+		return totalQuita;
+	}
+
+
+	public void setTotalQuita(Float totalQuita) {
+		this.totalQuita = totalQuita;
+	}
+
+
+	public Float getOperacionesEnTramite() {
+		return operacionesEnTramite;
+	}
+
+
+	public void setOperacionesEnTramite(Float operacionesEnTramite) {
+		this.operacionesEnTramite = operacionesEnTramite;
+	}
+
+
+	public Long getTarID() {
+		return tarID;
+	}
+
+
+	public void setTarID(Long tarID) {
+		this.tarID = tarID;
+	}
+
+
+	public Boolean getContabilizado() {
+		return contabilizado;
+	}
+
+
+	public void setContabilizado(Boolean contabilizado) {
+		this.contabilizado = contabilizado;
 	}
 
 }

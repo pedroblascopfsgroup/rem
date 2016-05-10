@@ -570,7 +570,7 @@ Panel principal
 
    
  panel.setVisibleTab = function(data){
-    return (data.cabecera.procedimientoCodigo == 'P400' || data.cabecera.procedimiento == 'T. notificación demandados') ? true : false;
+    return (data.cabecera.procedimientoCodigo == 'P400' || data.cabecera.procedimientoCodigo == 'HC108' || data.cabecera.procedimiento == 'T. notificación demandados' || data.cabecera.procedimiento == 'T. notificación personal') ? true : false;
  }
 
   return panel;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pepe Tamarit
---## FECHA_CREACION=20160510
+--## FECHA_CREACION=20160509
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HR-2343

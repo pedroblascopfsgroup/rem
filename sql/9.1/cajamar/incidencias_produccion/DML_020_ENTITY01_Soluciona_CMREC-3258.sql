@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ VIDAL
---## FECHA_CREACION=20160510
+--## FECHA_CREACION=20160511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.3
 --## INCIDENCIA_LINK=CMREC-3258

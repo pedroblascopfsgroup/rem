@@ -36,81 +36,10 @@ DECLARE
     
 BEGIN
 
-    DBMS_OUTPUT.PUT_LINE('******** TUP_ETP_ESQ_TURNADO_PROCU ********'); 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU... Comprobaciones previas'); 
-    
-    -- Creacion Tabla TUP_ETP_ESQUEMA_TURNADO_PROCU
-    
-    -- Comprobamos si existe la tabla   
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TUP_ETP_ESQ_TURNADO_PROCU'' and owner = '''||V_ESQUEMA||'''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    -- Si existe la tabla no hacemos nada
-    IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU... Tabla YA EXISTE y va a ser borrada');    
-            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU';    
-  	 ELSE
-        execute immediate 'CREATE SEQUENCE ' || V_ESQUEMA || '.S_TUP_ETP_ESQ_TURNADO_PROCU  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER  NOCYCLE';
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_TUP_ETP_ESQ_TURNADO_PROCU... Secuencia creada correctamente.');		
-         
-     END IF;
-  	   
-    	 --Creamos la tabla
-    	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU
-               (ETP_ID NUMBER(16) NOT NULL
-				,ETP_CODIGO VARCHAR2(10 CHAR)
-			    ,ETP_DESCRIPCION NUMBER(16) NOT NULL
-			    ,ETP_DESCRIPCION_LARGA NUMBER(16) NOT NULL
-			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
-			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
-			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL
-			    ,USUARIOMODIFICAR               VARCHAR2(50 CHAR)
-			    ,FECHAMODIFICAR                 TIMESTAMP(6)
-			    ,USUARIOBORRAR                  VARCHAR2(50 CHAR)
-			    ,FECHABORRAR                    TIMESTAMP(6)
-			    ,BORRADO                        NUMBER(1)      DEFAULT 0
-			   ,CONSTRAINT PK_TUP_ETP PRIMARY KEY (ETP_ID)
-               )';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TUP_ETP_ESQ_TURNADO_PROCU... Tabla creada');
+  
 	
 
-   DBMS_OUTPUT.PUT_LINE('******** TUP_EPT_ESQUEMA_PLAZAS_TPO ********'); 
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO... Comprobaciones previas'); 
-    
-    -- Creacion Tabla TUP_ETP_ESQUEMA_TURNADO_PROCU
-    
-    -- Comprobamos si existe la tabla   
-    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TUP_EPT_ESQUEMA_PLAZAS_TPO'' and owner = '''||V_ESQUEMA||'''';
-    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-    -- Si existe la tabla no hacemos nada
-    IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO... Tabla YA EXISTE y va a ser borrada'); 
-            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO'; 
-    ELSE  
-    
-     execute immediate 'CREATE SEQUENCE ' || V_ESQUEMA || '.S_TUP_EPT_ESQUEMA_PLAZAS_TPO  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER  NOCYCLE';
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_TUP_EPT_ESQUEMA_PLAZAS_TPO... Secuencia creada correctamente.');		
-    END IF;
-    	 --Creamos la tabla
-    	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO
-               (EPT_ID NUMBER(16) NOT NULL
-				,ETP_ID NUMBER(16) NOT NULL
-			    ,DD_PLA_ID NUMBER(16) 
-			    ,DD_TPO_ID NUMBER(16) 
-			    ,DD_TGE_ID NUMBER(16) NOT NULL
-			    ,EPT_GRUPO_ASIGNADO NUMBER(16) NOT NULL
-			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
-			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
-			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL
-			    ,USUARIOMODIFICAR               VARCHAR2(50 CHAR)
-			    ,FECHAMODIFICAR                 TIMESTAMP(6)
-			    ,USUARIOBORRAR                  VARCHAR2(50 CHAR)
-			    ,FECHABORRAR                    TIMESTAMP(6)
-			    ,BORRADO                        NUMBER(1)      DEFAULT 0
-			   ,CONSTRAINT PK_EPT PRIMARY KEY (EPT_ID)
-               )';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TUP_EPT_ESQUEMA_PLAZAS_TPO... Tabla creada');
+ 
 		
   	   
 
@@ -151,7 +80,104 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TUP_TPC_TURNADO_PROCU_CONFIG... Tabla creada');
 		
-  
+		
+		
+		  DBMS_OUTPUT.PUT_LINE('******** TUP_EPT_ESQUEMA_PLAZAS_TPO ********'); 
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO... Comprobaciones previas'); 
+    
+    -- Creacion Tabla TUP_ETP_ESQUEMA_TURNADO_PROCU
+    
+    -- Comprobamos si existe la tabla   
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TUP_EPT_ESQUEMA_PLAZAS_TPO'' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    -- Si existe la tabla no hacemos nada
+    IF V_NUM_TABLAS = 1 THEN 
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO... Tabla YA EXISTE y va a ser borrada'); 
+            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO'; 
+    ELSE  
+    
+     execute immediate 'CREATE SEQUENCE ' || V_ESQUEMA || '.S_TUP_EPT_ESQUEMA_PLAZAS_TPO  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER  NOCYCLE';
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_TUP_EPT_ESQUEMA_PLAZAS_TPO... Secuencia creada correctamente.');		
+    END IF;
+    	 --Creamos la tabla
+    	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO
+               (EPT_ID NUMBER(16) NOT NULL
+				,ETP_ID NUMBER(16) NOT NULL
+			    ,DD_PLA_ID NUMBER(16) 
+			    ,DD_TPO_ID NUMBER(16) 
+			    ,DD_TGE_ID NUMBER(16) NOT NULL
+			    ,EPT_GRUPO_ASIGNADO NUMBER(16) NOT NULL
+			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
+			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
+			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL
+			    ,USUARIOMODIFICAR               VARCHAR2(50 CHAR)
+			    ,FECHAMODIFICAR                 TIMESTAMP(6)
+			    ,USUARIOBORRAR                  VARCHAR2(50 CHAR)
+			    ,FECHABORRAR                    TIMESTAMP(6)
+			    ,BORRADO                        NUMBER(1)      DEFAULT 0
+			   ,CONSTRAINT PK_EPT PRIMARY KEY (EPT_ID)
+               )';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TUP_EPT_ESQUEMA_PLAZAS_TPO... Tabla creada');
+		
+		
+		  DBMS_OUTPUT.PUT_LINE('******** TUP_ETP_ESQ_TURNADO_PROCU ********'); 
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU... Comprobaciones previas'); 
+    
+    -- Creacion Tabla TUP_ETP_ESQUEMA_TURNADO_PROCU
+    
+    -- Comprobamos si existe la tabla   
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''TUP_ETP_ESQ_TURNADO_PROCU'' and owner = '''||V_ESQUEMA||'''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    -- Si existe la tabla no hacemos nada
+    IF V_NUM_TABLAS = 1 THEN 
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU... Tabla YA EXISTE y va a ser borrada');    
+            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU';    
+  	 ELSE
+        execute immediate 'CREATE SEQUENCE ' || V_ESQUEMA || '.S_TUP_ETP_ESQ_TURNADO_PROCU  MINVALUE 1 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 100 NOORDER  NOCYCLE';
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.S_TUP_ETP_ESQ_TURNADO_PROCU... Secuencia creada correctamente.');		
+         
+     END IF;
+  	   
+    	 --Creamos la tabla
+    	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU
+               (ETP_ID NUMBER(16) NOT NULL
+				,ETP_CODIGO VARCHAR2(10 CHAR)
+			    ,ETP_DESCRIPCION NUMBER(16) NOT NULL
+			    ,ETP_DESCRIPCION_LARGA NUMBER(16) NOT NULL
+			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
+			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
+			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL
+			    ,USUARIOMODIFICAR               VARCHAR2(50 CHAR)
+			    ,FECHAMODIFICAR                 TIMESTAMP(6)
+			    ,USUARIOBORRAR                  VARCHAR2(50 CHAR)
+			    ,FECHABORRAR                    TIMESTAMP(6)
+			    ,BORRADO                        NUMBER(1)      DEFAULT 0
+			   ,CONSTRAINT PK_TUP_ETP PRIMARY KEY (ETP_ID)
+               )';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.TUP_ETP_ESQ_TURNADO_PROCU... Tabla creada');
+		
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO ADD (
+				  CONSTRAINT EPT_PLA_FK 
+				 FOREIGN KEY (DD_PLA_ID) 
+				 REFERENCES '||V_ESQUEMA||'.DD_PLA_PLAZAS (DD_PLA_ID),
+				  CONSTRAINT EPT_TPO_FK 
+				 FOREIGN KEY (DD_TPO_ID) 
+				 REFERENCES '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO (DD_TPO_ID),
+				  CONSTRAINT EPT_ETP_FK 
+				 FOREIGN KEY (ETP_ID) 
+				 REFERENCES '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU (ETP_ID))';
+				 
+ 		EXECUTE IMMEDIATE V_MSQL;
+ 		
+ 		
+ 		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.TUP_TPC_TURNADO_PROCU_CONFIG ADD (
+				  CONSTRAINT TPC_EPT_FK 
+				 FOREIGN KEY (EPT_ID) 
+				 REFERENCES '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO (EPT_ID))';
+				 
+ 		EXECUTE IMMEDIATE V_MSQL;
 
     
 	DBMS_OUTPUT.PUT_LINE('[INFO] Fin.');

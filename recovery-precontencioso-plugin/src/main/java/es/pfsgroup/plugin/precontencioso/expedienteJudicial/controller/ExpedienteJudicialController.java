@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,10 +14,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDPrioridad;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
@@ -81,6 +80,9 @@ public class ExpedienteJudicialController {
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
+	private static final String JSON_PRIORIDAD = "expedientes/prioridadJSON";
+	private static final String JSON_TIPO_PREPARACION = "expedientes/tipoPreparacionJSON";
+	
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
 
@@ -110,6 +112,9 @@ public class ExpedienteJudicialController {
 
 	@Autowired
 	private BienApi bienApi;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -577,4 +582,25 @@ public class ExpedienteJudicialController {
 		return JSP_DOWNLOAD_FILE;
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDiccionarioPrioridad(ModelMap model) {
+
+		ArrayList<DDPrioridad> prioridad =  (ArrayList<DDPrioridad>) diccionarioApi.dameValoresDiccionario(DDPrioridad.class);
+		model.put("prioridad", prioridad);
+		
+		return JSON_PRIORIDAD;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDiccionarioPreparacion(ModelMap model) {
+
+		ArrayList<DDTipoPreparacionPCO> preparacion =  (ArrayList<DDTipoPreparacionPCO>) diccionarioApi.dameValoresDiccionario(DDTipoPreparacionPCO.class);
+		model.put("preparacion", preparacion);
+		
+		return JSON_TIPO_PREPARACION;
+	}
+	
 }

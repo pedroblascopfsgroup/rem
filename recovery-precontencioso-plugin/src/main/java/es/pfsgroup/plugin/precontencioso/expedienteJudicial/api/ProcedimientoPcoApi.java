@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -29,6 +30,10 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
 	public static final String BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO = "plugin.precontencioso.getVisibilidadBotonesPrecontencioso";
+	
+	public static final String BO_PCO_PROCEDIMIENTO_SALVAR = "plugin.precontencioso.salvarProcedimientoPCO";
+	public static final String BO_PCO_PROCEDIMIENTO_BORRAR = "plugin.precontencioso.borrarProcedimientoPCO";
+	public static final String BO_PCO_PROCEDIMIENTO_DEVOLVER = "plugin.precontencioso.devolverProcedimientoPCO";
 	
 	/**
 	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
@@ -154,5 +159,14 @@ public interface ProcedimientoPcoApi {
 	public String asuntoConProcuradorPrecontencioso(Long idProcedimiento);
 
 	public String validarDocumentoBienes(Long idProcedimiento, String idsBien);
+	
+	@BusinessOperationDefinition(BO_PCO_PROCEDIMIENTO_SALVAR)
+	public Long salvarProcedimientoPCO(ProcedimientoDto dto, Long id);
+	
+	@BusinessOperationDefinition(BO_PCO_PROCEDIMIENTO_BORRAR)
+	public void borrarProcedimientoPCO(Long id);
+	
+	@BusinessOperationDefinition(BO_PCO_PROCEDIMIENTO_DEVOLVER)
+	public ProcedimientoPCO devolverProcedimientoPCO(Long id);
 
 }

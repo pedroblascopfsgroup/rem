@@ -1191,48 +1191,47 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		Usuario usuario = usuarioManager.getUsuarioLogado();
 		Procedimiento procedimiento = procedimientoManager.getProcedimiento(idProcedimiento);
 		
-		if(!Checks.esNulo(procedimiento) && !procedimiento.getEsPrecontencioso()){
-			return false;
-		}
+		if(!Checks.esNulo(procedimiento) && procedimiento.getEsPrecontencioso()){
 		
-		List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
-		
-		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), PREDOC)) {
-			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
-				return true;
+			List<Long> idsGrupo = grupoUsuarios.buscaIdsGrupos(usuario);
+			
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), PREDOC)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
 			}
-		}
-		
-		// En el caso de la entidad Cajamar los preparadores son Gestor de estudio, Gestor de Documentación y Gestor de Liquidación		
-		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GE_PCO)) {
-			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
-				return true;
+			
+			// En el caso de la entidad Cajamar los preparadores son Gestor de estudio, Gestor de Documentación y Gestor de Liquidación		
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GE_PCO)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
 			}
-		}
-		
-		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GD_PCO)) {
-			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
-				return true;
+			
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GD_PCO)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
 			}
-		}
-		
-		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GL_PCO)) {
-			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
-				return true;
+			
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), CM_GL_PCO)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
 			}
-		}
-		
-// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como supervisor del expediente judicial
-		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), SUP_PCO)) {
-			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
-				return true;
+			
+	// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como supervisor del expediente judicial
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), SUP_PCO)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
 			}
-		}
-
-// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como GESTORIA del expediente judicial
-		for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), GESTORIA_PREDOC)) {
-			if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
-				return true;
+	
+	// 		Se comprueba si el usuario conectado o un grupo al que pertenece está asignado al asunto como GESTORIA del expediente judicial
+			for(Usuario usuarioGestor : gestorAdicionalAsuntomanager.findGestoresByAsunto(procedimiento.getAsunto().getId(), GESTORIA_PREDOC)) {
+				if(usuario.getUsername().equals(usuarioGestor.getUsername()) || idsGrupo.contains(usuarioGestor.getId())) {
+					return true;
+				}
 			}
 		}
 

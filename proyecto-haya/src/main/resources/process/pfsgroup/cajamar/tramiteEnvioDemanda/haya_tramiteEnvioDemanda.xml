@@ -57,7 +57,7 @@
             	<targetBean>genericLeaveActionHandler</targetBean>
         	 </action>
       	</event>
-		<transition to="Fin" name="hcj_tramiteProvisionFondosProcurador"></transition>
+		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
 	</state>
 
 

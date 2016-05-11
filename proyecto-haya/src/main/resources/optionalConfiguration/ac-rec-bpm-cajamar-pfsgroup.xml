@@ -20,6 +20,7 @@
  	<bean id="bccPrecontenciosoLeaveActionHandler" class="es.pfsgroup.procedimientos.precontencioso.BCCPrecontenciosoLeaveActionHandler" />
  	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.costas.CostasProcuradorHandler"></bean>
  	<bean id="tramiteSubElectronicaLeaveActionHandler" class="es.pfsgroup.procedimientos.subastaElectronica.TramiteSubElectronicaLeaveActionHandler"></bean>
+ 	<bean id="tramiteAntFondosLeaveActionHandler" class="es.pfsgroup.procedimientos.anticipoFondos.TramiteAntFondosLeaveActionHandler"></bean>
 
 	<!-- BPM activos -->
 	<!-- Nacho -->
@@ -33,6 +34,9 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/hcj_tramiteCesionRemate.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/hcj_tramiteSaneamientoCargas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondosProcu/hcj_provisionFondosProcu.xml" p:version="-1"/>
+	
+	<!-- A. Soler -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoAnticipoFondosProcu/hcj_anticipoFondosProcu.xml" p:version="-1"/>
 	
 	<!-- Alberto -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
@@ -363,6 +367,20 @@
 					return true;
 				}
 				
+				def validarP460SolicitudFondos = {
+					if (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
+						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='H005') {
+						return (
+							valores['P460_SolicitarAnticipoFondos']['numAuto'] != null &&
+							valores['P460_SolicitarAnticipoFondos']['importeAdj'] != null &&
+							valores['P460_SolicitarAnticipoFondos']['tipoImpLiquidar'] != null &&
+							valores['P460_SolicitarAnticipoFondos']['tipoImpTrPatr'] != null &&
+							valores['P460_SolicitarAnticipoFondos']['impTrPatr'] != null &&
+							valores['P460_SolicitarAnticipoFondos']['fechaFinLiqImp'] != null);
+					}
+					return true;
+				}
+				
 				def compruebaRegResEscJuzgadoPOST = {
 	            	def adjudicacionProcedimientoManager = ctx.getBean("adjudicacionProcedimientoManagerDelegated");
 					return adjudicacionProcedimientoManager.compruebaRegResEscJuzgadoPOST(idProcedimiento);
@@ -375,5 +393,13 @@
   </bean> 
   
   <!-- Diccionarios -->
+    <bean parent="clasesDiccionarioAnotadas">
+    <property name="sourceList">
+    	<list merge="true">    
+    		<value>es.capgemini.pfs.decisionProcedimiento.model.DDTipoSolicitud</value>
+    		<value>es.capgemini.pfs.decisionProcedimiento.model.DDAceptarSubsanar</value>
+    	</list>
+    </property>
+   </bean>
      
 </beans>

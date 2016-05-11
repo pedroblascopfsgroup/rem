@@ -10,7 +10,7 @@
 	<%-- Variables --%>
 	var labelStyle='font-weight:bolder;width:100';
 	var style='margin-bottom:2px;margin-top:1px';
-	var stylePanelDerecha='margin-bottom:-5px;margin-left:25px';
+	var stylePanelDerecha='margin-bottom:-2px;margin-left:25px';
 	var styleColumnas='margin-bottom:-15px;margin-top:-8px;margin-left:-10px';
 	var id = new Ext.form.Hidden({
 		id:'contabilidadCobro.id'
@@ -52,7 +52,7 @@
 	
 	var comboDDTipoEntrega =new Ext.form.ComboBox({
 		store: storeTipoEntrega
-		,allowBlank: false
+		,allowBlank: true
 		,blankElementText: '--'
 		,disabled: false
 		,displayField: 'descripcion'
@@ -81,7 +81,7 @@
 	
 	var comboDDConceptoEntrega =new Ext.form.ComboBox({
 		store: storeConceptoEntrega
-		,allowBlank: false
+		,allowBlank: true
 		,blankElementText: '--'
 		,disabled: false
 		,displayField: 'descripcion'
@@ -244,6 +244,26 @@
 		}
 	);
 	
+	<%-- Entrada de Texto Numero Operaciones En Tramite --%>
+	var operacionesEnTramite  = app.creaNumber('contabilidadCobro.operacionesEnTramite',
+		'<s:message code="contabilidad.operacionesEnTramite" text="**Operaciones En Trï¿½mite" />',
+		'${contabilidadCobro.operacionesEnTramite}',
+		{
+			labelStyle:labelStyle
+			,style:style
+			,allowDecimals: true
+			,allowNegative: false
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega()
+						}
+			}
+			<c:if test="${contabilidadCobro.operacionesEnTramite!=null}" >
+				,value:'${contabilidadCobro.operacionesEnTramite}'
+			</c:if>
+		}
+	);
+	
 	<%-- Entrada de Texto Numero Quita Nominal --%>
 	var quitaNominal  = app.creaNumber('contabilidadCobro.quitaNominal',
 		'<s:message code="contabilidad.quitaNominal" text="**Quita Nominal" />',
@@ -255,7 +275,8 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaNominal!=null}" >
@@ -275,7 +296,8 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaIntereses!=null}" >
@@ -295,7 +317,8 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaDemoras!=null}" >
@@ -315,7 +338,8 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaImpuestos!=null}" >
@@ -335,7 +359,8 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaGastosProcurador!=null}" >
@@ -355,7 +380,8 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaGastosLetrado!=null}" >
@@ -375,11 +401,33 @@
 			,allowNegative: false
 			,maxLength:16
 			,listeners : {blur : function(){
-							refreshTotalEntrega()
+							refreshTotalEntrega();
+							refreshTotalQuita();
 						}
 			}
 			<c:if test="${contabilidadCobro.quitaOtrosGastos!=null}" >
 				,value:'${contabilidadCobro.quitaOtrosGastos}'
+			</c:if>
+		}
+	);
+	
+	<%-- Entrada de Texto Numero Quita Operaciones En Tramite --%>
+	var quitaOperacionesEnTramite  = app.creaNumber('contabilidadCobro.quitaOperacionesEnTramite',
+		'<s:message code="contabilidad.quitaOperacionesEnTramite" text="**Quita Operaciones en Trï¿½mite" />',
+		'${contabilidadCobro.quitaOperacionesEnTramite}',
+		{
+			labelStyle:labelStyle
+			,style:style
+			,allowDecimals: true
+			,allowNegative: false
+			,maxLength:16
+			,listeners : {blur : function(){
+							refreshTotalEntrega();
+							refreshTotalQuita();
+						}
+			}
+			<c:if test="${contabilidadCobro.quitaOperacionesEnTramite!=null}" >
+				,value:'${contabilidadCobro.quitaOperacionesEnTramite}'
 			</c:if>
 		}
 	);
@@ -402,6 +450,25 @@
 		}
 	);
 	
+	<%-- Entrada de Texto Numero Total Quita --%>
+	var totalQuita  = app.creaNumber('contabilidadCobro.totalQuita',
+		'<s:message code="contabilidad.totalQuita" text="**Total Quita" />',
+		'${contabilidadCobro.totalQuita}',
+		{
+			labelStyle:labelStyle
+			,style:style
+			,allowDecimals: true
+			,allowBlank: true
+			,allowNegative: false
+			,readOnly:true
+			,maxLength:16
+			<c:if test="${contabilidadCobro.totalQuita!=null}" >
+				,value:'${contabilidadCobro.totalQuita}'
+			</c:if>
+		}
+	);
+	
+	<%-- Funcion suma total a campo Total Entrega --%>
 	function refreshTotalEntrega(){
 		var sumaTotal = 0;
 	 	if(nominal.getValue() != ''){
@@ -446,13 +513,50 @@
 		if(quitaOtrosGastos.getValue() != ''){
 			sumaTotal = sumaTotal + parseFloat(quitaOtrosGastos.getValue());
 		}
+		if(operacionesEnTramite.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(operacionesEnTramite.getValue());
+		}
+		if(quitaOperacionesEnTramite.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaOperacionesEnTramite.getValue());
+		}
 
 		totalEntrega.setValue(sumaTotal);
 	}
 	
+	<%-- Funcion suma total a campo Total Quita --%>
+	function refreshTotalQuita(){
+		var sumaTotal = 0;
+	 	if(quitaNominal.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaNominal.getValue());
+		}
+		if(quitaIntereses.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaIntereses.getValue());
+		}
+		if(quitaDemoras.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaDemoras.getValue());
+		}
+		if(quitaImpuestos.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaImpuestos.getValue());
+		}
+		if(quitaGastosProcurador.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaGastosProcurador.getValue());
+		}
+		if(quitaGastosLetrado.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaGastosLetrado.getValue());
+		}
+		if(quitaOtrosGastos.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaOtrosGastos.getValue());
+		}
+		if(quitaOperacionesEnTramite.getValue() != ''){
+			sumaTotal = sumaTotal + parseFloat(quitaOperacionesEnTramite.getValue());
+		}
+
+		totalQuita.setValue(sumaTotal);
+	}
+	
 	<%-- Campo de Texto Numero Num Enlace --%>
 	var numEnlace  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Número Enlace" />'
+		fieldLabel:'<s:message code="contabilidad.numEnlace" text="**Nï¿½mero Enlace" />'
 		,labelStyle:labelStyle
 		,style:style
 		,width:135
@@ -465,7 +569,7 @@
 	
 	<%-- Campo de Texto Numero Num Mandamiento --%>
 	var numMandamiento  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Número Mandamiento" />'
+		fieldLabel:'<s:message code="contabilidad.numMandamiento" text="**Nï¿½mero Mandamiento" />'
 		,labelStyle:labelStyle
 		,style:style
 		,width:135
@@ -478,7 +582,7 @@
 	
 	<%-- Campo de Texto Numero Num Cheque --%>
 	var numCheque  = new Ext.form.TextArea({
-		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Número Cheque" />'
+		fieldLabel:'<s:message code="contabilidad.numCheque" text="**Nï¿½mero Cheque" />'
 		,labelStyle:labelStyle
 		,width:135
 		,height:21
@@ -503,29 +607,6 @@
 		</c:if>
 	});
 	
-	<%-- var observaciones = new Ext.form.HtmlEditor({
-			id:'htmlRespuesta'
-			,fieldLabel : '<s:message code="contabilidad.observaciones" text="**Observaciones" />'
-			,width:550
-			,maxLength:100
-			,height : 80
-			,style:style
-			,labelStyle:labelStyle
-			,readOnly:false
-			,hideParent:true
-			,enableColors: false
-        	,enableAlignments: false
-        	,enableFont:false
-        	,enableFontSize:false
-        	,enableFormat:false
-        	,enableLinks:false
-        	,enableLists:false
-        	,enableSourceEdit:false
-        	<c:if test="${contabilidadCobro.observaciones!=null}">
-        	,value:'<s:message text="${contabilidadCobro.observaciones}" javaScriptEscape="true" />'
-			</c:if>
-			}); --%>
-	
 	<%-- CheckBox operaciones en tramite --%>
 	var opTramite = new Ext.form.CheckboxGroup({
     id:'opTramite',
@@ -535,7 +616,7 @@
     style:style,
 	labelStyle:labelStyle,
     items: [
-        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trámite" />'
+        {fieldLabel: '<s:message code="contabilidad.operacionesTramite" text="**Operaciones Trï¿½mite" />'
         ,name: 'cb-1'
         ,style:style
 		,labelStyle:labelStyle
@@ -549,19 +630,14 @@
 	<%-- Validaciones Formulario --%>
 	var validarCamposObligatorios = function(){
 		if(fechaEntrega.getValue() != null && fechaEntrega.getValue() != "" && fechaValor.getValue() != null && fechaValor.getValue() != "" &&
-		 comboDDTipoEntrega.getValue() != null && comboDDTipoEntrega.getValue() != "" && comboDDConceptoEntrega.getValue() != null && comboDDConceptoEntrega.getValue() != "" &&
 		 totalEntrega.getValue() != 0 && totalEntrega.getValue() != "" && totalEntrega.getValue() != null){
 			return true;
 		} else {
-			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algún parámetro obligatorio" />');
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta algï¿½n parï¿½metro obligatorio" />');
 			return false;
 		}
 	}
-	
-	Ext.onReady(function () {
-	    refreshTotalEntrega();
-	});
-	
+
 	<%-- Botones Ventana --%>
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -596,6 +672,9 @@
 						,numMandamiento:numMandamiento.getValue()
 						,numCheque:numCheque.getValue()
 						,operacionesTramite:opTramite.items.items[0].getValue()
+						,quitaOperacionesEnTramite:quitaOperacionesEnTramite.getValue()
+						,operacionesEnTramite:operacionesEnTramite.getValue()
+						,totalQuita:totalQuita.getValue()
 					};
 				Ext.Ajax.request({
     				url: page.resolveUrl('contabilidadcobros/saveContabilidadCobro')
@@ -621,52 +700,30 @@
 			}
 	});
 	
-	<%-- Seccion Superior Izquierda --%>
-	var panelSuperiorIzquierdo =  new Ext.Container({
-		layout: 'form'
-		,items : [fechaValor]
-	});
-	
-	<%-- Seccion Superior Derecha --%>
-	var panelSuperiorDerecha =  new Ext.Container({
-		layout: 'form'
-		,items : [opTramite]
-	});
-	
-	<%-- Columnas Superior --%>
-	var columnasSuperior = new Ext.form.FieldSet({
-		autoHeight:'true'
-		,layout: 'table'
-		,border:false
-		,style: styleColumnas
-		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop'}
-		,items : [panelSuperiorIzquierdo,panelSuperiorDerecha]
-	 });
-	
-	<%-- Seccion Inferior Izquierda --%>
-	var panelInferiorIzquierdo =  new Ext.Container({
+	<%-- Seccion Izquierda --%>
+	var panelIzquierdo =  new Ext.Container({
 		layout: 'form'
 		,items : [nominal,intereses,demoras,impuestos,
-			gastosProcurador,gastosLetrado,otrosGastos]
+			gastosProcurador,gastosLetrado,otrosGastos,operacionesEnTramite,totalEntrega]
 	});
 	
 	
-	<%-- Seccion Inferior Derecha --%>
-	var panelInferiorDerecha =  new Ext.Container({
+	<%-- Seccion Derecha --%>
+	var panelDerecha =  new Ext.Container({
 		layout: 'form'
 		,style: stylePanelDerecha
 		,items : [quitaNominal,quitaIntereses,quitaDemoras,quitaImpuestos,quitaGastosProcurador,
-			quitaGastosLetrado,quitaOtrosGastos]
+			quitaGastosLetrado,quitaOtrosGastos,quitaOperacionesEnTramite,totalQuita]
 	});
 	
-	<%-- Columnas Inferior --%>
-	var columnasInferior = new Ext.form.FieldSet({
+	<%-- Columnas --%>
+	var columnas = new Ext.form.FieldSet({
 		autoHeight:'true'
 		,layout: 'table'
 		,border:false
 		,style: styleColumnas
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop'}
-		,items : [panelInferiorIzquierdo,panelInferiorDerecha]
+		,items : [panelIzquierdo,panelDerecha]
 	 }); 
 	
 	<%-- Panel --%>	
@@ -682,7 +739,7 @@
 			,viewConfig : { columns : 2 }
 			,defaults :  {layout:'form', autoHeight : true, border : false,width:680 }
 			,items : [
-			{ items : [fechaEntrega,columnasSuperior,comboDDTipoEntrega,comboDDConceptoEntrega,columnasInferior,totalEntrega,numEnlace,numMandamiento,numCheque,observaciones]
+			{ items : [fechaEntrega,fechaValor,comboDDTipoEntrega,comboDDConceptoEntrega,columnas,opTramite,numEnlace,numMandamiento,numCheque,observaciones]
 			,style : 'margin-right:10px' }
 			]
 		}
@@ -691,6 +748,49 @@
 			btnGuardar, btnCancelar
 		]
 	});
-
+	
+	<%-- Funcion para preparar la ventana en modo 'EDITAR' o 'VER' --%>
+	function establecerModoVentana(){
+		var puedeEditar = ${puedeEditar};
+		
+		if(!puedeEditar){
+			<%-- Si el usuario actual NO es quien lo ha creado o NO es el supervisor del asunto --%>
+			btnGuardar.hide();
+			btnCancelar.setText('<s:message code="app.cerrarVentana" text="**Cerrar Ventana" />');
+			fechaEntrega.setReadOnly(true);
+			fechaValor.setReadOnly(true);
+			comboDDTipoEntrega.setReadOnly(true);
+			comboDDConceptoEntrega.setReadOnly(true);
+			nominal.setReadOnly(true);
+			intereses.setReadOnly(true);
+			demoras.setReadOnly(true);
+			impuestos.setReadOnly(true);
+			gastosProcurador.setReadOnly(true);
+			gastosLetrado.setReadOnly(true);
+			otrosGastos.setReadOnly(true);
+			quitaNominal.setReadOnly(true);
+			quitaIntereses.setReadOnly(true);
+			quitaDemoras.setReadOnly(true);
+			quitaImpuestos.setReadOnly(true);
+			quitaGastosProcurador.setReadOnly(true);
+			quitaGastosLetrado.setReadOnly(true);
+			quitaOtrosGastos.setReadOnly(true);
+			observaciones.setReadOnly(true);
+			numEnlace.setReadOnly(true);
+			numMandamiento.setReadOnly(true);
+			numCheque.setReadOnly(true);
+			opTramite.setDisabled(true);
+			quitaOperacionesEnTramite.setReadOnly(true);
+			operacionesEnTramite.setReadOnly(true);
+		}
+	}
+	
+	<%-- Funcion pagina lista --%>
+	Ext.onReady(function () {
+	    refreshTotalEntrega();
+	    refreshTotalQuita();
+	    establecerModoVentana();
+	});
+	
 	page.add(panelEdicion);
 </fwk:page>

@@ -439,6 +439,9 @@
 					var el = Ext.getCmp("tmp");
 					el.setVisible(true);
 					fieldSetPco.show();
+					if('${procedimientoPco}' != null){
+						comboTipoAccionPropuestaAIniciar.fireEvent('select', comboTipoAccionPropuestaAIniciar);
+					}
 				}
 			}
 		});
@@ -788,9 +791,9 @@
 		allowBlank: true,
 		autoSelect: true,
 		fieldLabel: '<s:message code="procedimientos.edicion.prioridad" text="**Prioridad" />'
-		<c:if test="${procedimientoPco != null}" >
+		<%--<c:if test="${procedimientoPco != null}" >
 					,value:'${procedimientoPco.prioridad.descripcion}'
-		</c:if>
+		</c:if> --%>
 		});
 		
 	
@@ -800,6 +803,9 @@
 	prioridadStore.on('load',function(ds,records,o){
 		<c:if test="${procedimientoPco == null}" >
 			comboPrioridad.setValue(records[2].data.codigo);
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+			comboPrioridad.setValue('${procedimientoPco.prioridad.codigo}');
 		</c:if>
    	});
 
@@ -829,9 +835,9 @@
 		labelStyle:labelStyle,
 		allowBlank: true,
 		fieldLabel: '<s:message code="procedimientos.edicion.preparacion" text="**Preparacion" />'
-		<c:if test="${procedimientoPco != null}" >
+		<%--<c:if test="${procedimientoPco != null}" >
 					,value:'${procedimientoPco.tipoPreparacion.descripcion}'
-		</c:if>
+		</c:if> --%>
 	});
 	
 	comboPreparacion.on('afterrender', function(combo) {
@@ -841,6 +847,9 @@
 	preparacionStore.on('load',function(ds,records,o){
 		<c:if test="${procedimientoPco == null}" >
 			comboPreparacion.setValue(records[2].data.codigo);
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+				comboPreparacion.setValue('${procedimientoPco.tipoPreparacion.codigo}');
 		</c:if>
    	});
 	
@@ -857,7 +866,7 @@
 	    ,allowBlank: true
 		,fieldLabel : '<s:message code="procedimientos.edicion.accionPropuesta" text="**Tipo acción propuesta a iniciar" />'
 		<c:if test="${procedimientoPco != null}" >
-					,value:'${procedimientoPco.tipoProcPropuesto.tipoActuacion.descripcion}'
+					,value:'${procedimientoPco.tipoProcPropuesto.tipoActuacion.codigo}'
 		</c:if>
 		
 	});
@@ -894,10 +903,25 @@
 		labelStyle:labelStyle,
 		allowBlank: true,
 		fieldLabel : '<s:message code="procedimientos.edicion.actuacionPropuesta" text="**Tipo actuación propuesta a iniciar" />'
-		<c:if test="${procedimientoPco != null}" >
-					,value:'${procedimientoPco.tipoProcPropuesto.descripcion}'
-		</c:if>
+		<%--<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoProcPropuesto.codigo}'
+		</c:if> --%>
 	});
+	
+	optionsTipoProcedimientoIniciarStore.on('load',function(ds,records,o){
+		<c:if test="${procedimientoPco != null}" >
+					debugger;
+					var val="^"+'${procedimientoPco.tipoProcPropuesto.codigo}'+"$"; 
+					var newval=new RegExp(val);
+					var result = optionsTipoProcedimientoIniciarStore.find('codigo',newval);
+					if(result != -1){
+						comboTipoActuacionPropuestaAIniciar.setValue('${procedimientoPco.tipoProcPropuesto.codigo}');
+					}else{
+						comboTipoActuacionPropuestaAIniciar.setValue(null);
+					}
+					
+		</c:if>
+   	});
 	
     var chkBoxPreturnado = new Ext.form.Checkbox({
     	name:'preturnado'
@@ -960,7 +984,7 @@
 			root: 'motivos'
 		}, motivoRecord)
 	});
-
+	
 	var comboMotivo = new Ext.form.ComboBox({
 		name:'motivo',
 	    hiddenName:'motivo',
@@ -972,14 +996,20 @@
 		labelStyle:labelStyle,
 		allowBlank: true,
 		fieldLabel: '<s:message code="procedimientos.edicion.motivo" text="**Motivo" />'
-		<c:if test="${procedimiento!=null}" >
+		<%--<c:if test="${procedimiento!=null}" >
 			,value:'${procedimiento.motivoNoLitigar.descripcion}'
-		</c:if>	
+		</c:if> --%> 
 	});
 	
 	comboMotivo.on('afterrender', function(combo) {
 		motivoStore.webflow();
 	});
+	
+	motivoStore.on('load',function(ds,records,o){
+		<c:if test="${procedimiento!=null}" >
+			comboMotivo.setValue('${procedimiento.motivoNoLitigar.codigo}');
+		</c:if>
+   	});
 	
 	var observaciones = new Ext.form.TextArea({
 		name:'observaciones',
@@ -1226,33 +1256,6 @@
 			if(errores!=""){
 				Ext.Msg.alert("Errores",errores);
 				return;
-			}
-			<%--validacion producto 1089 --%>
-			var letras="abcdefghyjklmnñopqrstuvwxyz";
-			var comparar = comboTipoActuacionPropuestaAIniciar.getValue();
-			var hayMinuscula = false;
-			for(var i=0; i < comparar.length; i++){
-				if (letras.indexOf(comparar.charAt(i),0)!=-1){
-         			<%--hay minusculas, por tanto es una descripcion precargada--%>
-         			hayMinuscula=true;
-         			break;
-      			}
-			}
-			if(hayMinuscula){
-				comboTipoActuacionPropuestaAIniciar.setValue('${procedimientoPco.tipoProcPropuesto.codigo}');
-			}
-			
-			var comparar2=comboTipoAccionPropuestaAIniciar.getValue();
-			var hayMinuscula2 = false;
-			for(var i=0; i < comparar2.length; i++){
-				if (letras.indexOf(comparar.charAt(i),0)!=-1){
-         			<%--hay minusculas, por tanto es una descripcion precargada--%>
-         			hayMinuscula2=true;
-         			break;
-      			}
-			}
-			if(hayMinuscula2){
-				comboTipoAccionPropuestaAIniciar.setValue('${procedimientoPco.tipoProcPropuesto.tipoActuacion.codigo}');
 			}
 			//FIN VALIDACIONES
 			

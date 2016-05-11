@@ -109,7 +109,7 @@
 
               -- Subcarteras
               C_SUBCARTERAS SYS_REFCURSOR;
-1
+
             BEGIN
               OPEN C_CARTERAS;
 

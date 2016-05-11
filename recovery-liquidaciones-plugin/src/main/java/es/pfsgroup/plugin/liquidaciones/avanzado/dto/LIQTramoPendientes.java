@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class LIQTramoPendientes {
 	private BigDecimal saldo = BigDecimal.ZERO;
+	private BigDecimal intDemoraCierre = BigDecimal.ZERO;
 	private BigDecimal intereses = BigDecimal.ZERO;
 	private BigDecimal impuestos = BigDecimal.ZERO;
 	private BigDecimal comisiones = BigDecimal.ZERO;
@@ -16,6 +17,12 @@ public class LIQTramoPendientes {
 	}
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
+	}
+	public BigDecimal getIntDemoraCierre() {
+		return intDemoraCierre;
+	}
+	public void setIntDemoraCierre(BigDecimal intDemoraCierre) {
+		this.intDemoraCierre = intDemoraCierre;
 	}
 	public BigDecimal getIntereses() {
 		return intereses;

@@ -10,11 +10,16 @@
 
 <fwk:page>
 	var labelStyle='font-weight:bolder;width:100';
-	var advertencia = new Ext.form.Label({
-		text: '<s:message code="plugin.liquidaciones.introducirdatos.message.advertencia" text="**Advertencia" />'
-		,style:labelStyle + ';font-size:0.8em; margin:20px'
-		,autoWidth: true
-	});
+	
+	<pfs:hidden name="idAsunto" value="${idAsunto}" />
+	<pfs:hidden name="isEdit" value="${isEdit}" />
+	
+	<pfs:hidden name="anteriorContrato" value="${dtoCalculoLiquidacion.contrato}" />
+	<pfs:hidden name="anteriorFechaCierre" value="${dtoCalculoLiquidacion.fechaCierre}" />
+	<pfs:hidden name="anteriorFechaLiquidacion" value="${dtoCalculoLiquidacion.fechaLiquidacion}" />
+	
+	<%-- Como no se quiere utilizar el estado calculo, de momento, le pasamos siempre como pendiente --%>
+	<pfs:hidden name="estadoCalculo" value='PTE' />
 	
 	var actuacionesAsunto = {"actuaciones" :<json:array name="actuaciones" items="${actuaciones}" var="a">
 		<json:object>
@@ -48,11 +53,17 @@
 		/>
 		
 
-	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
+	<pfsforms:textfield name="nombrePersona" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
 	<pfsforms:textfield name="dni" labelKey="plugin.liquidaciones.introducirdatos.control.dni" label="**D.N.I." value="" obligatory="true"/>
+	
+	contratos_Store.on('load',function (){
+		if(isEdit.getValue()){
+			contratos.setValue("${dtoCalculoLiquidacion.contrato}");
+		}
+	});
 		 
 	actuaciones.on('select',function (){
-		contratos.reload(true)
+		contratos.reload(true);
 		<%--
 		Ext.Ajax.request({
 			url: page.resolveUrl('plugin.liquidaciones.getprocedimiento')
@@ -74,7 +85,7 @@
 			,success: function (result, request){
 				var r = Ext.util.JSON.decode(result.responseText);
 				if (r.persona != undefined) {
-					nombre.setValue(r.persona.nombre);
+					nombrePersona.setValue(r.persona.nombre);
 					dni.setValue(r.persona.docid);
 				}
 				if (r.liquidacion != undefined) {
@@ -94,10 +105,11 @@
 	});
 	
 	<pfs:defineParameters name="parametros" paramId=""
+		asunto="idAsunto"
 		actuacion="actuaciones"
 		contrato="contratos"
-		nombre="nombre"
-		dni="dni"
+		nombrePersona="nombrePersona"
+		documentoId="dni"
 		
 		capital="capital"
 		interesesOrdinarios="interesesOrdinarios"
@@ -105,17 +117,18 @@
 		comisiones="comisiones"
 		gastos="gastos"
 		impuestos="impuestos"
-		tipoInteres="tipoInteres"
-		fechaCierre_date="fechaCierre"
-		fechaVencimiento="fechaVencimiento"
+		fechaCierre="fechaCierre"
 	
 		costasLetrado="costasLetrado"
 		costasProcurador="costasProcurador"
 		otrosGastos="otrosGastos"
 	
 		baseCalculo="baseCalculo"
-		fechaDeLiquidacion_date="fechaDeLiquidacion"
-		tipoDemoraCierre="tipoDemoraCierre"
+		fechaLiquidacion="fechaDeLiquidacion"
+		tipoMoraCierre="tipoDemoraCierre"
+		nombre="nombre"
+		
+		estadoCalculo="estadoCalculo"
 	/>
 	
 	<%-- tiposInteres="tiposInteresStore" --%>
@@ -127,25 +140,44 @@
 			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
 		} else {
 			if (validarForm()) {
-				var p=parametros();
-				
-				var storeList = tiposInteresStore.data.items;
-				if (storeList.length > 0) {
-					var tiposInteresesData = [];
+				if(isEdit.getValue() && (anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y"))){
+					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidación" />');
+				}else{
 					
-					var i;
-					for (i=0;i < storeList.length;i++) {
-						var reg = storeList[i].data;
-						var tipo = '';
-						tipo = reg.fecha + '#' + reg.tipoInteres;
-						tiposInteresesData.push(tipo);
+					fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
+					
+					var p=parametros();
+					
+					var storeList = tiposInteresStore.data.items;
+					if (storeList.length > 0) {
+						var tiposInteresesData = [];
+						
+						var i;
+						for (i=0;i < storeList.length;i++) {
+							var reg = storeList[i].data;
+							var tipo = '';
+							tipo = reg.fecha + '#' + reg.tipoInteres;
+							tiposInteresesData.push(tipo);
+						}
 					}
+					
+					p.tiposIntereses = tiposInteresesData;
+					
+					if(isEdit.getValue()){
+						p.id = "${dtoCalculoLiquidacion.id}";
+					}
+					
+					page.webflow({
+		      			flow:'liquidaciones/guardaCalculoLiquidacion'
+		      			,params: p
+		      			,success: function(){
+							page.fireEvent(app.event.DONE);
+		           		}	
+			      	});
+			      	
 				}
-				
-				p.tiposIntereses = tiposInteresesData;
-				
-				app.downloadFile({flow: 'liquidaciones/openReport', params: p});
-				page.fireEvent(app.event.DONE);
+
+
 				
 			} else {
 				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
@@ -157,14 +189,13 @@
 	<pfsforms:numberfield name="capital" labelKey="plugin.liquidaciones.introducirdatos.control.capital" label="**Capital" value="" obligatory="true" allowDecimals="true"/>
 	<pfsforms:numberfield name="interesesOrdinarios" labelKey="plugin.liquidaciones.introducirdatos.control.interesesOrdinarios" label="**Intereses Ordinarios" value="" obligatory="false" allowDecimals="true"/>
 	<pfsforms:numberfield name="interesesDemora" labelKey="plugin.liquidaciones.introducirdatos.control.interesesDemora" label="**Intereses Demora" value="" obligatory="false" allowDecimals="true"/>
-	<pfsforms:numberfield name="comisiones" labelKey="plugin.liquidaciones.introducirdatos.control.comisiones" label="**Comisiones" value="" obligatory="true" allowDecimals="true"/>
-	<pfsforms:numberfield name="gastos" labelKey="plugin.liquidaciones.introducirdatos.control.gastos" label="**Gastos" value="" obligatory="true" allowDecimals="true"/>
-	<pfsforms:numberfield name="impuestos" labelKey="plugin.liquidaciones.introducirdatos.control.impuestos" label="**Impuestos" value="" obligatory="true" allowDecimals="true"/>
+	<pfsforms:numberfield name="comisiones" labelKey="plugin.liquidaciones.introducirdatos.control.comisiones" label="**Comisiones" value="" allowDecimals="true"/>
+	<pfsforms:numberfield name="gastos" labelKey="plugin.liquidaciones.introducirdatos.control.gastos" label="**Gastos" value="" allowDecimals="true"/>
+	<pfsforms:numberfield name="impuestos" labelKey="plugin.liquidaciones.introducirdatos.control.impuestos" label="**Impuestos" value="" allowDecimals="true"/>
 	<pfs:hidden name="tipoInteres" value="" />
 	<pfs:hidden name="fechaVencimiento" value="" />
 	<pfsforms:datefield name="fechaCierre" labelKey="plugin.liquidaciones.introducirdatos.control.fechaCierre" label="**Fecha Cierre" obligatory="true"/>
 	fechaCierre.on('render', function() {this.validate();});
-	
 
 	<pfsforms:fieldset name="fieldDatosCierre" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.datoscierre" border="true" width="280" height="260"
 		items="capital,interesesOrdinarios,interesesDemora,comisiones,gastos,impuestos,tipoInteres,fechaCierre" />
@@ -186,9 +217,11 @@
 	fechaDeLiquidacion.setValue(new Date());
 	<pfsforms:numberfield name="tipoDemoraCierre" labelKey="plugin.liquidaciones.introducirdatos.control.tipoDemoraCierre" label="**Tipo Demora al Cierre" value="" 
 		obligatory="true" allowDecimals="true" allowNegative="false" />
+	
+	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="150"/>
 
 	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="280" height="260"
-		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre" />
+		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre,nombre" />
 
 	var fieldImportes = new Ext.Panel({
 		autoHeight : true
@@ -301,11 +334,45 @@
 	
 	<pfsforms:gridpanel name="gridTiposInteres" store="tiposInteresStore" columnModel="tiposInteresCM" width="500" bbar="[btnAddTipoInteres,btnDelTipoInteres]"
 		title="**Actualización de tipos de interés" titleKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres" />
-
+ 
+ 	
+ 	gridTiposInteres.on('render', function() {
+ 		if(isEdit.getValue()){
+ 		
+ 			var strTipsInt = '${dtoCalculoLiquidacion.tiposIntereses}'; 
+ 			
+ 			if(strTipsInt.length > 0){
+ 				var tiposInteres = strTipsInt.substring(1,strTipsInt.length - 1).split(',');
+	 			var newTipoInteresRecord = tiposInteresStore.recordType;
+	 			
+	 			for(i=0;i < tiposInteres.length; i++){
+	 				
+	 				var partesTipInt = tiposInteres[i].split('#');
+	 				var f = new Date(partesTipInt[0]);
+	 				var ti = parseFloat(partesTipInt[1]);
+	 			
+	 				var t = new newTipoInteresRecord({
+		   				fecha: convertDate(f),
+		   				tipoInteres: ti
+		   			});
+					tiposInteresStore.insert(0,t);
+	 			}
+ 			}
+ 		}
+ 	});
+ 	
+ 	function convertDate(inputFormat) {
+	  function pad(s) { return (s < 10) ? '0' + s : s; }
+	  var d = new Date(inputFormat);
+	  return [pad(d.getDate()), pad(d.getMonth()+1), d.getFullYear()].join('/');
+	}
+ 
+ 
 	//LabelStyle
 	actuaciones.labelStyle=labelStyle;
 	contratos.labelStyle=labelStyle;
 	nombre.labelStyle=labelStyle;
+	nombrePersona.labelStyle=labelStyle;
 	dni.labelStyle=labelStyle;
 	
 	capital.labelStyle=labelStyle;
@@ -341,7 +408,7 @@
 				,border:false
 				,bodyStyle:'padding:5px;cellspacing:5px;'
 				,defaults : {xtype : 'fieldset',autoWidth : true, autoHeight : true, border : false ,cellCls : 'vtop', bodyStyle : 'padding-left:5px'}
-				,items:[{items: [advertencia,{html: '&nbsp;',border:false},actuaciones,contratos,nombre,dni,fieldImportes,gridTiposInteres]}
+				,items:[{items: [actuaciones,contratos,nombrePersona,dni,fieldImportes,gridTiposInteres]}
 				]
 			}
 		]
@@ -351,6 +418,28 @@
 	});	
 	page.add(panelEdicion);
 	
+	
+	var rellenarCampos = function(){
+		actuaciones.setValue("${dtoCalculoLiquidacion.actuacion}");
+		contratos.reload(true);
+		nombrePersona.setValue("${dtoCalculoLiquidacion.nombrePersona}");
+		dni.setValue("${dtoCalculoLiquidacion.documentoId}");
+		capital.setValue("${dtoCalculoLiquidacion.capital}");
+		interesesOrdinarios.setValue("${dtoCalculoLiquidacion.interesesOrdinarios}");
+		interesesDemora.setValue("${dtoCalculoLiquidacion.interesesDemora}");
+		comisiones.setValue("${dtoCalculoLiquidacion.comisiones}");
+		gastos.setValue("${dtoCalculoLiquidacion.gastos}");
+		impuestos.setValue("${dtoCalculoLiquidacion.impuestos}");
+		fechaCierre.setValue("${dtoCalculoLiquidacion.fechaCierre}");
+		costasLetrado.setValue("${dtoCalculoLiquidacion.costasLetrado}");
+		costasProcurador.setValue("${dtoCalculoLiquidacion.costasProcurador}");
+		otrosGastos.setValue("${dtoCalculoLiquidacion.otrosGastos}");
+		baseCalculo.setValue("${dtoCalculoLiquidacion.baseCalculo}");
+		fechaDeLiquidacion.setValue("${dtoCalculoLiquidacion.fechaLiquidacion}");
+		tipoDemoraCierre.setValue("${dtoCalculoLiquidacion.tipoMoraCierre}");
+		nombre.setValue("${dtoCalculoLiquidacion.nombre}");
+	}
+	
 	var validarForm = function() {
 		if (!actuaciones.isValid())
 			return false;
@@ -358,7 +447,7 @@
 		if (!contratos.isValid())
 			return false;
 		
-		if (!nombre.isValid())
+		if(!nombrePersona.isValid())
 			return false;
 			
 		if (!dni.isValid())
@@ -402,8 +491,16 @@
 			
 		if (!tipoDemoraCierre.isValid())
 			return false;
+			
+		if (!nombre.isValid())
+			return false;
 						
 		return true;
 	}		
+	
+	if(isEdit.getValue()){
+		rellenarCampos();
+	}
+
 
 </fwk:page>

@@ -78,6 +78,16 @@ formatter = new DecimalFormat("###,##0.00");]]></method>
                     <property name="name">interesesDemora</property>
                     <property name="dataType">float</property>
                 </structure>
+                <structure>
+                    <property name="position">14</property>
+                    <property name="name">intDemoraCierre</property>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="position">15</property>
+                    <property name="name">intDemoraCierrePend</property>
+                    <property name="dataType">float</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -118,7 +128,7 @@ formatter = new DecimalFormat("###,##0.00");]]></method>
                 </structure>
                 <structure>
                     <property name="columnName">interesesPendientes</property>
-                    <property name="displayName">Intereses</property>
+                    <property name="displayName">Intereses pdte. cobro</property>
                 </structure>
                 <structure>
                     <property name="columnName">dias</property>
@@ -131,6 +141,14 @@ formatter = new DecimalFormat("###,##0.00");]]></method>
                 <structure>
                     <property name="columnName">interesesDemora</property>
                     <property name="displayName">Interés demora calculado</property>
+                </structure>
+                <structure>
+                    <property name="columnName">intDemoraCierre</property>
+                    <property name="displayName">A/C Demoras</property>
+                </structure>
+                <structure>
+                    <property name="columnName">intDemoraCierrePend</property>
+                    <property name="displayName">Demoras pdte. cobro</property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
@@ -200,6 +218,16 @@ formatter = new DecimalFormat("###,##0.00");]]></method>
                         <property name="name">interesesDemora</property>
                         <property name="dataType">float</property>
                     </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">intDemoraCierre</property>
+                        <property name="dataType">float</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">intDemoraCierrePend</property>
+                        <property name="dataType">float</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
@@ -215,10 +243,12 @@ row["descripcion"] = "";
 row["importe"] = "";
 row["entregado"] = "";
 row["intereses"] = "";
+row["intDemoraCierre"] = "";
 row["impuestos"] = "";
 row["comisiones"] = "";
 row["gastos"] = "";
 row["saldo"] = "";
+row["intDemoraCierrePend"] = "";
 row["interesesPendientes"] = "";
 row["dias"] = "";
 row["tipoDemora"] = "";
@@ -229,10 +259,12 @@ row["descripcion"] = p.getDescripcion();
 row["importe"] = p.getImporte();
 row["entregado"] = p.getEntregado();
 row["intereses"] = p.getIntereses();
+row["intDemoraCierre"] = p.getIntDemoraCierre();
 row["impuestos"] = p.getImpuestos();
 row["comisiones"] = p.getComisiones();
 row["gastos"] = p.getGastos();
 row["saldo"] = p.getSaldo();
+row["intDemoraCierrePend"] = p.getIntDemoraCierrePend();
 row["interesesPendientes"] = p.getInteresesPendientes();
 row["dias"] = p.getDias();
 row["tipoDemora"] = p.getTipoDemora();
@@ -339,13 +371,17 @@ return true;]]></method>
                 <property name="width">4.104166666666667in</property>
             </column>
             <row id="381">
+                <property name="suppressDuplicates">false</property>
+                <property name="canShrink">false</property>
                 <cell id="382">
                     <property name="fontSize">8pt</property>
                     <property name="verticalAlign">bottom</property>
                     <image name="logotipo" id="380">
+                        <property name="height">72px</property>
+                        <property name="width">225px</property>
                         <property name="size">size-to-image</property>
-                        <property name="source">url</property>
-                        <expression name="uri">params["img_src"].value+logo</expression>
+                        <property name="source">file</property>
+                        <expression name="uri">img_real+"/"+logo</expression>
                     </image>
                 </cell>
                 <cell id="383"/>
@@ -821,7 +857,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
         <table id="27">
             <property name="fontSize">9pt</property>
             <property name="marginTop">0pt</property>
-            <property name="height">0.9270833333333334in</property>
+            <property name="height">1.28125in</property>
             <property name="width">100%</property>
             <property name="dataSet">cuerpo</property>
             <list-property name="boundDataColumns">
@@ -967,51 +1003,99 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </structure>
                     </list-property>
                 </structure>
+                <structure>
+                    <property name="name">intDemoraCierre</property>
+                    <property name="displayName">A/C Demoras</property>
+                    <expression name="expression">BirtMath.round(dataSetRow["intDemoraCierre"],2)</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">intDemoraCierrePend</property>
+                    <property name="displayName">Demoras pdte. cobro</property>
+                    <expression name="expression">BirtMath.round(dataSetRow["intDemoraCierrePend"],2)</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">SumIntDemoraCierre</property>
+                    <property name="dataType">float</property>
+                    <property name="aggregateFunction">SUM</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">row["intDemoraCierre"]</expression>
+                        </structure>
+                    </list-property>
+                </structure>
             </list-property>
             <property name="pageBreakInterval">0</property>
             <column id="71">
-                <property name="width">0.6145833333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="135">
-                <property name="width">2.125in</property>
+                <property name="width">15.4%</property>
             </column>
             <column id="72">
-                <property name="width">0.7083333333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="75">
-                <property name="width">0.5729166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="418">
-                <property name="width">0.5833333333333334in</property>
+                <property name="width">7.7%</property>
+            </column>
+            <column id="595">
+                <property name="width">7.7%</property>
             </column>
             <column id="425">
                 <property name="width">0.6875in</property>
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">true</expression>
+                    </structure>
+                </list-property>
             </column>
             <column id="439">
                 <property name="width">0.71875in</property>
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">true</expression>
+                    </structure>
+                </list-property>
             </column>
             <column id="443">
                 <property name="width">0.8541666666666666in</property>
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr">true</expression>
+                    </structure>
+                </list-property>
             </column>
             <column id="447">
-                <property name="width">0.4895833333333333in</property>
+                <property name="width">7.7%</property>
+            </column>
+            <column id="601">
+                <property name="width">7.7%</property>
             </column>
             <column id="451">
-                <property name="width">0.9479166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="77">
-                <property name="width">0.2916666666666667in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="291">
-                <property name="width">0.6354166666666666in</property>
+                <property name="width">7.7%</property>
             </column>
             <column id="297">
-                <property name="width">0.9895833333333334in</property>
+                <property name="width">7.7%</property>
             </column>
             <header>
                 <row id="28">
                     <property name="backgroundColor">gray</property>
                     <cell id="29">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1032,6 +1116,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="132">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1052,6 +1137,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="31">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1073,6 +1159,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="37">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1094,6 +1181,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="416">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1114,7 +1202,74 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                             <text-property name="text">A/C Intereses</text-property>
                         </label>
                     </cell>
+                    <cell id="592">
+                        <property name="fontSize">100%</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="textAlign">right</property>
+                        <label id="596">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">1pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <text-property name="text">A/C Demoras</text-property>
+                        </label>
+                    </cell>
                     <cell id="423">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1136,6 +1291,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="437">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1157,6 +1313,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="441">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1178,6 +1335,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="445">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1198,7 +1356,74 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                             <text-property name="text">Saldo nominal pdte. cobro</text-property>
                         </label>
                     </cell>
+                    <cell id="598">
+                        <property name="fontSize">100%</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="textAlign">right</property>
+                        <label id="602">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">bold</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">1pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <property name="textAlign">center</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <text-property name="text">Demoras pdte. cobro</text-property>
+                        </label>
+                    </cell>
                     <cell id="449">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1216,10 +1441,11 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                             <property name="fontSize">6pt</property>
                             <property name="fontWeight">bold</property>
                             <property name="textAlign">center</property>
-                            <text-property name="text">Intereses</text-property>
+                            <text-property name="text">Intereses pdte. cobro</text-property>
                         </label>
                     </cell>
                     <cell id="41">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1241,6 +1467,7 @@ this.text = d.format(cabecera.getFechaCertifDeuda());</expression>
                         </label>
                     </cell>
                     <cell id="287">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1263,6 +1490,7 @@ Demora</text-property>
                         </label>
                     </cell>
                     <cell id="293">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1334,6 +1562,7 @@ calculado</text-property>
             <detail>
                 <row id="45">
                     <cell id="46">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1386,6 +1615,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="133">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1450,6 +1680,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="48">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1524,6 +1755,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="54">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1598,6 +1830,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="417">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1671,7 +1904,83 @@ calculado</text-property>
                             <property name="resultSetColumn">intereses</property>
                         </data>
                     </cell>
+                    <cell id="593">
+                        <property name="fontSize">100%</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <data id="597">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <list-property name="visibility">
+                                <structure>
+                                    <property name="format">all</property>
+                                    <expression name="valueExpr">row["intDemoraCierre"]==0</expression>
+                                </structure>
+                            </list-property>
+                            <property name="resultSetColumn">intDemoraCierre</property>
+                        </data>
+                    </cell>
                     <cell id="424">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1746,6 +2055,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="438">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1816,6 +2126,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="442">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1890,6 +2201,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="446">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -1957,7 +2269,77 @@ calculado</text-property>
                             <property name="resultSetColumn">saldo</property>
                         </data>
                     </cell>
+                    <cell id="599">
+                        <property name="fontSize">100%</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <data id="603">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <property name="resultSetColumn">intDemoraCierrePend</property>
+                        </data>
+                    </cell>
                     <cell id="450">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2026,6 +2408,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="58">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2096,6 +2479,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="288">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2170,6 +2554,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="294">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2247,12 +2632,14 @@ calculado</text-property>
             </detail>
             <footer>
                 <row id="460">
+                    <property name="height">0.3541666666666667in</property>
                     <property name="borderTopColor">#000000</property>
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">medium</property>
                     <cell id="461">
                         <property name="colSpan">2</property>
                         <property name="rowSpan">1</property>
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2317,6 +2704,7 @@ calculado</text-property>
                         </label>
                     </cell>
                     <cell id="463">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2385,6 +2773,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="464">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2453,6 +2842,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="465">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2520,7 +2910,77 @@ calculado</text-property>
                             <property name="resultSetColumn">SumIntereses</property>
                         </data>
                     </cell>
+                    <cell id="594">
+                        <property name="fontSize">100%</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <data id="605">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <property name="resultSetColumn">SumIntDemoraCierre</property>
+                        </data>
+                    </cell>
                     <cell id="466">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2589,6 +3049,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="467">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2657,6 +3118,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="468">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2725,6 +3187,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="469">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2792,7 +3255,116 @@ calculado</text-property>
                             <property name="resultSetColumn">saldo</property>
                         </data>
                     </cell>
+                    <cell id="600">
+                        <property name="backgroundAttachment">scroll</property>
+                        <property name="backgroundPositionX">0%</property>
+                        <property name="backgroundPositionY">0%</property>
+                        <property name="backgroundRepeat">repeat</property>
+                        <property name="fontFamily">"Verdana"</property>
+                        <property name="fontSize">100%</property>
+                        <property name="fontWeight">normal</property>
+                        <property name="fontStyle">normal</property>
+                        <property name="fontVariant">normal</property>
+                        <property name="color">black</property>
+                        <property name="textLineThrough">none</property>
+                        <property name="textOverline">none</property>
+                        <property name="textUnderline">none</property>
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">thin</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">thin</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="marginLeft">0pt</property>
+                        <property name="marginBottom">0pt</property>
+                        <property name="marginRight">0pt</property>
+                        <property name="paddingTop">1pt</property>
+                        <property name="paddingLeft">1pt</property>
+                        <property name="paddingBottom">1pt</property>
+                        <property name="paddingRight">1pt</property>
+                        <structure name="numberFormat">
+                            <property name="category">Currency</property>
+                            <property name="pattern">#,##0.00</property>
+                        </structure>
+                        <property name="textAlign">right</property>
+                        <property name="textIndent">0em</property>
+                        <property name="letterSpacing">normal</property>
+                        <property name="lineHeight">normal</property>
+                        <property name="orphans">2</property>
+                        <property name="textTransform">none</property>
+                        <property name="whiteSpace">normal</property>
+                        <property name="widows">2</property>
+                        <property name="wordSpacing">normal</property>
+                        <property name="display">block</property>
+                        <property name="pageBreakAfter">auto</property>
+                        <property name="pageBreakBefore">auto</property>
+                        <property name="pageBreakInside">auto</property>
+                        <property name="showIfBlank">false</property>
+                        <property name="canShrink">false</property>
+                        <data id="604">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"Verdana"</property>
+                            <property name="fontSize">6pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">black</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">black</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">black</property>
+                            <property name="borderTopStyle">none</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">2pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">2pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <structure name="numberFormat">
+                                <property name="category">Currency</property>
+                                <property name="pattern">#,##0.00</property>
+                            </structure>
+                            <property name="textAlign">right</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
+                            <property name="resultSetColumn">intDemoraCierrePend</property>
+                        </data>
+                    </cell>
                     <cell id="470">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2861,6 +3433,7 @@ calculado</text-property>
                         </data>
                     </cell>
                     <cell id="471">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2875,6 +3448,7 @@ calculado</text-property>
                         <property name="borderTopWidth">thin</property>
                     </cell>
                     <cell id="472">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>
@@ -2889,6 +3463,7 @@ calculado</text-property>
                         <property name="borderTopWidth">thin</property>
                     </cell>
                     <cell id="473">
+                        <property name="fontSize">100%</property>
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">thin</property>

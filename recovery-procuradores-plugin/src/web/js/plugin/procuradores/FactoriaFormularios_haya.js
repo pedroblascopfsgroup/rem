@@ -3559,9 +3559,21 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     
     // id: 413 : T. Inscripción título (CAJAMAR): H066_registrarInscripcionTitulo
     this.arrayCampos.push([
-        {"xtype":'combo',"store":this.storeDDSituacionTitulo,"name":"d_situacionTitulo","fieldLabel":"Situación del título",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_situacionTitulo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        {"xtype":'combo',"store":this.storeDDSituacionTitulo,"name":"d_situacionTitulo","fieldLabel":"Situación del título",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_situacionTitulo'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+        	,listeners: {
+     			 select: function(combo) { 
+     				 var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fechaEnvio');
+     				 if(combo.getValue()=='PEN'){
+     					 fecha.allowBlank = false;				 
+     				 }
+     				 else if(combo.getValue()!='PEN'){
+     					 fecha.allowBlank = true;
+     				 }   
+     			 }
+        	 }       
+        }
         ,{"xtype":'datefield',"name": "d_fechaInscripcion", "fieldLabel": "Fecha inscripción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-        ,{"xtype":'datefield',"name": "d_fechaEnvio", "fieldLabel": "Fecha envío escrito subsanación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+        ,{"xtype":'datefield',"name": "d_fechaEnvio", "fieldLabel": "Fecha envío escrito subsanación", allowBlank: true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
     ]);
     
     // id: 414 : T. mandamiento cancelación cargas (CAJAMAR): HC102_SolicitudMandamiento

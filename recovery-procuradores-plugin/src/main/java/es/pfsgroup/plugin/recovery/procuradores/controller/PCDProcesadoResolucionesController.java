@@ -2,17 +2,14 @@ package es.pfsgroup.plugin.recovery.procuradores.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
@@ -39,12 +36,8 @@ import es.capgemini.pfs.procesosJudiciales.model.DDImpugnacion1;
 import es.capgemini.pfs.procesosJudiciales.model.DDPositivoNegativo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.model.CausaProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.web.genericForm.DtoGenericForm;
-import es.capgemini.pfs.web.genericForm.GenericForm;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
@@ -56,14 +49,12 @@ import es.pfsgroup.plugin.recovery.masivo.api.MSVDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
-import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDMotivoInadmision;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDMotivosArchivo;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDRequerimientoPrevio;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.dto.MSVTipoResolucionDto;
-import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.GenericFormManagerApi;
 import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.MEJGenericFormManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
@@ -73,7 +64,6 @@ import es.pfsgroup.plugin.recovery.procuradores.configuracion.api.ConfiguracionD
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
 import es.pfsgroup.procedimientos.model.DDIndebidaExcesiva;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import es.pfsgroup.recovery.bpmframework.config.model.RecoveryBPMfwkDDTipoAccion;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
 import es.capgemini.devon.exception.FrameworkException;
@@ -186,6 +176,8 @@ public class PCDProcesadoResolucionesController {
 	private static final String JSON_LISTA_INDEBIDAS = "plugin/procuradores/listaIndebidasJSON";
 
 	private static final String JSON_GRABAR_PROCESAR_ERROR = "plugin/procuradores/datosResolucionErrorJSON";
+	
+	private static final String JSON_RESULTADO_PROCESADO = "plugin/procuradores/resultadoProcesadoJSON";
 	
 	
 	@Autowired
@@ -1214,4 +1206,30 @@ public class PCDProcesadoResolucionesController {
 
         return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
     }
+    
+    
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+	public String obtenerDatoTarea(Long idProcedimiento, String nombreCampoInput, ModelMap model) throws Throwable{
+	
+    	Map<String, Map<String, String>> datos = mejGenericFormManager.getValoresTareas(idProcedimiento);
+
+    	String resultado="";
+    	
+    	for (Map.Entry<String, Map<String,String>> entry : datos.entrySet())
+		{
+			for (Map.Entry<String, String> cmps : entry.getValue().entrySet())
+			{
+				if(cmps.getKey().equals(nombreCampoInput)){
+					resultado=cmps.getValue();
+				}
+			}
+		}
+ 
+		model.put("resultado", resultado);
+	
+		return JSON_RESULTADO_PROCESADO;
+
+	}
+    
 }

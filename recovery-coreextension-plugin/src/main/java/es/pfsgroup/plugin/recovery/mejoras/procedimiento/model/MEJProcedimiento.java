@@ -11,6 +11,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.proxy.HibernateProxy;
 
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDMotivoNoLitigar;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 
@@ -36,6 +38,13 @@ public class MEJProcedimiento extends Procedimiento {
 	
 	@Column(name="PRC_PLAZO_PARALIZ_MILS")
 	private Long plazoParalizacion;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MNL_ID")
+    private DDMotivoNoLitigar motivoNoLitigar;
+	
+	@Column(name="PRC_OBS_NO_LITIGAR")
+	private String observacionesNoLitigar;
 
 	@Column(name="SYS_GUID")
 	private String guid;
@@ -102,6 +111,22 @@ public class MEJProcedimiento extends Procedimiento {
 		this.plazoParalizacion = plazoParalizacion;
 	}
 
+	public DDMotivoNoLitigar getMotivoNoLitigar() {
+		return motivoNoLitigar;
+	}
+
+	public void setMotivoNoLitigar(DDMotivoNoLitigar motivoNoLitigar) {
+		this.motivoNoLitigar = motivoNoLitigar;
+	}
+
+	public String getObservacionesNoLitigar() {
+		return observacionesNoLitigar;
+	}
+
+	public void setObservacionesNoLitigar(String observacionesNoLitigar) {
+		this.observacionesNoLitigar = observacionesNoLitigar;
+	}
+	
 	@Transient
 	public static MEJProcedimiento instanceOf(Procedimiento procedimiento) {
 		MEJProcedimiento mejProcedimiento = null;

@@ -27,6 +27,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDPrioridad;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
@@ -106,6 +107,11 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@OrderBy(clause = "PCO_PRC_HEP_FECHA_INCIO DESC")
 	private List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc;
 	
+	@ManyToOne
+	@JoinColumn(name = "DD_PRI_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private DDPrioridad prioridad;
+
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
 
@@ -508,5 +514,13 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public DDPrioridad getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(DDPrioridad prioridad) {
+		this.prioridad = prioridad;
 	}
 }

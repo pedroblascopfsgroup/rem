@@ -51,6 +51,15 @@ public class ProcedimientoDto extends WebDto {
     private List<Persona> personasAfectadas;
 
     private List<ExpedienteContrato> contratosAfectados;
+    
+    private String prioridad;
+    private String preparacion;
+    private String tipoAccionPropuesta;
+    private String tipoActuacionPropuesta;
+    private Boolean turnadoOrdinario;//hay que ver como recoger el boolean y para guardarlo como 1 o 0
+    private Boolean preturnado;
+    private String motivo;
+    private String observaciones;
 
     /**
      * Valida la info del formulario.
@@ -80,11 +89,11 @@ public class ProcedimientoDto extends WebDto {
             }
             if (tipoReclamacion == null || "".equals(tipoReclamacion)) {
                 context.addMessage(new MessageBuilder().code(TIPO_RECLAMACION_NULO).error().source("").defaultText(
-                        "**Debe seleccionar un tipo de reclamación.").build());
+                        "**Debe seleccionar un tipo de reclamaciï¿½n.").build());
             }
             if (actuacion == null || "".equals(actuacion)) {
                 context.addMessage(new MessageBuilder().code(TIPO_ACTUACION_NULO).error().source("").defaultText(
-                        "**Debe seleccionar un tipo de Actuación.").build());
+                        "**Debe seleccionar un tipo de Actuaciï¿½n.").build());
             }
             if (saldorecuperar == null) {
                 context.addMessage(new MessageBuilder().code(SALDO_RECUPERAR_NULO).error().source("").defaultText(
@@ -92,11 +101,11 @@ public class ProcedimientoDto extends WebDto {
             }
             if (recuperacion == null) {
                 context.addMessage(new MessageBuilder().code(PORCENTAJE_RECUPERACION_NULO).error().source("").defaultText(
-                        "**Debe introducir un porcentaje de recuperación.").build());
+                        "**Debe introducir un porcentaje de recuperaciï¿½n.").build());
             }
             if (plazo == null) {
                 context.addMessage(new MessageBuilder().code(PLAZO_NULO).error().source("")
-                        .defaultText("**Debe introducir un plazo de recuperación.").build());
+                        .defaultText("**Debe introducir un plazo de recuperaciï¿½n.").build());
             }
             if (seleccionPersonas == null || "".equals(seleccionPersonas)) {
                 context.addMessage(new MessageBuilder().code(PERSONAS_SELECCIONADAS_NULO).error().source("").defaultText(
@@ -317,5 +326,69 @@ public class ProcedimientoDto extends WebDto {
     public void setEnConformacion(Boolean enConformacion) {
         this.enConformacion = enConformacion;
     }
+    
+    public String getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(String prioridad) {
+		this.prioridad = prioridad;
+	}
+
+	public String getPreparacion() {
+		return preparacion;
+	}
+
+	public void setPreparacion(String preparacion) {
+		this.preparacion = preparacion;
+	}
+
+	public String getTipoAccionPropuesta() {
+		return tipoAccionPropuesta;
+	}
+
+	public void setTipoAccionPropuesta(String tipoAccionPropuesta) {
+		this.tipoAccionPropuesta = tipoAccionPropuesta;
+	}
+
+	public String getTipoActuacionPropuesta() {
+		return tipoActuacionPropuesta;
+	}
+
+	public void setTipoActuacionPropuesta(String tipoActuacionPropuesta) {
+		this.tipoActuacionPropuesta = tipoActuacionPropuesta;
+	}
+
+	public Boolean getTurnadoOrdinario() {
+		return turnadoOrdinario;
+	}
+
+	public void setTurnadoOrdinario(Boolean turnadoOrdinario) {
+		this.turnadoOrdinario = turnadoOrdinario;
+	}
+
+	public Boolean getPreturnado() {
+		return preturnado;
+	}
+
+	public void setPreturnado(Boolean preturnado) {
+		this.preturnado = preturnado;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 
 }

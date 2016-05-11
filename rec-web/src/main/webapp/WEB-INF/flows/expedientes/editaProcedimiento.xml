@@ -32,6 +32,7 @@
 	    	<!--
 	    	<evaluate expression="executor.execute('procedimientoManager.getPersonasAsociadasAContratoProcedimiento', idContrato,idProcedimiento)" result="flowScope.personas"/>
 	    	-->
+	    	<evaluate expression="executor.execute('plugin.precontencioso.devolverProcedimientoPCO', idProcedimiento)" result="flowScope.procedimientoPco" />
 	    </on-entry>
 	    <transition on="updateProcedimiento" to="updateProcedimiento"/>
     </view-state>
@@ -40,6 +41,7 @@
 	  <on-entry>	
 		<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
 		<evaluate expression="executor.execute('procedimientoManager.salvarProcedimiento',dto)" result="flowScope.id"/>
+		<evaluate expression="executor.execute('plugin.precontencioso.salvarProcedimientoPCO',dto, id)" result="flowScope.id"/>
 	  </on-entry>
 	</end-state> 	
     

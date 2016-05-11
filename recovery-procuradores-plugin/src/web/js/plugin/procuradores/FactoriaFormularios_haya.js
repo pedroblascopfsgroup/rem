@@ -3469,6 +3469,20 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
         ,{"xtype":'combo',"store":storeSINO,"name":"d_comboDisconformidad","fieldLabel":"Disconformidad ejecutado",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboDisconformidad'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
     ]);
+    
+    //id: 458 : T. INVESTIGACIÓN JUDICIAL: Registrar resultado de investigación
+	this.arrayCampos.push([
+	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboRegistro","fieldLabel":"Resultados",allowBlank:false,filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboRegistro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAgTribut","fieldLabel":"Agencia tributaria",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAgTribut'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboSegSocial","fieldLabel":"Seg. social",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboSegSocial'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboCatastro","fieldLabel":"Catastro",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboCatastro'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboAyto","fieldLabel":"Ayuntamiento",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboAyto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboOtros","fieldLabel":"Otros",filtrar:true,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOtros'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'numberfield',"name":"d_solvencia","fieldLabel":"Solvencia encontrada",filtrar:false,allowBlank:false,id: 'd_solvencia' + this.idFactoria}
+	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",filtrar:false,allowBlank:false,id: 'd_impuestos' + this.idFactoria}
+	                       	
+	                      ]);
 	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

@@ -160,7 +160,6 @@
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
-			
 		}else{
 			comboZonas.setDisabled(true);
 		}
@@ -738,9 +737,7 @@
 			}			
 		}
 		if (tabJerarquia){
-			if (comboJerarquia.getValue() != '' ){
-				return true;
-			}
+			
 			if (listadoCodigoZonas.length > 0 ){
 				return true;
 			}	
@@ -810,8 +807,8 @@
 	
 	var buscarFunc = function(){
 		if (validarForm()){
-			if (validaTipoIntervencion()) {
-				if (validaZonaJerarquia()) {
+			<%--if (validaTipoIntervencion()) { 
+				if (validaZonaJerarquia()) {--%>
 					if (validaMinMax()){
 						panelFiltros.collapse(true);	
 		                var params= getParametros();
@@ -822,18 +819,18 @@
 					}else{
 						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 					}
-				}else{
+				<%--}else{
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="menu.clientes.listado.zonaIntervencion"/>');
 				}	
 			}else{
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="menu.clientes.listado.tipoIntervencion"/>');
-			}
+			} --%>
 		}else{
 			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="menu.clientes.listado.criterios"/>');
 		}
 	};
 	
-	
+	<%-- PRODUCTO-1257 Se deshabilita las llamadas a estas dos validaciones, pero no las borro por si en un futuro se vuelve a requerir --%>
 	var validaTipoIntervencion = function() {
 		if (!tabGestion)
 			return true;

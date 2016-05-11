@@ -281,6 +281,17 @@
 		</dependency>
 		<dependency>
 			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-liquidacionesWeb-plugin</artifactId>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-panelcontrol-plugin</artifactId>
 			<scope>compile</scope>
 			<exclusions>

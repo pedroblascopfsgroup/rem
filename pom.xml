@@ -196,6 +196,11 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-liquidacionesWeb-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-panelcontrol-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -537,6 +542,7 @@
 		<module>recovery-bpmframework-plugin</module>
 		<module>recovery-itinerarios-plugin</module>
 		<module>recovery-liquidaciones-plugin</module>
+		<module>recovery-liquidacionesWeb-plugin</module>
 		<module>recovery-mejoras-plugin</module>
 		<module>recovery-calendario-plugin</module>
 		<module>recovery-nuevoModeloBienesCommon-plugin</module>

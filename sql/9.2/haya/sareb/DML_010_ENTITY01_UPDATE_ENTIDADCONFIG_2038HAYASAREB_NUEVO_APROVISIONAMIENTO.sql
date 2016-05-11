@@ -1,17 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=Jose Manuel Pérez Barberá
---## FECHA_CREACION=20160505
+--## FECHA_CREACION=20160511
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-2506
 --## PRODUCTO=NO
---## Finalidad: Actualiza working code del ENTIDADCONFIG HAYAMASTER para el nuevo aprovisionamiento de bankia. Pasa de 2038 a 5074.
+--## Finalidad: Actualiza working code del ENTIDADCONFIG HAYAMASTER para el nuevo aprovisionamiento de bankia. VUELTA ATRÁS Pasa de 5074 a 2038.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
---##        
+--##        0.1 Vuelta atrás update
 --##########################################
 --*/
 
@@ -36,12 +35,12 @@ BEGIN
 	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''ENTIDADCONFIG'' AND OWNER = '''||V_ESQUEMA_M||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	IF V_NUM_TABLAS = 1 THEN
-		V_MSQL:= 'UPDATE '||V_ESQUEMA_M|| '.ENTIDADCONFIG SET DATAVALUE = ''5074'' WHERE DATAKEY=''workingCode'' AND DATAVALUE=''2038''';
+		V_MSQL:= 'UPDATE '||V_ESQUEMA_M|| '.ENTIDADCONFIG SET DATAVALUE = ''2038'' WHERE DATAKEY=''workingCode'' AND DATAVALUE=''5074''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ENTIDADCONFIG 2038 actualizada a 5074 en '||V_ESQUEMA_M||'.ENTIDADCONFIG');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ENTIDADCONFIG 5074 actualizada a 2038 en '||V_ESQUEMA_M||'.ENTIDADCONFIG');
 	ELSE
-		DBMS_OUTPUT.PUT_LINE('[INFO] No se han podido actualizar ENTIDADCONFIG 2038 a 5074 en  '||V_ESQUEMA_M||'.ENTIDADCONFIG');
+		DBMS_OUTPUT.PUT_LINE('[INFO] No se han podido actualizar ENTIDADCONFIG 5074 a 2038 en  '||V_ESQUEMA_M||'.ENTIDADCONFIG');
 	END IF;
 	
 	COMMIT;

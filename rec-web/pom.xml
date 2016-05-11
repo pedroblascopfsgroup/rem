@@ -1605,6 +1605,7 @@
 					<tag>${tag}</tag>
 					<container>${container}</container>
 					<port>${port}</port>
+					<dumpName>${dumpName}</dumpName>
 				</configuration>
 			</plugin>
 		</plugins>

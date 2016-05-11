@@ -1,13 +1,7 @@
-package es.pfsgroup.plugin.gestordocumental.dto.documentos;
+package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
-import java.io.File;
 
-public class CrearVersionMetadatosDto extends UsuarioPasswordDto {
-
-	/**
-	 * El fichero que se añadirá como nueva versión
-	 */
-	private File documento;
+public class ModificarMetadatosDto extends UsuarioPasswordDto {	
 
 	/**
 	 * Objeto constituido por los metadatos generales del documento
@@ -19,14 +13,6 @@ public class CrearVersionMetadatosDto extends UsuarioPasswordDto {
 	 */
 	private String archivoFisico;
 
-
-	public File getDocumento() {
-		return documento;
-	}
-
-	public void setDocumento(File documento) {
-		this.documento = documento;
-	}
 
 	public String getGeneralDocumentoModif() {
 		return generalDocumentoModif;

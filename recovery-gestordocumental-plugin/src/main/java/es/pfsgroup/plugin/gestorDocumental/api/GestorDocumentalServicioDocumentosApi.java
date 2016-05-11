@@ -1,19 +1,19 @@
-package es.pfsgroup.plugin.gestordocumental.api;
+package es.pfsgroup.plugin.gestorDocumental.api;
 
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CabeceraPeticionRestClientDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearDocumentoDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearVersionMetadatosDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DescargaDocumentosExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.ModificarMetadatosDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.UsuarioPasswordDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.model.RespuestaGeneral;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCatalogoDocumental;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaCrearDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDocumentosExpedientes;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.CabeceraPeticionRestClientDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearDocumentoDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearVersionDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.CrearVersionMetadatosDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.DescargaDocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.DocumentosExpedienteDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.ModificarMetadatosDto;
-import es.pfsgroup.plugin.gestordocumental.dto.documentos.UsuarioPasswordDto;
 
 public interface GestorDocumentalServicioDocumentosApi {
 

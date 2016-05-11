@@ -70,28 +70,29 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosContratosAsu(id);
 		}else if(esEntidadHaya()){
-//			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
-			return super.getAdjuntosContratosAsu(id);
+			return adjuntoHayaManager.getAdjuntosContratosAsu(id);
 		}
 		return super.getAdjuntosContratosAsu(id);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonaAsu(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosPersonaAsu(id);
-//			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
+			return adjuntoHayaManager.getAdjuntosPersonaAsu(id);
 		}
 		return super.getAdjuntosPersonaAsu(id);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosExpedienteAsu(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosExpedienteAsu(id);
@@ -103,6 +104,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoExp(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosConBorradoExp(id);
@@ -118,46 +120,46 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonasExp(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosPersonasExp(id);
-//			return adjuntoHayaManager.getAdjuntosPersonasExp(id);
+			return adjuntoHayaManager.getAdjuntosPersonasExp(id);
 		}
 		return super.getAdjuntosPersonasExp(id);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratoExp(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosContratoExp(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosContratoExp(id);
-//			return adjuntoHayaManager.getAdjuntosContratoExp(id);
+			return adjuntoHayaManager.getAdjuntosContratoExp(id);
 		}
 		return super.getAdjuntosContratoExp(id);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosCntConBorrado(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosCntConBorrado(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosCntConBorrado(id);
-//			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
+			return adjuntoHayaManager.getAdjuntosCntConBorrado(id);
 		}
 		return super.getAdjuntosCntConBorrado(id);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public List<? extends AdjuntoDto> getAdjuntosPersonaConBorrado(Long id) {
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.getAdjuntosPersonaConBorrado(id);
 		}else if(esEntidadHaya()){
-			return super.getAdjuntosPersonaConBorrado(id);
-//			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
+			return adjuntoHayaManager.getAdjuntosPersonaConBorrado(id);
 		}
 		return super.getAdjuntosPersonaConBorrado(id);
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String upload(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
@@ -172,13 +174,13 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String uploadPersona(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
 				return adjuntoCajamarManager.uploadPersona(uploadForm);
 			}else if(esEntidadHaya()){
-				return super.uploadPersona(uploadForm);
-//				return adjuntoHayaManager.uploadPersona(uploadForm);
+				return adjuntoHayaManager.uploadPersona(uploadForm);
 			}
 			return super.uploadPersona(uploadForm);
 		}else{
@@ -187,6 +189,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String uploadExpediente(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
@@ -202,13 +205,13 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public String uploadContrato(WebFileItem uploadForm) {
 		if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){
 			if(esEntidadCajamar()){
 				return adjuntoCajamarManager.uploadContrato(uploadForm);
 			}else if(esEntidadHaya()){
-				return super.uploadContrato(uploadForm);
-//				return adjuntoHayaManager.uploadContrato(uploadForm);
+				return adjuntoHayaManager.uploadContrato(uploadForm);
 			}
 			return super.uploadContrato(uploadForm);
 		}else{
@@ -242,8 +245,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 		}else if(esEntidadHaya()){
-			return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
-//			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
 		}
 		return super.bajarAdjuntoContrato(adjuntoId, nombre, extension);
 	}
@@ -253,8 +255,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		if(esEntidadCajamar()){
 			return adjuntoCajamarManager.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 		}else if(esEntidadHaya()){
-			return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
-			//			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
+			return adjuntoHayaManager.bajarAdjunto(adjuntoId);
 		}
 		return super.bajarAdjuntoPersona(adjuntoId, nombre, extension);
 	}

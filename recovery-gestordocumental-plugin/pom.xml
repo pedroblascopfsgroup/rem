@@ -10,6 +10,7 @@
 
 	<groupId>es.pfsgroup.plugin</groupId>
 	<artifactId>recovery-gestordocumental-plugin</artifactId>
+	<packaging>jar</packaging>
 	<name>recovery-gestordocumental-plugin</name>
 
 	<dependencies>

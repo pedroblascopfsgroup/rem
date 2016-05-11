@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.gestordocumental.api;
+package es.pfsgroup.plugin.gestorDocumental.api;
 
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGarantiaDto;

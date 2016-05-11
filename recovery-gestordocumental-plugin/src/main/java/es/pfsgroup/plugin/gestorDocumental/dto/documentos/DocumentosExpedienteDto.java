@@ -1,7 +1,7 @@
-package es.pfsgroup.plugin.gestordocumental.dto.documentos;
+package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
 
-public class DescargaDocumentosExpedienteDto extends UsuarioPasswordDto {
+public class DocumentosExpedienteDto extends UsuarioPasswordDto {
 
 	/**
 	 * Identificador que diferencia el tipo de relación (por expediente o por
@@ -23,7 +23,7 @@ public class DescargaDocumentosExpedienteDto extends UsuarioPasswordDto {
 	 */
 	private Boolean vinculoExpediente;
 	
-	
+
 	public String getTipoConsulta() {
 		return tipoConsulta;
 	}

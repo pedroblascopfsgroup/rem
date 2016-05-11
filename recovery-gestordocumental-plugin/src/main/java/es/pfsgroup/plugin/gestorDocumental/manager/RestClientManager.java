@@ -15,8 +15,8 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
-import es.pfsgroup.plugin.gestordocumental.api.RestClientApi;
 
 
 @Service

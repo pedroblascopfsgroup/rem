@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -24,6 +26,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoP
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
 public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
@@ -60,6 +63,12 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
+	
+	@Autowired
+	TurnadoProcuradoresApi turnadoProcuradoresApi;
+	
+	@Autowired
+	UsuarioManager usuarioManager;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -119,6 +128,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_EnviarExpedienteLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
 				
 			executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_ENVIADO);
+			turnadoProcuradoresApi.turnarProcurador(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarTomaDec.equals(tex.getTareaProcedimiento().getCodigo())) {
 			actualizarProcIniciar(prc, listado, TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR);			

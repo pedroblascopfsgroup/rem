@@ -21,7 +21,7 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
-public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
+public class BCCPrecontenciosoEnterActionHandler extends PROGenericLeaveActionHandler {
 
 	/**
 	 * Serial ID
@@ -33,10 +33,10 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 
 	@Autowired
 	UsuarioManager usuarioManager;
-	
+
 	@Autowired
 	GenericABMDao genericDao;
-	
+
 	@Autowired
 	TurnadoProcuradoresApi turnadoProcuradoresApi;
 
@@ -58,38 +58,20 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 	@Transactional
 	private void personalizacionTarea(Procedimiento procedimiento, TareaExterna tex) {
 
-		if (tex != null && tex.getTareaProcedimiento() != null && TAP_REDACTAR_DEMANDA.equals(tex.getTareaProcedimiento().getCodigo())) {
+		// Llamamos al turnado de procuradores siempre y cuando se haya
+		// detectado diferencia entre lo propuesto y lo asignado
+		// actualmente, ya que el usuario puede haber cambiado el procurador
+		// asignado manualmente
 
-			List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
-
-			if (!Checks.esNulo(listado)) {
-				for (TareaExternaValor tev : listado) {
-					try {
-						if ("principal".equals(tev.getNombre())) {
-							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
-						}
-					} catch (Exception e) {
-						logger.error("personalizacionTarea: " + e);
-					}
-				}
-			}
-
-			genericDao.save(Procedimiento.class, procedimiento);
-
-			// Llamamos al turnado de procuradores siempre y cuando se haya
-			// detectado diferencia entre lo propuesto y lo asignado
-			// actualmente, ya que el usuario puede haber cambiado el procurador
-			// asignado manualmente
-			
-			if(turnadoProcuradoresApi.comprobarSiLosDatosHanSidoCambiados(procedimiento.getId())){
-				try {
-					turnadoProcuradoresApi.turnarProcurador(procedimiento.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (AplicarTurnadoException e) {
-					e.printStackTrace();
-				}
+		if (turnadoProcuradoresApi.comprobarSiProcuradorHaSidoCambiado(procedimiento.getId())) {
+			try {
+				turnadoProcuradoresApi.turnarProcurador(procedimiento.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (AplicarTurnadoException e) {
+				e.printStackTrace();
 			}
 		}
 	}
+
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteEnvioDemanda" width="1157" height="626">
+<root-container name="hcj_tramiteEnvioDemanda" width="1549" height="845">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

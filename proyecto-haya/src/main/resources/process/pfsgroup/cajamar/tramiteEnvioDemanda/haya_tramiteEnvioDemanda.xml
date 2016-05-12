@@ -11,7 +11,7 @@
 	<state name="HC106_RedactarDemandaAdjuntarDocu">
 		<event type="node-enter">
          	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-            	<targetBean>genericEnterActionHandler</targetBean>
+            	<targetBean>bccPrecontenciosoEnterActionHandler</targetBean>
         	 </action>
       	</event>
       	<event type="node-leave">

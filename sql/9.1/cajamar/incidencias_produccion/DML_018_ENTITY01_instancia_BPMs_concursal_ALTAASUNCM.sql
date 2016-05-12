@@ -84,6 +84,7 @@ BEGIN
 
   /* ----- Reservamos id's objetos de BPM ------- */
   DELETE FROM CM01.TMP_ALTA_BPM_INSTANCES;
+
   
   
   /*------------ Cerramos conjunto de litigios a usar ---------------------- */
@@ -93,6 +94,7 @@ BEGIN
     from CM01.Prc_Procedimientos prc
       inner join CM01.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.DD_TAS_ID = 2
     where PRC.USUARIOCREAR = 'ALTAASUNCM'
+      and prc.dd_tpo_id = (SELECT dd_tpo_id FROM cm01.dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo = 'PCO')     
   ) and PRC.USUARIOCREAR = 'ALTAASUNCM';
 
   COMMIT;
@@ -108,11 +110,28 @@ BEGIN
     INNER JOIN CM01.prc_procedimientos prc ON tar.prc_id = prc.prc_id
     inner join CM01.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.DD_TAS_ID = 2
   where tex.USUARIOCREAR = 'ALTAASUNCM'
+      and prc.dd_tpo_id = (SELECT dd_tpo_id FROM cm01.dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo = 'PCO')   
   )and tex2.USUARIOCREAR = 'ALTAASUNCM';  
 
   commit;
-  DBMS_OUTPUT.PUT_LINE('[INFO] TEX2.TEX_TOKEN_ID_BPM=null en TEX_TAREA_EXTERNA.');
+  DBMS_OUTPUT.PUT_LINE('[INFO] TEX2.TEX_TOKEN_ID_BPM=null en TEX_TAREA_EXTERNA.');  
   
+    /*------------ Actualizamos el TPO a  tramite fase comun que son los que se deben crear en alta_asuntos_CM ---------------------- */
+  --TP_CODIGO SELECT dd_tpo_id FROM cm01.dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo = 'H009'
+  
+  update CM01.prc_procedimientos prc set  prc.dd_tpo_id = (SELECT dd_tpo_id FROM cm01.dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo = 'H009') 
+  where prc.prc_id in (
+    select distinct prc.prc_id
+    from CM01.Prc_Procedimientos prc
+      inner join CM01.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.DD_TAS_ID = 2
+    where PRC.USUARIOCREAR = 'ALTAASUNCM'
+      and prc.dd_tpo_id = (SELECT dd_tpo_id FROM cm01.dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo = 'PCO') 
+  ) and PRC.USUARIOCREAR = 'ALTAASUNCM';
+
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('[INFO] dd_tpo_id = H009.');
+
+   
     
   /*------------ CURSOR ---------------------- */
 

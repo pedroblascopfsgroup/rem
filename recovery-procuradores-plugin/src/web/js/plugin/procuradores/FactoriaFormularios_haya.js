@@ -3960,6 +3960,14 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	
 	                      ]);
 	
+	//id: 459 : TRAMITE SUBASTA A TERCEROS: H004_SenyalamientoSubasta
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaNot","fieldLabel":"Fecha notificación subasta",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaCel","fieldLabel":"Fecha Celebración",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textarea',"name":"d_solicitante","fieldLabel":"Solicitante",allowBlank:false,width:285}
+	                       ,{"xtype":'textarea',"name":"d_letyproc","fieldLabel":"Indicar el letrado y/o procurador",filtrar:true,width:285}
+	]);
+	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

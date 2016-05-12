@@ -309,12 +309,9 @@ public class AdjuntoManager implements AdjuntoApi{
 		return adjuntosMapeados;
 	}
 	
-	
-	
 	@Override
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem uploadForm) {
-
 		String comboTipoFichero = uploadForm.getParameter("comboTipoFichero");
 		
 		FileItem fileItem = uploadForm.getFileItem();
@@ -353,15 +350,8 @@ public class AdjuntoManager implements AdjuntoApi{
         Auditoria.save(adjuntoAsunto);
 		asunto.getAdjuntos().add(adjuntoAsunto);
 
-		// asunto.addAdjunto(fileItem);
 		proxyFactory.proxy(AsuntoApi.class).saveOrUpdateAsunto(asunto);
-        
-        
-//        Asunto asunto = asuntoDao.get(Long.parseLong(uploadForm.getParameter("id")));        
-//        asunto.addAdjunto(fileItem);
-//        asuntoDao.save(asunto);
 
-		//Integracion con IPLUS, si está configurado el flag correspondiente en devon.properties
         if (iplus != null && iplus.instalado()) {
         	iplus.almacenar(asunto, adjuntoAsunto);
         }
@@ -819,7 +809,7 @@ public class AdjuntoManager implements AdjuntoApi{
 		return adjuntos;
 	}
 	
-	private Set<EXTAdjuntoDto> creaObjetosEXTAsuntos(final Set<AdjuntoAsunto> adjuntos, final Usuario usuario, final Boolean borrarOtrosUsu) {
+	protected Set<EXTAdjuntoDto> creaObjetosEXTAsuntos(final Set<AdjuntoAsunto> adjuntos, final Usuario usuario, final Boolean borrarOtrosUsu) {
 		if (adjuntos == null)
 			return null;
 
@@ -867,6 +857,9 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public String getRefCentera() {
+					if(aa.getServicerId() != null) {
+						return aa.getServicerId().toString();
+					}
 					return null;
 				}
 

@@ -1,5 +1,7 @@
 package es.capgemini.pfs.persona.dao;
 
+import java.util.List;
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.persona.model.AdjuntoPersona;
 
@@ -8,5 +10,7 @@ import es.capgemini.pfs.persona.model.AdjuntoPersona;
  * @author marruiz
  */
 public interface AdjuntoPersonaDao extends AbstractDao<AdjuntoPersona, Long> {
+	
+	public List<AdjuntoPersona> getAdjuntoPersonaByIdDocumento(List<Integer> idsDocumento);
 
 }

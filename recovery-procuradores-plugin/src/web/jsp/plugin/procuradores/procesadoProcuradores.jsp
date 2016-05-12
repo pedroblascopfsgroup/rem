@@ -93,8 +93,8 @@ onViewClick : function(doFocus){
 	
 	tipoResolucionStore.on('load', function(){
 			comboTipoResolucionNew.setValue(idTipoResolucion);
-			//existenResolucionesPendientesValidar(recordSelect.idTarea);
-			existenResolucionesPendientesValidar(tareaId);
+			existenResolucionesPendientesValidar(recordSelect.idTarea);
+			//existenResolucionesPendientesValidar(tareaId);
 			
 	});
 	

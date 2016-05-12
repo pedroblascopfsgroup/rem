@@ -42,9 +42,13 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setAsesoria(despachoExtras.isAsesoria() ? "Si" : "No");
 		despachoExtrasDto.setCentroRecuperacion(despachoExtras.getCentroRecuperacion());
 		despachoExtrasDto.setClasifDespachoConcursos(despachoExtras.isClasifConcursos() ? "Si" : "No");
-		despachoExtrasDto.setClasifDespachoPerfil(context.getMapaClasificacionDespachoPerfil().get(despachoExtras.getClasifPerfil().toString()));
+		if(!Checks.esNulo(despachoExtras.getClasifPerfil())) {
+			despachoExtrasDto.setClasifDespachoPerfil(context.getMapaClasificacionDespachoPerfil().get(despachoExtras.getClasifPerfil().toString()));
+		}
 		despachoExtrasDto.setCodEstAse(context.getMapaCodEstAse().get(despachoExtras.getCodEstAse()));
-		despachoExtrasDto.setContratoVigor(context.getMapaContratoVigor().get(despachoExtras.getContratoVigor().toString()));
+		if(!Checks.esNulo(despachoExtras.getContratoVigor())) {
+			despachoExtrasDto.setContratoVigor(context.getMapaContratoVigor().get(despachoExtras.getContratoVigor().toString()));
+		}
 		despachoExtrasDto.setCorreoElectronico(despachoExtras.getCorreoElectronico());
 		despachoExtrasDto.setCuentaEntregas(despachoExtras.getCuentaEntregas());
 		despachoExtrasDto.setCuentaLiquidacion(despachoExtras.getCuentaLiquidacion());
@@ -66,7 +70,9 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setOficinaEntregas(despachoExtras.getOficinaEntregas());
 		despachoExtrasDto.setOficinaLiquidacion(despachoExtras.getOficinaContacto());
 		despachoExtrasDto.setOficinaProvisiones(despachoExtras.getOficinaProvisiones());
-		despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));
+		if(!Checks.esNulo(despachoExtras.getRelacionBankia())) {
+			despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));
+		}
 		despachoExtrasDto.setServicioIntegral(despachoExtras.isServicioIntegral() ? "Si" : "No");
 		despachoExtrasDto.setTipoDoc(despachoExtras.getTipoDocumento());
 		

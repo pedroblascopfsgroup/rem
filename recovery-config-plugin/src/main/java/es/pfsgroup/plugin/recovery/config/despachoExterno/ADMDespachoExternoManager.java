@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.config.despachoExterno;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,6 +34,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -691,5 +693,37 @@ public class ADMDespachoExternoManager {
 	public List<DDProvincia> dameAmbitoDespachoExtras(Long idDespacho) {
 		
 		return despachoExtrasDao.getProvinciasDespachoExtras(idDespacho);
+	}
+	
+	/** 
+	 * PRODUCTO-1274
+	 * Guarda Despacho Extras, a través del dto de DespachoExterno
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.guardarExtrasDespacho")
+	@Transactional(readOnly = false)
+	public DespachoExternoExtras guardarExtrasDespacho(ADMDtoDespachoExterno dto, Long idDespacho) {
+		DespachoExternoExtras desExtras;
+		if (dto.getId() == null) {
+			desExtras = new DespachoExternoExtras();
+		} else {
+			desExtras = despachoExtrasDao.get(dto.getId());
+		}
+		
+		desExtras.setId(idDespacho);
+		desExtras.setFax(dto.getFax());
+		try {
+			desExtras.setFechaAlta(DateFormat.toDate(dto.getFechaAlta()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		desExtras.setCorreoElectronico(dto.getCorreoElectronico());
+		desExtras.setDocumentoCif(dto.getDocumentoCif());
+		desExtras.setTipoDocumento(dto.getTipoDocumento());
+		
+		despachoExtrasDao.saveOrUpdate(desExtras);
+		
+		return desExtras;
 	}
 }

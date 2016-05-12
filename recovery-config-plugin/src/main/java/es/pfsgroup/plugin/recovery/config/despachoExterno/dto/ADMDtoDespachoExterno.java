@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import es.capgemini.devon.dto.WebDto;
 
-
 public class ADMDtoDespachoExterno extends WebDto {
 	
 	/**
@@ -41,7 +40,16 @@ public class ADMDtoDespachoExterno extends WebDto {
     
     private String tipoGestor;
         
-   
+    private String fax;
+    
+    private String correoElectronico;
+    
+    private String tipoDocumento;
+    
+    private String documentoCif;
+    
+    private String fechaAlta;
+    
     public Long getId() {
 		return id;
 	}
@@ -129,6 +137,47 @@ public class ADMDtoDespachoExterno extends WebDto {
 
 	public void setTipoGestor(String tipoGestor) {
 		this.tipoGestor = tipoGestor;
+	}
+
+	public String getFax() {
+		return fax;
+	}
+
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+
+	public String getCorreoElectronico() {
+		return correoElectronico;
+	}
+
+	public void setCorreoElectronico(String correoElectronico) {
+		this.correoElectronico = correoElectronico;
+	}
+
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+
+	public String getDocumentoCif() {
+		return documentoCif;
+	}
+
+	public void setDocumentoCif(String documentoCif) {
+		this.documentoCif = documentoCif;
+	}
+
+	public String getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(String fechaAlta) {
+		fechaAlta = fechaAlta.substring(0, 10).replace("-", "/");
+		this.fechaAlta = fechaAlta;
 	}
 
 }

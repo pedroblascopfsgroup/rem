@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.ext.turnadodespachos;
+package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,8 +31,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaTurnadoProcurador;
-import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaTurnadoProcuradorDao;
+import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 
 @Repository
 public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTurnadoProcurador, Long> implements EsquemaTurnadoProcuradorDao {
@@ -153,11 +153,11 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	}
 
 	@Override
-	public void turnarProcurador(Long idAsunto, String username) {
+	public void turnarProcurador(Long prcId, String username) {
 		Session session = this.getSessionFactory().getCurrentSession();
 		Query query = session.createSQLQuery(
 				"CALL asignacion_asuntos_turnado(:idAsunto, :username)")
-				.setParameter("idAsunto", idAsunto)
+				.setParameter("idAsunto", prcId)
 				.setParameter("username", username);
 						
 		query.executeUpdate();

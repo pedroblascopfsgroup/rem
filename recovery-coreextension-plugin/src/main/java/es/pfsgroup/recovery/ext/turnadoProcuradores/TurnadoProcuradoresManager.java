@@ -163,7 +163,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	@Transactional
-	public void turnarProcurador(Long idAsunto, String username, String codigoGestor) throws IllegalArgumentException, AplicarTurnadoException {
+	public void turnarProcurador(Long idAsunto, String username) throws IllegalArgumentException, AplicarTurnadoException {
 		try {
 			this.getEsquemaVigente();
 			esquemaTurnadoDao.turnarProcurador(idAsunto, username);

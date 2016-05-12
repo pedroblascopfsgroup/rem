@@ -65,7 +65,7 @@ public interface TurnadoProcuradoresApi {
 	 * 
 	 * @param idAsunto
 	 */
-	void turnarProcurador(Long idAsunto, String username, String codigoGestor) throws IllegalArgumentException, AplicarTurnadoException;
+	void turnarProcurador(Long idAsunto, String username) throws IllegalArgumentException, AplicarTurnadoException;
 
 	/**
 	 * Elimina un esquema

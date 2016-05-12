@@ -28,9 +28,9 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	/**
 	 * Asigna un despacho al asunto pasado como parámetro teniendo en cuenta la configuración del esquema de turnado vigente
 	 * 
-	 * @param idAsunto
+	 * @param prcId
 	 */
-	void turnarProcurador(Long idAsunto, String username);
+	void turnarProcurador(Long prcId, String username);
 
 	/**
 	 * Cuenta los letrados que hay asignados a estos tipos de turnado.

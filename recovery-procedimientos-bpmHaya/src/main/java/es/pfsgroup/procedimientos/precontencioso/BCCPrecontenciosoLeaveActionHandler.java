@@ -83,7 +83,7 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 			
 			if(turnadoProcuradoresApi.comprobarSiLosDatosHanSidoCambiados(procedimiento.getId())){
 				try {
-					turnadoProcuradoresApi.turnarProcurador(procedimiento.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
+					turnadoProcuradoresApi.turnarProcurador(procedimiento.getId(), usuarioManager.getUsuarioLogado().getUsername());
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
 				} catch (AplicarTurnadoException e) {

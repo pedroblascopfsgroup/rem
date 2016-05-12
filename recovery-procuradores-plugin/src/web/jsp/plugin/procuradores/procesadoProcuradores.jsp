@@ -93,8 +93,8 @@ onViewClick : function(doFocus){
 	
 	tipoResolucionStore.on('load', function(){
 			comboTipoResolucionNew.setValue(idTipoResolucion);
-			//existenResolucionesPendientesValidar(recordSelect.idTarea);
-			existenResolucionesPendientesValidar(idTarea);
+			existenResolucionesPendientesValidar(recordSelect.idTarea);
+			//existenResolucionesPendientesValidar(tareaId);
 			
 	});
 	
@@ -923,7 +923,7 @@ onViewClick : function(doFocus){
     });    
 		
 		var idTipoResolucion;
-		var idTarea;
+		var tareaId;
 		
     listaArchivosGrid.on('rowclick', function(grid, rowIndex, e) {
 		var idResolucion = grid.getStore().getAt(rowIndex).get('idResolucion');
@@ -944,7 +944,7 @@ onViewClick : function(doFocus){
 					comboTipoResolucionNew.fireEvent('select',comboTipoResolucionNew);
 					
 					idTipoResolucion=r.resolucion.comboTipoResolucionNew;
-					idTarea=r.resolucion.idTarea;
+					tareaId=r.resolucion.idTarea;
 					
 					resolucionPanel.getForm().reset();
 					

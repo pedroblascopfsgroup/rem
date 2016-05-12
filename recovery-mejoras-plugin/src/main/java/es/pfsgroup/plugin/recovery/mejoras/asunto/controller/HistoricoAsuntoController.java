@@ -29,6 +29,10 @@ import es.capgemini.pfs.expediente.model.Evento;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.tareaNotificacion.EXTDtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Funcion;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -56,7 +60,10 @@ public class HistoricoAsuntoController {
 	
 	@Autowired
 	private Executor executor;
-
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String abreDetalleHistorico(String tipoTraza, Long idTarea, Long idTraza, ModelMap model, WebRequest request) {
@@ -114,6 +121,15 @@ public class HistoricoAsuntoController {
 
 		return DEFAULT_ABRE_DETALLE_JSP;
 	}
+	
+	private Boolean getPerfilConFuncionVerSoloTareasPropias(Usuario usuario) {
+        for (Perfil perfil : usuario.getPerfiles()) {
+            for (Funcion funcion : perfil.getFunciones()) {
+                if (funcion.getDescripcion().equalsIgnoreCase(Funcion.FUNCION_SOLO_VER_TAREAS_PROPIAS)) { return true; }
+            }
+        }
+        return false;
+    }
 
 	@RequestMapping
 	public String getHistoricoAgregadoAsunto(@RequestParam(value = "id", required = true) Long id, int limit, int start, String sort, ModelMap map) {
@@ -124,6 +140,7 @@ public class HistoricoAsuntoController {
 
 			List<MEJHistoricoAsuntoViewDto> historico = juntaYOrdena(tareas, eventos);
 			List<MEJHistoricoAsuntoViewDto> historicos = new ArrayList<MEJHistoricoAsuntoViewDto>();
+			Usuario user = usuarioManager.getUsuarioLogado();
 
 			PageSql page = new PageSql();
 
@@ -137,7 +154,9 @@ public class HistoricoAsuntoController {
 				toIndex = 25;
 			}
 
+			Boolean tienePermiso = getPerfilConFuncionVerSoloTareasPropias(user);
 			for(MEJHistoricoAsuntoViewDto mhaw : historico){
+				
 				mhaw.setAgenda(false);
 				if(mhaw.getGroup().equals("D")){
 					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -145,14 +164,28 @@ public class HistoricoAsuntoController {
 					mhaw.setFechaIni(sdf.format(mhaw.getFechaInicio()));
 					mhaw.setAgenda(true);
 				}
-				
-				historicos.add(mhaw);
+				if (tienePermiso){
+					if("C".equals(mhaw.getGroup()) || "D".equals(mhaw.getGroup()) ){
+						if (user.getUsername().equals(mhaw.getDestinatarioTarea()) || user.getUsername().equals(mhaw.getNombreUsuario()) 
+						|| user.getNombre().equals(mhaw.getDescripcionTarea()) || user.getNombre().equals(mhaw.getNombreUsuario())){
+							
+							historicos.add(mhaw);
+						} else {
+							size--;
+						}
+					} else {
+						historicos.add(mhaw);
+					}
+				} else {
+					historicos.add(mhaw);
+				}
 			}
 			if (historicos.size() >= start + limit) {
 				historicos = historicos.subList(start, start + limit);
-			} else
-				historicos = historicos.subList(start, historico.size());
-
+			}
+			else{
+				historicos = historicos.subList(start, size);
+			}
 			page.setTotalCount(size);
 			page.setResults(historicos);
 

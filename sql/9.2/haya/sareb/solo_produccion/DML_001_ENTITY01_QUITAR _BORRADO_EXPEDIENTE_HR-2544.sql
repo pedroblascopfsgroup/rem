@@ -16,8 +16,8 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 DECLARE
-    V_ESQUEMA VARCHAR2(25 CHAR):= 'HAYA01'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'HAYAMASTER'; -- Configuracion Esquema Master
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
     table_count number(3); -- Vble. para validar la existencia de las Tablas.
     v_column_count number(3); -- Vble. para validar la existencia de las Columnas.

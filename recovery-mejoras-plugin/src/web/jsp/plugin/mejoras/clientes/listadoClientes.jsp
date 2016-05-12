@@ -845,16 +845,16 @@
 	}
     
 	var validaZonaJerarquia = function() {
-		if (!tabGestion)
+		debugger;
+		
+		if (!tabJerarquia)
 			return true; 	
 
-		if (comboJerarquia.getValue() == '' && comboZonas.getValue() == '')
+		if (comboJerarquia.getValue() == '' && listadoCodigoZonas.length == 0)
 			return true;
 
-		if (comboJerarquia.getValue() != '' && comboZonas.getValue() != '')
+		if (comboJerarquia.getValue() != '' && listadoCodigoZonas.length > 0)
 			return true;
-
-		return false;
 	}
    
 
@@ -887,13 +887,11 @@
             p.codigoColectivoSingular =comboColectivoSingular.getValue();
 			p.nominaPension =comboNominaPension.getValue();
 			p.propietario =comboPropietario.getValue();
-			p.codigoZona=comboZonas.getValue();
     		p.tipoIntervercion=comboIntervencion.getValue();			
-			p.jerarquia=comboJerarquia.getValue();
 			p.codigoGestion=comboGestion.getValue();			
     	}
     	if (tabJerarquia){
-    		p.codigoEntidad=comboJerarquia.getValue();
+    		p.jerarquia=comboJerarquia.getValue();
 			p.codigoZona=listadoCodigoZonas.toString();
     	}
     	return p;

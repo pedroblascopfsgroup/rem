@@ -346,7 +346,6 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		        	procBienCopiado.setBien(procBien.getBien());
 		        	procBienCopiado.setSolvenciaGarantia(procBien.getSolvenciaGarantia());
 		        	procBienCopiado.setProcedimiento(procedimiento);
-		        	procBienCopiado.setGuid(procBien.getGuid());
 		        	genericDao.save(ProcedimientoBien.class, procBienCopiado);
 		        	procedimientosBien.add(procBienCopiado);
 		        }

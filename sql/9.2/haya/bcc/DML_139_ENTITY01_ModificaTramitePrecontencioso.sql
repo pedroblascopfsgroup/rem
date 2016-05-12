@@ -69,7 +69,7 @@ DECLARE
         T_TIPO_TFI('PCO_RegistrarTomaDec','5','combo','proc_propuesto','Procedimiento propuesto por la entidad','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','dameTipoProcedimientoOriginal()','TipoProcedimiento','0','DD'),
         T_TIPO_TFI('PCO_RegistrarTomaDec','6','combo','proc_a_iniciar','Procedimiento a iniciar','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'TipoProcedimiento','0','DD'),
         T_TIPO_TFI('PCO_RegistrarTomaDec','7','currency','importeDemanda','Importe de la demanda','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','PRODUCTO-1342'),
-        T_TIPO_TFI('PCO_RegistrarTomaDec','8','combo','partidoJudicial','Partido judicial','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false','TipoPlaza',null,'0','PRODUCTO-1342'),
+        T_TIPO_TFI('PCO_RegistrarTomaDec','8','combo','partidoJudicial','Partido judicial','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'TipoPlaza','0','PRODUCTO-1342'),
         T_TIPO_TFI('PCO_RegistrarTomaDec','9','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
        ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;

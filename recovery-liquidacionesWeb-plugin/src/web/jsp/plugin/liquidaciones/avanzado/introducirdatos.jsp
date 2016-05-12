@@ -138,50 +138,53 @@
 	<pfs:button name="btAceptar" caption="**Aceptar"  captioneKey="plugin.liquidaciones.introducirdatos.action.aceptar" iconCls="icon_ok">
 		if (tipoDemoraCierre.value > 100) {
 			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
-		} else {
-			if (validarForm()) {
-				if(isEdit.getValue() && (anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y"))){
-					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidación" />');
-				}else{
-					
-					fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
-					
-					var p=parametros();
-					
-					var storeList = tiposInteresStore.data.items;
-					if (storeList.length > 0) {
-						var tiposInteresesData = [];
+		} 
+		else {
+		   	if( fechaCierre.getValue() > fechaDeLiquidacion.getValue()){
+				Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.introducirdatos.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre no puede ser posterior a la Fecha de Liquidación" />');
+				return false;
+			} else {		
+				if (validarForm()) {
+					if(isEdit.getValue() && (anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y"))){
+						Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidación" />');
+					}else{
 						
-						var i;
-						for (i=0;i < storeList.length;i++) {
-							var reg = storeList[i].data;
-							var tipo = '';
-							tipo = reg.fecha + '#' + reg.tipoInteres;
-							tiposInteresesData.push(tipo);
+						fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
+						
+						var p=parametros();
+						
+						var storeList = tiposInteresStore.data.items;
+						if (storeList.length > 0) {
+							var tiposInteresesData = [];
+							
+							var i;
+							for (i=0;i < storeList.length;i++) {
+								var reg = storeList[i].data;
+								var tipo = '';
+								tipo = reg.fecha + '#' + reg.tipoInteres;
+								tiposInteresesData.push(tipo);
+							}
 						}
+						
+						p.tiposIntereses = tiposInteresesData;
+						
+						if(isEdit.getValue()){
+							p.id = "${dtoCalculoLiquidacion.id}";
+						}
+						
+						page.webflow({
+			      			flow:'liquidaciones/guardaCalculoLiquidacion'
+			      			,params: p
+			      			,success: function(){
+								page.fireEvent(app.event.DONE);
+			           		}	
+				      	});
+				      	
 					}
-					
-					p.tiposIntereses = tiposInteresesData;
-					
-					if(isEdit.getValue()){
-						p.id = "${dtoCalculoLiquidacion.id}";
-					}
-					
-					page.webflow({
-		      			flow:'liquidaciones/guardaCalculoLiquidacion'
-		      			,params: p
-		      			,success: function(){
-							page.fireEvent(app.event.DONE);
-		           		}	
-			      	});
-			      	
+				} else {
+					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
 				}
-
-
-				
-			} else {
-				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
-			}
+			}	
 		}
 	</pfs:button>
 

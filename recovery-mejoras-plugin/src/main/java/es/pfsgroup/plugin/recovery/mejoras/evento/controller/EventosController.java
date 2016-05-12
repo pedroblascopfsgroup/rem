@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.mejoras.evento.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,6 +14,10 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.expediente.model.Evento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Funcion;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.evento.EventoAbrirDetalleHandler;
@@ -29,12 +34,40 @@ public class EventosController {
 	@Autowired(required = false)
 	private List<EventoAbrirDetalleHandler> handlers;
 	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
 	@RequestMapping
 	public String getListadoHistoricoEventos(Long idEntidad, String tipoEntidad, ModelMap model){
 		List<Evento> lista = proxyFactory.proxy(EventoApi.class).getHistoricoEventos(tipoEntidad, idEntidad);
-		model.put("eventos", lista);
+		Usuario user = usuarioManager.getUsuarioLogado();
+		Boolean tienePerfil = getPerfilConFuncionVerSoloTareasPropias(user);
+
+		if (tienePerfil){
+			List<Evento> listas = new ArrayList<Evento>();
+			EXTTareaNotificacion tarea;
+			for (Evento list : lista){
+				tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(list.getTarea().getId());
+				if(user.getUsername().equals(list.getTarea().getEmisor()) || user.getNombre().equals(list.getTarea().getEmisor()) || user.equals(tarea.getDestinatarioTarea())  ){
+							listas.add(list);
+						}
+			}
+			model.put("eventos", listas);
+
+		} else {
+			model.put("eventos", lista);
+		}
 		return "plugin/mejoras/historicos/MEJhistoricoEventosJSON";
 	}
+	
+	private Boolean getPerfilConFuncionVerSoloTareasPropias(Usuario usuario) {
+        for (Perfil perfil : usuario.getPerfiles()) {
+            for (Funcion funcion : perfil.getFunciones()) {
+                if (funcion.getDescripcion().equalsIgnoreCase(Funcion.FUNCION_SOLO_VER_TAREAS_PROPIAS)) { return true; }
+            }
+        }
+        return false;
+    }
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping

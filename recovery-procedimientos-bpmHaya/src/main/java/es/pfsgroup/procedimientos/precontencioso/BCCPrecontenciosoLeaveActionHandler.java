@@ -10,9 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -63,7 +61,7 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 			List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
 
 			if (!Checks.esNulo(listado)) {
-				for (TareaExternaValor tev : listado) {
+				for (EXTTareaExternaValor tev : listado) {
 					try {
 						if ("principal".equals(tev.getNombre())) {
 							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));

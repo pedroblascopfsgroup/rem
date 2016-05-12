@@ -1,23 +1,14 @@
 package es.pfsgroup.procedimientos.precontencioso;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
-import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
@@ -29,9 +20,6 @@ public class BCCPrecontenciosoEnterActionHandler extends PROGenericLeaveActionHa
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
-	private Executor executor;
-
-	@Autowired
 	UsuarioManager usuarioManager;
 
 	@Autowired
@@ -39,8 +27,6 @@ public class BCCPrecontenciosoEnterActionHandler extends PROGenericLeaveActionHa
 
 	@Autowired
 	TurnadoProcuradoresApi turnadoProcuradoresApi;
-
-	private final String TAP_REDACTAR_DEMANDA = "HC106_RedactarDemandaAdjuntarDocu";
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -54,7 +40,6 @@ public class BCCPrecontenciosoEnterActionHandler extends PROGenericLeaveActionHa
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Transactional
 	private void personalizacionTarea(Procedimiento procedimiento, TareaExterna tex) {
 

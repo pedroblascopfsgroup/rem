@@ -143,11 +143,11 @@ BEGIN
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU
                (ETP_ID                          NUMBER(16) NOT NULL
 				,ETP_CODIGO                     VARCHAR2(10 CHAR)
-			    ,ETP_DESCRIPCION                NUMBER(16) NOT NULL
-			    ,ETP_DESCRIPCION_LARGA          NUMBER(16) NOT NULL
+			    ,ETP_DESCRIPCION                VARCHAR2(50 CHAR) NOT NULL
+			    ,ETP_DESCRIPCION_LARGA          VARCHAR2(250 CHAR) NOT NULL
 				,DD_EET_ID                      NUMBER(16)
 				,ETP_FECHA_INI_VIGENCIA         TIMESTAMP(6)
-				,ETP_FECHE_FIN_VIGENCIA         TIMESTAMP(6)
+				,ETP_FECHA_FIN_VIGENCIA         TIMESTAMP(6)
 			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
 			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
 			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL

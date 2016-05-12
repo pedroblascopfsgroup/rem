@@ -1887,7 +1887,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 	public Boolean esGestorRecobroExpediente(Long idExpediente, Long idUsuario) {
 		GestorExpediente gestor = this.getGestorRecobroActualExpediente(idExpediente);
 		if (!Checks.esNulo(gestor) && !Checks.esNulo(idUsuario)){
-			if (idUsuario.equals(gestor.getUsuario().getId())){
+			if (!Checks.esNulo(gestor.getUsuario()) && idUsuario.equals(gestor.getUsuario().getId())){
 				return true;
 			}
 		}

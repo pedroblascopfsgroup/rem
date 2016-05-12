@@ -13,7 +13,27 @@
 	Ext.util.CSS.createStyleSheet("Button.icon_buildingEdit { background-image: url('../img/plugin/nuevoModeloBienes/building_edit.png');}");
 
 	var idBienSeleccionado;
+	
+	var SI_NO_Render = function (value, meta, record) {
+		if (value) {
+			return '<s:message code="label.si" text="**S&iacute;" />';
+		} else {
+			return '<s:message code="label.no" text="**No" />';
+		}
+	};
     
+    var SI_NO_NULL_Render = function (value, meta, record) {
+		        if (Ext.isEmpty(value)){
+                    return '';
+                } else {
+                    if (value == '1') {
+                            return '<s:message code="label.si" text="**S&iacute;" />';
+                    } else {
+                            return '<s:message code="label.no" text="**No" />';
+                    }
+                }
+	};
+	
 	var funcionEditarBien= function(){
 		var rec = embargoProcedimientoGrid.getSelectionModel().getSelected();
         var idEmbargo = rec.get('idEmbargo');
@@ -100,11 +120,12 @@
 		,{name:"idInstrucciones"}
 		,{name:"letra"}
 		,{name:"observaciones"}
-		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
-           	,{name:"numeroActivo"}
-        </sec:authorize>
+       	,{name:"numeroActivo"}
 		,{name:"referenciaCatastral"}
 		,{name:"numFinca"}		
+		,{name:"postores"}
+		,{name:"cesionRemate"}
+		,{name:"eAdjudicataria"}
 	]);
 	
 	var embargoProcedimientoStore = page.getStore({
@@ -121,9 +142,7 @@
 		{header : '<s:message code="procedimiento.embargos.grid.codigo" text="**Codigo"/>', hidden:true, dataIndex : 'codigo' }
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroFinca" text="**N&uacute;mero finca"/>', sortable: true, dataIndex : 'numFinca' }
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.referenciaCatastral" text="**Referencia catastral"/>', sortable: true, dataIndex : 'referenciaCatastral' }
-		<sec:authorize ifNotGranted="PERSONALIZACION-BCC">
-			,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', sortable: true, dataIndex : 'numeroActivo' }
-        </sec:authorize>
+		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.numeroActivo" text="**Número activo"/>', sortable: true, dataIndex : 'numeroActivo' }
 		,{header : '<s:message code="plugin.nuevoModeloBienes.procedimiento.embargos.grid.origen" text="**Carga"/>', width: 67, sortable: true, dataIndex : 'origen' }
 		,{header : '<s:message code="procedimiento.embargos.grid.descripcion" text="**Descripcion"/>', sortable: true, dataIndex : 'descripcion' }
 		,{header : '<s:message code="procedimiento.embargos.grid.tipo" text="**Tipo"/>', sortable: true, dataIndex : 'tipo' }
@@ -136,8 +155,16 @@
 		,{header : '<s:message code="procedimiento.embargos.grid.fechaDene" text="**fechaDenegacion"/>', sortable: true, dataIndex : 'fechaDenegacion' }
 		,{header : '<s:message code="procedimiento.embargos.grid.cargaBien" text="**cargaBien"/>', sortable: true, dataIndex : 'cargaBien'}
 		,{header : '<s:message code="procedimiento.embargos.grid.titular" text="**titular"/>', sortable: true, dataIndex : 'titular'}
-		,{header : '<s:message code="procedimiento.embargos.grid.Instrucciones" text="**Instrucciones"/>', sortable: true, dataIndex : 'instrucciones', renderer: function (val){if (val==1) {return "SI";} else {return "NO"}} }		
+		,{header : '<s:message code="procedimiento.embargos.grid.Instrucciones" text="**Instrucciones"/>', sortable: true, dataIndex : 'instrucciones', renderer : SI_NO_Render }	
+		,{header : '<s:message code="procedimiento.embargos.grid.Postores" text="**Postores"/>',width: 60, sortable: true, dataIndex : 'postores', renderer : SI_NO_NULL_Render }
+		,{header : '<s:message code="procedimiento.embargos.grid.CRemate" text="**C. Remate"/>',width: 67, sortable: true, dataIndex : 'cesionRemate', renderer : SI_NO_NULL_Render }
+		,{header : '<s:message code="procedimiento.embargos.grid.EAdjudicataria" text="**E. Adjudicataria"/>', sortable: true, dataIndex : 'eAdjudicataria'}
 	]);
+
+	<%-- Si el usuario pertenece a la entidad CAJAMAR no se mostrará la columna Numero Activo --%>	
+	if ('${usuario.entidad.descripcion}' == 'CAJAMAR') {
+		embargoProcedimientoCm.config[3].hidden=true;
+	}
 
 	btnVerificarBien = new Ext.Button({
 		text:'<s:message code="app.consultar" text="**Consultar" />'
@@ -326,7 +353,7 @@
 	<sec:authorize ifAllGranted="BOTON_MARCAR_EMBARGOS_MULTIPLE">
 		buttonBar.push(btnEditarMultiple);
 	</sec:authorize>
-	<sec:authorize ifNotGranted="SOLO_CONSULTA">
+	<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_EMBARGO_PROCEDIMIENTO">
 	buttonBar.push(btnAgregarBien);
 	buttonBar.push(btnExcluirBien);
 	buttonBar.push(btnEditar);

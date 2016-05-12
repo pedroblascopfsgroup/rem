@@ -11,12 +11,11 @@
 
 	var labelStyle = 'width:185px;font-weight:bolder",width:375';
 	var labelStyleAjusteColumnas = 'width:185px;height:40px;font-weight:bolder",width:375';
-	//var labelStyleDescripcion = 'width:185x;height:60px;font-weight:bolder",width:700';
 	var labelStyleTextArea = 'font-weight:bolder",width:500';
 	
 	var arrayCampos = new Array();
 	
-	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder"};
+	var config = {width: 250, labelStyle:"width:150px;font-weight:bolder",allowBlank:false, forceSelection: true};
 <%-- 	var idAsunto = '${asunto.id}'; --%>
 	var idTermino = '${termino.id}';
 	var idExpediente = '${idExpediente}';
@@ -85,6 +84,8 @@
 			flow: 'mejacuerdo/getCamposDinamicosTerminosPorTipoAcuerdo'
 			,params:{idTipoAcuerdo:cmp.getValue()} 
 			,success: function (result, request){
+				detalleFieldSet.removeAll(true);
+				
 				var cmpLft = Ext.getCmp('dinamicElementsLeft');
 			   	if (cmpLft && cmpLft.el) {
 					cmpLft.el.remove();
@@ -95,7 +96,6 @@
 					cmpRgt.el.remove();
 			   	}
 				
-				//var camposDynamics = Ext.util.JSON.decode(result.responseText);
 				var camposDynamics = result;
 		
 				var dinamicElementsLeft = [];
@@ -104,17 +104,18 @@
 				for (var i = 0; i < camposDynamics.camposTerminoAcuerdo.length; i++) {
 				    switch (camposDynamics.camposTerminoAcuerdo[i].tipoCampo) {
 				    	case 'number':
-				    		var campo = app.creaNumber(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo , '', {id:camposDynamics.camposTerminoAcuerdo[i].nombreCampo});
+				    		var campo = app.creaNumber(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo ,'', {id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo, allowBlank:!camposDynamics.camposTerminoAcuerdo[i].obligatorio});
 				    		break;
 				    	case 'text':
-				    		var campo = app.creaNumber(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo , '', {id:camposDynamics.camposTerminoAcuerdo[i].nombreCampo});
+				    		var campo = app.creaText(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo , '', {id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo, allowBlank:!camposDynamics.camposTerminoAcuerdo[i].obligatorio});
 				    		break;
 				    	case 'fecha':
 				    		var campo = new Ext.form.DateField({
 											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,name: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,value : ''
-											, allowBlank : true
+											, allowBlank : !camposDynamics.camposTerminoAcuerdo[i].obligatorio
+											,blankText: 'campo fecha obligatorio'
 											,autoWidth:true
 											 ,fieldLabel: camposDynamics.camposTerminoAcuerdo[i].labelCampo
 										});
@@ -128,6 +129,7 @@
 										    triggerAction: 'all',
 										    mode: 'local',
 										    editable: false,
+										    allowBlank : !camposDynamics.camposTerminoAcuerdo[i].obligatorio,
 										    emptyText:'---',
 										    store: new Ext.data.JsonStore({
 										        fields: ['myId','displayText'],
@@ -346,8 +348,7 @@
 			fechaActual.setSeconds(0);
 			
 			fechaActual = Date.parse(fechaActual);
-       		
-       		if(formulario.isValid()){
+       		if(formulario.isValid() && detalleFieldSet.getForm().isValid()){
        			var dateSolucionPrevista = null;
        			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
        				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
@@ -362,7 +363,7 @@
 					
 					return false;
        			}
-       			if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora ) {
+       			<%--if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));
        				date = Ext.util.Format.date(date, "d/m/y");
 	       			Ext.Msg.show({
@@ -371,8 +372,8 @@
 				   		buttons: Ext.Msg.OK
 					});
 					return false;
-	       		}  
-	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && !Ext.getCmp('fechaSolucionPrevista').isValid() ) {
+	       		}  --%>
+	       		if(comboTipoAcuerdo.getValue()==idTipoAcuerdoFondosPropios && isNaN(parseFloat(dateSolucionPrevista))) {
 	       			return false;
 	       		}else if(comboTipoAcuerdo.getValue() == idTipoAcuerdoRegulParcial && isNaN(parseFloat(dateSolucionPrevista))){
 	       			Ext.Msg.show({
@@ -386,17 +387,18 @@
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.planPago" text="**Este acuerdo ya tiene asignado un Plan de Pago" />',
 				   		buttons: Ext.Msg.OK
 					});       			
+       			}else if (comboBienes.getValue()== '' && bienesFieldSet.isVisible()){
+       				Ext.Msg.show({
+				   		title:'Aviso',
+				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.bienesPropuesta" text="**Rellene el campo Bienes del asunto" />',
+				   		buttons: Ext.Msg.OK
+					});
+       				
        			}
        			else {
        		
 	       		var params = detalleFieldSet.getForm().getValues();
 	       		
-	       		/*
-				for (var i = 0; i < detalleFieldSet.getForm().items.length; i++) {
-					if (detalleFieldSet.getForm().items.items[0].getValue()!='') {
-						Ext.apply(params)
-					}
-				}*/
 	       		
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });
 	       		Ext.apply(params, {idTipoAcuerdo : comboTipoAcuerdo.getValue()});
@@ -432,6 +434,14 @@
 					}       				
 				});	
 			}
+			}
+			else{
+				Ext.MessageBox.show({
+				           title: 'Error',
+				           msg: 'Por favor rellene los campos obligatorios',
+				           width:300,
+				           buttons: Ext.MessageBox.OK
+				       });
 			}	
        		
      	}		
@@ -497,6 +507,7 @@
 	
 	var comboBienes = app.creaDblSelect(null,'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.combo" text="**Bienes del asunto/Bienes para dación" />',config); 
 	
+	
 
 	var bienesFieldSet = new Ext.form.FieldSet({
 		title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.bienes.titulo" text="**Bienes de la propuesta y garantías seleccionadas"/>'
@@ -561,8 +572,10 @@
 		       	});
 	       	}
 	       	
-	       	if("${termino.informeLetrado}"!=null && "${termino.informeLetrado}"!=''){
-	       		informeLetrado.setValue("${termino.informeLetrado}");
+	       	var informLetrado = '<s:message text="${termino.informeLetrado}" javaScriptEscape="true" />';
+	       	
+	       	if(informLetrado !=null && informLetrado !=''){
+	       		informeLetrado.setValue(informLetrado);
 	       	}
 	       	
 	       	comboTipoAcuerdo.setDisabled(false);

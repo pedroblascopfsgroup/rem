@@ -125,16 +125,49 @@ public class ADMPerfilManager {
 		}
 		return p;
 	}
-
+	
 	/**
-	 * A�ade en un perfil una lista de funciones
+	 * A�ade en un perfil una lista de funciones no pwCheckl
 	 * 
 	 * @param idPerfil
 	 * @param funciones
 	 */
 	@BusinessOperation("ADMPerfilManager.guardaFuncionesPerfil")
 	@Transactional(readOnly = false)
-	public void guardaFuncionesPerfil(Long idPerfil, Collection<Long> funciones, String password) {
+	public void guardaFuncionesPerfil(Long idPerfil, Collection<Long> funciones) {
+		if (Checks.esNulo(idPerfil)) {
+			throw new IllegalArgumentException("idPerfil: es null");
+		}
+		if (!Checks.estaVacio(funciones)) {
+			EXTPerfil p = perfilDao.get(idPerfil);
+			if (p == null) {
+				throw new BusinessOperationException("plugin.config.perfiles.admperfilmanager.guardafuncionesperfil.noexisteperfil");
+			}
+
+			for (Long funid : funciones) {
+				FuncionPerfil fp = funcionPerfilDao.createNewObject();
+				fp.setPerfil(p);
+				Funcion f = funcionDao.get(funid);
+				if (Checks.esNulo(f)) {
+					throw new BusinessOperationException("plugin.config.perfiles.admperfilmanager.guardafuncionesperfil.noexistefuncion");
+				}
+				fp.setFuncion(f);
+				funcionPerfilDao.save(fp);
+			}
+
+		}
+	}
+
+	/**
+	 * A�ade en un perfil una lista de funciones
+	 * 
+	 * @param idPerfil
+	 * @param funciones
+	 * @param password
+	 */
+	@BusinessOperation("ADMPerfilManager.guardaFuncionesPerfilSeguro")
+	@Transactional(readOnly = false)
+	public void guardaFuncionesPerfilSeguro(Long idPerfil, Collection<Long> funciones, String password) {
 		if (Checks.esNulo(idPerfil)) {
 			throw new IllegalArgumentException("idPerfil: es null");
 		}
@@ -206,9 +239,9 @@ public class ADMPerfilManager {
 	 * @param idFuncion
 	 * @param password
 	 */
-	@BusinessOperation("ADMPerfilManager.borrarFuncionPerfilSegura")
+	@BusinessOperation("ADMPerfilManager.borrarFuncionPerfilSeguro")
 	@Transactional(readOnly = false)
-	public void borrarFuncionPerfilSegura(Long idPerfil, Long idFuncion, String password) {
+	public void borrarFuncionPerfilSeguro(Long idPerfil, Long idFuncion, String password) {
 		Assertions.assertNotNull(idFuncion, "idFuncion no puede ser null");
 		Assertions.assertNotNull(idPerfil, "idPerfil no puede ser null");
 		Assertions.assertNotNull(password, "password no puede ser null");

@@ -194,7 +194,13 @@
 					<set>
 						<value>29</value>
 					</set>
-				</entry>				
+				</entry>	
+				<entry key="ABRIR_COBROS_PAGOS">
+					<!-- Tareas tipo abrir asunto -->
+					<set>
+						<value>CONTACOBR</value>
+					</set>
+				</entry>			
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">
@@ -317,6 +323,11 @@
 				<value>GESPROC</value>
 			</set>
 		</property>
+		<property name="perfilesConsulta">
+			<set>
+				<value>CON_CONSULTA</value>
+			</set>
+		</property>
 	</bean>
 	
 	<bean id="procedimientosProjectContextCAJAMAR" parent="procedimientosProjectContextDefault">
@@ -381,6 +392,33 @@
 			<map>
 				<entry key="CODIGO_TIPO_GESTOR_EXTERNO" value="GESCON" />
 				<entry key="CODIGO_TIPO_GESTOR_SUPERVISOR" value="SUCON" />
+			</map>
+		</property>
+		
+		<property name="gestorYSupervisorPorTipoAsuntoYEntidad">
+			<map> <!-- CODIGO ENTIDAD -->
+				<entry key="CAJAMAR">
+					<map> <!-- CODIGO ASUNTO -->
+						<entry key="01"> <!-- LITIGIO -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="LETR"/>
+							</map>
+						</entry>
+						<entry key="02"> <!-- CONCURSAL -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="GESCON"/>
+							</map>
+						</entry>
+						<entry key="ACU"> <!-- ACUERDOS -->
+							<map>
+								<entry key="SUPERVISOR" value="SUCON"/>
+								<entry key="GESTOR" value="LETR"/>
+							</map>
+						</entry>
+					</map>
+				</entry>
 			</map>
 		</property>		
 

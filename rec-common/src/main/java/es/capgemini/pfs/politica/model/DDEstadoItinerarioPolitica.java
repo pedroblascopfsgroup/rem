@@ -34,6 +34,10 @@ public class DDEstadoItinerarioPolitica implements Auditable, Dictionary {
     public static final String ESTADO_REVISAR_EXPEDIENTE = "RE";
     public static final String ESTADO_DECISION_COMITE = "DC";
     public static final String ESTADO_VIGENTE = "VIG";
+    public static final String ESTADO_PERIODO_CARENCIA = "CAR";
+    public static final String ESTADO_GESTION_VENCIDOS = "GV";
+    public static final String ESTADO_EN_SANCION = "ENSAN";
+    public static final String ESTADO_SANCIONADO = "SANC";
 
     @Id
     @Column(name = "DD_EPI_ID")
@@ -51,8 +55,11 @@ public class DDEstadoItinerarioPolitica implements Auditable, Dictionary {
 
     @Column(name = "DD_EPI_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+    @Column(name = "DD_EPI_ORDEN")
+    private Long orden;
 
-    @Embedded
+	@Embedded
     private Auditoria auditoria;
 
     @Version
@@ -156,5 +163,14 @@ public class DDEstadoItinerarioPolitica implements Auditable, Dictionary {
     public void setVersion(Integer version) {
         this.version = version;
     }
+    
+    
+    public Long getOrden() {
+		return orden;
+	}
+
+	public void setOrden(Long orden) {
+		this.orden = orden;
+	}
 
 }

@@ -264,6 +264,7 @@ function run_container () {
 	fi
 	scripts_dir=$WORKSPACE_DIR/SQL-SCRIPTS/
 	cp $(pwd)/sql-files/*.sql $scripts_dir
+	cp $(pwd)/sql-files/listener.ora $scripts_dir
 	chmod ugo+r $scripts_dir/*
 	$(pwd)/showversion.sh > $WORKSPACE_DIR/version.txt
 	chmod go+r $WORKSPACE_DIR/version.txt

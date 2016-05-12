@@ -395,7 +395,9 @@
 			meses.show();
 
 			<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
-				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
+			if(Ext.Element.get('prc-btnGenerarDocPrecontencioso-padre') != null) {
+				Ext.Element.get('prc-btnGenerarDocPrecontencioso-padre').hide();
+			}			
 			</sec:authorize>
 			
 			<sec:authorize ifAllGranted="GENERAR_DOC_PRECONTENCIOSO">

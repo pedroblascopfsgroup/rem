@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=OSCAR DORADO
---## FECHA_CREACION=20160329
+--## FECHA_CREACION=20160330
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1048
@@ -152,7 +152,7 @@ AS
           LEFT JOIN ' + v_esquema+'.rel_categorias_tiporesol relctr ON relctr.tr_id = tr.dd_tr_id
           LEFT JOIN ' + v_esquema+'.rel_categorias relcat ON relcat.rel_id = relctr.rel_id
           LEFT JOIN ' + v_esquema+'.rec_res_cat rrc ON rrc.res_id = res.res_id
-          LEFT JOIN ' + v_esquema+'.cat_categorias cat ON rrc.cat_id = cat.cat_id
+          LEFT JOIN ' + v_esquema+'.cat_categorias cat ON (cat.cat_id = relcat.cat_id or cat.cat_id = rrc.cat_id)
           LEFT JOIN ' + v_esquema+'.prc_procedimientos prc ON prc.prc_id = vtar.prc_id
           LEFT JOIN ' + v_esquema+'.dd_tpo_tipo_procedimiento tpo ON tpo.dd_tpo_id = prc.dd_tpo_id
     WHERE ((res.res_epf_id = 2) OR (tr.dd_tr_id = 1003 AND res.res_epf_id = 6))';        

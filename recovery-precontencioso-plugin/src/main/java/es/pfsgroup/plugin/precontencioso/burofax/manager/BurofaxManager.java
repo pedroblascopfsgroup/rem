@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.precontencioso.burofax.manager;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.security.SecurityUtils;
@@ -25,6 +29,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dao.ContratoPersonaManualDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
@@ -42,6 +47,7 @@ import es.capgemini.pfs.persona.model.DDPropietario;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.persona.model.PersonaManual;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -72,6 +78,9 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 @Service
 public class BurofaxManager implements BurofaxApi {
 
+	@Autowired
+	private Executor executor;
+	
 	@Autowired
 	private BurofaxDao burofaxDao;
 
@@ -521,6 +530,8 @@ public class BurofaxManager implements BurofaxApi {
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoBurofaxPCO.ESTADO_SOLICITADO);
 			DDResultadoBurofaxPCO resultado=(DDResultadoBurofaxPCO) genericDao.get(DDResultadoBurofaxPCO.class,filtro1);
 			
+			Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			
 			for(EnvioBurofaxPCO envioBurofax : listaEnvioBurofaxPCO){
 				
 				String contenidoParseadoIntermedio = "";
@@ -538,7 +549,7 @@ public class BurofaxManager implements BurofaxApi {
 				String contenidoParseadoFinal = docBurManager.parseoFinalBurofax(contenidoParseadoIntermedio, mapeoVariables);
 				
 				envioBurofax.setContenidoBurofax(contenidoParseadoFinal);
-				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
+				//genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 				
 				BurofaxEnvioIntegracionPCO envioIntegracion=new BurofaxEnvioIntegracionPCO();
 				envioIntegracion.setEnvioId(envioBurofax.getId());
@@ -574,6 +585,7 @@ public class BurofaxManager implements BurofaxApi {
 					
 					// Obtener nombre de fichero
 					String nombreFichero = obtenerNombreFichero();
+					
 					//Generar documento a partir de la plantilla y de los campos HTML cabecera y contenido
 										
 					String nombreFicheroPdf = generarBurofaxPDF(envioBurofax, nombreFichero).getFileName();
@@ -581,11 +593,17 @@ public class BurofaxManager implements BurofaxApi {
 					envioIntegracion.setNombreFichero(nombreFicheroPdf);
 					envioIntegracion.setIdAsunto(envioBurofax.getBurofax().getProcedimientoPCO().getProcedimiento().getAsunto().getId());
 					
+					//rellenamos la referencia externa del burofax nombre pdf + usuario logado
+					String refExternaEnvio = obtenerNombreFicheroSinExt(nombreFichero) +" - "+usuarioLogado.getUsername();
+					
+					envioBurofax.setRefExternaEnvio(refExternaEnvio);
+					
 				} else {
 					envioIntegracion.setContenido(envioBurofax.getContenidoBurofax());
 				}
 
 				genericDao.save(BurofaxEnvioIntegracionPCO.class, envioIntegracion);
+				genericDao.save(EnvioBurofaxPCO.class, envioBurofax);
 			}
 		} catch (Exception e) {
 			logger.error("guardarEnvioBurofax: " + e);
@@ -612,12 +630,31 @@ public class BurofaxManager implements BurofaxApi {
 		fi.setFileName(nombreFicheroPdf);
 		fi.setContentType("application/pdf");
 		fi.setLength(archivoBurofaxPDF.length());
+		
+//		try {
+//			OutputStream outputStream = fi.getOutputStream(); // Last step is to get FileItem's output stream, and write your inputStream in it. This is the way to write to your FileItem.
+//			int read = 0;
+//			byte[] bytes = new byte[1024];
+//			while ((read = archivoBurofax.getInputStream().read(bytes)) != -1) {
+//			     outputStream.write(bytes, 0, read);
+//			}
+//			outputStream.close();
+//		} catch (FileException e) {
+//			logger.error("generarBurofaxPDF: " + e);
+//		} catch (IOException e) {
+//			logger.error("generarBurofaxPDF: " + e);
+//		}
+//	               
 		return fi;
 	}
 	
 	private String obtenerNombreFichero() {
 		Long secuencia = burofaxDao.obtenerSecuenciaFicheroDocBurofax();
 		return FICHERO_DOCUMENTO_RANKIA+String.format("%011d", secuencia)+".docx";
+	}
+	
+	private String obtenerNombreFicheroSinExt(String nombreFicheroDoc) {
+		return  nombreFicheroDoc.replaceAll(".docx", "");
 	}
 	
 	/*

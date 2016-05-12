@@ -191,12 +191,24 @@ public class LIQLiquidacionesManager {
 	public Persona findPrimerTitularContrato(Long idContrato){
 		EventFactory.onMethodStart(this.getClass());
 		
+		//Tenemos que quedarnos con el titular de orden menor
+		Long orden = null;
+		Persona resultado = null;
+		
 		Contrato c = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET,idContrato);
 		for (ContratoPersona cp : c.getContratoPersona()){
-			if (cp.getTipoIntervencion().getTitular() && (cp.getOrden() == 1)){
-				return cp.getPersona();
+			if (cp.getTipoIntervencion().getTitular()) { //&& (cp.getOrden() == 1)){
+				if (orden==null) {
+					orden = cp.getOrden();
+					resultado = cp.getPersona();
+				} else {
+					if (cp.getOrden()<orden) {
+						orden = cp.getOrden();
+						resultado = cp.getPersona();
+					}
+				}
 			}
 		}
-		return null;
+		return resultado;
 	}
 }

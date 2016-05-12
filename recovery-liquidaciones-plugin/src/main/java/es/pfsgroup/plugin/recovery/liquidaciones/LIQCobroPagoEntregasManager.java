@@ -83,8 +83,8 @@ public class LIQCobroPagoEntregasManager {
 		 
 		 	Assertions.assertNotNull(dto,
 					"plugin.liquidaciones.liqcobropagomanager.dto.null");
-			Assertions.assertNotNull(dto.getProcedimiento(),
-					"Debe seleccionar una actuaci�n");
+//			Assertions.assertNotNull(dto.getProcedimiento(),
+//					"Debe seleccionar una actuaci�n");
 			
 			Long idAsunto= dto.getIdAsunto();
 			String subTipo= dto.getSubtipo();//Codigo EC
@@ -171,8 +171,11 @@ public class LIQCobroPagoEntregasManager {
 			cobroPago.setGastosOtros(gastosOtros);
 			cobroPago.setImporte(dto.getImportePago());
 			
-			Procedimiento proc= procedimiento.get(dto.getProcedimiento());
-			cobroPago.setProcedimiento(proc);
+			if(dto.getProcedimiento() != null){
+				Procedimiento proc= procedimiento.get(dto.getProcedimiento());
+				cobroPago.setProcedimiento(proc);
+			}
+			
 			if (!Checks.esNulo(cobroPago.getSubTipo())) {
 				if (Checks.esNulo(dto.getContrato())){
 					throw new BusinessOperationException("plugin.liquidaciones.liqcobropagomanager.idcontrato.null");

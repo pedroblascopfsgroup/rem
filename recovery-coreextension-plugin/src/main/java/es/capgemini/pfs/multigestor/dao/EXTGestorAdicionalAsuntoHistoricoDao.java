@@ -23,6 +23,17 @@ public interface EXTGestorAdicionalAsuntoHistoricoDao extends AbstractDao<EXTGes
 	 * @param idTipoGestor
 	 */
 	void actualizaFechaHasta(Long idAsunto, Long idTipoGestor);
+	
+	/**
+	 * Acutaliza el valor del campo fechaHasta para todos los objetos del hist�rico que cumple con las condiciones de filtrado.
+	 * Filtrado por idAsunto e idTipoGestor.
+	 *
+	 * @param idAsunto
+	 * @param idTipoGestor
+	 * @param idGestor
+	 * 
+	 */
+	void actualizaFechaHastaIdGestor(Long idAsunto, Long idTipoGestor, Long idGestor);
 
 	/**
 	 * Dao que devuelve una lista de {@link EXTGestorAdicionalAsuntoHistorico} ordenada por 

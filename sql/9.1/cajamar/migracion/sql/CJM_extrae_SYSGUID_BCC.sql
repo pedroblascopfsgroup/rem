@@ -127,7 +127,7 @@ BEGIN
                  , prb.BIE_ID
                  , prb.USUARIOCREAR
                  , bie.BIE_CODIGO_INTERNO
-                 , RANK() OVER (PARTITION BY prb.PRC_ID ORDER BY bie.BIE_ID) AS RANKING     
+                 , RANK() OVER (PARTITION BY prb.PRC_ID ORDER BY bie.BIE_CODIGO_INTERNO) AS RANKING     
             FROM
                  '||V_ESQUEMA||'.PRB_PRC_BIE prb
                , '||V_ESQUEMA||'.BIE_BIEN bie

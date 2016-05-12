@@ -16,6 +16,7 @@ import org.springframework.security.Authentication;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
 import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -352,11 +353,21 @@ public class UsuarioManager {
 		DbIdContextHolder.setDbId(enti.getId());
 		loggedUser.setEntidad(enti);
 		usuarioDao.update(loggedUser);
-		Authentication authentication = SecurityContextHolder.getContext()
-				.getAuthentication();
+		
+		UsuarioSecurity user = usuarioDao.getUsuarioSecurity(loggedUser.getId()); 
+		
+		Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 		UsuarioSecurity usuSec = (UsuarioSecurity) userDetails;
 		usuSec.setEntidad(enti);
+		
+		Set<GrantedAuthority> authorities = usuarioDao.getAuthoritiesCambioEntidad(loggedUser.getId());
+        authorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+        authorities.add(new GrantedAuthorityImpl("ROLE_ANONYMOUS"));
+        user.setAuthorities(authorities);
+		authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(authentication);		
 	}
 
 	@BusinessOperation(ConfiguracionBusinessOperation.BO_USUARIO_MGR_CAMBIAR_ENTIDAD_BASE_DATOS)

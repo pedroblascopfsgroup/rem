@@ -778,7 +778,7 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -828,7 +828,7 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_PERSONAS">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -878,7 +878,7 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_EXPEDIENTES">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -928,7 +928,7 @@
 	
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_CONTRATOS">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true

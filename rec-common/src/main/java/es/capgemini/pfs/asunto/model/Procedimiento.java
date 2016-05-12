@@ -29,6 +29,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
@@ -155,6 +156,11 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
     
     @Column(name="PRC_REMOTO")
     private Integer prcRemoto; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACU_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Acuerdo propuesta;
 
 	@Transient
     private Boolean activo;
@@ -766,6 +772,14 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
 
 	public void setPrcRemoto(Integer prcRemoto) {
 		this.prcRemoto = prcRemoto;
+	}
+	
+	public Acuerdo getPropuesta() {
+		return propuesta;
+	}
+
+	public void setPropuesta(Acuerdo propuesta) {
+		this.propuesta = propuesta;
 	}
 
 }

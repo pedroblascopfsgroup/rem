@@ -421,16 +421,18 @@
                 FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
                 inner join per_personas p on a1.per_id = p.per_id
         )
-        SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, ${tipoGestionArquetipo.seguimiento} FROM (
-            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id
+        SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, DD_TIT_CODIGO
+          FROM (
+            SELECT DISTINCT arr.per_id, arr.arq_id_calculado arr_id, tit.dd_tit_codigo
                   FROM VARR arr
                     LEFT JOIN arq_arquetipos arq_per ON arr.arq_id = arq_per.arq_id  --arquetipo anterior
                     JOIN arq_arquetipos arq_cal ON arr.arq_id_calculado = arq_cal.arq_id  --arquetipo calculado
+                     JOIN iti_itinerarios iti ON arq_cal.iti_id = iti.iti_id JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id
                   WHERE
                   /* Que tenga un arquetipo NUEVO gestionable */
                   arq_cal.arq_gestion = 1
-                  /* Que tenga un NUEVO arquetipo que sea de seguimiento */
-                  AND EXISTS (SELECT iti.iti_id FROM iti_itinerarios iti JOIN ${master.schema}.dd_tit_tipo_itinerarios tit ON iti.dd_tit_id = tit.dd_tit_id WHERE arq_cal.iti_id = iti.iti_id AND tit.dd_tit_codigo IN (${ddTipoItinerario.sintomatico.codigo}, ${ddTipoItinerario.sistematico.codigo}))
+                  /* Que tenga un NUEVO arquetipo que sea de Seguimiento o de Gestion de deuda*/
+                  AND tit.dd_tit_codigo IN ('SIS','SIN','DEU')
                   AND
                   (
                     /* Si tiene fecha de vigencia que se cumpla/* Si tiene fecha de vigencia que se cumpla, o si tiene plazo de disparo que salte  */
@@ -473,7 +475,7 @@
                         WHERE pex.borrado = 0
                             AND pex.per_id = arr.per_id
                             AND eex.dd_eex_codigo IN (${ddEstadoExpedientes.Activo.codigo}, ${ddEstadoExpedientes.Bloqueado.codigo}, ${ddEstadoExpedientes.Congelado.codigo})
-                            AND exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
+                            AND exp.dd_tpx_id in (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo in ('SEG','GESDEU'))
                              --No sea un expediente de recobro
                             AND not exists (select exr.exp_id from exr_expediente_recobro exr where exp.exp_id = exr.exp_id)
                   )
@@ -698,7 +700,7 @@
         select mov.per_id, mov.cnt_id, mov.ofi_id, mov.mov_fecha_pos_vencida
                   ,case when tmp.dd_tit_codigo = ${ddTipoItinerario.recuperacion.codigo} then -- Recuperacion, vamos por importe pivote
                         case mov.n_mov_pos_vencida when 1 then 1 else 0 end
-                      else -- Seguimiento, vamos por riesgo
+                      else -- Seguimiento o Gestion de deuda, vamos por riesgo
                         case mov.n_mov_riesgo when 1 then 1 else 0 end
                       end es_cnt_pase
         from TMP_PER_ARQUETIPO_RECUPERACION tmp
@@ -727,8 +729,8 @@
           , ECL.DD_ECL_ID
           , 0 AS VERSION , 'BATCH' AS USUARIOCREAR ,SYSDATE AS FECHACREAR , 0 AS BORRADO -- Auditoria
           , TMP_CNT.OFI_ID
-          ,CASE WHEN DD_TIT_CODIGO = ${tipoGestionArquetipo.seguimiento} THEN
-            SYSDATE --SEGUIMIENTO, EL ITINERARIO EMPIEZA A CONTAR DESDE LA FECHA DE CREACION
+          ,CASE WHEN DD_TIT_CODIGO IN ('SEG','DEU') THEN
+            SYSDATE --SEGUIMIENTO O GESTION DEUDA, EL ITINERARIO EMPIEZA A CONTAR DESDE LA FECHA DE CREACION
           ELSE
             NVL(TMP_CNT.FECHA_POS_VENCIDA, SYSDATE) --RECUPERACION, EL ITINERARIO EMP. A CONTAR DESDE LA F.POS.VENCIDA, SI NULL = FECHA CREACION
           END AS CLI_FECHA_CREACION
@@ -763,7 +765,7 @@
       <![CDATA[
       MERGE INTO CLI_CLIENTES CLI USING
         ( WITH fechasEstados AS
-          (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+          (SELECT SYSDATE - ((((SUM(nvl(est.est_plazo,0))/1000)/24)/60)/60) fecha,
             ARQ_ID
           FROM arq_arquetipos arq
           INNER JOIN iti_itinerarios iti
@@ -895,7 +897,7 @@
     MERGE INTO CLI_CLIENTES CLI USING
         (
         WITH fechasEstados AS
-          (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+          (SELECT SYSDATE - ((((SUM(nvl(est.est_plazo,0))/1000)/24)/60)/60) fecha,
             ARQ_ID
           FROM arq_arquetipos arq
           INNER JOIN iti_itinerarios iti
@@ -948,7 +950,7 @@
      MERGE INTO CLI_CLIENTES CLI USING
         (
         WITH fechasEstados AS
-              (SELECT SYSDATE - ((((SUM(est.est_plazo)/1000)/24)/60)/60) fecha,
+              (SELECT SYSDATE - ((((SUM(nvl(est.est_plazo,0))/1000)/24)/60)/60) fecha,
             ARQ_ID
           FROM arq_arquetipos arq
           INNER JOIN iti_itinerarios iti
@@ -1271,7 +1273,7 @@ DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_MOV_REVISADOS',
 
     Insert /*+append*/ into TMP_CNT_CLI_DES
     SELECT cex.cnt_id
-      FROM cex_contratos_expediente cex, cmmaster.dd_eex_estado_expediente eex, exp_expedientes exp
+      FROM cex_contratos_expediente cex, ${master.schema}.dd_eex_estado_expediente eex, exp_expedientes exp
      WHERE exp.exp_id = cex.exp_id
        and cex.borrado = 0
        and eex.dd_eex_id = exp.dd_eex_id

@@ -162,7 +162,7 @@ if (bie.getInformacionRegistralBien()!=null){
 	row["refCatastral"] = bie.getInformacionRegistralBien().getReferenciaCatastralBien();
 	row["superficie"] = bie.getInformacionRegistralBien().getSuperficie();
 }
-if (bie.getLocalizacion()!=null){
+if (bie.getLocalizacion()!=null && bie.getLocalizacion().getLocalidad()!=null){
 	row["poblacion"] = bie.getLocalizacion().getLocalidad().getDescripcion();
 }
 

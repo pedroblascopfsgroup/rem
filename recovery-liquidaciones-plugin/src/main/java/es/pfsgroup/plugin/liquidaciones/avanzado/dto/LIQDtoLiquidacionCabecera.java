@@ -18,6 +18,7 @@ public class LIQDtoLiquidacionCabecera extends WebDto {
     private BigDecimal capital;
     private Date fechaVencimiento;
     private BigDecimal interes;
+    private Float tipoInteres;
     private Float tipoIntDemora;
     
     private Date fechaCertifDeuda;
@@ -72,6 +73,12 @@ public class LIQDtoLiquidacionCabecera extends WebDto {
 	}
 	public void setInteres(BigDecimal interes) {
 		this.interes = interes;
+	}
+	public Float getTipoInteres() {
+		return tipoInteres;
+	}
+	public void setTipoInteres(Float tipoInteres) {
+		this.tipoInteres = tipoInteres;
 	}
 	public Float getTipoIntDemora() {
 		return tipoIntDemora;

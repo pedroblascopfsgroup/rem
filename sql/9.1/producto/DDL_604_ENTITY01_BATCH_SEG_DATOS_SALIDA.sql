@@ -1,16 +1,17 @@
 --/*
 --##########################################
 --## AUTOR=LUIS RUIZ
---## FECHA_CREACION=20160218
+--## FECHA_CREACION=20160411
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.1.19
---## INCIDENCIA_LINK=PRODUCTO-673
+--## VERSION_ARTEFACTO=9.2.3
+--## INCIDENCIA_LINK=PRODUCTO-801
 --## PRODUCTO=SI
 --##
 --## Finalidad: DDL
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Agregamos dd_tpx_codigo
 --##########################################
 --*/
 
@@ -47,7 +48,8 @@ BEGIN
               PER_ID            NUMBER(16),
               ARQ_ID            NUMBER(16),
               CEX_PASE          NUMBER,
-              PEX_PASE          NUMBER
+              PEX_PASE          NUMBER,
+              DD_TPX_CODIGO     VARCHAR2 (20 CHAR)
             ) NOLOGGING';
 
   IF V_EXISTE = 0 THEN

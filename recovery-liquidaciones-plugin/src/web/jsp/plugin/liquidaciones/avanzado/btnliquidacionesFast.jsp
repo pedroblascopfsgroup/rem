@@ -5,11 +5,12 @@
 
 new Ext.Button({
 	text : '<s:message code="plugin.liquidaciones.btnliquidaciones.caption" text="**Liquidar" />'
+	,iconCls : 'icon_pdf'
 	,conodition : '' 
 	,handler : function() {
 		var w = app.openWindow({
 			flow : 'plugin.liquidaciones.avanzado.introducirdatos'
-			,width:950
+			,width:1110
 			,title : '<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Liquidaciones" />' 
 			,params : {idAsunto:data.id}
 		});

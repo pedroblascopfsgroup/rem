@@ -82,6 +82,8 @@ public class BusquedaContratosDto extends PaginationParamsImpl {
     private String motivoGestionHRE;
     
     private String situacionGestion;
+    
+    private Long idProcedimiento;
 
     /**
      * @return boolean: <code>true</code> si alguno de los siguientes campos existe:
@@ -566,5 +568,19 @@ public class BusquedaContratosDto extends PaginationParamsImpl {
 
 	public void setSituacionGestion(String situacionGestion) {
 		this.situacionGestion = situacionGestion;
+	}
+
+	/**
+	 * @return the idProcedimiento
+	 */
+	public Long getIdProcedimiento() {
+		return idProcedimiento;
+	}
+
+	/**
+	 * @param idProcedimiento the idProcedimiento to set
+	 */
+	public void setIdProcedimiento(Long idProcedimiento) {
+		this.idProcedimiento = idProcedimiento;
 	}
 }

@@ -3,9 +3,6 @@ package es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import jxl.StringFormulaCell;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -14,21 +11,24 @@ import org.hibernate.transform.Transformers;
 
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.PaginationParams;
+import es.pfsgroup.commons.utils.Checks;
 
 public class PageTransformHibernateFAKE extends PageHibernate {
 
     private static final long serialVersionUID = 1L;
     private Class clazz;
+    private String additionalOrder;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-	public PageTransformHibernateFAKE(String queryString, PaginationParams paginationParams, HashMap params, Class clazz) {
+	public PageTransformHibernateFAKE(String queryString, PaginationParams paginationParams, HashMap params, Class clazz, String additionalOrder) {
         super(queryString, paginationParams, params);
+        this.additionalOrder = additionalOrder;
         this.clazz = clazz;
     }
 
     @Override
     public Object doInHibernate(Session session) throws HibernateException {
-        String queryStr = creaQuery();
+      String queryStr = creaQuery();
 
       String query1 = queryStr;
       query1 = query1.replaceAll("^(.*?) order by.*?$", "$1");
@@ -48,6 +48,23 @@ public class PageTransformHibernateFAKE extends PageHibernate {
            this.results = new ArrayList<Object>();
        }
       return this.results;
+    }
+    
+    @Override
+    protected String creaQuery() {
+    	String sort;
+    	if (this.getSort() == null || this.getQueryString().toUpperCase().indexOf("ORDER BY") > 0) {
+            //no tenemos paginación
+            return this.getQueryString();
+        }
+        String order = this.getDir() != null ? this.getDir() : "ASC";
+
+        sort = this.getQueryString() + " order by " + this.getSort() + " " + order;
+
+        if(!Checks.esNulo(additionalOrder)){
+        	sort = sort + ", " + additionalOrder;
+        }
+        return sort;
     }
     
 }

@@ -140,8 +140,8 @@
 			var flow='plugin.liquidaciones.openReport';
 			var tipo='generaPDF';
 			var p=parametros();
-			var params='actuacion='+p.actuacion+'&contrato='+p.contrato+'&fechaCierre='+p.fechaCierre+'&intereses='+p.intereses+'&principal='+p.principal+'&nombre='+p.nombre+'&dni='+p.dni;
-			params = params + '&fechaLiquidacion='+p.fechaLiquidacion
+			var params='actuacion='+p.actuacion+'&contrato='+p.contrato+'&fechaCierre='+p.fechaCierre+'&intereses='+p.intereses+'&principal='+p.principal+'&nombre='+escape(p.nombre)+'&dni='+p.dni;
+			params =  params + '&fechaLiquidacion='+p.fechaLiquidacion;
 			//var params='id='+ '${expediente.id}'+'&REPORT_NAME=reporteExpediente'+'${expediente.id}'+'.pdf';
 			app.openPDF(flow,tipo,params);
 			page.fireEvent(app.event.DONE);

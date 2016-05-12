@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,12 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Set<String> tipoGestorLetrado;
 	private Map<String, String> tipoSupervisorProrroga;
 	private Set<String> tiposGestoresDeProcuradores;
+	private Set<String> perfilesConsulta;
+	private HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores;
+	private HashMap<String, HashMap<String, Set<String>>> perfilesGestoresEspeciales;
+	private HashMap<String, HashMap<String, Set<String>>> supervisorAsunto;
+	private HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto;
+	private HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -115,4 +122,70 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setTiposGestoresDeProcuradores(Set<String> tiposGestoresDeProcuradores) {
 		this.tiposGestoresDeProcuradores = tiposGestoresDeProcuradores;
 	}
+
+	/**
+	 * @return the perfilesConsulta
+	 */
+	@Override
+	public Set<String> getPerfilesConsulta() {
+		return perfilesConsulta;
+	}
+
+	/**
+	 * @param perfilesConsulta the perfilesConsulta to set
+	 */
+	public void setPerfilesConsulta(Set<String> perfilesConsulta) {
+		this.perfilesConsulta = perfilesConsulta;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getTiposAsuntosTiposGestores() {
+		return tiposAsuntosTiposGestores;
+	}
+
+	public void setTiposAsuntosTiposGestores(
+			HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores) {
+		this.tiposAsuntosTiposGestores = tiposAsuntosTiposGestores;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getPerfilesGestoresEspeciales() {
+		return perfilesGestoresEspeciales;
+	}
+
+	public void setPerfilesGestoresEspeciales(
+			HashMap<String, HashMap<String, Set<String>>> perfilesGestoresEspeciales) {
+		this.perfilesGestoresEspeciales = perfilesGestoresEspeciales;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getSupervisorAsunto() {
+		return supervisorAsunto;
+	}
+
+	public void setSupervisorAsunto(
+			HashMap<String, HashMap<String, Set<String>>> supervisorAsunto) {
+		this.supervisorAsunto = supervisorAsunto;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getDespachoSupervisorAsunto() {
+		return despachoSupervisorAsunto;
+	}
+
+	public void setDespachoSupervisorAsunto(
+			HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto) {
+		this.despachoSupervisorAsunto = despachoSupervisorAsunto;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getTipoGestorSupervisorAsunto() {
+		return tipoGestorSupervisorAsunto;
+	}
+
+	public void setTipoGestorSupervisorAsunto(
+			HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto) {
+		this.tipoGestorSupervisorAsunto = tipoGestorSupervisorAsunto;
+	}
+	
+	
+	
+	
+	
+	
 }

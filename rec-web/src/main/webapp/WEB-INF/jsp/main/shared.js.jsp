@@ -176,13 +176,13 @@ app.abreClienteTab = function(id, nombre,nombreTab){
  */
 app.abreExpediente = function(id, nombre){
 	
-	app.abreExpediente(id, nombre, '');
+	app.abreExpedienteTab(id, nombre, '');
 };
 
 /**
  * Abre una pestaña con la información del expediente en un tab determinado
  */
-app.abreExpediente = function(id, nombre, nombreTab){
+app.abreExpedienteTab = function(id, nombre, nombreTab){
 	this.openTab(nombre||'<s:message code="expedientes.consulta.titulo" text="**Expediente" />', 'expedientes/consultaExpediente', {id : id,'nombreTab':nombreTab} , {id:'exp'+id,iconCls:'icon_expedientes'});
 
 	this.addFavorite(id, nombre, this.constants.FAV_TIPO_EXPEDIENTE);

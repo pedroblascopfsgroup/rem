@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2"
+	name="tramiteObtenerValidacionComite">
+
+	<start-state name="inicio">
+		<transition to="P459_ObtenerValidacionComite"></transition>
+	</start-state>
+	
+	<state name="P459_ObtenerValidacionComite">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+				<targetBean>endProcessActionHandler</targetBean>
+			</action>
+		</event>  
+	</end-state>
+
+</process-definition>

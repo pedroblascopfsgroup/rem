@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
@@ -68,7 +69,7 @@ import es.pfsgroup.tipoFicheroAdjunto.MapeoTipoFicheroAdjunto;
 public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 
 	private static final String ALTA_GESTOR_DOC = "A";
-	private static final String CONSULTA_GESTOR_DOC = "C";
+	//private static final String CONSULTA_GESTOR_DOC = "C";
 	private static final String LISTADO_GESTOR_DOC = "L";
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -121,51 +122,64 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 	@BusinessOperation(BO_GESTOR_DOCUMENTAL_ALTA_DOCUMENTO)
 	@Transactional(readOnly = false)
 	public String altaDocumento(Long idEntidad, String tipoEntidadGrid, String tipoDocumento, WebFileItem uploadForm) {
-		if (Checks.esNulo(gestorDocumentalWSApi)) {
-			logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
-			return null;
-		}
-		GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
-		FileItem fileItem = uploadForm.getFileItem();
-
-		// En caso de que el fichero esté vacio, no subimos nada
-		if (fileItem == null || fileItem.getLength() <= 0) {
-		}
-
-		Integer max = getLimiteFichero(getParametroLimite(tipoEntidadGrid));
- 
-		if (fileItem.getLength() > max) {
-			AbstractMessageSource ms = MessageUtils.getMessageSource();
-			return ms.getMessage("fichero.limite.tamanyo",
-					new Object[] { (int) ((float) max / 1024f) },
-					MessageUtils.DEFAULT_LOCALE);
-		}
-		
-		if (comprobarExtensionNoPermitida(getFileExtension(uploadForm.getFileItem()))) {
-			AbstractMessageSource ms = MessageUtils.getMessageSource();
-			return ms.getMessage("fichero.extension.permitida",
-					new Object[] { getFileExtension(uploadForm.getFileItem()) },
-					MessageUtils.DEFAULT_LOCALE);
-		}
-		
-		String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
-
-		//Obtenemos el codigo mapeado		
-		if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)	|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
-			if(!Checks.esNulo(tipoDocumento)){
-				MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoDocumento));
-				if(!Checks.esNulo(mapeo)){
-					tipoDocumento = mapeo.getTipoFicheroExterno();
+		try {
+			if (Checks.esNulo(gestorDocumentalWSApi)) {
+				logger.warn("No encontrada implementación para el WS de gestión documental en Cajamar");
+				return null;
+			}
+			GestorDocumentalOutputDto outputDto = new GestorDocumentalOutputDto();
+			FileItem fileItem = uploadForm.getFileItem();
+	
+			// En caso de que el fichero esté vacio, no subimos nada
+			if (fileItem == null || fileItem.getLength() <= 0) {
+			}
+	
+			Integer max = getLimiteFichero(getParametroLimite(tipoEntidadGrid));
+	 
+			if (fileItem.getLength() > max) {
+				AbstractMessageSource ms = MessageUtils.getMessageSource();
+				return ms.getMessage("fichero.limite.tamanyo",
+						new Object[] { (int) ((float) max / 1024f) },
+						MessageUtils.DEFAULT_LOCALE);
+			}
+			
+			if (comprobarExtensionNoPermitida(getFileExtension(uploadForm.getFileItem()))) {
+				AbstractMessageSource ms = MessageUtils.getMessageSource();
+				return ms.getMessage("fichero.extension.permitida",
+						new Object[] { getFileExtension(uploadForm.getFileItem()) },
+						MessageUtils.DEFAULT_LOCALE);
+			}
+			String nombreFichero = uploadForm.getFileItem().getFileName();
+			
+			if(nombreFichero.length() > 100){
+				
+				AbstractMessageSource ms = MessageUtils.getMessageSource();
+				return ms.getMessage("fichero.tamanyo",new Object[] {(int) 100},
+						MessageUtils.DEFAULT_LOCALE);
+			}
+			
+			String claveRel = guardarRecuperarDatoEntidad(idEntidad, tipoEntidadGrid, uploadForm, tipoDocumento);
+	
+			//Obtenemos el codigo mapeado		
+			if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidadGrid)	|| DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidadGrid)) {
+				if(!Checks.esNulo(tipoDocumento)){
+					MapeoTipoFicheroAdjunto mapeo = genericDao.get(MapeoTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoDocumento));
+					if(!Checks.esNulo(mapeo)){
+						tipoDocumento = mapeo.getTipoFicheroExterno();
+					}
 				}
 			}
+			
+			outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
+					claveRel, ALTA_GESTOR_DOC, tipoDocumento,
+					tipoEntidadGrid, uploadForm));
+			
+			return outputDto.getTxtError();
 		}
-				
-		outputDto = gestorDocumentalWSApi.ejecutar(rellenaInputDto(
-				claveRel, ALTA_GESTOR_DOC, tipoDocumento,
-				tipoEntidadGrid, uploadForm));
-
-		return outputDto.getTxtError();
-		
+		catch(Exception e) {
+			logger.error("Error en el método altaDocumento: " + e.getMessage());
+			throw new FrameworkException(e);
+		}		
 	}
 	
 	private boolean comprobarExtensionNoPermitida(String extension) {
@@ -297,6 +311,7 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 			String nombreFichero = uploadForm.getFileItem().getFileName();
 			nombreFichero = nombreFichero.substring(0, nombreFichero.indexOf("."));
 			inputDto.setDescripcion(nombreFichero);
+			
 			if(!Checks.esNulo(uploadForm.getParameter("fechaCaducidad"))) {
 				SimpleDateFormat frmt = new SimpleDateFormat("ddMMyyyy");
 				try {

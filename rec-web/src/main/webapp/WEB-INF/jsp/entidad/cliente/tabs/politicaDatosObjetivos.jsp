@@ -235,7 +235,8 @@ var createDatosObjetivosPanel = function() {
 		{
 			if(estaPropuesto) btnModificar.enable();
 			if(estaPropuesto) btnBorrar.enable();
-        	if (pendiente && estaConfirmado && !automatico) btnProponerCumplimiento.enable();
+        	<%-- if (pendiente && estaConfirmado && !automatico) btnProponerCumplimiento.enable();--%>
+        	if (pendiente && estaConfirmado) btnProponerCumplimiento.enable();
         	if (estaIncumplido) btnJustificar.enable();
 		}		
     });

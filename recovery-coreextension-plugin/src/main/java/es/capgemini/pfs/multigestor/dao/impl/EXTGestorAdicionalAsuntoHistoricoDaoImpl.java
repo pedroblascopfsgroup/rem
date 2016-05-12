@@ -78,4 +78,18 @@ public class EXTGestorAdicionalAsuntoHistoricoDaoImpl extends AbstractEntityDao<
 		return false;
 	}
 
+	@Override
+	public void actualizaFechaHastaIdGestor(Long idAsunto, Long idTipoGestor,Long idGestor) {
+		 StringBuilder hqlUpdate = new StringBuilder("update EXTGestorAdicionalAsuntoHistorico gah set gah.fechaHasta = sysdate ");
+	        hqlUpdate.append(" where gah.asunto.id = :idAsunto and gah.tipoGestor.id = :idTipoGestor and gah.gestor.id = :idGestor and gah.fechaHasta is null");
+	        Query queryUpdate = this.getSession().createQuery(hqlUpdate.toString());
+
+	        queryUpdate.setParameter("idAsunto", idAsunto);
+	        queryUpdate.setParameter("idTipoGestor", idTipoGestor);
+	        queryUpdate.setParameter("idGestor", idGestor);
+	        
+	        queryUpdate.executeUpdate();
+		
+	}
+
 }

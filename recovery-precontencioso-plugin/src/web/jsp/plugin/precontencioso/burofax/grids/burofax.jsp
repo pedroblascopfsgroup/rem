@@ -365,7 +365,7 @@ var pdfRender = function(value, meta, record) {
       		delete this.items[this.getId(rec)];
       		var i = this.idArray.indexOf(rec.get(this.idProperty));
       		if (i >= 0){
-      			delete this.idArray.splice(i,1);
+      			this.idArray.splice(i,1);
       		}
       		
       		if(myCboxSelModel.getCount() == 0){
@@ -1372,7 +1372,7 @@ var pdfRender = function(value, meta, record) {
 		else{
 			btnNotificar.setDisabled(true);
 		}
-		<%-- Si hay un envio seleccionado y su estado es ENVIADO habilitamos el boton de descargar burofax --%>
+		<%-- Si hay un envio seleccionado y su estado es SOLICITADO habilitamos el boton de descargar burofax --%>
 		if(gridBurofax.getSelectionModel().getSelected().get('resultado') == 'Solicitado' && myCboxSelModel.getCount() == 1){
 			btnDescargarBurofax.setDisabled(false);
 		}

@@ -292,7 +292,12 @@ var gridLiquidaciones = app.crearGrid(storeLiquidaciones, cmLiquidacion, {
 	title: '<s:message code="plugin.precontencioso.grid.liquidacion.titulo" text="**Liquidaciones" />',
 	<sec:authorize ifAllGranted="TAB_PRECONTENCIOSO_LIQ_BTN">
 	bbar: [
-	<sec:authorize ifNotGranted="PERSONALIZACION-BCC">	btnSolicitar, </sec:authorize>
+	<%-- <sec:authorize ifNotGranted="PERSONALIZACION-BCC">	btnSolicitar, </sec:authorize>--%>
+		<c:choose>
+			<c:when test="${usuario.entidad.id ne appProperties.idEntidadCajamar}">
+		        btnSolicitar,
+		    </c:when>    
+		</c:choose>
 		btnEditarValores, 
 		btnConfirmar, 
 		btnVisar,
@@ -397,7 +402,7 @@ var actualizarBotonesLiquidacion = function() {
 			btnConfirmar.setDisabled(false);
 			btnVisar.setDisabled(true);
 			btnDescartar.setDisabled(false);
-			btnGenerar.setDisabled(true);
+			btnGenerar.setDisabled(false);
 			btnLiqGenDoc.setDisabled(true);
 			break;
 

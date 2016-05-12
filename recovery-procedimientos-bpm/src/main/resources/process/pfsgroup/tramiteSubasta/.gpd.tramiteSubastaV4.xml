@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteSubastaV4" width="1741" height="1044">
+<root-container name="tramiteSubastaV4" width="1335" height="781">
   <node name="Inicio" x="-223" y="-156" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -156,9 +156,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
   </node>
   <node name="P401_AdjuntarInformeSubasta" x="557" y="2" width="132" height="36">
     <edge>
@@ -281,9 +278,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
   </node>
   <node name="P401_BPMTramiteAdjudicacionV4" x="-133" y="310" width="132" height="36">
     <edge>
@@ -300,14 +294,8 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
   </node>
   <node name="P401_ContabilizarCierreDeuda" x="610" y="502" width="234" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -360,14 +348,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="P401_AprobacionPropCesionRemateDecision" x="-202" y="131" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

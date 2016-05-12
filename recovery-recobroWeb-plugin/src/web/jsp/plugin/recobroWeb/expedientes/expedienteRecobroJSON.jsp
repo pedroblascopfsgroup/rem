@@ -22,6 +22,7 @@
 		<json:property name='tieneTareaNotificacion' value="${expediente.fechaVencimiento!=null}" />
 		<json:property name='tieneComiteMixto' value="${expediente.comite.comiteMixto}" />
 		<json:property name='tieneComiteSeguimiento' value="${expediente.comite.comiteSeguimiento}" />
+		<json:property name='tieneComiteGestionDeuda' value="${expediente.comite.comiteGestionDeuda}" />
 		<json:property name="fechaVencimiento">
 		  <fwk:date value="${expediente.fechaVencimiento}"/>
 		</json:property>
@@ -47,6 +48,8 @@
 		<json:property name='comitesDelegarLen' value="${fn:length(comitesDelegar)==0}"/>
 		<json:property name='puedeMostrarSolapaMarcadoPoliticas' value="${puedeMostrarSolapaMarcadoPoliticas}"/>
 		<json:property name='puedeMostrarSolapaDecisionComite' value="${puedeMostrarSolapaDecisionComite}"/>
+		<json:property name='esPrimerGestorFaseActual' value="${esPrimerGestorFaseActual}"/>
+		<json:property name='esPrimerSupervisorFaseActual' value="${esPrimerSupervisorFaseActual}"/>
 	</json:object>
 	<json:object name="cabecera">
 		<json:property name="codExpediente" value="${expediente.id}" />
@@ -86,6 +89,7 @@
 		<json:property name='telefono2' value="${expediente.oficina.telefono2}" />
 		<json:property name='domicilio' value="${expediente.oficina.domicilio}" />
 		<json:property name='domicilioPlaza' value="${expediente.oficina.domicilioPlaza}" />
+		<json:property name='idZona' value="${expediente.oficina.zona.id}" />
 	</json:object>
 	<json:object name="clientes">
 		<json:array name="clientes" items="${expediente.personas}" var="expedientePersona">	
@@ -139,6 +143,12 @@
 		<json:property name='idGestorActual' value="${expediente.idGestorActual}" />
 		<json:property name='idSupervisorActual' value="${expediente.idSupervisorActual}" />
 	</json:object>
+	<c:if test="${expediente.decisionComite!=null}">
+		<json:property name='tieneDecisionComite' value="true" />
+	</c:if>
+	<c:if test="${expediente.decisionComite==null}">
+		<json:property name='tieneDecisionComite' value="false" />
+	</c:if>	
 	<json:object name="decision">
 		<json:property name='ultimaSesion' value="${expediente.comite.ultimaSesion.id}" />
 		<json:property name='comite' value="${expediente.comite.nombre}" />
@@ -180,7 +190,7 @@
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
 	<json:property name="esGestor" value="${esGestor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
-	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
+	<json:property name="esGestorSupervisorActual" value="${esPrimerGestorFaseActual || esPrimerSupervisorFaseActual}"/>
 	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">
 		<json:object>
 			<json:property name = "id" value = "${est.estadoItinerario.id }"/>

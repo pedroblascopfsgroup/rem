@@ -1,5 +1,7 @@
 package es.pfsgroup.procedimientos.expediente.deuda;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jbpm.graph.exe.ExecutionContext;
@@ -7,7 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.utils.BPMUtils;
+import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.process.ExpedienteBPMConstants;
+import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -15,6 +23,7 @@ import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
 import es.pfsgroup.recovery.api.ExpedienteApi;
 import es.pfsgroup.recovery.api.TareaNotificacionApi;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 /**
  * Handler del Nodo Enviar A Comite.
@@ -60,7 +69,31 @@ public class PROEnviarASancionadoDeudaActionHandler extends PROBaseActionHandler
              BPMUtils.deleteTimer(executionContext, TIMER_TAREA_RE);
              BPMUtils.deleteTimer(executionContext, TIMER_TAREA_ENSAN); 
              BPMUtils.deleteTimer(executionContext, TIMER_TAREA_SANC);       
-        } 
+        } else {
+        	//Si es avance automático decidimos todas las propuestas
+       	 	List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        	//Las propuestas en estado "Propuesto" se elevan/aceptan
+        	for (EXTAcuerdo propuesta : propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_PROPUESTO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO, true);
+        		}
+			}
+        	
+        	//Si es automático copiamos las políticas
+        	Expediente exp = expedienteManager.getExpediente(idExpediente);
+        	politicasVigentes = (Boolean) executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+
+           //Si se ha marcado como vigente las pol�ticas, el expediente se decide
+			if (politicasVigentes) {
+			     DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+			             DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+			     
+			     exp.setEstadoExpediente(estadoExpediente);
+			     expedienteManager.saveOrUpdate(exp);
+			
+			     //Si no se ha marcado como vigente, se siguie en la elevaci�n del expediente
+			}
+        }
         
         executionContext.setVariable(AVANCE_AUTOMATICO, Boolean.FALSE);
 
@@ -76,11 +109,24 @@ public class PROEnviarASancionadoDeudaActionHandler extends PROBaseActionHandler
         if (logger.isDebugEnabled()) {
             logger.debug("Cambio el estado del expediente a SANC");
         }
-
+        
+        if (!politicasVigentes) {
+        	expedienteManager.cambiarEstadoItinerarioExpediente(idExpediente, DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO);
+	        //Calcular el comite del expediente
+	        try {
+	            expedienteManager.calcularComiteExpediente(idExpediente);
+	        } catch (GenericRollbackException e) {
+	            logger.error("No se pudo encontrar un comite para el expediente: " + idExpediente, e);
+	        }
+	
+	        //Congela el expediente
+	        expedienteManager.congelarExpediente(idExpediente);
+	
+	        executionContext.getProcessInstance().signal();
+        }
        
-        expedienteManager.cambiarEstadoItinerarioExpediente(idExpediente, DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO);
-	        
-	    executionContext.getProcessInstance().signal();
+        
+	      
     }
 
 }

@@ -268,7 +268,7 @@
 		collapsible="false" titleKey="asunto.concurso.tabFaseComun.title" autoexpand="true"
 		bbar="btAddCredito,btEditCreditoGestor, btEditCreditoSupervisor, btEditCreditoDefinitivo,btnEditarTodos, btRemoveCredito" />
 
-	<sec:authorize ifAllGranted="SOLO_CONSULTA">
+	<sec:authorize ifNotGranted="ROLE_PUEDE_VER_BOTONES_CREDITO">
 		btAddCredito.hide();
 		btEditCreditoGestor.hide();
 		btEditCreditoSupervisor.hide();

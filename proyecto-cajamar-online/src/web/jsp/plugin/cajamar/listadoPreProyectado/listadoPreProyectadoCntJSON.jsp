@@ -22,6 +22,7 @@
 			<json:property name="fechaPrevReguCnt" >
 				<fwk:date value="${cnt.fechaPrevReguCnt}"/>
 			</json:property>
+			<json:property name="importePteDifer" value="${cnt.importePteDifer}" />			
 		</json:object>
 	</json:array>
 </fwk:json>

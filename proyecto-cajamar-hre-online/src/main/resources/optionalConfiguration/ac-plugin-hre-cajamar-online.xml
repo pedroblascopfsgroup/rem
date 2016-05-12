@@ -13,7 +13,7 @@
 	<bean id="listaEntidades" class="java.util.HashMap">
 		<constructor-arg>
 	   		<map>
-				<entry key="3058" value="CAJAS RURALES UNIDAS, SOCIEDAD COOPERATIVA DE CRÉDITO, CAJAMAR|Cajas Rurales Unidas, Sociedad Cooperativa de Crédito, Dom. Social Plaza de Barcelona, 5  04006 - Almeria  Teléfono: (950) 21 01 00*  E-mail:Cajamar@cajamar.es. Inscrita en el Registro Mercantil de Almeria, Libro 0, folio 1, tomo  1526, Hoja AL-40338, Inscripción 1Ş de fecha 31 de octubre de 2012. C.I.F. F04743175" />
+				<entry key="3058" value="CAJAMAR, CAJA RURAL, SOCIEDAD COOPERATIVA DE CREDITO|Cajas Rurales Unidas, Sociedad Cooperativa de Crédito, Dom. Social Plaza de Barcelona, 5  04006 - Almeria  Teléfono: (950) 21 01 00*  E-mail:Cajamar@cajamar.es. Inscrita en el Registro Mercantil de Almeria, Libro 0, folio 1, tomo  1526, Hoja AL-40338, Inscripción 1Ş de fecha 31 de octubre de 2012. C.I.F. F04743175" />
 				<entry key="3094" value="CAJA CAMPO, Caja Rural, Sociedad Cooperativa de Crédito|CAJA CAMPO, Caja Rural, Sociedad Cooperativa de Crédito, Dom. Social Avda. de Arrabal, 18 - 46340 REQUENA (Valencia). Inscrita en el R.M. de Valencia, T.6292, L.3597, Sec.8, F.73, H.V-28035, NIF F46026993" />
 				<entry key="3137" value="CAJA RURAL DE CASINOS, S.C.C.V.|Dom. Social Plaça Major, 10 - 46171 CASINOS (Valencia). Inscrita en el R.M. de Valencia, T.3061, L.377,S.G. H.V-5422, NIF F46043808" />
 				<entry key="3186" value="CAIXA RURAL ALBALAT DELS SORELLS, C.C.V.|CAIXA RURAL ALBALAT DELS SORELLS, Cooperativa de Crèdit Valenciana. Inscrita en el R.M. de Valencia, T.6267, L.3572, F.1, H.V-64305. NIF F96828728. Dom. Social Cl. Padre Salvador, 11 - 46135 ALBALAT DELS SORELLS (Valencia)." />

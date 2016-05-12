@@ -57,6 +57,7 @@ public class DatosLiquidacionDescuentosDaoImpl implements DatosLiquidacionDescue
 		plainQueryRecibosLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryRecibosLiq.append("  AND DEF_PCO_LIQ_ID = :idLiquidacion ");
 		plainQueryRecibosLiq.append("  AND DEF_COTIVT = :condicion ");
+		plainQueryRecibosLiq.append("  ORDER BY DEF_FEVCTR ASC ");
 
 		return plainQueryRecibosLiq.toString();
 	}
@@ -84,6 +85,7 @@ public class DatosLiquidacionDescuentosDaoImpl implements DatosLiquidacionDescue
 		plainQueryDatosGeneralesLiq.append(" FROM ECL_ENTREGAS_CUENTA_LIQ ");
 		plainQueryDatosGeneralesLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryDatosGeneralesLiq.append("  AND ECL_PCO_LIQ_ID = :idLiquidacion ");
+		plainQueryDatosGeneralesLiq.append("  ORDER BY ECL_FEDOEN ASC ");
 
 		return plainQueryDatosGeneralesLiq.toString();
 	}

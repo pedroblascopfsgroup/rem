@@ -91,6 +91,8 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_PrepararExpediente.equals(tex.getTareaProcedimiento().getCodigo())) {
 
+			boolean isInicializado = false;
+			
 			if (prc.getProcessBPM() == null) {
 				prc.setProcessBPM(executionContext.getProcessInstance().getId());
 			}
@@ -100,11 +102,14 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 				//Si es CONCURSO invocar inicializacion
 				if (DDTiposAsunto.CONCURSAL.equals(prc.getAsunto().getTipoAsunto().getCodigo())) {					
 					executor.execute("plugin.precontencioso.inicializarPco", prc);
+					isInicializado = true;
 				}
 			}
 			
-			executor.execute("es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumental", prc.getId());
-			
+			if(!isInicializado) {
+				executor.execute("es.pfsgroup.plugin.precontencioso.expedienteJudicial.recalcularTareasPreparacionDocumental", prc.getId());
+			}
+						
 		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarAceptacionPost.equals(tex.getTareaProcedimiento().getCodigo())) {

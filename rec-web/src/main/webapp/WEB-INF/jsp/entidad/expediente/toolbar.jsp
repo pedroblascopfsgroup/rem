@@ -131,7 +131,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeENSANaRE(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -147,7 +147,7 @@ function(entidad,page){
 				handler=function(btn, rta){
 					if (btn== 'ok'){
 						maskAll();
-						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta);
+						devolverExpedienteDeSANCaCE(toolbar.getIdExpediente(), rta, toolbar.isSupervisor());
 					}
 				};				
 				app.prompt(titulo, texto,handler);
@@ -191,11 +191,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeENSANaRE = function(params, rta){
+	var devolverExpedienteDeENSANaRE = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeENSANaRE'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoARevision" text="**Devuelto a Revisión" />', entidad.refrescar());
 				},error:function(){
@@ -232,11 +232,11 @@ function(entidad,page){
 		});
 	};
 
-	var devolverExpedienteDeSANCaCE = function(params, rta){
+	var devolverExpedienteDeSANCaCE = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaCE'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoACompletar" text="**Devuelto a Completar Expediente" />', entidad.refrescar());
 				},error:function(){
@@ -313,11 +313,11 @@ function(entidad,page){
 		});
 	};
 	
-	var devolverExpedienteDeSANCaENSAN = function(params, rta){
+	var devolverExpedienteDeSANCaENSAN = function(params, rta, isSupervisor){
 		page.webflow({
 				flow:  'expediente/devolverExpedienteDeSANCaENSAN'
 				,eventName: 'devolverExpediente'
-				,params:{id:params, respuesta:rta}
+				,params:{id:params, respuesta:rta, isSupervisor:isSupervisor}
 				,success: function(){
 					Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="dc.devueltoAEnSancion" text="**Devuelto a En Sanción" />', entidad.refrescar());
 				},error:function(){
@@ -338,7 +338,12 @@ function(entidad,page){
 		w.on(app.event.DONE, function(){
 			w.close();
 			maskAll();
-			Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.solicitudCancelacionRealizada" text="**expedientes.consulta.solicitudCancelacionRealizada" />', entidad.refrescar());
+			if(esSupervisor){
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.decisionCancelacionOk" text="**Cancelacion Confirmada" />', entidad.refrescar());
+			}else{
+				Ext.Msg.alert('<s:message code="app.informacion" text="**Información" />','<s:message code="expedientes.consulta.solicitudCancelacionRealizada" text="**expedientes.consulta.solicitudCancelacionRealizada" />', entidad.refrescar());
+			}
+			
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
 	};
@@ -483,7 +488,7 @@ function(entidad,page){
 				{
 					text:'<s:message code="expedientes.menu.devolverrevision" text="**Devolver a Revisin" />'
 					,id : 'expediente-accion12-devolverEnSancion'
-					,iconCls : 'icon_revisar_expediente'
+					,iconCls : 'icon_completar_expediente'
 					,handler:function(){
 						cambioEstado(tipoAccion.DEVOLVER_ENSANCION)
 					}
@@ -530,7 +535,7 @@ function(entidad,page){
 					}
 				}
 				,{
-					text:'<s:message code="expedientes.menu.solicitarcancelacion" text="**Solicitar Cancelacin" />'
+					text:'<s:message code="expedientes.menu.solicitarcancelacion" text="**Solicitar Cancelacion" />'
 					,id : 'expediente-accion4-solicitarCancelacion'
 					,iconCls : 'icon_cancelar_expediente'
 					,handler:function(){
@@ -539,7 +544,7 @@ function(entidad,page){
 				},
 				//Botn ver solicitud: Se muestra si es supervisor y hay solicitud pendiente.
 				{
-					text:'<s:message code="expedientes.menu.verSolicitudCancelacion" text="**Ver Solicitud Cancelacin" />'
+					text:'<s:message code="expedientes.menu.verSolicitudCancelacion" text="**Ver Solicitud Cancelacion" />'
 					,id : 'expediente-accion5-verCancelacion'
 					,iconCls : 'icon_rechazar_cancelar_expediente'
 					,handler:function(){
@@ -732,8 +737,8 @@ function(entidad,page){
 				,params : {
 					idEntidad: entidad.getData('id')
 					,codigoTipoEntidad: '2'
-					,tienePerfilGestor: permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idGestorActual')) || false
-					,tienePerfilSupervisor: permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idSupervisorActual')) || false
+					,tienePerfilGestor:  toolbar.isGestor() || false
+					,tienePerfilSupervisor: toolbar.isSupervisor() || false
 				}
 			});
 			w.on(app.event.DONE, function(){
@@ -774,6 +779,40 @@ function(entidad,page){
 	});
 
 	toolbar.add(botonResponder);
+	
+	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTON_CAMBIO_OFICINA">
+	var btnCambioOficina = new Ext.Button({
+    text:'<s:message code="plugin.coreextension.cambioOficina.descripcion" text="**Cambio de Oficina"/>'
+    ,handler: function() {
+        w = new Ext.Window({
+            autoLoad: {
+                    url : app.resolveFlow('plugin.core.expedientes.cambioOficina')
+                    ,scripts : true
+                    ,params : {id:data.id}
+            }
+            ,width:600
+            ,title : '<s:message code="plugin.coreextension.cambioOficina.descripcion" text="**Cambio de Oficina" />'
+            ,autoHeight:true
+            ,closable:false
+            ,resizable: true
+            ,modal:true
+            ,layout:'fit'
+            ,autoShow:true    
+            ,x:250
+            ,y:0
+            ,bodyBorder : false
+        });
+        
+        w.on(app.event.DONE, function(){
+            w.close();
+            entidad.refrescar();
+        });
+        w.on(app.event.CANCEL, function(){ w.close(); });
+        w.show();
+    }
+	});
+	toolbar.add(btnCambioOficina);
+	</sec:authorize>
 
 	<sec:authorize ifAllGranted="EXPORTAR_PDF_EXPEDIENTE">
 	var botonPDF = new Ext.Button({
@@ -859,23 +898,16 @@ function(entidad,page){
 		var data = entidad.get("data");
 		return data.id;
 	}
+	
 	toolbar.isSupervisor = function(){
 		var data = entidad.get("data");
 		var d = data.toolbar;
-		
-		if(permisosVisibilidadGestorSupervisor(d.idSupervisorActual)) 
-			return true;
-		else 
-			return false;
+		return d.esPrimerSupervisorFaseActual
 	}
 	toolbar.isGestor = function(){
 		var data = entidad.get("data");
 		var d = data.toolbar;
-		
-		if(permisosVisibilidadGestorSupervisor(d.idGestorActual)) 
-			return true;
-		else 
-			return false;
+		return d.esPrimerGestorFaseActual
 	}
 	
 	toolbar.getValue = function(){};
@@ -895,23 +927,16 @@ function(entidad,page){
 		if (d.tipoExpediente=='REC') { iconClass = 'icon_expedientes_R2'; }
 
 		if (iconClass!='') Ext.getCmp('expediente-'+entidad.getData('id')).setIconClass(iconClass); 
-	  
-		var perfilGestor = d.idGestorActual;
-		var perfilSupervisor = d.idSupervisorActual;
 		
-		var permisosGestor = permisosVisibilidadGestorSupervisor(perfilGestor);
-		var permisosSupervisor = permisosVisibilidadGestorSupervisor(perfilSupervisor);
-		var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+		var permisosGestor = toolbar.isGestor();
+		var permisosSupervisor = toolbar.isSupervisor();
+		var esGestorSupervisorDeFase = permisosGestor || permisosSupervisor;
 
 		var solicitud = d.solicitudCancelacion;
 
 		var solicitudYPermisos = (solicitud == null || solicitud=='') && (permisosGestor ||  permisosSupervisor);
 		
 		var subMenusVisibles = 0;
-		
-		var permiteElevar = false;
-		var permiteDevolver = false;
-		var mostrarRec = false;
 		
 		
 		function showHide(action, elements___){
@@ -977,17 +1002,14 @@ function(entidad,page){
 						}
 						if(permEle && permDevo){
 							<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-								if(d.esRecuperacion){
-									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
-								}else{
+								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+								if(!d.esRecuperacion){
 									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion9-aceptarPropuesta','expediente-accion2-devolverRevision');
 								}
-								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
 							</sec:authorize>
+						}else if(!permEle && permDevo){
+							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 						}
-					}
-					if(!permiteElevar && permiteDevolver){
-						showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 					}
 					break;
 				
@@ -1012,11 +1034,11 @@ function(entidad,page){
 												
 							if(estados[i].codigo == 'CE')
 							{
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion14-devolverCompletarExpediente');
+								showHide((estadoExpediente ==  EXP_ACTIVO || estadoExpediente ==  EXP_CONGELADO) ,'expediente-accion14-devolverCompletarExpediente');
 							}
 							
 							if(estados[i].codigo == 'ENSAN'){
-								showHide(estadoExpediente ==  EXP_ACTIVO ,'expediente-accion16-devolverAEnSancion');
+								showHide((estadoExpediente ==  EXP_ACTIVO || estadoExpediente ==  EXP_CONGELADO) ,'expediente-accion16-devolverAEnSancion');
 							}
 						}	
 					}
@@ -1041,13 +1063,6 @@ function(entidad,page){
 			}
 		}
 
-		if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
-			if (solicitud==null || solicitud==""){	
-				showHide(true, 'expediente-accion4-solicitarCancelacion');
-			}else{
-				showHide(false, 'expediente-accion4-solicitarCancelacion');
-			}
-		}
 		
 		if ( permisosSupervisor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0)  ){
 			if (solicitud!=null && solicitud!=""){	
@@ -1055,14 +1070,14 @@ function(entidad,page){
 			}else{
 				showHide(true, 'expediente-accion6-cancelacionExpediente');
 			}
-		}
-		if (entidad.getData('esSupervisor')  && ([EXP_ACTIVO, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0) ){
-			if (solicitud!=null && solicitud!=""){	
-				showHide(true, 'expediente-accion5-verCancelacion');
+		}else if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
+			if (solicitud==null || solicitud==""){	
+				showHide(true, 'expediente-accion4-solicitarCancelacion');
 			}else{
-				showHide(true, 'expediente-accion6-cancelacionExpediente');
+				showHide(false, 'expediente-accion4-solicitarCancelacion');
 			}
 		}
+		
 
 		showHide( subMenusVisibles>0, 'expediente-menu-menuAcciones');
 

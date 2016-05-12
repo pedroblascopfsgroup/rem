@@ -102,12 +102,16 @@ BEGIN
                 (select DD_DPA_ID from  '||V_ESQUEMA||'.DD_DPA_DECISION_PARALIZAR      where DD_DPA_CODIGO = ''RD'') as dd_dpa_id,    --> Causa de decisión PDTE RESOLUCIÓN OTRAS OPERACIONES
                 (select DD_EDE_ID from  '||V_ESQUEMA_MASTER||'.DD_EDE_ESTADOS_DECISION where DD_EDE_CODIGO = ''02'') as dd_ede_id,  --> Estado ACEPTADO
                 NULL dpr_process_bpm, 
-                 systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
-                ''PDTE RESOLUCIÓN OTRAS OPERACIONES'',
+                systimestamp + 700 dpr_fecha_para, -- Fecha hasta la que paralizar
+		(nvl(cab.MOTIVO_PARALIZACION, ''PDTE RESOLUCIÓN OTRAS OPERACIONES'')||''. Operación Vinculada:[''||nvl(replace(lpad(cab.OPERACION_PARALIZACION_VINCUL,16,''0''), ''0000000000000000'', ''''), ''Sin Informar'')||'']''),
                 '''||USUARIO_C||''', 
                 systimestamp
-            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC 
-                WHERE USUARIOMODIFICAR = '''||USUARIO_M||'''';
+            FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
+		inner join '||V_ESQUEMA||'.PRC_CEX PCEX ON PCEX.PRC_ID = PRC.PRC_ID
+		INNER JOIN '||V_ESQUEMA||'.CEX_CONTRATOS_EXPEDIENTE CEX ON CEX.CEX_ID = PCEX.CEX_ID
+		INNER JOIN '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP ON EXP.EXP_ID = CEX.EXP_ID
+		INNER JOIN '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA cab ON exp.CD_EXPEDIENTE_NUSE  = cab.cd_expediente 
+           WHERE PRC.USUARIOMODIFICAR = '''||USUARIO_M||'''';
 
      EXECUTE IMMEDIATE V_SQL;
 
@@ -140,62 +144,6 @@ BEGIN
      DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);      
                 
     
--- INSERTAMOS LOS PARALIZADOS EN PCO_PRC_HEP_HISTOR_EST_PREP
-
-/*************************************/
-/** INSERTAR ESTADO PARALIZADO         **/
-/*************************************/
-
-       V_SQL := 'INSERT INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO_PEP_ID, PCO_PRC_HEP_FECHA_INCIO, USUARIOCREAR, FECHACREAR, SYS_GUID)
-                                SELECT '||V_ESQUEMA||'.S_PCO_PRC_HEP_HIST_EST_PREP.NEXTVAL, 
-                                           PCO_PRC_ID,
-                                           (SELECT DD_PCO_PEP_ID FROM  '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'') ,-- PARALIZADO
-                                           PRC_FECHA_PARALIZADO AS PRC_HEP_FECHA_INICIO,
-                                           '''||USUARIO_C||''' AS USUARIOCREAR,
-                                           SYSDATE, SYS_GUID() AS SYS_GUID
-                                FROM(
-                                     SELECT PCO.PCO_PRC_ID, PRC.PRC_FECHA_PARALIZADO
-                                     FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
-                                        , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
-                                        , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
-                                     WHERE PCO.PRC_ID = PRC.PRC_ID
-                                       AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-                                       AND NOT EXISTS(SELECT 1
-                                               FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-                                               WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-                                       AND EXP.FECHA_PARALIZACION IS NOT NULL
-                                       AND EXP.MOTIVO_PARALIZACION = ''PARALIZADO'')';
-
-      EXECUTE IMMEDIATE V_SQL;
-      
-      DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);
-
-      
-/**********************************************************************/
-/*******   ACTUALIZAMOS FECHA FIN EN ESTADOS ANTERIORES A PARALIZADO  */
-/**********************************************************************/                                      
-
-      v_SQL:= 'MERGE INTO '||V_ESQUEMA||'.PCO_PRC_HEP_HISTOR_EST_PREP pco
-               USING (SELECT PCO.PCO_PRC_ID, PRC.PRC_FECHA_PARALIZADO
-                                                    FROM '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO
-                                                       , '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC
-                                                       , '||V_ESQUEMA||'.MIG_EXPEDIENTES_CABECERA EXP
-                                                    WHERE PCO.PRC_ID = PRC.PRC_ID
-                                                      AND PCO.PCO_PRC_NUM_EXP_EXT = EXP.CD_EXPEDIENTE
-                                                      AND NOT EXISTS(SELECT 1
-                                                              FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-                                                              WHERE CAB.CD_EXPEDIENTE_NUSE = EXP.CD_EXPEDIENTE)
-                                                      AND EXP.FECHA_PARALIZACION IS NOT NULL
-                                                      AND EXP.MOTIVO_PARALIZACION = ''PARALIZADO'') S
-                  ON (pco.PCO_PRC_ID = S.PCO_PRC_ID)                 
-                  WHEN MATCHED THEN UPDATE SET pco.PCO_PRC_HEP_FECHA_FIN = S.PRC_FECHA_PARALIZADO
-                  where pco.DD_PCO_PEP_ID <> (SELECT DD_PCO_PEP_ID FROM  '||V_ESQUEMA||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO = ''PA'')' ;
-                                                                              
-
-      EXECUTE IMMEDIATE V_SQL;
-      
-      DBMS_OUTPUT.PUT_LINE(RPAD(substr(V_SQL, 1, 60), 60, ' ') || '...' || sql%rowcount);                                       
-
       
  -- CREAMOS LAS VARIABLES DEL BMP (SOLO SE CREARAN PARA LAS TAREAS NO FICTICIAS)
 

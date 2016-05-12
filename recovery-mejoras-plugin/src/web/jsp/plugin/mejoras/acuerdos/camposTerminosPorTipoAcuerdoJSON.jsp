@@ -13,6 +13,7 @@
 	        <json:property name="nombreCampo" value="${campo.nombreCampo}" /> 
 	        <json:property name="labelCampo" value="${campo.labelCampo}" />
 	        <json:property name="tipoCampo" value="${campo.tipoCampo}" />
+	        <json:property name="obligatorio" value="${campo.obligatorio}" />
 	        <c:if test="${campo.arrayValoresCombo != null}">
 		        <json:array name="valoresCombo" items="${campo.arrayValoresCombo}" var="valor">
 		        	<json:object>

@@ -132,10 +132,10 @@ if ((view != null) && (id != null)){
 		<c:if test="${usuario.usuEntidad != null}">
 			<c:if test="${fn:length(usuario.usuEntidad)>0}">
 				<select id="comboEntidad" >
-					<option value='${usuario.entidad.descripcion}'selected>${usuario.entidad.descripcion}</option>
+					<option value='${usuario.entidad.descripcion}'selected>${usuario.entidad.descripcionLarga}</option>
 						<c:forEach items='${usuario.usuEntidad}' var='item'>
 							<c:if test="${usuario.entidad.descripcion != item.entidad.descripcion}">
-		  						<option> <c:out value='${item.entidad.descripcion}'/></option>
+		  						<option value='${item.entidad.descripcion}'> <c:out value='${item.entidad.descripcionLarga}'/></option>
 		  					</c:if>
 						</c:forEach>
 				</select> 

@@ -31,12 +31,18 @@
 	};
 
 	var cerrarHandler = function() {
-		if(tieneComiteSeguimiento() || tieneComiteMixto()) {
+		var poseeComite = false;
+		if (entidad.get("data").toolbar.tipoExpediente=='GESDEU' && tieneComiteGestionDeuda()) { poseeComite = true; }
+		if (entidad.get("data").toolbar.tipoExpediente=='SEG' && tieneComiteSeguimiento()) {poseeComite = true; }
+		if (!poseeComite) { poseeComite = tieneComiteMixto(); }
+		
+		if(poseeComite) {
 			Ext.Msg.confirm(fwk.constant.confirmar,
 			                '<s:message code="cerrarDecisionPolitica.quiereCerrar" text="**Esta seguro de que desea cerrar la decisin de poltica?" />',
 			                cerrarDecision);
 		} else {
 			cerrarDecision('no');
+			Ext.Msg.alert('Informaci&oacute;n','Para cerrar la decisi&oacute;n es necesario tener un Comite de su tipo del expediente o mixto.');
 		}
 	};
 
@@ -48,8 +54,6 @@
 		,disabled:false
 	});
 	
-	
-	   
     var Personas = Ext.data.Record.create([    
 		{name : "idPersona"}
 		,{name : "cliente"}
@@ -161,8 +165,7 @@
 	function estaCongelado () {return entidad.get("data").decision.estaCongelado;}
 	function tieneComiteMixto () {return entidad.get("data").toolbar.tieneComiteMixto;}
 	function tieneComiteSeguimiento () {return entidad.get("data").toolbar.tieneComiteSeguimiento;}
-	
-	// ${expediente.comite.comiteMixto || expediente.comite.comiteSeguimiento}
+	function tieneComiteGestionDeuda () {return entidad.get("data").toolbar.tieneComiteGestionDeuda; }
 	
 	panel.getValue = function(){}
 	
@@ -187,6 +190,11 @@
 			btnCerrar.setDisabled(false);
 		}
 		
+		//Si el expediente es de tipo Gestión Deuda, aunque no este congelado/decidido el expediente
+		//se deshabilita el botón si tiene una decisión de comite
+		if (entidad.get("data").toolbar.tipoExpediente=='GESDEU' && entidad.get("data").tieneDecisionComite=='true') {
+			btnCerrar.setDisabled(true);
+		}
 		
 	}
 	

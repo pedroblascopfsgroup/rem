@@ -147,7 +147,7 @@ public class EditBienController {
 
 	@Autowired
 	private InformePropuestaCancelacionBean informePropuestaCancelacionBean;
-
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getProcedimientos(
@@ -1528,6 +1528,13 @@ public class EditBienController {
 					.getParameter("cesionRemate")));
 		} else {
 			adjudicacion.setCesionRemate(null);
+		}
+
+		if (!Checks.esNulo(request.getParameter("postores"))) {
+			adjudicacion.setPostores(Boolean.parseBoolean(request
+					.getParameter("postores")));
+		} else {
+			adjudicacion.setPostores(null);
 		}
 
 		// selector persona
@@ -4240,17 +4247,18 @@ public class EditBienController {
 	}
 
 	/**
-	 * Inoca al servicio de tasación para recuperar un número de Activo.
+	 * Invoca al servicio de tasación para solicitar el alta.
 	 * 
 	 * @param idBien
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String solicitarTasacion(@RequestParam("id") Long idBien) {
-		// executor.execute(SubastasServicioTasacionDelegateApi.BO_UVEM_SOLICITUD_TASACION,
-		// idBien);
-		proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class)
-				.solicitarTasacion(idBien);
-		return "default";
+	public String solicitarTasacion(@RequestParam("id") Long idBien, ModelMap model) {
+
+		String respuesta = proxyFactory.proxy(SubastasServicioTasacionDelegateApi.class).solicitarTasacionConRespuesta(idBien);
+		
+		model.put("msgError", respuesta);
+		return JSON_RESPUESTA_SERVICIO;
 	}
 
 	@SuppressWarnings("unchecked")

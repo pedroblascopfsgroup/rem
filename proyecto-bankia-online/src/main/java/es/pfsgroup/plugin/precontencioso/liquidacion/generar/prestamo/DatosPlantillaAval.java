@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.generar.prestamo;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.dao.DatosLiquidacionDao;
@@ -96,101 +98,132 @@ public class DatosPlantillaAval extends DatosPlantillaPrestamoAbstract implement
 		conceptos.add(new ConceptoLiqVO(recibosLiq.get(0).getRCB_FEVCTR(), "Capital amortizado", null, capitalAmortizado, saldo));
 		
 		
-				// Comisión
-				BigDecimal tipoInteresAgrupado = null;
-				BigDecimal sumIntereses = BigDecimal.ZERO;
-				int i = 0;
-				for (RecibosLiqVO recibo : recibosLiq) {
-					i++;
-					// nuevo concepto basado en la sumatoria de los intereses anteriores
-					sumIntereses = sumIntereses.add(recibo.getRCB_IMCGTA());
-					// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
-					if (i == recibosLiq.size()) {
-						saldo = calculateSaldo(saldo, sumIntereses, null);
-						conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Comisión", sumIntereses, null, saldo));
-					}
-				}
-		
-				// Intereses ordinarios
-				tipoInteresAgrupado = null;
-				sumIntereses = BigDecimal.ZERO;
-				i = 0;
-				for (RecibosLiqVO recibo : recibosLiq) {
-					i++;
-
-					BigDecimal tipoInteresActual = recibo.getRCB_CDINTS();
-
-					// Primera iteracion no tiene un tipo definido
-					if (tipoInteresAgrupado == null) {
-						tipoInteresAgrupado = tipoInteresActual;
-					}
-
-					// agrupacion de intereses ordinarios del mismo tipo de interes
-					if (tipoInteresAgrupado.equals(tipoInteresActual)) {
-						sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
-					} else {
-						if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
-							sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
-							tipoInteresAgrupado = tipoInteresActual;
-						}
-					}
-
-					// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
-					if (i == recibosLiq.size()) {
-						saldo = calculateSaldo(saldo, sumIntereses, null);
-						conceptos.add(new ConceptoLiqVO(recibo.getRCB_FEVCTR(), "Intereses", sumIntereses, null, saldo));
-					}
-				}
-
-				// Intereses de demora
-				tipoInteresAgrupado = null;
-				sumIntereses = BigDecimal.ZERO;
-				i = 0;
-				for (RecibosLiqVO recibo : recibosLiq) {
-					i++;
-				
-					BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
-
-					// Primera iteracion no tiene un tipo definido
-					if (tipoInteresAgrupado == null) {
-						tipoInteresAgrupado = tipoInteresActual;
-					}
-
-					// agrupacion de intereses demora del mismo tipo de interes
-					if (tipoInteresAgrupado.equals(tipoInteresActual)) {
-						sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
-					} else {
-						if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
-							sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
-							tipoInteresAgrupado = tipoInteresActual;
-						}
-					}
-
-					// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
-					if (i == recibosLiq.size()) {
-						saldo = calculateSaldo(saldo, sumIntereses, null);
-						conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "Intereses de demora", sumIntereses, null, saldo));
-					}
-				}
-				
-				// I.V.A.
-				sumIntereses = BigDecimal.ZERO;
-				i = 0;
-				for (RecibosLiqVO recibo : recibosLiq) {
-					i++;
-					// nuevo concepto basado en la sumatoria de los intereses anteriores
-					sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
-					// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
-					if (i == recibosLiq.size()) {
-						saldo = calculateSaldo(saldo, sumIntereses, null);
-						conceptos.add(new ConceptoLiqVO(datosGeneralesLiq.getDGC_FEVACM(), "I.V.A.", sumIntereses, null, saldo));
-					}
-				}
-				
-				HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
-				datosLiquidacion.put("CONCEPTOS", conceptos);
-				return datosLiquidacion;
-				
+		// Comisión
+		BigDecimal tipoInteresAgrupado = null;
+		BigDecimal sumIntereses = BigDecimal.ZERO;
+		Date fechaControl = null;
+		int i = 0;
+		for (RecibosLiqVO recibo : recibosLiq) {
+			i++;
+			// nuevo concepto basado en la sumatoria de los intereses anteriores
+			sumIntereses = sumIntereses.add(recibo.getRCB_IMCGTA());
+			if(!Checks.esNulo(recibo.getRCB_IMCGTA()) && !BigDecimal.ZERO.equals(recibo.getRCB_IMCGTA())){
+				fechaControl = recibo.getRCB_FEVCTR();
+			}else if (BigDecimal.ZERO.equals(sumIntereses)){
+				fechaControl = datosGeneralesLiq.getDGC_FEVACM();
 			}
+			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
+			if (i == recibosLiq.size()) {
+				saldo = calculateSaldo(saldo, sumIntereses, null);
+				conceptos.add(new ConceptoLiqVO(fechaControl, "Comisión", sumIntereses, null, saldo));
+			}
+		}
+
+		// Intereses ordinarios
+		tipoInteresAgrupado = null;
+		sumIntereses = BigDecimal.ZERO;
+		fechaControl = null;
+		i = 0;
+		for (RecibosLiqVO recibo : recibosLiq) {
+			i++;
+
+			BigDecimal tipoInteresActual = recibo.getRCB_CDINTS();
+
+			// Primera iteracion no tiene un tipo definido
+			if (tipoInteresAgrupado == null) {
+				tipoInteresAgrupado = tipoInteresActual;
+			}
+
+			// agrupacion de intereses ordinarios del mismo tipo de interes
+			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
+				sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+			} else {
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTS())) {
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMPRTV());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
+			}
+					
+			// control de la fecha
+			if(!Checks.esNulo(recibo.getRCB_IMPRTV()) && !BigDecimal.ZERO.equals(recibo.getRCB_IMPRTV())){
+				fechaControl = recibo.getRCB_FEVCTR();
+			}else if (BigDecimal.ZERO.equals(sumIntereses)){
+				fechaControl = datosGeneralesLiq.getDGC_FEVACM();
+			}
+					
+			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
+			if (i == recibosLiq.size()) {
+				saldo = calculateSaldo(saldo, sumIntereses, null);
+				conceptos.add(new ConceptoLiqVO(fechaControl, "Intereses", sumIntereses, null, saldo));
+			}
+		}
+
+		// Intereses de demora
+		tipoInteresAgrupado = null;
+		sumIntereses = BigDecimal.ZERO;
+		fechaControl = null;
+		i = 0;
+		for (RecibosLiqVO recibo : recibosLiq) {
+			i++;
+				
+			BigDecimal tipoInteresActual = recibo.getRCB_CDINTM();
+
+			// Primera iteracion no tiene un tipo definido
+			if (tipoInteresAgrupado == null) {
+				tipoInteresAgrupado = tipoInteresActual;
+			}
+
+			// agrupacion de intereses demora del mismo tipo de interes
+			if (tipoInteresAgrupado.equals(tipoInteresActual)) {
+				sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
+			} else {
+				if (!BigDecimal.ZERO.equals(recibo.getRCB_CDINTM())) {
+					sumIntereses = sumIntereses.add(recibo.getRCB_IMINDR());
+					tipoInteresAgrupado = tipoInteresActual;
+				}
+			}
+					
+			// control de la fecha
+			if(!Checks.esNulo(recibo.getRCB_IMINDR()) && !BigDecimal.ZERO.equals(recibo.getRCB_IMINDR())){
+				fechaControl = recibo.getRCB_FEVCTR();
+			}else if (BigDecimal.ZERO.equals(sumIntereses)){
+				fechaControl = datosGeneralesLiq.getDGC_FEVACM();
+			}
+
+			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
+			if (i == recibosLiq.size()) {
+				saldo = calculateSaldo(saldo, sumIntereses, null);
+				conceptos.add(new ConceptoLiqVO(fechaControl, "Intereses de demora", sumIntereses, null, saldo));
+			}
+		}
+				
+		// I.V.A.
+		sumIntereses = BigDecimal.ZERO;
+		fechaControl = null;
+		i = 0;
+		for (RecibosLiqVO recibo : recibosLiq) {
+			i++;
+			// nuevo concepto basado en la sumatoria de los intereses anteriores
+			sumIntereses = sumIntereses.add(recibo.getRCB_IMBIM4());
+					
+			// control de la fecha
+			if(!Checks.esNulo(recibo.getRCB_IMBIM4()) && !BigDecimal.ZERO.equals(recibo.getRCB_IMBIM4())){
+				fechaControl = recibo.getRCB_FEVCTR();
+			}else if (BigDecimal.ZERO.equals(sumIntereses)){
+				fechaControl = datosGeneralesLiq.getDGC_FEVACM();
+			}
+					
+			// En caso de que sea el ultimo registro de la lista se añade un nuevo concepto
+			if (i == recibosLiq.size()) {
+				saldo = calculateSaldo(saldo, sumIntereses, null);
+				conceptos.add(new ConceptoLiqVO(fechaControl, "I.V.A.", sumIntereses, null, saldo));
+			}
+		}
+				
+		HashMap<String, Object> datosLiquidacion = new HashMap<String, Object>();
+		datosLiquidacion.put("CONCEPTOS", conceptos);
+		return datosLiquidacion;
+				
+	}
 }
 

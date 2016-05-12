@@ -55,6 +55,7 @@
 	var  existeInquilino = app.creaLabel('<s:message code="bienesAdjudicacion.existeInquilino" text="**existeInquilino"/>','${NMBbien.adjudicacion.existeInquilino != null ? NMBbien.adjudicacion.existeInquilino ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
 	var  llavesNecesarias = app.creaLabel('<s:message code="bienesAdjudicacion.llavesNecesarias" text="**llavesNecesarias"/>','${NMBbien.adjudicacion.llavesNecesarias != null ? NMBbien.adjudicacion.llavesNecesarias ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
 	var  cesionRemate = app.creaLabel('<s:message code="bienesAdjudicacion.cesionRemate" text="**cesionRemate"/>','${NMBbien.adjudicacion.cesionRemate != null ? NMBbien.adjudicacion.cesionRemate ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
+	var  postores = app.creaLabel('<s:message code="bienesAdjudicacion.postores" text="**Con postores"/>','${NMBbien.adjudicacion.postores != null ? NMBbien.adjudicacion.postores ? 'Si' : 'No' : ''}', {labelStyle:labelStyle});
 	
 	
 	//selector persona
@@ -94,6 +95,13 @@
 				 ]
 	});
 	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+
+	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+		datosAdjudicacion.items.items[1].add(postores);
+        datosAdjudicacion.doLayout();
+	}
+		
 	var datosPosesion = new Ext.form.FieldSet({
 		autoHeight:true
 		,width:770

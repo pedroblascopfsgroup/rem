@@ -1,6 +1,10 @@
 package es.pfsgroup.plugin.recovery.coreextension;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,7 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -43,9 +48,13 @@ public class coreextensionController {
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	private static final String JSON_LIST_TIPO_PROCEDIMIENTO = "procedimientos/listadoTiposProcedimientoJSON";
 	private static final String TIPO_USUARIO_DEFECTO_JSON = "plugin/coreextension/asunto/tipoUsuarioGestorDefectoJSON";
+	private static final String GESTORES_DESPACHOS_USUARIO_AUTO_JSON = "plugin/coreextension/asunto/listadoUsuariosAutomaticosJSON";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -143,6 +152,97 @@ public class coreextensionController {
 		model.put("listadoUsuarios", listadoUsuarios);
 		
 		return TIPO_USUARIO_JSON;
+	}
+	
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios, despachos y tipo de gestores para un tipo de asunto. 
+	 * 
+	 * @param model
+	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListUsuariosDefectoByTipoAsunto(ModelMap model,String idTipoAsunto, String idExpediente,
+			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
+			@RequestParam(value="adicional", required=false) Boolean adicional,
+			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional){
+		
+		List<EXTDDTipoGestor> listadoTipoGestores = null;
+		List<DespachoExterno> listaDespachos = null;
+		List<Usuario> listaUsuarios= null;
+		List<EXTDDTipoGestor> listadoTipoGestoresFinal= new ArrayList<EXTDDTipoGestor>();
+		List<DespachoExterno> listaDespachoFinal= new ArrayList<DespachoExterno>();
+		List<Usuario> listaUsuariosFinal= new ArrayList<Usuario>();
+		listadoTipoGestores= proxyFactory.proxy(coreextensionApi.class).getListTipoGestorAdicionalPorAsunto(idTipoAsunto);
+		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		
+		for(EXTDDTipoGestor tipoGestor: listadoTipoGestores){
+			listaDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(tipoGestor.getId(), false);
+			for(DespachoExterno despacho: listaDespachos){
+				listaUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosPorDefectoData(despacho.getId(), false);
+				HashMap<String,Set<String>> perfilesMap= proxyFactory.proxy(coreextensionApi.class).getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
+				if(!perfilesMap.isEmpty() && Integer.parseInt(idTipoAsunto)==21){
+					Set<String> perfiles= perfilesMap.get(tipoGestor.getCodigo());
+					if(perfiles!=null && !perfiles.isEmpty()){
+						for(String perfil: perfiles){
+							Usuario usuarioFinal= new Usuario();
+							long idexp= Long.valueOf(idExpediente);
+							List<Usuario> usuarioFinales= proxyFactory.proxy(coreextensionApi.class).getUsuarioGestorOficinaExpedienteGestorDeuda(idexp, perfil);
+							if(!usuarioFinales.isEmpty()){
+								usuarioFinal= usuarioFinales.get(0); 
+								listadoTipoGestoresFinal.add(tipoGestor);
+								listaDespachoFinal.add(despacho);
+								listaUsuariosFinal.add(usuarioFinal);
+							}
+						}
+					}
+					else{
+						for(Usuario usuario: listaUsuarios){
+							
+							Usuario usuarioFinal= new Usuario();
+								usuarioFinal= usuario;
+								listadoTipoGestoresFinal.add(tipoGestor);
+								listaDespachoFinal.add(despacho);
+								listaUsuariosFinal.add(usuarioFinal);
+						}
+					}
+				}
+				else{
+					for(Usuario usuario: listaUsuarios){
+						
+						Usuario usuarioFinal= new Usuario();
+							usuarioFinal= usuario;
+							listadoTipoGestoresFinal.add(tipoGestor);
+							listaDespachoFinal.add(despacho);
+							listaUsuariosFinal.add(usuarioFinal);
+					}
+				}
+			}
+		}
+		
+		//Supervisores
+		if(codigoEntidadUsuario.equals("HAYA")){
+			Usuario supervisor= proxyFactory.proxy(coreextensionApi.class).getSupervisorPorAsuntoEntidad(codigoEntidadUsuario, idTipoAsunto);
+			EXTDDTipoGestor tipoGestorSupervisor= proxyFactory.proxy(coreextensionApi.class).getTipoGestorSupervisorPorAsuntoEntidad(codigoEntidadUsuario, idTipoAsunto);
+			DespachoExterno despachoGestorSupervisor= proxyFactory.proxy(coreextensionApi.class).getDespachoSupervisorPorAsuntoEntidad(codigoEntidadUsuario, idTipoAsunto);
+			
+			if(supervisor!= null && tipoGestorSupervisor!= null && despachoGestorSupervisor!= null){
+				listadoTipoGestoresFinal.add(tipoGestorSupervisor);
+				listaDespachoFinal.add(despachoGestorSupervisor);
+				listaUsuariosFinal.add(supervisor);
+			}
+			
+			
+			
+		}
+		
+		
+		model.put("listadoGestores", listadoTipoGestoresFinal);
+		model.put("listadoDespachos", listaDespachoFinal);
+		model.put("listadoUsuarios", listaUsuariosFinal);
+		
+		return GESTORES_DESPACHOS_USUARIO_AUTO_JSON;
 	}
 	
 	/**

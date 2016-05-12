@@ -62,7 +62,7 @@
             ,fieldLabel: '<s:message code="precontencioso.grid.documento.informarDocumento.comentario" text="**Comentario" />'
             ,height : 60
             ,width : 450
-            ,value : '${solicitud.comentario}'
+            ,value : '<s:message text="${solicitud.comentario}" javaScriptEscape="true" />'
     });
 	
 		

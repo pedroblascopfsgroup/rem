@@ -1,10 +1,13 @@
 package es.pfsgroup.listadoPreProyectado.dao;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -34,21 +37,25 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	 * @param dto
 	 * 
 	 * @param isBuscadorProyectado
-	 *            true: en caso de que los resultados se vayan a visualizar en
-	 *            el grid de resultados del buscador.
+	 * 			true: en caso de que los resultados se vayan a visualizar en 
+	 * 			el grid de resultados del buscador.
+	 * @param isCount
+	 * 			true: la sql se utiliza para realizar un count.
 	 * @return
 	 */
-	private StringBuilder construirSql(final ListadoPreProyectadoDTO dto, final boolean isBuscadorProyectado) {
+	private StringBuilder construirSql(final ListadoPreProyectadoDTO dto, final boolean isBuscadorProyectado, final boolean isCount) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		if (isBuscadorProyectado) {
-			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion ");
+		if(isCount){
+			sb.append("Select count (distinct f.cntId) ");
+		}else if (isBuscadorProyectado) {
+			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.importePteDifer ");
 		} else {
-			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
+			sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.importePteDifer, f.fechaPrevReguCnt, f.nomTitular, f.nifTitular, f.ofiCodigo ");
 		}
 		//sb.append("select distinct f ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
-		sb.append(" where 1=1 ");
+		sb.append(" where f.diasVencidos BETWEEN 1 AND 120 ");
 		//sb.append(" where c.cntId IN (select distinct f.cntId from VListadoPreProyectadoCntFiltros f where 1=1 ");
 		
 		if (!Checks.esNulo(dto.getCodEstadoGestion())) {
@@ -140,7 +147,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				sb.append(" and (");
 				for (int i = 0; i < zonasExp.length; i++) {
 					String zonaExp = zonasExp[i];
-					sb.append(" f.zonExp = '" + zonaExp + "' ");
+					sb.append(" f.zonExp LIKE '" + zonaExp + "%' ");
 					if (i<zonasExp.length-1) {
 						sb.append(" or ");
 					}
@@ -171,20 +178,20 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				
 		
 		if (!Checks.esNulo(dto.getFechaPrevRegularizacion())) {
-			sb.append(" and f.fechaPrevReguCnt >= TO_DATE('" + dto.getFechaPrevRegularizacion().substring(0, 10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPrevReguCnt >= TO_DATE('" + parseDate(dto.getFechaPrevRegularizacion()) + "','yyyy-MM-dd') ");
 			
 		}
 		
 		if (!Checks.esNulo(dto.getFechaPrevRegularizacionHasta())) {
-			sb.append(" and f.fechaPrevReguCnt <= TO_DATE('" + dto.getFechaPrevRegularizacionHasta().substring(0,10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPrevReguCnt <= TO_DATE('" + parseDate(dto.getFechaPrevRegularizacionHasta()) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getPaseMoraDesde())) {
-			sb.append(" and f.fechaPaseAMoraCnt >= TO_DATE('" + dto.getPaseMoraDesde().substring(0,10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPaseAMoraCnt >= TO_DATE('" + parseDate(dto.getPaseMoraDesde()) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getPaseMoraHasta())) {
-			sb.append(" and f.fechaPaseAMoraCnt <= TO_DATE('" + dto.getPaseMoraHasta().substring(0,10) + "','yyyy-MM-dd') ");
+			sb.append(" and f.fechaPaseAMoraCnt <= TO_DATE('" + parseDate(dto.getPaseMoraHasta()) + "','yyyy-MM-dd') ");
 		}
 		
 		if (!Checks.esNulo(dto.getZonasCto())) {
@@ -221,13 +228,41 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		
 		return sb;
 	}
-	
-	
+		
+	private String parseDate(String fechaSinFormato) {
+		
+		SimpleDateFormat formatoFechaFiltroWeb = new SimpleDateFormat("yyyy-MM-dd");
+		try {
+			formatoFechaFiltroWeb.parse(StringUtils.substring(fechaSinFormato, 0, 10));
+			return StringUtils.substring(fechaSinFormato, 0, 10);
+		}
+		catch(Exception e) {
+			SimpleDateFormat formatoFechaFiltroWeb2 = new SimpleDateFormat("EEE MMM dd yyyy");
+			try {
+				Date fecha = formatoFechaFiltroWeb2.parse(fechaSinFormato);
+				return formatoFechaFiltroWeb.format(fecha);
+			} 
+			catch (ParseException e1) {
+				formatoFechaFiltroWeb2 = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					Date fecha = formatoFechaFiltroWeb2.parse(fechaSinFormato);
+					return formatoFechaFiltroWeb.format(fecha);
+				} 
+				catch (ParseException e2) {
+					logger.error("Error en el método parseDate: " + e2.getLocalizedMessage());
+				}		
+			}					
+		}
+		
+		return null;
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCnt(ListadoPreProyectadoDTO dto) {
 		
-		StringBuilder sb = construirSql(dto,false);
+		StringBuilder sb = construirSql(dto,false, false);
 		
 		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		return castearListado(lista, false);
@@ -238,7 +273,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntExp(Long expId, Usuario usuarioLogado) {
 		StringBuilder sb = new StringBuilder();
 		//sb.append("Select distinct c ");
-		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.fechaPrevReguCnt ");
+		sb.append("Select distinct f.cntId, f.contrato, f.expId, f.riesgoTotal, f.deudaIrregular, f.tramo, f.diasVencidos, f.fechaPaseAMoraCnt, f.propuesta, f.estadoGestion, f.importePteDifer, f.fechaPrevReguCnt ");
 		sb.append(" from VListadoPreProyectadoCnt f ");
 		sb.append(" where f.expId = " + expId);
 		
@@ -276,8 +311,9 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 		select.add(Projections.property("f.fechaPaseAMoraCnt").as("fechaPaseAMoraCnt"));
 		select.add(Projections.property("f.propuesta").as("propuesta"));
 		select.add(Projections.property("f.estadoGestion").as("estadoGestion"));
+		select.add(Projections.property("f.importePteDifer").as("importePteDifer"));
 		select.add(Projections.property("f.fechaPrevReguCnt").as("fechaPrevReguCnt"));
-
+		
 		Criteria query = getSession().createCriteria(VListadoPreProyectadoCnt.class, "f");
 		query.setProjection(Projections.distinct(select));
 		query.add(Restrictions.in("f.expId", expsId));
@@ -292,7 +328,7 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	public List<VListadoPreProyectadoCnt> getListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
 		//this.getSession().createSQLQuery("{call DBMS_MVIEW.REFRESH('V_LIS_PREPROYECT_CNT')}").executeUpdate();
 		
-		StringBuilder sb = construirSql(dto,true);
+		StringBuilder sb = construirSql(dto,true, false);
 		
 		//List<Object[]> lista = getHibernateTemplate().find(sb.toString());
 		HQLBuilder hb = new HQLBuilder(sb.toString());
@@ -303,10 +339,14 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	@SuppressWarnings("unchecked")
 	@Override
 	public int getCountListadoPreProyectadoCntPaginated(ListadoPreProyectadoDTO dto) {
-		StringBuilder sb = construirSql(dto,true);
+		StringBuilder sb = construirSql(dto,true, true);
 		
-		List<Object[]> lista = getHibernateTemplate().find(sb.toString());
-		return lista.size();
+		List<Object> lista = getHibernateTemplate().find(sb.toString());
+		if(lista.size() > 0){
+			final Long size = (Long)lista.get(0);
+			return size.intValue();
+		}
+		return 0;
 	}
 	
 	/**
@@ -322,29 +362,34 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 	private List<VListadoPreProyectadoCnt> castearListado(final List<Object[]> lista, final boolean isBuscadorProyectado) {
 		List<VListadoPreProyectadoCnt> resultado = new ArrayList<VListadoPreProyectadoCnt>();
 		
+		final List<Long> listCntId = new ArrayList<Long>();
+		
 		for (Object[] item : lista) {
-			VListadoPreProyectadoCnt cnt = new VListadoPreProyectadoCnt();
-			cnt.setCntId((Long) item[0]);
-			cnt.setContrato((String) item[1]);
-			cnt.setExpId((Long) item[2]);
-			cnt.setRiesgoTotal((BigDecimal) item[3]);
-			cnt.setDeudaIrregular((BigDecimal) item[4]);
-			cnt.setTramo((String) item[5]);
-			cnt.setDiasVencidos((Long) item[6]);
-			cnt.setFechaPaseAMoraCnt((Date) item[7]);
-			cnt.setPropuesta((String) item[8]);
-			cnt.setEstadoGestion((String)item[9]);
-			if (!isBuscadorProyectado) {
-				cnt.setFechaPrevReguCnt((Date) item[10]);
-				cnt.setNomTitular((String) item[11]);
-				cnt.setNifTitular((String) item[12]);
-				cnt.setOfiCodigo((String) item[13]);
+			final Long cntId = (Long) item[0];
+			if (!listCntId.contains(cntId)) {
+				VListadoPreProyectadoCnt cnt = new VListadoPreProyectadoCnt();
+				cnt.setCntId(cntId);
+				cnt.setContrato((String) item[1]);
+				cnt.setExpId((Long) item[2]);
+				cnt.setRiesgoTotal((BigDecimal) item[3]);
+				cnt.setDeudaIrregular((BigDecimal) item[4]);
+				cnt.setTramo((String) item[5]);
+				cnt.setDiasVencidos((Long) item[6]);
+				cnt.setFechaPaseAMoraCnt((Date) item[7]);
+				cnt.setPropuesta((String) item[8]);
+				cnt.setEstadoGestion((String) item[9]);
+				cnt.setImportePteDifer((BigDecimal) item[10]);
+				if (!isBuscadorProyectado) {
+					cnt.setFechaPrevReguCnt((Date) item[11]);
+					cnt.setNomTitular((String) item[12]);
+					cnt.setNifTitular((String) item[13]);
+					cnt.setOfiCodigo((String) item[14]);
+				}
+				listCntId.add(cntId);
+				resultado.add(cnt);
 			}
-			
-			resultado.add(cnt);
 		}
 		
 		return resultado;
 	}
-
 }

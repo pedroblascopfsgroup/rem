@@ -8,6 +8,12 @@
 		<json:property name="nombre" value="${persona.nom50}" />
 		<json:property name="docid" value="${persona.docId}" />
 	</json:object>
+	<json:object name="contrato">
+		<json:property name="fechaVencimiento">
+		 	<fwk:date value="${contrato.fechaVencimiento}" />
+		 </json:property>
+		 <json:property name="tipoInteres" value="${contrato.tipoInteres}" />
+	</json:object>
 	<c:if test="${liquidacion != null}">
 		<json:object name="liquidacion">
 			<json:property name="capital" value="${liquidacion.capitalVencido + liquidacion.capitalNoVencido}" />

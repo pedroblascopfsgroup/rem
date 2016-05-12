@@ -513,14 +513,26 @@
 			      		page.webflow({
 			      			flow:'editbien/solicitarTasacion'
 			      			,params:{id:${NMBbien.id}}
-			      			,success: function(){
-			      			   Ext.Msg.show({
-									title:'Operación realizada',
-									msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ok"/>',
+			      			,success: function(result,request){
+			      				debugger;
+			      			   if(result.msgError=='1'){
+			      			   		Ext.Msg.show({
+										title:'Operación realizada',
+										msg: '<s:message code="plugin.nuevoModeloBienes.uvem.tasacion.ok"/>',
+										buttons: Ext.Msg.OK,
+										icon:Ext.MessageBox.INFO
+									});	
+				      			   	
+				      			   	app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
+			      			   	}
+			      			   	else{
+			      			   	
+				      			   	Ext.Msg.show({
+									title:'Advertencia',
+									msg: 'No se ha podido realizar la solicitud de tasaci&oacute;n.\n' + result.msgError,
 									buttons: Ext.Msg.OK,
-									icon:Ext.MessageBox.INFO
-								});	
-			      			   app.abreBienTab(${NMBbien.id}, '${NMBbien.id}' + '${NMBbien.tipoBien.descripcion}', bienTabPanel.getActiveTab().initialConfig.nombreTab);
+									icon:Ext.MessageBox.WARNING});
+			      			   	}		
 			            	}
 			      		});
 		      		}

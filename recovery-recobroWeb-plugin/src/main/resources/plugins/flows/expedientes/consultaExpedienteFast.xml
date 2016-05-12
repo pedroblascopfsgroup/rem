@@ -30,7 +30,8 @@
 	    	<evaluate expression="executor.execute('expedienteRecobroApi.esSupervisorRecobroExpediente',id,0)" result="flowScope.esSupervisor" />
 	    	<evaluate expression="executor.execute('expedienteRecobroApi.esGestorRecobroExpediente',id,0)" result="flowScope.esGestor" />
 	    	<evaluate expression="executor.execute('expedienteRecobroApi.esAgenciaRecobroExpediente',id,0)" result="flowScope.esAgencia" />
-			<evaluate expression="executor.execute('propuestaApi.usuarioLogadoEsGestorSupervisorActual',id)" result="flowScope.esGestorSupervisorActual" />
+			<evaluate expression="executor.execute('expedienteManager.esGestorDeLaFaseDelExpediente',id)" result="flowScope.esPrimerGestorFaseActual" />
+			<evaluate expression="executor.execute('expedienteManager.esSupervisorDeLaFaseDelExpediente',id)" result="flowScope.esPrimerSupervisorFaseActual" />
    		</on-render>	
     </view-state> 	
         

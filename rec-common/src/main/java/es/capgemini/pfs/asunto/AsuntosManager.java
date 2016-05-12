@@ -53,7 +53,6 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -75,6 +74,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.ZipUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.Checks;
 
@@ -118,6 +118,7 @@ public class AsuntosManager {
     
 	@Autowired
 	private GenericABMDao genericDao;
+
 
     /**
      * Actualiza el estado del asunto (abierto o cerrado) en función de sus procedimientos (abiertos o cerrados)
@@ -508,7 +509,7 @@ public class AsuntosManager {
             if (!usuarioLogado.equals(usuarioGestor)) { throw new BusinessOperationException("asunto.aceptacion.usuarioErroneo"); }
         }
         //Validar que estoy en el estado Confirmado
-        if (!DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO.equals(asunto.getEstadoAsunto().getCodigo())) { throw new BusinessOperationException(
+       /* if (!DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO.equals(asunto.getEstadoAsunto().getCodigo())) { throw new BusinessOperationException(
                 "asunto.aceptacion.estadoErroneo"); }
         //Cambiar de estado el asunto
         DDEstadoAsunto estadoAsuntoAceptado = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
@@ -516,7 +517,7 @@ public class AsuntosManager {
         DDEstadoAsunto estadoAceptado = estadoAsuntoAceptado;
         asunto.setEstadoAsunto(estadoAceptado);
         executor.execute(ExternaBusinessOperation.BO_ASU_MGR_SAVE_OR_UDPATE, asunto);
-        //this.saveOrUpdateAsunto(asunto);
+        //this.saveOrUpdateAsunto(asunto);*/
 
         //Finalizo la tarea de confirmacion de asunto.
         if (!automatico) {
@@ -590,11 +591,13 @@ public class AsuntosManager {
         Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         for (TareaNotificacion tarea : asunto.getTareas()) {
             SubtipoTarea subtipo = tarea.getSubtipoTarea();
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
-                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
-            }
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
-                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+            if(subtipo != null){
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
+	            }
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+	            }
             }
         }
         return false;
@@ -1298,6 +1301,6 @@ public class AsuntosManager {
     @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_GET_LIST_TIPOS_ASUNTO)
     public List<DDTiposAsunto> obtenerListadoTiposDeAsunto() {
 		Order orderDescripcion = new Order(OrderType.ASC, "descripcion"); 
-		return genericDao.getListOrdered(DDTiposAsunto.class, orderDescripcion);
+		return genericDao.getListOrdered(DDTiposAsunto.class, orderDescripcion,genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
     }
 }

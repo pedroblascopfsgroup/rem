@@ -12,6 +12,8 @@
 	    	<evaluate expression="requestParameters.acuerdos" result="flowScope.acuerdos"/>
 	    	<evaluate expression="true" result="flowScope.readOnly"/>
 	    	<evaluate expression="executor.execute('asuntosManager.get',id)" result="flowScope.asunto" />
+	    	<evaluate expression="executor.execute('asuntosManager.getGestorDespachoGestorAsunto',id)" result="flowScope.gestorDespacho" />
+	    	<evaluate expression="executor.execute('asuntosManager.getGestorDespachoSupervisorAsunto',id)" result="flowScope.supervisorDespacho" />
 	    	<evaluate expression="executor.execute('asuntosManager.puedoDevolverAsunto',id)" result="flowScope.puedoDevolver" />
 	    	<evaluate expression="executor.execute('asuntosManager.puedeTomarAccionAsunto',id)" result="flowScope.puedeTomarAccion" />
 	    	<evaluate expression="executor.execute('asuntosManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />

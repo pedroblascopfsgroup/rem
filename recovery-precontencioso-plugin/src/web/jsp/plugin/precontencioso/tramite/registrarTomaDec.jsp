@@ -29,6 +29,9 @@ var bottomBar = [];
 					return;
 				}
 			}
+			
+			procedimientoIniciar.setDisabled(false);
+			
 			//page.fireEvent(app.event.DONE);
 			page.submit({
 				eventName : 'ok'

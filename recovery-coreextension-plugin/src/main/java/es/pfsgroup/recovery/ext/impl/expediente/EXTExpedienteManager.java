@@ -24,7 +24,10 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.ZonaManager;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -59,6 +62,12 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	
 	@Autowired
 	private ExpedienteContratoDao expedienteContratoDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ZonaManager zonaManager;
 
 	/**
 	 * Busca expedients que contengan un determinado contrato
@@ -348,6 +357,139 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
         }
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_REVISION_A_ENSANCION)
+    @Transactional(readOnly = false)
+	@Override
+    public void elevarExpedienteDeREaENSAN(Long idExpediente, Boolean isSupervisor) {
+        
+		//Validamos el estado de todas las propuestas (sea propuesto o rechazado o incumplido o cumplido o cancelado )
+        List<String> codigosEstadosValidos = new ArrayList<String>();
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_PROPUESTO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+        
+        List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
+        
+        if (propuestasEstadoConforme) {
+        	expedienteManager.elevarExpedienteDeREaENSAN(idExpediente, isSupervisor);        	
+        	//Las propuestas en estado "Propuesto" se cambian a "Elevado"
+        	for (EXTAcuerdo propuesta : propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_PROPUESTO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO, true);
+        		}
+			}        	
+        } else {
+        	throw new BusinessOperationException("expediente.elevar.falloEstadoPropuestas");
+        }        
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_ENSANCION_A_REVISION)
+    @Transactional(readOnly = false)
+	@Override
+    public void devolverExpedienteDeEnSancionARevision(Long idExpediente, String respuesta, Boolean isSupervisor) {
+        
+		//Validamos el estado de todas las propuestas (sea propuesto o rechazado o incumplido o cumplido o cancelado )
+        List<String> codigosEstadosValidos = new ArrayList<String>();
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+        
+        List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
+        
+        if (propuestasEstadoConforme) {
+        	expedienteManager.devolverExpedienteDeEnSancionARevision(idExpediente, respuesta, isSupervisor);        	
+        	//Las propuestas en estado "Propuesto" se cambian a "Elevado"
+        	for (EXTAcuerdo propuesta : propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO, true);
+        		}
+			}        	
+        } else {
+        	throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas");
+        }        
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO)
+    @Transactional(readOnly = false)
+	@Override
+    public void elevarExpedienteDeENSANaSANC(Long idExpediente, Boolean isSupervisor) {
+        
+		//Validamos el estado de todas las propuestas (sea propuesto o rechazado o incumplido o cumplido o cancelado )
+        List<String> codigosEstadosValidos = new ArrayList<String>();
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_PROPUESTO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+        
+        List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
+        
+        if (propuestasEstadoConforme) {
+        	expedienteManager.elevarExpedienteDeENSANaSANC(idExpediente, isSupervisor);        	
+        	//Las propuestas en estado "Propuesto" se cambian a "Elevado"
+        	for (EXTAcuerdo propuesta : propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_PROPUESTO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO, true);
+        		}
+			}        	
+        } else {
+        	throw new BusinessOperationException("expediente.elevar.falloEstadoPropuestas");
+        }        
+	}
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(overrides = InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
+    @Transactional(readOnly = false)
+	@Override
+    public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,String respuesta, Boolean isSupervisor){
+        
+		//Validamos el estado de todas las propuestas (sea propuesto o rechazado o incumplido o cumplido o cancelado )
+        List<String> codigosEstadosValidos = new ArrayList<String>();
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        codigosEstadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+        
+        List<EXTAcuerdo> propuestasExp = propuestaManager.listadoPropuestasByExpedienteId(idExpediente);
+        Boolean propuestasEstadoConforme = propuestaManager.estadoTodasPropuestas(propuestasExp, codigosEstadosValidos);
+        
+        if (propuestasEstadoConforme) {
+        	expedienteManager.devolverExpedienteDeSancionadoACompletarExpediente(idExpediente,respuesta, isSupervisor);        	
+        	//Las propuestas en estado "Propuesto" se cambian a "Elevado"
+        	for (EXTAcuerdo propuesta : propuestasExp) {
+        		if (propuesta.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_ACEPTADO)) {
+        			propuestaManager.cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO, true);
+        		}
+			}        	
+        } else {
+        	throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas");
+        }        
+	}
+	
+	
 	public Expediente prepareGuid(Expediente expediente) {
 		boolean modificados = false;
 		if (Checks.esNulo(expediente.getGuid())) {
@@ -366,4 +508,40 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 		}
 		return expediente;
 	}
+	
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ES_GESTOR_DE_LA_FASE_ACTUAL)
+	@Override
+	public boolean esGestorDeLaFaseDelExpediente(Long idExpediente){
+		Expediente exp = extExpedienteDao.get(idExpediente);
+		Long idGestor = exp.getIdGestorActual();
+		String codigoZona = exp.getOficina().getZona().getCodigo();
+		return usuarioLogadoEsPrimerDeLaZonaPerfil(idGestor, codigoZona);
+	}
+
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ES_SUPERVISOR_DE_LA_FASE_ACTUAL)
+	@Override
+	public boolean esSupervisorDeLaFaseDelExpediente(Long idExpediente) {
+		Expediente exp = extExpedienteDao.get(idExpediente);
+		Long idSupervisor = exp.getIdSupervisorActual();
+		String codigoZona = exp.getOficina().getZona().getCodigo();
+		return usuarioLogadoEsPrimerDeLaZonaPerfil(idSupervisor, codigoZona);
+	}
+	
+	private boolean usuarioLogadoEsPrimerDeLaZonaPerfil(Long idPerfil, String codigoZona){
+		
+		if(!Checks.esNulo(idPerfil) && !Checks.esNulo(codigoZona)){
+			List<ZonaUsuarioPerfil> zups = zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(idPerfil, codigoZona);
+			for(ZonaUsuarioPerfil zup : zups){
+				if(!Checks.esNulo(zup) && zup.getUsuario().equals(usuarioManager.getUsuarioLogado())){
+					return true;
+				}
+			}
+			
+			return false;
+			
+		}else{
+			return false;	
+		}
+	}
+	
 }

@@ -14,14 +14,25 @@ public class LIQDtoTramoLiquidacion extends WebDto {
     private BigDecimal importe = null;
     private BigDecimal entregado = null;
     private BigDecimal intereses = null;
+    private BigDecimal intDemoraCierre = null;
     private BigDecimal impuestos = null;
     private BigDecimal comisiones = null;
     private BigDecimal gastos = null;
+    private BigDecimal costasLetrado = null;
+    private BigDecimal costasProcurador = null;
     private BigDecimal saldo = null;
+    private BigDecimal intDemoraCierrePend = null;
     private BigDecimal interesesPendientes = null;
+    private BigDecimal impuestosPendientes = null;
+    private BigDecimal comisionesPendientes = null;
+    private BigDecimal gastosPendientes = null;
+    private BigDecimal costasLetradoPendientes = null;
+    private BigDecimal costasProcuradorPendientes = null;
+    private BigDecimal sobranteEntrega = null;
     private Integer dias = null;
     private Float tipoDemora = null;
     private BigDecimal interesesDemora = null;
+    
 	public String getFechaValor() {
 		return fechaValor;
 	}
@@ -52,6 +63,12 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	public void setIntereses(BigDecimal intereses) {
 		this.intereses = intereses;
 	}
+	public BigDecimal getIntDemoraCierre() {
+		return intDemoraCierre;
+	}
+	public void setIntDemoraCierre(BigDecimal intDemoraCierre) {
+		this.intDemoraCierre = intDemoraCierre;
+	}
 	public BigDecimal getImpuestos() {
 		return impuestos;
 	}
@@ -70,17 +87,71 @@ public class LIQDtoTramoLiquidacion extends WebDto {
 	public void setGastos(BigDecimal gastos) {
 		this.gastos = gastos;
 	}
+	public BigDecimal getCostasLetrado() {
+		return costasLetrado;
+	}
+	public void setCostasLetrado(BigDecimal costasLetrado) {
+		this.costasLetrado = costasLetrado;
+	}
+	public BigDecimal getCostasProcurador() {
+		return costasProcurador;
+	}
+	public void setCostasProcurador(BigDecimal costasProcurador) {
+		this.costasProcurador = costasProcurador;
+	}
 	public BigDecimal getSaldo() {
 		return saldo;
 	}
 	public void setSaldo(BigDecimal saldo) {
 		this.saldo = saldo;
 	}
+	public BigDecimal getIntDemoraCierrePend() {
+		return intDemoraCierrePend;
+	}
+	public void setIntDemoraCierrePend(BigDecimal intDemoraCierrePend) {
+		this.intDemoraCierrePend = intDemoraCierrePend;
+	}
 	public BigDecimal getInteresesPendientes() {
 		return interesesPendientes;
 	}
 	public void setInteresesPendientes(BigDecimal interesesPendientes) {
 		this.interesesPendientes = interesesPendientes;
+	}
+	public BigDecimal getImpuestosPendientes() {
+		return impuestosPendientes;
+	}
+	public void setImpuestosPendientes(BigDecimal impuestosPendientes) {
+		this.impuestosPendientes = impuestosPendientes;
+	}
+	public BigDecimal getComisionesPendientes() {
+		return comisionesPendientes;
+	}
+	public void setComisionesPendientes(BigDecimal comisionesPendientes) {
+		this.comisionesPendientes = comisionesPendientes;
+	}
+	public BigDecimal getGastosPendientes() {
+		return gastosPendientes;
+	}
+	public void setGastosPendientes(BigDecimal gastosPendientes) {
+		this.gastosPendientes = gastosPendientes;
+	}
+	public BigDecimal getCostasLetradoPendientes() {
+		return costasLetradoPendientes;
+	}
+	public void setCostasLetradoPendientes(BigDecimal costasLetradoPendientes) {
+		this.costasLetradoPendientes = costasLetradoPendientes;
+	}
+	public BigDecimal getCostasProcuradorPendientes() {
+		return costasProcuradorPendientes;
+	}
+	public void setCostasProcuradorPendientes(BigDecimal costasProcuradorPendientes) {
+		this.costasProcuradorPendientes = costasProcuradorPendientes;
+	}
+	public BigDecimal getSobranteEntrega() {
+		return sobranteEntrega;
+	}
+	public void setSobranteEntrega(BigDecimal sobranteEntrega) {
+		this.sobranteEntrega = sobranteEntrega;
 	}
 	public Integer getDias() {
 		return dias;

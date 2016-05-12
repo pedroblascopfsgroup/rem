@@ -222,10 +222,10 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 							///////////////////////////////
 							/* PRODUCTO-858
 							Esta parte del código se utiliza para hacer algo específico del tipo de operación masiva CC_AA (Carterización de acreditados)
-							En concreto, se utiliza para la validación de duplicados de un campo, ID_Acreditado en este caso.
-							En caso de que estemos con una operación del tipo CA_AC y en la columna ID_Acreditado, llamamos al método 
+							En concreto, se utiliza para la validación de duplicados de un campo, CIF/NIF Acreditado en este caso.
+							En caso de que estemos con una operación del tipo CA_AC y en la columna CIF/NIF Acreditado, llamamos al método 
 							hayErrorDuplicadoId que añade un nuevo error no definido en el ac-plugin-masivo-SQL-ErrorMessages.xml */
-							if(esTipoCA==true && cabecerasExcel.get(columna).equals("ID_Acreditado"))
+							if(esTipoCA==true && cabecerasExcel.get(columna).equals("CIF/NIF Acreditado"))
 							{
 								errorDesc = hayErrorDuplicadoId(listaAcreditados,contenidoCelda);
 								if(errorDesc.length()>0)
@@ -277,7 +277,7 @@ public abstract class MSVExcelValidatorAbstract implements MSVExcelValidator {
 		
 		if(listaAcreditados.contains(contenidoCelda))
 		{
-			errorDesc.append("ID_Acreditado duplicado con la fila ");
+			errorDesc.append("CIF/NIF Acreditado duplicado con la fila ");
 			errorDesc.append(listaAcreditados.indexOf(contenidoCelda)+2 + ", ");
 		}		
 			listaAcreditados.add(contenidoCelda);		

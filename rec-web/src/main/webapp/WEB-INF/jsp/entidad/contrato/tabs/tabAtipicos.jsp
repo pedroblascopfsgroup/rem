@@ -40,7 +40,7 @@
         {header:'<s:message code="contrato.consulta.tabAtipicos.listado.codigo" text="**Código" />',dataIndex:'codigo',width:120},
 
         {header:'<s:message code="contrato.consulta.tabAtipicos.listado.tipo" text="**Tipo" />',dataIndex:'tipoAtipicoContrato',width:120},
-        {header:'<s:message code="contrato.consulta.tabAtipicos.listado.importe" text="**Importe" />',dataIndex:'importe',width:120},
+        {header:'<s:message code="contrato.consulta.tabAtipicos.listado.importe" text="**Importe" />',dataIndex:'importe',renderer: app.format.moneyRenderer,width:120},
         {header:'<s:message code="contrato.consulta.tabAtipicos.listado.fechaValor" text="**Fecha valor" />',dataIndex:'fechaValor',width:120},
         {header:'<s:message code="contrato.consulta.tabAtipicos.listado.motivo" text="**Motivo" />',dataIndex:'motivoAtipicoContrato',width:120}
     ]);

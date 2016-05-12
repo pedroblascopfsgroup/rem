@@ -61,6 +61,7 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
@@ -69,8 +70,10 @@ import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
@@ -84,6 +87,7 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -108,6 +112,7 @@ import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecis
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
+import es.pfsgroup.recovery.common.api.CommonProjectContext;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
@@ -155,6 +160,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private EXTGestorAdicionalAsuntoDao gestorAdicionalAsuntoDao;
+	
+	@Autowired
+	EXTGestorAdicionalAsuntoHistoricoDao gestorAdicionalAsuntoHistoricoDao;
 
 	@Autowired(required = false)
 	private List<ModificacionAsuntoListener> listeners;
@@ -193,6 +201,15 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	private AdjuntoApi adjuntosApi;
+	
+	@Autowired
+	private CommonProjectContext commonProjectContext;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Autowired
+	private GestorDespachoDao gestorDespachoDao;
 	
 	@Override
 	public String managerName() {
@@ -344,8 +361,61 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_ASU_MGR_GET)
 	public Asunto get(Long id) {
 		EventFactory.onMethodStart(this.getClass());
-		return parent().get(id);
+		// Obtener asunto.
+    	Asunto asunto = asuntoDao.get(id);
+        return asunto;
 	}
+	
+	@Override
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_GESTORASUNTO)
+	public GestorDespacho getGestorDespachoGestorAsunto(Long idAsunto){
+		GestorDespacho gestorDespacho = null;
+		Asunto asunto = asuntoDao.get(idAsunto);
+		
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+			String tipoGestor = commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR);
+			if(!Checks.esNulo(tipoGestor)){
+	    		return this.getGestorDespachoAsunto(idAsunto,tipoGestor);
+	    	}
+	    	
+		}
+		return gestorDespacho;		
+	}
+	
+	@Override
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_SUPERVISORASUNTO)
+	public GestorDespacho getGestorDespachoSupervisorAsunto(Long idAsunto){
+		GestorDespacho gestorDespacho = null;
+		Asunto asunto = asuntoDao.get(idAsunto);
+		
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+			String tipoGestor = commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR);
+	    	if(!Checks.esNulo(tipoGestor)){
+	    		return this.getGestorDespachoAsunto(idAsunto,tipoGestor);
+	    	}
+	    	
+		}
+		return gestorDespacho;		
+	}
+	
+	public GestorDespacho getGestorDespachoAsunto(Long idAsunto, String tipoGestor){
+		GestorDespacho gestorDespacho = null;
+		
+		// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+    	List<Usuario> usuGestList = gestorAdicionalAsuntoDao.findGestoresByAsunto(idAsunto, tipoGestor);
+    	if(!Checks.estaVacio(usuGestList)){
+    		Usuario usuGestor = usuGestList.get(0);
+    		// Obtener gestor despacho para el gestor 
+    		List<GestorDespacho> gestDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId());
+    		if(!Checks.estaVacio(gestDespachoList)){
+    			gestorDespacho = gestDespachoList.get(0);
+    		}
+    	}
+		return gestorDespacho;		
+	}
+
 
 	private Collection<? extends HistoricoAsuntoInfo> getHistoricoProcedimiento(Procedimiento p) {
 
@@ -958,6 +1028,57 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
 																		, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
 			gaa.setGestor(gestor);
+			
+			List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
+			
+
+			
+			EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
+			gaah.setGestor(gaa.getGestor());
+			gaah.setAuditoria(Auditoria.getNewInstance());
+			gaah.setAsunto(gaa.getAsunto());
+			gaah.setTipoGestor(gaa.getTipoGestor());
+			gaah.setFechaDesde(new Date());
+			
+			Boolean existe= false;
+			Boolean existeConFechaHasta= false;
+			Boolean existeConFechaHastaVacio= false;
+			List<String> gestoresBorrados= Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
+			List<String> tipogestoresBorrados= Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+			for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+				
+				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
+					existe= true;
+					if(ges.getFechaHasta()!=null){
+						existeConFechaHasta= true;
+					}
+					if(ges.getFechaHasta()==null){
+						existeConFechaHastaVacio= true;
+					}
+				}
+				
+				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
+					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+					
+				}
+				
+				if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
+					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
+				}
+				
+				
+			}
+			
+			
+			if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
+				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+			}
+			
+//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+//			}
+			
+			
 			gestorAdicionalAsuntoDao.save(gaa);
 		}
 		
@@ -1967,7 +2088,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				boolean cumplido = false;
 				//Comprobamos el cumplimiento
 				if(!Checks.esNulo(dto.getCumplidoSelect())){
-					if(dto.getCumplidoSelect().charAt(0) == 'S'){
+					if(DDSiNo.SI.equals(dto.getCumplidoSelect())){
 						cumplido = true;
 					}
 				}

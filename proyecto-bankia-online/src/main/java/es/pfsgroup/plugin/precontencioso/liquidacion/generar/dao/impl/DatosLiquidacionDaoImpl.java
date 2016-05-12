@@ -51,6 +51,7 @@ public class DatosLiquidacionDaoImpl implements DatosLiquidacionDao {
 		plainQueryRecibosLiq.append(" FROM RCB_RECIBOS_LIQ ");
 		plainQueryRecibosLiq.append(" WHERE BORRADO = 0 ");
 		plainQueryRecibosLiq.append("  AND RCB_PCO_LIQ_ID = :idLiquidacion ");
+		plainQueryRecibosLiq.append("	ORDER BY RCB_FEVCTR ASC ");
 
 		return plainQueryRecibosLiq.toString();
 	}

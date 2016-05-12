@@ -88,6 +88,7 @@ public class DatosPlantillaCredito extends DatosPlantillaPrestamoAbstract implem
 		//datosLiquidacion.put("SUCURSAL_MAYOR_DEUDA", sucursal_mayor_deuda_exp);
 		//añadido para la unión con extracto
 		datosLiquidacion.put("COEXPD_GLOBAL", cabeceraExpediente.get(0).COEXPD());
+		datosLiquidacion.put("NUM_CONTRATO", datosGenerales.get(0).IDPRIG());
 
 		return datosLiquidacion;
 	}

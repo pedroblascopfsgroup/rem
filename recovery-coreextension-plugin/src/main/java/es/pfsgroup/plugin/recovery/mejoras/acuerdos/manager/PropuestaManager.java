@@ -134,9 +134,9 @@ public class PropuestaManager implements PropuestaApi {
 			Boolean esEstadoDecisionComite = DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo());
 			Boolean esEstadoSancionado = DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo());
 
-			if (esEstadoCompletarExp || esEstadoRevisarExp || esEstadoEnSancion) {
+			if (esEstadoCompletarExp || esEstadoRevisarExp ) {
 				cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_PROPUESTO);
-			} else if (esEstadoDecisionComite || esEstadoSancionado) {
+			} else if (esEstadoDecisionComite || esEstadoSancionado || esEstadoEnSancion) {
 				cambiarEstadoPropuesta(propuesta, DDEstadoAcuerdo.ACUERDO_ACEPTADO);
 			}
 		} else {
@@ -443,7 +443,8 @@ public class PropuestaManager implements PropuestaApi {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void cambiarEstadoPropuesta(EXTAcuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento) {
+	@BusinessOperation(BO_PROPUESTA_CAMBIAR_ESTADO)
+	public void cambiarEstadoPropuesta(Acuerdo propuesta, String nuevoCodigoEstado, boolean generarEvento) {
 		this.cambiarEstadoPropuesta(propuesta, nuevoCodigoEstado);
 		
 		if (generarEvento) {

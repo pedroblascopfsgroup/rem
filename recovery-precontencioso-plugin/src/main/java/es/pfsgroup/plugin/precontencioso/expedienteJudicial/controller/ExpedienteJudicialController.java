@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -15,10 +14,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDPrioridad;
 import es.capgemini.pfs.asunto.dao.TipoProcedimientoDao;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.bien.model.ProcedimientoBien;
 import es.capgemini.pfs.contrato.model.DDTipoProductoEntidad;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
@@ -76,9 +75,13 @@ public class ExpedienteJudicialController {
 	private static final String LISTA_PROCEDIMIENTOS_JSON = "plugin/precontencioso/acciones/json/tipoProcedimientoJSON";
 	private static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	private static final String DOCUMENTO_INSTANCIA_REGISTRO = "plugin/precontencioso/generarDocs/documentoInstanciaRegistro";
+	private static final String DOCUMENTO_INSTANCIA_REGISTRO_CANARIAS = "plugin/precontencioso/generarDocs/documentoInstanciaRegistroCanarias";
 	private static final String JSON_BIENES_PROCEDIMIENTO = "plugin/precontencioso/generarDocs/bienesProcedimientoJSON";
 	private static final String JSON_RESPUESTA_SERVICIO = "plugin/precontencioso/generarDocs/resultadoOKJSON";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
+	
+	private static final String JSON_PRIORIDAD = "expedientes/prioridadJSON";
+	private static final String JSON_TIPO_PREPARACION = "expedientes/tipoPreparacionJSON";
 	
 	@Autowired
 	ProcedimientoPcoApi procedimientoPcoApi;
@@ -110,6 +113,9 @@ public class ExpedienteJudicialController {
 	@Autowired
 	private BienApi bienApi;
 	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String comprobarFinalizacionPosible(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
@@ -132,7 +138,7 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String devolverPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		procedimientoPcoApi.devolverPreparacionPorProcedimientoId(idProcedimiento);
-//		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
 		return DEFAULT;
 	}
 
@@ -472,6 +478,12 @@ public class ExpedienteJudicialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
+	public String documentoInstanciaRegistroCanarias(ModelMap model) {
+		return DOCUMENTO_INSTANCIA_REGISTRO_CANARIAS;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
 	public String bienesAsociadosProcedimiento(ModelMap model, @RequestParam(value = "id", required = true) Long idProcedimiento) {
 
 		List<BienProcedimientoDTO> bienes = bienApi.getBienesPersonasContratos(idProcedimiento, null, null, null);
@@ -521,6 +533,37 @@ public class ExpedienteJudicialController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
+	public String generarDocumentoBienesCanarias(ModelMap model,
+			@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento,
+			@RequestParam(value = "idsBien", required = true) String idsBien,
+			@RequestParam(value = "localidad", required = true) String localidad,
+			@RequestParam(value = "nombreNotario", required = false) String nombreNotario,
+			@RequestParam(value = "numProtocolo", required = false) String numProtocolo,
+			@RequestParam(value = "fechaEscritura", required = false) String fechaEscritura,
+			@RequestParam(value = "nombreNotario2", required = false) String nombreNotario2,
+			@RequestParam(value = "numProtocolo2", required = false) String numProtocolo2,
+			@RequestParam(value = "fechaEscritura2", required = false) String fechaEscritura2,
+			@RequestParam(value = "localidadRegProp", required = false) String localidadRegProp, 
+			@RequestParam(value = "numeroRegProp", required = false) String numeroRegProp 
+			) {
+		
+		if (generarDocumentoApi == null) {
+			logger.error("LiquidacionDocController.generarCertSaldo: No existe una implementacion para generarDocumentoApi");
+			throw new BusinessOperationException("Not implemented generarDocumentoApi");
+		}
+
+		FileItem instanciaDocumento = generarDocumentoApi.generarDocumentoBienesCanarias(idProcedimiento, idsBien, localidad, 
+				nombreNotario, numProtocolo, fechaEscritura, 
+				nombreNotario2, numProtocolo2, fechaEscritura2,
+				localidadRegProp, numeroRegProp);
+		model.put("fileItem", instanciaDocumento);
+
+		return JSP_DOWNLOAD_FILE;
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping
 	public String generarCertSaldo(@RequestParam(value = "idLiquidacion", required = true) Long idLiquidacion, 
 			@RequestParam(value = "idPlantilla", required = true) Long idPlantilla, 
 			@RequestParam(value = "codigoPropietaria", required = true) String codigoPropietaria,
@@ -539,4 +582,25 @@ public class ExpedienteJudicialController {
 		return JSP_DOWNLOAD_FILE;
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDiccionarioPrioridad(ModelMap model) {
+
+		ArrayList<DDPrioridad> prioridad =  (ArrayList<DDPrioridad>) diccionarioApi.dameValoresDiccionario(DDPrioridad.class);
+		model.put("prioridad", prioridad);
+		
+		return JSON_PRIORIDAD;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDiccionarioPreparacion(ModelMap model) {
+
+		ArrayList<DDTipoPreparacionPCO> preparacion =  (ArrayList<DDTipoPreparacionPCO>) diccionarioApi.dameValoresDiccionario(DDTipoPreparacionPCO.class);
+		model.put("preparacion", preparacion);
+		
+		return JSON_TIPO_PREPARACION;
+	}
+	
 }

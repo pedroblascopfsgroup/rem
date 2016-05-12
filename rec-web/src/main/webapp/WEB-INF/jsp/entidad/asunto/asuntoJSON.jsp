@@ -38,9 +38,19 @@
 	  <c:if test="${asunto.gestionAsunto != null}">
 	  	<json:property name="gestionAsunto" value="${asunto.gestionAsunto.descripcion}" />
 	  </c:if>
-	  <json:property name="despacho" value="${asunto.gestor.despachoExterno.despacho}" />
-	  <json:property name="gestor" value="${asunto.gestor.usuario.apellidoNombre}" />
-	  <json:property name="supervisor" value="${asunto.supervisor.usuario.apellidoNombre}" />
+	  <c:if test="${gestorDespacho != null}">
+	  	<c:if test="${gestorDespacho.despachoExterno != null}">
+	  		<json:property name="despacho" value="${gestorDespacho.despachoExterno.despacho}" />
+	  	</c:if>
+	  	<c:if test="${gestorDespacho.usuario != null}">
+	  		<json:property name="gestor" value="${gestorDespacho.usuario.apellidoNombre}" />
+	  	</c:if>
+	  </c:if>
+	  <c:if test="${supervisorDespacho != null}">
+	  	<c:if test="${supervisorDespacho.usuario != null}">
+	  		<json:property name="supervisor" value="${supervisorDespacho.usuario.apellidoNombre}" />
+	  	</c:if>
+	  </c:if>
 	  <json:property name="expediente" value="${asunto.expediente.descripcionExpediente}" />
 	  <json:property name="expedienteId" value="${asunto.expediente.id}" />
 	  <json:property name="comite" value="${asunto.comite.nombre}" />

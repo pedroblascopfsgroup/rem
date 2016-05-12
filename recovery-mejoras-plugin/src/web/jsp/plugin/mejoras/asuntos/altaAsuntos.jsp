@@ -238,6 +238,108 @@
 	tipoDeAsunto.setValue("${asuntoEditar.tipoAsunto.id}");	 
 	
 	<%-- Fin creacion combo tipo de asunto  --%>
+	
+	
+		var insertarFunctionAutomatica= function(listados){
+			var lonlistadoGestores= listados.listadoGestores.length;
+			var lonlistadoDespachos= listados.listadoDespachos.length;
+			var lonlistadoUsuarios= listados.listadoUsuarios.length;
+			if(lonlistadoGestores == lonlistadoDespachos && lonlistadoDespachos == lonlistadoUsuarios && lonlistadoUsuarios>0){
+				for(var i=0; i<=listados.listadoGestores.length-1; i++){
+					var nuevoGestorRecord = new gestor();
+					nuevoGestorRecord.data.tipoGestorId = listados.listadoGestores[i].id;
+					nuevoGestorRecord.data.tipoGestorDescripcion = listados.listadoGestores[i].descripcion; 
+					nuevoGestorRecord.data.usuarioId = listados.listadoUsuarios[i].id;
+					nuevoGestorRecord.data.usuario = listados.listadoUsuarios[i].username;
+					//nuevoGestorRecord.data.fechaDesde = new Date();
+					
+					//var tipoDespachoRec = comboTipoDespacho.getStore().getById(comboTipoDespacho.getValue()).data;
+				
+					nuevoGestorRecord.data.tipoDespachoId = listados.listadoDespachos[i].cod;
+						
+					nuevoGestorRecord.data.domicilio = listados.listadoDespachos[i].domicilio;
+					nuevoGestorRecord.data.domicilioPlaza = listados.listadoDespachos[i].localidad;
+					nuevoGestorRecord.data.telefono1 = listados.listadoDespachos[i].telefono;
+					
+					if(!tipoInsertado(listados.listadoGestores[i].id)){
+						if(indexGestor(listados.listadoGestores[i].id,listados.listadoDespachos[i].cod,listados.listadoUsuarios[i].id)==-1){
+							gestorStore.add(nuevoGestorRecord);
+						}
+						else {
+							Ext.Msg.show({
+								title:'Atención: Operación no válida',
+								msg: 'Este usuario ya existe agregado como gestor',
+								buttons: Ext.Msg.OK,
+								icon:Ext.MessageBox.WARNING});
+						}					
+					}
+					else {
+						Ext.Msg.show({
+							title:'Atención: Operación no válida',
+							msg: 'Ya existe otro usuario con el mismo tipo de gestor',
+							buttons: Ext.Msg.OK,
+							icon:Ext.MessageBox.WARNING});		
+					}
+				}
+			
+			}
+			
+	
+		};
+	
+	
+	tipoDeAsunto.on('select', function(){
+		var idExpediente= ${idExpediente};
+    	if(tipoDeAsunto.getValue() == 1){
+	    	if(gestorStore.data.length>0){
+	    		gestorStore.removeAll();
+	    	}
+	    	page.webflow({
+				flow: 'coreextension/getListUsuariosDefectoByTipoAsunto'
+				,params:{'idTipoAsunto': '01', 'idExpediente': idExpediente} 
+				,success: function (result, request){
+					insertarFunctionAutomatica(result);
+				}
+				,failure : function(result,request){
+                    Ext.getCmp('Error en la carga automática de gestores');
+                 }
+			});	
+    	}
+    	
+    	else if(tipoDeAsunto.getValue() == 2){
+    		if(gestorStore.data.length>0){
+	    		gestorStore.removeAll();
+	    	}
+	    	page.webflow({
+				flow: 'coreextension/getListUsuariosDefectoByTipoAsunto'
+				,params:{'idTipoAsunto': '02', 'idExpediente': idExpediente} 
+				,success: function (result, request){
+					insertarFunctionAutomatica(result);
+				}
+				,failure : function(result,request){
+                    Ext.getCmp('Error en la carga automática de gestores');
+                 }
+			});	
+    	}
+    	
+    	else if(tipoDeAsunto.getValue() == 21){
+    		if(gestorStore.data.length>0){
+	    		gestorStore.removeAll();
+	    	}
+	    	page.webflow({
+				flow: 'coreextension/getListUsuariosDefectoByTipoAsunto'
+				,params:{'idTipoAsunto': '21', 'idExpediente': idExpediente} 
+				,success: function (result, request){
+					insertarFunctionAutomatica(result);
+				}
+				,failure : function(result,request){
+                    Ext.getCmp('Error en la carga automática de gestores');
+                 }
+			});	
+    	}
+    	
+    });
+    
 
     var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
@@ -324,8 +426,8 @@
 	]);
 	
 	var optionsDespachoStore = page.getStore({
-	       //flow: 'coreextension/getListTipoDespachoData'
-	       flow: 'asuntos/buscarDespachosPorZonaTipoGestor'
+	       flow: 'coreextension/getListTipoDespachoData'
+	       //flow: 'asuntos/buscarDespachosPorZonaTipoGestor'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoDespachos'
 	    	 ,idProperty: 'cod'
@@ -390,7 +492,7 @@
 		comboTipoUsuario.reset();
 		comboTipoDespacho.reset();
 		
-		if (comboZonas.getValue()!='') {
+		<%-- if (comboZonas.getValue()!='') {
 			optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue(), 'zonas': comboZonas.getValue()}); 
 			comboTipoDespacho.setDisabled(false);
 		} else {
@@ -398,6 +500,18 @@
 			Ext.Msg.show({
 				title:'Zonas',
 				msg: 'Debe seleccionar una zona para ver los correspondientes despachos.',
+				buttons: Ext.Msg.OK,
+				icon:Ext.MessageBox.WARNING});			
+		} --%>
+		
+		if (comboTipoGestor.getValue()!='') {
+			optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()}); 
+			comboTipoDespacho.setDisabled(false);
+		} else {
+			comboTipoDespacho.setDisabled(true);
+			Ext.Msg.show({
+				title:'Zonas',
+				msg: 'Debe seleccionar un tipo gestor.',
 				buttons: Ext.Msg.OK,
 				icon:Ext.MessageBox.WARNING});			
 		}
@@ -442,6 +556,9 @@
 		comboTipoUsuario.setDisabled(true);
 		comboTipoGestor.setValue('');
 	}; 
+	
+	comboZonas.hidden= true;
+	comboJerarquia.hidden= true;
 	
 	var insertar = new Ext.Button({
 		text:'<s:message code="app.agregar" text="**Agregar" />'
@@ -526,9 +643,12 @@
 		,autoHeight:true	
 		,title: '<s:message code="menu.clientes.filtrado.findGestores" text="**Modificar Gestores" />'
 		,collapsible: false
-		,items: [tituloTipoGestor,comboTipoGestor
+		,items: [
+		
+		
+				tituloTipoGestor,comboTipoGestor
 				,tituloDespacho,comboTipoDespacho
-				,tituloUsuario,comboTipoUsuario]
+				,tituloUsuario,comboTipoUsuario ]
 		,bbar: [insertar]
 	});
 	
@@ -571,9 +691,14 @@
    		borrar.setDisabled(true);
 	  }); 	
 	
+	
+	var idGestorBorrado=  '';
+	var idTipoGestorBorrado=  '';
 	var borrarFunction=function(){
 		var gestorSel = grid.getSelectionModel().getSelected();
 		if (gestorSel) {
+			idGestorBorrado=  gestorSel.get('idGestor') + ',' + idGestorBorrado ;
+			idTipoGestorBorrado= gestorSel.get('tipoGestorId') + ',' + idTipoGestorBorrado;
 			grid.getStore().remove(gestorSel);
 		}
 	}; 	
@@ -629,7 +754,10 @@
                     	,codigoEstadoAsunto: '${codigoEstadoAsunto}'
                     </c:if>
                     ,listaGestoresId: Ext.encode(getGestoresId())
-                    ,tipoDeAsunto: tipoDeAsunto.getValue()				
+                    ,tipoDeAsunto: tipoDeAsunto.getValue()
+                    ,idGestorBorrado: idGestorBorrado
+                    ,idTipoGestorBorrado: idTipoGestorBorrado
+                    				
 				}
 				,success :  function(){ 
                   				page.fireEvent(app.event.DONE);

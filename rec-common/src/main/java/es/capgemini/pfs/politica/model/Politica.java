@@ -432,7 +432,7 @@ public class Politica implements Auditable, Serializable {
 
 		@Override
 		public int compare(Politica o1, Politica o2) {
-			return o1.getEstadoItinerarioPolitica().getId().compareTo(o2.getEstadoItinerarioPolitica().getId());
+			return o1.getEstadoItinerarioPolitica().getOrden().compareTo(o2.getEstadoItinerarioPolitica().getOrden());
 		}    	
     }
 }

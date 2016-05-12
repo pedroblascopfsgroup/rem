@@ -4,6 +4,7 @@
 --*      --------------------------------          *
 --*     Borrado de BPMs y tablas maestras.         *
 --*                                                *
+--* GMN v.10.1:> incluimos borrado de tablas       *
 --*************************************************/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
@@ -1621,6 +1622,11 @@ BEGIN
                                                   JOIN '||V_ESQUEMA||'.TABLA_TMP_EXP TMP ON CEX.EXP_ID = TMP.EXP_ID)';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CRE_PRC_CEX... Se han eliminado '||EXISTE||' registros');
            COMMIT;
+                      
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.COV_CONVENIOS_CREDITOS where CRE_CEX_ID not in (SELECT CRE.CRE_CEX_ID FROM '||V_ESQUEMA||'.CRE_PRC_CEX CRE)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.COV_CONVENIOS_CREDITOS .. Se han eliminado convenios creditos '||SQL%ROWCOUNT||' registros');
+           COMMIT;        
+           
            PRO_KEYS_STATUS(V_ESQUEMA, 'CRE_PRC_CEX', 'ENABLE');
       END IF;
 
@@ -1683,7 +1689,20 @@ BEGIN
            
            EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.CMP_CICLO_MARCADO_POLITICA where exp_id not in (SELECT exp.exp_id FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP)';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CMP_CICLO_MARCADO_POLITICA .. Se han eliminado con Ciclo marcado Politica '||SQL%ROWCOUNT||' registros');
-           COMMIT;                             
+           COMMIT;           
+           
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.AEE_ACTUACION_EXPLORAR_EXP where exp_id not in (SELECT exp.exp_id FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.AEE_ACTUACION_EXPLORAR_EXP .. Se han eliminado con actuacion explorar '||SQL%ROWCOUNT||' registros');
+           COMMIT;                                
+            
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.REC_RECUPERACIONES where exp_id not in (SELECT exp.exp_id FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.REC_RECUPERACIONES .. Se han eliminado recuperaciones '||SQL%ROWCOUNT||' registros');
+           COMMIT;                                
+
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.EPR_ESTADOS_PROCESOS where exp_id not in (SELECT exp.exp_id FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP)';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.EPR_ESTADOS_PROCESOS .. Se han eliminado de estados procesos '||SQL%ROWCOUNT||' registros');
+           COMMIT;              
+           
            
            PRO_KEYS_STATUS(V_ESQUEMA, 'EXP_EXPEDIENTES', 'ENABLE');
       END IF;
@@ -1719,9 +1738,16 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'CLI_CLIENTES', 'DISABLE');
+
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA||'.REC_RECUPERACIONES where cli_id in ( SELECT CLI_ID FROM '||V_ESQUEMA ||'.CLI_CLIENTES 
+                                                                                                WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||'''))';
+           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.REC_RECUPERACIONES .. Se han eliminado con recuperaciones '||SQL%ROWCOUNT||' registros');
+
            EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.CLI_CLIENTES WHERE USUARIOCREAR  IN ( '''||USUARIO||''','''||USUARIO2||''','''||USUARIO3||''','''||USUARIO4||''')';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.CLI_CLIENTES...  Se han eliminado '||EXISTE||' registros');
-           COMMIT;
+
+           COMMIT;                       
+                      
            PRO_KEYS_STATUS(V_ESQUEMA, 'CLI_CLIENTES', 'ENABLE');
       END IF;
 /*
@@ -1771,4 +1797,5 @@ EXCEPTION
 END;
 /
 
-EXIT
+EXIT;
+

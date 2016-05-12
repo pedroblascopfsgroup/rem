@@ -54,22 +54,25 @@ public class ExpedientePersonaDaoImpl extends AbstractEntityDao<ExpedientePerson
 
         hql.append("select pex from ExpedientePersona pex ");
         hql.append(" where pex.expediente.id = ? and pex.auditoria.borrado = false ");
-        hql.append(" and pex.ambitoExpediente.codigo IN (");
-
-        boolean isSeparador = false;
-        for (String amb : vAmbitos) {
-            if (isSeparador) {
-                hql.append(",");
-            }
-            isSeparador = true;
-
-            hql.append("'" + amb + "'");
-        }
-        hql.append(")");
         
         if(ambitoExpediente.getCodigo().equals(DDAmbitoExpediente.PERSONA_PASE)){
         	hql.append(" and pex.pase = 1 ");
+        }else{
+        	hql.append(" and pex.ambitoExpediente.codigo IN (");
+
+	        boolean isSeparador = false;
+	        for (String amb : vAmbitos) {
+	            if (isSeparador) {
+	                hql.append(",");
+	            }
+	            isSeparador = true;
+	
+	            hql.append("'" + amb + "'");
+	        }
+	        hql.append(")");
         }
+        
+       
         
         
 

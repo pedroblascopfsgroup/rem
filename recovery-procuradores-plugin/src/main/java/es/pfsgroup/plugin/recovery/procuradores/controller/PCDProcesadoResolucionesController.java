@@ -1115,6 +1115,12 @@ public class PCDProcesadoResolucionesController {
     	if (mapaDatosPersistidos.containsKey(CON_TESTIMONIO)){
     		datosPersistidos.add(mapaDatosPersistidos.get(CON_TESTIMONIO));
     	}
+    	if (mapaDatosPersistidos.containsKey("cuantiaLetrado")){
+    		datosPersistidos.add(mapaDatosPersistidos.get("cuantiaLetrado"));
+    	}
+    	if (mapaDatosPersistidos.containsKey("cuantiaProcurador")){
+    		datosPersistidos.add(mapaDatosPersistidos.get("cuantiaProcurador"));
+    	}
     	model.put("datosPersistidos", datosPersistidos);
     	return JSON_DATOS_ADICIONALES;
     }

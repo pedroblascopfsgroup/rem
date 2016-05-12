@@ -144,6 +144,17 @@
         ,height : 140
         ,cls:'cursor_pointer'
     });	
+    
+    nivelCumplimientoGrid.on('rowdblclick',function(grid, rowIndex, e){
+    	var rec = grid.getStore().getAt(rowIndex);
+    	console.log(rec.get('descripcionRegla'));
+    	if(rec.get('descripcionRegla')=='Seleccionar propuesta de actuación'){
+    		console.log('dentro');
+    		console.log(getIdExpediente());
+    		console.log(entidad.get("data").cabecera.descripcion);
+    		app.abreExpedienteTab(getIdExpediente(), entidad.get("data").cabecera.descripcion, 'acuerdos');
+		}
+    });
 
 
 	nivelCumplimientoStore.webflow({idExpediente:${expediente.id}});
@@ -230,7 +241,7 @@
 			//es una persona
 			var id = rec.get('idPersona');
     		var nombre_cliente=rec.get('apellidoNombre');
-    		app.abreCliente(id, nombre_cliente);	
+    		app.abreClienteTab(id, nombre_cliente, 'politicaPanel');	
 		}
 		if(rec.get('tipoObjetoEntidad')=='<fwk:const value="es.capgemini.pfs.expediente.ObjetoEntidadRegla.TIPO_CONTRATO" />'){
 			//es un contrato

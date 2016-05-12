@@ -2,21 +2,38 @@ package es.pfsgroup.plugin.recovery.liquidaciones;
 
 import java.sql.Date;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
+import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.tareaNotificacion.EXTDtoGenerarTarea;
+import es.capgemini.pfs.tareaNotificacion.VencimientoUtils;
+import es.capgemini.pfs.tareaNotificacion.VencimientoUtils.TipoCalculo;
+import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
+import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.liquidaciones.api.ContabilidadCobrosApi;
+import es.pfsgroup.plugin.recovery.liquidaciones.api.LiquidacionesProjectContext;
 import es.pfsgroup.plugin.recovery.liquidaciones.dao.ContabilidadCobrosDao;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
+import es.pfsgroup.plugin.recovery.liquidaciones.excepciones.STAContabilidadException;
 import es.pfsgroup.plugin.recovery.liquidaciones.model.ContabilidadCobros;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableConceptoEntrega;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableTipoEntrega;
@@ -40,23 +57,26 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 	@Autowired
 	private AsuntoDao asuntoDao;
 	
+	@Autowired
+	private AsuntoApi asuntoApi;
+	
+	@Autowired
+	private LiquidacionesProjectContext liquidacionesProjectContext;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
 	@Override
 	@Transactional(readOnly=false)
 	public void saveContabilidadCobro(DtoContabilidadCobros dto) {
-		// Obtener los diccionarios por su columna 'CODIGO'.
-		Dictionary tipoEntrega = dictionary.getByCode(DDAdjContableTipoEntrega.class, dto.getTipoEntrega());
-		Dictionary conceptoEntrega = dictionary.getByCode(DDAdjContableConceptoEntrega.class, dto.getConceptoEntrega());
-	
 		ContabilidadCobros cnt = new ContabilidadCobros();
 		
+		/**Seteamos los valores de los campos**/
+		// Comprobar si ya existe un registro e importarlo para modificar su contenido.
 		if(!Checks.esNulo(dto.getId())){
 			cnt = contabilidadCobrosDao.get(dto.getId());
 		}
-		
-		/**Seteamos los valores de los campos**/
-		cnt.setAsunto(asuntoDao.get(dto.getAsunto()));
-		cnt.setConceptoEntrega((DDAdjContableConceptoEntrega) conceptoEntrega);
-		cnt.setDemoras(dto.getDemoras());
+		// Obtener fechas y asignar al modelo.
 		try {
 			Date sqlFE = new java.sql.Date(DateFormat.toDate(dto.getFechaEntrega()).getTime());
 			cnt.setFechaEntrega(sqlFE);
@@ -66,9 +86,20 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		// Obtener los diccionarios por su columna 'CODIGO' y asignar al modelo.
+		if(dto.getTipoEntrega() != null && !dto.getTipoEntrega().equals("")){
+			Dictionary tipoEntrega = dictionary.getByCode(DDAdjContableTipoEntrega.class, dto.getTipoEntrega());
+			cnt.setTipoEntrega((DDAdjContableTipoEntrega) tipoEntrega);
+		}
+		if(dto.getConceptoEntrega() != null && !dto.getConceptoEntrega().equals("")){
+			Dictionary conceptoEntrega = dictionary.getByCode(DDAdjContableConceptoEntrega.class, dto.getConceptoEntrega());
+			cnt.setConceptoEntrega((DDAdjContableConceptoEntrega) conceptoEntrega);
+		}
+		// Asignar resto de datos al modelo.
+		cnt.setAsunto(asuntoDao.get(dto.getAsunto()));
+		cnt.setDemoras(dto.getDemoras());
 		cnt.setGastosLetrado(dto.getGastosLetrado());
 		cnt.setGastosProcurador(dto.getGastosProcurador());
-		cnt.setImporte(dto.getImporte());
 		cnt.setImpuestos(dto.getImpuestos());
 		cnt.setIntereses(dto.getIntereses());
 		cnt.setNominal(dto.getNominal());
@@ -83,11 +114,15 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		cnt.setQuitaImpuestos(dto.getQuitaImpuestos());
 		cnt.setQuitaIntereses(dto.getQuitaIntereses());
 		cnt.setQuitaNominal(dto.getQuitaNominal());
-		cnt.setQuitaOtrosGastos(dto.getOtrosGastos());
-		cnt.setTipoEntrega((DDAdjContableTipoEntrega) tipoEntrega);
+		cnt.setQuitaOtrosGastos(dto.getQuitaOtrosGastos());
 		cnt.setTotalEntrega(dto.getTotalEntrega());
 		cnt.setOperacionesTramite(dto.getOperacionesTramite());
+		cnt.setOperacionesEnTramite(dto.getOperacionesEnTramite());
+		cnt.setQuitaOperacionesEnTramite(dto.getQuitaOperacionesEnTramite());
+		cnt.setTotalQuita(dto.getTotalQuita());
+		cnt.setContabilizado(false);
 
+		// Guardar en la DB.
 		genericDao.save(ContabilidadCobros.class, cnt);
 	}
 
@@ -100,7 +135,7 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 	@Override
 	public List<ContabilidadCobros> getListadoContabilidadCobros(
 			DtoContabilidadCobros dto) {
-		return (List<ContabilidadCobros>) contabilidadCobrosDao.getListadoContabilidadCobros(dto);
+		return (List<ContabilidadCobros>) contabilidadCobrosDao.getListadoContabilidadCobrosByASUID(dto);
 	}
 
 	@Override
@@ -108,6 +143,119 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 		return contabilidadCobrosDao.getContabilidadCobroByID(dto);
 	}
 
-   
+	@Override
+	@Transactional(readOnly = false)
+	public void crearTarea(DtoGenerarTarea dto) throws STAContabilidadException{
+		// Preparar los datos de la tarea.
+		EXTTareaNotificacion tarea = new EXTTareaNotificacion();
+		
+		Map<String, String> codigoSubtareaMap = liquidacionesProjectContext.getCodigosSubTarea();
+		if(!codigoSubtareaMap.containsKey(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion())){
+			throw new STAContabilidadException("contabilidad.cobros.mensaje.error.staContabilidadCobros"); 
+		}
+		String codigoSubtarea = codigoSubtareaMap.get(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
+        SubtipoTarea subtipoTarea = genericDao.get(SubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", codigoSubtarea));
+        TipoCalculo tipoCalculo = null;
+        if (dto instanceof EXTDtoGenerarTarea) {
+            EXTDtoGenerarTarea sandto = (EXTDtoGenerarTarea) dto;
+            tipoCalculo = sandto.getTipoCalculo();
+        }
+        if (subtipoTarea == null) {
+            throw new GenericRollbackException("tareaNotificacion.subtipoTareaInexistente", codigoSubtarea);
+        }
+        if (!TipoTarea.TIPO_TAREA.equals(subtipoTarea.getTipoTarea().getCodigoTarea())) {
+            throw new GenericRollbackException("tareaNotificacion.subtipoTarea.notificacionIncorrecta", codigoSubtarea);
+        }
+        
+        tarea.setEspera(false);
+        tarea.setAlerta(false);
+        tarea.setTarea(subtipoTarea.getDescripcion());
+        tarea.setDescripcionTarea(subtipoTarea.getDescripcionLarga());
+        tarea.setCodigoTarea(subtipoTarea.getTipoTarea().getCodigoTarea());
+        tarea.setSubtipoTarea(subtipoTarea);
+        DDTipoEntidad tipoEntidad = (DDTipoEntidad) dictionary.getByCode(DDTipoEntidad.class, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
+        tarea.setTipoEntidad(tipoEntidad);
+        Date ahora = new Date(System.currentTimeMillis());
+        tarea.setFechaInicio(ahora);
+
+        Map<String, Long> plazoTareaMap = liquidacionesProjectContext.getPlazoTarea();
+        if(!plazoTareaMap.containsKey(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion())){
+			throw new STAContabilidadException("contabilidad.cobros.mensaje.error.staContabilidadCobros"); 
+		}
+        Long plazoTarea = plazoTareaMap.get(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
+        Date fin = new Date(System.currentTimeMillis() + plazoTarea);
+        if (tipoCalculo == null) {
+            tipoCalculo = TipoCalculo.TODO;
+        }
+        tarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo));
+
+        // Seteo la entidad en el campo que corresponda.
+        Asunto asu = asuntoApi.get(dto.getIdEntidad());
+        tarea.setAsunto(asu);
+        tarea.setEstadoItinerario(asu.getEstadoItinerario());
+        if (Checks.esNulo(asu.getGestor())) {
+        	tarea.setEmisor("Automático");
+        } else {
+        	tarea.setEmisor(asu.getGestor().getUsuario().getApellidoNombre());
+        }
+        
+        // Guardar la tarea y obtener la tarea una vez guardada con el ID.
+        updateCCOTARID(genericDao.save(EXTTareaNotificacion.class, tarea));
+	}
 	
+	/**
+	 * Este metodo recibe una tarea y utiliza su ID para ponerlo en el campo
+	 * TAR_ID de la tabla CCO_CONTABILDIAD_COBROS para cada cobro donde el
+	 * 'ASU_ID' sea el mismo que la tarea trae, de esta manera quedan asociados
+	 * cobro y tarea. SOLO SE ASOCIAN AQUELLOS COBROS QUE NO LO ESTABAN CON
+	 * ANTERIORIDAD.
+	 * 
+	 * @param tarea : objeto EXTTareaNotificacion que contiene la tar_ID y
+	 * 					el ASU_ID necesario.
+	 */
+	private void updateCCOTARID(EXTTareaNotificacion tarea){
+		this.contabilidadCobrosDao.actualizarTARIDByASUID(tarea.getAsunto().getId(), tarea.getId());
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void contabilizarCobrosYFinalizarTareas(DtoContabilidadCobros dto) throws STAContabilidadException{
+		// Obtener lista de cobros por ID de asunto.
+		List<ContabilidadCobros> ccoList = (List<ContabilidadCobros>) this.getListadoContabilidadCobrosParaTareas(dto);
+		List<Long> tareasParaFinalizarList = new ArrayList<Long>();
+		
+		if(!Checks.estaVacio(ccoList)){
+			// Obtener los distintos tar_id.
+			for(ContabilidadCobros c : ccoList){
+				if(!tareasParaFinalizarList.contains(c.getTarID())){
+					tareasParaFinalizarList.add(c.getTarID());
+				}
+			}
+			
+			// Usar el TAR_ID para finalizar las tareas asociadas.
+			if(!Checks.estaVacio(tareasParaFinalizarList)){
+				
+				for(int i = 0; i < tareasParaFinalizarList.size(); i++){
+					EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id" , tareasParaFinalizarList.get(i)));
+					tarea.setTareaFinalizada(true);
+					tarea.setFechaFin(new Date(System.currentTimeMillis()));
+				}
+			}
+			
+			// Contabilizar todos los cobros.
+			for(ContabilidadCobros c : ccoList){
+				c.setContabilizado(true);
+			}
+		}else{
+			// Las tareas no se han enviado a contabilizar todavia.
+			throw new STAContabilidadException(STAContabilidadException.COBROS_NO_ENVIADOS);
+		}
+	}
+
+	@Override
+	public List<ContabilidadCobros> getListadoContabilidadCobrosParaTareas(
+			DtoContabilidadCobros dto) {
+		return (List<ContabilidadCobros>) contabilidadCobrosDao.getListadoContabilidadCobrosParaTareas(dto);
+	}
+
 }

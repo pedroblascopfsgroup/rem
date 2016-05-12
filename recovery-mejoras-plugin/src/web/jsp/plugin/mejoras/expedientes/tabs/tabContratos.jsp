@@ -63,9 +63,7 @@
 		}, ContratoVencido)
 	});
 	
-
   entidad.cacheStore(contratosExpedienteStore);
-
 
 	//ColumnModel para grids contratos
 	var contratosExpedienteCm= new Ext.grid.ColumnModel([
@@ -100,9 +98,29 @@
 		]
 	);
 	
-	
-	
 	var botonesTabla = fwk.ux.getPaging(contratosExpedienteStore);
+	
+	contratosExpedienteStore.on('load', function(contratosExpedienteStore) {
+		
+		var me = botonesTabla;
+        
+        if(me.displayItem){
+            var count = 0;
+            
+			for(var i = 0; i < me.store.data.length; i++) {
+            	if(!isNaN(me.store.data.items[i].id)) {
+            		count++;
+            	}
+            }
+            var msg = count == 0 ?
+                me.emptyMsg :
+                String.format(
+                    me.displayMsg,
+                    me.cursor+1, me.cursor+count, me.store.getTotalCount()
+                );
+            me.displayItem.setText(msg);
+        }
+	});
 	
 	var incluirContrato = new Ext.Button({
 		text : '<s:message code="expedientes.consulta.tabcabecera.otrosCont.incluirContratos" text="**Incluir contratos" />'
@@ -167,6 +185,30 @@
 				</sec:authorize>  
 				]
 	});
+	
+	contratosExpedienteStore.on('load', function(contratosExpedienteStore){
+
+		var me = botonesTabla;
+        
+        if(me.displayItem){
+            var count = 0;
+            
+			for(var i = 0; i < me.store.data.length; i++) {
+            	if(!isNaN(me.store.data.items[i].id)) {
+            		count++;
+            	}
+            }
+            var msg = count == 0 ?
+                me.emptyMsg :
+                String.format(
+                    me.displayMsg,
+                    me.cursor+1, me.cursor+count, me.cursor+count
+                );
+                
+            me.displayItem.setText(msg);
+        }
+	});
+	
 
 	contratosExpedienteGrid.on('rowdblclick', function(grid, rowIndex, e) {
 	    	var rec = grid.getStore().getAt(rowIndex);

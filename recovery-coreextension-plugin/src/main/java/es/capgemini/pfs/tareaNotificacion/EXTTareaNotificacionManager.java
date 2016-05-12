@@ -1003,10 +1003,20 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         listaRetorno.addAll((List<ResultadoBusquedaTareasBuzonesDto>) page.getResults());
         replaceGestorInListOpt(listaRetorno, usuarioLogado);
         replaceSupervisorInListOpt(listaRetorno, usuarioLogado);
-        page.setResults(listaRetorno);
-        return (List<ResultadoBusquedaTareasBuzonesDto>) page.getResults();
-
+        return removeTareasDuplicadas(listaRetorno);
     }
+
+	private List<ResultadoBusquedaTareasBuzonesDto> removeTareasDuplicadas(final List<ResultadoBusquedaTareasBuzonesDto> lista) {
+		final List<ResultadoBusquedaTareasBuzonesDto> listaRetorno = new ArrayList<ResultadoBusquedaTareasBuzonesDto>();
+		final List<Long> listIdTareas = new ArrayList<Long>();
+		for (final ResultadoBusquedaTareasBuzonesDto dto : lista) {
+			if (!listIdTareas.contains(dto.getId())) {
+				listIdTareas.add(dto.getId());
+				listaRetorno.add(dto);
+			}
+		}
+		return listaRetorno;
+	}
 
     /**
      * Realiza la b�squeda de Tareas NOtificaciones para reporte Excel.

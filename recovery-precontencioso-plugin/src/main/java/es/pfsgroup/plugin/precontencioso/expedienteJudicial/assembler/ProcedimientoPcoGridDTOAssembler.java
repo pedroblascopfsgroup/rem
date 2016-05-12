@@ -111,7 +111,10 @@ public class ProcedimientoPcoGridDTOAssembler {
 			liqGridDto.setFechaConfirmacion((Date) liquidacion.get("fechaConfirmacion"));
 			liqGridDto.setFechaCierre((Date) liquidacion.get("fechaCierre"));
 			liqGridDto.setFechaRecepcion((Date) liquidacion.get("fechaRecepcion"));
-			liqGridDto.setTotal((Float) liquidacion.get("total"));
+
+			if (liquidacion.get("total") != null) {
+				liqGridDto.setTotal(((BigDecimal) liquidacion.get("total")).floatValue());
+			}
 
 			prcPcoGridDto.setLiquidacion(liqGridDto);
 

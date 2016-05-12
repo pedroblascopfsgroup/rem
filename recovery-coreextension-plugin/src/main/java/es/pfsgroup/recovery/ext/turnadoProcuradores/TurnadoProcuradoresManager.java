@@ -29,7 +29,6 @@ import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfigDto;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDao;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 
 @Service
@@ -44,7 +43,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
     private UsuarioManager usuarioManager;
 
 	@Autowired
-	private EsquemaTurnadoDao esquemaTurnadoDao;
+	private EsquemaTurnadoProcuradorDao esquemaTurnadoProcuradorDao;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -52,35 +51,33 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	@Override
 	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
 		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
-		Page page = esquemaTurnadoDao.buscarEsquemasTurnado(dto, usuarioLogado);
+		Page page = esquemaTurnadoProcuradorDao.buscarEsquemasTurnado(dto, usuarioLogado);
 		return page;
 	}
 
 	@Override
-	public EsquemaTurnado get(Long id) {
-		return esquemaTurnadoDao.get(id);
+	public EsquemaTurnadoProcurador get(Long id) {
+		return esquemaTurnadoProcuradorDao.get(id);
 	}
 
 	@Override
 	@Transactional
-	public EsquemaTurnado save(EsquemaTurnadoDto dto) {
+	public EsquemaTurnadoProcurador save(EsquemaTurnadoDto dto) {
 
-		EsquemaTurnado esquema = null;	
+		EsquemaTurnadoProcurador esquema = null;	
 		if (dto.getId()!=null) {
 			esquema = get(dto.getId());
 		} else {
-			esquema = new EsquemaTurnado();
+			esquema = new EsquemaTurnadoProcurador();
 			DDEstadoEsquemaTurnado estado = (DDEstadoEsquemaTurnado)diccionarioApi
 					.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_DEFINICION);
 			esquema.setEstado(estado);
 		}
 
 		esquema.setDescripcion(dto.getDescripcion());
-		esquema.setLimiteStockAnualConcursos(dto.getLimiteStockConcursos());
-		esquema.setLimiteStockAnualLitigios(dto.getLimiteStockLitigios());
 
 		logger.debug("Guarda el esquema...");
-		esquemaTurnadoDao.saveOrUpdate(esquema);
+		esquemaTurnadoProcuradorDao.saveOrUpdate(esquema);
 		
 		if (esquema.getConfiguracion()!=null && esquema.getConfiguracion().size()>0) {
 			logger.debug("Elimina las configuraciones no existenes en el nuevo esquema...");
@@ -108,7 +105,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 			// insert
 			EsquemaTurnadoConfig config = new EsquemaTurnadoConfig();
 			config.setTipo(dtoConfig.getTipo());
-			config.setEsquema(esquema);
+			config.setEsquemaProcurador(esquema);
 			config.setCodigo(dtoConfig.getCodigo());
 			config.setImporteDesde(dtoConfig.getImporteDesde());
 			config.setImporteHasta(dtoConfig.getImporteHasta());
@@ -129,7 +126,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 			genericDao.save(EsquemaTurnadoConfig.class, config);
 		}
 		
-		esquema = esquemaTurnadoDao.get(esquema.getId());
+		esquema = esquemaTurnadoProcuradorDao.get(esquema.getId());
 		
 		return esquema;
 	}
@@ -138,8 +135,8 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	@Override
 	@Transactional
 	public void activarEsquema(Long idEsquema) {
-		EsquemaTurnado esquema = this.get(idEsquema);
-		EsquemaTurnado esquemaVigente = null;
+		EsquemaTurnadoProcurador esquema = this.get(idEsquema);
+		EsquemaTurnadoProcurador esquemaVigente = null;
 		
 		DDEstadoEsquemaTurnado estadoTerminado = (DDEstadoEsquemaTurnado)diccionarioApi
 				.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_TERMINADO);
@@ -151,13 +148,13 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 			esquemaVigente = this.getEsquemaVigente();
 			esquemaVigente.setFechaFinVigencia(fechaVigencia);
 			esquemaVigente.setEstado(estadoTerminado);
-			esquemaTurnadoDao.save(esquemaVigente);
+			esquemaTurnadoProcuradorDao.save(esquemaVigente);
 		} catch (IllegalArgumentException iae) {
 			logger.info(String.format("No existe esquema vigente previo, se va a activar el primer esquema!", esquema.getDescripcion()));
 		} finally {
 			esquema.setFechaInicioVigencia(fechaVigencia);
 			esquema.setEstado(estadoVigente);
-			esquemaTurnadoDao.save(esquema);
+			esquemaTurnadoProcuradorDao.save(esquema);
 		}
 	}
 
@@ -166,7 +163,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	public void turnarProcurador(Long idAsunto, String username) throws IllegalArgumentException, AplicarTurnadoException {
 		try {
 			this.getEsquemaVigente();
-			esquemaTurnadoDao.turnarProcurador(idAsunto, username);
+			esquemaTurnadoProcuradorDao.turnarProcurador(idAsunto, username);
 		} catch(IllegalArgumentException iae) {
 			logger.error(iae);
 			throw iae;
@@ -178,16 +175,16 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	public EsquemaTurnado getEsquemaVigente() {
-		EsquemaTurnado esquemaTurnado = esquemaTurnadoDao.getEsquemaVigente();
+	public EsquemaTurnadoProcurador getEsquemaVigente() {
+		EsquemaTurnadoProcurador esquemaTurnado = esquemaTurnadoProcuradorDao.getEsquemaVigente();
 		return esquemaTurnado;
 	}
 
 	@Override
 	@Transactional
 	public void delete(Long id) {
-		EsquemaTurnado esquema = get(id);
-		esquemaTurnadoDao.delete(esquema);
+		EsquemaTurnadoProcurador esquema = get(id);
+		esquemaTurnadoProcuradorDao.delete(esquema);
 		if (esquema.getConfiguracion()!=null) {
 			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
 				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
@@ -198,11 +195,9 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	@Override
 	@Transactional
 	public void copy(Long id) {
-		EsquemaTurnado esquema = get(id);
+		EsquemaTurnadoProcurador esquema = get(id);
 		EsquemaTurnadoDto dto = new EsquemaTurnadoDto();
 		dto.setDescripcion("Copia de " + esquema.getDescripcion());
-		dto.setLimiteStockConcursos(esquema.getLimiteStockAnualConcursos());
-		dto.setLimiteStockLitigios(esquema.getLimiteStockAnualLitigios());
 		if (esquema.getConfiguracion()!=null) {
 			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
 				EsquemaTurnadoConfigDto configDto = new EsquemaTurnadoConfigDto();
@@ -218,7 +213,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	public boolean isModificable(EsquemaTurnado esquema) {
+	public boolean isModificable(EsquemaTurnadoProcurador esquema) {
 		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
 		boolean modoConsulta = esquema.getId()!=null && 
 				(esquema.getEstado().getCodigo().equals(DDEstadoEsquemaTurnado.ESTADO_TERMINADO) ||
@@ -228,8 +223,8 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	public boolean checkActivarEsquema(Long id) {
-		EsquemaTurnado esquema = this.get(id);
-		EsquemaTurnado esquemaVigente = null;
+		EsquemaTurnadoProcurador esquema = this.get(id);
+		EsquemaTurnadoProcurador esquemaVigente = null;
 		try {
 			esquemaVigente = this.getEsquemaVigente();
 		} catch (IllegalArgumentException iae) {
@@ -264,7 +259,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 			}
 		}
 		
-		int total = esquemaTurnadoDao.cuentaLetradosAsignados(codigosCI, codigosCC, codigosLI, codigosLC);
+		int total = esquemaTurnadoProcuradorDao.cuentaLetradosAsignados(codigosCI, codigosCC, codigosLI, codigosLC);
 		
 		return (total==0);
 	}
@@ -272,7 +267,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	@Override
 	@Transactional
 	public void limpiarTurnadoTodosLosDespachos(Long id) {
-		esquemaTurnadoDao.limpiarTurnadoTodosLosDespachos();
+		esquemaTurnadoProcuradorDao.limpiarTurnadoTodosLosDespachos();
 	}
 
 	@Override

@@ -24,7 +24,7 @@ public interface TurnadoProcuradoresApi {
 	 * @param id
 	 * @return
 	 */
-	EsquemaTurnado get(Long id);
+	EsquemaTurnadoProcurador get(Long id);
 
 	/**
 	 * Recupera un esquema de turnado Vigente
@@ -32,7 +32,7 @@ public interface TurnadoProcuradoresApi {
 	 * @param id
 	 * @return
 	 */
-	EsquemaTurnado getEsquemaVigente();
+	EsquemaTurnadoProcurador getEsquemaVigente();
 
 	/**
 	 * Recupera un esquema de turnado por su ID
@@ -40,7 +40,7 @@ public interface TurnadoProcuradoresApi {
 	 * @param id
 	 * @return
 	 */
-	EsquemaTurnado save(EsquemaTurnadoDto dto);
+	EsquemaTurnadoProcurador save(EsquemaTurnadoDto dto);
 
 	/**
 	 * Indica si es o no modificable
@@ -48,7 +48,7 @@ public interface TurnadoProcuradoresApi {
 	 * @param esquema
 	 * @return true modificable / false no modificable
 	 */
-	boolean isModificable(EsquemaTurnado esquema);
+	boolean isModificable(EsquemaTurnadoProcurador esquema);
 
 	/**
 	 * Activa el esquema de turnado.

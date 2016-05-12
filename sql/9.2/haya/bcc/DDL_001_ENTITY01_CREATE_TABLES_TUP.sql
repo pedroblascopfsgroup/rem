@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Óscar
---## FECHA_CREACION=20160511
+--## FECHA_CREACION=20160512
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.4
 --## INCIDENCIA_LINK=PRODUCTO-1313
@@ -63,10 +63,11 @@ BEGIN
     	 --Creamos la tabla
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_TPC_TURNADO_PROCU_CONFIG
                (TPC_ID NUMBER(16) NOT NULL
-			    ,EPT_ID NUMBER(16) NOT NULL
+			    ,ETP_ID NUMBER(16) NOT NULL
 			    ,TPC_IMPORTE_DESDE NUMBER(16) 
 			    ,TPC_IMPORTE_HASTA NUMBER(16) 
 			    ,TPC_PORCENTAJE NUMBER(5,2) 
+				,USU_ID                         NUMBER(16)
 			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
 			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
 			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL
@@ -105,7 +106,6 @@ BEGIN
 				,ETP_ID NUMBER(16) NOT NULL
 			    ,DD_PLA_ID NUMBER(16) 
 			    ,DD_TPO_ID NUMBER(16) 
-			    ,DD_TGE_ID NUMBER(16) NOT NULL
 			    ,EPT_GRUPO_ASIGNADO NUMBER(16) NOT NULL
 			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
 			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
@@ -141,10 +141,13 @@ BEGIN
   	   
     	 --Creamos la tabla
     	 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU
-               (ETP_ID NUMBER(16) NOT NULL
-				,ETP_CODIGO VARCHAR2(10 CHAR)
-			    ,ETP_DESCRIPCION NUMBER(16) NOT NULL
-			    ,ETP_DESCRIPCION_LARGA NUMBER(16) NOT NULL
+               (ETP_ID                          NUMBER(16) NOT NULL
+				,ETP_CODIGO                     VARCHAR2(10 CHAR)
+			    ,ETP_DESCRIPCION                NUMBER(16) NOT NULL
+			    ,ETP_DESCRIPCION_LARGA          NUMBER(16) NOT NULL
+				,DD_EET_ID                      NUMBER(16)
+				,ETP_FECHA_INI_VIGENCIA         TIMESTAMP(6)
+				,ETP_FECHE_FIN_VIGENCIA         TIMESTAMP(6)
 			    ,VERSION                        INTEGER        DEFAULT 0                     NOT NULL
 			    ,USUARIOCREAR                   VARCHAR2(50 CHAR) NOT NULL
 			    ,FECHACREAR                     TIMESTAMP(6)   NOT NULL
@@ -173,9 +176,9 @@ BEGIN
  		
  		
  		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.TUP_TPC_TURNADO_PROCU_CONFIG ADD (
-				  CONSTRAINT TPC_EPT_FK 
-				 FOREIGN KEY (EPT_ID) 
-				 REFERENCES '||V_ESQUEMA||'.TUP_EPT_ESQUEMA_PLAZAS_TPO (EPT_ID))';
+				  CONSTRAINT TPC_ETP_FK 
+				 FOREIGN KEY (ETP_ID) 
+				 REFERENCES '||V_ESQUEMA||'.TUP_ETP_ESQ_TURNADO_PROCU (ETP_ID))';
 				 
  		EXECUTE IMMEDIATE V_MSQL;
 

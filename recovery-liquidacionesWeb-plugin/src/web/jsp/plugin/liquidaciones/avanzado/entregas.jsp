@@ -54,7 +54,6 @@
 			,value:'${codigoConceptoEntrega}'
 		</c:if>
 	});
-	console.log('${conceptoEntrega}');
 
 	var fechaEntrega = new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="entregas.fecha" text="**Fecha Cobro" />'
@@ -175,28 +174,30 @@
 	};
 	
 	var validarFechas= function(){
-	debugger;
 		fc= '${fechaCierre}'.split(' ');
 		fl= '${fechaLiquidacion}'.split(' ');
 	   	dtfechaCierre = Date.parseDate(fc[0], "Y-m-d");
 	   	dtfechaLiquidacion = Date.parseDate(fl[0], "Y-m-d");
 	   	
-	   	if(dtfechaLiquidacion >= dtfechaCierre){
+	   	mesCierre= dtfechaCierre.getMonth()+1;
+	   	mesLiquidacion= dtfechaLiquidacion.getMonth()+1;
+	   		   	
+	   	if(dtfechaCierre >= dtfechaLiquidacion){
 	   	
-		   	if(fechaValor.getValue().between(dtfechaCierre,dtfechaLiquidacion)){
+		   	if(fechaValor.getValue().between(dtfechaLiquidacion,dtfechaCierre)){
 		   	
 		   		return true;
 		   	}
-		   	else{
-				Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**La fecha Valor debe estar entre la Fecha de Cierre" /> ' + 
-												dtfechaCierre.getDay() +'/'+dtfechaCierre.getMonth() + '/' + dtfechaCierre.getUTCFullYear() + 
-												' <s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="**y Fecha Liquidación" /> ' + 
-												dtfechaLiquidacion.getDay() +'/'+dtfechaLiquidacion.getMonth() + '/' + dtfechaLiquidacion.getUTCFullYear());
+		   	else{												
+				Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="**La fecha Valor debe estar entre la Fecha de Liquidación" /> ' + 
+												dtfechaLiquidacion.getDate() +'/'+ mesLiquidacion + '/' + dtfechaLiquidacion.getUTCFullYear() + 
+												' <s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**y Fecha Cierre" /> ' + 
+												dtfechaCierre.getDate() +'/'+ mesCierre + '/' + dtfechaCierre.getUTCFullYear());
 				return false;
 			}
 		}
 		else{
-			Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.entrega.grid.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre no puede ser mayor que la Fecha de Liquidación" />');
+			Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.entrega.grid.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre debe ser mayor que la Fecha de Liquidación" />');
 			return false;
 			
 		}

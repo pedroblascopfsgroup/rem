@@ -2,16 +2,16 @@ package es.pfsgroup.plugin.gestorDocumental.dto;
 
 public class PersonaInputDto {
 
-	public static final String ID_CLIENTE = "ID_CLIENTE";
-	public static final String ID_PERSONA_CLIENTE = "ID_INTERVINIENTE_CLIENTE";
-	public static final String ID_PERSONA_ORIGEN = "ID_PERSONA_ORIGEN";
+	//public static final String ID_CLIENTE = "ID_CLIENTE";
+	//public static final String ID_PERSONA_CLIENTE = "ID_INTERVINIENTE_CLIENTE";
+	public static final String ID_INTERVINIENTE_ORIGEN = "ID_INTERVINIENTE_ORIGEN";
 	public static final String ID_ORIGEN = "ID_ORIGEN";
-	public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
-	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
+	//public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
+	public static final String ID_INTERVINIENTE_HAYA = "ID_INTERVINIENTE_HAYA";
 	public static final String FORMATO_STRING = "STRING";
-	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE = "ConsultaIdIntervinientePorCliente";
+	//public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE = "ConsultaIdIntervinientePorCliente";
 	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN = "ConsultaIdIntervinientePorOrigen";
-	public static final String EVENTO_CONSULTA_TIPO_INTERVINIENTE = "ConsultaTiposInterviniente";
+	//public static final String EVENTO_CONSULTA_TIPO_INTERVINIENTE = "ConsultaTiposInterviniente";
 
 	private String idCliente;
 	private String idIntervinienteCliente;

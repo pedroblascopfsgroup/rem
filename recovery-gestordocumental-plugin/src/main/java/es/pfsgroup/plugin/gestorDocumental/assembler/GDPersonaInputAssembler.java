@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.gestorDocumental.assembler;
 
-import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.KeyValuePair;
 import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType;
@@ -29,34 +28,34 @@ public class GDPersonaInputAssembler {
 	private static Parameters getParametersPersona(PersonaInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
 		if(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN.equals(inputDto.getEvent())) {
-			parameters.getParameter().add(getPersonaCliente(inputDto.getIdIntervinienteOrigen()));
+			parameters.getParameter().add(getIntervinienteOrigen(inputDto.getIdIntervinienteOrigen()));
 			parameters.getParameter().add(getPersonaCliente2(inputDto.getIdOrigen()));
 		}
-		parameters.getParameter().add(getActivoHaya(inputDto.getIdIntervinienteHaya()));
+		parameters.getParameter().add(getIntervinienteHaya(inputDto.getIdIntervinienteHaya()));
 		return parameters;
 	}
 	
-	private static KeyValuePair getPersonaCliente(String idActivoOrigen) {
-		KeyValuePair activoOrigen = new KeyValuePair();
-		activoOrigen.setCode(PersonaInputDto.ID_PERSONA_ORIGEN);
-		activoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
-		activoOrigen.setValue(idActivoOrigen);
-		return activoOrigen;
+	private static KeyValuePair getIntervinienteOrigen(String idIntervinienteOrigen) {
+		KeyValuePair intervinienteOrigen = new KeyValuePair();
+		intervinienteOrigen.setCode(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
+		intervinienteOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
+		intervinienteOrigen.setValue(idIntervinienteOrigen);
+		return intervinienteOrigen;
 	}
 	
-	private static KeyValuePair getPersonaCliente2(String idActivoOrigen) {
-		KeyValuePair activoOrigen = new KeyValuePair();
-		activoOrigen.setCode(PersonaInputDto.ID_ORIGEN);
-		activoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
-		activoOrigen.setValue(idActivoOrigen);
-		return activoOrigen;
+	private static KeyValuePair getPersonaCliente2(String idOrigen) {
+		KeyValuePair origen = new KeyValuePair();
+		origen.setCode(PersonaInputDto.ID_ORIGEN);
+		origen.setFormat(PersonaInputDto.FORMATO_STRING);
+		origen.setValue(idOrigen);
+		return origen;
 	}
 	
-	private static KeyValuePair getActivoHaya(String idPersonaHaya) {
-		KeyValuePair activoHaya = new KeyValuePair();
-		activoHaya.setCode(ActivoInputDto.ID_ACTIVO_HAYA);
-		activoHaya.setFormat(ActivoInputDto.FORMATO_STRING);
-		activoHaya.setValue(idPersonaHaya);
-		return activoHaya;
+	private static KeyValuePair getIntervinienteHaya(String idIntervinienteHaya) {
+		KeyValuePair intervinienteHaya = new KeyValuePair();
+		intervinienteHaya.setCode(PersonaInputDto.ID_INTERVINIENTE_HAYA);
+		intervinienteHaya.setFormat(PersonaInputDto.FORMATO_STRING);
+		intervinienteHaya.setValue(idIntervinienteHaya);
+		return intervinienteHaya;
 	}
 }

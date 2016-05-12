@@ -64,7 +64,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 	@Override
 	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
-		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada...");
+		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdOrigen() + ", " + dto.getIdIntervinienteOrigen());
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
@@ -79,11 +79,12 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			output = servicePort.processEvent(input);
 			
 			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-			logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
-			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
-//		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
-//		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
-//		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
+			if (output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+				logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
+			} else {
+				logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
+				logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+			}
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}

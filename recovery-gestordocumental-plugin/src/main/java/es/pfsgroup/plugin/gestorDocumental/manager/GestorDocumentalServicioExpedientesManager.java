@@ -121,7 +121,9 @@ public class GestorDocumentalServicioExpedientesManager implements GestorDocumen
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			if (!respuesta.getMensajeError().contains("An item with the name")) {
+				throw new GestorDocumentalException(respuesta.getMensajeError());
+			}
 		}
 		return respuesta;
 	}

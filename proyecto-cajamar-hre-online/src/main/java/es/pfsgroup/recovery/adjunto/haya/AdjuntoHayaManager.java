@@ -58,7 +58,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
-import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroPersonaApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioDocumentosApi;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalServicioExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
@@ -106,11 +105,8 @@ public class AdjuntoHayaManager {
 	@Autowired
 	private GestorDocumentalServicioExpedientesApi gestorDocumentalServicioExpedientesApi;
 	
-	@Autowired(required=false)
+	@Autowired
 	private GestorDocumentalMaestroApi gestorDocumentalMaestroApi;
-	
-	@Autowired(required=false)
-	private GestorDocumentalMaestroPersonaApi gestorDocumentalMaestroPersonaApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -440,6 +436,7 @@ public class AdjuntoHayaManager {
 	}	
 	
 	private List<Integer> documentosExpediente(Long id, String tipoExpediente, String claseExpediente) {
+		logger.info("[AdjuntoHayaManager.documentosExpediente]: " + id + ", tipoExpediente: " + tipoExpediente + ", claseExpediente: " + claseExpediente);
 		if(Checks.esNulo(id)) {
 			return null;
 		}
@@ -475,7 +472,9 @@ public class AdjuntoHayaManager {
 				insertarContenedor(respuesta.getIdExpediente(), prc.getAsunto(), null, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS, claseExpe);
 				creando = true;
 			} catch (GestorDocumentalException e) {
-				e.printStackTrace();
+				if (!e.getMessage().contains(idAsunto)) {
+					e.printStackTrace();
+				}
 			}		
 		}
 		return creando;
@@ -585,9 +584,10 @@ public class AdjuntoHayaManager {
 	}
 
 	
-	private RespuestaCrearDocumento uploadGestorDoc(Long idAsunto,String tipoExp, String claseExp, WebFileItem uploadForm, String tipoEntidad, String tipoFichero) {
+	private RespuestaCrearDocumento uploadGestorDoc(Long idExpediente,String tipoExp, String claseExp, WebFileItem uploadForm, String tipoEntidad, String tipoFichero) {
+		logger.info("[AdjuntoHayaManager.uploadGestorDoc]: " + idExpediente + ", claseExp: " + claseExp + ", tipoEntidad: " + tipoEntidad + " , tipoFichero: " + tipoFichero);
 		RespuestaCrearDocumento respuesta = null;
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idAsunto.toString(), tipoExp, claseExp);	
+		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idExpediente.toString(), tipoExp, claseExp);	
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
 		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
@@ -602,15 +602,19 @@ public class AdjuntoHayaManager {
 	
 	private String obtenerMatricula(String tipoExp, String claseExp, String tipoFichero){
 		StringBuilder sb = new StringBuilder();
-		//MapeoTipoContenedor mapeo = genericDao.getList(MapeoTipoContenedor.class, genericDao.createFilter(FilterType.EQUALS, "tipoFichero.codigo", tipoFichero)).get(0);
-		//Recogemos el mapeo filtrado por el TFA y el codigo TDN2
-		MapeoTipoContenedor mapeo = mapeoTipoContenedorDao.getMapeoByTfaAndTdn2(tipoExp, claseExp, tipoFichero);
-		if(!Checks.esNulo(mapeo)){
-			sb.append(tipoExp);
-			sb.append("-");
-			sb.append(claseExp);
-			sb.append("-");
-			sb.append(mapeo.getCodigoTDN2().substring(6));
+		if (tipoExp.equals(GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_PROPUESTAS)) {
+			//Recogemos el mapeo filtrado por el TFA y el codigo TDN2
+			MapeoTipoContenedor mapeo = mapeoTipoContenedorDao.getMapeoByTfaAndTdn2(tipoExp, claseExp, tipoFichero);
+			if(!Checks.esNulo(mapeo)){
+				sb.append(tipoExp);
+				sb.append("-");
+				sb.append(claseExp);
+				sb.append("-");
+				sb.append(mapeo.getCodigoTDN2().substring(6));
+			}
+		} else {
+			//Para Activos Financieros y Personas el tipoFichero coincide con la matrícula
+			sb.append(tipoFichero);
 		}
 		return sb.toString();
 	}
@@ -656,6 +660,7 @@ public class AdjuntoHayaManager {
 	} 
 	
 	public FileItem bajarAdjunto(String adjuntoId) {
+		logger.info("[AdjuntoHayaManager.bajarAdjunto] adjuntoId: " + adjuntoId);
 		RespuestaDescargarDocumento respuesta = null;
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
@@ -876,7 +881,7 @@ public class AdjuntoHayaManager {
 				input.setIdIntervinienteOrigen(persona.getDocId());
 				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
 				
-				PersonaOutputDto output = gestorDocumentalMaestroPersonaApi.ejecutarPersona(input);
+				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 				
 				if(output.getIdIntervinienteHaya() == null) {
 					return null;

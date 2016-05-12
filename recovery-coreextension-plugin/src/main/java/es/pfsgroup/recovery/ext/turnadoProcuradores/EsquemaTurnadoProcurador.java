@@ -2,9 +2,7 @@ package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,19 +12,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
 
 @Entity
 @Table(name = "TUP_ETP_ESQ_TURNADO_PROCU", schema = "${entity.schema}")
@@ -60,12 +54,6 @@ public class EsquemaTurnadoProcurador implements Serializable, Auditable {
 
 	@Column(name = "ETP_FECHA_FIN_VIGENCIA")
 	private Date fechaFinVigencia;
-	
-    @OneToMany(mappedBy = "esquema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ETP_ID")
-    @OrderBy("codigo ASC")
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-	private List<EsquemaTurnadoConfig> configuracion;
 	
     @Embedded
     private Auditoria auditoria;
@@ -128,63 +116,5 @@ public class EsquemaTurnadoProcurador implements Serializable, Auditable {
 		this.auditoria = auditoria;
 		
 	}
-
-	public List<EsquemaTurnadoConfig> getConfiguracion() {
-		return configuracion;
-	}
-
-	public void setConfiguracion(List<EsquemaTurnadoConfig> configuracion) {
-		this.configuracion = configuracion;
-	}
-
-	/**
-	 * Recupera una configuración por el Id. Null en caso de no encontrarla.
-	 * 
-	 * @param id id de configuración
-	 * @return Configuración con el id, null en caso de no encontrarla
-	 */
-	public EsquemaTurnadoConfig getConfigById(Long id) {
-		if (configuracion==null) return null;
-		for (EsquemaTurnadoConfig config : configuracion) {
-			if (config.getId().equals(id)) return config;
- 		}
-		return null;
-	}
-	
-	
-	/**
-	 * Recupera una configuración por el Id. Null en caso de no encontrarla.
-	 * 
-	 * @param id id de configuración
-	 * @return Configuración con el id, null en caso de no encontrarla
-	 */
-	public EsquemaTurnadoConfig getConfigByCodigo(String codigo) {
-		if (configuracion==null) return null;
-		for (EsquemaTurnadoConfig config : configuracion) {
-			if (config.getCodigo().equals(codigo)) return config;
- 		}
-		return null;
-	}
-	/**
-	 * Comprueba si este esquema contiene la configuración que se le pasa.
-	 * 
-	 * @param esquemaTurnadoConfig
-	 * @return
-	 */
-	public boolean contains(EsquemaTurnadoConfig esquemaTurnadoConfig) {
-		if (this.configuracion==null || esquemaTurnadoConfig==null) return false;
-		for (EsquemaTurnadoConfig config : configuracion) {
-			if (config.getTipo()!=null 
-					&& esquemaTurnadoConfig.getTipo()!=null
-					&& config.getCodigo() != null
-					&& esquemaTurnadoConfig.getCodigo() != null
-					&& config.getTipo().equals(esquemaTurnadoConfig.getTipo()) 
-					&& config.getCodigo().equals(esquemaTurnadoConfig.getCodigo())
-				) {
-				return true;
-			}
-		}
-		return false;
-	} 
 	
 }

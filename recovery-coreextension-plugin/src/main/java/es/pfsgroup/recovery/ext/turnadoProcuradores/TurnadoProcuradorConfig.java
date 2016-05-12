@@ -40,8 +40,8 @@ public class TurnadoProcuradorConfig implements Serializable, Auditable {
 	private Long id;
 
 	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ETP_ID")
-	private List<EsquemaTurnadoProcurador> esquemaTurnadoProcurador;
+	@JoinColumn(name = "EPT_ID")
+	private List<EsquemaPlazasTpo> esquemaPlazasTpo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USU_ID")
@@ -67,12 +67,12 @@ public class TurnadoProcuradorConfig implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public List<EsquemaTurnadoProcurador> getEsquemaTurnadoProcurador() {
-		return esquemaTurnadoProcurador;
+	public List<EsquemaPlazasTpo> getEsquemaPlazasTpo() {
+		return esquemaPlazasTpo;
 	}
 
-	public void setEsquemaTurnadoProcurador(List<EsquemaTurnadoProcurador> esquemaTurnadoProcurador) {
-		this.esquemaTurnadoProcurador = esquemaTurnadoProcurador;
+	public void setEsquemaPlazasTpo(List<EsquemaPlazasTpo> esquemaPlazasTpo) {
+		this.esquemaPlazasTpo = esquemaPlazasTpo;
 	}
 
 	public Usuario getUsuario() {

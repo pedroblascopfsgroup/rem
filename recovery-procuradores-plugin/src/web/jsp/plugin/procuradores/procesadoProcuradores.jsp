@@ -92,7 +92,10 @@ onViewClick : function(doFocus){
 	});
 	
 	tipoResolucionStore.on('load', function(){
-			existenResolucionesPendientesValidar(recordSelect.idTarea);
+			comboTipoResolucionNew.setValue(idTipoResolucion);
+			//existenResolucionesPendientesValidar(recordSelect.idTarea);
+			existenResolucionesPendientesValidar(idTarea);
+			
 	});
 	
 	var arrayCamposValoresAntRes = new Array();
@@ -917,7 +920,10 @@ onViewClick : function(doFocus){
             plugins: [filters]
         })
     });    
-
+		
+		var idTipoResolucion;
+		var idTarea;
+		
     listaArchivosGrid.on('rowclick', function(grid, rowIndex, e) {
 		var idResolucion = grid.getStore().getAt(rowIndex).get('idResolucion');
 		Ext.Ajax.request({
@@ -936,6 +942,8 @@ onViewClick : function(doFocus){
 					comboTipoResolucionNew.setValue(r.resolucion.comboTipoResolucionNew);
 					comboTipoResolucionNew.fireEvent('select',comboTipoResolucionNew);
 					
+					idTipoResolucion=r.resolucion.comboTipoResolucionNew;
+					idTarea=r.resolucion.idTarea;
 					
 					resolucionPanel.getForm().reset();
 					
@@ -957,11 +965,7 @@ onViewClick : function(doFocus){
 			});
     });
   
-    tipoResolucionStore.on('load', function(combo, r, index){
-    	//if (comboTipoResolucionNew.getValue() != "" && comboTipoResolucionNew.getValue() != null)	
-    		comboTipoResolucionNew.setValue(comboTipoResolucionNew.getValue());
-    });
-    
+ 
     
     var resolucionPanel = new Ext.FormPanel({
         autoHeight:'false'

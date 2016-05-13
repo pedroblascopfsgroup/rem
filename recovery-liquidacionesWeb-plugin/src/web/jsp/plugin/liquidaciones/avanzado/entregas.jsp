@@ -168,7 +168,7 @@
 			return true;
 		}
 		else{
-			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.SumaCamposNumericos" text="**Al menos un campo debe estar informado con una cantidad positiva" />');
+			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.SumaCamposNumericos" text="**La suma del Total Entrega, Gastos Procurador y Gastos Letrado debe ser positiva" />');
 			return false;
 		}
 	};
@@ -182,24 +182,17 @@
 	   	mesCierre= dtfechaCierre.getMonth()+1;
 	   	mesLiquidacion= dtfechaLiquidacion.getMonth()+1;
 	   		   	
-	   	if(dtfechaCierre >= dtfechaLiquidacion){
 	   	
-		   	if(fechaValor.getValue().between(dtfechaLiquidacion,dtfechaCierre)){
+		if(fechaValor.getValue().between(dtfechaCierre,dtfechaLiquidacion)){
 		   	
-		   		return true;
-		   	}
-		   	else{												
-				Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="**La fecha Valor debe estar entre la Fecha de Liquidación" /> ' + 
-												dtfechaLiquidacion.getDate() +'/'+ mesLiquidacion + '/' + dtfechaLiquidacion.getUTCFullYear() + 
-												' <s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**y Fecha Cierre" /> ' + 
-												dtfechaCierre.getDate() +'/'+ mesCierre + '/' + dtfechaCierre.getUTCFullYear());
-				return false;
-			}
-		}
-		else{
-			Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.entrega.grid.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre debe ser mayor que la Fecha de Liquidación" />');
+		   	return true;
+		 }
+		 else{																								
+			Ext.MessageBox.alert('Error', '<s:message code="plugin.liquidaciones.entrega.grid.fechaCierre" text="**La fecha Valor debe estar entre la Fecha de Cierre" /> ' + 
+											dtfechaCierre.getDate() +'/'+ mesCierre + '/' + dtfechaCierre.getUTCFullYear() + 
+											' <s:message code="plugin.liquidaciones.entrega.grid.fechaLiquidacion" text="** y Fecha Liquidación" /> ' + 
+											dtfechaLiquidacion.getDate() +'/'+ mesLiquidacion + '/' + dtfechaLiquidacion.getUTCFullYear());
 			return false;
-			
 		}
 	};
 

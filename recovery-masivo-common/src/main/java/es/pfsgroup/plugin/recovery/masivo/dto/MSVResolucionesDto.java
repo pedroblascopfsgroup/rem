@@ -41,6 +41,8 @@ public class MSVResolucionesDto {
     private TareaNotificacion tareaNotificacion;
     
     private Long categoria;
+    
+    private String idsFicheros;
 	
 	public String getEstadoResolucion() {
 		return estadoResolucion;
@@ -186,6 +188,14 @@ public class MSVResolucionesDto {
 	
 	public void setCategoria(Long categoria) {
 		this.categoria = categoria;
+	}
+
+	public String getIdsFicheros() {
+		return idsFicheros;
+	}
+
+	public void setIdsFicheros(String idsFicheros) {
+		this.idsFicheros = idsFicheros;
 	}
 	
 }

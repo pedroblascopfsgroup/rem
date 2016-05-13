@@ -18,6 +18,7 @@
 			<c:if test="${asu.tipoAsunto != null}">
 				<json:property name="tipoAsuntoDescripcion" value="${asu.tipoAsunto.descripcion}" />
 			</c:if>
+			<json:property name="usuarioCrear" value="${asu.auditoria.usuarioCrear}" />
 		</json:object>
 		<c:forEach items="${asu.procedimientos}" var="prc">
 			<json:object>
@@ -26,7 +27,8 @@
 				<json:property name="actuacion" value="${prc.tipoProcedimiento.descripcion}" />
 				<json:property name="prcEstado" value="${prc.estadoProcedimiento.codigo}" />			
 				<json:property name="principal" value="${prc.saldoRecuperacion}" />
-				<json:property name="idAsunto" value="${asu.id}" />			
+				<json:property name="idAsunto" value="${asu.id}" />		
+				<json:property name="usuarioCrearActuacion" value="${prc.auditoria.usuarioCrear}" />	
 			</json:object>
 		</c:forEach>
 	</json:array>

@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-1343
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Añadida la tarea PCO_ValidarAsignacion del Preconencioso
+--## Finalidad: BPM - Añadida la tarea PCO_ValidarAsignacion del Precontencioso
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -65,10 +65,10 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     
-         T_TIPO_TFI('PCO_ValidarAsignacion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por finalizada esta tarea, debe informar de la fecha de presentación del escrito en el juzgado y adjuntar el escrito, donde comunique que Sareb es sujeto pasivo del IVA así como el acogimiento al régimen establecido en la D.A. 6º de la LIVA.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Un vez realizada la tarea, se finalizará el trámite.</p></div>',null,null,null,null,'0','PRODUCTO-1343')
+         T_TIPO_TFI('PCO_ValidarAsignacion','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Instrucciones pendientes de definir</p></div>',null,null,null,null,'0','PRODUCTO-1343')
 		,T_TIPO_TFI('PCO_ValidarAsignacion','1','currency','importeDemanda','Importe de la demanda',null,null,'(valores[''PCO_RegistrarTomaDec''] !=null && valores[''PCO_RegistrarTomaDec''][''importeDemanda''] !=null) ? valores[''PCO_RegistrarTomaDec''][''importeDemanda''] : null',null,'0','PRODUCTO-1343')
-		,T_TIPO_TFI('PCO_ValidarAsignacion','2','date','proc_a_iniciar','Procedimiento a iniciar',null,null,'(valores[''PCO_RegistrarTomaDec''] !=null && valores[''PCO_RegistrarTomaDec''][''proc_a_iniciar''] !=null) ? valores[''PCO_RegistrarTomaDec''][''proc_a_iniciar''] : null','TipoProcedimiento','0','PRODUCTO-1343')
-		,T_TIPO_TFI('PCO_ValidarAsignacion','3','date','partidoJudicial','Partido judicial',null,null,'(valores[''PCO_RegistrarTomaDec''] !=null && valores[''PCO_RegistrarTomaDec''][''partidoJudicial''] !=null) ? valores[''PCO_RegistrarTomaDec''][''partidoJudicial''] : null','TipoPlaza','0','PRODUCTO-1343')
+		,T_TIPO_TFI('PCO_ValidarAsignacion','2','combo','proc_a_iniciar','Procedimiento a iniciar',null,null,'(valores[''PCO_RegistrarTomaDec''] !=null && valores[''PCO_RegistrarTomaDec''][''proc_a_iniciar''] !=null) ? valores[''PCO_RegistrarTomaDec''][''proc_a_iniciar''] : null','TipoProcedimiento','0','PRODUCTO-1343')
+		,T_TIPO_TFI('PCO_ValidarAsignacion','3','combo','partidoJudicial','Partido judicial',null,null,'(valores[''PCO_RegistrarTomaDec''] !=null && valores[''PCO_RegistrarTomaDec''][''partidoJudicial''] !=null) ? valores[''PCO_RegistrarTomaDec''][''partidoJudicial''] : null','TipoPlaza','0','PRODUCTO-1343')
         ,T_TIPO_TFI('PCO_ValidarAsignacion','4','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1343')
         
         ); 

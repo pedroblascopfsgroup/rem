@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVNotificacionDemandadosApi;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVFechasNotificacionDto;
@@ -55,9 +56,12 @@ public class MSVNotificacionDemandadosController {
 	public static final String JSON_HISTORICO_DETALLE_FECHAS_NOTIFICACION = "plugin/masivo/notificacionDemandados/detalleHistoricoFechasNotificacionJSON";
 
 	public static final String JSON_UPDATE_NOTIFICACION = "plugin/masivo/notificacionDemandados/detalleUpdateNotificacionJSON";
+	
+	public static final String JSON_TR_NOTIFICACION_PERSONAL = "plugin/masivo/notificacionDemandados/compruebaTrNotificacionPersonalJSON";
 
 	@Autowired
 	private ApiProxyFactory apiProxyFactory;
+	
 	
 	
 	/**
@@ -80,6 +84,7 @@ public class MSVNotificacionDemandadosController {
 	public String abreVentanaNotificacion(ModelMap map, Long idProcedimiento) {
 		
 		map.put("idProcedimiento", idProcedimiento);
+		
 		return JSP_VENTANA_NOTIFICACION;
 	}
 	
@@ -112,6 +117,7 @@ public class MSVNotificacionDemandadosController {
 		
 		List<MSVInfoResumen> listado = apiProxyFactory.proxy(MSVNotificacionDemandadosApi.class).getResumenNotificaciones(dto.getIdProcedimiento());
 		map.put("data", listado);
+		
 		return JSON_RESUMEN_FECHAS_NOTIFICACION;
 	}
 
@@ -206,6 +212,7 @@ public class MSVNotificacionDemandadosController {
 		MSVDireccionFechaNotificacion msvDireccionFechaNotificacion = apiProxyFactory.proxy(MSVNotificacionDemandadosApi.class).updateExcluido(dto);
 		map.put("data", msvDireccionFechaNotificacion);
 		return JSON_UPDATE_NOTIFICACION;
-	}	
+	}
+	
 	
 }

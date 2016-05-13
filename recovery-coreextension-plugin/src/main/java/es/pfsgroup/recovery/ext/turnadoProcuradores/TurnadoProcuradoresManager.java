@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -25,13 +28,12 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfigDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 
-@Service
+@Service ("turnadoProcuradoresManager")
 public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -47,6 +49,10 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+
+	@Autowired
+	private TareaExternaManager tareaExternaManager;
 	
 	@Override
 	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
@@ -290,7 +296,74 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	public Boolean comprobarSiLosDatosHanSidoCambiados(Long prcId) {
-		// TODO Auto-generated method stub
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao
+				.createFilter(FilterType.EQUALS, "id", prcId));
+		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prcId);
+		List<TareaExterna> tareasAnterior = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
+
+		String importeDemanda = "";
+		String procIniciar = "";
+		String partidoJudicial = "";
+		
+		for (TareaExterna tarea : tareas) {
+			//FIXME No reconoce la cadena entera, falta revisar la comparacion pero así entra
+			if ("demanda".contains(tarea.getTareaProcedimiento().getDescripcion())) {
+				List<TareaExternaValor> valores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
+				for (TareaExternaValor valor : valores) {
+					if ("principal".equals(valor.getNombre())) {
+						importeDemanda = valor.getValor();
+					}
+					else if ("proc_a_iniciar".equals(valor.getNombre())) {
+						procIniciar = valor.getValor();
+					}
+					else if ("partidoJudicial".equals(valor.getNombre())) {
+						partidoJudicial = valor.getValor();
+					}
+				}
+			}
+		}
+		
+		for (TareaExterna tarea : tareasAnterior) {
+			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+				List<TareaExternaValor> valores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
+				for (TareaExternaValor valor : valores) {
+					if ("importeDemanda".equals(valor.getNombre())) {
+						if(!importeDemanda.equals(valor.getValor())){
+							return true;
+						}
+					}
+					else if ("proc_a_iniciar".equals(valor.getNombre())) {
+						if(!procIniciar.equals(valor.getValor())){
+							return true;
+						}
+					}
+					else if ("partidoJudicial".equals(valor.getNombre())) {
+						if(!partidoJudicial.equals(valor.getValor())){
+							return true;
+						}
+					}
+				}
+			}
+		}
 		return false;
+	}
+	
+	public String dameValoresBPMPadrePCO(Long idProcedimiento, String codigo) {
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao
+				.createFilter(FilterType.EQUALS, "id", idProcedimiento));
+		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
+
+		for (TareaExterna tarea : tareas) {
+			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+				List<TareaExternaValor> valores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
+				for (TareaExternaValor valor : valores) {
+					if (codigo.equals(valor.getNombre())) {
+						return valor.getValor();
+					}
+				}
+			}
+		}
+
+		return null;
 	}
 }

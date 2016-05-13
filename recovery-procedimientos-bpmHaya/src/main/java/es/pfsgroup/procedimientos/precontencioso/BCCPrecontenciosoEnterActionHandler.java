@@ -8,11 +8,12 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
-
-public class BCCPrecontenciosoEnterActionHandler extends PROGenericLeaveActionHandler {
+//Se ha dejado de usar por faltar revision
+public class BCCPrecontenciosoEnterActionHandler extends PROGenericEnterActionHandler {
 
 	/**
 	 * Serial ID
@@ -30,8 +31,8 @@ public class BCCPrecontenciosoEnterActionHandler extends PROGenericLeaveActionHa
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
-
-		super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
+		//FIXME
+		//super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
 
 		Procedimiento procedimiento = getProcedimiento(executionContext);
 		TareaExterna tex = getTareaExterna(executionContext);

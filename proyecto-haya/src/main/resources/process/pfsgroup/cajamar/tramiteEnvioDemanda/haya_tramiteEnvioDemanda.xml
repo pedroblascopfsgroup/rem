@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <process-definition name="hcj_tramiteEnvioDemanda" xmlns="urn:jbpm.org:jpdl-3.2">
 
-
-
 	<start-state name="Inicio">
 		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="avanzaBPM"></transition>
 	</start-state>
@@ -11,7 +9,7 @@
 	<state name="HC106_RedactarDemandaAdjuntarDocu">
 		<event type="node-enter">
          	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-            	<targetBean>bccPrecontenciosoEnterActionHandler</targetBean>
+            	<targetBean>genericEnterActionHandler</targetBean>
         	 </action>
       	</event>
       	<event type="node-leave">
@@ -19,8 +17,28 @@
             	<targetBean>bccPrecontenciosoLeaveActionHandler</targetBean>
         	 </action>
       	</event>
-		<transition to="HC106_RevisarCompletitudDocu" name="avanzaBPM"></transition>
+		<transition to="HC106_RedactarDemandaAdjuntarDocuDecision" name="avanzaBPM"></transition>
 		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="HC106_RedactarDemandaAdjuntarDocuDecision" expression="#{HC106_RedactarDemandaAdjuntarDocuDecision}">
+		<transition to="HC106_ValidacionAsignacionProcu" name="nuevo"></transition>
+		<transition to="HC106_RevisarCompletitudDocu" name="normal"></transition>
+	</decision>
+
+	<state name="HC106_ValidacionAsignacionProcu">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -70,6 +88,5 @@
 			</action>
 		</event>
 	</end-state>
-
 
 </process-definition>

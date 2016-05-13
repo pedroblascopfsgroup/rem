@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteEnvioDemanda" width="1549" height="845">
+<root-container name="hcj_tramiteEnvioDemanda" width="1169" height="884">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -10,6 +10,22 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC106_RedactarDemandaAdjuntarDocuDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="HC106_ValidacionAsignacionProcu" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

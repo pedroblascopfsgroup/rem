@@ -1,6 +1,5 @@
 package es.pfsgroup.procedimientos.precontencioso;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -63,9 +62,9 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 			if (!Checks.esNulo(listado)) {
 				for (EXTTareaExternaValor tev : listado) {
 					try {
-						if ("principal".equals(tev.getNombre())) {
-							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
-						}
+//						if ("principal".equals(tev.getNombre())) {
+//							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
+//						}
 					} catch (Exception e) {
 						logger.error("personalizacionTarea: " + e);
 					}

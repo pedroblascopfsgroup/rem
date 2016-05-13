@@ -82,6 +82,12 @@ public class TurnadoDespachosController {
 	private static final String CODIGO_ERROR_TIPO_FICHERO = "plugin.config.esquematurnado.carga.validacion.errorTipoFichero";
 	private static final String CODIGO_ERROR_DESPACHO_ERRONEO = "plugin.config.esquematurnado.carga.validacion.errorDespachoNoExiste";
 	
+	//FIX-ME mover al controler de turnado de procuradores
+	private static final String VIEW_ESQUEMA_TURNADO_PROCURADORES_BUSCADOR = "plugin/config/turnadoprocuradores/buscadorEsquemasProcuradores";
+	private static final String VIEW_ESQUEMA_TURNADO_PROCURADORES_SELECCIONAR_PLAZA = "plugin/config/turnadoprocuradores/seleccionarPlaza";
+	// FIN FIX-ME
+
+	
 	@Resource
 	private Properties appProperties;
 	
@@ -701,4 +707,19 @@ public class TurnadoDespachosController {
 		}
 		
 	}
+	
+	//FIX-ME mover al controler de turnado de procuradores
+	@RequestMapping
+	public String ventanaBusquedaEsquemasProcuradores(ModelMap map) {
+		return VIEW_ESQUEMA_TURNADO_PROCURADORES_BUSCADOR;
+	}
+	
+	@RequestMapping
+	public String seleccionarPlaza(ModelMap map) {
+		return VIEW_ESQUEMA_TURNADO_PROCURADORES_SELECCIONAR_PLAZA;
+	}
+	
+	
+	
+	// FIN FIX-ME
 }

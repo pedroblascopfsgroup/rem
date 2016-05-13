@@ -38,7 +38,7 @@
 			<evaluate expression="idProcedimiento" result="flowScope.idProcedimiento"/>
 			<evaluate expression="numeroAuto" result="flowScope.numeroAuto"/>
 			<evaluate expression="executor.execute('convenioManager.dameEstadoPorDefecto')" result="flowScope.estado_por_defecto"/>
-			<evaluate expression="executor.execute('convenioManager.dameFechaPorDefecto')" result="flowScope.fecha_por_defecto"/>
+			<!-- <evaluate expression="executor.execute('convenioManager.dameFechaPorDefecto')" result="flowScope.fecha_por_defecto"/> -->
 			<evaluate expression="executor.execute('convenioManager.estadosConvenio')" result="flowScope.estados"/>
 			<evaluate expression="executor.execute('convenioManager.posturasConvenio')" result="flowScope.posturas"/>
 			<evaluate expression="executor.execute('convenioManager.iniciosConvenio')" result="flowScope.inicios"/>

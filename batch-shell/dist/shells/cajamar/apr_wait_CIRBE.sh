@@ -16,15 +16,14 @@ hora_actual=`date +%Y%m%d%H%M%S`
 echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
 
 for fichero in $arrayFicheros
-do
-	ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
-    ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-
-    echo "$ficheroSem"
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
-	   sleep 10
-	   hora_actual=`date +%Y%m%d%H%M%S`
-	   #echo "$hora_actual"
+do	
+	numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
+	numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
+	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ $numFicherosSem -eq 0 || $numFicherosZip -eq 0 ]]; do
+		sleep 10
+		hora_actual=`date +%Y%m%d%H%M%S`
+		numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
+		numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
 	done
 done
 
@@ -37,8 +36,8 @@ else
    do
 	    mascaraSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
         mascaraZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+        ficheroSem=`ls $mascaraSem | sort | tail -n 1`
+        ficheroZip=`ls $mascaraZip | sort | tail -n 1`
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO
@@ -47,4 +46,3 @@ else
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi
-

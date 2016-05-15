@@ -42,8 +42,8 @@ do
     if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
 	    ./ftp/ftp_get_tr_files.sh $1 $fichero
     fi
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroSem -o ! -e $ficheroZip ]; do
-	    sleep 900
+	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do	    
+        sleep 900
 	    hora_actual=`date +%Y%m%d%H%M%S`
         if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
 	        ./ftp/ftp_get_tr_files.sh $1 $fichero

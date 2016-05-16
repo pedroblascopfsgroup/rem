@@ -131,29 +131,32 @@
     BEGIN
 
     INSERT INTO TMP_MOV_REVISADOS_EXP
-    SELECT /*+ USE_NL(TMP,E,MOVANT,MOVACT) */ C.CNT_ID,
+    SELECT /*+ PARALLEL */
+           c.CNT_ID,
            tmp.EXP_ID,
            tmp.pase as ES_PASE,
-           CASE WHEN e.dd_esc_codigo <> 1 --Cancelado es cualquier tipo que no sea activo, no solo el 7
-                                          THEN 1
+           CASE WHEN e.dd_esc_codigo <> '0'
+                THEN 1
                 ELSE 0 END as Cancelado,
-           CASE WHEN movAct.mov_deuda_irregular = 0 THEN 1
+           CASE WHEN movAct.mov_deuda_irregular = 0
+                THEN 1
                 ELSE 0 END as SaldadoSinMovAnterior,
            CASE WHEN movAct.mov_deuda_irregular = 0
-       AND movAnt.mov_deuda_irregular <> 0 THEN 1
+                 AND movAnt.mov_deuda_irregular <> 0
+                THEN 1
                 ELSE 0 END as Saldado,
            NVL(movAnt.mov_deuda_irregular - movAct.mov_deuda_irregular, 0) as Diferencia,
-           movAct.mov_deuda_irregular as Importe,
-           movAnt.mov_deuda_irregular as ImporteAnterior,
-           t.dd_tpe_activo as Activo,
+           movAct.mov_deuda_irregular   as Importe,
+           movAnt.mov_deuda_irregular   as ImporteAnterior,
+           t.dd_tpe_activo              as Activo,
            movAnt.MOV_FECHA_POS_VENCIDA as fechaVencido,
-           movAct.mov_fecha_extraccion as fechaExtraccion
-      FROM cnt_contratos c,
-           dd_tpe_tipo_prod_entidad t,
-           mov_movimientos movAct,
-           mov_movimientos movAnt,
-           ${master.schema}.dd_esc_estado_cnt e,
-           tmp_exp_revision tmp
+           movAct.mov_fecha_extraccion  as fechaExtraccion
+      FROM CNT_CONTRATOS c,
+           DD_TPE_TIPO_PROD_ENTIDAD t,
+           MOV_MOVIMIENTOS movAct,
+           MOV_MOVIMIENTOS movAnt,
+           ${master.schema}.DD_ESC_ESTADO_CNT e,
+           TMP_EXP_REVISION tmp
      WHERE c.dd_tpe_id = t.dd_tpe_id
        AND c.dd_esc_id = e.dd_esc_id
        AND movAct.cnt_id = c.cnt_id
@@ -164,8 +167,7 @@
                                             FROM mov_movimientos
                                            WHERE mov_fecha_extraccion < c.cnt_fecha_extraccion
                                              AND CNT_ID = c.cnt_id)
-       AND tmp.CNT_ID = C.CNT_ID
-     ORDER BY C.CNT_COD_ENTIDAD;
+       AND tmp.CNT_ID = C.CNT_ID;
     COMMIT;
 
     OPERACION_DDL.DDL_TABLE('STATS','TMP_MOV_REVISADOS_EXP');
@@ -179,18 +181,8 @@
     Inserta en rec_recuperaciones la variación de saldo
     ******************************************/
 
- INSERT into rec_recuperaciones
-        (REC_ID,
-         CNT_ID,
-         DD_EST_ID,
-         ASU_ID,
-         EXP_ID,
-         CLI_ID,
-         REC_FECHA_ENTREGA,
-         REC_IMPORTE_ENTREGADO,
-         REC_IMPORTE_RECUPERADO,
-         USUARIOCREAR,
-         FECHACREAR)
+     INSERT into rec_recuperaciones
+        (REC_ID, CNT_ID, DD_EST_ID, ASU_ID, EXP_ID, CLI_ID, REC_FECHA_ENTREGA, REC_IMPORTE_ENTREGADO, REC_IMPORTE_RECUPERADO, USUARIOCREAR, FECHACREAR)
      WITH vCliExp AS
      (
       select distinct tmp.cnt_id, cli.dd_est_id, tmp.exp_id, cli.cli_id, tmp.diferencia, tmp.fechaextraccion
@@ -217,13 +209,15 @@
       FROM vCliExp TMP_MOV
        INNER JOIN (SELECT c.cnt_id, m.mov_int_remuneratorios, m.mov_int_moratorios, m.mov_comisiones, m.mov_gastos
                      FROM mov_movimientos m, cnt_contratos c
-                    WHERE m.cnt_id = c.cnt_id AND mov_fecha_extraccion = c.cnt_fecha_extraccion) mAct ON mAct.cnt_id = tmp_mov.cnt_id
+                    WHERE m.cnt_id = c.cnt_id AND mov_fecha_extraccion = c.cnt_fecha_extraccion) mAct
+               ON mAct.cnt_id = tmp_mov.cnt_id
        INNER JOIN (SELECT m.cnt_id, m.mov_int_remuneratorios, m.mov_int_moratorios, m.mov_comisiones, m.mov_gastos
                      FROM mov_movimientos m
-                    WHERE  mov_fecha_extraccion = (SELECT MAX(m2.mov_fecha_extraccion)
-                                                     FROM mov_movimientos m2, cnt_contratos c2
-                                                    WHERE m.cnt_id = m2.cnt_id and m2.cnt_id = c2.cnt_id
-                                                      AND m2.mov_fecha_extraccion < c2.cnt_fecha_extraccion)) mAnt ON tmp_mov.cnt_id = mAnt.cnt_id
+                    WHERE  mov_fecha_extraccion = (Select MAX(m2.mov_fecha_extraccion)
+                                                     From mov_movimientos m2, cnt_contratos c2
+                                                    Where m.cnt_id = m2.cnt_id and m2.cnt_id = c2.cnt_id
+                                                      And m2.mov_fecha_extraccion < c2.cnt_fecha_extraccion)) mAnt
+               ON tmp_mov.cnt_id = mAnt.cnt_id
 
     ]]>
     </entry>

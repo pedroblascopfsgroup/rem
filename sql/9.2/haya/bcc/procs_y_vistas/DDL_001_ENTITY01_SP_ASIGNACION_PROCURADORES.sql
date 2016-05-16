@@ -21,6 +21,7 @@ create or replace PROCEDURE asignacion_turnado_procu (
    p_prc_id       #ESQUEMA#.prc_procedimientos.prc_id%TYPE,
    p_username     #ESQUEMA_MASTER#.usu_usuarios.usu_username%TYPE,
    p_plaza_codigo       #ESQUEMA#.dd_pla_plazas.dd_pla_codigo%TYPE,
+   p_tpo_codigo       #ESQUEMA#.dd_tpo_tipo_procedimiento.dd_tpo_codigo%TYPE,
    p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GESPROC'
 )
 AUTHID CURRENT_USER IS
@@ -164,6 +165,13 @@ CURSOR crs_id_usu_tabla_tmp
       from #ESQUEMA#.DD_PLA_PLAZAS 
         where DD_PLA_CODIGO = p_plaza_codigo;
 
+--Recogemos el id del tpo a partir del código que llega por parámetro
+  CURSOR crs_obtener_id_tpo
+    IS
+      select dd_tpo_id 
+      from #ESQUEMA#.DD_TPO_TIPO_PROCEDIMIENTO 
+        where DD_TPO_CODIGO = p_tpo_codigo;
+
 
 p_asu_id       #ESQUEMA#.asu_asuntos.asu_id%TYPE;
 v_usu_id_pfs                  #ESQUEMA#.des_despacho_externo.des_id%TYPE;
@@ -195,6 +203,7 @@ v_calculo                 NUMBER;
 v_filtro_porcAsuntos      crs_porcentaje_asu%ROWTYPE;
 
 p_plaza_id_parametro       #ESQUEMA#.dd_pla_plazas.dd_pla_id%TYPE;
+p_tpo_id_parametro       #ESQUEMA#.dd_tpo_tipo_procedimiento.dd_tpo_id%TYPE;
 
 BEGIN
   EXECUTE IMMEDIATE 'truncate table #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU';
@@ -246,9 +255,18 @@ BEGIN
     INTO p_plaza_id_parametro;
 
    CLOSE crs_obtener_id_plaza;
+
+   --recupero el id de tpo a partir del código por parámetro
+  OPEN crs_obtener_id_tpo ();
+
+   FETCH crs_obtener_id_tpo
+    INTO p_tpo_id_parametro;
+
+   CLOSE crs_obtener_id_tpo;
    --ahora recupero el id de ept que se ajusta a los valores de plaza y tpo que hay en el procedimiento
   --OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id,p_tipo_tpo);
-  OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id_parametro,p_tipo_tpo); --sustuimos el plaza_id calculado por el plaza_id que nos llega por paŕámetro
+  --OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id_parametro,p_tipo_tpo); --sustuimos el plaza_id calculado por el plaza_id que nos llega por paŕámetro
+  OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id_parametro,p_tpo_id_parametro); --sustuimos el TPO_ID calculado por el TPO_ID que nos llega por paŕámetro
 
    FETCH crs_plazas_esquema
     INTO p_plazas_esquema;

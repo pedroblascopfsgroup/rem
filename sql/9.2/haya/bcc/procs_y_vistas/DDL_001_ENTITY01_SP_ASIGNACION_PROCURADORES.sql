@@ -20,7 +20,7 @@ SET DEFINE OFF;
 create or replace PROCEDURE asignacion_turnado_procu (
    p_prc_id       #ESQUEMA#.prc_procedimientos.prc_id%TYPE,
    p_username     #ESQUEMA_MASTER#.usu_usuarios.usu_username%TYPE,
-   p_plaza_id_parametro       #ESQUEMA#.dd_pla_plazas.dd_pla_id%TYPE,
+   p_plaza_codigo       #ESQUEMA#.dd_pla_plazas.dd_pla_codigo%TYPE,
    p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GESPROC'
 )
 AUTHID CURRENT_USER IS
@@ -157,6 +157,14 @@ CURSOR crs_id_usu_tabla_tmp
         (select usu_id, (PORC_REAL - PORC_ASU) res from #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU order by res DESC, PORC_REAL desc)
       where rownum=1;
 
+--Recogemos el id de la plaza a partir del código que llega por parámetro
+  CURSOR crs_obtener_id_plaza
+    IS
+      select dd_pla_id 
+      from #ESQUEMA#.DD_PLA_PLAZAS 
+        where DD_PLA_CODIGO = p_plaza_codigo;
+
+
 p_asu_id       #ESQUEMA#.asu_asuntos.asu_id%TYPE;
 v_usu_id_pfs                  #ESQUEMA#.des_despacho_externo.des_id%TYPE;
 v_usu_id_aba                 #ESQUEMA#.des_despacho_externo.des_id%TYPE;
@@ -185,6 +193,8 @@ v_usuid_tabla_tmp          #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU.usu_id%TYPE;
 v_filtro_numAsuntos       crs_num_asu%ROWTYPE;
 v_calculo                 NUMBER;
 v_filtro_porcAsuntos      crs_porcentaje_asu%ROWTYPE;
+
+p_plaza_id_parametro       #ESQUEMA#.dd_pla_plazas.dd_pla_id%TYPE;
 
 BEGIN
   EXECUTE IMMEDIATE 'truncate table #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU';
@@ -229,7 +239,13 @@ BEGIN
 
    CLOSE crs_esquema;
 
+--recupero el id de plaza
+  OPEN crs_obtener_id_plaza ();
 
+   FETCH crs_obtener_id_plaza
+    INTO p_plaza_id_parametro;
+
+   CLOSE crs_obtener_id_plaza;
    --ahora recupero el id de ept que se ajusta a los valores de plaza y tpo que hay en el procedimiento
   --OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id,p_tipo_tpo);
   OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id_parametro,p_tipo_tpo); --sustuimos el plaza_id calculado por el plaza_id que nos llega por paŕámetro
@@ -289,7 +305,7 @@ DBMS_OUTPUT.put_line ('esquema activo '||p_esquema_vigente);
                   values v_resguardo_tmp;
             END LOOP;
         CLOSE crs_resguardo_tmp;
-        
+
 
 -- Insertamos en temporal el numero de asuntos por usuario
                   OPEN crs_num_asu(p_tge_codigo);

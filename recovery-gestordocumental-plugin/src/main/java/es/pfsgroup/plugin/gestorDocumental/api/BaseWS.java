@@ -14,7 +14,7 @@ public abstract class BaseWS {
 	public abstract String getWSName();
 	
 	public String getWSNamespace() {
-		return appProperties.getProperty(String.format("ws.namespace"));
+		return appProperties.getProperty(String.format("ws.haya.namespace"));
 	}
 
 	public String getWSURL(String wS) {

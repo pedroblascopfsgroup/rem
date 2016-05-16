@@ -54,9 +54,9 @@ var curr_imp = items[1 + muestraBotonGuardar];
 var cb_proc = items[2 + muestraBotonGuardar];
 var cb_juz = items[3 + muestraBotonGuardar];
 
-curr_imp.setDisabled(true);
-cb_proc.setDisabled(true);
-cb_juz.setDisabled(true);
+curr_imp.readOnly = true;
+cb_proc.readOnly = true;
+cb_juz.readOnly = true;
 
 
 </c:if>

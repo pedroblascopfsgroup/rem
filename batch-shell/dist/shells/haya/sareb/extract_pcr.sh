@@ -1,10 +1,5 @@
 #!/bin/bash
 # Generado manualmente por PBO
- 
-ENTIDAD=2038
-
-DIR_INPUT=/data/etl/HRE/recepcion/aprovisionamiento/troncal/
-export DIR_TXT=/home/ops-haya/etl/input/
 
 MAX_WAITING_MINUTES=720
 ficheros=PCR
@@ -13,6 +8,7 @@ ficheros=PCR
 
 mascara='-'$ENTIDAD'-'????????
 extensionZip=".zip"
+extensionSem=".sem"
 
 arrayFicheros=$ficheros
 
@@ -24,16 +20,18 @@ hora_actual=`date +%Y%m%d%H%M%S`
 
 for fichero in $arrayFicheros
 do
-        mascaraZip=$DIR_INPUT$fichero$mascara$extensionZip
+        mascaraZip=$DIR_INPUT_TR/$fichero$mascara$extensionZip
         ficheroZip=`ls -Art $mascaraZip | tail -n 1` 
+        mascaraSem=$DIR_INPUT_TR/$fichero$mascara$extensionSem
+        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
         #ultFicheroZip=$ficheroZip
 
-	while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip -a ]; do
-	   sleep 300
-	   hora_actual=`date +%Y%m%d%H%M%S`
-	   #echo "$hora_actual"
-	   ficheroZip=`ls -Art $mascaraZip | tail -n 1`
-	done
+        while [ "$hora_actual" -lt "$hora_limite" -a ! -e $ficheroZip -a ]; do
+           sleep 300
+           hora_actual=`date +%Y%m%d%H%M%S`
+           #echo "$hora_actual"
+           ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+        done
 
 done
 #echo $ultFicheroZip
@@ -42,13 +40,15 @@ export mascCONTRATOS=CONTRATOS*.txt
 export mascPERSONAS=PERSONAS*.txt
 export mascRELACION=RELACION*.txt
 
-rm $DIR_TXT$mascCONTRATOS
-rm $DIR_TXT$mascPERSONAS
-rm $DIR_TXT$mascRELACION
+rm $DIR_DESTINO/$mascCONTRATOS
+rm $DIR_DESTINO/$mascPERSONAS
+rm $DIR_DESTINO/$mascRELACION
 
 
 if [ -f "$ficheroZip" ] ; then
-   unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION" -d $DIR_TXT
+   unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION" -d $DIR_DESTINO
+   mv $ficheroZip $DIR_DESTINO
+   mv $ficheroSem $DIR_DESTINO
    exit 0
 else 
    exit 1

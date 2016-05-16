@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160510
+--## FECHA_CREACION=20160516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1343
@@ -47,7 +47,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-        T_TIPO_TAP('PCO','PCO_ValidarAsignacion','plugin/precontencioso/tramite/validarAsignacion',null,null,null,null,'0','Validar asignación','0','PRODUCTO-1343','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'CJ-814',null,'GCONGE',null)
+        T_TIPO_TAP('PCO','PCO_ValidarAsignacion','plugin/precontencioso/tramite/validarAsignacion',null,null,null,null,'0','Validar asignación','0','PRODUCTO-1343','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'TCP',null,'GCONGE',null)
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
 

@@ -28,12 +28,12 @@
 			<targetBean>tramiteEnvioDemandaHandler
 			</targetBean>
 		</action>
-		<transition to="HC106_ValidacionAsignacionProcu" name="nuevo"></transition>
+		<transition to="HC106_ValidarAsignacion" name="nuevo"></transition>
 		<transition to="HC106_RevisarCompletitudDocu" name="normal"></transition>
 	</node>
 	
 
-	<state name="HC106_ValidacionAsignacionProcu">
+	<state name="HC106_ValidarAsignacion">
 		<event type="node-enter">
          	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
             	<targetBean>genericEnterActionHandler</targetBean>

@@ -1,15 +1,18 @@
 package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -22,6 +25,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPco
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
@@ -91,6 +95,8 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		}
 	}
 
+
+	@Transactional(readOnly = false)
 	private void personalizacion(ExecutionContext executionContext) throws IllegalArgumentException, AplicarTurnadoException {
 
 		// executionContext.getProcessDefinition().getName();
@@ -129,8 +135,11 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_ENVIADO);
 
 		} else if (PrecontenciosoBPMConstants.PCO_RegistrarTomaDec.equals(tex.getTareaProcedimiento().getCodigo())) {
+			
 			actualizarProcIniciar(prc, listado, TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR);			
+			trasladarDatos(executionContext, prc);
 			turnadoProcuradoresApi.turnarProcurador(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername());
+			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarSubsanacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_IniciarProcJudicial.equals(tex.getTareaProcedimiento().getCodigo())) {
@@ -180,6 +189,9 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 				executor.execute(BO_PLUGIN_PRECONTENCIOSO_CAMBIAR_ESTADO_EXPEDIETE, prc.getId(), PrecontenciosoBPMConstants.PCO_FINALIZADO);
 			}
 		}
+		
+
+		genericDao.save(Procedimiento.class, prc);
 	}
 
 	private void actualizarProcIniciar(Procedimiento prc,
@@ -221,5 +233,22 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 		return valorVariable;
 	}
 
+	private void trasladarDatos(ExecutionContext executionContext, Procedimiento prc){
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
+		if (!Checks.esNulo(listado)) {
+			for (TareaExternaValor tev : listado) {
+				try {
+					if ("importeDemanda".equals(tev.getNombre())) {
+						prc.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
+					}
+				} catch (Exception e) {
+					logger.error("trasladarDatos: "+e);
+				}
+			}
+	
+		}
+
+	}
 
 }

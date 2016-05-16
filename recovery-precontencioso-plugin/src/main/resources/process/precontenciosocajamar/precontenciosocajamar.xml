@@ -213,7 +213,7 @@
 	<decision name="PCO_ValidarCambioProcDecision" expression="#{PCO_ValidarCambioProcDecision}">
 		<transition to="PCO_RegistrarTomaDec" name="no"/>
 		<transition to="PCO_SubsanarCambioProc" name="si_nueva_preparacion"/>
-		<transition to="PCO_IniciarProcJudicial" name="si_sin_nueva_prep"></transition>
+		<transition to="PCO_ValidarAsignacion" name="si_sin_nueva_prep"></transition>
 	</decision>
 	
 	

@@ -1,5 +1,6 @@
 package es.pfsgroup.procedimientos.precontencioso;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
@@ -16,7 +17,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
-import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
 public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
 
@@ -52,7 +52,7 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 	}
 
 	@SuppressWarnings("unchecked")
-	@Transactional
+	@Transactional(readOnly = false)
 	private void personalizacionTarea(Procedimiento procedimiento, TareaExterna tex) {
 
 		if (tex != null && tex.getTareaProcedimiento() != null && TAP_REDACTAR_DEMANDA.equals(tex.getTareaProcedimiento().getCodigo())) {
@@ -62,31 +62,33 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 			if (!Checks.esNulo(listado)) {
 				for (EXTTareaExternaValor tev : listado) {
 					try {
-//						if ("principal".equals(tev.getNombre())) {
-//							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
-//						}
+						if ("principal".equals(tev.getNombre())) {
+							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
+						}
 					} catch (Exception e) {
 						logger.error("personalizacionTarea: " + e);
 					}
 				}
 			}
+			
 
 			genericDao.save(Procedimiento.class, procedimiento);
 
-			// Llamamos al turnado de procuradores siempre y cuando se haya
-			// detectado diferencia entre lo propuesto y lo asignado
-			// actualmente, ya que el usuario puede haber cambiado el procurador
-			// asignado manualmente
-			
-			if(turnadoProcuradoresApi.comprobarSiLosDatosHanSidoCambiados(procedimiento.getId())){
-				try {
-					turnadoProcuradoresApi.turnarProcurador(procedimiento.getId(), usuarioManager.getUsuarioLogado().getUsername());
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (AplicarTurnadoException e) {
-					e.printStackTrace();
-				}
-			}
+
+//			// Llamamos al turnado de procuradores siempre y cuando se haya
+//			// detectado diferencia entre lo propuesto y lo asignado
+//			// actualmente, ya que el usuario puede haber cambiado el procurador
+//			// asignado manualmente
+//			
+//			if(turnadoProcuradoresApi.comprobarSiLosDatosHanSidoCambiados(procedimiento.getId())){
+//				try {
+//					turnadoProcuradoresApi.turnarProcurador(procedimiento.getId(), usuarioManager.getUsuarioLogado().getUsername());
+//				} catch (IllegalArgumentException e) {
+//					e.printStackTrace();
+//				} catch (AplicarTurnadoException e) {
+//					e.printStackTrace();
+//				}
+//			}
 		}
 	}
 }

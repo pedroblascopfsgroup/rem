@@ -17,15 +17,21 @@
             	<targetBean>bccPrecontenciosoLeaveActionHandler</targetBean>
         	 </action>
       	</event>
-		<transition to="HC106_RedactarDemandaAdjuntarDocuDecision" name="avanzaBPM"></transition>
+		<transition to="nodeRedactarDemandaAdjuntarDocuDecision" name="avanzaBPM"></transition>
 		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
-
-	<decision name="HC106_RedactarDemandaAdjuntarDocuDecision" expression="#{HC106_RedactarDemandaAdjuntarDocuDecision}">
+	
+	<node name="nodeRedactarDemandaAdjuntarDocuDecision">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>tramiteEnvioDemandaHandler
+			</targetBean>
+		</action>
 		<transition to="HC106_ValidacionAsignacionProcu" name="nuevo"></transition>
 		<transition to="HC106_RevisarCompletitudDocu" name="normal"></transition>
-	</decision>
+	</node>
+	
 
 	<state name="HC106_ValidacionAsignacionProcu">
 		<event type="node-enter">

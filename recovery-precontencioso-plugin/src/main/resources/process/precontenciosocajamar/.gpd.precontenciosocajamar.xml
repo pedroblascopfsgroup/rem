@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="precontenciosocajamar" width="1169" height="592">
+<root-container name="precontenciosocajamar" width="1549" height="845">
   <node name="Inicio" x="21" y="16" width="132" height="36">
     <edge>
       <label x="-35" y="-17"/>

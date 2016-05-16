@@ -15,17 +15,20 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
@@ -50,10 +53,15 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private SubastaProcedimientoApi subastaProcedimientoApi;
+	
+	@Autowired
+	private EXTTareaExternaManager extTareaExternaManager;
 
 	@Autowired
 	private TareaExternaManager tareaExternaManager;
-	
+
 	@Override
 	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
 		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
@@ -67,7 +75,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public EsquemaTurnadoProcurador save(EsquemaTurnadoDto dto) {
 
 		EsquemaTurnadoProcurador esquema = null;	
@@ -139,7 +147,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public void activarEsquema(Long idEsquema) {
 		EsquemaTurnadoProcurador esquema = this.get(idEsquema);
 		EsquemaTurnadoProcurador esquemaVigente = null;
@@ -165,7 +173,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = false)
 	public void turnarProcurador(Long idAsunto, String username) throws IllegalArgumentException, AplicarTurnadoException {
 		try {
 			this.getEsquemaVigente();
@@ -293,13 +301,20 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 				
 		return true;
 	}
+	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean comprobarSiLosDatosHanSidoCambiados(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao
 				.createFilter(FilterType.EQUALS, "id", prcId));
-		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prcId);
-		List<TareaExterna> tareasAnterior = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
+		List<Long> procedimientos = new ArrayList<Long>();
+		procedimientos.add(prc.getId());
+		List<EXTTareaExterna> tareas = (List<EXTTareaExterna>) extTareaExternaManager.obtenerTareasPorProcedimientos(procedimientos);
+		
+		procedimientos = new ArrayList<Long>();
+		procedimientos.add(prc.getProcedimientoPadre().getId());
+		List<EXTTareaExterna> tareasAnterior = (List<EXTTareaExterna>) extTareaExternaManager.obtenerTareasPorProcedimientos(procedimientos);
 
 		String importeDemanda = "";
 		String procIniciar = "";
@@ -307,9 +322,9 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		
 		for (TareaExterna tarea : tareas) {
 			//FIXME No reconoce la cadena entera, falta revisar la comparacion pero así entra
-			if ("demanda".contains(tarea.getTareaProcedimiento().getDescripcion())) {
-				List<TareaExternaValor> valores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
-				for (TareaExternaValor valor : valores) {
+			if ("Redactar demanda y adjuntar documentación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
+				for (EXTTareaExternaValor valor : valores) {
 					if ("principal".equals(valor.getNombre())) {
 						importeDemanda = valor.getValor();
 					}
@@ -325,8 +340,8 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		
 		for (TareaExterna tarea : tareasAnterior) {
 			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
-				List<TareaExternaValor> valores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
-				for (TareaExternaValor valor : valores) {
+				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
+				for (EXTTareaExternaValor valor : valores) {
 					if ("importeDemanda".equals(valor.getNombre())) {
 						if(!importeDemanda.equals(valor.getValor())){
 							return true;
@@ -348,15 +363,17 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public String dameValoresBPMPadrePCO(Long idProcedimiento, String codigo) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao
 				.createFilter(FilterType.EQUALS, "id", idProcedimiento));
+
 		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
 
 		for (TareaExterna tarea : tareas) {
 			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
-				List<TareaExternaValor> valores = tareaExternaManager.obtenerValoresTarea(tarea.getId());
-				for (TareaExternaValor valor : valores) {
+				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
+				for (EXTTareaExternaValor valor : valores) {
 					if (codigo.equals(valor.getNombre())) {
 						return valor.getValor();
 					}

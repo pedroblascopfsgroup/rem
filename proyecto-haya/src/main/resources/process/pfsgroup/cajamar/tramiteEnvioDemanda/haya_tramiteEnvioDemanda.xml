@@ -45,6 +45,7 @@
         	 </action>
       	</event>
 		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="avanzaBPM"></transition>
+		<transition to="HC106_ValidarAsignacion" name="activarAlerta"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 

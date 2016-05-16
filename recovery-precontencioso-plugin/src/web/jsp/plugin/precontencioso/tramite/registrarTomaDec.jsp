@@ -68,7 +68,7 @@ var tipoProblema = items[4];
 var procedimientoPropuesto = items[5];
 var procedimientoIniciar = items[6];
 
-procedimientoPropuesto.setDisabled(true);
+procedimientoPropuesto.readOnly = true;
 
 var dsProcedimientos = new Ext.data.Store({
 			autoLoad:true,
@@ -113,7 +113,7 @@ docCompleta.on('select', function() {
 		
 		if(procedimientoPropuesto.getValue() != '') { 
 			procedimientoIniciar.allowBlank = true;
-			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.readOnly = true;
 			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 		}
 	}else{
@@ -131,7 +131,7 @@ docCompleta.on('select', function() {
 			procedimientoIniciar.setDisabled(false);
 		} else {
 			if(procedimientoPropuesto.getValue() != '') {
-				procedimientoIniciar.setDisabled(true);
+				procedimientoIniciar.readOnly = true;
 				procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 			}
 		}

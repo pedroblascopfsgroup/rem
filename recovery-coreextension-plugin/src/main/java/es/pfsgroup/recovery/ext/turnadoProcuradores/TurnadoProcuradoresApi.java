@@ -2,7 +2,6 @@ package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 

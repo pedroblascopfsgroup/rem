@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160516
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3318 FECHA_SENYAL_LANZAMIENTO
+--## PRODUCTO=NO
+--## 
+--## Finalidad: FECHA_SENYAL_LANZAMIENTO
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE CARGAR_DIM_FECHA_OTRAS (O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jamie Sánchez-Cuenca Bellido
@@ -19752,3 +19770,5 @@ EXCEPTION
 --     DBMS_OUTPUT.PUT_LINE(SQLCODE||' - '||SQLERRM);
 
 END CARGAR_DIM_FECHA_OTRAS;
+/
+EXIT

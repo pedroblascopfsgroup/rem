@@ -2,10 +2,9 @@ create or replace PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE,
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
-
--- Fecha ultima modificacion: 27/04/2016
--- Motivos del cambio: CMREC-3085 - se añaden distinct en los merges de lanzamientos
+-- Responsable ultima modificacion:María Villanueva, PFS Group
+-- Fecha ultima modificacion: 13/05/2016
+-- Motivos del cambio: CMREC-3318 FECHA_SENYAL_LANZAMIENTO
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de Bien
@@ -858,6 +857,32 @@ BEGIN
 
 
 
+
+    -- Fecha_señalamiento_Lanzamiento
+
+        EXECUTE IMMEDIATE'
+        MERGE INTO TMP_H_BIE TMP USING (
+            SELECT PRC.BIE_ID, TAR.ASU_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
+            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+            WHERE TEV.TEX_ID = TEX.TEX_ID
+            AND TEX.TAP_ID = 10000000002966 -- Fecha_señalamiento_Lanzamiento
+            AND TEV.TEV_NOMBRE = ''fecha''
+            AND TEX.TAR_ID = TAR.TAR_ID
+            AND TAR.PRC_ID = PRC.PRC_ID
+            AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || '''
+            GROUP BY PRC.BIE_ID, TAR.ASU_ID) BIENES
+        ON (TMP.BIE_ID = BIENES.BIE_ID AND TMP.ASUNTO_ID = BIENES.ASU_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.FECHA_SENYAL_LANZAMIENTO = BIENES.FECHA'; 
+
+
+        V_ROWCOUNT := sql%rowcount;
+              
+        --Log_Proceso
+        execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Update Fecha Lanzamiento: ' || TO_CHAR(V_ROWCOUNT), 4;
+        commit;        
+
+
+
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_BIE_IX'', ''TMP_H_BIE (DIA_ID,LOTE_ID,BIE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
@@ -900,7 +925,8 @@ BEGIN
                             ENTIDAD_BIEN_ID,
                             FECHA_LANZAMIENTO_BIEN,
 							FECHA_INTERP_DEM_HIP,
-                    VIVIENDA_HABITUAL_ID
+                    VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
                             )
           SELECT  DIA_ID,
                   FECHA_CARGA_DATOS,
@@ -931,7 +957,8 @@ BEGIN
                   ENTIDAD_BIEN_ID,
                   FECHA_LANZAMIENTO_BIEN,
 				  FECHA_INTERP_DEM_HIP,
-                    VIVIENDA_HABITUAL_ID
+                    VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
           FROM TMP_H_BIE;
 
         V_ROWCOUNT := sql%rowcount;
@@ -1020,7 +1047,8 @@ BEGIN
                             ENTIDAD_BIEN_ID,
                             FECHA_LANZAMIENTO_BIEN,
 							FECHA_INTERP_DEM_HIP,
-                    VIVIENDA_HABITUAL_ID
+                    VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
                             )
     select semana, 
            max_dia_semana,
@@ -1051,7 +1079,8 @@ BEGIN
           ENTIDAD_BIEN_ID,
           FECHA_LANZAMIENTO_BIEN,
 		  FECHA_INTERP_DEM_HIP,
-                    VIVIENDA_HABITUAL_ID
+                    VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
      from H_BIE
      where DIA_ID = max_dia_semana;
      
@@ -1140,7 +1169,8 @@ BEGIN
                     ENTIDAD_BIEN_ID,
                     FECHA_LANZAMIENTO_BIEN,
 					          FECHA_INTERP_DEM_HIP,
-                    VIVIENDA_HABITUAL_ID
+                    VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
                   )
       select mes,
              max_dia_mes,
@@ -1171,7 +1201,8 @@ BEGIN
               ENTIDAD_BIEN_ID,
               FECHA_LANZAMIENTO_BIEN,
 			        FECHA_INTERP_DEM_HIP,
-              VIVIENDA_HABITUAL_ID
+              VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
       from H_BIE where DIA_ID = max_dia_mes;
       
       V_ROWCOUNT := sql%rowcount;     
@@ -1257,7 +1288,8 @@ BEGIN
                   ENTIDAD_BIEN_ID,
                   FECHA_LANZAMIENTO_BIEN,
 				          FECHA_INTERP_DEM_HIP,
-                  VIVIENDA_HABITUAL_ID
+                  VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
                   )
       select trimestre,
              max_dia_trimestre,
@@ -1288,7 +1320,8 @@ BEGIN
               ENTIDAD_BIEN_ID,
               FECHA_LANZAMIENTO_BIEN,
 			        FECHA_INTERP_DEM_HIP,
-              VIVIENDA_HABITUAL_ID
+              VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
       from H_BIE where DIA_ID = max_dia_trimestre;
       
       V_ROWCOUNT := sql%rowcount;     
@@ -1375,7 +1408,8 @@ BEGIN
                   ENTIDAD_BIEN_ID,
                   FECHA_LANZAMIENTO_BIEN,
 				          FECHA_INTERP_DEM_HIP,
-                  VIVIENDA_HABITUAL_ID
+                  VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
                   )
       select anio,
              max_dia_anio,
@@ -1406,7 +1440,8 @@ BEGIN
               ENTIDAD_BIEN_ID,
               FECHA_LANZAMIENTO_BIEN,
 			        FECHA_INTERP_DEM_HIP,
-              VIVIENDA_HABITUAL_ID
+              VIVIENDA_HABITUAL_ID,
+                    FECHA_SENYAL_LANZAMIENTO
       from H_BIE where DIA_ID = max_dia_anio;
       
       V_ROWCOUNT := sql%rowcount;     

@@ -1,3 +1,21 @@
+--/*
+--##########################################
+--## AUTOR=María V.
+--## FECHA_CREACION=20160516
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-3318 FECHA_SENYAL_LANZAMIENTO
+--## PRODUCTO=NO
+--## 
+--## Finalidad: FECHA_SENYAL_LANZAMIENTO
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
 create or replace PROCEDURE TRUNCAR_DIM_FECHA_OTRAS (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
@@ -1469,3 +1487,5 @@ BEGIN
 
   
 END TRUNCAR_DIM_FECHA_OTRAS;
+/
+EXIT

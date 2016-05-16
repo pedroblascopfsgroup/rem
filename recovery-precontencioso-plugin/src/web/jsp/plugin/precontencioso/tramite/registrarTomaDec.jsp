@@ -30,7 +30,7 @@ var bottomBar = [];
 				}
 			}
 			
-			procedimientoIniciar.setDisabled(false);
+			procedimientoIniciar.readOnly =  true;
 			
 			//page.fireEvent(app.event.DONE);
 			page.submit({
@@ -69,6 +69,9 @@ var procedimientoPropuesto = items[5];
 var procedimientoIniciar = items[6];
 
 procedimientoPropuesto.readOnly = true;
+procedimientoIniciar.readOnly = true;
+fechaEnvio.setDisabled(true);
+tipoProblema.setDisabled(true);
 
 var dsProcedimientos = new Ext.data.Store({
 			autoLoad:true,
@@ -104,7 +107,6 @@ procedimientoIniciar = items[6];
 docCompleta.on('select', function() {
 	if(docCompleta.getValue() == resultadoDocCompletaNO) {
 		fechaRecep.allowBlank = false;
-		docCompleta.allowBlank = false;
 		fechaEnvio.allowBlank = false;
 		fechaEnvio.setDisabled(false);
 		tipoProblema.allowBlank = false;
@@ -118,7 +120,6 @@ docCompleta.on('select', function() {
 		}
 	}else{
 		fechaRecep.allowBlank = false;
-		docCompleta.allowBlank = false;
 		fechaEnvio.allowBlank = true;
 		fechaEnvio.setDisabled(true);
 		fechaEnvio.setValue('');
@@ -128,7 +129,7 @@ docCompleta.on('select', function() {
 		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
 		if(tipoProblema.getValue() == cambioProcedimiento) {
-			procedimientoIniciar.setDisabled(false);
+			procedimientoIniciar.readOnly = false;
 		} else {
 			if(procedimientoPropuesto.getValue() != '') {
 				procedimientoIniciar.readOnly = true;
@@ -141,10 +142,10 @@ docCompleta.on('select', function() {
 tipoProblema.on('select', function() {
 	procedimientoIniciar.allowBlank = false;
 	if(tipoProblema.getValue() == cambioProcedimiento) {
-		procedimientoIniciar.setDisabled(false);
+		procedimientoIniciar.readOnly = false;
 	}else{
 		if(procedimientoPropuesto.getValue() != '') {
-			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.readOnly = true;
 			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
 		}
 	}

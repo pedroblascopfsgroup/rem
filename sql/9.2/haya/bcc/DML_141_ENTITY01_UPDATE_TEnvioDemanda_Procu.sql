@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160516
+--## FECHA_CREACION=20160515
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1345
@@ -49,7 +49,7 @@ DECLARE
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
         T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
        ,T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu2','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
-       ,T_TIPO_TAP('HC106','HC106_ValidacionAsignacionProcu','plugin/cajamar/tramiteEnvioDemanda/validacionAsignacionProcu',null,null,null,null,'0','Validación de asignación de procurador','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
+       ,T_TIPO_TAP('HC106','HC106_ValidacionAsignacionProcu','plugin/cajamar/tramiteEnvioDemanda/validacionAsignacionProcu',null,null,null,null,'0','Validar asignación','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
        ,T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,null,'(valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.NO && valores[''HC106_RevisarCompletitudDocu''][''observaciones''] == null) ? ''Atención, al haber indicado disconformidad con la documentación, deberá indicar el motivo en el campo Observaciones.'' : null ' ,'valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.SI ? ''completa'' : ''incompleta''',null,'0','Revisar completitud de la documentación','0','PRODUCTO-1345','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null)
        ,T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondosProcurador',null,null,null,null,'HC107','0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
     );
@@ -81,9 +81,9 @@ DECLARE
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1345')
 
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deberá de indicar en el campo Principal de la demanda, dicho importe. Además, deberá adjuntar al procedimiento el escrito de la demanda completo, así como toda la documentación que requiera el procurador para su revisión. </p><p style="margin-bottom: 10px">En el caso de que el procurador haya indicado disconformidad con la documentación que hubiera adjuntado al procedimiento, en el campo ‘Observaciones procurador’ aparecerá el motivo de dicha disconformidad. </p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Revisar completitud de la documentación" a realizar por el procurador asignado al asunto de referencia.</p></div>',null,null,null,null,'0','PRODUCTO-1345')
-       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','1','currency','principal','Principal de la demanda',null,null,'(valores[''HC106_ValidarAsignacionProcu''] !=null && valores[''HC106_ValidarAsignacionProcu''][''importeDemanda''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''importeDemanda''] : null',null,'0','PRODUCTO-1345')
-       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','2','combo','proc_a_iniciar','Procedimiento a iniciar',null,null,'(valores[''HC106_ValidarAsignacionProcu''] !=null && valores[''HC106_ValidarAsignacionProcu''][''proc_a_iniciar''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''proc_a_iniciar''] : null','TipoProcedimiento','0','PRODUCTO-1345')
-       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','3','combo','partidoJudicial','Partido judicial',null,null,'(valores[''HC106_ValidarAsignacionProcu''] !=null && valores[''HC106_ValidarAsignacionProcu''][''partidoJudicial''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''partidoJudicial''] : null','TipoPlaza','0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','1','currency','principal','Principal de la demanda',null,null,'(valores[''HC106_ValidacionAsignacionProcu''] !=null && valores[''HC106_ValidacionAsignacionProcu''][''importeDemanda''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''importeDemanda''] : null',null,'0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','2','combo','proc_a_iniciar','Procedimiento a iniciar',null,null,'(valores[''HC106_ValidacionAsignacionProcu''] !=null && valores[''HC106_ValidacionAsignacionProcu''][''proc_a_iniciar''] !=null) ? valores[''HC106_ValidacionAsignacionProcu''][''proc_a_iniciar''] : null','TipoProcedimiento','0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','3','combo','partidoJudicial','Partido judicial',null,null,'(valores[''HC106_ValidacionAsignacionProcu''] !=null && valores[''HC106_ValidacionAsignacionProcu''][''partidoJudicial''] !=null) ? valores[''HC106_ValidacionAsignacionProcu''][''partidoJudicial''] : null','TipoPlaza','0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','4','textarea','observacionesProcu','Observaciones procurador',null,null,'valores[''HC106_RevisarCompletitudDocu''] != null ? valores[''HC106_RevisarCompletitudDocu''][''observaciones''] : ''''',null,'0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1345')
 

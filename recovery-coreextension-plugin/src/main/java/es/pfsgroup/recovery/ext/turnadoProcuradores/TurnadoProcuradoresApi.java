@@ -63,8 +63,10 @@ public interface TurnadoProcuradoresApi {
 	 * Asignar un letrado a un asunto.
 	 * 
 	 * @param idAsunto
+	 * @param plaza TODO
+	 * @param tpo TODO
 	 */
-	void turnarProcurador(Long idAsunto, String username) throws IllegalArgumentException, AplicarTurnadoException;
+	void turnarProcurador(Long idAsunto, String username, String plaza, String tpo) throws IllegalArgumentException, AplicarTurnadoException;
 
 	/**
 	 * Elimina un esquema

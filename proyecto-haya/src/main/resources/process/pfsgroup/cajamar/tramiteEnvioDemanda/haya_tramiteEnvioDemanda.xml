@@ -36,7 +36,7 @@
 	<state name="HC106_ValidarAsignacion">
 		<event type="node-enter">
          	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-            	<targetBean>genericEnterActionHandler</targetBean>
+            	<targetBean>bccPrecontenciosoEnterActionHandler</targetBean>
         	 </action>
       	</event>
       	<event type="node-leave">
@@ -56,7 +56,7 @@
       	</event>
       	<event type="node-leave">
 	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-            	<targetBean>genericLeaveActionHandler</targetBean>
+            	<targetBean>bccPrecontenciosoLeaveActionHandler</targetBean>
         	 </action>
       	</event>
 		<transition to="HC106_RevisarCompletitudDocuDecision" name="avanzaBPM"></transition>

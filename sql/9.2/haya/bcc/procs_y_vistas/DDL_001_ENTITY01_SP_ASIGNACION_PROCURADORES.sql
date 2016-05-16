@@ -499,3 +499,5 @@ END IF; --ESTE IF ES EL DE COMPROBAR SI HAY QUE ENTRAR AL CASO
 
 commit;
 END asignacion_turnado_procu;
+
+/

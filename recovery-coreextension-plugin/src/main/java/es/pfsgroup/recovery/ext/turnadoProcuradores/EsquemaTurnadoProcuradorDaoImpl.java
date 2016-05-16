@@ -153,12 +153,14 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	}
 
 	@Override
-	public void turnarProcurador(Long prcId, String username) {
+	public void turnarProcurador(Long prcId, String username, String plaza, String tpo) {
 		Session session = this.getSessionFactory().getCurrentSession();
 		Query query = session.createSQLQuery(
-				"CALL asignacion_asuntos_turnado(:idAsunto, :username)")
+				"CALL asignacion_turnado_procu(:idAsunto, :username, :plaza, :tpo)")
 				.setParameter("idAsunto", prcId)
-				.setParameter("username", username);
+				.setParameter("username", username)
+				.setParameter("plaza", plaza)
+				.setParameter("tpo", tpo);
 						
 		query.executeUpdate();
 	}

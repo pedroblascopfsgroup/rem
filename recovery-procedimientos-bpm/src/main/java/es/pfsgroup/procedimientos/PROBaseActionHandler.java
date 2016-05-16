@@ -378,7 +378,7 @@ public class PROBaseActionHandler implements ActionHandler {
     }
 
     private Long getIdTareaExterna(ExecutionContext executionContext) {
-        final String name = executionContext.getNode().getName().replaceAll("Decision$", "");
+        final String name = "HC106_ValidarAsignacion";//executionContext.getNode().getName().replaceAll("Decision$", "");
         final Long idToken = executionContext.getToken().getId();
 
         // Esto permite tener asociación robusta para cada tarea en el contexto JBPM.

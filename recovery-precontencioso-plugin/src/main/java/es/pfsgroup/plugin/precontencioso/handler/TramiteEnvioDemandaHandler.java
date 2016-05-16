@@ -1,14 +1,12 @@
 package es.pfsgroup.plugin.precontencioso.handler;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
@@ -21,10 +19,7 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-		
-	@Autowired
-	private TareaExternaApi tareaExternaApi;
-	
+			
 	@Autowired
 	private SubastaProcedimientoApi subastaProcedimientoApi;
 	
@@ -40,15 +35,13 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 		Procedimiento prc = getProcedimiento(executionContext);
 		
 		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getId());
-		List<TareaExterna> tareasAnterior = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getId());
 		
 		String importeDemanda = "";
 		String procIniciar = "";
 		String partidoJudicial = "";
 		
 		for (TareaExterna tarea : tareas) {
-			//FIXME No reconoce la cadena entera, falta revisar la comparacion pero así entra
-			if ("Redactar demanda y adjuntar documentación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+			if (tarea.getTareaProcedimiento().getCodigo().contains("RedactarDemandaAdjuntarDocu")) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if ("principal".equals(valor.getNombre())) {
@@ -64,11 +57,37 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 				break;
 			}
 		}
+		for (TareaExterna tarea : tareas) {
+			if(tarea.getTareaProcedimiento().getCodigo().contains("ValidarAsignacion")){
+				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
+				for (EXTTareaExternaValor valor : valores) {
+					if ("importeDemanda".equals(valor.getNombre())) {
+						if(!importeDemanda.equals(valor.getValor())){
+							executionContext.getToken().signal("nuevo");
+							return "";
+						}
+					}
+					else if ("proc_a_iniciar".equals(valor.getNombre())) {
+						if(!procIniciar.equals(valor.getValor())){
+							executionContext.getToken().signal("nuevo");
+							return "";
+						}
+					}
+					else if ("partidoJudicial".equals(valor.getNombre())) {
+						if(!partidoJudicial.equals(valor.getValor())){
+							executionContext.getToken().signal("nuevo");
+							return "";
+						}
+					}
+				}
+				break;
+			}		
+		}
+
+		List<TareaExterna> tareasPadrePCO = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
 		
-		
-		
-		for (TareaExterna tarea : tareasAnterior) {
-			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+		for (TareaExterna tarea : tareasPadrePCO) {
+			if (tarea.getTareaProcedimiento().getCodigo().contains("ValidarAsignacion")) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if ("importeDemanda".equals(valor.getNombre())) {

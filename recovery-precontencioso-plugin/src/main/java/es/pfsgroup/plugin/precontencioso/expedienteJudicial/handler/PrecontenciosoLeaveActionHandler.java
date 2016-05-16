@@ -29,7 +29,6 @@ import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimient
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
-import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 
 public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
@@ -66,9 +65,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 	@Autowired
 	PrecontenciosoProjectContext precontenciosoContext;
-	
-	@Autowired
-	TurnadoProcuradoresApi turnadoProcuradoresApi;
 	
 	@Autowired
 	UsuarioManager usuarioManager;
@@ -138,7 +134,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			
 			actualizarProcIniciar(prc, listado, TAREA_REGISTRAR_TOMA_DEC_COMBO_PROC_INICIAR);			
 			trasladarDatos(executionContext, prc);
-			turnadoProcuradoresApi.turnarProcurador(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername());
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarSubsanacion.equals(tex.getTareaProcedimiento().getCodigo())) {
 			

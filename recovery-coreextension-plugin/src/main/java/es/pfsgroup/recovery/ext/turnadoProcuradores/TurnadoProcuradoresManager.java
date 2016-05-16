@@ -174,10 +174,10 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void turnarProcurador(Long idAsunto, String username) throws IllegalArgumentException, AplicarTurnadoException {
+	public void turnarProcurador(Long idAsunto, String username, String plaza, String tpo) throws IllegalArgumentException, AplicarTurnadoException {
 		try {
 			this.getEsquemaVigente();
-			esquemaTurnadoProcuradorDao.turnarProcurador(idAsunto, username);
+			esquemaTurnadoProcuradorDao.turnarProcurador(idAsunto, username, plaza, tpo);
 		} catch(IllegalArgumentException iae) {
 			logger.error(iae);
 			throw iae;
@@ -363,7 +363,6 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		return false;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public String dameValoresBPMPadrePCO(Long idProcedimiento, String codigo) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao
 				.createFilter(FilterType.EQUALS, "id", idProcedimiento));
@@ -371,7 +370,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
 
 		for (TareaExterna tarea : tareas) {
-			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+			if ("PCO_ValidarAsignacion".equals(tarea.getTareaProcedimiento().getCodigo())) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if (codigo.equals(valor.getNombre())) {

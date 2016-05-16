@@ -236,4 +236,6 @@ public interface coreextensionApi {
 	@BusinessOperationDefinition(GET_LIST_ALL_USUARIOS_POR_DEFECTO)
 	List<Usuario> getListAllUsuariosPorDefectoData(long idTipoDespacho, boolean incluirBorrados);
 	
+	public Page getListAllUsersPaginated(UsuarioDto usuarioDto);
+	
 }

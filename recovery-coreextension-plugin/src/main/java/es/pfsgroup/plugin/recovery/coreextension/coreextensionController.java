@@ -59,6 +59,9 @@ public class coreextensionController {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private coreextensionApi coreextensionApi;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListTipoGestorData(@RequestParam(value="ugCodigo",required = true)String ugCodigo, ModelMap model){
@@ -386,5 +389,21 @@ public class coreextensionController {
 		model.put("pagina", page);
 		
 		return TIPO_USUARIO_DEFECTO_JSON;
+	}
+	
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios 
+	 * @param model
+	 * @param UsuarioDto 
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListAllUsersPaginated(ModelMap model, UsuarioDto usuarioDto){
+		
+		Page page = coreextensionApi.getListAllUsersPaginated(usuarioDto);
+		model.put("pagina", page);
+		
+		return TIPO_USUARIO_PAGINATED_JSON;
 	}
 }

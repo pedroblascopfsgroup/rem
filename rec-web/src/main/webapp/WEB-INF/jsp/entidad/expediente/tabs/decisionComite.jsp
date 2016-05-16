@@ -279,7 +279,7 @@
 		,{name:'idProcedimiento'}
 		,{name:'tipoActuacion'}
 		,{name:'actuacion'}
-		,{name:'fcreacion',type:'date', dateFormat:'d/m/Y'}
+		//,{name:'fcreacion',type:'date', dateFormat:'d/m/Y'}
 		,{name:'gestor'}
 		,{name:'estado'}
 		,{name:'supervisor'}
@@ -363,9 +363,9 @@
 	}, {
 		header: '<s:message code="asuntos.listado.actuacion" text="**Actuacin"/>',
 		width:140, dataIndex: 'actuacion',sortable:false
-	},{
-		header: '<s:message code="asuntos.listado.fcreacion" text="**Fecha Creacion"/>',
-		hidden:true, dataIndex: 'fcreacion'
+<%-- 	},{ 
+ 		header: '<s:message code="asuntos.listado.fcreacion" text="**Fecha Creacion"/>', 
+		hidden:true, dataIndex: 'fcreacion' --%>
 	},{
 		header: '<s:message code="asuntos.listado.gestor" text="**Gestor"/>',
 		hidden:true, dataIndex: 'gestor',sortable:false
@@ -842,9 +842,13 @@
 
     var esGestorSupervisorDeFase = entidad.getData("esGestorSupervisorActual");
     
-    var entidadUserLogado = app.usuarioLogado.codigoEntidad;
-    
-    if(entidadUserLogado == "BANKIA" && data.toolbar.tipoExpediente == "RECU"){
+    var isBankia = false;
+    <sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
+   		isBankia = true;
+	</c:if>
+     
+    if(isBankia && data.toolbar.tipoExpediente == "RECU"){
     
         var visible = [
 	      [btnActuacion, esGestorSupervisorDeFase]

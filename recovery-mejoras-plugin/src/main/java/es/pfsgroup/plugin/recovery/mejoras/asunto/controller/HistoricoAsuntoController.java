@@ -153,7 +153,7 @@ public class HistoricoAsuntoController {
 				fromIndex = 0;
 				toIndex = 25;
 			}
-
+			EXTTareaNotificacion tarea;
 			Boolean tienePermiso = getPerfilConFuncionVerSoloTareasPropias(user);
 			for(MEJHistoricoAsuntoViewDto mhaw : historico){
 				
@@ -164,11 +164,21 @@ public class HistoricoAsuntoController {
 					mhaw.setFechaIni(sdf.format(mhaw.getFechaInicio()));
 					mhaw.setAgenda(true);
 				}
+				if("C".equals(mhaw.getGroup()) && mhaw.getIdTarea()!=null ){
+					tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
+					mhaw.setDestinatarioTarea(tarea.getDestinatarioTarea().getUsername());
+				}
 				if (tienePermiso){
-					if("C".equals(mhaw.getGroup()) || "D".equals(mhaw.getGroup()) ){
-						if (user.getUsername().equals(mhaw.getDestinatarioTarea()) || user.getUsername().equals(mhaw.getNombreUsuario()) 
-						|| user.getNombre().equals(mhaw.getDescripcionTarea()) || user.getNombre().equals(mhaw.getNombreUsuario())){
-							
+
+					if("C".equals(mhaw.getGroup()) || "D".equals(mhaw.getGroup())){
+						if(mhaw.getIdTarea()!=null){
+						tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
+							if (user.equals(tarea.getDestinatarioTarea())){
+							historicos.add(mhaw);
+							} else {
+								size--;
+							}
+						} else if (user.getUsername().equals(mhaw.getNombreUsuario()) || user.getNombre().equals(mhaw.getNombreUsuario())){
 							historicos.add(mhaw);
 						} else {
 							size--;

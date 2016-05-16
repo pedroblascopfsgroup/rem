@@ -18,11 +18,12 @@
 	
 	var muestraBotonGuardar = 0;
 	var validacion= {html:'<div id="validacionCMPS" style="font-size:12px;"> ${validacion}</div>', border:false, bodyStyle:'color:red;margin-bottom:5px'};
-	
-	 
+
 	<c:if test="${validacion==null}">
 		muestraBotonGuardar=1;
 	</c:if>
+	
+	
 	
 	var uploading = false;
 	
@@ -616,5 +617,7 @@ var fn_procesarResolucionOk = function(r){
 	//recargarGrid();
 }
 
-
+if(Ext.get('permiteGuardar')!=null){
+	btnGuardar.setDisabled(false);
+}
 </fwk:page>

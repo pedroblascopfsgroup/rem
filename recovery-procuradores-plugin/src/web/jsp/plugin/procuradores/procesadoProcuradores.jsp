@@ -354,11 +354,13 @@ onViewClick : function(doFocus){
 				resolucionPanel.el.mask('Guardando datos', 'x-mask-loading');
 				
 			}else{
-					Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios.');
 					var valores = resolucionPanel.getForm().getFieldValues();
 					if(valores['file_upload_ok'] == ""){
-						//Ext.get('file').addClass('x-form-invalid');
-						Ext.get('d_file_right').addClass('x-form-invalid');
+						Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios, incluida la documentación adjunta');
+						
+					}
+					else{
+						Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios.');
 					}
 
 			}
@@ -1004,7 +1006,8 @@ onViewClick : function(doFocus){
 				var resolucion = listaArchivosGrid.getSelectionModel().getSelected();
 				if(resolucion){
 					var estadoResolucion = resolucion.get('estado');
-					if (estadoResolucion == 'Procesado'){
+			
+					if (estadoResolucion == 'Procesado' || estadoResolucion == 'Pte. Validar' || estadoResolucion=='Rechazado'){
 		    			if (btnAdjuntar && !btnAdjuntar.isDestroyed) {
 		    				btnAdjuntar.setDisabled(true);
 		    			}

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=201600512
+--## FECHA_CREACION=201600516
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1395
@@ -119,16 +119,42 @@ CURSOR crs_id_usu_ganador_tmp(p_importe_tarea NUMBER, p_esquema_vigente #ESQUEMA
       FROM tup_tpc_turnado_procu_config tpc
       WHERE tpc.ept_id = p_esquema_vigente and p_importe_tarea BETWEEN tpc.tpc_importe_desde and tpc.tpc_importe_hasta;
 
-CURSOR crs_resguardo_tmp(p_importe_tarea NUMBER, p_esquema_vigente #ESQUEMA#.tup_etp_esq_turnado_procu.etp_id%TYPE)
+CURSOR crs_resguardo_tmp(p_importe_tarea NUMBER, p_plazas_esquema #ESQUEMA#.tup_etp_esq_turnado_procu.etp_id%TYPE)
     IS
       select tpc.usu_id, tpc.tpc_porcentaje, null, null
       FROM tup_tpc_turnado_procu_config tpc
-      WHERE tpc.ept_id = p_esquema_vigente and p_importe_tarea BETWEEN tpc.tpc_importe_desde and tpc.tpc_importe_hasta;
+      WHERE tpc.ept_id = p_plazas_esquema and p_importe_tarea BETWEEN tpc.tpc_importe_desde and tpc.tpc_importe_hasta;
       
 CURSOR crs_id_usu_tabla_tmp
    IS
       SELECT FIRST_VALUE (tmp.usu_id) OVER (ORDER BY tmp.usu_id DESC)
       FROM TUP_TMP_CALCULOS_TURN_PROCU tmp;
+
+-- Recolecta el numero de asuntos totales por usuarios procurador    
+   CURSOR crs_num_asu(p_tge_codigo #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE)
+      IS
+        select tmp.usu_id,tmp.porc_real, count(*) num_asu
+            from #ESQUEMA#.USD_USUARIOS_DESPACHOS usd  
+            join #ESQUEMA#.GAA_GESTOR_ADICIONAL_ASUNTO gaa on usd.usd_id=gaa.usd_id and gaa.dd_tge_id = (select dd_tge_id from #ESQUEMA_MASTER#.DD_TGE_TIPO_GESTOR where dd_tge_codigo=p_tge_codigo)
+            join #ESQUEMA#.ASU_ASUNTOS asu on asu.asu_id=gaa.asu_id
+            join #ESQUEMA_MASTER#.DD_EAS_ESTADO_ASUNTOS eas on asu.dd_eas_id=eas.dd_eas_id
+            join #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU tmp on usd.usu_id=tmp.usu_id
+            where gaa.borrado=0 and asu.borrado=0 and eas.borrado=0
+            and eas.dd_eas_codigo='03'
+              group by tmp.usu_id, tmp.porc_real;
+
+-- Calcular porcentaje asuntos correspondiente
+  CURSOR crs_porcentaje_asu(p_calculo NUMBER)
+    IS
+      select usu_id, (NUM_ASU / p_calculo) * 100 porc_asu
+          from #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU;
+
+-- Elige el usuario con mejor puntuacion
+  CURSOR crs_usuario_puntos
+    IS
+      select usu_id from 
+        (select usu_id, (PORC_REAL - PORC_ASU) res from #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU order by res DESC, PORC_REAL desc)
+      where rownum=1;
 
 p_asu_id       #ESQUEMA#.asu_asuntos.asu_id%TYPE;
 v_usu_id_pfs                  #ESQUEMA#.des_despacho_externo.des_id%TYPE;
@@ -154,6 +180,10 @@ p_id_usu_ganador_tmp #ESQUEMA#.des_despacho_externo.des_id%TYPE;
 v_resguardo_tmp          #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU%ROWTYPE;
 
 v_usuid_tabla_tmp          #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU.usu_id%TYPE;
+
+v_filtro_numAsuntos       crs_num_asu%ROWTYPE;
+v_calculo                 NUMBER;
+v_filtro_porcAsuntos      crs_porcentaje_asu%ROWTYPE;
 
 BEGIN
   EXECUTE IMMEDIATE 'truncate table #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU';
@@ -241,8 +271,15 @@ BEGIN
 DBMS_OUTPUT.put_line ('importe total: '||p_importe_tarea);
 DBMS_OUTPUT.put_line ('esquema activo '||p_esquema_vigente);
 
+ -- Si existe algun gestor activo del tipo indicado para el asunto, se añade al historico y se borra la relacion
+      FOR relacion IN crs_gestores_activos (p_tge_codigo, p_asu_id)
+      LOOP
+         DELETE FROM #ESQUEMA#.gaa_gestor_adicional_asunto gaa
+               WHERE gaa.gaa_id = relacion.gaa_id;
+      END LOOP;
+
 -- Inserta en temporal las entradas que cumplen las condiciones para que sus usuarios sean elegidos
-        OPEN crs_resguardo_tmp(p_importe_tarea, p_esquema_vigente);
+        OPEN crs_resguardo_tmp(p_importe_tarea, p_plazas_esquema);
             LOOP
               FETCH crs_resguardo_tmp INTO v_resguardo_tmp;
                 EXIT WHEN crs_resguardo_tmp%NOTFOUND;
@@ -251,14 +288,48 @@ DBMS_OUTPUT.put_line ('esquema activo '||p_esquema_vigente);
             END LOOP;
         CLOSE crs_resguardo_tmp;
         
-        
+
+-- Insertamos en temporal el numero de asuntos por usuario
+                  OPEN crs_num_asu(p_tge_codigo);
+                  LOOP
+                    FETCH crs_num_asu INTO v_filtro_numAsuntos;
+                      EXIT WHEN crs_num_asu%NOTFOUND;
+                      update #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU
+                        set num_Asu=v_filtro_numAsuntos.num_Asu
+                        where usu_id=v_filtro_numAsuntos.usu_id;
+                  END LOOP;
+                  CLOSE crs_num_asu;
+
+        --contamos en total de asuntos de la tabla temporal
+        execute immediate 'select sum(num_asu) from #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU' INTO v_calculo;
+
+--DBMS_OUTPUT.put_line ('Suma Total ASU de los usu encontrdos: '||v_calculo);
+                  -- Insertamos el % de asuntos que ya tienen asignados los usuarios
+                  OPEN crs_porcentaje_asu(v_calculo);
+                  LOOP
+                    FETCH crs_porcentaje_asu INTO v_filtro_porcAsuntos;
+                      EXIT WHEN crs_porcentaje_asu%NOTFOUND;
+                      update #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU
+                        set porc_Asu=v_filtro_porcAsuntos.porc_Asu
+                        where usu_id=v_filtro_porcAsuntos.usu_id;
+                  END LOOP;
+                  CLOSE crs_porcentaje_asu;
+
+
+-- Se obtiene el usuario con mejor puntuacion
+                  OPEN crs_usuario_puntos;
+                    FETCH crs_usuario_puntos INTO v_usuid_tabla_tmp;
+                  CLOSE crs_usuario_puntos;
+                   --DBMS_OUTPUT.put_line ('USU_id encontrado final: '||v_usuid_tabla_tmp);
+
+
 --recogemos el usuario ganador de la tabla tmp
-OPEN crs_id_usu_tabla_tmp;
+--OPEN crs_id_usu_tabla_tmp;  ESTO ES TEMPORA, PORQUE SE ASIGNA A PIÑON
+                              --HAY QUE SACARLO CON LA PUNTUACIÓN
+ -- FETCH crs_id_usu_tabla_tmp
+    --INTO v_usuid_tabla_tmp;
 
-  FETCH crs_id_usu_tabla_tmp
-    INTO v_usuid_tabla_tmp;
-
-  CLOSE crs_id_usu_tabla_tmp;
+  --CLOSE crs_id_usu_tabla_tmp;
   
 DBMS_OUTPUT.put_line ('GANADOR DE TABLA TMP '||v_usuid_tabla_tmp);
 -------------------------------------------
@@ -351,12 +422,6 @@ END IF; --ESTE IF ES EL DE COMPROBAR SI HAY QUE ENTRAR AL CASO
 
    CLOSE crs_des_id;
 
- -- Si existe algun gestor activo del tipo indicado para el asunto, se añade al historico y se borra la relacion
-      FOR relacion IN crs_gestores_activos (p_tge_codigo, p_asu_id)
-      LOOP
-         DELETE FROM #ESQUEMA#.gaa_gestor_adicional_asunto gaa
-               WHERE gaa.gaa_id = relacion.gaa_id;
-      END LOOP;
 
   -- Se añade la relacion entre el despacho elegido y el asunto
       INSERT INTO #ESQUEMA#.gaa_gestor_adicional_asunto

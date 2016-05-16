@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160513
+--## FECHA_CREACION=20160516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1345
@@ -39,7 +39,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-709','0','03',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('HC106','T. de envío de la demanda','T. de envío de la demanda',null,'hcj_tramiteEnvioDemanda','0','PRODUCTO-1345','0','03',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -47,7 +47,8 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-        T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,'comprobarSiLosDatosHanSidoCambiados() ? ''nuevo'' : ''normal''',null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
+        T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
+       ,T_TIPO_TAP('HC106','HC106_RedactarDemandaAdjuntarDocu2','plugin/cajamar/tramiteEnvioDemanda/redactarDemanda',null,null,null,null,'0','Redactar demanda y adjuntar documentación','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
        ,T_TIPO_TAP('HC106','HC106_ValidacionAsignacionProcu','plugin/cajamar/tramiteEnvioDemanda/validacionAsignacionProcu',null,null,null,null,'0','Validación de asignación de procurador','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
        ,T_TIPO_TAP('HC106','HC106_RevisarCompletitudDocu',null,null,'(valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.NO && valores[''HC106_RevisarCompletitudDocu''][''observaciones''] == null) ? ''Atención, al haber indicado disconformidad con la documentación, deberá indicar el motivo en el campo Observaciones.'' : null ' ,'valores[''HC106_RevisarCompletitudDocu''][''documentacionCompletada''] == DDSiNo.SI ? ''completa'' : ''incompleta''',null,'0','Revisar completitud de la documentación','0','PRODUCTO-1345','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null)
        ,T_TIPO_TAP('HC106','HC106_BPMTramiteProvisionFondosProcurador',null,null,null,null,'HC107','0','Se inicia trámite de provisiones de fondos','0','PRODUCTO-1345','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'PCO_LET',null,null,null)
@@ -59,6 +60,7 @@ DECLARE
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
       T_TIPO_PLAZAS(null,null,'HC106_RedactarDemandaAdjuntarDocu','15*24*60*60*1000L','0','0','PRODUCTO-1345')
+     ,T_TIPO_PLAZAS(null,null,'HC106_RedactarDemandaAdjuntarDocu2','15*24*60*60*1000L','0','0','PRODUCTO-1345')
      ,T_TIPO_PLAZAS(null,null,'HC106_ValidacionAsignacionProcu','15*24*60*60*1000L','0','0','PRODUCTO-1345')
      ,T_TIPO_PLAZAS(null,null,'HC106_RevisarCompletitudDocu','1*24*60*60*1000L','0','0','PRODUCTO-1345')
      ,T_TIPO_PLAZAS(null,null,'HC106_BPMTramiteProvisionFondosProcurador','300*24*60*60*1000L','0','0','PRODUCTO-1345')
@@ -71,15 +73,23 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     
-         T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deberá de indicar en el campo Principal de la demanda, dicho importe. Además, deberá adjuntar al procedimiento el escrito de la demanda completo, así como toda la documentación que requiera el procurador para su revisión. </p><p style="margin-bottom: 10px">En el caso de que el procurador haya indicado disconformidad con la documentación que hubiera adjuntado al procedimiento, en el campo ‘Observaciones procurador’ aparecerá el motivo de dicha disconformidad. </p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Revisar completitud de la documentación" a realizar por el procurador asignado al asunto de referencia.</p></div>',null,null,null,null,'0','PRODUCTO-1345')
-       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','1','currency','principal','Principal de la demanda',null,null,'dameValoresBPMPadrePCO(''importeDemanda'')',null,'0','PRODUCTO-1345')
+        T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deberá de indicar en el campo Principal de la demanda, dicho importe. Además, deberá adjuntar al procedimiento el escrito de la demanda completo, así como toda la documentación que requiera el procurador para su revisión. </p><p style="margin-bottom: 10px">En el caso de que el procurador haya indicado disconformidad con la documentación que hubiera adjuntado al procedimiento, en el campo ‘Observaciones procurador’ aparecerá el motivo de dicha disconformidad. </p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Revisar completitud de la documentación" a realizar por el procurador asignado al asunto de referencia.</p></div>',null,null,null,null,'0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','1','currency','principal','Principal de la demanda',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','2','combo','proc_a_iniciar','Procedimiento a iniciar',null,null,'dameValoresBPMPadrePCO(''proc_a_iniciar'')','TipoProcedimiento','0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','3','combo','partidoJudicial','Partido judicial',null,null,'dameValoresBPMPadrePCO(''partidoJudicial'')','TipoPlaza','0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','4','textarea','observacionesProcu','Observaciones procurador',null,null,'valores[''HC106_RevisarCompletitudDocu''] != null ? valores[''HC106_RevisarCompletitudDocu''][''observaciones''] : ''''',null,'0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1345')
 
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Para dar por completada esta tarea deberá de indicar en el campo Principal de la demanda, dicho importe. Además, deberá adjuntar al procedimiento el escrito de la demanda completo, así como toda la documentación que requiera el procurador para su revisión. </p><p style="margin-bottom: 10px">En el caso de que el procurador haya indicado disconformidad con la documentación que hubiera adjuntado al procedimiento, en el campo ‘Observaciones procurador’ aparecerá el motivo de dicha disconformidad. </p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla la siguiente tarea será "Revisar completitud de la documentación" a realizar por el procurador asignado al asunto de referencia.</p></div>',null,null,null,null,'0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','1','currency','principal','Principal de la demanda',null,null,'(valores[''HC106_ValidarAsignacionProcu''] !=null && valores[''HC106_ValidarAsignacionProcu''][''importeDemanda''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''importeDemanda''] : null',null,'0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','2','combo','proc_a_iniciar','Procedimiento a iniciar',null,null,'(valores[''HC106_ValidarAsignacionProcu''] !=null && valores[''HC106_ValidarAsignacionProcu''][''proc_a_iniciar''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''proc_a_iniciar''] : null','TipoProcedimiento','0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','3','combo','partidoJudicial','Partido judicial',null,null,'(valores[''HC106_ValidarAsignacionProcu''] !=null && valores[''HC106_ValidarAsignacionProcu''][''partidoJudicial''] !=null) ? valores[''HC106_ValidarAsignacionProcu''][''partidoJudicial''] : null','TipoPlaza','0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','4','textarea','observacionesProcu','Observaciones procurador',null,null,'valores[''HC106_RevisarCompletitudDocu''] != null ? valores[''HC106_RevisarCompletitudDocu''][''observaciones''] : ''''',null,'0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_RedactarDemandaAdjuntarDocu2','5','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1345')
+
+       
        ,T_TIPO_TFI('HC106_ValidacionAsignacionProcu','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Instrucciones pendientes de definir</div>',null,null,null,null,'0','PRODUCTO-1345')
-       ,T_TIPO_TFI('HC106_ValidacionAsignacionProcu','1','currency','importeDemanda','Importe de la demanda',null,null,'(valores[''HC106_RedactarDemandaAdjuntarDocu''] !=null && valores[''HC106_RedactarDemandaAdjuntarDocu''][''principal''] !=null) ? valores[''HC106_RedactarDemandaAdjuntarDocu''][''principal''] : null',null,'0','PRODUCTO-1345')
+       ,T_TIPO_TFI('HC106_ValidacionAsignacionProcu','1','currency','importeDemanda','Importe de la demanda',null,null,'procedimientoManager.getProcedimiento(idProcedimiento).getSaldoRecuperacion()',null,'0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_ValidacionAsignacionProcu','2','combo','proc_a_iniciar','Procedimiento a iniciar',null,null,'(valores[''HC106_RedactarDemandaAdjuntarDocu''] !=null && valores[''HC106_RedactarDemandaAdjuntarDocu''][''proc_a_iniciar''] !=null) ? valores[''HC106_RedactarDemandaAdjuntarDocu''][''proc_a_iniciar''] : null','TipoProcedimiento','0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_ValidacionAsignacionProcu','3','combo','partidoJudicial','Partido judicial',null,null,'(valores[''HC106_RedactarDemandaAdjuntarDocu''] !=null && valores[''HC106_RedactarDemandaAdjuntarDocu''][''partidoJudicial''] !=null) ? valores[''HC106_RedactarDemandaAdjuntarDocu''][''partidoJudicial''] : null','TipoPlaza','0','PRODUCTO-1345')
        ,T_TIPO_TFI('HC106_ValidacionAsignacionProcu','4','textarea','observaciones','Observaciones',null,null,null,null,'0','PRODUCTO-1345')

@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=20160506
+--## FECHA_CREACION=20160516
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1315
@@ -55,7 +55,7 @@ DECLARE
        ,T_TIPO_TAP('P460','P460_ConfirmarSolicitud',null,null,null,'valores[''P460_ConfirmarSolicitud''][''resultado''] == ''ACEPTADO'' ? ''aceptado'' : ''denegado''',null,'0','Autorizar solicitud','0','PRODUCTO-1315','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,'DRECU',null)
        ,T_TIPO_TAP('P460','P460_RealizarTransferencia',null,null,null,null,null,'0','Realizar transferencia','0','PRODUCTO-1315','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'TGCON',null,'TGCONPR',null)
        ,T_TIPO_TAP('P460','P460_ConfirmarTransferencia',null,null,null,'valores[''P460_SolicitarAnticipoFondos''][''tipoSolicitud'']',null,'0','Confirmar transferencia realizada','0','PRODUCTO-1315','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,'TGCONPR',null)
-       ,T_TIPO_TAP('P460','P460_AdjuntarFactura',null,'existeAdjuntoUG(''FACJUS'', ''PRC'') ? null : existeAdjuntoUGMensaje(''FACJUS'',''PRC'')',null,'valores[''P460_SolicitarAnticipoFondos''][''tipoSolicitud'']',null,'0','Adjuntar factura a nombre de la entidad','0','PRODUCTO-1315','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,null,null)
+       ,T_TIPO_TAP('P460','P460_AdjuntarFactura',null,'existeAdjuntoUG(''FACJUS'', ''PRC'') ? null : existeAdjuntoUGMensaje(''FACJUS'',''PRC'')',null,'valores[''P460_SolicitarAnticipoFondos''][''tipoSolicitud'']',null,'0','Adjuntar factura a nombre de la entidad','0','PRODUCTO-1315','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'543',null,'TGCONGE',null)
        ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 

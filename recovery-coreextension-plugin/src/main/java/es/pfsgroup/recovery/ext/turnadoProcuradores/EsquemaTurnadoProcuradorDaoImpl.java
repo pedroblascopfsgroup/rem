@@ -1,4 +1,4 @@
-package es.pfsgroup.recovery.ext.turnadodespachos;
+package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,9 +31,11 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 
 @Repository
-public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Long> implements EsquemaTurnadoDao {
+public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTurnadoProcurador, Long> implements EsquemaTurnadoProcuradorDao {
 
 	private static final String FORMATO_FECHA_BD = "dd/MM/yyyy 00:00:00";
 
@@ -46,16 +48,16 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 	private UtilDiccionarioApi utilDiccionario;
 	
 	@Override
-	public EsquemaTurnado getEsquemaVigente() {
+	public EsquemaTurnadoProcurador getEsquemaVigente() {
 
 		// Estado vigente
-		DDEstadoEsquemaTurnado estadoVigente = (DDEstadoEsquemaTurnado)utilDiccionario.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_VIGENTE);
+		DDEstadoEsquemaTurnado estadoVigente = (DDEstadoEsquemaTurnado) utilDiccionario.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_VIGENTE);
 		Assertions.assertNotNull(estadoVigente, "No existe estado de turnado VIGENTE (VIG)");
 
-		HQLBuilder b = new HQLBuilder("from EsquemaTurnado d");
+		HQLBuilder b = new HQLBuilder("from EsquemaTurnadoProcurador d");
 		b.appendWhere(Auditoria.UNDELETED_RESTICTION);
 		HQLBuilder.addFiltroIgualQue(b, "d.estado.id", estadoVigente.getId());
-		EsquemaTurnado esquemaVigente = HibernateQueryUtils.uniqueResult(this, b);
+		EsquemaTurnadoProcurador esquemaVigente = HibernateQueryUtils.uniqueResult(this, b);
 		Assertions.assertNotNull(esquemaVigente, "No existe ningún esquema de turnado marcado como vigente");
 
 		return esquemaVigente;
@@ -151,13 +153,14 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 	}
 
 	@Override
-	public void turnar(Long idAsunto, String username, String codigoGestor) {
+	public void turnarProcurador(Long prcId, String username, String plaza, String tpo) {
 		Session session = this.getSessionFactory().getCurrentSession();
 		Query query = session.createSQLQuery(
-				"CALL asignacion_asuntos_turnado(:idAsunto, :username, :codigoGestor)")
-				.setParameter("idAsunto", idAsunto)
+				"CALL asignacion_turnado_procu(:idAsunto, :username, :plaza, :tpo)")
+				.setParameter("idAsunto", prcId)
 				.setParameter("username", username)
-				.setParameter("codigoGestor", codigoGestor);
+				.setParameter("plaza", plaza)
+				.setParameter("tpo", tpo);
 						
 		query.executeUpdate();
 	}
@@ -201,24 +204,13 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		return result;
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public void limpiarTurnadoTodosLosDespachos() {
 		String updateQuery= "update DespachoExterno set turnadoCodigoImporteConcursal=null,turnadoCodigoCalidadConcursal=null,"
 				+ "turnadoCodigoImporteLitigios=null,turnadoCodigoCalidadLitigios=null where auditoria.borrado=false";
 		Query query = this.getSessionFactory().getCurrentSession().createQuery(updateQuery);
 		int recordupdated=query.executeUpdate();
-	}
-
-	@Override
-	public void turnarProcurador(Long idAsunto, String username) {
-		Session session = this.getSessionFactory().getCurrentSession();
-		Query query = session.createSQLQuery(
-				"CALL asignacion_turnado_procu(:idAsunto, :username)")
-				.setParameter("idAsunto", idAsunto)
-				.setParameter("username", username);
-						
-		query.executeUpdate();
-		
 	}
 	
 }

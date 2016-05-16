@@ -14,26 +14,49 @@ var tipo_wf='${tipoWf}'
 <%@ include file="/WEB-INF/jsp/plugin/procedimientos-bpmHaya-plugin/elementos.jsp" %>
 
 var items=[];
-var offset=0;
 var muestraBotonGuardar = 0;
 
 <c:if test="${form.errorValidacion!=null}">
+	
 	items.push({ html : '<s:message code="${form.errorValidacion}" text="${form.errorValidacion}" />', border:false, bodyStyle:'color:red;margin-bottom:5px'});
-	offset=1;
 	var textError = '${form.errorValidacion}';
 	if (textError.indexOf('<div id="permiteGuardar">')>0) {
-		<c:if test="${!readOnly}">muestraBotonGuardar=1;</c:if>
+		muestraBotonGuardar=1;
 	}
 </c:if>
 
 var values;
+
 <c:forEach items="${form.items}" var="item">
 values = <app:dict value="${item.values}" />;
 items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:message text="${item.label}" javaScriptEscape="true" />', '<s:message text="${item.value}" javaScriptEscape="true" />', values));
 </c:forEach>
 
+<c:if test="${form.tareaExterna.tareaProcedimiento.descripcion=='Dictar Instrucciones'}">
 
+    var btnExportarPDF=new Ext.Button({
+        text:'<s:message code="menu.clientes.listado.filtro.exportar.pdf" text="**Exportar a PDF" />'
+        ,iconCls:'icon_pdf'
+        ,handler: function() {
+         	var flow = 'plugin/agendaMultifuncion/operaciones/plugin.agendaMultifuncion.operaciones.exportarDetalleDictarInstruccionesHistorico';
+		var params = {
+			idTareaExterna: '${form.tareaExterna.id}'
+		};
+		app.openBrowserWindow(flow,params);
+	}
+    });
+</c:if>
 var bottomBar = [];
+
+<c:if test="${form.errorValidacion==null}">
+
+var campoImporte = items[1 + muestraBotonGuardar];
+campoImporte.readOnly = true;
+
+
+</c:if>
+
+
 
 //mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
@@ -41,6 +64,7 @@ var bottomBar = [];
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
+			
 			//page.fireEvent(app.event.DONE);
 			page.submit({
 				eventName : 'ok'
@@ -84,6 +108,8 @@ if (muestraBotonGuardar==1){
 	}
 }
 
+
+
 var btnCancelar= new Ext.Button({
 	text : '<s:message code="app.cancelar" text="**Cancelar" />'
 	,iconCls : 'icon_cancel'
@@ -91,12 +117,20 @@ var btnCancelar= new Ext.Button({
 		page.fireEvent(app.event.CANCEL);
 	}
 });
-bottomBar.push(btnCancelar);
 
+bottomBar.push(btnCancelar);
+<c:if test="${form.tareaExterna.tareaProcedimiento.descripcion=='Dictar Instrucciones'}">
+	bottomBar.push(btnExportarPDF);
+</c:if>
 
 var anyadirFechaFaltante = function(response){
 							var win;
-							var fechaNoExiste = new Ext.form.DateField({id:'fechaNoExiste', name:'fechaNoExiste',value : '', allowBlank : false,autoWidth:true});
+							var fechaNoExiste = new Ext.form.DateField({
+								id:'fechaNoExiste'
+								,name:'fechaNoExiste'
+								,value : ''
+								, allowBlank : false,autoWidth:true
+							});
 							var mensajeError = response.fwk.fwkUserExceptions[0];
 							var error = mensajeError.split('%');
 							
@@ -104,7 +138,7 @@ var anyadirFechaFaltante = function(response){
 							
 								var errorL = Ext.getCmp('errorList');
 								errorL.setValue('');
-								console.debug(Ext.getCmp('errorList'));
+								
 								var campoDescripcion = error[1];
 								var tareaDescripcion = error[2];
 								var idTarea = error[3];
@@ -124,7 +158,7 @@ var anyadirFechaFaltante = function(response){
 												,items :[ {html:'Para poder completar esta tarea debe introducir el valor del campo '+campoDescripcion+' correspondiente a la tarea previa '+tareaDescripcion, border:false,style:'margin:10px;font-size:8pt;font-family:Arial'}
 														]
 												},{border : false, layout : 'table',viewConfig : { columns : 1 }  
-												,items :[new Ext.form.Label({text:campo,style:'margin:10px;font-size:8pt;font-family:Arial'})
+												,items :[new Ext.form.Label({text:campoDescripcion,style:'margin:10px;font-size:8pt;font-family:Arial'})
 														,fechaNoExiste]
 												}
 												
@@ -143,7 +177,7 @@ var anyadirFechaFaltante = function(response){
 						                buttons: [new Ext.Button({
 						                	text:'<s:message code="app.guardar" text="**Guardar" />',
 						                	handler:function(){
-						                		console.debug(fechaNoExiste);
+						                		
 						                		Ext.Ajax.request({
 													url: page.resolveUrl('completarcampotarea/insertarCampo')
 													,params: {campo:campo,tarea:tarea,idTarea:idTarea,nuevaFecha:fechaNoExiste.getValue(),tokenIdBPM:tokenIdBPM, idProcedimiento:idProcedimiento}
@@ -172,15 +206,10 @@ var anyadirFechaFaltante = function(response){
 }
 
 
-// *************************************************************** //
-// ***  AÑADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
-// *************************************************************** //
-
-var observacionesProcurador = items[4 + offset];
-observacionesProcurador.setDisabled(true);
-
 var panelEdicion=new Ext.form.FormPanel({
-	autoHeight:true
+	height:320
+	,width:700
+	,autoScroll:true
 	,bodyStyle:'padding:10px;cellspacing:20px'
 	//,xtype:'fieldset'
 	,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}

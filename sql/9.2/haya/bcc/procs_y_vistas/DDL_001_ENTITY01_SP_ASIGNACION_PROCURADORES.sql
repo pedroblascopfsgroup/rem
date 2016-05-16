@@ -20,6 +20,7 @@ SET DEFINE OFF;
 create or replace PROCEDURE asignacion_turnado_procu (
    p_prc_id       #ESQUEMA#.prc_procedimientos.prc_id%TYPE,
    p_username     #ESQUEMA_MASTER#.usu_usuarios.usu_username%TYPE,
+   p_plaza_id_parametro       #ESQUEMA#.dd_pla_plazas.dd_pla_id%TYPE,
    p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GESPROC'
 )
 AUTHID CURRENT_USER IS
@@ -230,7 +231,8 @@ BEGIN
 
 
    --ahora recupero el id de ept que se ajusta a los valores de plaza y tpo que hay en el procedimiento
-  OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id,p_tipo_tpo);
+  --OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id,p_tipo_tpo);
+  OPEN crs_plazas_esquema (p_esquema_vigente,p_plaza_id_parametro,p_tipo_tpo); --sustuimos el plaza_id calculado por el plaza_id que nos llega por paŕámetro
 
    FETCH crs_plazas_esquema
     INTO p_plazas_esquema;

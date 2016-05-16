@@ -1,6 +1,6 @@
 ﻿--##########################################
 --## AUTOR=Pepe Tamarit
---## FECHA_CREACION=20160516
+--## FECHA_CREACION=20160517
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-3353

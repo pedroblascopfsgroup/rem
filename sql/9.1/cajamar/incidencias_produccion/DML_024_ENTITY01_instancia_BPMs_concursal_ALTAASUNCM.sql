@@ -1,6 +1,6 @@
 --##########################################
 --## AUTOR=GUSTAVO MORA NAVARRO
---## FECHA_CREACION=20160509
+--## FECHA_CREACION=20160517
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=CMREC-3043
@@ -98,7 +98,7 @@ BEGIN
   ) and PRC.USUARIOCREAR = 'ALTAASUNCM';
 
   COMMIT;
-  DBMS_OUTPUT.PUT_LINE('[INFO] prc_process_bpm = null en prc_procedimientos.');
+  DBMS_OUTPUT.PUT_LINE('[INFO] prc_process_bpm = null en prc_procedimientos.'||SQL%ROWCOUNT);
 
 
   update CM01.TEX_TAREA_EXTERNA TEX2 set TEX2.TEX_TOKEN_ID_BPM=null
@@ -114,7 +114,7 @@ BEGIN
   )and tex2.USUARIOCREAR = 'ALTAASUNCM';  
 
   commit;
-  DBMS_OUTPUT.PUT_LINE('[INFO] TEX2.TEX_TOKEN_ID_BPM=null en TEX_TAREA_EXTERNA.');  
+  DBMS_OUTPUT.PUT_LINE('[INFO] TEX2.TEX_TOKEN_ID_BPM=null en TEX_TAREA_EXTERNA.'||SQL%ROWCOUNT);  
   
     /*------------ Actualizamos el TPO a  tramite fase comun que son los que se deben crear en alta_asuntos_CM ---------------------- */
   --TP_CODIGO SELECT dd_tpo_id FROM cm01.dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo = 'H009'
@@ -129,7 +129,7 @@ BEGIN
   ) and PRC.USUARIOCREAR = 'ALTAASUNCM';
 
   COMMIT;
-  DBMS_OUTPUT.PUT_LINE('[INFO] dd_tpo_id = H009.');
+  DBMS_OUTPUT.PUT_LINE('[INFO] dd_tpo_id = H009.'||SQL%ROWCOUNT);
 
    
     
@@ -150,7 +150,7 @@ BEGIN
     
     --DBMS_OUTPUT.PUT_LINE(L_PRC.PRC_ID || '--' || INSTANCE_ID_ || '--' || L_PRC.DEFINITION_ID) ;
   END LOOP;
-  DBMS_OUTPUT.PUT_LINE('Instancias asignadas!!') ;
+  DBMS_OUTPUT.PUT_LINE('Instancias asignadas!!'||SQL%ROWCOUNT) ;
  
   DBMS_OUTPUT.PUT_LINE('Asigna los nodos root...') ;
   FOR L_PRC2 in CUR_PROCEDIMIENTOS2
@@ -171,14 +171,14 @@ BEGIN
     
     --DBMS_OUTPUT.PUT_LINE(L_PRC.PRC_ID || '--' || INSTANCE_ID_ || '--' || L_PRC.DEFINITION_ID) ;
   END LOOP;
-  DBMS_OUTPUT.PUT_LINE('Asignados los nodos root!!') ;
+  DBMS_OUTPUT.PUT_LINE('Asignados los nodos root!!'||SQL%ROWCOUNT) ;
  
   DBMS_OUTPUT.PUT_LINE('Asigna los IDs de token...') ;
   UPDATE CM01.TMP_ALTA_BPM_INSTANCES SET 
     TOKEN_ID = CMMASTER.HIBERNATE_SEQUENCE.NEXTVAL
     ,MODULE_ID=CMMASTER.HIBERNATE_SEQUENCE.NEXTVAL
     ,VMAP_ID = CMMASTER.HIBERNATE_SEQUENCE.NEXTVAL;
-  DBMS_OUTPUT.PUT_LINE('IDs de token asignados...') ;
+  DBMS_OUTPUT.PUT_LINE('IDs de token asignados...'||SQL%ROWCOUNT) ;
 
   DBMS_OUTPUT.PUT_LINE('Actualizando tokens padre...') ;
   UPDATE CM01.TMP_ALTA_BPM_INSTANCES SET 
@@ -186,7 +186,7 @@ BEGIN
     ,MODULE_PADRE_ID=MODULE_ID
     ,VMAP_PADRE_ID = VMAP_ID
     WHERE TOKEN_PADRE_ID IS NULL;
-  DBMS_OUTPUT.PUT_LINE('Actualizando tokens padre!!') ;
+  DBMS_OUTPUT.PUT_LINE('Actualizando tokens padre!!'||SQL%ROWCOUNT) ;
 
   DBMS_OUTPUT.PUT_LINE('---------------------------------') ;
   DBMS_OUTPUT.PUT_LINE('COMIENZA LA INSERCION DE DATOS...') ;
@@ -202,7 +202,7 @@ BEGIN
           , 0 --ISSUSPENDED_
           , TMP.DEF_ID --PRCESSDEFINITION_
   FROM CM01.TMP_ALTA_BPM_INSTANCES TMP;
-  DBMS_OUTPUT.PUT_LINE('Instancias insertados!!') ;
+  DBMS_OUTPUT.PUT_LINE('Instancias insertados!!'||SQL%ROWCOUNT) ;
 
   DBMS_OUTPUT.PUT_LINE('Insertando los root token...') ;
   INSERT INTO CMMASTER.JBPM_TOKEN
@@ -220,7 +220,7 @@ BEGIN
             ,0
             ,0
       FROM CM01.TMP_ALTA_BPM_INSTANCES TMP WHERE TOKEN_PADRE_ID<>TOKEN_ID;
-  DBMS_OUTPUT.PUT_LINE('Insertadoslos root token!!!') ;
+  DBMS_OUTPUT.PUT_LINE('Insertadoslos root token!!!'||SQL%ROWCOUNT) ;
 
   DBMS_OUTPUT.PUT_LINE('Insertando tokens...') ;
   INSERT INTO CMMASTER.JBPM_TOKEN
@@ -250,14 +250,14 @@ BEGIN
 	ON (TMP.ID_=T.ID_)
 	WHEN MATCHED THEN UPDATE SET T.NAME_=TMP.NAME_;
 
-  DBMS_OUTPUT.PUT_LINE('TOKENS insertados...') ;
+  DBMS_OUTPUT.PUT_LINE('TOKENS insertados...'||SQL%ROWCOUNT) ;
 
   DBMS_OUTPUT.PUT_LINE('Actualizando las instancias...') ;
   MERGE INTO CMMASTER.JBPM_PROCESSINSTANCE INS
   USING (SELECT DISTINCT INST_ID, TOKEN_PADRE_ID AS TOKEN FROM CM01.TMP_ALTA_BPM_INSTANCES) TMP
   ON (INS.ID_ = TMP.INST_ID)
   WHEN MATCHED THEN UPDATE SET INS.ROOTTOKEN_ = TMP.TOKEN;
-  DBMS_OUTPUT.PUT_LINE('Instancias actualizadas!!');
+  DBMS_OUTPUT.PUT_LINE('Instancias actualizadas!!'||SQL%ROWCOUNT);
 
     DBMS_OUTPUT.PUT_LINE('Actualizando las module y vmap...') ;
     INSERT INTO CMMASTER.JBPM_MODULEINSTANCE
@@ -276,7 +276,7 @@ BEGIN
         , TMP.TOKEN_PADRE_ID --ROOTTOKEN_
         , TMP.MODULE_PADRE_ID  --CONTEXTINSTANCE_
     FROM CM01.TMP_ALTA_BPM_INSTANCES TMP;
-  DBMS_OUTPUT.PUT_LINE('module y vmap actualizadas!!') ;
+  DBMS_OUTPUT.PUT_LINE('module y vmap actualizadas!!'||SQL%ROWCOUNT) ;
 
     DBMS_OUTPUT.PUT_LINE('Actualizando VARIABLE INSTABLE...') ;
 
@@ -293,7 +293,7 @@ BEGIN
       , V_DBID --LONGVLAUE_
     FROM (SELECT DISTINCT INST_ID, PRC_ID, TOKEN_PADRE_ID AS TOKEN_ID,MODULE_PADRE_ID AS MODULE_ID,VMAP_PADRE_ID AS VMAP_ID FROM CM01.TMP_ALTA_BPM_INSTANCES) TMP;
 
-    DBMS_OUTPUT.PUT_LINE('Insertamos la variable procedimientoTareaExterna para cada instancia..') ;
+    DBMS_OUTPUT.PUT_LINE('Insertamos la variable procedimientoTareaExterna para cada instancia..'||SQL%ROWCOUNT) ;
     INSERT INTO CMMASTER.JBPM_VARIABLEINSTANCE
         (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
       SELECT CMMASTER.HIBERNATE_SEQUENCE.NEXTVAL
@@ -306,7 +306,7 @@ BEGIN
         , TMP.PRC_ID --LONGVLAUE_
     FROM (SELECT DISTINCT INST_ID, PRC_ID, TOKEN_PADRE_ID AS TOKEN_ID,MODULE_PADRE_ID AS MODULE_ID,VMAP_PADRE_ID AS VMAP_ID FROM CM01.TMP_ALTA_BPM_INSTANCES) TMP;
 
-    DBMS_OUTPUT.PUT_LINE('Insertamos la variable bpmParalizado para cada instancia..') ;
+    DBMS_OUTPUT.PUT_LINE('Insertamos la variable bpmParalizado para cada instancia..'||SQL%ROWCOUNT) ;
     INSERT INTO CMMASTER.JBPM_VARIABLEINSTANCE
         (ID_, CLASS_, VERSION_, NAME_, TOKEN_, TOKENVARIABLEMAP_, PROCESSINSTANCE_, LONGVALUE_)
       SELECT CMMASTER.HIBERNATE_SEQUENCE.NEXTVAL
@@ -331,7 +331,7 @@ BEGIN
       , TMP.INST_ID --PROCESSINSTANCE_
       , TMP.TEX_ID --LONGVLAUE_
     FROM CM01.TMP_ALTA_BPM_INSTANCES TMP;
-  DBMS_OUTPUT.PUT_LINE('FIN VARIABLE INSTANCE!!') ;
+  DBMS_OUTPUT.PUT_LINE('FIN VARIABLE INSTANCE!!'||SQL%ROWCOUNT) ;
 
 --Insertamos variable sin concatenar TOKEN_PADRE_ID  
   
@@ -347,7 +347,7 @@ BEGIN
       , TMP.INST_ID --PROCESSINSTANCE_
       , TMP.TEX_ID --LONGVLAUE_
     FROM CM01.TMP_ALTA_BPM_INSTANCES TMP;
-  DBMS_OUTPUT.PUT_LINE('FIN VARIABLE INSTANCE!!') ;  
+  DBMS_OUTPUT.PUT_LINE('FIN VARIABLE INSTANCE!!'||SQL%ROWCOUNT) ;  
   
   
   DBMS_OUTPUT.PUT_LINE('Actualizando los procedimientos...') ;
@@ -356,7 +356,7 @@ BEGIN
   ON (PRC.PRC_ID = TMP.PRC_ID)
   WHEN MATCHED THEN UPDATE SET PRC.PRC_PROCESS_BPM = TMP.INST_ID
     ,USUARIOMODIFICAR = 'AUTO', fechamodificar = sysdate;
-  DBMS_OUTPUT.PUT_LINE('Procedimientos actualziados!!!') ;
+  DBMS_OUTPUT.PUT_LINE('Procedimientos actualziados!!!'||SQL%ROWCOUNT) ;
 
   DBMS_OUTPUT.PUT_LINE('Actualizando las TEX...') ;
   MERGE INTO CM01.TEX_TAREA_EXTERNA TEX
@@ -364,7 +364,7 @@ BEGIN
   ON (TEX.TEX_ID = TMP.TEX_ID)
   WHEN MATCHED THEN UPDATE SET TEX.TEX_TOKEN_ID_BPM = TMP.TOKEN_ID
     ,USUARIOMODIFICAR = 'AUTO', fechamodificar = sysdate;
-  DBMS_OUTPUT.PUT_LINE('TEX actualiziadas...') ;
+  DBMS_OUTPUT.PUT_LINE('TEX actualiziadas...'||SQL%ROWCOUNT) ;
 
   COMMIT;
 

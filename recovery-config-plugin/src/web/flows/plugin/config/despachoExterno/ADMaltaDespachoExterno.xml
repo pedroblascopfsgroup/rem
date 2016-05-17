@@ -6,12 +6,22 @@
 	<end-state id="listado" view="plugin/config/despachoExterno/altaDespachoExterno">
 	<secured attributes="ROLE_ADMIN" match="any" />
 	<on-entry>
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado').entidad.descripcion" result="flowScope.usuarioEntidad" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getTipoVia')"
 				result="flowScope.ddTipoVia" />
 			<evaluate expression="executor.execute('admTipoDespachoExternoManager.getList')"
 				result="flowScope.tiposDespachos" />
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.multigestor.getList')"
 				result="flowScope.tiposGestor" />
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getMapasDespachoExtras')"
+				result="flowScope.mapasDespExtras" />
+			<evaluate expression="executor.execute('ADMDiccionariosManager.getSiNo')" 
+				result="flowScope.ddSiNo" />	
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDProvincias')" 
+				result="flowScope.listaProvincias" />
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getIdTipoLetrado')" 
+				result="flowScope.idTipoLetrado" />	
+				
 		</on-entry>
 	</end-state>
 </flow>

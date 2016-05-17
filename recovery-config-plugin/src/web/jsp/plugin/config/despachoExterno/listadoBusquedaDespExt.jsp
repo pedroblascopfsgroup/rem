@@ -119,7 +119,7 @@
 			gridName="despachosGrid"
 			buttonDelete="btBorrar"
 			iconCls="icon_despacho" 
-			defaultWidth="850"
+			defaultWidth="1000"
 			>
 			<pfs:items
 			items="datosdespacho"

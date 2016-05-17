@@ -6,25 +6,15 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
-import es.capgemini.pfs.users.domain.Usuario;
+
 
 /**
  * PRODUCTO-1272 - Clase que representa campos adicionales a DES_DESPACHO_EXTERNO
@@ -53,6 +43,9 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	@Column(name = "DEE_COD_EST_ASE")
 	private String codEstAse;
 	
+	/**
+	 * Valores posibles:[0/1/2/3] --> [Historico Caja / Acuerdo 2011 / 2014 / 2015] - MAPEADOS en recovery
+	 */
 	@Column(name = "DEE_CONTRATO_VIGOR")
 	private Integer contratoVigor;
 	
@@ -65,9 +58,15 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	@Column(name = "DEE_CLASIF_CONCURSOS")
 	private boolean clasifConcursos;
 	
+	/**
+	 * Tipo de perfil del despacho. Valores posibles:[0/1/2] --> [A/B/C] - MAPEADOS en recovery
+	 */
 	@Column(name = "DEE_CLASIF_PERFIL")
     private Integer clasifPerfil;
 	
+	/**
+	 * Relacion Bankia. Valores posibles:[0/1/2/3/4] --> [En devinculacion/Sin turno/Sin acceso/Turno Activo/Historico] - MAPEADOS en recovery
+	 */
 	@Column(name = "DEE_REL_BANKIA")
     private Integer relacionBankia;
 	
@@ -134,6 +133,9 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	@Column(name = "DEE_IVA_APL")
 	private Float iva;
 	
+	/**
+	 * Descripcion impuesto. Valores posibles:[0/1] --> [IGIC/IVA] - MAPEADOS en recovery
+	 */
 	@Column(name = "DEE_IVA_DES")
 	private String descripcionIVA;
 	

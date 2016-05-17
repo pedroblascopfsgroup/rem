@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -50,8 +52,11 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoDespachoExte
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExternoExtrasDao;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExtrasAmbitoDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dto.DespachoExternoExtrasDto;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExtrasAmbito;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
@@ -102,6 +107,12 @@ public class ADMDespachoExternoManager {
 	
 	@Autowired
 	private EXTGestoresDao gestoresDao;
+	
+	@Autowired
+	private CoreProjectContext context;
+	
+	@Autowired
+	private DespachoExtrasAmbitoDao extrasAmbitoDao;
 
 	public ADMDespachoExternoManager() {
 
@@ -330,6 +341,9 @@ public class ADMDespachoExternoManager {
 					"plugin.config.despachoExterno.admdespachoexternomanager.borrardespachoexterno.despachocongestores");
 		}
 		despachoExternoDao.deleteById(idDespachoExterno);
+		despachoExtrasDao.deleteById(idDespachoExterno);
+		extrasAmbitoDao.deleteById(idDespachoExterno);
+		
 	}
 
 	/**
@@ -695,6 +709,24 @@ public class ADMDespachoExternoManager {
 		return despachoExtrasDao.getProvinciasDespachoExtras(idDespacho);
 	}
 	
+	/**
+	 * PRODUCTO-1274
+	 * Devuelve los codigos de provincias asociados al despacho
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.dameAmbitoDespachoExtrasCodigos")
+	public List<String> dameAmbitoDespachoExtrasCodigos(Long idDespacho) {
+		
+		List<String> listaProvinciasDespacho = new LinkedList<String>();
+		for(DDProvincia provincia : despachoExtrasDao.getProvinciasDespachoExtras(idDespacho)) {
+			listaProvinciasDespacho.add(provincia.getCodigo());
+		}
+		
+		return listaProvinciasDespacho;
+	}
+	
+	
 	/** 
 	 * PRODUCTO-1274
 	 * Guarda Despacho Extras, a través del dto de DespachoExterno
@@ -710,19 +742,180 @@ public class ADMDespachoExternoManager {
 		} else {
 			desExtras = despachoExtrasDao.get(dto.getId());
 		}
+		//Si no es de Tipo Letrado no aplica
+		if(dto.getTipoDespacho() != getIdTipoLetrado()) {
+			return desExtras;
+		}
 		
 		desExtras.setId(idDespacho);
+		desExtras = this.transformaDtoAEntityDespachOExtras(dto, desExtras);
+		//Guardamos los extras del despacho
+		despachoExtrasDao.saveOrUpdate(desExtras);
+		
+		//Ahora guardamos las provincias de los extras del despacho
+		if(!Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])) {
+			this.guardarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
+		}
+		return desExtras;
+	}
+	
+	/**
+	 * De un mapa de Strings, devuelve la KEY a partir del VALUE.
+	 * @param mapa
+	 * @param valor
+	 * @return
+	 */
+	private String getKeyByValue(Map<String,String> mapa, String valor) {
+		
+		for(Map.Entry<String,String> map : mapa.entrySet()){
+			if( valor.equals(map.getValue()))
+				return map.getKey();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * PRODUCTO-1274
+	 * Devuelve un listado con listas de mapas, para despachoExtras. 
+	 * ---Atención: Si en un futuro cambias el orden, afectará a los combos del jsp.
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getMapasDespachoExtras")
+	public List<List<String>> getMapasDespachoExtras() {
+		List<List<String>> listaMapas = new ArrayList<List<String>>();
+		
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaContratoVigor()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaClasificacionDespachoPerfil()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaCodEstAse()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaDescripcionIVA()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaRelacionBankia()));
+		
+		return listaMapas;
+	}
+	
+	/**
+	 * Rellena los valores de contexto según el mapa pasado por parámetro
+	 * @param mapa
+	 * @return
+	 */
+	private List<String> listaMapeadaDespachoExtras(Map<String,String> mapa) {
+		List<String> lista = new ArrayList<String>();
+		
+		for(Map.Entry<String,String> map : mapa.entrySet()){
+			lista.add(map.getValue());
+		}
+		
+		return lista;
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation("ADMDespachoExternoManager.getDDProvincias")
+	public List<DDProvincia> getDDProvincias() {
+		return proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDProvincia.class);
+	}
+	
+	/**
+	 * Las provincias de los extras del despacho se guardan en una tabla a parte.
+	 * @param provincias
+	 * @param idDespacho
+	 */
+	private void guardarAmbitoDespachoExtras(String[] provincias, Long idDespacho) {
+		
+		DespachoExtrasAmbito despachoExtrasAmbito;
+		
+		for(String codProvincia : provincias) {
+			if(!extrasAmbitoDao.isDespachoEnProvincia(codProvincia, idDespacho)) {
+				
+				despachoExtrasAmbito = new DespachoExtrasAmbito();
+				despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+				despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
+				
+				extrasAmbitoDao.save(despachoExtrasAmbito);
+			}
+		}
+		
+	}
+	
+	/**
+	 * Ya que al crear o editar un despacho, si es de tipo LETRADO, se mostrará
+	 * la pestanya datos Adicionales, con campos que solo tendrán este tipo de despachos.
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getIdTipoLetrado")
+	public Long getIdTipoLetrado() {
+		Long idLetrado = null;
+		
+		for(DDTipoDespachoExterno tipo : tipoDespachoDao.getList()) {
+			if(tipo.getCodigo().equals("1")) {
+				return tipo.getId();
+			}
+		}
+		
+		return idLetrado;
+	}
+	
+	/**
+	 * Transforma el dto en la entidad DespachoExternoExtras, el dto incluso tanto despacho como despachoExtras, pero
+	 * este metodo solo coge la parte que se guardará en DES_DESPACHO_EXTRAS
+	 * @param dto
+	 * @param desExtras
+	 * @return
+	 */
+	private DespachoExternoExtras transformaDtoAEntityDespachOExtras(ADMDtoDespachoExterno dto, DespachoExternoExtras desExtras) {
+		
 		desExtras.setFax(dto.getFax());
-		try {
-			desExtras.setFechaAlta(DateFormat.toDate(dto.getFechaAlta()));
-		} catch (ParseException e) {
-			e.printStackTrace();
+		if (dto.getFechaAlta() != null) {
+			try {
+				desExtras.setFechaAlta(DateFormat.toDate(dto.getFechaAlta()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 		}
 		desExtras.setCorreoElectronico(dto.getCorreoElectronico());
 		desExtras.setDocumentoCif(dto.getDocumentoCif());
 		desExtras.setTipoDocumento(dto.getTipoDocumento());
-		
-		despachoExtrasDao.saveOrUpdate(desExtras);
+		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
+			desExtras.setClasifPerfil(Integer.parseInt(
+					this.getKeyByValue(context.getMapaClasificacionDespachoPerfil(), dto.getClasificacionPerfil())));
+		}
+		if(!Checks.esNulo(dto.getAsesoria())) {
+			desExtras.setAsesoria(Boolean.parseBoolean(dto.getAsesoria()));
+		}
+		desExtras.setCentroRecuperacion(dto.getClasificacionConcursos());
+		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
+			desExtras.setClasifConcursos(Boolean.parseBoolean(dto.getClasificacionConcursos()));
+		}
+		if(!Checks.esNulo(dto.getCodEstAse())) {
+			desExtras.setCodEstAse(this.getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()));
+		}
+		desExtras.setCuentaEntregas(dto.getCuentaEntregas());
+		desExtras.setCuentaLiquidacion(dto.getCuentaLiquidacion());
+		desExtras.setCuentaProvisiones(dto.getCuentaProvisiones());
+		desExtras.setDigconEntregas(dto.getDigconEntregas());
+		desExtras.setDigconLiquidacion(dto.getDigconLiquidacion());
+		desExtras.setDigconProvisiones(dto.getDigconProvisiones());
+		desExtras.setEntidadContacto(dto.getEntidadContacto());
+		desExtras.setEntidadEntregas(dto.getEntidadEntregas());
+		desExtras.setEntidadLiquidacion(dto.getEntidadLiquidacion());
+		desExtras.setEntidadProvisiones(dto.getEntidadProvisiones());
+		desExtras.setOficinaContacto(dto.getOficinaContacto());
+		desExtras.setOficinaEntregas(dto.getOficinaEntregas());
+		desExtras.setOficinaLiquidacion(dto.getOficinaLiquidacion());
+		desExtras.setOficinaProvisiones(dto.getOficinaProvisiones());
+		if(!Checks.esNulo(dto.getRelacionBankia())) {
+			desExtras.setRelacionBankia(Integer.parseInt(
+					this.getKeyByValue(context.getMapaRelacionBankia(), dto.getRelacionBankia())));			
+		}
+		if(!Checks.esNulo(dto.getServicioIntegral())) {
+			desExtras.setServicioIntegral(Boolean.parseBoolean(dto.getServicioIntegral()));
+		}
+		if(!Checks.esNulo(dto.getServicioIntegral())) {
+			desExtras.setContratoVigor(Integer.parseInt(
+					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
+		}
 		
 		return desExtras;
 	}

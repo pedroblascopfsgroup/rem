@@ -86,7 +86,7 @@
 			windowTitleKey="plugin.config.despachoExterno.modificar.windowName" 
 			parameters="modDespParams" 
 			windowTitle="**Modificar despacho" 
-			defaultWidth="800"
+			defaultWidth="1000"
 			on_success="recargar" />
 	
 	<%-- Agregando al panel todos lso elementos que de mostraran --%>		

@@ -85,9 +85,6 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@Autowired
 	private JBPMProcessManager jbpmManager;
 	
-	@Autowired(required=false)
-    ServletContext servletContext;
-	
 	@Override
 	@BusinessOperation(PCD_MSV_BO_MOSTRAR_RESOLUCIONES)
 	public	List<MSVResolucion> mostrarResoluciones() {
@@ -141,7 +138,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		else
 			msvResolucion = msvResolucionDao.get(dtoResolucion.getIdResolucion());
 		
-		this.populateResolucion(msvResolucion, dtoResolucion);
+		proxyFactory.proxy(MSVResolucionApi.class).populateResolucion(msvResolucion, dtoResolucion);
 		
 		msvResolucionDao.saveOrUpdate(msvResolucion);
 		
@@ -465,74 +462,6 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	 */
 	private MSVFileItem getFile(Long idFichero) {
 		return proxyFactory.proxy(MSVFileManagerApi.class).getFile(idFichero);
-	}
-	
-	
-	private void populateResolucion(MSVResolucion msvResolucion, MSVResolucionesDto dto) {
-
-		if(!Checks.esNulo(dto.getAuto())){
-			msvResolucion.setAutos(dto.getAuto());
-		}
-		if(!Checks.esNulo(dto.getJuzgado())){
-			msvResolucion.setJuzgado(dto.getJuzgado());
-		}
-		if(!Checks.esNulo(dto.getPlaza())){
-			msvResolucion.setPlaza(dto.getPlaza());
-		}
-		if(!Checks.esNulo(dto.getPrincipal())){
-			msvResolucion.setPrincipal(dto.getPrincipal());
-		}
-		
-		if (!Checks.esNulo(dto.getIdTarea())) {
-			EXTTareaExterna tarea=(EXTTareaExterna) proxyFactory.proxy(TareaExternaApi.class).get(dto.getIdTarea());
-			msvResolucion.setTarea(tarea);
-		}
-		if (dto.getComboTipoJuicioNew() != null){
-			msvResolucion.setTipoJuicio(genericDao.get(MSVDDTipoJuicio.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getComboTipoJuicioNew())));
-		}
-		if (dto.getComboTipoResolucionNew() != null){
-			msvResolucion.setTipoResolucion(genericDao.get(MSVDDTipoResolucion.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getComboTipoResolucionNew())));
-		}		
-		
-		if (dto.getEstadoResolucion() != null){
-			msvResolucion.setEstadoResolucion(genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoResolucion())));
-		}else{
-			msvResolucion.setEstadoResolucion(genericDao.get(MSVDDEstadoProceso.class, genericDao.createFilter(FilterType.EQUALS, "codigo", MSVDDEstadoProceso.CODIGO_EN_PROCESO)));
-		}
-		
-		if (msvResolucion.getContenidoFichero() == null){
-			FileItem contenidoFichero = new FileItem();
-			String path = servletContext.getRealPath(FICHERO_VACIO);
-			FileSystemResource resource = new FileSystemResource(path);
-			contenidoFichero.setFile(resource.getFile());
-			msvResolucion.setContenidoFichero(contenidoFichero);
-		}
-		if (dto.getIdAsunto() != null){
-			Filter filtroExiste = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdAsunto());
-			EXTAsunto asunto = (EXTAsunto) genericDao.get(EXTAsunto.class, filtroExiste);
-			msvResolucion.setAsunto(asunto);
-		}
-		if (dto.getIdProcedimiento() != null) {
-			Filter filtroExiste = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdProcedimiento());
-			MEJProcedimiento procedimiento = genericDao.get(MEJProcedimiento.class, filtroExiste);
-			msvResolucion.setProcedimiento(procedimiento);
-		}
-		if(dto.getCamposDinamicos() != null && dto.getCamposDinamicos().size() > 0){
-			Set<MSVCampoDinamico> camposResolucion = msvResolucion.getCamposDinamicos();
-			Map<String,String> camposDinamicos = dto.getCamposDinamicos();
-
-			for (Map.Entry<String, String> entry : camposDinamicos.entrySet()) {
-				MSVCampoDinamico msvCampoDinamico = this.dameCampo(entry.getKey(), camposResolucion);
-				msvCampoDinamico.setNombreCampo(entry.getKey());
-			    msvCampoDinamico.setValorCampo(this.formateaValor(entry.getValue()));
-			    msvCampoDinamico.setResolucion(msvResolucion);
-			    genericDao.save(MSVCampoDinamico.class, msvCampoDinamico);
-			    camposResolucion.add(msvCampoDinamico);
-			}
-			
-			msvResolucion.setCamposDinamicos(camposResolucion);
-			
-		}
 	}
 	
 	private MSVCampoDinamico dameCampo(String key, Set<MSVCampoDinamico> camposResolucion) {

@@ -7,6 +7,7 @@
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
 	var comboWidth = 300;
@@ -39,6 +40,13 @@
 		pageSize: 10,
 		triggerAction: 'all',
 		mode: 'remote'
+	});
+	
+ 	var lblUsuarioOrigen = new Ext.form.Label({
+   		text:'${userNameOrigen}'
+   		,style: {
+            marginRight: '25px'
+        }
 	});
 	
 	
@@ -103,21 +111,21 @@
 	
 	
 	var camposRellenos = function(){
-		return comboTipoGestor.getValue() 
-				&& comboUsuarioOrigen.getValue()
-				&& comboUsuarioDestino.getValue() 
-				&& fechaInicio.getValue()
-				&& fechaFin.getValue();
+		return  <sec:authorize ifAllGranted="DELEGAR-CUALQUIER-TAREAS"> comboUsuarioOrigen.getValue() && </sec:authorize> comboUsuarioDestino.getValue() && fechaInicio.getValue() && fechaFin.getValue();
 	}
 	
 	
 	var createParams = function(){
 		var p ={
 			 usuarioDestino:comboUsuarioDestino.getValue()
-			,usuarioOrigen:comboUsuarioOrigen.getValue()
-			,fechaInicio:fechaInicio.getValue().format('d/m/Y')
-			,fechaFin:fechaFin.getValue().format('d/m/Y')
+			,fechaIniVigencia:fechaInicio.getValue().format('d/m/Y')
+			,fechaFinVigencia:fechaFin.getValue().format('d/m/Y')
 		};
+		
+		p.usuarioOrigen = '${idUserOrigen}';
+		<sec:authorize ifAllGranted="DELEGAR-CUALQUIER-TAREAS">
+			p.usuarioOrigen:comboUsuarioOrigen.getValue();
+		</sec:authorize>
 		
 		return p;			
 	}
@@ -151,6 +159,12 @@
 	      		page.fireEvent(app.event.CANCEL);
 	     	}
 	});
+	
+	var itemOrigen = lblUsuarioOrigen;
+	
+	<sec:authorize ifAllGranted="DELEGAR-CUALQUIER-TAREAS">
+		itemOrigen = comboUsuarioOrigen;
+	</sec:authorize>
 			    
  
 	var panelEdicion =  new Ext.Container({
@@ -163,7 +177,7 @@
 		code="plugin.config.delegaciones.new.usuario.origen"
 		text="**Usuario origen" />'
 				,width: fieldSetsWidth
-				,items:[comboUsuarioOrigen]
+				,items:[itemOrigen]
 			}
 			, {
 				title:'<s:message

@@ -361,7 +361,62 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     		valueFlUp = "";
     		validatorFnc = resolucionesSinAdjunto[pos].validateFunction;
     	}
-
+    	
+    	ficherosAdjuntos = [{
+            //title : 'Panel de Ficheros Adjuntos',
+            layout:'table'  
+            ,border : false
+            ,layoutConfig: { columns: 3 }
+            ,autoScroll:true
+            ,bodyStyle:'padding:5px;margin:5px;'
+            ,name: 'filePanel'
+            ,id:'d_file_panel'
+            //,autoHeight:true
+            ,autoWidth : true
+            ,height: 110                    
+            ,items:[{
+            title : 'Documentos obligatorios'
+                ,layout:'table' 
+                ,border : true
+                ,layoutConfig: { columns: 2 }
+                ,autoScroll:true
+                ,bodyStyle:'padding:5px;'
+                ,name: 'fileLeft'
+                ,id:'d_file_left'
+                //,autoHeight:true
+                //,autoWidth : true
+                ,height: 96
+                ,width: 350
+                ,hidden: true
+            },{
+                layout:'table'  
+                ,border : false
+                ,layoutConfig: { columns: 1 }
+                ,autoScroll:true
+                ,bodyStyle:'padding:5px;'
+                ,name: 'fileCenter'
+                ,id:'d_file_center'
+                //,autoHeight:true
+                //,autoWidth : true
+                ,height: 96
+                //,width: 70
+                ,width: 95
+            },{
+                title : 'Documentos subidos'
+                ,layout:'table' 
+                ,border : true
+                ,layoutConfig: { columns: 2 }
+                ,autoScroll:true
+                ,bodyStyle:'padding:5px;'
+                ,name: 'fileRight'
+                ,id:'d_file_right'
+                //,autoHeight:true
+                //,autoWidth : true
+                ,height: 96
+                ,width: 350
+            }]
+        }];
+    	
     	var items = [{colspan:2, width:800, style:'padding-top:0px;padding-bottom:0px',
 			items:[{"xtype":'textfield',"name":"d_numAutos","fieldLabel":"N&uacute;mero de autos",allowBlank:function(idTipoResolucion){idTipoResolucion==1 || idTipoResolucion==92 || idTipoResolucion==135},
 				id:'d_numAutos_id' + this.idFactoria, hidden:true
@@ -376,8 +431,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 				items:[ {"xtype":'textarea',"name":"d_observaciones","fieldLabel":"Observaciones",allowBlank:true,width:600}]
 			}
 	        ,{colspan:2, width:800, style:'padding-top:0px;padding-bottom:0px',
-				items:	[ 
-				      	  	{"xtype":'displayfield',"name":"file","id":"file","fieldLabel":"Fichero","value":"No se ha adjuntado ning&uacute;n fichero.",allowBlank:false,width:500}
+				items:	[ 	ficherosAdjuntos
+				      	  	//{"xtype":'displayfield',"name":"file","id":"file","fieldLabel":"Fichero","value":"No se ha adjuntado ning&uacute;n fichero.",allowBlank:false,width:500}
 				      	  	,{"xtype": 'textfield', "id": 'file_upload_ok',"name": 'file_upload_ok',"value": valueFlUp ,allowBlank:adjuntoNoObligatorio,hidden:true, validator:validatorFnc
 				      	  	}
 						]
@@ -2497,12 +2552,16 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboOposicion","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOposicion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',
 	                    	   listeners: {
 		                  			 select: function(combo) { 
-		                  				 var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fecha');	                  				 
+		                  				 var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fecha');
+		                  				 var fechaVista = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fechaVista');	                  				 
 		                  				 if(combo.getValue()=='01'){
-		                  					 fecha.allowBlank = false;				 
+		                  					 fecha.allowBlank = false;
+		                  					 fechaVista.allowBlank = false;
 		                  				 }
 		                  				 else if(combo.getValue()=='02'){
 		                  					 fecha.allowBlank = true;
+		                  					 fechaVista.allowBlank = true;
+
 		                  				 }   
 		                  			 }
 		                     	 }      
@@ -3959,6 +4018,14 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       	,{"xtype":'numberfield',"name":"d_impuestos","fieldLabel":"Ingresos encontrados",filtrar:false,allowBlank:false,id: 'd_impuestos' + this.idFactoria}
 	                       	
 	                      ]);
+	
+	//id: 459 : TRAMITE SUBASTA A TERCEROS: H004_SenyalamientoSubasta
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaNot","fieldLabel":"Fecha notificación subasta",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fechaCel","fieldLabel":"Fecha Celebración",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textarea',"name":"d_solicitante","fieldLabel":"Solicitante",allowBlank:false,width:285}
+	                       ,{"xtype":'textarea',"name":"d_letyproc","fieldLabel":"Indicar el letrado y/o procurador",filtrar:true,width:285}
+	]);
 	
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

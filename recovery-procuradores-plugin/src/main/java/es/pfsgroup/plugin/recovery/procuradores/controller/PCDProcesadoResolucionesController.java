@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.devon.pagination.PaginationParamsImpl;
@@ -66,7 +67,6 @@ import es.pfsgroup.procedimientos.model.DDIndebidaExcesiva;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
-import es.capgemini.devon.exception.FrameworkException;
 
 /**
  * @author manuel
@@ -204,6 +204,8 @@ public class PCDProcesadoResolucionesController {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionario;
 	
+	@Autowired
+	private PCDResolucionProcuradorApi pcdResolucioneProcuradorApi;
 	
 	/**
 	 * Muestra la pantalla de procesado de resoluciones.
@@ -344,6 +346,7 @@ public class PCDProcesadoResolucionesController {
 	 * @param model
 	 * @return String validacion
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String dameValidacion(Long idResolucion, ModelMap model) throws Exception{
 		
@@ -369,6 +372,7 @@ public class PCDProcesadoResolucionesController {
 	 * @param model
 	 * @return String validacion JBPM
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String dameValidacionJBPM(Long idResolucion, ModelMap model) throws Exception{
 		
@@ -493,23 +497,25 @@ public class PCDProcesadoResolucionesController {
 	 * @return 
 	 * @throws Exception 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String adjuntaFicheroResolucion(MSVResolucionesDto dtoResolucion, ModelMap model) throws Exception{
 		
 		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
-		
+		/*
 		//Se sobreescribe el fichero del procurador.
 		if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
 		{
 			apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
 			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
 		}else{
-			//El gestor adjunta un fichero y no había
-			if(!Checks.esNulo(dtoResolucion.getIdFichero()))
-			{
-				msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
-			}
+			//El gestor adjunta un fichero y no había*/
+		if(!Checks.esNulo(dtoResolucion.getIdFichero()))
+		{
+			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
+			model.put("resolucion", msvResolucion);
 		}
+		//}
 
 		return JSON_GRABAR_PROCESAR;
 	}
@@ -1153,8 +1159,9 @@ public class PCDProcesadoResolucionesController {
 		//msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).guardarDatos(dtoResolucion); //Guarda el fichero y ya lo tenemos guardado.
 		msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).guardarResolucion(dtoResolucion);
 		
-		if(!Checks.esNulo(msvResolucion.getNombreFichero()))
-				apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
+		//if(!Checks.esNulo(msvResolucion.getNombreFichero()))
+		//Borrar todos los adjuntos asociados a la resolucion
+		apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
 		
 		apiProxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarTarea(dtoResolucion);
 		
@@ -1184,6 +1191,13 @@ public class PCDProcesadoResolucionesController {
 		
 		model.put("resolucion", msvResolucion);
 		
+		return JSON_GRABAR_PROCESAR;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String cancelar(String idsFicheros, ModelMap model, WebRequest request) throws Exception{
+		pcdResolucioneProcuradorApi.borrarAdjuntoResolucion(idsFicheros);
 		return JSON_GRABAR_PROCESAR;
 	}
 

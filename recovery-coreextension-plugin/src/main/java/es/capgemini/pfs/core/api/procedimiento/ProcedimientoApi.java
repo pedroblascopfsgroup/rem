@@ -76,5 +76,8 @@ public interface ProcedimientoApi {
     @BusinessOperationDefinition(BO_CORE_PROCEDIMIENTO_ADJUNTOSMAPEADOS)
     public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId);
     
+    @BusinessOperationDefinition(ExternaBusinessOperation.BO_PRC_MGR_ES_TR_NOTIFICACION_PERSONAL)
+	public Boolean compruebaTrNotificacionPersonal(Long idProcedimiento);	
+    
 
 }

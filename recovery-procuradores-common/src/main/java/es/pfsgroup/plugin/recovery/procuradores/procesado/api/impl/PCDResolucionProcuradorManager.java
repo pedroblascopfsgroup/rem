@@ -13,7 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -21,7 +26,9 @@ import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.masivo.api.MSVFileManagerApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVDDTipoResolucionDao;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVResolucionDao;
@@ -30,22 +37,24 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoResultadoSubidaFicheroMasivo;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
+import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
+import es.pfsgroup.plugin.recovery.masivo.model.MSVFileItem;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.api.MSVResolucionInputApi;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.dto.MSVTipoResolucionDto;
 import es.pfsgroup.plugin.recovery.procuradores.historico.MSVCampoDinamicoHistorico;
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
 import es.pfsgroup.recovery.api.TareaExternaApi;
-import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
+import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
 @Service
 @Transactional(readOnly = false)
 public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorApi {
 
-	//private static final String FICHERO_VACIO = "/reports/plugin/masivo/vacio.file";
+	private static final String FICHERO_VACIO = "/reports/plugin/masivo/vacio.file";
 	private static final String COD_RESOLUCION_AUTOPRORROGA = "RESOL_PROCU_AUTO";
 
 	@Autowired
@@ -60,8 +69,8 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-    @Autowired
-    private transient RecoveryBPMfwkDatosProcedimientoApi datosProcedimientoManager;
+    //@Autowired
+    //private transient RecoveryBPMfwkDatosProcedimientoApi datosProcedimientoManager;
     
 	@Autowired
 	private ApiProxyFactory apiProxyFactory;
@@ -92,13 +101,57 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@Override
 	@BusinessOperation(PCD_MSV_BO_GUARDAR_DATOS_RESOLUCION)
 	public MSVResolucion guardarDatos(MSVResolucionesDto dtoResolucion) {
-		return proxyFactory.proxy(MSVResolucionApi.class).guardarDatos(dtoResolucion);
+		
+		MSVResolucion msvResolucion = this.guardarResolucion(dtoResolucion);
+		
+		//Adjuntamos el fichero o ficheros al asunto.
+		if (msvResolucion.getAdjunto() != null){
+			//this.adjuntarFichero(msvResolucion.getAdjunto(), msvResolucion);
+			msvResolucion.setAdjuntoFinal(adjuntarFicheroFinal(msvResolucion.getAdjunto(), msvResolucion));
+			if(!Checks.esNulo(dtoResolucion.getIdsFicheros())){
+				String[] array = dtoResolucion.getIdsFicheros().split("_");
+				for(int i = 1; i<array.length;i++){
+					MSVFileItem msvFileItem = this.getFile(new Long(array[i]));
+					adjuntarFicheroFinal(msvFileItem, msvResolucion);
+				}
+			}
+		}
+		//this.adjuntarFicheroResolucion(msvResolucion);
+
+		return msvResolucion;
 	}
 	
 	@Override
 	@BusinessOperation(PCD_MSV_BO_GUARDAR_RESOLUCION)
 	public MSVResolucion guardarResolucion(MSVResolucionesDto dtoResolucion){
-		return proxyFactory.proxy(MSVResolucionApi.class).guardarResolucion(dtoResolucion);
+		
+		MSVResolucion msvResolucion;
+		if (dtoResolucion.getIdResolucion() == null)
+			msvResolucion = new MSVResolucion();
+		else
+			msvResolucion = msvResolucionDao.get(dtoResolucion.getIdResolucion());
+		
+		proxyFactory.proxy(MSVResolucionApi.class).populateResolucion(msvResolucion, dtoResolucion);
+		
+		msvResolucionDao.saveOrUpdate(msvResolucion);
+		
+		if (dtoResolucion.getIdFichero() != null){
+			MSVFileItem msvFileItem = this.getFile(dtoResolucion.getIdFichero());
+			msvResolucion.setNombreFichero(msvFileItem.getNombre());
+			msvResolucion.setContenidoFichero(msvFileItem.getFileItem());
+			msvResolucion.setAdjunto(msvFileItem);
+			msvResolucionDao.saveOrUpdate(msvResolucion);
+		}
+		else if(!Checks.esNulo(dtoResolucion.getIdsFicheros())){
+			String[] array = dtoResolucion.getIdsFicheros().split("_");
+			MSVFileItem msvFileItem = this.getFile(new Long(array[0]));
+			msvResolucion.setNombreFichero(msvFileItem.getNombre());
+			msvResolucion.setContenidoFichero(msvFileItem.getFileItem());
+			msvResolucion.setAdjunto(msvFileItem);
+			msvResolucionDao.saveOrUpdate(msvResolucion);
+		}
+		
+		return msvResolucion;
 	}
 
 	@Override
@@ -233,10 +286,31 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	
 	@BusinessOperation(PCD_MSV_BO_BORRAR_ADJUNTO)
 	public void borrarAdjunto(MSVResolucion msvResolucion){
-		EXTAdjuntoAsunto adjuntoAsunto = msvResolucion.getAdjuntoFinal();
-		adjuntoAsunto.getAuditoria().setBorrado(true);
+		List<EXTAdjuntoAsunto> listaAdjuntos = msvResolucion.getAdjuntosResolucion();
+		if(listaAdjuntos != null && listaAdjuntos.size()>0){
+			for(EXTAdjuntoAsunto adjunto : listaAdjuntos){
+				adjunto.getAuditoria().setBorrado(true);
+			}
+		}
+		//EXTAdjuntoAsunto adjuntoAsunto = msvResolucion.getAdjuntoFinal();
 	}
 	
+	@Override
+	public void borrarAdjuntoResolucion(String idsFicheros) throws Exception{
+		if(!Checks.esNulo(idsFicheros)){
+			String[] array = idsFicheros.split("_");
+			Filter f1 = null;
+			EXTAdjuntoAsunto adjunto = null;
+			for(int i = 0; i<array.length; i++){
+				f1 = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(array[i]));
+				adjunto = genericDao.get(EXTAdjuntoAsunto.class, f1);
+				if(!Checks.esNulo(adjunto)){
+					adjunto.getAuditoria().setBorrado(true);
+					genericDao.save(EXTAdjuntoAsunto.class, adjunto);
+				}
+			}
+		}
+	}
 	
 	@BusinessOperation(PCD_MSV_BO_DAME_VALIDACION_RESOLUCION)
 	public String dameValidacion(Long idTarea){
@@ -319,8 +393,76 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 
 	@Override
 	@BusinessOperation(PCD_MSV_BO_ADJUNTAR_FICHERO_RESOLUCION)
-	public MSVResolucion adjuntaFicheroResolucuion(MSVResolucionesDto dtoResolucion) {
-		return proxyFactory.proxy(MSVResolucionApi.class).guardarAdjuntoResolucion(dtoResolucion);
+	public MSVResolucion adjuntaFicheroResolucuion(MSVResolucionesDto dtoResolucion) throws Exception {
+		
+		MSVResolucion msvResolucion = getResolucion(dtoResolucion.getIdResolucion());
+		
+		if (dtoResolucion.getIdFichero() != null){
+			//MSVFileItem msvFileItem = proxyFactory.proxy(MSVFileManagerApi.class).getFile(dtoResolucion.getIdFichero());
+			MSVFileItem msvFileItem = this.getFile(dtoResolucion.getIdFichero());
+			msvResolucion.setNombreFichero(msvFileItem.getNombre());
+			msvResolucion.setContenidoFichero(msvFileItem.getFileItem());
+			msvResolucion.setAdjunto(msvFileItem);
+			msvResolucion.setAdjuntoFinal(adjuntarFicheroFinal(msvResolucion.getAdjunto(), msvResolucion));
+			msvResolucionDao.saveOrUpdate(msvResolucion);
+		}
+		
+		//msvResolucionDao.saveOrUpdate(msvResolucion);
+
+		return msvResolucion;
+	}
+	
+	/**
+	 * Adjunta un fichero al asunto relacionado con una resoluci�n y lo devuelve.
+	 * @param msvFileItem Objeto que contiene la informaci�n del fichero.
+	 * @param msvResolucion Datos de la resoluci�n.
+	 */
+	private EXTAdjuntoAsunto adjuntarFicheroFinal(MSVFileItem msvFileItem, MSVResolucion msvResolucion) {
+		
+		Asunto asunto = msvResolucion.getAsunto();
+		Procedimiento prc = msvResolucion.getProcedimiento();
+		
+		FileItem fileItem = msvFileItem.getFileItem();
+		EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(fileItem);
+		
+		adjuntoAsunto.setAsunto(asunto);
+		adjuntoAsunto.setContentType(msvFileItem.getContentType());
+		adjuntoAsunto.setNombre(msvFileItem.getNombre());
+		adjuntoAsunto.setDescripcion(msvFileItem.getNombre());
+		if (prc != null){
+			adjuntoAsunto.setProcedimiento(prc);
+		}
+		if (!Checks.esNulo(msvFileItem.getTipoFichero())){
+			adjuntoAsunto.setTipoFichero(msvFileItem.getTipoFichero());
+		} else {
+			DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "OT"));
+			adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
+		}
+		adjuntoAsunto.setLength(fileItem.getFile().length());
+		adjuntoAsunto.setIdResolucion(msvResolucion.getId());
+		Auditoria.save(adjuntoAsunto);
+		asunto.getAdjuntos().add(adjuntoAsunto);
+		AsuntoApi asuntoApi = proxyFactory.proxy(AsuntoApi.class);
+		asuntoApi.saveOrUpdateAsunto(asunto);
+		
+		return adjuntoAsunto;
+	}
+	
+	/**
+	 * Recupera un fichero de la base de datos.
+	 * @param dto dto con el dato idFichero.
+	 * @return objeto con el fichero.
+	 */
+	private MSVFileItem getFile(Long idFichero) {
+		return proxyFactory.proxy(MSVFileManagerApi.class).getFile(idFichero);
+	}
+	
+	private MSVCampoDinamico dameCampo(String key, Set<MSVCampoDinamico> camposResolucion) {
+		for(MSVCampoDinamico msvCampoDinamico : camposResolucion){
+			if (msvCampoDinamico.getNombreCampo().equals(key))
+				return msvCampoDinamico;
+		}
+		return new MSVCampoDinamico();
 	}
 	
 }

@@ -53,7 +53,7 @@
 	});
 	
 	<pfsforms:textfield
-		labelKey=""
+		labelKey="plugin.procuradores.turnado.descripcionEsquema"
 		label="**Descripci&oacute;n esquema"
 		name="txtNombreEsquema"
 		value=""
@@ -71,7 +71,7 @@
 
 
 	var panelFiltros = new Ext.Panel({
-		title:'<s:message code="" text="**Buscador de esquemas de turnado de procuradores" />'
+		title:'<s:message code="plugin.procuradores.turnado.title" text="**Buscador de esquemas de turnado de procuradores" />'
 		,collapsible:true
 		,collapsed: false
 		,titleCollapse : true
@@ -132,8 +132,9 @@
 		var w = app.openWindow({
 			flow : 'turnadoprocuradores/seleccionarPlaza'
 			,width :  600
+			,resizable:false
 			,closable: true
-			,title : '<s:message code="plugin.config.esquematurnado.ventana.editar" text="**Edición esquema" />'
+			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza" text="**Seleccionar plaza" />'
 			,params : {id:id}
 		});
 		w.on(app.event.DONE, function(){
@@ -190,6 +191,8 @@
 					}, this);
 			}
 	});
+	btnCopiar.setDisabled(true);
+	
 
 	var btnActivar = new Ext.Button({
 			text : '<s:message code="app.activar" text="**Activar" />'
@@ -248,7 +251,7 @@
 		 ,{name:'descripcion'}
 		 ,{name:'estado_cod'}
 		 ,{name:'estado_des'}
-		 ,{name:'usuario'}
+		 ,{name:'autor'}
 		 ,{name:'fechaalta'}
 		 ,{name:'fechainivig'}
 		 ,{name:'fechafinvig'}
@@ -274,7 +277,7 @@
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_cod" text="**Cod Estado"/>', dataIndex: 'id', hidden: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_des" text="**Estado"/>', dataIndex: 'estado_des', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechaSolicitud" text="F.Alta"/>', dataIndex: 'fechaalta', sortable: true}
-		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.usuario" text="**Usuario"/>', dataIndex: 'usuario', sortable: true}
+		,{header: '<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.autor" text="**Autor"/>', dataIndex: 'autor', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechainivig" text="**F.Inicio Vigencia"/>', dataIndex: 'fechainivig', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="**F.Fin Vigencia"/>', dataIndex: 'fechafinvig', sortable: true}
 	]);
@@ -300,10 +303,10 @@
 	var esquemasGrid = new Ext.grid.EditorGridPanel({
 		store: esquemasStore
 		,cm: esquemasCm
-		,title:'<s:message code="" text="**Esquemas de turnado de procuradores encontrados"/>'
+		,title:'<s:message code="plugin.procuradores.turnado.busquedaTitle" text="**Esquemas de turnado de procuradores encontrados"/>'
 		,stripeRows: true
 		,autoHeight:true
-		,resizable:false
+		,resizable:true
 		,collapsible : true
 		,collapsed : true
 		,titleCollapse : true

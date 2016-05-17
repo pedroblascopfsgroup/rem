@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=María V.
+--## AUTOR=MarÃ­a V.
 --## FECHA_CREACION=20160517
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
@@ -10,7 +10,7 @@
 --## Finalidad: FECHA_SENYAL_LANZAMIENTO
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 VersiÃ³n inicial
 --##########################################
 --*/
 
@@ -20,7 +20,7 @@ create or replace PROCEDURE TRUNCAR_DIM_FECHA_OTRAS (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
--- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Responsable ultima modificacion: MarÃ­a Villanueva, PFS Group
 -- Fecha ultima modificacion: 16/05/2016
 -- Motivos del cambio: CMREC-3318 FECHA_SENYAL_LANZAMIENTO
 -- Cliente: Recovery BI CAJAMAR

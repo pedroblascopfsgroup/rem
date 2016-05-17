@@ -104,12 +104,12 @@ BEGIN
                               GRADO_AVANCE_DOCUMENTOS NUMBER(14,2),
                               GRADO_AVANCE_LIQUIDACIONES NUMBER(14,2),
                               GRADO_AVANCE_BUROFAXES NUMBER(14,2) )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_CM_DWH" 
+        SEGMENT CREATION IMMEDIATE 
+           
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE');
 
@@ -154,12 +154,12 @@ BEGIN
                               GRADO_AVANCE_LIQUIDACIONES NUMBER(14,2),
                               GRADO_AVANCE_BUROFAXES NUMBER(14,2)
                          )
-			                                SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_CM_DWH"   
-                           	PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+                                      SEGMENT CREATION IMMEDIATE NOLOGGING
+                               
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_SEMANA');
 
@@ -205,10 +205,10 @@ BEGIN
                               GRADO_AVANCE_BUROFAXES NUMBER(14,2)
                           )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_CM_DWH"   
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                               
+                            PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_MES');
 
@@ -254,10 +254,10 @@ BEGIN
                               GRADO_AVANCE_BUROFAXES NUMBER(14,2)
                              )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_CM_DWH"   
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (201501) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_TRIMESTRE');
 
@@ -303,10 +303,10 @@ BEGIN
                               GRADO_AVANCE_BUROFAXES NUMBER(14,2)
                           )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_CM_DWH"   
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (2015) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_ANIO');

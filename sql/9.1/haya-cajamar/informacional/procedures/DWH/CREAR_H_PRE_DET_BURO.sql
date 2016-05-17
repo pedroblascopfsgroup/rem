@@ -5,7 +5,7 @@ create or replace PROCEDURE CREAR_H_PRE_DET_BURO (error OUT VARCHAR2) AS
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 -- Fecha ultima modificacion: 13/11/2015
 -- Motivos del cambio: usuario propietario
--- Cliente: Recovery BI Haya
+-- Cliente: Recovery BI HAYA CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Precontecioso Detalle Burofax
 -- ===============================================================================================
@@ -72,12 +72,12 @@ BEGIN
                               PERSONA_ID NUMBER(16,0),
                               NUM_BUROFAX INTEGER
                            )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "recovery_haya02_DWH" 
+        SEGMENT CREATION IMMEDIATE 
+           
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO');
 
@@ -100,13 +100,13 @@ BEGIN
                               ESTADO_BUROFAX_ID NUMBER(16,0),
                               RESULTADO_BUROFAX_ID NUMBER(16,0),
                               PERSONA_ID NUMBER(16,0),
-                              NUM_BUROFAX INTEGER )
-                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
-                           	PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
-      execute immediate V_SQL USING OUT error;
+                              NUM_BUROFAX INTEGER)
+                                      SEGMENT CREATION IMMEDIATE NOLOGGING
+                               
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_SEMANA');
 
@@ -130,10 +130,10 @@ BEGIN
                               NUM_BUROFAX INTEGER
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                               
+                            PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_DET_BURO_PRE_MES');
@@ -159,10 +159,10 @@ BEGIN
                               NUM_BUROFAX INTEGER
                           )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (201501) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_TRIMESTRE');
@@ -190,10 +190,10 @@ BEGIN
                               NUM_BUROFAX INTEGER
                            )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (2015) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_ANIO');
@@ -247,12 +247,12 @@ BEGIN
                               NUM_ENVIOS_BUROFAX INTEGER,
                               P_BURO_SOLICITUD_ACUSE INTEGER
                          )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "recovery_haya02_DWH" 
+        SEGMENT CREATION IMMEDIATE 
+           
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_ENV');
 
@@ -264,7 +264,7 @@ BEGIN
     
 
     ------------------------------ H_PRE_DET_BURO_ENV_SEMANA --------------------------
-    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRE_DET_BURO_ENV_SEMANA'', 
+V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRE_DET_BURO_ENV_SEMANA'', 
                             ''SEMANA_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,                  -- Fecha ultimo dia cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -279,10 +279,10 @@ BEGIN
                               P_BURO_SOLICITUD_ACUSE INTEGER
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
-                           	PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                            
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_ENV_SEMANA');
@@ -311,10 +311,10 @@ BEGIN
                               P_BURO_SOLICITUD_ACUSE INTEGER
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                               
+                            PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_ENV_MES');
@@ -339,10 +339,10 @@ BEGIN
                               NUM_ENVIOS_BUROFAX INTEGER,
                               P_BURO_SOLICITUD_ACUSE INTEGER)
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (201501) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_ENV_TRIMESTRE');
@@ -368,10 +368,10 @@ BEGIN
                               P_BURO_SOLICITUD_ACUSE INTEGER
                            )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (2015) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_BURO_ENV_ANIO');

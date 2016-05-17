@@ -5,7 +5,7 @@ create or replace PROCEDURE CREAR_H_PRE_DET_LIQ (error OUT VARCHAR2) AS
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 -- Fecha ultima modificacion: 13/11/2015
 -- Motivos del cambio: usuario propietario
--- Cliente: Recovery BI Haya
+-- Cliente: Recovery BI HAYA
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Precontecioso Detalle Liquidación
 -- ===============================================================================================
@@ -84,12 +84,11 @@ BEGIN
                               GASTOS_LIQ  NUMBER(14,2),
                               TOTAL_LIQ  NUMBER(14,2),
                               P_LIQ_SOLICITUD_CIERRE INTEGER )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "recovery_haya02_DWH" 
+        SEGMENT CREATION IMMEDIATE 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_LIQ');
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_DET_LIQ_IX'', '' H_PRE_DET_LIQ (DIA_ID, PROCEDIMIENTO_ID, LIQUIDACION_ID)'', ''S'', '''', :error); END;';
@@ -120,13 +119,12 @@ BEGIN
                               COMISIONES_LIQ NUMBER(14,2),
                               GASTOS_LIQ  NUMBER(14,2),
                               TOTAL_LIQ  NUMBER(14,2),
-                              P_LIQ_SOLICITUD_CIERRE INTEGER )
-                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
-                           	PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
-      execute immediate V_SQL USING OUT error;
+                              P_LIQ_SOLICITUD_CIERRE INTEGER)
+                                      SEGMENT CREATION IMMEDIATE NOLOGGING
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_LIQ_SEMANA');
 
@@ -161,10 +159,9 @@ BEGIN
                               P_LIQ_SOLICITUD_CIERRE INTEGER
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "recovery_haya02_DWH"   
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                            PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H__PRE_DET_LIQ_MES');
 
@@ -198,10 +195,9 @@ BEGIN
                               P_LIQ_SOLICITUD_CIERRE INTEGER
                           )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                              PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (201501) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_LIQ_TRIMESTRE');
 
@@ -235,10 +231,10 @@ BEGIN
                               P_LIQ_SOLICITUD_CIERRE INTEGER
                            )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "recovery_haya02_DWH"   
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "recovery_haya02_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (2015) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_LIQ_ANIO');

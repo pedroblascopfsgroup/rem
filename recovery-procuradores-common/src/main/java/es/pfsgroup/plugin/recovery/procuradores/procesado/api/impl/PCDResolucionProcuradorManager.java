@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,19 +38,15 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoResultadoSubidaFicheroMasivo
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
-import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
-import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoJuicio;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVFileItem;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.api.MSVResolucionInputApi;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.dto.MSVTipoResolucionDto;
-import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.procuradores.historico.MSVCampoDinamicoHistorico;
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
 import es.pfsgroup.recovery.api.TareaExternaApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
-import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 

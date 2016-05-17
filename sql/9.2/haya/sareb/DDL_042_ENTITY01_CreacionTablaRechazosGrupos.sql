@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RAFAEL ARACIL LOPEZ
---## FECHA_CREACION=20160426
+--## FECHA_CREACION=20160510
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-2197
@@ -34,7 +34,7 @@ BEGIN
 --Validamos si la tabla existe antes de crearla
   SELECT COUNT(*) INTO V_EXISTE
   FROM ALL_TABLES
-  WHERE TABLE_NAME = ''||TABLA||'';
+  WHERE TABLE_NAME = ''||TABLA||'' AND OWNER = ''||V_ESQUEMA||'';
 
   
   V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 

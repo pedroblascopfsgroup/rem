@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pedro S.
---## FECHA_CREACION=20160516
+--## FECHA_CREACION=20160517
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-3318 FECHA_SENYAL_LANZAMIENTO
@@ -22,7 +22,7 @@ SET SERVEROUTPUT ON;
 DECLARE
 
  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; 			-- Configuracion Esquema
- TABLA VARCHAR(30) :='D_F_SENYAL_LANZA_ANIO2';
+ TABLA VARCHAR(30) :='D_F_SENYAL_LANZA_ANIO';
  err_num NUMBER;
  err_msg VARCHAR2(2048 CHAR); 
  V_MSQL VARCHAR2(8500 CHAR);
@@ -61,7 +61,7 @@ BEGIN
   END IF;   
 
 --Fin crear tabla
-TABLA := 'D_F_SENYAL_LANZA_DIA_SEMANA2';
+TABLA := 'D_F_SENYAL_LANZA_DIA_SEMANA';
 --Validamos si la tabla existe antes de crearla
 
   V_EXISTE := 0;
@@ -97,7 +97,7 @@ TABLA := 'D_F_SENYAL_LANZA_DIA_SEMANA2';
 
 --Fin crear tabla
 
-TABLA := 'D_F_SENYAL_LANZA_MES2';
+TABLA := 'D_F_SENYAL_LANZA_MES';
 --Validamos si la tabla existe antes de crearla
 
   V_EXISTE := 0;
@@ -141,7 +141,7 @@ TABLA := 'D_F_SENYAL_LANZA_MES2';
 
 --Fin crear tabla
 
-TABLA := 'D_F_SENYAL_LANZA_MES_ANIO2';
+TABLA := 'D_F_SENYAL_LANZA_MES_ANIO';
 --Validamos si la tabla existe antes de crearla
 
   V_EXISTE := 0;
@@ -177,7 +177,7 @@ TABLA := 'D_F_SENYAL_LANZA_MES_ANIO2';
 
 --Fin crear tabla
 
-TABLA := 'D_F_SENYAL_LANZA_TRIMESTRE2';
+TABLA := 'D_F_SENYAL_LANZA_TRIMESTRE';
 --Validamos si la tabla existe antes de crearla
 
   V_EXISTE := 0;
@@ -218,7 +218,7 @@ TABLA := 'D_F_SENYAL_LANZA_TRIMESTRE2';
 
 --Fin crear tabla
 
-TABLA := 'D_F_SENYAL_LANZA_DIA2';
+TABLA := 'D_F_SENYAL_LANZA_DIA';
 --Validamos si la tabla existe antes de crearla
 
   V_EXISTE := 0;

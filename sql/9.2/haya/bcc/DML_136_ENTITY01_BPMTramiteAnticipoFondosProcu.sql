@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=20160516
+--## FECHA_CREACION=20160517
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1315
@@ -39,7 +39,7 @@ DECLARE
     TYPE T_TIPO_TPO IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
-      T_TIPO_TPO('P460','T. de anticipo de fondos procurador','T. de anticipo de fondos procurador',null,'hcj_anticipoFondosProcu','0','PRODUCTO-1315','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
+      T_TIPO_TPO('P460','T. de anticipo de fondos y pago suplidos','T. de anticipo de fondos y pago suplidos',null,'hcj_anticipoFondosProcu','0','PRODUCTO-1315','0','TR',null,null,'1','MEJTipoProcedimiento','1','0')
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 

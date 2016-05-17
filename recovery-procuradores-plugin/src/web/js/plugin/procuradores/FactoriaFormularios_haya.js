@@ -2552,12 +2552,16 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	                       {"xtype":'combo',"store":storeSINO,"name":"d_comboOposicion","fieldLabel":"Existe oposición",allowBlank:false,"autoload":true, mode:'local',triggerAction:'all',resizable:true, id:'d_comboOposicion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',
 	                    	   listeners: {
 		                  			 select: function(combo) { 
-		                  				 var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fecha');	                  				 
+		                  				 var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fecha');
+		                  				 var fechaVista = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fechaVista');	                  				 
 		                  				 if(combo.getValue()=='01'){
-		                  					 fecha.allowBlank = false;				 
+		                  					 fecha.allowBlank = false;
+		                  					 fechaVista.allowBlank = false;
 		                  				 }
 		                  				 else if(combo.getValue()=='02'){
 		                  					 fecha.allowBlank = true;
+		                  					 fechaVista.allowBlank = true;
+
 		                  				 }   
 		                  			 }
 		                     	 }      

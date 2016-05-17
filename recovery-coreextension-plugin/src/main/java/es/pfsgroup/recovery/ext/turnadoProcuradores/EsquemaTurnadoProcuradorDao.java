@@ -1,19 +1,20 @@
-package es.pfsgroup.recovery.ext.turnadodespachos;
+package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 
-public interface EsquemaTurnadoDao extends AbstractDao<EsquemaTurnado, Long> {
+public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoProcurador, Long> {
 	
 	/**
 	 * Recupera el esquema de turnado activo
 	 * 
 	 * @return Esquema activo vigente
 	 */
-	EsquemaTurnado getEsquemaVigente();
+	EsquemaTurnadoProcurador getEsquemaVigente();
 	
 	/**
 	 * Buscar esquemas de turnado paginados.
@@ -27,9 +28,11 @@ public interface EsquemaTurnadoDao extends AbstractDao<EsquemaTurnado, Long> {
 	/**
 	 * Asigna un despacho al asunto pasado como parámetro teniendo en cuenta la configuración del esquema de turnado vigente
 	 * 
-	 * @param idAsunto
+	 * @param prcId
+	 * @param plaza TODO
+	 * @param tpo TODO
 	 */
-	void turnar(Long idAsunto, String username, String codigoGestor);
+	void turnarProcurador(Long prcId, String username, String plaza, String tpo);
 
 	/**
 	 * Cuenta los letrados que hay asignados a estos tipos de turnado.
@@ -48,11 +51,4 @@ public interface EsquemaTurnadoDao extends AbstractDao<EsquemaTurnado, Long> {
 	 */
 	void limpiarTurnadoTodosLosDespachos();
 	
-
-	/**
-	 * Asigna un procurador al asunto pasado como parámetro teniendo en cuenta la configuración del esquema de turnado vigente
-	 * 
-	 * @param idAsunto
-	 */
-	void turnarProcurador(Long idAsunto, String username);
 }

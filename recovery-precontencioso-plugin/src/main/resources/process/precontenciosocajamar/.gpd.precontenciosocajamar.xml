@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="precontenciosocajamar" width="765" height="582">
+<root-container name="precontenciosocajamar" width="1549" height="845">
   <node name="Inicio" x="21" y="16" width="132" height="36">
     <edge>
       <label x="-35" y="-17"/>
@@ -74,6 +74,11 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="PCO_ValidarAsignacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="nodeConfirmarProcurador" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -86,14 +91,6 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="PCO_ConfirmarProcurador" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

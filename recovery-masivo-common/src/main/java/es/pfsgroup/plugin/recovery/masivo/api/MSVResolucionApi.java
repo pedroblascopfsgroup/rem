@@ -130,5 +130,7 @@ public interface MSVResolucionApi {
 	 */
 	@BusinessOperationDefinition(MSV_BO_GUARDAR_ARCHIVO_ADJUNTO_RESOLUCION)
 	public MSVResolucion guardarAdjuntoResolucion(MSVResolucionesDto dtoResolucion);
+	
+	public void populateResolucion(MSVResolucion msvResolucion, MSVResolucionesDto dto);
 
 }

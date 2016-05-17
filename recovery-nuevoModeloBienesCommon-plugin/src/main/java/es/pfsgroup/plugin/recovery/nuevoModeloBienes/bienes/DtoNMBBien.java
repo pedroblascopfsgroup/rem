@@ -65,6 +65,8 @@ public class DtoNMBBien extends WebDto {
 	
 	private String provinciaRegistro;
     
+	private String cru;
+
 	/* Datos Localizacion */
 	private String provincia;
 	
@@ -906,6 +908,13 @@ public class DtoNMBBien extends WebDto {
 	public void setInversionPorRenuncia(String inversionPorRenuncia) {
 		this.inversionPorRenuncia = inversionPorRenuncia;
 	}
-	
+
+	public void setCru(String cru) {
+		this.cru = cru;
+	}
+
+	public String getCru() {
+		return this.cru;
+	}
 
 }

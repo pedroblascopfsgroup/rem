@@ -10,17 +10,12 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-debugger;	
+debugger;
 	var maxWidth=800;
-	var plazas = "";
-	var listadoPlazasStore = new Ext.data.JsonStore({
+	var listadoTpoStore = new Ext.data.Store({
 		fields: [
-			{name: 'codigo'
-			,name: 'comentario'}
+			{name: 'codigo'}
 		]
-		,data : [["1","Valencia"]
-				,["2","Madrid"]
-				,["3","Barcelona"]]
 	});
 	
 	var creaDblSelectMio = function(label, config){
@@ -79,40 +74,35 @@ debugger;
 		return itemSelector;
 	};
 	
-   var dbselectPlazas = creaDblSelectMio('<b><s:message code="plugin.procuradores.turnado.plaza" text="**Plazas" /></b>',{store:listadoPlazasStore});
-  
-  var ventanaEdicion = function() {
+   var dbselectTpo = creaDblSelectMio('<b><s:message code="plugin.procuradores.turnado.tpo" text="**Tpo" /></b>',{store:listadoTpoStore});
+    
+    var ventanaEdicion = function() {
 		var w = app.openWindow({
-			flow : 'turnadoprocuradores/seleccionarTpo'
-			,width :  600
+			flow : 'turnadoprocuradores/configurarPlazaTpo'
+			,width :  800
 			,closable: true
-			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarTpo" text="**Seleccionar tpo" />'
+			,title : '<s:message code="plugin.procuradores.turnado.tapConfigurar" text="**Configuracion plazas y TPO" />'
 			,params : ''
 		});
 		w.on(app.event.DONE, function(){
 			w.close();
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
-	};
-                     
+	};          
+	       
 	var btnSiguiente = new Ext.Button({
 		text : '<s:message code="plugin.procuradores.turnado.btnSiguiente" text="**Siguiente" />'
 		,iconCls : 'icon_siguiente'
 		,disabled: false
 		,minWidth:60
 		,handler: function() {
-				Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarBorrarPlaza" text="**Borrar datos plaza" />', '<s:message code="plugin.procuradores.turnado.mensajeConfirmarBorrarPlaza" text="**Ya existe una configuracion para la plaza seleccionada, desea borrarla" />', this.evaluateAndSend);
-		}
-		,evaluateAndSend: function(seguir) {      			
-	         			if(seguir== 'yes') {
-	         				ventanaEdicion();
-	            			page.fireEvent(app.event.DONE);				
-						}
-	    } 
+						ventanaEdicion();
+	            			page.fireEvent(app.event.DONE);	
+	       		}
 	});    
 	                 
                                
-	var tabPlazas = new Ext.Panel({
+	var tabTpo = new Ext.Panel({
 		autoWidth:true
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
@@ -121,14 +111,14 @@ debugger;
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items:[dbselectPlazas]
+					,items:[dbselectTpo]
 					,autoWidth:true
 				}
 				]
 		,bbar:['->',btnSiguiente]
 	});
 	
-	page.add(tabPlazas);
+	page.add(tabTpo);
 </fwk:page>
 
 

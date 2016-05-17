@@ -12,6 +12,7 @@ import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -48,10 +49,10 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 
 	@Autowired
 	TurnadoProcuradoresApi turnadoProcuradoresApi;
-
+	
 	@Autowired
 	private TareaExternaManager tareaExternaManager;
-
+	
 	@Autowired
 	private SubastaProcedimientoApi subastaProcedimientoApi;
 
@@ -86,7 +87,7 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		// executionContext.getNode().getName();
 
 		Procedimiento prc = getProcedimiento(executionContext);
-		TareaExterna tex = getTareaExterna(executionContext);
+		EXTTareaExterna tex = (EXTTareaExterna) getTareaExterna(executionContext);
 		
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
@@ -187,24 +188,21 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 		String plaza = "";
 		String tpo = "";
-		
 		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(procedimiento.getId());
-		
 		for (TareaExterna tarea : tareas) {
 			if ("PCO_RegistrarTomaDec".equals(tarea.getTareaProcedimiento().getCodigo())) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if ("proc_a_iniciar".equals(valor.getNombre())) {
 						tpo = valor.getValor();
-					}
+					} 
 					else if ("partidoJudicial".equals(valor.getNombre())) {
 						plaza = valor.getValor();
 					}
-				}
+ 				}
 				break;
 			}
 		}
-		
 		try {
 			turnadoProcuradoresApi.turnarProcurador(procedimiento.getId(), usuarioManager.getUsuarioLogado().getUsername(), plaza, tpo);
 		} catch (IllegalArgumentException e) {

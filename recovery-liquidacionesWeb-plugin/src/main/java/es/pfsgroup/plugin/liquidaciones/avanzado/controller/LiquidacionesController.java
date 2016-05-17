@@ -34,8 +34,6 @@ public class LiquidacionesController {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
-	@Autowired 
-	private LiquidacionAvanzadoApi liquidacionesManager;
 	
 	@Autowired
 	private AsuntoApi asuntoApi;
@@ -49,7 +47,7 @@ public class LiquidacionesController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String openReport(ModelMap model, Long idCalculo) {
-		CalculoLiquidacion request = liquidacionesManager.getCalculoById(idCalculo);
+		CalculoLiquidacion request = liquidacionApi.getCalculoById(idCalculo);
 		
 		if (!Checks.esNulo(request)) {
 		
@@ -68,14 +66,14 @@ public class LiquidacionesController {
 			pendientes.setSobranteEntrega(BigDecimal.ZERO);
 			
 			
-			LIQDtoLiquidacionCabecera cabecera = liquidacionesManager.completarCabecera(request);
-			List<LIQDtoTramoLiquidacion> cuerpo = liquidacionesManager.obtenerLiquidaciones(request,pendientes);
-			LIQDtoLiquidacionResumen resumen = liquidacionesManager.crearResumen(request,cuerpo, pendientes);
+			LIQDtoLiquidacionCabecera cabecera = liquidacionApi.completarCabecera(request);
+			List<LIQDtoTramoLiquidacion> cuerpo = liquidacionApi.obtenerLiquidaciones(request,pendientes);
+			LIQDtoLiquidacionResumen resumen = liquidacionApi.crearResumen(request,cuerpo, pendientes);
 			
 			//Actualizamos total calculo y estado
 			request.setTotalCaculo(resumen.getTotalPagar());
 			//request.setEstadoCalculo(estadoCalculo);
-			liquidacionesManager.saveCalculoLiquidacionAvanzado(request);
+			liquidacionApi.saveCalculoLiquidacionAvanzado(request);
 			
 			String logo = usuarioManager.getUsuarioLogado().getEntidad().configValue("logo");
 			String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
@@ -150,7 +148,7 @@ public class LiquidacionesController {
 	@RequestMapping
 	public String obtenerCalculosLiquidacionesAsunto(ModelMap model, Long idAsunto){
 		
-		List<CalculoLiquidacion> listado= liquidacionesManager.obtenerCalculosLiquidacionesAsunto(idAsunto);
+		List<CalculoLiquidacion> listado= liquidacionApi.obtenerCalculosLiquidacionesAsunto(idAsunto);
 		model.put("historicoLiquidaciones", listado);
 		return JSP_LISTADO_CALCULOS_LIQUIDACIONES;
 		
@@ -159,7 +157,7 @@ public class LiquidacionesController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String obtenerEntregasCalculoLiquidacion(ModelMap model, Long idCalculo){
-		List<EntregaCalculoLiq> listado= liquidacionesManager.getEntregasCalculo(idCalculo);
+		List<EntregaCalculoLiq> listado= liquidacionApi.getEntregasCalculo(idCalculo);
 		model.put("entregas", listado);
 		return JSP_LISTADO_ENTREGAS_LIQUIDACIONES;
 	}
@@ -172,8 +170,8 @@ public class LiquidacionesController {
 	@RequestMapping
     public String abreEditarLiquidacion(ModelMap model,Long idCalculoLiquidacion) {
 		
-		CalculoLiquidacion calcLiq = liquidacionesManager.getCalculoLiquidacion(idCalculoLiquidacion);
-		DtoCalculoLiquidacion dto = liquidacionesManager.convertCalculoLiquidacionTODtoCalculoLiquidacion(calcLiq);
+		CalculoLiquidacion calcLiq = liquidacionApi.getCalculoLiquidacion(idCalculoLiquidacion);
+		DtoCalculoLiquidacion dto = liquidacionApi.convertCalculoLiquidacionTODtoCalculoLiquidacion(calcLiq);
 		model.put("actuaciones", asuntoApi.obtenerActuacionesAsunto(dto.getAsunto()));
 		model.put("idAsunto", dto.getAsunto());
 		model.put("dtoCalculoLiquidacion", dto);
@@ -184,7 +182,7 @@ public class LiquidacionesController {
 	
 	@RequestMapping
 	public String eliminarLiquidacion(ModelMap model, Long idCalculoLiquidacion) {
-		liquidacionesManager.eliminarLiquidacion(idCalculoLiquidacion);
+		liquidacionApi.eliminarLiquidacion(idCalculoLiquidacion);
 		
 		return DEFAULT;
 	}

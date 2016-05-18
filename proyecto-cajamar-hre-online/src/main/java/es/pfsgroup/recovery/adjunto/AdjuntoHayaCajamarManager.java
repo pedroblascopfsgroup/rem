@@ -51,7 +51,7 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 	@Transactional(readOnly = false)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
 		if(esEntidadCajamar()){
-			return (List<? extends EXTAdjuntoDto>) adjuntoCajamarManager.getAdjuntosCntConBorrado(id);
+			return (List<? extends EXTAdjuntoDto>) adjuntoCajamarManager.getAdjuntosConBorrado(id);
 		}else if(esEntidadHaya()){
 			return adjuntoHayaManager.getAdjuntosConBorrado(id);
 		}

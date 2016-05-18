@@ -1,13 +1,13 @@
 /*
 --##########################################
 --## AUTOR=Oscar Dorado
---## FECHA_CREACION=20160216
+--## FECHA_CREACION=20160518
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-766
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Trámite de envío de demanda
+--## Finalidad: Modificacion de los campos de factoria procuradores
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -38,6 +38,30 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('Id 346 se le cambia la resolución de "Diligencia de precinto" a "Documento realización efectiva precinto (Precinto)" - R_DLG_FCH_PRE');
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_descripcion = ''Documento realización efectiva precinto (Precinto)'', dd_tr_descripcion_larga = ''Documento realización efectiva precinto (Precinto)'', usuariomodificar = ''PRODUCTO-1153'', fechamodificar=sysdate where dd_tr_codigo = ''R_DLG_FCH_PRE''';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    --PRODUCTO-1445
+    
+    DBMS_OUTPUT.PUT_LINE('Borrado - ita_inputs_tareas');
+    V_MSQL := 'delete '||V_ESQUEMA||'.ita_inputs_tareas where bpm_ipt_id in (select bpm_ipt_id from '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id = (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_PR_HIP_DEM_SELLADA''))';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('Borrado - bpm_dip_datos_input');
+    V_MSQL := 'delete '||V_ESQUEMA||'.bpm_dip_datos_input WHERE BPM_IPT_ID in (select bpm_ipt_id from '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id = (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_PR_HIP_DEM_SELLADA''))';
+    EXECUTE IMMEDIATE V_MSQL;    
+  
+    DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
+    V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_PR_HIP_DEM_SELLADA'')';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
+    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('De 440 a 460 - R_PR_HIP_DEM_SELLADA');
+    V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_PR_HIP_DEM_SELLADA'')';
+    EXECUTE IMMEDIATE V_MSQL;
+    V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''460'', usuariomodificar = ''PRODUCTO-1445'', fechamodificar=sysdate where dd_tr_codigo = ''R_PR_HIP_DEM_SELLADA''';
     EXECUTE IMMEDIATE V_MSQL;
     
     COMMIT;

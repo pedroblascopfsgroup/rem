@@ -33,6 +33,7 @@ public class DDEstadoDelegaciones implements Serializable, Auditable {
 	
 	public static final String ACTIVA = "ACTIVA";
 	public static final String CERRADA = "CERRADA";
+	public static final String PREPARADA = "PREPARADA";
 	
 	@Id
 	@Column(name="DD_EDL_ID")

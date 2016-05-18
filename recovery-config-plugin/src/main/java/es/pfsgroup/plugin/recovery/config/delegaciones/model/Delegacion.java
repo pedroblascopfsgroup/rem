@@ -24,7 +24,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 
 @Entity
-@Table(name="DEL_DELEGACIONES", schema="${entity.schema}")
+@Table(name="DEL_ZPU_DELEGACIONES", schema="${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause= Auditoria.UNDELETED_RESTICTION)
 public class Delegacion implements Serializable, Auditable {
@@ -35,7 +35,7 @@ public class Delegacion implements Serializable, Auditable {
 	private static final long serialVersionUID = -3875490540451172845L;
 	
 	@Id
-	@Column(name="DEL_ID")
+	@Column(name="DEL_ZPU_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="DelegacionGenerator")
 	@SequenceGenerator(name="DelegacionGenerator", sequenceName = "S_DEL_DELEGACIONES")
 	private Long id;

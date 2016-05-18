@@ -13,7 +13,7 @@ public class ZonaUsuarioPerfilDelegaciones extends ZonaUsuarioPerfil {
 	private static final long serialVersionUID = -5146406259602340204L;
 
 	@ManyToOne
-	@JoinColumn(name="DEL_ID")
+	@JoinColumn(name="DEL_ZPU_ID")
 	Delegacion delegacion;
 
 	public Delegacion getDelegacion() {

@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
@@ -33,12 +35,24 @@ public class BCCPrecontenciosoEnterActionHandler extends PROGenericEnterActionHa
 
 	@Autowired
 	TurnadoProcuradoresApi turnadoProcuradoresApi;
+	
+	@Autowired
+	private TareaExternaManager tareaExternaManager;
+	
+	@Autowired
+	private SubastaProcedimientoApi subastaProcedimientoApi;
 
 	@Autowired
 	private Executor executor;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
+		
+		try {
+			super.process(delegateTransitionClass, delegateSpecificClass, executionContext);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		personalizacionTarea(getProcedimiento(executionContext), getTareaExterna(executionContext));
 
@@ -51,26 +65,27 @@ public class BCCPrecontenciosoEnterActionHandler extends PROGenericEnterActionHa
 		String plaza = "";
 		String tpo = "";
 
-		List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
-
-		if (!Checks.esNulo(listado)) {
-			for (EXTTareaExternaValor tev : listado) {
-				if ("partidoJudicial".equals(tev.getNombre())) {
-					plaza = tev.getValor();
-				} else if ("proc_a_iniciar".equals(tev.getNombre())) {
-					tpo = tev.getValor();
-				}
-
+		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(procedimiento.getId());
+		for (TareaExterna tarea : tareas) {
+			if ("HC106_RedactarDemandaAdjuntarDocu".equals(tarea.getTareaProcedimiento().getCodigo())) {
+				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
+				for (EXTTareaExternaValor valor : valores) {
+					if ("proc_a_iniciar".equals(valor.getNombre())) {
+						tpo = valor.getValor();
+					} 
+					else if ("partidoJudicial".equals(valor.getNombre())) {
+						plaza = valor.getValor();
+					}
+ 				}
+				break;
 			}
 		}
 		try {
 			turnadoProcuradoresApi.turnarProcurador(procedimiento.getId(), usuarioManager.getUsuarioLogado().getUsername(), plaza, tpo);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			logger.error("Illegal turnado: " + e);
 		} catch (AplicarTurnadoException e) {
-			e.printStackTrace();
+			logger.error("Aplicar turnado: " + e);
 		}
-
 	}
-
 }

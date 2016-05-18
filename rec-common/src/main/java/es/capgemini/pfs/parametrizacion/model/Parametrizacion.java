@@ -44,6 +44,7 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_FICHERO_CONTRATO = "fichero.contrato.limite";
     public static final String LIMITE_FICHERO_EXPEDIENTE = "fichero.expediente.limite";
     public static final String LIMITE_FICHERO_ASUNTO = "fichero.asunto.limite";
+    public static final String CREACION_TAREA_UNICA_ANOTACION = "creacionTareaUnicaAnotacion";
     public static final String LIMITE_EXPORT_EXCEL = "limiteExportExcel";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS = "limiteExportExcelBuscadorAsuntos";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS = "limiteExportExcelBuscadorSubastas";

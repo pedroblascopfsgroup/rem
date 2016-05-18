@@ -3,8 +3,8 @@ create or replace PROCEDURE TRUNCAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable última modificación: María Villanueva, PFS Groupp
--- Fecha última modificación: 03/11/2015
--- Motivos del cambio:  Cambio a usuario porpietario
+-- Fecha última modificación: 18/05/2015
+-- Motivos del cambio:  Cambio Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que trunca las tablas de la dimensionExpediente
@@ -171,6 +171,9 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_EXP_TIPO_GESTION_CNT'
   execute immediate V_SQL USING OUT error;
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_EXP_TIPO_EXPEDIENTE'', '''', :O_ERROR_STATUS); END;';
+  execute immediate V_SQL USING OUT error;
+
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_EXP_DIR_TERRITORIAL'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT error;
  
    

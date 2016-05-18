@@ -3,8 +3,8 @@ create or replace PROCEDURE TRUNCAR_DIM_ASUNTO (error OUT VARCHAR2) AS
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable última modificación: María Villanueva, PFS Group
--- Fecha última modificación:03/11/2015
--- Motivos del cambio: Cambio a usuario propietario
+-- Fecha última modificación:17/05/2015
+-- Motivos del cambio: Modifcaciones Cajamar
 -- Cliente: Recovery BI Haya 
 --
 -- Descripción: Procedimiento almancenado que trunca las tablas de la dimensión Asunto.
@@ -67,6 +67,9 @@ BEGIN
   execute immediate V_SQL USING OUT error;
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_DESPACHO_ASUNTO'', '''', :O_ERROR_STATUS); END;';
+  execute immediate V_SQL USING OUT error; 
+  
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_ASU_TIT_CNT_CREA'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT error; 
 
   --Log_Proceso 

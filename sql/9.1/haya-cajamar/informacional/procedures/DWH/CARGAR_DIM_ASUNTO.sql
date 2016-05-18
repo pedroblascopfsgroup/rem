@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_DIM_ASUNTO(o_error_status OUT VARCHAR2) AS
 -- Autor: Gonzalo Martin, PFS Group
 -- Fecha creacion: Febrero 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 02/12/2015
--- Motivos del cambio: Se corrige referencia a datastage
+-- Fecha ultima modificacion: 17/05/2016
+-- Motivos del cambio: Modificaciones Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Asunto.
@@ -29,6 +29,7 @@ create or replace PROCEDURE CARGAR_DIM_ASUNTO(o_error_status OUT VARCHAR2) AS
     -- D_ASU_PROV_DESPACHO_GESTOR
     -- D_ASU_ZONA_DESPACHO_GESTOR
     -- D_ASU_PROPIETARIO_ASUNTO
+    -- D_ASU_TIT_CNT_CREA
     -- D_ASU
 
 BEGIN
@@ -328,13 +329,46 @@ select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
 
   EXECUTE IMMEDIATE
     'INSERT INTO D_ASU_PROPIETARIO_ASUNTO (PROPIETARIO_ASUNTO_ID, PROPIETARIO_ASUNTO_DESC, PROPIETARIO_ASUNTO_DESC_2)
-    SELECT DD_PAS_ID, DD_PAS_DESCRIPCION, DD_PAS_DESCRIPCION_LARGA from '||V_DATASTAGE||'.DD_PAS_PROPIEDAD_ASUNTO';
+    SELECT DD_PAS_ID, DD_PAS_DESCRIPCION, DD_PAS_DESCRIPCION_LARGA from '||V_DATASTAGE||'.DD_PAS_PROPIEDAD_ASUNTO WHERE DD_PAS_ID <> 3';
 
   V_ROWCOUNT := sql%rowcount;     
   COMMIT;
   
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_ASU_PROPIETARIO_ASUNTO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_ASU_TIT_CNT_CREA
+-- ----------------------------------------------------------------------------------------------
+
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_ASU_TIT_CNT_CREA WHERE TIT_CNT_CREA_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_ASU_TIT_CNT_CREA (TIT_CNT_CREA_ID, TIT_CNT_CREA_DOCUMENTO_ID, TIT_CNT_CREA_NOMBRE, TIT_CNT_CREA_APELLIDO_1, TIT_CNT_CREA_APELLIDO_2) VALUES (-1 ,'Desconocido', 'Desconocido','Desconocido', 'Desconocido');
+  END IF;
+
+  EXECUTE IMMEDIATE
+    'INSERT INTO D_ASU_TIT_CNT_CREA (TIT_CNT_CREA_ID, TIT_CNT_CREA_DOCUMENTO_ID, TIT_CNT_CREA_NOMBRE, TIT_CNT_CREA_APELLIDO_1, TIT_CNT_CREA_APELLIDO_2)
+     SELECT MAX(AUX_TITULARES.PER_ID) PER_ID, AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2 FROM(
+            SELECT DISTINCT PER.PER_ID, PER.PER_DOC_ID, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking2 FROM(
+              SELECT DISTINCT CNT.CNT_ID, rank() over (partition by CNT.CNT_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
+              FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV
+              WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION) AUX,
+            '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+            WHERE CPE.CNT_ID = AUX.CNT_ID
+            AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+            AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
+            AND AUX.RANKING = 1) AUX_TITULARES
+          WHERE AUX_TITULARES.RANKING2 = 1
+          GROUP BY AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2
+          ORDER BY 1';
+
+  V_ROWCOUNT := sql%rowcount;     
+
+  COMMIT;
+  
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_ASU_TIT_CNT_CREA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
 
 -- ----------------------------------------------------------------------------------------------
@@ -380,17 +414,49 @@ select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_ASU. Registros Updatados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
-EXECUTE IMMEDIATE
- ' update D_ASU A
+  execute immediate '
+  update D_ASU A
     set PROPIETARIO_ASUNTO_ID = NVL((select B.DD_PAS_ID from '||V_DATASTAGE||'.ASU_ASUNTOS B where B.ASU_ID = A.ASUNTO_ID), -1)';
   COMMIT;
 
   V_ROWCOUNT := sql%rowcount;     
   
    --Log_Proceso
-  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_ASU. Registros Updatados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_ASU. Registros Updatados PROPIETARIO_ASUNTO_ID: ' || TO_CHAR(V_ROWCOUNT), 3;
 
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_TITULAR_ASUNTO'', '''', :O_ERROR_STATUS); END;';
+  execute immediate V_SQL USING OUT o_error_status;
 
+   --Log_Proceso
+
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_TITULAR_ASUNTO. Realizado TRUNCATE', 3;
+  
+    EXECUTE IMMEDIATE
+    'INSERT INTO TMP_TITULAR_ASUNTO(ASUNTO_ID, PER_TITULAR_ID)
+     SELECT AUX.ASU_ID, MAX(AUX.PER_ID) FROM(
+          SELECT DISTINCT ASU.ASU_ID, CPE.CNT_ID, PER.PER_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking
+          FROM '||V_DATASTAGE||'.ASU_ASUNTOS ASU, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE,
+               '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+          WHERE ASU.EXP_ID = CEX.EXP_ID
+            AND CEX.CEX_PASE = 1
+            AND CEX.CNT_ID = CPE.CNT_ID
+            AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+            AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0) AUX
+     WHERE AUX.RANKING = 1
+     GROUP BY AUX.ASU_ID
+     ORDER BY 1';
+
+  V_ROWCOUNT := sql%rowcount; 
+  
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_TITULAR_ASUNTO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;  
+  
+  UPDATE D_ASU ASU
+     SET TIT_CNT_CREA_ID =NVL((SELECT PER_TITULAR_ID FROM TMP_TITULAR_ASUNTO TMP WHERE ASU.ASUNTO_ID = TMP.ASUNTO_ID),-1);
+  
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_ASU. Registros Updatados TIT_CNT_CREA_ID: ' || TO_CHAR(V_ROWCOUNT), 3;  
+  
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
   
@@ -407,5 +473,6 @@ EXCEPTION
   WHEN OTHERS THEN
     O_ERROR_STATUS := 'Se ha producido un error en el proceso: '||SQLCODE||' -> '||SQLERRM;
     --ROLLBACK;
+    
   end;
 END CARGAR_DIM_ASUNTO;

@@ -331,7 +331,7 @@ BEGIN
                             ZONA_CONTRATO_DESC_2 VARCHAR2(250 CHAR),
                             NIVEL_CONTRATO_ID NUMBER(16,0),
                             OFICINA_CONTRATO_ID NUMBER(16,0),
-                            PRIMARY KEY (ZONA_CONTRATO_ID)'', :error); END;'; 		 
+                            PRIMARY KEY (ZONA_CONTRATO_ID,OFICINA_CONTRATO_ID)'', :error); END;'; 		 
  execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_CNT_ZONA');
    

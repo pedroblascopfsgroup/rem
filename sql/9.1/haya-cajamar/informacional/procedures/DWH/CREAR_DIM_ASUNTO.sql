@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_DIM_ASUNTO (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 05/11/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 17/05/2016
+-- Motivos del cambio: Modifcaciones Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Asunto.
@@ -31,6 +31,8 @@ create or replace PROCEDURE CREAR_DIM_ASUNTO (error OUT VARCHAR2) AS
     -- D_ASU_PROPIETARIO_ASUNTO
     -- D_ASU
     -- TMP_DESPACHO_ASUNTO
+    -- TMP_TITULAR_ASUNTO
+    -- D_ASU_TIT_CNT_CREA
 
 BEGIN
   declare
@@ -280,6 +282,7 @@ BEGIN
                           EXPEDIENTE_ID NUMBER(16,0),
                           DESPACHO_ID NUMBER(16,0),
                           PROPIETARIO_ASUNTO_ID NUMBER(16,0),
+                          TIT_CNT_CREA_ID NUMBER(16,0),
                          
                         PRIMARY KEY (ASUNTO_ID)'', 
                       :error); END;';
@@ -299,6 +302,38 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_DESPACHO_ASUNTO_IX'', ''TMP_DESPACHO_ASUNTO (ASUNTO_ID, DESPACHO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;  
+    
+    
+    ------------------------------ TMP_TITULAR_ASUNTO --------------------------
+     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_TITULAR_ASUNTO'', 
+
+
+
+              ''ASUNTO_ID NUMBER(16,0),
+                PER_TITULAR_ID NUMBER(16,0) NOT NULL'', 
+              :error); END;';
+    execute immediate V_SQL USING OUT error;    
+
+
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_TITULAR_ASUNTO_IX'', ''TMP_TITULAR_ASUNTO (ASUNTO_ID, PER_TITULAR_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+    
+
+    ------------------------------ D_ASU_TIT_CNT_CREA --------------------------
+     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_ASU_TIT_CNT_CREA'', 
+
+
+
+                            ''TIT_CNT_CREA_ID NUMBER(16,0) NOT NULL,
+                              TIT_CNT_CREA_DOCUMENTO_ID VARCHAR2(20),
+                              TIT_CNT_CREA_NOMBRE VARCHAR2(100 CHAR),
+                              TIT_CNT_CREA_APELLIDO_1 VARCHAR2(100 CHAR),
+                              TIT_CNT_CREA_APELLIDO_2 VARCHAR2(100 CHAR),
+                              
+                            PRIMARY KEY (TIT_CNT_CREA_ID)'', 
+                            :error); END;';
+    execute immediate V_SQL USING OUT error;
+
 
   
     --Log_Proceso

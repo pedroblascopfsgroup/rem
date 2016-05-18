@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_H_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Gonzalo Martin, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha Última modificación: 01/12/2015
--- Motivos del cambio: usuario propietario
+-- Fecha Última modificación: 018/05/2016
+-- Motivos del cambio: Modifcaciones Cajamar
 -- Cliente: Recovery BI Haya
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Expediente
@@ -127,9 +127,10 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL)
 			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_HAYA02_DWH" 
+					TABLESPACE "RECOVERY_CM_DWH" 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
@@ -228,7 +229,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                             '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_EXP');
@@ -326,13 +328,14 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                               )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            TABLESPACE "RECOVERY_HAYA02_DWH"   
+                            TABLESPACE "RECOVERY_CM_DWH"   
                             PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
                            (PARTITION "P1" VALUES LESS THAN (201501) 
-                           TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                           TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
 	execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_EXP_SEMANA');
 
@@ -429,13 +432,14 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                              )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_HAYA02_DWH"   
+                           	TABLESPACE "RECOVERY_CM_DWH"   
                            	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_EXP_MES');
 
@@ -532,13 +536,14 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                               )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"   
+                            	TABLESPACE "RECOVERY_CM_DWH"   
                             	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_EXP_TRIMESTRE');
 
@@ -635,13 +640,14 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                             )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"   
+                            	TABLESPACE "RECOVERY_CM_DWH"   
                             	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "RECOVERY_HAYA02_DWH"'', :error); END;';
+                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_EXP_ANIO');
 
@@ -730,11 +736,7 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                           )
-                    SEGMENT CREATION IMMEDIATE NOLOGGING
-                    PARTITION BY RANGE ("DIA_ID")
-                    INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
-                    (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
+                           '', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_IX'', ''H_EXP_DET_CICLO_REC (DIA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -835,10 +837,7 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                            )
-                            SEGMENT CREATION IMMEDIATE NOLOGGING
-                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           (PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
+                            '', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_SEMANA_IX'', ''H_EXP_DET_CICLO_REC_SEMANA (SEMANA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -864,10 +863,7 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                            )
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
+                            '', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_MES_IX'', ''H_EXP_DET_CICLO_REC_MES (MES_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -893,10 +889,7 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                            )
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501)'', :error); END;';
+                            '', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_TRI_IX'', ''H_EXP_DET_CICLO_REC_TRIMESTRE (TRIMESTRE_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
@@ -922,10 +915,7 @@ BEGIN
                               SALDO_TOTAL_EXP_CR NUMBER(14,2)  ,        -- Suma de los saldos vencido y no vencido de los contratos asociados al expediente
                               RIESGO_VIVO_EXP_CR NUMBER(14,2)  ,        -- Riesgo vivo de los contratos asociados al expediente
                               DEUDA_IRREGULAR_EXP_CR NUMBER(14,2)       -- Deuda irregular de los contratos asociados al expediente  
-                           )
-                            	SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015)'', :error); END;';
+                           '', :error); END;';
 							 execute immediate V_SQL USING OUT error;
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_ANIO_IX'', ''H_EXP_DET_CICLO_REC_ANIO (ANIO_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';

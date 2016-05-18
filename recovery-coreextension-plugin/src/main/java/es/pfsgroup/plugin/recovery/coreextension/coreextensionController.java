@@ -462,6 +462,7 @@ public class coreextensionController {
 			String idAsunto="";
 			String nombreAsunto="";
 			String idExpediente="";
+			String tipoExpediente="";
 			String descripcionExpediente="";
 			String contratoPrincipal = "";
 			String tipoAcuerdo="";
@@ -486,8 +487,11 @@ public class coreextensionController {
 			}
 			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente())){
 				idExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getId().toString();
-				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getDescripcionExpediente())){
-					descripcionExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getDescripcionExpediente();
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente())){
+					tipoExpediente= terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente().getCodigo();
+					if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getDescripcionExpediente())){
+						descripcionExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getDescripcionExpediente();
+					}
 				}
 			}
 			
@@ -549,6 +553,7 @@ public class coreextensionController {
 			terminos.setIdAsunto(idAsunto);
 			terminos.setNombreAsunto(nombreAsunto);
 			terminos.setIdExpediente(idExpediente);
+			terminos.setTipoExpediente(tipoExpediente);
 			terminos.setDescripcionExpediente(descripcionExpediente);
 			terminos.setIdContrato(contratoPrincipal);
 			terminos.setNroCliente(clientePase);

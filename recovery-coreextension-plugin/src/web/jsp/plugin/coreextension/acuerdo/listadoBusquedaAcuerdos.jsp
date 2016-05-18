@@ -892,7 +892,7 @@
 			,title : '<s:message code="acuerdo.busqueda.filtros" text="**Búsqueda de Acuerdos" />'
 			,titleCollapse:true
 			,collapsible:true
-			,tbar : [btnBuscar,btnReset,btnExportarXLS,'->', app.crearBotonAyuda()] 
+			,tbar : [btnBuscar,btnReset,'->', app.crearBotonAyuda()] 
 			<%--,tbar : [buttonsL,'->', buttonsR]--%>
 			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 			,style:'padding-bottom:10px; padding-right:10px;'
@@ -924,6 +924,7 @@
 		,{name : 'idAsunto'}
 		,{name : 'nombreAsunto'}
 		,{name : 'idExpediente'}
+		,{name : 'tipoExpediente'}
 		,{name : 'descripcionExpediente'}
 	    ,{name : 'idContrato'}
 		,{name : 'cliente'}
@@ -999,6 +1000,9 @@
 		header: '<s:message code="acuerdos.listado.descripcionExpediente" text="**Descripcion Expediente"/>',
 		dataIndex: 'descripcionExpediente', sortable: false,  hidden: true
 	}, {
+		header: '<s:message code="acuerdos.listado.tipoExpediente" text="**Tipo Expediente"/>',
+		dataIndex: 'tipoExpediente', sortable: false,  hidden: true
+	}, {
 		header: '<s:message code="acuerdos.listado.nroContrato" text="**Contrato Principal"/>',
 		dataIndex: 'idContrato', sortable: false
 	}, {
@@ -1068,8 +1072,15 @@
 	    	if(rec.get('idExpediente')){
 	    		var idExpediente = rec.get('idExpediente');
 	    		var des = rec.get('descripcionExpediente');
+	    		var tipo = rec.get('tipoExpediente');
+	    		
+	    		if(tipo == 'REC'){
+	    			debugger;
+	    			app.abreExpedienteTab(idExpediente,des,'acuerdos');	
+	    		}else{
 	    		debugger;
-	    		app.abreExpedienteTab(idExpediente,des,'acuerdos');		    	
+	    			app.abreExpediente(idExpediente,des,'acuerdos');
+	    		} 	
 	    	}
 	    	else{
 	    		if(rec.get('idAsunto')){

@@ -7,6 +7,7 @@ public class DTOTerminosResultado {
 	private String idAsunto;
 	private String nombreAsunto;
 	private String idExpediente;
+	private String tipoExpediente;
 	private String descripcionExpediente;
 	private String idContrato;
 	private String nroCliente;
@@ -20,6 +21,12 @@ public class DTOTerminosResultado {
 	
 	
 	
+	public String getTipoExpediente() {
+		return tipoExpediente;
+	}
+	public void setTipoExpediente(String tipoExpediente) {
+		this.tipoExpediente = tipoExpediente;
+	}
 	public String getNombreAsunto() {
 		return nombreAsunto;
 	}

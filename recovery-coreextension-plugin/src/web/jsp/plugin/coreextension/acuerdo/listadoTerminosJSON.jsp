@@ -13,6 +13,7 @@
 			<json:property name="nombreAsunto" value="${ter.nombreAsunto}"/>
 			<json:property name="idExpediente" value="${ter.idExpediente}"/>
 			<json:property name="descripcionExpediente" value="${ter.descripcionExpediente}"/>
+			<json:property name="tipoExpediente" value="${ter.tipoExpediente}"/>
 			<json:property name="idContrato" value="${ter.idContrato}"/>
 			<json:property name="cliente" value="${ter.nroCliente}"/>
 			<json:property name="tipoAcuerdo" value="${ter.tipoAcuerdo}"/>

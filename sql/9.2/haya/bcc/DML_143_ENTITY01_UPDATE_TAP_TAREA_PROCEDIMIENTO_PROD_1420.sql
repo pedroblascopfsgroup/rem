@@ -35,7 +35,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE(V_SQL);
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS > 0 THEN
-    	V_MSQL := 'UPDATE tap_tarea_procedimiento SET tap_script_validacion=''existeAdjuntoUG("DA","PRC")? null : existeAdjuntoUGMensaje("DA","PRC")'' WHERE tap_codigo=''H005_notificacionDecretoAdjudicacionAEntidad''';
+    	V_MSQL := 'UPDATE '||V_ESQUEMA||'.tap_tarea_procedimiento SET tap_script_validacion=''existeAdjuntoUG("DA","PRC")? null : existeAdjuntoUGMensaje("DA","PRC")'' WHERE tap_codigo=''H005_notificacionDecretoAdjudicacionAEntidad''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');

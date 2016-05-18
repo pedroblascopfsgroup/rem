@@ -403,6 +403,7 @@ var creaVentanaUpload = function(){
         }
         ,items: [
             	{xtype:'combo'
+            			,itemId:'comboTipoFichero'
 						,name:'comboTipoFichero'
 						<app:test id="tipoProcedimientoCombo" addComa="true" />
 						,hiddenName:'comboTipoFichero'
@@ -415,6 +416,7 @@ var creaVentanaUpload = function(){
 						,resizable:true
 						,triggerAction: 'all'
 						,allowBlank:true
+						,forceSelection: true
 						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
 						,listeners: {
            					'select': function(combo, record, index){
@@ -445,25 +447,20 @@ var creaVentanaUpload = function(){
            ,buttons: [{
                text: 'Subir',
                handler: function(){
-               //debugger;
-               //controlador.nuevoProceso(comboTipoJuicioNew.getValue(),upload.getForm(), fn_nuevoProcesoOk);
-               var formulario = panelEdicion.getForm();//.findField('idResolucion');
-               var idProcedimiento = formulario.findField('idProcedimiento').getValue();
-			   upload.getForm().findField('idProcedimiento').setValue(idProcedimiento);
-
-               //DatosFieldSet.find('name','idResolucion')[0];//Ext.getCmp('idResolucion');
-               //controlador.uploadFicheroResolucion(resolucion.getValue(), upload, fn_subirFicheroOk, fn_subirFicheroError);
-               //controlador.uploadFicheroResolucionTareas(upload, fn_subirFicheroOk, fn_subirFicheroError);
-               //formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
-					
-                uploading = true;
-
-                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
-		
-		        //updateBotonGuardar();
-		        
-		        win.hide();
-                
+				   if(upload.getComponent('comboTipoFichero').getValue().trim()!=''){
+		               //controlador.nuevoProceso(comboTipoJuicioNew.getValue(),upload.getForm(), fn_nuevoProcesoOk);
+		               var formulario = panelEdicion.getForm();//.findField('idResolucion');
+		               var idProcedimiento = formulario.findField('idProcedimiento').getValue();
+					   upload.getForm().findField('idProcedimiento').setValue(idProcedimiento);
+		               //DatosFieldSet.find('name','idResolucion')[0];//Ext.getCmp('idResolucion');
+		               //controlador.uploadFicheroResolucion(resolucion.getValue(), upload, fn_subirFicheroOk, fn_subirFicheroError);
+		               //controlador.uploadFicheroResolucionTareas(upload, fn_subirFicheroOk, fn_subirFicheroError);
+		               //formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
+		                uploading = true;
+		                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
+				        //updateBotonGuardar();
+				        win.hide();
+	               }upload.getComponent('comboTipoFichero').addClass('x-form-invalid'); 
                }
            },{
                text: 'Cancelar',

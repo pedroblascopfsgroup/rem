@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=201600516
+--## FECHA_CREACION=201600517
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1395
@@ -67,7 +67,7 @@ CURSOR crs_usd_id (p_usu_id #ESQUEMA_MASTER#.usu_usuarios.usu_id%TYPE)
    IS
       SELECT usd.usd_id
         FROM #ESQUEMA#.usd_usuarios_despachos usd
-       WHERE usd.usu_id = p_usu_id;
+       WHERE usd.usu_id = p_usu_id and borrado = 0;
 
 CURSOR crs_des_id (p_usd_id #ESQUEMA#.usd_usuarios_despachos.usd_id%TYPE)
    IS
@@ -324,6 +324,7 @@ DBMS_OUTPUT.put_line ('esquema activo '||p_esquema_vigente);
             END LOOP;
         CLOSE crs_resguardo_tmp;
 
+-----------------------------------------
 
 -- Insertamos en temporal el numero de asuntos por usuario
                   OPEN crs_num_asu(p_tge_codigo);
@@ -477,7 +478,7 @@ END IF; --ESTE IF ES EL DE COMPROBAR SI HAY QUE ENTRAR AL CASO
           WHERE gah.gah_asu_id = p_asu_id
             AND gah.gah_tipo_gestor_id = (SELECT tge.dd_tge_id  FROM #ESQUEMA_MASTER#.dd_tge_tipo_gestor tge  WHERE tge.dd_tge_codigo = p_tge_codigo)
             AND gah.gah_fecha_hasta is null
-            AND gah.gah_gestor_id = (SELECT DISTINCT FIRST_VALUE (usd.usd_id) OVER (ORDER BY usd.usd_gestor_defecto DESC) FROM #ESQUEMA#.usd_usuarios_despachos usd WHERE usd.des_id = v_des_id);
+            AND (gah.gah_gestor_id <> (SELECT DISTINCT FIRST_VALUE (usd.usd_id) OVER (ORDER BY usd.usd_gestor_defecto DESC) FROM #ESQUEMA#.usd_usuarios_despachos usd WHERE usd.des_id = v_des_id) or gah.gah_gestor_id = (SELECT DISTINCT FIRST_VALUE (usd.usd_id) OVER (ORDER BY usd.usd_gestor_defecto DESC) FROM #ESQUEMA#.usd_usuarios_despachos usd WHERE usd.des_id = v_des_id));
 
 
 -- Ahora insertamos la relacion asunto-despacho, con el nuevo PROCURADOR seleccionado, y lo insertamos en el historico, pero sin la fecha HASTA, para que recovery lo recoja como el activo.

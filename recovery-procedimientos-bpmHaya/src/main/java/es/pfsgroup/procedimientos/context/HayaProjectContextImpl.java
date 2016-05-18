@@ -150,5 +150,4 @@ public class HayaProjectContextImpl implements HayaProjectContext {
 		this.tareaInicioConcurso = tareaInicioConcurso;
 	}
 	
-	
 }

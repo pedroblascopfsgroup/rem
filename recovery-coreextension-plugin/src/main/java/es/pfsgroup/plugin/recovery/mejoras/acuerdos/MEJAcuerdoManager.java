@@ -144,6 +144,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_CANCELAR_ACUERDO = "mejacuerdoManager.cancelarAcuerdo";
 	public static final String BO_ACUERDO_MGR_SAVE_ACTUACION_REALIZADA_EXPEDIENTE = "mejacuerdoManager.saveActuacionesRealizadasExpediente";
     public static final String BO_ACUERDO_MGR_ACTUALIZACIONES_REALIZADAS_EXPEDIENTE = "mejacuerdoManager.getActuacionExpediente";
+    public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO_BY_ENTIDAD = "mejacuerdoManager.getListTipoAcuerdoByEntidad";
 	
 	public static final String USER_SESSION_KEY = "user_login";
 	@Autowired
@@ -526,18 +527,39 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		List<DDTipoAcuerdo> listado = tipoAcuerdoDao.buscarTipoAcuerdoPorFiltro(fambito.getId(), fambitoAmbas.getId());
 		
 		return listado;
-	}   
+	}  
 	
 	/**
      * 
-     * Obtiene el listado de los tipos de solicitante de acuerdos
+     * Obtiene el listado de los tipos de acuerdo para el buscador de Acuerdos
      * 
      * @return
      */
-	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE)
-	public List<DDSolicitante> getListTiposSolicitante() {
-		return solicitanteDao.getList();
-	}
+	@BusinessOperation(BO_ACUERDO_MGR_GET_LISTADO_TIPO_ACUERDO_BY_ENTIDAD)
+	public List<DDTipoAcuerdo> getListTipoAcuerdoByEntidad(String entidad) {
+
+		DDEntidadAcuerdo codigoEntidad = null;
+		DDEntidadAcuerdo codigoEntidadAmbas =genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_AMBAS));
+		List<DDTipoAcuerdo> listado= new ArrayList<DDTipoAcuerdo>();
+		
+		if(entidad.equals("ASU")){
+			codigoEntidad = genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_ASUNTO));
+			listado = tipoAcuerdoDao.buscarTipoAcuerdoPorEntidad(codigoEntidadAmbas,codigoEntidad);
+		}else{	
+			if(entidad.equals("EXP")){
+				codigoEntidad = genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_EXPEDIENTE));
+				listado = tipoAcuerdoDao.buscarTipoAcuerdoPorEntidad(codigoEntidadAmbas,codigoEntidad);
+				}else {
+					if(entidad.equals("AMBAS")){
+					codigoEntidad=genericDao.get(DDEntidadAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEntidadAcuerdo.CODIGO_ENTIDAD_AMBAS));
+					listado = tipoAcuerdoDao.buscarTipoAcuerdoPorEntidad(codigoEntidadAmbas,codigoEntidad);
+					}
+				}
+			}
+		
+		
+		return listado;
+	}  
 	
 	/**
      * 
@@ -1571,6 +1593,11 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		}else{
 			return false;
 		}
+	}
+	
+	
+	public List<AcuerdoConfigAsuntoUsers> getProponentesAcuerdo(){
+		return acuerdoDao.getProponentesAcuerdo();
 	}
 	
 }

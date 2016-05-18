@@ -4,22 +4,28 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <fwk:page>
 	
 	
 <%-----------------Campos Pestaña Datos Generales -----------------------%>
 	
+	var limit=25;
+	
 	//Campo Número Contrato
-	var codigoContrato=app.creaNumber('codigo',
-			'<s:message code="acuerdo.busqueda.filtro.contrato" text="**Nº Contrato" />','',{autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"}<app:test id="idContrato" addComa="true"/>});
-	
+	var nroContrato = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.contrato" text="**Cód. Contrato" />'); 
+
 	//Campo Numero Cliente
-	var codigoCliente=app.creaNumber('codigo',
-			'<s:message code="acuerdo.busqueda.filtro.cliente" text="**Nº Cliente" />','',{autoCreate : {tag: "input", type: "text",maxLength:"16", autocomplete: "off"}<app:test id="idCliente" addComa="true"/>});
+	<%--var codigoCliente = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cód. Cliente" />'); --%>
+	 var codigoCliente=app.creaNumber('codigo','<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cód. Cliente" />');
+
+	//Listado de tipos de Solicitante
+	var tiposSolicitante = <app:dict value="${tiposSolicitante}" blankElement="true" blankElementValue="" blankElementText="---"/>;
+	var despachos=<app:dict value="${despachos}" />;
 	
 	
-	//Listado de entidad_acuerdo, viene del flow
-	var entidadAcuerdo = <app:dict value="${listadoEntidadAcuerdo}" blankElement="true" blankElementValue="" blankElementText="---"/>;
+	//Listado de entidad_acuerdo
+	var entidadAcuerdo = <app:dict value="${listadoEntidadAcuerdo}" blankElement="false" blankElementValue="" blankElementText="---"/>;
 	
 	//store generico de combo diccionario
 	var optionsEntidadAcuerdoStore = new Ext.data.JsonStore({
@@ -35,48 +41,208 @@
 				,valueField:'codigo'
 				,width:135
 				,mode: 'local'
-				,emptyText:'---'
 				,editable: false
 				,triggerAction: 'all'
 				,fieldLabel : '<s:message code="acuerdo.busqueda.filtro.entidadAcuerdo" text="**Tipo de Acuerdo"/>'
 				<app:test id="comboEntidadAcuerdo" addComa="true"/>
 	});
 	
-	
-	//Campo Solicitante
-	var solicitante = new Ext.form.TextField({
-		fieldLabel:'<s:message code="acuerdo.busqueda.filtro.solicitante" text="**Solicitante" />'
-		,name:'solicitante'
-		<app:test id="solicitante" addComa="true"/>
+	comboEntidadAcuerdo.on('select', function(){
+		if(comboEntidadAcuerdo.value != '') {
+			comboTiposAcuerdo.reset();
+			comboTiposAcuerdo.setDisabled(false);
+			optionsTiposAcuerdoStore.webflow({'codigo': comboEntidadAcuerdo.getValue()}); 
+			
+		}else{
+			comboTiposAcuerdo.setDisabled(true);
+		}
 	});
-	
-	//Listado de tipos de Solicitante, viene del flow
-	var tiposSolicitante = <app:dict value="${tiposSolicitante}" blankElement="true" blankElementValue="" blankElementText="---"/>;
 	
 	//store generico de combo diccionario
-	var optionsTiposSolicitanteStore = new Ext.data.JsonStore({
-	       fields: ['codigo', 'descripcion']
-	       ,root: 'diccionario'
-	       ,data : tiposSolicitante
+	var optionsTiposAcuerdoRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var optionsTiposAcuerdoStore = page.getStore({
+	       flow: 'coreextension/getTipoAcuerdosByEntidad'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tiposAcuerdo'
+	    }, optionsTiposAcuerdoRecord)	       
 	});
 	
-	//Campo Combo Tipo Solicitante
-	var comboTiposSolicitante = new Ext.form.ComboBox({
-				store:optionsTiposSolicitanteStore
+	//Campo Combo Tipo de Acuerdo
+	var comboTiposAcuerdo = new Ext.form.ComboBox({
+				store:optionsTiposAcuerdoStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,width:135
 				,mode: 'local'
 				,emptyText:'---'
+				,forceSelection: true
+				,width:135
 				,editable: false
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="acuerdo.busqueda.filtro.tipoSolicitante" text="**Tipo Solicitante"/>'
-				<app:test id="comboTiposSolicitante" addComa="true"/>
+				,disabled:true
+				,resizable:true
+				,fieldLabel : '<s:message code="acuerdo.busqueda.filtro.terminoAcuerdo" text="**Tipo Termino"/>'
+				<app:test id="comboTiposAcuerdo" addComa="true"/>
+	});
+	
+	var comboTiposSolicitante = app.creaCombo({triggerAction: 'all',
+	 	data:tiposSolicitante, 
+	 	value:tiposSolicitante.diccionario[0].codigo, 
+	 	name : 'tiposSolicitante', 
+	 	width:200,
+	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtro.tipoSolicitante" text="**Tipo Solicitante" />'});
+	 	
+	var listadoSolicitantes = [];
+	
+	comboTiposSolicitante.on('select',function(){
+		if(comboTiposSolicitante.value != '') {
+			comboSolicitantes.setDisabled(false);
+			optionsSolicitantesStore.setBaseParam('codigo', comboTiposSolicitante.getValue());
+		}else{
+			comboSolicitantes.setDisabled(true);
+		}
+	});
+	
+	var idSol='';
+	var codSolSel='';
+	var telSolSel='';
+	
+	var solicitantesRecord = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'despacho'}
+		,{name:'telefono1'}
+	]);
+	
+	//Template para el combo de solicitantes
+    var solicitantesTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{despacho}&nbsp;&nbsp;&nbsp;</p><p>{telefono1}</p>',
+        '</div></tpl>'
+    );
+    
+    var optionsSolicitantesStore = page.getStore({
+	       flow: 'coreextension/getDespachosExternosByTipo'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'despachos'
+	    }, solicitantesRecord)
+	       
+	});
+	
+	//Combo de solicitantes
+    var comboSolicitantes = new Ext.form.ComboBox({
+        name: 'comboSolicitantes'
+        ,disabled:true 
+        ,allowBlank:true
+        ,store:optionsSolicitantesStore
+        ,width:200
+        ,fieldLabel: '<s:message code="acuerdo.busqueda.filtro.solicitante" text="**Solicitante"/>'
+        ,tpl: solicitantesTemplate  
+        ,forceSelection:true
+        ,style:'padding:0px;margin:0px;'
+        ,enableKeyEvents: true
+        ,typeAhead: false
+        ,hideTrigger:true     
+        ,minChars: 2 
+        ,hidden:false
+        ,maxLength:256 
+        ,itemSelector: 'div.search-item'
+        ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
+        ,onSelect: function(record) {
+        	btnIncluirSol.setDisabled(false);
+        	idSol=record.data.id;
+        	codSolSel=record.data.despacho;
+        	telSolSel=record.data.telefono1;
+         }
+    });	
+    
+    var recordSolicitante = Ext.data.Record.create([
+		{name: 'idDespacho'},
+		{name: 'desDespacho'},
+		{name: 'telefono1Despacho'}
+	]);
+	
+	var solicitantesStore = page.getStore({
+		flow:''
+		,reader: new Ext.data.JsonReader({
+	  		root : 'data'
+		} 
+		, recordSolicitante)
+	});
+	
+	 var solicitantesCM = new Ext.grid.ColumnModel([
+	 	 {header : '<s:message code="acuerdo.busqueda.filtro.idSolicitante" text="**Id" />', dataIndex : 'idDespacho' ,sortable:false, hidden:true, width:10} 
+		,{header : '<s:message code="acuerdo.busqueda.filtro.solicitante" text="**Solicitante" />', dataIndex : 'desDespacho' ,sortable:false, hidden:false, width:180}
+		,{header : '<s:message code="acuerdo.busqueda.filtro.telefono" text="**Telefono" />', dataIndex : 'telefono1Despacho',sortable:false, hidden:false, width:120}
+	]);
+	
+	var solicitantesGrid = new Ext.grid.EditorGridPanel({
+	    title : '<s:message code="acuerdo.busqueda.filtro.solicitantes" text="**Solicitantes" />'
+	    ,cm: solicitantesCM
+	    ,store: solicitantesStore
+	    ,width: '300'
+	    ,height: 150
+	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+	    ,clicksToEdit: 1
+	});
+	
+	var incluirSolicitante = function() {
+	    var solicitanteAInsertar = solicitantesGrid.getStore().recordType;
+   		var p = new solicitanteAInsertar({
+   			idDespacho: idSol,
+   			desDespacho: codSolSel,
+   			telefono1Despacho: telSolSel
+   		});
+		solicitantesStore.insert(0, p);
+		listadoSolicitantes.push(idSol);
+	}
+	
+	 
+	 var btnIncluirSol = new Ext.Button({
+		text : '<s:message code="acuerdo.busqueda.btn.incluir" text="**Incluir" />'
+		,iconCls : 'icon_mas'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			incluirSolicitante();
+			idSol='';
+			codSolSel='';
+   			telSolSel='';
+   			btnIncluirSol.setDisabled(true);
+			comboSolicitantes.focus();
+		}
+	});
+	
+	var solicitanteAExcluir = -1;
+	var codSolicitanteExcluir = '';
+	
+	solicitantesGrid.on('cellclick', function(grid, rowIndex, columnIndex, e) {
+   		codSolicitanteExcluir = grid.selModel.selections.get(0).data.idDespacho;
+   		solicitanteAExcluir = rowIndex;
+   		btnExcluirSol.setDisabled(false);
+	});
+	
+	var btnExcluirSol = new Ext.Button({
+		text : '<s:message code="acuerdo.busqueda.btn.excluir" text="**Excluir" />'
+		,iconCls : 'icon_menos'
+		,disabled: true
+		,minWidth:60
+		,handler : function(){
+			if (solicitanteAExcluir >= 0) {
+				solicitantesStore.removeAt(solicitanteAExcluir);
+				listadoSolicitantes.remove(codSolicitanteExcluir);
+			}
+			solicitanteAExcluir = -1;
+	   		btnExcluirSol.setDisabled(true);
+		}
 	});
 	
 	
 	//Listado de estados del Acuerdo, viene del flow
 	var estadosAcuerdo = <app:dict value="${estadosAcuerdo}" blankElement="true" blankElementValue="" blankElementText="---"/>;
+	var tiposTerminos = <app:dict value="${tiposTerminos}" blankElement="true" blankElementValue="" blankElementText="---"/>;
 	
 	//store generico de combo diccionario
 	var optionsEstadosAcuerdoStore = new Ext.data.JsonStore({
@@ -99,6 +265,8 @@
 				<app:test id="comboEstadosAcuerdo" addComa="true"/>
 	});
 	
+	//optionsTiposAcuerdoStore.webflow({'codigo': comboEntidadAcuerdo.getValue()}); 
+	
 	var txtDesde = app.creaLabel('<s:message text="Desde" />');
 	var txtHasta = app.creaLabel('<s:message text="Hasta" />');
 	
@@ -113,7 +281,7 @@
 		fieldLabel:'<s:message text="" />'
 		,name:'fechaAltaHasta'
 		,style:'margin:0px'
-		//,labelStyle:'font-weight:bolder;width:150px'
+		,hideLabel:'true'
 	});
 	
 	var fechaEstadoDesde = new Ext.ux.form.XDateField({
@@ -124,10 +292,10 @@
 	});
 	
 	var fechaEstadoHasta = new Ext.ux.form.XDateField({
-		fieldLabel:'<s:message text="" />'
+		fieldLabel:'<s:message text="h" />'
 		,name:'fechaEstadoHasta'
 		,style:'margin:0px'
-		//,labelStyle:'font-weight:bolder;width:150px'
+		,hideLabel:'true'
 	});
 	
 	var fechaVigenteDesde = new Ext.ux.form.XDateField({
@@ -138,14 +306,13 @@
 	});
 	
 	var fechaVigenteHasta = new Ext.ux.form.XDateField({
-		fieldLabel:'<s:message text="" />'
+		fieldLabel:'<s:message text="h" />'
 		,name:'fechaVigenteHasta'
 		,style:'margin:0px'
-		//,labelStyle:'font-weight:bolder;width:150px'
+		,hideLabel:'true'
 	});
 	
-	
-	
+
 	
 <%-----------------Campos Pestaña Gestores -----------------------%>
 	
@@ -472,23 +639,28 @@
 	var validarEmptyForm = function(){
 
 		if (tabDatos){
-			if (codigoContrato.getValue() != '' && app.validate.validateInteger(codigoContrato.getValue())){
+			if (nroContrato.getValue() != '' && app.validate.validateInteger(nroContrato.getValue())){
 				return true;
 			}
 			if (codigoCliente.getValue() != '' && app.validate.validateInteger(codigoCliente.getValue())){
 				return true;
 			}
-			////////////////////Revisar//////////////7
-			if (comboEntidadAcuerdo.length > 0 ){
+			if (comboEntidadAcuerdo.getValue() != '' ){
 					return true;
 			}
-			if (solicitante.getValue() != '' ){
+			if (comboTiposAcuerdo.getValue() != '' ){
+					return true;
+			}
+			if (comboEstadosAcuerdo.getValue() != '' ){
 				return true;
 			}
 			if (comboTiposSolicitante.getValue() != '' ){
 				return true;
 			}
-			if (comboEstadosAcuerdo.getValue() != '' ){
+			if (comboSolicitantes.getValue() != '' ){
+				return true;
+			}
+			if (listadoSolicitantes.length > 0 ){
 				return true;
 			}
 			if (fechaAltaDesde.getValue() != '' ){
@@ -509,17 +681,19 @@
 			if (fechaVigenteHasta.getValue() != '' ){
 				return true;
 			}
+			
 		}
 		if (tabGestores){
+		
+			if (comboTiposGestor.getValue() != '' ){
+				return true;
+			}
 			if (comboDespachos.getValue() != '' ){
 				return true;
 			}
 			if (comboGestor.getValue() != '' ){
 				return true;
-			}
-			if (comboTipoGestor.getValue() != '' ){
-				return true;
-			}
+			}	
 		}
 		if (tabJerarquia){
 			if (comboJerarquia.getValue() != '' ){
@@ -537,10 +711,12 @@
 	var getParametros = function() {
 	 	var p = {};
         	if (tabDatos){
-        		p.nroContrato=codigoContrato.getValue();
+        		p.nroContrato=nroContrato.getValue();
         		p.nroCliente=codigoCliente.getValue();
-        		p.solicitante=solicitante.getValue();
+        		p.tipoAcuerdo=comboEntidadAcuerdo.getValue();
+        		p.tipoTermino=comboTiposAcuerdo.getValue();
         		p.tipoSolicitante=comboTiposSolicitante.getValue();
+        		p.solicitantes=listadoSolicitantes.toString();
         		p.estado=comboEstadosAcuerdo.getValue();
         		p.fechaAltaDesde=app.format.dateRenderer(fechaAltaDesde.getValue());
         		p.fechaAltaHasta=app.format.dateRenderer(fechaAltaHasta.getValue());
@@ -556,7 +732,7 @@
         	}
         	if (tabJerarquia){
         		p.jerarquia=comboJerarquia.getValue();
-				p.codigoZona=listadoCodigoZonas.toString();
+				p.centros=listadoCodigoZonas.toString();
         	}
 
         return p;
@@ -565,15 +741,18 @@
 	
 	var buscarFunc = function()
 	{
+		panelFiltros.collapse(true);
 		var params= getParametros();
 		acuerdosStore.webflow(params);
 		pagingBar.show();	
 	};
 	
 	var btnReset = app.crearBotonResetCampos([
-		codigoContrato
+		nroContrato
 		,codigoCliente
-		,solicitante
+		,comboEntidadAcuerdo
+		,comboTiposAcuerdo
+		,comboSolicitantes
 		,comboTiposSolicitante
 		,comboEstadosAcuerdo
 		,fechaAltaDesde
@@ -582,14 +761,28 @@
 		,fechaEstadoHasta
 		,fechaVigenteDesde
 		,fechaVigenteHasta
+		,comboTiposGestor
+		,comboDespachos
 		,comboJerarquia
 		,comboZonas
-		,listadoCodigoZonas
-		,zonasStore
-		,comboEntidadAcuerdo
-		
-		
+		,gridAcuerdos
+
 	]);
+	
+	btnReset.on('click', function(){
+		zonasStore.removeAll();
+		listadoCodigoZonas = [];
+		comboZonas.setDisabled(true);	
+		comboDespachos.reset();
+		comboGestor.reset();
+		comboGestor.setValue('');
+		optionsGestoresStore.removeAll();
+		comboDespachos.setDisabled(true);
+		comboTiposAcuerdo.reset();
+		comboTiposAcuerdo.setDisabled(true);	
+		listadoSolicitantes= [];
+		solicitantesStore.removeAll();
+	});
 	
 	 var btnExportarXLS=new Ext.Button({
         text:'<s:message code="acuerdo.busqueda.exportar.xls" text="**Exportar a Excel" />'
@@ -611,22 +804,23 @@
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
-		,layoutConfig:{columns:3}
-		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
+		,layoutConfig:{columns:2}
+		,defaults : { border : false , layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;margin-right:40px'}
 		,items:[{
-				width:350
-				,items:[codigoContrato,codigoCliente,comboEntidadAcuerdo,solicitante,comboTiposSolicitante,comboEstadosAcuerdo
-					//espacios en blanco para alinear ambas columnas
-					,{border:false,html:'&nbsp;'},{border:false,html:'&nbsp;'}
-				]
-			},{
-				layout:'form'
-				,items:[txtDesde,fechaAltaDesde,fechaEstadoDesde,fechaVigenteDesde]
-			},{
-				layout:'form'
-				,items:[txtHasta,fechaAltaHasta,fechaEstadoHasta,fechaVigenteHasta]
-			}
-		]
+					layout:'form'
+					,items: [nroContrato,codigoCliente,comboEntidadAcuerdo,comboTiposAcuerdo,comboEstadosAcuerdo]
+				},{
+					layout:'table'
+                    ,layoutConfig:{columns:2}
+                    ,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form'}
+					,items: [{items:[fechaAltaDesde,fechaEstadoDesde,fechaVigenteDesde]}, {autoWidth: true,items:[fechaAltaHasta,fechaEstadoHasta,fechaVigenteHasta]}]				
+				},{
+					layout:'table'
+                    ,layoutConfig:{columns:2}
+                    ,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form'}
+					,items: [{items:[comboTiposSolicitante,comboSolicitantes,solicitantesGrid]},{autoWidth: true,items:[btnIncluirSol,btnExcluirSol]}]
+					}]
+		
 	});
 	
 	filtrosTabDatosAcuerdo.on('activate',function(){
@@ -644,21 +838,7 @@
 		,items:[{
 				layout:'form'
 				,items:[comboTiposGestor,comboDespachos,comboGestor]
-				}]
-				,listeners:{	
-					limpiar: function() {
-    		   			app.resetCampos([      
-    		          		 comboDespachos
-    		           		,comboGestor
-    		           		,comboTiposGestor
-    		           
-	           ]); 
-	           comboGestor.setDisabled(true);
-	           comboDespachos.setDisabled(true);
-	           optionsGestoresStore.webflow({'idTipoDespacho': 0}); 
-    		}
-    		
-		}
+				}]	
 	});
 	
 	filtrosTabGestores.on('activate',function(){
@@ -728,21 +908,26 @@
 			]
 		,listeners:{	
 			beforeExpand:function(){
-				gridAsuntos.setHeight(175);
+				gridAcuerdos.setHeight(175);
 			}
 			,beforeCollapse:function(){
-				gridAsuntos.setHeight(435);
+				gridAcuerdos.setHeight(435);
 			}
 		}
 	});
 
 	
 	
-	var acuerdo = Ext.data.Record.create([
-	     {name : 'id'}
-		,{name : 'contrato'}
+	var termino = Ext.data.Record.create([
+		 {name : 'idTermino'}
+		,{name : 'idAcuerdo'}
+		,{name : 'idAsunto'}
+		,{name : 'nombreAsunto'}
+		,{name : 'idExpediente'}
+		,{name : 'descripcionExpediente'}
+	    ,{name : 'idContrato'}
 		,{name : 'cliente'}
-		,{name : 'tipoTermino'}
+		,{name : 'tipoAcuerdo'}
 		,{name : 'solicitante'}
 		,{name : 'tipoSolicitante'}
 		,{name : 'estado'}
@@ -751,31 +936,77 @@
 		,{name : 'fechaVigencia'}
 			
 	]);
-	
 
-	var acuerdosStore = page.getStore({
-		flow : 'coreextension/listBusquedaAcuerdos'
-		,reader: new Ext.data.JsonReader({
-	    	root : 'acuerdos'
-	    	,totalProperty : 'total'
-	    }, acuerdo)
-		,remoteSort : true
-	});
 	
+	<c:if test="${busquedaOrInclusion=='inclusion'}">
+
+			Ext.grid.CheckColumn = function(config){
+			    Ext.apply(this, config);
+			    if(!this.id){
+			        this.id = Ext.id();
+			    }
+			    this.renderer = this.renderer.createDelegate(this);
+			};
+
+			Ext.grid.CheckColumn.prototype ={
+			    init : function(grid){
+			        this.grid = grid;
+			        this.grid.on('render', function(){
+			            var view = this.grid.getView();
+			            view.mainBody.on('mousedown', this.onMouseDown, this);
+			        }, this);
+			    },
+
+			    onMouseDown : function(e, t){
+			        if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
+			            e.stopEvent();
+			            var index = this.grid.getView().findRowIndex(t);
+			            var record = this.grid.store.getAt(index);
+			            record.set(this.dataIndex, !record.data[this.dataIndex]);
+			        }
+			    },
+			
+			    renderer : function(v, p, record){
+			        p.css += ' x-grid3-check-col-td'; 
+			        return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';
+			    }
+			};
+
+			var checkColumn = new Ext.grid.CheckColumn({ 
+		            header : '<s:message code="listadoContratos.listado.incluir" text="**Incluir" />'
+		            ,dataIndex : 'incluir', width: 40});
+
+	</c:if>
 	
 	var acuerdosCm = new Ext.grid.ColumnModel([
 	{
-		header: '<s:message code="acuerdos.listado.id" text="**Id"/>',
-		dataIndex: 'id', sortable: true
+		header: '<s:message code="acuerdos.listado.idAcuerdo" text="**Id Acuerdo"/>',
+		dataIndex: 'idAcuerdo',  fixed:true
+	},<c:if test="${busquedaOrInclusion=='inclusion'}">,checkColumn</c:if>
+		{
+		header: '<s:message code="acuerdos.listado.idTermino" text="**Id Termino"/>',
+		dataIndex: 'idTermino', sortable: false
+	},  {
+		header: '<s:message code="acuerdos.listado.idAsunto" text="**Id Asunto"/>',
+		dataIndex: 'idAsunto', sortable: false,  hidden: true
+	},  {
+		header: '<s:message code="acuerdos.listado.nombreAsunto" text="**Nombre Asunto"/>',
+		dataIndex: 'nombreAsunto', sortable: false,  hidden: true
 	}, {
-		header: '<s:message code="acuerdos.listado.contrato" text="**Contrato"/>',
-		dataIndex: 'contrato', sortable: true
+		header: '<s:message code="acuerdos.listado.idExpediente" text="**Id Expediente"/>',
+		dataIndex: 'idExpediente', sortable: false,  hidden: true
+	}, {
+		header: '<s:message code="acuerdos.listado.descripcionExpediente" text="**Descripcion Expediente"/>',
+		dataIndex: 'descripcionExpediente', sortable: false,  hidden: true
+	}, {
+		header: '<s:message code="acuerdos.listado.nroContrato" text="**Contrato Principal"/>',
+		dataIndex: 'idContrato', sortable: false
 	}, {
 		header: '<s:message code="acuerdos.listado.cliente" text="**Cliente"/>',
 		dataIndex: 'cliente', sortable: false
 	}, {
 		header: '<s:message code="acuerdos.listado.tipoAcuerdo" text="**Tipo Acuerdo"/>',
-		dataIndex: 'tipoTermino', sortable: false
+		dataIndex: 'tipoAcuerdo', sortable: false
 	}, {
 		header: '<s:message code="acuerdos.listado.solicitante" text="**Solicitante"/>',
 		dataIndex: 'solicitante', sortable: false
@@ -797,21 +1028,62 @@
 	}
 	]);
 	
+	
+	var acuerdosStore = page.getStore({
+		flow : 'coreextension/listBusquedaAcuerdos'
+		,limit:limit
+		,reader: new Ext.data.JsonReader({
+	    	root : 'terminos'
+	    	,totalProperty : 'total'
+	    }, termino)
+		,remoteSort : true
+	});
+	
+	
 	var pagingBar=fwk.ux.getPaging(acuerdosStore);
 	pagingBar.hide();
 	
-	 
-	var gridAcuerdos=app.crearGrid(acuerdosStore,acuerdosCm,{
-		title: '<s:message code="acuerdos.grid.titulo" text="**Acuerdos" />'	
-		//,style:'padding:10px'
+	acuerdosStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
+    
+    var cfg={
+		title:'<s:message code="acuerdos.grid.titulo" text="**Acuerdos"/>'
+		,style:'padding:10px'
 		,cls:'cursor_pointer'
 		,iconCls : 'icon_asuntos'
-		,height:175
-		//,autoWidth : true
-		//,bbar : [ botonesTabla  ]
-		<app:test id="listaAcuerdos" addComa="true"/>
-	});
+		,height:240
+		,bbar : [pagingBar]
+		<app:test id="listaAcuerdos" addComa="true" />
+       	<c:if test="${busquedaOrInclusion=='inclusion'}">,plugins:checkColumn</c:if>
+		,resizable:true
+		,dontResizeHeight:true
+	};
 	
+	var gridAcuerdos = app.crearGrid(acuerdosStore,acuerdosCm,cfg);
+	
+	var gridAcuerdosListener =	function(grid, rowIndex, e) {
+	    	var rec = grid.getStore().getAt(rowIndex);
+	    	
+	    	if(rec.get('idExpediente')){
+	    		var idExpediente = rec.get('idExpediente');
+	    		var des = rec.get('descripcionExpediente');
+	    		debugger;
+	    		app.abreExpedienteTab(idExpediente,des,'acuerdos');		    	
+	    	}
+	    	else{
+	    		if(rec.get('idAsunto')){
+	    			var idAsunto = rec.get('idAsunto');
+	    			var desc = rec.get('nombreAsunto');
+	    			app.abreAsunto(idAsunto,desc,'acuerdos');	  				
+	    		}else{
+	    		    	alert('El acuerdo no tiene asociado ningún expediente o asunto');
+	    		    	}
+	    	}
+	    	
+	    };
+	    
+	gridAcuerdos.addListener('rowdblclick', gridAcuerdosListener);
 	
 	var mainPanel = new Ext.Panel({
 		items : [

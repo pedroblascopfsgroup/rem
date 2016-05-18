@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
-import es.capgemini.pfs.acuerdo.model.DDSolicitante;
 import es.capgemini.pfs.acuerdo.model.DDSubTipoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.bien.model.Bien;
@@ -55,7 +54,6 @@ public interface MEJAcuerdoApi {
 	public static final String BO_ACUERDO_MGR_GET_VALIDACION_TRAMITE_CORRESPONDIENTE = "mejacuerdo.validacionTramiteCorrespondiente";
 	public static final String BO_ACUERDO_MGR_GUARDAR_ESTADO_GESTION = "mejacuerdo.guardarEstadoGestion";
 	public static final String BO_ACUERDO_MGR_GET_FECHA_PASE_MORA = "mejacuerdo.getFechaPaseMora";
-	public static final String BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE= "mejacuerdomanager.getListTiposSolicitante";
 	
     
 	/**
@@ -168,7 +166,4 @@ public interface MEJAcuerdoApi {
 	
 	public boolean usuarioEstaEnGAA(Usuario user, Long idAsunto, String codTipoGestor);
 	
-	@BusinessOperationDefinition(BO_ACUERDO_MGR_GET_LISTADO_TIPO_SOLICITANTE)
-	public List<DDSolicitante> getListTiposSolicitante();
-
 }

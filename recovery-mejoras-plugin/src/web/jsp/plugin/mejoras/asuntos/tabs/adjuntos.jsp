@@ -1057,6 +1057,7 @@
 	});
 
 	gridContratos.on('rowclick', function(grid, rowIndex, e){
+
 		var rec = grid.getStore().getAt(rowIndex);
 		var descripcionEntidad = rec.get('descripcionEntidad');
 		if(descripcionEntidad==null || descripcionEntidad=='') {
@@ -1073,6 +1074,22 @@
 		}
 	});
 	
+	var gestionarGrid = function(sm) {
+
+		if(sm.selections.getCount() > 0) {
+			var ds = sm.grid.store;
+            var index = ds.indexOf(sm.getSelected(), true);
+			sm.grid.fireEvent('rowclick', sm.grid, index);
+		}
+		else {
+			sm.grid.bottomToolbar.setDisabled(true);
+		}
+	}
+	
+	gridContratos.getSelectionModel().on('selectionchange', gestionarGrid);
+	gridExpedientes.getSelectionModel().on('selectionchange', gestionarGrid);
+	gridPersonas.getSelectionModel().on('selectionchange', gestionarGrid);
+		
 	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
 		borrar.setVisible(false);
 		editarDescripcionAdjuntoAsunto.setVisible(false);

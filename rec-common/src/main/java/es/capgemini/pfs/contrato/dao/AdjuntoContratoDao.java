@@ -1,5 +1,7 @@
 package es.capgemini.pfs.contrato.dao;
 
+import java.util.List;
+
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.dao.AbstractDao;
 
@@ -12,4 +14,5 @@ import es.capgemini.pfs.dao.AbstractDao;
 
 public interface AdjuntoContratoDao extends AbstractDao<AdjuntoContrato, Long> {
 
+	public List<AdjuntoContrato> getAdjuntoContratoByIdDocumento(List<Integer> idsDocumento);
 }

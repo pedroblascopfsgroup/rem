@@ -190,6 +190,7 @@
     	<json:property name="flagextra4" value="${contrato.flagextra4}" />
     	<json:property name="flagextra5" value="${contrato.flagextra5}" />
     	<json:property name="flagextra6" value="${contrato.flagextra6}" />
+    	<json:property name="flagextra7" value="${contrato.flagextra7}" />
     	<json:property name="dateextra2" value="${contrato.dateextra2}" />
     	<json:property name="dateextra3" value="${contrato.dateextra3}" />
     	<json:property name="dateextra4" value="${contrato.dateextra4}" />

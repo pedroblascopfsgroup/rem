@@ -58,9 +58,13 @@ BEGIN
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('De 440 a 460 - R_PR_HIP_DEM_SELLADA');
+    DBMS_OUTPUT.PUT_LINE('Borrado (Update a null) - ADA_ADJUNTOS_ASUNTOS');
+    V_MSQL := 'update '||V_ESQUEMA||'.ADA_ADJUNTOS_ASUNTOS set res_id = null';
+    EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('Borrado - res_resoluciones_masivo');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_PR_HIP_DEM_SELLADA'')';
     EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('De 440 a 460 - R_PR_HIP_DEM_SELLADA');
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''460'', usuariomodificar = ''PRODUCTO-1445'', fechamodificar=sysdate where dd_tr_codigo = ''R_PR_HIP_DEM_SELLADA''';
     EXECUTE IMMEDIATE V_MSQL;
     

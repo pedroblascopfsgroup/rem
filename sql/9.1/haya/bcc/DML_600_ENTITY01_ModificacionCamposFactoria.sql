@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Oscar Dorado
---## FECHA_CREACION=20160512
+--## FECHA_CREACION=20160519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-766
@@ -102,10 +102,6 @@ BEGIN
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_DEM_SEL_PCM'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
-    V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_DEM_SEL_PCM''';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('Modificado bug, de I_DOT_DET_OCU a I_DOC_DET_OCU');
     V_MSQL := 'update '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT SET BPM_DD_TIN_CODIGO=''I_DOC_DET_OCU'', usuariomodificar = ''PRODUCTO-766'', fechamodificar = sysdate WHERE BPM_dd_tin_codigo = ''I_DOT_DET_OCU''';
     EXECUTE IMMEDIATE V_MSQL;
@@ -143,11 +139,6 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
     EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
-    V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_PR_HIP_DEM_SELLADA''';
-    EXECUTE IMMEDIATE V_MSQL;
-        
     
     --PRODUCTO-1055     
     DBMS_OUTPUT.PUT_LINE('Borrado - ita_inputs_tareas');

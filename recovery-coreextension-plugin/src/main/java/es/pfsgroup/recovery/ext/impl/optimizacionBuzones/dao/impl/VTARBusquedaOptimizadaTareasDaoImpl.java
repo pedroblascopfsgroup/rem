@@ -287,9 +287,14 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         
         if(!Checks.estaVacio(dto.getUsuarioLogado().getZonaPerfil())){
         	hb.append(" ((");
+        	int i=0;
         	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
         		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
-        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");
+        			if(i>0) {
+        				hb.append(" OR ");
+        			}
+        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') ");
+        			i++;
         		}
         	}
         	
@@ -301,6 +306,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 			hb.append("','");
 			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
 			hb.append("'))");
+        	
         }
         
 		hb.append("))" );

@@ -7,24 +7,29 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.expediente.model.Evento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroInfo;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.cliente.EventoClienteBuilder;
+import es.pfsgroup.plugin.recovery.mejoras.evento.model.MEJEvento;
+import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJRegistro;
 
 
-//@Component
+@Component
 public class EventoClienteMostrarComentario implements EventoClienteBuilder {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
+	@Autowired
+	private GenericABMDao genericDao;
 	
 	@Override
 	public List<Evento> getEventos(long idCliente) {
@@ -47,12 +52,17 @@ public class EventoClienteMostrarComentario implements EventoClienteBuilder {
 				.get(AgendaMultifuncionTipoEventoRegistro.EventoComentario.ASUNTO_COMENTARIO);
 				if (!Checks.esNulo(idTareaStr)) {
 					try {
-						TareaNotificacion tarea = proxyFactory.proxy(
+						/*TareaNotificacion tarea = proxyFactory.proxy(
 								TareaNotificacionApi.class).get(
 								Long.parseLong(idTareaStr));
 						if (tarea != null) {
 							listaEventos.add(new Evento(tarea,
 									Evento.TIPO_EVENTO_PERSONA));
+						}*/
+						Filter f = genericDao.createFilter(FilterType.EQUALS, "id", evento.getId());
+						MEJRegistro registro = genericDao.get(MEJRegistro.class, f);
+						if (registro != null){
+							listaEventos.add(new MEJEvento(registro.getId(), Evento.TIPO_EVENTO_PERSONA));
 						}
 					} catch (NumberFormatException e) {
 					}
@@ -73,7 +83,7 @@ public class EventoClienteMostrarComentario implements EventoClienteBuilder {
 
 			@Override
 			public String getTipoUnidadGestion() {
-				return DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE;
+				return DDTipoEntidad.CODIGO_ENTIDAD_PERSONA;
 			}
 
 			@Override

@@ -6,14 +6,18 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=CMREC-3358
 --## PRODUCTO=NO
---## Finalidad: DDL Creación de las tablas MIG1_PROCEDIMIENTOS_ACTORES  MIG1_CONCURSOS_CABECERA  MIG1_PROCEDIMIENTOS_DEMANDADOS  MIG1_PROCEDIMIENTOS_OPERACIONE  
---##            MIG1_PROCEDIMIENTOS_BIENES  MIG1_PROCEDIMIENTOS_DEMANDADOS  MIG1_PROCEDIMIENTOS_EMBARGOS  MIG1_PROCEDIMIENTOS_SUBASTAS  MIG1_PROCS_SUBASTAS_LOTES  MIG1_PROCS_SUBASTAS_LOTES_BIEN 
+--## Finalidad: DDL Creación de las tablas 
+--##            MIG1_PROCEDIMIENTOS_ACTORES  MIG1_PROCEDIMIENTOS_CABECERA  MIG1_PROCEDIMIENTOS_DEMANDADOS  MIG1_PROCEDIMIENTOS_OPERACIONE   MIG1_PROCEDIMIENTOS_BIENES 
+--##            MIG1_PROCEDIMIENTOS_DEMANDADOS  MIG1_PROCEDIMIENTOS_EMBARGOS  MIG1_PROCEDIMIENTOS_SUBASTAS  MIG1_PROCS_SUBASTAS_LOTES  MIG1_PROCS_SUBASTAS_LOTES_BIEN 
+--##            MIG_MAESTRA_HITOS MIG_MAESTRA_HITOS_VALORES MIG_PARAM_HITOS MIG_PARAM_HITOS_VALORES
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
+
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
@@ -35,6 +39,58 @@ DECLARE
 BEGIN
 
   -- Comprobamos si existe la tabla   
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_MAESTRA_HITOS'' and owner = '''||V_ESQUEMA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+      -- Si existe la tabla no hacemos nada
+  IF V_NUM_TABLAS = 1 THEN 
+     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG1_MAESTRA_HITOS... Tabla YA EXISTE');
+  ELSE
+     --Creamos la tabla
+     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG1_MAESTRA_HITOS as select * from '||V_ESQUEMA||'.mig_maestra_hitos';
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG1_MAESTRA_HITOS... Tabla creada');
+  END IF;
+
+  -- Comprobamos si existe la tabla   
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_MAESTRA_HITOS_VALORES'' and owner = '''||V_ESQUEMA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+      -- Si existe la tabla no hacemos nada
+  IF V_NUM_TABLAS = 1 THEN 
+     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG1_MAESTRA_HITOS_VALORES... Tabla YA EXISTE');
+  ELSE
+     --Creamos la tabla
+     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG1_MAESTRA_HITOS_VALORES as select * from '||V_ESQUEMA||'.mig_maestra_hitos_valores';
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG1_MAESTRA_HITOS_VALORES... Tabla creada');
+  END IF;
+  
+  -- Comprobamos si existe la tabla   
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_PARAM_HITOS'' and owner = '''||V_ESQUEMA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+      -- Si existe la tabla no hacemos nada
+  IF V_NUM_TABLAS = 1 THEN 
+     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG1_PARAM_HITOS... Tabla YA EXISTE');
+  ELSE
+     --Creamos la tabla
+     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG1_PARAM_HITOS as select * from '||V_ESQUEMA||'.mig_param_hitos';
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG1_PARAM_HITOS... Tabla creada');
+  END IF;
+
+  -- Comprobamos si existe la tabla   
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_PARAM_HITOS_VALORES'' and owner = '''||V_ESQUEMA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+      -- Si existe la tabla no hacemos nada
+  IF V_NUM_TABLAS = 1 THEN 
+     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG1_PARAM_HITOS_VALORES... Tabla YA EXISTE');
+  ELSE
+     --Creamos la tabla
+     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG1_PARAM_HITOS_VALORES as select * from '||V_ESQUEMA||'.mig_param_hitos_valores';
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG1_PARAM_HITOS_VALORES... Tabla creada');
+  END IF;
+
+  -- Comprobamos si existe la tabla   
   V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_PROCEDIMIENTOS_ACTORES'' and owner = '''||V_ESQUEMA||'''';
   EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       -- Si existe la tabla no hacemos nada
@@ -48,16 +104,16 @@ BEGIN
   END IF;
 
   -- Comprobamos si existe la tabla   
-  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_CONCURSOS_CABECERA'' and owner = '''||V_ESQUEMA||'''';
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MIG1_PROCEDIMIENTOS_CABECERA'' and owner = '''||V_ESQUEMA||'''';
   EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
       -- Si existe la tabla no hacemos nada
   IF V_NUM_TABLAS = 1 THEN 
-     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG1_CONCURSOS_CABECERA... Tabla YA EXISTE');
+     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.MIG1_PROCEDIMIENTOS_CABECERA... Tabla YA EXISTE');
   ELSE
      --Creamos la tabla
-     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG1_CONCURSOS_CABECERA as select * from '||V_ESQUEMA||'.mig_concursos_cabecera';
+     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MIG1_PROCEDIMIENTOS_CABECERA as select * from '||V_ESQUEMA||'.mig_procedimientos_cabecera';
      EXECUTE IMMEDIATE V_MSQL;
-     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG1_CONCURSOS_CABECERA... Tabla creada');
+     DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.MIG1_PROCEDIMIENTOS_CABECERA... Tabla creada');
   END IF;
   
   -- Comprobamos si existe la tabla   

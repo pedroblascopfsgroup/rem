@@ -831,3 +831,10 @@ button.icon_checkbox_on, .icon_checkbox_on {
 * html .icon_delegacion_tareas{
   background: transparent url('delegacion_tareas.png') no-repeat;
 }
+
+.icon_historico_delegaciones{
+  background: transparent url('historico-delegaciones.png') no-repeat;
+}
+* html .icon_historico_delegaciones{
+  background: transparent url('historico-delegaciones.png') no-repeat;
+}

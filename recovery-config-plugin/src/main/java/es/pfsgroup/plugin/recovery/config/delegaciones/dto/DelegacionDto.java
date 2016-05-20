@@ -14,7 +14,7 @@ public class DelegacionDto extends WebDto{
 	private Long usuarioDestino;
 	private String fechaIniVigencia;
 	private String fechaFinVigencia;
-	private Long estado;
+	private String estado;
 	
 	
 	public Long getId() {
@@ -52,10 +52,10 @@ public class DelegacionDto extends WebDto{
 		this.fechaFinVigencia = fechaFinVigencia;
 	}
 	
-	public Long getEstado() {
+	public String getEstado() {
 		return estado;
 	}
-	public void setEstado(Long estado) {
+	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 	

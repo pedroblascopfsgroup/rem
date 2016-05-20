@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -14,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.config.delegaciones.api.DelegacionApi;
+import es.pfsgroup.plugin.recovery.config.delegaciones.dao.DelegacionDao;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionDto;
 import es.pfsgroup.plugin.recovery.config.delegaciones.model.DDEstadoDelegaciones;
 import es.pfsgroup.plugin.recovery.config.delegaciones.model.Delegacion;
@@ -23,6 +25,9 @@ public class DelegacionManager implements DelegacionApi {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private DelegacionDao delegacionDao;
 
 	@Override
 	public Delegacion convertDelegacionDtoTODelegacion(DelegacionDto dto) {
@@ -79,16 +84,53 @@ public class DelegacionManager implements DelegacionApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void saveDelegacion(DelegacionDto dto) {
+	public void saveOrUpdateDelegacion(DelegacionDto dto) {
 		
 		Delegacion delegacion = convertDelegacionDtoTODelegacion(dto);
-		Auditoria auditoria = Auditoria.getNewInstance();
-		delegacion.setAuditoria(auditoria);
-		Filter filter = genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoDelegaciones.ACTIVA);
-		DDEstadoDelegaciones estado = genericDao.get(DDEstadoDelegaciones.class, filter);
-		delegacion.setEstado(estado);
-		genericDao.save(Delegacion.class,delegacion);
 		
+		if(Checks.esNulo(dto.getId())){
+			
+			Auditoria auditoria = Auditoria.getNewInstance();
+			delegacion.setAuditoria(auditoria);
+			Filter filter = genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoDelegaciones.PREPARADA);
+			DDEstadoDelegaciones estado = genericDao.get(DDEstadoDelegaciones.class, filter);
+			delegacion.setEstado(estado);
+			
+		}
+		
+		delegacionDao.saveOrUpdate(delegacion);
+	}
+
+	@Override
+	public Page getListDelegaciones(DelegacionDto dto) {
+		if(!Checks.esNulo(dto)){
+			return delegacionDao.getDelegaciones(dto);
+		}else{
+			return null;
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void borrarDelegacion(Long idDelegacion) {
+		genericDao.deleteById(Delegacion.class, idDelegacion);
+	}
+
+	@Override
+	public DelegacionDto convertDelegacionTODelegacionDto(Delegacion delegacion) {
+	
+		DelegacionDto dto = new DelegacionDto();
+		
+		SimpleDateFormat frmt = new SimpleDateFormat("dd/MM/yyyy");
+		
+		dto.setId(delegacion.getId());
+		dto.setEstado(delegacion.getEstado().getDescripcion());
+		dto.setFechaFinVigencia(frmt.format(delegacion.getFechaFinVigencia()));
+		dto.setFechaIniVigencia(frmt.format(delegacion.getFechaIniVigencia()));
+		dto.setUsuarioDestino(delegacion.getUsuarioDestino().getId());
+		dto.setUsuarioOrigen(delegacion.getUsuarioOrigen().getId());
+		
+		return dto;
 	}
 
 }

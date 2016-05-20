@@ -37,7 +37,7 @@ public class Delegacion implements Serializable, Auditable {
 	@Id
 	@Column(name="DEL_ZPU_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="DelegacionGenerator")
-	@SequenceGenerator(name="DelegacionGenerator", sequenceName = "S_DEL_DELEGACIONES")
+	@SequenceGenerator(name="DelegacionGenerator", sequenceName = "S_DEL_ZPU_DELEGACIONES")
 	private Long id;
 	
 	@ManyToOne
@@ -120,12 +120,10 @@ public class Delegacion implements Serializable, Auditable {
 		this.version = version;
 	}
 
-	@Override
 	public Auditoria getAuditoria() {
 		return this.auditoria;
 	}
 
-	@Override
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}

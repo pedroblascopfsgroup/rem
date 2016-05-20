@@ -19,7 +19,7 @@
 	]);
 	 	
 	var usuarioOrigenStore = page.getStore({
-	       flow: 'coreextension/getListAllUsersPaginated'
+	       flow: 'delegaciontareas/getListAllUsersPaginated'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoUsuarios'
 	    }, usuarioRecord)	       
@@ -51,7 +51,7 @@
 	
 	
 	var usuarioDestinoStore = page.getStore({
-	       flow: 'coreextension/getListAllUsersPaginated'
+	       flow: 'delegaciontareas/getListAllUsersPaginated'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoUsuarios'
 	    }, usuarioRecord)	       
@@ -71,8 +71,24 @@
 		resizable: true,
 		pageSize: 10,
 		triggerAction: 'all',
-		mode: 'remote'
-	});
+		mode: 'remote',
+		enableKeyEvents :true
+	});	
+	
+	if('${idDelegacion}' != ''){
+			usuarioOrigenStore.load({params:{idUsuario:'${delegacion.usuarioOrigen}'}});
+			usuarioOrigenStore.on('load', function(){
+				comboUsuarioOrigen.setValue('${delegacion.usuarioOrigen}');
+				comboUsuarioOrigen.store.events['load'].clearListeners();
+			});
+	
+			usuarioDestinoStore.load({params:{idUsuario:'${delegacion.usuarioDestino}'}});
+	 		usuarioDestinoStore.on('load', function(){
+				comboUsuarioDestino.setValue('${delegacion.usuarioDestino}');
+				comboUsuarioDestino.store.events['load'].clearListeners();
+			});	
+	}
+	
 	
 	var hoy = new Date();
 	var tomorrow = hoy.add(Date.DAY, 1);
@@ -82,7 +98,7 @@
         ,fieldLabel : '<s:message
 		code="plugin.config.delegaciones.new.desde"
 		text="**Desde" />'
-        ,value : ''
+        ,value : '${delegacion.fechaIniVigencia}'
         ,allowBlank : false
         ,width:125
         ,minValue: tomorrow
@@ -103,7 +119,7 @@
         ,fieldLabel : '<s:message
 		code="plugin.config.delegaciones.new.hasta"
 		text="**Hasta" />'
-        ,value : ''
+        ,value : '${delegacion.fechaFinVigencia}'
         ,allowBlank : false
         ,width:125
         ,minValue: tomorrow
@@ -124,8 +140,12 @@
 		
 		p.usuarioOrigen = '${idUserOrigen}';
 		<sec:authorize ifAllGranted="DELEGAR-CUALQUIER-TAREAS">
-			p.usuarioOrigen:comboUsuarioOrigen.getValue();
+			p.usuarioOrigen = comboUsuarioOrigen.getValue();
 		</sec:authorize>
+		
+		if('${idDelegacion}' != ''){
+			p.id = '${idDelegacion}';
+		}
 		
 		return p;			
 	}
@@ -138,7 +158,7 @@
        ,handler:function(){
       		if (camposRellenos()){
 					Ext.Ajax.request({
-					url: page.resolveUrl('delegaciontareas/crearDelegacion')
+					url: page.resolveUrl('delegaciontareas/createOrUpdateDelegacion')
 					,params: createParams()
 					,method: 'POST'
 					,success: function (result, request){

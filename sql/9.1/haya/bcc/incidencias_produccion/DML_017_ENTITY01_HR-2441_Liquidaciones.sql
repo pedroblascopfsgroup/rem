@@ -24,8 +24,8 @@ DECLARE
 --##########################################
 --*/
   -- Configuracion Esquemas
-   V_ESQUEMA          VARCHAR2(25 CHAR):= 'HAYA02'; -- Configuracion Esquema
-   V_ESQUEMA_MASTER   VARCHAR2(25 CHAR):= 'HAYAMASTER'; -- Configuracion Esquema Master
+   V_ESQUEMA          VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+   V_ESQUEMA_MASTER   VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
 
    err_num            NUMBER; -- Numero de errores
    err_msg            VARCHAR2(2048); -- Mensaje de error    

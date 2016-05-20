@@ -32,6 +32,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.liquidaciones.avanzado.dao.CalculoLiquidacionDAO;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.DtoCalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionCabecera;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoLiquidacionResumen;
@@ -74,7 +75,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	
 	@Autowired
 	private LIQCobroPagoDao LiqCobroPagoDao;
-
+	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoApi#completarCabecera(es.pfsgroup.plugin.liquidaciones.avanzado.dto.LIQDtoReportRequest)
 	 */
@@ -884,6 +885,67 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		
 		//Borramos el cálculo
 		genericDao.deleteById(CalculoLiquidacion.class, idCalculoLiquidacion);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void copiarLiquidacion(Long idCalculoLiquidacion) {
+	
+		CalculoLiquidacion calculo = this.getCalculoById(idCalculoLiquidacion);
+		if (!Checks.esNulo(calculo)) {
+			CalculoLiquidacion copia = new CalculoLiquidacion();
+			copia.setActuacion(calculo.getActuacion());
+			copia.setAsunto(calculo.getAsunto());
+			copia.setBaseCalculo(calculo.getBaseCalculo());
+			copia.setCapital(calculo.getCapital());
+			copia.setComisiones(calculo.getComisiones());
+			copia.setContrato(calculo.getContrato());
+			copia.setCostasLetrado(calculo.getCostasLetrado());
+			copia.setCostasProcurador(calculo.getCostasProcurador());
+			copia.setDocumentoId(calculo.getDocumentoId());
+			copia.setEstadoCalculo(calculo.getEstadoCalculo());
+			copia.setFechaCierre(calculo.getFechaCierre());
+			copia.setFechaLiquidacion(calculo.getFechaLiquidacion());
+			copia.setGastos(calculo.getGastos());
+			copia.setImpuestos(calculo.getImpuestos());
+			copia.setInteresesDemora(calculo.getInteresesDemora());
+			copia.setInteresesOrdinarios(calculo.getInteresesOrdinarios());
+			copia.setNombre("Copia " + calculo.getNombre());
+			copia.setNombrePersona(calculo.getNombrePersona());
+			copia.setOtrosGastos(calculo.getOtrosGastos());
+			copia.setTipoMoraCierre(calculo.getTipoMoraCierre());
+			copia.setTotalCaculo(calculo.getTotalCaculo());
+			copia.setAuditoria(Auditoria.getNewInstance());
+			
+			genericDao.save(CalculoLiquidacion.class, copia);
+			
+			//Ahora copiamos las actualizaciones tipo interes
+			for (ActualizacionTipoCalculoLiq actu : calculo.getActualizacionesTipo()) {
+				ActualizacionTipoCalculoLiq copiaActu = new ActualizacionTipoCalculoLiq();
+				copiaActu.setCalculoLiquidacion(copia);
+				copiaActu.setFecha(actu.getFecha());
+				copiaActu.setTipoInteres(actu.getTipoInteres());
+				copiaActu.setAuditoria(Auditoria.getNewInstance());
+				
+				genericDao.save(ActualizacionTipoCalculoLiq.class, copiaActu);
+			}
+			
+			//Ahora copiamos las entregas
+			for (EntregaCalculoLiq entrega : this.getEntregasCalculo(idCalculoLiquidacion)) {
+				EntregaCalculoLiq copiaEntrega = new EntregaCalculoLiq();
+				copiaEntrega.setCalculoLiquidacion(copia);
+				copiaEntrega.setConceptoEntrega(entrega.getConceptoEntrega());
+				copiaEntrega.setFechaEntrega(entrega.getFechaEntrega());
+				copiaEntrega.setFechaValor(entrega.getFechaValor());
+				copiaEntrega.setGastosLetrado(entrega.getGastosLetrado());
+				copiaEntrega.setOtrosGastos(entrega.getOtrosGastos());
+				copiaEntrega.setTipoEntrega(entrega.getTipoEntrega());
+				copiaEntrega.setTotalEntrega(entrega.getTotalEntrega());
+				copiaEntrega.setAuditoria(Auditoria.getNewInstance());
+
+				genericDao.save(EntregaCalculoLiq.class, copiaEntrega);
+			}
+		}
 	}
 
 }

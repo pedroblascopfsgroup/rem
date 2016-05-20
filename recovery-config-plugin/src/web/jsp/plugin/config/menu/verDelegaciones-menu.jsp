@@ -13,7 +13,6 @@
                         });
                         w.on(app.event.DONE, function(){
                                 w.close();
-                                page.fireEvent(app.event.DONE);
                         });
                         w.on(app.event.CANCEL, function(){w.close(); });
         }

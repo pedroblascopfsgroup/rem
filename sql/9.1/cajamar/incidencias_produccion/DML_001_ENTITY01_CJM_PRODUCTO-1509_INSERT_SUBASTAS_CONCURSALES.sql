@@ -1,3 +1,19 @@
+--/*
+--##########################################
+--## AUTOR=JAIME SANCHEZ CUENCA
+--## FECHA_CREACION=20160523
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2.3
+--## INCIDENCIA_LINK=PRODUCTO-1509
+--## PRODUCTO=NO
+--## Finalidad: DML que inserta subastas concursales
+--##           
+--## INSTRUCCIONES: 
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON
 

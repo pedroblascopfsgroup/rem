@@ -986,6 +986,7 @@ function(entidad,page){
 					}
 					break;
 				case 'DC' : 
+					
 					if(esGestorSupervisorDeFase){
 						
 						var permEle = false;
@@ -1000,13 +1001,16 @@ function(entidad,page){
 								permDevo = true;
 							}
 						}
+						
 						if(permEle && permDevo){
-							<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
-								if(!d.esRecuperacion){
+							if(d.tipoExpediente != 'REC'){
+								if(d.esRecuperacion){
+									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+								}else{
 									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion9-aceptarPropuesta','expediente-accion2-devolverRevision');
 								}
-							</sec:authorize>
+								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+							}
 						}else if(!permEle && permDevo){
 							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 						}

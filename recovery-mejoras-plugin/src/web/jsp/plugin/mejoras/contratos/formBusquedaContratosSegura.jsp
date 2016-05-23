@@ -160,6 +160,7 @@ var formBusquedaContratos=function(){
 	</c:if>
 
     comboJerarquia.on('select',function(){
+    debugger;
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());

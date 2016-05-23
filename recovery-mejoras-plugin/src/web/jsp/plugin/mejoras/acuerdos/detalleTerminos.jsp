@@ -239,7 +239,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 								,params:{idTerminoAcuerdo:idTerminoSeleccionado}
 								,success: function(){
 									terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});
-									btnBorrarTermino.disable();									
+									btnBorrarTermino.disable();
+									btnVerTermino.disable();											
 									//cantidadAsuntos = asuntosStore.getCount();
 									//contratosStore.on('load',cargarArrayInicial);
 									//contratosStore.webflow({id:${asunto.id}});

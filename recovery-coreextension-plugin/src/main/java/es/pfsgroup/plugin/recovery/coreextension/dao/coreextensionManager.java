@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -16,11 +15,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -60,7 +59,6 @@ import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
-import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.despachoExterno.EXTDespachoExternoComparator;
@@ -847,7 +845,7 @@ public class coreextensionManager implements coreextensionApi {
 		
 		return ranking;
 	}*/
-	
+
 	@BusinessOperation(GET_LIST_BUSQUEDA_TERMINOS)
 	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario) {
 		

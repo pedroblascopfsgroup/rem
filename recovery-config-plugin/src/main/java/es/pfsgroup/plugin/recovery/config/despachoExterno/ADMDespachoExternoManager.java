@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.config.despachoExterno;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,6 +33,7 @@ import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.multigestor.dao.EXTTipoGestorPropiedadDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
@@ -741,6 +743,10 @@ public class ADMDespachoExternoManager {
 			desExtras = new DespachoExternoExtras();
 		} else {
 			desExtras = despachoExtrasDao.get(dto.getId());
+			//Si todavía no hay registro en extras de este despacho, debemos inicializarlo para crearlo.
+			if(Checks.esNulo(desExtras)) {
+				desExtras = new DespachoExternoExtras();
+			}
 		}
 		//Si no es de Tipo Letrado no aplica
 		if(dto.getTipoDespacho() != getIdTipoLetrado()) {
@@ -752,9 +758,13 @@ public class ADMDespachoExternoManager {
 		//Guardamos los extras del despacho
 		despachoExtrasDao.saveOrUpdate(desExtras);
 		
-		//Ahora guardamos las provincias de los extras del despacho
-		if(!Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])) {
+		//Ahora guardamos las provincias de los extras del despacho (Para cuando se hace alta de un nuevo despacho)
+		if(dto.getId() == null && !Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])) {
 			this.guardarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
+		}
+		else if(dto.getId() != null && !Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])){ 
+			//Actualizar el ambito (si quitan o añaden provicinas)
+			this.actualizarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
 		}
 		return desExtras;
 	}
@@ -817,6 +827,12 @@ public class ADMDespachoExternoManager {
 		return proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDProvincia.class);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation("ADMDespachoExternoManager.getDDTipoDocumento")
+	public List<DDTipoDocumento> getDDTipoDocumento() {
+		return proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoDocumento.class);
+	}
+	
 	/**
 	 * Las provincias de los extras del despacho se guardan en una tabla a parte.
 	 * @param provincias
@@ -833,10 +849,35 @@ public class ADMDespachoExternoManager {
 				despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
 				despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
 				
-				extrasAmbitoDao.save(despachoExtrasAmbito);
+				extrasAmbitoDao.saveOrUpdate(despachoExtrasAmbito);
 			}
 		}
 		
+	}
+	
+	/**
+	 * Actualiza Provincias dle ambito del despacho.
+	 * @param provincias
+	 * @param idDespacho
+	 */
+	private void actualizarAmbitoDespachoExtras(String[] provincias, Long idDespacho) {
+		List<DespachoExtrasAmbito> listaAmbitoExtras = genericDao.getList(DespachoExtrasAmbito.class, genericDao.createFilter(FilterType.EQUALS, "despacho.id", idDespacho));
+		List<String> listaCodProvincias = new ArrayList<String>();
+		for(int i=0; i< provincias.length; i++) {
+			listaCodProvincias.add(provincias[i]);
+		}
+		List<String> provinciasSobrantes = new ArrayList<String>();
+		for(DespachoExtrasAmbito ambito : listaAmbitoExtras) {
+			if(!listaCodProvincias.contains(ambito.getProvincia().getCodigo())) {
+				ambito.getAuditoria().setBorrado(true);
+				extrasAmbitoDao.saveOrUpdate(ambito);	
+			} else {
+				provinciasSobrantes.add(ambito.getProvincia().getCodigo());
+			}
+		}
+		listaCodProvincias.removeAll(provinciasSobrantes);
+		
+		this.guardarAmbitoDespachoExtras(listaCodProvincias.toArray(new String[listaCodProvincias.size()]), idDespacho);
 	}
 	
 	/**
@@ -867,16 +908,18 @@ public class ADMDespachoExternoManager {
 	private DespachoExternoExtras transformaDtoAEntityDespachOExtras(ADMDtoDespachoExterno dto, DespachoExternoExtras desExtras) {
 		
 		desExtras.setFax(dto.getFax());
-		if (dto.getFechaAlta() != null) {
+		if (!Checks.esNulo(dto.getFechaAlta())) {
 			try {
-				desExtras.setFechaAlta(DateFormat.toDate(dto.getFechaAlta()));
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+				Date fechaAlta = formatter.parse(dto.getFechaAlta());
+				desExtras.setFechaAlta(fechaAlta);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Error parseando la fecha Alta ", e);
 			}
 		}
 		desExtras.setCorreoElectronico(dto.getCorreoElectronico());
 		desExtras.setDocumentoCif(dto.getDocumentoCif());
-		desExtras.setTipoDocumento(dto.getTipoDocumento());
+		desExtras.setTipoDocumento(genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getTipoDocumento()))));
 		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
 			desExtras.setClasifPerfil(Integer.parseInt(
 					this.getKeyByValue(context.getMapaClasificacionDespachoPerfil(), dto.getClasificacionPerfil())));
@@ -884,7 +927,6 @@ public class ADMDespachoExternoManager {
 		if(!Checks.esNulo(dto.getAsesoria())) {
 			desExtras.setAsesoria(Boolean.parseBoolean(dto.getAsesoria()));
 		}
-		desExtras.setCentroRecuperacion(dto.getClasificacionConcursos());
 		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
 			desExtras.setClasifConcursos(Boolean.parseBoolean(dto.getClasificacionConcursos()));
 		}
@@ -905,6 +947,7 @@ public class ADMDespachoExternoManager {
 		desExtras.setOficinaEntregas(dto.getOficinaEntregas());
 		desExtras.setOficinaLiquidacion(dto.getOficinaLiquidacion());
 		desExtras.setOficinaProvisiones(dto.getOficinaProvisiones());
+		desExtras.setCentroRecuperacion(dto.getCentroRecuperacion());
 		if(!Checks.esNulo(dto.getRelacionBankia())) {
 			desExtras.setRelacionBankia(Integer.parseInt(
 					this.getKeyByValue(context.getMapaRelacionBankia(), dto.getRelacionBankia())));			
@@ -912,7 +955,7 @@ public class ADMDespachoExternoManager {
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			desExtras.setServicioIntegral(Boolean.parseBoolean(dto.getServicioIntegral()));
 		}
-		if(!Checks.esNulo(dto.getServicioIntegral())) {
+		if(!Checks.esNulo(dto.getContratoVigor())) {
 			desExtras.setContratoVigor(Integer.parseInt(
 					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
 		}

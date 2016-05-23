@@ -24,7 +24,9 @@
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDProvincias')" 
 				result="flowScope.listaProvincias" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getIdTipoLetrado')" 
-				result="flowScope.idTipoLetrado" />					
+				result="flowScope.idTipoLetrado" />	
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDTipoDocumento')" 
+				result="flowScope.tiposDocumentos" />					
 		</on-entry>
 	</end-state>
 	

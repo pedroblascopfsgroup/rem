@@ -91,19 +91,10 @@
 	<pfs:textfield labelKey="plugin.config.despachoExternoExtras.field.irpfAplicado" label="**irpfAplicado" name="irpfAplicado" value="${despachoExtras.irpfAplicado}" />
 	<pfs:datefield labelKey="plugin.config.despachoExternoExtras.field.fechaServicioIntegral" label="**Fecha SI" name="fechaServicioIntegral" value="${despachoExtras.fechaServicioIntegral}" />
 	
-	var tipoDocumento = new Ext.form.TextField({
-		fieldLabel: '<s:message code="plugin.config.despachoExternoExtras.field.tipoDocumento" text="**tipoDocumento" />' 
-		,value:'${despachoExtras.tipoDoc}'
-		,maxLength: 1
-		,enforceMaxLength: true
-		,width: 30
-	});
-	
-	tipoDocumento.on('change', function(){
-	 if(tipoDocumento.getValue().length > 1) {
-	 	tipoDocumento.setValue(tipoDocumento.getValue()[0]);
-	 }
-	});
+	<pfsforms:ddCombo name="tipoDocumento"
+		labelKey="plugin.config.despachoExternoExtras.field.tipoDocumento" label="**Tipo de documento"
+		value="" dd="${tiposDocumentos}" />
+	tipoDocumento.setValue('${despachoExtras.doc.id}');	
 	
 	var documentoCif = new Ext.form.TextField({
 		fieldLabel: '<s:message code="plugin.config.despachoExternoExtras.field.documento" text="**documentoCif" />' 
@@ -164,7 +155,7 @@
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
 		,width:125
 		,value:'${despachoExtras.clasifDespachoPerfil}'
-	})
+	});
 	
 	var codEstAseStore = 
 		<json:array name="ddCodEstAse" items="${mapasDespExtras[2]}" var="d">	
@@ -179,7 +170,7 @@
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.codEstAse" text="**codEstAse" />'
 		,width:150
 		,value:'${despachoExtras.codEstAse}'
-	})
+	});
 	
 	
 	var impuestoStore = 
@@ -196,7 +187,7 @@
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.impuesto" text="**impuesto" />'
 		,width:150
 		,value:'${despachoExtras.ivaDescripcion}'
-	})
+	});
 	
 	var relacionBankiaStore = 
 		<json:array name="ddrelacionBankia" items="${mapasDespExtras[4]}" var="d">	
@@ -211,11 +202,11 @@
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
 		,width:150
 		,value:'${despachoExtras.relacionBankia}'
-	})
+	});
 
 	   	
 	var provinciasData = <app:dict value="${listaProvincias}" />;
-   var comboProvincias = app.creaDblSelect(provinciasData 
+    var comboProvincias = app.creaDblSelect(provinciasData 
     	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
     	,config);
  	

@@ -6,7 +6,10 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -14,6 +17,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 
 
 /**
@@ -121,8 +125,10 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	@Column(name = "DEE_CORREO_ELECTRONICO")
 	private String correoElectronico;
 	
-	@Column(name = "DEE_TIPO_DOC")
-	private String tipoDocumento;
+	@OneToOne(fetch = FetchType.LAZY)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @JoinColumn(name = "DD_TDI_ID")
+	private DDTipoDocumento tipoDocumento;
 	
 	@Column(name = "DEE_DOCUMENTO")
 	private String documentoCif;
@@ -356,11 +362,11 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.correoElectronico = correoElectronico;
 	}
 
-	public String getTipoDocumento() {
+	public DDTipoDocumento getTipoDocumento() {
 		return tipoDocumento;
 	}
 
-	public void setTipoDocumento(String tipoDocumento) {
+	public void setTipoDocumento(DDTipoDocumento tipoDocumento) {
 		this.tipoDocumento = tipoDocumento;
 	}
 

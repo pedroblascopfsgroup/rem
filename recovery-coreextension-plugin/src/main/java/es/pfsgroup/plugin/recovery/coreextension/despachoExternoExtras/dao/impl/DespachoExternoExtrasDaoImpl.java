@@ -73,7 +73,8 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 			despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));
 		}
 		despachoExtrasDto.setServicioIntegral(despachoExtras.isServicioIntegral() ? "Si" : "No");
-		despachoExtrasDto.setTipoDoc(despachoExtras.getTipoDocumento());
+		despachoExtrasDto.setTipoDoc(!Checks.esNulo(despachoExtras.getTipoDocumento()) ? despachoExtras.getTipoDocumento().getDescripcion() : "");
+		despachoExtrasDto.setDoc(despachoExtras.getTipoDocumento());
 		
 		return despachoExtrasDto;
 	}

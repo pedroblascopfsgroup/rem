@@ -99,7 +99,7 @@
 					,{id:'DespachoExterno${despacho.id}'}
 				)
 	};
-	
+	<%--
 	<pfs:buttonedit name="btModificar" 
 			flow=""  
 			windowTitleKey="plugin.config.despachoExterno.modificar.windowName" 
@@ -107,8 +107,8 @@
 			windowTitle="**Modificar despacho" 
 			defaultWidth="800"
 			on_success="recargar" />
-	
-	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho" bbar="btModificar" >
+	 --%>
+	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
 		<pfs:items items="clasificacionFieldSet, provinciasGrid"/>
 		<pfs:items items="contratoVigor, servicioIntegral, codEstAse, oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion" />
 		<pfs:items items="entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />

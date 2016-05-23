@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -38,7 +37,6 @@ import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.multigestor.model.EXTGestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
-import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -833,5 +831,4 @@ public class coreextensionManager implements coreextensionApi {
 		
 		return ranking;
 	}*/
-
 }

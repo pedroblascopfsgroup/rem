@@ -2,7 +2,7 @@
 --##########################################
 --## AUTOR=JORGE ROS
 --## FECHA_CREACION=20160502
---## ARTEFACTO=produc
+--## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1272
 --## PRODUCTO=SI
@@ -77,7 +77,7 @@ BEGIN
 				,DEE_CENTRO_RECUP				VARCHAR2(60 CHAR)
 				,DEE_CORREO_ELECTRONICO			VARCHAR2(100 CHAR)
 				,DEE_ACEPTACION_ACCESO			NUMBER(1)			DEFAULT 0
-				,DEE_TIPO_DOC					VARCHAR2(1 CHAR)
+				,DD_TDI_ID						NUMBER(16)
 				,DEE_DOCUMENTO					VARCHAR2(10 CHAR)
 				,DEE_ASESORIA					NUMBER(1)			DEFAULT 0
 				,DEE_IVA_APL					NUMBER(5,2)
@@ -95,6 +95,7 @@ BEGIN
   			   	,BORRADO                   	  	NUMBER(1)           DEFAULT 0  NOT NULL
 			   	,CONSTRAINT PK_DEE_DESPACHO_EXTRAS_ID PRIMARY KEY (DES_ID)
 				,CONSTRAINT FK_DEE_DES FOREIGN KEY (DES_ID) REFERENCES '|| V_ESQUEMA ||'.DES_DESPACHO_EXTERNO (DES_ID)
+				,CONSTRAINT FK_DEE_DD_TDI FOREIGN KEY (DD_TDI_ID) REFERENCES '|| V_ESQUEMA ||'.DD_TDI_TIPO_DOCUMENTO_ID (DD_TDI_ID)
                )';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DEE_DESPACHO_EXTRAS... Tabla creada');
@@ -111,9 +112,7 @@ BEGIN
 		V_MSQL := 'comment on column '||v_esquema||'.DEE_DESPACHO_EXTRAS.DEE_REL_BANKIA IS ''Relacion Bankia. Valores posibles:[0/1/2/3/4] --> [En devinculacion/Sin turno/Sin acceso/Turno Activo/Historico] - MAPEADOS en recovery''';
 		EXECUTE IMMEDIATE V_MSQL;
 		V_MSQL := 'comment on column '||v_esquema||'.DEE_DESPACHO_EXTRAS.DEE_FECHA_ALTA IS ''Fecha en la que se dio de alta el despacho en los sistemas Bankia''';
-		EXECUTE IMMEDIATE V_MSQL;
-		V_MSQL := 'comment on column '||v_esquema||'.DEE_DESPACHO_EXTRAS.DEE_TIPO_DOC IS ''Es el tipo de documento (Tipo CIF) del despacho''';
-		EXECUTE IMMEDIATE V_MSQL;
+		EXECUTE IMMEDIATE V_MSQL;		
 		V_MSQL := 'comment on column '||v_esquema||'.DEE_DESPACHO_EXTRAS.DEE_DOCUMENTO IS ''CIF del despacho''';
 		EXECUTE IMMEDIATE V_MSQL;
 		V_MSQL := 'comment on column '||v_esquema||'.DEE_DESPACHO_EXTRAS.DEE_IVA_DES IS ''Descripcion impuesto. Valores posibles:[0/1] --> [IGIC/IVA] - MAPEADOS en recovery''';

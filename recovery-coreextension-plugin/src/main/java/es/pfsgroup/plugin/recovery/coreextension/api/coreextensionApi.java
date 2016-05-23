@@ -49,7 +49,6 @@ public interface coreextensionApi {
 	String GET_SUPERVISOR_GESTOR_ADICIONAL_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getSupervisorPorAsuntoEntidad";
 	String GET_TIPO_GESTOR_SUPERVISOR_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getTipoGestorSupervisorPorAsuntoEntidad";
 	String GET_DESPACHO_SUPERVISOR_POR_CODIGO_ENTIDAD= "plugin.recovery.coreextension.api.getDespachoSupervisorPorAsuntoEntidad";
-
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
 	List<EXTDDTipoGestor> getList(String ugCodigo);

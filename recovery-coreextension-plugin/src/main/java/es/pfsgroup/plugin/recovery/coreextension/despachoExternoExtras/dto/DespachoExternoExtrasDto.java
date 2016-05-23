@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dto;
 
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+
 public class DespachoExternoExtrasDto {
 
 	private String fax;
@@ -32,6 +34,7 @@ public class DespachoExternoExtrasDto {
 	private String clasifDespachoConcursos;
 	private String clasifDespachoPerfil;
 	private String relacionBankia;
+	private DDTipoDocumento doc;
 	
 	public String getFax() {
 		return fax;
@@ -212,5 +215,11 @@ public class DespachoExternoExtrasDto {
 	}
 	public void setRelacionBankia(String relacionBankia) {
 		this.relacionBankia = relacionBankia;
+	}
+	public DDTipoDocumento getDoc() {
+		return doc;
+	}
+	public void setDoc(DDTipoDocumento doc) {
+		this.doc = doc;
 	}
 }

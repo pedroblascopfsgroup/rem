@@ -35,6 +35,9 @@
 	<bean p:entity="plugin.mejoras.web.asuntos.tabs" p:name="filtrosAsuntoDatosGestor"
 		p:order="1" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/filtrosGestor.jsp"
 		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+	<bean p:entity="plugin.mejoras.web.asuntos.tabs" p:name="filtrosAsuntoDatosLetrado"
+		p:order="1" p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/tabs/filtrosLetrado.jsp"
+		p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER_TAB_LETRADOS_BUSCADOR_ASU"/>
 		
 	<!--   <bean p:entity="menu" p:name="busquedas/asuntosDinamico" p:order="1"  
 		  p:fileName="/WEB-INF/jsp/plugin/coreextension/asunto/busqueda/btnBusquedaDinamico.jsp"

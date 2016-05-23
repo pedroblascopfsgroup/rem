@@ -14,7 +14,7 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fax" label="**Fax" name="fax" value="${despachoExtras.fax}" readOnly="true" width="350" labelWidth="150"/>	
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fechaAlta" label="**Fecha alta" name="fechaAlta" value="${despachoExtras.fechaAlta}" readOnly="true" width="350" labelWidth="150"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.correoElectronico" label="**correoElectronico" name="correoElectronico" value="${despachoExtras.correoElectronico}" readOnly="true" width="350" labelWidth="150"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.tipoDocumento" label="**tipoDocumento" name="tipoDocumento" value="${despachoExtras.tipoDoc}" readOnly="true" width="350" labelWidth="150"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.tipoDocumento" label="**tipoDocumento" name="tipoDocumento" value="${despachoExtras.doc.descripcion}" readOnly="true" width="350" labelWidth="150"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.documento" label="**documento CIF" name="documentoCif" value="${despachoExtras.documentoCif}" readOnly="true" width="350" labelWidth="150"/>
 	
 	<%-- Fin Campos nuevos --%>

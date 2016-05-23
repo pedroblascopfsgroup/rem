@@ -220,7 +220,7 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setFechaAlta(String fechaAlta) {
-		fechaAlta = fechaAlta.substring(0, 10).replace("-", "/");
+		fechaAlta = fechaAlta.replace("-", "/");
 		this.fechaAlta = fechaAlta;
 	}
 
@@ -246,7 +246,12 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setClasificacionConcursos(String clasificacionConcursos) {
-		this.clasificacionConcursos = clasificacionConcursos;
+		if(clasificacionConcursos.equals("01")) {
+			this.clasificacionConcursos = "true";
+		}
+		if(clasificacionConcursos.equals("02")) {
+			this.clasificacionConcursos = "false";
+		}
 	}
 
 	public String getCodEstAse() {
@@ -270,7 +275,12 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setServicioIntegral(String servicioIntegral) {
-		this.servicioIntegral = servicioIntegral;
+		if(servicioIntegral.equals("01")) {
+			this.servicioIntegral = "true";
+		}
+		if(servicioIntegral.equals("02")) {
+			this.servicioIntegral = "false";
+		}
 	}
 
 	public String getFechaServicioIntegral() {
@@ -414,7 +424,12 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setAsesoria(String asesoria) {
-		this.asesoria = asesoria;
+		if(asesoria.equals("01")) {
+			this.asesoria = "true";
+		}
+		if(asesoria.equals("02")) {
+			this.asesoria = "false";
+		}
 	}
 
 }

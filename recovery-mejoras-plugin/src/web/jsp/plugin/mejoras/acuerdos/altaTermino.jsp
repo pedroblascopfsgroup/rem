@@ -196,12 +196,58 @@
 				    	Ext.getCmp('${operacion.campo.nombreCampo}').setDisabled(false);
 					</c:forEach>
 		       	}
+		       	
+				if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+					ocultarMostrarCamposCargas();
+					Ext.getCmp('cargasPosterioresAnteriores').on ('select', function(record, index ) {
+						ocultarMostrarCamposCargas();
+					});
+				}
 				
+				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+					ocultarMostrarCamposSolvencia();
+					Ext.getCmp('otrosBienesSolvencia').on ('select', function(record, index ) {
+						ocultarMostrarCamposSolvencia();
+					});
+				}		
+				
+				if (Ext.getCmp('datosContacto1')!=undefined) {
+					datosContacto1.maxLength = 9;
+				}
+				if (Ext.getCmp('datosContacto2')!=undefined) {
+					datosContacto2.maxLength = 9;
+				}
 			}
 			,error: function(){
 			}       				
 		});
-	};				
+	};
+	
+	var ocultarMostrarCamposCargas = function() {
+		if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+			//Mostramos el resto de campos solo si su valor = 1
+			if (Ext.getCmp('cargasPosterioresAnteriores').value != 1) {
+				if(Ext.getCmp('valoracionCargas')!=undefined) Ext.getCmp('valoracionCargas').setVisible(false);
+				if(Ext.getCmp('descripcionCargas')!=undefined) Ext.getCmp('descripcionCargas').setVisible(false);
+			} else {
+				if(Ext.getCmp('valoracionCargas')!=undefined) Ext.getCmp('valoracionCargas').setVisible(true);
+				if(Ext.getCmp('descripcionCargas')!=undefined) Ext.getCmp('descripcionCargas').setVisible(true);				
+			}
+		}
+	}
+	
+	var ocultarMostrarCamposSolvencia = function() {
+		if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+			//Mostramos el resto de campos solo si su valor = 1
+			if (Ext.getCmp('otrosBienesSolvencia').value != 1) {
+				if(Ext.getCmp('valoracionBienesSolvencia')!=undefined) Ext.getCmp('valoracionBienesSolvencia').setVisible(false);
+				if(Ext.getCmp('descripcionBienesSolvencia')!=undefined) Ext.getCmp('descripcionBienesSolvencia').setVisible(false);
+			} else {
+				if(Ext.getCmp('valoracionBienesSolvencia')!=undefined) Ext.getCmp('valoracionBienesSolvencia').setVisible(true);
+				if(Ext.getCmp('descripcionBienesSolvencia')!=undefined) Ext.getCmp('descripcionBienesSolvencia').setVisible(true);				
+			}
+		}	
+	}
 	
 	var optionsSubtiposAcuerdosStore = page.getStore({
 	       flow: 'mejacuerdo/getListSubTiposAcuerdosData'
@@ -363,6 +409,33 @@
 					
 					return false;
        			}
+       			
+       			if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+       				if (Ext.getCmp('cargasPosterioresAnteriores').value==1) {
+       					if (valoracionCargas.value=='' || descripcionCargas.value=='') {
+       						Ext.Msg.show({
+       							title:'Aviso',
+       							msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.camposCargas.obligatorios" text="**Debe rellenar la información para la Carga" />',
+       							buttons: Ext.Msg.OK
+       						});
+       						return false;
+       					}
+       				}
+       			}
+       			
+				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+					if (Ext.getCmp('otrosBienesSolvencia').value==1) {
+						if (valoracionBienesSolvencia.value=='' || descripcionBienesSolvencia.value=='') {
+      						Ext.Msg.show({
+       							title:'Aviso',
+       							msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.camposSolvencia.obligatorios" text="**Debe rellenar la información para Otros Bienes/Solvencia" />',
+       							buttons: Ext.Msg.OK
+       						});
+       						return false;						
+						}
+					}
+				}       			
+       			
        			<%--if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));
        				date = Ext.util.Format.date(date, "d/m/y");

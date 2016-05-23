@@ -24,6 +24,11 @@
 			<artifactId>recovery-domain</artifactId>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-gestordocumental-plugin</artifactId>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -139,4 +139,16 @@ public class MEJContratoManager extends
     	return listAtipicosContrato;
     }
 
+	@Override
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_GET_ESTADO_BLOQUEO)
+	public String getEstadoBloqueo(Long idContrato) {
+		String estado = contratoDao.getEstadoBloqueoContrato(idContrato);
+		if(!Checks.esNulo(estado)){
+			return estado;
+		}else{
+			return null;
+		}
+	}
+
+    
 }

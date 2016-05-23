@@ -279,13 +279,15 @@
 		,{name:'idProcedimiento'}
 		,{name:'tipoActuacion'}
 		,{name:'actuacion'}
-		,{name:'fcreacion',type:'date', dateFormat:'d/m/Y'}
+		//,{name:'fcreacion',type:'date', dateFormat:'d/m/Y'}
 		,{name:'gestor'}
 		,{name:'estado'}
 		,{name:'supervisor'}
 		,{name:'principal'}
 		,{name:'tipoAsuntoDescripcion'}
 		,{name:'idAsunto'}
+		,{name:'usuarioCrear'}
+		,{name:'usuarioCrearActuacion'}
 		//,{name:'despacho'}	
 	]);
 
@@ -361,10 +363,9 @@
 	}, {
 		header: '<s:message code="asuntos.listado.actuacion" text="**Actuacin"/>',
 		width:140, dataIndex: 'actuacion',sortable:false
-	},{
-		header: '<s:message code="asuntos.listado.fcreacion" text="**Fecha Creacion"/>',
-		hidden:true, dataIndex: 'fcreacion'
-		,renderer:app.format.dateRenderer,sortable:false
+<%-- 	},{ 
+ 		header: '<s:message code="asuntos.listado.fcreacion" text="**Fecha Creacion"/>', 
+		hidden:true, dataIndex: 'fcreacion' --%>
 	},{
 		header: '<s:message code="asuntos.listado.gestor" text="**Gestor"/>',
 		hidden:true, dataIndex: 'gestor',sortable:false
@@ -413,6 +414,7 @@
 	var btnEditar = new Ext.Button({
 		text: '<s:message code="decisionComite.boton.editarAsunto" text="**Editar Asunto" />',
 		iconCls: 'icon_edit',
+		disabled: true,
 		handler: function(){
 			if (idAsuntoSeleccionado){
 				var win = app.openWindow({
@@ -439,6 +441,7 @@
 	var btnBorrar = new Ext.Button({
 		text: '<s:message code="asuntos.boton.borrar" text="**Borrar Asunto" />',
 		iconCls: 'icon_menos',
+		disabled: true,
 		handler: function(){
 			if (idAsuntoSeleccionado){
 				//BORRAR EL ASUNTOS
@@ -477,6 +480,7 @@
 	    text:  '<s:message code="decisionComite.boton.nuevoProcedimiento" text="**Agregar Procedimiento" />'
         ,iconCls : 'icon_mas'
 		,cls: 'x-btn-text-icon'
+		,disabled: true
         ,handler:function(){
 			if (asuntosGrid.store.data.length && asuntosGrid.store.data.length>0){
 				if (idAsuntoSeleccionado){
@@ -511,6 +515,7 @@
 		           text:  '<s:message code="decisionComite.boton.borrarProcedimiento" text="**Borrar Procedimiento" />'
 	           ,iconCls : 'icon_menos'
 			   ,cls: 'x-btn-text-icon'
+			   ,disabled: true
 	           ,handler:function(){ 
 						 	if (idProcSeleccionado){
 					 		Ext.Msg.confirm("<s:message code="dc.proc.borrarProcedimiento" text="**BorrarProcedimiento" />", 
@@ -545,6 +550,7 @@
 		           text:  '<s:message code="decisionComite.boton.editarProcedimiento" text="**Editar Procedimiento" />'
 		           ,iconCls : 'icon_edit'
 				,cls: 'x-btn-text-icon'
+				,disabled: true
 		           ,handler:function(){
 					if (asuntosGrid.store.data.length && asuntosGrid.store.data.length>0){
 						if (idProcSeleccionado){
@@ -595,16 +601,34 @@
 		var rec = grid.getStore().getAt(rowIndex);
 		idAsuntoSeleccionado = rec.get('id');
 		idProcSeleccionado = rec.get('idProcedimiento');
+		
+		var username = app.usuarioLogado.username;
+    	var isGestor = permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idGestorActual'));
+		var isSupervisor = permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idSupervisorActual'));
+		
 		if(idAsuntoSeleccionado!='') {
-			btnEditar.enable();
-			btnBorrar.enable();
-			btnAltaProcedimiento.enable();
+
+			if(isSupervisor ||  (isGestor && username == rec.get('usuarioCrear'))){
+				btnEditar.enable();
+				btnBorrar.enable();
+				btnAltaProcedimiento.enable();
+			}else{
+				btnEditar.disable();
+				btnBorrar.disable();
+				btnAltaProcedimiento.disable();
+			}
 			btnEditProcedimiento.disable();
 			btnBorraProcedimiento.disable();
 		} else {
+			
+			if(isSupervisor ||  (isGestor && username == rec.get('usuarioCrearActuacion'))){
+				btnEditProcedimiento.enable();
+				btnBorraProcedimiento.enable();
+			}else{
+				btnEditProcedimiento.disable();
+				btnBorraProcedimiento.disable();
+			}
 			idAsuntoSeleccionado = rec.get('idAsunto');
-			btnEditProcedimiento.enable();
-			btnBorraProcedimiento.enable();
 			btnEditar.disable();
 			btnBorrar.disable();
 			btnAltaProcedimiento.disable();
@@ -793,6 +817,13 @@
                                                                                                                                                                        
 	panel.getValue = function(){};
 	panel.setValue = function(){
+	
+		btnEditar.disable();
+		btnBorrar.disable();
+		btnAltaProcedimiento.disable();
+		btnEditProcedimiento.disable();
+		btnBorraProcedimiento.disable();
+	
 		sesion.setValue(entidad.getData("decision.ultimaSesion")); 
 		comite.setValue(entidad.getData("decision.comite")); 
 		fecha.setValue(entidad.getData("decision.fechaUltimaSesion")); 
@@ -808,21 +839,50 @@
 		entidad.cacheOrLoad(entidad.getData(), asuntosStore, {id : entidad.getData("id"), idSesion : entidad.getData("decision.ultimaSesion") });
 
     var congelado = entidad.getData("decision.estaCongelado");
-    var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+
+    var esGestorSupervisorDeFase = entidad.getData("esGestorSupervisorActual");
     
-    var visible = [
-      [btnActuacion, congelado && esGestorSupervisorDeFase]
-		,[btnNuevo, congelado && esGestorSupervisorDeFase]
-        ,[btnEditar, congelado && esGestorSupervisorDeFase]
-        ,[btnBorrar, congelado && esGestorSupervisorDeFase]
-        ,[btnAltaProcedimiento, congelado && esGestorSupervisorDeFase]
-        ,[btnEditProcedimiento, congelado && esGestorSupervisorDeFase]
-        ,[btnBorraProcedimiento, congelado && esGestorSupervisorDeFase]
-        <sec:authorize ifAllGranted="CERRAR_DECISION">
-        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
-        </sec:authorize>
-        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
-    ]
+    var isBankia = false;
+    <sec:authentication var="user" property="principal" />
+	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
+   		isBankia = true;
+	</c:if>
+     
+    if(isBankia && data.toolbar.tipoExpediente == "RECU"){
+    
+        var visible = [
+	      [btnActuacion, esGestorSupervisorDeFase]
+			,[btnNuevo, esGestorSupervisorDeFase]
+	        ,[btnEditar, esGestorSupervisorDeFase]
+	        ,[btnBorrar, esGestorSupervisorDeFase]
+	        ,[btnAltaProcedimiento, esGestorSupervisorDeFase]
+	        ,[btnEditProcedimiento, esGestorSupervisorDeFase]
+	        ,[btnBorraProcedimiento, esGestorSupervisorDeFase]
+	        <sec:authorize ifAllGranted="CERRAR_DECISION">
+	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
+	        </sec:authorize>
+	        ,[btnEditarObs, esGestorSupervisorDeFase]
+	    ]
+    	
+    }else{
+    
+        var visible = [
+	      [btnActuacion, congelado && esGestorSupervisorDeFase]
+			,[btnNuevo, congelado && esGestorSupervisorDeFase]
+	        ,[btnEditar, congelado && esGestorSupervisorDeFase]
+	        ,[btnBorrar, congelado && esGestorSupervisorDeFase]
+	        ,[btnAltaProcedimiento, congelado && esGestorSupervisorDeFase]
+	        ,[btnEditProcedimiento, congelado && esGestorSupervisorDeFase]
+	        ,[btnBorraProcedimiento, congelado && esGestorSupervisorDeFase]
+	        <sec:authorize ifAllGranted="CERRAR_DECISION">
+	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
+	        </sec:authorize>
+	        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
+	    ]
+    	
+    }
+    
+
 
      entidad.setVisible(visible); 
 

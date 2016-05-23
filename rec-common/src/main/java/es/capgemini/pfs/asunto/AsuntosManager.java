@@ -66,6 +66,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -537,9 +538,12 @@ public class AsuntosManager {
                 Long idBPM = proc.getProcessBPM();
                 if (idBPM != null)
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
-            }
+            //TODO CAmbiar esto cuando exista BPM para este tipo
+            }else if(!TipoProcedimiento.TIPO_NO_LITIGAR.equals(proc.getTipoProcedimiento().getCodigo())){
             //Lanzo el proceso bpm asociado.
-            executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
+            	executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
+            }
+            
         }
     }
 
@@ -592,11 +596,13 @@ public class AsuntosManager {
         Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         for (TareaNotificacion tarea : asunto.getTareas()) {
             SubtipoTarea subtipo = tarea.getSubtipoTarea();
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
-                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
-            }
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
-                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+            if(subtipo != null){
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
+	            }
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+	            }
             }
         }
         return false;

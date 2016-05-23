@@ -243,7 +243,14 @@ public class VListadoPreProyectadoCntDaoImpl extends AbstractEntityDao<VListadoP
 				return formatoFechaFiltroWeb.format(fecha);
 			} 
 			catch (ParseException e1) {
-				logger.error("Error en el método parseDate: " + e.getLocalizedMessage());
+				formatoFechaFiltroWeb2 = new SimpleDateFormat("dd/MM/yyyy");
+				try {
+					Date fecha = formatoFechaFiltroWeb2.parse(fechaSinFormato);
+					return formatoFechaFiltroWeb.format(fecha);
+				} 
+				catch (ParseException e2) {
+					logger.error("Error en el método parseDate: " + e2.getLocalizedMessage());
+				}		
 			}					
 		}
 		

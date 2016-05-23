@@ -794,7 +794,7 @@
                     SELECT f.EXP_ID
                          , f.EXP_DESCRIPCION
                          , 0 as EXP_MANUAL
-                         , f.DD_AEX_CODIGO
+                         , decode(f.PRIO,1,'PP',2,'PP',3,'PG',4,'PPGRA',5,'PPGRA',6,'PSGRA',7,'PSGRA') as DD_AEX_CODIGO
                          , 2 as DD_EEX_ID
                          , 3 as DD_EST_ID
                          , sysdate as EXP_FECHA_EST_ID
@@ -1283,7 +1283,7 @@
                 SELECT f.EXP_ID
                      , f.EXP_DESCRIPCION
                      , 0 as EXP_MANUAL
-                     , f.DD_AEX_CODIGO
+                     , decode(f.PRIO,1,'CP',2,'CP',3,'CG',4,'CPGRA',5,'CPGRA',6,'CSGRA',7,'CSGRA') as DD_AEX_CODIGO
                      , 2 as DD_EEX_ID
                      , 3 as DD_EST_ID
                      , sysdate as EXP_FECHA_EST_ID

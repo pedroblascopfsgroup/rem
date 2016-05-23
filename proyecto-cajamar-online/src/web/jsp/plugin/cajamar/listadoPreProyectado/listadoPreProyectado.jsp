@@ -853,10 +853,10 @@
 		
 		if(tabContrato){
 			param.codContrato=txtCodContrato.getValue();
-			param.fechaPrevRegularizacion=filtroFechaDesde.getValue();
-			param.fechaPrevRegularizacionHasta=filtroFechaHasta.getValue();
-			param.paseMoraDesde = filtroPaseMoraDesde.getValue();
-			param.paseMoraHasta = filtroPaseMoraHasta.getValue();
+			param.fechaPrevRegularizacion=filtroFechaDesde.value;
+			param.fechaPrevRegularizacionHasta=filtroFechaHasta.value;
+			param.paseMoraDesde = filtroPaseMoraDesde.value;
+			param.paseMoraHasta = filtroPaseMoraHasta.value;
 			param.zonasCto=dobleSelCentroContrato.getValue();
 		}
 		

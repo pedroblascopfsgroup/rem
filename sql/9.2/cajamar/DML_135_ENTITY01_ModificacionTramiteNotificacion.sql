@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160418
+--## FECHA_CREACION=20160429
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1233
@@ -47,8 +47,8 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-        T_TIPO_TAP('P400','P400_GestionarNotificacionesAdjudicacion',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones desde Adjudicación','0','PRODUCTO-1233','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'TGCONGE',null,'GAREO',null)
-       ,T_TIPO_TAP('P400','P400_GestionarNotificaciones',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones','0','PRODUCTO-1233','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'TGCONGE',null,'SUCONGE',null)
+        T_TIPO_TAP('P400','P400_GestionarNotificacionesAdjudicacion',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones desde Adjudicación','0','PRODUCTO-1233','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,'GAREO',null)
+       ,T_TIPO_TAP('P400','P400_GestionarNotificaciones',null,'!todosNotificados() ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">&iexcl;Atenci&oacute;n! Para dar por terminada esta tarea debe notificar todos los demandados o excluirlos.</div>'' : dameNumNotificadosNoEdictoNoExcluidos() != dameNumDocumentosTipo(''ACUREC'') ? ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Se deben adjuntar tantos documentos "Acuse de recibo" como demandados no excluidos y no notificados por edicto existan.</div>'' : null',null,null,null,'0','Gestionar notificaciones','0','PRODUCTO-1233','0',null,null,null,'1','EXTTareaProcedimiento','3',null,'814',null,'SUCONGE',null)
      
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;

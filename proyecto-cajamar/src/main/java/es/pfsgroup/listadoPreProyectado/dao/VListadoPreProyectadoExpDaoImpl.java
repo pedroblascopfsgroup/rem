@@ -358,8 +358,21 @@ public class VListadoPreProyectadoExpDaoImpl extends AbstractEntityDao<VListadoP
 			}
 
 		} catch (ParseException ex) {
-			logger.error(ex.getLocalizedMessage());
-			return where;
+			formatoFechaFiltroWeb2 = new SimpleDateFormat("dd/MM/yyyy");
+
+			try {
+				if (!StringUtils.isBlank(dateFrom)) {
+					where.add(Restrictions.ge(field, formatoFechaFiltroWeb2.parse(dateFrom)));
+				}
+
+				if (!StringUtils.isBlank(dateTo)) {
+					where.add(Restrictions.le(field, formatoFechaFiltroWeb2.parse(dateTo)));
+				}
+
+			} catch (ParseException e) {
+				logger.error(e.getLocalizedMessage());
+				return where;
+			}
 		}
 
 		return where;

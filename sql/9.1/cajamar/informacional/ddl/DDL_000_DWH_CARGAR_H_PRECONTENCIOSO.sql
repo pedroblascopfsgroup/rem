@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=María V.
---## FECHA_CREACION=20160503
+--## FECHA_CREACION=20160523
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-3200
+--## INCIDENCIA_LINK=BI-82
 --## PRODUCTO=NO
 --## 
---## Finalidad: e modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_INICIO_PRE
+--## Finalidad: Se modifica TMP_PRE_FECHA_ESTADO
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_EN
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María V, PFS Group
--- Fecha ultima modificacion:03/05/16
--- Motivos del cambio: Se modifica el Plazo Inicio Exp Prejudicial a Finalizado utilizando com fecha de inicio FECHA_INICIO_PRE
+-- Fecha ultima modificacion:23/05/16
+-- Motivos del cambio: BI-82-Se modifica TMP_PRE_FECHA_ESTADO
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de PreContencioso
@@ -160,17 +160,19 @@ BEGIN
     commit;
     
         execute immediate 'merge into TMP_PRE_FECHA_ESTADO t1
-                           using (select a.pco_prc_id, a.PCO_PRC_HEP_FECHA_INCIO, a.pco_prc_hep_id, a.DD_PCO_PEP_ID
-                                  from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP a 
-                           left join 
-                           (select PCO_PRC_ID, Max(PCO_PRC_HEP_FECHA_INCIO) as fecha, max(pco_prc_hep_id) as secuencial
-                                  from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP where trunc(FECHACREAR) <= '''||fecha||''' and BORRADO = 0
-                                  group by pco_prc_id) b
-                           on a.pco_prc_id=b.pco_prc_id and a.PCO_PRC_HEP_FECHA_INCIO=b.fecha and a.pco_prc_hep_id=b.secuencial and trunc(a.FECHACREAR) <= '''||fecha||''' and a.BORRADO = 0
-                           where b.pco_prc_id is not null) t2
+                       using (select PCO_PRC_HEP_FECHA_INCIO, pco_prc_id, DD_PCO_PEP_ID
+                      from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
+                      where PCO_PRC_HEP_FECHA_FIN is null
+                      and DD_PCO_PEP_ID<>5
+                      union 
+                      select max(PCO_PRC_HEP_FECHA_INCIO), pco_prc_id, max(DD_PCO_PEP_ID) 
+                      from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
+                      where DD_PCO_PEP_ID=5
+                      group by pco_prc_id) t2
 
-                           on (t1.PCO_PRC_ID = t2.PCO_PRC_ID and t1.FECHA_ACTUAL_ESTADO = t2.PCO_PRC_HEP_FECHA_INCIO)
-                           when matched then update set t1.ESTADO_PREPARACION_ID = t2.DD_PCO_PEP_ID';
+                      on (t1.PCO_PRC_ID = t2.PCO_PRC_ID and t1.FECHA_ACTUAL_ESTADO = t2.PCO_PRC_HEP_FECHA_INCIO)
+                      when matched then update set t1.ESTADO_PREPARACION_ID = t2.DD_PCO_PEP_ID';
+
 commit; 
 
   /* 

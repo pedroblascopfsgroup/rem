@@ -130,7 +130,6 @@ IF V_NUM_TABLAS = 1 THEN
     ,USUARIOMODIFICAR=''HR-2532''
     ,FECHAMODIFICAR=SYSDATE
     ,DD_PCO_BFR_NOTIFICADO=1
-    ,DD_PCO_BFR_NOTIFICADO=1
     WHERE DD_PCO_BFR_CODIGO = ''4''';   
     EXECUTE IMMEDIATE V_MSQL; 
     
@@ -190,7 +189,6 @@ IF V_NUM_TABLAS = 1 THEN
     ,DD_PCO_BFR_DESCRIPCION_LARGA=''NUEVO DOMICILIO ENTREGA''
     ,USUARIOMODIFICAR=''HR-2532''
     ,FECHAMODIFICAR=SYSDATE
-    ,DD_PCO_BFR_NOTIFICADO=0
     ,DD_PCO_BFR_NOTIFICADO=1
     WHERE DD_PCO_BFR_CODIGO = ''14''';   
     EXECUTE IMMEDIATE V_MSQL; 
@@ -222,7 +220,7 @@ IF V_NUM_TABLAS = 1 THEN
         EXECUTE IMMEDIATE V_MSQL;  
         DBMS_OUTPUT.PUT_LINE('[INFO] Insertado el codigo 12');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[ERROR] El codigo 12 ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] El codigo 12 ya existe');
     END IF;
     
     V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' BFR WHERE BFR.DD_PCO_BFR_CODIGO=''16''';
@@ -250,7 +248,7 @@ IF V_NUM_TABLAS = 1 THEN
         EXECUTE IMMEDIATE V_MSQL;  
         DBMS_OUTPUT.PUT_LINE('[INFO] Insertado el codigo 18');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[ERROR] El codigo 18 ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] El codigo 18 ya existe');
     END IF;
     
     V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' BFR WHERE BFR.DD_PCO_BFR_CODIGO=''27''';
@@ -260,7 +258,7 @@ IF V_NUM_TABLAS = 1 THEN
         EXECUTE IMMEDIATE V_MSQL;  
         DBMS_OUTPUT.PUT_LINE('[INFO] Insertado el codigo 27');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[ERROR] El codigo 27 ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] El codigo 27 ya existe');
     END IF;
     
     V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' BFR WHERE BFR.DD_PCO_BFR_CODIGO=''31''';
@@ -270,7 +268,7 @@ IF V_NUM_TABLAS = 1 THEN
         EXECUTE IMMEDIATE V_MSQL;  
         DBMS_OUTPUT.PUT_LINE('[INFO] Insertado el codigo 31');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[ERROR] El codigo 31 ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] El codigo 31 ya existe');
     END IF;
     
     V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' BFR WHERE BFR.DD_PCO_BFR_CODIGO=''38''';
@@ -316,7 +314,7 @@ IF V_NUM_TABLAS = 1 THEN
         EXECUTE IMMEDIATE V_MSQL;  
         DBMS_OUTPUT.PUT_LINE('[INFO] Insertado el codigo 58');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[ERROR] El codigo 58 ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] El codigo 58 ya existe');
     END IF;
     
     V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA||' BFR WHERE BFR.DD_PCO_BFR_CODIGO=''68''';
@@ -326,7 +324,7 @@ IF V_NUM_TABLAS = 1 THEN
         EXECUTE IMMEDIATE V_MSQL;  
         DBMS_OUTPUT.PUT_LINE('[INFO] Insertado el codigo 68');
     ELSE
-        DBMS_OUTPUT.PUT_LINE('[ERROR] El codigo 68 ya existe');
+        DBMS_OUTPUT.PUT_LINE('[INFO] El codigo 68 ya existe');
     END IF;
     
     

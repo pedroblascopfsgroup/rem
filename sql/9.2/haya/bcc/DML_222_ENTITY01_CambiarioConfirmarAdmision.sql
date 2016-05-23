@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JORGE MARTIN
---## FECHA_CREACION=20160118
+--## FECHA_CREACION=20160119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=PRODUCTO-585
@@ -41,7 +41,7 @@ DECLARE
     ## En la ayuda introducirá la cadena 'Ayuda de ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     ## En el input introducirá la cadena 'Input ' seguida del valor definido en la variable: V_TR_DESCRIPCION.
     */
-    V_TR_ID VARCHAR2(16 CHAR):= 			'306';
+    V_TR_ID VARCHAR2(16 CHAR):= 			'433';
     V_TR_CODIGO VARCHAR2(25 CHAR):= 		'R_ATO_REQ_PGS';
     V_TR_DESCRIPCION  VARCHAR2(100 CHAR):=	'Auto de requerimiento de pago y embargo preventivo';
 

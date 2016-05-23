@@ -241,8 +241,26 @@ cp -f $BASEDIR/scripts/reg_sql.sh $BASEDIR/tmp/$nombreSinDirSinExt.sh
 cp -f $BASEDIR/scripts/reg?.sql $BASEDIR/tmp/
 chmod u+x $BASEDIR/tmp/$nombreSinDirSinExt.sh
 
+CRITICAL_OBJECTS_FILE=sql/tool/scripts
+if [[ $nombreFicheroSinDir =~ ^DDL.*$ ]] ; then
+    CRITICAL_OBJECTS_FILE=${CRITICAL_OBJECTS_FILE}/DDL-critical-objects.txt
+else
+    CRITICAL_OBJECTS_FILE=${CRITICAL_OBJECTS_FILE}/DML-critical-objects.txt
+fi
 echo ""
 echo "         $1"
+while read -r line
+    do
+        grep -i "$line" $1 > $BASEDIR/tmp/ocurrences.log
+        if [ $? -eq 0 ]; then
+            echo "******** WARNING - Incluye "$line
+            while read -r ocurrence
+                do
+                    echo "********         |   "$ocurrence
+                done < $BASEDIR/tmp/ocurrences.log
+            echo ""
+        fi
+    done < $CRITICAL_OBJECTS_FILE
 cp $1 $BASEDIR/tmp/
 
 if [[ $VERBOSE == 1 ]]; then

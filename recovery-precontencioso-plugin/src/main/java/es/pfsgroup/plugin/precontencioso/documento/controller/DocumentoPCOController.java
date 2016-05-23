@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -102,6 +103,9 @@ public class DocumentoPCOController {
     @Autowired
     private DDTipoFicheroAdjuntoDao tipoFicheroAdjuntoDao;
 
+	@Autowired
+	private EXTGrupoUsuariosApi grupoUsuarios;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getSolicitudesDocumentosPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, Long idTipoDocumento, ModelMap model) {
@@ -125,7 +129,7 @@ public class DocumentoPCOController {
 					tieneSolicitud = true;
 					
 					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
-					if (!isGestoria || (isGestoria && usuarioManager.getUsuarioLogado().getId().equals(sol.getActor().getUsuario().getId()))) {
+					if (comprobarPermisosGestoria(isGestoria, sol)) {
 						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud));
 					}
 
@@ -140,6 +144,24 @@ public class DocumentoPCOController {
 		model.put("solicitudesDocumento", solicitudesDoc);
 
 		return SOLICITUDES_DOC_PCO_JSON;
+	}
+
+	private boolean comprobarPermisosGestoria(boolean isGestoria, SolicitudDocumentoPCO sol) {
+		boolean tienePermiso = false;
+		if (!isGestoria) {
+			tienePermiso = true;
+		} else {
+			Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+			Usuario usuarioSolicitud = sol.getActor().getUsuario();
+			if (usuarioLogado.getId().equals(usuarioSolicitud.getId())) {
+				tienePermiso = true;
+			} else {
+				if (usuarioSolicitud.getUsuarioGrupo()) {
+					tienePermiso = grupoUsuarios.usuarioPerteneceAGrupo(usuarioLogado, usuarioSolicitud);
+				}
+			}
+		}
+		return tienePermiso;
 	}
 
 	public boolean esUsuarioTipoDespachoGestoria() {

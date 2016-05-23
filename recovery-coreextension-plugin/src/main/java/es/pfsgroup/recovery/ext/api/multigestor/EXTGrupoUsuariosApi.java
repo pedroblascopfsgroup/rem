@@ -13,6 +13,6 @@ public interface EXTGrupoUsuariosApi {
 	@BusinessOperationDefinition(EXT_BO_GRUPOS_USUARIO_DAME_IDGRUPOS_BY_USU)
 	List<Long> buscaIdsGrupos(Usuario usuario) ;
 
-	
+	Boolean usuarioPerteneceAGrupo(Usuario usuario, Usuario grupo);
 
 }

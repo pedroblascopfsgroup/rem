@@ -31,6 +31,12 @@ DECLARE
     
 BEGIN    
     
+	V_MSQL:= 'UPDATE '||V_ESQUEMA||'.ADA_ADJUNTOS_ASUNTOS SET RES_ID = NULL, USUARIOMODIFICAR=''PRODUCTO-766'', FECHAMODIFICAR = SYSDATE WHERE RES_ID IS NOT NULL';
+	EXECUTE IMMEDIATE V_MSQL;
+	
+	V_MSQL:= 'DELETE FROM '||V_ESQUEMA||'.REL_CATEGORIAS_TIPORESOL';
+    EXECUTE IMMEDIATE V_MSQL;
+    	
     DBMS_OUTPUT.PUT_LINE('De 306 a 433 - R_ATO_REQ_PGS');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_ATO_REQ_PGS'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -102,6 +108,10 @@ BEGIN
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_DEM_SEL_PCM'')';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
+    V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_DEM_SEL_PCM''';
+    EXECUTE IMMEDIATE V_MSQL;
+    
     DBMS_OUTPUT.PUT_LINE('Modificado bug, de I_DOT_DET_OCU a I_DOC_DET_OCU');
     V_MSQL := 'update '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT SET BPM_DD_TIN_CODIGO=''I_DOC_DET_OCU'', usuariomodificar = ''PRODUCTO-766'', fechamodificar = sysdate WHERE BPM_dd_tin_codigo = ''I_DOT_DET_OCU''';
     EXECUTE IMMEDIATE V_MSQL;
@@ -138,6 +148,10 @@ BEGIN
     
     DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
+    V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_PR_HIP_DEM_SELLADA''';
     EXECUTE IMMEDIATE V_MSQL;
     
     --PRODUCTO-1055     
@@ -491,7 +505,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 348 a 458 - R_REG_RES_INV');
-    V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_POI_REG_RES'')';
+    V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_REG_RES_INV'')';
     EXECUTE IMMEDIATE V_MSQL;
     V_MSQL := 'update '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION set dd_tr_id = ''458'', usuariomodificar = ''PRODUCTO-1199'', fechamodificar=sysdate where dd_tr_codigo = ''R_REG_RES_INV''';
     EXECUTE IMMEDIATE V_MSQL;

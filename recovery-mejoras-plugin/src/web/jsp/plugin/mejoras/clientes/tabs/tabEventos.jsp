@@ -100,7 +100,7 @@
 								emisor: rec.get('emisor'),
 								descripcionEntidad: rec.get('descripcionEntidad'),
 								descripcion: rec.get('descripcion'),
-								fechaInicio: rec.get('fechaInicio'),
+								fechaInicio: rec.get('fechaInicio')
 							}
 						});
 						w.on(app.event.CANCEL, function(){

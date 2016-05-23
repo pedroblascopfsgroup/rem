@@ -1164,7 +1164,7 @@ function(entidad,page){
 		var expedienteActivo=false;
 		if ([EXP_ACTIVO,EXP_BLOQUEADO,EXP_CONGELADO].indexOf(estadoExpediente)>=0) expedienteActivo=true;
 		<sec:authorize ifAllGranted="ROLE_COMITE">
-			if (expedienteActivo && (d.puedeMostrarSolapaDecisionComite || d.puedeMostrarSolapaMarcadoPoliticas)){
+			if (expedienteActivo && entidad.getData('toolbar.puedeMostrarElevarDelegarExpediente')){
 				elevarAComiteSuperiorButton.show();
 				delegarAOtroComiteButton.show();
 			}

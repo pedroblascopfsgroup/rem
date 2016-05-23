@@ -420,6 +420,8 @@ public class coreextensionController {
 	@RequestMapping
 	public String listBusquedaAcuerdos(ModelMap model, DTOTerminosFiltro terminosFiltroDto){
 		
+		//Si en la pestaña de jerarquía hemos seleccionado algún centro, lo añade a codigoZonas, en caso contrario,
+		//las extrae a través del usuario logado.
 		List<DTOTerminosResultado> results = new ArrayList<DTOTerminosResultado>();
 		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
     	EventFactory.onMethodStart(this.getClass());
@@ -443,7 +445,6 @@ public class coreextensionController {
 		
 		model.put("results",results);
 		model.put("totalTerminos",page.getTotalCount());
-		//model.put("pagina",page);
 		
 		return LISTADO_BUSQUEDA_TERMINOS_JSON;
 	}
@@ -489,10 +490,10 @@ public class coreextensionController {
 				idExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getId().toString();
 				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente())){
 					tipoExpediente= terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente().getCodigo();
-					if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getDescripcionExpediente())){
-						descripcionExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getDescripcionExpediente();
-					}
 				}
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getDescripcion())){
+					descripcionExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getDescripcion();
+				}			
 			}
 			
 			List<TerminoContrato> contratosTermino=terminoAcuerdo.getContratosTermino();
@@ -500,27 +501,33 @@ public class coreextensionController {
 			Acuerdo acuerdo = terminoAcuerdo.getAcuerdo();
 			
 			Expediente expediente = acuerdo.getExpediente();
-			if(!terminoAcuerdo.getTipoAcuerdo().getTipoEntidad().getCodigo().equals("ASU")){
-				if(!Checks.esNulo(expediente.getContratoPase())){	
-					if(expediente.getContratoPase().getContratoPersona().size()>0){
-						clientePase=expediente.getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
-					}			
-				}
-			}else{	
-				if(!Checks.esNulo(expediente.getContratoPase())){
-					Asunto asunto = acuerdo.getAsunto();
-					if(asunto.getExpediente().getContratoPase().getContratoPersona().size()>0){
-						clientePase=asunto.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
+			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getTipoAcuerdo())){
+				
+				if(!terminoAcuerdo.getAcuerdo().getTipoAcuerdo().getTipoEntidad().getCodigo().equals("ASU")){
+					if(!Checks.esNulo(expediente.getContratoPase())){	
+						if(expediente.getContratoPase().getContratoPersona().size()>0){
+							clientePase=expediente.getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
+						}			
+					}
+				}else{	
+					if(!Checks.esNulo(expediente.getContratoPase())){
+						Asunto asunto = acuerdo.getAsunto();
+						if(asunto.getExpediente().getContratoPase().getContratoPersona().size()>0){
+							clientePase=asunto.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
+						}
 					}
 				}
 			}
+			
 				
 			if(contratosTermino.size()!=0){
 				contratoPrincipal=contratosTermino.get(0).getContrato().getCodigoContrato();
 			}
 			
-			if(!Checks.esNulo(terminoAcuerdo.getTipoAcuerdo())){
-				tipoAcuerdo= terminoAcuerdo.getTipoAcuerdo().getDescripcion();
+			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo())){
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getTipoAcuerdo())){
+					tipoAcuerdo= terminoAcuerdo.getAcuerdo().getTipoAcuerdo().getDescripcion();
+				}	
 			}
 			
 			if(!Checks.esNulo(acuerdo.getEstadoAcuerdo())){
@@ -566,10 +573,7 @@ public class coreextensionController {
 			terminos.setFechaVigencia(fechaVigencia);
 			
 			results.add(terminos);
-	
-				
 		}
-		
 		return results;
 	}
 	
@@ -578,7 +582,6 @@ public class coreextensionController {
 	public String getDespachosExternosByTipo(String codigo, String query, ModelMap model) {
 		
 		Page despachos = proxyFactory.proxy(coreextensionApi.class).getDespachosExternosByTipo(codigo,query);
-		//List<DespachoExterno> despachos= proxyFactory.proxy(coreextensionApi.class).getDespachosExternosByTipo(codigo,query);
 		model.put("despachos", despachos);
 		return JSON_LISTADO_DESPACHOS;
 	}

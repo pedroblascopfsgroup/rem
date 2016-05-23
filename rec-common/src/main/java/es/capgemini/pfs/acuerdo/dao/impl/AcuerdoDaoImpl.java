@@ -179,6 +179,8 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		boolean cruzaTipoTermino= (!Checks.esNulo(dto.getTipoTermino()));
 		boolean cruzaDespachos = (!Checks.esNulo(dto.getSolicitantes()) || !StringUtils.emtpyString(dto.getSolicitantes()));
 		boolean cruzaEstado = (!Checks.esNulo(dto.getEstado()));
+		boolean cruzaJerarquia = (!Checks.esNulo(dto.getJerarquia()));
+		boolean cruzaCentros = (!Checks.esNulo(dto.getCentros()));
 		
 		hql.append("select distinct ter ");
 		
@@ -220,18 +222,22 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 			
 			if(dto.getTipoAcuerdo().equals("ASU")){
 				hql.append(" and ter.acuerdo.asunto.id is not null ");
-			}
-			if(dto.getTipoAcuerdo().equals("EXP")){
-				hql.append(" and ter.acuerdo.expediente.id is not null ");
-			}
-			if(dto.getTipoAcuerdo().equals("AMBAS")){
-				hql.append(" and ter.acuerdo.expediente.id is not null and ter.acuerdo.asunto.id is not null ");
-			}
+			}else{	
+				if(dto.getTipoAcuerdo().equals("EXP")){
+					hql.append(" and ter.acuerdo.expediente.id is not null ");
+				}else{	
+					if(dto.getTipoAcuerdo().equals("AMBAS")){
+						hql.append(" and (ter.acuerdo.expediente.id is not null or ter.acuerdo.asunto.id is not null) ");
+						}
+					}
+			}	
+		}else{
+			hql.append(" and (ter.acuerdo.expediente.id is not null or ter.acuerdo.asunto.id is not null) ");
 		}
 		
 		//TIPO TERMINO
 		if(cruzaTipoTermino){
-			hql.append(" and ter.tipoAcuerdo.codigo = '"+ dto.getTipoTermino() + "' ");
+			hql.append(" and ter.acuerdo.tipoAcuerdo.codigo = '"+ dto.getTipoTermino() + "' ");
 		}
 		
 		//ESTADO
@@ -273,8 +279,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
         if (dto.getFechaVigenciaHasta() != null && !"".equals(dto.getFechaVigenciaHasta())) {        		
 			 hql.append(" and ter.acuerdo.fechaLimite <= TO_DATE('"+dto.getFechaVigenciaHasta() + "','dd/MM/yyyy')" );    
         }
-        
-       
+          
         // DESPACHO
         if (dto.getDespacho() != null && !"".equals(dto.getDespacho())) {
      		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosDelDespacho(new Long(dto.getDespacho())) + ")");
@@ -285,7 +290,8 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
     		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosParaGestor(dto.getGestores(), dto.getTipoGestor()) + ")");
         }
      		
-        //JERARQUÍA
+        //VISIBILIDAD
+        /*
         int cantZonas = dto.getCodigoZonas().size();
             
         if (cantZonas > 0) {
@@ -307,13 +313,25 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
     	        hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
     	        hql.append(" ) ");
             	}
-
-        //CENTROS
-        if (!StringUtils.emtpyString(dto.getJerarquia())) {
-               	hql.append("  and ter.acuerdo.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
+ */
+        //VISIBILIDAD
+        int cantZonas = dto.getCodigoZonas().size();
+        if (cantZonas > 0) {
+            hql.append(" and ( ");
+            for (String codigoZ : dto.getCodigoZonas()) {
+                hql.append(" ter.acuerdo.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
+            }
+            hql.deleteCharAt(hql.length() - 1);
+            hql.deleteCharAt(hql.length() - 1);
+            hql.append(" ) ");
         }
         
-        hql.append(" order by ter.acuerdo.id desc ");
+        //JERARQUIA
+        if (!StringUtils.emtpyString(dto.getJerarquia())) {
+               	hql.append("  and ter.acuerdo.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
+        }  
+        
+        //hql.append(" order by ter.acuerdo.id desc ");
                   
 		return hql.toString();
 	}
@@ -378,7 +396,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	}
 
 	public List<AcuerdoConfigAsuntoUsers> getProponentesAcuerdo(){
-		String hql = "from AcuerdoConfigAsuntoUsers a where a.auditoria.borrado = 0";
+		String hql = "from AcuerdoConfigAsuntoUsers where auditoria.borrado = 0";
         List<AcuerdoConfigAsuntoUsers> lista = getHibernateTemplate().find(hql);
 		return lista;
     }

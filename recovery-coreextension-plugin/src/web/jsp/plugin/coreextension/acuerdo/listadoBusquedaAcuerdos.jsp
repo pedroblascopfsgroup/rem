@@ -782,6 +782,7 @@
 		comboTiposAcuerdo.setDisabled(true);	
 		listadoSolicitantes= [];
 		solicitantesStore.removeAll();
+		gridAcuerdos.collapse(true);
 	});
 	
 	 var btnExportarXLS=new Ext.Button({
@@ -912,6 +913,7 @@
 			}
 			,beforeCollapse:function(){
 				gridAcuerdos.setHeight(435);
+				gridAcuerdos.expand(true);
 			}
 		}
 	});
@@ -1069,29 +1071,28 @@
 	var gridAcuerdosListener =	function(grid, rowIndex, e) {
 	    	var rec = grid.getStore().getAt(rowIndex);
 	    	
-	    	if(rec.get('idExpediente')){
-	    		var idExpediente = rec.get('idExpediente');
-	    		var des = rec.get('descripcionExpediente');
-	    		var tipo = rec.get('tipoExpediente');
-	    		
-	    		if(tipo == 'REC'){
-	    			debugger;
-	    			app.abreExpedienteTab(idExpediente,des,'acuerdos');	
-	    		}else{
-	    		debugger;
-	    			app.abreExpediente(idExpediente,des,'acuerdos');
-	    		} 	
-	    	}
-	    	else{
 	    		if(rec.get('idAsunto')){
 	    			var idAsunto = rec.get('idAsunto');
 	    			var desc = rec.get('nombreAsunto');
-	    			app.abreAsunto(idAsunto,desc,'acuerdos');	  				
+	    			app.abreAsuntoTab(idAsunto,desc,'acuerdos');	  				
 	    		}else{
+	    			if(rec.get('idExpediente')){
+	    				var idExpediente = rec.get('idExpediente');
+	    				var des = rec.get('descripcionExpediente');
+	    				var tipo = rec.get('tipoExpediente');
+	    		
+	    				if(tipo == 'REC'){
+	    					debugger;
+	    					app.abreExpedienteTab(idExpediente,des,'acuerdos');	
+	    				}else{
+	    					debugger;
+	    					app.abreExpedienteTab(idExpediente,des,'propuestas');
+	    				}
+	    			}else{
 	    		    	alert('El acuerdo no tiene asociado ningún expediente o asunto');
 	    		    	}
-	    	}
-	    	
+	    		}
+ 	
 	    };
 	    
 	gridAcuerdos.addListener('rowdblclick', gridAcuerdosListener);

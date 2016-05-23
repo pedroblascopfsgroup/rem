@@ -34,7 +34,6 @@ import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 public class AcuerdoController {
 
 	private static final String LISTADO_BUSQUEDA_ACUERDOS = "plugin/coreextension/acuerdo/listadoBusquedaAcuerdos";
-	private static final String LISTADO_BUSQUEDA_ACUERDOS_JSON= "";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -63,14 +62,13 @@ public class AcuerdoController {
 	@SuppressWarnings("unchecked")
 	private ModelMap rellenarFormBusqueda(ModelMap model) {
 		
-		DDSolicitante solicitante = new DDSolicitante();
-		long num=1;
 		List<DDTipoDespachoExterno> tiposSolicitante = new ArrayList<DDTipoDespachoExterno>();
-		//List<AcuerdoConfigAsuntoUsers> proponentes = mejAcuerdoManager.getProponentesAcuerdo();
-		DDTipoDespachoExterno tipoSol = (DDTipoDespachoExterno) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoDespachoExterno.class,num);
-		tiposSolicitante.add(tipoSol);
+		List<AcuerdoConfigAsuntoUsers> proponentes = acuerdoDao.getProponentesAcuerdo();
 		
-		//List<DDTipoDespachoExterno> tiposSolicitante = this.getTipoDespachoByProponente(proponentes);	
+		for(int i=0;i<proponentes.size();i++){
+			DDTipoDespachoExterno tipoSol = (DDTipoDespachoExterno) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoDespachoExterno.class,proponentes.get(i).getProponente().getId());
+			tiposSolicitante.add(tipoSol);
+		}
 		
 		List<DDEstadoAcuerdo> estadosAcuerdo = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoAcuerdo.class);
 		List<DDZona> zonas = usuarioManager.getZonasUsuarioLogado();

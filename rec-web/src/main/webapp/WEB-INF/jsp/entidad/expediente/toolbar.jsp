@@ -986,6 +986,7 @@ function(entidad,page){
 					}
 					break;
 				case 'DC' : 
+					
 					if(esGestorSupervisorDeFase){
 						
 						var permEle = false;
@@ -1000,13 +1001,16 @@ function(entidad,page){
 								permDevo = true;
 							}
 						}
+						
 						if(permEle && permDevo){
-							<sec:authorize ifAllGranted="PERSONALIZACION-BCC">
-								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
-								if(!d.esRecuperacion){
+							if(d.tipoExpediente != 'REC'){
+								if(d.esRecuperacion){
+									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+								}else{
 									showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion9-aceptarPropuesta','expediente-accion2-devolverRevision');
 								}
-							</sec:authorize>
+								showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion7-formulacionPropuesta','expediente-accion2-devolverRevision');
+							}
 						}else if(!permEle && permDevo){
 							showHide(estadoExpediente == EXP_CONGELADO , 'expediente-accion2-devolverRevision');
 						}
@@ -1160,7 +1164,7 @@ function(entidad,page){
 		var expedienteActivo=false;
 		if ([EXP_ACTIVO,EXP_BLOQUEADO,EXP_CONGELADO].indexOf(estadoExpediente)>=0) expedienteActivo=true;
 		<sec:authorize ifAllGranted="ROLE_COMITE">
-			if (expedienteActivo && (d.puedeMostrarSolapaDecisionComite || d.puedeMostrarSolapaMarcadoPoliticas)){
+			if (expedienteActivo && entidad.getData('toolbar.puedeMostrarElevarDelegarExpediente')){
 				elevarAComiteSuperiorButton.show();
 				delegarAOtroComiteButton.show();
 			}

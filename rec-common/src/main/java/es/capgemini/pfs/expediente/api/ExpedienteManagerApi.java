@@ -731,5 +731,13 @@ public interface ExpedienteManagerApi {
 	 */
 	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_GESTION_DEUDA)
 	public Boolean tieneExpedienteGestionDeuda(Long idPersona);
+	
+	/**
+	 * Devuelve si se muestran o no los botones de delegar o elevar el expediente
+	 * @param idExpediente
+	 * @return
+	 */
+	@BusinessOperationDefinition(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_ELEVAR_DELEGAR_EXPEDIENTE)
+	public Boolean puedeMostrarelevarDelegarExpediente(Long idExpediente);
 
 }

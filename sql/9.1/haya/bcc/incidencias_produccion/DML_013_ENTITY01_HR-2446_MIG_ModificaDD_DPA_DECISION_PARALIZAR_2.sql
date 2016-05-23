@@ -94,7 +94,7 @@ BEGIN
 
    V_MSQL1 := 'INSERT INTO ' ||V_ESQUEMA|| '.'||V_TABLADD1||' 
                     (DD_DPA_ID, DD_DPA_CODIGO, DD_DPA_DESCRIPCION, DD_DPA_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-                   VALUES (   S_'||V_TABLADD1||'.NEXTVAL,'''
+                   VALUES ( ' ||V_ESQUEMA||'.S_'||V_TABLADD1||'.NEXTVAL,'''
                         ||V_TMP_GES(1)||q'[',']'
                         ||V_TMP_GES(2)||q'[',']'
                         ||V_TMP_GES(3)||q'[',]'

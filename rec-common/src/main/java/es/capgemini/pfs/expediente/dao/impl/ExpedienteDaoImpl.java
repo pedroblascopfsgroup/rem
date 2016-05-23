@@ -28,6 +28,7 @@ import es.capgemini.pfs.expediente.BusquedaExpedienteFiltroDinamico;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.dto.DtoBuscarExpedientes;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
@@ -1045,6 +1046,8 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         }
 
         hql.append(" where exp.auditoria.borrado = 0 ");
+        //Que no sean de recobro
+        hql.append(" and not exp.tipoExpediente.codigo = '" + DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO +"' ");
 
         /***
 		 * La lista de los parámetros dinánmicos debe venir de la siguiente manera

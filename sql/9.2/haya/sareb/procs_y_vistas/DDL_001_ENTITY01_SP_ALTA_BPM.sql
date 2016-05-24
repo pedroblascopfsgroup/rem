@@ -15,7 +15,7 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 
-create or replace PROCEDURE ALTA_BPM_NUEVA (P_TEXTO OUT VARCHAR2) AUTHID CURRENT_USER AS
+create or replace PROCEDURE ALTA_BPM_NUEVA AS
   
   --/* Consulta, procedimientos sin BPM */
   CURSOR CUR_PROCEDIMIENTOS IS 
@@ -273,7 +273,6 @@ err_num := SQLCODE;
 err_msg := SQLERRM;
 DBMS_OUTPUT.put_line('Error:'||TO_CHAR(SQLCODE));
 DBMS_OUTPUT.put_line(SQLERRM);
-P_TEXTO := 'Error:'||TO_CHAR(err_num)||'['||err_msg||']';
     ROLLBACK;
     RAISE;
 

@@ -79,7 +79,7 @@ public interface SubastaProcedimientoApi {
 	@BusinessOperationDefinition(BO_SUBASTA_BPM_PREPARAR_DECIDIR_PROPUESTA_SUBASTA)
 	public String decidirPrepararPropuestaSubasta(Long prcId);
 	
-	@BusinessOperationDefinition( BO_SUBASTA_COMPROBAR_PROV_LOC_FIN_BIEN )
+	@BusinessOperationDefinition(BO_SUBASTA_COMPROBAR_PROV_LOC_FIN_BIEN)
 	public boolean comprobarProvLocFinBien(Long prcId);
 	
 	@BusinessOperation(BO_SUBASTA_COMPROBAR_COSTAS_LETRADO_VIVIENDA_HABITUAL)
@@ -87,4 +87,6 @@ public interface SubastaProcedimientoApi {
 	
 	@BusinessOperationDefinition(BO_SUBASTA_NO_VIVIENDA_HABITUAL_TERCEROS)
 	public boolean isNotViviendaHabitualAdjTerceros(Long prcId);
+	
+	public void determinarTipoSubasta(Subasta sub);
 }

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -16,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -27,6 +30,7 @@ import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.core.api.plazaJuzgado.BuscaPlazaPaginadoDtoInfo;
 import es.capgemini.pfs.core.api.plazaJuzgado.PlazaJuzgadoApi;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -57,6 +61,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.InformeActaComiteB
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastaSareb.InformeSubastaSarebBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaBean;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.informes.subastabankia.InformeSubastaLetradoBean;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDDocAdjudicacion;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdicionalBien;
@@ -90,8 +95,7 @@ public class SubastaController {
 	private static final String LOTES_SUBASTA_BUSCADOR_JSON = "plugin/nuevoModeloBienes/subastas/resultadoLotesSubastaJSON"; 
 	private static final String EDITAR_INFORMACION_CIERRE = "plugin/nuevoModeloBienes/subastas/editarInformacionCierre";
 	private static final String DICCIONARIO_JSON = "plugin/nuevoModeloBienes/subastas/diccionarioJSON";
-	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";
-	
+	private static final String JSON_RESPUESTA_SERVICIO = "plugin/nuevoModeloBienes/adjudicacion/generico/respuestaJSON";	
 	private static final String ADD_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/addRelacionContratoBien";
 	private static final String BORRAR_RELACION_CONTRATO_BIEN = "plugin/nuevoModeloBienes/subastas/borrarRelacionContratoBien";
 	private static final String BUSQUEDA_CONTRATO_JSON = "plugin/nuevoModeloBienes/subastas/busquedaContratoJSON";
@@ -127,6 +131,9 @@ public class SubastaController {
 	@Autowired
 	private EXTAsuntoManager extAsuntoManager;
 	
+	@Resource
+    private MessageService messageService;	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getSubastasAsunto(@RequestParam(value = "id", required = true) Long id, ModelMap map) {
@@ -146,7 +153,6 @@ public class SubastaController {
 		return DISABLED_BOTONES_CDD_JSON;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String reiniciarKOCDD(@RequestParam(value = "idAsunto", required = true) Long id, ModelMap map) {
 		subastaApi.eliminarBatchCierreDeudaAsunto(id);		
@@ -316,7 +322,6 @@ public class SubastaController {
 					
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformeCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
@@ -499,7 +504,6 @@ public class SubastaController {
 		return "";
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String enviarCierreDeuda(
 			@RequestParam(value = "idSubasta", required = true) Long idSubasta,
@@ -632,13 +636,34 @@ public class SubastaController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String generarInformeBusquedaSubastasManager(NMBDtoBuscarSubastas b, ModelMap model) {
+		
 		model.put("fileItem", proxyFactory.proxy(SubastaApi.class).buscarSubastasXLS(b));
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String validarLimiteExcel(NMBDtoBuscarSubastas b, ModelMap model) {
+		
+		if(subastaManager.comprobarLimiteXLS(b)) {
+			model.put("respuesta", "ok");
+		}
+		else {
+			
+			Parametrizacion parametrizacion = subastaManager.parametrizarLimite(Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS);
+			Integer limite = Integer.parseInt(parametrizacion.getValor());
+			
+			model.put("msgError", messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") + limite + " "
+					+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+		}
+	
+		return JSON_RESPUESTA_SERVICIO;
 	}
 
 	/**
 	 * MÃ©todo para buscar subastas segÃºn filtros indicados en el DTO.
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String buscarLotesSubasta(NMBDtoBuscarLotesSubastas dto, ModelMap model) {
 		Page page = (Page)proxyFactory.proxy(SubastaApi.class).buscarLotesSubastas(dto);
@@ -646,6 +671,7 @@ public class SubastaController {
 		return LOTES_SUBASTA_BUSCADOR_JSON;
 	}	
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String buscarLotesSubastasXLS(NMBDtoBuscarLotesSubastas dto, ModelMap model) {
 		FileItem fileItem = (FileItem)proxyFactory.proxy(SubastaApi.class).buscarLotesSubastasXLS(dto);
@@ -663,7 +689,6 @@ public class SubastaController {
 		return "plugin/nuevoModeloBienes/subastas/editarObservacionesLoteSubasta";
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String guardarEstadoLotesSubasta(@RequestParam Long[] idLotes, 
 			@RequestParam String codEstado,
@@ -690,6 +715,7 @@ public class SubastaController {
 		return DICCIONARIO_JSON;		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String buscarJuzgadosPlaza(@RequestParam(value = "codigo", required = true) String codigo, ModelMap map){
 		List<TipoJuzgado> juzgados = proxyFactory.proxy(PlazaJuzgadoApi.class).buscaJuzgadosPorPlaza(codigo);
@@ -697,6 +723,7 @@ public class SubastaController {
 		return "plugin/coreextension/tipoPlaza/listadoJuzgadosPlazaJSON";
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String buscaPlazasPorCod(@RequestParam(value = "codigo", required = true) String codigo, ModelMap map){
 		Integer pagina = proxyFactory.proxy(PlazaJuzgadoApi.class).buscarPorCodigo(codigo);
@@ -986,7 +1013,7 @@ public class SubastaController {
 					if(!"P401".equals(informe.getSubasta().getProcedimiento().getTipoProcedimiento().getCodigo())){
 						if(!Checks.esNulo(infoBienes.getFechaTestimonioAdjudicacionSareb())){
 							fila.add(infoBienes.getFechaTestimonioAdjudicacionSareb().concat(";White;Text"));
-						} else {
+						} else if(!DDDocAdjudicacion.ESCRITURA.equalsIgnoreCase(infoBienes.getCodigoDocAdjudicacion())){
 							fila.add("******;Red;Text");
 						}
 					}
@@ -1039,6 +1066,7 @@ public class SubastaController {
 		return GENINFVisorInformeController.JSP_DOWNLOAD_FILE;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListErrorPreviCDDData(ModelMap model){
 		List<DDResultadoValidacionCDD> list = proxyFactory.proxy(SubastaApi.class).getListErrorPreviCDDData();
@@ -1048,6 +1076,7 @@ public class SubastaController {
 	
 	
 		
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListErrorPostCDDData(ModelMap model){
 		List<DDResultadoValidacionNuse> list = proxyFactory.proxy(SubastaApi.class).getListErrorPostCDDData();
@@ -1213,6 +1242,7 @@ public class SubastaController {
 	 * @param numLotes
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String descargarPlantillaInstrucciones(WebRequest request,ModelMap model,@RequestParam(value = "numAutos", required = true) String numAutos,@RequestParam(value = "fechaSubasta", required = true) String fechaSubasta,
 			@RequestParam(value = "numLotes", required = true) String numLotes) {
@@ -1400,6 +1430,7 @@ public class SubastaController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getEditarRevisionCargas(WebRequest request, ModelMap model,@RequestParam(value = "idBienes", required = true) Long[] idBienes){
 		

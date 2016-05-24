@@ -22,6 +22,7 @@ public class DDTipoPreparacionPCO implements Dictionary, Auditable {
 
 	public static final String SENCILLO = "SE";
 	public static final String COMPLEJO = "CO";
+	public static final String OTRA = "OT";
 
 	@Id
 	@Column(name = "DD_PCO_PTP_ID")

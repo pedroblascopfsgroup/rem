@@ -192,8 +192,8 @@
 	var filtroContrato =new Ext.form.NumberField({
 		fieldLabel:'<s:message code="menu.clientes.listado.filtro.contrato" text="**Nro. Contrato" />'
 		,enableKeyEvents: true
-		,maxLength:10 
-		,autoCreate : {tag: "input", type: "text",maxLength:"10", autocomplete: "off"}
+		,maxLength:50 
+		,autoCreate : {tag: "input", type: "text",maxLength:"50", autocomplete: "off"}
 		,listeners : {
 			keypress : function(target,e){
 					if(e.getKey() == e.ENTER && this.getValue().length > 0) {

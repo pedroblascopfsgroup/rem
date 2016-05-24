@@ -30,19 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OUTPUT }
-     * 
-     */
-    public OUTPUT createOUTPUT() {
-        return new OUTPUT();
-    }
-
-    /**
      * Create an instance of {@link OUTPUT.LBLISTADODOCUMENTOS.Element }
      * 
      */
     public OUTPUT.LBLISTADODOCUMENTOS.Element createOUTPUTLBLISTADODOCUMENTOSElement() {
         return new OUTPUT.LBLISTADODOCUMENTOS.Element();
+    }
+
+    /**
+     * Create an instance of {@link OUTPUT }
+     * 
+     */
+    public OUTPUT createOUTPUT() {
+        return new OUTPUT();
     }
 
     /**

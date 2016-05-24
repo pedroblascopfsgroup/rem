@@ -804,6 +804,38 @@ var tipoFicheroStore =	page.getStore({
 	});	
 	
 var creaVentanaUpload = function(){	
+	
+	var comboTipoFichero = new Ext.form.ComboBox(
+			{
+				xtype:'combo'
+				,name:'comboTipoFichero'
+				<app:test id="tipoProcedimientoCombo" addComa="true" />
+				,hiddenName:'comboTipoFichero'
+				,store:tipoFicheroStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,emptyText:'----'
+				,width:250
+				,resizable:true
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+			}
+		);	
+		
+	var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
+		var fechaCaducidad = new Ext.form.DateField({
+    		xtype: 'datefield'
+            ,fieldLabel: '<s:message code="fichero.upload.fechaCaducidad" text="**Fecha de caducidad" />'
+            ,name: 'fechaCaducidad'
+            ,submitFormat: 'd/m/Y'
+ 			,format : 'd/m/Y'
+ 			,renderer: date_renderer
+ 			,hideMode: 'offsets'
+    	});		
+
+    fechaCaducidad.setVisible(false);
+    		
     upload = new Ext.FormPanel({
             fileUpload: true
             ,height: 55
@@ -812,24 +844,11 @@ var creaVentanaUpload = function(){
             ,defaults: {
                 allowBlank: false
                 ,msgTarget: 'side'
-                ,height:50
+                ,height:25
             }
             ,items: [
-            	{xtype:'combo'
-						,name:'comboTipoFichero'
-						<app:test id="tipoProcedimientoCombo" addComa="true" />
-						,hiddenName:'comboTipoFichero'
-						,store:tipoFicheroStore
-						,displayField:'descripcion'
-						,valueField:'codigo'
-						,mode: 'local'
-						,emptyText:'----'
-						,width:250
-						,resizable:true
-						,triggerAction: 'all'
-						,allowBlank:true
-						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'}
-				,{xtype: 'fileuploadfield'
+            	comboTipoFichero
+		        ,{xtype: 'fileuploadfield'
 		        	,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Seleccione un fichero" />'
 		            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
 		            ,name: 'path'
@@ -847,6 +866,9 @@ var creaVentanaUpload = function(){
 		            	}
 		           	}
             	}
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">			     
+			,fechaCaducidad
+</sec:authorize>
             ]
             ,buttons: [{
                 text: 'Subir',
@@ -865,12 +887,36 @@ var creaVentanaUpload = function(){
                 }
             }]
         });
+        
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		    
+		comboTipoFichero.on('select', function(){
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('adjuntoasunto/isFechaCaducidadVisible')
+				,params: {codigoFichero:this.value}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					
+					if(r.fechaCaducidadVisible) {
+						fechaCaducidad.setVisible(true);
+						fechaCaducidad.allowBlank = false;
+					}		
+					else {
+						fechaCaducidad.setVisible(false);
+						fechaCaducidad.allowBlank = true;
+					}									
+				}
+			});
+		});
+</sec:authorize>   
             
         win =new Ext.Window({
                  width:400
                 ,minWidth:400
-                ,height:125
-                ,minHeight:125
+                ,height:180
+                ,minHeight:180
                 ,layout:'fit'
                 ,border:false
                 ,closable:true

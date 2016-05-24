@@ -60,6 +60,7 @@ public final class PrimariaBusinessOperation {
     public static final String BO_CLI_MGR_BUSCAR_CLIENTES_TITULARE_POR_CONTRATO = "clienteManager.buscarClientesTitularesPorContrato";
     public static final String BO_CLI_MGR_CAMBIAR_ESTADO_ITINERARIO_CLIENTE = "clienteManager.cambiarEstadoItinerarioCliente";
     public static final String BO_CLI_MGR_CREAR_CLIENTE = "clienteManager.crearCliente";
+    public static final String BO_CLI_MGR_CREAR_CLIENTE_GEST_DEUDA = "clienteManager.crearClienteGestionDeuda";
     public static final String BO_CLI_MGR_CREAR_CLIENTE_W_ESTADO = "clienteManager.crearClienteWestado";
     public static final String BO_CLI_MGR_ELIMINAR_CLIENTE = "clienteManager.eliminarCliente";
     public static final String BO_CLI_MGR_ELIMINAR_CLI_Y_BPM = "clienteManager.eliminarClienteyBPM";
@@ -229,6 +230,7 @@ public final class PrimariaBusinessOperation {
      ** CirbeManager.
      ****************************************************************************/
     public static final String BO_CIRBE_MGR_GET_FECHAS_EXTRAC_PERSONA = "cirbeManager.getFechasExtraccionPersona";
+    public static final String BO_CIRBE_MGR_GET_FECHAS_ACTUALIZACION_PERSONA = "cirbeManager.getFechasActualizacionPersona";
     public static final String BO_CIRBE_MGR_GET_FECHAS_EXTRAC_PERSONA_DESDE = "cirbeManager.getFechasExtraccionPersonaDesde";
     public static final String BO_CIRBE_MGR_GET_FECHAS_EXTRAC_PERSONA_HASTA = "cirbeManager.getFechasExtraccionPersonaHasta";
     public static final String BO_CIRBE_MGR_GET_CIRBE_DATA = "cirbeManager.getCirbeData";

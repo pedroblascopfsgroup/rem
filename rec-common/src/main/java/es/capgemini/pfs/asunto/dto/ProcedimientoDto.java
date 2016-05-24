@@ -9,8 +9,11 @@ import org.springframework.binding.message.MessageContext;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.persona.model.Persona;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * DTO para procedimientos.
@@ -29,6 +32,14 @@ public class ProcedimientoDto extends WebDto {
     private static final String PORCENTAJE_RECUPERACION_NULO = "dc.proc.porcentajeRecuperacionNulo";
     private static final String PLAZO_NULO = "dc.proc.plazoNulo";
     private static final String PERSONAS_SELECCIONADAS_NULO = "dc.proc.personasSeleccionadasNulo";
+     private static final String PROPUESTA_NULO = "dc.proc.propuestasNulo";
+    private static final String TURNADO_NULO = "dc.proc.turnadoNulo";
+    private static final String PRIORIDAD_NULA = "dc.proc.prioridadNula";
+    private static final String PREPARACION_NULA = "dc.proc.preparacionNula";
+    private static final String ACCION_PROPUESTA_NULA = "dc.proc.accionPropuestaNula";
+    private static final String ACTUACION_PROPUESTA_NULA = "dc.proc.actuacionPropuestaNula";
+    private static final String MOTIVO_NULO = "dc.proc.motivoNulo";
+    private static final String OBSERVACIONES_NULAS = "dc.proc.observacionesNulas";
 
     //private static final String CONTRATOS_SELECCIONADOS_NULO = "dc.proc.contratosSeleccionadosNulo";
     //private static final String PORCENTAJE_RECUPERACION_INVALIDO = "dc.proc.porcentajeRecuperacionInvalido";
@@ -47,10 +58,22 @@ public class ProcedimientoDto extends WebDto {
     private String seleccionPersonas;
     private BigDecimal saldoOriginalVencido;
     private BigDecimal saldoOriginalNoVencido;
+    private String codigoTipoAsunto;
+    private Long propuesta;
 
-    private List<Persona> personasAfectadas;
+
+	private List<Persona> personasAfectadas;
 
     private List<ExpedienteContrato> contratosAfectados;
+    
+    private String prioridad;
+    private String preparacion;
+    private String tipoAccionPropuesta;
+    private String tipoActuacionPropuesta;
+    private Boolean turnadoOrdinario;//hay que ver como recoger el boolean y para guardarlo como 1 o 0
+    private Boolean preturnado;
+    private String motivo;
+    private String observaciones;
 
     /**
      * Valida la info del formulario.
@@ -86,15 +109,19 @@ public class ProcedimientoDto extends WebDto {
                 context.addMessage(new MessageBuilder().code(TIPO_ACTUACION_NULO).error().source("").defaultText(
                         "**Debe seleccionar un tipo de Actuación.").build());
             }
-            if (saldorecuperar == null) {
+            if (DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && propuesta == null) {
+                context.addMessage(new MessageBuilder().code(PROPUESTA_NULO).error().source("").defaultText(
+                        "**Debe seleccionar una propuesta.").build());
+            }
+            if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && saldorecuperar == null) {
                 context.addMessage(new MessageBuilder().code(SALDO_RECUPERAR_NULO).error().source("").defaultText(
                         "**Debe introducir un saldo a recuperar.").build());
             }
-            if (recuperacion == null) {
+            if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && recuperacion == null) {
                 context.addMessage(new MessageBuilder().code(PORCENTAJE_RECUPERACION_NULO).error().source("").defaultText(
                         "**Debe introducir un porcentaje de recuperación.").build());
             }
-            if (plazo == null) {
+            if (!DDTiposAsunto.ACUERDO.equals(codigoTipoAsunto) && plazo == null) {
                 context.addMessage(new MessageBuilder().code(PLAZO_NULO).error().source("")
                         .defaultText("**Debe introducir un plazo de recuperación.").build());
             }
@@ -102,6 +129,47 @@ public class ProcedimientoDto extends WebDto {
                 context.addMessage(new MessageBuilder().code(PERSONAS_SELECCIONADAS_NULO).error().source("").defaultText(
                         "**Debe seleccionar por lo menos una persona para el procedimiento.").build());
             }
+            
+            //Validaciones para desarrollo PRODUCTO-1089
+            if(actuacion.equals("PCO")){
+            	if(Checks.esNulo(turnadoOrdinario) && Checks.esNulo(preturnado)){
+            		context.addMessage(new MessageBuilder().code(TURNADO_NULO).error().source("").defaultText(
+                            "**Debe seleccionar un tipo para el turnado.").build());
+            	}
+            	
+            	if(Checks.esNulo(prioridad)){
+            		context.addMessage(new MessageBuilder().code(PRIORIDAD_NULA).error().source("").defaultText(
+                            "**Debe seleccionar una prioridad.").build());
+            	}
+            	
+            	if(Checks.esNulo(preparacion)){
+            		context.addMessage(new MessageBuilder().code(PREPARACION_NULA).error().source("").defaultText(
+                            "**Debe seleccionar una preparación.").build());
+            	}
+            	
+            	if(Checks.esNulo(tipoAccionPropuesta)){
+            		context.addMessage(new MessageBuilder().code(ACCION_PROPUESTA_NULA).error().source("").defaultText(
+                            "**Debe seleccionar un tipo de acción propuesta.").build());
+            	}
+            	
+            	if(Checks.esNulo(tipoActuacionPropuesta)){
+            		context.addMessage(new MessageBuilder().code(ACTUACION_PROPUESTA_NULA).error().source("").defaultText(
+                            "**Debe seleccionar un tipo de actuación propuesta.").build());
+            	}
+            }
+            
+            if(tipoProcedimiento.equals("NOLIT")){
+            	if(Checks.esNulo(motivo)){
+            		context.addMessage(new MessageBuilder().code(MOTIVO_NULO).error().source("").defaultText(
+                            "**Debe seleccionar un motivo.").build());
+            	}
+            	
+            	if(Checks.esNulo(observaciones)){
+            		context.addMessage(new MessageBuilder().code(OBSERVACIONES_NULAS).error().source("").defaultText(
+                            "**Debe indicar las observaciones.").build());
+            	}
+            }
+
         }
         if (context.getAllMessages().length > 0) {
             throw new ValidationException(ErrorMessageUtils.convertMessages(context.getAllMessages()));
@@ -317,5 +385,87 @@ public class ProcedimientoDto extends WebDto {
     public void setEnConformacion(Boolean enConformacion) {
         this.enConformacion = enConformacion;
     }
+    
+    public String getCodigoTipoAsunto() {
+		return codigoTipoAsunto;
+	}
+
+	public void setCodigoTipoAsunto(String codigoTipoAsunto) {
+		this.codigoTipoAsunto = codigoTipoAsunto;
+	}
+	
+	public Long getPropuesta() {
+		return propuesta;
+	}
+
+	public void setPropuesta(Long propuesta) {
+		this.propuesta = propuesta;
+	}
+	
+	public String getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(String prioridad) {
+		this.prioridad = prioridad;
+	}
+
+	public String getPreparacion() {
+		return preparacion;
+	}
+
+	public void setPreparacion(String preparacion) {
+		this.preparacion = preparacion;
+	}
+
+	public String getTipoAccionPropuesta() {
+		return tipoAccionPropuesta;
+	}
+
+	public void setTipoAccionPropuesta(String tipoAccionPropuesta) {
+		this.tipoAccionPropuesta = tipoAccionPropuesta;
+	}
+
+	public String getTipoActuacionPropuesta() {
+		return tipoActuacionPropuesta;
+	}
+
+	public void setTipoActuacionPropuesta(String tipoActuacionPropuesta) {
+		this.tipoActuacionPropuesta = tipoActuacionPropuesta;
+	}
+
+	public Boolean getTurnadoOrdinario() {
+		return turnadoOrdinario;
+	}
+
+	public void setTurnadoOrdinario(Boolean turnadoOrdinario) {
+		this.turnadoOrdinario = turnadoOrdinario;
+	}
+
+	public Boolean getPreturnado() {
+		return preturnado;
+	}
+
+	public void setPreturnado(Boolean preturnado) {
+		this.preturnado = preturnado;
+	}
+
+	public String getMotivo() {
+		return motivo;
+	}
+
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+
 
 }

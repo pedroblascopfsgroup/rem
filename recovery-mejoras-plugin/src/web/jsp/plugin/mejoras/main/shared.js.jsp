@@ -5,6 +5,44 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+
+//------------------------------------------------
+// Sobreescribe la funcion filter para IE8
+//------------------------------------------------
+
+function isIE () {
+  var myNav = navigator.userAgent.toLowerCase();
+  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
+
+if (isIE () && isIE () <= 9) {
+	if (!Array.prototype.filter){
+		  Array.prototype.filter = function(fun /*, thisp */){
+		    "use strict";
+		
+		    if (this === void 0 || this === null)
+		      throw new TypeError();
+		
+		    var t = Object(this);
+		    var len = t.length >>> 0;
+		    if (typeof fun !== 'function')
+		      throw new TypeError();
+		
+		    var res = [];
+		    var thisp = arguments[1];
+		    for (var i = 0; i < len; i++){
+		      if (i in t){
+		        var val = t[i]; // in case fun mutates this
+		        if (fun.call(thisp, val, i, t))
+		          res.push(val);
+		      }
+		    }
+		
+		    return res;
+		  };
+	}
+}
+
 //------------------------------------------------
 // Extendemos un nuevo tipo de combo que permite con
 // la propiedad listAlignOffsets setearle unas dimensiones
@@ -67,6 +105,7 @@ app.subtipoTarea.CODIGO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.ta
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE" />';
 app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC" />';
+app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CONTRATO_CANCELADO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_SALDO_REDUCIDO" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO  = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea.CODIGO_NOTIFICACION_CLIENTE_CANCELADO" />';
@@ -126,6 +165,7 @@ app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_GESTOR_EXPTE = '
 app.subtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR_EXPTE" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_GESTOR_EXPTE" />';
 app.subtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR_EXPTE" />';
+app.subtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO" />';
 
 app.subtipoTarea.CODIGO_NOTIFICACION_INTERCOMUNICACION = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_NOTIFICACION_INTERCOMUNICACION" />';
 app.subtipoTarea.CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea.CODIGO_TAREA_COMUNICACION_INTERCOMUNICACION" />';
@@ -160,6 +200,8 @@ app.categoriaSubTipoTarea={};
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_TOMA_DECISION = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_TOMA_DECISION" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_EXP" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_PER" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -181,6 +223,7 @@ app.estItinerario.ESTADO_RE = '<fwk:const value="es.capgemini.pfs.itinerario.mod
 app.estItinerario.ESTADO_DECISION_COMITE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_DECISION_COMIT" />';
 app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA" />';
 app.estItinerario.ESTADO_REVISAR_EXPEDIENTE = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE" />';
+app.estItinerario.ESTADO_ITINERARIO_EN_SANCION = '<fwk:const value="es.capgemini.pfs.itinerario.model.DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION" />';
 
 app.tipoBien={};
 app.tipoBien.CODIGO_TIPOBIEN_PISO = '<fwk:const value="es.capgemini.pfs.bien.model.DDTipoBien.CODIGO_TIPOBIEN_PISO" />';
@@ -210,6 +253,14 @@ app.codigoAcuerdoFinalizado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.
 app.codigoAcuerdoEnviado = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_ENVIADO" />';
 app.codigoAcuerdoIncumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_INCUMPLIDO" />';
 app.codigoAcuerdoCumplido = '<fwk:const value="es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo.ACUERDO_CUMPLIDO" />';
+
+app.decisionSancion={};
+app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_APROBADA" />';
+app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES" />';
+app.decisionSancion.CODIGO_DECISION_SANCION_RECHAZADA = '<fwk:const value="es.capgemini.pfs.expediente.model.Sancion.CODIGO_DECISION_SANCION_RECHAZADA" />';
+
+app.tipoExpediente={};
+app.tipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA = '<fwk:const value="es.capgemini.pfs.expediente.model.DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA" />';
 
 
 /**
@@ -859,6 +910,60 @@ app.openPDF=function(flow,tipo,params){
 };
 
 /**
+descarga un fichero enviado los parametros por POST
+*/
+app.downloadFile = function(config){
+    config = config || {};
+    var url = app.resolveFlow(config.flow);
+    var method = config.method || 'POST'; // Either GET or POST. Default is POST.
+    var params = config.params || {};
+
+    // Create form panel. It contains a basic form that we need for the file download.
+    var fp = new Ext.form.FormPanel({
+        standardSubmit: false
+        ,url: url
+        ,method: method
+        ,renderTo: Ext.getBody()
+        ,target : '_blank'
+    });
+
+    // Call the submit to begin the file download.
+    var form = fp.getForm();
+    
+    if (config.params && !fp.paramsAdded) {
+        // add hidden items for all params
+        for (i in config.params) {
+            fp.add({
+                xtype: 'hidden',
+                name: i,
+                value: config.params[i]
+            });
+        }
+        fp.doLayout();
+        // set a custom flag to prevent re-adding
+        fp.paramsAdded = true;
+    }    
+    
+     var el = form.getEl().dom;
+     var target = document.createAttribute("target");
+     target.nodeValue = "_blank";
+     el.setAttributeNode(target);
+     el.action = form.url;
+     el.submit();     
+    
+    var tiempo = config.tiempoSuccess || 100;
+    
+    //Si en el config tenemos una función success la ejecutamos a los x milisegundos después del submit
+    Ext.defer(function(){
+        //fp.close();
+        debugger;
+        if (config.succesFunction) {
+     		config.succesFunction();
+     	}
+    }, tiempo);
+}	
+
+/**
 abre una nueva ventana del navegador con el flow y parï¿½metros que se le pasan
 */
 app.openBrowserWindow = function(flow, params){
@@ -1419,6 +1524,8 @@ app.crearEditorGrid=	function(myStore,columnModel, config){
 		if (config.height) cfg.height=config.height;
 		if (config.plugins) cfg.plugins=config.plugins;
 		if (config.cls) cfg.cls=config.cls;
+		if (config.sm) cfg.sm=config.sm;
+		if (config.clicksToEdit) cfg.clicksToEdit=config.clicksToEdit;
 
 		//implementa el tooltip para ver el contenido de las celdas
 		cfg.onRender = function() {
@@ -1742,5 +1849,3 @@ app.promptPw=function(title,msg,handler){
 		        }
 		    }
 	});
-
-

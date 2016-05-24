@@ -163,12 +163,12 @@
     	    var apellido1Str = separa[0]; 
     	    var apellido2Str = separa[1]; 
     	    var nombreStr    = separa[2]; 
-    	    
-    	    if(apellido1Str.length > 0)
+    	       	    
+    	    if(apellido1Str.length > 0 && apellido1Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + apellido1Str;
     	    }
-    	    if(apellido2Str.length > 0)
+    	    if(apellido2Str.length > 0 && apellido2Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + " " + apellido2Str;
     	    }

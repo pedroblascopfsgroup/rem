@@ -4,7 +4,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <fwk:json>
 
@@ -54,11 +54,11 @@
 			</json:property>
 			<json:property name="dispuesto1"		value="${dto.dispuestoFecha1}" />
 			<json:property name="disponible1"		value="${dto.disponibleFecha1}" />
-			<c:if test="${result.fecha2!=null}">
+			<c:if test="${result.fecha2!=null && result.fecha2!=result.fecha1}">
 				<json:property name="dispuesto2"	value="${dto.dispuestoFecha2}" />
 				<json:property name="disponible2"	value="${dto.disponibleFecha2}" />
 			</c:if>
-			<c:if test="${result.fecha3!=null}">
+			<c:if test="${result.fecha3!=null && result.fecha3!=result.fecha2}">
 				<json:property name="dispuesto3"	value="${dto.dispuestoFecha3}" />
 				<json:property name="disponible3"	value="${dto.disponibleFecha3}" />
 			</c:if>
@@ -94,7 +94,7 @@
 			<json:object>
 				<json:property name="name" value="disponible1" />
 			</json:object>
-			<c:if test="${result.fecha2!=null}">
+			<c:if test="${result.fecha2!=null && result.fecha2!=result.fecha1}">
 				<json:object>
 					<json:property name="name" value="dispuesto2" />
 				</json:object>
@@ -102,7 +102,7 @@
 					<json:property name="name" value="disponible2" />
 				</json:object>
 			</c:if>
-			<c:if test="${result.fecha3!=null}">
+			<c:if test="${result.fecha3!=null && result.fecha3!=result.fecha2}">
 				<json:object>
 					<json:property name="name" value="dispuesto3" />
 				</json:object>
@@ -145,7 +145,7 @@
 		</json:object>
 		<json:object>
 			<json:property name="header" escapeXml="false">
-				<s:message code="cirbe.grid.dispuesto" text="**Dispuesto" /><br /><fwk:date value="${result.fecha1}" />
+				<s:message code="cirbe.grid.dispuesto" text="**Dispuesto" /><br /><fmt:formatDate value="${result.fecha1}" pattern="dd/MM/yyyy"/>
 			</json:property>
 			<json:property name="dataIndex" value="dispuesto1" />
 			<json:property name="renderer" value="moneyRenderer" />
@@ -153,16 +153,16 @@
 		</json:object>
 		<json:object>
 			<json:property name="header" escapeXml="false">
-				<s:message code="cirbe.grid.disponible" text="**Disponible" /><br /><fwk:date value="${result.fecha1}" />
+				<s:message code="cirbe.grid.disponible" text="**Disponible" /><br /><fmt:formatDate value="${result.fecha1}" pattern="dd/MM/yyyy"/>
 			</json:property>
 			<json:property name="dataIndex" value="disponible1" />
 			<json:property name="renderer" value="moneyRenderer" />
 			<json:property name="align" value="right" />
 		</json:object>
-		<c:if test="${result.fecha2!=null}">
+		<c:if test="${result.fecha2!=null && result.fecha2!=result.fecha1}">
 			<json:object>
 				<json:property name="header" escapeXml="false">
-					<s:message code="cirbe.grid.dispuesto" text="**Dispuesto" /><br /><fwk:date value="${result.fecha2}" />
+					<s:message code="cirbe.grid.dispuesto" text="**Dispuesto" /><br /><fmt:formatDate value="${result.fecha2}" pattern="dd/MM/yyyy"/>
 				</json:property>
 				<json:property name="dataIndex" value="dispuesto2" />
 				<json:property name="renderer" value="moneyRenderer" />
@@ -170,17 +170,17 @@
 			</json:object>
 			<json:object>
 				<json:property name="header" escapeXml="false">
-					<s:message code="cirbe.grid.disponible" text="**Disponible" /><br /><fwk:date value="${result.fecha2}" />
+					<s:message code="cirbe.grid.disponible" text="**Disponible" /><br /><fmt:formatDate value="${result.fecha2}" pattern="dd/MM/yyyy"/>
 				</json:property>
 				<json:property name="dataIndex" value="disponible2" />
 				<json:property name="renderer" value="moneyRenderer" />
 				<json:property name="align" value="right" />
 			</json:object>
 		</c:if>
-		<c:if test="${result.fecha3!=null}">
+		<c:if test="${result.fecha3!=null && result.fecha3!=result.fecha2}">
 			<json:object>
 				<json:property name="header" escapeXml="false">
-					<s:message code="cirbe.grid.dispuesto" text="**Dispuesto" /><br /><fwk:date value="${result.fecha3}" />
+					<s:message code="cirbe.grid.dispuesto" text="**Dispuesto" /><br /><fmt:formatDate value="${result.fecha3}" pattern="dd/MM/yyyy"/>
 				</json:property>
 				<json:property name="dataIndex" value="dispuesto3" />
 				<json:property name="renderer" value="moneyRenderer" />
@@ -188,7 +188,7 @@
 			</json:object>
 			<json:object>
 				<json:property name="header" escapeXml="false">
-					<s:message code="cirbe.grid.disponible" text="**Disponible" /><br /><fwk:date value="${result.fecha3}" />
+					<s:message code="cirbe.grid.disponible" text="**Disponible" /><br /><fmt:formatDate value="${result.fecha3}" pattern="dd/MM/yyyy"/>
 				</json:property>
 				<json:property name="dataIndex" value="disponible3" />
 				<json:property name="renderer" value="moneyRenderer" />

@@ -20,9 +20,7 @@
 	});
 
 	panel.on('render', function(){
-	
-	
-	
+
 		fechaInicial1 = '<fwk:date value="${fechaCirbeActual}"/>';
 		fechaInicial2 = '<fwk:date value="${fechaCirbe30Dias}"/>';
 		fechaInicial3 = '<fwk:date value="${fechaCirbe60Dias}"/>';

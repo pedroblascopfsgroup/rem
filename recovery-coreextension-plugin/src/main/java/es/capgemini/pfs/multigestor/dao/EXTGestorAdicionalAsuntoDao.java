@@ -1,6 +1,7 @@
 package es.capgemini.pfs.multigestor.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
@@ -12,10 +13,10 @@ public interface EXTGestorAdicionalAsuntoDao extends
 		AbstractDao<EXTGestorAdicionalAsunto, Long> {
 
 	List<Usuario> findGestoresByAsunto(Long idAsunto, String tipoGestor);
+	List<EXTGestorAdicionalAsunto> findGestoresByAsuntoTipos(Long idAsunto, Set<String> tiposGestor);	
 	
 	List<DespachoExterno> getTipoDespachoExternoList(long idUsuario);
 	List<EXTTipoGestorPropiedad> getTipoGestorPropiedadList(String codSta);
 
 	List<EXTGestorAdicionalAsunto> findGestorAdicionalesByAsunto(Long idAsunto);
-
 }

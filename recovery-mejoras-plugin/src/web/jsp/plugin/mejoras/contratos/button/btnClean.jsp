@@ -13,6 +13,8 @@ new Ext.Button({
         			txtCodRecibo.reset();
         			txtCodEfecto.reset();
         			txtCodDisposicion.reset();
+        			comboMotivoGestionHRE.reset();
+        			comboSituacionGestion.reset();
         		}
         	if(tabRelaciones){
         			txtNombre.reset();
@@ -40,6 +42,10 @@ new Ext.Button({
     				comboZonasAdm.reset();
     				comboJerarquiaAdministrativa.reset();
     				optionsZonasAdmStore.webflow({id:0});
+    				zonasStore.removeAll();
+    				zonasAdmStore.removeAll();
+    				listadoCodigoZonas = [];
+    				listadoCodigoZonasAdm = [];
         		} 
 			contratosGrid2.collapse(true);
 		}

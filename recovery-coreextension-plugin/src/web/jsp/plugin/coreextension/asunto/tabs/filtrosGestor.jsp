@@ -27,8 +27,9 @@
 				store:optionsTipoGestorStore
 				,displayField:'descripcion'
 				,valueField:'id'
-				,mode: 'remote'
-				,editable: false
+				,mode: 'local'
+				,forceSelection: true
+				,editable: true
 				,emptyText:'---'
 				,triggerAction: 'all'
 				,fieldLabel : '<s:message code="ext.asuntos.busqueda.filtro.tipoGestor" text="**Tipo de gestor"/>'
@@ -73,9 +74,10 @@
 				store:optionsDespachoStore
 				,displayField:'descripcion'
 				,valueField:'cod'
-				,mode: 'remote'
+				,mode: 'local'
 				,emptyText:'---'
-				,editable: false
+				,forceSelection: true
+				,editable: true
 				,triggerAction: 'all'
 				,disabled:true
 				,resizable:true

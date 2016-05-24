@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;all>
  *         &lt;element name="DESC_ESTADO" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="ESTADO" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="EXTENSIONFICHERO" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="FECHAALTARELACION" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="FECHAALTAVERSION" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="FICHEROBASE64" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="IDDOCUMENTO" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="LB_LISTADODOCUMENTOS">
@@ -63,6 +66,7 @@ import javax.xml.bind.annotation.XmlType;
  *             &lt;/complexContent>
  *           &lt;/complexType>
  *         &lt;/element>
+ *         &lt;element name="VERSION" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="COD_ERROR" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="TXT_ERROR" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/all>
@@ -84,12 +88,20 @@ public class OUTPUT {
     protected String descestado;
     @XmlElement(name = "ESTADO", required = true)
     protected String estado;
+    @XmlElement(name = "EXTENSIONFICHERO", required = true)
+    protected String extensionfichero;
+    @XmlElement(name = "FECHAALTARELACION", required = true)
+    protected String fechaaltarelacion;
+    @XmlElement(name = "FECHAALTAVERSION", required = true)
+    protected String fechaaltaversion;
     @XmlElement(name = "FICHEROBASE64", required = true)
     protected String ficherobase64;
     @XmlElement(name = "IDDOCUMENTO", required = true)
     protected String iddocumento;
     @XmlElement(name = "LB_LISTADODOCUMENTOS", required = true)
     protected OUTPUT.LBLISTADODOCUMENTOS lblistadodocumentos;
+    @XmlElement(name = "VERSION", required = true)
+    protected String version;
     @XmlElement(name = "COD_ERROR", required = true)
     protected String coderror;
     @XmlElement(name = "TXT_ERROR", required = true)
@@ -141,6 +153,78 @@ public class OUTPUT {
      */
     public void setESTADO(String value) {
         this.estado = value;
+    }
+
+    /**
+     * Gets the value of the extensionfichero property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEXTENSIONFICHERO() {
+        return extensionfichero;
+    }
+
+    /**
+     * Sets the value of the extensionfichero property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEXTENSIONFICHERO(String value) {
+        this.extensionfichero = value;
+    }
+
+    /**
+     * Gets the value of the fechaaltarelacion property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFECHAALTARELACION() {
+        return fechaaltarelacion;
+    }
+
+    /**
+     * Sets the value of the fechaaltarelacion property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFECHAALTARELACION(String value) {
+        this.fechaaltarelacion = value;
+    }
+
+    /**
+     * Gets the value of the fechaaltaversion property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFECHAALTAVERSION() {
+        return fechaaltaversion;
+    }
+
+    /**
+     * Sets the value of the fechaaltaversion property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFECHAALTAVERSION(String value) {
+        this.fechaaltaversion = value;
     }
 
     /**
@@ -213,6 +297,30 @@ public class OUTPUT {
      */
     public void setLBLISTADODOCUMENTOS(OUTPUT.LBLISTADODOCUMENTOS value) {
         this.lblistadodocumentos = value;
+    }
+
+    /**
+     * Gets the value of the version property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVERSION() {
+        return version;
+    }
+
+    /**
+     * Sets the value of the version property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVERSION(String value) {
+        this.version = value;
     }
 
     /**

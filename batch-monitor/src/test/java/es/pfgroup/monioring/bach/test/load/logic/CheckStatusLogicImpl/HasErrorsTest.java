@@ -14,6 +14,7 @@ import org.junit.Test;
 import es.pfgroup.monioring.bach.load.dao.CheckStatusDao;
 import es.pfgroup.monioring.bach.load.dao.model.CheckStatusTuple;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusErrorType;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusUserError;
 import es.pfgroup.monioring.bach.load.logic.CheckStatusLogicImpl;
@@ -68,7 +69,10 @@ public class HasErrorsTest extends AbstractCheckStatusLogicImplTests{
             fail("Debería haberse producido una excepción.");
         } catch (CheckStatusWrongArgumentsException e) {
             assertEquals(CheckStatusErrorType.MISSING_ARGUMENTS, e.getErrorType());
-        }
+        } catch (CheckStatusRecoverableException e) {
+			fail("Excepción inesperada");
+			e.printStackTrace();
+		}
     }
     
     @Test
@@ -78,7 +82,10 @@ public class HasErrorsTest extends AbstractCheckStatusLogicImplTests{
             fail("Debería haberse producido una excepción.");
         } catch (CheckStatusWrongArgumentsException e) {
             assertEquals(CheckStatusErrorType.MISSING_ARGUMENTS, e.getErrorType());
-        }
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepción inesperada");
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -106,7 +113,10 @@ public class HasErrorsTest extends AbstractCheckStatusLogicImplTests{
         } catch (CheckStatusWrongArgumentsException e) {
             // Esto no va a ocurrir porque son mocks
             return false;
-        }
+        } catch (CheckStatusRecoverableException e) {
+            // Esto no va a ocurrir porque son mocks
+            return false;
+		}
     }
 
 }

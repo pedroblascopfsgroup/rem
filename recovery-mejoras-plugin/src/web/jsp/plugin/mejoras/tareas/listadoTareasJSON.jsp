@@ -79,6 +79,9 @@
 				</json:property>
 				<json:property name="motivo" value="${tar.prorroga.causaProrroga.descripcion}"/>
 			</c:if>
+			<c:if test='${tar.idProrroga != null}'>
+				<json:property name="esPeticionProrroga" value="true"/>
+			</c:if>
 		</json:object>
 	</json:array>
 </fwk:json>

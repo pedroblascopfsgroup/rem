@@ -13,16 +13,40 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	private String numeroProcedimientoEnJuzgado;
 	private String anyoProcedimientoEnJuzgado;
 	
+	private String ComboDecisionesFinalizacion;
+	private String ComboTipoAsunto;
 	private String comboGestion;
 	private String comboPropiedades;
 	private String comboErrorPreviCDD;
 	private String comboErrorPostCDD;
     private String fechaEntregaDesde;
     private String fechaEntregaHasta;
-		
+    private String nombrePersonaProcedimiento;
+    private String apellido1PersonaProcedimiento;
+    private String apellido2PersonaProcedimiento;
+    private String dniPersonaProcedimiento;
 	
 	private List<Long> idsUsuariosGrupos;
 	
+	
+	
+	
+	public String getComboDecisionesFinalizacion() {
+		return ComboDecisionesFinalizacion;
+	}
+
+	public void setComboDecisionesFinalizacion(String comboDecisionesFinalizacion) {
+		ComboDecisionesFinalizacion = comboDecisionesFinalizacion;
+	}
+
+	public String getComboTipoAsunto() {
+		return ComboTipoAsunto;
+	}
+
+	public void setComboTipoAsunto(String comboTipoAsunto) {
+		ComboTipoAsunto = comboTipoAsunto;
+	}
+
 	public void setComboTiposGestor(String comboTiposGestor) {
 		this.comboTiposGestor = comboTiposGestor;
 	}
@@ -103,6 +127,46 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	public void setFechaEntregaDesde(String fechaEntregaDesde) {
 		this.fechaEntregaDesde = fechaEntregaDesde;
 	}
+
+	
+	public String getNombrePersonaProcedimiento() {
+		return nombrePersonaProcedimiento;
+	}
+
+	public void setNombrePersonaProcedimiento(String nombrePersonaProcedimiento) {
+		this.nombrePersonaProcedimiento = nombrePersonaProcedimiento;
+	}
+
+	public String getApellido1PersonaProcedimiento() {
+		return apellido1PersonaProcedimiento;
+	}
+
+	public void setApellido1PersonaProcedimiento(
+			String apellido1PersonaProcedimiento) {
+		this.apellido1PersonaProcedimiento = apellido1PersonaProcedimiento;
+	}
+
+	public String getApellido2PersonaProcedimiento() {
+		return apellido2PersonaProcedimiento;
+	}
+
+	public void setApellido2PersonaProcedimiento(
+			String apellido2PersonaProcedimiento) {
+		this.apellido2PersonaProcedimiento = apellido2PersonaProcedimiento;
+	}
+	
+	public String getDniPersonaProcedimiento() {
+		return dniPersonaProcedimiento;
+	}
+
+	public void setDniPersonaProcedimiento(String dniPersonaProcedimiento) {
+		this.dniPersonaProcedimiento = dniPersonaProcedimiento;
+	}
+
+	
+	
+	
+	
 
 	
 }

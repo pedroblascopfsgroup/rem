@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RUBEN ROVIRA
---## FECHA_CREACION=20160229
+--## FECHA_CREACION=201600510
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=CMREC-2336
@@ -24,7 +24,7 @@ DECLARE
     V_ESQUEMA      VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M    VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL          VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS   NUMBER(16); -- Vble. para validar la existencia de una tabla.  
+    V_NUM_TABLAS   NUMBER(16); -- Vble. para validar la existencia de una tabla o indice 
     ERR_NUM        NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG        VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -37,21 +37,22 @@ BEGIN
     --------------------- 
     
     --** Comprobamos si existe la tabla   
-    V_SQL := 'select COUNT(1)
-from all_ind_columns
-where table_name = upper(''CIR_CIRBE'') and column_name =''CIR_FECHA_EXTRACCION'' AND index_name IN 
-(select index_name from all_ind_columns
-where table_name = upper(''CIR_CIRBE'') and (column_name =''PER_ID''))';
-    EXECUTE IMMEDIATE v_sql INTO v_num_tablas;
+    V_SQL := 'SELECT count(1) FROM (
+            SELECT index_name, To_Char(WM_CONCAT(column_name))  columnas
+            FROM ALL_IND_COLUMNS 
+            WHERE table_name = ''CIR_CIRBE'' and index_owner=''' || V_ESQUEMA || '''
+            GROUP BY index_name
+        ) sqli
+        WHERE sqli.columnas = ''PER_ID,CIR_FECHA_EXTRACCION''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 0 THEN 
-    --**Guardamos en una tabla temporal los valores del campo ven_id
-    V_MSQL := 'CREATE INDEX '||v_esquema||'.INX_CIR_CIRBE_DEL ON
-               CIR_CIRBE (PER_ID,CIR_FECHA_EXTRACCION)';        
-    EXECUTE IMMEDIATE V_MSQL;
-    
-     DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.INX_CIR_CIRBE_DEL INDICE CREADO');
-     ELSE
-       DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.INX_CIR_CIRBE_DEL YA EXISTIA....');
+        --**Guardamos en una tabla temporal los valores del campo ven_id
+        V_MSQL := 'CREATE INDEX '||v_esquema||'.INX_CIR_CIRBE_DEL ON
+                   CIR_CIRBE (PER_ID,CIR_FECHA_EXTRACCION)';        
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.INX_CIR_CIRBE_DEL INDICE CREADO');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.INX_CIR_CIRBE_DEL (o equivalente) YA EXISTIA....');
 	END IF;
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.CIR_CIRBE... FIN CREACION INDICE');
 

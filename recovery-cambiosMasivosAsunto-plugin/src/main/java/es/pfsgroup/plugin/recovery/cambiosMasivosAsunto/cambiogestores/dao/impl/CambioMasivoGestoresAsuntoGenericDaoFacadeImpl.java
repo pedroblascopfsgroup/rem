@@ -26,8 +26,9 @@ public class CambioMasivoGestoresAsuntoGenericDaoFacadeImpl implements CambioMas
 	@Override
 	public List<EXTDDTipoGestor> getTiposGestor(CambiosMasivosAsuntoPluginConfig config) {
 		Order order = new Order(OrderType.ASC, "descripcion");
-		
-		List<EXTDDTipoGestor> unfiltered = genericDao.getListOrdered(EXTDDTipoGestor.class, order);
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
+
+		List<EXTDDTipoGestor> unfiltered = genericDao.getListOrdered(EXTDDTipoGestor.class, order, filtro1);
 		
 		if (config.isFiltrarTiposGestor()){
 			return filter(unfiltered, config.getTiposGestorValidos());
@@ -39,8 +40,9 @@ public class CambioMasivoGestoresAsuntoGenericDaoFacadeImpl implements CambioMas
 	
 	@Override
 	public List<DespachoExterno> getTodosLosDespachos() {
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
 		Order order = new Order(OrderType.ASC, "despacho");
-		return genericDao.getListOrdered(DespachoExterno.class, order);
+		return genericDao.getListOrdered(DespachoExterno.class, order, filtro1);
 	}
 
 	private List<EXTDDTipoGestor> filter(List<EXTDDTipoGestor> unfiltered, List<String> tiposGestorValidos) {

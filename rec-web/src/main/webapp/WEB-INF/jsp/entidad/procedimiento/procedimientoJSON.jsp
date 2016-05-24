@@ -5,20 +5,26 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 
 <fwk:json>
+  <json:property name="tieneProcurador" value="${tieneProcurador}" />
+  <json:property name="activoDespachoIntegral" value="${activoDespachoIntegral}" />
   <json:property name="id" value="${procedimiento.id}" />
   <json:property name="nombreTab" value="${nombreTab}" />
-  <json:property name="fechaVenc" value="${fechaVenc}" />
-  <json:property name="tarea" value="${tarea}" />
+<%--  <json:property name="fechaVenc" value="${fechaVenc}" /> --%>
+<%--  <json:property name="tarea" value="${tarea}" /> --%>
   <json:property name="paralizado" value="${paralizado}" />
   <json:property name="esGestor" value="${esGestor}" />
   <json:property name="esSupervisor" value="${esSupervisor}" />
   <json:property name="esGestorDecision" value="${esGestorDecision}" />  
   <json:property name="procedimientoAceptado" value="${procedimiento.estaAceptado}" />
   <json:property name="puedeCrearRecurso" value="${puedeCrearRecurso}" />
+  <json:property name="esProcedimientoAcuerdo" value="${esProcedimientoAcuerdo}" />
+  <json:property name="verTabInfRequerida" value="${verTabInfRequerida}" />
+  <json:property name="codigoTipoActuacion" value="${codigoTipoActuacion}" />
   <json:property name="derivacionAceptada" value="${procedimiento.derivacionAceptada}" />
   <json:property name="nombreProcedimiento" value="${procedimiento.nombreProcedimiento}" />
   <json:property name="hayPrecontencioso" value="${precontencioso.id != null}" />
   <json:property name="estadoPrecontencioso" value="${precontencioso.estadoActualCodigo}" />
+  <json:property name="hayDespachoIntegral" value="${hayDespachoIntegral}" />
   <json:object name="toolbar">
 	  <json:property name="fechaCreacionFormateada" value="${procedimiento.asunto.fechaCreacionFormateada}" />
 	  <json:property name="estadoItinerario" value="${procedimiento.asunto.estadoItinerario.descripcion}" />
@@ -33,6 +39,7 @@
 	  <json:property name="gestor" value="${procedimiento.asunto.gestor.usuario.apellidoNombre}" />
 	  <json:property name="supervisor" value="${procedimiento.asunto.supervisor.usuario.apellidoNombre}" />
 	  <json:property name="procurador" value="${procedimiento.asunto.procurador.usuario.apellidoNombre}" />
+	  <json:property name="procuradorReal" value="${procuradorReal}" />
 	  <json:property name="fechaInicio">
 		<fwk:date value="${procedimiento.auditoria.fechaCrear}" />
 	  </json:property>
@@ -101,8 +108,39 @@
 	<json:property name="numExpInterno" value="${precontencioso.numExpInterno}" />
 	<json:property name="numExpExterno" value="${precontencioso.numExpExterno}" />
 	<json:property name="cntPrincipal" value="${precontencioso.cntPrincipal}" />
+  </json:object>  
+  <!-- UTILIZAR EN EL ITEM PRODUCTO-1046  
+  <json:object name="acuerdo">
+  	<json:property name="importeAPagar" value="${acuerdo.importeAPagar}"/>
+  	<json:property name="importeVencido" value="${acuerdo.importeVencido}"/>
+  	<json:property name="importeIntMoratorios" value="${acuerdo.importeIntMoratorios}"/>
+  	<json:property name="comisiones" value="${acuerdo.comisiones}"/>
+  	<json:property name="quita" value="${acuerdo.quita}"/>
+  	<json:property name="importeNoVencido" value="${acuerdo.importeNoVencido}"/>
+  	<json:property name="importeIntOrdinarios" value="${acuerdo.importeIntOrdinarios}"/>
+  	<json:property name="gastos" value="${acuerdo.gastos}"/>
+  	<json:property name="fResolPBCYFT" value="${acuerdo.fResolPBCYFT}"/>
+  	<json:property name="conflicInteres" value="${acuerdo.conflicInteres}"/>
+  	<json:property name="riesgReputacional" value="${acuerdo.riesgReputacional}"/>
+  	<json:property name="resolPBCYFT" value="${acuerdo.resolPBCYFT}"/>
+  	<json:property name="resolConflicInteres" value="${acuerdo.resolConflicInteres}"/>
+  	<json:property name="resolRiesgReputacional" value="${acuerdo.resolRiesgReputacional}"/>
+  	<json:property name="fAnalisisInternoBCapitales" value="${acuerdo.fAnalisisInternoBCapitales}"/>
+  	<json:property name="resulAnalisisInterno" value="${acuerdo.resulAnalisisInterno}"/>
+  	<json:property name="fCartaCert" value="${acuerdo.fCartaCert}"/>
+  	<json:property name="fEnvioSareb" value="${acuerdo.fEnvioSareb}"/>
+  	<json:property name="numPropuesta" value="${acuerdo.numPropuesta}"/>
+  	<json:property name="fRespuestaSareb" value="${acuerdo.fRespuestaSareb}"/>
+  	<json:property name="resolSareb" value="${acuerdo.resolSareb}"/>
+  	<json:property name="fPrevistaFirmaForm" value="${acuerdo.fPrevistaFirmaForm}"/>
+  	<json:property name="fFirmaForm" value="${acuerdo.fFirmaForm}"/>
+  	<json:property name="notario" value="${acuerdo.notario}"/>
+  	<json:property name="fFormNotaria" value="${acuerdo.fFormNotaria}"/>
+  	<json:property name="fContabilizacion" value="${acuerdo.fContabilizacion}"/>
+  	<json:property name="fCierreSareb" value="${acuerdo.fCierreSareb}"/>
   </json:object>
-	<json:array name="botonesVisiblesDocPco" items="${botonesVisiblesDocPco}" var="bot">
+  -->
+  <json:array name="botonesVisiblesDocPco" items="${botonesVisiblesDocPco}" var="bot">
 		<json:object>
 			<json:property name="boton" value="${bot}"/>
 		</json:object>

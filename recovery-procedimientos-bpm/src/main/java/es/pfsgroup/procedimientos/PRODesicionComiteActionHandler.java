@@ -65,7 +65,12 @@ public class PRODesicionComiteActionHandler extends PROBaseActionHandler impleme
             Estado estadoDC = arquetipoManager.getWithEstado(idArquetipo).getItinerario().getEstado(DDEstadoItinerario.ESTADO_DECISION_COMIT);
             Long idTareaAnterior = (Long) executionContext.getVariable(TAREA_ASOCIADA_DC);
             Long fechaFin = obtenerFinTareaAnterior(idTareaAnterior);
-            Long plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo() + estadoRE.getPlazo() + estadoDC.getPlazo(), fechaFin);
+            Long plazoRestante = 0L;
+            if (estadoDC.getAutomatico() != null && estadoDC.getAutomatico()) {
+            	plazoRestante = estadoDC.getPlazo();
+            } else {
+            	plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo() + estadoRE.getPlazo() + estadoDC.getPlazo(), fechaFin);
+            }
             estadoProcesoManager.pasarDeEstado(idExpediente, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, estadoDC, executionContext.getProcessInstance()
                     .getId());
             Long seconds = (plazoRestante.longValue() / MILLISECONDS);

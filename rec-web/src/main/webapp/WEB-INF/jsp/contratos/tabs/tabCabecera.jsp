@@ -24,7 +24,7 @@
 	
 	var finalidadContrato    = app.creaLabel('<s:message code="contrato.consulta.tabcabecera.finalidadContrato" text="**finalidadContrato"/>','${contrato.finalidadContrato}',{labelStyle:labelStyle});
 	var finalidadAcuerdo	= app.creaLabel('<s:message code="contrato.consulta.tabcabecera.finalidadAcuerdo" text="**finalidadAcuerdo"/>','${contrato.finalidadAcuerdo}',{labelStyle:labelStyle});
-	var fechaCreacion		= app.creaLabel('<s:message code="contrato.consulta.tabcabecera.fechaCreación" text="**fechaCreación"/>','<fwk:date value="${contrato.fechaCreacion}" />',{labelStyle:labelStyle});
+	var fechaCreacion		= app.creaLabel('<s:message code="contrato.consulta.tabcabecera.fechaCreacion" text="**fechaCreación"/>','<fwk:date value="${contrato.fechaCreacion}" />',{labelStyle:labelStyle});
 	
 	//DATOS FINANCIEROS
 	var moneda				= app.creaLabel('<s:message code="contrato.consulta.tabcabecera.moneda" text="**Moneda"/>','${contrato.moneda.descripcionLarga}',{labelStyle:labelStyle});

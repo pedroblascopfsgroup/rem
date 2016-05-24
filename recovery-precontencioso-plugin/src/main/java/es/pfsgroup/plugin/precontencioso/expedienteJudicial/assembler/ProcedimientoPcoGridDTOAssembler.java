@@ -111,7 +111,10 @@ public class ProcedimientoPcoGridDTOAssembler {
 			liqGridDto.setFechaConfirmacion((Date) liquidacion.get("fechaConfirmacion"));
 			liqGridDto.setFechaCierre((Date) liquidacion.get("fechaCierre"));
 			liqGridDto.setFechaRecepcion((Date) liquidacion.get("fechaRecepcion"));
-			liqGridDto.setTotal((Float) liquidacion.get("total"));
+
+			if (liquidacion.get("total") != null) {
+				liqGridDto.setTotal(((BigDecimal) liquidacion.get("total")).floatValue());
+			}
 
 			prcPcoGridDto.setLiquidacion(liqGridDto);
 
@@ -143,6 +146,8 @@ public class ProcedimientoPcoGridDTOAssembler {
 			burofaxGridDto.setFechaSolicitud((Date) burofax.get("fechaSolicitud"));
 			burofaxGridDto.setFechaEnvio((Date) burofax.get("fechaEnvio"));
 			burofaxGridDto.setFechaAcuse((Date) burofax.get("fechaAcuse"));
+			burofaxGridDto.setRegManual(Boolean.valueOf(ObjectUtils.toString("esPersonaManual")));
+			burofaxGridDto.setRefExternaEnvio(ObjectUtils.toString(burofax.get("refExternaEnvio")));
 			burofaxGridDto.setResultado(Boolean.valueOf(ObjectUtils.toString(burofax.get("resultado"))));
 
 			proPcoGridDto.setBurofax(burofaxGridDto);

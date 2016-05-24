@@ -2,6 +2,8 @@ package es.capgemini.pfs.acuerdo.dao.impl;
 
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.acuerdo.dao.ActuacionesRealizadasAcuerdoDao;
@@ -27,4 +29,22 @@ public class ActuacionesRealizadasAcuerdoDaoImpl extends AbstractEntityDao<Actua
                 + "where acuerdo.actuacionesRealizadas = actuacion and acuerdo.id = ?";
         return getHibernateTemplate().find(hql, idAcuerdo);
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActuacionesRealizadasAcuerdo getByGuid(String guid) {
+		
+		ActuacionesRealizadasAcuerdo actuacionesRealizadasAcuerdo = null;
+		
+		DetachedCriteria crit = DetachedCriteria.forClass(ActuacionesRealizadasAcuerdo.class);
+		crit.add(Restrictions.eq("guid", guid));
+        crit.add(Restrictions.eq("auditoria.borrado", false));
+        
+        List<ActuacionesRealizadasAcuerdo> listado = getHibernateTemplate().findByCriteria(crit);
+        if(listado != null && listado.size() > 0) {
+        	actuacionesRealizadasAcuerdo = listado.get(0);
+        }
+        
+        return actuacionesRealizadasAcuerdo;
+	}
 }

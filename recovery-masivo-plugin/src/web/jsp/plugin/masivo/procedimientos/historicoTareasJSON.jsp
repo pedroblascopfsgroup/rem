@@ -36,6 +36,7 @@
 					<json:property name="observaciones" value="${hr.observaciones}"/>
 				</json:object>
 			</json:array>
+			<json:property name="usuarioResponsable" value="${tp.usuarioResponsable}" />
 		</json:object>
 	</json:array>
 </fwk:json>

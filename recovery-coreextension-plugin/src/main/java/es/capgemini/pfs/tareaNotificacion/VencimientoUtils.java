@@ -51,12 +51,20 @@ public class VencimientoUtils implements ApplicationContextAware {
 
 		@Override
 		public Date getFechaReal() {
-			return fechaReal;
+			if(fechaReal != null){
+				return (Date)fechaReal.clone();
+			}else{
+				return null;
+			}
 		}
 
 		@Override
 		public Date getFechaVencimiento() {
-			return fechaCalculada;
+			if(fechaCalculada != null){
+				return (Date)fechaCalculada.clone();
+			}else{
+				return null;
+			}
 		}
 	}
 
@@ -72,9 +80,9 @@ public class VencimientoUtils implements ApplicationContextAware {
 	 *            Fecha de vencimiento original
 	 * @param tipo
 	 *            <ul>
-	 *            <li>TODO: Aplica el cáclulo del més de Asto, festivos y fines
+	 *            <li>TODO: Aplica el cï¿½clulo del mï¿½s de Asto, festivos y fines
 	 *            de semana</li>
-	 *            <li>NADA o null: no aplica ningún tipo de cálculo</li>
+	 *            <li>NADA o null: no aplica ningï¿½n tipo de cï¿½lculo</li>
 	 *            </ul>
 	 * @return
 	 */
@@ -89,9 +97,9 @@ public class VencimientoUtils implements ApplicationContextAware {
 	 *            Fecha de vencimiento original
 	 * @param tipo
 	 *            <ul>
-	 *            <li>TODO: Aplica el cáclulo del més de Asto, festivos y fines
+	 *            <li>TODO: Aplica el cï¿½clulo del mï¿½s de Asto, festivos y fines
 	 *            de semana</li>
-	 *            <li>NADA o null: no aplica ningún tipo de cálculo</li>
+	 *            <li>NADA o null: no aplica ningï¿½n tipo de cï¿½lculo</li>
 	 *            </ul>
 	 * @return
 	 */
@@ -159,7 +167,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 		return fechaReal.before(new Date());
 	}
 
-	private static PoliticaVencimientoPasado getPoliticaVencimientoPasado() {
+	private synchronized static PoliticaVencimientoPasado getPoliticaVencimientoPasado() {
 		if (politicaVencimientoPasado == null) {
 			politicaVencimientoPasado = new DefaultPoliticaVencimientoPasado();
 		}
@@ -204,7 +212,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(ApplicationContext applicationContext)
+	public synchronized void setApplicationContext(ApplicationContext applicationContext)
 			throws BeansException {
 		ctx = applicationContext;
 

@@ -80,7 +80,7 @@ BEGIN
   V_SQL_2 := ''',''14597'',''CM_GE_PCO'',null,''';
   V_SQL_3 := ''',''PROCURADOR'',''16626'',NULL,''';
   V_SQL_4 := '000000'',''';
-  V_SQL_5 := ''', ''0'',NULL,NULL,NULL,''02'')' ;
+  V_SQL_5 := ''', ''0'',NULL,NULL,NULL,''01'')' ;
   FOR FILA in TCURSOR LOOP
     V_SQL := V_SQL_CABECERA || FILA.CNT_CONTRATO || V_SQL_1 || FILA.NUM_FILA || V_SQL_2 || V_DD_TPO_ID || V_SQL_3 || FILA.NUM_FILA || V_SQL_4 || FILA.NUM_FILA || V_SQL_5;
     DBMS_OUTPUT.PUT_LINE(substr(V_SQL, 1, 60) || ' :' || FILA.NUM_FILA || ': ' || sql%rowcount);

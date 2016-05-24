@@ -28,11 +28,5 @@ public class ArquetiposRuleExecutor extends RuleExecutor{
     public RuleExecutorConfig getConfig() {
         return aRuleExecutorConfig;
     }
-    
-    
-    
-    
-    
-    
 
 }

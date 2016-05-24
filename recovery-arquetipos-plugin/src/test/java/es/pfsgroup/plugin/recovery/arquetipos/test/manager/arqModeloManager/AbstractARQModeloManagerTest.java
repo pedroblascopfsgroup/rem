@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import es.pfsgroup.plugin.recovery.arquetipos.estadoModelo.dao.ARQDDEstadoModeloDao;
 import es.pfsgroup.plugin.recovery.arquetipos.modelos.ARQModeloManager;
 import es.pfsgroup.plugin.recovery.arquetipos.modelos.dao.ARQModeloDao;
+import es.pfsgroup.testfwk.DInjector;
 import es.pfsgroup.testfwk.TestData;
 import es.pfsgroup.testfwk.TestDataCriteria;
 
@@ -24,11 +25,13 @@ public class AbstractARQModeloManagerTest {
 	}
 	
 	@Before
-	public void sutup() {
+	public void setup() {
 		this.modeloDao = Mockito.mock(ARQModeloDao.class);
 		this.estadoDao = Mockito.mock(ARQDDEstadoModeloDao.class);
 		
 		this.arqModeloManager = new ARQModeloManager(modeloDao);
+		DInjector di = new DInjector(arqModeloManager);
+		di.inject("estadoModeloDao", estadoDao);
 	}
 	
 	@After

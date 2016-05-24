@@ -35,7 +35,7 @@ public class CSConfigSingleton {
 	
 	private static CSConfigSingleton instance;
 	
-	public static CSConfigSingleton getInstance(){
+	public static synchronized CSConfigSingleton getInstance(){
 		if (instance == null){
 			instance = new CSConfigSingleton();
 		}

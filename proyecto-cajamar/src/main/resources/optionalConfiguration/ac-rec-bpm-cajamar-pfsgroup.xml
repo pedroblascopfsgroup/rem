@@ -25,6 +25,7 @@
 		</property>
 	</bean>	
 	<bean id="tramiteAceptacionUserDecisionActionHandler" class="es.pfsgroup.procedimientos.handlers.TramiteAceptacionUserDecisionActionHandler"></bean>
+	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.handlers.CostasProcuradorHandler"></bean>
  	    
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
@@ -61,7 +62,10 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/cj_tramiteAdjudicacion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/cj_tramiteCesionRemate.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/cj_tramiteSaneamientoCargas.xml" p:version="-1"/>
-					
+				
+	<!-- Cambios para subasta electronica -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteObtenerValidacionComite/tramiteObtenerValidacionComite.xml" p:version="-1"/>
+		
 	<!-- Groovy's -->
 	<bean id="jbpmUtilCajamarConcursos" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >
   	<property name="contextScripts">
@@ -330,6 +334,14 @@
 					return (tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre()!=null && 
 						(tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ105' || 
 						tareaExterna.getTareaPadre().getProcedimiento().getProcedimientoPadre().getTipoProcedimiento().getCodigo()=='CJ106'));
+				}
+				
+				def noExistenTantosCreditosInsinuados = {
+					def concursoManager = ctx.getBean("concursoManager");
+					def nCreditosInsinuados = concursoManager.dameCreditosInsinuados(idProcedimiento).size();
+					def nCreditosRectificados = Integer.valueOf(it);
+					
+					return nCreditosRectificados > nCreditosInsinuados;					
 				}
 				
   			 ]]>

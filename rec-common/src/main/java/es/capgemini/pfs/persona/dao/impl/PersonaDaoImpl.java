@@ -31,6 +31,7 @@ import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.persona.dao.PersonaDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Perfil;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * dao de personas.
@@ -694,23 +695,43 @@ public class PersonaDaoImpl extends AbstractEntityDao<Persona, Long> implements 
     /**
      * {@inheritDoc}
      */
-    public Long obtenerIdExpedientePropuestoPersona(Long idPersona) {
+    @SuppressWarnings("unchecked")
+	public Long obtenerIdExpedientePropuestoPersona(Long idPersona) {
         String hql = " select distinct exp.id " + obtenerExpedientePropuestoPersonaHQL();
         Query query = getSession().createQuery(hql);
         query.setParameter("expEstProp", DDEstadoExpediente.ESTADO_EXPEDIENTE_PROPUESTO);
         query.setParameter("perId", idPersona);
-        return (Long) query.uniqueResult();
+        
+        //return (Long) query.uniqueResult();
+        //Si el proceso de creación se corta a mitad, más de una vez, se quedá mas de un expediente propuesto
+        //en tal caso solo seleccionamos el primero
+        
+	    List<Long> expPropuestos = query.list();
+	    if (!Checks.estaVacio(expPropuestos))
+	    	return expPropuestos.get(0);
+	    
+	    return null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Expediente obtenerExpedientePropuestoPersona(Long idPersona) {
+    @SuppressWarnings("unchecked")
+	public Expediente obtenerExpedientePropuestoPersona(Long idPersona) {
         String hql = " select distinct exp " + obtenerExpedientePropuestoPersonaHQL();
         Query query = getSession().createQuery(hql);
         query.setParameter("expEstProp", DDEstadoExpediente.ESTADO_EXPEDIENTE_PROPUESTO);
         query.setParameter("perId", idPersona);
-        return (Expediente) query.uniqueResult();
+        
+        //return (Expediente) query.uniqueResult();
+        //Si el proceso de creación se corta a mitad, más de una vez, se quedá mas de un expediente propuesto
+        //en tal caso solo seleccionamos el primero
+        
+        List<Expediente> expPropuestos = query.list();
+        if (!Checks.estaVacio(expPropuestos))
+        	return expPropuestos.get(0);
+        
+        return null;
     }
 
     /**

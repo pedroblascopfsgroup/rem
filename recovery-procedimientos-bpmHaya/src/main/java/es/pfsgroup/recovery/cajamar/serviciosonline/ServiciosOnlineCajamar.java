@@ -35,12 +35,13 @@ public class ServiciosOnlineCajamar implements ServiciosOnlineCajamarApi {
 	private ContratoManager contratoManager;
 	
 	@Override
-	public boolean solicitarTasacion(Long idBien, Long cuenta, String personaContacto,
+	public String solicitarTasacion(Long idBien, Long cuenta, String personaContacto,
 			Long telefono, String observaciones) {
 	
 		if(tasacionWSApi == null) {
-			logger.warn("No encontrada implementación para el WS de solicitar tasación en Cajamar");
-			return false;
+			final String errorMsg = "No encontrada implementación para el WS de solicitar tasación en Cajamar";
+			logger.warn(errorMsg);
+			return errorMsg;
 		}
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", idBien);
@@ -51,7 +52,7 @@ public class ServiciosOnlineCajamar implements ServiciosOnlineCajamarApi {
 		List<NMBPersonasBien> personasBien = genericDao.getList(NMBPersonasBien.class, filter, filterAuditoria);
 		List<NMBContratoBien> contratosBien = genericDao.getList(NMBContratoBien.class, filter, filterAuditoria);
 		
-		boolean res = tasacionWSApi.altaSolicitud(bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
+		String res = tasacionWSApi.altaSolicitud(bien, personasBien, contratosBien, cuenta, personaContacto, telefono, observaciones);
 		return res;
 	}
 

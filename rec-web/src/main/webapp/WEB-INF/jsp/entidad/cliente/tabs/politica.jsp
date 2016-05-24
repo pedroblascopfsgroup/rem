@@ -9,6 +9,7 @@
 <%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
 
 (function(page,entidad) {
+
 // Cada una de las partes del tab estan en los .jsp importados.
     
     var isSuperusuario = false;
@@ -53,19 +54,13 @@
 
       panel.setValue = function(){
       
-      	//Limpiamos los paneles de políticas
-      	limpiarPanel(pPrePolitica);
-      	limpiarPanel(pCEPolitica);
-      	limpiarPanel(pREPolitica);
-      	limpiarPanel(pDCPolitica);
-      	limpiarPanel(pVigentePolitica);
-      	
-      	//Quitamos el borde de activo si lo hay
-      	 pDCPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
-        pCEPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
-        pREPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
-        pDCPolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
-        pVigentePolitica.getEl().replaceClass('bordeActivo', 'bordeInactivo');
+      
+      	<%-- Borramos todas las fases del plan de actuación --%>
+<!-- 		var posicionPanel = panel.items.indexOfKey('datosPlanActuacion'); -->
+
+<!-- 		panel.items.get(posicionPanel).removeAll( true ); -->
+			panelPolitica.removeAll( true );
+      
       	
       	//Reseteamos el grid de objetivos
       	objetivosGrid.getStore().removeAll();

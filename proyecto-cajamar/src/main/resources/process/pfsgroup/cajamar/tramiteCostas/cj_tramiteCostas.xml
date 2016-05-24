@@ -24,7 +24,7 @@
 			</action>
 		</event>
 		<transition to="CJ007_SolicitudTasacion" name="activarAlerta"></transition>
-		<transition to="CJ007_TasacionCostas" name="avanzaBPM"></transition>
+		<transition to="TasacionProcu" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -48,7 +48,6 @@
 		<transition to="CJ007_TasacionCostas" name="activarAlerta"></transition>
 		<transition to="CJ007_ConfirmarNotificacion" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="CJ007_SolicitudTasacion" name="vueltaAtras"></transition>
 	</state>
 
 	<state name="CJ007_ConfirmarNotificacion">
@@ -145,10 +144,10 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="CJ007_AutoAprobacionCostas" name="activarAlerta"></transition>
-		<transition to="CJ007_AutoFirme" name="avanzaBPM"></transition>
+		<transition to="AutoFirmeProcu" name="avanzaBPM"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="CJ007_Impugnacion" name="vueltaAtras"></transition>
+		<transition to="CJ007_AutoAprobacionCostas" name="activarAlerta"></transition>
 	</state>
 
 	<state name="CJ007_RegistrarCelebracionVista">
@@ -202,8 +201,81 @@
 		</event>
 		<transition to="CJ007_AutoFirme" name="activarAlerta"></transition>
 		<transition to="CJ007_AutoDecision" name="avanzaBPM"></transition>
-		<transition to="CJ007_AutoAprobacionCostas" name="vueltaAtras"></transition>
 		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<node name="TasacionProcu">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>costasProcuradorHandler
+			</targetBean>
+		</action>
+		<transition to="CJ007_TasacionCostas" name="avanza"></transition>
+		<transition to="fork1" name="avanzaConProcu"></transition>
+	</node>
+
+	<fork name="fork1">
+		<transition to="CJ007_RevisionCostas" name="revision"></transition>
+		<transition to="CJ007_TasacionCostas" name="tasacion"></transition>
+	</fork>
+
+	<state name="CJ007_RevisionCostas">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ007_RevisionCostas" name="activarAlerta"></transition>
+	</state>
+
+	<node name="AutoFirmeProcu">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>costasProcuradorHandler
+			</targetBean>
+		</action>
+		<transition to="fork2" name="avanzaConProcu"></transition>
+		<transition to="CJ007_AutoFirme" name="avanza"></transition>
+	</node>
+
+	<fork name="fork2">
+		<transition to="CJ007_PostSolicitudTasacion" name="postSolicitud"></transition>
+		<transition to="CJ007_AutoFirme" name="autoFirme"></transition>
+	</fork>
+
+	<state name="CJ007_PostSolicitudTasacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="CJ007_PostSolicitudTasacion" name="avtivarAlerta"></transition>
 	</state>
 
 

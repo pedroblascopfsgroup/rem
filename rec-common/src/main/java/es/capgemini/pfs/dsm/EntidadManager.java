@@ -9,6 +9,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 
 /**
  * Clase manager de EntidadConfig.
@@ -33,5 +34,5 @@ public class EntidadManager {
     public Entidad findByWorkingCode(String workingCode) {
     	return entidadDao.findByWorkingCode(workingCode);
     }
-    
+   
 }

@@ -59,33 +59,37 @@
    // DEFINICION TIPOS GRIDs 
 	var TipoImporte = Ext.data.Record.create([
 	    {name: 'id', type: 'int', mapping:0},
-	    {name: 'codigo', mapping:1},
+	    {name: 'codigo', tag: 'input', type: 'text', maxlength: '10', autocomplete: 'off', mapping:1},
 	    {name: 'desde', type: 'float', mapping:2},
 	    {name: 'hasta', type: 'float', mapping:3}
 	]);
 	var TipoCalidad = Ext.data.Record.create([
 	    {name: 'id', type: 'int', mapping:0},
-	    {name: 'codigo', mapping:1},
+	    {name: 'codigo', mapping:1, maxLength:10, size:"10"},
 	    {name: 'porcentaje', type: 'float', mapping:2}
 	]);
 
    // STOREs GRIDs 
     var storeImpCon = new Ext.data.ArrayStore({
+    storeId: 'storeImpCon',
 	    reader: new Ext.data.ArrayReader(
 	        {idIndex: 0}
 	        ,TipoImporte)
     });
     var storeCalCon = new Ext.data.ArrayStore({
+    storeId: 'storeCalCon',
 	    reader: new Ext.data.ArrayReader(
 	        {idIndex: 0}
 	        ,TipoCalidad)
     });
     var storeImpLit = new Ext.data.ArrayStore({
+    storeId: 'storeImpLit',
 	    reader: new Ext.data.ArrayReader(
 	        {idIndex: 0}
 	        ,TipoImporte)
     });
     var storeCalLit = new Ext.data.ArrayStore({
+    storeId: 'storeCalLit',
 	    reader: new Ext.data.ArrayReader(
 	        {idIndex: 0}
 	        ,TipoCalidad)
@@ -122,7 +126,9 @@
 	// GRID 
 	var txtGridEditor = function() {
 		return {
-			allowBlank: false
+			xtype: 'textfield'
+			,maxLength: 10
+			,allowBlank: false
 		};
 	};
 	var txtCantidadGridEditor = function() {
@@ -237,29 +243,54 @@
 					var store = roweditor.grid.getStore(),
 					value = changes.codigo
 					valid = true;
+					validCodCalidad=true;
+					validCodImporte=true;
 					validPercent = true;
 					totalPercent = (changes.porcentaje) ? changes.porcentaje : 0;
 
 					store.each(function (record, index) {
-						//validating new title field value with existing title field value 
+						//validating new title field value with existing title field value
 						if (index !== rowIndex && record.data.codigo === value) {
 							valid = false;
 							return false;
 						}
-						
+
 						if (record.data.porcentaje) {
 							totalPercent+=record.data.porcentaje;
 						}
+						
+						if(comprobarDuplicados(store, record, value) == 1)
+						{
+							validCodCalidad = false;
+						}
+						
+						if(comprobarDuplicados(store, record, value) == 2)
+						{
+							validCodImporte = false;
+						}
+									
 					});
-					
+
 					if (!valid) {
 						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.codigoExistente" text="**Este codigo ya existe, no se creará la línea."/>');
 						return false;
 					}
+					
 					if (totalPercent>100) {
 						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.percentSuperado" text="**Las diferentes opciones no pueden superar el 100%"/>');
 						return false;
 					}
+					
+					if (!validCodCalidad) {
+						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.codigoExistenteCalidadTurnados" text="**Este codigo ya existe, no se creará la línea."/>');
+						return false;
+					}
+					
+					if (!validCodImporte) {
+						Ext.Msg.alert('<s:message code="fwk.constant.alert" text="**Alerta"/>','<s:message code="plugin.config.esquematurnado.editar.grid.error.codigoExistenteImporteTurnados" text="**Este codigo ya existe, no se creará la línea."/>');
+						return false;
+					}
+					
 					return valid;
 				}
 				,hide: function(p) {
@@ -280,6 +311,57 @@
 		return rowEditor;
 	}
 
+	
+	var comprobarDuplicados = function(store, record, value) 
+	{
+	var resultado = 0;
+		if(store.storeId == "storeCalCon")
+		{
+			storeCalLit.each(function (record, index) 
+			{
+				if((value === record.data.codigo))
+				{
+					resultado = 1;
+				}
+			});
+			return resultado;
+		}
+		
+		if(store.storeId == "storeCalLit")
+		{
+			storeCalCon.each(function (record, index) 
+			{
+				if((value === record.data.codigo))
+				{
+					resultado = 1;
+				}
+			});
+		}
+			
+		if(store.storeId == "storeImpCon")
+		{
+			storeImpLit.each(function (record, index) 
+			{
+				if((value === record.data.codigo))
+				{
+					resultado = 2;
+				}
+			});
+		}			
+				
+		if(store.storeId == "storeImpLit")
+		{
+			storeImpCon.each(function (record, index) 
+			{
+				if((value === record.data.codigo))
+				{
+					resultado = 2;
+				}
+			});
+		}
+					
+		return resultado;		
+	};
 	
 	var importeConcursalGridRE = newRowEditor();
 	var importeConcursalGrid = new Ext.grid.EditorGridPanel({

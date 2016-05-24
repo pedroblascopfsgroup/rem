@@ -11,6 +11,7 @@ import org.springframework.binding.message.MessageContext;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.validation.ErrorMessageUtils;
 import es.capgemini.devon.validation.ValidationException;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Dto para asuntos.
@@ -43,7 +44,9 @@ public class DtoAsunto extends WebDto {
     
     private String codigoEstadoAsunto;
     
-    /**
+    private Long tipoDeAsunto;
+
+	/**
      * @return the idGestor
      */
     public Long getIdGestor() {
@@ -97,6 +100,11 @@ public class DtoAsunto extends WebDto {
         if (observaciones != null && observaciones.length() > 1000) {
             context.addMessage(new MessageBuilder().code("altaAsunto.observaciones.limite").error().source("").defaultText(
                     "**Las observaciones del asunto no deben exceder de 1000 carácteres.").build());
+        }
+        
+        if(Checks.esNulo(tipoDeAsunto)){
+        	context.addMessage(new MessageBuilder().code("altaAsunto.tipoAsunto.requerido").error().source("").defaultText(
+                    "**Debe indicar el tipo de asunto.").build());
         }
 
         if (context.getAllMessages().length > 0) { throw new ValidationException(ErrorMessageUtils.convertMessages(context.getAllMessages())); }
@@ -188,5 +196,12 @@ public class DtoAsunto extends WebDto {
 	public void setCodigoEstadoAsunto(String codigoEstadoAsunto) {
 		this.codigoEstadoAsunto = codigoEstadoAsunto;
 	}
+	
+	public Long getTipoDeAsunto() {
+		return tipoDeAsunto;
+	}
 
+	public void setTipoDeAsunto(Long tipoDeAsunto) {
+		this.tipoDeAsunto = tipoDeAsunto;
+	}
 }

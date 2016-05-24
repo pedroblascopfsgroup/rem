@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.precontencioso.documento.dto;
 
 import java.util.Date;
 
+import es.capgemini.pfs.direccion.model.DDProvincia;
+
 public class DocumentoPCODto {
 	private Long id;
 	private Long idProc;
@@ -27,6 +29,7 @@ public class DocumentoPCODto {
 	private String fechaEscritura;
 	private String plaza;
 	private String ejecutivo;
+	private String provinciaNotario;
 	
 	public Long getId() {
 		return id;
@@ -172,6 +175,12 @@ public class DocumentoPCODto {
 	}
 	public void setEjecutivo(String ejecutivo) {
 		this.ejecutivo = ejecutivo;
+	}
+	public String getProvinciaNotario() {
+		return provinciaNotario;
+	}
+	public void setProvinciaNotario(String provinciaNotario) {
+		this.provinciaNotario = provinciaNotario;
 	}
 	
 }

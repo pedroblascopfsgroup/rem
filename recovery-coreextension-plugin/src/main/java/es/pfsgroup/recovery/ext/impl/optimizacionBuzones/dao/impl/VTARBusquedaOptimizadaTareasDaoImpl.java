@@ -8,11 +8,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.hibernate.dao.AbstractHibernateDao;
@@ -20,12 +18,14 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
-import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.dao.UsuarioDao;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -37,7 +37,7 @@ import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzone
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.model.VTARTareaVsUsuario;
 
-@Repository("VTARBusquedaOptimizadaTareasDao")
+@Component
 public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<TareaNotificacion, Long> implements VTARBusquedaOptimizadaTareasDao {
     
     @Autowired
@@ -48,6 +48,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
     @Autowired
     private UsuarioDao usuarioDao;
+    
+    @Autowired
+    private ZonaDao zonaDao;
 
     @Override
     public Long obtenerCantidadDeTareasPendientes(final DtoBuscarTareaNotificacion dto, final boolean conCarterizacion, final Usuario usuarioLogado) {
@@ -85,6 +88,8 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
      * @param modelClass
      * @return
      */
+    @SuppressWarnings("unchecked")
+	@Override
     public final HQLBuilderReutilizable createHQLBbuscarTareasPendiente(DtoBuscarTareaNotificacion dto, Usuario u, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass){
     	dto.setSort(reescribeParametro(dto.getSort()));
 
@@ -109,10 +114,11 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 				return HQLQueryCallback.TipoResultado.PAGE;
 			}
 
+			@SuppressWarnings("rawtypes")
 			@Override
 			public Page getPage(AbstractHibernateDao ldao,
 					HQLBuilder lhqlbuilder, WebDto ldto) {
-				return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+				return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass, "vtar.id ASC");
 			}
 		};
         
@@ -130,17 +136,19 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     			return HQLQueryCallback.TipoResultado.PAGE;
     		}
     		
-    		@Override
+    		@SuppressWarnings({ "unchecked", "rawtypes" })
+			@Override
     		public Page getPage(AbstractHibernateDao ldao,
     				HQLBuilder lhqlbuilder, WebDto ldto) {
-    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass);
+    			return returnPageTransformedFAKE(ldao, lhqlbuilder, ldto, modelClass, null);
     		}
     	};
     	
     	return new HQLBuilderReutilizable(hb, callback);
     }
     
-    private StringBuilder UnionTareasExpedientes (DtoBuscarTareaNotificacion dto, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass, boolean addUnion) {
+    @SuppressWarnings("unchecked")
+	private StringBuilder UnionTareasExpedientes (DtoBuscarTareaNotificacion dto, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass, boolean addUnion) {
         //Añadimos tareas de expediente
     	StringBuilder queryStringBuilder = new StringBuilder();
     	if (addUnion)
@@ -213,9 +221,10 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
     	
     }
    
-    private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz) 
+    @SuppressWarnings("rawtypes")
+	private <T extends Serializable, K extends Serializable> Page returnPageTransformedFAKE(AbstractHibernateDao<T, K> dao, HQLBuilder hqlbuilder, PaginationParams dto, Class clazz, String additionalOrder) 
     {
-		PageTransformHibernateFAKE page = new PageTransformHibernateFAKE(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz);
+		PageTransformHibernateFAKE page = new PageTransformHibernateFAKE(hqlbuilder.toString(), dto, hqlbuilder.getParameters(), clazz, additionalOrder);
 		dao.getHibernateTemplate().executeFind(page);
 		return page;
 
@@ -226,43 +235,6 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         final Page page = buscarTareasPendiente(dto, conCarterizacion, usuarioLogado, modelClass);
         return Integer.valueOf(page.getResults().size());
     }
-
-    private void armaFiltrosBasicos(final DtoBuscarTareaNotificacion dto, final Usuario u, final HQLBuilder hb) {
-    	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
-    	grupos.add(u.getId()); // incluimos el usuario
-    	StringBuilder listaIdUsuarios = new StringBuilder();
-    	String sep = "";
-    	for (Long str : grupos) {
-    		listaIdUsuarios.append(sep).append(str);
-    	    sep = ",";
-    	}
-        if (dto.isEnEspera()) {
-        	String usuIdWhere = String.format("vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
-        	hb.appendWhere(usuIdWhere);
-        } else if (dto.isEsAlerta()) {
-        	String usuIdWhere = String.format("vtar.usuarioAlerta in (%s)", listaIdUsuarios);
-        	hb.appendWhere(usuIdWhere);
-        } else {
-        	String usuIdWhere = String.format("vtar.usuarioPendiente in (%s)", listaIdUsuarios);
-        	hb.appendWhere(usuIdWhere);
-        }
-
-        // Que la tarea est� pendiente
-        hb.appendWhere("vtar.tarea.tareaFinalizada is null or vtar.tarea.tareaFinalizada = 0");
-        hb.appendWhere("vtar.borrado = 0");
-
-        // Filtro por tipo de tarea
-        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
-
-        // Alertas y espera
-        if (dto.isEnEspera()) {
-            hb.appendWhere("vtar.espera = 1 ");
-        }
-        if (dto.isEsAlerta()) {
-            hb.appendWhere("vtar.alerta = 1 ");
-            // alertasLetradosActivos(hb);
-        }
-    }
     
     private StringBuilder armaFiltrosBasicosString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
         final StringBuilder hb = new StringBuilder();
@@ -270,28 +242,10 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         //Ante todo que cumpla el tipo de tarea
         // Filtro por tipo de tarea
         //HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vtar.codigoTipoTarea", dto.getCodigoTipoTarea());
-        hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea() + " AND (");
+        hb.append(" vtar.codigoTipoTarea = " + dto.getCodigoTipoTarea());
    	
     	
-    	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
-    	grupos.add(u.getId()); // incluimos el usuario
-    	StringBuilder listaIdUsuarios = new StringBuilder();
-    	String sep = "";
-    	for (Long str : grupos) {
-    		listaIdUsuarios.append(sep).append(str);
-    	    sep = ",";
-    	}
-    	hb.append(" ( ");
-        if (dto.isEnEspera()) {
-        	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
-        	hb.append(usuIdWhere);
-        } else if (dto.isEsAlerta()) {
-        	String usuIdWhere = String.format(" vtar.usuarioAlerta in (%s)", listaIdUsuarios);
-        	hb.append(usuIdWhere);
-        } else {
-        	String usuIdWhere = String.format(" vtar.usuarioPendiente in (%s)", listaIdUsuarios);
-        	hb.append(usuIdWhere);
-        }
+
 
         // Que la tarea est� pendiente
         if (hb.length()>0)
@@ -308,124 +262,50 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             // alertasLetradosActivos(hb);
         }
         
-        //Parte Expedientes
-        hb.append(") OR (");
         
-		if (dto.getZonas().size()>0) {
-			hb.append(" (");
-			for (DDZona zonCodigo : dto.getZonas()) {
-				hb.append(" vtar.zonCodigo like '")
-						.append(zonCodigo.getCodigo()).append("%' OR");
-			}
-			hb.deleteCharAt(hb.length() - 1);
-			hb.deleteCharAt(hb.length() - 1);
-			hb.append(" )");
-		}
-		
-		if (dto.getPerfiles().size()>0) {
-			if (dto.getZonas().size()>0)
-				hb.append(" and ");
-			hb.append(" (vtar.idPerfil IN (");
-			for (Perfil idPerfil : dto.getPerfiles()) {
-				hb.append(idPerfil.getId().toString()).append(",");
-			}		
-			hb.deleteCharAt(hb.length() - 1);
-			hb.append(")");
-			hb.append(") ");
-		}
+    	List<Long> grupos = grupoUsuarioDao.buscaGruposUsuario(u);
+    	grupos.add(u.getId()); // incluimos el usuario
+    	StringBuilder listaIdUsuarios = new StringBuilder();
+    	String sep = "";
+    	for (Long str : grupos) {
+    		listaIdUsuarios.append(sep).append(str);
+    	    sep = ",";
+    	}
+    	hb.append(" AND ( ");
+        if (dto.isEnEspera()) {
+        	String usuIdWhere = String.format(" vtar.usuarioEnEspera in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        } else if (dto.isEsAlerta()) {
+        	String usuIdWhere = String.format(" vtar.usuarioAlerta in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        } else {
+        	String usuIdWhere = String.format(" vtar.usuarioPendiente in (%s)", listaIdUsuarios);
+        	hb.append(usuIdWhere);
+        }
+        //Parte Expedientes
+        hb.append(" OR (");
+        
+        if(!Checks.estaVacio(dto.getUsuarioLogado().getZonaPerfil())){
+        	hb.append(" ((");
+        	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
+        		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
+        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");
+        		}
+        	}
+        	
+        	hb.deleteCharAt(hb.length() - 1);
+        	hb.deleteCharAt(hb.length() - 1);
+        	
+			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN ('");
+			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
+			hb.append("','");
+			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
+			hb.append("'))");
+        }
+        
 		hb.append("))" );
 		
         return hb;
-    }
-
-    // private void alertasLetradosActivos(HQLBuilder hb) {
-    // hb.appendWhere("vtar.emisor not in (" +
-    // "select distinct usu.username " +
-    // "from LssLetradoSituacionSuper let, Usuario usu " +
-    // "where let.idLetrado = usu.id and let.letradoActivo = 0)");
-    // hb.appendWhere("vtar.emisor not in (" +
-    // "select distinct concat(case when (usu_apellido1 is not null) then concat(usu_apellido1, ' ') end, "
-    // +
-    // "case when (usu_apellido2 is not null) then concat(usu_apellido2, ', ') end, usu_nombre) "
-    // +
-    // "from LssLetradoSituacionSuper let, Usuario usu " +
-    // "where let.idLetrado = usu.id and let.letradoActivo = 0)");
-    // }
-
-    private void armaFiltroBusqueda(final DtoBuscarTareaNotificacion dto, final Usuario u, final HQLBuilder hb) {
-
-        // Filtro por fecha de vencimiento
-        if ((!Checks.esNulo(dto.getFechaVencimientoDesde())) || (!Checks.esNulo(dto.getFechaVencimientoHasta()))) {
-            Date fechaDesde = parseaFecha(dto.getFechaVencimientoDesde(), "dd/MM/yyyy");
-            Calendar fechaDesdeParse = Calendar.getInstance();
-            if (fechaDesde != null) {
-                fechaDesdeParse.setTime(fechaDesde);
-                if (dto.getFechaVencDesdeOperador().equals(">")) {
-                    fechaDesdeParse.add(Calendar.DAY_OF_MONTH, 1);
-                }
-            }
-
-            Date fechaHasta = parseaFecha(dto.getFechaVencimientoHasta(), "dd/MM/yyyy");
-            Calendar fechaHastaParsed = Calendar.getInstance();
-            if (fechaHasta != null) {
-                fechaHastaParsed.setTime(fechaHasta);
-                if (dto.getFechaVencimientoHastaOperador().equals("<")) {
-                    fechaHastaParsed.add(Calendar.DAY_OF_MONTH, -1);
-                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
-                    fechaHastaParsed.add(Calendar.MINUTE, 59);
-                    fechaHastaParsed.add(Calendar.SECOND, 59);
-                } else if (dto.getFechaVencimientoHastaOperador().equals("<=")) {
-                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
-                    fechaHastaParsed.add(Calendar.MINUTE, 59);
-                    fechaHastaParsed.add(Calendar.SECOND, 59);
-                }
-            }
-
-            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && dto.getFechaVencDesdeOperador().equals("=")) {
-                fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
-                fechaHastaParsed.add(Calendar.MINUTE, 59);
-                fechaHastaParsed.add(Calendar.SECOND, 59);
-            }
-
-            Date fechaDesdeFinal;
-            if (!Checks.esNulo(dto.getFechaVencimientoDesde())) {
-                fechaDesdeFinal = fechaDesdeParse.getTime();
-            } else {
-                fechaDesdeFinal = null;
-            }
-
-            Date fechaHastaFinal;
-            if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
-                fechaHastaFinal = fechaHastaParsed.getTime();
-            } else {
-                if (dto.getFechaVencDesdeOperador().equals("=") && fechaDesdeParse != null) {
-                    fechaHastaParsed = fechaDesdeParse;
-                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
-                    fechaHastaParsed.add(Calendar.MINUTE, 59);
-                    fechaHastaParsed.add(Calendar.SECOND, 59);
-                    fechaHastaFinal = fechaHastaParsed.getTime();
-                } else {
-                    fechaHastaFinal = null;
-                }
-            }
-
-            HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaVenc", fechaDesdeFinal, fechaHastaFinal);
-
-        }
-
-        // Filtro por fecha de inicio
-        if ((!Checks.esNulo(dto.getFechaInicioDesde())) || (!Checks.esNulo(dto.getFechaInicioHasta()))) {
-            Date fechaDesde = parseaFecha(dto.getFechaInicioDesde(), "dd/MM/yyyy");
-            Date fechaHasta = parseaFecha(dto.getFechaInicioHasta(), "dd/MM/yyyy");
-            HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaInicio", fechaDesde, fechaHasta);
-        }
-
-        // Descripcion Entidad Informacion
-        HQLBuilder.addFiltroLikeSiNotNull(hb, "vtar.descripcionTarea", dto.getDescripcionTarea(), true);
-
-        // Nombre Tarea (TareaNotificacion.getDescripcionTarea)
-        HQLBuilder.addFiltroLikeSiNotNull(hb, "vtar.nombreTarea", dto.getNombreTarea(), true);
-
     }
     
     private StringBuilder armaFiltroBusquedaString(final DtoBuscarTareaNotificacion dto, final Usuario u) {
@@ -442,7 +322,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 	            fechaDesdeParse = Calendar.getInstance();
 	            if (fechaDesde != null) {
 	                fechaDesdeParse.setTime(fechaDesde);
-	                if (dto.getFechaVencDesdeOperador().equals(">")) {
+	                if (">".equals(dto.getFechaVencDesdeOperador())) {
 	                    fechaDesdeParse.add(Calendar.DAY_OF_MONTH, 1);
 	                }
 	            }
@@ -453,12 +333,12 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 	            fechaHastaParsed = Calendar.getInstance();
 	            if (fechaHasta != null) {
 	                fechaHastaParsed.setTime(fechaHasta);
-	                if (dto.getFechaVencimientoHastaOperador().equals("<")) {
+	                if ("<".equals(dto.getFechaVencimientoHastaOperador())) {
 	                    fechaHastaParsed.add(Calendar.DAY_OF_MONTH, -1);
 	                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
 	                    fechaHastaParsed.add(Calendar.MINUTE, 59);
 	                    fechaHastaParsed.add(Calendar.SECOND, 59);
-	                } else if (dto.getFechaVencimientoHastaOperador().equals("<=")) {
+	                } else if ("<=".equals(dto.getFechaVencimientoHastaOperador())) {
 	                    fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
 	                    fechaHastaParsed.add(Calendar.MINUTE, 59);
 	                    fechaHastaParsed.add(Calendar.SECOND, 59);
@@ -466,7 +346,7 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 	            }
         	}
 
-            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && dto.getFechaVencDesdeOperador().equals("=")) {
+            if ((fechaDesdeParse != null) && (fechaHastaParsed != null) && fechaDesdeParse.getTime().equals(fechaHastaParsed.getTime()) && "=".equals(dto.getFechaVencDesdeOperador())) {
                 fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                 fechaHastaParsed.add(Calendar.MINUTE, 59);
                 fechaHastaParsed.add(Calendar.SECOND, 59);
@@ -481,9 +361,10 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
             Date fechaHastaFinal;
             if (!Checks.esNulo(dto.getFechaVencimientoHasta())) {
-                fechaHastaFinal = fechaHastaParsed.getTime();
+            	fechaHastaParsed.add(Calendar.DAY_OF_MONTH, +1);
+            	fechaHastaFinal = fechaHastaParsed.getTime();
             } else {
-                if (dto.getFechaVencDesdeOperador().equals("=") && fechaDesdeParse != null) {
+                if ("=".equals(dto.getFechaVencDesdeOperador()) && fechaDesdeParse != null) {
                     fechaHastaParsed = fechaDesdeParse;
                     fechaHastaParsed.add(Calendar.HOUR_OF_DAY, 23);
                     fechaHastaParsed.add(Calendar.MINUTE, 59);
@@ -495,8 +376,13 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
             }
 
             //HQLBuilder.addFiltroBetweenSiNotNull(hb, "vtar.fechaVenc", fechaDesdeFinal, fechaHastaFinal);
-            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal))
+            if (!Checks.esNulo(fechaDesdeFinal) && !Checks.esNulo(fechaHastaFinal)){
             	hb.append(" vtar.fechaVenc BETWEEN TO_DATE('" +  formateaFecha.format(fechaDesdeFinal) + "','dd/MM/yyyy') and TO_DATE('" + formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')" );
+            }else if(!Checks.esNulo(fechaDesdeFinal)) {
+            	hb.append(" vtar.fechaVenc >= TO_DATE('" +  formateaFecha.format(fechaDesdeFinal) + "','dd/MM/yyyy')" );
+            }else if(!Checks.esNulo(fechaHastaFinal)) {
+            	hb.append(" vtar.fechaVenc <= TO_DATE('" +  formateaFecha.format(fechaHastaFinal) + "','dd/MM/yyyy')" );
+            }
 
         }
 
@@ -515,9 +401,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         if (!Checks.esNulo(dto.getDescripcionTarea())) {
         	if (hb.length()>0)
         		hb.append(" and ");
-        	//hb.append(" UPPER(vtar.descripcionTarea) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'");
+        	hb.append(" UPPER(vtar.descripcionEntidad) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'");
         	//La descripcion expediente es el campo descripcion que se muestra en la grid
-        	hb.append(" UPPER(vtar.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'"); 
+        	//hb.append(" UPPER(vtar.descripcionExpediente) like '%" + dto.getDescripcionTarea().toUpperCase() + "%'"); 
         }
 
         // Nombre Tarea (TareaNotificacion.getDescripcionTarea)
@@ -569,7 +455,8 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         return alias + "." + parametro;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public Usuario obtenerResponsableTarea(Long idTarea) {
        //Criteria criteria = this.getSession().createCriteria(VTARTareaVsUsuario.class, "vTarUsu");
        //criteria.add(Restrictions.eq("vTarUsu.id", idTarea));

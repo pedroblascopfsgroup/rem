@@ -5,6 +5,7 @@ import java.util.List;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
@@ -24,7 +25,7 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
             String observaciones);
 	
 	Long crearAsuntoConEstado(GestorDespacho gestorDespacho, GestorDespacho supervisor, GestorDespacho procurador,
-			String nombreAsunto, Expediente expediente, String observaciones, String codigoEstadoAsunto);
+			String nombreAsunto, Expediente expediente, String observaciones, String codigoEstadoAsunto, DDTiposAsunto tipoAsunto);
 	
 	 /**
      * Modifica un Asunto.
@@ -33,10 +34,11 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
      * @param supervisor el supervisor nuevo.
      * @param nombreAsunto el nuevo nombre del Asunto.
      * @param observaciones las obeservaciones.
+     * @param DDTiposAsunto tipoAsunto
      * @return el id del asunto.
      */
     Long modificarAsunto(Long idAsunto, GestorDespacho gestorDespacho, GestorDespacho supervisor, GestorDespacho procurador, String nombreAsunto,
-            String observaciones);
+            String observaciones, DDTiposAsunto tipoAsunto);
 	
 	/**
      * Busca de entre todos los asuntos si existe otro con el mismo nombre

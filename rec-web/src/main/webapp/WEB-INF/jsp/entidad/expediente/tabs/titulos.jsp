@@ -257,7 +257,8 @@
     }
 
    panel.setVisibleTab = function(data){
-		return entidad.get("data").toolbar.tipoExpediente != 'REC';
+		return (entidad.get("data").toolbar.tipoExpediente != 'REC'
+			&& entidad.get("data").toolbar.tipoExpediente != 'GESDEU');
    }
    
    return panel;

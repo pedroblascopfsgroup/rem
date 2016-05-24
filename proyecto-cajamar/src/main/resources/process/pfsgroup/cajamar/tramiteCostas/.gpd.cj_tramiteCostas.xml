@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_tramiteCostas" width="1043" height="752">
+<root-container name="cj_tramiteCostas" width="1488" height="1004">
   <node name="Inicio" x="50" y="46" width="132" height="36">
     <edge>
       <label x="-29" y="-21"/>
@@ -15,8 +15,8 @@
     </edge>
     <edge>
       <label x="-37" y="-309"/>
-      <bendpoint w1="650" h1="0" w2="297" h2="-666"/>
-      <bendpoint w1="649" h1="662" w2="296" h2="-4"/>
+      <bendpoint w1="1098" h1="1" w2="745" h2="-665"/>
+      <bendpoint w1="1086" h1="723" w2="733" h2="57"/>
     </edge>
   </node>
   <node name="CJ007_TasacionCostas" x="305" y="148" width="167" height="36">
@@ -28,12 +28,9 @@
     </edge>
     <edge>
       <label x="-29" y="-270"/>
-      <bendpoint w1="637" h1="-2" w2="285" h2="-569"/>
-      <bendpoint w1="638" h1="563" w2="286" h2="-4"/>
-    </edge>
-    <edge>
-      <label x="-69" y="-9"/>
-      <bendpoint w1="-166" h1="-52" w2="-165" h2="47"/>
+      <bendpoint w1="595" h1="32" w2="260" h2="-535"/>
+      <bendpoint w1="1057" h1="10" w2="722" h2="-557"/>
+      <bendpoint w1="1053" h1="607" w2="718" h2="40"/>
     </edge>
   </node>
   <node name="CJ007_ConfirmarNotificacion" x="278" y="247" width="205" height="36">
@@ -45,8 +42,8 @@
     </edge>
     <edge>
       <label x="-29" y="-223"/>
-      <bendpoint w1="636" h1="-1" w2="285" h2="-473"/>
-      <bendpoint w1="637" h1="471" w2="286" h2="-1"/>
+      <bendpoint w1="1044" h1="-60" w2="701" h2="-528"/>
+      <bendpoint w1="1043" h1="484" w2="700" h2="16"/>
     </edge>
     <edge>
       <label x="-66" y="-30"/>
@@ -75,8 +72,9 @@
     </edge>
     <edge>
       <label x="-23" y="-137"/>
-      <bendpoint w1="631" h1="0" w2="279" h2="-289"/>
-      <bendpoint w1="630" h1="287" w2="278" h2="-2"/>
+      <bendpoint w1="503" h1="-18" w2="151" h2="-307"/>
+      <bendpoint w1="1008" h1="-210" w2="656" h2="-499"/>
+      <bendpoint w1="1006" h1="269" w2="654" h2="-20"/>
     </edge>
     <edge>
       <label x="-29" y="-44"/>
@@ -97,10 +95,7 @@
   </node>
   <node name="CJ007_AutoAprobacionCostas" x="634" y="484" width="239" height="36">
     <edge>
-      <label x="-73" y="5"/>
-    </edge>
-    <edge>
-      <label x="15" y="-8"/>
+      <label x="-33" y="-23"/>
     </edge>
     <edge>
       <label x="-59" y="14"/>
@@ -108,6 +103,10 @@
     </edge>
     <edge>
       <label x="22" y="-17"/>
+    </edge>
+    <edge>
+      <label x="-73" y="5"/>
+      <bendpoint w1="-1" h1="25" w2="-1" h2="25"/>
     </edge>
   </node>
   <node name="CJ007_RegistrarCelebracionVista" x="43" y="505" width="221" height="36">
@@ -127,12 +126,12 @@
       <bendpoint w1="158" h1="61" w2="-442" h2="82"/>
     </edge>
   </node>
-  <node name="CJ007_AutoDecision" x="621" y="626" width="173" height="36">
+  <node name="CJ007_AutoDecision" x="622" y="674" width="173" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ007_AutoFirme" x="613" y="558" width="264" height="36">
+  <node name="CJ007_AutoFirme" x="612" y="566" width="264" height="36">
     <edge>
       <label x="-8" y="7"/>
     </edge>
@@ -140,13 +139,68 @@
       <label x="-67" y="-9"/>
     </edge>
     <edge>
-      <label x="-4" y="9"/>
-      <bendpoint w1="-192" h1="-22" w2="-191" h2="39"/>
-    </edge>
-    <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="91" h1="56" w2="113" h2="-101"/>
     </edge>
   </node>
-  <node name="Fin" x="657" y="715" width="132" height="36"/>
+  <node name="Fin" x="667" y="816" width="132" height="36"/>
+  <node name="TasacionProcu" x="591" y="93" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="817" y="143" width="76" height="24">
+    <edge>
+      <label x="-25" y="6"/>
+    </edge>
+    <edge>
+      <label x="-6" y="6"/>
+    </edge>
+  </node>
+  <node name="CJ007_RevisionCostas" x="971" y="106" width="196" height="36">
+    <edge>
+      <label x="-54" y="-33"/>
+      <bendpoint w1="288" h1="21" w2="634" h2="-588"/>
+      <bendpoint w1="280" h1="572" w2="626" h2="-37"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="323" h1="-6" w2="669" h2="-615"/>
+      <bendpoint w1="321" h1="606" w2="667" h2="-3"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="AutoFirmeProcu" x="1081" y="430" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork2" x="1119" y="510" width="88" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="9" y="-5"/>
+    </edge>
+  </node>
+  <node name="CJ007_PostSolicitudTasacion" x="1086" y="583" width="205" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-39" h1="116" w2="416" h2="-117"/>
+    </edge>
+    <edge>
+      <label x="16" y="4"/>
+    </edge>
+  </node>
 </root-container>

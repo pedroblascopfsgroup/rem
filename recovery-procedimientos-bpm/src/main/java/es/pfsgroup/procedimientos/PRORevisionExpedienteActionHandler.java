@@ -67,7 +67,13 @@ public class PRORevisionExpedienteActionHandler extends PROBaseActionHandler imp
                     .getId());
             Long idTareaAnterior = (Long) executionContext.getVariable(TAREA_ASOCIADA_RE);
             Long fechaFin = obtenerFinTareaAnterior(idTareaAnterior);
-            Long plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo() + estadoRE.getPlazo(), fechaFin);
+            Long plazoRestante = 0L;
+            if (!DEVOLVER_REVISION.equals(comeFrom) && estadoRE.getAutomatico() != null && estadoRE.getAutomatico()) {
+            	//Si es automático no suma los plazos y 
+            	plazoRestante = estadoRE.getPlazo();
+            } else {
+            	plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo() + estadoRE.getPlazo(), fechaFin);
+            }
             Long seconds = (plazoRestante.longValue() / MILLISECONDS);
 
             DtoGenerarTarea dto = new DtoGenerarTarea(idExpediente, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE,

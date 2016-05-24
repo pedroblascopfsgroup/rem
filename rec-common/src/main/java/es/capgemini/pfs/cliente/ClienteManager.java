@@ -40,6 +40,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase de servicios de acceso de datos del cliente.
@@ -281,6 +282,15 @@ public class ClienteManager {
         return generaCliente(personaId, idJBPM, arquetipoId, manual, estado);
     }
     
+    @SuppressWarnings("unchecked")
+    @Transactional(readOnly = false)
+    @BusinessOperation(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE_GEST_DEUDA)
+    public Long crearClienteGestionDeuda(Long personaId, Long idJBPM, final Long arquetipoId, final Boolean manual) {
+    	final DDEstadoItinerario estado = (DDEstadoItinerario) executor.execute(ConfiguracionBusinessOperation.BO_EST_ITI_MGR_FIND_BY_CODE,
+                DDEstadoItinerario.ESTADO_COMPLETAR_EXPEDIENTE);
+        return generaCliente(personaId, idJBPM, arquetipoId, manual, estado);
+    }    
+    
     /**
      * Crea un cliente para el id de la persona indicada.
      * <br>Le asigna todos los contratos de la persona.
@@ -345,8 +355,15 @@ public class ClienteManager {
                         }
                     } else {
                         //Si es de seguimiento se debe comprobar el de mayor riesgo
-                        Float riesgoPivote = cliContratoPase.getContrato().getLastMovimiento().getRiesgo();
-                        Float riesgoNuevo = contrato.getLastMovimiento().getRiesgo();
+                    	Float riesgoPivote = null;
+                    	Float riesgoNuevo = null;
+                    	
+                    	if (!Checks.esNulo(cliContratoPase.getContrato().getLastMovimiento())) { 
+                    		riesgoPivote = cliContratoPase.getContrato().getLastMovimiento().getRiesgo();
+                    	}
+                    	if (!Checks.esNulo(contrato.getLastMovimiento())) {
+                    		riesgoNuevo = contrato.getLastMovimiento().getRiesgo();
+                    	}
 
                         if (riesgoPivote == null) {
                             riesgoPivote = 0f;
@@ -531,7 +548,9 @@ public class ClienteManager {
         	arquetipo = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, arquetipoId);
         
         Boolean isRecuperacion = true;
-        //Boolean isRecuperacion = arquetipo.getItinerario().getRecuperacion();
+        //Boolean isRecuperacion = arquetipo.getItinerario().getdDtipoItinerario().getItinerarioRecuperacion();
+        Boolean isGestDeuda = arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda();
+        
 
         //Comprobamos que esta persona no tiene ningún cliente activo
         Cliente c = persona.getClienteActivo();
@@ -560,7 +579,12 @@ public class ClienteManager {
         List<Contrato> contratos = (List<Contrato>) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_OBTENER_CONTRATOS_PARA_FUTUROS_CLIENTES,
                 persona.getId());
 
-        List<ClienteContrato> clienteContratos = generarEntidadesClienteContrato(contratos, cliente, isRecuperacion);
+        List<ClienteContrato> clienteContratos;
+        if (isGestDeuda) {
+        	clienteContratos = generarEntidadesClienteContrato(contratos, cliente, false);
+        } else {
+        	clienteContratos = generarEntidadesClienteContrato(contratos, cliente, isRecuperacion);
+        }
         cliente.setContratos(clienteContratos);
         cliente.setEstadoItinerario(estado);
         cliente.setFechaEstado(new Date());

@@ -5,9 +5,9 @@ import java.util.List;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
+import es.capgemini.pfs.persona.model.DDSituacConcursal;
 import es.capgemini.pfs.persona.model.Persona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.plugin.recovery.coreextension.model.DDSituacConcursal;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.cliente.dto.MEJBuscarClientesDto;
 

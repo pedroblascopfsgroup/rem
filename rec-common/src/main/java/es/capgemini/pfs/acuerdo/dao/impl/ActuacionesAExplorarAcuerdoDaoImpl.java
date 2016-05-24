@@ -2,6 +2,8 @@ package es.capgemini.pfs.acuerdo.dao.impl;
 
 import java.util.List;
 
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.acuerdo.dao.ActuacionesAExplorarAcuerdoDao;
@@ -37,4 +39,22 @@ public class ActuacionesAExplorarAcuerdoDaoImpl extends AbstractEntityDao<Actuac
                 + "            from ActuacionesAExplorarAcuerdo aea " + "            where aea.acuerdo.id = ?" + "        )" + "    )";
         return getHibernateTemplate().find(hql, idAcuerdo);
     }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActuacionesAExplorarAcuerdo getByGuid(String guid) {
+
+		ActuacionesAExplorarAcuerdo actuacionesAExplorarAcuerdo = null;
+		
+		DetachedCriteria crit = DetachedCriteria.forClass(ActuacionesAExplorarAcuerdo.class);
+		crit.add(Restrictions.eq("guid", guid));
+        crit.add(Restrictions.eq("auditoria.borrado", false));
+        
+        List<ActuacionesAExplorarAcuerdo> listado = getHibernateTemplate().findByCriteria(crit);
+        if(listado != null && listado.size() > 0) {
+        	actuacionesAExplorarAcuerdo = listado.get(0);
+        }
+        
+        return actuacionesAExplorarAcuerdo;
+	}
 }

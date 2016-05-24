@@ -2,7 +2,9 @@ package es.capgemini.pfs.arquetipo.dao;
 
 import java.util.List;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.arquetipo.model.Arquetipo;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.dao.AbstractDao;
 
 /**
@@ -59,4 +61,10 @@ public interface ArquetipoDao extends AbstractDao<Arquetipo, Long> {
      * @return
      */
 	List<Arquetipo> getListSeguimiento();
+	
+    /**
+     * Devuelve una lista con los arquetipos de gestión de deuda
+     * @return
+     */    
+    List<Arquetipo> getListGestDeuda();	
 }

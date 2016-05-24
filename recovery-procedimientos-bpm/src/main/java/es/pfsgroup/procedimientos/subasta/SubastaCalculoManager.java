@@ -20,17 +20,14 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.dao.SubastaDao;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDTipoSubasta;
@@ -57,13 +54,7 @@ public class SubastaCalculoManager {
 	private ProcedimientosProjectContext procedimientosProjectContext;
 
 	@Autowired
-	private ApiProxyFactory proxyFactory;
-
-	@Autowired
 	private GenericABMDao genericDao;
-
-	@Autowired
-	private SubastaDao subastaDao;	
 	
 	@Autowired
 	private Executor executor;
@@ -73,7 +64,10 @@ public class SubastaCalculoManager {
 
     @Autowired
     private IntegracionBpmService bpmIntegracionService;
-	
+    
+    @Autowired
+    private SubastaProcedimientoApi subastaProcedimientoApi;
+
 	/**
 	 * Actualiza la subasta con los datos del procedimiento, crea la subasta si no existe.
 	 * 
@@ -127,7 +121,7 @@ public class SubastaCalculoManager {
 
 		if (condicion2) {
 			// duplicamos toda la información
-			Subasta subastaOrigen = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prcPadre.getId());
+			Subasta subastaOrigen = subastaProcedimientoApi.obtenerSubastaByPrcId(prcPadre.getId());
 			subastaDuplicada.setTipoSubasta(subastaOrigen.getTipoSubasta());
 
 			subastaDuplicada.setProcedimiento(procedimiento);
@@ -137,9 +131,9 @@ public class SubastaCalculoManager {
 			subastaDuplicada.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.PIN)));
 
-			subastaDuplicada.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
-					genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
-
+			//subastaDuplicada.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
+			subastaProcedimientoApi.determinarTipoSubasta(subastaDuplicada);
+			
 			subastaDuplicada = genericDao.save(Subasta.class, subastaDuplicada);
 
 			// Ahora recorremos los lotes y bienes y asignamos a la nueva
@@ -223,7 +217,7 @@ public class SubastaCalculoManager {
 
 			genericDao.save(Subasta.class, subastaDuplicada);
 			
-			actualizarTipoSubasta(procedimiento);
+			//actualizarTipoSubasta(procedimiento);
 			bpmIntegracionService.enviarDatos(subastaDuplicada);
 			
 		}
@@ -237,12 +231,10 @@ public class SubastaCalculoManager {
 	 * @param procedimiento
 	 */
 	public void actualizarTipoSubasta(Procedimiento procedimiento) {
-		Subasta subasta = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(procedimiento.getId());
+		Subasta subasta = subastaProcedimientoApi.obtenerSubastaByPrcId(procedimiento.getId());
 		
-		subasta.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
-				genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
+		subastaProcedimientoApi.determinarTipoSubasta(subasta);
 		
-		genericDao.save(Subasta.class, subasta);
 	}
 	
 
@@ -254,6 +246,8 @@ public class SubastaCalculoManager {
 	 * @param prc
 	 * @return
 	 */
+	@SuppressWarnings("unused")
+	@Deprecated
 	private String determinarTipoSubasta(Procedimiento prc) {
 
 		// TODO: Quitar si las subastas sareb no deben cambiar el tipo de subasta
@@ -263,7 +257,7 @@ public class SubastaCalculoManager {
 		// ------
 		
 		Asunto asunto = prc.getAsunto();
-		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
+		Subasta sub = subastaProcedimientoApi.obtenerSubastaByPrcId(prc.getId());
 		@SuppressWarnings("unchecked")
 		List<Bien> listadoBienes = (List<Bien>)executor.execute("es.pfsgroup.plugin.recovery.nuevoModeloBienes.subastas.api.getBienes", sub.getId());
 		DDTiposAsunto tipoAsu = asunto.getTipoAsunto();
@@ -401,41 +395,6 @@ public class SubastaCalculoManager {
 		}
 		// Recupera los bienes de la subasta.
 		return acumulado;
-		
-	}
-	
-	
-	/**
-	 * Determina el tipo de subasta tras la propuesta de lotes de subasta 
-	 * 
-	 * @param prc
-	 * @return
-	 */
-	public void determinarTipoSubastaTrasPropuesta(Subasta sub) {
-
-		// Las NO DELEGADAS no hace nada.
-		if (DDTipoSubasta.NDE.equals(sub.getTipoSubasta().getCodigo())) {
-			return;
-		}
-		
-		// busca un lote con riesgo consignación
-		boolean riesgoEncontrado = false;
-		for (LoteSubasta lote : sub.getLotesSubasta()) {
-			if (lote.getRiesgoConsignacion()) {
-				riesgoEncontrado = true;
-				break;
-			}
-		}
-
-		// No hay riesgo, lo deja como está.
-		if (!riesgoEncontrado) {
-			return;
-		}
-
-		// hay riesgo, cambia a NO DELEGADA
-		sub.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
-				genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSubasta.NDE)));
-		genericDao.update(Subasta.class, sub);
 		
 	}
 	

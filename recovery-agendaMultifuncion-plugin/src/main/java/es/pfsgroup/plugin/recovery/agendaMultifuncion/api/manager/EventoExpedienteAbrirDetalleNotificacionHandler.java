@@ -78,6 +78,8 @@ public class EventoExpedienteAbrirDetalleNotificacionHandler implements
 	        result.setSituacion("Expediente");
 	        result.setCodUg(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
 	        result.setIdAsunto(idEntidad);
+	        result.setIdTarea(idTarea);
+	        result.setIdTraza(idTraza);
 
 	        return result;
 	}

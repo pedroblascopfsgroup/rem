@@ -38,6 +38,7 @@ public class ITIReglasElevacionManager {
 	
 	@Autowired
 	ITIEstadoDao estadoDao;
+
 	
 	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_REGLASELEVACIONITINERARIO_CE)
 	public List<ITIReglasElevacion> listaReglasElevacionEstado(Long id){
@@ -50,6 +51,17 @@ public class ITIReglasElevacionManager {
 		EventFactory.onMethodStop(this.getClass());
 		return reglasEstado;
 	}
+	
+	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_REGLASELEVACIONITINERARIO)
+	public List<ITIReglasElevacion> listaReglasElevacionEstado(Long id, Long estadoId){
+		EventFactory.onMethodStart(this.getClass());
+		List<ITIReglasElevacion> reglasEstado = null;
+		if (!Checks.esNulo(estadoId)) {
+			reglasEstado = reglasElevacionDao.buscaReglasEstado(estadoId);
+		}
+		EventFactory.onMethodStop(this.getClass());
+		return reglasEstado;
+	}	
 	
 	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_REGLASELVACION_RE)
 	public List<ITIReglasElevacion> listaReglasElevacionRE(Long idItinerario){
@@ -86,11 +98,12 @@ public class ITIReglasElevacionManager {
 	public List<DDTipoReglasElevacion> restoReglasCE(Long idItinerario){
 		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
 		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionEstado(idItinerario);
-		for(ITIReglasElevacion re: listaReglasEstado){
-			if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
-				listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+		if (!Checks.esNulo(listaReglasEstado)) {
+			for(ITIReglasElevacion re: listaReglasEstado){
+				if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
+					listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+				}
 			}
-				
 		}
 		return listaTipoReglas;
 	}
@@ -99,11 +112,12 @@ public class ITIReglasElevacionManager {
 	public List<DDTipoReglasElevacion> restoReglasFP(Long idItinerario){
 		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
 		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionEstado(idItinerario);
-		for(ITIReglasElevacion re: listaReglasEstado){
-			if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
-				listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+		if (!Checks.esNulo(listaReglasEstado)) {
+			for(ITIReglasElevacion re: listaReglasEstado){
+				if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
+					listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+				}
 			}
-				
 		}
 		return listaTipoReglas;
 	}
@@ -112,11 +126,12 @@ public class ITIReglasElevacionManager {
 	public List<DDTipoReglasElevacion> restoReglasRE(Long idItinerario){
 		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
 		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionRE(idItinerario);
-		for(ITIReglasElevacion re: listaReglasEstado){
-			if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
-				listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+		if (!Checks.esNulo(listaReglasEstado)) {
+			for(ITIReglasElevacion re: listaReglasEstado){
+				if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
+					listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+				}
 			}
-				
 		}
 		return listaTipoReglas;
 	}
@@ -125,11 +140,12 @@ public class ITIReglasElevacionManager {
 	public List<DDTipoReglasElevacion> restoReglasDC(Long idItinerario){
 		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
 		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionDC(idItinerario);
+		if (!Checks.esNulo(listaReglasEstado)) {		
 		for(ITIReglasElevacion re: listaReglasEstado){
-			if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
-				listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+				if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
+					listaReglasEstado.remove(re.getDdTipoReglasElevacion());
+				}
 			}
-				
 		}
 		return listaTipoReglas;
 	}
@@ -175,5 +191,28 @@ public class ITIReglasElevacionManager {
 					"La regla que desea eliminar no existe");
 		}
 		reglasElevacionDao.deleteById(id);
+	}
+	
+	@BusinessOperation(PluginItinerariosBusinessOperations.TRE_MGR_RESTOREGLAS_GENERICO)
+	public List<DDTipoReglasElevacion> restoReglasGeneric(Long idItinerario, String codEstadoIti){
+		List<DDTipoReglasElevacion> listaTipoReglas = ddTipoReglasElevacionDao.getList();
+		List<ITIReglasElevacion> listaReglasEstado = listaReglasElevacionEstadoGeneric(idItinerario,codEstadoIti);
+		if (!Checks.esNulo(listaReglasEstado)) {
+			for(ITIReglasElevacion re: listaReglasEstado){
+				if (listaTipoReglas.contains(re.getDdTipoReglasElevacion())){
+					listaTipoReglas.remove(re.getDdTipoReglasElevacion());
+				}
+			}
+		}
+		return listaTipoReglas;
+	}
+	
+	private List<ITIReglasElevacion> listaReglasElevacionEstadoGeneric(Long idItinerario, String codEstado){
+		Estado estado = estadoManager.dameEstadoDelItinerario(idItinerario, codEstado);
+		List<ITIReglasElevacion> reglasEstado = null;
+		if (!Checks.esNulo(estado)) {
+			reglasEstado = reglasElevacionDao.buscaReglasEstado(estado.getId());
+		}
+		return reglasEstado;
 	}
 }

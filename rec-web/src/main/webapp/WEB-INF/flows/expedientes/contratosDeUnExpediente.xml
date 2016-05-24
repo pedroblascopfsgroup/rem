@@ -4,7 +4,7 @@
     
     <var name="dto" class="es.capgemini.pfs.contrato.dto.DtoBuscarContrato"/>
      
-    <end-state id="contratosExpedientes" view="clientes/contratosJSON" >
+    <end-state id="contratosExpedientes" view="expedientes/contratosExpJSON" >
     	<on-entry>
     		<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
 			<evaluate expression="executor.execute('contratoManager.buscarContratosExpediente', dto)" result="flowScope.pagina"/>

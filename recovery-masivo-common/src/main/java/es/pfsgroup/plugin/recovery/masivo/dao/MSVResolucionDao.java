@@ -22,5 +22,7 @@ public interface MSVResolucionDao extends AbstractDao<MSVResolucion, Long>{
 	public List<MSVResolucion> dameResolucionByTarea(Long idTareaExterna);
 	
 	public MSVResolucion getResolucionByTareaNotificacion(Long idTareaNotificacion);
+	
+	public List<MSVResolucion> getResolucionesPendientesValidar(Long idTarea, List<String> tipoResolucionAccionBaned);
 
 }

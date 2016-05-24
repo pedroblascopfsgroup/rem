@@ -20,15 +20,37 @@
 	  <json:property name="asunto" value="${asunto.nombre}" />
 	  <json:property name="estado" value="${asunto.estadoAsunto.descripcion}" />
 	  <json:property name="codigoExterno" value="${asunto.codigoExterno}" />
+	  <c:if test="${asunto.asuOrigen.id != null}">
+	  	<json:property name="idAsuOrigen" value="${asunto.asuOrigen.id}" />
+	  	<json:property name="idOrigen" value="${asuOrigen.id}" />
+	  	<json:property name="nombreOrigen" value="${asuntoOrigen.nombre}" />
+	  	<json:property name="codigoOrigen" value="${asuntoOrigen.tipoAsunto.codigo}" />
+	  	<json:property name="tipoAsuntoOrigen" value="${asuntoOrigen.tipoAsunto.descripcion}" />
+	  </c:if>
+	  <c:if test="${asunto.expOrigen.id != null}">
+	  	<json:property name="idExpOrigen" value="${asunto.expOrigen.id}" />
+	  	<json:property name="idExp" value="${expedienteOrigen.id}" />
+	  	<json:property name="nombreExp" value="${expedienteOrigen.descripcionExpediente}" />
+	  </c:if>
 	  <c:if test="${asunto.propiedadAsunto != null}">
 	  	<json:property name="propiedadAsunto" value="${asunto.propiedadAsunto.descripcion}" />
 	  </c:if>
 	  <c:if test="${asunto.gestionAsunto != null}">
 	  	<json:property name="gestionAsunto" value="${asunto.gestionAsunto.descripcion}" />
 	  </c:if>
-	  <json:property name="despacho" value="${asunto.gestor.despachoExterno.despacho}" />
-	  <json:property name="gestor" value="${asunto.gestor.usuario.apellidoNombre}" />
-	  <json:property name="supervisor" value="${asunto.supervisor.usuario.apellidoNombre}" />
+	  <c:if test="${gestorDespacho != null}">
+	  	<c:if test="${gestorDespacho.despachoExterno != null}">
+	  		<json:property name="despacho" value="${gestorDespacho.despachoExterno.despacho}" />
+	  	</c:if>
+	  	<c:if test="${gestorDespacho.usuario != null}">
+	  		<json:property name="gestor" value="${gestorDespacho.usuario.apellidoNombre}" />
+	  	</c:if>
+	  </c:if>
+	  <c:if test="${supervisorDespacho != null}">
+	  	<c:if test="${supervisorDespacho.usuario != null}">
+	  		<json:property name="supervisor" value="${supervisorDespacho.usuario.apellidoNombre}" />
+	  	</c:if>
+	  </c:if>
 	  <json:property name="expediente" value="${asunto.expediente.descripcionExpediente}" />
 	  <json:property name="expedienteId" value="${asunto.expediente.id}" />
 	  <json:property name="comite" value="${asunto.comite.nombre}" />
@@ -89,6 +111,9 @@
 		<json:property name="puedeVerTabAdjudicados" value="${puedeVerTabAdjudicados}" />		
 	    <json:property name="provision" value="${provision}" />
 	    <json:property name="puedeFinalizarAsunto" value="${puedeFinalizarAsunto}" />
+	    <c:if test="${esAsuntoAcuerdo != null}">
+	    	<json:property name="esAsuntoAcuerdo" value="${esAsuntoAcuerdo}" />
+	    </c:if>
 	</json:object>
 	<json:object name="concursal">
 		<json:property name="procedimientosConcursales" value="${procedimientosConcursales}" />

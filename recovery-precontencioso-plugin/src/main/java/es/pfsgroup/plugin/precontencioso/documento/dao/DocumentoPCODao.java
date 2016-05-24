@@ -21,7 +21,9 @@ public interface DocumentoPCODao extends AbstractDao<DocumentoPCO, Long> {
 	 * @param idProcedimientoPCO
 	 * @return lista documentos
 	 */
-	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO);
+	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO, Long idTipoDocumento);
+	
+	List<DocumentoPCO> getDocumentosPorIdProcedimientoPCONoDescartados(Long idProcedimientoPCO);
 	
 	List<Contrato> getContratosByIdsOrderByDesc(String ids);
 	

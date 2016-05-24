@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -12,13 +13,13 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 public interface NMBValoracionesBienInfo {
 
 	/**
-	 * Id de la valoración del bien 
+	 * Id de la valoraciï¿½n del bien 
 	 * @return Lista de datos registrales
 	 */
 	Long getId();
 	
 	/**
-	 * El bien relacionado con esta valoración
+	 * El bien relacionado con esta valoraciï¿½n
 	 * @return Lista de datos registrales
 	 */
 	NMBBienInfo getBien();
@@ -32,29 +33,29 @@ public interface NMBValoracionesBienInfo {
 	 * Importe valor subjetivo para el bien
 	 * @return
 	 */
-	Float getImporteValorSubjetivo();
+	BigDecimal getImporteValorSubjetivo();
 
 	/**
-	 * Fecha valor apreciación para el bien
+	 * Fecha valor apreciaciï¿½n para el bien
 	 */	
 	Date getFechaValorApreciacion();
 
 	/**
-	 * Importe valor apreciación para el bien
+	 * Importe valor apreciaciï¿½n para el bien
 	 * @return
 	 */
-	Float getImporteValorApreciacion();
+	BigDecimal getImporteValorApreciacion();
 	
 	/**
-	 * Fecha valor tasación para el bien
+	 * Fecha valor tasaciï¿½n para el bien
 	 */	
 	Date getFechaValorTasacion();
 
 	/**
-	 * Importe valor tasación para el bien
+	 * Importe valor tasaciï¿½n para el bien
 	 * @return
 	 */
-	Float getImporteValorTasacion();	
+	BigDecimal getImporteValorTasacion();	
 	
 	/**
 	 * Auditoria
@@ -62,7 +63,7 @@ public interface NMBValoracionesBienInfo {
 	Auditoria getAuditoria();
 	
 	/**
-	 * Código nuita para el bien
+	 * Cï¿½digo nuita para el bien
 	 */
-	Integer getCodigoNuita();
+	Long getCodigoNuita();
 }

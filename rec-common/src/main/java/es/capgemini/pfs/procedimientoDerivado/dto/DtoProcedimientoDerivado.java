@@ -19,7 +19,7 @@ public class DtoProcedimientoDerivado extends WebDto {
 	 * serialVersionUID.
 	 */
 	private static final long serialVersionUID = 4378091696318488148L;
-	private static final int N = 10;
+	private static final int N = 50;
 	private Long[] personas;
 	private Long id;
 	private Long procedimientoPadre;

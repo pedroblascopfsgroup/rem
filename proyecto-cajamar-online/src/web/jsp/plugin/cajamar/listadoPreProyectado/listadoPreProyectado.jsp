@@ -12,7 +12,7 @@
 
 	//TAB DATOS GENERALES
 	
-	//Combo Estado GestiÃ³n
+	//Combo Estado Gestión
 	var estadosGestion = <app:dict value="${estadosGestion}" blankElement="true" blankElementValue=""/>;
 	var optionsEstadoGestionStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']
@@ -30,7 +30,7 @@
 		,triggerAction:'all'
 		,editable: false
 		,emptyText:'---'
-		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestiÃ³n"/>'
+		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.estadoGestion" text="**Estado gestión"/>'
 	});
 	
 	//Combo Tipo persona
@@ -52,6 +52,20 @@
 		,editable: false
 		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.tipoPersona" text="**Tipo Persona"/>'
 	});
+	
+	var txtNif = new Ext.form.TextField({
+		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.nif" text="**NIF/CIF" />'
+		,enableKeyEvents: true
+		,style : 'margin:0px'
+		,autoCreate : {tag: "input", type: "text",maxLength:"20", autocomplete: "off"}
+		});	
+		
+	var txtNombreCompleto = new Ext.form.TextField({
+		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.nombreCompleto" text="**Nombre completo" />'
+		,enableKeyEvents: true
+		,style : 'margin:0px'
+		,autoCreate : {tag: "input", type: "text",maxLength:"200", autocomplete: "off"}
+		});		
 	
 	// Field riesgo total
 	var mmRiesgoTotal = app.creaMinMaxMoneda('<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.riesgoTotal" text="**Riesgo Total" />', 'riesgo',{width : 80, labelWidth:105});
@@ -82,6 +96,7 @@
 		,fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.agruparPor" text="**Agrupar por"/>'
 	});
 	
+	var mmDiasVencidos = app.creaMinMax('<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.diasVencidos" text="**Días Vencidos" />', 'diasVencidos',{width : 80, labelWidth:105});		
 	
 	var tramos = <app:dict value="${tramo}" />;
 	var propuestas = <app:dict value="${propuesta}" />;
@@ -98,6 +113,14 @@
                						width:250
            						},{<app:test id="dobleSelPropuesta" />} );	
 	
+	dobleSelPropuesta.on('change', function(field, newVal, oldVal) {
+		if (newVal.search("-1") != -1) {
+			comboEstadoGestion.setDisabled(true);
+			app.resetCampos([comboEstadoGestion]);
+		} else {
+			comboEstadoGestion.setDisabled(false);
+		}
+	});
 	
 	// TAB EXPEDIENTE
 
@@ -229,6 +252,29 @@
 		]
 	}); 
 	
+	// Field fecha pase a mora
+	<pfsforms:datefield name="filtroPaseMoraDesde" labelKey="plugin.cajamar.listadoPreProyectado.contrato.fechaPaseMora"
+	label="**Fecha Pase a Mora" width="140" />
+	<pfsforms:datefield name="filtroPaseMoraHasta" labelKey="" label="" hideLabel="true" width="140" />
+	var panelFehasPaseMora = new Ext.Panel({
+		layout:'table'
+		,title:''
+		,id:'panelFechasPaseMora'
+		,collapsible:false
+		,titleCollapse:false
+		,layoutConfig:{
+			columns:2
+		}
+		,style:'margin-right:0px;margin-left:0px'
+		,border:false
+		,autoWidth:true
+		,defaults:{xtype:'panel',border:false,cellCls:'vtop'}
+		,items:[
+			{layout:'form',items:[filtroPaseMoraDesde]}
+			,{layout:'form',items:[filtroPaseMoraHasta]}
+		]
+	});
+	
 	//Combo jerarquia
 	
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />; 
@@ -292,12 +338,12 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [comboEstadoGestion,comboTipoPersona,mmRiesgoTotal.panel,mmDeudaIrregular.panel,comboAgruparPor]	
+					,items: [comboEstadoGestion<%-- ,comboTipoPersona --%>,txtNif,mmRiesgoTotal.panel,mmDeudaIrregular.panel,comboAgruparPor]	
 		
 				},
 				{
 					layout:'form'
-					,items: [dobleSelTramo,dobleSelPropuesta]
+					,items: [mmDiasVencidos.panel,txtNombreCompleto,dobleSelTramo,dobleSelPropuesta]
 				}]
 		
 	});
@@ -338,7 +384,7 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items:[txtCodContrato, panelFechasPrevistaRegul]
+					,items:[txtCodContrato, panelFechasPrevistaRegul,panelFehasPaseMora]
 					,autoWidth:true
 				}
 				,{
@@ -351,7 +397,7 @@
 		tabContrato=true;
 	});
 	
-	//filtro pestaÃ±as
+	//filtro pestañas
 	var filtroTabPanel= new Ext.TabPanel({
 		items:[filtrosTabDatosGenerales,filtrosTabExpediente,filtrosTabContrato]
 		,layoutOnTabChange:true
@@ -366,11 +412,15 @@
 	var btnReset = app.crearBotonResetCampos([ 
  			comboEstadoGestion,
  			comboTipoPersona,
+ 			txtNif,
+ 			txtNombreCompleto,
  			mmRiesgoTotal.min,
  			mmRiesgoTotal.max,
  			mmDeudaIrregular.min,
  			mmDeudaIrregular.max,
  			comboAgruparPor,
+ 			mmDiasVencidos.min,
+ 			mmDiasVencidos.max,
  			dobleSelTramo,
  			dobleSelPropuesta,
  			txtCodExpediente,
@@ -380,6 +430,8 @@
  			txtCodContrato,
  			filtroFechaDesde,
  			filtroFechaHasta,
+ 			filtroPaseMoraDesde,
+ 			filtroPaseMoraHasta,
  			comboJerarquiaContrato,
  			dobleSelCentroContrato
  			
@@ -391,6 +443,9 @@
 			return false;
 		}
 		if (!app.validaValoresDblText(mmDeudaIrregular)){
+			return false;
+		}
+		if (!app.validaValoresDblText(mmDiasVencidos)){
 			return false;
 		}
 		return true;
@@ -405,7 +460,16 @@
 		}
 		return true;
 	}
-
+	
+	var validaMinDiasVencidos = function() {
+		if (mmDiasVencidos.min.getValue()!=null
+			&& (!(mmDiasVencidos.min.getValue()===''))) {
+			if (new Number(mmDiasVencidos.min.getValue()) < 0) {
+				return false;
+			}
+		}
+		return true;
+	}
 	
 	var limit = 25;
 	
@@ -426,6 +490,7 @@
 		,{name:'propuesta'}
 		,{name:'estadoGestion'}
 		,{name:'fechaPrevReguCnt'}
+		,{name: 'importePteDifer'}
 	]);
 
 	 var preProCntsStore = page.getStore({
@@ -437,7 +502,7 @@
 		,baseParams: paramsBusquedaInicial
 		,flow:'listadopreproyectado/getListPreproyectadoCnt'
  		//,reader : new Ext.data.JsonReader({root:'contratos',totalProperty : 'total'}, contratosRecord)
- 		,reader : new Ext.data.JsonReader({root:'contratos'}, contratosRecord)
+ 		,reader : new Ext.data.JsonReader({idProperty: 'contrato',root:'contratos'}, contratosRecord)
 	});
 	
 	var contratosCM = new Ext.grid.ColumnModel([
@@ -451,7 +516,8 @@
 		,{header: '<s:message code="preproyectado.contratos.fechaPaseAMora" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraCnt',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.propuesta" text="**Última Propuesta" />',dataIndex: 'propuesta',sortable:true}
 		,{header: '<s:message code="preproyectado.contratos.estadoGestion" text="**Estado Gestión" />',dataIndex: 'estadoGestion',sortable:true}
-		,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true}
+		,{header: '<s:message code="preproyectado.contratos.importePteDifer" text="**Imp. Pdte. Diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right'}
+		<%-- ,{header: '<s:message code="preproyectado.contratos.fechaPrevistaRegularizacion" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguCnt',sortable:true} --%>
 	]);
 	
 	var pagingBar = fwk.ux.getPaging(preProCntsStore);
@@ -487,10 +553,6 @@
 		,{name:'fechaVtoTarea'}
 		,{name:'numContratos'}
 		,{name:'volRiesgoExp'}
-		,{name:'importeInicialExp'}
-		,{name:'regularizadoExp'}
-		,{name:'importeActual'}
-		,{name:'importePteDifer'}
 		,{name:'tramoExp'}
 		,{name:'diasVencidosExp'}
 		,{name:'fechaPaseAMoraExp'}
@@ -509,7 +571,7 @@
 		,baseParams: paramsBusquedaInicial
 		,flow:'listadopreproyectado/getListPreproyectadoExp'
  		//,reader : new Ext.data.JsonReader({root:'expedientes',totalProperty : 'total'}, expedientesRecord)
- 		,reader : new Ext.data.JsonReader({root:'expedientes'}, expedientesRecord)
+ 		,reader : new Ext.data.JsonReader({idProperty: 'expId', root:'expedientes'}, expedientesRecord)
 	});
 	
 	var expanderExp = new Ext.ux.grid.RowExpander({
@@ -543,7 +605,8 @@
 						,'fechaPaseAMoraCnt'
 						,'propuesta'
 						,'estadoGestion'
-						,'fechaPrevReguCnt'				
+						,'fechaPrevReguCnt'
+						,'importePteDifer'				
 				],
 				data: contratos
 			});
@@ -589,15 +652,15 @@
 		,{header: '<s:message code="preproyectado.expedientes.fechaVtoTarea" text="**Fecha vto tarea" />',dataIndex: 'fechaVtoTarea',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.numContratos" text="**Nro. contratos" />',dataIndex: 'numContratos',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.volRiesgoExp" text="**Vol. Riesgo Exp." />',dataIndex: 'volRiesgoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}		
-		,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true, css: cssExp}
+<%--	,{header: '<s:message code="preproyectado.expedientes.importeInicialExp" text="**Importe inicial" />',dataIndex: 'importeInicialExp',sortable:true, hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.regularizadoExp" text="**Regularizado" />',dataIndex: 'regularizadoExp',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importeActual" text="**Importe Actual" />',dataIndex: 'importeActual',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+		,{header: '<s:message code="preproyectado.expedientes.importePteDifer" text="**Importe a diferir" />',dataIndex: 'importePteDifer',sortable:true,hidden: true, renderer: app.format.moneyRenderer, align: 'right', css: cssExp}
+--%>	,{header: '<s:message code="preproyectado.expedientes.tramoExp" text="**Tramo" />',dataIndex: 'tramoExp',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.diasVencidosExp" text="**Días vencidos" />',dataIndex: 'diasVencidosExp',sortable:true, align: 'right', css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.fechaPaseAMoraExp" text="**Fecha pase a mora" />',dataIndex: 'fechaPaseAMoraExp',sortable:true, css: cssExp}
 		,{header: '<s:message code="preproyectado.expedientes.propuesta" text="**Propuesta" />',dataIndex: 'propuesta',sortable:true, css: cssExp}
-		,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true, css: cssExp}		
+		<%-- ,{header: '<s:message code="preproyectado.expedientes.fechaPrevReguExp" text="**Fecha prevista regularización" />',dataIndex: 'fechaPrevReguExp',sortable:true, css: cssExp} --%>		
 	]);
 	
 	var pagingBar = fwk.ux.getPaging(preProExpsStore);
@@ -663,6 +726,14 @@
 			return true;
 		}
 		
+		if(txtNif.getValue() != ''){
+			return true;
+		}
+		
+		if (txtNombreCompleto.getValue() != '') {
+			return true;
+		}
+		
 		if(!(mmRiesgoTotal.min.getValue() === '')){
 			return true;
 		}
@@ -675,6 +746,13 @@
 		}
 		if(!(mmDeudaIrregular.max.getValue() === '')){
 			return true;		
+		}
+		
+		if(!(mmDiasVencidos.min.getValue() === '')){
+			return true;
+		}
+		if(!(mmDiasVencidos.max.getValue() === '')){
+			return true;
 		}
 		
 		if(dobleSelTramo.getValue() != ''){
@@ -706,6 +784,12 @@
 			}
 			if(filtroFechaHasta.getValue() != ''){
 				return true;		
+			}
+			if (filtroPaseMoraDesde.getValue() != '') {
+				return true;
+			}
+			if (filtroPaseMoraHasta.getValue() != '') {
+				return true;
 			}
 			if(dobleSelCentroContrato.getValue() != ''){
 	 			return true;		 
@@ -754,16 +838,26 @@
 				filtroFechaHasta.setValue('');
 			}
 			
+			if (filtroPaseMoraDesde.getValue()=='undefined' || !filtroPaseMoraDesde.getValue()) {
+				filtroPaseMoraDesde.setValue('');
+			}
+			
+			if (filtroPaseMoraHasta.getValue()=='undefined' || !filtroPaseMoraHasta.getValue()) {
+				filtroPaseMoraHasta.setValue('');
+			}
+			
 			if(dobleSelCentroContrato.getValue() == 'undefined' || !dobleSelCentroContrato.getValue()){
 				dobleSelCentroContrato.setValue('');
 			}
 		}
 		
 		if(tabContrato){
-			param.codContrato=txtCodContrato.getValue()
-			param.fechaPrevRegularizacion=filtroFechaDesde.getValue()
-			param.fechaPrevRegularizacionHasta=filtroFechaHasta.getValue()
-			param.zonasCto=dobleSelCentroContrato.getValue()
+			param.codContrato=txtCodContrato.getValue();
+			param.fechaPrevRegularizacion=filtroFechaDesde.value;
+			param.fechaPrevRegularizacionHasta=filtroFechaHasta.value;
+			param.paseMoraDesde = filtroPaseMoraDesde.value;
+			param.paseMoraHasta = filtroPaseMoraHasta.value;
+			param.zonasCto=dobleSelCentroContrato.getValue();
 		}
 		
 		return param;
@@ -778,11 +872,15 @@
 		
 		param.codEstadoGestion=comboEstadoGestion.getValue();
 		param.codTipoPersona=comboTipoPersona.getValue();
+		param.nif=txtNif.getValue();
+		param.nombreCompleto=txtNombreCompleto.getValue();
 		param.minRiesgoTotal=mmRiesgoTotal.min.getValue();
 		param.maxRiesgoTotal=mmRiesgoTotal.max.getValue();
 		param.minDeudaIrregular=mmDeudaIrregular.min.getValue();
 		param.maxDeudaIrregular=mmDeudaIrregular.max.getValue();
 		param.codAgruparPor=comboAgruparPor.getValue();
+		param.minDiasVencidos=mmDiasVencidos.min.getValue();
+		param.maxDiasVencidos=mmDiasVencidos.max.getValue();
 		param.tramos=dobleSelTramo.getValue();
 		param.propuestas=dobleSelPropuesta.getValue();
 			
@@ -793,20 +891,24 @@
 		if(validarEmptyForm()){
 			if(validaMinMax()){
 				if (validaMinDeudaIrregular()) {
-					panelFiltros.collapse(true);
-					if (comboAgruparPor.getValue()=='CNT') {
-						expedientesGrid.collapse(true);
-						expedientesGrid.hide();
-						contratosGrid.show();
-						contratosGrid.expand(true);
-						preProCntsStore.webflow(getParametros());
-					}
-					if (comboAgruparPor.getValue()=='EXP') {
-						contratosGrid.collapse(true);
-						contratosGrid.hide();
-						expedientesGrid.show();
-						expedientesGrid.expand(true);
-						preProExpsStore.webflow(getParametros());
+					if (validaMinDiasVencidos()) {
+						panelFiltros.collapse(true);
+						if (comboAgruparPor.getValue()=='CNT') {
+							expedientesGrid.collapse(true);
+							expedientesGrid.hide();
+							contratosGrid.show();
+							contratosGrid.expand(true);
+							preProCntsStore.webflow(getParametros());
+						}
+						if (comboAgruparPor.getValue()=='EXP') {
+							contratosGrid.collapse(true);
+							contratosGrid.hide();
+							expedientesGrid.show();
+							expedientesGrid.expand(true);
+							preProExpsStore.webflow(getParametros());
+						}
+					} else {
+						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.minDiasVencidos"/>');
 					}
 				} else {
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.minDeudaIrregular"/>');

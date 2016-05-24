@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.contratos.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.springframework.binding.message.MessageBuilder;
@@ -22,9 +23,9 @@ public class DtoNMBBien extends WebDto {
     /* Datos registrales */
     private String referenciaCatastralBien;   
 	
-    private Float superficie;
+    private BigDecimal superficie;
 	
-    private Float superficieConstruida;
+    private BigDecimal superficieConstruida;
 	
 	private String tomo;
 	
@@ -54,15 +55,15 @@ public class DtoNMBBien extends WebDto {
     /* Datos Valoracion */
     private Date fechaValorSubjetivo;
 	
-    private Float importeValorSubjetivo;
+    private BigDecimal importeValorSubjetivo;
 	
     private Date fechaValorApreciacion;
 	
-    private Float importeValorApreciacion;
+    private BigDecimal importeValorApreciacion;
 	
     private Date fechaValorTasacion;
 	
-    private Float importeValorTasacion;
+    private BigDecimal importeValorTasacion;
     
     public void validateFormulario(MessageContext messageContext) {
         messageContext.clearMessages();
@@ -102,19 +103,19 @@ public class DtoNMBBien extends WebDto {
 		this.referenciaCatastralBien = referenciaCatastralBien;
 	}
 
-	public Float getSuperficie() {
+	public BigDecimal getSuperficie() {
 		return superficie;
 	}
 
-	public void setSuperficie(Float superficie) {
+	public void setSuperficie(BigDecimal superficie) {
 		this.superficie = superficie;
 	}
 
-	public Float getSuperficieConstruida() {
+	public BigDecimal getSuperficieConstruida() {
 		return superficieConstruida;
 	}
 
-	public void setSuperficieConstruida(Float superficieConstruida) {
+	public void setSuperficieConstruida(BigDecimal superficieConstruida) {
 		this.superficieConstruida = superficieConstruida;
 	}
 
@@ -222,11 +223,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaValorSubjetivo = fechaValorSubjetivo;
 	}
 
-	public Float getImporteValorSubjetivo() {
+	public BigDecimal getImporteValorSubjetivo() {
 		return importeValorSubjetivo;
 	}
 
-	public void setImporteValorSubjetivo(Float importeValorSubjetivo) {
+	public void setImporteValorSubjetivo(BigDecimal importeValorSubjetivo) {
 		this.importeValorSubjetivo = importeValorSubjetivo;
 	}
 
@@ -238,11 +239,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaValorApreciacion = fechaValorApreciacion;
 	}
 
-	public Float getImporteValorApreciacion() {
+	public BigDecimal getImporteValorApreciacion() {
 		return importeValorApreciacion;
 	}
 
-	public void setImporteValorApreciacion(Float importeValorApreciacion) {
+	public void setImporteValorApreciacion(BigDecimal importeValorApreciacion) {
 		this.importeValorApreciacion = importeValorApreciacion;
 	}
 
@@ -254,11 +255,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaValorTasacion = fechaValorTasacion;
 	}
 
-	public Float getImporteValorTasacion() {
+	public BigDecimal getImporteValorTasacion() {
 		return importeValorTasacion;
 	}
 
-	public void setImporteValorTasacion(Float importeValorTasacion) {
+	public void setImporteValorTasacion(BigDecimal importeValorTasacion) {
 		this.importeValorTasacion = importeValorTasacion;
 	}
 

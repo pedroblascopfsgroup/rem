@@ -176,12 +176,19 @@ public class DDSubtipoSolucionAmistosaAcuerdo implements Auditable, Dictionary {
      */
     @Override
     public boolean equals(Object o) {
-        if (o != null) {
-            DDSubtipoSolucionAmistosaAcuerdo s = (DDSubtipoSolucionAmistosaAcuerdo) o;
-            if (s.getId() == this.id) {
-                return true;
-            }
+        if(o == null){
+        	return false;
         }
+        
+        if(this.getClass() != o.getClass()){
+        	return false;
+        }
+        
+        DDSubtipoSolucionAmistosaAcuerdo s = (DDSubtipoSolucionAmistosaAcuerdo) o;
+        if (s.getId() == this.id) {
+              return true;
+        }
+    
         return false;
     }
 

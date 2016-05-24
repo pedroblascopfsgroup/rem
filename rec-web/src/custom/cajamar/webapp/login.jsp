@@ -238,7 +238,15 @@ else{
                         cambiarDatosWindow.show();
         	    }});
             }
-        });       
+        });
+        
+        var accesoCredenciales = new Ext.Button({
+			text : 'Acceder con usuario interno'
+			,style:'margin-left:0px;padding:0px;margin-top:0px;margin-bottom:0px'         				
+			,handler : function(target, e){
+				window.location = "/../index.php";
+			}
+		});
 
         var loginForm = new Ext.form.FormPanel({
 			url : '<c:url value='j_spring_security_check' />'
@@ -247,7 +255,7 @@ else{
             ,items:[
                 {items:[<c:if test="${not empty param.login_error}">error,</c:if>
                         usuario,password]}
-                ,{items:[validar]}         
+                ,{items:[validar, accesoCredenciales]}         
              	,{items:[labelOlvidoPass]}
             ]
 			,standardSubmit : true

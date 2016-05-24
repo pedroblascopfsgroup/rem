@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.zona.model.Nivel;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -28,7 +29,11 @@ public interface ProcedimientoPcoApi {
 	public static final String BO_PCO_INICIALIZAR = "plugin.precontencioso.inicializarPco";
 	public static final String BO_PCO_CREAR_PROCEDIMIENTO_PCO = "plugin.precontencioso.crearProcedimientoPco";
 	public static final String BO_PCO_EXPEDIENTE_COMPROBAR_EDICION_EXPEDIENTE = "plugin.precontencioso.isExpedienteEditable";
-
+	public static final String BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO = "plugin.precontencioso.getVisibilidadBotonesPrecontencioso";
+	
+	public static final String BO_PCO_PROCEDIMIENTO_SALVAR = "plugin.precontencioso.salvarProcedimientoPCO";
+	public static final String BO_PCO_PROCEDIMIENTO_BORRAR = "plugin.precontencioso.borrarProcedimientoPCO";
+	public static final String BO_PCO_PROCEDIMIENTO_DEVOLVER = "plugin.precontencioso.devolverProcedimientoPCO";
 	
 	/**
 	 * Devuelve el numero de resultados que va a devolver la consulta con el filtro enviado por parametro
@@ -43,9 +48,6 @@ public interface ProcedimientoPcoApi {
 	 * @return numero de resultados
 	 */
 	Integer countBusquedaElementosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro);
-	
-
-	public static final String BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO = "plugin.precontencioso.getVisibilidadBotonesPrecontencioso";
 
 	/**
 	 * Obtiene el historico de estados de un procedimientoPCO mediante un id procedimiento.
@@ -149,5 +151,22 @@ public interface ProcedimientoPcoApi {
 
 	@BusinessOperationDefinition(BO_PCO_EXPEDIENTE_VISIBILIDAD_BOTONES_PCO)
 	public List<String> getVisibilidadBotonesDocumentosPrecontencioso(String seccion, boolean visible);
+
+	boolean mostrarSegunCodigos(Long idProcedimiento, List<String> codigosTiposGestores);
 	
+	public boolean comprobarExistenciaGestor(Long idProcedimiento);
+	
+	public String asuntoConProcuradorPrecontencioso(Long idProcedimiento);
+
+	public String validarDocumentoBienes(Long idProcedimiento, String idsBien);
+	
+	@BusinessOperationDefinition(BO_PCO_PROCEDIMIENTO_SALVAR)
+	public Long salvarProcedimientoPCO(ProcedimientoDto dto, Long id);
+	
+	@BusinessOperationDefinition(BO_PCO_PROCEDIMIENTO_BORRAR)
+	public void borrarProcedimientoPCO(Long id);
+	
+	@BusinessOperationDefinition(BO_PCO_PROCEDIMIENTO_DEVOLVER)
+	public ProcedimientoPCO devolverProcedimientoPCO(Long id);
+
 }

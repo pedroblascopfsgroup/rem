@@ -13,16 +13,16 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 
 @Controller
 public class EditAsuntoController {
-	
+		
 	@Autowired
-	private ApiProxyFactory proxyFactory;
+	private AsuntoApi asuntoApi;
 	
 	
 
 	@RequestMapping
 	public String open(@RequestParam(value = "id", required = true) Long id, ModelMap map) {
 				
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
+		Asunto asunto = asuntoApi.get(id);
 		map.put("asunto", asunto);
 		
 		return "plugin/mejoras/asuntos/formulario/editaNombreAsunto";
@@ -46,7 +46,7 @@ public class EditAsuntoController {
 		};;;
 		
 		
-		proxyFactory.proxy(AsuntoApi.class).actualizaAsunto(dto);
+		asuntoApi.actualizaAsunto(dto);
 		
 		return "default";
 	}

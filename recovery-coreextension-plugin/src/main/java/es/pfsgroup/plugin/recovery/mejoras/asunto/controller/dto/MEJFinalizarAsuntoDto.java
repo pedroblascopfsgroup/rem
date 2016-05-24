@@ -15,6 +15,7 @@ public class MEJFinalizarAsuntoDto extends WebDto {
 	private Date fechaFinalizacion;
 	private String motivoFinalizacion;
 	private String observaciones;
+	private String cumplidoSelect;
 	
 	public Long getIdAsunto() {
 		return idAsunto;
@@ -39,5 +40,11 @@ public class MEJFinalizarAsuntoDto extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public String getCumplidoSelect() {
+		return cumplidoSelect;
+	}
+	public void setCumplidoSelect(String cumplidoSelect) {
+		this.cumplidoSelect = cumplidoSelect;
 	}
 }

@@ -284,6 +284,10 @@
 		,{name:'estado'}
 		,{name:'supervisor'}
 		,{name:'principal'}
+		,{name:'tipoAsuntoDescripcion'}
+		,{name:'idAsunto'}
+		,{name:'usuarioCrear'}
+		,{name:'usuarioCrearActuacion'}
 		//,{name:'despacho'}	
 	]);
 
@@ -345,10 +349,10 @@
 	var asuntosCm = new Ext.grid.ColumnModel([
     {
 		header: '<s:message code="asuntos.listado.asunto" text="**Asunto"/>',
-		width:150, dataIndex: 'nombre', sortable:false
+		width:125, dataIndex: 'nombre', sortable:false
 	},{
 		header: '<s:message code="asuntos.listado.estado" text="**Estado"/>',
-		width:100, dataIndex: 'estado',sortable:false
+		width:90, dataIndex: 'estado',sortable:false
 	}, {
 		header: '<s:message code="asuntos.listado.procedimiento" text="**Cdigo actuacin"/>',
 		width:100, dataIndex: 'idProcedimiento'
@@ -358,7 +362,7 @@
 		width:100, dataIndex: 'tipoActuacion',sortable:false
 	}, {
 		header: '<s:message code="asuntos.listado.actuacion" text="**Actuacin"/>',
-		width:175, dataIndex: 'actuacion',sortable:false
+		width:140, dataIndex: 'actuacion',sortable:false
 	},{
 		header: '<s:message code="asuntos.listado.fcreacion" text="**Fecha Creacion"/>',
 		hidden:true, dataIndex: 'fcreacion'
@@ -373,9 +377,14 @@
 		hidden:true, dataIndex: 'supervisor',sortable:false
 	},{
 		header: '<s:message code="asuntos.listado.principal" text="**Principal"/>',
-		width:100, dataIndex: 'principal',sortable:false, renderer: app.format.moneyRendererNull,align:'right'
+		width:80, dataIndex: 'principal',sortable:false, renderer: app.format.moneyRendererNull,align:'right'
+	},{
+		header: '<s:message code="asuntos.listado.tipoAsunto" text="**Tipo de asunto"/>',
+		width:90, dataIndex: 'tipoAsuntoDescripcion',sortable:false
 	},{
 		hidden:true, dataIndex: 'id', fixed:true
+	},{
+		hidden:true, dataIndex: 'idAsunto', fixed:true
 	}]);
 
 
@@ -588,15 +597,34 @@
 		var rec = grid.getStore().getAt(rowIndex);
 		idAsuntoSeleccionado = rec.get('id');
 		idProcSeleccionado = rec.get('idProcedimiento');
+		
+		var username = app.usuarioLogado.username;
+		var isGestor = entidad.get("data").toolbar.esPrimerGestorFaseActual;
+		var isSupervisor = entidad.get("data").toolbar.esPrimerSupervisorFaseActual;
+		
 		if(idAsuntoSeleccionado!='') {
-			btnEditar.enable();
-			btnBorrar.enable();
-			btnAltaProcedimiento.enable();
+
+			if(isSupervisor ||  (isGestor && username == rec.get('usuarioCrear'))){
+				btnEditar.enable();
+				btnBorrar.enable();
+				btnAltaProcedimiento.enable();
+			}else{
+				btnEditar.disable();
+				btnBorrar.disable();
+				btnAltaProcedimiento.disable();
+			}
 			btnEditProcedimiento.disable();
 			btnBorraProcedimiento.disable();
 		} else {
-			btnEditProcedimiento.enable();
-			btnBorraProcedimiento.enable();
+			
+			if(isSupervisor ||  (isGestor && username == rec.get('usuarioCrearActuacion'))){
+				btnEditProcedimiento.enable();
+				btnBorraProcedimiento.enable();
+			}else{
+				btnEditProcedimiento.disable();
+				btnBorraProcedimiento.disable();
+			}
+			idAsuntoSeleccionado = rec.get('idAsunto');
 			btnEditar.disable();
 			btnBorrar.disable();
 			btnAltaProcedimiento.disable();
@@ -785,6 +813,13 @@
                                                                                                                                                                        
 	panel.getValue = function(){};
 	panel.setValue = function(){
+		
+		btnEditar.disable();
+		btnBorrar.disable();
+		btnAltaProcedimiento.disable();
+		btnEditProcedimiento.disable();
+		btnBorraProcedimiento.disable();
+	
 		sesion.setValue(entidad.getData("decision.ultimaSesion")); 
 		comite.setValue(entidad.getData("decision.comite")); 
 		fecha.setValue(entidad.getData("decision.fechaUltimaSesion")); 
@@ -800,21 +835,41 @@
 		entidad.cacheOrLoad(entidad.getData(), asuntosStore, {id : entidad.getData("id"), idSesion : entidad.getData("decision.ultimaSesion") });
 
     var congelado = entidad.getData("decision.estaCongelado");
-    var visible = [
-      [btnActuacion, congelado ]
-		,[btnNuevo, congelado]
-        ,[btnEditar, congelado]
-        ,[btnBorrar, congelado]
-        ,[btnAltaProcedimiento, congelado]
-        ,[btnEditProcedimiento, congelado]
-        ,[btnBorraProcedimiento, congelado]
-        <sec:authorize ifAllGranted="CERRAR_DECISION">
-        ,[btnCerrarDecision, congelado]
-        </sec:authorize>
-        ,[btnEditarObs, congelado]
-    ]
+    var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+    
+    var entidadUserLogado = app.usuarioLogado.codigoEntidad;
+    
+    if(entidadUserLogado == "BANKIA" && data.toolbar.tipoExpediente == "RECU"){
+    	var visible = [
+	      	 [btnActuacion, esGestorSupervisorDeFase]
+			,[btnNuevo, esGestorSupervisorDeFase]
+	        ,[btnEditar, esGestorSupervisorDeFase]
+	        ,[btnBorrar, esGestorSupervisorDeFase]
+	        ,[btnAltaProcedimiento, esGestorSupervisorDeFase]
+	        ,[btnEditProcedimiento, esGestorSupervisorDeFase]
+	        ,[btnBorraProcedimiento, esGestorSupervisorDeFase]
+	        <sec:authorize ifAllGranted="CERRAR_DECISION">
+	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
+	        </sec:authorize>
+	        ,[btnEditarObs, esGestorSupervisorDeFase]
+	    ]
+    }else{
+    	var visible = [
+	      	 [btnActuacion, congelado && esGestorSupervisorDeFase]
+			,[btnNuevo, congelado && esGestorSupervisorDeFase]
+	        ,[btnEditar, congelado && esGestorSupervisorDeFase]
+	        ,[btnBorrar, congelado && esGestorSupervisorDeFase]
+	        ,[btnAltaProcedimiento, congelado && esGestorSupervisorDeFase]
+	        ,[btnEditProcedimiento, congelado && esGestorSupervisorDeFase]
+	        ,[btnBorraProcedimiento, congelado && esGestorSupervisorDeFase]
+	        <sec:authorize ifAllGranted="CERRAR_DECISION">
+	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
+	        </sec:authorize>
+	        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
+	    ]
+    }
 
-    entidad.setVisible(visible);
+     entidad.setVisible(visible); 
 
     var contratosSinActuacion = entidad.getData("decision.contratosSinActuacion");
 		refrescaCheckBox(contratosSinActuacion);

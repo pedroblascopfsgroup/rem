@@ -221,7 +221,6 @@ var createDatosObjetivosPanel = function() {
 		btnProponerCumplimiento.disable();
 		btnJustificar.disable();
 		
-		
 		//Si está proponiendo política, se pueden activar los botones de modificación
 		if ((estaPoliticaPropuesta && (esGestorExpediente || esSupervisorExpediente)) ||
 			(estaPoliticaPropuestaSuperusuario && isSuperusuario))
@@ -237,7 +236,8 @@ var createDatosObjetivosPanel = function() {
 		{
 			if(estaPropuesto) btnModificar.enable();
 			if(estaPropuesto) btnBorrar.enable();
-        	if (pendiente && estaConfirmado && !automatico) btnProponerCumplimiento.enable();
+        	<%-- if (pendiente && estaConfirmado && !automatico) btnProponerCumplimiento.enable();--%>
+        	if (pendiente && estaConfirmado) btnProponerCumplimiento.enable();
         	if (estaIncumplido) btnJustificar.enable();
 		}		
     });

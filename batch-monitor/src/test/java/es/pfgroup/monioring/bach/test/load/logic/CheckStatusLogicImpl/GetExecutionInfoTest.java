@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import es.pfgroup.monioring.bach.load.BatchExecutionData;
 import es.pfgroup.monioring.bach.load.dao.model.CheckStatusTuple;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 
 public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
@@ -25,8 +26,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+            fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+			e.printStackTrace();
+		}
     }
 
     @Test
@@ -40,8 +45,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+            fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
 
     @Test
@@ -58,8 +67,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
 
     @Test
@@ -77,8 +90,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();;
+		}
     }
 
 
@@ -92,12 +109,16 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
             final BatchExecutionData result = manager.getExecutionInfo(entity, jobName, lastTime);
 
-            assert_RUNNING_NoErrors_NotExecuted(result);
+            assert_NotRunning_NoErrors_EXECUTED(result);
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
     
     @Test
@@ -114,8 +135,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
 
     @Test
@@ -131,12 +156,16 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
             final BatchExecutionData result = manager.getExecutionInfo(entity, jobName, lastTime);
 
-            assert_RUNNING_NoErrors_EXECUTED(result);
+            assert_NotRunning_NoErrors_EXECUTED(result);
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
 
     @Test
@@ -154,8 +183,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
     
     @Test
@@ -175,8 +208,12 @@ public class GetExecutionInfoTest extends AbstractCheckStatusLogicImplTests {
 
         } catch (CheckStatusWrongArgumentsException e) {
             // No se tiene porqu茅 producir
-            fail("Excepci贸n inesperada");
-        }
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+        } catch (CheckStatusRecoverableException e) {
+        	fail("Excepci髇 inesperada");
+            e.printStackTrace();
+		}
     }
 
     private CheckStatusTuple createRunningTuple(final Integer entity, final String jobName) {

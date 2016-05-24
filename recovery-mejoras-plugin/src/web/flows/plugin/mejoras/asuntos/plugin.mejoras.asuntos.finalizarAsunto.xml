@@ -7,7 +7,7 @@
 	<input name="fechaFinalizacion" type="java.util.Date"/>
 	<input name="motivoFinalizacion" type="java.lang.String"/>
 	<input name="observaciones" type="java.lang.String"/>
-	
+	<input name="cumplidoSelect" type="java.lang.String"/>
 		
     <view-state id="formulario" view="${view}" model="dto">
     	<binder>
@@ -15,7 +15,7 @@
     		<binding property="fechaFinalizacion"/>
     		<binding property="motivoFinalizacion"/>
     		<binding property="observaciones"/>
-    		
+    		<binding property="cumplidoSelect"/>
 		</binder>
     	<on-entry>
     		<set name="idAsunto" value="idAsunto" />
@@ -27,6 +27,8 @@
     	
 			<!-- <evaluate expression="executor.execute('dictionaryManager.getList','DDCausaDecision')" result="flashScope.causaDecision"/> -->
 			<evaluate expression="executor.execute('dictionaryManager.getList','DDCausaDecisionFinalizar')" result="flashScope.causaDecisionFinalizar"/>  
+			<evaluate expression="executor.execute('dictionaryManager.getList','DDSiNo')" result="flashScope.ddSiNo"/>
+			<evaluate expression="executor.execute('AsuntoAcuerdoManager.esAsuntoAcuerdo',idAsunto)" result="flashScope.esAsuntoAcuerdo" />
 			<set name="flowScope.view" value="'default'"/>
 			
 		</on-render>

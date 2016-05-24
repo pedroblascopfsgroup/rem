@@ -1,6 +1,7 @@
 package es.capgemini.pfs.tareaNotificacion;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,6 +64,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.politica.model.Objetivo;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.registro.AceptarProrrogaListener;
@@ -85,7 +89,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
+import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 import es.pfsgroup.recovery.ext.impl.tareas.ExportarTareasBean;
@@ -134,6 +140,9 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
 	@Autowired
 	private IntegracionBpmService integracionBPMService;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
     
     @Override
     @BusinessOperation(overrides = ComunBusinessOperation.BO_TAREA_MGR_GET)
@@ -186,6 +195,12 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_RE;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_RE;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_ENSAN;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_ENSAN;
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)) {
+                subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_SANC;
+                timerName = ExpedienteBPMConstants.TIMER_TAREA_SANC;
             } else {
                 subtipoTarea = SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_DC;
                 timerName = ExpedienteBPMConstants.TIMER_TAREA_DC;
@@ -522,8 +537,14 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
             } else if (DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE.equals(codigoEstado)) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
-            } else {
+            } else if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(codigoEstado)){
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION.equals(codigoEstado)){
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+            } else if (DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(codigoEstado)){
+                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
+            }else if(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(codigoEstado)){
+            	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
             }
         } else if (DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO.equals(tipoEntidad.getCodigo())) {
 
@@ -536,7 +557,21 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             // BPMContants.TRANSICION_ACTIVAR_APLAZAMIENTO);
             param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, proc.getId());
             param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO);
-            param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO);
+            
+            ///Comprobamos si el supervisor de la tarea tiene un subtipo de tarea
+            EXTTareaProcedimiento ExtTareaPro = genericDao.get(EXTTareaProcedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prorroga.getTareaAsociada().getTareaExterna().getTareaProcedimiento().getId()));
+            if(!Checks.esNulo(ExtTareaPro) && !Checks.esNulo(ExtTareaPro.getTipoGestorSupervisor())){
+                String sbt = coreProjectContext.getTipoSupervisorProrroga().get(ExtTareaPro.getTipoGestorSupervisor().getCodigo());
+                if(!Checks.esNulo(sbt)){
+                	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, sbt); 
+                }else{
+                	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO);	
+                }
+            }else{
+            	param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO);
+            }
+
+            
         } else if (DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO.equals(tipoEntidad.getCodigo())) {
             Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, dto.getIdEntidadInformacion());
             param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, proc.getId());
@@ -795,8 +830,19 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
      *            expediente
      */
     private void setearEmisorExpediente(TareaNotificacion tareaNotificacion, Expediente exp) {
-        String descZona = exp.getOficina().getZona().getDescripcion();
-        Perfil gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	String descZona = "";
+    	if (!Checks.esNulo(exp.getOficina()) && (!Checks.esNulo(exp.getOficina().getZona()))) {
+    		descZona = exp.getOficina().getZona().getDescripcion();
+    	}
+    	Perfil gestor = null;
+    	if ((!Checks.esNulo(exp.getArquetipo())) 
+    		&& (!Checks.esNulo(exp.getArquetipo().getItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario()))
+			&& (!Checks.esNulo(exp.getEstadoItinerario().getCodigo()))
+			&& (!Checks.esNulo(exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo())))) {
+				
+				gestor = exp.getArquetipo().getItinerario().getEstado(exp.getEstadoItinerario().getCodigo()).getGestorPerfil();
+    	}
         String descPerfil = "";
         if (gestor != null) {
             descPerfil = gestor.getDescripcion();
@@ -883,7 +929,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             }
         }
 
-        final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass = modelClassFactory.getModelFor(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE, ResultadoBusquedaTareasBuzonesDto.class);
+        final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass = modelClassFactory.getModelFor(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_TAREAS_PENDIETE, DtoResultadoBusquedaTareasBuzones.class);
         return busquedaGenericaTareas(dto, null, modelClass);
     }
 
@@ -957,10 +1003,20 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
         listaRetorno.addAll((List<ResultadoBusquedaTareasBuzonesDto>) page.getResults());
         replaceGestorInListOpt(listaRetorno, usuarioLogado);
         replaceSupervisorInListOpt(listaRetorno, usuarioLogado);
-        page.setResults(listaRetorno);
-        return (List<ResultadoBusquedaTareasBuzonesDto>) page.getResults();
-
+        return removeTareasDuplicadas(listaRetorno);
     }
+
+	private List<ResultadoBusquedaTareasBuzonesDto> removeTareasDuplicadas(final List<ResultadoBusquedaTareasBuzonesDto> lista) {
+		final List<ResultadoBusquedaTareasBuzonesDto> listaRetorno = new ArrayList<ResultadoBusquedaTareasBuzonesDto>();
+		final List<Long> listIdTareas = new ArrayList<Long>();
+		for (final ResultadoBusquedaTareasBuzonesDto dto : lista) {
+			if (!listIdTareas.contains(dto.getId())) {
+				listIdTareas.add(dto.getId());
+				listaRetorno.add(dto);
+			}
+		}
+		return listaRetorno;
+	}
 
     /**
      * Realiza la b�squeda de Tareas NOtificaciones para reporte Excel.
@@ -1103,6 +1159,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CE_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RE_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_DC_VENCIDA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_ENSAN_VENCIDA)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_SANC_VENCIDA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_CERRADO)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_SOLICITUD_CANCELACION_EXPEDIENTE_RECHAZADA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_RECHAZAR_SOLICITAR_PRORROGA_CE)
@@ -1110,7 +1168,10 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_CIERRA_SESION)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_DECISION_TOMADA)
                                 || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(SubtipoTarea.CODIGO_NOTIFICACION_GESTOR_PROPUESTA_SUBASTA)
-                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)) {
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_ACUERDOS)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_NUEVO_RIESGO)
+                                || tarNotificacion.getSubtipoTarea().getCodigoSubtarea().equals(EXTSubtipoTarea.CODIGO_NOTIFICACION_EXPEDIENTE_SCORING_GRAVE)
+                               ) {
                             param.put("fuerzaChkLeida", "true");
                         }
                     }
@@ -1256,25 +1317,18 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                                 row = new Label(10, i, VACIO);
                             }
                             sheet1.addCell(row);
-                            try {
-                                if (dto.getVolumenRiesgoSQL() != null) {
-                                    row = new Label(11, i, dto.getVolumenRiesgoSQL().toString());
-                                } else {
-                                    row = new Label(11, i, VACIO);
-                                }
-                            } catch (Throwable e) {
+                            if (dto.getVolumenRiesgoSQL() != null) {
+                                row = new Label(11, i, dto.getVolumenRiesgoSQL().toString());
+                            } else {
                                 row = new Label(11, i, VACIO);
-                            }
+                            }                 
                             sheet1.addCell(row);
-                            try {
-                                if (dto.getVolumenRiesgoSQL() != null) {
-                                    row = new Label(12, i, dto.getVolumenRiesgoSQL().toString());
-                                } else {
-                                    row = new Label(12, i, VACIO);
-                                }
-                            } catch (Throwable e) {
+                            if (dto.getVolumenRiesgoSQL() != null) {
+                            	row = new Label(12, i, dto.getVolumenRiesgoSQL().toString());
+                            } else {
                                 row = new Label(12, i, VACIO);
                             }
+                            
                             sheet1.addCell(row);
                             i++;
                         }
@@ -1286,19 +1340,27 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
                     }
                 }
             }
-        } catch (Throwable ex) {
-            logger.error(ex);
+        } catch (IOException ioex) {
+            logger.error(ioex);
+        } catch (RowsExceededException reex) {
+            logger.error(reex);
+        } catch (WriteException wex) {
+            logger.error(wex);   
         } finally {
             try {
-                workbook1.close();
-            } catch (Throwable e) {
-                logger.error(e);
+            	if(workbook1 != null){
+            		workbook1.close();
+            	}
+            } catch (WriteException we) {
+                logger.error(we);
+            } catch (IOException ix) {
+                logger.error(ix);
             }
         }
         return null;
     }
 
-    private void inicializaPoolExportacionExcel() {
+    private synchronized void inicializaPoolExportacionExcel() {
         String fileNameExtension = ".xls";
         exportarExcelPool = new ExportarTareasBean[Integer.parseInt(appProperties.getProperty(EXPORTAR_ASUNTOS_LIMITE_SIMULTANEO))];
         ExportarTareasBean bean = null;
@@ -1334,7 +1396,13 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 		EXTTareaNotificacion extTareaNotif = EXTTareaNotificacion.instanceOf(tareaNotif); 
 		if (tareaNotif == null) return null;
 		if (Checks.esNulo(extTareaNotif.getGuid())) {
-			extTareaNotif.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getTareaNoficiacionByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			extTareaNotif.setGuid(guid);
 			genericDao.save(EXTTareaNotificacion.class, extTareaNotif);
 		}
 		return extTareaNotif;

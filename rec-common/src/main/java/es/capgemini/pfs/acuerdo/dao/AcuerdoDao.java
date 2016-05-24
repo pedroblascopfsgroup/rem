@@ -1,10 +1,10 @@
 package es.capgemini.pfs.acuerdo.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.dao.AbstractDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.users.domain.Usuario;
 
 /**
@@ -49,4 +49,7 @@ public interface AcuerdoDao extends AbstractDao<Acuerdo, Long> {
      * @return boolean
      */
     boolean hayAcuerdosVigentes(Long idAsunto, Long idAcuerdo);
+    
+    
+    String getFechaPaseMora(Long idContrato);
 }

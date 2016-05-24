@@ -534,19 +534,31 @@ public class Comite implements Serializable, Comparable<Comite>, Auditable {
         }
         return false;
     }
+    
+    /**
+     * @return <code>true</code> si tiene itinerarios de gestión de deuda
+     */
+    public boolean isComiteGestionDeuda() {
+    	for (Itinerario iti: itinerarios) {
+    		if (iti.getdDtipoItinerario().getItinerarioGestionDeuda()) { return true; }
+    	}
+    	return false;
+    }
 
     /**
-     * @return <code>true</code> si tiene itinerarios de seguimiento y recuperación
+     * @return <code>true</code> si tiene itinerarios de seguimiento, recuperación o gestión deuda
      */
     public boolean isComiteMixto() {
-        boolean rec = false, seg = false;
+        boolean rec = false, seg = false, gestDeu = false;
         for (Itinerario iti : itinerarios) {
             if (iti.getdDtipoItinerario().getItinerarioSeguimiento()) {
                 seg = true;
             } else if (iti.getdDtipoItinerario().getItinerarioRecuperacion()) {
                 rec = true;
+            /*} else if (iti.getdDtipoItinerario().getItinerarioGestionDeuda()) {
+            	gestDeu = true;*/
             }
-            if (rec && seg) { return true; }
+            if (rec && seg  /*& gestDeu*/) { return true; }
         }
         return false;
     }

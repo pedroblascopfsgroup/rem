@@ -245,5 +245,12 @@ public interface ProcedimientoManager {
 	 * 
 	 * */
 	String getTipoProcedimientoOriginal(Long idProcedimiento);
+	
+	/**
+	 * Devuelve los tipos de actuacion.
+	 * @Param idAsunto
+	 * @return la lista de Tipos de actuación
+	 */
+	List<DDTipoActuacion> getTiposActuacionByIdTipoAsunto(Long idAsunto);
 
 }

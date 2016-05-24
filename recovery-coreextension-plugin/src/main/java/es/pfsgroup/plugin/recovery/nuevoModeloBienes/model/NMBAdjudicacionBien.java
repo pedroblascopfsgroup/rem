@@ -216,6 +216,12 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
     @OneToOne
     @JoinColumn(name = "DD_DAD_ID")
 	private DDDocAdjudicacion tipoDocAdjudicacion;
+    
+    @Column(name = "BIE_ADJ_F_CONTABILIDAD")
+    private Date fechaContabilidad;
+
+	@Column(name= "BIE_ADJ_POSTORES")
+	private Boolean postores;
 
 	@Embedded
 	private Auditoria auditoria;
@@ -691,6 +697,22 @@ public class NMBAdjudicacionBien implements Serializable, Auditable{
 
 	public void setTipoDocAdjudicacion(DDDocAdjudicacion tipoDocAdjudicacion) {
 		this.tipoDocAdjudicacion = tipoDocAdjudicacion;
+	}
+
+	public Date getFechaContabilidad() {
+		return fechaContabilidad;
+	}
+
+	public void setFechaContabilidad(Date fechaContabilidad) {
+		this.fechaContabilidad = fechaContabilidad;
+	}
+	
+	public Boolean getPostores() {
+		return postores;
+	}
+
+	public void setPostores(Boolean postores) {
+		this.postores = postores;
 	}
 	
 }

@@ -10,6 +10,8 @@
 
 (function(page,entidad){
    
+   var limit = 50;
+   
     var panel = new Ext.Panel({
         title:'<s:message code="contrato.tabRecEfecDis.titulo" text="**Recibos/Disposiciones/Efectos"/>'
         ,bodyStyle:'padding:10px'   
@@ -73,8 +75,8 @@
         {header:'<s:message code="contrato.tabRecEfecDis.importeImpagado" text="**importe Impagado" />',dataIndex:'importeImpagado',width:120,renderer:app.format.moneyRenderer,align:'right'},
 		{header:'<s:message code="contrato.tabRecEfecDis.capital" text="**Capital" />',dataIndex:'capital',width:120,renderer:app.format.moneyRenderer,align:'right'},
         {header:'<s:message code="contrato.tabRecEfecDis.situacionRecibo" text="**Situación Recibo" />',dataIndex:'DDsituacionRecibo',width:120},
-        {header:'<s:message code="contrato.tabRecEfecDis.motivoDevolucion" text="**Motivo Devolucion" />',dataIndex:'DDMotivoDevolucion',width:120},
-        {header:'<s:message code="contrato.tabRecEfecDis.motivoRechazo" text="**Motivo Rechazo" />',dataIndex:'DDMotivoRechazo',width:120},
+        {header:'<s:message code="contrato.tabRecEfecDis.motivoDevolucion" text="**Motivo Devolucion" />',dataIndex:'DDmotivoDevolucion',width:120},
+        {header:'<s:message code="contrato.tabRecEfecDis.motivoRechazo" text="**Motivo Rechazo" />',dataIndex:'DDmotivoRechazo',width:120},
         
         {header:'<s:message code="contrato.tabRecEfecDis.ccDomiciliacion" text="**CC. Domiciliación" />',dataIndex:'ccDomiciliacion',width:120,hidden:true},
         {header:'<s:message code="contrato.tabRecEfecDis.intOrdinarios" text="**Int. Ordinarios" />',dataIndex:'interesesOrdinarios',width:120,renderer:app.format.moneyRenderer,align:'right',hidden:true},
@@ -228,11 +230,14 @@
     ]);
 	
    var efectosStore = page.getStore({
-       flow:'contrato/getEfectos'
+   		limit:limit
+       , flow:'contrato/getEfectos' 
        ,storeId: 'efectosContratoStore'
        ,reader: new Ext.data.JsonReader({
            root: 'efectos'
+           ,totalProperty : 'total'
        }, Efecto)
+       , remoteSort: true       
    });
     
  
@@ -281,9 +286,30 @@
         ,clicksToEdit:1
         ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
         ,height:210
-        ,bbar : [  pagingBarEfecto ]
+        ,bbar : [ pagingBarEfecto  ]
     });
 
+	efectosStore.on('load', function(efectosStore){
+
+		var me = pagingBarEfecto;
+        
+        if(me.displayItem){
+            var count = 0;
+            
+			for(var i = 0; i < me.store.data.length; i++) {
+            	if(!isNaN(me.store.data.items[i].id)) {
+            		count++;
+            	}
+            }
+            var msg = count == 0 ?
+                me.emptyMsg :
+                String.format(
+                    me.displayMsg,
+                    me.cursor+1, me.cursor+count, me.store.getTotalCount()
+                );
+            me.displayItem.setText(msg);
+        }
+	});
 
 //FIN EFECTOS     
 

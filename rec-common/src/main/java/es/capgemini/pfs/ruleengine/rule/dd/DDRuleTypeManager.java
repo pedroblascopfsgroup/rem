@@ -25,7 +25,7 @@ public class DDRuleTypeManager {
      * TODO DOCUMENTAR FO.
      */
     @PostConstruct
-    public void init() {
+    public synchronized void init() {
         if (typesObj == null) {
             typesObj = new HashMap<String, DDRuleType>();
             for (DDRuleType type : types) {

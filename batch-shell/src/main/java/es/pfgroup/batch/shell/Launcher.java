@@ -18,6 +18,7 @@ import es.pfgroup.monioring.bach.load.CheckStatusResult;
 public class Launcher {
 
 	private static final int MAX_NOOP_CHECKS = 3;
+	public static boolean debugMode = false;
 
 	private JMXClientFacade jmxFacade;
 
@@ -112,7 +113,7 @@ public class Launcher {
 		
 		for (int i = 0; i < jobList.length; i++) {
 			final SynchronizedCheckStatus scheck = new SynchronizedCheckStatus(
-					checkStatus, startDate);
+					checkStatus, startDate, debugMode);
 
 			final String jobName = jobList[i];
 

@@ -259,7 +259,7 @@ var createHistorialPoliticasPanel = function() {
 		}
 		
         // Ver tabPoliticaDatos.jsp
-        reloadEstados(rec.get('id'));
+        reloadEstados(rec.get('id'), rec.get('idExpediente'), panel);
         objetivosGrid.getBottomToolbar().disable();        
     });
 

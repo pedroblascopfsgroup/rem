@@ -1,5 +1,6 @@
 package es.capgemini.pfs.analisisExterna.dao.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import es.capgemini.pfs.utils.StringUtils;
 @Repository("AnalisisExternaDao")
 public class AnalisisExternaDaoImpl extends AbstractEntityDao<AnalisisExterna, Long> implements AnalisisExternaDao {
 
-    protected static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
+    protected SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * {@inheritDoc}
@@ -84,8 +85,9 @@ public class AnalisisExternaDaoImpl extends AbstractEntityDao<AnalisisExterna, L
 
     /**
      * Crea el HQL para la busqueda SIN EL FROM y completa el map de parámetros.
+     * @throws ParseException 
      */
-    private String createHqlAndCompleteParameters(DtoAnalisisExternaFormulario dto, HashMap<String, Object> parameters) throws Exception {
+    private String createHqlAndCompleteParameters(DtoAnalisisExternaFormulario dto, HashMap<String, Object> parameters) throws ParseException {
         StringBuilder hql = new StringBuilder(" AnalisisExterna a where a.auditoria.borrado = false ");
 
         if (!StringUtils.emtpyString(dto.getFecha())) {
@@ -133,10 +135,9 @@ public class AnalisisExternaDaoImpl extends AbstractEntityDao<AnalisisExterna, L
      * @param groupBy columnas a agrupar, deben incluir las columnas a mostrar
      * @param orderBy columnas a order, deben ser algunas de las columnas a mostrar
      * @return lista de DtoExportRow
-     * @throws Exception e
+     * @throws ParseException 
      */
-    private List<DtoAnalisisExternaTabla> buscarAgrupando(DtoAnalisisExternaFormulario dto, String columnas, String groupBy, String orderBy)
-            throws Exception {
+    private List<DtoAnalisisExternaTabla> buscarAgrupando(DtoAnalisisExternaFormulario dto, String columnas, String groupBy, String orderBy) throws ParseException{
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String hql = "select " + columnas;
         hql += ", sum(a.numProcedimientos), sum(a.numAsuntos), sum(a.principal), sum(a.cobrosPagos), sum(a.importeRecuperado), sum(a.importeMenorMenos24), sum(a.importeMenorMenos12), sum(a.importeMenorMenos6), sum(a.importeMenorMenos3), sum(a.importeMenorMenos0), sum(a.importeMenor3), sum(a.importeMenor6), sum(a.importeMenor12), sum(a.importeMenor24), sum(a.importeMayor24) ";

@@ -78,7 +78,7 @@
    var codClienteEntidad =  label('codClienteEntidad','<s:message code="menu.clientes.consultacliente.datosTab.codCliente" text="**Codigo" />');
    var nacionalidad =       label('nacionalidad','<s:message code="menu.clientes.consultacliente.datosTab.nacionalidad" text="**Nacionalidad" />');
    var numEmpleados =       label('numEmpleados','<s:message code="menu.clientes.consultacliente.datosTab.numEmpleados" text="**Numero de Empleados" />');
-   var politicaEntidad	=   label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.politicaEntidad" text="**politicaEntidad" />');
+   var politicaEntidad	=   label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.politicaEntidad" text="**Plan de actuaci&oacute;n Entidad" />');
    var ratingAuxiliar =     label('ratingAuxiliar','<s:message code="menu.clientes.consultacliente.datosTab.ratingAuxiliar" text="**rating Auxiliar" />');
    //var fechaReferenciaRating =     label('fechaReferenciaRating','<s:message code="menu.clientes.consultacliente.datosTab.fechaReferenciaRating" text="**Rating fecha" />');
    //var ratingReferencia =     label('ratingReferencia','<s:message code="menu.clientes.consultacliente.datosTab.ratingReferencia" text="**Rating referencia" />');
@@ -99,8 +99,8 @@
    var fijo6		=         label('fijo6','<s:message code="menu.clientes.consultacliente.datosTab.telefono6" text="**Fijo6" />');
    
    var colectivoSingular =   label('colectivoSingular','<s:message code="menu.clientes.consultacliente.datosTab.colectivoSingular" text="**Colectivo singular"/>');
-   var politicaEntidad =  label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.politicaEntidad" text="**Política entidad"/>');
-   var prePolitica	=            label('prePolitica','<s:message code="menu.clientes.consultacliente.datosTab.prePolitica" text="**prePolitica" />');
+   var politicaEntidad =  label('politicaEntidad','<s:message code="menu.clientes.consultacliente.datosTab.prePolitica" text="**Política de Seguimiento"/>');
+   var prePolitica	=            label('prePolitica','<s:message code="menu.clientes.consultacliente.datosTab.politica" text="**Plan de actuaci&oacute;n" />');
    var puntuacionAlerta=         label('puntuacionAlerta','<s:message code="menu.clientes.consultacliente.datosTab.puntuacionAlerta" text="**puntuacionAlerta" />');
    var grupoCliente =            label('grupoCliente','<s:message code="menu.clientes.consultacliente.datosTab.grupoCliente" text="**grupoCliente" />');
    var ultimaOperacionConcedida= label('ultimaOperacionConcedida','<s:message code="menu.clientes.consultacliente.datosTab.ultimaOperacionConcedida" text="**ultima Operacion Concedida" />');
@@ -197,7 +197,7 @@
 		//entidad.setLabel("fechaReferenciaRating", d.fechaReferenciaRating);
 		entidad.setLabel("servicioNominaPension", d.servicioNominaPension);
 		entidad.setLabel("ultimaActuacion", d.ultimaActuacion);
-		entidad.setLabel("situacionConcursal",d.situacionConcursal);
+		entidad.setLabel("situacionConcursal",d.sitConcursal);
 		entidad.setLabel('fechaSituacionConcursal',d.fechaSituacionConcursal);
 		entidad.setLabel('clienteReestructurado',d.clienteReestructurado);
 		entidad.setLabel("extra1", d.extra1);

@@ -1,0 +1,118 @@
+/*
+--##########################################
+--## AUTOR=Alejandro Iñigo
+--## FECHA_CREACION=20160210
+--## ARTEFACTO=ETL
+--## VERSION_ARTEFACTO=1.00
+--## INCIDENCIA_LINK=BKREC-1718
+--## PRODUCTO=NO
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); /* Sentencia a ejecutar    */
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; /* Configuracion Esquema*/
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; /* Configuracion Esquema Master*/
+    V_TS_INDEX VARCHAR2(25 CHAR):= '#TABLESPACE_INDEX#'; /* Configuracion Indice*/
+    V_SQL VARCHAR2(4000 CHAR); /* Vble. para consulta que valida la existencia de una tabla.*/
+    V_NUM_TABLAS VARCHAR2(16); /* Vble. para validar la existencia de una tabla.  */
+    ERR_NUM VARCHAR2(25);  /* Vble. auxiliar para registrar errores en el script.*/
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.*/
+
+    V_TEXT1 VARCHAR2(2400 CHAR); /* Vble. auxiliar*/
+    
+    V_ESQUEMA_MIN VARCHAR2(25 CHAR):= '#ESQUEMA_MINIREC#'; /* Configuracion Esquema minirec*/
+    V_ESQUEMA_DWH VARCHAR2(25 CHAR):= '#ESQUEMA_DWH#'; /* Configuracion Esquema recovery_bankia_dwh*/
+    V_ESQUEMA_STG VARCHAR2(25 CHAR):= '#ESQUEMA_STG#'; /* Configuracion Esquema recovery_bankia_datastage*/
+	
+BEGIN
+
+    /*  tabla APR_AUX_JERARQUIAS <-- ELIMINAR */
+
+    DBMS_OUTPUT.PUT_LINE('[START] DROP TABLE tabla APR_AUX_JERARQUIAS');
+
+    select count(1) into V_NUM_TABLAS from ALL_TABLES where table_name = 'APR_AUX_JERARQUIAS';
+    if V_NUM_TABLAS > 0 then
+        EXECUTE IMMEDIATE ' DROP TABLE '|| V_ESQUEMA ||'.APR_AUX_JERARQUIAS CASCADE CONSTRAINTS';
+            DBMS_OUTPUT.PUT_LINE('DROP TABLE '|| V_ESQUEMA ||'.APR_AUX_JERARQUIAS... Tabla borrada OK');
+	else
+	  DBMS_OUTPUT.PUT_LINE('TABLE '|| V_ESQUEMA ||'.APR_AUX_JERARQUIAS... No existe');
+    end if;
+            
+    EXECUTE IMMEDIATE '    
+    CREATE TABLE '|| V_ESQUEMA ||'.APR_AUX_JERARQUIAS (
+		JRQ_FECHA_EXTRACCION              VARCHAR2(8 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L0      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL0          VARCHAR2(6 CHAR),
+		JRQ_NIVEL                         VARCHAR2(3 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L1      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL1          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_1                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_1             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_1                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L2      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL2          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_2                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_2             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_2                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L3      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL3          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_3                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_3             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_3                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L4      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL4          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_4                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_4             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_4                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L5      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL5          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_5                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_5             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_5                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L6      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL6          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_6                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_6             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_6                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L7      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL7          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_7                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_7             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_7                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L8      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL8          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_8                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_8             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_8                  VARCHAR2(12 CHAR),
+		JRQ_CODIGO_ENTIDAD_CENTRO_L9      VARCHAR2(6 CHAR),
+		JRQ_CODIGO_CENTRO_NIVEL9          VARCHAR2(6 CHAR),
+		JRQ_NUM_EXTRA_9                   VARCHAR2(3 CHAR),
+		JRQ_INDICADOR_NIVEL_9             VARCHAR2(4 CHAR),
+		JRQ_CHAR_EXTRA_9                  VARCHAR2(12 CHAR),
+        USUARIOCREAR     VARCHAR2(50 CHAR) NOT NULL,
+        FECHACREAR       TIMESTAMP(6)      NOT NULL,
+        USUARIOMODIFICAR VARCHAR2(50 CHAR),
+        FECHAMODIFICAR   TIMESTAMP(6),		
+		VERSION          INTEGER DEFAULT 0 NOT NULL,
+		USUARIOBORRAR    VARCHAR2(50 CHAR),
+		FECHABORRAR      TIMESTAMP(6)         ,
+		BORRADO          VARCHAR2(1) DEFAULT 0 NOT NULL ) ' ;    
+  		
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.APR_AUX_JERARQUIAS... Tabla creada');				
+
+    
+DBMS_OUTPUT.PUT_LINE('[INFO] EJECUCION TERMINADA CON EXITO');
+
+EXCEPTION
+     WHEN OTHERS THEN
+       DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución: '|| TO_CHAR(SQLCODE) || ' ' || SQLERRM );
+    RAISE;
+END;
+/
+exit

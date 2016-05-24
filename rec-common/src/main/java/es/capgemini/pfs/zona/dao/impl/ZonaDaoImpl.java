@@ -6,14 +6,21 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
+
+import java.math.BigDecimal;
 
 /**
  * Implementación del dao zona.
@@ -37,6 +44,28 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
             }
             hql = hql.substring(0, hql.length() - 2);
             hql += " ) ";
+        }
+        return getHibernateTemplate().find(hql, idNivel);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, Set<String> codigoZonasUsuario, String codDesc) {
+        String hql = " from DDZona z where z.auditoria.borrado = 0 and z.nivel.codigo = ?";
+        if (codigoZonasUsuario != null && codigoZonasUsuario.size() > 0) {
+            hql += " and ( ";
+            for (String cz : codigoZonasUsuario) {
+                hql += " z.codigo like '" + cz + "%' or";
+            }
+            hql = hql.substring(0, hql.length() - 2);
+            hql += " ) ";
+        }
+        if(!Checks.esNulo(codDesc)) {
+        	hql += " and ( z.codigo like '%";
+        	hql += codDesc;
+        	hql += "%' or upper(z.descripcion) like '%";
+        	hql += codDesc.toUpperCase();
+        	hql += "%' )";
         }
         return getHibernateTemplate().find(hql, idNivel);
     }
@@ -183,4 +212,146 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
 
         return (total != null && total > 0L);
     }
+    
+    /**
+     * Método que devuelve las zonas a partir del usuario y el perfil
+     * @param idUsuario
+     * @param codPerfil
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public List<DDZona> getZonaPorUsuarioPerfil(Long idUsuario, String codPerfil) {
+    	String hql = "select distinct z.zona from ZonaUsuarioPerfil z where z.perfil.codigo = :codPerfil" +
+    			" and z.usuario.id = :idUsuario and z.auditoria." + Auditoria.UNDELETED_RESTICTION;
+    	Query query = getSession().createQuery(hql);
+        query.setParameter("codPerfil", codPerfil);
+        query.setParameter("idUsuario", idUsuario);
+        List<DDZona> zonas = query.list();
+        if (Checks.esNulo(zonas) || zonas.size()==0) {
+            return null;
+        } else /*if (zonas.size() == 1)*/ {
+        	return zonas; 
+        } //else {
+        //	throw new DataIntegrityViolationException("Duplicate zona de usuario: " + idUsuario + " perfil: "+codPerfil);
+      //  }
+    }
+    
+    /**
+     * Guarda un nuevo registro en ZON_PEF_USU, si no existe ya (se comrpueba que no haya ya un registro con la zona,
+     * el perfil, y el usuario pasados por parametro)
+     */
+    public void guardarNuevoZonaPerfilUsuario(DDZona zona, Usuario usuario, String codPerfil) {
+    	String sqlSecuence = "SELECT S_ZON_PEF_USU.NEXTVAL FROM DUAL";
+    	Long secuenciaHistorico = ((BigDecimal)getSession().createSQLQuery(sqlSecuence).uniqueResult()).longValue();
+    	
+    	Perfil perfil = (Perfil) getHibernateTemplate().find("from Perfil p where p.codigo = ? and p.auditoria.borrado=0", codPerfil).get(0);
+    	
+    	String hql = "select * from ZON_PEF_USU where zon_id="+zona.getId()+" and pef_id="+perfil.getId()+" and usu_id="+usuario.getId() +" and borrado=0";
+    	if(getSession().createSQLQuery(hql).list().size() == 0)
+    	{
+	    	hql = "insert into ZON_PEF_USU (zpu_id,zon_id, pef_id, usu_id, version, usuariocrear,fechacrear,borrado) "
+	    			+ "select "+secuenciaHistorico+", "+zona.getId()+", "+perfil.getId()+", "+usuario.getId()+", "+0+", '"+usuario.getUsername()+"', TRUNC(sysdate),"+0+" from dual";
+	    	getSession().createSQLQuery(hql).executeUpdate();
+    	}
+    }
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ZonaUsuarioPerfil> getZonasPerfilesUsuariosPrimerNivelExistente(Long idPerfil, String codigoZona) {
+		
+		String sql =" WITH zz2 AS ( "
+									+" SELECT zz.ZON_ID, "
+											+" zz.ZON_DESCRIPCION, "
+											+" zz.ZON_PID, "
+											+" level AS nivel "
+									+" FROM ZON_ZONIFICACION zz "
+									+" WHERE zz.borrado = 0 "
+									+" START WITH zz.ZON_COD = '"+codigoZona+"' "
+									+" CONNECT BY NOCYCLE PRIOR zz.ZON_PID = zz.ZON_ID "
+									
+									+" UNION "
+									
+									+" SELECT zz3.ZON_ID, "
+											+" zz3.ZON_DESCRIPCION, "
+											+" zz3.ZON_PID, "
+											+" nivel+1 AS nivel "
+									+" FROM ZON_ZONIFICACION zz3 "
+									+" INNER JOIN "
+									+" (SELECT zz4.ZON_PID, "
+												+" level AS nivel "
+									  +" FROM ZON_ZONIFICACION zz4 "
+									  +" WHERE CONNECT_BY_ISCYCLE = 1 "
+									  +" AND zz4.borrado = 0 "
+									  +" START WITH zz4.ZON_COD = '"+codigoZona+"' "
+									  +" CONNECT BY NOCYCLE PRIOR zz4.ZON_PID = zz4.ZON_ID "
+									  +" )zz5 "
+									  +" ON zz3.ZON_ID = zz5.ZON_PID "
+    		  				+" ), "
+
+					+" zonasPerfil AS ( "
+										+" SELECT zpu.*, nivel "
+										  +" FROM zon_pef_usu zpu "
+								    		+" INNER JOIN zz2 ON zz2.zon_id = zpu.zon_id "
+								    		+" WHERE zpu.PEF_ID = "+idPerfil+" "
+								    		+" AND zpu.borrado  = 0 "
+								    +" ) "
+
+		+" SELECT * FROM zonasPerfil WHERE nivel = (SELECT MIN(nivel) from zonasPerfil) ";
+		
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		return sqlQuery.addEntity(ZonaUsuarioPerfil.class).list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean userEstaEnElNivelMasBajoZonaPerfil(ZonaUsuarioPerfil zonPefUsu){
+		
+				String sql =" WITH zz2 AS ( "
+						+" SELECT zz.ZON_ID, "
+								+" zz.ZON_DESCRIPCION, "
+								+" zz.ZON_PID, "
+								+" level AS nivel "
+						+" FROM ZON_ZONIFICACION zz "
+						+" WHERE zz.borrado = 0 "
+						+" START WITH zz.ZON_COD = '"+zonPefUsu.getZona().getCodigo()+"' "
+						+" CONNECT BY NOCYCLE PRIOR zz.ZON_PID = zz.ZON_ID "
+						
+						+" UNION "
+						
+						+" SELECT zz3.ZON_ID, "
+								+" zz3.ZON_DESCRIPCION, "
+								+" zz3.ZON_PID, "
+								+" nivel+1 AS nivel "
+						+" FROM ZON_ZONIFICACION zz3 "
+						+" INNER JOIN "
+						+" (SELECT zz4.ZON_PID, "
+									+" level AS nivel "
+						  +" FROM ZON_ZONIFICACION zz4 "
+						  +" WHERE CONNECT_BY_ISCYCLE = 1 "
+						  +" AND zz4.borrado = 0 "
+						  +" START WITH zz4.ZON_COD = '"+zonPefUsu.getZona().getCodigo()+"' "
+						  +" CONNECT BY NOCYCLE PRIOR zz4.ZON_PID = zz4.ZON_ID "
+						  +" )zz5 "
+						  +" ON zz3.ZON_ID = zz5.ZON_PID "
+					+" ), "
+		
+		+" zonasPerfil AS ( "
+							+" SELECT zpu.*, nivel "
+							  +" FROM zon_pef_usu zpu "
+					    		+" INNER JOIN zz2 ON zz2.zon_id = zpu.zon_id "
+					    		+" WHERE zpu.PEF_ID = "+zonPefUsu.getPerfil().getId()+" "
+					    		+" AND zpu.USU_ID = "+zonPefUsu.getUsuario().getId()+" "
+					    		+" AND zpu.borrado  = 0 "
+					    +" ) "
+		
+		+" SELECT * FROM zonasPerfil WHERE nivel = (SELECT MIN(nivel) from zonasPerfil) ";
+		
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		List<ZonaUsuarioPerfil> results = sqlQuery.addEntity(ZonaUsuarioPerfil.class).list();
+		if(results.size() > 0){
+			return true;
+		}else{
+			return false;	
+		}
+	}
 }

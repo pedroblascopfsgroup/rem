@@ -17,7 +17,7 @@ var bottomBar = [];
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/items.jsp" %>
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/botonExportar.jsp" %>
 
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -35,7 +35,7 @@ var bottomBar = [];
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -70,54 +70,57 @@ if (muestraBotonGuardar==1){
 	bottomBar.push(btnExportarPDF);
 </c:if>
 
-	var agenciaExternaSi = '<fwk:const value="es.capgemini.pfs.procesosJudiciales.model.DDSiNo.SI" />';
+	var dsProcedimientos = new Ext.data.Store({
+			autoLoad:true,
+			proxy: new Ext.data.HttpProxy({
+				url: page.resolveUrl('expedientejudicial/getTiposProcedimientoAsignacionDeGestores')
+			}),
+			reader: new Ext.data.JsonReader({
+				root: 'listadoProcedimientos'
+				,totalProperty: 'total'
+			}, [
+				{name: 'codigo', mapping: 'codigo'},
+				{name: 'descripcion', mapping: 'descripcion'}
+			])
+		});
 	
-	var agenciaExt = items[2];
+	for(i=0;i < items.length; i++){
+		if(items[i].nombre == "proc_iniciar"){
+			items[i] = new Ext.form.ComboBox({
+								name:items[i].name
+								,hiddenName:items[i].name
+								,disabled:items[i].disabled
+								,value:items[i].value
+								,data:items[i].values
+								,allowBlank : true
+								,store:dsProcedimientos
+								,displayField:'descripcion'
+								,valueField:'codigo'
+								,mode: 'local'
+								,emptyText:'----'
+								,triggerAction: 'all'
+								,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.propuesto" text="**Procedimiento propuesto" />'
+						});
+		}
+	}
+
+	var gestionJUDICIALIZAR = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial.JUDICIALIZAR" />';
+	
+	var gestion = items[2];
 	var procedimientoProp = items[3];
 	
-	agenciaExt.on('select', function() {
-		if(agenciaExt.getValue() == agenciaExternaSi) {
-			procedimientoProp.allowBlank = true;
-		}else{
+	gestion.on('select', function()
+	{
+		procedimientoProp.setValue('');
+		if(gestion.getValue() == gestionJUDICIALIZAR) {
 			procedimientoProp.allowBlank = false;
+			procedimientoProp.setDisabled(false);
+		}
+		else{
+			procedimientoProp.allowBlank = true;
+			procedimientoProp.setDisabled(true);
 		}
 	});
-	
-	var dsProcedimientos = new Ext.data.Store({
-		autoLoad:true,
-		proxy: new Ext.data.HttpProxy({
-			url: page.resolveUrl('expedientejudicial/getTiposProcedimientoAsignacionDeGestores')
-		}),
-		reader: new Ext.data.JsonReader({
-			root: 'listadoProcedimientos'
-			,totalProperty: 'total'
-		}, [
-			{name: 'codigo', mapping: 'codigo'},
-			{name: 'descripcion', mapping: 'descripcion'}
-		])
-	});
-
-for(i=0;i < items.length; i++){
-	if(items[i].nombre == "proc_iniciar"){
-		items[i] = new Ext.form.ComboBox({
-							name:items[i].name
-							,hiddenName:items[i].name
-							,disabled:items[i].disabled
-							,value:items[i].value
-							,data:items[i].values
-							,allowBlank : false
-							,store:dsProcedimientos
-							,displayField:'descripcion'
-							,valueField:'codigo'
-							,mode: 'local'
-							,emptyText:'----'
-							,triggerAction: 'all'
-							,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.iniciar" text="**Procedimiento a iniciar" />'
-					});
-	}
-}
-
-
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

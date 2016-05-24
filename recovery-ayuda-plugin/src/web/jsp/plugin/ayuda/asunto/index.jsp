@@ -3098,7 +3098,7 @@ estado &lsquo;Propuesto&rsquo;, y pulsar &lsquo;Aceptar&rsquo; . El acuerdo pasa
 
 
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:shape id="Imagen_x0020_16" o:spid="_x0000_s1055"
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:shape id="Imagen_x0020_16" o:spid="_x0000_s1055"
  type="#_x0000_t75" style='position:absolute;left:0;text-align:left;
  margin-left:180.25pt;margin-top:41.35pt;width:44.25pt;height:21.35pt;
  z-index:21;visibility:visible;mso-wrap-style:square;mso-wrap-distance-left:9pt;
@@ -3109,7 +3109,7 @@ estado &lsquo;Propuesto&rsquo;, y pulsar &lsquo;Aceptar&rsquo; . El acuerdo pasa
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image069.png"
   o:title=""/>
  <w:wrap type="square"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><span style="font-size: 10pt; line-height: 115%;" lang="ES-TRAD">La operaci&oacute;n ser&aacute; posible solo para el
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><span style="font-size: 10pt; line-height: 115%;" lang="ES-TRAD">La operaci&oacute;n ser&aacute; posible solo para el
 Supervisor del Asunto, y cuando el Acuerdo est&eacute; en estado &lsquo;Propuesto&rsquo; o
 &lsquo;Vigente&rsquo;. Para rechazar un Acuerdo, seleccionar el acuerdo en estado
 &lsquo;Propuesto&rsquo; o &lsquo;Vigente&rsquo;, y pulsar &lsquo;Rechazar&rsquo; . El Acuerdo pasar&aacute; a estado
@@ -3414,7 +3414,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Estado<o:p></o:p></span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Estado<o:p></o:p></span></p>
 
 
 
@@ -3454,7 +3454,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Tipo<o:p></o:p></span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Tipo<o:p></o:p></span></p>
 
 
 
@@ -3484,7 +3484,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Subtipo</span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Subtipo</span></p>
 
 
 
@@ -3500,7 +3500,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Actuaci&oacute;n<o:p></o:p></span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Actuaci&oacute;n<o:p></o:p></span></p>
 
 
 
@@ -3530,7 +3530,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Contrato</span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Contrato</span></p>
 
 
 
@@ -3546,7 +3546,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Fecha</span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Fecha</span></p>
 
 
 
@@ -3562,7 +3562,7 @@ entre los activos en el asunto, y explicando su estado, su fecha y su importe.<o
 
 
 
-<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><!--[if !supportLists]--><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><!--[endif]--><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Importe<o:p></o:p></span></p>
+<p class="MsoListParagraph" style="margin-left: 21.3pt; text-indent: 0cm; font-family: Arial;"><%--[if !supportLists]--%><span style="font-size: 10pt; line-height: 115%;"><span style="">&middot;<span style="font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><%--[endif]--%><span dir="ltr"></span><span style="font-size: 10pt; line-height: 115%;">Importe<o:p></o:p></span></p>
 
 
 

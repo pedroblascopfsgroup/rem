@@ -3,8 +3,9 @@
 
 shutdown immediate;
 
-startup mount exclusive;
+startup exclusive mount orcl; #startup mount exclusive;
 
+alter database archivelog;
 
 alter database flashback on;
 

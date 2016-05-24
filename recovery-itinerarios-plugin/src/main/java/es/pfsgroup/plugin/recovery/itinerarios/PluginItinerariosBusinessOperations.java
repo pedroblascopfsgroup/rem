@@ -260,6 +260,7 @@ public class PluginItinerariosBusinessOperations {
 	 * @return una lista de objetos tipoReglasElevaci�n del estado Completar Expediente de ese itinerario
 	 */
 	public static final String TRE_MGR_REGLASELEVACIONITINERARIO_CE="plugin.itinerarios.reglasElevacion.listaReglasElevacionCE";
+	public static final String TRE_MGR_REGLASELEVACIONITINERARIO="plugin.itinerarios.reglasElevacion.listaReglasElevacion";
 
 	/**
 	 * @param id del itinerario 
@@ -339,6 +340,18 @@ public class PluginItinerariosBusinessOperations {
 	public static final String ITI_MGR_PUNTO_ENGANCHE_BUTTONS_LEFT="plugin.itinerarios.web.buttons.left";
 	
 	public static final String ITI_MGR_PUNTO_ENGANCHE_BUTTONS_RIGHT="plugin.itinerarios.web.buttons.right";
-
+	
+	/**
+	 * @param id de itinerario.
+	 * @param estado id de la fase.
+	 */
+	public static final String TRE_MGR_RESTOREGLAS_GENERICO = "plugin.itinerarios.reglasElevacion.getRestoReglas";
+		
+	/**
+	 * @param id del itinerario
+	 * @param estado codigo de la fase.
+	 * @return devuelve el estado del itinerario segun codigo de estado
+	 */
+	public static final String EST_MGR_ESTADOGENERICOITI="plugin.itinerarios.estados.getEstadoGenerico";
 }
 

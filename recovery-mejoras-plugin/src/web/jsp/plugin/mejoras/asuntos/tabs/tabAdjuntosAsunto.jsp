@@ -153,6 +153,7 @@
 			recargarAdjuntos();
 		}
 	});
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 	
 	borrar.disable();
 
@@ -458,7 +459,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjAsunto'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionAsunto" text="**Editar descripción del adjunto del asunto" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionAsunto" text="**Editar descripciï¿½n del adjunto del asunto" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -471,7 +472,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionAsunto" text="**Editar descripción del adjunto del asunto" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionAsunto" text="**Editar descripciï¿½n del adjunto del asunto" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}
@@ -482,7 +483,7 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_TAB_ADJUNTO">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -510,7 +511,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjPersona'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripción del adjunto de la persona" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripciï¿½n del adjunto de la persona" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -523,7 +524,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionPersona" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}
@@ -533,7 +534,7 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoPersona,editarDescripcionAdjuntoPersona<sec:authorize ifNotGranted="SOLO_CONSULTA">]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_TAB_ADJUNTO_PERSONAS">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -562,7 +563,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjExpediente'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripciï¿½n del adjunto del expediente" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -575,7 +576,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionExpediente" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}
 		}	
@@ -585,7 +586,7 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente<sec:authorize ifNotGranted="SOLO_CONSULTA">]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_TAB_ADJUNTO_EXPE">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -614,7 +615,7 @@
                                          flow: 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.editarDescripAdjContrato'
                                          ,closable: true
                                          ,width : 700
-                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del contrato" />'
+                                         ,title : '<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del contrato" />'
                                          ,params: parametros
                         });
            	 		w.on(app.event.DONE, function(){
@@ -627,7 +628,7 @@
 					});
 			
 			}else{
-				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripción del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
+				Ext.Msg.alert('<s:message code="plugin.mejoras.asunto.adjuntos.editarDescripcionContrato" text="**Editar descripciï¿½n del adjunto del expediente" />','<s:message code="plugin.mejoras.asunto.adjuntos.noValor" text="**Debe seleccionar un valor de la lista" />');
 			}
 		}	
 		}
@@ -636,7 +637,7 @@
 	editarDescripcionAdjuntoContrato.disable();
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoContrato,editarDescripcionAdjuntoContrato<sec:authorize ifNotGranted="SOLO_CONSULTA">]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_TAB_ADJUNTO_CONTRATO">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -652,7 +653,7 @@
 
 	grid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
-		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId=${asunto.id}&id="+rec.get('id'));
+		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId=${asunto.id}&id="+rec.get('id')+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 	});
 
 	
@@ -669,7 +670,7 @@
 			var id = rec.get('id');
 			if(id!=null && id!='') {
 				// Abrimos el adjunto
-				window.open("/pfs/bajarAdjuntoPersona.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoPersona.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
@@ -708,7 +709,7 @@
 			// Abrimos el adjunto
 			var id = rec.get('id');
 			if(id!=null && id!='') {
-				window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
@@ -763,7 +764,7 @@
 			var id = rec.get('id');
 			if(id!=null && id!='') {
 				// Abrimos el adjunto
-				window.open("/pfs/bajarAdjuntoContrato.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoContrato.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});

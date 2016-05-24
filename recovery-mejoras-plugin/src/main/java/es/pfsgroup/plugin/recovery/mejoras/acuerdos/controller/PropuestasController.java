@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,11 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
-import com.tc.aspectwerkz.transform.inlining.compiler.CompilationInfo.Model;
-
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
-import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
+import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.acuerdo.CumplimientoAcuerdoDto;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -28,7 +24,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 
 @Controller
@@ -45,7 +40,8 @@ public class PropuestasController {
 	private static final String LISTADO_PROPUESTAS_EXPLORAR_JSON =  "plugin/mejoras/acuerdos/propuestasExplorarJSON";
 	private static final String JSON_LISTADO_BIENES_PROPUESTA = "plugin/mejoras/acuerdos/listadoBienesAcuerdoJSON";
 	private static final String JSP_CUMPLIMIENTO_PROPUESTA = "plugin/mejoras/acuerdos/cumplimientoPropuesta";
-
+	private static final String LISTADO_CONTRATOS_TERMINOS_PROPUESTAS_JSON =  "plugin/mejoras/acuerdos/contratosIncluidosEnTerminosJSON";
+	
 
 	@Autowired 
 	private DictionaryManager dictionaryManager; 
@@ -197,6 +193,7 @@ public class PropuestasController {
     public String getContratosByExpedienteId(Long idExpediente,ModelMap model) {
 		
 		model.put("listadoContratosAsuntos",propuestaApi.listadoContratosByExpedienteId(idExpediente));
+		model.put("codEntorno", usuarioManager.getUsuarioLogado().getEntidad().getCodigo());
 		
 		return JSON_LISTADO_CONTRATOS;
 	}
@@ -206,7 +203,9 @@ public class PropuestasController {
 		
 		List<Long> idsContrato = new ArrayList<Long>();
 		for(String contrato : contratosIncluidos.split(",")){
-			idsContrato.add(Long.parseLong(contrato));
+			if (!contrato.equals("")) {
+				idsContrato.add(Long.parseLong(contrato));
+			}
 		}
 
 		model.put("listadoBienesAcuerdo", propuestaApi.getBienesDelExpedienteParaLaPropuesta(idExpediente,idsContrato));
@@ -242,4 +241,28 @@ public class PropuestasController {
 	private CumplimientoAcuerdoDto creaDto(final WebRequest request) {
 		return DynamicDtoUtils.create(CumplimientoAcuerdoDto.class, request);
 	}
+	
+	/**
+     * Obtiene un listado de las propuestas asignadas al expediente en estado Elevado.
+     * @param idExpediente
+     */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String getPropuestasElevadasDelExpediente(@RequestParam(value = "idExpediente", required = true)Long idExpediente,ModelMap model) {
+		model.put("acuerdos",propuestaApi.listadoPropuestasDelExpediente(idExpediente, DDEstadoAcuerdo.ACUERDO_ACEPTADO));
+		return LISTADO_PROPUESTAS_JSON;
+	}
+	
+	
+	/**
+	 * Obtiene un listado de los contratos que estan incluidos en los t�rminos de la propuesta 
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String contratosIncluidosEnLosTerminosDeLaPropuesta(@RequestParam(value = "idPropuesta", required = true)Long idPropuesta,ModelMap model) {
+		model.put("contratos",propuestaApi.contratosIncluidosEnLosTerminosDeLaPropuesta(idPropuesta));
+		return LISTADO_CONTRATOS_TERMINOS_PROPUESTAS_JSON;
+	}
+	
 }

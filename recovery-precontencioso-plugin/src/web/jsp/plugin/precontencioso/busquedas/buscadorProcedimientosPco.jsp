@@ -48,7 +48,7 @@
 				comboTiposGestorDoc,comboDespachosDoc,comboGestorDoc,comboEstadoLiquidacion,dateFieldSolicitudLiqDesde,dateFieldSolicitudLiqHasta,dateFieldRecepcionLiqDesde,
 				dateFieldRecepcionLiqHasta,dateFieldConfirmacionLiqDesde,dateFieldConfirmacionLiqHasta,dateFieldCierreLiqDesde,dateFieldCierreLiqHasta,
 				fieldTotalLiqDesde,fieldTotalLiqHasta,fieldDiasGestionLiq,comboResultadoBurofax,dateFieldSolicitudBurDesde,dateFieldSolicitudBurHasta,
-				dateFieldEnvioBurDesde,dateFieldEnvioBurHasta,dateFieldAcuseBurDesde,dateFieldAcuseBurHasta];
+				dateFieldEnvioBurDesde,dateFieldEnvioBurHasta,dateFieldAcuseBurDesde,dateFieldAcuseBurHasta,fieldrefExternaEnvio,comboAcuseRecibo,comboRegManual];
 	
 	var camposStoreLimpiar = [optionsZonasStore, optionsGestoresStore, optionsGestoresStoreDoc];
 

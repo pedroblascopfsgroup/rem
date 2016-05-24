@@ -24,9 +24,11 @@
 				<json:property name="fechaInicio" > 
 					<fwk:date value="${tar.fechaInicio}"/>
 				</json:property>
- 				<json:property name="group">
+
+	 			<json:property name="group">
 						<app:groupTareasOptimizacion value="${tar.groupTareasDataInfo}" />
 				</json:property>	
+
 				<json:property name="id" value="${tar.id}" />
  				<json:property name="plazo" value="${tar.plazo}" /> 
  				<json:property name="entidadInformacion" value="${tar.entidadInformacion}"/> 
@@ -79,6 +81,9 @@
 					<fwk:date  value="${tar.prorrogaFechaPropuesta}"/>
 				</json:property>
 				<json:property name="motivo" value="${tar.prorrogaCausaProrrogaDescripcion}"/>
+			</c:if>
+			<c:if test='${tar.idProrroga != null}'>
+				<json:property name="esPeticionProrroga" value="true"/>
 			</c:if>
 		</json:object>
 	</json:array>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteAsignacionGestores" width="1098" height="590">
+<root-container name="haya_tramiteAsignacionGestores" width="1150" height="572">
   <node name="Inicio" x="319" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -12,8 +12,8 @@
       <bendpoint w1="-240" h1="-1" w2="-1" h2="-93"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="306" h1="1" w2="-1" h2="-97"/>
+      <label x="-156" y="-24"/>
+      <bendpoint w1="286" h1="4" w2="1" h2="-56"/>
     </edge>
   </node>
   <node name="H067_seleccionarProcedimiento" x="26" y="179" width="236" height="36">
@@ -30,24 +30,54 @@
       <bendpoint w1="-137" h1="374" w2="-484" h2="1"/>
     </edge>
   </node>
-  <node name="H067_SeleccionarProcedimientoAsignarGestor" x="566" y="185" width="248" height="36">
+  <node name="H067_SeleccionarProcedimientoAsignarGestor" x="787" y="230" width="312" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="184" h1="-1" w2="429" h2="-369"/>
-      <bendpoint w1="185" h1="370" w2="470" h2="2"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="180" h1="-3" w2="738" h2="-296"/>
+      <bendpoint w1="185" h1="286" w2="743" h2="-7"/>
+    </edge>
+  </node>
+  <node name="H067_transicionProcedimiento" x="249" y="433" width="269" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="542" y="153" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="13" y="-20"/>
+    </edge>
+  </node>
+  <node name="H067_seleccionarProcedimientoConc" x="414" y="237" width="301" height="36">
     <edge>
       <label x="3" y="-5"/>
-      <bendpoint w1="-1" h1="241" w2="285" h2="-2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-3" h1="211" w2="156" h2="-105"/>
     </edge>
   </node>
-  <node name="H067_transicionProcedimiento" x="270" y="428" width="269" height="36">
+  <node name="H067_transicionProcedimientoConc" x="645" y="388" width="302" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="339" y="553" width="132" height="36"/>
+  <node name="join1" x="855" y="461" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="0" h1="47" w2="596" h2="-21"/>
+    </edge>
+  </node>
+  <node name="Fin" x="319" y="523" width="132" height="36"/>
 </root-container>

@@ -64,7 +64,12 @@ public class PROCompletarExpedienteActionHandler extends PROBaseActionHandler im
                     .getId());
             Long idTareaAnterior = (Long) executionContext.getVariable(TAREA_ASOCIADA_CE);
             Long fechaFin = obtenerFinTareaAnterior(idTareaAnterior);
-            Long plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo(), fechaFin);
+            Long plazoRestante = 0L;
+            if (!DEVOLVER_COMPLETAR.equals(comeFrom) && estadoCE.getAutomatico() != null && estadoCE.getAutomatico()) {
+            	plazoRestante = estadoCE.getPlazo();
+            } else {            	
+            	plazoRestante = calcularTiempoRestante(idExpediente, estadoCE.getPlazo(), fechaFin);
+            }
             Long seconds = (plazoRestante.longValue() / MILLISECONDS);
 
             DtoGenerarTarea dto = new DtoGenerarTarea(idExpediente, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE,

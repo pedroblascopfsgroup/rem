@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -46,8 +48,12 @@ public class DDTipoActuacion implements Dictionary, Auditable {
 
     @Column(name = "DD_TAC_DESCRIPCION_LARGA")
     private String descripcionLarga;
+    
+	@ManyToOne
+	@JoinColumn(name = "DD_TAS_ID")
+	private DDTiposAsunto tipoAsunto;
 
-    @Embedded
+	@Embedded
     private Auditoria auditoria;
 
     @Version
@@ -136,5 +142,13 @@ public class DDTipoActuacion implements Dictionary, Auditable {
     public void setVersion(Integer version) {
         this.version = version;
     }
+    
+    public DDTiposAsunto getTipoAsunto() {
+		return tipoAsunto;
+	}
+
+	public void setTipoAsunto(DDTiposAsunto tipoAsunto) {
+		this.tipoAsunto = tipoAsunto;
+	}
 
 }

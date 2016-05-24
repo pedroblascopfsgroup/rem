@@ -68,6 +68,10 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
+    
+    @Autowired
+    private SubastaProcedimientoApi subastaProcedimientoApi;
+    
         
 	/**
 	 * Control de la transicion a la que ir despues de crearse la tarea.
@@ -85,7 +89,7 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 		if (executionContext.getNode().getName().contains("BPMTramiteAdjudicacion")) {
 			//
 			// Tenemos que crear un procedimiento adjudicación por cada uno de
-			// los bienes asociados a la subasta
+			// los bienes asociados a la subasta con cesión de remate
 			if (!Checks.esNulo(sub)) {
 				List<LoteSubasta> listado = sub.getLotesSubasta();
 				if (!Checks.estaVacio(listado)) {
@@ -115,8 +119,13 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 				if (!Checks.estaVacio(bienes)) {
 					for (ProcedimientoBien b : bienes) {
 						if(!bienesInsertados.contains(b.getId())){
-							creaProcedimientoAdjudicacion(prc, b.getBien());
-							bienesInsertados.add(b.getId());
+							
+							NMBBien nmbBien = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", b.getBien().getId()));
+							if(nmbBien.getAdjudicacion().getCesionRemate()) {
+								
+								creaProcedimientoAdjudicacion(prc, b.getBien());
+								bienesInsertados.add(b.getId());
+							}
 						}
 					}
 				}
@@ -132,10 +141,21 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 			Procedimiento procedimiento=getProcedimiento(executionContext);
 			if (Checks.esNulo(sub)) {
 				subastaCalculoManager.crearSubasta(procedimiento);
+				Subasta subasta = subastaProcedimientoApi.obtenerSubastaByPrcId(procedimiento.getId());
+				if (!Checks.esNulo(subasta)) {
+					subastaProcedimientoApi.determinarTipoSubasta(subasta);
+				}
+				
 			}
 			else{
 				//Reseteamos la fecha de solicitud, ya que la tarea ha sido cancelada
 				sub.setFechaSolicitud(null);
+			}
+		}
+		else if (executionContext.getNode().getName().contains("PrepararPropuestaSubasta")) {
+			// personalización del handler: determinar tipo de subasta
+			if (!Checks.esNulo(sub)) {
+				subastaProcedimientoApi.determinarTipoSubasta(sub);
 			}
 		}
 

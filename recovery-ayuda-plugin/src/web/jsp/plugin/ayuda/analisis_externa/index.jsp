@@ -62,7 +62,7 @@ salida</p>
 
 
 
-<p class="MsoNormal" style="text-indent: 35.4pt; font-family: Arial;"><!--[if gte vml 1]><v:shapetype
+<p class="MsoNormal" style="text-indent: 35.4pt; font-family: Arial;"><%--[if gte vml 1]><v:shapetype
  id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
  path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
  <v:stroke joinstyle="miter"/>
@@ -86,7 +86,7 @@ salida</p>
  style='width:295.5pt;height:167.25pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image001.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -103,65 +103,65 @@ definir mediante el formulario de la pesta&ntilde;a de &lsquo;An&aacute;lisis Ex
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Fecha
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Fecha
 de extracci&oacute;n: Fecha que en la que se desea consultar los datos</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Tipo
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Tipo
 de Actuaci&oacute;n: Multi-Combo con los tipos de procedimientos/actuaciones que se
 quieren consultar</p>
 
 
 
-<p class="MsoListParagraph" style="text-indent: -14.15pt; font-family: Arial; text-align: left; margin-left: 0px; width: 700px;"><!--[if !supportLists]-->&nbsp;&nbsp;&nbsp;<br>
-<img style="width: 682px; height: 64px;" alt="tipo_actuacion" src="../img/plugin/ayuda/analisis_externa/tipo_actuacion.jpg"> <!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_10"
+<p class="MsoListParagraph" style="text-indent: -14.15pt; font-family: Arial; text-align: left; margin-left: 0px; width: 700px;"><%--[if !supportLists]--%>&nbsp;&nbsp;&nbsp;<br>
+<img style="width: 682px; height: 64px;" alt="tipo_actuacion" src="../img/plugin/ayuda/analisis_externa/tipo_actuacion.jpg"> <%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_10"
  o:spid="_x0000_i1033" type="#_x0000_t75" style='width:345.75pt;height:35.25pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image003.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
 
 
 
-<p class="MsoListParagraph" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Despacho:
+<p class="MsoListParagraph" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Despacho:
 Multi-Combo con los despachos que se quieren consultar</p>
 <p class="MsoListParagraph" style="text-indent: -14.15pt; font-family: Arial; margin-left: 0px; width: 700px;"><br>
-<img style="width: 679px; height: 64px;" alt="despacho" src="../img/plugin/ayuda/analisis_externa/despacho.jpg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_13"
+<img style="width: 679px; height: 64px;" alt="despacho" src="../img/plugin/ayuda/analisis_externa/despacho.jpg">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_13"
  o:spid="_x0000_i1032" type="#_x0000_t75" style='width:346.5pt;height:35.25pt;
  visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image005.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Supervisor:
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Supervisor:
 Multi-Combo con los supervisores que se quieren consultar</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Gestor:
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Gestor:
 Multi-Combo con los gestores que se quieren consultar</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Solo
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Solo
 actuaciones activas</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Fase
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Fase
 Procesal: Multi-Combo con las fases que se quieren consultar</p>
 
 
@@ -170,52 +170,52 @@ Procesal: Multi-Combo con las fases que se quieren consultar</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<!--[endif]-->Plazo
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<%--[endif]--%>Plazo
 de aceptaci&oacute;n: Rango de fechas de la aceptaci&oacute;n del Asunto objetivo</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; font-family: Arial;"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="margin-left: 35.45pt; font-family: Arial;"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_19" o:spid="_x0000_i1030" type="#_x0000_t75" style='width:166.5pt;
  height:72.75pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image009.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->Criterio de salida: Columna por la cual se desea agrupar la
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>Criterio de salida: Columna por la cual se desea agrupar la
 informaci&oacute;n del informe:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Por
+<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Por
 tipo de procedimiento</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Por
+<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Por
 despacho</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Por
+<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Por
 supervisor</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Por
+<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Por
 gestor</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Por
+<p class="MsoNormal" style="margin-left: 99.25pt; text-align: left; text-indent: -14.2pt; font-family: Arial;" align="left"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Por
 fase procesal</p>
 
 
@@ -245,16 +245,16 @@ a Excel</span> </p>
 
 
 
-<p class="MsoNormal" style="font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:rect id="_x0000_s1026"
+<p class="MsoNormal" style="font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:rect id="_x0000_s1026"
  style='position:absolute;left:0;text-align:left;margin-left:96.4pt;
  margin-top:1.6pt;width:78.9pt;height:20.75pt;z-index:1' filled="f"
  strokecolor="red" strokeweight="1.5pt">
  <v:stroke dashstyle="dash"/>
-</v:rect><![endif]--><!--[if !vml]--><!--[endif]-->&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[if gte vml 1]><v:shape id="_x0000_i1029" type="#_x0000_t75"
+</v:rect><![endif]--%><%--[if !vml]--%><%--[endif]--%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[if gte vml 1]><v:shape id="_x0000_i1029" type="#_x0000_t75"
  style='width:202.5pt;height:23.25pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image012.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><img style="width: 290px; height: 29px;" alt="excel" src="../img/plugin/ayuda/analisis_externa/excel.jpg"><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><img style="width: 290px; height: 29px;" alt="excel" src="../img/plugin/ayuda/analisis_externa/excel.jpg"><%--[endif]--%></p>
 
 
 
@@ -282,13 +282,13 @@ criterio de salida por despacho.</p>
 
 
 
-<p style="font-family: Arial; text-align: center;" class="MsoNormal"><!--[if gte vml 1]><v:shape
+<p style="font-family: Arial; text-align: center;" class="MsoNormal"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_325" o:spid="_x0000_i1028" type="#_x0000_t75" style='width:471pt;
  height:116.25pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image014.png"
   o:title="" croptop="27949f" cropbottom="23751f" cropleft="11172f"
   cropright="9726f"/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 700px; height: 198px;" alt="archivo_excel" src="../img/plugin/ayuda/analisis_externa/archivo_excel.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 700px; height: 198px;" alt="archivo_excel" src="../img/plugin/ayuda/analisis_externa/archivo_excel.jpg"></p>
 
 
 
@@ -313,17 +313,17 @@ a PDF</p>
 
 
 
-<p class="MsoNormal" style="font-family: Arial; text-align: center;"><!--[if gte vml 1]><v:rect id="_x0000_s1027"
+<p class="MsoNormal" style="font-family: Arial; text-align: center;"><%--[if gte vml 1]><v:rect id="_x0000_s1027"
  style='position:absolute;left:0;text-align:left;margin-left:128pt;
  margin-top:3.25pt;width:78.9pt;height:20.75pt;z-index:2' filled="f"
  strokecolor="red" strokeweight="1.5pt">
  <v:stroke dashstyle="dash"/>
-</v:rect><![endif]--><!--[if !vml]--><!--[endif]--><!--[if gte vml 1]><v:shape id="Imagen_x0020_22" o:spid="_x0000_i1027"
+</v:rect><![endif]--%><%--[if !vml]--%><%--[endif]--%><%--[if gte vml 1]><v:shape id="Imagen_x0020_22" o:spid="_x0000_i1027"
  type="#_x0000_t75" style='width:202.5pt;height:23.25pt;visibility:visible;
  mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image012.png"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--><img style="width: 290px; height: 29px;" alt="pdf" src="../img/plugin/ayuda/analisis_externa/pdf.jpg"></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%><img style="width: 290px; height: 29px;" alt="pdf" src="../img/plugin/ayuda/analisis_externa/pdf.jpg"></p>
 
 
 
@@ -339,12 +339,12 @@ a PDF</p>
 
 
 
-<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><!--[if gte vml 1]><v:shape
+<p class="MsoNormal" style="text-align: center; font-family: Arial;" align="center"><%--[if gte vml 1]><v:shape
  id="Imagen_x0020_320" o:spid="_x0000_i1026" type="#_x0000_t75" style='width:256.5pt;
  height:406.5pt;visibility:visible;mso-wrap-style:square'>
  <v:imagedata src="file:///C:\Users\Arturo\AppData\Local\Temp\msohtmlclip1\01\clip_image016.emz"
   o:title=""/>
-</v:shape><![endif]--><!--[if !vml]--><!--[endif]--></p>
+</v:shape><![endif]--%><%--[if !vml]--%><%--[endif]--%></p>
 
 
 
@@ -357,84 +357,84 @@ informes se agrega en los siguientes campos:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->N&uacute;mero de Asuntos</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>N&uacute;mero de Asuntos</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->N&ordm; de Procedimientos/Actuaciones</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>N&ordm; de Procedimientos/Actuaciones</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->Principal del procedimiento</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>Principal del procedimiento</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->Cobros/pagos realizados en el procedimiento</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>Cobros/pagos realizados en el procedimiento</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->Importe Recuperado en el procedimiento</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>Importe Recuperado en el procedimiento</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->Estimaciones Pasadas:</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>Estimaciones Pasadas:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Hace
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Hace
 m&aacute;s de 24 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Entre
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Entre
 12 y 6 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Entre
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Entre
 6 y 3 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Entre
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Entre
 3 meses y la fecha del informe</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><!--[if !supportLists]-->&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[endif]-->Estimaciones Futuras:</p>
+<p class="MsoNormal" style="margin-left: 35.45pt; text-indent: -14.15pt; font-family: Arial;"><%--[if !supportLists]--%>&middot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <%--[endif]--%>Estimaciones Futuras:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Los
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Los
 pr&oacute;ximos 3 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Los
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Los
 pr&oacute;ximos 6 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Los
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Los
 pr&oacute;ximos 12 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->Los
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>Los
 pr&oacute;ximos 24 meses</p>
 
 
 
-<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><!--[if !supportLists]-->o&nbsp;&nbsp;
-<!--[endif]-->A
+<p class="MsoNormal" style="margin-left: 49.65pt; text-indent: -14.2pt; font-family: Arial;"><%--[if !supportLists]--%>o&nbsp;&nbsp;
+<%--[endif]--%>A
 partir de los 24 meses</p>
 
 
@@ -446,7 +446,7 @@ procedimiento&rsquo; se tendr&iacute;a este informe:</p>
 
 
 
-<p class="MsoNormal" style="margin-left: -18.1pt; font-family: Arial;">&nbsp;<!--[if !vml]--><!--[endif]--></p>
+<p class="MsoNormal" style="margin-left: -18.1pt; font-family: Arial;">&nbsp;<%--[if !vml]--%><%--[endif]--%></p>
 
 
 

@@ -21,6 +21,10 @@ public class DtoMostrarAnotacion {
 	private String numeroLitigio;
 	private String nombreDeudor;
 	private Long idTraza;
+	private Long idArchivoAdjunto;
+	private Long idResolucion;
+	private String nombreAdjunto;
+	private Long idTipoResolucion;
 
 	public Long getIdAsunto() {
 		return idAsunto;
@@ -164,5 +168,38 @@ public class DtoMostrarAnotacion {
 
 	public void setIdTraza(Long idTraza) {
 		this.idTraza = idTraza;
-	}	
+	}
+	
+	public Long getIdArchivoAdjunto() {
+		return idArchivoAdjunto;
+	}
+
+	public void setIdArchivoAdjunto(Long idArchivoAdjunto) {
+		this.idArchivoAdjunto = idArchivoAdjunto;
+	}
+	
+	public String getNombreAdjunto() {
+		return nombreAdjunto;
+	}
+	
+	public void setNombreAdjunto(String nombreAdjunto) {
+		this.nombreAdjunto = nombreAdjunto;
+	}
+	
+	public Long getIdResolucion() {
+		return idResolucion;
+	}
+
+	public void setIdResolucion(Long idResolucion) {
+		this.idResolucion = idResolucion;
+	}
+
+	public Long getIdTipoResolucion() {
+		return idTipoResolucion;
+	}
+
+	public void setIdTipoResolucion(Long idTipoResolucion) {
+		this.idTipoResolucion = idTipoResolucion;
+	}
+
 }

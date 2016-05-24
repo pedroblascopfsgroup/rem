@@ -9,7 +9,7 @@
 
 	<bean id="cambiosMasivosAsuntoPluginConfig"
 		class="es.pfsgroup.plugin.recovery.cambiosMasivosAsunto.CambiosMasivosAsuntoPluginConfig">
-		<property name="filtrarTiposGestor" value="true" />
+		<property name="filtrarTiposGestor" value="false" />
          <property name="tiposGestorValidos">
                  <list>
                          <value>SUP</value>

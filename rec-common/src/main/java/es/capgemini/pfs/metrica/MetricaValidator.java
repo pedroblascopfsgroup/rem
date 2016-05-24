@@ -52,7 +52,7 @@ public class MetricaValidator {
         MetricaFileReader parser = new MetricaFileReader(dto.getFile());
         try {
             if (!validarCantidadFilas(parser)) {
-                return false;
+            	return false;
             }
             if (!validarCodigoAlertas(parser)) {
                 return false;
@@ -85,7 +85,15 @@ public class MetricaValidator {
      * @throws IOException
      */
     private boolean validarCantidadFilas(MetricaFileReader parser) throws IOException {
-        return tipoAlertaDao.getList().size() >= parser.getRowCount();
+    	
+    	int tamTabla = tipoAlertaDao.getList().size();
+    	int tamFichero = parser.getRowCount();
+    	boolean res = tamTabla >= tamFichero;
+    	if(!res) {
+    		logger.error("Método validarCantidadFilas. El número de filas de la tabla TAL_TIPO_ALERTA (" + tamTabla + ") es menor que el número de filas del fichero (" + tamFichero + ")");
+    	}
+    	
+        return res;
 
     }
 
@@ -104,7 +112,8 @@ public class MetricaValidator {
             return false;
         }
         for (DtoMetricaPorAlerta dto : dtos) {
-            if (tipoAlertaDao.findByCodigo(dto.getCodigoAlerta()) == null) {
+            if (tipoAlertaDao.findByCodigo(dto.getCodigoAlerta()) == null) {            	
+            	logger.error("Método validarCodigoAlertas. El tipo de alerta con código " + dto.getCodigoAlerta() + " no existe.");
                 return false;
             }
         }
@@ -118,7 +127,16 @@ public class MetricaValidator {
      * @throws IOException
      */
     private boolean validarCantidadNivelesGravedad(MetricaFileReader parser) throws IOException {
-        return nivelGravedadDao.getList().size() == parser.getCantidadNivelesGravedad();
+    	
+    	int nivelSistema = nivelGravedadDao.getList().size();
+    	int nivelFichero = parser.getCantidadNivelesGravedad();
+    	
+    	boolean res = nivelSistema == nivelFichero;
+    	if(!res) {
+    		logger.error("Método validarCantidadNivelesGravedad. La cantidad de niveles de gravedad en el archivo (" + nivelFichero + ") no coincide con los existentes en el sistema (" + nivelSistema + ").");
+    	}
+    	
+        return res;
     }
 
     /**
@@ -137,7 +155,9 @@ public class MetricaValidator {
         }
         for (DtoMetricaPorAlerta dto : dtos) {
             if (dto.getNivelPreocupacion() < 0 || dto.getNivelPreocupacion() > 10) {
-                return false;
+            	
+            	logger.error("Método validarRangosNivelPreocupacion. El valor de nivel de preocupacion del tipo de alerta " + dto.getCodigoAlerta() + " no está entre 0 y 10 incluidos (" + dto.getNivelPreocupacion() + ").");
+            	return false;
             }
         }
         return true;
@@ -155,7 +175,7 @@ public class MetricaValidator {
         try {
             dtos = parser.getAllRows();
         } catch (ValidationException e) {
-            logger.warn("Error al obtener las filas.", e);
+            logger.warn("Método validarRangosNivelesGravedad. Error al obtener las filas.", e);
             return false;
         }
         for (DtoMetricaPorAlerta dto : dtos) {
@@ -165,7 +185,8 @@ public class MetricaValidator {
                     continue;
                 }
 
-                if (nivel < 1 || nivel > 100) {
+                if (nivel.intValue() < 1 || nivel.intValue() > 100) {
+                	logger.error("Método validarRangosNivelesGravedad. El valor de nivel de gravedad del tipo de alerta " + dto.getCodigoAlerta() + " no está entre 0 y 100 incluidos (" + dto.getNivelesGravedad() + ").");
                     return false;
                 }
             }
@@ -221,7 +242,7 @@ public class MetricaValidator {
     }
 
     /**
-     * Verifica si en los datos del archivo existe una definiciónn para el tipo de alerta y nivel de gravedad.
+     * Verifica si en los datos del archivo existe una definición para el tipo de alerta y nivel de gravedad.
      * @param dtos
      * @param tipoAlerta
      * @param nivelGravedad
@@ -237,6 +258,7 @@ public class MetricaValidator {
                     return nivel != null;
                 } catch (IndexOutOfBoundsException e) {
                     //No existe en el archivo uan definición para el nivel de gravedad
+                	logger.warn("Método existeDefinicionEnFichero. No existe en el archivo una definición para el nivel de gravedad");
                     return false;
                 }
 
@@ -291,10 +313,12 @@ public class MetricaValidator {
 
     private boolean validarCantidadMetricasSegmento(List<Metrica> metricasPorSegmento) {
         if (metricasPorSegmento.isEmpty()) {
+        	logger.error("Método validarCantidadMetricasSegmento. No existen métricas por segmento en el sistema.");
             return false;
         }
         if (segmentoDao.getList().size() > metricasPorSegmento.size()) {
             // Tengo mas segmentos que metricas
+        	logger.error("Método validarCantidadMetricasSegmento. Existen más segmentos que métricas.");
             return false;
         }
         return true;
@@ -317,6 +341,7 @@ public class MetricaValidator {
 
     private boolean existeDefinicionEnMetricas(List<Metrica> metricas, TipoAlerta tipoAlerta, NivelGravedad nivelGravedad) {
         if (metricas.isEmpty()) {
+        	logger.error("Método existeDefinicionEnMetricas. No existen métricas en el sistema.");
             return false;
         }
         for (Metrica metrica : metricas) {
@@ -336,17 +361,27 @@ public class MetricaValidator {
      */
     private boolean existeDefinicionEnMetrica(Metrica metrica, TipoAlerta tipoAlerta, NivelGravedad nivelGravedad) {
         if (metrica == null) {
+        	logger.error("Método existeDefinicionEnMetrica. No existe la métrica pasada como parámetro.");
             return false;
         }
         for (MetricaTipoAlerta metricaTipoAlerta : metrica.getMetricasTipoAlerta()) {
             if (metricaTipoAlerta.getTipoAlerta().getCodigo().equalsIgnoreCase(tipoAlerta.getCodigo())) {
                 for (MetricaTipoAlertaGravedad metricaTipoAlertaGravedad : metricaTipoAlerta.getMetricasTipoAlertaGravedad()) {
                     if (metricaTipoAlertaGravedad.getNivelGravedad().getCodigo().equalsIgnoreCase(nivelGravedad.getCodigo())) {
-                        return metricaTipoAlertaGravedad.getPeso() != null;
+                    	Integer peso = metricaTipoAlertaGravedad.getPeso(); 
+                    	boolean res = peso != null;
+                    	
+                    	if(!res) {
+                    		logger.error("Método existeDefinicionEnMetrica. No existe un peso no nulo para la métrica " + metrica.getId() + ".");
+                    	}
+                    	
+                        return res;
                     }
                 }
             }
         }
+        
+        logger.error("Método existeDefinicionEnMetrica. No existe un peso no nulo para la métrica " + metrica.getId() + ".");
         return false;
     }
 

@@ -53,4 +53,7 @@ public interface ProcedimientoApi {
 	@BusinessOperationDefinition(BO_PRC_NMB_GET_GARANTIAS_DE_UN_PROCEDIMIENTO)
 	public List<Bien> getGarantiasDeUnProcedimiento(Long idProcedimiento);
     
+	public Boolean validarDatosAdjudicacionTerceroBien(Long idProcedimiento);
+	
+	public Boolean comprobarSiEntidadAdjudicatariaEnBienEsEntidad(Long idProcedimiento);
 }

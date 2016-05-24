@@ -129,36 +129,58 @@
             </structure>
             <property name="dataSource">Data Source</property>
             <method name="open"><![CDATA[contratosIt = contratosPage.getResults().iterator();]]></method>
-            <method name="fetch"><![CDATA[if (!contratosIt.hasNext()) return false;
-var cnt = contratosIt.next();
-
-row["codigoContrato"] = cnt.getCodigoContrato();
-row["tipo"] = cnt.getTipoProducto().getDescripcion();
-row["saldoVencido"] = cnt.getLastMovimiento().getPosVivaVencidaAbsoluta();
-row["diasVencido"] = cnt.getDiasIrregular();
-row["riesgo"] = cnt.getLastMovimiento().getSaldoTotalAbsoluto();
-row["estado"] = cnt.getEstadoContrato().getDescripcion();
-row["situacion"] = "";
-
-var cntActivo = cnt.getExpedienteContratoActivo();
-
-if (cntActivo != null)
-{
-	var sinActuacion = cntActivo.getSinActuacion();
-	var borrado = cntActivo.getAuditoria().isBorrado();
+            <method name="fetch"><![CDATA[ 
+	if (!contratosIt.hasNext()) return false;
+	var cnt = contratosIt.next();
+	if(cnt == null) false;
 	
+	row["codigoContrato"] = cnt.getCodigoContrato();
+	row["diasVencido"] = cnt.getDiasIrregular();
 	
-	if (sinActuacion == null && borrado == false){
-		row["situacion"] = "Expedientado";
-	}
-	else if (sinActuacion == false && borrado == false && cntActivo.getCantidadProcedimientos() > 0) {
-		row["situacion"] = "En Asunto";
+	var cntActivo = cnt.getExpedienteContratoActivo();
+	if (cntActivo != null)
+	{
+	        var sinActuacion = cntActivo.getSinActuacion();
+	        var borrado = cntActivo.getAuditoria().isBorrado();
+	        
+	        
+	        if (sinActuacion == null && borrado == false){
+	                row["situacion"] = "Expedientado";
+	        }
+	        else if (sinActuacion == false && borrado == false && cntActivo.getCantidadProcedimientos() > 0) {
+	                row["situacion"] = "En Asunto";
+	        }
+	    
 	}
 	
-}
-
-
-return true;]]></method>
+	var cntTipoProducto = cnt.getTipoProducto();
+	if (cntTipoProducto != null)
+	{
+	        row["tipo"] = cntTipoProducto.getDescripcion();
+	}
+	
+	
+	var cntLastMovimiento = cnt.getLastMovimiento();
+	if (cntLastMovimiento != null)
+	{
+	        row["saldoVencido"] = cntLastMovimiento.getPosVivaVencidaAbsoluta();
+	}
+	
+	
+	var cntLastMovimiento = cnt.getLastMovimiento();
+	if (cntLastMovimiento != null)
+	{
+	        row["riesgo"] = cntLastMovimiento.getSaldoTotalAbsoluto();
+	}
+	
+	var cntEstadoContrato = cnt.getEstadoContrato();
+	if (cntEstadoContrato != null)
+	{
+	        row["estado"] = cntEstadoContrato.getDescripcion();
+	}
+	
+	return true;
+]]></method>
         </script-data-set>
     </data-sets>
     <styles>

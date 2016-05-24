@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 
 @Component
 public class EXTGestorAdicionalAsuntoManager implements
@@ -30,6 +31,9 @@ public class EXTGestorAdicionalAsuntoManager implements
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
 
 	@Override
 	@BusinessOperation(BO_EXT_GESTOR_ADICIONAL_FIND_GESTORES_BY_ASUNTO)
@@ -62,6 +66,30 @@ public class EXTGestorAdicionalAsuntoManager implements
 		}
 
 		return gaa;
+	}
+	
+	@Override
+	public Usuario obtenerLetradoDelAsunto(Long idAsunto){
+		List<EXTGestorAdicionalAsunto> gestoresAsunto = adicionalAsuntoDao.findGestoresByAsuntoTipos(idAsunto, coreProjectContext.getTipoGestorLetrado());
+		
+		Usuario letradoAsunto = null;
+
+		if(gestoresAsunto.size()==1){
+			
+			letradoAsunto = gestoresAsunto.get(0).getGestor().getUsuario();
+			
+		}else if(gestoresAsunto.size()>1){
+			
+			letradoAsunto = gestoresAsunto.get(0).getGestor().getUsuario();
+			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
+				if(gaa.getGestor().getGestorPorDefecto()){
+					letradoAsunto = gaa.getGestor().getUsuario();
+					break;
+				}
+			}
+		}
+		
+		return letradoAsunto;
 	}
 
 }

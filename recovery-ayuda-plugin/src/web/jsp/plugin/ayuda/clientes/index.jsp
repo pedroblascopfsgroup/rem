@@ -9117,11 +9117,11 @@ emprendan las acciones de recuperaci&oacute;n t&eacute;cnica cuanto antes.</p>
 <p style="font-family: Arial;" class="MsoNormal">Si un expediente se ha generado manualmente, s&oacute;lo podr&aacute; cancelarse
 de forma manual</p>
 
-<p style="font-family: Arial;" class="MsoNormal"><!--[if gte vml 1]><v:rect id="_x0000_s1027" style='position:absolute;
+<p style="font-family: Arial;" class="MsoNormal"><%--[if gte vml 1]><v:rect id="_x0000_s1027" style='position:absolute;
  left:0;text-align:left;margin-left:148.4pt;margin-top:3.9pt;width:96.65pt;
  height:14.25pt;z-index:26' filled="f" strokecolor="red" strokeweight="1.5pt">
  <v:stroke dashstyle="dash"/>
-</v:rect><![endif]--><!--[if !vml]-->&nbsp;&nbsp;</p>
+</v:rect><![endif]--%><%--[if !vml]--%>&nbsp;&nbsp;</p>
 
 <<<<<<< .mine
 <p class="MsoNormal" style="text-indent: 35.4pt; text-align: center; font-family: Arial;">&nbsp;<img style="width: 195px; height: 77px;" alt="expediente_recuperacion" src="../img/plugin/ayuda/clientes/expediente_recuperacion.jpg"></p>

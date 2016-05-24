@@ -37,7 +37,7 @@ public interface RecoveryAnotacionApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition(AMF_CREATE_ANOTACION)
-	public void createAnotacion(DtoCrearAnotacionInfo dto);
+	public List<Long> createAnotacion(DtoCrearAnotacionInfo dto);
 
 	@BusinessOperationDefinition(AMF_CREATE_RESPUESTA)
 	public void createRespuesta(DtoCrearAnotacionRespuestaTareaInfo dto);

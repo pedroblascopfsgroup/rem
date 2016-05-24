@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -66,7 +67,7 @@ public class NMBAdicionalBien implements Serializable, Auditable, NMBAdicionalBi
     private DDTipoInmueble tipoInmueble;
 	
 	@Column(name = "BIE_ADI_VALORACION")
-    private Float valoracion;
+    private BigDecimal valoracion;
 	
 	@Column(name = "BIE_ADI_ENTIDAD")
     private String entidad;
@@ -198,11 +199,11 @@ public class NMBAdicionalBien implements Serializable, Auditable, NMBAdicionalBi
 		this.tipoInmueble = tipoInmueble;
 	}
 
-	public Float getValoracion() {
+	public BigDecimal getValoracion() {
 		return valoracion;
 	}
 
-	public void setValoracion(Float valoracion) {
+	public void setValoracion(BigDecimal valoracion) {
 		this.valoracion = valoracion;
 	}
 

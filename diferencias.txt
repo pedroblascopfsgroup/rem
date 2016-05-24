@@ -1,0 +1,212 @@
+0a1
+> 
+3,4c4
+< 
+< master.jdbc.username=CMMASTER
+---
+> master.jdbc.username=cmmaster
+7c7
+< 
+---
+> proyecto=CAJAMAR
+14c14,15
+< birt.loadOnStartup=TRUE
+---
+> #birt.loadOnStartup=TRUE
+> birt.loadOnStartup=FALSE
+16,17c17,18
+< jmx.port=2198
+< jmx.address=service:jmx:rmi://localhost/jndi/rmi://localhost:2198/server
+---
+> jmx.port=2199
+> jmx.address=service:jmx:rmi://localhost/jndi/rmi://localhost:2199/server
+24c25
+< jbpm.startJobExecutor=false
+---
+> jbpm.startJobExecutor=true
+27c28
+< #mailManager.host=172.22.1.114
+---
+> agendaMultifuncion.mail.from = recovery@lindorff.es
+32,36c33,37
+< versions.local.repo=/shared/maven
+< #batch.home=/home/demo/batch
+< #sql.user.PFSMASTER=pfsmaster/admin
+< sql.user.SYSTEM=system/Pintor32
+< #sql.user.PFS01=pfs01/admin
+---
+> qversions.local.repo=/shared/maven
+> batch.home=/home/desalindorff/batch
+> sql.user.PFSMASTER=hayamaster/j0b3d2CHe3I=67569785
+> sql.user.SYSTEM=system/admin
+> sql.user.PFS01=haya01/j0b3d2CHe3I=67569785
+55c56
+< master.jdbc.username=cmmaster
+---
+> master.jdbc.username=hayamaster
+58,62c59,62
+< #Oracle9iDialect.jdbc.url=jdbc:oracle:thin:BANKMASTER/admin@//192.168.0.148:1521/inte1bankia
+< #Oracle9iDialect.conn.url1=jdbc:oracle:thin:BANK01/admin@//192.168.0.148:1521/inte1bankia
+< 
+< Oracle9iDialect.jdbc.url=jdbc:oracle:thin:CMMASTER/admin@//localhost:1522/orcl11g
+< Oracle9iDialect.conn.url1=jdbc:oracle:thin:CM01/admin@//localhost:1522/orcl11g
+---
+> Oracle9iDialect.jdbc.url=jdbc:oracle:thin:HAYAMASTER/admin@//localhost:1521/orcl11g
+> #Oracle9iDialect.jdbc.url=jdbc:oracle:thin:BANKMASTER/j0b3d2CHe3I=67569785@//localhost:1521/orcl11g
+> #Oracle9iDialect.jdbc.url=jdbc:oracle:thin:BANKMASTER/admin@//localhost:1521/orcl11g
+> #Oracle9iDialect.conn.url1=jdbc:oracle:thin:BANK01/j0b3d2CHe3I=67569785@//intebd:1521/intelindorff
+64,65d63
+< #Oracle9iDialect.jdbc.url=jdbc:oracle:thin:HAYAMASTER/admin@//192.168.0.152:1525/ibd014
+< #Oracle9iDialect.conn.url1=jdbc:oracle:thin:HAYA01/admin@//192.168.0.152:1525/ibd014
+67,68c65,66
+< #Oracle9iDialect.jdbc.url=jdbc:oracle:thin:BANKMASTER/admin@//192.168.0.106:1522/orcl11g
+< #Oracle9iDialect.conn.url1=jdbc:oracle:thin:BANK01/admin@//192.168.0.106:1522/orcl11g
+---
+> batch.pathToSqlLoader=/opt/app/oracle/product/10.2.0/db_1/bin/sqlldr
+> batch.pathToSqlLoader=/var/tomcat/versiones/util/sqlldrConverter
+71,74d68
+< batch.pathToSqlLoader=/opt/app/oracle/product/11.2.0/db_1/bin/sqlldr
+< #batch.pathToSqlLoader=/var/tomcat/inteugas/util/sqlldrConverter
+< 
+< #batch.pathToSqlLoader=/opt/app/oracle/product/10.2.0/db_1/bin/sqlldr
+77c71
+< batch.connectionInfo = bank01/admin@localhost:1521/orcl11g
+---
+> batch.connectionInfo = haya01/admin@localhost:1521/orcl11g
+87,97d80
+< batch.linCobros.in=linCobros
+< batch.linCobros.semaphore=COBROS${batch.files.semaphore.suffix}
+< batch.linCobros.period=30000
+< 
+< batch.linAcuerdos.in=linAcuerdos
+< batch.linAcuerdos.semaphore=ACUERDOS${batch.files.semaphore.suffix}
+< batch.linAcuerdos.period=5000
+< 
+< batch.linAltaAsuntos.in=linAltaAsuntos
+< batch.linAltaAsuntos.semaphore=ALTA_ASUNTOS${batch.files.semaphore.suffix}
+< batch.linAltaAsuntos.period=5000
+99c82,99
+< files.temporaryPath=/home/desalindorff/pfs/temporaryFiles
+---
+> # Integracion recovery-pentaho
+> pentaho.usersPath=/home/desalindorff/pentaho-users.xml
+> pentaho.setCookieUrl=/pfs/setCookie.jsp
+> pentaho.cookieUrl=/Login?
+> pentaho.cookieName=JSESSIONID
+> pentaho.context=/pfsbip
+> pentaho.repositoryUrl=/SolutionRepositoryService?component=getSolutionRepositoryDoc
+> pentaho.trustStore=/usr/java/jdk1.6.0_18/jre/lib/security/cacerts
+> pentaho.trustStorePassword=changeit
+> pentaho.host=intebip.pfsgroup.es
+> pentaho.port=8087
+> pentaho.protocol=http
+> pentaho.defaultPentahoPassword=pzona
+> pentaho.defaultPentahoUser=pfsvalencia
+> 
+> # JasperReports (GestorInformes)
+> jasper.ruta.plantillas=/var/tomcat/desalindorff/webapps/pfs/plantillas/plugin/masivo
+> jasper.ruta.informes=/var/tomcat/desalindorff/webapps/pfs/plantillas/plugin/masivo
+102,109c102,107
+< # Integracion recovery-pentaho
+< #pentaho.usersPath=/home/demo/pentaho-users.xml
+< #pentaho.setCookieUrl=/pfs/setCookie.jsp
+< #pentaho.cookieUrl=/Login?
+< #pentaho.cookieName=JSESSIONID
+< #pentaho.context=/pfsbip
+< #pentaho.repositoryUrl=/SolutionRepositoryService?component=getSolutionRepositoryDoc
+< #pentaho.trustStore=/usr/java/jdk1.6.0_18/jre/lib/security/cacerts
+---
+> files.temporaryPath=/home/desalindorff/pfs/temporaryFiles
+> 
+> cargadocs.hora.inicio=08:00:00
+> cargadocs.hora.fin=20:30:00
+> cargadocs.intervalo=1
+> cargadocs.directorio=/tmp/pruebaCargaDocumentacion/
+112c110
+< security.validezTimeStamp = 99999999
+---
+> security.validezTimeStamp = 1800000
+117c115,152
+< devon.webservice.ugas.wsdl =  file:/home/desalindorff/ugasv2.wsdl
+---
+> #Limite de TAMANYO MAXIMO DE LOS ADJUNTOS QUE SE PUEDEN ENVIAR
+> agendaMultifuncion.mail.tamanyoMaximoAdjustos = 12000000
+> 
+> #Ruta de la carpeta temporal donde dejar los documentos a imprimir
+> ruta.imprimir.docs=/home/desalindorff/imprimeDocs
+> 
+> # Número de días a procesar, por defecto, el procesamiento será semanal
+> proceso.impulsos.numero.dias = 7
+> # Ruta tamporal donde se dejarán los escritos con procurador 
+> proceso.impulsos.ruta_con_proc = /tmp/impulsos/con_proc
+> # Ruta tamporal donde se dejarán los escritos sin procurador 
+> proceso.impulsos.ruta_sin_proc = /tmp/impulsos/sin_proc
+> # Ruta tamporal donde se dejarán los ficheros de rechazos 
+> proceso.impulsos.ruta_rechazos = /tmp/impulsos/rechazos
+> 
+> # Número máximde inputs que se pueden procesar por botón
+> procesarInputs.num.maximo.inputs=100
+> 
+> # Configuracion Recovery-Kerberos
+> autorizacion.kerberos.driver=es.capgemini.pfs.security.KerberosStubDriver
+> #autorizacion.kerberos.driver=es.pfs.bankia.security.KerberosBankiaDriver
+> autorizacion.kerberos.perfil.acceso=FPFSRACCESO
+> autorizacion.kerberos.perfiles=FPFSRSOPORT,FPFSRADMIN,FPFSREXT,FPFSRINT
+> 
+> #Localizacion del servidor de LOGs (para Bankia)
+> log.authentication.servername=localhost
+> log.authentication.port=9876
+> 
+> # Configuración de servicios remotos
+> remote.services.serverName=localhost
+> remote.services.port=7001
+> 
+> modeloFacturacion.tramos.numMaxTramosFacturacion=4
+> 
+> contrato.codigo.subStringIni=10
+> contrato.codigo.subStringFin=27
+> 
+> dsm.prot.cnts=SI
+119d153
+< agendaMultifuncion.mail.from = recovery@aaaa.es
+131,132c165,178
+< #Filtro de html para las anotaciones del report de la ficha global de litigios
+< report.ficha.global.litigios.filtro.html.anotaciones=true
+---
+> #Entradas para composición del correo de otificación de acuerdo
+> mail.acuerdo.defaultTo = pbo2005@gmail.com
+> mail.acuerdo.from = pedro.blasco@pfsgroup.es
+> mail.acuerdo.pwFrom = qNktA2nL6ih53JhrMZMbQA==06875977
+> mail.acuerdo.serverLocal = smtp.gmail.com
+> mail.acuerdo.portLocal = 587
+> mail.acuerdo.serverDesa = correodesarrollo.cm.es
+> mail.acuerdo.portDesa = 25
+> mail.acuerdo.serverPre = smtp-a.cm.es
+> mail.acuerdo.portPre = 25
+> mail.acuerdo.serverPro = smtp-a.cm.es
+> mail.acuerdo.portPro = 25
+> mail.acuerdo.usuario = SV00154
+> mail.acuerdo.usuarioTest = pedro.blasco@pfsgroup.es
+134,137c180,181
+< cargadocs.hora.inicio=08:00:00
+< cargadocs.hora.fin=20:30:00
+< cargadocs.intervalo=1
+< cargadocs.directorio=/tmp/pruebaCargaDocumentacion/
+---
+> iplus.instalado=NO
+> iplus.driver=es.pfsgroup.plugin.recovery.iplus.driver.GestionIplusStubImpl
+139,142d182
+< #Limite de TAMA�~QO M�~AXIMO DE LOS ADJUNTOS QUE SE PUEDEN ENVIAR
+< agendaMultifuncion.mail.tamanyoMaximoAdjustos = 12000000
+< 
+< masivo.cargaExcel.maxFilas=5000
+144d183
+< # Integración mensajería
+154,159d192
+< 
+< # Envío de emails
+< mail.smtp.usuario=xxx
+< mail.smtp.pwd=xxx
+< mail.smtp.server=xxx
+< mail.smtp.port=xxx
+\ No newline at end of file

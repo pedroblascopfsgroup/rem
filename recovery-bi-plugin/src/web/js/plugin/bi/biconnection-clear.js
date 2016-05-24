@@ -9,14 +9,14 @@
      `Y88P'  Y8888P   `Y88P'
     
     
-    Tener en cuenta que al ofuscar, las posiciones 2 y 27 de array deben ser ${bi.url} y ${bi.auth} respectivamente
+    Tener en cuenta que al ofuscar, las posiciones 7 y 32 de array deben ser ${bi.url} y ${bi.auth} respectivamente
     
     
 */
 var count=0;
 
 function centeredWindowStyle() {
-    return 'titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes';
+        return 'width='.concat(screen.width,',height=',screen.height,',top=0,left=0,titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes');
 }
 
 function openRecBI() {

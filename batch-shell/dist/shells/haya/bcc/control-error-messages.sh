@@ -17,6 +17,7 @@ cd $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error
 error_files=`find . -type f -cmin -60 -name *.msg > control-msg.tmp`
 num_error_files=`cat control-msg.tmp | wc -l`
 if [ $num_error_files -eq 0 ]; then
+    rm control-msg.tmp
     exit 0
 fi
 echo "[ERROR] Creados ficheros de error en la última hora:"

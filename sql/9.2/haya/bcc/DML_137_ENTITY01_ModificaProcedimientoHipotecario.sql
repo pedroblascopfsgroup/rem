@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Óscar Dorado
---## FECHA_CREACION=20160508
+--## FECHA_CREACION=20160509
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1316
@@ -46,7 +46,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-    	T_TIPO_TAP('H001','H001_AutoDespachandoEjecucion','plugin/procedimientos-bpmHaya-plugin/procedimientoHipotecario/autoDespachandoEjecucion','comprobarExisteDocumentoADEH() ? null : ''Es necesario adjuntar el documento Auto despachando ejecuci&oacute;n.''',null,'valores[''H001_AutoDespachandoEjecucion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_DemandaCertificacionCargas''][''comboNotificacion''] == DDSiNo.SI ? ''notificaPersonal'' : ''SI'') : ''NO''',null,'0','Auto despachando ejecución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
+    	T_TIPO_TAP('H001','H001_AutoDespachandoEjecucion','plugin/procedimientos-bpmHaya-plugin/procedimientoHipotecario/autoDespachandoEjecucion','comprobarExisteDocumentoADEH() ? null : ''Es necesario adjuntar el documento Auto despachando ejecuci&oacute;n.''',null,'valores[''H001_AutoDespachandoEjecucion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_DemandaCertificacionCargas''][''notPersonal''] == DDSiNo.SI ? ''notificaPersonal'' : ''SI'') : ''NO''',null,'0','Auto despachando ejecución','0','DD','0',null,'tareaExterna.cancelarTarea',null,'1','EXTTareaProcedimiento','3',null,'814',null,'GULI',null),
         T_TIPO_TAP('H001','H001_BPMTramiteNotificacionPersonal',null,null,null,null,'HC108','0','Se inicia el trámite de notificación personal','0','PRODUCTO-1316','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
@@ -81,7 +81,7 @@ DECLARE
         T_TIPO_TFI('H001_DemandaCertificacionCargas','12','currency','respHipCosGas','Responsabilidad hipotecaria máxima por costas y gastos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','13','currency','creditoSupl','Crédito supletorio','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,null,'0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','14','combo','provisionFondos','Provisión Fondos','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
-        T_TIPO_TFI('H001_DemandaCertificacionCargas','15','combo','comboNotificacion','Notificación personal','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
+        T_TIPO_TFI('H001_DemandaCertificacionCargas','15','combo','notPersonal','Notificación personal','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '''' ? true : false',null,'DDSiNo','0','DD'),
         T_TIPO_TFI('H001_DemandaCertificacionCargas','16','textarea','observaciones','Observaciones',null,null,null,null,'0','DD')
      ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;

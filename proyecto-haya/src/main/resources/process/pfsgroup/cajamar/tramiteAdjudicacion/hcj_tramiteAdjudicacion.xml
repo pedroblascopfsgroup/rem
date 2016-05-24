@@ -582,7 +582,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin2" name="hcj_provisionFondos"></transition>
+		<transition to="Fin2" name="hcj_anticipoFondosProcu"></transition>
 	</state>
 
 	<state name="H005_BPMCertfLibertadArrendamiento">

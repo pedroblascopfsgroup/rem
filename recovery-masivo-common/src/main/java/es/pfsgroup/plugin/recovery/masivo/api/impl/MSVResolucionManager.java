@@ -339,8 +339,9 @@ public class MSVResolucionManager implements MSVResolucionApi {
 		AsuntoApi asuntoApi = proxyFactory.proxy(AsuntoApi.class);
 		asuntoApi.saveOrUpdateAsunto(asunto);
 	}
-
-	private void populateResolucion(MSVResolucion msvResolucion, MSVResolucionesDto dto) {
+	
+	@Override
+	public void populateResolucion(MSVResolucion msvResolucion, MSVResolucionesDto dto) {
 
 		if(!Checks.esNulo(dto.getAuto())){
 			msvResolucion.setAutos(dto.getAuto());

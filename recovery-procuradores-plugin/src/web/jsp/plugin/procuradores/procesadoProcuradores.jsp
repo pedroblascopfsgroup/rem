@@ -92,7 +92,10 @@ onViewClick : function(doFocus){
 	});
 	
 	tipoResolucionStore.on('load', function(){
+			comboTipoResolucionNew.setValue(idTipoResolucion);
 			existenResolucionesPendientesValidar(recordSelect.idTarea);
+			//existenResolucionesPendientesValidar(tareaId);
+			
 	});
 	
 	var arrayCamposValoresAntRes = new Array();
@@ -199,6 +202,7 @@ onViewClick : function(doFocus){
 			//resolucionPanel.getBottomToolbar().setDisabled(false);
 			habilitaBotones(false);
     		datosResolucion.add({xtype:'hidden',name:'idFichero',value:''});
+    		datosResolucion.add({xtype:'hidden',name:'idsFicheros',value:''});
     		datosResolucion.setVisible(true);
     		datosResolucion.doLayout();
     		factoriaFormularios.updateStores(comboTipoResolucionNew.getValue());
@@ -321,7 +325,6 @@ onViewClick : function(doFocus){
 		
 		btnGuardar.on('click', function(){
 			var formulario = resolucionPanel.getForm();
-			
 			if (formulario.isValid()){
 			
 				var valores = resolucionPanel.getForm().getFieldValues();
@@ -351,10 +354,13 @@ onViewClick : function(doFocus){
 				resolucionPanel.el.mask('Guardando datos', 'x-mask-loading');
 				
 			}else{
-					Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios.');
 					var valores = resolucionPanel.getForm().getFieldValues();
 					if(valores['file_upload_ok'] == ""){
-						Ext.get('file').addClass('x-form-invalid');
+						Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios, incluida la documentación adjunta');
+						
+					}
+					else{
+						Ext.Msg.alert('Error', 'Debe rellenar los campos obligatorios.');
 					}
 
 			}
@@ -917,7 +923,10 @@ onViewClick : function(doFocus){
             plugins: [filters]
         })
     });    
-
+		
+		var idTipoResolucion;
+		var tareaId;
+		
     listaArchivosGrid.on('rowclick', function(grid, rowIndex, e) {
 		var idResolucion = grid.getStore().getAt(rowIndex).get('idResolucion');
 		Ext.Ajax.request({
@@ -936,11 +945,31 @@ onViewClick : function(doFocus){
 					comboTipoResolucionNew.setValue(r.resolucion.comboTipoResolucionNew);
 					comboTipoResolucionNew.fireEvent('select',comboTipoResolucionNew);
 					
+					idTipoResolucion=r.resolucion.comboTipoResolucionNew;
+					tareaId=r.resolucion.idTarea;
 					
 					resolucionPanel.getForm().reset();
 					
 					resolucionPanel.getForm().setValues(r.resolucion);
-
+					
+					if(r.resolucion.adjuntosResolucion != null){
+						var panel = Ext.getCmp('d_file_right');
+						for(i = 0; i < r.resolucion.adjuntosResolucion.length; i++){
+						    var campo = new Ext.form.Label({
+					   		   html: '<a href="/pfs/procuradores/descargarAdjunto.htm?idResolucion='+idResolucion+'&idAdjunto='+r.resolucion.adjuntosResolucion[i].id+'")>'+r.resolucion.adjuntosResolucion[i].tipoFicheroCodigo + '&nbsp;' + '-' + '&nbsp;' + r.resolucion.adjuntosResolucion[i].nombreFichero+'</a>'+ '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>',
+					   		   width:250,
+					   		   style: 'font-size:12px;'
+					   	    }); 
+					   	    var borrarCampo = new Ext.form.Label({
+			   					html: "",
+	   		   					style: 'float:left;font-size:12px;margin-left:2px;'
+						  	});
+						  	panel.add(borrarCampo);
+						    panel.add(campo);
+						  	panel.doLayout();
+						}
+					}
+					
 					var itemsFormPanel = resolucionPanel.getForm().items.items;
 					for (i = 0; i < itemsFormPanel.length; i++) {
 						if ((itemsFormPanel[i].isXType('combo')) && (itemsFormPanel[i].name.substring(0,2) == "d_")) {
@@ -957,11 +986,7 @@ onViewClick : function(doFocus){
 			});
     });
   
-    tipoResolucionStore.on('load', function(combo, r, index){
-    	//if (comboTipoResolucionNew.getValue() != "" && comboTipoResolucionNew.getValue() != null)	
-    		comboTipoResolucionNew.setValue(comboTipoResolucionNew.getValue());
-    });
-    
+ 
     
     var resolucionPanel = new Ext.FormPanel({
         autoHeight:'false'
@@ -981,7 +1006,8 @@ onViewClick : function(doFocus){
 				var resolucion = listaArchivosGrid.getSelectionModel().getSelected();
 				if(resolucion){
 					var estadoResolucion = resolucion.get('estado');
-					if (estadoResolucion == 'Procesado'){
+			
+					if (estadoResolucion == 'Procesado' || estadoResolucion == 'Pte. Validar' || estadoResolucion=='Rechazado'){
 		    			if (btnAdjuntar && !btnAdjuntar.isDestroyed) {
 		    				btnAdjuntar.setDisabled(true);
 		    			}
@@ -1016,7 +1042,8 @@ onViewClick : function(doFocus){
     });    
 
     page.add(mainPanel);    
-	var nodeValue = "";  
+	var nodeValue = "";
+	var codigoTipoDocumento ="";  
 	var upload;
 	var win;
 	
@@ -1047,6 +1074,7 @@ var creaVentanaUpload = function(){
             }
             ,items: [
             	{xtype:'combo'
+            			,itemId:'comboTipoFichero'
 						,name:'comboTipoFichero'
 						<app:test id="tipoProcedimientoCombo" addComa="true" />
 						,hiddenName:'comboTipoFichero'
@@ -1059,7 +1087,14 @@ var creaVentanaUpload = function(){
 						,resizable:true
 						,triggerAction: 'all'
 						,allowBlank:true
-						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'}
+						,forceSelection: true
+						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+						,listeners: {
+           					'select': function(combo, record, index){
+		            			codigoTipoDocumento = combo.getValue();
+           					}
+          			}
+				}
 				,{xtype: 'fileuploadfield'
 		        	,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Seleccione un fichero" />'
 		            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -1082,12 +1117,15 @@ var creaVentanaUpload = function(){
             ,buttons: [{
                 text: 'Subir',
                 handler: function(){
-                uploading = true;
-                updateBotonGuardar();
-                var formulario = resolucionPanel.getForm();
-                formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
-                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
-                win.hide();
+                	if(upload.getComponent('comboTipoFichero').getValue().trim()!=''){
+	                	uploading = true;
+		                updateBotonGuardar();
+		                var formulario = resolucionPanel.getForm();
+		                //formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
+		                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
+		                win.hide();
+		            }
+		            else upload.getComponent('comboTipoFichero').addClass('x-form-invalid');
                 }
             },{
                 text: 'Cancelar',
@@ -1114,24 +1152,80 @@ var creaVentanaUpload = function(){
 
 var fn_subirFicheroOk = function(r){
 
-	Ext.get('file').removeClass('x-form-invalid');
+	//Ext.get('file').removeClass('x-form-invalid');
+	Ext.get('d_file_right').removeClass('x-form-invalid');
  	Ext.getCmp('file_upload_ok').setValue('ok');
     //recargarGrid();
     uploading = false;
     updateBotonGuardar();
     var id = r.resultado;
-    resolucionPanel.getForm().findField('idFichero').setValue(id);
-    resolucionPanel.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');
+    var ids = resolucionPanel.getForm().findField('idsFicheros').getValue();
+    ids =  ids + id + '_';
+    resolucionPanel.getForm().findField('idsFicheros').setValue(ids);
+    //resolucionPanel.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');
+    var panel = Ext.getCmp('d_file_right');
+    var campo = new Ext.form.Label({
+    	   name: 'adjunto_'+id,
+   		   html: codigoTipoDocumento + '&nbsp;' + '-' + '&nbsp;' + nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>',
+   		   width:250,
+   		   style: 'font-size:12px;'
+   	    }); 
+    panel.add(campo);
+    var borrarCampo = new Ext.form.Label({
+		   name: 'borrarCampo_'+id,
+		   html: '<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',
+  		   style: 'float:left;font-size:12px;margin-left:2px;',
+  		   listeners: {
+  		   		render: function(c){
+  		   			c.getEl().on({
+  		   				click: function(el){
+  		   					var idAdj = this.name.split('_')[1];
+  		   					var cmp = Ext.getCmp('d_file_right').find('name','adjunto_'+idAdj)[0];
+  		   					borrarAdjunto(idAdj, cmp, this);
+  		   				},scope: c
+  		   			});
+  		   		}
+   		   }
+  	}); 
+   	panel.add(borrarCampo);
+  	panel.doLayout();
     //win.hide();
     //recargarGrid();
     //alert("id:" + id);
     
 }
 
+var borrarAdjunto = function(idAdjunto, cmp, cmpBorrar){
+	if(cmp) cmp.destroy();
+	if(cmpBorrar) cmpBorrar.destroy();
+	var arrayIds = resolucionPanel.getForm().findField('idsFicheros').getValue().split('_');
+	var found = false;
+	var index = arrayIds.indexOf(idAdjunto);
+	if(index > -1) arrayIds.splice(index, 1);
+	var ids = "";
+	for(i = 0; i < arrayIds.length; i ++){
+		ids = ids + arrayIds[i] + "_";
+	}
+	resolucionPanel.getForm().findField('idsFicheros').setValue(ids);
+}
+
 var fn_subirFicheroError = function(r){
 	uploading = false;
 	updateBotonGuardar();
-	resolucionPanel.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Close-2-icon.png"/>');
+	//resolucionPanel.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Close-2-icon.png"/>');
+	var panel = Ext.getCmp('d_file_right');
+	var campo = new Ext.form.Label({
+	   		   html: codigoTipoDocumento + '&nbsp;' + '-' + '&nbsp;' + nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Close-2-icon.png"/>',
+	   		   width:250,
+	   		   style: 'font-size:12px;'
+	   	   });
+  	 panel.add(campo);
+  	 var borrarCampo = new Ext.form.Label({
+			   html: "",
+	   		   style: 'float:left;font-size:12px;margin-left:2px;'
+  	 });
+  	 panel.add(borrarCampo);
+  	 panel.doLayout();
 	//Ext.Msg.alert('Error al subir el fichero', 'El fichero no se ha podido subir para su procesado.');
 	//recargarGrid();
 }

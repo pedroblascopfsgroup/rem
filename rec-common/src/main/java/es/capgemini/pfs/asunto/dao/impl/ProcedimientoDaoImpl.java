@@ -78,9 +78,9 @@ public class ProcedimientoDaoImpl extends AbstractEntityDao<Procedimiento, Long>
     @SuppressWarnings("unchecked")
     public TareaNotificacion buscarTareaPendiente(Long idProcedimiento, Long usuarioLogado) {
         String hql = "Select t from TareaNotificacion t, Procedimiento p where " + "t.procedimiento = p " + "and p.id = ? "
-                + "and ((p.asunto.gestor.usuario.id = ? " + "and t.subtipoTarea.codigoSubtarea = "
-                + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR + ") " + "or " + "(p.asunto.supervisor.usuario.id = ? "
-                + "and t.subtipoTarea.codigoSubtarea = " + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_GESTOR + ")) " + "and t.auditoria.borrado = 0";
+                + "and ((p.asunto.gestor.usuario.id = ? " + "and t.subtipoTarea.codigoSubtarea = '"
+                + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR + "') " + "or " + "(p.asunto.supervisor.usuario.id = ? "
+                + "and t.subtipoTarea.codigoSubtarea = '" + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_GESTOR + "')) " + "and t.auditoria.borrado = 0";
         List<TareaNotificacion> tareas = getHibernateTemplate().find(hql, new Object[] { idProcedimiento, usuarioLogado, usuarioLogado });
         if (tareas.size() > 0) { return tareas.get(0); }
         return null;

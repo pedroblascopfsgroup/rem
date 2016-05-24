@@ -118,12 +118,32 @@
 		  ,params:{idResolucion:idResolucion}
 		
 		});
-		w.on(app.event.DONE, function(){      
+		w.on(app.event.DONE, function(){
+		  w.suspendEvents(false);      
 		  w.close();
 		  app.abreProcedimientoTab(panel.getProcedimientoId(), null, 'tareas');
 		});
 		w.on(app.event.CANCEL, function(){
+		  w.suspendEvents(false);	
 		  w.close();
+		});
+		w.on('close', function(){
+			var panelEdicion = w.find('name', 'panelEdicionResolucion')[0];
+			var valores = panelEdicion.getForm().getFieldValues();
+			Ext.Ajax.request({
+				url: '/pfs/pcdprocesadoresoluciones/cancelar.htm'
+				,params: {idsFicheros: valores['idsFicheros']}
+				,method: 'POST'
+				,success: function (result, request){
+					panelEdicion.container.unmask();
+					return true;
+				}
+				,error: function(result, request){
+					panelEdicion.container.unmask();
+					alert("Error cancelar");
+					return false;
+				}
+			});
 		});
   };  
 

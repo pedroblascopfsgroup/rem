@@ -13,13 +13,12 @@ if [ ! -d $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error ]; then
     exit 0
 fi
 
+echo "[INFO] Revisando $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error ..."
 cd $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error
-error_files=`find . -type f -cmin -60 -name *.msg > control-msg.tmp`
-num_error_files=`cat control-msg.tmp | wc -l`
-if [ $num_error_files -eq 0 ]; then
-    exit 0
-fi
-echo "[ERROR] Creados ficheros de error en la última hora:"
-cat control-msg.tmp
-rm control-msg.tmp
-exit 1
+for dir_error in `ls -tr`
+do
+    mv $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/$dir_error/* $QUEUE_DIR_OUTPUT/$QUEUE_NAME/
+    rmdir $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/$dir_error
+    echo "[INFO] Movido contenido de directorio $dir_error"
+done
+echo "[INFO] Finalizada revisión."

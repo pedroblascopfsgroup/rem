@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificación: María Villanueva ., PFS Group
--- Fecha ultima modificación: 09/05/2016
--- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
+-- Responsable ultima modificación: Pedro S., PFS Group
+-- Fecha ultima modificación: 24/05/2016
+-- Motivos del cambio: Corrijo procurador acceso a histórico
 
 -- Cliente: Recovery BI Haya
 --
@@ -1574,7 +1574,8 @@ execute immediate V_SQL USING OUT O_ERROR_STATUS;
                 join '||V_DATASTAGE||'.GAH_GESTOR_ADICIONAL_HISTORICO gah on gah.GAH_GESTOR_ID = usd.USD_ID
                 join '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR tges on gah.GAH_TIPO_GESTOR_ID = tges.DD_TGE_ID
                 join '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc on gah.GAH_ASU_ID = prc.ASU_ID
-                where tges.DD_TGE_DESCRIPCION = ''Procurador'' and trunc(gah.GAH_FECHA_DESDE) <='''||fecha||''') t2
+				join (select GAH_ASU_ID, GAH_TIPO_GESTOR_ID, max(fechacrear) max_fechacrear from '||V_DATASTAGE||'.GAH_GESTOR_ADICIONAL_HISTORICO where trunc(GAH_FECHA_DESDE) <='''||fecha||'''  and borrado=0  group by GAH_ASU_ID, GAH_TIPO_GESTOR_ID) gah2 on gah2.GAH_ASU_ID = gah.GAH_ASU_ID and gah2.GAH_TIPO_GESTOR_ID = gah.GAH_TIPO_GESTOR_ID and gah2.max_fechacrear = gah.fechacrear
+                where tges.DD_TGE_DESCRIPCION = ''Procurador'' and trunc(gah.GAH_FECHA_DESDE) <='''||fecha||''' and gah.borrado=0) t2
         on(t1.PROCEDIMIENTO_ID=t2.PRC_ID)
                  when matched then update set t1.PROCURADOR_PRC_ID=t2.USU_ID
                  where t1.DIA_ID = '''||fecha||'''';

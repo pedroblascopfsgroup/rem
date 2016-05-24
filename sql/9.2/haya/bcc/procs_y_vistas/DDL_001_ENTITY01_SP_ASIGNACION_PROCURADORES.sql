@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=201600518
+--## FECHA_CREACION=201600524
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1395
@@ -22,7 +22,7 @@ create or replace PROCEDURE asignacion_turnado_procu (
    p_username     #ESQUEMA_MASTER#.usu_usuarios.usu_username%TYPE,
    p_plaza_codigo       #ESQUEMA#.dd_pla_plazas.dd_pla_codigo%TYPE,
    p_tpo_codigo       #ESQUEMA#.dd_tpo_tipo_procedimiento.dd_tpo_codigo%TYPE,
-   p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'GESPROC'
+   p_tge_codigo   #ESQUEMA_MASTER#.dd_tge_tipo_gestor.dd_tge_codigo%TYPE := 'PROC'
 )
 AUTHID CURRENT_USER IS
 

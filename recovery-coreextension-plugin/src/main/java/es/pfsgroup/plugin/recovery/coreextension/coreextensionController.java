@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,6 +131,18 @@ public class coreextensionController {
 		}
 		//////
 		
+		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
+		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		if(codEntidad.equals("HCJ")){
+			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+			while(iter.hasNext()){
+				DespachoExterno elemento = iter.next();
+				if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
+					iter.remove();
+				}
+			}
+		}
+				
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;
 	}

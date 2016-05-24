@@ -25,6 +25,8 @@ DECLARE
  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
  TABLA1 VARCHAR(30) :='DD_MNC_MTO_CORRECTIVO'; 
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
 
  err_num NUMBER;	
  err_msg VARCHAR2(2048); 
@@ -33,7 +35,16 @@ DECLARE
 
 BEGIN 
 
-   EXECUTE IMMEDIATE ('grant insert, references, select, update on '||V_ESQUEMA||'.'||TABLA1||' to '||V_ESQUEMA_M||''); 
+    -- Comprobamos si existe la tabla   
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MNC_MTO_CORRECTIVO'' and owner = '''||V_ESQUEMA_M||'''';
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        IF V_NUM_TABLAS = 1 THEN 
+            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA_M||'.MNC_MTO_CORRECTIVO';
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_M||'.MNC_MTO_CORRECTIVO BORRADA...');
+
+	END IF;
    
 EXCEPTION
 WHEN OTHERS THEN  

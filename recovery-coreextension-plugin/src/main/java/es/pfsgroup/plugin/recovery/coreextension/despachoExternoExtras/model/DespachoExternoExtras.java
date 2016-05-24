@@ -54,13 +54,13 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	private Integer contratoVigor;
 	
 	@Column(name = "DEE_SERVICIO_INTEGRAL")
-	private boolean servicioIntegral;
+	private Boolean servicioIntegral;
 	
 	@Column(name = "DEE_FECHA_SERVICIO_INTEGRAL")
 	private Date fechaServicioIntegral;
 	
 	@Column(name = "DEE_CLASIF_CONCURSOS")
-	private boolean clasifConcursos;
+	private Boolean clasifConcursos;
 	
 	/**
 	 * Tipo de perfil del despacho. Valores posibles:[0/1/2] --> [A/B/C] - MAPEADOS en recovery
@@ -134,7 +134,7 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	private String documentoCif;
 	
 	@Column(name = "DEE_ASESORIA")
-	private boolean asesoria;
+	private Boolean asesoria;
 	
 	@Column(name = "DEE_IVA_APL")
 	private Float iva;
@@ -186,11 +186,11 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.contratoVigor = contratoVigor;
 	}
 
-	public boolean isServicioIntegral() {
+	public Boolean isServicioIntegral() {
 		return servicioIntegral;
 	}
 
-	public void setServicioIntegral(boolean servicioIntegral) {
+	public void setServicioIntegral(Boolean servicioIntegral) {
 		this.servicioIntegral = servicioIntegral;
 	}
 
@@ -202,11 +202,11 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.fechaServicioIntegral = fechaServicioIntegral;
 	}
 
-	public boolean isClasifConcursos() {
+	public Boolean isClasifConcursos() {
 		return clasifConcursos;
 	}
 
-	public void setClasifConcursos(boolean clasifConcursos) {
+	public void setClasifConcursos(Boolean clasifConcursos) {
 		this.clasifConcursos = clasifConcursos;
 	}
 
@@ -378,11 +378,11 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.documentoCif = documentoCif;
 	}
 
-	public boolean isAsesoria() {
+	public Boolean isAsesoria() {
 		return asesoria;
 	}
 
-	public void setAsesoria(boolean asesoria) {
+	public void setAsesoria(Boolean asesoria) {
 		this.asesoria = asesoria;
 	}
 

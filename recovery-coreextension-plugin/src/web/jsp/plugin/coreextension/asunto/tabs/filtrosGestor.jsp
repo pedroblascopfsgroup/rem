@@ -216,8 +216,8 @@
 				,editable: false
 				,emptyText:'---'
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="asuntos.busqueda.filtro.tipo.asunto" text="**Tipo Asunto"/>'
-				<app:test id="comboTipoAsunto" addComa="true"/>
+				,fieldLabel : '<s:message code="plugin.config.despachoExternoExtras.field.tipoDocumento" text="**Tipo Documento"/>'
+				<app:test id="comboTipoDocumento" addComa="true"/>
 	});
 
 

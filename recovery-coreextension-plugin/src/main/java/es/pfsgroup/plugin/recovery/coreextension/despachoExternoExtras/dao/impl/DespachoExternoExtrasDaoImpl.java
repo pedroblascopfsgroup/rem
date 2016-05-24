@@ -38,15 +38,21 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 			return despachoExtrasDto;
 		}
 		
-		despachoExtrasDto.setAsesoria(despachoExtras.isAsesoria() ? "Si" : "No");
+		despachoExtrasDto.setAsesoria(Checks.esNulo(despachoExtras.isAsesoria()) ? "" : despachoExtras.isAsesoria() ? "Si" : "No");
 		despachoExtrasDto.setCentroRecuperacion(despachoExtras.getCentroRecuperacion());
-		despachoExtrasDto.setClasifDespachoConcursos(despachoExtras.isClasifConcursos() ? "Si" : "No");
+		despachoExtrasDto.setClasifDespachoConcursos(Checks.esNulo(despachoExtras.isClasifConcursos()) ? "" : despachoExtras.isClasifConcursos() ? "Si" : "No");
 		if(!Checks.esNulo(despachoExtras.getClasifPerfil())) {
 			despachoExtrasDto.setClasifDespachoPerfil(context.getMapaClasificacionDespachoPerfil().get(despachoExtras.getClasifPerfil().toString()));
+		}
+		else {
+			despachoExtrasDto.setClasifDespachoPerfil("");
 		}
 		despachoExtrasDto.setCodEstAse(context.getMapaCodEstAse().get(despachoExtras.getCodEstAse()));
 		if(!Checks.esNulo(despachoExtras.getContratoVigor())) {
 			despachoExtrasDto.setContratoVigor(context.getMapaContratoVigor().get(despachoExtras.getContratoVigor().toString()));
+		}
+		else {
+			despachoExtrasDto.setContratoVigor("");
 		}
 		despachoExtrasDto.setCorreoElectronico(despachoExtras.getCorreoElectronico());
 		despachoExtrasDto.setCuentaEntregas(despachoExtras.getCuentaEntregas());
@@ -64,7 +70,12 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setFechaAlta(!Checks.esNulo(despachoExtras.getFechaAlta()) ? formateoFecha(despachoExtras.getFechaAlta()) : null);
 		despachoExtrasDto.setFechaServicioIntegral(!Checks.esNulo(despachoExtras.getFechaServicioIntegral()) ? formateoFecha(despachoExtras.getFechaServicioIntegral()) : null);
 		despachoExtrasDto.setIrpfAplicado(!Checks.esNulo(despachoExtras.getIrpf()) ? despachoExtras.getIrpf().toString() : null);
-		despachoExtrasDto.setIvaDescripcion(context.getMapaDescripcionIVA().get(despachoExtras.getDescripcionIVA()));
+		if(!Checks.esNulo(despachoExtras.getDescripcionIVA())) {
+			despachoExtrasDto.setIvaDescripcion(context.getMapaDescripcionIVA().get(despachoExtras.getDescripcionIVA()));
+		}
+		else {
+			despachoExtrasDto.setIvaDescripcion("");
+		}
 		despachoExtrasDto.setOficinaContacto(despachoExtras.getOficinaContacto());
 		despachoExtrasDto.setOficinaEntregas(despachoExtras.getOficinaEntregas());
 		despachoExtrasDto.setOficinaLiquidacion(despachoExtras.getOficinaContacto());
@@ -72,7 +83,10 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		if(!Checks.esNulo(despachoExtras.getRelacionBankia())) {
 			despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));
 		}
-		despachoExtrasDto.setServicioIntegral(despachoExtras.isServicioIntegral() ? "Si" : "No");
+		else {
+			despachoExtrasDto.setRelacionBankia("");
+		}
+		despachoExtrasDto.setServicioIntegral(Checks.esNulo(despachoExtras.isServicioIntegral()) ? "" : despachoExtras.isServicioIntegral() ? "Si" : "No");
 		despachoExtrasDto.setTipoDoc(!Checks.esNulo(despachoExtras.getTipoDocumento()) ? despachoExtras.getTipoDocumento().getDescripcion() : "");
 		despachoExtrasDto.setDoc(despachoExtras.getTipoDocumento());
 		

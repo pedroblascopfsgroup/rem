@@ -762,7 +762,7 @@ public class ADMDespachoExternoManager {
 		if(dto.getId() == null && !Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])) {
 			this.guardarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
 		}
-		else if(dto.getId() != null && !Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])){ 
+		else if(dto.getId() != null && !Checks.esNulo(dto.getListaProvincias()) /*&& !Checks.esNulo(dto.getListaProvincias()[0])*/){ 
 			//Actualizar el ambito (si quitan o añaden provicinas)
 			this.actualizarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
 		}
@@ -834,7 +834,7 @@ public class ADMDespachoExternoManager {
 	}
 	
 	/**
-	 * Las provincias de los extras del despacho se guardan en una tabla a parte.
+	 * Las provincias de los extras del despacho se guardan en una tabla a parte (DEA_DESPACHO_EXTRAS_AMBITO)
 	 * @param provincias
 	 * @param idDespacho
 	 */
@@ -842,17 +842,17 @@ public class ADMDespachoExternoManager {
 		
 		DespachoExtrasAmbito despachoExtrasAmbito;
 		
-		for(String codProvincia : provincias) {
-			if(!extrasAmbitoDao.isDespachoEnProvincia(codProvincia, idDespacho)) {
-				
-				despachoExtrasAmbito = new DespachoExtrasAmbito();
-				despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
-				despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
-				
-				extrasAmbitoDao.saveOrUpdate(despachoExtrasAmbito);
-			}
+		if(provincias.length > 0 && provincias[0].length() >0) {
+			for(String codProvincia : provincias) {
+				if(!extrasAmbitoDao.isDespachoEnProvincia(codProvincia, idDespacho)) {				
+					despachoExtrasAmbito = new DespachoExtrasAmbito();
+					despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+					despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
+					
+					extrasAmbitoDao.saveOrUpdate(despachoExtrasAmbito);
+				}
+			}	
 		}
-		
 	}
 	
 	/**
@@ -917,21 +917,41 @@ public class ADMDespachoExternoManager {
 				logger.error("Error parseando la fecha Alta ", e);
 			}
 		}
+		else {
+			desExtras.setFechaAlta(null);
+		}
 		desExtras.setCorreoElectronico(dto.getCorreoElectronico());
 		desExtras.setDocumentoCif(dto.getDocumentoCif());
-		desExtras.setTipoDocumento(genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getTipoDocumento()))));
+		if(!Checks.esNulo(dto.getTipoDocumento())) {
+			desExtras.setTipoDocumento(genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getTipoDocumento()))));
+		}
+		else {
+			desExtras.setTipoDocumento(null);
+		}
 		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
 			desExtras.setClasifPerfil(Integer.parseInt(
 					this.getKeyByValue(context.getMapaClasificacionDespachoPerfil(), dto.getClasificacionPerfil())));
 		}
+		else {
+			desExtras.setClasifPerfil(null);
+		}
 		if(!Checks.esNulo(dto.getAsesoria())) {
 			desExtras.setAsesoria(Boolean.parseBoolean(dto.getAsesoria()));
+		}
+		else {
+			desExtras.setAsesoria(null);
 		}
 		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
 			desExtras.setClasifConcursos(Boolean.parseBoolean(dto.getClasificacionConcursos()));
 		}
+		else {
+			desExtras.setClasifConcursos(null);
+		}
 		if(!Checks.esNulo(dto.getCodEstAse())) {
 			desExtras.setCodEstAse(this.getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()));
+		}
+		else {
+			desExtras.setCodEstAse(null);
 		}
 		desExtras.setCuentaEntregas(dto.getCuentaEntregas());
 		desExtras.setCuentaLiquidacion(dto.getCuentaLiquidacion());
@@ -952,12 +972,21 @@ public class ADMDespachoExternoManager {
 			desExtras.setRelacionBankia(Integer.parseInt(
 					this.getKeyByValue(context.getMapaRelacionBankia(), dto.getRelacionBankia())));			
 		}
+		else {
+			desExtras.setRelacionBankia(null);
+		}
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			desExtras.setServicioIntegral(Boolean.parseBoolean(dto.getServicioIntegral()));
+		}
+		else {
+			desExtras.setServicioIntegral(null);
 		}
 		if(!Checks.esNulo(dto.getContratoVigor())) {
 			desExtras.setContratoVigor(Integer.parseInt(
 					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
+		}
+		else {
+			desExtras.setContratoVigor(null);
 		}
 		
 		return desExtras;

@@ -246,10 +246,10 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setClasificacionConcursos(String clasificacionConcursos) {
-		if(clasificacionConcursos.equals("01")) {
+		if(clasificacionConcursos.equals("01") || clasificacionConcursos.equals("Si")) {
 			this.clasificacionConcursos = "true";
 		}
-		if(clasificacionConcursos.equals("02")) {
+		if(clasificacionConcursos.equals("02") || clasificacionConcursos.equals("No")) {
 			this.clasificacionConcursos = "false";
 		}
 	}
@@ -275,10 +275,10 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setServicioIntegral(String servicioIntegral) {
-		if(servicioIntegral.equals("01")) {
+		if(servicioIntegral.equals("01") || servicioIntegral.equals("No")) {
 			this.servicioIntegral = "true";
 		}
-		if(servicioIntegral.equals("02")) {
+		if(servicioIntegral.equals("02") || servicioIntegral.equals("No")) {
 			this.servicioIntegral = "false";
 		}
 	}
@@ -424,10 +424,10 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setAsesoria(String asesoria) {
-		if(asesoria.equals("01")) {
+		if(asesoria.equals("01") || asesoria.equals("Si") ) {
 			this.asesoria = "true";
 		}
-		if(asesoria.equals("02")) {
+		if(asesoria.equals("02") || asesoria.equals("No") ) {
 			this.asesoria = "false";
 		}
 	}

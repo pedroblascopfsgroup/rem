@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Oscar Dorado
---## FECHA_CREACION=20160519
+--## FECHA_CREACION=20160520
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-766
@@ -104,10 +104,6 @@ BEGIN
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.res_resoluciones_masivo  WHERE RES_TRE_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_DEM_SEL_PCM'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-     DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_DEM_SEL_PCM'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
     V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_DEM_SEL_PCM''';
     EXECUTE IMMEDIATE V_MSQL;
@@ -146,10 +142,6 @@ BEGIN
     V_MSQL := 'delete FROM '||V_ESQUEMA||'.res_resoluciones_masivo  WHERE RES_TRE_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('Borrado - DD_TR_TIPOS_RESOLUCION');
     V_MSQL := 'delete '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dd_tr_codigo  =''R_PR_HIP_DEM_SELLADA''';
     EXECUTE IMMEDIATE V_MSQL;
@@ -169,10 +161,6 @@ BEGIN
  
     DBMS_OUTPUT.PUT_LINE('De 272 a 443 - R_SOL_INI_MON');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_SOL_INI_MON'')';
-    EXECUTE IMMEDIATE V_MSQL;
-   
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_SOL_INI_MON'')';
     EXECUTE IMMEDIATE V_MSQL;    
     
      DBMS_OUTPUT.PUT_LINE('De 272 a 443 - R_SOL_INI_MON');
@@ -190,10 +178,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_TR_CNF_NOT'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_TR_CNF_NOT'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 438 a 444 - R_TR_CNF_NOT');
@@ -215,10 +199,6 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_REG_VIS_IMP'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_REG_VIS_IMP'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('De 240 a 445 - R_REG_VIS_IMP');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_REG_VIS_IMP'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -236,10 +216,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_SOL_LIQ_INT'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_SOL_LIQ_INT'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 237 a 446 - R_REG_VIS_IMP');
@@ -260,11 +236,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_REGI_RESOL'')';
     EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_REGI_RESOL'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
+
     DBMS_OUTPUT.PUT_LINE('De 238 a 447 - R_REGI_RESOL');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_REGI_RESOL'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -282,10 +254,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_REG_RES_PER'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_REG_RES_PER'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 250 a 449 - R_REG_RES_PER');
@@ -308,10 +276,6 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_REG_RES_NPR'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_REG_RES_NPR'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('De 251 a 450 - R_REG_RES_NPR');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_REG_RES_NPR'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -330,10 +294,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_AUT_DSP_PJU'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_AUT_DSP_PJU'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 333 a 451 - R_AUT_DSP_PJU');
@@ -356,10 +316,6 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_AUT_DSP_DAB'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_AUT_DSP_DAB'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('De 334 a 452 - R_AUT_DSP_DAB');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_AUT_DSP_DAB'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -378,10 +334,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_PR_HIP_RES_JUZ'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_RES_JUZ'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 375 a 453 - R_PR_HIP_RES_JUZ');
@@ -404,10 +356,6 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_ACT_ACP_DEP'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_ACT_ACP_DEP'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('De 317 a 454 - R_ACT_ACP_DEP');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_ACT_ACP_DEP'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -426,10 +374,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_POI_ALE_DIS'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_POI_ALE_DIS'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 406 a 455 - R_POI_ALE_DIS');
@@ -452,10 +396,6 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_POI_REG_RES'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_POI_REG_RES'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('De 409 a 456 - R_POI_REG_RES');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_POI_REG_RES'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -476,10 +416,6 @@ BEGIN
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_POI_REG_DIS_EJE'')';
     EXECUTE IMMEDIATE V_MSQL;
     
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_POI_REG_DIS_EJE'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
     DBMS_OUTPUT.PUT_LINE('De 405 a 457 - R_POI_REG_DIS_EJE');
     V_MSQL := 'delete from '||V_ESQUEMA||'.res_resoluciones_masivo mas where res_tre_id = (select dd_tr_id from '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION res where dd_tr_codigo = ''R_POI_REG_DIS_EJE'')';
     EXECUTE IMMEDIATE V_MSQL;
@@ -498,10 +434,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_REG_RES_INV'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_REG_RES_INV'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('De 348 a 458 - R_REG_RES_INV');

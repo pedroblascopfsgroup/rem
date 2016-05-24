@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Oscar Dorado
---## FECHA_CREACION=20160518
+--## FECHA_CREACION=20160519
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-766
@@ -52,10 +52,6 @@ BEGIN
   
     DBMS_OUTPUT.PUT_LINE('Borrado - bpm_ipt_input');
     V_MSQL := 'delete '||V_ESQUEMA||'.bpm_ipt_input where bpm_dd_tin_id in (select bpm_dd_tin_id from '||V_ESQUEMA||'.BPM_DD_TIN_TIPO_INPUT WHERE BPM_dd_tin_codigo = ''I_PR_HIP_DEM_SELLADA'')';
-    EXECUTE IMMEDIATE V_MSQL;
-    
-    DBMS_OUTPUT.PUT_LINE('Borrado - TRE_TAREA_RESOLUCION');
-    V_MSQL := 'delete FROM '||V_ESQUEMA||'.TRE_TAREA_RESOLUCION  WHERE DD_TR_ID = (SELECT DD_TR_ID FROM '||V_ESQUEMA||'.DD_TR_TIPOS_RESOLUCION where dD_tr_codigo  =''R_PR_HIP_DEM_SELLADA'')';
     EXECUTE IMMEDIATE V_MSQL;
     
     DBMS_OUTPUT.PUT_LINE('Borrado (Update a null) - ADA_ADJUNTOS_ASUNTOS');

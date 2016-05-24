@@ -102,6 +102,7 @@ function lanzarParaleloSinEsperar () {
 
 lanzar apr_wait_group.sh 
 lanzar apr_main_grupos.sh
+lanzar apr_validacion_pcr_GRUPOS.sh
 lanzar apr_main_grupos_prod.sh
 lanzarSinFinalizarPorError rera_precalculo.sh
 

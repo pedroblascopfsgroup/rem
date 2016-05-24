@@ -3,7 +3,8 @@ create or replace PROCEDURE CREAR_H_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Gonzalo Martin, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha Última modificación: 02/05/16
+-- Fecha Última modificación: 24/05/2016
+-- Motivos del cambio:Se modifica campo dir_terriotorial_id de tmp_h_exp a not null
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Expediente

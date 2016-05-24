@@ -28,8 +28,8 @@ DECLARE
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_MSQL VARCHAR2(4000 CHAR);
     TABLA VARCHAR2(30 CHAR) :='MINIRECOVERY_CNT_PROC_VIVOS';
-	COLUMNA VARCHAR2(32 CHAR) := 'MR_CNT_ID'
-    NUEVA_DEFINITION_COLUMNA VARCHAR(100 CHAR) :='NUMBER(16) NULL';
+	  COLUMNA VARCHAR2(32 CHAR) := 'MR_CNT_ID';
+    NUEVA_DEFI_COLUMNA VARCHAR(100 CHAR) :='NUMBER(16) NULL';
     V_EXISTE NUMBER (1);
     PK_EXISTE NUMBER (1);
     PK_NAME varchar2(32 char);
@@ -37,32 +37,42 @@ DECLARE
     IDX_EXISTE NUMBER (1);
     IDX_NAME NUMBER (1);
     PK_SAME NUMBER (1) := 0;
+	 v_column_not_null number(3); -- Vble. para validar si la columna ya esta indicada como not null.
     -- Otras variables
 	
 BEGIN 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.'||TABLA||'... Modificamos definicion de la columna ['|COLUMNA|'].');
+	DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.'||TABLA||'... Modificamos definicion de la columna ['||COLUMNA||'].');
 
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE table_name ='||TABLA||'';
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE table_name ='''||TABLA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO table_count;
 	
 	IF table_count > 0 THEN
 		V_MSQL := 'SELECT count(1) FROM all_tab_columns 
-					WHERE trim(upper(table_name)) =trim(upper('||TABLA||'))
-					and trim(upper(column_name)) = trim(upper('||COLUMNA||'));';
+					WHERE trim(upper(table_name)) =trim(upper('''||TABLA||'''))
+					and trim(upper(column_name)) = trim(upper('''||COLUMNA||'''))';
 		EXECUTE IMMEDIATE V_MSQL INTO v_column_count;
 		IF v_column_count > 0 THEN
-			V_MSQL := 'ALTER TABLE '||TABLA||' MODIFY '||COLUMNA||' '||NUEVA_DEFINITION_COLUMNA||'';
-			DBMS_OUTPUT.PUT_LINE ('[TRAZA] ['|V_MSQL|'].');
-			EXECUTE IMMEDIATE V_MSQL;
-			DBMS_OUTPUT.PUT_LINE ('[INFO] Se ha cambiado la definicion de la columna ['|COLUMNA|'] de la tabla ['|TABLA|'] a ['|NUEVA_DEFINITION_COLUMNA|']');
+			V_MSQL := 'SELECT count(1) FROM all_tab_columns 
+						WHERE trim(upper(table_name)) =trim(upper('''||TABLA||'''))
+						and trim(upper(column_name)) = trim(upper('''||COLUMNA||'''))
+						and NULLABLE = ''N''';
+			EXECUTE IMMEDIATE V_MSQL INTO v_column_not_null;
+			IF v_column_not_null > 0 THEN
+				V_MSQL := 'ALTER TABLE '||TABLA||' MODIFY '||COLUMNA||' '||NUEVA_DEFI_COLUMNA||'';
+				DBMS_OUTPUT.PUT_LINE ('[TRAZA] ['||V_MSQL||'].');
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE ('[INFO] Se ha cambiado la definicion de la columna ['||COLUMNA||'] de la tabla ['||TABLA||'] a ['||NUEVA_DEFI_COLUMNA||']');
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE ('[INFO] La columna ya esta definida como nullable.');
+			END IF;
 		ELSE 
-			DBMS_OUTPUT.PUT_LINE ('[ERROR] La columna no existe ['|COLUMNA|'].');
-		END IF
+			DBMS_OUTPUT.PUT_LINE ('[ERROR] La columna no existe ['||COLUMNA||'].');
+		END IF;
 	ELSE 
-		DBMS_OUTPUT.PUT_LINE ('[ERROR] La tabla no existe ['|TABLA|']..');
+		DBMS_OUTPUT.PUT_LINE ('[ERROR] La tabla no existe ['||TABLA||']..');
 	END IF;
 	
-	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.'||TABLA||'... Modificamos definicion de la columna ['|COLUMNA|'].');
+	DBMS_OUTPUT.PUT_LINE('[FIN] '||V_ESQUEMA||'.'||TABLA||'... Modificamos definicion de la columna ['||COLUMNA||'].');
 EXCEPTION
 	WHEN OTHERS THEN
 		ERR_NUM := SQLCODE;
@@ -77,3 +87,4 @@ END;
 /
  
 EXIT;
+

@@ -74,8 +74,8 @@ public class ADMDespachoExternoDaoImpl extends
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "desp.tipoDespacho.id", dto
 				.getTipoDespacho());
 
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "gd.usuario.username", dto
-				.getUsername(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gd.usuario.username", dto
+				.getUsername());
 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "gd.usuario.nombre", dto
 				.getNombre(), true);

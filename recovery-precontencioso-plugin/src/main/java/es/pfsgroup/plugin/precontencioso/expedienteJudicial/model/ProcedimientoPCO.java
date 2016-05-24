@@ -126,18 +126,44 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-	" (SELECT MIN(dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion)" +
-	" FROM   pco_prc_hep_histor_est_prep " +
-	"       INNER JOIN pco_prc_procedimientos " +
-	"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
-	"       INNER JOIN dd_pco_prc_estado_preparacion " +
-	"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
-	" WHERE pco_prc_procedimientos.borrado = 0 " +
-	//"       AND pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +//como se calculaba antes
-	"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
-	"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
-	"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
+			"			(SELECT DISTINCT dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion " +
+			"					FROM pco_prc_hep_histor_est_prep " +
+			"					INNER JOIN pco_prc_procedimientos " +
+			"					ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"					INNER JOIN dd_pco_prc_estado_preparacion " +
+			"					ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			"					WHERE pco_prc_procedimientos.borrado           = 0 " +
+			"					AND pco_prc_hep_histor_est_prep.borrado        = 0 " +
+			"					AND dd_pco_prc_estado_preparacion.borrado      = 0 " +
+			"					AND pco_prc_procedimientos.pco_prc_id          = PCO_PRC_ID " +
+			"					AND NOT EXISTS " +
+			"					  (SELECT 1 " +
+			"					  FROM pco_prc_hep_histor_est_prep hep " +
+			"					  WHERE pco_prc_procedimientos.pco_prc_id = hep.pco_prc_id " +
+			"					  AND hep.pco_prc_hep_fecha_incio         > pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio " +
+			"					  AND hep.borrado        = 0 " +
+			"			)) ")
 	private String estadoActual;
+	
+	@Formula(value = 
+			"			(SELECT DISTINCT dd_pco_prc_estado_preparacion.dd_pco_pep_codigo " +
+			"					FROM pco_prc_hep_histor_est_prep " +
+			"					INNER JOIN pco_prc_procedimientos " +
+			"					ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"					INNER JOIN dd_pco_prc_estado_preparacion " +
+			"					ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			"					WHERE pco_prc_procedimientos.borrado           = 0 " +
+			"					AND pco_prc_hep_histor_est_prep.borrado        = 0 " +
+			"					AND dd_pco_prc_estado_preparacion.borrado      = 0 " +
+			"					AND pco_prc_procedimientos.pco_prc_id          = PCO_PRC_ID " +
+			"					AND NOT EXISTS " +
+			"					  (SELECT 1 " +
+			"					  FROM pco_prc_hep_histor_est_prep hep " +
+			"					  WHERE pco_prc_procedimientos.pco_prc_id = hep.pco_prc_id " +
+			"					  AND hep.pco_prc_hep_fecha_incio         > pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio " +
+			"					  AND hep.borrado        = 0 " +
+			"			)) ")
+	private String codigoEstadoActual;
 
 	@Formula(value = 
 		" (SELECT max(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +

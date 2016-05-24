@@ -1,9 +1,9 @@
 --/*
 --##########################################
 --## AUTOR=GUSTAVO MORA NAVARRO
---## FECHA_CREACION=20160504
+--## FECHA_CREACION=20160509
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=0.1
+--## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HRE-2391
 --## PRODUCTO=NO
 --## 

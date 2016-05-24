@@ -86,7 +86,9 @@ public class NMBInformacionRegistralBien implements  Serializable, Auditable, NM
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;	
 	
-	
+	@Column(name = "BIE_DREG_CRU")
+    private String cru;
+		
 	@Embedded
     private Auditoria auditoria;
 
@@ -231,5 +233,13 @@ public class NMBInformacionRegistralBien implements  Serializable, Auditable, NM
 
 	public void setLocalidad(Localidad localidad) {
 		this.localidad = localidad;
+	}
+
+	public String getCru() {
+		return cru;
+	}
+
+	public void setCru(String cru) {
+		this.cru = cru;
 	}
 }

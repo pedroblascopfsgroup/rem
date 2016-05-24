@@ -196,6 +196,11 @@
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-liquidacionesWeb-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-panelcontrol-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -438,10 +443,16 @@
 				<scope>test</scope>
 			</dependency>
 			<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.3</version>
-		</dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>2.3</version>
+			</dependency>
+<!-- 	GESTOR DOCUMENTAL LIBRARIES -->
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-gestordocumental-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -537,6 +548,7 @@
 		<module>recovery-bpmframework-plugin</module>
 		<module>recovery-itinerarios-plugin</module>
 		<module>recovery-liquidaciones-plugin</module>
+		<module>recovery-liquidacionesWeb-plugin</module>
 		<module>recovery-mejoras-plugin</module>
 		<module>recovery-calendario-plugin</module>
 		<module>recovery-nuevoModeloBienesCommon-plugin</module>
@@ -565,6 +577,7 @@
 		<module>recovery-bi-plugin</module>
 		<module>recovery-procuradores-common</module>
 		<module>recovery-procuradores-plugin</module>
+		<module>recovery-gestordocumental-plugin</module>
 	</modules>
 
 	<profiles>
@@ -595,7 +608,6 @@
 				<module>proyecto-cajamar-ws</module>
 				<module>proyecto-haya</module>
 				<module>recovery-procedimientos-bpmHaya-plugin</module>
-				
 				<module>rec-web</module>
 				<module>rec-batch</module>
 			</modules>

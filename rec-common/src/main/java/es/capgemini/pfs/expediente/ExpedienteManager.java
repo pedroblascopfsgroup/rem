@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
+import org.springframework.security.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -113,6 +114,7 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.titulo.model.Titulo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
@@ -177,6 +179,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     
     @Autowired
 	GenericABMDao genericDao;
+    
+    @Autowired
+    private UsuarioManager usuarioManager;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -1930,7 +1935,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         	}else{
         		return Boolean.FALSE;
         	}
-        }else if(!Checks.esNulo(exp.getTipoExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_BANKIA_RECUPERACION.equals(exp.getTipoExpediente().getCodigo())){
+        }else if(!Checks.esNulo(exp.getTipoExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION.equals(exp.getTipoExpediente().getCodigo()) && "BANKIA".equals(usuarioManager.getUsuarioLogado().getEntidad().getCodigo())){
         	return Boolean.TRUE;
         }else if(!Checks.esNulo(exp.getArquetipo().getItinerario()) && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()){
         	///Comprobaciones para expedientes de recuperacion
@@ -3920,5 +3925,27 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     	
     	return resultado;
     }
+
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_ELEVAR_DELEGAR_EXPEDIENTE)
+	@Override
+	public Boolean puedeMostrarelevarDelegarExpediente(Long idExpediente) {
+		
+		Expediente exp = expedienteDao.get(idExpediente);   	
+	
+		if(!Checks.esNulo(exp.getEstadoItinerario()) && (exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) || exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO))){
+    		
+			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+    		
+            for (Perfil perfil : usuario.getPerfiles()) {
+            	if(exp.getIdGestorActual().equals(perfil.getId()) || exp.getIdSupervisorActual().equals(perfil.getId())){
+            		return Boolean.TRUE;
+            	}
+            }
+			return Boolean.FALSE;
+    	}else{
+    		return Boolean.FALSE;
+    	}	
+
+	}
 
 }

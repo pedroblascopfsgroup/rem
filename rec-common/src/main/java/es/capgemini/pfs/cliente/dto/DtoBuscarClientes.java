@@ -130,7 +130,11 @@ public class DtoBuscarClientes extends WebDto {
                     "**Debe elegir una zona de la jerarquia.").build());
             throw new ValidationException(ErrorMessageUtils.convertMessages(messageContext.getAllMessages()));
         }
-
+        
+        
+        /*
+         * PRODUCTO-1257 Se deshabilita las llamadas a estas dos validaciones, pero no las borro por si en un futuro se vuelve a requerir
+         * 
         //Si no ha seleccionado alguno de los filtros básicos
         if ((codigoEntidad == null || codigoEntidad.trim().length() == 0) && (nombre == null || nombre.trim().length() == 0)
                 && (apellido1 == null || apellido1.trim().length() == 0) && (docId == null || docId.trim().length() == 0)
@@ -143,6 +147,7 @@ public class DtoBuscarClientes extends WebDto {
                 && (tipoProductoEntidad == null || tipoProductoEntidad.trim().length() == 0)
                 && (codigoGestion == null || codigoGestion.trim().length() == 0)) {
 
+        	
             boolean bTipoIntervencion = (tipoIntervercion == null || tipoIntervercion.trim().length() == 0);
             boolean bJerarquia = (codigoZonas == null || codigoZonas.size() == 0) && (codigoZona == null || codigoZona.trim().length() == 0);
             //boolean bJerarquia = (jerarquia == null || jerarquia.trim().length() == 0);
@@ -152,7 +157,8 @@ public class DtoBuscarClientes extends WebDto {
                         "**Si elige un tipo de intervención debe seleccionar una zona de la jerarquia o viceversa.").build());
                 throw new ValidationException(ErrorMessageUtils.convertMessages(messageContext.getAllMessages()));
             }
-        }
+            
+        }*/
 
     }
 

@@ -64,6 +64,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -536,9 +537,11 @@ public class AsuntosManager {
                 Long idBPM = proc.getProcessBPM();
                 if (idBPM != null)
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
-            }
+            }else {
             //Lanzo el proceso bpm asociado.
-            executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
+            	executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
+            }
+            
         }
     }
 

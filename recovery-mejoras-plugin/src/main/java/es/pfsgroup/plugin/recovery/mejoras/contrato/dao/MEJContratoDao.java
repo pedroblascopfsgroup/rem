@@ -19,6 +19,14 @@ public interface MEJContratoDao extends AbstractDao<Contrato, Long>{
 	/**
 	 * PBO: Incorporado al desenchufar referencias a UNNIM
 	 */
-	public Page buscaContratosSinAsignar(Long idAsunto, List<Procedimiento> procedimientos, MEJBusquedaContratosDto dto); 
+	public Page buscaContratosSinAsignar(Long idAsunto, List<Procedimiento> procedimientos, MEJBusquedaContratosDto dto);
+	
+	/**
+	 * Obtiene un String, si lo hubiera, del estado de bloqueo de un contrato.
+	 * 
+	 * @param idContrato : id del contrato.
+	 * @return un string con la descripcion del bloque, si lo hay. Si no devuelve null.
+	 */
+	public String getEstadoBloqueoContrato(Long idContrato);
 
 }

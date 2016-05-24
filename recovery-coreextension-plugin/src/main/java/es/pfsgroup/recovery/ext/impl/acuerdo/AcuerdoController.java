@@ -63,12 +63,8 @@ public class AcuerdoController {
 	private ModelMap rellenarFormBusqueda(ModelMap model) {
 		
 		List<DDTipoDespachoExterno> tiposSolicitante = new ArrayList<DDTipoDespachoExterno>();
-		List<AcuerdoConfigAsuntoUsers> proponentes = acuerdoDao.getProponentesAcuerdo();
-		
-		for(int i=0;i<proponentes.size();i++){
-			DDTipoDespachoExterno tipoSol = (DDTipoDespachoExterno) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionario(DDTipoDespachoExterno.class,proponentes.get(i).getProponente().getId());
-			tiposSolicitante.add(tipoSol);
-		}
+		DDTipoDespachoExterno tipoSol = (DDTipoDespachoExterno) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoDespachoExterno.class,DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO);
+		tiposSolicitante.add(tipoSol);
 		
 		List<DDEstadoAcuerdo> estadosAcuerdo = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoAcuerdo.class);
 		List<DDZona> zonas = usuarioManager.getZonasUsuarioLogado();

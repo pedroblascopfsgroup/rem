@@ -8,21 +8,26 @@
 <fwk:page>
 	
 	
-<%-----------------Campos Pestaña Datos Generales -----------------------%>
+<%-----------------Campos Pestaï¿½a Datos Generales -----------------------%>
 	
 	var limit=25;
 	
-	//Campo Número Contrato
-	var nroContrato = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.contrato" text="**Cód. Contrato" />'); 
+	//Campo Nï¿½mero Contrato
+	var nroContrato = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.contrato" text="**Cï¿½d. Contrato" />'); 
 
 	//Campo Numero Cliente
-	<%--var codigoCliente = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cód. Cliente" />'); --%>
-	 var codigoCliente=app.creaNumber('codigo','<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cód. Cliente" />');
+	<%--var codigoCliente = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cï¿½d. Cliente" />'); --%>
+	 var codigoCliente=app.creaNumber('codigo','<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cï¿½d. Cliente" />');
 
 	//Listado de tipos de Solicitante
-	var tiposSolicitante = <app:dict value="${tiposSolicitante}" blankElement="true" blankElementValue="" blankElementText="---"/>;
-	var despachos=<app:dict value="${despachos}" />;
+	var tiposSolicitante = <app:dict value="${tiposSolicitante}"/>;
 	
+	var tipoSolicitanteInicial = '';
+	if (tiposSolicitante.diccionario.length >= 1) {
+		tipoSolicitanteInicial = tiposSolicitante.diccionario[0].codigo; 
+	}
+	
+	var despachos=<app:dict value="${despachos}" />;
 	
 	//Listado de entidad_acuerdo
 	var entidadAcuerdo = <app:dict value="${listadoEntidadAcuerdo}" blankElement="false" blankElementValue="" blankElementText="---"/>;
@@ -90,7 +95,7 @@
 	
 	var comboTiposSolicitante = app.creaCombo({triggerAction: 'all',
 	 	data:tiposSolicitante, 
-	 	value:tiposSolicitante.diccionario[0].codigo, 
+	 	value:tipoSolicitanteInicial, 
 	 	name : 'tiposSolicitante', 
 	 	width:200,
 	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtro.tipoSolicitante" text="**Tipo Solicitante" />'});
@@ -130,11 +135,15 @@
 	    }, solicitantesRecord)
 	       
 	});
+
+	if (tiposSolicitante.diccionario.length >= 1) {
+		optionsSolicitantesStore.setBaseParam('codigo', comboTiposSolicitante.getValue());
+	}
 	
 	//Combo de solicitantes
     var comboSolicitantes = new Ext.form.ComboBox({
         name: 'comboSolicitantes'
-        ,disabled:true 
+        ,disabled:false 
         ,allowBlank:true
         ,store:optionsSolicitantesStore
         ,width:200
@@ -145,7 +154,7 @@
         ,enableKeyEvents: true
         ,typeAhead: false
         ,hideTrigger:true     
-        ,minChars: 2 
+        ,minChars: 4 
         ,hidden:false
         ,maxLength:256 
         ,itemSelector: 'div.search-item'
@@ -314,7 +323,7 @@
 	
 
 	
-<%-----------------Campos Pestaña Gestores -----------------------%>
+<%-----------------Campos Pestaï¿½a Gestores -----------------------%>
 	
 	//store para los tipos de testor
 	var optionsTiposGestor  = Ext.data.Record.create([
@@ -485,7 +494,7 @@
 	}
 	
 	
-<%-----------------Campos Pestaña Jerarquía -----------------------%>
+<%-----------------Campos Pestaï¿½a Jerarquï¿½a -----------------------%>
 	
 	var zonas=<app:dict value="${zonas}" />;
 
@@ -545,7 +554,7 @@
         ,enableKeyEvents: true
         ,typeAhead: false
         ,hideTrigger:true     
-        ,minChars: 2 
+        ,minChars: 4 
         ,hidden:false
         ,maxLength:256 
         ,itemSelector: 'div.search-item'
@@ -572,7 +581,7 @@
 	});
 	
 	 var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Cï¿½digo" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
 		]);
 		
@@ -789,7 +798,7 @@
         text:'<s:message code="acuerdo.busqueda.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-                    //insertar aquí función
+                    //insertar aquï¿½ funciï¿½n
                 }
         }
     );
@@ -798,7 +807,7 @@
 		handler : buscarFunc
 	});
 	
-	<%--*************PESTAÑA DE DATOS DEL ACUERDO***************************************** --%>
+	<%--*************PESTAï¿½A DE DATOS DEL ACUERDO***************************************** --%>
 	tabDatos=false;
 	var filtrosTabDatosAcuerdo = new Ext.Panel({
 		title:'<s:message code="acuerdo.busqueda.filtros.datosAcuerdos" text="**Datos generales" />'
@@ -827,7 +836,7 @@
 	filtrosTabDatosAcuerdo.on('activate',function(){
 		tabDatos=true;
 	});
-	<%--*************PESTAÑA DE GESTORES***************************************** --%>
+	<%--*************PESTAï¿½A DE GESTORES***************************************** --%>
 	tabGestores=false;
 	var filtrosTabGestores = new Ext.Panel({
 		title:'<s:message code="acuerdo.busqueda.filtros.gestores" text="**Gestores" />'
@@ -845,7 +854,7 @@
 	filtrosTabGestores.on('activate',function(){
 		tabGestores=true;
 	});
-	<%--*************PESTAÑA DE JERARQUÍA***************************************** --%>
+	<%--*************PESTAï¿½A DE JERARQUï¿½A***************************************** --%>
 	var tabJerarquia=false;
 	var filtrosTabJerarquia = new Ext.Panel({
 		title: '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
@@ -872,7 +881,7 @@
 	});
 	
 	<%--*************************************************************************************
-	*************TABPANEL QUE CONTIENE TODAS LAS PESTAÑAS****************************************
+	*************TABPANEL QUE CONTIENE TODAS LAS PESTAï¿½AS****************************************
 	**************************************************************************************** --%>
 	var filtroTabPanel=new Ext.TabPanel({
 		items:[filtrosTabDatosAcuerdo, filtrosTabGestores,filtrosTabJerarquia]
@@ -886,11 +895,11 @@
 	});
 	
 	
-	<%--***********PANEL QUE CONTIENE EL PANEL DE PESTAÑAS******************** --%>
+	<%--***********PANEL QUE CONTIENE EL PANEL DE PESTAï¿½AS******************** --%>
 	var panelFiltros = new Ext.Panel({
 			autoHeight:true
 			,autoWidth:true
-			,title : '<s:message code="acuerdo.busqueda.filtros" text="**Búsqueda de Acuerdos" />'
+			,title : '<s:message code="acuerdo.busqueda.filtros" text="**Bï¿½squeda de Acuerdos" />'
 			,titleCollapse:true
 			,collapsible:true
 			,tbar : [btnBuscar,btnReset,'->', app.crearBotonAyuda()] 
@@ -1089,7 +1098,7 @@
 	    					app.abreExpedienteTab(idExpediente,des,'propuestas');
 	    				}
 	    			}else{
-	    		    	alert('El acuerdo no tiene asociado ningún expediente o asunto');
+	    		    	alert('El acuerdo no tiene asociado ningï¿½n expediente o asunto');
 	    		    	}
 	    		}
  	

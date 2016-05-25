@@ -49,4 +49,10 @@ TRAILING NULLCOLS
   ,ULTIMO_HITO                    POSITION(1809:1908)   CHAR nullif (ULTIMO_HITO=BLANKS) "replace (replace(replace(TRIM(:ULTIMO_HITO),';',' '), '\"',''),'''','')"
   ,GESTION_PLATAFORMA             POSITION(1909:1909)   CHAR "replace (replace(replace(TRIM(:GESTION_PLATAFORMA),';',' '), '\"',''),'''','')"
   ,GESTOR_PROC                    POSITION(1910:1917)   CHAR "replace (replace(replace(TRIM(:GESTOR_PROC),';',' '), '\"',''),'''','')"
+  ,FECHA_APROBACION_CONVENIO      POSITION(1918:1925)   DATE 'DDMMYYYY' nullif (FECHA_APROBACION_CONVENIO=BLANKS) "replace( replace(:FECHA_APROBACION_CONVENIO, '01010001', ''), '00000000', '')"
+  ,FECHA_APERTURA	          POSITION(1926:1933)   DATE 'DDMMYYYY' nullif (FECHA_APERTURA=BLANKS) "replace( replace(:FECHA_APERTURA, '01010001', ''), '00000000', '')"
+  ,FECHA_APROBACION_PLAN          POSITION(1934:1941)   DATE 'DDMMYYYY' nullif (FECHA_APROBACION_PLAN=BLANKS) "replace( replace(:FECHA_APROBACION_PLAN, '01010001', ''), '00000000', '')"
+  ,FECHA_SUBASTA	          POSITION(1942:1949)   DATE 'DDMMYYYY' nullif (FECHA_SUBASTA=BLANKS) "replace( replace(:FECHA_SUBASTA, '01010001', ''), '00000000', '')"
+  ,ALEGACIONES_PLAN_LIQUIDACION   POSITION(1950:1950)   CHAR "replace (replace(replace(TRIM(:ALEGACIONES_PLAN_LIQUIDACION),';',' '), '\"',''),'''','')"
+  ,CONCURSO_CONCLUIDO		  POSITION(1951:1951)   CHAR "replace (replace(replace(TRIM(:CONCURSO_CONCLUIDO),';',' '), '\"',''),'''','')"
 )

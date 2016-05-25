@@ -1,0 +1,93 @@
+--/*
+--##########################################
+--## AUTOR=JOSE MANUEL PEREZ
+--## FECHA_CREACION=20160229
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=CMREC-2257
+--## PRODUCTO=NO
+--## 
+--## Finalidad: DDL
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+ V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- '#ESQUEMA#';             -- Configuracion Esquema
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- '#ESQUEMA_MASTER#';         -- Configuracion Esquema Master
+ TABLA VARCHAR(30 CHAR) :='BUROFAX_RECEPCION';
+ TABLA1 VARCHAR(30 CHAR) :='BUROFAX_RECEPCION_REJECTS';
+ err_num NUMBER;
+ err_msg VARCHAR2(2048 CHAR); 
+ V_MSQL VARCHAR2(8500 CHAR);
+ V_EXISTE NUMBER (1);
+
+BEGIN 
+
+--Validamos si la tabla existe antes de crearla
+  SELECT COUNT(*) INTO V_EXISTE  FROM ALL_TABLES WHERE TABLE_NAME = ''||TABLA;
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA||' 
+            (	
+                ID_BUROFAX				  		NUMBER(16,0),
+				ESTADO                 			VARCHAR2(3 CHAR),
+				DESCRIPCION_ERROR       		VARCHAR2(500 CHAR),
+				EMISOR                  		VARCHAR2(20 CHAR),
+				VERSION                 		NUMBER(*,0) DEFAULT 0 NOT NULL ENABLE,
+				USUARIOCREAR            		VARCHAR2(50 CHAR) NOT NULL ENABLE,
+				FECHACREAR              		TIMESTAMP (6) NOT NULL ENABLE,
+				USUARIOMODIFICAR        		VARCHAR2(50 CHAR),
+				FECHAMODIFICAR          		TIMESTAMP (6),
+				USUARIOBORRAR           		VARCHAR2(50 CHAR),
+				FECHABORRAR             		TIMESTAMP (6),
+				BORRADO                 		NUMBER(1,0) DEFAULT 0 NOT NULL ENABLE,
+				CONSTRAINT PK_BUROFAX_RECEPCION PRIMARY KEY (ID_BUROFAX)
+            )'; 
+
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA||' CREADA');  
+  END IF;
+  
+  SELECT COUNT(*) INTO V_EXISTE  FROM ALL_TABLES WHERE TABLE_NAME = ''||TABLA1;
+  
+  V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA1||' 
+            (	
+                ROWREJECTED  VARCHAR2(1024 BYTE),
+				ERRORCODE    VARCHAR2(255 BYTE),
+				ERRORMESSAGE VARCHAR2(255 BYTE)
+            )'; 
+
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA1||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA1||' CASCADE CONSTRAINTS ');
+     DBMS_OUTPUT.PUT_LINE(TABLA1||' BORRADA');
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA1||' CREADA');  
+  END IF;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
+END;
+/
+EXIT;

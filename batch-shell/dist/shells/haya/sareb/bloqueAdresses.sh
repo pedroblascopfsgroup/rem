@@ -7,8 +7,8 @@
 
 FECHA=`date +%d%b%G`
 FECHA_ANT=`date +%d%b%G --date="1 days ago"`
-LOG="/home/ops-haya/bloqueAdresses.log"
-DIR=/etl/HRE/shells
+LOG="$DIR_CONTROL_LOG/bloqueAdresses.log"
+DIR=$DIR_SHELLS
 #DIR=./
 source $DIR/setBatchEnv.sh
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 dat_dir="dat"
-dat_aprov_dir="../../transferencia/aprov_migracion"
+dat_aprov_dir="../../../transferencia/bcc/aprov_migracion"
 
 echo "[INFO] Directorio DAT: ""$dat_dir"
 echo "[INFO] Directorio DAT Aprov: ""$dat_aprov_dir"

@@ -603,8 +603,8 @@
 		idProcSeleccionado = rec.get('idProcedimiento');
 		
 		var username = app.usuarioLogado.username;
-    	var isGestor = permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idGestorActual'));
-		var isSupervisor = permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idSupervisorActual'));
+		var isGestor = entidad.get("data").toolbar.esPrimerGestorFaseActual;
+		var isSupervisor = entidad.get("data").toolbar.esPrimerSupervisorFaseActual;
 		
 		if(idAsuntoSeleccionado!='') {
 
@@ -817,7 +817,7 @@
                                                                                                                                                                        
 	panel.getValue = function(){};
 	panel.setValue = function(){
-	
+		
 		btnEditar.disable();
 		btnBorrar.disable();
 		btnAltaProcedimiento.disable();
@@ -849,7 +849,6 @@
 	</c:if>
      
     if(isBankia && data.toolbar.tipoExpediente == "RECU"){
-    
         var visible = [
 	      [btnActuacion, esGestorSupervisorDeFase]
 			,[btnNuevo, esGestorSupervisorDeFase]
@@ -867,7 +866,7 @@
     }else{
     
         var visible = [
-	      [btnActuacion, congelado && esGestorSupervisorDeFase]
+	      	 [btnActuacion, congelado && esGestorSupervisorDeFase]
 			,[btnNuevo, congelado && esGestorSupervisorDeFase]
 	        ,[btnEditar, congelado && esGestorSupervisorDeFase]
 	        ,[btnBorrar, congelado && esGestorSupervisorDeFase]
@@ -879,10 +878,7 @@
 	        </sec:authorize>
 	        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
 	    ]
-    	
     }
-    
-
 
      entidad.setVisible(visible); 
 

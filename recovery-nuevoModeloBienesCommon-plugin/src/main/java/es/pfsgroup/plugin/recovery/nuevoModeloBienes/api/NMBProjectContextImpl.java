@@ -65,7 +65,7 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	private String resultadoMoratoria;
 	
 	private String plantillaReportPropuestaCancelacionCargas;
-
+	
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
@@ -117,7 +117,6 @@ public class NMBProjectContextImpl implements NMBProjectContext {
 	public void setMapaTiposPrc(Map<String, String> mapaTiposPrc) {
 		this.mapaTiposPrc = mapaTiposPrc;
 	}
-	
 	
 	/**
 	 * Completa la tarea Validar Propuestas según el BPM de subastas como se hubiera realizado desde el formulario.

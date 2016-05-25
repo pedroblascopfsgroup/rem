@@ -99,6 +99,7 @@ public class APPConstants {
 	public static final String FLAG_EXTRA4 = "flag_extra4";
 	public static final String FLAG_EXTRA5 = "flag_extra5";
 	public static final String FLAG_EXTRA6 = "flag_extra6";
+	public static final String FLAG_EXTRA7 = "flag_extra7";
 	public static final String CHAR_EXTRA8 = "char_extra8";
 	public static final String CHAR_EXTRA7 = "char_extra7";
 	public static final String CHAR_EXTRA6 = "char_extra6";

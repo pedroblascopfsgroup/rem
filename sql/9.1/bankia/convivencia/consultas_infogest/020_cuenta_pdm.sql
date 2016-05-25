@@ -71,3 +71,15 @@ LEFT JOIN BANK01.DD_GES_GESTION_ASUNTO GES ON ASU.DD_GES_ID = GES.DD_GES_ID
 WHERE ASU.BORRADO = 0;
 
 commit;
+
+MERGE INTO MINIREC.rcv_gest_cuenta_pdm RCV
+USING(
+select cnt_id,
+case when ges.dd_ges_codigo like '%X%' then 'HAYA' else 'BANKIA' end GESTION
+from BANK01.CNT_CONTRATOS cnt 
+inner join BANK01.DD_GES_GESTION_ESPECIAL ges on ges.dd_ges_id = cnt.dd_ges_id)CAMBIO
+ON (RCV.ID_CUENTA_RCV=CAMBIO.CNT_ID)
+WHEN MATCHED THEN UPDATE SET RCV.IND_GEST_HAYA=CAMBIO.GESTION;
+
+COMMIT;
+

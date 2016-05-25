@@ -4,9 +4,11 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -166,6 +168,51 @@ public class coreextensionManager implements coreextensionApi {
 		
 		
 		return listado;
+	}
+	
+	@BusinessOperation(GET_LIST_PERFILES_GESTORES_ESPECIALES)
+	public HashMap<String,Set<String>> getListPerfilesGestoresEspeciales(String codigoEntidadUsuario){
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto=null;
+		mapCompleto= coreProjectContext.getPerfilesGestoresEspeciales();
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+		}
+		return map1;
+	}
+	
+	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL_POR_ASUNTO)
+	public List<EXTDDTipoGestor> getListTipoGestorAdicionalPorAsunto(String idTipoAsunto) {
+		
+		List<EXTDDTipoGestor> listadoPrueba= new ArrayList<EXTDDTipoGestor>();
+		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		HashMap<String, HashMap<String, Set<String>>> prueba= coreProjectContext.getTiposAsuntosTiposGestores();
+		HashMap<String,Set<String>> map1= prueba.get(codigoEntidadUsuario);
+		if(map1!=null){
+			Set<String> set1= map1.get(idTipoAsunto);
+			
+	
+			for(String codigoTipoGestor:set1 ){
+				EXTDDTipoGestor tipoGestor= tipoGestorManager.getByCod(codigoTipoGestor);
+				listadoPrueba.add(tipoGestor);
+			}
+		}
+		
+//		List<Entidad> listEnt = genericDao.getList(Entidad.class);//entidadManager.getListaEntidades();
+//		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
+//		
+//		if(!Checks.esNulo(listEnt) && listEnt.size()>1){
+//			Entidad entidad = genericDao.get(Entidad.class, 
+//					genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getEntidad().getId()));
+//			listado = entidad.getTiposDeGestores();
+//		}else{
+//			Order order = new Order(OrderType.ASC, "descripcion");
+//			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));	
+//		}
+		
+		
+		return listadoPrueba;//listado;
+		
 	}
 
 
@@ -575,6 +622,104 @@ public class coreextensionManager implements coreextensionApi {
 		
 		
 	}
+	
+	@Override
+	@BusinessOperation(GET_LIST_ALL_USUARIOS_POR_DEFECTO)
+	public List<Usuario> getListAllUsuariosPorDefectoData(long idTipoDespacho, boolean incluirBorrados) {
+		
+		List<Usuario> listaUsuarios = gestoresDao.getGestoresPorDefectoByDespacho(idTipoDespacho, incluirBorrados);
+		if (listaUsuarios.size() > 0 ){
+			Locale locale = new Locale("es_ES");
+			Collator c = Collator.getInstance();
+			c.setStrength(Collator.PRIMARY);
+			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
+		}
+		return listaUsuarios;
+		
+		
+	}
+	
+	@Override
+	@BusinessOperation(GET_USUARIO_GESTOR_OFICINA_EXPEDIENTE)
+	public List<Usuario> getUsuarioGestorOficinaExpedienteGestorDeuda(long idExpediente, String codigoPerfil){
+		List<Usuario> usuarios= gestoresDao.getGestorOficinaExpedienteGestorDeuda(idExpediente, codigoPerfil);
+		return usuarios;
+		
+	}
+	
+	@Override
+	@BusinessOperation(GET_SUPERVISOR_GESTOR_ADICIONAL_POR_CODIGO_ENTIDAD)
+	public Usuario getSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto){
+		Usuario supervisor=null;
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto= coreProjectContext.getSupervisorAsunto();
+		
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+			if(map1!=null){
+				Set<String> map2= map1.get(idTipoAsunto);
+				if(map2!=null){
+					for(String usuario: map2){
+						supervisor= usuarioManager.getByUsername(usuario);
+					}
+				}
+			}
+		}
+		
+		return supervisor;
+	}
+	
+	
+	
+	@Override
+	@BusinessOperation(GET_TIPO_GESTOR_SUPERVISOR_POR_CODIGO_ENTIDAD)
+	public EXTDDTipoGestor getTipoGestorSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto){
+		EXTDDTipoGestor tipoGestor= null;
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto= coreProjectContext.getTipoGestorSupervisorAsunto();
+		
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+			if(map1!= null){
+				Set<String> map2= map1.get(idTipoAsunto);
+				if(map2!=null){
+					for(String tipo: map2){
+						tipoGestor= tipoGestorManager.getByCod(tipo);
+					}
+				}
+			}
+		}
+		
+		return tipoGestor;
+	}
+	
+	@Override
+	@BusinessOperation(GET_DESPACHO_SUPERVISOR_POR_CODIGO_ENTIDAD)
+	public DespachoExterno getDespachoSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto){
+		DespachoExterno despachoSupervisor= new DespachoExterno();
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto= coreProjectContext.getDespachoSupervisorAsunto();
+		
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+			if(map1!= null){
+				Set<String> map2= map1.get(idTipoAsunto);
+				if(map2!=null){
+					for(String desDespacho: map2){
+						List<DespachoExterno> listaDespachos = despachoExternoManager.getDespachosExternos();
+						for(DespachoExterno despacho: listaDespachos){
+							if(despacho.getDescripcion().equals(desDespacho)){
+								despachoSupervisor= despacho;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return despachoSupervisor;
+	}
+
 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)

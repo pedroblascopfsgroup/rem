@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -41,6 +42,40 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		}
 		
 		return HibernateQueryUtils.list(this, hb);
+		
+	}
+	
+	@Override
+	public List<Usuario> getGestoresPorDefectoByDespacho(long idTipoDespacho, boolean incluirBorrados) {
+		HQLBuilder hb = new HQLBuilder(" select gd.usuario from GestorDespacho gd");
+		
+		HQLBuilder.addFiltroIgualQue(hb, "gd.despachoExterno.id", idTipoDespacho);
+		HQLBuilder.addFiltroIgualQue(hb, "gd.gestorPorDefecto", true);
+		
+		if(!incluirBorrados) {
+			HQLBuilder.addFiltroIgualQue(hb, "gd.auditoria.borrado", false);
+		}
+		
+		return HibernateQueryUtils.list(this, hb);
+		
+	}
+	
+	@Override
+	public List<Usuario> getGestorOficinaExpedienteGestorDeuda(long idExpediente, String codigoPerfil){
+		List<Usuario> listUsuarios= new ArrayList<Usuario>();
+		StringBuilder sqlUsuarios = new StringBuilder();
+		sqlUsuarios.append("select zon_pef.usuario from ZonaUsuarioPerfil zon_pef,Perfil per, DDZona zon, Expediente exp");
+		sqlUsuarios.append(" where zon_pef.zona.id = zon.id");
+		sqlUsuarios.append(" and zon.oficina.id = exp.oficina.id");
+		sqlUsuarios.append(" and per.codigo = '"+codigoPerfil+"'");
+		sqlUsuarios.append(" and exp.id = :idExpediente");
+		
+		Query query = getSession().createQuery(sqlUsuarios.toString());
+		query.setParameter("idExpediente", idExpediente);
+		
+		listUsuarios= (List<Usuario>) query.list();
+		
+		return listUsuarios;
 		
 	}
 	

@@ -50,9 +50,9 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "u.usuarioExterno", dtoBusquedaUsuario.getUsuarioExterno());
 		
 		if (!Checks.esNulo(dtoBusquedaUsuario.getDespachosExternos())){
-			if ((dtoBusquedaUsuario.getUsuarioExterno() != null) && (dtoBusquedaUsuario.getUsuarioExterno()) ) {
+			//if ((dtoBusquedaUsuario.getUsuarioExterno() != null) && (dtoBusquedaUsuario.getUsuarioExterno()) ) {
 				hb.appendWhere("u in (select gd.usuario from GestorDespacho gd where gd.despachoExterno.id in (" + dtoBusquedaUsuario.getDespachosExternos() + "))");
-			}
+			//}
 		}
 		
 

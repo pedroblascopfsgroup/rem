@@ -1,37 +1,45 @@
 --Actualizacion nombre asunto LITIGIOS CAJAMAR
+-- GMN 20160329 CMREC-2875
+-- Modificamos el nombre de asunto a:
+--   . Asuntos de Litigios: Cod. Contrato | NIF | Nombre y apellidos 1er titular
+--   . Asuntos de Concursos: NIF | Nombre y apellidos 1er titular
 
-MERGE INTO CM01.ASU_ASUNTOS ASU USING 
-   (SELECT asu2.asu_id 
-         , CAB.NOMBRE_ASUNTO
-   FROM 
-      (SELECT        PCAB.CD_PROCEDIMIENTO
-                  ,  substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' ' || per_nom50,1,50) AS NOMBRE_ASUNTO
-                  ,  PCAB.ENTIDAD_PROPIETARIA
-                  ,  PCAB.GESTION_PLATAFORMA
-        FROM CM01.mig_procedimientos_cabecera pcab 
-            INNER JOIN CM01.mig_procedimientos_operaciones pop on pcab.cd_procedimiento = pop.cd_procedimiento            
-            LEFT JOIN (SELECT CD_PROCEDIMIENTO, MIN(PER_NOM50) AS PER_NOM50, MIN(PER_DOC_ID) AS PER_DOC_ID
-                          FROM
-                              (
-                               select pdem.cd_procedimiento, per.per_doc_id, per.per_nom50, tin.DD_TIN_CODIGO, CPE_ORDEN
-                                    , rank() over (partition by pdem.cd_procedimiento order by tin.DD_TIN_CODIGO, CPE_ORDEN desc) RANKING
-                               from  CM01.mig_procedimientos_demandados pdem 
-                                   inner join  CM01.per_personas per on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
-                                   inner join  CM01.CPE_CONTRATOS_PERSONAS cpe ON per.per_id = cpe.per_id 
-                                   inner join  CM01.DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id 
-                                where tin.DD_TIN_TITULAR = 1
-                               )          
-                            WHERE RANKING = 1
-                       GROUP BY CD_PROCEDIMIENTO)  tmp1
-            ON tmp1.CD_PROCEDIMIENTO = pcab.CD_PROCEDIMIENTO                                       
-         GROUP BY PCAB.CD_PROCEDIMIENTO, substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' ' || per_nom50,1,50), PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA  
-        ) CAB,        
-      CM01.ASU_ASUNTOS ASU2
-   WHERE asu2.asu_id_externo = CAB.CD_PROCEDIMIENTO   
-   ) TMP
-ON (ASU.ASU_ID = TMP.ASU_ID)
+-- select distinct per.*    
+-- 20.079  Filas
+-- 19.694  Filas Updateables, <<REALES>>.
+MERGE INTO CM01.ASU_ASUNTOS ASU2 USING 
+(SELECT * FROM (
+WITH MIG_NOM_ASUNTO AS (
+  SELECT CD_PROCEDIMIENTO, PER_NOM50 AS PER_NOM50, PER_DOC_ID AS PER_DOC_ID
+  FROM
+      (
+          select distinct pdem.cd_procedimiento, per.per_doc_id, per.per_nom50, tin.DD_TIN_CODIGO, CPE_ORDEN
+              , rank() over (partition by pdem.cd_procedimiento order by tin.DD_TIN_CODIGO, CPE_ORDEN ASC, CPE.fechacrear desc) RANKING
+           from  CM01.mig_procedimientos_demandados pdem 
+           inner join CM01.MIG_PROCEDIMIENTOS_OPERACIONES mpo on mpo.CD_PROCEDIMIENTO = pdem.CD_PROCEDIMIENTO
+           inner join CM01.CNT_CONTRATOS CNT ON CNT.CNT_CONTRATO = mpo.NUMERO_CONTRATO   
+           inner join  CM01.CPE_CONTRATOS_PERSONAS cpe ON cnt.cnt_id = cpe.cnt_id 
+          -- inner join  CM01.per_personas per on per.per_cod_cliente_entidad = pdem.CODIGO_PERSONA
+           inner join  CM01.per_personas per on per.per_id = cpe.per_id
+           inner join  CM01.DD_TIN_TIPO_INTERVENCION tin ON cpe.dd_tin_id = tin.dd_tin_id 
+          where tin.DD_TIN_TITULAR = 1 -- AND CPE.CNT_ID = 6746736
+            -- and mpo.NUMERO_CONTRATO = 34907200064946
+  )
+  WHERE RANKING = 1   
+)
+SELECT       PCAB.CD_PROCEDIMIENTO
+          ,  substr(lpad(pop.numero_contrato,16,'0') || ' | ' || per_doc_id || ' | ' || per_nom50,1,50) AS NOMBRE_ASUNTO
+          ,  PCAB.ENTIDAD_PROPIETARIA
+          ,  PCAB.GESTION_PLATAFORMA
+          ,  ASU.ASU_ID
+FROM CM01.mig_procedimientos_cabecera pcab 
+    INNER JOIN CM01.mig_procedimientos_operaciones pop on pcab.cd_procedimiento = pop.cd_procedimiento 
+    INNER JOIN CM01.ASU_ASUNTOS ASU ON ASU.asu_id_externo = pop.CD_PROCEDIMIENTO 
+    INNER JOIN MIG_NOM_ASUNTO MNA ON MNA.CD_PROCEDIMIENTO = pop.cd_procedimiento   
+) ) TMP 
+ON (ASU2.ASU_ID = TMP.ASU_ID)
 WHEN MATCHED THEN 
-UPDATE SET ASU.ASU_NOMBRE = TMP.NOMBRE_ASUNTO;   
+UPDATE SET ASU2.ASU_NOMBRE = TMP.NOMBRE_ASUNTO;
           
 COMMIT;          
 
@@ -45,9 +53,10 @@ COMMIT;
 --COMMIT;
 
 -- Actualizamos nombre asuntos concursos
+--   . Asuntos de Concursos: NIF | Nombre y apellidos 1er titular
 
 MERGE INTO CM01.ASU_ASUNTOS ASU USING 
-(select distinct CD_CONCURSO, NUMERO_CONTRATO, nif, per_nom50, substr(NVL(to_char(lpad(NUMERO_CONTRATO,16,'0')),lpad(' ',16,' ')) || ' | '|| NIF || ' '|| per_nom50,1,50) AS NOMBRE_ASUNTO
+(select distinct CD_CONCURSO, NUMERO_CONTRATO, nif, per_nom50, substr( NIF || ' | ' || per_nom50,1,50) AS NOMBRE_ASUNTO
 from (
      SELECT mca.CD_CONCURSO , mopc.NUMERO_CONTRATO, mca.nif, per.per_nom50
            ,rank() over (partition by mca.CD_CONCURSO, mopc.NUMERO_CONTRATO, mca.nif
@@ -60,7 +69,7 @@ from (
                      SELECT DISTINCT 
                             MCO.NUMERO_CONTRATO, MCO.CD_CONCURSO, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA as deuda, MOV.MOV_ID 
                            , rank() over (partition by MCO.CD_CONCURSO 
-                                              order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA), MOV.MOV_ID DESC) RANKING
+                                              order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV.MOV_ID) RANKING
                      FROM CM01.MIG_CONCURSOS_OPERACIONES MCO
                      inner JOIN CM01.CNT_CONTRATOS CNT ON CNT.CNT_CONTRATO = MCO.NUMERO_CONTRATO
                      inner JOIN CM01.MOV_MOVIMIENTOS MOV ON MOV.CNT_ID = CNT.CNT_ID AND MOV.MOV_FECHA_EXTRACCION = CNT.CNT_FECHA_EXTRACCION
@@ -87,7 +96,7 @@ COMMIT;
 
 MERGE INTO CM01.asu_asuntos asu  USING
     (SELECT  distinct (select dd_TPX_ID from CM01.DD_TPX_TIPO_EXPEDIENTE where DD_TPX_CODIGO = 'RECU') as dd_tpx_id,
-					   substr(lpad(CNT_CONTRATO,16,'0') || ' | '|| PER_DOC_ID || ' '|| per_nom50,1,50) AS ASU_NOMBRE,
+					   substr(lpad(CNT_CONTRATO,16,'0') || ' | '|| PER_DOC_ID || ' | '|| per_nom50,1,50) AS ASU_NOMBRE,
 					   COD_RECOVERY as CD_EXPEDIENTE
 				  FROM
 				  (

@@ -5,6 +5,7 @@
 -- Fecha: 12/01/2016
 --        18/01/2016 GMN:> Se corrección de DD_PCO_BFR_ID, acceso a diccionario por código y 
 --                         uso de subconsulta con WITH para PCO_BUR_ENVIO
+--		  05/02/2016 JPB:> 
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -113,15 +114,7 @@ BEGIN
                           ,SYS_GUID
                           ,VERSION
                           ,USUARIOCREAR
-                          ,FECHACREAR) 
-        WITH MIG_EXPNOT AS  ( SELECT CD_EXPEDIENTE
-                            , FECHA_ENVIO
-                            , FECHA_ACUSE_RECIBO
-                            , CODIGO_ENTIDAD
-                            , CODIGO_PERSONA
-                            , SUBSTR(REPLACE(NOMBRE_VIA,''C/'',''''),1,INSTR(NOMBRE_VIA,'','')-1) AS DIR_DOMICILIO
-                            , CODIGO_POSTAL 
-                     FROM '||V_ESQUEMA||'.MIG_EXPEDIENTES_NOTIFICACIONES)                          
+                          ,FECHACREAR)                           
 	SELECT '||V_ESQUEMA||'.S_PCO_BUR_ENVIO_ID.NEXTVAL,
 	       BUR.PCO_BUR_BUROFAX_ID,
 	       DIR.DIR_ID,
@@ -137,7 +130,7 @@ BEGIN
 	       0,
 	       '''||USUARIO||''',
 	       SYSDATE       
-	FROM MIG_EXPNOT MIG,
+	FROM '||V_ESQUEMA||'.MIG_EXPEDIENTES_NOTIFICACIONES MIG,
 	     '||V_ESQUEMA||'.PCO_BUR_BUROFAX BUR,
 	     '||V_ESQUEMA||'.PCO_PRC_PROCEDIMIENTOS PCO,
 	     '||V_ESQUEMA||'.PER_PERSONAS PER,
@@ -146,8 +139,7 @@ BEGIN
 	AND PCO.PCO_PRC_ID = BUR.PCO_PRC_ID
 	AND MIG.CODIGO_ENTIDAD||MIG.CODIGO_PERSONA = PER.PER_COD_CLIENTE_ENTIDAD
 	AND PER.PER_ID = BUR.PER_ID
-	AND MIG.DIR_DOMICILIO = DIR.DIR_DOMICILIO
-	AND MIG.CODIGO_POSTAL = DIR.DIR_COD_POST_INTL';
+	AND MIG.NOMBRE_VIA = DIR.DIR_COD_DIRECCION';
 
         DBMS_OUTPUT.PUT_LINE('Insert en PCO_BUR_ENVIO: '||sql%rowcount);
 

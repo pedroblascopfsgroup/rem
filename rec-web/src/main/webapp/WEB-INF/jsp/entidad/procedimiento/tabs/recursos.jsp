@@ -94,7 +94,7 @@
 
   
 
-  var buttonBar = [<sec:authorize ifNotGranted="SOLO_CONSULTA"> btnNuevoRecurso,</sec:authorize> btnEditarRecurso ];
+  var buttonBar = [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTON_RECURSO_NUEVO"> btnNuevoRecurso,</sec:authorize> btnEditarRecurso ];
 
   var recursosGrid = app.crearGrid(recursosStore,recursosCm,{
       title:'<s:message code="procedimiento.recursos.grid" text="**Recursos ya existentes en el procedimiento" />'

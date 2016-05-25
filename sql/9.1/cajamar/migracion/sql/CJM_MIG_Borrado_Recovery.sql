@@ -1672,6 +1672,7 @@ BEGIN
 --    /********************
 --    *ORDEN DE BORRADO 2 *
 --    ********************/
+
       DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.EXP_EXPEDIENTES... Comprobando si existen registros para el usuario MIGRACM01');
       EXISTE := 0;
       V_SQL:= 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES  WHERE EXP_ID IN ( SELECT EXP_ID FROM '||V_ESQUEMA||'.TABLA_TMP_EXP )';
@@ -1798,5 +1799,5 @@ EXCEPTION
 END;
 /
 
-EXIT
+EXIT;
 

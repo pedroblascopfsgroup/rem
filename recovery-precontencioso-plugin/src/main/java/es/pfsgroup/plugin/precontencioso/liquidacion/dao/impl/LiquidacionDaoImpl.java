@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.dao.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -14,12 +13,14 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 @Repository
 public class LiquidacionDaoImpl extends AbstractEntityDao<LiquidacionPCO, Long> implements LiquidacionDao {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<LiquidacionPCO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 
 		Criteria query = getSession().createCriteria(LiquidacionPCO.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		query.createAlias("procedimientoPCO", "procedimientoPCO");
 		query.add(Restrictions.eq("procedimientoPCO.id", idProcedimientoPCO));
+		query.add(Restrictions.eq("auditoria.borrado", false));
 
 		List<LiquidacionPCO> liquidaciones = query.list();
 		return liquidaciones;

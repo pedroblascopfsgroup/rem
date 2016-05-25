@@ -5,8 +5,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+
 //------------------------------------------------
-// Sobreescribe la función filter para IE8
+// Sobreescribe la funcion filter para IE8
 //------------------------------------------------
 
 function isIE () {
@@ -950,11 +951,16 @@ app.downloadFile = function(config){
      el.action = form.url;
      el.submit();     
     
-    // Clean-up the form after 100 milliseconds.
-    // Once the submit is called, the browser does not care anymore with the form object.
-    /*Ext.defer(function(){
-        fp.close();
-    }, 100);*/
+    var tiempo = config.tiempoSuccess || 100;
+    
+    //Si en el config tenemos una función success la ejecutamos a los x milisegundos después del submit
+    Ext.defer(function(){
+        //fp.close();
+        debugger;
+        if (config.succesFunction) {
+     		config.succesFunction();
+     	}
+    }, tiempo);
 }	
 
 /**

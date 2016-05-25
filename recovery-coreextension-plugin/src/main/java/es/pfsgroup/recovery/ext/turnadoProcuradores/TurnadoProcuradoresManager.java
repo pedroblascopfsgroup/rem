@@ -1,6 +1,7 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +20,8 @@ import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -381,5 +384,116 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		}
 
 		return null;
+	}
+	
+	@Override
+	public List<TipoPlaza> getPlazasEsquemaTurnadoProcu(){
+		List<TipoPlaza> listaPlazas = genericDao.getList(TipoPlaza.class, genericDao
+				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		if(!Checks.esNulo(listaPlazas)){
+			return listaPlazas;
+		}
+		return null;
+	}
+	
+	@Override
+	public List<TipoProcedimiento> getTPOsEsquemaTurnadoProcu(){
+		List<TipoProcedimiento> listaTpo = genericDao.getList(TipoProcedimiento.class, genericDao
+				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		if(!Checks.esNulo(listaTpo)){
+			return listaTpo;
+		}
+		return null;
+	}
+	
+	@Override
+	public Collection<? extends TipoPlaza> getPlazas(String query) {
+		return esquemaTurnadoProcuradorDao.getPlazas(query);
+	}
+
+	@Override
+	public Collection<? extends TipoProcedimiento> getTPOs(String query) {
+		return esquemaTurnadoProcuradorDao.getTPOs(query);
+	}
+
+	@Override
+	public List<TipoPlaza> getPlazasGrid(Long idEsquema) {
+		List<TipoPlaza> list = esquemaTurnadoProcuradorDao.getPlazasEquema(idEsquema);
+		return (list.size()>0 ? list : null);
+	}
+
+	@Override
+	public List<TipoProcedimiento> getTPOsGrid(Long idEsquema, Long idPlaza) {
+		List<TipoProcedimiento> list = esquemaTurnadoProcuradorDao.getTiposProcedimientoPorPlazaEsquema(idEsquema,idPlaza);
+		return (list.size()>0 ? list : null);
+	}
+
+	@Override
+	public List<TurnadoProcuradorConfig> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO) {
+		List<TurnadoProcuradorConfig> list = esquemaTurnadoProcuradorDao.getRangosPorPlazaTPOEsquema(idEsquema,idPlaza,idTPO);
+		return (list.size()>0 ? list : null);
+	}
+
+	@Override
+	public List<Usuario> getDespachosProcuradores() {
+		List<Usuario> list = esquemaTurnadoProcuradorDao.getDespachosProcuradores();
+		return (list.size()>0 ? list : null);
+	}
+
+	@Override
+	public EsquemaTurnadoProcurador getEsquemaById(Long id) {
+		return genericDao.get(EsquemaTurnadoProcurador.class, genericDao
+				.createFilter(FilterType.EQUALS, "id", id));
+	}
+
+	@Override
+	@Transactional
+	public List<Long> añadirNuevoTpoAPlazas(Long idEsquema, String codTPO, String[] arrayPlazas) {
+		//Lista de ids pares plaza-tpo insertados
+		List<Long> idsPlazasTpo = new ArrayList<Long>();
+		
+		//Recuperar procedimiento
+		TipoProcedimiento tpo = genericDao.get(TipoProcedimiento.class, genericDao
+				.createFilter(FilterType.EQUALS, "codigo", codTPO));
+		//Recuperar esquema
+		EsquemaTurnadoProcurador esquema = genericDao.get(EsquemaTurnadoProcurador.class, genericDao
+				.createFilter(FilterType.EQUALS, "id", idEsquema));
+		
+		TipoPlaza plaza;
+		EsquemaPlazasTpo plazaTpo;
+		//Crear pares plaza-tpo
+		for(int i = 0; i < arrayPlazas.length; i++){
+			plaza = genericDao.get(TipoPlaza.class, genericDao
+					.createFilter(FilterType.EQUALS, "codigo", arrayPlazas[i]));
+			//Crear plaza-tpo
+		    plazaTpo = new EsquemaPlazasTpo();
+		    plazaTpo.setEsquemaTurnadoProcurador(esquema);
+		    plazaTpo.setTipoPlaza(plaza);
+		    plazaTpo.setTipoProcedimiento(tpo);
+		    genericDao.save(EsquemaPlazasTpo.class, plazaTpo);
+		    idsPlazasTpo.add(plazaTpo.getId());
+		}
+		
+		return idsPlazasTpo;
+	}
+
+	@Override
+	@Transactional
+	public List<Long> borrarConfigParaPlazaOTpo(Long idEsquema, String plazaCod, String tpoCod, String[] arrayPlazas) {
+		//Lista de ids pares plaza-tpo insertados
+		List<Long> idsPlazasTpo = null;
+		
+		if(!Checks.esNulo(plazaCod)){
+			//Get ids de las tuplas que van a ser borradas
+			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorCodigoPlaza(plazaCod);
+		}
+		if(!Checks.esNulo(tpoCod)){
+			//Get ids de las tuplas que van a ser borradas
+			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorCodigoTPO(tpoCod,arrayPlazas);
+		}
+		//Borrado fisico de toda la configuracion relacionada con los pares plazas-tpo dados
+		if(!Checks.esNulo(idsPlazasTpo)) esquemaTurnadoProcuradorDao.borradoFisicoConfigPlazaTPO(idsPlazasTpo);
+		
+		return idsPlazasTpo;
 	}
 }

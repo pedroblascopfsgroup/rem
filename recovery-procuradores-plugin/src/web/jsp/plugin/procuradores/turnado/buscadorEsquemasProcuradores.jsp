@@ -130,12 +130,13 @@
 	
 	var ventanaEdicion = function(id) {
 		var w = app.openWindow({
-			flow : 'turnadoprocuradores/seleccionarPlaza'
-			,width :  600
+			flow : 'turnadoprocuradores/openDetalleEsquemaTurnado'
+			,width :  900
 			,resizable:false
 			,closable: true
-			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza" text="**Seleccionar plaza" />'
-			,params : {id:id}
+			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza**" text="Detalles esquema" />'
+			,params : {idEsquema:1}
+			,autoScroll: 'auto'
 		});
 		w.on(app.event.DONE, function(){
 			w.close();
@@ -180,7 +181,7 @@
 					,function(boton){
 						if (boton=='yes') {
 			      			page.webflow({
-				      			flow:'turnadodespachos/copiarEsquema'
+				      			flow:'turnadoprocuradores/openEdicionRangos'
 				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);

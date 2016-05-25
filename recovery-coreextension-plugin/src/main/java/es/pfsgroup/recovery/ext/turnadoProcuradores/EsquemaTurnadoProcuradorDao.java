@@ -1,9 +1,12 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
+import java.util.Collection;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 
@@ -50,5 +53,38 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	 * 
 	 */
 	void limpiarTurnadoTodosLosDespachos();
+	
+	Collection<? extends TipoPlaza> getPlazas(String query);
+	
+	Collection<? extends TipoProcedimiento> getTPOs(String query);
+
+	List<TipoPlaza> getPlazasEquema(Long idEsquema);
+
+	List<TipoProcedimiento> getTiposProcedimientoPorPlazaEsquema(Long idEsquema, Long idPlaza);
+
+	List<TurnadoProcuradorConfig> getRangosPorPlazaTPOEsquema(Long idEsquema, Long idPlaza, Long idTPO);
+
+	List<Usuario> getDespachosProcuradores();
+	
+	/**
+	 * Borra fisicamente toda la configuracion asociada a una lista de plazas-tpos dados sus ids
+	 * @param idsPlazasTpo
+	 * @param plazaCod
+	 */
+	void borradoFisicoConfigPlazaTPO(List<Long> idsPlazasTpo);
+
+	/**
+	 * Devuelve todos los ids de las tuplas de TUP_EPT_ESQUEMA_PLAZAS_TPO que pertenezcan a la plaza especificada con el plazaCod
+	 * @param plazaCod
+	 * @return
+	 */
+	List<Long> getIdsEPTPorCodigoPlaza(String plazaCod);
+	
+	/**
+	 * Devuelve todos los ids de las tuplas de TUP_EPT_ESQUEMA_PLAZAS_TPO que pertenezcan al TPO especificado con el tpoCod
+	 * @param tpoCod
+	 * @return
+	 */
+	List<Long> getIdsEPTPorCodigoTPO(String tpoCod, String[] arrayPlazas);
 	
 }

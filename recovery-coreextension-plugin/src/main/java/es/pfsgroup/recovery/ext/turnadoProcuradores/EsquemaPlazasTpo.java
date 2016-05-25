@@ -1,6 +1,7 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -11,11 +12,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -52,6 +55,11 @@ public class EsquemaPlazasTpo implements Serializable, Auditable {
 	
 	@Column(name = "EPT_GRUPO_ASIGNADO")
 	private float grupoAsignado;
+
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "EPT_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private List<TurnadoProcuradorConfig> configuracion;
 	
 //    @OneToMany(mappedBy = "esquema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    @JoinColumn(name = "ETU_ID")
@@ -111,6 +119,14 @@ public class EsquemaPlazasTpo implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 		
+	}
+	
+	public List<TurnadoProcuradorConfig> getConfiguracion() {
+		return configuracion;
+	}
+
+	public void setConfiguracion(List<TurnadoProcuradorConfig> configuracion) {
+		this.configuracion = configuracion;
 	}	
 		
 }

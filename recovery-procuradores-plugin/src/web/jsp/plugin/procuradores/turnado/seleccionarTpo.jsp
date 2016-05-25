@@ -10,26 +10,28 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-debugger;
 	var maxWidth=800;
-	var listadoTpoStore = new Ext.data.Store({
-		fields: [
-			{name: 'codigo'}
-		]
+	
+	var listadoTpoData = <app:dict value="${listaTpo}"/>;
+	var listadoTpoStore = new Ext.data.JsonStore({
+	       fields: ['codigo', 'descripcion']
+	       ,data : listadoTpoData
+	       ,root: 'diccionario'
 	});
+	
 	
 	var creaDblSelectMio = function(label, config){
 				
 		var store = config.store ;
 		var cfg = {
 		    	fieldLabel: label || ''
-		    	,displayField:'comentario'
+		    	,displayField:'descripcion'
 		    	,valueField: 'codigo'
 		    	,imagePath:"/${appProperties.appName}/js/fwk/ext.ux/Multiselect/images/"
 		    	,dataFields : ['codigo']
 		    	,fromStore:store
 		    	,toData : []
-		        ,msHeight : config.height || 120
+		        ,msHeight : config.height || 150
 				,labelStyle:config.labelStyle || ''
 		        ,msWidth : config.width || maxWidth/5.65
 		        ,drawTopIcon:false
@@ -74,7 +76,7 @@ debugger;
 		return itemSelector;
 	};
 	
-   var dbselectTpo = creaDblSelectMio('<b><s:message code="plugin.procuradores.turnado.tpo" text="**Tpo" /></b>',{store:listadoTpoStore});
+   var dbselectTpo = creaDblSelectMio('<b><s:message code="plugin.procuradores.turnado.tpo**" text="Tipos de procedimientos" /></b>',{store:listadoTpoStore});
     
     var ventanaEdicion = function() {
 		var w = app.openWindow({
@@ -89,19 +91,61 @@ debugger;
 		});
 		w.on(app.event.CANCEL, function(){ w.close(); });
 	};          
+	
+	var btnAtras = new Ext.Button({
+		text : '<s:message code="plugin.procuradores.turnado.btnSiguiente**" text="Volver" />'
+		,iconCls : 'icon_atras'
+		,disabled: false
+		,minWidth:60
+		,handler: function() {
+			var w = app.openWindow({
+					flow : 'turnadoprocuradores/seleccionarPlaza'
+					,width :  600
+					,resizable:false
+					,closable: true
+					,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza" text="**Seleccionar plaza" />'
+					,params : ''
+					,autoScroll: 'auto'
+				});
+				w.on(app.event.DONE, function(){
+					w.close();
+				});
+				w.on(app.event.CANCEL, function(){ w.close(); });
+			page.fireEvent(app.event.DONE);
+	    } 
+	}); 
+	
+	var btnGuardar = new Ext.Button({
+		text : '<s:message code="plugin.procuradores.turnado.btnSiguiente**" text="Guardar" />'
+		,iconCls : 'icon_ok'
+		,disabled: false
+		,minWidth:60
+		,handler: function() {
+	           page.fireEvent(app.event.DONE);	
+	    } 
+	}); 
 	       
 	var btnSiguiente = new Ext.Button({
-		text : '<s:message code="plugin.procuradores.turnado.btnSiguiente" text="**Siguiente" />'
-		,iconCls : 'icon_siguiente'
+		text : '<s:message code="plugin.procuradores.turnado.btnSiguiente**" text="Añadir rangos" />'
+		,iconCls : 'icon_mas'
 		,disabled: false
 		,minWidth:60
 		,handler: function() {
 						ventanaEdicion();
-	            			page.fireEvent(app.event.DONE);	
+	            		page.fireEvent(app.event.DONE);	
 	       		}
-	});    
-	                 
-                               
+	});
+	
+	var btnCancelar = new Ext.Button({
+		text : '<s:message code="plugin.procuradores.turnado.btnSiguiente**" text="Cancelar" />'
+		,iconCls : 'icon_cancel'
+		,disabled: false
+		,minWidth:60
+		,handler: function() {
+			page.fireEvent(app.event.DONE);
+	    } 
+	});     
+	                                        
 	var tabTpo = new Ext.Panel({
 		autoWidth:true
 		,autoHeight:true
@@ -115,7 +159,7 @@ debugger;
 					,autoWidth:true
 				}
 				]
-		,bbar:['->',btnSiguiente]
+		,bbar:['->',btnAtras,btnSiguiente,btnGuardar,btnCancelar]
 	});
 	
 	page.add(tabTpo);

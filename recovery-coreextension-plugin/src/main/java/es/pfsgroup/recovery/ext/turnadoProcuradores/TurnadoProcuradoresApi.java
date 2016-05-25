@@ -1,6 +1,12 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
+import java.util.Collection;
+import java.util.List;
+
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
@@ -115,4 +121,81 @@ public interface TurnadoProcuradoresApi {
 	 * @return
 	 */
 	Boolean comprobarSiLosDatosHanSidoCambiados(Long prcId);
+	
+	/**
+	 * Devuelve una lista con las plazas disponibles
+	 * @return listaPlazas
+	 */
+	List<TipoPlaza> getPlazasEsquemaTurnadoProcu();
+	
+	/**
+	 * Devuelve una lista con las tipos de procedimientos disponibles
+	 * @return listaTPO
+	 */
+	List<TipoProcedimiento> getTPOsEsquemaTurnadoProcu();
+
+	Collection<? extends TipoPlaza> getPlazas(String query);
+	
+	Collection<? extends TipoProcedimiento> getTPOs(String query);
+	
+	/**
+	 * Devuelve las plazas configuradas para un esquema
+	 * @param idEsquema
+	 * @return
+	 */
+	List<TipoPlaza> getPlazasGrid(Long idEsquema);
+	
+	/**
+	 * Devuelve los procedimientos configurados para un esquema:
+	 * - Si idPlaza = null -> todos los procedimientos configurados para el esquema
+	 * - Si idPlaza != null -> solo los procedimientos configurados para el esquema y la plaza dada
+	 * @param idEsquema
+	 * @param idPlaza
+	 * @return
+	 */
+	List<TipoProcedimiento> getTPOsGrid(Long idEsquema, Long idPlaza);
+	
+	/**
+	 * Devuelve todos los rangos configurados para un esquema:
+	 * - Si idPlaza = null && idTPO = null -> todos los rangos configurados para el esquema
+	 * - Si solo idTPO = null -> solo los rangos 
+	 * @param idEsquema
+	 * @param idPlaza
+	 * @param idTPO
+	 * @return
+	 */
+	List<TurnadoProcuradorConfig> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO);
+	
+	/**
+	 * Devuelve una lista de usuarios que representan despachos de procuradorres
+	 * @return
+	 */
+	List<Usuario> getDespachosProcuradores();
+	
+	/**
+	 * Devuelve el esquema dado el id
+	 * @param id
+	 * @return EsquemaTurnadoProcurador
+	 */
+	EsquemaTurnadoProcurador getEsquemaById(Long id);
+	
+	/**
+	 * Añadir una configuracion plaza-tpo nueva a un esquema de turnado de procuradores
+	 * @param idEsquema
+	 * @param codTpo
+	 * @param arrayPlazas
+	 * @return 
+	 */
+	List<Long> añadirNuevoTpoAPlazas(Long idEsquema, String codTpo, String[] arrayPlazas);
+	
+	/**
+	 * Borra todas las configuraciones plaza-tpo relacionadas con el tpo o plaza recibido
+	 * @param idEsquema
+	 * @param plazaCod
+	 * @param tpoCod
+	 * @param arrayPlazas
+	 * @return 
+	 */
+	List<Long> borrarConfigParaPlazaOTpo(Long idEsquema, String plazaCod, String tpoCod, String[] arrayPlazas);
+	
 }

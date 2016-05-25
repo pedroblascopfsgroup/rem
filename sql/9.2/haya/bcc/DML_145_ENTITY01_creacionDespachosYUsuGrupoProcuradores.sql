@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=20160524
+--## FECHA_CREACION=20160525
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1496
@@ -85,8 +85,12 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA_M || '.' || V_DDNAME || ' WHERE US
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO en usu_usuarios Grupo Elena Medina');
-V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M || '.USU_USUARIOS (usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear,fechacrear, usu_grupo)  values  ('|| V_ESQUEMA_M ||'.s_usu_usuarios.nextval, ''41'',''GRELME'',''1234'',''Grupo - Elena Medina'', ''PRODUCTO-1496'', sysdate, 1)';
+V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M || '.USU_USUARIOS (usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear,fechacrear, usu_grupo, usu_externo)  values  ('|| V_ESQUEMA_M ||'.s_usu_usuarios.nextval, ''41'',''GRELME'',''1234'',''Grupo - Elena Medina'', ''PRODUCTO-1496'', sysdate, 1, 1)';
 DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO esta query: ' || V_MSQL);
+EXECUTE IMMEDIATE V_MSQL;
+ELSE
+DBMS_OUTPUT.PUT_LINE('[INFO] UPDATEANDO en usu_usuarios Grupo Elena Medina');
+V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS SET entidad_id = ''41'', usu_username = ''GRELME'', usu_password = ''1234'', usu_nombre = ''Grupo - Elena Medina'', usu_grupo = 1, usu_externo = 1 WHERE USU_USERNAME = ''GRELME''';
 EXECUTE IMMEDIATE V_MSQL;
 END IF;
 DBMS_OUTPUT.PUT_LINE('[INFO] Insertar nuevo usuario Francisco Abajo');
@@ -96,8 +100,12 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA_M || '.' || V_DDNAME || ' WHERE US
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO en usu_usuarios Francisco Abajo');
-V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M || '.USU_USUARIOS (usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear,fechacrear, usu_grupo)  values  ('|| V_ESQUEMA_M ||'.s_usu_usuarios.nextval, ''41'',''GRFRAB'',''1234'',''Grupo - Francisco Abajo'', ''PRODUCTO-1496'', sysdate, 1)';
+V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M || '.USU_USUARIOS (usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear,fechacrear, usu_grupo, usu_externo)  values  ('|| V_ESQUEMA_M ||'.s_usu_usuarios.nextval, ''41'',''GRFRAB'',''1234'',''Grupo - Francisco Abajo'', ''PRODUCTO-1496'', sysdate, 1, 1)';
 DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO esta query: ' || V_MSQL);
+EXECUTE IMMEDIATE V_MSQL;
+ELSE
+DBMS_OUTPUT.PUT_LINE('[INFO] UPDATEANDO en usu_usuarios Francisco Abajo');
+V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS SET entidad_id = ''41'', usu_username = ''GRFRAB'', usu_password = ''1234'', usu_nombre = ''Grupo - Francisco Abajo'', usu_grupo = 1, usu_externo = 1 WHERE USU_USERNAME = ''GRFRAB''';
 EXECUTE IMMEDIATE V_MSQL;
 END IF;
 DBMS_OUTPUT.PUT_LINE('[INFO] Insertar nuevo usuario Leticia Codias');
@@ -107,8 +115,12 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA_M || '.' || V_DDNAME || ' WHERE US
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO en usu_usuarios Leticia Codias');
-V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M || '.USU_USUARIOS (usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear,fechacrear, usu_grupo)  values  ('|| V_ESQUEMA_M ||'.s_usu_usuarios.nextval, ''41'',''GRLECO'',''1234'',''Grupo - Leticia Codias'', ''PRODUCTO-1496'', sysdate, 1)';
+V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M || '.USU_USUARIOS (usu_id, entidad_id, usu_username, usu_password, usu_nombre, usuariocrear,fechacrear, usu_grupo, usu_externo)  values  ('|| V_ESQUEMA_M ||'.s_usu_usuarios.nextval, ''41'',''GRLECO'',''1234'',''Grupo - Leticia Codias'', ''PRODUCTO-1496'', sysdate, 1, 1)';
 DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO esta query: ' || V_MSQL);
+EXECUTE IMMEDIATE V_MSQL;
+ELSE
+DBMS_OUTPUT.PUT_LINE('[INFO] UPDATEANDO en usu_usuarios Leticia Codias');
+V_MSQL := 'UPDATE '||V_ESQUEMA_M||'.USU_USUARIOS SET entidad_id = ''41'', usu_username = ''GRLECO'', usu_password = ''1234'', usu_nombre = ''Grupo - Leticia Codias'', usu_grupo = 1, usu_externo = 1 WHERE USU_USERNAME = ''GRLECO''';
 EXECUTE IMMEDIATE V_MSQL;
 END IF;
 
@@ -128,7 +140,7 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE USU_
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO en ZON_PEF_USU');
-V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ((SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' AND rownum = 1) ,' ||V_TMP_2 || ',' || V_TMP || ',' ||V_ESQUEMA|| '.S_ZON_PEF_USU.NEXTVAL, 0,''PRODUCTO-1496'', SYSDATE, 0)';
+V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ((SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' and ZON_DESCRIPCION <> ''BANKIA'' AND rownum = 1) ,' ||V_TMP_2 || ',' || V_TMP || ',' ||V_ESQUEMA|| '.S_ZON_PEF_USU.NEXTVAL, 0,''PRODUCTO-1496'', SYSDATE, 0)';
 DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO esta query: ' || V_MSQL);
 EXECUTE IMMEDIATE V_MSQL;
 END IF; 
@@ -146,7 +158,7 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE USU_
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO en ZON_PEF_USU');
-V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ((SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' AND rownum = 1) ,' ||V_TMP_2 || ',' || V_TMP || ',' ||V_ESQUEMA|| '.S_ZON_PEF_USU.NEXTVAL, 0,''PRODUCTO-1496'', SYSDATE, 0)';
+V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ((SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' and ZON_DESCRIPCION <> ''BANKIA'' AND rownum = 1) ,' ||V_TMP_2 || ',' || V_TMP || ',' ||V_ESQUEMA|| '.S_ZON_PEF_USU.NEXTVAL, 0,''PRODUCTO-1496'', SYSDATE, 0)';
 DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO esta query: ' || V_MSQL);
 EXECUTE IMMEDIATE V_MSQL;
 END IF; 
@@ -164,7 +176,7 @@ V_SQL := 'SELECT COUNT(*) FROM ' || V_ESQUEMA || '.' || V_DDNAME || ' WHERE USU_
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 IF V_NUM_TABLAS = 0 THEN
   DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO en ZON_PEF_USU');
-V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ((SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' AND rownum = 1) ,' ||V_TMP_2 || ',' || V_TMP || ',' ||V_ESQUEMA|| '.S_ZON_PEF_USU.NEXTVAL, 0,''PRODUCTO-1496'', SYSDATE, 0)';
+V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (ZON_ID,PEF_ID,USU_ID,ZPU_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) VALUES ((SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' and ZON_DESCRIPCION <> ''BANKIA'' AND rownum = 1) ,' ||V_TMP_2 || ',' || V_TMP || ',' ||V_ESQUEMA|| '.S_ZON_PEF_USU.NEXTVAL, 0,''PRODUCTO-1496'', SYSDATE, 0)';
 DBMS_OUTPUT.PUT_LINE('[INFO] INSERTANDO esta query: ' || V_MSQL);
 EXECUTE IMMEDIATE V_MSQL;
 END IF;

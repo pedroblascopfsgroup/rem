@@ -198,6 +198,10 @@
 		       	}
 		       	
 				if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+					var lblCargasPosterioresAnteriores = new Ext.form.Label({id:'lblCargasPosterioresAnteriores' ,text: '*Debe introducir la informaci\u00F3n de cargas en la ficha del bien, pesta\u00F1a Cargas' ,hidden: true, style: labelStyle});
+					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.add(lblCargasPosterioresAnteriores);
+					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.doLayout();
+					
 					ocultarMostrarCamposCargas();
 					Ext.getCmp('cargasPosterioresAnteriores').on ('select', function(record, index ) {
 						ocultarMostrarCamposCargas();
@@ -205,6 +209,10 @@
 				}
 				
 				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+					var lblBienesSolvencia = new Ext.form.Label({id:'lblBienesSolvencia' ,text: '*Debe introducir la informaci\u00F3n de bienes y solvencias en la ficha del cliente, pesta\u00F1a Solvencia' ,hidden: true, style: labelStyle});
+					Ext.getCmp('otrosBienesSolvencia').ownerCt.add(lblBienesSolvencia);
+					Ext.getCmp('otrosBienesSolvencia').ownerCt.doLayout();
+				
 					ocultarMostrarCamposSolvencia();
 					Ext.getCmp('otrosBienesSolvencia').on ('select', function(record, index ) {
 						ocultarMostrarCamposSolvencia();
@@ -225,13 +233,11 @@
 	
 	var ocultarMostrarCamposCargas = function() {
 		if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
-			//Mostramos el resto de campos solo si su valor = 1
+			//Mostramos la label de aviso solo si su valor = 1
 			if (Ext.getCmp('cargasPosterioresAnteriores').value != 1) {
-				if(Ext.getCmp('valoracionCargas')!=undefined) Ext.getCmp('valoracionCargas').setVisible(false);
-				if(Ext.getCmp('descripcionCargas')!=undefined) Ext.getCmp('descripcionCargas').setVisible(false);
+				if(Ext.getCmp('lblCargasPosterioresAnteriores')!=undefined) Ext.getCmp('lblCargasPosterioresAnteriores').setVisible(false);
 			} else {
-				if(Ext.getCmp('valoracionCargas')!=undefined) Ext.getCmp('valoracionCargas').setVisible(true);
-				if(Ext.getCmp('descripcionCargas')!=undefined) Ext.getCmp('descripcionCargas').setVisible(true);				
+				if(Ext.getCmp('lblCargasPosterioresAnteriores')!=undefined) Ext.getCmp('lblCargasPosterioresAnteriores').setVisible(true);			
 			}
 		}
 	}
@@ -240,11 +246,9 @@
 		if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
 			//Mostramos el resto de campos solo si su valor = 1
 			if (Ext.getCmp('otrosBienesSolvencia').value != 1) {
-				if(Ext.getCmp('valoracionBienesSolvencia')!=undefined) Ext.getCmp('valoracionBienesSolvencia').setVisible(false);
-				if(Ext.getCmp('descripcionBienesSolvencia')!=undefined) Ext.getCmp('descripcionBienesSolvencia').setVisible(false);
+				if(Ext.getCmp('lblBienesSolvencia')!=undefined) Ext.getCmp('lblBienesSolvencia').setVisible(false);
 			} else {
-				if(Ext.getCmp('valoracionBienesSolvencia')!=undefined) Ext.getCmp('valoracionBienesSolvencia').setVisible(true);
-				if(Ext.getCmp('descripcionBienesSolvencia')!=undefined) Ext.getCmp('descripcionBienesSolvencia').setVisible(true);				
+				if(Ext.getCmp('lblBienesSolvencia')!=undefined) Ext.getCmp('lblBienesSolvencia').setVisible(true);
 			}
 		}	
 	}
@@ -410,8 +414,10 @@
 					return false;
        			}
        			
+       			<%--
        			if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
        				if (Ext.getCmp('cargasPosterioresAnteriores').value==1) {
+       					//Poner aquí la comprobación si tiene Cargas en la pestaña Cargas del Bien
        					if (valoracionCargas.value=='' || descripcionCargas.value=='') {
        						Ext.Msg.show({
        							title:'Aviso',
@@ -422,9 +428,12 @@
        					}
        				}
        			}
+       			 --%>
        			
+       			<%--
 				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
 					if (Ext.getCmp('otrosBienesSolvencia').value==1) {
+						//Poner aquí la comprobación si tiene Otros Bienes/Solvencia en la pestaña correspondiente del cliente
 						if (valoracionBienesSolvencia.value=='' || descripcionBienesSolvencia.value=='') {
       						Ext.Msg.show({
        							title:'Aviso',
@@ -434,7 +443,8 @@
        						return false;						
 						}
 					}
-				}       			
+				}
+				--%>   			
        			
        			<%--if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));

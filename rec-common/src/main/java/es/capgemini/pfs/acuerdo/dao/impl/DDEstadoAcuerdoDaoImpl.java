@@ -29,4 +29,16 @@ public class DDEstadoAcuerdoDaoImpl extends AbstractEntityDao<DDEstadoAcuerdo, L
 		}
 		return tipos.get(0);
 	}
+    
+    @SuppressWarnings("unchecked")
+   	public List<DDEstadoAcuerdo> getListEstadosAcuerdo() {
+   		//StringBuilder sb = new StringBuilder();
+       	String hql = "from DDEstadoAcuerdo where auditoria.borrado = 0";
+   		//sb.append("Select * from DDSolicitante sol ");
+   		//sb.append("where sol.auditoria.borrado = 0 ");
+   		
+   		List<DDEstadoAcuerdo> lista = getHibernateTemplate().find(hql);
+   				
+   		return lista;
+   	}
 }

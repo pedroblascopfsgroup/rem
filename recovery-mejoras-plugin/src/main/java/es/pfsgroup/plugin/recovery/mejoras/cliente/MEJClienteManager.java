@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
@@ -57,6 +59,8 @@ public class MEJClienteManager implements MEJClienteApi {
 	
 	@Autowired
 	MEJClienteDao mejClienteDao;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	@BusinessOperation(PluginMejorasBOConstants.MEJ_BO_CLIENTE_BUTTONS_LEFT)
@@ -140,7 +144,9 @@ public class MEJClienteManager implements MEJClienteApi {
         if (clientes.getIsBusquedaGV() != null && clientes.getIsBusquedaGV().booleanValue()) {
         	clientes.setPerfiles(usuario.getPerfiles());
         }
-        return mejClienteDao.findClientesExcel(clientes, usuario, true);
+        
+        Boolean busquedaJerarquizada= getConfiguracionBusquedaJerarquica();
+        return mejClienteDao.findClientesExcel(clientes, usuario, true, busquedaJerarquizada);
     }
 	
 	@Override
@@ -151,7 +157,9 @@ public class MEJClienteManager implements MEJClienteApi {
         if (clientes.getIsBusquedaGV() != null && clientes.getIsBusquedaGV().booleanValue()) {
         	clientes.setPerfiles(usuario.getPerfiles());
         }
-        return mejClienteDao.findClientesExcel(clientes, usuario, false);
+        
+        Boolean busquedaJerarquizada= getConfiguracionBusquedaJerarquica();
+        return mejClienteDao.findClientesExcel(clientes, usuario, false, busquedaJerarquizada);
     }
 	
 	/**
@@ -173,7 +181,10 @@ public class MEJClienteManager implements MEJClienteApi {
                 Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_CLIENTES);
         int limit = Integer.parseInt(param.getValor());
         clientes.setLimit(0); // No queremos que el DAO pagine para hacer el count
-        int cant = mejClienteDao.buscarClientesPaginadosCount(clientes, usuLogado, false);
+        
+        Boolean busquedaJerarquizada= getConfiguracionBusquedaJerarquica();
+        
+        int cant = mejClienteDao.buscarClientesPaginadosCount(clientes, usuLogado, false, busquedaJerarquizada);
         result.setResultados(new Long(cant));
 
         if (cant > limit) {
@@ -236,7 +247,8 @@ public class MEJClienteManager implements MEJClienteApi {
 			else
 				conCaracterizacion = false;
 		}
-		return mejClienteDao.findClientesPage(clientes, usuario, conCaracterizacion);
+		Boolean jerarquizado= getConfiguracionBusquedaJerarquica();
+		return mejClienteDao.findClientesPage(clientes, usuario, conCaracterizacion, jerarquizado);
 	}
 	
 
@@ -249,7 +261,11 @@ public class MEJClienteManager implements MEJClienteApi {
 
 			clientes.setPerfiles(usuario.getPerfiles());
 		}
-		return mejClienteDao.findClientesPage(clientes, usuario, false);
+		
+
+		Boolean jerarquizado= getConfiguracionBusquedaJerarquica();
+
+		return mejClienteDao.findClientesPage(clientes, usuario, false, jerarquizado);
 	}
 	
 	
@@ -264,5 +280,20 @@ public class MEJClienteManager implements MEJClienteApi {
         }
         return zonas;
     }
+	
+	
+	private Boolean getConfiguracionBusquedaJerarquica(){
+		String parametroBuscadoresJerarquizado= Parametrizacion.BUSCADORES_JERARQUIZADO_ACTIVADO;
+		
+        
+        try {
+		    Parametrizacion param = (Parametrizacion) executor.execute(
+		            ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, parametroBuscadoresJerarquizado);
+		    return Boolean.valueOf(param.getValor());
+		} catch (Exception e) {
+		    logger.warn("No esta parametrizado el parámetro buscadoresJerarquizadoActivado, se toma un valor por defecto 'false'");
+		    return false;
+		}
+	}
 
 }

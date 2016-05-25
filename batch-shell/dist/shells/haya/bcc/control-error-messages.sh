@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ENTITY_CODE=0240
-QUEUE_DIR_OUTPUT=/recovery/transferencia/integration/messages/input
-QUEUE_NAME=para.cajamar.ENTORNO
+QUEUE_DIR_OUTPUT=/recovery/haya/transferencia/integration/messages/input
+QUEUE_NAME=para.haya.ENTORNO
 
 DAY=$(date +%d)
 MONTH=$(date +%m)

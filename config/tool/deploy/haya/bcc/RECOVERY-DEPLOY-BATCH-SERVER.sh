@@ -30,7 +30,8 @@ cp config/$1/setBatchEnv.sh $BASE_DIR/bcc/shells/
 cp scripts/shells/* $BASE_DIR/bcc/shells/
 sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/unzip-messages-to-queue.sh
 sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/zip-messages-from-queue.sh
-sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/control-error-messages.sh
+sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/control-input-error-messages.sh
+sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/control-output-error-messages.sh
 sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/move-input-error-messages.sh
 sed -e 's/ENTORNO/$1/g' -i $BASE_DIR/bcc/shells/move-output-error-messages.sh
 chmod a+rx $BASE_DIR/bcc/shells/*.sh

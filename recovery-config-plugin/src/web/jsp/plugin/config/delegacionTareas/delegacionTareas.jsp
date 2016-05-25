@@ -162,6 +162,7 @@
 					,params: createParams()
 					,method: 'POST'
 					,success: function (result, request){
+						Ext.Msg.alert('<s:message code="plugin.config.delegacion.creada" text="**Delegación creada" />', '<s:message code="plugin.config.delegacion.creada.correctamente" text="**La delegación se ha creado correctamente" />');
 						page.fireEvent(app.event.DONE);
 					}
 				}); 

@@ -2,17 +2,14 @@ package es.pfsgroup.plugin.recovery.config.delegaciones.dao.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +19,7 @@ import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dao.DelegacionDao;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionBusquedaDto;
-import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionDto;
+import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionFiltrosBusquedaDto;
 import es.pfsgroup.plugin.recovery.config.delegaciones.model.Delegacion;
 
 @Repository
@@ -30,7 +27,7 @@ public class DelegacionDaoImpl extends AbstractEntityDao<Delegacion, Long> imple
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Page getDelegaciones(DelegacionDto dto) {
+	public Page getDelegaciones(DelegacionFiltrosBusquedaDto dto) {
 		
 		Criteria query = getCriteriaQueryDelegaciones(dto);
 		
@@ -65,7 +62,7 @@ public class DelegacionDaoImpl extends AbstractEntityDao<Delegacion, Long> imple
 	}
 	
 	
-	private int getCountDelegaciones(DelegacionDto dto){
+	private int getCountDelegaciones(DelegacionFiltrosBusquedaDto dto){
 		
 		Criteria query = getCriteriaQueryDelegaciones(dto);
 
@@ -76,7 +73,7 @@ public class DelegacionDaoImpl extends AbstractEntityDao<Delegacion, Long> imple
 	}
 	
 	
-	private Criteria getCriteriaQueryDelegaciones(DelegacionDto dto){
+	private Criteria getCriteriaQueryDelegaciones(DelegacionFiltrosBusquedaDto dto){
 		
 		SimpleDateFormat frmt = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -95,17 +92,33 @@ public class DelegacionDaoImpl extends AbstractEntityDao<Delegacion, Long> imple
 			query.add(Restrictions.eq("usuarioDestino.id", dto.getUsuarioDestino()));
 		}
 		
-		if(!Checks.esNulo(dto.getFechaIniVigencia())){
+		if(!Checks.esNulo(dto.getFechaDesdeIniVigencia())){
 			try {
-				query.add(Restrictions.ge("delegacion.fechaIniVigencia", frmt.parse(dto.getFechaIniVigencia())));
+				query.add(Restrictions.ge("delegacion.fechaIniVigencia", frmt.parse(dto.getFechaDesdeIniVigencia())));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 		}
 		
-		if(!Checks.esNulo(dto.getFechaFinVigencia())){
+		if(!Checks.esNulo(dto.getFechaHastaIniVigencia())){
 			try {
-				query.add(Restrictions.le("delegacion.fechaFinVigencia", frmt.parse(dto.getFechaFinVigencia())));
+				query.add(Restrictions.le("delegacion.fechaIniVigencia", frmt.parse(dto.getFechaHastaIniVigencia())));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(!Checks.esNulo(dto.getFechaDesdeFinVigencia())){
+			try {
+				query.add(Restrictions.ge("delegacion.fechaFinVigencia", frmt.parse(dto.getFechaDesdeFinVigencia())));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(!Checks.esNulo(dto.getFechaHastaFinVigencia())){
+			try {
+				query.add(Restrictions.le("delegacion.fechaFinVigencia", frmt.parse(dto.getFechaHastaFinVigencia())));
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

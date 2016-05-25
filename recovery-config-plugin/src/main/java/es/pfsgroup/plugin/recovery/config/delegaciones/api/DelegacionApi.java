@@ -4,6 +4,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionDto;
+import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionFiltrosBusquedaDto;
 import es.pfsgroup.plugin.recovery.config.delegaciones.model.Delegacion;
 
 
@@ -30,7 +31,7 @@ public interface DelegacionApi {
 	 * @param DelegacionDto
 	 * @return Delegacion
 	 */
-	public Page getListDelegaciones(DelegacionDto dto);
+	public Page getListDelegaciones(DelegacionFiltrosBusquedaDto dto);
 	
 	
 	/**

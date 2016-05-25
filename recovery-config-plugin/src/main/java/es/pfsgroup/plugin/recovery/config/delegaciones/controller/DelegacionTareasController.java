@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.config.delegaciones.api.DelegacionApi;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dao.DelegacionDao;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionDto;
+import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionFiltrosBusquedaDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 
@@ -77,7 +78,7 @@ public class DelegacionTareasController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getListaDelegaciones(ModelMap map, DelegacionDto dto) {
+	public String getListaDelegaciones(ModelMap map, DelegacionFiltrosBusquedaDto dto) {
 		
 		map.put("pagina", delegacionApi.getListDelegaciones(dto));
 

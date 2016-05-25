@@ -193,18 +193,6 @@
     		nombreCategorizacion = recStore.get('nombre');
    		}
     	
-	  }); 
-	  
-	 
-	  
-	  
-	  
-	DelegacionesGrid.on('rowdblclick', function(grid, rowIndex, e){
-	var rec = grid.getStore().getAt(rowIndex);
-    app.openTab( "<s:message code="plugin.procuradores.categorizaciones.categorias.tab.titulo" text="**Categor&iacute;as de "/>"+" "+rec.get('nombre') 
-                 ,'categorias/abreVentanaCategorias'
-                 ,{idcategorizacion : rec.get('id')}
-		   		 ,{id:'categorizacion_'+rec.get('id') , iconCls:'icon_busquedas'});
 	});
 	
 	
@@ -277,19 +265,37 @@
 		mode: 'remote'
 	});
 	
-	var fechaInicio = new Ext.ux.form.XDateField({
-        name : 'fechaInicio'
+	var fechaInicioDesde = new Ext.ux.form.XDateField({
+        name : 'fechaInicioDesde'
         ,fieldLabel : '<s:message
-		code="plugin.config.delegaciones.new.desde"
-		text="**Desde" />'
+		code="plugin.config.delegaciones.busqueda.fechaini.desde"
+		text="**Fecha inicio desde" />'
         ,value : ''
         ,width:125
     });
     
-    var fechaFin = new Ext.ux.form.XDateField({
-        name : 'fechaFin'
+    var fechaInicioHasta = new Ext.ux.form.XDateField({
+        name : 'fechaInicioHasta'
         ,fieldLabel : '<s:message
-		code="plugin.config.delegaciones.new.hasta"
+		code="plugin.config.delegaciones.busqueda.fechaini.hasta"
+		text="**Fecha inicio hasta" />'
+        ,value : ''
+        ,width:125
+    });
+    
+    var fechaFinDesde = new Ext.ux.form.XDateField({
+        name : 'fechaFinDesde'
+        ,fieldLabel : '<s:message
+		code="plugin.config.delegaciones.busqueda.fechaFin.desde"
+		text="**Hasta" />'
+        ,value : ''
+        ,width:125
+    });
+    
+    var fechaFinHasta = new Ext.ux.form.XDateField({
+        name : 'fechaFinHasta'
+        ,fieldLabel : '<s:message
+		code="plugin.config.delegaciones.busqueda.fechaFin.hasta"
 		text="**Hasta" />'
         ,value : ''
         ,width:125
@@ -304,12 +310,20 @@
 			,usuarioOrigen: '${idUserOrigen}' 
 		}
 		
-		if(fechaInicio.getValue()!=''){
-			p.fechaIniVigencia = fechaInicio.getValue().format('d/m/Y');
+		if(fechaInicioDesde.getValue()!=''){
+			p.fechaDesdeIniVigencia = fechaInicioDesde.getValue().format('d/m/Y');
 		}
 		
-		if(fechaFin.getValue()!=''){
-			p.fechaFinVigencia = fechaFin.getValue().format('d/m/Y');
+		if(fechaInicioHasta.getValue()!=''){
+			p.fechaHastaIniVigencia = fechaInicioHasta.getValue().format('d/m/Y');
+		}
+		
+		if(fechaFinDesde.getValue()!=''){
+			p.fechaDesdeFinVigencia = fechaFinDesde.getValue().format('d/m/Y');
+		}
+		
+		if(fechaFinHasta.getValue()!=''){
+			p.fechaHastaFinVigencia = fechaFinHasta.getValue().format('d/m/Y');
 		}
 		
 		<sec:authorize ifAllGranted="DELEGAR-CUALQUIER-TAREAS">
@@ -333,7 +347,7 @@
 		text:'<s:message code="app.botones.limpiar" text="**Limpiar" />'
 		,iconCls:'icon_limpiar'
 		,handler:function(){
-			app.resetCampos([comboUsuarioDestino,comboUsuarioOrigen,fechaInicio,fechaFin]);
+			app.resetCampos([comboUsuarioDestino,comboUsuarioOrigen,fechaInicioDesde,fechaInicioHasta,fechaFinDesde,fechaFinHasta]);
 			recargar();
 			panelFiltros.collapse(true);
 		}
@@ -361,11 +375,19 @@
 			},{
 				layout:'form' 
 				,defaults:{xtype:'fieldset'}
-				,items:[fechaInicio]
+				,items:[fechaInicioDesde]
 			},{
 				layout:'form' 
 				,defaults:{xtype:'fieldset'}
-				,items:[fechaFin]
+				,items:[fechaInicioHasta]
+			},{
+				layout:'form' 
+				,defaults:{xtype:'fieldset'}
+				,items:[fechaFinDesde]
+			},{
+				layout:'form' 
+				,defaults:{xtype:'fieldset'}
+				,items:[fechaFinHasta]
 			}
 			
 		]              

@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.config.delegaciones.api.DelegacionApi;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dao.DelegacionDao;
 import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionDto;
+import es.pfsgroup.plugin.recovery.config.delegaciones.dto.DelegacionFiltrosBusquedaDto;
 import es.pfsgroup.plugin.recovery.config.delegaciones.model.DDEstadoDelegaciones;
 import es.pfsgroup.plugin.recovery.config.delegaciones.model.Delegacion;
 
@@ -102,7 +103,7 @@ public class DelegacionManager implements DelegacionApi {
 	}
 
 	@Override
-	public Page getListDelegaciones(DelegacionDto dto) {
+	public Page getListDelegaciones(DelegacionFiltrosBusquedaDto dto) {
 		if(!Checks.esNulo(dto)){
 			return delegacionDao.getDelegaciones(dto);
 		}else{

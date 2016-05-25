@@ -1,15 +1,15 @@
 #!/bin/bash
 
 ENTITY_CODE=0240
-QUEUE_DIR_OUTPUT=/recovery/transferencia/integration/messages/output
-QUEUE_NAME=para.haya.ENTORNO
+QUEUE_DIR_OUTPUT=/recovery/transferencia/integration/messages/input
+QUEUE_NAME=para.cajamar.ENTORNO
 
 DAY=$(date +%d)
 MONTH=$(date +%m)
 YEAR=$(date +%Y)
 
 if [ ! -d $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error ]; then
-    echo "[ERROR] $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error not exists"
+    echo "[INFO] $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error not exists"
     exit 0
 fi
 

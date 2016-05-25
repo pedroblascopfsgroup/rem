@@ -36,55 +36,14 @@ BEGIN
     -- Comprobamos si existe la tabla   
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_MNC_MTO_CORRECTIVO'' and owner = '''||V_ESQUEMA||'''';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        -- Si existe la tabla no hacemos nada
+        
         IF V_NUM_TABLAS = 1 THEN 
-            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_M||'.DD_MNC_MTO_CORRECTIVO... Tabla YA EXISTE');
-	ELSE
-    
-		 --Creamos la tabla
-		 V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.DD_MNC_MTO_CORRECTIVO (
-					  DD_MNC_CODIGO VARCHAR(10 char) NOT NULL	
-				         ,DD_MNC_DESCRIPCION VARCHAR2(250 char) NOT NULL
+            EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.DD_MNC_MTO_CORRECTIVO';
 
-	               )';
-
-
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.DD_MNC_MTO_CORRECTIVO... Tabla creada');
-		
+            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.DD_MNC_MTO_CORRECTIVO BORRADA...');
 
 	END IF;
 
-
-    --** Comprobamos si existe la tabla   
-    V_SQL := 'select count(1) from ALL_CONSTRAINTS where constraint_name = ''PK_DD_MNC_MTO_CORRECTIVO'' and owner = upper('''||V_ESQUEMA||''')';
-    EXECUTE IMMEDIATE v_sql INTO v_num_tablas;
-    IF V_NUM_TABLAS = 1 THEN 
-      V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.DD_MNC_MTO_CORRECTIVO DROP CONSTRAINT PK_DD_MNC_MTO_CORRECTIVO';        
-      EXECUTE IMMEDIATE V_MSQL;
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.PK_DD_MNC_MTO_CORRECTIVO YA EXISTE...');
-    END IF;
-	
-    
-    --** Comprobamos si existe la tabla   
-    V_SQL := 'select count(1) from ALL_indexes where index_name = ''PK_DD_MNC_MTO_CORRECTIVO''  and owner = upper('''||V_ESQUEMA||''')';
-    EXECUTE IMMEDIATE v_sql INTO v_num_tablas;
-    
-    IF V_NUM_TABLAS = 1 THEN 
-      V_MSQL := 'DROP index '||V_ESQUEMA||'.PK_DD_MNC_MTO_CORRECTIVO';        
-      EXECUTE IMMEDIATE V_MSQL;
-
-      DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.DD_MNC_MTO_CORRECTIVO INDICE PK BORRADO...');
-    END IF;
-	
-    
-
-    V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.DD_MNC_MTO_CORRECTIVO
-	         ADD CONSTRAINT PK_DD_MNC_MTO_CORRECTIVO PRIMARY KEY (
-	                    DD_MNC_CODIGO)';        
-    EXECUTE IMMEDIATE V_MSQL;
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.DD_MNC_MTO_CORRECTIVO NUEVA PK CREADA...');
   
 EXCEPTION
   WHEN OTHERS THEN

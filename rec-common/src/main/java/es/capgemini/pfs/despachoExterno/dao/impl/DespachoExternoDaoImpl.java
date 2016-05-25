@@ -4,12 +4,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Assertions;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -124,4 +131,24 @@ public class DespachoExternoDaoImpl extends AbstractEntityDao<DespachoExterno, L
                 + listadoDespachos + ") and gd.usuario.auditoria.borrado = false";
         return getHibernateTemplate().find(hqlUsuarios);
     }
+
+	@Override
+	public Page getDespachosExternosByTipo(String tipo,String query) {
+		
+		PageSql page = new PageSql();
+		
+		 String hql = "select distinct d from DespachoExterno d where d.auditoria.borrado = 0 and d.tipoDespacho.codigo = '"+tipo+"' ";
+		
+	        if(!Checks.esNulo(query)) {
+	        	hql += " and (d.despacho like '%";
+	        	hql += query;
+	        	hql += "%' or upper(d.despacho) like '%";
+	        	hql += query.toUpperCase();
+	        	hql += "%' )";
+	        }
+	        
+	     page.setResults(getHibernateTemplate().find(hql));  
+	     
+		return page;
+	}
 }

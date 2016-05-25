@@ -108,7 +108,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 	@SuppressWarnings({ "unchecked", "serial" })
 	@Override
 	public Page findClientesPage(MEJBuscarClientesDto clientes,
-			Usuario usuarioLogueado, boolean conCarterizacion) {
+			Usuario usuarioLogueado, boolean conCarterizacion, boolean busquedaJerarquizada) {
 
 		// Plantilla del HQL para recuperar las personas
 		String hql = " from Persona p where p.id in (:idlist)";
@@ -123,7 +123,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		// Generamos la query que recupera los ID's y rellenamos los parÃ¡metros
 		// que vamos necesitando
 		String sqlPersonas = generateHQLClientesFilterSQL(clientes,
-				usuarioLogueado, conCarterizacion, parameters);
+				usuarioLogueado, conCarterizacion, parameters, busquedaJerarquizada);
 		PageSql page = new PageSql();
 
 		try {
@@ -247,14 +247,14 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Persona> findClientesExcel(MEJBuscarClientesDto clientes,
-			Usuario usuarioLogueado, boolean conCarterizacion) {
+			Usuario usuarioLogueado, boolean conCarterizacion, boolean busquedaJerarquizada) {
 		List<Persona> list = new ArrayList<Persona>();
 		// AlmacÃ©n de los parÃ¡metros que necesitarÃ¡ la query que recupera los
 		// id'S
 		final HashMap<String, Object> parameters = new HashMap<String, Object>();
 
 		String sql = generateHQLClientesFilterSQL(clientes, usuarioLogueado,
-				conCarterizacion, parameters);
+				conCarterizacion, parameters, busquedaJerarquizada);
 
 		// Plantilla del HQL para recuperar las personas
 		String hql = " from Persona per where per.id in (:idlist)";
@@ -276,7 +276,7 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 	private String generateHQLClientesFilterSQL(MEJBuscarClientesDto clientes,
 			Usuario usuarioLogueado, boolean conCarterizacion,
-			HashMap<String, Object> parameters) {
+			HashMap<String, Object> parameters, boolean busquedaJerarquizada) {
 		StringBuilder hql = new StringBuilder();
 
 		if (clientes.getLimit() > 0) {
@@ -359,19 +359,21 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		/*
 		 * FIXME Comentamos esta parte para quitar de momento la zonificaciÃ³n
 		 */ 
-		hql.append("and (");
+		if(busquedaJerarquizada || !Checks.esNulo(clientes.getJerarquia())){
+			hql.append("and (");
+				
+			// AÃƒÂ±ade la persona si es gestionada por el usuario
+			hql.append("(p.per_id in ( ");
+			hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
+			parameters)); // hql.append(" ))");
 			
-		// AÃƒÂ±ade la persona si es gestionada por el usuario
-		hql.append("(p.per_id in ( ");
-		hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
-		parameters)); // hql.append(" ))");
-		
-		if ((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))) {
-			hql.append(" union all ");
-			hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); hql.append(" ))"); } else { hql.append(" ))"); 
+			if ((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))) {
+				hql.append(" union all ");
+				hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); hql.append(" ))"); } else { hql.append(" ))"); 
+			}
+			
+			hql.append(") ");
 		}
-		
-		hql.append(") ");
 		
 		// AÃ¯Â¿Â½adimos soporte para perfiles carterizados
 		/*
@@ -1301,11 +1303,12 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 	@Override
 	public int buscarClientesPaginadosCount(MEJBuscarClientesDto clientes,
-			Usuario usuLogado, boolean conCarterizacion) {
+			Usuario usuLogado, boolean conCarterizacion, boolean busquedaJerarquizada) {
 		final HashMap<String, Object> parameters = new HashMap<String, Object>();
 
+		
 		String hql = createQueryForCount(generateHQLClientesFilterSQL(clientes,
-				usuLogado, conCarterizacion, parameters));
+				usuLogado, conCarterizacion, parameters, busquedaJerarquizada));
 		try {
 			Query q = getSession().createSQLQuery(hql);
 

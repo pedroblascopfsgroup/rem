@@ -599,7 +599,7 @@ public class PCDProcesadoResolucionesController {
     	if(check)
     		model.put("data", apiProxyFactory.proxy(MSVAsuntoAllApi.class).getAsuntos(query));
     	else
-    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntos(query));
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntosGrupoUsuarios(query));
         
         return JSON_LISTA_ASUNTOS;
     }

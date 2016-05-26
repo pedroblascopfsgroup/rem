@@ -120,6 +120,11 @@ public class GestorDocumentalServicioExpedientesManager implements GestorDocumen
 		serverRequest.setMultipart(getMultipartCrearPropuesta(crearPropuesta));
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
 		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+		try {
+			Thread.sleep(15000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			if (!respuesta.getMensajeError().contains("An item with the name")) {
 				throw new GestorDocumentalException(respuesta.getMensajeError());

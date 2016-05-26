@@ -586,6 +586,7 @@ onViewClick : function(doFocus){
 			comboTipoResolucionNew.getStore().removeAll();
 			comboTipoResolucionNew.reset();
 			datosResolucion.setVisible(false);
+			idTipoResolucion="";
 			tipoResolucionStore.webflow({idTarea:record.data.idTarea, idProcedimiento:record.data.idProcedimiento});
 			valoresCamposAntResols(record.data.idProcedimiento)
 			//obtenerCodigoPlaza({idAsunto:record.data.idAsunto});
@@ -593,6 +594,7 @@ onViewClick : function(doFocus){
 			habilitaBotonesPopUp(false, false);
 			filtroAsunto.getStore().removeAll();
 			filtroAsunto.lastQuery = filtroAsunto.lastSelectionText;
+			
 			//debugger;
          }
     });

@@ -198,10 +198,13 @@ public class coreextensionManager implements coreextensionApi {
 		
 		List<EXTDDTipoGestor> listadoPrueba= new ArrayList<EXTDDTipoGestor>();
 		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
-		HashMap<String, HashMap<String, Set<String>>> prueba= coreProjectContext.getTiposAsuntosTiposGestores();
-		HashMap<String,Set<String>> map1= prueba.get(codigoEntidadUsuario);
-		if(map1!=null){
-			Set<String> set1= map1.get(idTipoAsunto);
+		HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores= coreProjectContext.getTiposAsuntosTiposGestores();
+		HashMap<String,Set<String>> codigoEntidadusuario= null;
+		if(tiposAsuntosTiposGestores!=null){
+			codigoEntidadusuario= tiposAsuntosTiposGestores.get(codigoEntidadUsuario);
+		}
+		if(codigoEntidadusuario!=null){
+			Set<String> set1= codigoEntidadusuario.get(idTipoAsunto);
 			
 	
 			for(String codigoTipoGestor:set1 ){

@@ -198,7 +198,7 @@
 		       	}
 		       	
 				if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
-					var lblCargasPosterioresAnteriores = new Ext.form.Label({id:'lblCargasPosterioresAnteriores' ,text: '*Debe introducir la informaci\u00F3n de cargas en la ficha del bien, pesta\u00F1a Cargas' ,hidden: true, style: labelStyle});
+					var lblCargasPosterioresAnteriores = new Ext.form.Label({id:'lblCargasPosterioresAnteriores' ,text: '<s:message code="acuerdos.terminos.cargasPosteriores" text="**Debe introducir la informaci\u00F3n de cargas en la ficha del bien, pesta\u00F1a Cargas" />' ,hidden: true, style: labelStyle});
 					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.add(lblCargasPosterioresAnteriores);
 					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.doLayout();
 					
@@ -209,7 +209,7 @@
 				}
 				
 				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
-					var lblBienesSolvencia = new Ext.form.Label({id:'lblBienesSolvencia' ,text: '*Debe introducir la informaci\u00F3n de bienes y solvencias en la ficha del cliente, pesta\u00F1a Solvencia' ,hidden: true, style: labelStyle});
+					var lblBienesSolvencia = new Ext.form.Label({id:'lblBienesSolvencia' ,text: '<s:message code="acuerdos.terminos.otrosBienesSolvencia" text="**Debe introducir la informaci\u00F3n de bienes y solvencias en la ficha de los titulares de todos los contratos, pesta\u00F1a Solvencia" />' ,hidden: true, style: labelStyle});
 					Ext.getCmp('otrosBienesSolvencia').ownerCt.add(lblBienesSolvencia);
 					Ext.getCmp('otrosBienesSolvencia').ownerCt.doLayout();
 				

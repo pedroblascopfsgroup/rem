@@ -60,14 +60,18 @@ function download_files {
 	MASK=$3
 	BANDERA=$4
     echo "Descargando ficheros desde SFTP (${HOST})..."
+    
 	cd $DESTINO
 
     echo "lftp -u ${USER},${PASS} -p ${PORT} sftp://${HOST} -e ls"
 
 	echo "$ORIGEN  $DESTINO"
 	
+	cd $DIR_SHELLS
+	
 	./ftp/ftp_get_files.sh $ORIGEN $DESTINO $MASK $BANDERA
 
+	cd $DESTINO
 }
 
 function file_list {
@@ -89,7 +93,7 @@ function file_copy {
 	echo "Copiando $TIPO3...."
 	cd $DIR_SFT_HAYA_RECEPCION_APR/$TIPO3
 	cp *.* $DIR_RAIZ/$TIPO/$TIPO2/aprov_$TIPO3
-	mv *.* backup/
+	mv *.* backup/  
 }
 
 if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
@@ -170,13 +174,13 @@ BANDERA_T_PR=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | grep .sem`)
 
 for i in "${BANDERA_T_PR[@]}"
 do
-                if [ "${i}" = "PCR_5074_${FECHA_PR}.sem" ]; then
+                if [ "${i}" = "PCR-5074-${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(PCR)'`)
-                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "PCR_5074_${FECHA_PR}.sem"
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "PCR-5074-${FECHA_PR}.sem"
                 fi
-		if [ "${i}" = "GCL_5074_${FECHA_PR}.sem" ]; then
+		if [ "${i}" = "GCL-5074-${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(GCL)'`)
-                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "GCL_5074_${FECHA_PR}.sem"
+                        file_list "$(echo ${FILES_DOWN_AT[@]})" troncal_PR "GCL-5074-${FECHA_PR}.sem"
                 fi
 		if [ "${i}" = "ZONAS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T_PR" | awk '{print $9}' | egrep -i '(ZONAS)'`)

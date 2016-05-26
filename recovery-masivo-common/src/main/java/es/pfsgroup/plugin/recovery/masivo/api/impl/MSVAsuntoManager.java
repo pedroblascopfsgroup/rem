@@ -25,7 +25,6 @@ import es.pfsgroup.plugin.recovery.masivo.dao.MSVAsuntoDao;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVAsunto;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
-import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 
 @Service
 @Transactional(readOnly = false)
@@ -78,19 +77,11 @@ public class MSVAsuntoManager implements MSVAsuntoApi {
 	@BusinessOperation(MSV_BO_CONSULTAR_ASUNTOS_GRUPOS)
 	public Collection<? extends MSVAsunto> getAsuntosGrupoUsuarios(String query) {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		Long idUsuarioLogado = usuarioLogado.getId();
-		
 		List<Long> listaUsuariosGrupo=new ArrayList<Long>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS,
-				"usuario.id", idUsuarioLogado);
-		EXTGrupoUsuarios grupoUsuarios=genericDao.get(EXTGrupoUsuarios.class,filtro);
-		if(!Checks.esNulo(grupoUsuarios)){
-			listaUsuariosGrupo=grupoUsuarioDao.getIdsUsuariosGrupoUsuario(grupoUsuarios.getGrupo());
+		if(!Checks.esNulo(usuarioLogado)){
+			listaUsuariosGrupo=grupoUsuarioDao.getIdsUsuariosGrupoUsuario(usuarioLogado);
+			listaUsuariosGrupo.add(usuarioLogado.getId());
 		}
-		else{
-			listaUsuariosGrupo.add(idUsuarioLogado);
-		}
-		
 		return msvAsuntoDao.getAsuntosGrupoUsuarios(query, listaUsuariosGrupo);
 
 	}

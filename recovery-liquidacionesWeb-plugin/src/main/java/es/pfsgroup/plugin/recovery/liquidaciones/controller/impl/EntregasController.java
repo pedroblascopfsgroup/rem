@@ -26,6 +26,7 @@ public class EntregasController{
 	
 	
 	static final String LISTADO_COBRO_PAGO_JSON= "plugin/liquidaciones/listadoEntregasJSON";
+	static final String LISTADO_COBRO_PAGO_ENTREGAS_JSON= "plugin/liquidaciones/listadoEntregasCobrosJSON";
 	static final String NUEVA_ENTREGA= "plugin/liquidaciones/avanzado/entregas";
 	private static final String DEFAULT= "default";
 
@@ -82,6 +83,16 @@ public class EntregasController{
         
 		return LISTADO_COBRO_PAGO_JSON; 
 	}
+	
+	@SuppressWarnings("unchecked")
+    @RequestMapping
+    public String getListbyAsuntoId(Long id, ModelMap model) {
+            // TODO Auto-generated method stub
+            List<LIQCobroPago> lista = cobroPagoDao.getByIdAsuntoContrato(id); 
+            model.put("listado", lista);
+    
+            return LISTADO_COBRO_PAGO_ENTREGAS_JSON; 
+    }
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping

@@ -1424,7 +1424,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 		}
 		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
-			subSelect += "dee.clasifPerfil = "+ Integer.parseInt(getKeyByValue(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil())) +" and ";
+			subSelect += "dee.clasifPerfil IN ("+ this.getListaMapeoValores(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
 			subSelect += "dee.clasifConcursos = "+ Integer.parseInt(dto.getClasificacionConcursos()) +" and ";
@@ -1433,13 +1433,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			subSelect += "dee.codEstAse = '"+ getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()) +"' and ";
 		}
 		if(!Checks.esNulo(dto.getContratoVigor())) {
-			subSelect += "dee.contratoVigor = "+ Integer.parseInt(getKeyByValue(context.getMapaContratoVigor(),dto.getContratoVigor())) +" and ";
+			subSelect += "dee.contratoVigor IN ("+ this.getListaMapeoValores(context.getMapaContratoVigor(),dto.getContratoVigor()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			subSelect += "dee.servicioIntegral = "+ Integer.parseInt(dto.getServicioIntegral()) +" and ";
 		}
 		if(!Checks.esNulo(dto.getRelacionBankia())) {
-			subSelect += "dee.relacionBankia = "+ Integer.parseInt(getKeyByValue(context.getMapaContratoVigor(),dto.getRelacionBankia())) +" and ";
+			subSelect += "dee.relacionBankia IN ("+ this.getListaMapeoValores(context.getMapaRelacionBankia(),dto.getRelacionBankia()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getOficinaContacto())) {
 			subSelect += "UPPER(dee.oficinaContacto) like UPPER('%"+ dto.getOficinaContacto() +"%') and ";
@@ -1529,6 +1529,19 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		
 		return null;
+	}
+	
+	private String getListaMapeoValores(Map<String,String> mapa, String valores) {
+		String[] array = valores.split(",");
+		String listaMapeada = "";
+		for(int i=0; i< array.length;i++) {
+			listaMapeada += Integer.parseInt(getKeyByValue(mapa,array[i]));
+			if(i < array.length - 1) {
+				listaMapeada += ",";
+			}
+		}
+		
+		return listaMapeada;
 	}
         
 }

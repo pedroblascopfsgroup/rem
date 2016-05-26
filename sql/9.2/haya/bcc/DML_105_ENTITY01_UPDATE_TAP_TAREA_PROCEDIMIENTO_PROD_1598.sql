@@ -38,6 +38,9 @@ BEGIN
     	V_MSQL := 'UPDATE '||V_ESQUEMA||'.tap_tarea_procedimiento SET dd_tpo_id_bpm=(SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo=''P460'') WHERE tap_codigo=''HC106_BPMTramiteProvisionFondosProcurador''';
 		DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
+		V_MSQL := 'UPDATE '||V_ESQUEMA||'.tap_tarea_procedimiento SET dd_tpo_id_bpm=(SELECT dd_tpo_id FROM dd_tpo_tipo_procedimiento WHERE dd_tpo_codigo=''P460'') WHERE tap_codigo=''H001_BPMProvisionFondos''';
+		DBMS_OUTPUT.PUT_LINE(V_MSQL);
+		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] Registro actualizado en '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO');
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] No existe el registro');

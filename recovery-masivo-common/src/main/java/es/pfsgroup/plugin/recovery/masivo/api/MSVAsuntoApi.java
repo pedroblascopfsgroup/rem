@@ -60,5 +60,12 @@ public interface MSVAsuntoApi {
 	 */
 	@BusinessOperationDefinition(MSV_ASUNTO_PARALIZA_ASUNTO)
 	public void paralizaAsunto(Asunto asunto, Date fechaParalizacion);
+	
+	/**
+	 * Devuelve la lista de asuntos que pertenecen al usuario logueado y a su grupo y además que concuerdan con la expresión pasada
+	 * (Puede incluir nombre de asunto, plaza, juzgado, auto
+	 * @return boolean
+	 */
+	public Collection<? extends MSVAsunto> getAsuntosGrupoUsuarios(String query);
 
 }

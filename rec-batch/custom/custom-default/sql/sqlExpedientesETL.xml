@@ -515,13 +515,13 @@
             --** Juntamos todas las relaciones
             ----------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_BASE
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, MAX(CEX_PASE), MAX(PEX_PASE), ARRASTRE, MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_GUIA
                   UNION ALL
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_TIT)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -607,7 +607,7 @@
             --** Juntamos todas las relaciones (intervinientes + arrastrados 1Gen)
             ----------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1GEN
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, MAX(CEX_PASE), MAX(PEX_PASE), ARRASTRE, MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
                     From BATCH_SEG_DATOS_SALIDA_BASE
                   UNION ALL
@@ -616,7 +616,7 @@
                   UNION ALL
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_1G_CNT)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -696,7 +696,7 @@
             --** Juntamos todas las relaciones
             -----------------------------------
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_TODO
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, MAX(CEX_PASE), MAX(PEX_PASE), MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
                     From BATCH_SEG_DATOS_SALIDA_1GEN
                   UNION
@@ -708,7 +708,7 @@
                   UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
                     From BATCH_SEG_DATOS_SALIDA_2G_CNT)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, CNT_RIESGO, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID
             ;
 
             --LOG
@@ -956,13 +956,13 @@
             -------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_BASE
             (EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO)
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, MAX(CEX_PASE), MAX(PEX_PASE), ARRASTRE, MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 1 as PRIO
                     from BATCH_VEN_DATOS_SALIDA_GUIA
                   UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, 2 as PRIO
                     from BATCH_VEN_DATOS_SALIDA_TIT )
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1090,7 +1090,7 @@
             --** Juntamos relaciones (intervinientes + arrastrados  1Gen)
             ----------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_1GEN
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, MIN(PRIO) as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, MAX(CEX_PASE), MAX(PEX_PASE), ARRASTRE, MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE, PRIO
                     from BATCH_VEN_DATOS_SALIDA_BASE
                   UNION
@@ -1099,7 +1099,7 @@
                   UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 1 as ARRASTRE, 5 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_1G_PER)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, ARRASTRE;
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, ARRASTRE;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1184,7 +1184,7 @@
             --** Juntamos todas las relaciones (intervinientes + arrastrados del grupo + 1Gen + 2Gen)
             -----------------------------------------------------------------------------------------
             Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TODO
-            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, MIN(PRIO) as PRIO
+            SELECT EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, MAX(CEX_PASE), MAX(PEX_PASE), MIN(PRIO) as PRIO
             FROM (Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, PRIO
                     From BATCH_VEN_DATOS_SALIDA_1GEN
                   UNION
@@ -1196,7 +1196,7 @@
                   UNION
                   Select EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE, 7 as PRIO
                     From BATCH_VEN_DATOS_SALIDA_2G_CNT)
-            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID, CEX_PASE, PEX_PASE
+            GROUP BY EXP_ID, EXP_DESCRIPCION, DD_AEX_CODIGO, OFI_ID, IMP_PIVOTE, CNT_ID, PER_ID, CPE_ORDEN, ARQ_ID
               ;
 
             --LOG
@@ -1252,7 +1252,7 @@
                From BATCH_VEN_DISTRIBUCION ko, BATCH_VEN_DISTRIBUCION ok
               Where ko.cnt_id = ok.cnt_id
                 And ko.exp_id > ok.exp_id
-                And ok.num_cnt <= v_limit_cnt;    --15
+                And ok.num_cnt <= v_limit_cnt;
 
              v_count := SQL%ROWCOUNT;
 
@@ -1368,22 +1368,25 @@
 
             INSERT INTO CEX_CONTRATOS_EXPEDIENTE
               (CEX_ID, CNT_ID, EXP_ID, DD_AEX_ID, CEX_PASE, VERSION, USUARIOCREAR,FECHACREAR, BORRADO)
-            Select s_cex_contratos_expediente.nextval
-                 , t.CNT_ID
+            Select s_cex_contratos_expediente.nextval, d.cnt_id, d.exp_id, d.dd_aex_id, d.cex_pase, d.version, d.usuariocrear, d.fechacrear, d.borrado
+            From (
+            select t.CNT_ID
                  , t.EXP_ID
-                 , t.DD_AEX_ID
-                 , t.CEX_PASE
+                 , MIN(t.DD_AEX_ID) as DD_AEX_ID
+                 , MAX(t.CEX_PASE) as CEX_PASE
                  , 0 as VERSION
                  , '${usuario.crear}' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
-              From (select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
-                    where a.dd_aex_codigo = b.dd_aex_codigo
+              from (select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE
+                    from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b, BATCH_SEG_DATOS_SALIDA_GUIA g
+                    where g.dd_aex_codigo = b.dd_aex_codigo and a.exp_id = g.exp_id
                     UNION ALL
-                    select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE, a.DD_AEX_CODIGO
+                    select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE
                     from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
-                    where a.dd_aex_codigo = b.dd_aex_codigo) t;
+                    where a.dd_aex_codigo = b.dd_aex_codigo) t
+            group by t.CNT_ID, t.EXP_ID ) d;
+
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'CEX_CONTRATOS_EXPEDIENTE Cargada',V_NUFILAS);
@@ -1391,22 +1394,24 @@
 
             INSERT INTO PEX_PERSONAS_EXPEDIENTE
               (PEX_ID, EXP_ID, PER_ID, DD_AEX_ID, PEX_PASE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-            select s_pex_personas_expediente.nextval
-                 , t.EXP_ID
+            Select s_pex_personas_expediente.nextval, d.exp_id, d.per_id, d.dd_aex_id, d.pex_pase, d.version, d.usuariocrear, d.fechacrear, d.borrado
+            From (
+            select t.EXP_ID
                  , t.PER_ID
-                 , t.DD_AEX_ID
-                 , t.PEX_PASE
+                 , MIN(t.DD_AEX_ID) as DD_AEX_ID
+                 , MAX(t.PEX_PASE) as PEX_PASE
                  , 0 as VERSION
                  , '${usuario.crear}' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
-              From (select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
+              from (select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE
                     from BATCH_SEG_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
                     where a.dd_aex_codigo = b.dd_aex_codigo
                     UNION ALL
-                    select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE, a.DD_AEX_CODIGO
-                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b
-                    where a.dd_aex_codigo = b.dd_aex_codigo) t;
+                    select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE
+                    from BATCH_VEN_DATOS_SALIDA a, ${master.schema}.DD_AEX_AMBITOS_EXPEDIENTE b, BATCH_VEN_DATOS_SALIDA_GUIA g
+                    where g.dd_aex_codigo = b.dd_aex_codigo and a.exp_id = g.exp_id) t
+              group by t.EXP_ID, t.PER_ID ) d;
 
             --LOG
             V_NUFILAS:=SQL%ROWCOUNT;
@@ -1891,7 +1896,7 @@
             Insert Into '||cMASTER_SCHEMA||'.JBPM_TRANSITION (id_, name_, processdefinition_, from_, to_, fromindex_)
             select '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL, DATA.* FROM (
               select distinct ''CompletarExpediente'' name_, pi.processdefinition_, tr1.from_, tr1.to_, 1
-              from EXP_EXPEDIENTES exp
+              from '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES exp
                 join '||cMASTER_SCHEMA||'.JBPM_PROCESSINSTANCE pi on exp.EXP_PROCESS_BPM = pi.id_
                 join '||cMASTER_SCHEMA||'.JBPM_TOKEN tk on EXP.EXP_PROCESS_BPM = tk.processinstance_
                 join '||cMASTER_SCHEMA||'.JBPM_NODE nd on tk.node_ = nd.id_

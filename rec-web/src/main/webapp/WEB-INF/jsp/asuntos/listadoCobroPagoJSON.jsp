@@ -8,7 +8,9 @@
 	<json:array name="listado" items="${listado}" var="rec">
 	<json:object>
 		<json:property name="id" value="${rec.id}"/>
-		<json:property name="procedimiento" value="${rec.procedimiento.nombreProcedimiento}"/>
+		<c:if test="${rec.procedimiento != null}">
+			<json:property name="procedimiento" value="${rec.procedimiento.nombreProcedimiento}"/>
+		</c:if>
 		<json:property name="estado" value="${rec.estado}"/>
 		<json:property name="subTipo" value="${rec.subTipo}"/>
 		<json:property name="importe" value="${rec.importe}"/>

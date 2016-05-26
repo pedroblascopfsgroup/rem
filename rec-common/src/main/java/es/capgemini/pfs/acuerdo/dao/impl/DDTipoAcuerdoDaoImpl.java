@@ -52,7 +52,8 @@ public class DDTipoAcuerdoDaoImpl extends AbstractEntityDao<DDTipoAcuerdo, Long>
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("Select tpa from DDTipoAcuerdo tpa ");
-		sb.append("where tpa.auditoria.borrado = 0 ");
+		//sb.append("where tpa.auditoria.borrado = 0 ");
+		sb.append("where 1=1 ");
 		
 		if(entidad.getCodigo().equals("ASU")){
 			sb.append(" and tpa.tipoEntidad.id in ("+entidadAmbas.getId()+")");

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -542,16 +543,18 @@ public class coreextensionController {
 				}			
 			}
 			
+			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			
 			if(!Checks.esNulo(acuerdo.getFechaPropuesta())){
-				fechaAlta=acuerdo.getFechaPropuesta().toString();
+				fechaAlta=format.format(acuerdo.getFechaPropuesta());
 			}
 			
 			if(!Checks.esNulo(acuerdo.getFechaEstado())){
-				fechaEstado=acuerdo.getFechaEstado().toString();
+				fechaEstado=format.format(acuerdo.getFechaEstado());
 			}
 			
 			if(!Checks.esNulo(acuerdo.getFechaLimite())){
-				fechaVigencia=acuerdo.getFechaLimite().toString();
+				fechaVigencia=format.format(acuerdo.getFechaLimite());
 			}
 			
 			terminos.setIdTermino(idTermino);

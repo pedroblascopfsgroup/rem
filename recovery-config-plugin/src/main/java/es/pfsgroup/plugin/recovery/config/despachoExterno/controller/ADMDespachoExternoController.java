@@ -7,13 +7,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
+import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoExternoDao;
 import es.pfsgroup.plugin.recovery.config.usuarios.dao.ADMUsuarioDao;
 import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 
@@ -21,6 +24,7 @@ import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 public class ADMDespachoExternoController {
 	
 	static final String JSON_LISTADO_USUARIOS = "plugin/config/despachoExterno/listadoGestoresJSON";
+	static final String JSON_LISTADO_DESPACHOS = "plugin/config/despachoExterno/listadoDespachosSinAsociarJSON";
 	private static final String DEFAULT = "default";
 
     @Autowired
@@ -38,6 +42,12 @@ public class ADMDespachoExternoController {
 	@Autowired
 	private ADMDespachoExternoManager despachoManager;
 	
+	@Autowired
+	private DespachoExternoDao despachoDao;
+	
+	@Autowired
+	private ADMDespachoExternoDao admDespachoDao;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getUsuariosInstant(Integer idDespacho, String query, ModelMap model) {
@@ -51,7 +61,6 @@ public class ADMDespachoExternoController {
 		return JSON_LISTADO_USUARIOS;
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String guardarGestores(Integer id, String listaUsuariosId, ModelMap model) {
 		String[] idUsuarios = listaUsuariosId.split(",");
@@ -74,4 +83,29 @@ public class ADMDespachoExternoController {
 		return gestor;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDespachosInstant(String idUsuario, String query, ModelMap model) {
+		
+		List<DespachoExterno> listaDespachos = admDespachoDao.getListByNombre(query);
+		List<DespachoExterno> listaDespachosAsociados = despachoDao.getDespachosAsociadosAlUsuario(Long.parseLong(idUsuario));
+		
+		//Borramos los ya existentes
+		listaDespachos.removeAll(listaDespachosAsociados);
+		model.put("listaDespachos", listaDespachos);
+		
+		return JSON_LISTADO_DESPACHOS;
+	}
+
+	@RequestMapping
+	public String guardaDespachoAsociados(Integer id, String listadoDespachosId, ModelMap model) {
+		if(!Checks.esNulo(id) && !Checks.esNulo(listadoDespachosId)) {
+			String[] arrayDespachos = listadoDespachosId.split(",");
+			for(int i = 0; i< arrayDespachos.length; i++) {
+				despachoManager.guardarGestorDespacho(this.rellenarGestor(Long.parseLong(arrayDespachos[i]), Long.parseLong(id.toString())));
+			}
+		}
+		
+		return DEFAULT;
+	}	
 }

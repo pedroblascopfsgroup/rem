@@ -24,7 +24,7 @@
 	<pfs:hidden name="username" value="${usuario.username}"/>
 	
 	<pfs:defineParameters name="usuarioDespachoParams" paramId="${usuario.id}" 
-		username="username" 
+		 username="username" 
 	/>
 	
 	<pfs:remoteStore name="storeDespachoUsuario"
@@ -61,8 +61,8 @@
 	</pfs:defineColumnModel>
 	
 	<pfs:buttonadd name="btNuevo" 
-		flow="plugin/config/usuarios/ADMsupervisarDespacho"  
-		windowTitleKey="plugin.config.usuarios.supervisardespacho.windowTitle" 
+		flow="plugin/config/usuarios/ADMgetDespachosPorTipo"  
+		windowTitleKey="plugin.config.usuarios.supervisardespacho.control.despachoExterno" 
 		parameters="usuarioDespachoParams" 
 		windowTitle="**Nuevo despacho" 
 		store_ref="storeDespachoUsuario"/>

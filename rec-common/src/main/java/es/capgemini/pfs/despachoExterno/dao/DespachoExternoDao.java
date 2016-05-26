@@ -70,4 +70,11 @@ public interface DespachoExternoDao extends AbstractDao<DespachoExterno, Long> {
      * @return
      */
     List<GestorDespacho> buscaDespachosPorUsuario(Long idUsuario);
+    
+    /**
+     * Devuelve los despapchos asociados al usuario
+     * @param idUsuario
+     * @return
+     */
+    List<DespachoExterno> getDespachosAsociadosAlUsuario(Long idUsuario);
 }

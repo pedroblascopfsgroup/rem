@@ -178,4 +178,14 @@ public class ADMDespachoExternoDaoImpl extends
 			b.appendWhere("gd.usuario.usuarioExterno = true");
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DespachoExterno> getListByNombre(String filtro) {
+		
+		filtro = filtro.toUpperCase();
+		String hql = " from DespachoExterno des where des.auditoria.borrado = 0 and upper(des.despacho) like upper('%"+filtro+"%')";
+		
+		return getHibernateTemplate().find(hql);
+	}
 }

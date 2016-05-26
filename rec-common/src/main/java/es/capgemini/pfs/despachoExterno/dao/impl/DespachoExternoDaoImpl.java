@@ -124,4 +124,12 @@ public class DespachoExternoDaoImpl extends AbstractEntityDao<DespachoExterno, L
                 + listadoDespachos + ") and gd.usuario.auditoria.borrado = false";
         return getHibernateTemplate().find(hqlUsuarios);
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DespachoExterno> getDespachosAsociadosAlUsuario(Long idUsuario) {
+    	String hql = "select distinct gd.despachoExterno from GestorDespacho gd where gd.auditoria.borrado = false and gd.usuario.id = "+idUsuario;
+    	
+    	return getHibernateTemplate().find(hql);
+    }
 }

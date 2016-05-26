@@ -20,7 +20,7 @@ do
 	./ftp/ftp_get_aux_monthly_files.sh $fichero
 	numFicherosSem=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionSem | wc -l`
 	numFicherosZip=`find $DIR_INPUT_AUX -name $fichero$mascara$extensionZip | wc -l`
-	while [ "$hora_actual" -lt "$hora_limite" -a $numFicherosSem -eq 0 -o $numFicherosZip -eq 0 ]; do
+	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ $numFicherosSem -eq 0 || $numFicherosZip -eq 0 ]]; do
 		sleep 10
 		hora_actual=`date +%Y%m%d%H%M%S`
 		./ftp/ftp_get_aux_monthly_files.sh $fichero
@@ -38,8 +38,8 @@ else
    do
 	    mascaraSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
         mascaraZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+        ficheroSem=`ls $mascaraSem | sort | tail -n 1`
+        ficheroZip=`ls $mascaraZip | sort | tail -n 1`
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO
@@ -48,4 +48,3 @@ else
    echo "$(basename $0) Ficheros encontrados"
    exit 0
 fi
-

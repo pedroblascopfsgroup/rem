@@ -597,9 +597,9 @@ public class PCDProcesadoResolucionesController {
     public String getAsuntosInstant(Boolean check, String query, ModelMap model) {
     	
     	if(check)
-    		model.put("data", apiProxyFactory.proxy(MSVAsuntoAllApi.class).getAsuntos(query));
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoAllApi.class).getAsuntosGrupoUsuarios(query));
     	else
-    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntos(query));
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntosGrupoUsuarios(query));
         
         return JSON_LISTA_ASUNTOS;
     }

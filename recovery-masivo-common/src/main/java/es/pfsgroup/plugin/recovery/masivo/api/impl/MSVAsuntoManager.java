@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.recovery.masivo.api.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -20,7 +23,9 @@ import es.pfsgroup.plugin.recovery.coreextension.api.AsuntoCoreApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVAsuntoApi;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVAsuntoDao;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVAsunto;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 
 @Service
 @Transactional(readOnly = false)
@@ -37,6 +42,9 @@ public class MSVAsuntoManager implements MSVAsuntoApi {
 	
 	@Autowired(required=false)
 	AsuntoCoreApi asuntoCoreApi;
+	
+	@Autowired
+	private EXTGrupoUsuariosDao grupoUsuarioDao;
 
 	@Override
 	@BusinessOperation(MSV_BO_COMPROBAR_ESTADO_ASUNTO)
@@ -64,6 +72,27 @@ public class MSVAsuntoManager implements MSVAsuntoApi {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		Long idUsuarioLogado = usuarioLogado.getId();
 		return msvAsuntoDao.getAsuntos(query, idUsuarioLogado);
+	}
+	
+	@Override
+	@BusinessOperation(MSV_BO_CONSULTAR_ASUNTOS_GRUPOS)
+	public Collection<? extends MSVAsunto> getAsuntosGrupoUsuarios(String query) {
+		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+		Long idUsuarioLogado = usuarioLogado.getId();
+		
+		List<Long> listaUsuariosGrupo=new ArrayList<Long>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS,
+				"usuario.id", idUsuarioLogado);
+		EXTGrupoUsuarios grupoUsuarios=genericDao.get(EXTGrupoUsuarios.class,filtro);
+		if(!Checks.esNulo(grupoUsuarios)){
+			listaUsuariosGrupo=grupoUsuarioDao.getIdsUsuariosGrupoUsuario(grupoUsuarios.getGrupo());
+		}
+		else{
+			listaUsuariosGrupo.add(idUsuarioLogado);
+		}
+		
+		return msvAsuntoDao.getAsuntosGrupoUsuarios(query, listaUsuariosGrupo);
+
 	}
 
 	@Override

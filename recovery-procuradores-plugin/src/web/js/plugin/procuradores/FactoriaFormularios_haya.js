@@ -432,7 +432,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 			}
 	        ,{colspan:2, width:800, style:'padding-top:0px;padding-bottom:0px',
 				items:	[ 	ficherosAdjuntos
-				      	  	//{"xtype":'displayfield',"name":"file","id":"file","fieldLabel":"Fichero","value":"No se ha adjuntado ning&uacute;n fichero.",allowBlank:false,width:500}
+				      	  	,{"xtype":'displayfield',"hidden":"true","name":"file","id":"file","fieldLabel":"Fichero","value":"No se ha adjuntado ning&uacute;n fichero.",allowBlank:false,width:500}
 				      	  	,{"xtype": 'textfield', "id": 'file_upload_ok',"name": 'file_upload_ok',"value": valueFlUp ,allowBlank:adjuntoNoObligatorio,hidden:true, validator:validatorFnc
 				      	  	}
 						]

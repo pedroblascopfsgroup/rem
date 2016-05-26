@@ -79,7 +79,7 @@ DECLARE
         /*TAP_SCRIPT_VALIDACION........:*/ null,
         /*TAP_SCRIPT_VALIDACION_JBPM...:*/ null,
         /*TAP_SCRIPT_DECISION..........:*/ null,
-        /*DD_TPO_ID_BPM(FK)............:*/ 'HC103',
+        /*DD_TPO_ID_BPM(FK)............:*/ 'P460',
         /*TAP_SUPERVISOR,..............:*/ '0',
         /*TAP_DESCRIPCION,.............:*/ 'Trámite Provisión de Fondos',
         /*VERSION......................:*/ '0',

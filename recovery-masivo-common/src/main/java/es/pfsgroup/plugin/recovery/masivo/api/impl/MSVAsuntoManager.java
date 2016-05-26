@@ -43,6 +43,7 @@ public class MSVAsuntoManager implements MSVAsuntoApi {
 	@Autowired(required=false)
 	AsuntoCoreApi asuntoCoreApi;
 	
+	@Autowired
 	private EXTGrupoUsuariosDao grupoUsuarioDao;
 
 	@Override
@@ -74,6 +75,7 @@ public class MSVAsuntoManager implements MSVAsuntoApi {
 	}
 	
 	@Override
+	@BusinessOperation(MSV_BO_CONSULTAR_ASUNTOS_GRUPOS)
 	public Collection<? extends MSVAsunto> getAsuntosGrupoUsuarios(String query) {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		Long idUsuarioLogado = usuarioLogado.getId();

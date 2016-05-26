@@ -115,34 +115,7 @@ BEGIN
 --/***************************************
 --*  INICIO MIGRACION DESDE MAESTRA      *
 --***************************************/
-/*
-    SELECT COUNT(1)
-    INTO V_COUNT
-    FROM ALL_SEQUENCES
-    WHERE SEQUENCE_NAME  = 'S_ASU_ASUNTOS'
-    AND SEQUENCE_OWNER = V_ESQUEMA;
 
-    IF V_COUNT = 1 THEN
-
-      v_SQL := 'DROP SEQUENCE '||V_ESQUEMA||'.S_ASU_ASUNTOS';
-      
-      EXECUTE IMMEDIATE(v_SQL);
-      
-      v_SQL := 'CREATE SEQUENCE  '||V_ESQUEMA||'.S_ASU_ASUNTOS  MINVALUE 100000000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 100000000 CACHE 20 NOORDER  NOCYCLE';
-      
-      EXECUTE IMMEDIATE(v_SQL);
-      
-    ELSE
-
-      v_SQL := 'CREATE SEQUENCE  '||V_ESQUEMA||'.S_ASU_ASUNTOS  MINVALUE 100000000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 100000000 CACHE 20 NOORDER  NOCYCLE';
-      
-      EXECUTE IMMEDIATE(v_SQL);
-      
-    END IF;
-    
-    COMMIT;
-
-*/
 
     -------------------------
     --TEMPORAL DE CONTRATOS:
@@ -162,16 +135,7 @@ BEGIN
                         , CNT.CNT_ID 
           FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_OPERACIONES PRO
           LEFT JOIN  '||V_ESQUEMA||'.CNT_CONTRATOS CNT 
-                 ON (PRO.NUMERO_CONTRATO = CNT.CNT_CONTRATO)
-        UNION
-          SELECT DISTINCT PRO.CD_CONCURSO  CD_PROCEDIMIENTO
-                        , PRO.CODIGO_PROPIETARIO CODIGO_ENTIDAD   --> Los concursos son todos de CAJAMAR? Entidad 0240?
-                        , PRO.NUMERO_CONTRATO AS CONTRATO
-                        , CNT.CNT_ID
-          FROM '||V_ESQUEMA||'.MIG_CONCURSOS_OPERACIONES PRO
-          LEFT JOIN '||V_ESQUEMA||'.CNT_CONTRATOS CNT 
-                 ON (PRO.NUMERO_CONTRATO = CNT.CNT_CONTRATO)
-          ORDER BY 1,4';
+                 ON (PRO.NUMERO_CONTRATO = CNT.CNT_CONTRATO) ORDER BY 1,4';
 
     EXECUTE IMMEDIATE v_sql;
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_TMP_CNT_ID Creada. '||SQL%ROWCOUNT||' Filas.');
@@ -386,8 +350,6 @@ BEGIN
       FROM 
       	(        
         SELECT CD_PROCEDIMIENTO, CD_EXPEDIENTE_NUSE , NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA            	
-      UNION
-    	  SELECT CD_CONCURSO CD_PROCEDIMIENTO, NULL CD_EXPEDIENTE_NUSE , NULL NUMERO_EXP_NUSE FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
         , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ             	
@@ -481,14 +443,6 @@ BEGIN
                                  AND PRC.CD_PROCEDIMIENTO = TPI.CD_PROCEDIMIENTO
                                  AND PRC.CD_PROCEDIMIENTO = PRD.CD_PROCEDIMIENTO
                                  AND PRD.CODIGO_PERSONA = TPI.CODIGO_PERSONA 
-                           UNION
-                               SELECT DISTINCT PER.PER_ID, EXP.EXP_ID
-                               FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP
-                                  , '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA CON
-                                  , '||V_ESQUEMA||'.PER_PERSONAS PER
-                               WHERE EXP.CD_PROCEDIMIENTO = CON.CD_CONCURSO
-                                 AND EXP.USUARIOCREAR = '''||USUARIO||'''
-                                 AND CON.NIF = PER.PER_DOC_ID
                            )'
                      );
     
@@ -512,15 +466,9 @@ BEGIN
        EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_OP_1 ON '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_OPERACIONES(LPAD(TO_CHAR(CODIGO_PROPIETARIO),5,''0'')||LPAD(TIPO_PRODUCTO,5,''0'')||LPAD(NUMERO_CONTRATO,17,''0'')||LPAD(TO_CHAR(NUMERO_ESPEC),15,''0'')) ');
     END IF;
     existe := 0;
-    v_sql:= 'select count(*) from all_indexes where index_name=''IDX_MIG_OP_2'' and table_name=''MIG_CONCURSOS_OPERACIONES'' and table_owner = ''' || V_ESQUEMA || '''';
-    EXECUTE IMMEDIATE v_sql INTO existe;
-    IF (existe=0) THEN
-       EXECUTE IMMEDIATE('CREATE INDEX IDX_MIG_OP_2 ON '||V_ESQUEMA||'.MIG_CONCURSOS_OPERACIONES(LPAD(TO_CHAR(CODIGO_PROPIETARIO),5,''0'')||LPAD(TIPO_PRODUCTO,5,''0'')||LPAD(NUMERO_CONTRATO,17,''0'')||LPAD(TO_CHAR(NUMERO_ESPEC),15,''0'')) ');
-    END IF;
-
 
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_OPERACIONES COMPUTE STATISTICS for all indexes');
-    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_CONCURSOS_OPERACIONES COMPUTE STATISTICS for all indexes');
+  --  EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_CONCURSOS_OPERACIONES COMPUTE STATISTICS for all indexes');
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  Indices para contratos en MIGs Creados');
 
@@ -571,18 +519,6 @@ BEGIN
                            AND PRC.CD_PROCEDIMIENTO   = TCI.CD_PROCEDIMIENTO
                            AND PRC.CD_PROCEDIMIENTO   = PRO.CD_PROCEDIMIENTO
                            AND PRO.NUMERO_CONTRATO    = TCI.CONTRATO 
-                       UNION
-                         SELECT DISTINCT TCI.CNT_ID, EXP.EXP_ID
-                         FROM '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP
-                            , '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA PRC
-                            , '||V_ESQUEMA||'.MIG_TMP_CNT_ID TCI
-                            , '||V_ESQUEMA||'.MIG_CONCURSOS_OPERACIONES PRO
-                         WHERE TCI.CNT_ID IS NOT NULL
-                           AND EXP.CD_PROCEDIMIENTO IS NOT NULL
-                           AND EXP.CD_PROCEDIMIENTO = PRC.CD_CONCURSO 
-                           AND PRC.CD_CONCURSO      = TCI.CD_PROCEDIMIENTO
-                           AND PRC.CD_CONCURSO      = PRO.CD_CONCURSO
-                           AND PRO.NUMERO_CONTRATO  = TCI.CONTRATO 
                          )'
                     );
     
@@ -681,20 +617,6 @@ BEGIN
                left join '||V_ESQUEMA||'.cnt_contratos cnt
                       on cpe.cnt_id = cnt.cnt_id                                  
              GROUP BY PCAB.CD_PROCEDIMIENTO, PCAB.ENTIDAD_PROPIETARIA, PCAB.GESTION_PLATAFORMA
-          UNION
-          SELECT CD_CONCURSO AS CD_PROCEDIMIENTO
-               , substr(max(cnt.cnt_contrato || '' | '' || nif || '' '' || per_nom50),1,50) AS NOMBRE_ASUNTO
-               , (SELECT DD_TAS_ID FROM '||V_ESQUEMA_MASTER||'.DD_TAS_TIPOS_ASUNTO WHERE DD_TAS_DESCRIPCION_LARGA = ''Concursal'') AS DD_TAS_ID
-               , ENTIDAD_PROPIETARIA
-               , GESTION_PLATAFORMA
-            from '||V_ESQUEMA||'.mig_concursos_cabecera 
-               left join  '||V_ESQUEMA||'.per_personas per 
-                      on per.per_doc_id = nif
-               left join '||V_ESQUEMA||'.cpe_contratos_personas cpe
-                      on per.per_id = cpe.per_id
-               left join '||V_ESQUEMA||'.cnt_contratos cnt
-                      on cpe.cnt_id = cnt.cnt_id                              
-             GROUP BY CD_CONCURSO,ENTIDAD_PROPIETARIA, GESTION_PLATAFORMA
           ) CAB,        
           '||V_ESQUEMA||'.EXP_EXPEDIENTES EXP,
           '||V_ESQUEMA||'.DD_GES_GESTION_ASUNTO GES,
@@ -715,7 +637,7 @@ BEGIN
     
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.ASU_ASUNTOS COMPUTE STATISTICS');    
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  ASU_ASUNTOS Analizada');
-    
+ /*   
     EXECUTE IMMEDIATE('update '||V_ESQUEMA||'.asu_asuntos asuc 
                           set asuc.fechacrear = (select nvl(fecha_publicacion_boe, TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')) 
                                                  from '||V_ESQUEMA||'.mig_concursos_cabecera 
@@ -723,7 +645,7 @@ BEGIN
                        where exists (select 1 from '||V_ESQUEMA_MASTER||'.dd_tas_tipos_asunto tas1 
                                      where tas1.dd_tas_id = asuc.dd_tas_id 
                                      and tas1.dd_tas_codigo = ''02'')');
-
+*/
 -- updateados 7.931 registros 
                                      
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  ASU_ASUNTOS.FechaCrear cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -870,10 +792,6 @@ FROM (
       FROM (select distinct CD_PROCEDIMIENTO, PRC_ID, PRC_PRC_ID, DD_TPO_CODIGO from  '||V_ESQUEMA||'.MIG_MAESTRA_HITOS Z ) MAE,
            (SELECT DISTINCT CD_PROCEDIMIENTO, null FECHA_PUBLICACION_BOE, JUZGADO, IMPORTE_PRINCIPAL, NUM_AUTO_SIN_FORMATO AS NUM_AUTO
               FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA
-            UNION
-            SELECT DISTINCT CD_CONCURSO CD_PROCEDIMIENTO, FECHA_PUBLICACION_BOE, JUZGADO, IMPORTE_PRINCIPAL, NUM_AUTOS AS NUM_AUTO
-              FROM '||V_ESQUEMA||'.MIG_CONCURSOS_CABECERA K 
-             WHERE NOT EXISTS(SELECT 1 FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA L WHERE K.CD_CONCURSO = L.CD_PROCEDIMIENTO)
             ) CAB,
 --GMN Solo migramos procedimientos abiertos            
 --GMN       (SELECT PRC_ID, PRC_PRC_ID, MAX(TAR_TAREA_FINALIZADA) AS PRC_FINALIZADO FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS GROUP BY PRC_ID, PRC_PRC_ID) MJ,
@@ -973,7 +891,7 @@ FROM (
                , NULL AS TAR_TAR_ID
                , 6 AS DD_EST_ID --ASUNTO en DD_EST_ESTADOS ITINERARIOS
                , 5 AS DD_EIN_ID ---PROCEDIMIENTO en DD_EIN_ENTIDAD_INFORMACION
-               , 39 AS DD_STA_ID ---GESTOR POR DEFECTO (). LUEGO UN PROCESO UPDATEARA A GESTOR/SUPERVISOR 
+               , TAP.DD_STA_ID ---GESTOR POR DEFECTO (). LUEGO UN PROCESO UPDATEARA A GESTOR/SUPERVISOR 
                , 1 AS TAR_CODIGO
                , MAE.TAR_TAREA
                , MAE.TAR_TAREA as TAR_DESCRIPCION
@@ -1123,91 +1041,6 @@ FROM (
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.TEV_TAREA_EXTERNA_VALOR COMPUTE STATISTICS');
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  TEV_TAREA_EXTERNA_VALOR Analizada');
 
-    
-/*    
-    ------------------
-    --    EMBARGOS
-    ------------------
-
-    EXECUTE IMMEDIATE ('
-    INSERT INTO '||V_ESQUEMA||'.EMP_NMBEMBARGOS_PROCEDIMIENTOS (
-            EMP_ID,
-            BIE_ID,
-            PRC_ID,
-            EMP_FECHA_SOLICITUD_EMBARGO,
-            EMP_FECHA_DECRETO_EMBARGO,
-            EMP_FECHA_REGISTRO_EMBARGO,
-            EMP_FECHA_ADJUDICACION_EMBARGO,
-            VERSION,
-            USUARIOCREAR,
-            FECHACREAR,
-            BORRADO,
-            EMP_IMPORTE_AVAL,
-            EMP_FECHA_AVAL,
-            EMP_IMPORTE_TASACION,
-            EMP_FECHA_TASACION,
-            EMP_IMPORTE_ADJUDICACION,
-            EMP_IMPORTE_VALOR,
-            EMP_LETRA,
-            EMP_FECHA_DENEGACION_EMBARGO )
-        SELECT '||V_ESQUEMA||'.S_EMP_EMBARGOS_PROCEDIMIENTOS.NEXTVAL,
-             BIE_ID,
-             PRC_ID,
-             FECHA_SOLICITUD_EMBARGO
-            ,FECHA_DECRETO_EMBARGO
-            ,FECHA_REGISTRO_EMBARGO
-            ,FECHA_ADJUDICACION_EMBARGO
-            ,VERSION
-            ,USUARIOCREAR
-            ,FECHACREAR
-            ,BORRADO
-            ,IMPORTE_AVALUO
-            ,FECHA_AVALUO
-            ,IMPORTE_TASACION
-            ,FECHA_TASACION
-            ,IMPORTE_ADJUDICACION
-            ,IMPORTE_VALOR
-            ,LETRA
-            ,EMP_FECHA_DENEGACION_EMBARGO
-        FROM(    
-        SELECT DISTINCT -- EJECUTIVOS
-            BIE.BIE_ID,
-            (SELECT MIN(PRC_ID) MIN_PRC FROM '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS PRC, '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO WHERE PRC.DD_TPO_ID = TPO.DD_TPO_ID AND DD_TPO_CODIGO = ''P15'' AND PRC.ASU_ID = ASU.ASU_ID) AS PRC_ID,
-            MPE.FECHA_SOLICITUD_EMBARGO,
-            MPE.FECHA_DECRETO_EMBARGO,
-            MPE.FECHA_REGISTRO_EMBARGO,
-            MPE.FECHA_ADJUDICACION_EMBARGO,
-            0 AS VERSION,
-            '''||USUARIO||''' AS USUARIOCREAR,
-            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'') FECHACREAR,
-            0 AS BORRADO,
-            MPE.IMPORTE_AVALUO,
-            MPE.FECHA_AVALUO,
-            MPE.IMPORTE_TASACION,
-            MPE.FECHA_TASACION,
-            ADJ.BIE_ADJ_IMPORTE_ADJUDICACION as IMPORTE_ADJUDICACION,
-            MPE.IMPORTE_VALOR,
-            MPE.LETRA,
-            NULL AS EMP_FECHA_DENEGACION_EMBARGO
-        FROM '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_EMBARGOS MPE
-           , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
-           , '||V_ESQUEMA||'.ASU_ASUNTOS ASU
-           , '||V_ESQUEMA||'.BIE_BIEN BIE
-           , '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ
-        WHERE CAB.ESTADO_PROCEDIMIENTO=''VIV''
-        AND CAB.TIPO_PROCEDIMIENTO = ''EJECUTIVO''
-        AND CAB.CD_PROCEDIMIENTO = MPE.CD_PROCEDIMIENTO
-        AND MPE.CD_PROCEDIMIENTO = ASU.ASU_ID_EXTERNO
-        AND MPE.CD_BIEN = BIE.BIE_CODIGO_EXTERNO
-        AND BIE.BIE_ID = ADJ.BIE_ID (+))');
-        
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  EMP_NMBEMBARGOS_PROCEDIMIENTOS cargada. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;    
-    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.EMP_NMBEMBARGOS_PROCEDIMIENTOS COMPUTE STATISTICS');
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  EMP_NMBEMBARGOS_PROCEDIMIENTOS Analizada');
-     
-  */
     ---------------
     --  SUBASTAS  --
     ---------------  
@@ -1656,24 +1489,6 @@ FROM (
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN ESTIMATE STATISTICS SAMPLE 20 PERCENT');
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' MIG_PROCS_SUBASTAS_LOTES_BIEN Analizada');
 
-
-/* No aplica en CAJAMAR ya que solo tenemos un lote por subasta
-
-    EXECUTE IMMEDIATE ('UPDATE '||V_ESQUEMA||'.LOS_LOTE_SUBASTA LOS
-                           SET LOS_VALOR_SUBASTA = ( 
-                                                     SELECT SUM(PSLB.VALOR_JUDICIAL_SUBASTA)
-                                                     FROM '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES PSL            
-                                                        LEFT JOIN '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN PSLB 
-                                                               ON PSLB.CD_LOTE = PSL.CD_LOTE
-                                                     WHERE PSL.CD_LOTE = LOS.CD_LOTE
-                                                    )
-                      ');                        
-    
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  LOS_LOTE_SUBASTA.LOS_VALOR_SUBASTA actualizada. '||SQL%ROWCOUNT||' Filas.');
-    COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' LOS_LOTE_SUBASTA cargada');
-    
-*/
     --------------------
     ---  LOB_LOTE_BIEN
     --------------------
@@ -1714,25 +1529,6 @@ FROM (
     
     EXECUTE IMMEDIATE('Analyze table '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_BIENES compute statistics FOR ALL INDEXES');
 
-/*
-    EXECUTE IMMEDIATE ('INSERT INTO  '||V_ESQUEMA||'.LOB_LOTE_BIEN
-                            (  
-                                LOS_ID
-                              , BIE_ID
-                              , VERSION 
-                            ) 
-                            SELECT DISTINCT 
-                                     LOS.LOS_ID
-                                   , BIE.BIE_ID
-                                   , LOS.VERSION 
-                            FROM  '||V_ESQUEMA||'.MIG_PROCS_SUBASTAS_LOTES_BIEN SLB 
-                                , '||V_ESQUEMA||'.LOS_LOTE_SUBASTA LOS
-                                , '||V_ESQUEMA||'.BIE_BIEN BIE
-                            WHERE SLB.CD_LOTE = LOS.CD_LOTE  
-                              AND SLB.CD_BIEN = BIE.BIE_CODIGO_INTERNO'
-                       );
-    */
---Se utiliza un unico bien 100314414. el cd_bien no cruza con el de BIE_BIEN
     EXECUTE IMMEDIATE ('INSERT INTO  '||V_ESQUEMA||'.LOB_LOTE_BIEN
                             (  
                                 LOS_ID
@@ -1753,7 +1549,8 @@ FROM (
                               AND C.CD_SUBASTA = A.CD_SUBASTA
 							  AND B.CD_LOTE = A.CD_LOTE
 							  AND C.CD_PROCEDIMIENTO = D.CD_PROCEDIMIENTO
-							  AND D.CD_BIEN = E.BIE_CODIGO_INTERNO'
+							  AND D.CD_BIEN = E.BIE_CODIGO_INTERNO
+                AND NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.LOB_LOTE_BIEN llb WHERE llb.los_id = los.los_id AND llb.bie_id = e.bie_id)'
                        );
     
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  LOB_LOTE_BIEN cargada. '||SQL%ROWCOUNT||' Filas.');
@@ -1822,28 +1619,7 @@ FROM (
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  PRB_PRC_BIE Analizada');
 
     -- 21.416 registros cargados
-    
-
-    -- Actualizamos el dd_stda_id de tareas para CONCURSOS DD_TAS_ID = 2
-    
-    EXECUTE IMMEDIATE ('
-       MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES tar
-       USING (select tap.dd_sta_id, tex.tar_id 
-              from '||V_ESQUEMA||'.TEX_TAREA_EXTERNA tex
-                 inner join '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap on tex.tap_id = tap.tap_id 
-                 inner join '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES t on t.TAR_ID   = tex.TAR_ID 
-                 inner join '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS      prc on prc.PRC_ID = t.PRC_ID         
-                 inner join '||V_ESQUEMA||'.ASU_ASUNTOS             asu on prc.asu_id = asu.asu_id                    
-                 where asu.usuariocrear='''||USUARIO||''' 
-                   and asu.DD_TAS_ID = 2  
-              ) tmp
-                      on (tmp.tar_id = tar.tar_id)                        
-       WHEN MATCHED THEN UPDATE SET tar.dd_sta_id = tmp.dd_sta_id,
-            tar.usuariomodificar = tar.dd_sta_id, tar.fechamodificar = sysdate'
-                     );
-       
-      COMMIT;    
-    
+ 
 
 
 --/***************************************

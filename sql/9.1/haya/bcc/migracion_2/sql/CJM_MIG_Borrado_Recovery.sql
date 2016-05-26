@@ -929,8 +929,8 @@ BEGIN
            EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU )';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado '||EXISTE||' registros');
 
-           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar where tar.spr_id NOT in (SELECT spr.spr_ID FROM '||V_ESQUEMA||'.SPR_SOLICITUD_PRORROGA spr ) and tar.spr_id is not null';
-           DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado con Solicitud de Prorroga '||EXISTE||' registros');
+           --EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar where tar.spr_id NOT in (SELECT spr.spr_ID FROM '||V_ESQUEMA||'.SPR_SOLICITUD_PRORROGA spr ) and tar.spr_id is not null';
+           --DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES .. Se han eliminado con Solicitud de Prorroga '||EXISTE||' registros');
 
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'ENABLE');
@@ -1245,12 +1245,14 @@ BEGIN
                            and b.IRG_CLAVE = ''ASUNTO_NOTIF''
                            and b.IRG_VALOR = ''Anotacion migrada''
                            and a.reg_id = b.reg_id
-                           and c.tar_id = to_number(a.irg_valor)';
+                           and c.tar_id = to_number(a.irg_valor)
+						   and c.usuariocrear = '''||USUARIO||'''';
               EXECUTE IMMEDIATE V_SQL INTO EXISTE;
               IF (EXISTE>0) THEN
                    PRO_KEYS_STATUS(V_ESQUEMA, 'TAR_TAREAS_NOTIFICACIONES', 'DISABLE');
                    EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.TAR_TAREAS_NOTIFICACIONES tar
-                                       WHERE exists ( SELECT 1
+                                       WHERE tar.usuariocrear = '''||USUARIO||'''
+									   and exists ( SELECT 1
                                                       FROM '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO a, MEJ_IRG_INFO_REGISTRO b
                                                       WHERE a.IRG_CLAVE = ''ID_NOTIF''
                                                       AND   b.IRG_CLAVE = ''ASUNTO_NOTIF''
@@ -1595,7 +1597,7 @@ BEGIN
       EXECUTE IMMEDIATE V_SQL INTO EXISTE;
       IF (EXISTE>0) THEN
            PRO_KEYS_STATUS(V_ESQUEMA, 'ASU_ASUNTOS', 'DISABLE');
-           EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA ||'.ASU_ASUNTOS ';
+           EXECUTE IMMEDIATE 'DELETE FROM '||V_ESQUEMA ||'.ASU_ASUNTOS WHERE ASU_ID IN ( SELECT ASU_ID FROM '||V_ESQUEMA||'.TABLA_TMP_ASU )';
            DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ASU_ASUNTOS... Se han eliminado '||EXISTE||' registros');
            COMMIT;
            PRO_KEYS_STATUS(V_ESQUEMA, 'ASU_ASUNTOS', 'ENABLE');
@@ -1767,12 +1769,12 @@ BEGIN
 DBMS_OUTPUT.PUT_LINE( 'BORRADO DE TEMPORALES');
 --***************************************/
 
-
+/*
      EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TABLA_TMP_ASU PURGE ';
      EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TABLA_TMP_PRC PURGE ';
      EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TABLA_TMP_EXP PURGE ';
      EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.TABLA_TMP_BIE PURGE ';
-
+*/
 
 
 --***************************************/

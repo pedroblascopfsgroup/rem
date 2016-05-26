@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ "$#" -ne 3 ] ; then
-    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID> <fecha_datos YYYYMMDD> <entorno>" 
+if [ "$#" -ne 2 ] ; then
+    echo "Parametros: <CM01/CM01_pass@host:puerto/ORACLE_SID> <fecha_datos YYYYMMDD> " 
     echo "  <entorno>: desa, pre, pro"
     exit 1
 fi
@@ -9,9 +9,9 @@ export NLS_LANG=SPANISH_SPAIN.AL32UTF8
 
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.AL32UTF8"
 
-echo "[INFO] Cogiendo información del entorno correpondiente"
-cd /recovery/batch-server/migracion
-cp etls/config/$3/config.ini etls/config/
+echo "[INFO] Cogiendo información del entorno correspondiente"
+#cd /recovery/batch-server/migracion
+#cp etls/config/$3/config.ini etls/config/
 
 sh_dir="shells/"
 
@@ -56,14 +56,14 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_tabla_intermedia.sh ejecutado correctamente"            
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_script_borrado.sh"                      
-./"$sh_dir"CJM_script_borrado.sh "$1"          
-if [ $? != 0 ] ; then 
-    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_script_borrado.sh"
-    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-    exit 1
-fi
-echo "[OK] ""$sh_dir""CJM_script_borrado.sh ejecutado correctamente"            
+#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_script_borrado.sh"                      
+#./"$sh_dir"CJM_script_borrado.sh "$1"          
+#if [ $? != 0 ] ; then 
+#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_script_borrado.sh"
+#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+#    exit 1
+#fi
+#echo "[OK] ""$sh_dir""CJM_script_borrado.sh ejecutado correctamente"            
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_Analiza_cm01.sh"                      
 ./"$sh_dir"CJM_Analiza_cm01.sh "$1" 
@@ -82,26 +82,6 @@ if [ $? != 0 ] ; then
   exit 1
 fi
 echo "[OK] ""$sh_dir""CJM_migracion_a_recovery.sh ejecutado correctamente"        
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_anotaciones.sh"                      
-#./"$sh_dir"CJM_migracion_anotaciones.sh "$1"   
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_anotaciones.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CJM_migracion_anotaciones.sh ejecutado correctamente"  
-
-#COMENTADA POR OBSOLETA#
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_caracteriza_validadores.sh"                               
-#./"$sh_dir"CJM_migracion_caracteriza_validadores.sh "$1"   
-#if [ $? != 0 ] ; then 
-#  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_caracteriza_validadores.sh"
-#  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-#  exit 1
-#fi
-#echo "[OK] ""$sh_dir""CJM_migracion_caracteriza_validadores.sh ejecutado correctamente" 
 
 
 #Este script instancia los litigios
@@ -126,62 +106,9 @@ echo "[OK] ""$sh_dir""CJM_migracion_volumetria_carga.sh ejecutado correctamente"
 
 
 
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_a_recovery_precontencioso.sh"                      
-#./"$sh_dir"CJM_migracion_a_recovery_precontencioso.sh "$1" "$2" 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_a_recovery_precontencioso.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CJM_migracion_a_recovery_precontencioso.sh ejecutado correctamente"      
-#
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_contratos_HRE_resto.sh"                      
-#./"$sh_dir"CJM_migracion_contratos_HRE_resto.sh "$1"
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_migracion_contratos_HRE_resto.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CJM_migracion_contratos_HRE_resto.sh ejecutado correctamente"     
-
-
-
 #####################################
 ### BLOQUE Correccion incidencias y Cambios
 #####################################
-
-#COMENTADA POR OBSOLETA#
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"                      
-#./"$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh "$1"
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CMREC_1449_ARREGLA_LETRADOS_y_PROCURADORES.sh ejecutado correctamente"   
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"                      
-#./"$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh "$1"
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CMREC_1505_migracion_paraliza_procedimientos_precontencioso.sh ejecutado correctamente"   
-
-
-#COMENTADA POR OBSOLETA#
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh"                      
-#./"$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh "$1" 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1645_Asignacion_Gestores_PREContencioso.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CMREC_1645_Asignacion_Gestores_PREContencioso.sh ejecutado correctamente"   
-
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1728_Situacion_cliente_Asunto.sh"                      
 ./"$sh_dir"CMREC_1728_Situacion_cliente_Asunto.sh "$1" 
@@ -202,26 +129,6 @@ fi
 echo "[OK] ""$sh_dir""CMREC_1460_Modifica_Nombre_Asunto.sh ejecutado correctamente"   
 
 
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_observaciones.sh"                      
-#./"$sh_dir"apr_main_observaciones.sh 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_observaciones.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""apr_main_observaciones.sh ejecutado correctamente"     
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""apr_main_obs_expediente.sh"                      
-#./"$sh_dir"apr_main_obs_expediente.sh 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"apr_main_obs_expediente.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""apr_main_obs_expediente.sh ejecutado correctamente"      
-
-
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh"                               
 ./"$sh_dir"CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh "$1"   
 if [ $? != 0 ] ; then 
@@ -232,16 +139,6 @@ fi
 echo "[OK] ""$sh_dir""CMREC-1797_carterizacion_CAJAMAR_postmigracion.sh ejecutado correctamente" 
 
 
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-1797_Carga_DD_Letrados_procuradores.sh"                               
-./"$sh_dir"CMREC-1797_Carga_DD_Letrados_procuradores.sh "$1"   
-if [ $? != 0 ] ; then 
-  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-1797_Carga_DD_Letrados_procuradores.sh"
-  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-  exit 1
-fi
-echo "[OK] ""$sh_dir""CMREC-1797_Carga_DD_Letrados_procuradores.sh ejecutado correctamente" 
-
-
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh"                               
 ./"$sh_dir"CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh "$1"   
 if [ $? != 0 ] ; then 
@@ -250,37 +147,6 @@ if [ $? != 0 ] ; then
   exit 1
 fi
 echo "[OK] ""$sh_dir""CMREC-1797_Carterizacion_LETRADOS_y_PROCURADORES.sh ejecutado correctamente" 
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1811_Carga_liquidaciones_precontencioso.sh"                               
-#./"$sh_dir"CMREC_1811_Carga_liquidaciones_precontencioso.sh "$1"   
-#if [ $? != 0 ] ; then 
-#  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1811_Carga_liquidaciones_precontencioso.sh"
-#  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-#  exit 1
-#fi
-#echo "[OK] ""$sh_dir""CMREC_1811_Carga_liquidaciones_precontencioso.sh ejecutado correctamente" 
-
-#PENDIENTE DE CORRECCION
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh"                               
-#./"$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh "$1"   
-#if [ $? != 0 ] ; then 
-#  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh"
-#  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-#  exit 1
-#fi
-#echo "[OK] ""$sh_dir""CMREC_1510_MIGRACION_PROPUESTAS_FONDOS_PROPIOS.sh ejecutado correctamente" 
-
-
-echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh"                               
-./"$sh_dir"CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh "$1"   
-if [ $? != 0 ] ; then 
-  echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh"
-  echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"          
-  exit 1
-fi
-echo "[OK] ""$sh_dir""CJM_MIGRACION_EXPEDIENTES_NOTIFICACIONES.sh ejecutado correctamente" 
-
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh"                               
 ./"$sh_dir"CJM_CMREC_3078_INSERT_SUBASTAS_FICTICIAS_NO_ENVIADAS.sh "$1"   
@@ -303,7 +169,7 @@ echo "[OK] ""$sh_dir""CMREC-2102_Corrige_estados_subastas.sh ejecutado correctam
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC-2339_Transiciones_automaticas_CM01.sh"                               
-./"$sh_dir"CMREC-2102_Corrige_estados_subastas.sh "$1"   
+./"$sh_dir"CMREC-2339_Transiciones_automaticas_CM01.sh "$1"   
 if [ $? != 0 ] ; then 
   echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC-2339_Transiciones_automaticas_CM01.sh"
   echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh [CMREC-2339_Transiciones_automaticas_CM01]"          
@@ -330,26 +196,6 @@ if [ $? != 0 ] ; then
     exit 1           
 fi
 echo "[OK] ""$sh_dir""CMREC_1671_Gestion_asunto_por_marca_haya.sh ejecutado correctamente"   
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_1866_update_nombre_expediente_PCO.sh"                      
-#./"$sh_dir"CMREC_1866_update_nombre_expediente_PCO.sh "$1" 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_1866_update_nombre_expediente_PCO.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CMREC_1866_update_nombre_expediente_PCO.sh ejecutado correctamente"         
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_2718_update_tipo_expediente_Precontencioso.sh"                      
-#./"$sh_dir"CMREC_2718_update_tipo_expediente_Precontencioso.sh "$1" 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CMREC_2718_update_tipo_expediente_Precontencioso.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CMREC_2718_update_tipo_expediente_Precontencioso.sh ejecutado correctamente"         
 
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CMREC_2874_Modifica_Descripcion_expediente.sh"                      
@@ -380,16 +226,7 @@ if [ $? != 0 ] ; then
     exit 1           
 fi
 echo "[OK] ""$sh_dir""CJM_MIGRACION_EMBARGOS.sh ejecutado correctamente"         
-
-
-#echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_INSERT_TEV_VALORES_PRECONTENCIOSO.sh"                      
-#./"$sh_dir"CJM_INSERT_TEV_VALORES_PRECONTENCIOSO.sh "$1" 
-#if [ $? != 0 ] ; then
-#    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_INSERT_TEV_VALORES_PRECONTENCIOSO.sh"
-#    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
-#    exit 1           
-#fi
-#echo "[OK] ""$sh_dir""CJM_INSERT_TEV_VALORES_PRECONTENCIOSO.sh ejecutado correctamente"         
+     
 
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh"                      
 ./"$sh_dir"CJM_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh "$1" 

@@ -229,7 +229,7 @@ FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABEC
           select distinct asu.asu_id, usd.usd_id,
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
-               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_PROCURADOR = '''||v_procurador.CD_PROCURADOR||''' inner join
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on to_char(migp.cd_procedimiento) = asu.asu_id_externo  and migp.CD_PROCURADOR = '''||v_procurador.CD_PROCURADOR||''' inner join
                '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_codigo = '''||v_procurador.CD_PROCURADOR||''' inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on usd.des_id = des.des_id                    inner join
                '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 and usu_username = '''||v_procurador.CD_PROCURADOR||'''       
@@ -266,7 +266,7 @@ FOR v_procurador IN (SELECT DISTINCT CD_PROCURADOR FROM MIG_PROCEDIMIENTOS_CABEC
           select distinct asu.asu_id, usd.usd_id,
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
-               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_PROCURADOR = '''||v_procurador.CD_PROCURADOR||''' inner join
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on to_char(migp.cd_procedimiento) = asu.asu_id_externo  and migp.CD_PROCURADOR = '''||v_procurador.CD_PROCURADOR||''' inner join
                '||V_ESQUEMA||'.des_despacho_externo        des  on des.des_codigo = '''||v_procurador.CD_PROCURADOR||''' inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd on usd.des_id = des.des_id                     inner join
                '||V_ESQUEMA_MASTER||'.usu_usuarios         usu  on usu.usu_id = usd.usu_id and usu.USU_EXTERNO = 1 and usu_username = '''||v_procurador.CD_PROCURADOR||'''       
@@ -606,7 +606,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
           select distinct asu.asu_id, usd.usd_id
 --                 rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
-               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on to_char(migp.cd_procedimiento) = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
                '||V_ESQUEMA||'.DD_LHC_LETR_HAYA_CAJAMAR    lhc  on  lhc.dd_lhc_bcc_codigo = '''||v_letrado.CD_DESPACHO||'''  inner join              
    --               '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
                '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usu.USU_EXTERNO = 1 and usu_username = lhc.dd_lhc_haya_codigo       inner join
@@ -635,7 +635,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
      (
  select distinct asu.asu_id, usd.usd_id
        from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
-               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on to_char(migp.cd_procedimiento) = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
                '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on des.des_id= usd.des_id 			and usd.USD_GESTOR_DEFECTO = 1  inner join 
                '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usd.usu_id = usu.usu_id and usu.USU_EXTERNO = 1  and usu.usu_grupo = 1
@@ -673,7 +673,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
           select distinct asu.asu_id, usd.usd_id,
                  rank() over (partition by asu.asu_id order by usd.usu_id) as ranking
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
-               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on to_char(migp.cd_procedimiento) = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join
                '||V_ESQUEMA||'.DD_LHC_LETR_HAYA_CAJAMAR    lhc  on  lhc.dd_lhc_bcc_codigo = '''||v_letrado.CD_DESPACHO||'''  inner join              
    --               '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
                '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usu.USU_EXTERNO = 1 and usu_username = lhc.dd_lhc_haya_codigo       inner join
@@ -703,7 +703,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM MIG_PROCEDIMIENTOS_CABECERA) 
      (
           select distinct asu.asu_id, usd.usd_id
           from '||V_ESQUEMA||'.asu_asuntos asu                                                                inner join 
-               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on migp.cd_procedimiento = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join           
+               '||V_ESQUEMA||'.mig_procedimientos_cabecera migp on to_char(migp.cd_procedimiento) = asu.asu_id_externo  and migp.CD_DESPACHO = '''||v_letrado.CD_DESPACHO||''' inner join           
                '||V_ESQUEMA||'.des_despacho_externo   des  on des.des_codigo = '''||v_letrado.CD_DESPACHO||''' inner join 
                '||V_ESQUEMA||'.usd_usuarios_despachos      usd  on des.des_id= usd.des_id 			and usd.USD_GESTOR_DEFECTO = 1  inner join 
                '||V_ESQUEMA_MASTER||'.usu_usuarios            usu  on usd.usu_id = usu.usu_id and usu.USU_EXTERNO = 1  and usu.usu_grupo = 1

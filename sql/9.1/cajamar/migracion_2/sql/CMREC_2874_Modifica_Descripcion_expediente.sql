@@ -34,7 +34,7 @@ SELECT       PCAB.CD_PROCEDIMIENTO
           ,  ASU.EXP_ID
 FROM CM01.mig_procedimientos_cabecera pcab 
     INNER JOIN CM01.mig_procedimientos_operaciones pop on pcab.cd_procedimiento = pop.cd_procedimiento 
-    INNER JOIN CM01.ASU_ASUNTOS ASU ON ASU.asu_id_externo = pop.CD_PROCEDIMIENTO 
+    INNER JOIN CM01.ASU_ASUNTOS ASU ON ASU.asu_id_externo = to_char(pop.CD_PROCEDIMIENTO)
     INNER JOIN MIG_NOM_ASUNTO MNA ON MNA.CD_PROCEDIMIENTO = pop.cd_procedimiento   
 ) ) TMP 
 ON (EXP.EXP_ID = TMP.EXP_ID)

@@ -84,7 +84,7 @@ BEGIN
                                 from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                                      '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                                      '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                                where asuu.DD_TAS_ID = 1
+                                where asuu.DD_TAS_ID = 1 and asuu.USUARIOCREAR = '''||USUARIO||'''
                                )
               ) aux' ;
    
@@ -105,7 +105,7 @@ BEGIN
                                 from '||V_ESQUEMA||'.asu_asuntos asuu inner join
                                      '||V_ESQUEMA||'.dd_pas_propiedad_asunto pas on pas.dd_pas_id = asuu.dd_pas_id inner join
                                      '||V_ESQUEMA||'.dd_ges_gestion_asunto ges on ges.dd_ges_id = asuu.dd_ges_id
-                                where asuu.DD_TAS_ID = 1 )
+                                where asuu.DD_TAS_ID = 1 and asuu.USUARIOCREAR = '''||USUARIO||''')
             ) aux';
    
     EXECUTE IMMEDIATE V_SQL1; 
@@ -121,12 +121,6 @@ BEGIN
 
     EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO COMPUTE STATISTICS');
     DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' - GAH_GESTOR_ADICIONAL_HISTORICO Analizada');
-
- 
- 
---/***************************************
---*     FIN CARACTERIZACION VALIDADORES  *
---***************************************/
 
   DBMS_OUTPUT.PUT_LINE( 'FIN DEL PROCESO');
 

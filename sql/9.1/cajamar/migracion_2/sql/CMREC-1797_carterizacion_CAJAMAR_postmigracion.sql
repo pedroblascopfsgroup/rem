@@ -797,7 +797,7 @@ from
                     where gaa.asu_id = asu.asu_id and gaa.dd_tge_id = (select dd_tge_id from cmmaster.dd_tge_tipo_gestor where dd_tge_codigo = 'LETR'))
   and asu.asu_id in ( select assu.asu_id
                       from cm01.mig_procedimientos_actores migp inner join  
-                           cm01.asu_asuntos assu on assu.asu_id_externo = migp.cd_procedimiento
+                           cm01.asu_asuntos assu on assu.asu_id_externo = to_char(migp.cd_procedimiento)
                       where migp.cd_actor = 'PROYFORMS')
   ) aux ;
 
@@ -813,7 +813,7 @@ from
                     where gaa.gah_asu_id = asu.asu_id and gaa.GAH_TIPO_GESTOR_ID = (select dd_tge_id from cmmaster.dd_tge_tipo_gestor where dd_tge_codigo = 'LETR'))
   and asu.asu_id in (select assu.asu_id
                       from cm01.mig_procedimientos_actores migp inner join  
-                           cm01.asu_asuntos assu on assu.asu_id_externo = migp.cd_procedimiento
+                           cm01.asu_asuntos assu on assu.asu_id_externo = to_char(migp.cd_procedimiento)
                       where migp.cd_actor = 'PROYFORMS')
  ) aux ;
  

@@ -1621,6 +1621,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 						}
 					}
 					
+					/*
 					//Si el termino posee el campo otrosBienesSolvencia
 					vct = terminoAcuerdo.getValorTermino("otrosBienesSolvencia");
 					//Y es Si = 1
@@ -1630,6 +1631,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 							throw new BusinessOperationException("acuerdos.terminos.otrosBienesSolvencia");
 						}
 					}
+					*/
 				}
 			}
 		}
@@ -1638,13 +1640,16 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	private boolean CargasBienesInformadas(TerminoAcuerdo termino) {
 		//Revisamos que todos los bienes del termino tienen informado el importe Cargas
 		List<TerminoBien> terminosBien = termino.getBienes();
-		for (TerminoBien bien : terminosBien) {
-			if (!Checks.esNulo(bien.getBien()))
-				if (Checks.esNulo(bien.getBien().getImporteCargas()))
-						return false;
+		for (TerminoBien tbien : terminosBien) {
+			if (!Checks.esNulo(tbien.getBien()))
+				if (!Checks.esNulo(tbien.getBien().getImporteCargas()))
+						return true;
 		}
 		
-		return true;
+		if (Checks.esNulo(termino.getBienes()) || termino.getBienes().size()==0) 
+			return true;
+		else
+			return false;
 	}
 	
 	private boolean OtrosBienesSolvenciaInformada(TerminoAcuerdo termino) {

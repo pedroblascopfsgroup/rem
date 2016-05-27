@@ -104,7 +104,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA_M||'.FK_MNC_MTO_CORRECTIVO PK BORRADO...');
     END IF;
     
-    EXECUTE IMMEDIATE ('grant insert, references, select, update on '||V_ESQUEMA_M||'.MNC_MTO_CORRECTIVO '||' to '||V_ESQUEMA_M||''); 
+    EXECUTE IMMEDIATE ('grant insert, references, select, update on '||V_ESQUEMA_M||'.MNC_MTO_CORRECTIVO '||' to '||V_ESQUEMA||''); 
     
     V_MSQL := 'ALTER TABLE '||V_ESQUEMA_M||'.MNC_MTO_CORRECTIVO
 	         ADD CONSTRAINT FK_MNC_MTO_CORRECTIVO FOREIGN KEY (DD_MNC_CODIGO) REFERENCES '||V_ESQUEMA_M||'.DD_MNC_MTO_CORRECTIVO (DD_MNC_CODIGO) ';        

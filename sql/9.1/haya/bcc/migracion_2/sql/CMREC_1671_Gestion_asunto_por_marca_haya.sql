@@ -5,7 +5,7 @@ MERGE INTO HAYA02.asu_asuntos asu  USING
    select asuf.asu_id
         , (SELECT ges.DD_GES_ID FROM HAYA02.DD_GES_GESTION_ASUNTO ges
                             WHERE ges.DD_GES_CODIGO = case when b.dd_ges_codigo = 'HAYA' 
-                                                        and r.dd_cre_codigo  in ('EX','CN','IM','AR','MA','SC','AL') then 'HAYA' 
+                                                        and r.dd_cre_codigo  in ('EX','CN','IM','AR','MA','SC','AL', 'CA') then 'HAYA' 
                                                       else 'CAJAMAR' end ) as DD_GES_ID
    from 
    (select asu.asu_id, asu.dd_tas_id, asu.DD_GES_ID, trim(substr(asu.asu_nombre,1,INSTR(asu.asu_nombre,'|', 1) -1)) as numero_contrato 

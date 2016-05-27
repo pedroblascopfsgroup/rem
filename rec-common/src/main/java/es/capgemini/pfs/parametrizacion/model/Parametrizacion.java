@@ -44,6 +44,8 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_FICHERO_CONTRATO = "fichero.contrato.limite";
     public static final String LIMITE_FICHERO_EXPEDIENTE = "fichero.expediente.limite";
     public static final String LIMITE_FICHERO_ASUNTO = "fichero.asunto.limite";
+    public static final String CREACION_TAREA_UNICA_ANOTACION = "creacionTareaUnicaAnotacion";
+    public static final String BUSCADORES_JERARQUIZADO_ACTIVADO = "buscadoresJerarquizadoActivado";
     public static final String LIMITE_EXPORT_EXCEL = "limiteExportExcel";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_ASUNTOS = "limiteExportExcelBuscadorAsuntos";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_SUBASTAS = "limiteExportExcelBuscadorSubastas";
@@ -65,6 +67,8 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_EXPEDIENTES = "limiteExportExcelBuscadorExpedientes";
     public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_TAREAS = "limiteExportExcelBuscadorTareas";
     public static final String TIEMPO_CARGA_FECHA_CACHEO = "tiempoCargaFechaCacheo";
+    public static final String GESTOR_DOCUMENTAL_REST_CLIENT_USUARIO = "usuarioHayaGestorDoc";
+    public static final String GESTOR_DOCUMENTAL_REST_CLIENT_PASSWORD = "passwordHayaGestorDoc";
 
     @Id
     @Column(name = "PEN_ID")

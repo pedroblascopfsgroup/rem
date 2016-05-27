@@ -1,5 +1,7 @@
 package es.capgemini.pfs.acuerdo.dao;
 
+import java.util.List;
+
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.dao.AbstractDao;
 
@@ -15,4 +17,7 @@ public interface DDEstadoAcuerdoDao extends AbstractDao<DDEstadoAcuerdo, Long> {
      * @return DDEstadoAcuerdo
      */
     DDEstadoAcuerdo buscarPorCodigo(String codigo);
+    
+	List<DDEstadoAcuerdo> getListEstadosAcuerdo();
+
 }

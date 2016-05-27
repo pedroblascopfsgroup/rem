@@ -377,7 +377,13 @@
 	}
 
 	panel.setVisibleTab = function(data){
-		return true;
+		if(data.toolbar.tipoExpediente == 'REC'){
+			return true;
+		}
+		else{
+			return false;
+		}
+		
 	}
 	
   

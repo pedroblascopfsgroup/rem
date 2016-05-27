@@ -17,12 +17,20 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dao.MEJContratoDao;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dto.MEJBusquedaContratosDto;
+import es.pfsgroup.recovery.ext.impl.contrato.dao.DDSmcStockMarcadoCuentasDao;
+import es.pfsgroup.recovery.ext.impl.contrato.dao.impl.EXTInfoAdicionalContratoDaoImpl;
+import es.pfsgroup.recovery.ext.impl.contrato.model.DDSmcStockMarcadoCuentas;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 @Repository("MEJContratoDao")
 public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implements MEJContratoDao{
@@ -32,6 +40,12 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+	@Autowired
+	private DDSmcStockMarcadoCuentasDao ddSmcStockMarcadoCuentas;
+	
+	@Autowired
+	private EXTInfoAdicionalContratoDaoImpl infoAdicionalContratoDaoImpl;
 
 	@Override
 	public Page buscarContratosCliente(DtoBuscarContrato dto) {
@@ -271,6 +285,21 @@ public class MEJContratoDaoImpl extends AbstractEntityDao<Contrato, Long> implem
 		}
 
 		return hql.toString();
+	}
+
+	@Override
+	public String getEstadoBloqueoContrato(Long idContrato) {
+		String iacValue = infoAdicionalContratoDaoImpl.getEstadoBloqueoByCNTID(idContrato);
+		if(!Checks.esNulo(iacValue)){
+			DDSmcStockMarcadoCuentas asd = ddSmcStockMarcadoCuentas.getDDSmcStockMarcadoCuentasByID(Long.valueOf(iacValue));
+			if(!Checks.esNulo(asd)){
+				return asd.getDescripcionLarga();
+			}else{
+				return null;
+			}
+		}else{
+			return null;
+		}
 	}
 	
 }

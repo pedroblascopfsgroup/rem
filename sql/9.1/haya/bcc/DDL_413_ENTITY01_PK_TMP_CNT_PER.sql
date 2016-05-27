@@ -48,7 +48,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||v_esquema||'.TMP_CNT_PER PK BORRADA...');
     
         --** Comprobamos si existe la tabla   
-    V_SQL := 'select count(1) from ALL_indexes where index_name = 'PK_TMP_CNT_PER'  and owner = upper('''||v_esquema||''')';
+    V_SQL := 'select count(1) from ALL_indexes where index_name = ''PK_TMP_CNT_PER''  and owner = upper('''||v_esquema||''')';
     EXECUTE IMMEDIATE v_sql INTO v_num_tablas;
     IF V_NUM_TABLAS = 1 THEN 
     V_MSQL := 'DROP index '||v_esquema||'.PK_TMP_CNT_PER';        

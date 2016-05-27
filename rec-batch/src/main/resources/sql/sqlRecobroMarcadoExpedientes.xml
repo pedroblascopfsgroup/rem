@@ -1,29 +1,29 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-    <entry key="recobro.borrado.tmp_rec_exp_activos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_activos">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_ACTIVOS'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_extincion.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_extincion">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_EXTINCION'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_extincion_ru.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_extincion_ru">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_EXTINCION_RU'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_extincion_ra.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_extincion_ra">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_EXTINCION_RA'); END;
         ]]>
     </entry>
 
     <!-- PASO 2 - OBTENCION EXPEDIENTES ACTIVOS DE RECOBRO -->
-    <entry key="recobro.insert.tmp_rec_exp_activos.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_activos">
         <![CDATA[
            
             BEGIN
@@ -43,7 +43,7 @@
 
     <!-- PASO 3 - SE COMPRUEBA QUE LA FECHA DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA HOY O ANTERIOR: EN CASO DE QUE SEA ASÍ,
                   SE OBTIENEN TODOS LOS EXPEDIENTES ACTIVOS DE RECOBRO DE ESQUEMAS EN EXTINCIÓN -->
-    <entry key="recobro.insert.tmp_rec_exp_extincion.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_extincion">
         <!-- REVISAR -->
         <![CDATA[
             declare
@@ -78,7 +78,7 @@
 
     <!-- PASO 4.1 - SE COMPRUEBA QUE EL MODO DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA RU (RUPTURA): EN CASO DE QUE SEA ASÍ,
                     OBTENEMOS TODOS LOS EXPEDIENTES PREPARADOS PARA EXTINCIÓN Y LOS ENVIAMOS A RUPTURA -->
-    <entry key="recobro.insert.tmp_rec_exp_extincion_ru.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_extincion_ru">
         <!-- REVISAR -->
         <![CDATA[
             declare
@@ -110,7 +110,7 @@
 
     <!-- PASO 4.2 - SE COMPRUEBA QUE EL MODO DE EXTINCIÓN DEL ESQUEMA LIBERADO SEA RA (REARQUETIPACIÓN): EN CASO DE QUE SEA ASÍ,
                     OBTENEMOS TODOS LOS EXPEDIENTES PREPARADOS PARA EXTINCIÓN Y LOS ENVIAMOS A REARQUETIPACIÓN -->
-    <entry key="recobro.insert.tmp_rec_exp_extincion_ra.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_extincion_ra">
         <!-- REVISAR -->
         <![CDATA[
             declare

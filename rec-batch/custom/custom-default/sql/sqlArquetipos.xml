@@ -1,9 +1,0 @@
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-
-  <entry key="arquetipos.buscarArquetipoPredefinido">
-    <![CDATA[
-      SELECT arq_id FROM per_arq WHERE per_id = ? AND borrado = 0
-    ]]>
-  </entry>
-</properties>

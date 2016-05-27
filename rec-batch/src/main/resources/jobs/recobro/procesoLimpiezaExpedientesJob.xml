@@ -20,99 +20,99 @@
       						<!-- Paso 1 -->
       						<!-- Truncado de la tabla TMP_REC_EXP_SIN_PERSONAS_SUB -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_personas_sub.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_personas_sub"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_exp_sin_personas_sub"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<!-- Truncado de la tabla TMP_REC_EXP_SIN_RIESGO_SUB -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_riesgos_sub.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_riesgos_sub"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_exp_sin_riesgos_sub"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<!-- Truncado de la tabla TMP_REC_SIN_CONTRATOS_SUB -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_contratos_sub.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_contratos_sub"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_sin_contratos_sub"/>
       							<entry key="severidad" value="error"/>
       						</map>      
       						<!-- Truncado de la tabla TMP_REC_EXP_SIN_PERSONAS -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_personas.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_personas"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_exp_sin_personas"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<!-- Truncado de la tabla TMP_REC_EXP_SIN_RIESGO -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_riesgos.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_riesgos"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_exp_sin_riesgos"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<!-- Truncado de la tabla TMP_REC_SIN_CONTRATOS -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_contratos.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_contratos"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_sin_contratos"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<!-- Truncado de la tabla TMP_REC_EXP_SIN_CNT_ACTIVOS -->      						
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_cnt_activos.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_sin_cnt_activos"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_exp_sin_cnt_activos"/>
       							<entry key="severidad" value="error"/>
       						</map> 
       						<!-- Truncado de la tabla TMP_REC_EXP_CANCELADOS -->      						
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_cancelados.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.borrado.tmp_rec_exp_cancelados"/></entry>
       							<entry key="message" value="recobro.borrado.tmp_rec_exp_cancelados"/>
       							<entry key="severidad" value="error"/>
       						</map>        						
       						<!-- Paso 2 -->
       						<!-- Obtenemos los expedientes de recobro sin personas o que estas esten exceptuadas -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_personas_sub.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_personas_sub"/></entry>
       							<entry key="message" value="recobro.insert.tmp_rec_exp_sin_personas_sub"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_personas.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_personas"/></entry>
       							<entry key="message" value="recobro.insert.tmp_rec_exp_sin_personas"/>
       							<entry key="severidad" value="error"/>
       						</map>
       						<!-- Paso 3 -->
       						<!-- Obtenemos los expedientes de recobro sin contratos o que estos estan exceptuados -->
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_contratos_sub.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_contratos_sub"/></entry>
       							<entry key="message" value="recobro.insert.tmp_rec_exp_sin_contratos_sub"/>
       							<entry key="severidad" value="error"/>
       						</map>      						
       						<map>
-      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_contratos.${entity.dialect}"/></entry>
+      							<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_contratos"/></entry>
       							<entry key="message" value="recobro.insert.tmp_rec_exp_sin_contratos"/>
       							<entry key="severidad" value="error"/>
       						</map>
 							<!-- Paso 4 -->
 							<!-- Obtenemos los expedientes de recobro regularizados (suma del riesgo de todos los contratos igual a 0 -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_riesgos_sub.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_riesgos_sub"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_sin_riesgos_sub"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_riesgos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_riesgos"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_sin_riesgos"/>
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- Paso 5 Obtenemos los expedientes que no tienen ningún contrato activo y que se deben de cancelar -->
 							<!-- Obtenemos los expedientes de recobro regularizados (suma del riesgo de todos los contratos igual a 0 -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_cnt_activos.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_sin_cnt_activos"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_sin_cnt_activos"/>
 								<entry key="severidad" value="error"/>
 							</map>							
 							<!-- PASO 6 -->
 							<!-- Juntar los expedientes obtenidos en la tabla TMP_REC_EXP_CANCELADOS -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_cancelados.${entity.dialect}"/></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.insert.tmp_rec_exp_cancelados"/></entry>
 								<entry key="message" value="recobro.insert.tmp_rec_exp_cancelados"/>
 								<entry key="severidad" value="error"/>
 							</map>

@@ -21,7 +21,7 @@
   <bean id="movimientosDao" class="es.capgemini.pfs.batch.revisar.movimientos.dao.impl.MovimientosBatchDaoImpl">
     <property name="dataSource" ref="entityDataSource" />
     <property name="buscarDiasPosVencidaQuery">
-      <bean parent="sql" p:key="movimientos.buscarDiasPosVencida.${entity.dialect}" />
+      <bean parent="sql" p:key="movimientos.buscarDiasPosVencida" />
     </property>
     <property name="buscarDiasDescubiertoMovimientoQuery">
       <bean parent="sql" p:key="movimientos.diasDescubiertoMovimiento" />
@@ -47,16 +47,16 @@
     </property>
     <!--  Querys de registro de recuperaciones  -->
     <property name="registrarRecuperacionQuery">
-      <bean parent="sql" p:key="contratos.registrarRecuperacion.${entity.dialect}" />
+      <bean parent="sql" p:key="contratos.registrarRecuperacion" />
     </property>
     <property name="buscarSaldoProcedimientoAsuntoQuery">
       <bean parent="sql" p:key="contratos.buscarSaldoProcedimientoAsunto" />
     </property>
     <property name="buscarRecuperacionesQuery">
-      <bean parent="sql" p:key="contratos.buscarRecuperaciones.${entity.dialect}" />
+      <bean parent="sql" p:key="contratos.buscarRecuperaciones" />
     </property>
     <property name="buscarIdRecuperacionesQuery">
-      <bean parent="sql" p:key="contratos.buscarIdRecuperaciones.${entity.dialect}" />
+      <bean parent="sql" p:key="contratos.buscarIdRecuperaciones" />
     </property>
   </bean>  
 
@@ -72,7 +72,7 @@
       <bean parent="sql" p:key="antecedentes.buscarUltimoAntecedente" />
     </property>
     <property name="insertarNuevoAntecedenteQuery">
-      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedente.${entity.dialect}" />
+      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedente" />
     </property>
     <property name="updateAntecedenteEnPersonaQuery">
       <bean parent="sql" p:key="antecedentes.updateAntecedenteEnPersona" />
@@ -81,10 +81,10 @@
       <bean parent="sql" p:key="antecedentes.incrementarAntecedente" />
     </property>
     <property name="insertarNuevoAntecedenteInternoQuery">
-      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedenteInterno.${entity.dialect}" />
+      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedenteInterno" />
     </property>
     <property name="updateAntecedenteInternoQuery">
-      <bean parent="sql" p:key="antecedentes.updateAntecedenteInterno.${entity.dialect}" />
+      <bean parent="sql" p:key="antecedentes.updateAntecedenteInterno" />
     </property>
   </bean>    
   
@@ -124,10 +124,10 @@
       <bean parent="sql" p:key="clientes.buscarPersonaCliente" />
     </property>
     <property name="insertarNuevosContratosVencidosQuery">
-      <bean parent="sql" p:key="clientes.insertarNuevosContratosVencidos.${entity.dialect}" />
+      <bean parent="sql" p:key="clientes.insertarNuevosContratosVencidos" />
     </property>    
     <property name="insertarNuevosContratosQuery">
-      <bean parent="sql" p:key="clientes.insertarNuevosContratos.${entity.dialect}" />
+      <bean parent="sql" p:key="clientes.insertarNuevosContratos" />
     </property>    
     <property name="buscarContratosOrdenadoFechaPosVencidaQuery">
       <bean parent="sql" p:key="clientes.buscarContratosOrdenadoFechaPosVencida" />

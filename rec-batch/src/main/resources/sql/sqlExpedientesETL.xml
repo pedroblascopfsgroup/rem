@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- PASO 1 - PARTE COMUN A TODOS LOS BATCH. FUSIONAR EN EL FUTURO TAMBIEN RECOBRO AGENCIAS sqlRecobroPreparacionRecobro-->
-    <entry key="comunes.idxdrop.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxdrop.PreparaGeneracionExpedientes">
         <![CDATA[
         BEGIN
 
@@ -12,17 +12,17 @@
         END;
         ]]>
     </entry>
-    <entry key="comunes.truncate.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.truncate.PreparaGeneracionExpedientes">
         <![CDATA[
         BEGIN
-         --Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT');
-         --Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_GCL');
-         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT';
-         EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_GCL';
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT');
+         Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_GCL');
+         --EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT';
+         --EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_GCL';
         END;
         ]]>
     </entry>
-    <entry key="comunes.create.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.create.PreparaGeneracionExpedientes">
         <![CDATA[
         Declare
 
@@ -92,46 +92,47 @@
         End;
         ]]>
     </entry>
-    <entry key="comunes.idxcreate.PreparaGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxcreate.PreparaGeneracionExpedientes">
         <![CDATA[
         BEGIN
-         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_GCL');
-         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT');
-         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_GCL', estimate_percent => 20);
-         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT', estimate_percent => 20);
+         Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_GCL');
+         Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT');
+         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_GCL', estimate_percent => 20);
+         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT', estimate_percent => 20);
         END;
         ]]>
     </entry>
     <!-- PASO 2 - PARTE COMUN A SEGUIMIENTO Y VENCIDOS -->
-    <entry key="comunes.idxdrop.jobGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxdrop.jobGeneracionExpedientes">
         <![CDATA[
         BEGIN
-         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_EXP');
-         --Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_PER_EXP');
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_EXP UNUSABLE';
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_PER_EXP UNUSABLE';
+         Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_CNT_EXP');
+         Operacion_DDL.DDL_INDEX('DROP','IDX_BATCH_SV_DATOS_PER_EXP');
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_EXP UNUSABLE';
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_PER_EXP UNUSABLE';
         END;
         ]]>
     </entry>
-     <entry key="comunes.truncate.jobGeneracionExpedientes.Oracle9iDialect">
+     <entry key="comunes.truncate.jobGeneracionExpedientes">
         <![CDATA[
         BEGIN
-        /*
+
          Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT_PER');
          Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_CNT_EXP');
          Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_DATOS_PER_EXP');
          Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_CLIENTES_BASE');
          Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SV_CLIENTES');
-        */
+        /*
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT_PER';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_CNT_EXP';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_DATOS_PER_EXP';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_CLIENTES_BASE';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SV_CLIENTES';
+        */
         END;
         ]]>
     </entry>
-     <entry key="comunes.create.jobGeneracionExpedientes.Oracle9iDialect">
+     <entry key="comunes.create.jobGeneracionExpedientes">
         <![CDATA[
         DECLARE
 
@@ -172,7 +173,7 @@
                 Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
-               And tpx.dd_tpx_codigo in ('SEG','RECU','GESDEU')
+               And tpx.dd_tpx_codigo = 'RECU'
                And eex.borrado = 0
                And tpx.borrado = 0
                And cex.borrado = 0
@@ -236,7 +237,7 @@
                 Join ${master.schema}.DD_EEX_ESTADO_EXPEDIENTE EEX On exp.dd_eex_id = eex.dd_eex_id
                 Join DD_TPX_TIPO_EXPEDIENTE tpx On exp.dd_tpx_id = tpx.dd_tpx_id
              Where eex.dd_eex_codigo in ('1','2','4') --activo, bloqueado o congelado
-               And tpx.dd_tpx_codigo in ('SEG','RECU','GESDEU')
+               And tpx.dd_tpx_codigo in ('SEG','GESDEU')
                And pex.borrado = 0
                And exp.borrado = 0
                And eex.borrado = 0
@@ -281,8 +282,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SV_CLIENTES_BASE Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SV_CLIENTES_BASE');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_CLIENTES_BASE', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SV_CLIENTES_BASE');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_CLIENTES_BASE', estimate_percent => 20);
 
 
 
@@ -321,30 +322,30 @@
         END;
         ]]>
     </entry>
-    <entry key="comunes.idxcreate.jobGeneracionExpedientes.Oracle9iDialect">
+    <entry key="comunes.idxcreate.jobGeneracionExpedientes">
         <![CDATA[
         BEGIN
-         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_EXP');
-         --Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_PER_EXP');
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_EXP REBUILD';
-         EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_PER_EXP REBUILD';
+         Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_CNT_EXP');
+         Operacion_DDL.DDL_INDEX('CREATE','IDX_BATCH_SV_DATOS_PER_EXP');
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_CNT_EXP REBUILD';
+         --EXECUTE IMMEDIATE 'ALTER INDEX IDX_BATCH_SV_DATOS_PER_EXP REBUILD';
 
-         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_CLIENTES');
-         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_PER_EXP');
-         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT_PER');
-         --Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT_EXP');
-         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_CLIENTES', estimate_percent => 20);
-         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_PER_EXP', estimate_percent => 20);
-         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT_PER', estimate_percent => 20);
-         DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT_EXP', estimate_percent => 20);
+         Operacion_DDL.DDL_Table('STATS','BATCH_SV_CLIENTES');
+         Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_PER_EXP');
+         Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT_PER');
+         Operacion_DDL.DDL_Table('STATS','BATCH_SV_DATOS_CNT_EXP');
+         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_CLIENTES', estimate_percent => 20);
+         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_PER_EXP', estimate_percent => 20);
+         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT_PER', estimate_percent => 20);
+         --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SV_DATOS_CNT_EXP', estimate_percent => 20);
         END;
         ]]>
     </entry>
     <!-- PASO 3 - GENERAMOS EXPEDIENTES DE SEGUIMIENTO -->
-    <entry key="seguimiento.truncate.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="seguimiento.truncate.GeneracionExpedientes">
         <![CDATA[
         Begin
-         /*
+
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_GUIA');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_TIT');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_GCL');
@@ -358,8 +359,8 @@
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_EXP_DES');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA_TODO_LM');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_SEG_DATOS_SALIDA');
-         */
 
+         /*
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_GUIA';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_TIT';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_GCL';
@@ -373,10 +374,11 @@
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_EXP_DES';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA_TODO_LM';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_SEG_DATOS_SALIDA';
+         */
         End;
         ]]>
     </entry>
-    <entry key="seguimiento.create.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="seguimiento.create.GeneracionExpedientes">
         <![CDATA[
         DECLARE
 
@@ -419,7 +421,6 @@
                          , BATCH_SV_DATOS_CNT_PER  cpe
                          , BATCH_SV_DATOS_CNT      cnt
                      Where cli.per_id = pex.per_id(+)
-                       And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                        And pex.exp_id is null  --libre
                        And cli.cli_id = ccl.cli_id
                        And ccl.cnt_id = cnt.cnt_id
@@ -438,8 +439,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_GUIA Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_GUIA');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GUIA', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_GUIA');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GUIA', estimate_percent => 20);
 
 
             --** Obtenemos resto de contratos de la persona de pase
@@ -470,8 +471,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TIT Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_TIT');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TIT', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_TIT');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TIT', estimate_percent => 20);
 
 
             --** Obtenemos otras personas del grupo de la persona de pase y sus contratos
@@ -497,7 +498,6 @@
              Where gui.PER_ID = gl1.PER_ID
                And gl1.GCL_ID = gl2.GCL_ID
                And gl2.PER_ID = pex.PER_ID(+) and pex.exp_id is null --libre
-               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And gl2.PER_ID =  cpe.PER_ID
                And gui.PER_ID <> cpe.PER_ID
                And cpe.CNT_ID = cnt.CNT_ID
@@ -508,8 +508,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_GCL Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_GCL');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GCL', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_GCL');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_GCL', estimate_percent => 20);
 
 
             --** Juntamos todas las relaciones
@@ -528,8 +528,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_BASE Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_BASE');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_BASE', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_BASE');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_BASE', estimate_percent => 20);
 
 
             --** Inicio Primera Generacion si hace falta
@@ -556,7 +556,6 @@
              Where gui.CNT_ID =  cpe.CNT_ID
                And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
-               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO in ('PPGRA', 'PSGRA')
@@ -568,8 +567,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_1G_PER Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_PER');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_PER', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_PER');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_PER', estimate_percent => 20);
 
             --b) Buscamos otros contratos de los que sean titulares las personas del paso a).
             Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_1G_CNT
@@ -600,8 +599,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_1G_CNT Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_CNT');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1G_CNT');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
 
 
             --** Juntamos todas las relaciones (intervinientes + arrastrados 1Gen)
@@ -623,8 +622,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_1GEN Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1GEN');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1GEN', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_1GEN');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_1GEN', estimate_percent => 20);
 
 
             --** Inicio Segunda Generacion si hace falta
@@ -651,7 +650,6 @@
              Where gui.CNT_ID =  cpe.CNT_ID
                And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1
                And cpe.PER_ID = pex.PER_ID(+) and pex.EXP_ID is null --libre
-               And pex.dd_tpx_codigo(+) in ('SEG','GESDEU')
                And cpe.CNT_ID = cnt.CNT_ID
                And gui.EXP_ID = pas.EXP_ID
                And gui.DD_AEX_CODIGO = 'PSGRA'
@@ -716,8 +714,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_TODO Cargada',V_NUFILAS);
             COMMIT;
 
-            --Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_TODO');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TODO', estimate_percent => 20);
+            Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA_TODO');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA_TODO', estimate_percent => 20);
 
          --** Limpiamos relaciones arrastradas en varios expedientes
          ------------------------------------------------------------
@@ -733,7 +731,7 @@
                    loop
 
                      -- Quitamos relaciones obtenidas (ninguna la primera vez)
-                     execute immediate 'Truncate table BATCH_SEG_DATOS_SALIDA_TODO_LM';
+                     Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SEG_DATOS_SALIDA_TODO_LM');
                      Insert /*+append*/ into BATCH_SEG_DATOS_SALIDA_TODO_LM
                         WITH BATCH_SEG_FILTRADOS
                           AS (Select t.EXP_ID, t.EXP_DESCRIPCION, t.DD_AEX_CODIGO, t.OFI_ID, t.CNT_RIESGO, t.CNT_ID, t.PER_ID, t.CPE_ORDEN, t.ARQ_ID, t.CEX_PASE, t.PEX_PASE, t.PRIO
@@ -781,7 +779,8 @@
                    end loop;
 
                    -- dejamos limpia la temporal
-                   execute immediate 'Truncate table BATCH_SEG_DATOS_SALIDA_EXP_DES';
+                   --execute immediate 'Truncate table BATCH_SEG_DATOS_SALIDA_EXP_DES';
+                   Operacion_DDL.DDL_Table('TRUNCATE','BATCH_SEG_DATOS_SALIDA_EXP_DES');
                    --Log
                    INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA_EXP_DES Truncada',V_NUFILAS);
                    Commit;
@@ -816,16 +815,16 @@
               INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_SEG_DATOS_SALIDA Cargada',V_NUFILAS);
               COMMIT;
 
---              Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA');
-              DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA', estimate_percent => 20);
+              Operacion_DDL.DDL_Table('STATS','BATCH_SEG_DATOS_SALIDA');
+              --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_SEG_DATOS_SALIDA', estimate_percent => 20);
         END;
         ]]>
     </entry>
     <!-- PASO 4 - GENERAMOS EXPEDIENTES DE RECUPERACION -->
-    <entry key="recuperacion.truncate.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="recuperacion.truncate.GeneracionExpedientes">
         <![CDATA[
         Begin
-         /*
+
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_GUIA');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TIT');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_GCL');
@@ -839,7 +838,7 @@
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_EXP_DES');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TODO_LM');
          Operacion_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA');
-         */
+         /*
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_GUIA';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TIT';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_GCL';
@@ -853,10 +852,11 @@
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_EXP_DES';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TODO_LM';
          EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA';
+         */
         End;
         ]]>
     </entry>
-    <entry key="recuperacion.create.GeneracionExpedientes.Oracle9iDialect">
+    <entry key="recuperacion.create.GeneracionExpedientes">
         <![CDATA[
         DECLARE
 
@@ -899,7 +899,6 @@
                        , BATCH_SV_DATOS_CNT_PER  cpe
                        , BATCH_SV_DATOS_CNT      cnt
                    Where ccl.cnt_id = cex.cnt_id(+) and cex.exp_id is null  --libre
-                     And cex.dd_tpx_codigo(+) = 'RECU' --expediente de recuperacion
                      And cli.cli_id = ccl.cli_id
                      And ccl.cnt_id = cnt.cnt_id
                      And cli.per_id = cpe.per_id
@@ -918,8 +917,8 @@
               INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_GUIA Cargada',V_NUFILAS);
               COMMIT;
 
-              --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_GUIA');
-              DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_GUIA', estimate_percent => 20);
+              OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_GUIA');
+              --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_GUIA', estimate_percent => 20);
 
 
             --** Obtenemos los intervinientes obligados del contrato de pase.
@@ -969,8 +968,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_BASE Cargada',V_NUFILAS);
             COMMIT;
 
-            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_BASE');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_BASE', estimate_percent => 20);
+            OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_BASE');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_BASE', estimate_percent => 20);
 
 
             --** Obtenemos otras personas de los grupos de los titulares de contratos de pase y los contratos de los que son titulares.
@@ -1001,7 +1000,6 @@
                          And gui.PER_ID <> cpe.PER_ID and cpe.ARRASTRE = 1 --contratos de las personas del grupo (solo si son titulares)
                          And cpe.CNT_ID = cnt.CNT_ID
                          And cnt.CNT_ID = cex.CNT_ID(+) and cex.EXP_ID is null --contratos libres
-                         And cex.DD_TPX_CODIGO(+) = 'RECU'
                          And gui.EXP_ID = pas.EXP_ID
                          And pas.CEX_PASE = 1 and pas.PEX_PASE = 1
                          And gui.DD_AEX_CODIGO in ('CG','CPGRA', 'CSGRA')
@@ -1038,7 +1036,7 @@
                  , BATCH_VEN_DATOS_SALIDA_GUIA pas
              WHERE gui.PER_ID =  cpe.PER_ID
                AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
-               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.EXP_ID is null --libres
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
                AND gui.ARRASTRE = 1 --solo de titulares
@@ -1051,8 +1049,8 @@
             COMMIT;
 
 
-            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_1G_CNT');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
+            OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_1G_CNT');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1G_CNT', estimate_percent => 20);
 
 
             -- b) Buscamos otros titulares de los contratos del paso a).
@@ -1106,8 +1104,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_1GEN Cargada',V_NUFILAS);
             COMMIT;
 
-            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_1GEN');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1GEN', estimate_percent => 20);
+            OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_1GEN');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_1GEN', estimate_percent => 20);
 
 
 
@@ -1135,7 +1133,7 @@
                  , BATCH_VEN_DATOS_SALIDA_GUIA pas
              WHERE gui.PER_ID =  cpe.PER_ID
                AND gui.CNT_ID <> cpe.CNT_ID And cpe.ARRASTRE = 1 --contratos de los que sean titulares
-               And cnt.CNT_ID = cex.CNT_ID(+) And cex.DD_TPX_CODIGO(+) = 'RECU' And cex.EXP_ID is null --libres
+               And cnt.CNT_ID = cex.CNT_ID(+) And cex.EXP_ID is null --libres
                AND cpe.CNT_ID = cnt.CNT_ID
                AND gui.EXP_ID = pas.EXP_ID
                AND gui.ARRASTRE = 1 --solo de titulares
@@ -1147,8 +1145,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_2G_CNT Cargada',V_NUFILAS);
             COMMIT;
 
-            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_2G_CNT');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_2G_CNT', estimate_percent => 20);
+            OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_2G_CNT');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_2G_CNT', estimate_percent => 20);
 
 
             -- b) Buscamos titulares relacionadas con los contratos del paso a).
@@ -1204,8 +1202,8 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA_TODO Cargada',V_NUFILAS);
             COMMIT;
 
-            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_TODO');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_TODO', estimate_percent => 20);
+            OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA_TODO');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA_TODO', estimate_percent => 20);
 
 
          --** Limpiamos relaciones arrastradas en varios expedientes
@@ -1220,8 +1218,8 @@
            loop
 
              -- Quitamos relaciones obtenidas (ninguna la primera vez)
-             --OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TODO_LM');
-             EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TODO_LM';
+             OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_TODO_LM');
+             --EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_TODO_LM';
 
              Insert /*+append*/ into BATCH_VEN_DATOS_SALIDA_TODO_LM
                 WITH BATCH_VEN_FILTRADOS
@@ -1271,8 +1269,8 @@
            end loop;
 
            -- dejamos limpia la temporal
-           --OPERACION_DDl.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_EXP_DES');
-           EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_EXP_DES';
+           OPERACION_DDl.DDL_TABLE('TRUNCATE','BATCH_VEN_DATOS_SALIDA_EXP_DES');
+           --EXECUTE IMMEDIATE 'TRUNCATE TABLE BATCH_VEN_DATOS_SALIDA_EXP_DES';
 
 
 
@@ -1302,14 +1300,14 @@
             INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'BATCH_VEN_DATOS_SALIDA Cargada',V_NUFILAS);
             COMMIT;
 
-            --OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA');
-            DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA', estimate_percent => 20);
+            OPERACION_DDl.DDL_TABLE('STATS','BATCH_VEN_DATOS_SALIDA');
+            --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'BATCH_VEN_DATOS_SALIDA', estimate_percent => 20);
 
         END;
         ]]>
     </entry>
     <!-- PASO 5 - PERSISTENCIA DE EXPEDIENTES -->
-    <entry key="vencidos.persistencia.expedientes.Oracle9iDialect">
+    <entry key="vencidos.persistencia.expedientes">
         <![CDATA[
         DECLARE
 
@@ -1375,7 +1373,7 @@
                  , MIN(t.DD_AEX_ID) as DD_AEX_ID
                  , MAX(t.CEX_PASE) as CEX_PASE
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'REC-BATCH' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               from (select Distinct a.CNT_ID, a.EXP_ID, b.DD_AEX_ID, a.CEX_PASE
@@ -1401,7 +1399,7 @@
                  , MIN(t.DD_AEX_ID) as DD_AEX_ID
                  , MAX(t.PEX_PASE) as PEX_PASE
                  , 0 as VERSION
-                 , '${usuario.crear}' as USUARIOCREAR
+                 , 'REC-BATCH' as USUARIOCREAR
                  , sysdate as FECHACREAR
                  , 0 as BORRADO
               from (select distinct a.EXP_ID, a.PER_ID, b.DD_AEX_ID, a.PEX_PASE
@@ -1471,7 +1469,7 @@
         END;
         ]]>
     </entry>
-    <entry key="vencidos.persistencia.clientes.Oracle9iDialect">
+    <entry key="vencidos.persistencia.clientes">
         <![CDATA[
         DECLARE
 
@@ -1512,7 +1510,7 @@
         END;
         ]]>
     </entry>
-    <entry key="vencidos.persistencia.politicas.Oracle9iDialect">
+    <entry key="vencidos.persistencia.politicas">
         <![CDATA[
         DECLARE
 
@@ -1620,7 +1618,7 @@
         END;
         ]]>
     </entry>
-    <entry key="vencidos.persistencia.expedientesbpm.Oracle9iDialect">
+    <entry key="vencidos.persistencia.expedientesbpm">
         <![CDATA[
         DECLARE
 
@@ -1717,8 +1715,8 @@
           END IF;
 
           --** Conjunto base de expedientes sin proceso BPM con sus nuevos IDs
-          --OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_BATCH_SV_BPM_INSTANCE');
-          EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_BATCH_SV_BPM_INSTANCE';
+          OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_BATCH_SV_BPM_INSTANCE');
+          --EXECUTE IMMEDIATE 'TRUNCATE TABLE TMP_BATCH_SV_BPM_INSTANCE';
 
           EXECUTE IMMEDIATE
           'Insert /*+append*/ into '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE
@@ -1726,10 +1724,13 @@
            SELECT exp.EXP_ID
                 , '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL as PROCESSINSTANCE
                 , tpx.DD_TPX_CODIGO
-             FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES exp JOIN DD_TPX_TIPO_EXPEDIENTE tpx ON exp.dd_tpx_id = tpx.dd_tpx_id
+             FROM '||cENTITY_SCHEMA||'.EXP_EXPEDIENTES exp
+             JOIN '||cENTITY_SCHEMA||'.DD_TPX_TIPO_EXPEDIENTE tpx
+               ON exp.dd_tpx_id = tpx.dd_tpx_id
             WHERE exp.DD_EEX_ID = (select dd_eex_id from '||cMASTER_SCHEMA||'.DD_EEX_ESTADO_EXPEDIENTE Where dd_eex_codigo = ''1'') --activos
               AND exp.EXP_PROCESS_BPM IS NULL
               AND exp.EXP_MANUAL = 0
+              AND tpx.DD_TPX_CODIGO in (''RECU'',''SEG'',''GESDEU'')
           ';
 
           --LOG
@@ -1738,18 +1739,34 @@
           COMMIT;
 
           EXECUTE IMMEDIATE'
-          Update TMP_BATCH_SV_BPM_INSTANCE set TOKEN = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          Update '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE set TOKEN = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          --LOG
+          V_NUFILAS:=SQL%ROWCOUNT;
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Identificadores de TOKEN asignados',V_NUFILAS);
           COMMIT;
 
           EXECUTE IMMEDIATE'
-          Update TMP_BATCH_SV_BPM_INSTANCE set MODULEINSTANCE = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          Update '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE set MODULEINSTANCE = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          COMMIT;
+
+          --LOG
+          V_NUFILAS:=SQL%ROWCOUNT;
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Identificadores de INSTANCIA asignados',V_NUFILAS);
           COMMIT;
 
           EXECUTE IMMEDIATE'
-          Update TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
+          Update '||cENTITY_SCHEMA||'.TMP_BATCH_SV_BPM_INSTANCE set VARIABLEMAP = '||cMASTER_SCHEMA||'.HIBERNATE_SEQUENCE.NEXTVAL';
           COMMIT;
 
-          DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_BATCH_SV_BPM_INSTANCE', estimate_percent => 20);
+          --LOG
+          V_NUFILAS:=SQL%ROWCOUNT;
+          INSERT INTO BATCH_LOG VALUES(SYSTIMESTAMP,V_CADENA,V_PROCE,V_PASO,'Identificadores de MAPA de VARIABLES asignados',V_NUFILAS);
+          COMMIT;
+
+          --DBMS_STATS.GATHER_TABLE_STATS (ownname => USER , tabname => 'TMP_BATCH_SV_BPM_INSTANCE', estimate_percent => 20);
+          OPERACION_DDL.DDL_TABLE('STATS','TMP_BATCH_SV_BPM_INSTANCE');
 
           --** Insertamos la instancia
           EXECUTE IMMEDIATE

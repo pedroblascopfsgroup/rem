@@ -13,17 +13,17 @@
   						<property name="scripts">
   							<list>
   								<map>
-  									<entry key="sql"><bean parent="sql" p:key="recobro.facturacion.historizar_tablas.recobro_detalle_factura.${entity.dialect}"/></entry>
+  									<entry key="sql"><bean parent="sql" p:key="recobro.facturacion.historizar_tablas.recobro_detalle_factura"/></entry>
   									<entry key="message" value="recobro.facturacion.historizar_tablas.recobro_detalle_factura"/>
   									<entry key="severidad" value="error"/>
   								</map>
   								<map>
-  									<entry key="sql"><bean parent="sql" p:key="recobro.facturacion.historizar_tablas.recobro_detalle_factura_co.${entity.dialect}"/></entry>
+  									<entry key="sql"><bean parent="sql" p:key="recobro.facturacion.historizar_tablas.recobro_detalle_factura_co"/></entry>
   									<entry key="message" value="recobro.facturacion.historizar_tablas.recobro_detalle_factura"/>
   									<entry key="severidad" value="error"/>
   								</map>  		
   								<map>
-  									<entry key="sql"><bean parent="sql" p:key="recobro.facturacion.historizar_tablas.rdf_recobro_detalle_factura.${entity.dialect}"/></entry>
+  									<entry key="sql"><bean parent="sql" p:key="recobro.facturacion.historizar_tablas.rdf_recobro_detalle_factura"/></entry>
   									<entry key="message" value="recobro.facturacion.historizar_tablas.recobro_detalle_factura"/>
   									<entry key="severidad" value="error"/>
   								</map>

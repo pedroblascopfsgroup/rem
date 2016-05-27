@@ -204,7 +204,22 @@
 		,value:'${despachoExtras.relacionBankia}'
 	});
 
-	   	
+
+	<pfsforms:ddCombo name="comboProvincias"
+		labelKey="plugin.config.despachoExterno.turnado.ventana.provincias" label="**Provincias"  width="150"
+		value="" dd="${listaProvincias}" />
+	comboProvincias.setValue('${ambitoDespachoExtras[0]}');	
+	
+<%--
+ 	PRODUCTO-1274 ; BKREC-2291
+
+	Cuando se quieran multiples provincias por despacho, descomentar esta parte, y eleminar el combo anterior a este comentario.
+	La lógica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
+	Manager: ADMDespachoExternoManager 
+	Métodos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
+	
+	Vistas modificadas: altaDespachoExterno.jsp ; tabDatosAdicionalesDespacho.jsp
+
 	var provinciasData = <app:dict value="${listaProvincias}" />;
     var comboProvincias = app.creaDblSelect(provinciasData 
     	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
@@ -217,7 +232,8 @@
 	];
 
 	comboProvincias.setValue(arrayProvinciasLetrado);
- 
+  --%>
+  
 	var clasifDespachoFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.despachoExternoExtras.fieldSet.title" text="**Clasif Despacho" />'
 		,layout:'column'
@@ -280,7 +296,7 @@
 			,layout:'table'
 			,layoutConfig:{columns:3}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
-			,items:[ {items: [clasifDespachoFieldSet, comboProvincias,contratoVigor, servicioIntegral, codEstAse]}
+			,items:[ {items: [clasifDespachoFieldSet, comboProvincias, contratoVigor, servicioIntegral, codEstAse]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
 					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
 				   ]

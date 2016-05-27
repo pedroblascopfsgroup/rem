@@ -17,13 +17,12 @@
 	var idEsquema = ${idEsquema};
 	</c:if>
 
-	var nombreEsquema = new Ext.form.TextField({
-		name : 'esquemaNombre'
-		,value : '<s:message text="${nombreEsquema}" javaScriptEscape="true" />'
-		,fieldLabel : '<s:message code="plugin.procuradores.turnado.tipoProcedimiento**" text="**Nombre del esquema" />'
-		,allowBlank : false
-		,readOnly: true
-	});
+	<pfsforms:textfield
+		labelKey="plugin.procuradores.turnado.tipoProcedimiento**"
+		label="**Nombre del esquema"
+		name="nombreEsquema"
+		value="${nombreEsquema}"
+		readOnly="false" />
 	
 	var nombreEsquemaPanel = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.procuradores.turnado.tipoProcedimiento**" text="**Información esquema" />'
@@ -75,7 +74,7 @@
 			}
 			,evaluateAndSend: function(seguir) {      			
 	         			if(seguir== 'yes') {
-	         				//BORRAR REGLA
+	         				//TODO BORRAR REGLA
 						}
 	    	} 
 	});
@@ -110,7 +109,10 @@
 			,disabled: true
 			,hidden: true
 			,handler : function(){
-				//Guardar nueva configuracion (aplicar cambios)
+				<%-- Reset de las variable auxilaries que permiten la cancelacion de nuevas configuraciones --%>
+				nuevasPlazasConfig = [];
+				idsTuplasConfig = [];
+				<%-- Guardar nueva configuracion (aplicar cambios) --%>
 				btnGuardarNuevaConfiguracion.setDisabled(true);
 				btnGuardarNuevaConfiguracion.setVisible(false);
 				btnCancelarNuevaConfiguracion.setDisabled(true);
@@ -127,7 +129,12 @@
 			,disabled: true
 			,hidden: true
 			,handler : function(){
-				//Cancelar nueva configuracion (deshacer cambios)
+				<%-- Cancelar  modificaciones realizadas --%>
+				//TODO
+				<%-- Reset de las variable auxilaries que permiten la cancelacion de nuevas configuraciones --%>	
+				nuevasPlazasConfig = [];
+				idsTuplasConfig = [];
+				<%-- Cancelar nueva configuracion (deshacer cambios) --%>
 				btnGuardarNuevaConfiguracion.setDisabled(true);
 				btnGuardarNuevaConfiguracion.setVisible(false);
 				btnCancelarNuevaConfiguracion.setDisabled(true);

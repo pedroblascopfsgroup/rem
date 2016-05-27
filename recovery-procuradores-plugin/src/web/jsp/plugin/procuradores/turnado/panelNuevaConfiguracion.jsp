@@ -58,42 +58,8 @@
         ,handler : function(){
         	if(cmbPlazas.getValue().trim()!='' && cmbPlazas.getValue()!=null){
         		var plazaItem = listadoPlazasStore.getAt(listadoPlazasStore.find('codigo', cmbPlazas.getValue()));
-        		
 			  	//Llamar funcion añadir plaza nueva config
-			  	if(añadirNuevaPlazaConfigEsquema(plazaItem.get('codigo'))){
-		        	var campo = new Ext.form.Label({
-		  	   				name: 'plaza_'+plazaItem.get('codigo'),
-			   				html:  plazaItem.get('descripcion')+ '&nbsp;',
-			   				width:250,
-			   				style: 'font-size:12px;'
-		   	    	}); 
-		   	    	var borrarCampo = new Ext.form.Label({
-					   name: 'borrarPlaza_'+plazaItem.get('codigo'),
-					   html: '<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',
-			  		   style: 'float:left;font-size:12px;margin-left:2px;',
-			  		   listeners: {
-			  		   		render: function(c){
-			  		   			c.getEl().on({
-			  		   				click: function(el){
-			  		   					//Llamar funcion eliminar plaza config
-			  		   					if(borrarPlazaConfigEsquema(plazaValue)){
-				  		   					var plazaValue = this.name.split('_')[1];
-				  		   					var cmp = Ext.getCmp('turn_procu_lista_plazas').find('name','plaza_'+plazaValue)[0];
-				  		   					cmp.destroy();
-				  		   					this.destroy();
-				  		   					dimeSiPlazaYaSeleccionada(plazaValue);
-				  		   				}
-			  		   				},scope: c
-			  		   			});
-			  		   		}
-			   		   }
-			  		});
-			  		var panel = Ext.getCmp('turn_procu_lista_plazas');
-				    panel.add(campo);
-				   	panel.add(borrarCampo);
-				  	panel.doLayout();
-				  	dimeSiPlazaYaSeleccionada(plazaItem.get('codigo'));
-				}
+			  	añadirNuevaPlazaConfigEsquema(plazaItem);
    	    	}		
 		}
     });
@@ -104,15 +70,9 @@
         ,disabled : true
         ,handler: function(){
         	if(cmbPlazas.getValue().trim()!='' && cmbPlazas.getValue()!=null){
+        		var plazaItem = listadoPlazasStore.getAt(listadoPlazasStore.find('codigo', cmbPlazas.getValue()));	
         		//Llamar funcion eliminar plaza config
-        		if(borrarPlazaConfigEsquema(plazaItem.get('codigo'))){
-	        		var plazaItem = listadoPlazasStore.getAt(listadoPlazasStore.find('codigo', cmbPlazas.getValue()));	
-					var cmp = Ext.getCmp('turn_procu_lista_plazas').find('name','plaza_'+plazaItem.get('codigo'))[0];
-					cmp.destroy();
-					cmp = Ext.getCmp('turn_procu_lista_plazas').find('name','borrarPlaza_'+plazaItem.get('codigo'))[0];
-					cmp.destroy();
-					dimeSiPlazaYaSeleccionada(plazaItem.get('codigo'));
-				}
+        		borrarPlazaConfigEsquema(plazaItem.get('codigo'));
 			}
         }
     });
@@ -200,15 +160,9 @@
         ,disabled : true
         ,handler: function(){
         	if(cmbTPO.getValue().trim()!='' && cmbTPO.getValue()!=null){
+        		var tpoItem = listadoTPOStore.getAt(listadoTPOStore.find('codigo', cmbTPO.getValue()));	
 				//Llamar funcion eliminar tpo config
-				if(borrarTPOConfigEsquema(tpoItem.get('codigo'))){
-	        		var tpoItem = listadoTPOStore.getAt(listadoTPOStore.find('codigo', cmbTPO.getValue()));	
-					var cmp = Ext.getCmp('turn_procu_lista_procedimientos').find('name','tpo_'+tpoItem.get('codigo'))[0];
-					cmp.destroy();
-					cmp = Ext.getCmp('turn_procu_lista_procedimientos').find('name','borrarTpo_'+tpoItem.get('codigo'))[0];
-					cmp.destroy();
-					dimeSiTPOYaSeleccionado(tpoItem.get('codigo'));
-				}
+				borrarTPOConfigEsquema(tpoItem.get('codigo'));
 			}
         }
     });
@@ -280,14 +234,58 @@
 	}); 
 	
 	<%-- Funciones --%>
-	var añadirNuevaPlazaConfigEsquema = function(itemCod){
-		//TODO Comprobar que no exista ya configuracion existente para dicha plaza
-		nuevasPlazasConfig.push(itemCod);
-		return true;
+	var añadirNuevaPlazaConfigEsquema = function(plazaItem){
+		//Comprobar que no exista ya configuracion existente para dicha plaza
+		Ext.Ajax.request({
+			url: '/pfs/turnadoprocuradores/checkSiPlazaYaTieneConfiguracion.htm'
+			,params: {
+						plazaCod: plazaItem.get('codigo')
+						,idEsquema: idEsquema
+					}
+			,method: 'POST'
+			,success: function (result, request){
+				//Añadir codigo al array de codigo de plazas
+				nuevasPlazasConfig.push(plazaItem.get('codigo'));
+				
+				//Crear objetos dinamicos
+				var campo = new Ext.form.Label({
+	  	   				name: 'plaza_'+plazaItem.get('codigo'),
+		   				html:  plazaItem.get('descripcion')+ '&nbsp;',
+		   				width:250,
+		   				style: 'font-size:12px;'
+	   	    	}); 
+	   	    	var borrarCampo = new Ext.form.Label({
+					   name: 'borrarPlaza_'+plazaItem.get('codigo'),
+					   html: '<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',
+			  		   style: 'float:left;font-size:12px;margin-left:2px;',
+			  		   listeners: {
+			  		   		render: function(c){
+			  		   			c.getEl().on({
+			  		   				click: function(el){
+		  		   						var plazaValue = this.name.split('_')[1];
+		  		   						//Llamar funcion eliminar plaza config
+		  		   						borrarPlazaConfigEsquema(plazaValue);
+			  		   				},scope: c
+			  		   			});
+			  		   		}
+			   		   }
+		  		});
+		  		var panel = Ext.getCmp('turn_procu_lista_plazas');
+			    panel.add(campo);
+			   	panel.add(borrarCampo);
+			  	panel.doLayout();
+			  	dimeSiPlazaYaSeleccionada(plazaItem.get('codigo'));
+			  	
+			  	//Webflob para cargar el grid
+				rangosStore.webflow({idEsquema : idEsquema,  idPlaza : '', idTPO : ''});
+			}
+			,error: function(result, request){
+				alert("Error comprobando si ya existe configuracion para la plaza seleccionada");
+			}
+		});
 	}
 	
 	var borrarPlazaConfigEsquema = function(itemCod){
-		var success = false;
 		Ext.Ajax.request({
 			url: '/pfs/turnadoprocuradores/borrarConfigParaPlazaOTpo.htm'
 			,params: {
@@ -296,20 +294,31 @@
 					}
 			,method: 'POST'
 			,success: function (result, request){
+				var r = Ext.util.JSON.decode(result.responseText);
 				//Eliminar codigo del array de codigo de plazas
 				var index = nuevasPlazasConfig.indexOf(itemCod);
 				if(index > -1) nuevasPlazasConfig.splice(index, 1);
-				//TODO Eliminar ids tuplas eliminadas de el array que guarda ids
 				
+				//Eliminar ids tuplas eliminadas de el array que guarda ids
+				for(var i=0; i< r.idTuplas.length; i++){
+					var index = idsTuplasConfig.indexOf(r.idTuplas[0].idTupla);
+					if(index > -1) idsTuplasConfig.splice(index, 1);
+				}
+				
+				//Borrar objetos dinamico
+				var cmp = Ext.getCmp('turn_procu_lista_plazas').find('name','plaza_'+itemCod)[0];
+				cmp.destroy();
+				cmp = Ext.getCmp('turn_procu_lista_plazas').find('name','borrarPlaza_'+itemCod)[0];
+				cmp.destroy();
+				dimeSiPlazaYaSeleccionada(itemCod);
+				
+				//Webflob para cargar el grid
 				rangosStore.webflow({idEsquema : idEsquema,  idPlaza : '', idTPO : ''});
-				success = true;
 			}
 			,error: function(result, request){
 				alert("Error borrando");
-				success = false;
 			}
 		});
-		return success;
 	}
 	
 	var addNuevoTPOConfigEsquema = function(tpoItem){
@@ -327,42 +336,39 @@
 				for(var i=0; i< r.idTuplas.length; i++){
 					idsTuplasConfig.push(r.idTuplas[0].idTupla);
 				}
-				rangosStore.webflow({idEsquema : idEsquema,  idPlaza : '', idTPO : ''});
+		
 				//Crear objetos dinamicos
 				var campo = new Ext.form.Label({
-		  	   				name: 'tpo_'+tpoItem.get('codigo'),
-			   				html:  tpoItem.get('descripcion')+ '&nbsp;',
-			   				width:250,
-			   				style: 'font-size:12px;'
-		   	    	}); 
-		   	    	var borrarCampo = new Ext.form.Label({
-					   name: 'borrarTpo_'+tpoItem.get('codigo'),
-					   html: '<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',
-			  		   style: 'float:left;font-size:12px;margin-left:2px;',
-			  		   listeners: {
-			  		   		render: function(c){
-			  		   			c.getEl().on({
-			  		   				click: function(el){
-			  		   					//Llamar funcion eliminar tpo config
-			  		   					if(borrarTPOConfigEsquema(tpoValue)){
-				  		   					var tpoValue = this.name.split('_')[1];
-				  		   					var cmp = Ext.getCmp('turn_procu_lista_procedimientos').find('name','tpo_'+tpoValue)[0];
-				  		   					cmp.destroy();
-				  		   					this.destroy();
-				  		   					dimeSiTPOYaSeleccionado(tpoValue);
-			  		   					}
-			  		   				},scope: c
-			  		   			});
-			  		   		}
-			   		   }
-			  		});
-			  		
-			  		var panel = Ext.getCmp('turn_procu_lista_procedimientos');
-				    panel.add(campo);
-				   	panel.add(borrarCampo);
-				  	panel.doLayout();
-				  	dimeSiTPOYaSeleccionado(tpoItem.get('codigo'));
-				  	
+	  	   				name: 'tpo_'+tpoItem.get('codigo'),
+		   				html:  tpoItem.get('descripcion')+ '&nbsp;',
+		   				width:250,
+		   				style: 'font-size:12px;'
+	   	    	}); 
+	   	    	var borrarCampo = new Ext.form.Label({
+				   name: 'borrarTpo_'+tpoItem.get('codigo'),
+				   html: '<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',
+		  		   style: 'float:left;font-size:12px;margin-left:2px;',
+		  		   listeners: {
+		  		   		render: function(c){
+		  		   			c.getEl().on({
+		  		   				click: function(el){
+		  		   					var tpoValue = this.name.split('_')[1];
+		  		   					//Llamar funcion eliminar tpo config
+		  		   					borrarTPOConfigEsquema(tpoValue);
+		  		   				},scope: c
+		  		   			});
+		  		   		}
+		   		   }
+		  		});
+		  		
+		  		var panel = Ext.getCmp('turn_procu_lista_procedimientos');
+			    panel.add(campo);
+			   	panel.add(borrarCampo);
+			  	panel.doLayout();
+			  	dimeSiTPOYaSeleccionado(tpoItem.get('codigo'));
+			  	
+			  	//Webflob para cargar el grid
+			  	rangosStore.webflow({idEsquema : idEsquema,  idPlaza : '', idTPO : ''});
 			}
 			,error: function(result, request){
 				alert("Error guardando");
@@ -370,26 +376,34 @@
 		});
 	}
 	
-	var borrarTPOConfigEsquema = function(itemCod){
-		var success = false;
+	var borrarTPOConfigEsquema = function(tpoValue){
 		Ext.Ajax.request({
 			url: '/pfs/turnadoprocuradores/borrarConfigParaPlazaOTpo.htm'
 			,params: {
-						tpoCod: itemCod
+						tpoCod: tpoValue
 						,idEsquema: idEsquema
 						,arrayPlazas : nuevasPlazasConfig
 					}
 			,method: 'POST'
 			,success: function (result, request){
-				//TODO Eliminar ids tuplas eliminadas de el array que guarda ids
-	
+				var r = Ext.util.JSON.decode(result.responseText);
+				//Eliminar ids tuplas eliminadas de el array que guarda ids
+				for(var i=0; i< r.idTuplas.length; i++){
+					var index = idsTuplasConfig.indexOf(r.idTuplas[0].idTupla);
+					if(index > -1) idsTuplasConfig.splice(index, 1);
+				}
+				//Borrar objetos dinamicos
+				var cmp = Ext.getCmp('turn_procu_lista_procedimientos').find('name','tpo_'+tpoValue)[0];
+				cmp.destroy();
+				cmp = Ext.getCmp('turn_procu_lista_procedimientos').find('name','borrarTpo_'+tpoValue)[0];
+				cmp.destroy();
+				dimeSiTPOYaSeleccionado(tpoValue);
+					
+				//Webflob para cargar el grid
 				rangosStore.webflow({idEsquema : idEsquema,  idPlaza : '', idTPO : ''});
-				success = true;
 			}
 			,error: function(result, request){
 				alert("Error borrando");
-				success = false;
 			}
 		});
-		return success;
 	}

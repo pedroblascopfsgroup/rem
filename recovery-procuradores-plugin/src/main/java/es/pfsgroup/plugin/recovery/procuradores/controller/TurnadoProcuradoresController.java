@@ -8,6 +8,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -123,6 +124,15 @@ public class TurnadoProcuradoresController {
 	public String getTPOsInstant(String query, ModelMap model) {
 		model.put("data", turnadoPocuradoresMang.getTPOs(query));
 		return JSON_ESQUEMA_TURNADO_COMBOS_BUSQUEDA;
+	}
+	
+	@RequestMapping
+	public String checkSiPlazaYaTieneConfiguracion(@RequestParam(value = "idEsquema", required = true) Long idEsquema,
+			@RequestParam(value = "plazaCod", required = true) String plazaCod, ModelMap model) {
+		//Comprobar si ya existe configuracion
+		Boolean existeConfiguracion = turnadoPocuradoresMang.checkSiPlazaYaTieneConfiguracion(idEsquema,plazaCod);
+		if(existeConfiguracion) throw new UserException("Ya existe una configuracion vigente para el esquema y plaza especificados");
+		return "default";
 	}
 	
 	@SuppressWarnings("unchecked")

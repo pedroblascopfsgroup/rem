@@ -197,5 +197,13 @@ public interface TurnadoProcuradoresApi {
 	 * @return 
 	 */
 	List<Long> borrarConfigParaPlazaOTpo(Long idEsquema, String plazaCod, String tpoCod, String[] arrayPlazas);
+
+	/**
+	 * Comprueba si ya existe una configuracion para un esquema y una plaza dadas
+	 * @param idEsquema
+	 * @param plazaCod
+	 * @return
+	 */
+	Boolean checkSiPlazaYaTieneConfiguracion(Long idEsquema, String plazaCod);
 	
 }

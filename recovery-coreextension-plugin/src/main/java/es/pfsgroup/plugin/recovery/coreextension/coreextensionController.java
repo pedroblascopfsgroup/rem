@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
@@ -58,6 +60,9 @@ public class coreextensionController {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -129,6 +134,32 @@ public class coreextensionController {
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
 		//////
+		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven, para ello usaremos el coreProjectContext
+		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		
+		Map<String, String> despachosProcuradores = coreProjectContext.getDespachosProcuradores();
+		if(despachosProcuradores.containsKey(codEntidad)){
+			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+			while(iter.hasNext()){
+				DespachoExterno elemento = iter.next();
+				despachosProcuradores.get(codEntidad);
+				//for(String desp : despachosProcuradores){
+					//if(!elemento.getDespacho().equals(desp)){
+						//iter.remove();
+					//}
+				//}
+			}
+		}
+		
+		if(codEntidad.equals("HCJ")){
+			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+			while(iter.hasNext()){
+				DespachoExterno elemento = iter.next();
+				if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
+					iter.remove();
+				}
+			}
+		}
 		
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;

@@ -309,7 +309,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 		if(!Checks.esNulo(idsPlazasTpo)){
 			//Delete de TUP_TPC_TURNADO_PROCU_CONFIG
 			StringBuilder hql = new StringBuilder();
-			hql.append("delete * from TurnadoProcuradorConfig conf ");
+			hql.append("delete conf from TurnadoProcuradorConfig conf ");
 	        hql.append("where conf.esquemaPlazasTpo.id in (");
 	        for(int i = 0; i<idsPlazasTpo.size(); i++) {
 	        	if(i==0) hql.append(idsPlazasTpo.get(i));
@@ -321,7 +321,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	        
 	        //Delete de TUP_EPT_ESQUEMA_PLAZAS_TPO
 	        hql = new StringBuilder();
-			hql.append("delete * from EsquemaPlazasTpo ept ");
+			hql.append("delete ept from EsquemaPlazasTpo ept ");
 	        hql.append("where ept.id in (");
 	        for(int i = 0; i<idsPlazasTpo.size(); i++) {
 	        	if(i==0) hql.append(idsPlazasTpo.get(i));
@@ -351,10 +351,10 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ept.id from EsquemaPlazasTpo ept ");
 		hql.append("where ept.tipoProcedimiento.codigo = '"+tpoCod+"'");
-        hql.append("and ept.tipoPlaza.codigo in ('");
+        hql.append("and ept.tipoPlaza.codigo in (");
         for(int i = 0; i<arrayPlazas.length; i++) {
-        	if(i==0) hql.append(arrayPlazas[i]);
-        	else hql.append(","+arrayPlazas[i]);
+        	if(i==0) hql.append("'"+arrayPlazas[i]+"'");
+        	else hql.append(",'"+arrayPlazas[i]+"'");
         }
         hql.append(")");
         

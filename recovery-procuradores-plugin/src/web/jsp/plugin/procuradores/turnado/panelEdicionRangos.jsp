@@ -45,32 +45,64 @@
 	    ,triggerAction: 'all'
 	    ,emptyText:'----'
 	    ,obligatory: true
-		,width:205
+		,width:150
 		,allowBlank:false
 	    ,editable : false
+		,listeners: {
+			select: function(){
+				//TODO HACER COMPROBACIONES DE LOS BOTONES
+				botonAddDespacho.setDisabled(false);
+				//dimeSiTPOYaSeleccionado(this.getValue());
+			}
+		}
 	});
+	
+	var botonAddDespacho = new Ext.Button({
+        iconCls:'icon_mas'
+        ,disabled : true
+        ,handler : function(){
+			if(cmbDespachos.getValue().trim()!='' && cmbDespachos.getValue()!=null){
+				var item = despachosStore.getAt(despachosStore.find('id', cmbDespachos.getValue()));
+        		configDespachosPanel.add(crearTuplaDespacho(item.get('id'),item.get('nombre')));
+        		configDespachosPanel.doLayout();
+        		//TODO ACTUALIZAR BOTONES
+       		}	
+		}
+    });
     
-    var crearTuplaDespacho = function(index, despacho){
+	var botonRemoveDespacho = new Ext.Button({
+        iconCls:'icon_menos'
+        ,disabled : true
+        ,handler: function(){
+        	//TODO COMPROBAR SELECCION
+        	//TODO ELIMINAR COMPONENTES
+        	//TODO ACTUALIZAR BOTONES
+        }
+    });
+    
+    var despachosPanel = app.creaPanelHz({style : "margin-top:4px;margin-bottom:4px;"},[cmbDespachos, botonAddDespacho, botonRemoveDespacho]);
+    
+    var crearTuplaDespacho = function(id, despacho){
 		return despachoHzPanel = app.creaPanelHz({style : "margin-top:4px;margin-bottom:4px;"}
 					,[{
 		                	xtype: 'checkbox'
 		                	,boxLabel: despacho
-		                	,name: 'item-plaza-'+index
-		                	,itemId: 'item-plaza-'+index
+		                	,name: 'item-plaza-'+id
+		                	,itemId: 'item-plaza-'+id
 		                	,listeners: {
 				  		   		check: function(c){
-				  		   					var item = rangoImportesFieldSet.find('itemId','item-porcentaje-'+index)[0];
+				  		   					var item = rangoImportesFieldSet.find('itemId','item-porcentaje-'+id)[0];
 				  		   					item.setDisabled(!c.isDirty());
 				  		   				}
 				  		   	}
 	            	 }
 				     ,{					
     					xtype: 'numberfield'
-	                	,name: 'item-porcentaje-'+index
+	                	,name: 'item-porcentaje-'+id
 	                	,maxValue: 100
 		                ,minValue: 0
 		                ,width:50 
-		                ,itemId: 'item-porcentaje-'+index
+		                ,itemId: 'item-porcentaje-'+id
 		                ,disabled: true
 		                ,listeners: {
 		                	render: function(c) {
@@ -116,7 +148,7 @@
 		height:290
 		,border:false
 		,defaults : {hiddeLabel: true, labelWidth: 0, cellCls : 'vtop', style: 'padding:10px;'}
-		,items:[importeMinimo,importeMaximo,cmbFieldLabel,cmbDespachos,configDespachosPanel]
+		,items:[importeMinimo,importeMaximo,cmbFieldLabel,despachosPanel,configDespachosPanel]
 	});
 	
 	var rangoImportesFieldSet = new Ext.Panel({

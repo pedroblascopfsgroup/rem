@@ -496,4 +496,14 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		
 		return idsPlazasTpo;
 	}
+
+	@Override
+	public Boolean checkSiPlazaYaTieneConfiguracion(Long idEsquema, String plazaCod) {
+		List<EsquemaPlazasTpo> listaConfig = genericDao.getList(EsquemaPlazasTpo.class, 
+									genericDao.createFilter(FilterType.EQUALS, "esquemaTurnadoProcurador.id", idEsquema),
+									genericDao.createFilter(FilterType.EQUALS, "tipoPlaza.codigo", plazaCod));
+		
+		if(!Checks.esNulo(listaConfig)) return true;
+		else return false;
+	}
 }

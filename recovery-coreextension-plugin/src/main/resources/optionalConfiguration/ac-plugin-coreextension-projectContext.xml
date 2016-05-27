@@ -71,6 +71,17 @@
 				</entry>
 			</map>
 		</property>
+		<property name="despachosProcuradores">
+			<map>
+				<entry key="HCJ">
+					<set>
+						<value>Medina Cuadros Procuradores</value>
+						<value>ABA Procuradores</value>
+						<value>Leticia Codias</value>
+					</set>
+				</entry>
+			</map>
+		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->

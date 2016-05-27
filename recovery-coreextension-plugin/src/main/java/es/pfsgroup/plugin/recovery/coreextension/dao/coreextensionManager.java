@@ -46,6 +46,7 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.NivelDao;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -112,6 +113,9 @@ public class coreextensionManager implements coreextensionApi {
 	
 	@Autowired
 	private DespachoExternoDao despachoExternoDao;
+	
+	@Autowired
+	private NivelDao nivelDao;
 	
 	@Autowired
 	private MEJAcuerdoManager mejAcuerdoManager;
@@ -871,6 +875,13 @@ public class coreextensionManager implements coreextensionApi {
 		PageSql tiposAcuerdo = new PageSql();
 		tiposAcuerdo.setResults(mejAcuerdoManager.getListTipoAcuerdoByEntidad(codigo));
 		return tiposAcuerdo;
+	}
+	
+	@BusinessOperation(GET_CODIGO_NIVEL_POR_DESCRIPCION)
+	public Integer getCodigoNivelPorDescripcion(String descripcion) {
+	
+		return nivelDao.buscarCodigoNivelPorDescripcion(descripcion);
+
 	}
 
 }

@@ -66,6 +66,7 @@ public class coreextensionController {
 	private static final String LISTADO_BUSQUEDA_TERMINOS_JSON = "plugin/coreextension/acuerdo/listadoTerminosJSON";
 	private static final String JSON_LISTADO_DESPACHOS = "plugin/coreextension/acuerdo/listadoDespachosJSON";
 	private static final String JSON_LISTADO_TIPOS_ACUERDO = "plugin/coreextension/acuerdo/listadoTiposAcuerdoJSON";
+	private static final String JSON_CODIGO_NIVEL = "plugin/coreextension/listadoCodigoNivelJSON";
 
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -596,6 +597,15 @@ public class coreextensionController {
 		
 		model.put("tiposAcuerdo", tiposAcuerdo);
 		return JSON_LISTADO_TIPOS_ACUERDO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getCodigoNivelPorDescripcion(String descripcion, ModelMap model) {
+
+		Integer codigo= proxyFactory.proxy(coreextensionApi.class).getCodigoNivelPorDescripcion(descripcion);
+		model.put("codigo", codigo);
+		return JSON_CODIGO_NIVEL;
 	}
 	
 }

@@ -33,7 +33,7 @@ DECLARE
   cursor c1 is
     select usd_id, usu_id ,des_id from(
       select usd_id, usu_id ,des_id,ROW_NUMBER()
-         OVER (PARTITION BY usu_id ,des_id ORDER BY fechacrear asc) AS rownumber
+         OVER (PARTITION BY usu_id ,des_id ORDER BY fechacrear DESC, USD_ID DESC) AS rownumber
       from HAYA02.USD_USUARIOS_DESPACHOS where borrado=0
       )
       where rownumber > 1 ;  
@@ -43,14 +43,32 @@ DECLARE
 BEGIN
 
   DBMS_OUTPUT.PUT_LINE('[INICIO] HR-2549');
+  
+   UPDATE haya02.USD_USUARIOS_DESPACHOS
+          SET BORRADO = 0,
+                 usuarioborrar=NULL,
+                 fechaborrar= NULL
+   WHERE usuarioborrar='HR-2549';
 
+   UPDATE HAYA02.GAH_GESTOR_ADICIONAL_HISTORICO
+          SET BORRADO = 0,
+                 usuarioborrar=NULL,
+                 fechaborrar= NULL
+   WHERE usuarioborrar='HR-2549';
+   
+   UPDATE haya02.gaa_gestor_adicional_asunto
+          SET BORRADO = 0,
+                 usuarioborrar=NULL,
+                 fechaborrar= NULL
+   WHERE usuarioborrar='HR-2549';
+   
    for r in c1 loop
    
     select usd_id
        into nUSD_iD 
      from(
       select usd_id ,usu_id,ROW_NUMBER()
-         OVER (PARTITION BY usu_id ,des_id ORDER BY fechacrear asc) AS rownumber
+         OVER (PARTITION BY usu_id ,des_id ORDER BY fechacrear DESC, USD_ID DESC) AS rownumber
       from HAYA02.USD_USUARIOS_DESPACHOS where borrado=0 and usu_id= r.usu_id and des_id=r.des_id
       )
       where rownumber = 1 ;     
@@ -58,11 +76,12 @@ BEGIN
      update HAYA02.GAA_GESTOR_ADICIONAL_ASUNTO gaa
            set gaa.USD_ID = nUSD_iD
       where gaa.usd_id =  r.usd_id
-          and borrado=0;
+          and gaa.borrado=0;
   
      update HAYA02.GAH_GESTOR_ADICIONAL_HISTORICO gah
            set gah.gah_gestor_id = nUSD_iD
-      where gah.gah_gestor_id =  r.usd_id;
+      where gah.gah_gestor_id =  r.usd_id
+         and borrado=0; 
   
      update HAYA02.USD_USUARIOS_DESPACHOS usd
            set usd.BORRADO = 1,
@@ -78,7 +97,7 @@ BEGIN
   MERGE INTO HAYA02.gaa_gestor_adicional_asunto gaa USING
     (   select distinct gaa_id from 
                                         (select  gaa_id,ROW_NUMBER()
-                                           OVER (PARTITION BY asu_id, /*usd_id,*/dd_tge_id ORDER BY fechacrear asc) AS rownumber
+                                           OVER (PARTITION BY asu_id, /*usd_id,*/dd_tge_id ORDER BY fechacrear DESC, USD_ID DESC) AS rownumber
                                         from haya02.gaa_gestor_adicional_asunto
                                         where borrado=0 ) aux
                                         where rownumber > 1 ) aux
@@ -93,7 +112,7 @@ BEGIN
   MERGE INTO HAYA02.GAH_GESTOR_ADICIONAL_HISTORICO gah USING
     (   select distinct gah_id from   
                                       (select  gah_id, ROW_NUMBER()
-                                         OVER (PARTITION BY gah_asu_id,/*gah_gestor_id,*/ gah_tipo_gestor_id ORDER BY fechacrear asc) AS rownumber
+                                         OVER (PARTITION BY gah_asu_id,/*gah_gestor_id,*/ gah_tipo_gestor_id ORDER BY fechacrear DESC, GAH_GESTOR_ID DESC) AS rownumber
                                       from HAYA02.GAH_GESTOR_ADICIONAL_HISTORICO gah
                                       where borrado=0 )
                                       where rownumber > 1 ) aux

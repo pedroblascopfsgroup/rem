@@ -21,18 +21,15 @@
 /*******************************  INSERTAMOS ESTADOS EN LA HEP  ***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON
-set timing ON
-set linesize 2000
-SET VERIFY OFF
-set feedback on
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
 
 DECLARE
 
     V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -176,7 +173,6 @@ UPDATE CM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = 'CMREC-3245'
                                 and exp.FECHA_REALIZ_ESTUDIO_SOLV IS not NULL 
                              );
                              
-                             commit;
 
 
 UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
@@ -315,18 +311,19 @@ select hep.pco_prc_hep_id from pco_oks
 commit;                             
                              
                              
-EXCEPTION
-     WHEN OTHERS THEN
-          ERR_NUM := SQLCODE;
-          ERR_MSG := SQLERRM;
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
-          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(ERR_MSG);
-          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(V_SQL);
-          ROLLBACK;
-          RAISE;   
-END;
-/
 
-EXIT;
+EXCEPTION
+
+ WHEN OTHERS THEN
+   err_num := SQLCODE;
+   err_msg := SQLERRM;
+
+   DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
+   DBMS_OUTPUT.put_line(err_msg);
+
+   ROLLBACK;
+   RAISE;
+ END;
+  /
+ EXIT;
+

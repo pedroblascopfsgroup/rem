@@ -641,6 +641,7 @@
 		layout:'table'
 		,layoutConfig:{columns:2,tableAttrs:{style:'border-spacing:5px'}}
 		,autoHeight:true	
+		,width: 810
 		,title: '<s:message code="menu.clientes.filtrado.findGestores" text="**Modificar Gestores" />'
 		,collapsible: false
 		,items: [
@@ -668,7 +669,7 @@
         ,style : 'margin-bottom:10px;padding-right:10px'
         ,iconCls : 'icon_bienes'
        ,height: 200
-	   //,width:100
+	   ,width:820
 	   ,autoWidth:false
 	   ,store: gestorStore
 	   ,cm:gestorCM
@@ -774,41 +775,32 @@
 					}
 	});
 
+	
 	var panelAlta = new Ext.form.FormPanel({
-		bodyStyle : 'padding-left:5px;padding-top:5px'
+		bodyStyle : 'padding-left:5px; padding-top:10px'
 		,layout:'anchor'
-		,autoHeight : true
+		,autoScroll: true
+		,autoHeight : false
+		,height: 550
 		,defaults:{
 			border:false
 		}
 		,items : [
 		 	{ xtype : 'errorList', id:'errL' }
 		 	,{
-		 		autoHeight:true
+		 		autoHeight:false
 		 		,border:false
-		 		,defaults:{border:false,xtype:'fieldset',autoHeight:true}
+		 		,defaults:{border:false,xtype:'fieldset',autoHeight:false}
 		 		,items:[ 
 		 			{
-						layout:'table'
-						,layoutConfig:{columns:3}
-						,autoHeight:true
-						,border:false
-						,style:'padding-left:10px'
-						,cellCls:'vtop'
-						,width:900
-						,defaults:{xtype:'fieldset',border:false,autoHeight:true}
-						,items:[
-							{
-								items:[txtNombreAsunto,comboJerarquia,tipoDeAsunto]
+						
+							
+								items:[comboZonas,txtNombreAsunto,comboJerarquia,tipoDeAsunto]
 							},{
-								items:[comboZonas]
-								,style:'padding:5px'
+								items:[findGestoresPanel]
 							}
-						]
-					}
-					,{
-						items:[findGestoresPanel]
-					}
+						
+	
 					,{
 						items:[grid]
 					}

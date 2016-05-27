@@ -312,6 +312,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             exit 1
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
+    echo ""
+    echo "---------------------------------------------------"
     mkdir -p $BASEDIR/tmp/package/DB/scripts/
     mkdir -p $BASEDIR/tmp/package/DDL/scripts/
     mkdir -p $BASEDIR/tmp/package/DML/scripts/
@@ -384,7 +386,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
-            zip DDL-scripts.zip -r DDL 
+            zip --quiet DDL-scripts.zip -r DDL 
             cd -
         fi
     fi
@@ -400,13 +402,13 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
-            zip DML-scripts.zip -r DML 
+            zip --quiet DML-scripts.zip -r DML 
             cd -
         fi
     fi     
     if [[ $UNIFIED_PACKAGE != 'false' ]]; then
         cd $BASEDIR/tmp/package
-        zip DB-scripts.zip -r DB
+        zip --quiet DB-scripts.zip -r DB
         cd -
     fi
     echo ""

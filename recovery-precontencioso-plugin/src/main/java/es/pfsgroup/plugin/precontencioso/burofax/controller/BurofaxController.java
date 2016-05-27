@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.precontencioso.burofax.controller;
 
-import java.io.File;
 import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -257,6 +256,7 @@ public class BurofaxController {
 				if(direcciones.size()>0){	
 					
 					for(Direccion direccion : direcciones){
+						if(!direccion.getAuditoria().isBorrado()) {
 				    		if(!Checks.esNulo(burofax.getContrato())){
 				    			StringBuilder id = new StringBuilder();
 				    			id.append(burofax.getId()).append(burofax.getContrato().getId()).append(direccion.getId());
@@ -336,7 +336,7 @@ public class BurofaxController {
 				    			dto=new BurofaxDTO();
 				    			dto.setId(direccion.getId().toString());
 			    			}
-				    		
+						}	
 				    }
 				}
 				//Si el demandado no tiene direccion , agregamos la fila

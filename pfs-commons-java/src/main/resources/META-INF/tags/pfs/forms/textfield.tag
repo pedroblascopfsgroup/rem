@@ -13,6 +13,7 @@
 <%@ attribute name="width" required="false" type="java.lang.String"%>
 <%@ attribute name="readOnly" required="false" type="java.lang.Boolean"%>
 <%@ attribute name="labelWidth" required="false" type="java.lang.String"%>
+<%@ attribute name="maxLength" required="false" type="java.lang.String"%>
 
 <c:set var="_width" value="175" />
 
@@ -30,6 +31,7 @@ var ${name} = new Ext.ux.form.StaticTextField({
 		,width : ${_width} 
 	});
 </c:if>
+
 <c:if test="${!readOnly}">
 var ${name} = app.creaText("${name}","<s:message code="${labelKey}" text="${label}" />","${value}",{
 	width : ${_width}
@@ -43,5 +45,6 @@ var ${name} = app.creaText("${name}","<s:message code="${labelKey}" text="${labe
   					}
   				}
 		}</c:if>
+	<c:if test="${maxLength != null}">,maxLength:${maxLength}</c:if>
 });
 </c:if>

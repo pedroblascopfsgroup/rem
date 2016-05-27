@@ -1,0 +1,57 @@
+package es.pfsgroup.plugin.gestorDocumental.assembler;
+
+import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.KeyValuePair;
+import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_ACTIVOS.ProcessEventResponseType;
+
+
+public class GDActivoOutputAssembler {
+
+	public static ActivoOutputDto outputToDtoActivo(ProcessEventResponseType output) {
+
+		if (output == null) {
+			return null;
+		}
+
+		ActivoOutputDto dto = new ActivoOutputDto();
+		dto.setResultCode(output.getResultCode());
+		dto.setResultDescription(output.getResultDescription());
+		
+		if(output.getParameters() != null) {
+			for(KeyValuePair param : output.getParameters().getParameter()) {
+				if(ActivoInputDto.ID_ACTIVO_HAYA.equals(param.getCode())) {
+					dto.setIdActivoHaya(param.getValue());
+				}else if(ActivoInputDto.ID_ACTIVO_ORIGEN.equals(param.getCode())) {
+					dto.setIdActivoOrigen(param.getValue());
+				}
+			}
+		}
+		
+		return dto;
+	}
+	
+	public static PersonaOutputDto outputToDtoPersona(ProcessEventResponseType output) {
+
+		if (output == null) {
+			return null;
+		}
+
+		PersonaOutputDto dto = new PersonaOutputDto();
+		dto.setResultCode(output.getResultCode());
+		dto.setResultDescription(output.getResultDescription());
+		
+		if(output.getParameters() != null) {
+			for(KeyValuePair param : output.getParameters().getParameter()) {
+				if(PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode())) {
+					dto.setIdIntervinienteHaya(param.getValue());
+				}
+			}
+		}
+		
+		return dto;
+	}
+
+}

@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="recobro.idxdrop.jobArquetipado.Oracle10gDialect">
+    <entry key="recobro.idxdrop.jobArquetipado">
         <![CDATA[
             DECLARE
               A_TABLES DBMS_SQL.VARCHAR2_TABLE;
@@ -29,53 +29,53 @@
     </entry>
 
     <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-    <!-- entry key="recobro.borrado.tmp_rec_cnt_libres.Oracle10gDialect">
+    <!-- entry key="recobro.borrado.tmp_rec_cnt_libres">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES'); END;
         ]]>
     </entry -->
-    <entry key="recobro.borrado.tmp_rec_cnt_libres_arq_rec.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_cnt_libres_arq_rec">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_ARQ_REC'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_nuevos_cli.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_nuevos_cli">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_NUEVOS_CLI'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_cnt_libres_des_arq.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_cnt_libres_des_arq">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_DES_ARQ'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_cnt_libres_des_arq_rec.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_cnt_libres_des_arq_rec">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_DES_ARQ_REC'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_cnt_libres_des_arq_ord.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_cnt_libres_des_arq_ord">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_DES_ARQ_ORD'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_cnt_libres_arq_rec_pri.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_cnt_libres_arq_rec_pri">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_ARQ_REC_PRI'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_cnt_libres_per_arq.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_cnt_libres_per_arq">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CNT_LIBRES_PER_ARQ'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_arp_arq_recobro_persona.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_arp_arq_recobro_persona">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARP_ARQ_RECOBRO_PERSONA'); END;
         ]]>
     </entry>
     <!-- TODO Quitar estos si finalmente no hace falta
-    <entry key="recobro.borrado.tmp_rec_data_rule_engine.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_data_rule_engine">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_DATA_RULE_ENGINE'); END;
         ]]>
@@ -84,7 +84,7 @@
 
     <!-- PASO 2 - Obtenemos todos los contratos libres -->
     <!--  -TODO Comentado esto porque estamos probando de sustituir esta tabala como una vista. Si lo activamso de nuevo hay que descomentar el drop de los índices al principio
-    <entry key="recobro.insert.tmp_rec_cnt_libres.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres">
         <![CDATA[
             INSERT INTO TMP_REC_CNT_LIBRES
             SELECT DISTINCT CNT.CNT_ID, CPE.PER_ID
@@ -97,7 +97,7 @@
 
     <!-- PASO 3 - Recarga de la tabla tmp_rec_data_rule_engine -->
     <!--  TODO Si finalmente no necesitamos este paso, quitarlo.
-    <entry key="recobro.insert.tmp_rec_data_rule_egine.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_data_rule_egine">
         <![CDATA[
             INSERT INTO /*+ PARALLEL(TMP_REC_DATA_RULE_ENGINE, 16) PQ_DISTRIBUTE(TMP_REC_DATA_RULE_ENGINE,NONE) */ TMP_REC_DATA_RULE_ENGINE
             SELECT *
@@ -111,7 +111,7 @@
     <!-- Filtramos con la configuración, para obtener el único esquema liberado, y que el arquetipo
     de la persona sea distinto a un tipo de filtrado -->
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_per_arq.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_per_arq">
         <![CDATA[
             BEGIN
                 INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_PER_ARQ, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_PER_ARQ, NONE) */ INTO TMP_REC_CNT_LIBRES_PER_ARQ
@@ -143,7 +143,7 @@
 
     <!-- PASO 5 - Cruzamos las tablas resultantes anteriores y guardamos las personas arquetipadas -->
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_des_arq.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_des_arq">
         <![CDATA[
             BEGIN
                 INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ, NONE) */ INTO TMP_REC_CNT_LIBRES_DES_ARQ
@@ -159,7 +159,7 @@
 
     <!-- PASO 6 - Extraer de los contratos libres aquellos que no tienen asignados clientes -->
     <!--  xxx Debemos mantenerlo XXXX -->
-    <entry key="recobro.insert.tmp_rec_nuevos_cli.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_nuevos_cli">
         <![CDATA[
             BEGIN
                 INSERT /*+ APPEND PARALLEL(TMP_REC_NUEVOS_CLI, 16) PQ_DISTRIBUTE(TMP_REC_NUEVOS_CLI, NONE) */ INTO TMP_REC_NUEVOS_CLI
@@ -175,7 +175,7 @@
 
     <!-- PASO 7 - Guardamos los contratos libres arquetipados junto con su riesgo -->
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_des_arq_rec.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_des_arq_rec">
         <![CDATA[
             BEGIN
                 INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ_REC, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ_REC, NONE) */ INTO TMP_REC_CNT_LIBRES_DES_ARQ_REC
@@ -187,7 +187,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_rec_cnt_libres_des_arq_rec.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_rec_cnt_libres_des_arq_rec">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_DES_ARQ_REC_1'); --rebuild
@@ -201,7 +201,7 @@
 
     <!-- PASO 8 - Ordenamos los contratos libres por la prioridad del arquetipo y por el riesgo -->
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.create2.tmp_arq_recobro.Oracle10gDialect">
+    <entry key="recobro.create2.tmp_arq_recobro">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_ARQ_RECOBRO');
@@ -217,7 +217,7 @@
     </entry>
 
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_des_arq_ord.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_des_arq_ord">
         <![CDATA[
             BEGIN
                 INSERT /*+ APPEND PARALLEL(TMP_REC_CNT_LIBRES_DES_ARQ_ORD, 16) PQ_DISTRIBUTE(TMP_REC_CNT_LIBRES_DES_ARQ_ORD, NONE) */  INTO TMP_REC_CNT_LIBRES_DES_ARQ_ORD
@@ -233,7 +233,7 @@
 
     <!-- PASO 9 - Escojemos el arquetipo prioritario de cada contrato -->
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec_pri.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec_pri">
         <![CDATA[
             BEGIN
             COMMIT;
@@ -262,7 +262,7 @@
 
     <!-- PASO 10 - Borramos los contratos que no tengan personas -->
     <!--  xxx Podemos quitarlo XXXX -->
-    <entry key="recobro.delete.tmp_rec_cnt_libres_arq_rec_pri.Oracle10gDialect">
+    <entry key="recobro.delete.tmp_rec_cnt_libres_arq_rec_pri">
         <![CDATA[
             DELETE FROM TMP_REC_CNT_LIBRES_ARQ_REC_PRI
             WHERE PER_ID IS NULL
@@ -270,7 +270,7 @@
     </entry>
 
     <!-- PASO 11 - Volver a ordenar los contratos por arquetipo y riesgo -->
-    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_cnt_libres_arq_rec">
         <![CDATA[
             BEGIN
             COMMIT;
@@ -291,7 +291,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_INDEX('CREATE','TMP_REC_CNT_LIB_ARQ_REC_1'); --rebuild
@@ -303,7 +303,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.drop2.tmp_arq_recobro.Oracle10gDialect">
+    <entry key="recobro.drop2.tmp_arq_recobro">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE ('TRUNCATE','TMP_ARQ_RECOBRO');
@@ -313,7 +313,7 @@
 
     <!-- PASO 4 - Insertar los nuevos clientes en CLI_CLIENTES -->
     <!--
-    <entry key="recobro.insert.cli_clientes.Oracle10gDialect">
+    <entry key="recobro.insert.cli_clientes">
         <![CDATA[
             INSERT INTO CLI_CLIENTES
               (CLI_ID, PER_ID, ARQ_ID, DD_EST_ID, CLI_FECHA_EST_ID, USUARIOCREAR, FECHACREAR,

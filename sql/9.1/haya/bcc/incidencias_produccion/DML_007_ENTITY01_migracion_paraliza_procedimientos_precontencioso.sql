@@ -1,10 +1,17 @@
-/***************************************/
--- PARALIZAR PROCEDIMIENTOS PRECONTENCIOSO CAJAMAR (BCC)
--- Creador: CARLOS LOPEZ VIDAL
--- Modificador: 
--- Fecha: 05/05/2016
--- Modificacion: 
---          GMN:> Versión Inicial
+--##########################################
+--## AUTOR=CARLOS LOPEZ VIDAL
+--## FECHA_CREACION=20160505
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=HR-2441
+--## PRODUCTO=NO
+--## 
+--## Finalidad: PARALIZAR PROCEDIMIENTOS PRECONTENCIOSO CAJAMAR (BCC)
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##            0.1 Versión inicial
+--##########################################
+--*/
 /***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

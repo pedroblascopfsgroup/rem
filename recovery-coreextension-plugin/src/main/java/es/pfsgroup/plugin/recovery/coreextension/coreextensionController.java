@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.recovery.coreextension;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,17 +15,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
+import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
+import es.capgemini.pfs.termino.model.TerminoContrato;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -33,8 +43,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
-
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
 @Controller
@@ -49,7 +62,10 @@ public class coreextensionController {
 	private static final String JSON_LIST_TIPO_PROCEDIMIENTO = "procedimientos/listadoTiposProcedimientoJSON";
 	private static final String TIPO_USUARIO_DEFECTO_JSON = "plugin/coreextension/asunto/tipoUsuarioGestorDefectoJSON";
 	private static final String GESTORES_DESPACHOS_USUARIO_AUTO_JSON = "plugin/coreextension/asunto/listadoUsuariosAutomaticosJSON";
-	
+	private static final String LISTADO_BUSQUEDA_TERMINOS_JSON = "plugin/coreextension/acuerdo/listadoTerminosJSON";
+	private static final String JSON_LISTADO_DESPACHOS = "plugin/coreextension/acuerdo/listadoDespachosJSON";
+	private static final String JSON_LISTADO_TIPOS_ACUERDO = "plugin/coreextension/acuerdo/listadoTiposAcuerdoJSON";
+
 	@Autowired
 	public ApiProxyFactory proxyFactory;
 	
@@ -58,6 +74,12 @@ public class coreextensionController {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private	MEJAcuerdoManager mejAcuerdoManager;
+	
+	@Autowired
+    private Executor executor;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -387,4 +409,190 @@ public class coreextensionController {
 		
 		return TIPO_USUARIO_DEFECTO_JSON;
 	}
+	
+	/**
+	 * Controlador que devuelve un JSON con la lista de acuerdos en base a los filtros utilizados en el buscador de acuerdos
+	 * @param model
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String listBusquedaAcuerdos(ModelMap model, DTOTerminosFiltro terminosFiltroDto){
+		
+		//Si en la pestaña de jerarquía hemos seleccionado algún centro, lo añade a codigoZonas, en caso contrario,
+		//las extrae a través del usuario logado.
+		List<DTOTerminosResultado> results = new ArrayList<DTOTerminosResultado>();
+		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+    	EventFactory.onMethodStart(this.getClass());
+        if (terminosFiltroDto.getCentros() != null && terminosFiltroDto.getCentros().trim().length() > 0) {
+            StringTokenizer tokens = new StringTokenizer(terminosFiltroDto.getCentros(), ",");
+            Set<String> zonas = new HashSet<String>();
+            while (tokens.hasMoreTokens()) {
+                String zona = tokens.nextToken();
+                zonas.add(zona);
+            }
+            terminosFiltroDto.setCodigoZonas(zonas);
+        } else {
+           
+        	terminosFiltroDto.setCodigoZonas(usuario.getCodigoZonas());
+        }
+        EventFactory.onMethodStop(this.getClass());
+               
+		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario);
+		
+		results=preparaResultadosTerminos(page, terminosFiltroDto);
+		
+		model.put("results",results);
+		model.put("totalTerminos",page.getTotalCount());
+		
+		return LISTADO_BUSQUEDA_TERMINOS_JSON;
+	}
+
+	private List<DTOTerminosResultado> preparaResultadosTerminos(Page page,DTOTerminosFiltro terminosFiltroDto) {
+					
+		List<DTOTerminosResultado> results = new ArrayList<DTOTerminosResultado>();
+		List<TerminoAcuerdo> listadoTerminos = (List<TerminoAcuerdo>) page.getResults();
+		
+		for(int i=0;i<listadoTerminos.size();i++){
+			
+			DTOTerminosResultado terminos= new DTOTerminosResultado();
+
+			String idAcuerdo="";
+			String idTermino="";
+			String idAsunto="";
+			String nombreAsunto="";
+			String idExpediente="";
+			String tipoExpediente="";
+			String descripcionExpediente="";
+			String contratoPrincipal = "";
+			String tipoAcuerdo="";
+			String estado="";
+			String solicitante="";
+			String tipoSolicitante="";
+			String fechaAlta="";
+			String fechaEstado="";
+			String fechaVigencia="";
+			String clientePase="";
+			
+			TerminoAcuerdo terminoAcuerdo = listadoTerminos.get(i);
+			
+			idTermino=terminoAcuerdo.getId().toString();
+			idAcuerdo=terminoAcuerdo.getAcuerdo().getId().toString();
+			
+			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getAsunto())){
+				idAsunto=terminoAcuerdo.getAcuerdo().getAsunto().getId().toString();
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getAsunto().getNombre())){
+					nombreAsunto=terminoAcuerdo.getAcuerdo().getAsunto().getNombre();
+				}
+			}
+			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente())){
+				idExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getId().toString();
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente())){
+					tipoExpediente= terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente().getCodigo();
+				}
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getDescripcion())){
+					descripcionExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getDescripcion();
+				}			
+			}
+			
+			List<TerminoContrato> contratosTermino=terminoAcuerdo.getContratosTermino();
+			
+			Acuerdo acuerdo = terminoAcuerdo.getAcuerdo();
+			
+			Expediente expediente = acuerdo.getExpediente();
+			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getTipoAcuerdo())){
+				
+				if(!terminoAcuerdo.getAcuerdo().getTipoAcuerdo().getTipoEntidad().getCodigo().equals("ASU")){
+					if(!Checks.esNulo(expediente.getContratoPase())){	
+						if(expediente.getContratoPase().getContratoPersona().size()>0){
+							clientePase=expediente.getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
+						}			
+					}
+				}else{	
+					if(!Checks.esNulo(expediente.getContratoPase())){
+						Asunto asunto = acuerdo.getAsunto();
+						if(asunto.getExpediente().getContratoPase().getContratoPersona().size()>0){
+							clientePase=asunto.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
+						}
+					}
+				}
+			}
+			
+				
+			if(contratosTermino.size()!=0){
+				contratoPrincipal=contratosTermino.get(0).getContrato().getCodigoContrato();
+			}
+			
+			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo())){
+				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getTipoAcuerdo())){
+					tipoAcuerdo= terminoAcuerdo.getAcuerdo().getTipoAcuerdo().getDescripcion();
+				}	
+			}
+			
+			if(!Checks.esNulo(acuerdo.getEstadoAcuerdo())){
+				estado=acuerdo.getEstadoAcuerdo().getDescripcion();
+			}
+			
+			GestorDespacho gestorDespacho = acuerdo.getGestorDespacho();
+			if(!Checks.esNulo(gestorDespacho)){
+				DespachoExterno despachoExterno = gestorDespacho.getDespachoExterno();
+				if(!Checks.esNulo(despachoExterno)){
+					solicitante=despachoExterno.getDescripcion();	
+					tipoSolicitante=despachoExterno.getTipoDespacho().getDescripcion();
+				}			
+			}
+			
+			if(!Checks.esNulo(acuerdo.getFechaPropuesta())){
+				fechaAlta=acuerdo.getFechaPropuesta().toString();
+			}
+			
+			if(!Checks.esNulo(acuerdo.getFechaEstado())){
+				fechaEstado=acuerdo.getFechaEstado().toString();
+			}
+			
+			if(!Checks.esNulo(acuerdo.getFechaLimite())){
+				fechaVigencia=acuerdo.getFechaLimite().toString();
+			}
+			
+			terminos.setIdTermino(idTermino);
+			terminos.setIdAcuerdo(idAcuerdo);
+			terminos.setIdAsunto(idAsunto);
+			terminos.setNombreAsunto(nombreAsunto);
+			terminos.setIdExpediente(idExpediente);
+			terminos.setTipoExpediente(tipoExpediente);
+			terminos.setDescripcionExpediente(descripcionExpediente);
+			terminos.setIdContrato(contratoPrincipal);
+			terminos.setNroCliente(clientePase);
+			terminos.setTipoAcuerdo(tipoAcuerdo);
+			terminos.setSolicitante(solicitante);
+			terminos.setTipoSolicitante(tipoSolicitante);
+			terminos.setEstado(estado);
+			terminos.setFechaAlta(fechaAlta);
+			terminos.setFechaEstado(fechaEstado);
+			terminos.setFechaVigencia(fechaVigencia);
+			
+			results.add(terminos);
+		}
+		return results;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDespachosExternosByTipo(String codigo, String query, ModelMap model) {
+		
+		Page despachos = proxyFactory.proxy(coreextensionApi.class).getDespachosExternosByTipo(codigo,query);
+		model.put("despachos", despachos);
+		return JSON_LISTADO_DESPACHOS;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getTipoAcuerdosByEntidad(String codigo,ModelMap model) {
+
+		Page tiposAcuerdo = proxyFactory.proxy(coreextensionApi.class).getTipoAcuerdosByEntidad(codigo);
+		
+		model.put("tiposAcuerdo", tiposAcuerdo);
+		return JSON_LISTADO_TIPOS_ACUERDO;
+	}
+	
 }

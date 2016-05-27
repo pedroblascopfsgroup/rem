@@ -36,6 +36,7 @@
 	var unidadPoblacional_valor = '';
 	
 	var numFinca_valor = '';
+	var cru_valor = '';
 	var referenciaCatastralBien_valor = '';
 	var tomo_valor = '';
 	var libro_valor = '';
@@ -104,6 +105,7 @@
 		folio_valor = '${NMBbien.datosRegistralesActivo.folio}';
 		inscripcion_valor = '${NMBbien.datosRegistralesActivo.inscripcion}';
 		numFinca_valor = '${NMBbien.datosRegistralesActivo.numFinca}';
+		cru_valor = '${NMBbien.datosRegistralesActivo.cru}';
 		numRegistro_valor = '${NMBbien.datosRegistralesActivo.numRegistro}';
 		municipoLibro_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />';
 		municipioRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
@@ -173,7 +175,7 @@
 			/* AUTOMATICO */
 			/*
 			CPI - 14/11/2015
-			Se permite modificar bienes automaticos por tener la pestaña datos_entidad
+			Se permite modificar bienes automaticos por tener la pestaï¿½a datos_entidad
 			bloquearCampos = 1;
 			*/			 
 			bloquearCampos = 2; 
@@ -277,6 +279,7 @@
 			
 			numRegistro.setValue('');
 			numFinca.setValue('');
+			cru.setValue('');
 			comboProvinciaRegistro.setValue('');
 			municipoLibro.setValue('');
 			codigoRegistro.setValue('');
@@ -846,6 +849,7 @@
 		});
 		var referenciaCatastral = app.creaText('referenciaCatastralBien', '<s:message code="plugin.mejoras.bienesNMB.referenciaCatastral" text="**Referencia catastral" />' , referenciaCatastralBien_valor, {maxLength:20,labelStyle : labelStyle});
 		var numFinca = app.creaText('numFinca', '<s:message code="plugin.mejoras.bienesNMB.numFinca" text="**Numero de finca" />' , numFinca_valor, {maxLength:50,labelStyle : labelStyle});
+		var cru = app.creaText('cru', '<s:message code="plugin.mejoras.bienesNMB.cru" text="**CRU" />' , cru_valor, {maxLength:14,labelStyle : labelStyle});
 		var tomo = app.creaNumber('tomo', '<s:message code="plugin.nuevoModeloBienes.bienesNMB.tomo" text="**Tomo" />' , tomo_valor, {maxLength:6,labelStyle : labelStyle});
 		var libro = app.creaNumber('libro', '<s:message code="plugin.mejoras.bienesNMB.libro" text="**libro" />' , libro_valor, {maxLength:6,labelStyle : labelStyle});
 		var folio = app.creaNumber('folio', '<s:message code="plugin.mejoras.bienesNMB.folio" text="**folio" />' , folio_valor, {maxLength:6,labelStyle : labelStyle});
@@ -1325,7 +1329,7 @@
 			
 			for(var i=0;i < listaTabs.length;i++) {
 				 if (listaTabs[i].tipoBien == tipoBienValidar)  {	 	
-				 	<%-- Comprobamos pestañas del tipo de bien correspondiente --%>
+				 	<%-- Comprobamos pestaï¿½as del tipo de bien correspondiente --%>
 					for(var x=0;x < listaTabs[i].tabs.length; x++) {
 						if (!validaTab(listaTabs[i].tabs[x])) {
 							return false;
@@ -1337,7 +1341,7 @@
 			return true;			
 		}
 				
-		<%--Obtiene el tipoBien cuyas pestañas se validarán, en caso de no encontrarse, se validarán las pestañas por defecto --%>
+		<%--Obtiene el tipoBien cuyas pestaï¿½as se validarï¿½n, en caso de no encontrarse, se validarï¿½n las pestaï¿½as por defecto --%>
 		var getTipoBienValidar = function(tipoBien){
 			for(var i=0;i < listaTabs.length;i++) {
 				 if (listaTabs[i].tipoBien == tipoBien)  {
@@ -1630,6 +1634,7 @@
 			}
 			parametros.numRegistro=numRegistro.getValue();
 			parametros.numFinca=numFinca.getValue();
+			parametros.cru=cru.getValue();
 			parametros.municipoLibro=municipoLibro.getValue();
 			parametros.municipioRegistro=comboMunicipioRegistro.getValue();
 			parametros.provinciaRegistro=comboProvinciaRegistro.getValue();
@@ -1882,7 +1887,7 @@
 					,items: [tipoInmueble, superficieNMB, superficieConstruida, tomo, libro, folio, comboProvinciaRegistro, comboMunicipioRegistro, municipoLibro ]
 				},{
 					layout:'form'
-					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca]
+					,items: [numRegistro, referenciaCatastral, codigoRegistro, inscripcion, fechaInscripcion, numFinca, cru]
 				}]
 		});
 		
@@ -2194,14 +2199,14 @@
 	   
     <c:forEach items="${tabs}" var="entry">
 		var lista = [];
-		<%-- Es posible que algunas de las pestañas existentes en la configuración no están definidas en la jsp, por eso filtramos la lista. --%>
+		<%-- Es posible que algunas de las pestaï¿½as existentes en la configuraciï¿½n no estï¿½n definidas en la jsp, por eso filtramos la lista. --%>
 		<c:forEach items = "${entry.value.listaTabs}" var="tab">
 			try{
 				if(${tab}){
 					lista[lista.length] = ${tab};
 				}
 			}catch(e){
-				<%-- Si la pestaña no se ha creado, no se intenta añadir. --%>		
+				<%-- Si la pestaï¿½a no se ha creado, no se intenta aï¿½adir. --%>		
 			}	
 		</c:forEach>
 		listaTabs[listaTabs.length] = new objTabs('${entry.key}',lista);

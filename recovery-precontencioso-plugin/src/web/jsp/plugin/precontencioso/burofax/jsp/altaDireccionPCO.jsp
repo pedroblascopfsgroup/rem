@@ -109,10 +109,11 @@
 			labelKey="rec-web.direccion.form.puerta" label="**Puerta"
 			value="" obligatory="false" width="50" />
 				
-	var origen = app.creaText("origen","<s:message code="rec-web.direccion.form.origen" text="**Origen" />","Manual",{
-		width : 100
-		,readOnly: true
-	});
+	<pfsforms:textfield name="origen"
+			labelKey="rec-web.direccion.form.origen" label="**Origen"
+			value="" obligatory="false" width="50" />
+	
+	origen.readOnly = true;
 	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'

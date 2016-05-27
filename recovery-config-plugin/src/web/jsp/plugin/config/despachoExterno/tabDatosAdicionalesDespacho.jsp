@@ -44,6 +44,21 @@
 		,items : [concursos,perfil]
 	});	
 	
+	
+	
+	
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.provincias" label="**Provincias" name="provinciasGrid" value="${ambitoDespachoExtras[0].descripcion}" readOnly="true" width="150" labelWidth="80"/>	
+	<%-- 
+	PRODUCTO-1274 ; BKREC-2291
+
+	Cuando se quieran multiples provincias por despacho, descomentar esta parte, y eleminar el field anterior a este comentario.
+	La lógica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
+	Manager: ADMDespachoExternoManager 
+	Métodos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
+	
+	Vistas modificadas: altaDespachoExterno.jsp ; tabDatosAdicionalesDespacho.jsp
+	
+	
 	var provinciaRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		 ,{name:'descripcion'}
@@ -85,11 +100,11 @@
    			descripcion: '${provinciasExtras.descripcion}'
    		});
 		provinciasStrore.insert(0, p); 
-	</c:forEach>
+	</c:forEach>--%>
 	
+	
+
 	<%-- Fin Campos PRODUCTO-1272 --%>
-
-
 	<pfs:defineParameters name="modDespParams" paramId="${despacho.id}" />
 	
 	var recargar = function (){

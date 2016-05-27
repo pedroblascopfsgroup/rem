@@ -301,7 +301,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		}
 		LiquidacionPCO liquPCO = null;
 		if (!Checks.esNulo(contrato)) {
-			liquPCO = liquidacionDao.getLiquidacionDelContrato(contrato.getId());
+			liquPCO = liquidacionDao.getLiquidacionDelContrato(contrato.getId(), envioBurofax.getBurofax().getProcedimientoPCO().getId());
 		}
 		
 		if(!Checks.esNulo(liquPCO) && !Checks.esNulo(liquPCO.getFechaCierre())){

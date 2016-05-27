@@ -111,8 +111,9 @@ public interface LiquidacionApi {
 	 * Obtiene la liquidación de un contrato
 	 * 
 	 * @param cntId
+	 * @param idProc
 	 * @return
 	 */
-	LiquidacionPCO getLiquidacionByCnt(Long cntId);
+	LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idProc);
 
 }

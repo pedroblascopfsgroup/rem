@@ -82,8 +82,9 @@ public class LiquidacionManager implements LiquidacionApi {
 	
 	@Override
 	@BusinessOperation("plugin.liquidaciones.liquidacionManager.getLiquidacionByCnt")
-	public LiquidacionPCO getLiquidacionByCnt(Long cntId) {
-		return liquidacionDao.getLiquidacionDelContrato(cntId);
+	public LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idProc) {
+		ProcedimientoPCO prcPCO = genericDao.get(ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));
+		return liquidacionDao.getLiquidacionDelContrato(cntId, prcPCO.getId());
 	}
 
 	@Override

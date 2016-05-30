@@ -1,7 +1,7 @@
 ﻿--/*
 --##########################################
 --## AUTOR=Joaquin_Arnal
---## FECHA_CREACION=20160523
+--## FECHA_CREACION=20160525
 --## ARTEFACTO=proc_convivencia_contratos_litios
 --## VERSION_ARTEFACTO=2.18
 --## INCIDENCIA_LINK=BKREC-2416
@@ -39,7 +39,7 @@ BEGIN
 	IF (table_count = 0) THEN
 		-- Copiar los datos a una temporal
 		V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.MINIRECOVERY_CNT_PROC_VIVOS_BA
-				(MR_CNT_ID NUMBER(16, 0) NOT NULL 
+				(MR_CNT_ID NUMBER(16, 0)  
 				,MR_CODIGO_PROPIETARIO NUMBER(5, 0) NOT NULL 
 				,MR_TIPO_PRODUCTO VARCHAR2(5 CHAR) NOT NULL 
 				,MR_NUMERO_CONTRATO NUMBER(17, 0) NOT NULL 

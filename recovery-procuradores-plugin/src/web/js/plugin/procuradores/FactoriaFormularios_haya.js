@@ -3511,9 +3511,9 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     this.arrayCampos.push([
         {"xtype":'combo',"store":storeSINO,"name":"d_comboFinaliza","fieldLabel":"Realizada solicitud con facultad de cesión de remate",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboFinaliza'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
         ,{"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-        ,{"xtype":'textfield',"name":"d_instrucciones","fieldLabel":"Instrucciones",allowBlank:true,id:'d_instrucciones'+this.idFactoria}
-        ,{"xtype":'combo',"store":storeSINO,"name":"d_cbCresionRemate","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_cbCresionRemate'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-        ,{"xtype":'combo',"store":storeSINO,"name":"d_cbTitulizado","fieldLabel":"Documentación",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_cbTitulizado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'textfield',"name":"d_instrucciones","fieldLabel":"Instrucciones",allowBlank:true,filtrar:true,id:'d_instrucciones'+this.idFactoria}
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_cbCresionRemate","fieldLabel":"Cesión de remate",allowBlank:true,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_cbCresionRemate'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_cbTitulizado","fieldLabel":"Titulizado",allowBlank:true,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_cbTitulizado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
         ]);
 
 

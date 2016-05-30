@@ -2,6 +2,9 @@ package es.pfsgroup.plugin.recovery.config.perfiles;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +20,7 @@ import es.capgemini.pfs.core.api.seguridadPw.PasswordApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.scoring.dto.DtoPuntuacionTotal;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.FuncionPerfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -287,10 +291,50 @@ public class ADMPerfilManager {
 	 * @return
 	 */
 	@BusinessOperation("ADMPerfilManager.buscaFuncionesPerfil")
-	public Set<Funcion> buscaFuncionesPerfil(Long idPerfil) {
-		EXTPerfil p = perfilDao.get(idPerfil);
-		return p.getFunciones();
+	public List<Funcion> buscaFuncionesPerfil(ADMDtoBuscaPerfil dto) {
+		EXTPerfil p = perfilDao.get(dto.getId());
+
+		List<Funcion> listFuncionPerfil = new ArrayList<Funcion>();
+		listFuncionPerfil.addAll(p.getFunciones());
+		if("descripcionLarga".equals(dto.getSort())) {
+			if("ASC".equals(dto.getDir())) {
+				Collections.sort(listFuncionPerfil, new Comparator<Funcion>() {
+					@Override
+					public int compare(Funcion t1, Funcion t2) {
+						return t1.getDescripcionLarga().compareTo(t2.getDescripcionLarga());
+					}
+				});				
+			}else{
+				Collections.sort(listFuncionPerfil, new Comparator<Funcion>() {
+					@Override
+					public int compare(Funcion t1, Funcion t2) {
+						return t2.getDescripcionLarga().compareTo(t1.getDescripcionLarga());
+					}
+				});
+			}
+		}else{
+			if("DESC".equals(dto.getDir())) {
+				Collections.sort(listFuncionPerfil, new Comparator<Funcion>() {
+					@Override
+					public int compare(Funcion t1, Funcion t2) {
+						return t2.getDescripcion().compareTo(t1.getDescripcion());
+					}
+				});
+			}else{
+				Collections.sort(listFuncionPerfil, new Comparator<Funcion>() {
+					@Override
+					public int compare(Funcion t1, Funcion t2) {
+						return t1.getDescripcion().compareTo(t2.getDescripcion());
+					}
+				});
+			}
+		}
+		
+		return listFuncionPerfil;
 	}
+	
+   
+	
 
 	/**
 	 * Lista todas las funciones que no tiene asociadas el perfil con ese id.
@@ -304,6 +348,17 @@ public class ADMPerfilManager {
 		Set<Funcion> funciones = p.getFunciones();
 		List<Funcion> todasfunciones = funcionDao.getList();
 		todasfunciones.removeAll(funciones);
+		
+		Collections.sort(todasfunciones, new Comparator<Funcion>() {
+			@Override
+			public int compare(Funcion t1, Funcion t2) {
+				return t1.getDescripcion().compareTo(t2.getDescripcion());
+			}
+		});
+		for(Funcion funcion : todasfunciones) {
+			String descripcion = funcion.getDescripcion() + " - " + funcion.getDescripcionLarga();
+			funcion.setDescripcion(descripcion);
+		}
 		return todasfunciones;
 
 	}

@@ -96,6 +96,10 @@
 		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/adjuntos.jsp" 
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 		
+	<bean p:entity="tabs.cliente.fast" p:name="accionesFSR" p:order="1300" p:permission="TAB_CLIENTE_DATOS"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/accionesFSR.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
+		
 	<!--
 	<bean p:entity="tabs.cliente.fast" p:name="adjuntosCliente" p:order="1200" 
 		p:fileName="/WEB-INF/jsp/plugin/mejoras/entidad/cliente/tabs/adjuntos.jsp" 

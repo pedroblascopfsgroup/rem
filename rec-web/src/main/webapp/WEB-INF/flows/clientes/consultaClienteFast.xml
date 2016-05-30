@@ -51,6 +51,8 @@
 			<evaluate expression="zonaPersona != null ? executor.execute('zonaManager.getZonaTerritorial', zonaPersona) : null" result="flowScope.zonaTerritorial" />
 			
             <evaluate expression="executor.execute('personaManager.getAccionFSRByIdPersona', id)" result="flowScope.accionFSR" />
+            
+            <evaluate expression="executor.execute('personaManager.getAccionesFSRDeLaPersona', id)" result="flowScope.accionesFSRDeLaPersona" />
 			
 			<!-- Flag para edición del tab de análisis -->
 	        <set name="flowScope.readOnly" value="true" />

@@ -1,6 +1,7 @@
 package es.capgemini.pfs.core.api.persona;
 
 import java.util.List;
+import java.util.Map;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.bien.model.Bien;
@@ -20,6 +21,7 @@ public interface PersonaApi {
 //	String BO_CORE_PERSONA_CREAR_ADJUNTOS_AMPLIADOS = "plugin.coreextension.persona.crearAdjuntoPersonaAmpliado";
 	String BO_CORE_PERSONA_GET_BY_COD_CLIENTE_ENTIDAD = "plugin.coreextension.persona.getPersonaByCodClienteEntidad";
 	String BO_CORE_CLIENTES_ACTUACION_CURSO_GET_FSR = "personaManager.getAccionFSRByIdPersona";
+	String BO_CORE_CLIENTES_LIST_ACTUACION_FSR = "personaManager.getAccionesFSRDeLaPersona";
 
 	
 	@BusinessOperationDefinition(PrimariaBusinessOperation.BO_PER_MGR_UPDATE_UMBRAL)
@@ -111,5 +113,13 @@ public interface PersonaApi {
      */
     @BusinessOperationDefinition(BO_CORE_CLIENTES_ACTUACION_CURSO_GET_FSR)
     public Boolean getAccionFSRByIdPersona(Long idPersona);
-
+    
+    
+    /**
+     * 
+     * @param idPersona
+     * return List<Map<String,Object>>
+     */
+    @BusinessOperationDefinition(BO_CORE_CLIENTES_LIST_ACTUACION_FSR)
+    public List<Map<String,Object>> getAccionesFSRDeLaPersona(Long idPersona);
 }

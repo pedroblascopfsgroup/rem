@@ -1,9 +1,12 @@
 package es.capgemini.pfs.persona;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -33,7 +36,9 @@ import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.dto.DtoUmbral;
 import es.capgemini.pfs.persona.dto.EXTDtoBuscarClientes;
+import es.capgemini.pfs.persona.model.CavClientesActuacionesVigentesFSR;
 import es.capgemini.pfs.persona.model.ClientesActuacionCurso;
+import es.capgemini.pfs.persona.model.DDTipoActuacionFSR;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
@@ -352,5 +357,35 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 			return false;
 		else
 			return clienteActuacionCurso.getActuacionEnCurso();	
+	}
+
+	@Override
+	@BusinessOperation(BO_CORE_CLIENTES_LIST_ACTUACION_FSR)
+	public List<Map<String, Object>> getAccionesFSRDeLaPersona(Long idPersona) {
+		
+		List<DDTipoActuacionFSR> allActuacionesFsr = genericDao.getList(DDTipoActuacionFSR.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		List<CavClientesActuacionesVigentesFSR> actuacionesFsr = genericDao.getList(CavClientesActuacionesVigentesFSR.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona));
+		
+		///Obtenemos las relaciones existentes
+		List<Long> idsTipoActFsr = new ArrayList<Long>();
+		for(CavClientesActuacionesVigentesFSR act : actuacionesFsr){
+			idsTipoActFsr.add(act.getTipoActuacionFSR().getId());
+		}
+		
+		///Costruimos el list Map
+		List<Map<String, Object>> actuacionesDeLaPersona = new ArrayList<Map<String,Object>>();
+		
+		for(DDTipoActuacionFSR ddfsr : allActuacionesFsr){
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("actuacion", ddfsr);
+			if(idsTipoActFsr.contains(ddfsr.getId())){
+				map.put("activa",true);
+			}else{
+				map.put("activa",false);
+			}
+			actuacionesDeLaPersona.add(map);
+		}
+		
+		return actuacionesDeLaPersona;
 	}
 }

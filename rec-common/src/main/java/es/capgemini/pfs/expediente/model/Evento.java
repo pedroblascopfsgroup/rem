@@ -17,7 +17,7 @@ public class Evento implements Serializable {
 
     int tipoEvento = 0;
     TareaNotificacion tarea;
-
+    long idRegistro;
     /**
      * Constructor a partir de una tarea notificacion
      * @param tareaNotificacion
@@ -25,6 +25,11 @@ public class Evento implements Serializable {
     public Evento(TareaNotificacion tarea, int tipoEvento) {
         setTarea(tarea);
         setTipoEvento(tipoEvento);
+    }
+    
+    public Evento(Long idRegistro,int tipoEvento) {
+		setIdRegistro(idRegistro);
+		setTipoEvento(tipoEvento);
     }
 
     /**
@@ -95,5 +100,13 @@ public class Evento implements Serializable {
 
         return tarea.getDescripcionTarea();
     }
+
+	public long getIdRegistro() {
+		return idRegistro;
+	}
+
+	public void setIdRegistro(long idRegistro) {
+		this.idRegistro = idRegistro;
+	}
 
 }

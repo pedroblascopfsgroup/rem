@@ -180,8 +180,16 @@ public interface PCDResolucionProcuradorApi {
 	 * Guarda el fichero adjunto en la resolucion.
 	 * @param dtoResolucion
 	 * @return
+	 * @throws Exception 
 	 */
 	@BusinessOperationDefinition(PCD_MSV_BO_ADJUNTAR_FICHERO_RESOLUCION)
-	public MSVResolucion adjuntaFicheroResolucuion(MSVResolucionesDto dtoResolucion);
+	public MSVResolucion adjuntaFicheroResolucuion(MSVResolucionesDto dtoResolucion) throws Exception;
+	
+	/**
+	 * Borra los ficheros que haya introducido el letrado en la ventana si finalmente decide cancelar la resolucion.
+	 * @param idsFicheros
+	 * @throws Exception
+	 */
+	public void borrarAdjuntoResolucion(String idsFicheros) throws Exception;
 	
 }

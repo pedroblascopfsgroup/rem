@@ -10,7 +10,13 @@
 <%@page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 (function(page, entidad) {
-
+	
+	var codigoEntidadInformacion;			
+	var id;
+	var emisor;
+	var descripcionEntidad;
+	var descripcion;
+	var fechaInicio;
 
 	var tipoEntidad='<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE" />';
 	
@@ -43,11 +49,12 @@
 		,{name:'fechaPropuestaProrroga'}
 		,{name:'id'}
 		,{name:'idTraza'}
+		,{name:'isRegistro'}
 	]);
 	
     
    var eventosStore = page.getStore({
-       flow:'eventos/getListadoHistoricoEventos'
+       flow:'eventos/getListadoHistoricoEventosClientes'
 	    ,storeId : 'eventosStore'
        ,reader: new Ext.data.JsonReader({
                 root: 'eventos'
@@ -80,6 +87,29 @@
 	eventosGrid.on('rowdblclick', function(grid, rowIndex, e) {
 		
     	var rec = grid.getStore().getAt(rowIndex);
+		
+		if(rec.get('isRegistro')){
+			var w = app.openWindow({
+							flow: 'eventos/abreDetalleEventoComentario',
+							title: '<s:message code="tareas.comentario" text="**Comentario" />',
+							width: 700,
+							params: {
+								idEntidad: rec.get('idEntidad'),
+								codigoEntidadInformacion:rec.get('codigoEntidadInformacion') ,
+								id: rec.get('id'),
+								emisor: rec.get('emisor'),
+								descripcionEntidad: rec.get('descripcionEntidad'),
+								descripcion: rec.get('descripcion'),
+								fechaInicio: rec.get('fechaInicio')
+							}
+						});
+						w.on(app.event.CANCEL, function(){
+							w.close();
+						});
+						w.on(app.event.DONE, function(){
+							w.close();
+						});
+		} else{
 		
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
 		
@@ -220,7 +250,7 @@
 				//	}
 				break;				
 			}
-		
+		}
 		
 	});
 

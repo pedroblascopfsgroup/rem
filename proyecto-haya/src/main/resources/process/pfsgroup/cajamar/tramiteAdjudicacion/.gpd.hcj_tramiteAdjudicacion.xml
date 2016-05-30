@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteAdjudicacion" width="1875" height="1665">
+<root-container name="hcj_tramiteAdjudicacion" width="1875" height="1666">
   <node name="Inicio" x="-360" y="46" width="132" height="36">
     <edge>
       <label x="-47" y="-12"/>
@@ -84,6 +84,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="H005_RegistrarInscripcionDelTitulo" x="416" y="1528" width="252" height="36">
     <edge>
@@ -139,6 +142,17 @@
     </edge>
     <edge>
       <label x="-20" y="-13"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_RegistrarPresentacionHacienda" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="H005_BPMTramiteDePosesion" x="108" y="1145" width="246" height="36">
@@ -287,6 +301,35 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="forkInfoContable" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_ValorarLanzamiento" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_ValorarLanzamientoDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H005_BPMTramiteSolicitudSolvenciaPatrimonial" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

@@ -2,10 +2,10 @@ create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_EN
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable ultima modificacion: María Villanueva , PFS Group
--- Fecha ultima modificacion: 10/05/2016
--- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
--- Cliente: Recovery BI Haya
+-- Responsable ultima modificacion: María V, PFS Group
+-- Fecha ultima modificacion: 30/05/2016
+-- Motivos del cambio: Se modifica la carga de Gestor de Documentación
+-- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de PreContencioso
 -- ===============================================================================================
@@ -14,7 +14,7 @@ DECLARE
 -- ===============================================================================================
 
 -- ===============================================================================================
---                  									Declaracación de variables
+--                                    Declaracación de variables
 -- ===============================================================================================
   V_NUM_ROW NUMBER(10);
   V_DATASTAGE VARCHAR2(100);
@@ -92,7 +92,7 @@ BEGIN
               TRAMO_AVANCE_DOCUMENTO_ID,
               TRAMO_AVANCE_LIQUIDACION_ID,
               TRAMO_AVANCE_BUROFAX_ID,
-			  ESTADO_PREPARACION_ID
+        ESTADO_PREPARACION_ID
               )
       select '''||fecha||''',
              '''||fecha||''',
@@ -108,7 +108,7 @@ BEGIN
              -1,
              -1,
              -1,
-			 -1
+       -1
       from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS 
       where trunc(FECHACREAR) <= '''||fecha||''' and BORRADO = 0';
       
@@ -122,8 +122,8 @@ BEGIN
     -- Crear indices TMP_H_PRE
   
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRE_IX'', ''TMP_H_PRE (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-	execute immediate V_SQL USING OUT O_ERROR_STATUS;
-		
+  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+    
     commit;    
     
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_PRE_FECHA_ESTADO'', '''', :O_ERROR_STATUS); END;';
@@ -262,7 +262,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
                       JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
                       JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
                       JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
-                      WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor de Documentación''';
+                      WHERE TGES.DD_TGE_DESCRIPCION = ''CJ - Gestor de Documentación''';
 
     UPDATE TMP_H_PRE a SET GESTOR_PRE_ID = (SELECT GESTOR_PRC_ID FROM TMP_PRC_GESTOR b WHERE a.PROCEDIMIENTO_ID =  b.PROCEDIMIENTO_ID);
       commit;
@@ -408,10 +408,10 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
 
     V_ROWCOUNT := sql%rowcount;
     commit;
-	
+  
     update h_pre set gestor_pre_id=-1 where gestor_pre_id is null
-	and dia_id=fecha;
-	commit;
+  and dia_id=fecha;
+  commit;
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 

@@ -471,7 +471,7 @@ BEGIN
 
 	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_CNT_IX'', ''TMP_H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
-	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TTMP_H_CNT_CNT_IX'', ''TMP_H_CNT (CONTRATO_ID)'', ''S'', '''', :error); END;';
+	   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_CNT_CNT_IX'', ''TMP_H_CNT (CONTRATO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
 
         DBMS_OUTPUT.PUT_LINE('---- Creacion INDICES en TMP_H_CNT');

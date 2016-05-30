@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_DIM_PROCEDIMIENTO (O_ERROR_STATUS OUT VARCHAR
 -- Autor:  Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificacion: María V., PFS Group
--- Fecha ultima modificacion: 09/05/2016
--- Motivos del cambio: Se actualiza con los cambios realizados en Cajamar
+-- Fecha ultima modificacion: 30/05/2016
+-- Motivos del cambio: Se modifica la carga de Gestor de Documentación
 -- Cliente: Recovery BI Haya
 --
 -- Descripción: Procedimiento almacenado que carga las tablas de la dimensión Procedimiento.
@@ -1081,7 +1081,7 @@ select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA
     JOIN '||V_DATASTAGE||'.USU_USUARIOS USU ON USD.USU_ID = USU.USU_ID
     JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
     JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
-  WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor de Documentación''
+  WHERE TGES.DD_TGE_DESCRIPCION = ''CJ - Gestor de Documentación''
   ';
 
   V_ROWCOUNT := sql%rowcount;

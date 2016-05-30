@@ -133,7 +133,7 @@ public class coreextensionController {
 		} else {
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
-		//////
+		//FIXME
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven, para ello usaremos el coreProjectContext
 		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		
@@ -160,7 +160,7 @@ public class coreextensionController {
 				}
 			}
 		}
-		
+		///FIXME
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;
 	}

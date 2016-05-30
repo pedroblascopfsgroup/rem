@@ -772,17 +772,25 @@ BEGIN
    -- 5. Gestión Precontenciosa: contrato que está dentro de un asunto prejudicial.
     execute immediate 'merge into TMP_H_CNT h 
     using (select distinct CNT_ID
-           from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex 
-           join '||V_DATASTAGE||'.PRC_CEX pcex on cex.CEX_ID = pcex.CEX_ID
-           join H_PRE pre on pre.PROCEDIMIENTO_ID = pcex.PRC_ID
-           where pre.DIA_ID = '''||fecha||'''
-           AND NOT EXISTS (SELECT 1
-                      FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
+            from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex,
+                 '||V_DATASTAGE||'.PRC_CEX pcex, 
+                 tmp_H_PRE pre, 
+                 (SELECT distinct PCO.PRC_ID
+                     FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, 
+                          '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP,
+                          '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION PCE
                       WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
-                      AND DD_PCO_PEP_ID IN (SELECT DD_PCO_PEP_ID FROM '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION WHERE DD_PCO_PEP_CODIGO IN (''FI''))
-                      AND PCO_PRC_HEP_FECHA_FIN IS NULL
-                      AND PCO.PRC_ID = PCEX.PRC_ID)
-           ) hprc
+                        AND HEP.DD_PCO_PEP_ID = PCE.DD_PCO_PEP_ID 
+                        AND PCE.DD_PCO_PEP_CODIGO = ''FI''
+                        AND PCO_PRC_HEP_FECHA_FIN IS NULL) a
+             where pre.PROCEDIMIENTO_ID(+) = pcex.PRC_ID
+                and pre.PROCEDIMIENTO_ID is not null
+                and pre.DIA_ID(+) = '''||fecha||''' 
+                and cex.CEX_ID(+) = pcex.CEX_ID
+                and cex.CEX_ID is not null
+                and PCEX.PRC_ID = a.PRC_ID(+)
+                and a.PRC_ID is null
+          ) hprc
     on (h.CONTRATO_ID = hprc.CNT_ID)
     when matched then update set h.PERIMETRO_GES_PRE_ID = 1
     where h.DIA_ID = '''||fecha||'''';

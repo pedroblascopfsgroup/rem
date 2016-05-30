@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
@@ -72,6 +73,7 @@ public class PrecontenciosoHayaLeaveActionHandler extends PROGenericLeaveActionH
 		}
 	}
 
+	@Transactional(readOnly = false)
 	private void personalizacion(ExecutionContext executionContext) throws IllegalArgumentException, AplicarTurnadoException {
 
 		// executionContext.getProcessDefinition().getName();

@@ -622,11 +622,13 @@ public class AdjuntoHayaManager {
 	private String getClaseExpedienteByProcedimientoPadre(Procedimiento prc) {
 		String claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 		Procedimiento padre = prc.getProcedimientoPadre();
-		while(Checks.esNulo(claseExp)) {
-			if(cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
-				padre = padre.getProcedimientoPadre();
-			}else{
-				claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
+		if(!Checks.esNulo(padre)) {
+			while(Checks.esNulo(claseExp)) {
+				if(cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
+					padre = padre.getProcedimientoPadre();
+				}else{
+					claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
+				}
 			}
 		}
 		return claseExp;
@@ -850,9 +852,9 @@ public class AdjuntoHayaManager {
 		}	
 
 	 private Long getIdActivoHaya(Contrato contrato) {
-			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId()));
+			List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId()));
 
-			if(contenedor == null) {
+			if(Checks.estaVacio(contenedor)) {
 				ActivoInputDto input = new ActivoInputDto();
 				input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
 				input.setIdActivoOrigen(contrato.getNroContrato().substring(17, 27));
@@ -866,16 +868,16 @@ public class AdjuntoHayaManager {
 				insertarContenedor(Integer.valueOf(output.getIdActivoHaya()), null, contrato, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
 				return new Long(output.getIdActivoHaya());
 			}
-			return contenedor.getIdExterno();
+			return contenedor.get(0).getIdExterno();
 			
 	 }
 	 
 	 
 	 private Long getIdClienteHaya(Persona persona) {
 
-			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", persona.getId()));
+		 List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", persona.getId()));
 			
-			if(contenedor == null) {
+			if(Checks.estaVacio(contenedor)) {
 				PersonaInputDto input = new PersonaInputDto();
 				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
 				input.setIdIntervinienteOrigen(persona.getDocId());
@@ -889,7 +891,7 @@ public class AdjuntoHayaManager {
 				insertarContenedor(Integer.valueOf(output.getIdIntervinienteHaya()), null, null, persona, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, getClaseExpPersona(persona));
 				return new Long(output.getIdIntervinienteHaya());
 			}
-			return contenedor.getIdExterno();
+			return contenedor.get(0).getIdExterno();
 	 }
 	 
 	 private void insertarContenedor(Integer idExpediente, Asunto asun, Contrato contrato, Persona persona, String tipoExp, String claseExp) {

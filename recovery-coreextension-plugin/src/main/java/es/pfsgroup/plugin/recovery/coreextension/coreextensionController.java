@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,7 @@ import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
@@ -32,7 +34,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 
 //FIXME Hay que eliminar esta clase o renombrarla
@@ -58,6 +62,9 @@ public class coreextensionController {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private EXTDDTipoGestorApi tipoGestorApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -130,6 +137,19 @@ public class coreextensionController {
 		}
 		//////
 		
+		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
+		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
+		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)){
+			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+			while(iter.hasNext()){
+				DespachoExterno elemento = iter.next();
+				if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
+					iter.remove();
+				}
+			}
+		}
+				
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;
 	}

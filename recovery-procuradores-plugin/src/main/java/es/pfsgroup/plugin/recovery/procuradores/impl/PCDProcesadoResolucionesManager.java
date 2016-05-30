@@ -81,6 +81,9 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	private AdjuntoApi adjuntoApi;
 	
 	@Autowired
+	private MSVResolucionApi msvResolucionApi;
+	
+	@Autowired
 	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
 	
 	//private static final String ESTADO_GUARDAR = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
@@ -238,9 +241,10 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	@BusinessOperation(PCD_BO_PROCESAR_RESOLUCION)
 	public void procesar(MSVResolucionesDto dtoResolucion) throws Exception {
 		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-				MSVResolucion msvResolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
+				
+		MSVResolucion msvResolucion = msvResolucionApi.guardarResolucion(dtoResolucion);
 				//session.getStatistics().getEntityKeys().
-					//Se sobreescribe el fichero del procurador.
+					/*//Se sobreescribe el fichero del procurador.
 					if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
 					{
 						proxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
@@ -256,7 +260,11 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 							  msvResolucion = proxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarResolucion(dtoResolucion);
 						}
 					}
-
+					*/
+					List<EXTAdjuntoAsunto> listaAdjuntos = msvResolucion.getAdjuntosResolucion();
+					if(!Checks.estaVacio(listaAdjuntos)){
+							subirFicheroAdjunto(msvResolucion);
+					}
 					dtoResolucion.setIdTarea(msvResolucion.getTarea().getId());
 					if(msvResolucion.getTipoResolucion().getCodigo().equals(PCDProcesadoResolucionesController.CODIGO_AUTOPRORROGA))
 					{
@@ -278,12 +286,14 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	 * @return
 	 */
 	private MSVResolucion subirFicheroAdjunto(MSVResolucion msvResolucion) {
-		if (msvResolucion.getAdjuntoFinal() != null && msvResolucion.getAdjuntoFinal().getAdjunto() != null) {
+		//if (msvResolucion.getAdjuntoFinal() != null && msvResolucion.getAdjuntoFinal().getAdjunto() != null) {
+		List<EXTAdjuntoAsunto> listaAdjuntos = msvResolucion.getAdjuntosResolucion();
+		for(EXTAdjuntoAsunto adj : listaAdjuntos){
 			Map<String, String> parameters = new HashMap<String, String>();
 
 			parameters.put("id", msvResolucion.getAsunto().getId().toString());
 			parameters.put("prcId", msvResolucion.getProcedimiento().getId().toString());
-			parameters.put("comboTipoFichero", msvResolucion.getAdjuntoFinal().getTipoFichero().getCodigo());
+			parameters.put("comboTipoFichero", adj.getTipoFichero().getCodigo());
 
 			WebFileItem uploadForm = new WebFileItem();
 
@@ -292,7 +302,7 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 			adjuntoApi.upload(uploadForm);
 		}
 
-		// Se actualiza la resolucion con el nuevo adjunto.
+		/*// Se actualiza la resolucion con el nuevo adjunto.
 		EXTAdjuntoAsunto adjunto = msvResolucion.getAdjuntoFinal();
 
 		List<EXTAdjuntoAsunto> x = extAdjuntoAsuntoDao.getAdjuntoAsuntoByNombreAndPrcIdAndTipoAdjunto(adjunto.getProcedimiento().getId(), adjunto.getNombre(), adjunto.getTipoFichero().getCodigo());
@@ -300,7 +310,7 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		if (!x.isEmpty()) {
 			msvResolucion.setAdjuntoFinal(x.get(0));
 		}
-
+		*/
 		return msvResolucion;
 	}
 

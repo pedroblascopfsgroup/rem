@@ -11,30 +11,34 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.procedimientos.PROGenericLeaveActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
+import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 
 public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandler {
 
 	/**
 	 * Serial ID
 	 */
-	private static final long serialVersionUID = 1L;	
+	private static final long serialVersionUID = 1L;
 
 	@Autowired
 	private Executor executor;
 
 	@Autowired
-	private ApiProxyFactory proxyFactory;	
+	UsuarioManager usuarioManager;
 
 	@Autowired
 	GenericABMDao genericDao;
-	
+
+	@Autowired
+	TurnadoProcuradoresApi turnadoProcuradoresApi;
+
 	private final String TAP_REDACTAR_DEMANDA = "HC106_RedactarDemandaAdjuntarDocu";
+	private final String TAP_REVISAR_DOCU = "HC106_RevisarCompletitudDocu";
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -49,26 +53,43 @@ public class BCCPrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHa
 	}
 
 	@SuppressWarnings("unchecked")
-	@Transactional
+	@Transactional(readOnly = false)
 	private void personalizacionTarea(Procedimiento procedimiento, TareaExterna tex) {
-		
-		if (tex != null && tex.getTareaProcedimiento() != null && TAP_REDACTAR_DEMANDA.equals(tex.getTareaProcedimiento().getCodigo())) {
 
-			List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>)executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
+		if (tex != null && tex.getTareaProcedimiento() != null) {
+			if (TAP_REDACTAR_DEMANDA.equals(tex.getTareaProcedimiento().getCodigo())) {
 
-			if (!Checks.esNulo(listado)) {
-				for (TareaExternaValor tev : listado) {
-					try {
-						if ("principal".equals(tev.getNombre())) {
-							procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
+				List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
+
+				if (!Checks.esNulo(listado)) {
+					for (EXTTareaExternaValor tev : listado) {
+						try {
+							if ("principal".equals(tev.getNombre())) {
+								procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
+							}
+						} catch (Exception e) {
+							logger.error("personalizacionTarea: " + e);
 						}
-					} catch (Exception e) {
-						logger.error("personalizacionTarea: " + e);
+					}
+				}
+
+			} else if (TAP_REVISAR_DOCU.equals(tex.getTareaProcedimiento().getCodigo())) {
+				List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
+
+				if (!Checks.esNulo(listado)) {
+					for (EXTTareaExternaValor tev : listado) {
+						try {
+							if ("importeDemanda".equals(tev.getNombre())) {
+								procedimiento.setSaldoRecuperacion(new BigDecimal(tev.getValor()));
+							}
+						} catch (Exception e) {
+							logger.error("personalizacionTarea: " + e);
+						}
 					}
 				}
 			}
-			
 			genericDao.save(Procedimiento.class, procedimiento);
+
 		}
 	}
 }

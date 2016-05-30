@@ -16,6 +16,7 @@
 		<json:property name="fecha" >
 			<fwk:date value="${rec.fecha}"/>
 		</json:property>
+	<c:if test="${rec.class.simpleName == 'LIQCobroPago'}">
 		<json:property name="fechaValor" >
 			<fwk:date value="${rec.fechaValor}"/>
 		</json:property>
@@ -32,13 +33,14 @@
 		<json:property name="capitalNoVencido" value="${rec.capitalNoVencido}"/>
 		<json:property name="comisiones" value="${rec.comisiones}"/>
 		<json:property name="nominal" value="${rec.capital + rec.capitalNoVencido}"/>
-		<json:property name="totalEntrega" value="${rec.capitalVencido + rec.capitalNoVencido + rec.interesesOrdinarios + rec.interesesMoratorios + rec.impuestos + rec.gastosProcurador + rec.gastosAbogado + rec.gastosOtros}"/>
+		<json:property name="totalEntrega" value="${rec.capital + rec.capitalNoVencido + rec.interesesOrdinarios + rec.interesesMoratorios + rec.impuestos + rec.gastosProcurador + rec.gastosAbogado + rec.gastosOtros}"/>
 		<json:property name="gastosProcurador" value="${rec.gastosProcurador}"/>
 		<json:property name="gastosAbogado" value="${rec.gastosAbogado}"/>
 		<json:property name="gastosOtros" value="${rec.gastosOtros}"/>
 		<json:property name="gastos" value="${rec.gastos}"/>
 		<json:property name="tipoEntrega" value="${rec.tipoEntrega.descripcion}"/>
 		<json:property name="conceptoEntrega" value="${rec.conceptoEntrega}"/>
+	</c:if>
 		
 	</json:object>
 	</json:array>

@@ -18,11 +18,12 @@
 	
 	var muestraBotonGuardar = 0;
 	var validacion= {html:'<div id="validacionCMPS" style="font-size:12px;"> ${validacion}</div>', border:false, bodyStyle:'color:red;margin-bottom:5px'};
-	
-	 
+
 	<c:if test="${validacion==null}">
 		muestraBotonGuardar=1;
 	</c:if>
+	
+	
 	
 	var uploading = false;
 	
@@ -65,6 +66,11 @@
 					xtype:'hidden'
 					,name:'idFichero'
 					,value:''
+        		 },
+        		 {
+        		 	xtype:'hidden'
+        		 	,name:'idsFicheros'
+        		 	,value:''
         		 }
         ]
     }); 
@@ -79,18 +85,47 @@
 				,params: {idResolucion: ${idResolucion}}
 				,method: 'POST'
 				,success: function (result, request){
-				
 					var r = Ext.util.JSON.decode(result.responseText);
 					
 					panelEdicion.getForm().reset();
 					
 					panelEdicion.getForm().setValues(r.resolucion);
-					var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
+					//var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
 					//var tipoAdjunto = panelEdicion.getForm().findField('file').getValue('type');
 					
-					if(nombreAdjunto !=  "No se ha adjuntado ningún fichero.")
-					{
-						panelEdicion.getForm().findField('file').setValue("<a href='/pfs/procuradores/descargarAdjunto.htm?idResolucion="+${idResolucion}+"')>"+nombreAdjunto+"</a>"); 			
+					//if(nombreAdjunto !=  "No se ha adjuntado ningún fichero.")
+					//{
+						//panelEdicion.getForm().findField('file').setValue("<a href='/pfs/procuradores/descargarAdjunto.htm?idResolucion="+${idResolucion}+"')>"+nombreAdjunto+"</a>"); 			
+					//}
+					if(r.resolucion.adjuntosResolucion != null){
+						var panel = Ext.getCmp('d_file_right');
+						for(i = 0; i < r.resolucion.adjuntosResolucion.length; i++){
+						    var campo = new Ext.form.Label({
+						       name: 'adjunto_'+r.resolucion.adjuntosResolucion[i].id,
+					   		   html: '<a href="/pfs/procuradores/descargarAdjunto.htm?idResolucion='+${idResolucion}+'&idAdjunto='+r.resolucion.adjuntosResolucion[i].id+'")>'+r.resolucion.adjuntosResolucion[i].tipoFicheroCodigo + '&nbsp;' + '-' + '&nbsp;' + r.resolucion.adjuntosResolucion[i].nombreFichero+'</a>'+ '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>',
+					   		   width:250,
+					   		   style: 'font-size:12px;'
+					   	    }); 
+						    panel.add(campo);
+						    var borrarCampo = new Ext.form.Label({
+						       name: 'borrarCampo_'+r.resolucion.adjuntosResolucion[i].id,
+	    					   html: '<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',
+	    		    		   style: 'float:left;font-size:12px;margin-left:2px;',
+	    		    		   listeners: {
+	    		    		   		render: function(c){
+	    		    		   			c.getEl().on({
+	    		    		   				click: function(el){
+	    		    		   					var idAdj = this.name.split('_')[1];
+	    		    		   					var cmp = Ext.getCmp('d_file_right').find('name','adjunto_'+idAdj)[0];
+	    		    		   					borrarAdjunto(idAdj, cmp, this);
+	    		    		   				},scope: c
+	    		    		   			});
+	    		    		   		}
+	    		    		   }
+    		    	   		}); 
+   							panel.add(borrarCampo);
+						  	panel.doLayout();
+						}
 					}
 					
 					var itemsFormPanel = panelEdicion.getForm().items.items;
@@ -113,10 +148,39 @@
 	var btnCancelar= new Ext.Button({
 			text : '<s:message code="app.cancelar" text="**Cancelar" />'
 			,iconCls : 'icon_cancel'
-			,handler : function(){
-				page.fireEvent(app.event.CANCEL);
-		}
 	});
+	
+	btnCancelar.on('click', function(){
+		var valores = panelEdicion.getForm().getFieldValues();
+		Ext.Ajax.request({
+			url: '/pfs/pcdprocesadoresoluciones/cancelar.htm'
+			,params: {idsFicheros: valores['idsFicheros'], idResolucion: ${idResolucion}}
+			,method: 'POST'
+			,success: function (result, request){
+				panelEdicion.container.unmask();
+				page.fireEvent(app.event.CANCEL);
+			}
+			,error: function(result, request){
+				panelEdicion.container.unmask();
+				alert("Error cancelar");
+			}
+		});
+	});
+	
+	var borrarAdjunto = function(idAdjunto, cmp, cmpBorrar){
+		Ext.Ajax.request({
+			url: '/pfs/pcdprocesadoresoluciones/cancelar.htm'
+			,params: {idsFicheros: idAdjunto+"_"}
+			,method: 'POST'
+			,success: function (result, request){
+				if(cmp) cmp.destroy();
+				if(cmpBorrar) cmpBorrar.destroy();
+			}
+			,error: function(result, request){
+				alert("Error borrando");
+			}
+		});
+	}
 	
 	if (muestraBotonGuardar==1){
 		var btnGuardar = new Ext.Button({
@@ -137,10 +201,9 @@
 	btnGuardar.on('click', function(){
 		var valores = panelEdicion.getForm().getFieldValues();
 		valores['idResolucion'] = ${idResolucion};
-		//debugger;
 		var formulario = panelEdicion.getForm();
 		
-		var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
+		//var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
 		
 		////Al gestor se le permite guardar sin adjuntar
 		Ext.getCmp('file_upload_ok').setValue('ok');
@@ -159,7 +222,6 @@
 								,params: valores
 								,method: 'POST'
 								,success: function (result, request){
-								debugger;
 									var r = Ext.util.JSON.decode(result.responseText);
 									if (r.resultadoDatosvalidacion.validacion == ""){
 										panelEdicion.container.unmask();
@@ -173,7 +235,6 @@
 									alert("Error procesar");
 								},failure: function(result, request){
 									panelEdicion.container.unmask();
-									debugger;
 									alert("Error procesar");
 								}
 							});
@@ -230,7 +291,6 @@
 	
 	
 	btnRechazar.on('click', function(){
-	debugger;
 		var valores = panelEdicion.getForm().getFieldValues();
 		panelEdicion.container.mask('<s:message code="fwk.ui.form.rechazando" text="**Rechazando" />');
 		Ext.Ajax.request({
@@ -279,7 +339,8 @@
 	
 	
 	var panelEdicion=new Ext.form.FormPanel({
-	autoHeight:true
+	name : 'panelEdicionResolucion'
+	,autoHeight:true
 	,width:820
 	,bodyStyle:'padding:10px;cellspacing:20px'
 	//,xtype:'fieldset'
@@ -308,8 +369,8 @@
 });
 
 page.add(panelEdicion);
-var nodeValue = ""; 
-
+var nodeValue = "";
+var codigoTipoDocumento ="";
 var upload;
 var win;
 
@@ -342,6 +403,7 @@ var creaVentanaUpload = function(){
         }
         ,items: [
             	{xtype:'combo'
+            			,itemId:'comboTipoFichero'
 						,name:'comboTipoFichero'
 						<app:test id="tipoProcedimientoCombo" addComa="true" />
 						,hiddenName:'comboTipoFichero'
@@ -354,7 +416,14 @@ var creaVentanaUpload = function(){
 						,resizable:true
 						,triggerAction: 'all'
 						,allowBlank:true
-						,fieldLabel : '<s:message code="fichero.upload.tipoDocumento" text="**Tipo fichero" />'}
+						,forceSelection: true
+						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+						,listeners: {
+           					'select': function(combo, record, index){
+		            			codigoTipoDocumento = combo.getValue();
+           					}
+           				}
+           		}
 				,
                 {xtype:'hidden',name:'idProcedimiento',hiddenName:'idProcedimiento'}
                 ,{xtype: 'fileuploadfield'
@@ -378,25 +447,20 @@ var creaVentanaUpload = function(){
            ,buttons: [{
                text: 'Subir',
                handler: function(){
-               //debugger;
-               //controlador.nuevoProceso(comboTipoJuicioNew.getValue(),upload.getForm(), fn_nuevoProcesoOk);
-               var formulario = panelEdicion.getForm();//.findField('idResolucion');
-               var idProcedimiento = formulario.findField('idProcedimiento').getValue();
-			   upload.getForm().findField('idProcedimiento').setValue(idProcedimiento);
-
-               //DatosFieldSet.find('name','idResolucion')[0];//Ext.getCmp('idResolucion');
-               //controlador.uploadFicheroResolucion(resolucion.getValue(), upload, fn_subirFicheroOk, fn_subirFicheroError);
-               //controlador.uploadFicheroResolucionTareas(upload, fn_subirFicheroOk, fn_subirFicheroError);
-                formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
-					
-                uploading = true;
-
-                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
-		
-		        //updateBotonGuardar();
-		        
-		        win.hide();
-                
+				   if(upload.getComponent('comboTipoFichero').getValue().trim()!=''){
+		               //controlador.nuevoProceso(comboTipoJuicioNew.getValue(),upload.getForm(), fn_nuevoProcesoOk);
+		               var formulario = panelEdicion.getForm();//.findField('idResolucion');
+		               var idProcedimiento = formulario.findField('idProcedimiento').getValue();
+					   upload.getForm().findField('idProcedimiento').setValue(idProcedimiento);
+		               //DatosFieldSet.find('name','idResolucion')[0];//Ext.getCmp('idResolucion');
+		               //controlador.uploadFicheroResolucion(resolucion.getValue(), upload, fn_subirFicheroOk, fn_subirFicheroError);
+		               //controlador.uploadFicheroResolucionTareas(upload, fn_subirFicheroOk, fn_subirFicheroError);
+		               //formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
+		                uploading = true;
+		                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
+				        //updateBotonGuardar();
+				        win.hide();
+	               }upload.getComponent('comboTipoFichero').addClass('x-form-invalid'); 
                }
            },{
                text: 'Cancelar',
@@ -428,11 +492,36 @@ var fn_subirFicheroOk = function(r){
     
     var id = r.resultado;
     panelEdicion.getForm().findField('idFichero').setValue(id);
-    panelEdicion.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');    
-    var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
-
-	panelEdicion.getForm().findField('file').setValue("<a href='/pfs/procuradores/descargarAdjunto.htm?idResolucion="+${idResolucion}+"')>"+nombreAdjunto+"</a>");
-	
+    //panelEdicion.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');    
+    //var nombreAdjunto = panelEdicion.getForm().findField('file').getValue('file');
+	//panelEdicion.getForm().findField('file').setValue("<a href='/pfs/procuradores/descargarAdjunto.htm?idResolucion="+${idResolucion}+"')>"+nombreAdjunto+"</a>");
+	var panel = Ext.getCmp('d_file_right');
+    var campo = new Ext.form.Label({
+    	   name: 'adjunto_',
+   		   html: codigoTipoDocumento + '&nbsp;' + '-' + '&nbsp;' + nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>',
+   		   width:250,
+   		   style: 'font-size:12px;'
+   	    }); 
+    panel.add(campo);
+    var borrarCampo = new Ext.form.Label({
+		   name: 'borrarCampo_',
+		   html: "",
+  		   style: 'float:left;font-size:12px;margin-left:2px;',
+  		   listeners: {
+  		   		render: function(c){
+  		   			c.getEl().on({
+  		   				click: function(el){
+  		   					var idAdj = this.name.split('_')[1];
+  		   					var cmp = Ext.getCmp('d_file_right').find('name','adjunto_'+idAdj)[0];
+  		   					borrarAdjunto(idAdj, cmp, this);
+  		   				},scope: c
+  		   			});
+  		   		}
+   		   }
+  	}); 
+   	panel.add(borrarCampo);
+  	panel.doLayout();
+  	
 	            var valores = panelEdicion.getForm().getFieldValues();
 				valores['idResolucion'] = ${idResolucion};
 
@@ -441,6 +530,16 @@ var fn_subirFicheroOk = function(r){
 					,params: valores
 					,method: 'POST'
 					,success: function (result, request){
+							var res = Ext.util.JSON.decode(result.responseText);
+							if(res.resolucion.fileId != null){
+								var ids = panelEdicion.getForm().findField('idsFicheros').getValue();
+    							ids =  ids + res.resolucion.fileId + '_';
+								panelEdicion.getForm().findField('idsFicheros').setValue(ids);
+								campo.name = campo.name+res.resolucion.fileId;
+								campo.setText('<a href="/pfs/procuradores/descargarAdjunto.htm?idResolucion='+${idResolucion}+'&idAdjunto='+res.resolucion.fileId+'")>'+codigoTipoDocumento+ '&nbsp;' + '-' + '&nbsp;' + nodeValue+'</a>'+ '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>', false);
+								borrarCampo.name = borrarCampo.name+res.resolucion.fileId;
+								borrarCampo.setText('<img src="/${appProperties.appName}/img/plugin/masivo/icon_trash.png"/>',false);
+							}
 <%--						panelEdicion.container.unmask(); --%>
 <%--						//btnCancelar.fireEvent('click',btnCancelar); --%>
 <%--						page.fireEvent(app.event.DONE); --%>
@@ -449,6 +548,7 @@ var fn_subirFicheroOk = function(r){
 					,error: function(result, request){
 <%--						panelEdicion.container.unmask(); --%>
 <%--						alert("Error procesar"); --%>
+							campo.setText(codigoTipoDocumento+ '&nbsp;' + '-' + '&nbsp;' + nodeValue+ '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Close-2-icon.png"/>', false);
 							updateBotonGuardar();
 					}
 				});
@@ -461,8 +561,20 @@ var fn_subirFicheroError = function(r){
 	uploading = false;
 	updateBotonGuardar();
 	//Ext.Msg.alert('Error al subir el fichero', 'El fichero no se ha podido subir.');
-    panelEdicion.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');	
-
+    //panelEdicion.getForm().findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>');
+	var panel = Ext.getCmp('d_file_right');
+	var campo = new Ext.form.Label({
+	   		   html: codigoTipoDocumento + '&nbsp;' + '-' + '&nbsp;' + nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Close-2-icon.png"/>',
+	   		   width:250,
+	   		   style: 'font-size:12px;'
+	   	   });
+  	 panel.add(campo);
+  	 var borrarCampo = new Ext.form.Label({
+			   html: "",
+	   		   style: 'float:left;font-size:12px;margin-left:2px;'
+  	 });
+  	 panel.add(borrarCampo);
+  	 panel.doLayout();	
 }
 
 var updateBotonGuardar  = function(){
@@ -502,5 +614,7 @@ var fn_procesarResolucionOk = function(r){
 	//recargarGrid();
 }
 
-
+if(Ext.get('permiteGuardar')!=null){
+	btnGuardar.setDisabled(false);
+}
 </fwk:page>

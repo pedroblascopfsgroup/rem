@@ -88,6 +88,7 @@ public final class ExternaBusinessOperation {
     public static final String BO_PRC_MGR_GET_ESTADOS_PROCEDIMIENTOS = "procedimientoManager.getEstadosProcedimientos";
     public static final String BO_PRC_MGR_BUSCAR_TAREA_PENDIENTE = "procedimientoManager.buscarTareaPendiente";
     public static final String BO_PRC_MGR_GET_TIPOS_ACTUACION_BY_TIPO_ASUNTO = "procedimientoManager.getTiposActuacionByTipoAsunto";
+    public static final String BO_PRC_MGR_ES_TR_NOTIFICACION_PERSONAL = "procedimientoManager.compruebaTrNotificacionPersonal";
 
     /*****************************************************************************
      ** DecisionProcedimientoManager.

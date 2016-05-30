@@ -1,13 +1,19 @@
 package es.pfsgroup.plugin.recovery.masivo;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.masivo.api.ExcelManagerApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVFileManagerApi;
@@ -25,6 +31,9 @@ public class MSVFileUploadFacade {
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
+	
+    @Autowired
+    private Executor executor;
 	
 	/**
 	 * Alamacena un fichero que se ha subido mediante un HTTP/Upload en el repositorio
@@ -107,11 +116,33 @@ public class MSVFileUploadFacade {
 		
 		if (uploadForm == null)
 			throw new BusinessOperationException("El objeto WebFileItem es nulo.");
+		
+		FileItem fileItem = uploadForm.getFileItem();
+		Integer max = getLimiteFichero(Parametrizacion.LIMITE_FICHERO_ASUNTO);
+
+        if (fileItem.getLength() > max) {
+            AbstractMessageSource ms = MessageUtils.getMessageSource();
+            return ms.getMessage("fichero.limite.tamanyo", new Object[] { (int) ((float) max / 1024f) }, MessageUtils.DEFAULT_LOCALE);
+            
+        }
 
 		// DIANA: cambiamos el método upload file para que se le pase todo el objeto WEBFileItem en lugar de sólamente el fileItem, para poder guardar el tipo de documento
 		MSVDtoResultadoSubidaFicheroMasivo result =  proxyFactory.proxy(MSVFileManagerApi.class).uploadFile(uploadForm);
 		return String.valueOf(result.getIdFichero());
 		
 	}
+	
+	
+
+	 private Integer getLimiteFichero(String limite) {
+        try {
+            Parametrizacion param = (Parametrizacion) executor.execute(
+                    ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, limite);
+            return Integer.valueOf(param.getValor());
+        } catch (Exception e) {
+            //logger.warn("No esta parametrizado el lï¿½mite mï¿½ximo del fichero en bytes para asuntos, se toma un valor por defecto (2Mb)");
+            return new Integer(2 * 1024 * 1024);
+        }
+	 }
 
 }

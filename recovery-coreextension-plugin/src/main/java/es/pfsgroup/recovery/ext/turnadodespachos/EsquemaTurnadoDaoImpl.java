@@ -208,5 +208,17 @@ public class EsquemaTurnadoDaoImpl extends AbstractEntityDao<EsquemaTurnado, Lon
 		Query query = this.getSessionFactory().getCurrentSession().createQuery(updateQuery);
 		int recordupdated=query.executeUpdate();
 	}
+
+	@Override
+	public void turnarProcurador(Long idAsunto, String username) {
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query = session.createSQLQuery(
+				"CALL asignacion_turnado_procu(:idAsunto, :username)")
+				.setParameter("idAsunto", idAsunto)
+				.setParameter("username", username);
+						
+		query.executeUpdate();
+		
+	}
 	
 }

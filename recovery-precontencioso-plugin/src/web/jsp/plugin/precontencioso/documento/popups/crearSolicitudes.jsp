@@ -177,7 +177,6 @@
 	});
 	
 	comboTipoGestor.on('select', function() {
-		
 		comboTipoDespacho.reset();
 		comboUsuario.reset();
 		comboTipoDespacho.setDisabled(false);

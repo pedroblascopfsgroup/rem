@@ -55,8 +55,8 @@
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',true)" result="flowScope.botonesVisiblesLiqPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesLiquidaciones',false)" result="flowScope.botonesInvisiblesLiqPco" />
 			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',true)" result="flowScope.botonesVisiblesBurPco" />
-			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',false)" result="flowScope.botonesInvisiblesBurPco" />
-			
+			<evaluate expression="executor.execute('plugin.precontencioso.getVisibilidadBotonesPrecontencioso','botonesBurofaxes',false)" result="flowScope.botonesInvisiblesBurPco" />			
+			<evaluate expression="executor.execute('procedimientoManager.compruebaTrNotificacionPersonal',id)" result="flowScope.isTrNotificacionPersonal" />
 	    </on-entry>
     </end-state>     
 </flow>

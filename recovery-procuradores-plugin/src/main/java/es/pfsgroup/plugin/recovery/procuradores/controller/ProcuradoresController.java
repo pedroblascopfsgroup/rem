@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.procuradores.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,9 +13,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
-import es.pfsgroup.plugin.recovery.procuradores.categorias.api.CategoriaApi;
 import es.pfsgroup.plugin.recovery.procuradores.tareas.api.PCDProcuradoresApi;
 import es.pfsgroup.plugin.recovery.procuradores.tareas.dto.PCDProcuradoresDto;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 
 /**
  * @author manuel
@@ -36,8 +38,8 @@ public class ProcuradoresController {
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-	@Autowired
-	private CategoriaApi categoriaApi;
+	//@Autowired
+	//private CategoriaApi categoriaApi;
 	/**
 	 * Método que devuelve la pestaña de tareas pendientes de validar.
 	 * 
@@ -45,6 +47,7 @@ public class ProcuradoresController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getPanelListadoTareasPendientes(WebRequest request, ModelMap model) {
 
@@ -111,12 +114,28 @@ public class ProcuradoresController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String descargarAdjunto(Long idResolucion, ModelMap model) throws Exception{
+	public String descargarAdjunto(Long idResolucion, Long idAdjunto, ModelMap model) throws Exception{
 		
 		MSVResolucion resolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucion(idResolucion);
-		FileItem fileItem = resolucion.getContenidoFichero();
-		fileItem.setFileName(resolucion.getNombreFichero());
-		model.put("fileItem", fileItem);
+		if(!Checks.esNulo(idAdjunto)){
+			List<EXTAdjuntoAsunto> listaAdjuntos = resolucion.getAdjuntosResolucion();
+			if(listaAdjuntos!= null && listaAdjuntos.size()>0){
+				for(EXTAdjuntoAsunto adjunto : listaAdjuntos){
+					if(adjunto.getId().equals(idAdjunto)){
+						FileItem fileItem = adjunto.getAdjunto().getFileItem();
+						fileItem.setFileName(adjunto.getNombre());
+						model.put("fileItem", fileItem);
+						break;
+					}
+				}
+			}
+			
+		}
+		else if(!Checks.esNulo(idResolucion)){
+			FileItem fileItem = resolucion.getContenidoFichero();
+			fileItem.setFileName(resolucion.getNombreFichero());
+			model.put("fileItem", fileItem);
+		}
 		
 		/*
 		if (id != null && tipo != null){

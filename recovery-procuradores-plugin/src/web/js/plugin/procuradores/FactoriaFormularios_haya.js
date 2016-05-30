@@ -2162,7 +2162,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	//id: 274 : PROCEDIMIENTO MONITORIO: Confirmar notificación requerimiento de pago
 	this.arrayCampos.push([
-	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false,filtradoProcurador:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                       ,{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	

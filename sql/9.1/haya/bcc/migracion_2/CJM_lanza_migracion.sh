@@ -245,6 +245,15 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_Inclusion_Bur_Doc_otros_estados.sh ejecutado correctamente"         
 
+echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_BORRA_TEX_DECISION.sh"                      
+./"$sh_dir"CJM_BORRA_TEX_DECISION.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"CJM_BORRA_TEX_DECISION.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_BORRA_TEX_DECISION.sh ejecutado correctamente"
+
 echo "[INFO] Comienza ejecución de: ""$sh_dir""HRE_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh"                      
 ./"$sh_dir"HRE_LAMINACION_Y_MIG_TAREAS_PERENTORIAS.sh "$1" 
 if [ $? != 0 ] ; then

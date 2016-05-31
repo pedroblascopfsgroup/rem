@@ -937,6 +937,8 @@
 	var chkBoxOrdinario = new Ext.form.Checkbox({
 		name:'turnadoOrdinario'
 		,labelStyle:labelStyle
+		,checked:true
+		,value: true
         ,fieldLabel:'<s:message code="procedimientos.edicion.turnadoOrdinario" text="**Turnado ordinario" />'
         <c:if test="${procedimientoPco!=null}" >
         	<c:if test="${procedimientoPco.preturnado != true}" >
@@ -1064,7 +1066,27 @@
 		comboPreparacion.reset();
 		comboTipoAccionPropuestaAIniciar.reset();
 		comboTipoActuacionPropuestaAIniciar.reset();
-		chkBoxOrdinario.reset();
+		debugger;
+		<c:if test="${procedimientoPco == null}" >
+			if(prioridadStore.getTotalCount() > 0){
+				comboPrioridad.setValue(prioridadStore.getAt(2).data.codigo);
+			}
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+			comboPrioridad.setValue('${procedimientoPco.prioridad.codigo}');
+		</c:if>
+		
+		<c:if test="${procedimientoPco == null}" >
+			if(preparacionStore.getTotalCount()>0){
+				comboPreparacion.setValue(preparacionStore.getAt(2).data.codigo);
+			}
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+			comboPreparacion.setValue('${procedimientoPco.tipoPreparacion.codigo}');
+		</c:if>
+		
+		
+		chkBoxOrdinario.setValue(true);
 		chkBoxPreturnado.reset();
 		var el = Ext.getCmp("tmp");
 		fieldSetLitigar.hide();
@@ -1280,7 +1302,9 @@
 	});
 	
 	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight : true
+		autoHeight : false
+		,autoScroll: true
+		,height: 550
 		,autoWidth:true
 		,bodyStyle : 'padding:5px'
 		,border : false

@@ -3,7 +3,7 @@
 
 shutdown immediate;
 
-startup exclusive mount orcl; #startup mount exclusive;
+startup exclusive mount orcl; 
 
 drop restore point before_test;
 

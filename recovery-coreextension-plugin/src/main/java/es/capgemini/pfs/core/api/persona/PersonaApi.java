@@ -1,7 +1,6 @@
 package es.capgemini.pfs.core.api.persona;
 
 import java.util.List;
-import java.util.Map;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.bien.model.Bien;
@@ -9,6 +8,7 @@ import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.estadoFinanciero.model.DDSituacionEstadoFinanciero;
 import es.capgemini.pfs.persona.dto.DtoUmbral;
 import es.capgemini.pfs.persona.dto.EXTDtoBuscarClientes;
+import es.capgemini.pfs.persona.model.DDTipoActuacionFSR;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -21,7 +21,8 @@ public interface PersonaApi {
 //	String BO_CORE_PERSONA_CREAR_ADJUNTOS_AMPLIADOS = "plugin.coreextension.persona.crearAdjuntoPersonaAmpliado";
 	String BO_CORE_PERSONA_GET_BY_COD_CLIENTE_ENTIDAD = "plugin.coreextension.persona.getPersonaByCodClienteEntidad";
 	String BO_CORE_CLIENTES_ACTUACION_CURSO_GET_FSR = "personaManager.getAccionFSRByIdPersona";
-	String BO_CORE_CLIENTES_LIST_ACTUACION_FSR = "personaManager.getAccionesFSRDeLaPersona";
+	String BO_CORE_CLIENTES_LIST_ACTUACION_FSR = "personaManager.getAllAccionesFSR";
+	String BO_CORE_CLIENTES_LIST_ACTUACION_FSR_ACTIVAS = "personaManager.getAccionesFSRDeLaPersonaActivas";
 
 	
 	@BusinessOperationDefinition(PrimariaBusinessOperation.BO_PER_MGR_UPDATE_UMBRAL)
@@ -117,9 +118,16 @@ public interface PersonaApi {
     
     /**
      * 
-     * @param idPersona
-     * return List<Map<String,Object>>
+     * return List<DDTipoActuacionFSR>
      */
     @BusinessOperationDefinition(BO_CORE_CLIENTES_LIST_ACTUACION_FSR)
-    public List<Map<String,Object>> getAccionesFSRDeLaPersona(Long idPersona);
+    public List<DDTipoActuacionFSR> getAllAccionesFSR();
+    
+    /**
+     * 
+     * @param idPersona
+     * return List<DDTipoActuacionFSR>
+     */
+    @BusinessOperationDefinition(BO_CORE_CLIENTES_LIST_ACTUACION_FSR_ACTIVAS)
+    public List<DDTipoActuacionFSR> getAccionesFSRDeLaPersonaActivas(Long idPersona);
 }

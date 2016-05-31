@@ -10,11 +10,6 @@
 
 (function(page,entidad){
 
-	function label(id,text){
-		return app.creaLabel(text,"",  {id:'entidad-cliente-'+id});
-	}
-
-
 	var panel=new Ext.Panel({
 		title:'<s:message code="cliente.tabaccionesfsr.tab.title" text="**Acciones FSR"/>'
 		,autoScroll:true
@@ -86,7 +81,7 @@
 	}
 	
 	panel.esActivo = function(codigo){
-		var accionesMarcadas = data.accionesPersonaFSRActivas;
+		var accionesMarcadas = data.accionesFSRContrato;
 		for(n=0; n < accionesMarcadas.length; n++){
 			accion = accionesMarcadas[n];
 			if(accion.codigo == codigo){

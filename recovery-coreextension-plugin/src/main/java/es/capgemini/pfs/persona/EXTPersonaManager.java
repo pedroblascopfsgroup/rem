@@ -3,10 +3,8 @@ package es.capgemini.pfs.persona;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -361,31 +359,24 @@ public class EXTPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 
 	@Override
 	@BusinessOperation(BO_CORE_CLIENTES_LIST_ACTUACION_FSR)
-	public List<Map<String, Object>> getAccionesFSRDeLaPersona(Long idPersona) {
+	public List<DDTipoActuacionFSR> getAllAccionesFSR() {
 		
 		List<DDTipoActuacionFSR> allActuacionesFsr = genericDao.getList(DDTipoActuacionFSR.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		
+		return allActuacionesFsr;
+	}
+	
+	@Override
+	@BusinessOperation(BO_CORE_CLIENTES_LIST_ACTUACION_FSR_ACTIVAS)
+	public List<DDTipoActuacionFSR> getAccionesFSRDeLaPersonaActivas(Long idPersona) {
+		
 		List<CavClientesActuacionesVigentesFSR> actuacionesFsr = genericDao.getList(CavClientesActuacionesVigentesFSR.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "persona.id", idPersona));
 		
 		///Obtenemos las relaciones existentes
-		List<Long> idsTipoActFsr = new ArrayList<Long>();
+		List<DDTipoActuacionFSR> actuacionesActivas = new ArrayList<DDTipoActuacionFSR>();
 		for(CavClientesActuacionesVigentesFSR act : actuacionesFsr){
-			idsTipoActFsr.add(act.getTipoActuacionFSR().getId());
+			actuacionesActivas.add(act.getTipoActuacionFSR());
 		}
-		
-		///Costruimos el list Map
-		List<Map<String, Object>> actuacionesDeLaPersona = new ArrayList<Map<String,Object>>();
-		
-		for(DDTipoActuacionFSR ddfsr : allActuacionesFsr){
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			map.put("actuacion", ddfsr);
-			if(idsTipoActFsr.contains(ddfsr.getId())){
-				map.put("activa",true);
-			}else{
-				map.put("activa",false);
-			}
-			actuacionesDeLaPersona.add(map);
-		}
-		
-		return actuacionesDeLaPersona;
+		return actuacionesActivas;
 	}
 }

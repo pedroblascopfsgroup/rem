@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.recovery.nuevoModeloBienes.personas;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +16,7 @@ import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.estadoFinanciero.model.DDSituacionEstadoFinanciero;
 import es.capgemini.pfs.persona.dto.DtoUmbral;
 import es.capgemini.pfs.persona.dto.EXTDtoBuscarClientes;
+import es.capgemini.pfs.persona.model.DDTipoActuacionFSR;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.users.FuncionManager;
@@ -214,8 +214,16 @@ public class NMBPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	}
 
 	@Override
-	public List<Map<String, Object>> getAccionesFSRDeLaPersona(Long idPersona) {
+	public List<DDTipoActuacionFSR> getAllAccionesFSR() {
 		// TODO Auto-generated method stub
 		return null;
-	}	
+	}
+
+	@Override
+	public List<DDTipoActuacionFSR> getAccionesFSRDeLaPersonaActivas(
+			Long idPersona) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

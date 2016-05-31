@@ -325,11 +325,16 @@
 	<json:object name="scoring">
 		<json:property name="fechasAlertas" value="${fechasAlertas}" />
 	</json:object>
-	<json:array name="accionesPersonaFSR" items="${accionesFSRDeLaPersona}" var="acc">
+	<json:array name="accionesPersonaFSRActivas" items="${accionesFSRActivas}" var="acc">
 		<json:object>
-			<json:property name="descripcion" value="${acc.get('actuacion').descripcion}" />
-			<json:property name="activa" value="${acc.get('activa')}" />
+			<json:property name="descripcion" value="${acc.descripcion}" />
+			<json:property name="codigo" value="${acc.codigo}" />
 		</json:object>
 	</json:array>
-	
+	<json:array name="allAccionesFSR" items="${allAccionesFSR}" var="acc">
+		<json:object>
+			<json:property name="descripcion" value="${acc.descripcion}" />
+			<json:property name="codigo" value="${acc.codigo}" />
+		</json:object>
+	</json:array>
 </fwk:json>

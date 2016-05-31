@@ -88,6 +88,9 @@ public class coreextensionController {
 
     @Autowired
 	private EXTDDTipoGestorApi tipoGestorApi;
+
+	@Autowired
+	private coreextensionApi coreextensionApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -614,6 +617,22 @@ public class coreextensionController {
 		
 		model.put("tiposAcuerdo", tiposAcuerdo);
 		return JSON_LISTADO_TIPOS_ACUERDO;
+	}
+
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios 
+	 * @param model
+	 * @param UsuarioDto 
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListAllUsersPaginated(ModelMap model, UsuarioDto usuarioDto){
+		
+		Page page = coreextensionApi.getListAllUsersPaginated(usuarioDto);
+		model.put("pagina", page);
+		
+		return TIPO_USUARIO_PAGINATED_JSON;
 	}
 	
 }

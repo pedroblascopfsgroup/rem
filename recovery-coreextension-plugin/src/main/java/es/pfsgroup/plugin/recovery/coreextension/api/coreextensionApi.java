@@ -249,4 +249,6 @@ public interface coreextensionApi {
 	@BusinessOperationDefinition(GET_LIST_BUSQUEDA_TIPOSACUERDO_BY_ENTIDAD)
 	Page getTipoAcuerdosByEntidad(String codigo);
 	
+	public Page getListAllUsersPaginated(UsuarioDto usuarioDto);
+	
 }

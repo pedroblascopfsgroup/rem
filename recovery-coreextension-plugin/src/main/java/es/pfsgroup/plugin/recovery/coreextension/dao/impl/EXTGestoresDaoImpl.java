@@ -168,5 +168,52 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		page.setResults(lista);
 		return page;
 	}
+	
+	@Override
+	public Page getAllGestores(UsuarioDto usuarioDto) {
 
+		PageSql page = new PageSql();
+		int totalCount = this.getCountAllGestores(usuarioDto);
+		
+		StringBuilder sqlUsuarios = new StringBuilder();
+		sqlUsuarios.append("select gd.usuario from GestorDespacho gd ");
+		sqlUsuarios.append("where gd.auditoria.borrado = false ");
+		if (StringUtils.hasText(usuarioDto.getQuery())){
+			String[] palabras = usuarioDto.getQuery().split(" ");
+			for (String palabra : palabras) {
+				sqlUsuarios.append(" and (upper(gd.usuario.apellido1) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.apellido2) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.nombre) like '%" + palabra.toUpperCase() + "%' ) ");
+			}
+		}
+		sqlUsuarios.append(" order by gd.usuario.apellido1 asc, gd.usuario.apellido2 asc, gd.usuario.nombre asc ");
+		
+		Query query = getSession().createQuery(sqlUsuarios.toString());
+		query.setFirstResult(usuarioDto.getStart());
+		query.setMaxResults(usuarioDto.getLimit());
+		List<Usuario> lista = query.list();
+		
+		page.setTotalCount(totalCount);
+		page.setResults(lista);
+		return page;
+	}
+
+	
+	private int getCountAllGestores(UsuarioDto usuarioDto){
+		StringBuilder sqlUsuarios = new StringBuilder();
+		sqlUsuarios.append("select count(gd.id) from GestorDespacho gd ");
+		sqlUsuarios.append("where gd.auditoria.borrado = false ");
+		if (StringUtils.hasText(usuarioDto.getQuery())){
+			String[] palabras = usuarioDto.getQuery().split(" ");
+			for (String palabra : palabras) {
+				sqlUsuarios.append(" and (upper(gd.usuario.apellido1) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.apellido2) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.nombre) like '%" + palabra.toUpperCase() + "%' ) ");
+			}
+		}
+		
+		Query query = getSession().createQuery(sqlUsuarios.toString());
+		int totalCount = Integer.parseInt(query.uniqueResult().toString());
+		return totalCount;
+	}
 }

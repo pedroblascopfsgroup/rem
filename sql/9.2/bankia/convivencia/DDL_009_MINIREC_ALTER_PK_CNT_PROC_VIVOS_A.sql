@@ -131,11 +131,11 @@ BEGIN
     Execute Immediate V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||TABLA||'... Se han pasado estadisticas a la tabla.');
     -- Creamos PK a la tabla
-    DBMS_OUTPUT.PUT_LINE ('[INFO] Creamos la nueva clave primaria... PK_'||TABLA||'.');
-    V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||' ADD CONSTRAINT PK_'||TABLA||' PRIMARY KEY ('||PK_NEW_COLUMNS||')';
+    DBMS_OUTPUT.PUT_LINE ('[INFO] Creamos la nueva clave primaria... PK_MINIRE_CNT_PROC_VIVOS_A.');
+    V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||' ADD CONSTRAINT PK_MINIRE_CNT_PROC_VIVOS_A PRIMARY KEY ('||PK_NEW_COLUMNS||')';
     Execute Immediate V_MSQL;
     commit;
-    DBMS_OUTPUT.PUT_LINE ('[INFO] Nueva clave primaria creada... PK_'||TABLA||'.');
+    DBMS_OUTPUT.PUT_LINE ('[INFO] Nueva clave primaria creada... PK_MINIRE_CNT_PROC_VIVOS_A.');
   ELSE 
     DBMS_OUTPUT.PUT_LINE ('[INFO] La nueva PK es la misma PK que ya existe, no hacemos mas acciones.');
   END IF;

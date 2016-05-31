@@ -81,6 +81,9 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	private AdjuntoApi adjuntoApi;
 	
 	@Autowired
+	private MSVResolucionApi msvResolucionApi;
+	
+	@Autowired
 	private EXTAdjuntoAsuntoDao extAdjuntoAsuntoDao;
 	
 	//private static final String ESTADO_GUARDAR = MSVDDEstadoProceso.CODIGO_PTE_VALIDAR;
@@ -238,7 +241,8 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 	@BusinessOperation(PCD_BO_PROCESAR_RESOLUCION)
 	public void procesar(MSVResolucionesDto dtoResolucion) throws Exception {
 		// MSVResolucion msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).guardarDatos(dtoResolucion);
-				MSVResolucion msvResolucion = proxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
+				
+		MSVResolucion msvResolucion = msvResolucionApi.guardarResolucion(dtoResolucion);
 				//session.getStatistics().getEntityKeys().
 					/*//Se sobreescribe el fichero del procurador.
 					if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
@@ -258,7 +262,7 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 					}
 					*/
 					List<EXTAdjuntoAsunto> listaAdjuntos = msvResolucion.getAdjuntosResolucion();
-					if(!Checks.esNulo(listaAdjuntos) && listaAdjuntos.isEmpty()){
+					if(!Checks.estaVacio(listaAdjuntos)){
 							subirFicheroAdjunto(msvResolucion);
 					}
 					dtoResolucion.setIdTarea(msvResolucion.getTarea().getId());
@@ -287,7 +291,7 @@ public class PCDProcesadoResolucionesManager implements PCDProcesadoResoluciones
 		for(EXTAdjuntoAsunto adj : listaAdjuntos){
 			Map<String, String> parameters = new HashMap<String, String>();
 
-			parameters.put("id", adj.getId().toString());
+			parameters.put("id", msvResolucion.getAsunto().getId().toString());
 			parameters.put("prcId", msvResolucion.getProcedimiento().getId().toString());
 			parameters.put("comboTipoFichero", adj.getTipoFichero().getCodigo());
 

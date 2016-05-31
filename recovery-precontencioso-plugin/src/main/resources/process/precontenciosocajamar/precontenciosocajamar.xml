@@ -49,29 +49,10 @@
 			<targetBean>precontenciosoGestorProcuradorHandler
 			</targetBean>
 		</action>
-		<transition to="forkAceptacion" name="avanzaConProcu"></transition>
+		<transition to="PCO_EnviarExpedienteLetrado" name="avanzaConProcu"></transition>
 		<transition to="PCO_EnviarExpedienteLetrado" name="avanza"></transition>
 	</node>
-		
-	<fork name="forkAceptacion">
-		<transition to="PCO_EnviarExpedienteLetrado" name="enviarExpediente"></transition>
-		<transition to="PCO_PreasignarProcurador" name="preasignarProcurador"></transition>
-	</fork>
 	
-	<state name="PCO_PreasignarProcurador">
-		<event type="node-enter">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoLeaveActionHandler</targetBean>
-			</action>
-		</event>
-		<transition to="Fin" name="avanzaBPM"/>
-	</state>
-
 	<state name="PCO_RevisarNoAceptacionPost">
 		<transition to="PCO_RegistrarAceptacionPost" name="avanzaBPM"/>
 		<event type="node-enter">

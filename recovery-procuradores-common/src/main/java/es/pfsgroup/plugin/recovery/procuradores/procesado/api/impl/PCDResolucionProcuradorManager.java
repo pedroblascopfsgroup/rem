@@ -37,7 +37,6 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoResultadoSubidaFicheroMasivo;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
-import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVFileItem;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
@@ -54,7 +53,6 @@ import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 @Transactional(readOnly = false)
 public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorApi {
 
-	private static final String FICHERO_VACIO = "/reports/plugin/masivo/vacio.file";
 	private static final String COD_RESOLUCION_AUTOPRORROGA = "RESOL_PROCU_AUTO";
 
 	@Autowired
@@ -69,11 +67,8 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-    //@Autowired
-    //private transient RecoveryBPMfwkDatosProcedimientoApi datosProcedimientoManager;
-    
 	@Autowired
-	private ApiProxyFactory apiProxyFactory;
+	private MSVResolucionApi resolucionApi;
     
 	@Autowired
 	private JBPMProcessManager jbpmManager;
@@ -131,7 +126,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		else
 			msvResolucion = msvResolucionDao.get(dtoResolucion.getIdResolucion());
 		
-		proxyFactory.proxy(MSVResolucionApi.class).populateResolucion(msvResolucion, dtoResolucion);
+		resolucionApi.populateResolucion(msvResolucion, dtoResolucion);
 		
 		msvResolucionDao.saveOrUpdate(msvResolucion);
 		
@@ -259,8 +254,8 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		
     	//Si no tiene tareas activas obtiene los tipos de resolución a partir del idProcedimiento
     	Set<MSVTipoResolucionDto> setTiposResolucion = (Checks.esNulo(idTarea)) 
-    			? apiProxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesSinTarea(idProcedimiento)
-    			: apiProxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesTareas(idTarea);
+    			? proxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesSinTarea(idProcedimiento)
+    			: proxyFactory.proxy(MSVResolucionInputApi.class).obtenerTiposResolucionesTareas(idTarea);
     	
     	
 		MSVTipoResolucionDto tipoAutoprorroga = new MSVTipoResolucionDto();
@@ -455,14 +450,6 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	 */
 	private MSVFileItem getFile(Long idFichero) {
 		return proxyFactory.proxy(MSVFileManagerApi.class).getFile(idFichero);
-	}
-	
-	private MSVCampoDinamico dameCampo(String key, Set<MSVCampoDinamico> camposResolucion) {
-		for(MSVCampoDinamico msvCampoDinamico : camposResolucion){
-			if (msvCampoDinamico.getNombreCampo().equals(key))
-				return msvCampoDinamico;
-		}
-		return new MSVCampoDinamico();
 	}
 	
 }

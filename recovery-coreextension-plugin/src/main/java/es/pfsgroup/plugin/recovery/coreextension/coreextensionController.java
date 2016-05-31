@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 
 //FIXME Hay que eliminar esta clase o renombrarla
@@ -63,6 +64,9 @@ public class coreextensionController {
 	
 	@Autowired
 	private CoreProjectContext coreProjectContext;
+	
+	@Autowired
+	private EXTDDTipoGestorApi tipoGestorApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -136,9 +140,10 @@ public class coreextensionController {
 		
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven, para ello usaremos el coreProjectContext
 		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
 		
 		Map<String, List<String>> despachosProcuradores = coreProjectContext.getDespachosProcuradores();
-		if(despachosProcuradores.containsKey(codEntidad)){
+		if(despachosProcuradores.containsKey(codEntidad) && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)){
 			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
 			List<String> despachosValidos = despachosProcuradores.get(codEntidad);
 			while(iter.hasNext()){
@@ -147,7 +152,7 @@ public class coreextensionController {
 				}
 			}
 		}
-		
+				
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;
 	}

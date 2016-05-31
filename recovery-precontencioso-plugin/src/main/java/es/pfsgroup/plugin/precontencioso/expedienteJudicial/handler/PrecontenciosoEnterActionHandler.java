@@ -10,15 +10,16 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContext;
 import es.pfsgroup.plugin.precontencioso.PrecontenciosoProjectContextImpl;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.procedimientos.PROGenericEnterActionHandler;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
@@ -48,6 +49,12 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 
 	@Autowired
 	TurnadoProcuradoresApi turnadoProcuradoresApi;
+	
+	@Autowired
+	private TareaExternaManager tareaExternaManager;
+	
+	@Autowired
+	private SubastaProcedimientoApi subastaProcedimientoApi;
 
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -80,7 +87,7 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		// executionContext.getNode().getName();
 
 		Procedimiento prc = getProcedimiento(executionContext);
-		TareaExterna tex = getTareaExterna(executionContext);
+		EXTTareaExterna tex = (EXTTareaExterna) getTareaExterna(executionContext);
 		
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
@@ -171,35 +178,37 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
 		} else if (PrecontenciosoBPMConstants.PCO_ValidarAsignacion.equals(tex.getTareaProcedimiento().getCodigo())) {
-			turnado(prc, tex);
+			turnado(prc);
 		}
 		
 	}
 
-	@SuppressWarnings("unchecked")
 	@Transactional
-	private void turnado(Procedimiento procedimiento, TareaExterna tex) {
+	private void turnado(Procedimiento procedimiento) {
 			
 		String plaza = "";
 		String tpo = "";
-		List<EXTTareaExternaValor> listado = (List<EXTTareaExternaValor>) executor.execute(ComunBusinessOperation.BO_TAREA_EXTERNA_MGR_OBTENER_VALORES_TAREA, tex.getId());
-
-		if (!Checks.esNulo(listado)) {
-			for (EXTTareaExternaValor tev : listado) {
-				if ("partidoJudicial".equals(tev.getNombre())) {
-					plaza = tev.getValor();
-				} else if ("proc_a_iniciar".equals(tev.getNombre())) {
-					tpo = tev.getValor();
-				}
-
+		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(procedimiento.getId());
+		for (TareaExterna tarea : tareas) {
+			if ("PCO_RegistrarTomaDec".equals(tarea.getTareaProcedimiento().getCodigo())) {
+				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
+				for (EXTTareaExternaValor valor : valores) {
+					if ("proc_a_iniciar".equals(valor.getNombre())) {
+						tpo = valor.getValor();
+					} 
+					else if ("partidoJudicial".equals(valor.getNombre())) {
+						plaza = valor.getValor();
+					}
+ 				}
+				break;
 			}
 		}
 		try {
 			turnadoProcuradoresApi.turnarProcurador(procedimiento.getId(), usuarioManager.getUsuarioLogado().getUsername(), plaza, tpo);
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			logger.error("Illegal turnado: " + e);
 		} catch (AplicarTurnadoException e) {
-			e.printStackTrace();
+			logger.error("Aplicar turnado: " + e);
 		}
 	}
 

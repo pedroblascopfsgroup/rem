@@ -68,7 +68,7 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 	
 	@Autowired
 	UsuarioManager usuarioManager;
-
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
 

@@ -586,6 +586,7 @@ onViewClick : function(doFocus){
 			comboTipoResolucionNew.getStore().removeAll();
 			comboTipoResolucionNew.reset();
 			datosResolucion.setVisible(false);
+			idTipoResolucion="";
 			tipoResolucionStore.webflow({idTarea:record.data.idTarea, idProcedimiento:record.data.idProcedimiento});
 			valoresCamposAntResols(record.data.idProcedimiento)
 			//obtenerCodigoPlaza({idAsunto:record.data.idAsunto});
@@ -593,6 +594,7 @@ onViewClick : function(doFocus){
 			habilitaBotonesPopUp(false, false);
 			filtroAsunto.getStore().removeAll();
 			filtroAsunto.lastQuery = filtroAsunto.lastSelectionText;
+			
 			//debugger;
          }
     });
@@ -1074,6 +1076,7 @@ var creaVentanaUpload = function(){
             }
             ,items: [
             	{xtype:'combo'
+            			,itemId:'comboTipoFichero'
 						,name:'comboTipoFichero'
 						<app:test id="tipoProcedimientoCombo" addComa="true" />
 						,hiddenName:'comboTipoFichero'
@@ -1086,6 +1089,7 @@ var creaVentanaUpload = function(){
 						,resizable:true
 						,triggerAction: 'all'
 						,allowBlank:true
+						,forceSelection: true
 						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
 						,listeners: {
            					'select': function(combo, record, index){
@@ -1115,12 +1119,15 @@ var creaVentanaUpload = function(){
             ,buttons: [{
                 text: 'Subir',
                 handler: function(){
-                uploading = true;
-                updateBotonGuardar();
-                var formulario = resolucionPanel.getForm();
-                //formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
-                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
-                win.hide();
+                	if(upload.getComponent('comboTipoFichero').getValue().trim()!=''){
+	                	uploading = true;
+		                updateBotonGuardar();
+		                var formulario = resolucionPanel.getForm();
+		                //formulario.findField('file').setRawValue(nodeValue + '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/loading.gif"/>');
+		                controlador.uploadFicheroAjax(upload, fn_subirFicheroOk, fn_subirFicheroError);
+		                win.hide();
+		            }
+		            else upload.getComponent('comboTipoFichero').addClass('x-form-invalid');
                 }
             },{
                 text: 'Cancelar',

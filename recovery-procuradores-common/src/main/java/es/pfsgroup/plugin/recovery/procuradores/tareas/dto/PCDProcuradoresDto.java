@@ -46,6 +46,7 @@ public class PCDProcuradoresDto extends PaginationParamsImpl{
     private List<Perfil> perfiles;
     private List<DDZona> zonas;
     private Usuario usuarioLogado;
+    private List<Long> listaUsuariosGrupo;
 
     private Boolean tienePerfilGestor;
     private Boolean tienePerfilSupervisor;
@@ -340,4 +341,10 @@ public class PCDProcuradoresDto extends PaginationParamsImpl{
 	public void setTipoAccionCodigo(String tipoAccionCodigo) {
         this.tipoAccionCodigo = tipoAccionCodigo;
     }
+	public List<Long> getListaUsuariosGrupo() {
+		return listaUsuariosGrupo;
+	}
+	public void setListaUsuariosGrupo(List<Long> listaUsuariosGrupo) {
+		this.listaUsuariosGrupo = listaUsuariosGrupo;
+	}
 }

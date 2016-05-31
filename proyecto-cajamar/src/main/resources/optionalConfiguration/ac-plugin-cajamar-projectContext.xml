@@ -320,7 +320,7 @@
 		</property>
 		<property name="tiposGestoresDeProcuradores">
 			<set>
-				<value>GESPROC</value>
+				<value>PROC</value>
 			</set>
 		</property>
 		<property name="perfilesConsulta">
@@ -428,5 +428,4 @@
 	<alias name="procedimientosProjectContextCAJAMAR" alias="procedimientosProjectContext"/>		
 	<alias name="coreProjectContextCAJAMAR" alias="coreProjectContext"/>
 	<alias name="commonProjectContextCAJAMAR" alias="commonProjectContext"/>
-	<alias name="adjuntoManagerHayaImpl" alias="adjuntoManagerImpl"/>
 </beans>	

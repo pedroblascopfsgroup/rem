@@ -58,9 +58,6 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	
 	@Autowired
 	private SubastaProcedimientoApi subastaProcedimientoApi;
-	
-	@Autowired
-	private EXTTareaExternaManager extTareaExternaManager;
 
 	@Autowired
 	private TareaExternaManager tareaExternaManager;
@@ -306,26 +303,20 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 	
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean comprobarSiLosDatosHanSidoCambiados(Long prcId) {
-		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao
-				.createFilter(FilterType.EQUALS, "id", prcId));
-		List<Long> procedimientos = new ArrayList<Long>();
-		procedimientos.add(prc.getId());
-		List<EXTTareaExterna> tareas = (List<EXTTareaExterna>) extTareaExternaManager.obtenerTareasPorProcedimientos(procedimientos);
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
 		
-		procedimientos = new ArrayList<Long>();
-		procedimientos.add(prc.getProcedimientoPadre().getId());
-		List<EXTTareaExterna> tareasAnterior = (List<EXTTareaExterna>) extTareaExternaManager.obtenerTareasPorProcedimientos(procedimientos);
+		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getId());
+		
+		List<TareaExterna> tareasAnterior = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getId());
 
 		String importeDemanda = "";
 		String procIniciar = "";
 		String partidoJudicial = "";
 		
 		for (TareaExterna tarea : tareas) {
-			//FIXME No reconoce la cadena entera, falta revisar la comparacion pero así entra
-			if ("Redactar demanda y adjuntar documentación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+			if ("PCO_RegistrarTomaDec".equals(tarea.getTareaProcedimiento().getCodigo())) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if ("principal".equals(valor.getNombre())) {
@@ -342,7 +333,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		}
 		
 		for (TareaExterna tarea : tareasAnterior) {
-			if ("Validar asignación".equals(tarea.getTareaProcedimiento().getDescripcion())) {
+			if ("PCO_ValidarAsignacion".equals(tarea.getTareaProcedimiento().getCodigo())) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if ("importeDemanda".equals(valor.getNombre())) {

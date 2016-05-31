@@ -52,7 +52,7 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 		if(!Checks.esNulo(dto.getIdCategoria())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", dto.getIdCategorizacion());
 		}
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "usuarioPendiente", dto.getUsuarioLogado().getId());
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "usuarioPendiente", dto.getListaUsuariosGrupo());
 		List<String> vals = new ArrayList<String>();
 		vals.add("'PRC'");
 		vals.add("'PTV'");
@@ -73,7 +73,7 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 		if(!Checks.esNulo(dto.getIdCategoria())){
 				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "idcategorizacion", dto.getIdCategorizacion());
 		}
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "usuarioPendiente", dto.getUsuarioLogado().getId());
+		HQLBuilder.addFiltroWhereInSiNotNull(hb, "usuarioPendiente", dto.getListaUsuariosGrupo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "estadoProcesoCodigo", "PAU");
 
 		//hb.orderBy("fechaVencimiento", HQLBuilder.ORDER_ASC);
@@ -82,7 +82,7 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 	}
 
 	@Override
-	public Long getCountListadoTareasPendientesValidar(Long idUsuario) {
+	public Long getCountListadoTareasPendientesValidar(List<Long> listaUsuariosGrupo) {
 		
 		/*
 		 * select count(distinct id, usuarioPendiente) from PCDProcuradores;
@@ -96,7 +96,13 @@ public class PCDProcuradoresDaoImpl extends AbstractEntityDao<PCDProcuradores, L
 		
 		StringBuffer sql = new StringBuffer();
 		sql.append("select count(*) from (select distinct tar_id, usu_pendientes from vtar_tarea_vs_procuradores ) vtar ");
-		sql.append(" where vtar.usu_pendientes = " + idUsuario);
+		sql.append(" where  vtar.usu_pendientes IN (-1");
+		for(Long idUsuario:listaUsuariosGrupo){
+			sql.append(",");
+			sql.append(idUsuario);
+		}
+		sql.append(") ");
+		//sql.append(" where vtar.usu_pendientes = " + idUsuario);
 
 		String query = sql.toString();
 		SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());

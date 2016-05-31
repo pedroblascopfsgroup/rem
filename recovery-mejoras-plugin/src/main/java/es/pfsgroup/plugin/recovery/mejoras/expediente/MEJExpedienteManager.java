@@ -196,11 +196,17 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
     private void incluirEnExpedientePersona(Expediente expediente, Persona persona) {
 
         ExpedientePersona expedientePersona = new ExpedientePersona();
+        DDAmbitoExpediente ambitoExpediente= null;
         expedientePersona.setExpediente(expediente);
         expedientePersona.setPersona(persona);
         // Nuevo método para obtener el arquetipo de una persona
         Arquetipo arq = arquetipoDao.getArquetipoPorPersona(persona.getId());
-        DDAmbitoExpediente ambitoExpediente = arq.getItinerario().getAmbitoExpediente();
+        if(arq!=null){
+        	ambitoExpediente = arq.getItinerario().getAmbitoExpediente();
+        }
+        else{
+        	ambitoExpediente = expediente.getArquetipo().getItinerario().getAmbitoExpediente();
+        }
         expedientePersona.setAmbitoExpediente(ambitoExpediente);
         expedientePersona.setAuditoria(Auditoria.getNewInstance());
 

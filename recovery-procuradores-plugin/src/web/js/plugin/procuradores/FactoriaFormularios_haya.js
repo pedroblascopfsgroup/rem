@@ -2468,7 +2468,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 304 : T. MEJORA EMBARGO: Registrar anotacion en registro
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de anotación de los embargos",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes no apremiados","autoload":true, mode:'local',"editable":false,triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes",allowBlank:false,filtradoProcurador:true,"fieldLabel":"Existen bienes no apremiados","autoload":true, mode:'local',"editable":false,triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	

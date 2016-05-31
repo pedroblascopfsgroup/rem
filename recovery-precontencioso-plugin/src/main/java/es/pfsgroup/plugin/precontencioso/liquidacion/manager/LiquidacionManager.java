@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
@@ -30,6 +30,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.api.DatosLiquidacionExtraApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
@@ -70,13 +71,18 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
 	
+	@Autowired(required = false)
+	private DatosLiquidacionExtraApi datosLiquidacionExtraApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public List<LiquidacionDTO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 		List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
-
 		List<LiquidacionDTO> liquidacionesDto = LiquidacionAssembler.entityToDto(liquidaciones);
+		if (!Checks.esNulo(datosLiquidacionExtraApi)) {
+			datosLiquidacionExtraApi.agregarDatosExtra(liquidacionesDto);
+		}
 		return liquidacionesDto;
 	}
 	

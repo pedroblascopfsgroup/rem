@@ -83,8 +83,8 @@
 	panel.esActivo = function(codigo){
 		var accionesMarcadas = data.accionesFSRContrato;
 		for(n=0; n < accionesMarcadas.length; n++){
-			accion = accionesMarcadas[n];
-			if(accion.codigo == codigo){
+			accionMarcada = accionesMarcadas[n];
+			if(accionMarcada.codigo == codigo){
 				return true;
 			}
 		}

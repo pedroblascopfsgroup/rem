@@ -79,7 +79,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			output = servicePort.processEvent(input);
 			
 			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-			if (output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+			if (output.getParameters() != null && output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
 				logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
 			} else {
 				logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());

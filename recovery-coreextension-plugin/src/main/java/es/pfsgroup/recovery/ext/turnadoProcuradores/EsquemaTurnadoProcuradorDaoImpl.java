@@ -271,7 +271,8 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 
         return q.list();
 	}
-
+	
+	/*
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TurnadoProcuradorConfig> getRangosPorPlazaTPOEsquema(Long idEsquema, Long idPlaza, Long idTPO) {
@@ -287,16 +288,25 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 
         return q.list();
 	}
+	*/
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Usuario> getDespachosProcuradores() {
+	public List<Usuario> getDespachosProcuradores(List<String> despachosValidos) {
 		StringBuilder hql = new StringBuilder();
 		hql.append("select usd.usuario from GestorDespacho usd ");
         hql.append("where usd.auditoria.borrado = false ");
         hql.append("and usd.usuario.auditoria.borrado = false ");
         hql.append("and usd.despachoExterno.auditoria.borrado = false ");
         hql.append("and usd.despachoExterno.tipoDespacho ='"+DDTipoDespachoExterno.CODIGO_DESPACHO_PROCURADOR+"' ");
+        if(!Checks.estaVacio(despachosValidos)){
+        	hql.append("and usd.despachoExterno.despacho in (");
+        	for(int i = 0; i<despachosValidos.size();i++){
+        		if(i==0) hql.append("'"+despachosValidos.get(i)+"'");
+        		else hql.append(",'"+despachosValidos.get(i)+"'");
+        	}
+        	hql.append(") ");
+        }
         hql.append("order by usd.usuario.nombre ASC");
         
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
@@ -306,7 +316,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 
 	@Override
 	public void borradoFisicoConfigPlazaTPO(List<Long> idsPlazasTpo) {
-		if(!Checks.esNulo(idsPlazasTpo)){
+		if(!Checks.estaVacio(idsPlazasTpo)){
 			//Delete de TUP_TPC_TURNADO_PROCU_CONFIG
 			StringBuilder hql = new StringBuilder();
 			hql.append("delete conf from TurnadoProcuradorConfig conf ");

@@ -61,10 +61,10 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	List<TipoPlaza> getPlazasEquema(Long idEsquema);
 
 	List<TipoProcedimiento> getTiposProcedimientoPorPlazaEsquema(Long idEsquema, Long idPlaza);
-
+	/*
 	List<TurnadoProcuradorConfig> getRangosPorPlazaTPOEsquema(Long idEsquema, Long idPlaza, Long idTPO);
-
-	List<Usuario> getDespachosProcuradores();
+	*/
+	List<Usuario> getDespachosProcuradores(List<String> despachosValidos);
 	
 	/**
 	 * Borra fisicamente toda la configuracion asociada a una lista de plazas-tpos dados sus ids

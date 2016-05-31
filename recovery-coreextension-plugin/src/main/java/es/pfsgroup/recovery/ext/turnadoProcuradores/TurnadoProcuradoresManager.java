@@ -3,9 +3,9 @@ package es.pfsgroup.recovery.ext.turnadoProcuradores;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,9 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -27,7 +25,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -35,8 +33,6 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfigDto;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 
 @Service ("turnadoProcuradoresManager")
@@ -61,6 +57,9 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Autowired
 	private TareaExternaManager tareaExternaManager;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;
 
 	@Override
 	public Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto) {
@@ -73,11 +72,11 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	public EsquemaTurnadoProcurador get(Long id) {
 		return esquemaTurnadoProcuradorDao.get(id);
 	}
-
+	
 	@Override
 	@Transactional(readOnly = false)
 	public EsquemaTurnadoProcurador save(EsquemaTurnadoDto dto) {
-
+		/*
 		EsquemaTurnadoProcurador esquema = null;	
 		if (dto.getId()!=null) {
 			esquema = get(dto.getId());
@@ -143,6 +142,8 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		esquema = esquemaTurnadoProcuradorDao.get(esquema.getId());
 		
 		return esquema;
+		*/
+		return null;
 	}
 
 
@@ -197,18 +198,21 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	@Override
 	@Transactional
 	public void delete(Long id) {
-		EsquemaTurnadoProcurador esquema = get(id);
+		/*
+		 * EsquemaTurnadoProcurador esquema = get(id);
 		esquemaTurnadoProcuradorDao.delete(esquema);
 		if (esquema.getConfiguracion()!=null) {
 			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
 				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
 			}
 		}
+		*/
 	}
 
 	@Override
 	@Transactional
 	public void copy(Long id) {
+		/*
 		EsquemaTurnadoProcurador esquema = get(id);
 		EsquemaTurnadoDto dto = new EsquemaTurnadoDto();
 		dto.setDescripcion("Copia de " + esquema.getDescripcion());
@@ -224,6 +228,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 			}
 		}
 		this.save(dto);
+		*/
 	}
 
 	@Override
@@ -237,6 +242,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	public boolean checkActivarEsquema(Long id) {
+		/*
 		EsquemaTurnadoProcurador esquema = this.get(id);
 		EsquemaTurnadoProcurador esquemaVigente = null;
 		try {
@@ -276,6 +282,8 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		int total = esquemaTurnadoProcuradorDao.cuentaLetradosAsignados(codigosCI, codigosCC, codigosLI, codigosLC);
 		
 		return (total==0);
+		*/
+		return false;
 	}
 
 	@Override
@@ -381,7 +389,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	public List<TipoPlaza> getPlazasEsquemaTurnadoProcu(){
 		List<TipoPlaza> listaPlazas = genericDao.getList(TipoPlaza.class, genericDao
 				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		if(!Checks.esNulo(listaPlazas)){
+		if(!Checks.estaVacio(listaPlazas)){
 			return listaPlazas;
 		}
 		return null;
@@ -391,7 +399,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	public List<TipoProcedimiento> getTPOsEsquemaTurnadoProcu(){
 		List<TipoProcedimiento> listaTpo = genericDao.getList(TipoProcedimiento.class, genericDao
 				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		if(!Checks.esNulo(listaTpo)){
+		if(!Checks.estaVacio(listaTpo)){
 			return listaTpo;
 		}
 		return null;
@@ -420,14 +428,40 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	public List<TurnadoProcuradorConfig> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO) {
-		List<TurnadoProcuradorConfig> list = esquemaTurnadoProcuradorDao.getRangosPorPlazaTPOEsquema(idEsquema,idPlaza,idTPO);
-		return (list.size()>0 ? list : null);
+	public List<EsquemaPlazasTpo> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO) {
+		
+		//Get esquema
+		EsquemaTurnadoProcurador esquemaTurnado = genericDao.get(EsquemaTurnadoProcurador.class, genericDao
+				.createFilter(FilterType.EQUALS, "id", idEsquema));
+		//Sobre el esquema, filtrar por plaza o tpo si se requiere
+		List<EsquemaPlazasTpo> listaConfiguracion = esquemaTurnado.getConfiguracion();
+		if(!Checks.esNulo(idPlaza)){
+			Iterator<EsquemaPlazasTpo> iter = listaConfiguracion.iterator();
+			while(iter.hasNext()){
+				if(!iter.next().getTipoPlaza().getId().equals(idPlaza)) iter.remove();
+			}
+		}
+		if(!Checks.esNulo(idTPO)){
+			Iterator<EsquemaPlazasTpo> iter = listaConfiguracion.iterator();
+			while(iter.hasNext()){
+				if(!iter.next().getTipoProcedimiento().getId().equals(idTPO)) iter.remove();
+			}
+		}
+		
+		//List<TurnadoProcuradorConfig> list = esquemaTurnadoProcuradorDao.getRangosPorPlazaTPOEsquema(idEsquema,idPlaza,idTPO);
+		return (!Checks.estaVacio(listaConfiguracion) ? listaConfiguracion : null);
 	}
 
 	@Override
 	public List<Usuario> getDespachosProcuradores() {
-		List<Usuario> list = esquemaTurnadoProcuradorDao.getDespachosProcuradores();
+		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		Map<String, List<String>> despachosProcuradores = coreProjectContext.getDespachosProcuradores();
+		List<String> despachosValidos = null;
+		if(despachosProcuradores.containsKey(codEntidad)){
+			despachosValidos = despachosProcuradores.get(codEntidad);
+		}
+		
+		List<Usuario> list = esquemaTurnadoProcuradorDao.getDespachosProcuradores(despachosValidos);
 		return (list.size()>0 ? list : null);
 	}
 
@@ -483,7 +517,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorCodigoTPO(tpoCod,arrayPlazas);
 		}
 		//Borrado fisico de toda la configuracion relacionada con los pares plazas-tpo dados
-		if(!Checks.esNulo(idsPlazasTpo)) esquemaTurnadoProcuradorDao.borradoFisicoConfigPlazaTPO(idsPlazasTpo);
+		if(!Checks.estaVacio(idsPlazasTpo)) esquemaTurnadoProcuradorDao.borradoFisicoConfigPlazaTPO(idsPlazasTpo);
 		
 		return idsPlazasTpo;
 	}
@@ -494,7 +528,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 									genericDao.createFilter(FilterType.EQUALS, "esquemaTurnadoProcurador.id", idEsquema),
 									genericDao.createFilter(FilterType.EQUALS, "tipoPlaza.codigo", plazaCod));
 		
-		if(!Checks.esNulo(listaConfig)) return true;
+		if(!Checks.estaVacio(listaConfig)) return true;
 		else return false;
 	}
 }

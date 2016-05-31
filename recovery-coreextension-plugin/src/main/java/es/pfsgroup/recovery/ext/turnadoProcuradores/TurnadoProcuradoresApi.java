@@ -164,7 +164,7 @@ public interface TurnadoProcuradoresApi {
 	 * @param idTPO
 	 * @return
 	 */
-	List<TurnadoProcuradorConfig> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO);
+	List<EsquemaPlazasTpo> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO);
 	
 	/**
 	 * Devuelve una lista de usuarios que representan despachos de procuradorres

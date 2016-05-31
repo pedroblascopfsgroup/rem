@@ -13,6 +13,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaPlazasTpo;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaTurnadoProcurador;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 
@@ -96,7 +97,10 @@ public class TurnadoProcuradoresController {
 	public String getRangosGrid(@RequestParam(value = "idEsquema", required = true) Long idEsquema,
 			@RequestParam(value = "idPlaza", required = true) Long idPlaza,
 			@RequestParam(value = "idTPO", required = true) Long idTPO, ModelMap model) {
-		model.put("rangosEsquema", turnadoPocuradoresMang.getRangosGrid(idEsquema,(!Checks.esNulo(idPlaza) ? idPlaza  :null ),(!Checks.esNulo(idTPO) ? idTPO  :null )));
+		
+		List<EsquemaPlazasTpo> listaConfiguraciones = turnadoPocuradoresMang.getRangosGrid(idEsquema,(!Checks.esNulo(idPlaza) ? idPlaza  :null ),(!Checks.esNulo(idTPO) ? idTPO  :null ));
+		
+		model.put("configuracion", listaConfiguraciones);
 		return JSON_ESQUEMA_TURNADO_CONFIG;
 	}
 	
@@ -133,6 +137,7 @@ public class TurnadoProcuradoresController {
 		Boolean existeConfiguracion = turnadoPocuradoresMang.checkSiPlazaYaTieneConfiguracion(idEsquema,plazaCod);
 		if(existeConfiguracion) throw new UserException("Ya existe una configuracion vigente para el esquema y plaza especificados");
 		return "default";
+		//TODO COMPROBAR FUNCIONAMIENTO CORRECTO DE LA EXCEPCION
 	}
 	
 	@SuppressWarnings("unchecked")

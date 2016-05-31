@@ -50,9 +50,8 @@
 	    ,editable : false
 		,listeners: {
 			select: function(){
-				//TODO HACER COMPROBACIONES DE LOS BOTONES
-				botonAddDespacho.setDisabled(false);
-				//dimeSiTPOYaSeleccionado(this.getValue());
+				//Se hacen comprobaciones de los botones
+				dimeSiDespachoYaSeleccionado(this.getValue());
 			}
 		}
 	});
@@ -65,7 +64,8 @@
 				var item = despachosStore.getAt(despachosStore.find('id', cmbDespachos.getValue()));
         		configDespachosPanel.add(crearTuplaDespacho(item.get('id'),item.get('nombre')));
         		configDespachosPanel.doLayout();
-        		//TODO ACTUALIZAR BOTONES
+        		//Se actualizan botones
+        		dimeSiDespachoYaSeleccionado(item.get('id'));
        		}	
 		}
     });
@@ -74,55 +74,25 @@
         iconCls:'icon_menos'
         ,disabled : true
         ,handler: function(){
-        	//TODO COMPROBAR SELECCION
-        	//TODO ELIMINAR COMPONENTES
-        	//TODO ACTUALIZAR BOTONES
+        	if(cmbDespachos.getValue().trim()!='' && cmbDespachos.getValue()!=null){
+        		//Eliminar componente
+        		eliminarTuplaDespacho(cmbDespachos.getValue());
+        		configDespachosPanel.doLayout();
+	        	//Se actualizan botones
+	        	dimeSiDespachoYaSeleccionado(cmbDespachos.getValue());
+	        }
         }
     });
     
-    var despachosPanel = app.creaPanelHz({style : "margin-top:4px;margin-bottom:4px;"},[cmbDespachos, botonAddDespacho, botonRemoveDespacho]);
-    
-    var crearTuplaDespacho = function(id, despacho){
-		return despachoHzPanel = app.creaPanelHz({style : "margin-top:4px;margin-bottom:4px;"}
-					,[{
-		                	xtype: 'checkbox'
-		                	,boxLabel: despacho
-		                	,name: 'item-plaza-'+id
-		                	,itemId: 'item-plaza-'+id
-		                	,listeners: {
-				  		   		check: function(c){
-				  		   					var item = rangoImportesFieldSet.find('itemId','item-porcentaje-'+id)[0];
-				  		   					item.setDisabled(!c.isDirty());
-				  		   				}
-				  		   	}
-	            	 }
-				     ,{					
-    					xtype: 'numberfield'
-	                	,name: 'item-porcentaje-'+id
-	                	,maxValue: 100
-		                ,minValue: 0
-		                ,width:50 
-		                ,itemId: 'item-porcentaje-'+id
-		                ,disabled: true
-		                ,listeners: {
-		                	render: function(c) {
-						      Ext.QuickTips.register({
-						        target: c.getEl(),
-						        text: 'Porcentaje correspondiente al despacho',
-						        enabled: true,
-						        showDelay: 20,
-						        trackMouse: true,
-						        autoShow: true
-						      });
-					    	}
-					    }
-           			}]);           			
-	}
-
+    var despachosPanel = app.creaPanelHz({style : "margin-top:4px;margin-bottom:4px;"},[cmbDespachos, {style : "margin-right:4px;"},botonAddDespacho, botonRemoveDespacho]);
+	
 	var btnGuardarRangos =  new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
-		,handler : function(){				
+		,handler : function(){
+				if(!validarPorcentajes()){
+					alert("**Advertencia: el total de porcentajes de los despachos debe ser 100%");
+				}				
 			}
 	});
 	
@@ -138,8 +108,10 @@
 	
 	var configDespachosPanel = new Ext.form.FieldSet({
 		width: 205
+		,height:100
 		,border:true
 		,hidde: true
+		,autoScroll: true
 		,defaults : {xtype:'fieldSet' ,cellCls : 'vtop', style: 'padding:10px;'}
 		,items:[]
 	});
@@ -147,7 +119,7 @@
 	var rangoImportesInnerPanel = new Ext.form.FieldSet({
 		height:290
 		,border:false
-		,defaults : {hiddeLabel: true, labelWidth: 0, cellCls : 'vtop', style: 'padding:10px;'}
+		,defaults : {hiddeLabel: true, labelWidth: 0, cellCls : 'vtop', style: 'padding:0px;'}
 		,items:[importeMinimo,importeMaximo,cmbFieldLabel,despachosPanel,configDespachosPanel]
 	});
 	
@@ -156,7 +128,6 @@
 		,height:290
 		,border:true
 		,disabled: true
-		,autoScroll: 'auto'
 		,style: 'padding-left:2px;'
 		,defaults : {xtype:'fieldSet' ,cellCls : 'vtop'}
 		,bbar : [btnGuardarRangos, btnCancelarRangos]
@@ -166,13 +137,78 @@
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});	
+	<%--Funciones --%>
 	
+	var arrayDespachosAux = [];
+	
+	<%-- Funcion crear tupla de despacho-porcentaje --%>
+    var crearTuplaDespacho = function(id, despacho){
+		//Añadir id del despacho que se va a añadir al array auxiliar
+		arrayDespachosAux.push(id);  
+		return despachoHzPanel = app.creaPanelHz({itemId:'despacho-panel-'+id, style : "margin-top:4px;margin-bottom:4px;"}
+					,[{html:"<b>"+despacho+"</b>"+":", border: false, width : 133, cls: 'x-form-item', style: "margin-top:4px;"}
+					  ,{					
+    					xtype: 'numberfield'
+    					,fieldLabel: despacho
+	                	,name: 'item-porcentaje-'+id
+	                	,maxValue: 100
+		                ,minValue: 0
+		                ,width:50 
+		                ,itemId: 'item-porcentaje-'+id
+		                ,listeners: {
+		                	render: function(c) {
+						      Ext.QuickTips.register({
+						        target: c.getEl(),
+						        text: 'Porcentaje correspondiente al despacho',
+						        enabled: true,
+						        showDelay: 20,
+						        trackMouse: true,
+						        autoShow: true
+						      });
+					    	}
+					    }
+           			}]);        			
+	}
+	
+	<%-- Funcion borra tupla de despacho-porcentaje --%>
+	var eliminarTuplaDespacho = function(id){
+		var despachoItem = rangoImportesFieldSet.find('itemId','despacho-panel-'+id);
+		if(despachoItem.length>0){
+			despachoItem[0].destroy();
+			//Borrar id del despacho borrado del array auxiliar
+			var index = arrayDespachosAux.indexOf(id);
+			if(index > -1) arrayDespachosAux.splice(index, 1);
+		}
+	}
+	
+	<%-- Funcion validar si plaza ya seleccionada --%>
+    var dimeSiDespachoYaSeleccionado = function(idDespacho){
+    	var flag;
+    	var despachoItem = rangoImportesFieldSet.find('itemId','despacho-panel-'+idDespacho);
+    	if(despachoItem.length>0) flag=true;
+    	else flag=false;
+		botonAddDespacho.setDisabled(flag);
+		botonRemoveDespacho.setDisabled(!flag);	
+    }
+    
+	<%-- Funcion validar si el total de porcentajes seleccionados es 100 --%>
 	var validarPorcentajes = function(){
+		debugger;
 		var sumatorio = 0;
-		sumatorio = sumatorio;
-		//TODO RECORRER VALORES DE DESPACHOS Y SUMAR
+		
+		if(arrayDespachosAux.length>0){
+			for(i = 0; i< arrayDespachosAux.length;i++){
+				var item = rangoImportesFieldSet.find('itemId','item-porcentaje-'+arrayDespachosAux[i]);
+				if(item.length>0){
+					sumatorio = sumatorio + item[0].getValue();
+				}
+			}
+		}
+		
 		return (sumatorio==100);
 	}
+	
+	<%--Fin funciones --%>
 	
 	var gestionarPanelEdicionRangos = function(flag, operacion, value){
 		debugger;

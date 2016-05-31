@@ -660,7 +660,7 @@ app.creaPanelHz = function(config, items){
 		,defaults : {bodyStyle : 'margin-right:5px'}
 		,items : items
 	};
-	fwk.js.copyProperties(cfg, config, ['width', 'style']);
+	fwk.js.copyProperties(cfg, config, ['width', 'style','itemId']);
 
 	var p = new Ext.Panel(cfg);
 

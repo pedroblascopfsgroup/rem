@@ -858,8 +858,9 @@ public class AdjuntoHayaManager {
 				ActivoInputDto input = new ActivoInputDto();
 				input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
 				input.setIdActivoOrigen(contrato.getNroContrato().substring(17, 27));
-				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
-				
+				input.setIdOrigen(ActivoInputDto.ID_ORIGEN_SAREB);
+				input.setIdCliente(ActivoInputDto.ID_CLIENTE_NOS);
+				input.setIdTipoActivo(ActivoInputDto.ID_TIPO_ACTIVO_RED);
 				ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
 				
 				if(output.getIdActivoHaya() == null) {
@@ -879,9 +880,9 @@ public class AdjuntoHayaManager {
 			
 			if(Checks.estaVacio(contenedor)) {
 				PersonaInputDto input = new PersonaInputDto();
-				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
-				input.setIdIntervinienteOrigen(persona.getDocId());
-				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
+				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+				input.setIdPersonaOrigen(persona.getDocId());
+				input.setIdOrigen(PersonaInputDto.ID_ORIGEN_NOS);
 				
 				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 				

@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.1
  * 
  */
-@WebServiceClient(name = "wsWS", targetNamespace = "http://alamo.haya.es/IntegracionSOA/schemas", wsdlLocation = "http://10.10.25.196:8080/WSMaestroIntervinientes/wsdl/ws.wsdl?wsdl")
+@WebServiceClient(name = "wsWS", targetNamespace = "http://alamo.haya.es/IntegracionSOA/schemas", wsdlLocation = "http://10.10.25.196:8080/WSMaestroPersonas/wsdl/MAESTRO_PERSONAS.wsdl?wsdl")
 public class WsWS
     extends Service
 {
@@ -30,7 +30,7 @@ public class WsWS
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://10.10.25.196:8080/WSMaestroIntervinientes/wsdl/ws.wsdl?wsdl");
+            url = new URL("http://10.10.25.196:8080/WSMaestroPersonas/wsdl/MAESTRO_PERSONAS.wsdl?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

@@ -41,6 +41,9 @@
 			b=getParametrosDto();
 			esquemasStore.webflow(b);
 			page.fireEvent(app.event.DONE);
+			esquemasGrid.expand(true);
+            panelFiltros.collapse(true);
+			
 		}
 	});
 	var btnClean=new Ext.Button({
@@ -252,7 +255,7 @@
 		 ,{name:'descripcion'}
 		 ,{name:'estado_cod'}
 		 ,{name:'estado_des'}
-		 ,{name:'autor'}
+		 ,{name:'usuario'}
 		 ,{name:'fechaalta'}
 		 ,{name:'fechainivig'}
 		 ,{name:'fechafinvig'}
@@ -261,7 +264,7 @@
 	]);				
 	
 	var esquemasStore = page.getStore({
-		 flow: 'turnadodespachos/buscarEsquemas' 
+		 flow: 'turnadoprocuradores/buscarEsquemas' 
 		,limit: limit
 		,remoteSort: true
 		,reader: new Ext.data.JsonReader({
@@ -278,7 +281,7 @@
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_cod" text="**Cod Estado"/>', dataIndex: 'id', hidden: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_des" text="**Estado"/>', dataIndex: 'estado_des', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechaSolicitud" text="F.Alta"/>', dataIndex: 'fechaalta', sortable: true}
-		,{header: '<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.autor" text="**Autor"/>', dataIndex: 'autor', sortable: true}
+		,{header: '<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.autor" text="**Autor"/>', dataIndex: 'usuario', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechainivig" text="**F.Inicio Vigencia"/>', dataIndex: 'fechainivig', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="**F.Fin Vigencia"/>', dataIndex: 'fechafinvig', sortable: true}
 	]);
@@ -309,7 +312,7 @@
 		,autoHeight:true
 		,resizable:true
 		,collapsible : true
-		,collapsed : true
+		,collapsed : false
 		,titleCollapse : true
 		,dontResizeHeight:true
 		,cls:'cursor_pointer'
@@ -320,7 +323,7 @@
 		,monitorResize: true
 		//,clicksToEdit:0
 		,selModel: sm
-		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar,btnActivar
+		,bbar : [pagingBar<%--,btnNuevo,btnCopiar,btnBorrar,btnActivar --%>
 			]
 	});
 	

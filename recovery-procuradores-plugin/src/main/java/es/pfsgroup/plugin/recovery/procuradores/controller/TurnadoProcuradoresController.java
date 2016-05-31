@@ -4,17 +4,22 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.exception.UserException;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaTurnadoProcurador;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
+import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
+import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
 
 /**
  * @author Sergio
@@ -30,12 +35,18 @@ public class TurnadoProcuradoresController {
 	private static final String VIEW_ESQUEMA_TURNADO_PROCURADORES_DETALLES_ESQUEMA = "plugin/procuradores/turnado/detalleEsquemaTurnado";
 	private static final String JSON_ESQUEMA_TURNADO_COMBOS_BUSQUEDA = "plugin/procuradores/turnado/diccionariosDataJSON";
 	private static final String JSON_ESQUEMA_TURNADO_CONFIG = "plugin/procuradores/turnado/esquemaTurnadoConfigJSON";
+	private static final String VIEW_ESQUEMA_TURNADO_SEARCH = "plugin/procuradores/turnado/busquedaEsquemasJSON";
 	
 	@Autowired
 	TurnadoProcuradoresApi turnadoPocuradoresMang;
 	
+	@Autowired
+	UtilDiccionarioManager utilDiccionarioManager;
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String ventanaBusquedaEsquemasProcuradores(ModelMap map) {
+		map.put("estadosEsquema", utilDiccionarioManager.dameValoresDiccionario(DDEstadoEsquemaTurnado.class));
 		return VIEW_ESQUEMA_TURNADO_PROCURADORES_BUSCADOR;
 	}
 	
@@ -160,5 +171,11 @@ public class TurnadoProcuradoresController {
 		return JSON_ESQUEMA_TURNADO_CONFIG;
 	}
 	
-
+	@RequestMapping
+	public String buscarEsquemas(EsquemaTurnadoBusquedaDto dto, Model model) {
+		Page page = (Page)turnadoPocuradoresMang.listaEsquemasTurnado(dto);
+		model.addAttribute("data", page);
+		return VIEW_ESQUEMA_TURNADO_SEARCH;
+	}
+	
 }

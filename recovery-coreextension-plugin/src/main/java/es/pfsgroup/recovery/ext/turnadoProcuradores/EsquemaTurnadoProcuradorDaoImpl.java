@@ -82,7 +82,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	@Override
 	public Page buscarEsquemasTurnado(EsquemaTurnadoBusquedaDto dto, Usuario usuLogado) {
 		// Establece el orden de la búsqueda
-		setSortBusquedaEsquemas(dto);
+		//setSortBusquedaEsquemas(dto);
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				generarHQLBuscarEsquemasTurnado(dto, usuLogado), dto);
 	}
@@ -95,7 +95,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 		// Consulta inicial básica
 		hqlSelect.append("select esq ");
 
-		hqlFrom.append("from EsquemaTurnado esq");
+		hqlFrom.append("from EsquemaTurnadoProcurador esq");
 
 		hqlWhere.append(" where esq.auditoria.borrado = false ");
 
@@ -103,10 +103,10 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 			hqlWhere.append(" and esq.estado.codigo = '").append(dto.getTipoEstado()).append("'");
 		}
 		if(!Checks.esNulo(dto.getNombreEsquemaTurnado())) {
-			hqlWhere.append(" and esq.descripcion like '%").append(dto.getNombreEsquemaTurnado()).append("%'");
+			hqlWhere.append(" and UPPER(esq.descripcion) like '%").append(dto.getNombreEsquemaTurnado().toUpperCase()).append("%'");
 		}
 		if(!Checks.esNulo(dto.getAutor())){
-			hqlWhere.append(" and esq.auditoria.usuarioCrear like '%").append(dto.getAutor()).append("%'");
+			hqlWhere.append(" and UPPER(esq.auditoria.usuarioCrear) like '%").append(dto.getAutor().toUpperCase()).append("%'");
 		}
 		if(!Checks.esNulo(dto.getFechaVigente())){
 			try {

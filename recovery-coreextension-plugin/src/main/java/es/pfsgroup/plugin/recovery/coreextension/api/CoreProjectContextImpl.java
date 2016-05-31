@@ -24,7 +24,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private HashMap<String, HashMap<String, Set<String>>> supervisorAsunto;
 	private HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto;
 	private HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto;
-	private Map<String, String> despachosProcuradores;
+	private Map<String, List<String>> despachosProcuradores;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -185,11 +185,11 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	}
 	
 	@Override
-	public Map<String, String> getDespachosProcuradores() {
+	public Map<String, List<String>> getDespachosProcuradores() {
 		return despachosProcuradores;
 	}
 
-	public void setDespachosProcuradores(Map<String, String> despachosProcuradores) {
+	public void setDespachosProcuradores(Map<String, List<String>> despachosProcuradores) {
 		this.despachosProcuradores = despachosProcuradores;
 	}
 	

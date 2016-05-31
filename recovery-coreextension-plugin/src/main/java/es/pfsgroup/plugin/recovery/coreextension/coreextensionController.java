@@ -133,34 +133,21 @@ public class coreextensionController {
 		} else {
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
-		//FIXME
+		
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven, para ello usaremos el coreProjectContext
 		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		
-		Map<String, String> despachosProcuradores = coreProjectContext.getDespachosProcuradores();
+		Map<String, List<String>> despachosProcuradores = coreProjectContext.getDespachosProcuradores();
 		if(despachosProcuradores.containsKey(codEntidad)){
 			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+			List<String> despachosValidos = despachosProcuradores.get(codEntidad);
 			while(iter.hasNext()){
-				DespachoExterno elemento = iter.next();
-				despachosProcuradores.get(codEntidad);
-				//for(String desp : despachosProcuradores){
-					//if(!elemento.getDespacho().equals(desp)){
-						//iter.remove();
-					//}
-				//}
-			}
-		}
-		
-		if(codEntidad.equals("HCJ")){
-			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
-			while(iter.hasNext()){
-				DespachoExterno elemento = iter.next();
-				if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
+				if(!despachosValidos.contains(iter.next().getDespacho())){
 					iter.remove();
 				}
 			}
 		}
-		///FIXME
+		
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;
 	}

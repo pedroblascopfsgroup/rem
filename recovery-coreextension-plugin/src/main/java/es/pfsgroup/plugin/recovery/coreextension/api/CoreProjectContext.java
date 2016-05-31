@@ -51,6 +51,6 @@ public interface CoreProjectContext {
 	public HashMap<String, HashMap<String, Set<String>>> getDespachoSupervisorAsunto();
 	public HashMap<String, HashMap<String, Set<String>>> getTipoGestorSupervisorAsunto();
 	
-	public Map<String, String> getDespachosProcuradores();
+	public Map<String, List<String>> getDespachosProcuradores();
 	
 }

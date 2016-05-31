@@ -25,9 +25,9 @@ fi
 if [ "$reinicio" == "SI" ] 
 then
       echo "*** Es necesario reiniciar el Batch"
-      /aplicaciones/ops-haya/programas/stopBatch.sh
+      /recovery/batch-server/sareb/programas/stopBatch.sh
       echo "*** Batch detenido"
-      /aplicaciones/ops-haya/programas/startBatch.sh
+      /recovery/batch-server/sareb/programas/startBatch.sh
       echo "*** Batch arrancado de nuevo"
 else
       echo "--- NO es necesario reiniciar el Batch"

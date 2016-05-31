@@ -118,10 +118,10 @@ public class EXTDtoAsunto extends DtoAsunto{
         	validateSaveAsuntoEXT(context);
         }
         
-        if (listaGestoresId.size() == 0) {
-            context.addMessage(new MessageBuilder().code(ID_GESTORES_NO_AGREGADOS).error().source("altaAsunto.gestores.vacio").defaultText(
-                    "**Debe agregar algún gestor para el asunto.").build());
-        }
+//        if (listaGestoresId.size() == 0) {
+//            context.addMessage(new MessageBuilder().code(ID_GESTORES_NO_AGREGADOS).error().source("altaAsunto.gestores.vacio").defaultText(
+//                    "**Debe agregar algún gestor para el asunto.").build());
+//        }
         
         
         if (context.getAllMessages().length > 0) { throw new ValidationException(ErrorMessageUtils.convertMessages(context.getAllMessages())); }

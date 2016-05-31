@@ -4,10 +4,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <fwk:json>
-        <c:set var="total" value="0"/>
+        <json:property name="total" value="${pagina.totalCount}" />
         <json:array name="contratos" items="${pagina.results}" var="c">
-        		<c:set var="total" value="${total + 1}"/>    
-                <json:object>
+        		<json:object>
                 	<json:property name="id" value="${c[0].id}" />
                     <json:property name="vencido" value="${c[0].vencido}" />
                     <json:property name="cc" value="${c[0].codigoContrato}" />
@@ -64,7 +63,6 @@
                 </json:object>
                     <c:forEach items="${c[0].contratoPersonaOrdenado}" var="cp">
                         <c:if test="${cp.persona.id!=c[0].contratoPersonaOrdenado[0].persona.id}">
-                        	<c:set var="total" value="${total + 1}"/>
                             <json:object>
                                 <json:property name="idPersona" value="${cp.persona.id}" />
                                 <json:property name="tipointerv" value="${cp.tipoIntervencion.descripcion} ${cp.orden}" />
@@ -84,5 +82,4 @@
                     </c:forEach>
                 
         </json:array>
-        <json:property name="total" value="${total}" />
 </fwk:json>

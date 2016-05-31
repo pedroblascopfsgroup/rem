@@ -112,6 +112,7 @@ public final class PrimariaBusinessOperation {
     public static final String BO_CNT_MGR_GET_EFECTOS_DE_CONTRATO = "contratoManager.getEfectosContrato";
     public static final String BO_CNT_MGR_GET_RIESGO = "riesgoOperacionalManager.obtenerRiesgoOperacionalContrato";
     public static final String BO_CNT_MGR_GET_VENCIDOS = "riesgoOperacionalManager.obtenerVencidosByCntId";
+    public static final String BO_CNT_GET_ESTADO_BLOQUEO = "contratoManager.getEstadoBloqueo";
 
     /*****************************************************************************
      ** AntecedenteManager.

@@ -492,7 +492,7 @@ Ext.onReady(function() {
                     ]
                  }
 </sec:authorize>
-<sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_GESTION_CLIENTES">
+<sec:authorize ifAllGranted="ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES">
                  ,{
                                 text:"<s:message code="tareas.gc" text="**Gesti&oacute;n de Clientes"/>"
                                 //,listeners:
@@ -506,7 +506,7 @@ Ext.onReady(function() {
                                 
                 }
 </sec:authorize>
-<sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_OBJETIVOS_PENDIENTES">
+<sec:authorize ifAllGranted="ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES">
                 ,{
                     text:'<s:message code="main.arbol_tareas.groups.objetivos" text="**Objetivos Pendientes" /> (${countObjetivos})'
                     //,listeners:
@@ -602,7 +602,7 @@ Ext.onReady(function() {
                     tree.getNodeById('arbol_tareas_nodo_alertas').setText('<b><s:message code="main.arbol_tareas.alertas" text="**Alertas" /> (' +tareas[3]+")</b>");
                 }
 </sec:authorize>  
-<sec:authorize ifNotGranted="ROLE_OCULTAR_ARBOL_OBJETIVOS_PENDIENTES">
+<sec:authorize ifAllGranted="ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES">
                 if (tareas[4]>countTareas[4]){
                      strToast += "<s:message code="main.arbol_tareas.nuevos_objetivos" text="**Nuevos objetivos" /><br/>";
                     tree.getNodeById('arbol_tareas_nodo_objetivos').setText('<b><s:message code="main.arbol_tareas.groups.objetivos" text="**Objetivos Pendientes" /> (' +tareas[4]+")</b>");

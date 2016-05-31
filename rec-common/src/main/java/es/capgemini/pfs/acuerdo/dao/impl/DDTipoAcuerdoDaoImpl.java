@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.acuerdo.dao.DDTipoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 
 /**
  * @author Mariano Ruiz
@@ -39,6 +40,30 @@ public class DDTipoAcuerdoDaoImpl extends AbstractEntityDao<DDTipoAcuerdo, Long>
 		sb.append("Select tpa from DDTipoAcuerdo tpa ");
 		sb.append("where tpa.auditoria.borrado = 0 ");
 		sb.append("and tpa.tipoEntidad.id in ("+ambito+","+ambas+")");
+		
+		List<DDTipoAcuerdo> lista = getHibernateTemplate().find(sb.toString());
+				
+		return lista;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DDTipoAcuerdo> buscarTipoAcuerdoPorEntidad(DDEntidadAcuerdo entidadAmbas, DDEntidadAcuerdo entidad) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Select tpa from DDTipoAcuerdo tpa ");
+		//sb.append("where tpa.auditoria.borrado = 0 ");
+		sb.append("where 1=1 ");
+		
+		if(entidad.getCodigo().equals("ASU")){
+			sb.append(" and tpa.tipoEntidad.id in ("+entidadAmbas.getId()+")");
+			sb.append(" or tpa.tipoEntidad.id in ("+entidad.getId()+")");
+		}
+		
+		if(entidad.getCodigo().equals("EXP")){
+			sb.append(" and tpa.tipoEntidad.id in ("+entidadAmbas.getId()+")");
+			sb.append(" or tpa.tipoEntidad.id in ("+entidad.getId()+")");
+		}	
 		
 		List<DDTipoAcuerdo> lista = getHibernateTemplate().find(sb.toString());
 				

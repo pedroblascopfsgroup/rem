@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -65,12 +66,22 @@ public class AdjuntoAsunto implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "PRC_ID")
     private Procedimiento procedimiento;
+    
+    @Column(name = "SERVICER_ID")
+    private Long servicerId;
 
-    @Version
+	@Version
     private Integer version;
 
     @Embedded
     private Auditoria auditoria;
+    
+    @Transient
+	private String refCentera;
+    
+	@Transient
+	private String nombreTipoDoc;
+
 
     /**
      * Constructor vacio.
@@ -228,4 +239,27 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 		this.procedimiento = procedimiento;
 	}
 
+    public Long getServicerId() {
+		return servicerId;
+	}
+
+	public void setServicerId(Long servicerId) {
+		this.servicerId = servicerId;
+	}
+	
+	public String getRefCentera() {
+		return refCentera;
+	}
+	
+	public void setRefCentera(String refCentera) {
+		this.refCentera = refCentera;
+	}
+	
+	public String getNombreTipoDoc() {
+		return nombreTipoDoc;
+	}
+	
+	public void setNombreTipoDoc(String nombreTipoDoc) {
+		this.nombreTipoDoc = nombreTipoDoc;
+	}
 }

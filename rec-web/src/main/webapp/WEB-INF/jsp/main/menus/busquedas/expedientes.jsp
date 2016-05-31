@@ -4,6 +4,6 @@
 text : '<s:message code="main.toolbar.buscar.expedientes" text="**Expedientes" />' 
 		,iconCls : 'icon_expedientes'
 		,handler : function(){
-				app.openTab("<s:message code="expedientes" text="**Expedientes"/>", "expedientes/listadoExpedientes",{},{id:'busqueda_expedientes',iconCls:'icon_busquedas'});
+				app.openTab("<s:message code="expedientes" text="**Expedientes Gestión"/>", "expedientes/listadoExpedientes",{},{id:'busqueda_expedientes',iconCls:'icon_busquedas'});
 		}
 	

@@ -1,8 +1,6 @@
 #!/bin/bash
 # Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
 
-DIR_BASE_ETL=/etl/HRE/programas/etl
-
 filename=$(basename $0)
 nameETL="${filename%.*}"
 
@@ -17,6 +15,8 @@ if [ ! -d $DIR_ETL ] ; then
 	echo "$(basename $0) Error en $filename: directorio inexistente $DIR_ETL"
 	exit 1
 fi
+
+cd $DIR_ETL
 
 if [ -f $MAINSH ]; then
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"

@@ -11,6 +11,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -18,12 +20,16 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.plazoTareasDefault.PlazoTareasDefaultApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
+import es.capgemini.pfs.parametrizacion.ParametrizacionManager;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -40,6 +46,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacionUsuario;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacionWeb;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.manager.RecoveryAnotacionManager;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.web.dto.GestorWebDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.recovery.api.AsuntoApi;
@@ -60,6 +67,9 @@ public class RecoveryAgendaMultifuncionAnotacionController {
     
     @Autowired
     private GenericABMDao genericDao;
+    
+    
+    protected final Log logger = LogFactory.getLog(getClass());
 
     /**
      * Metodo que devuelve la vista de la pantalla de anotacion
@@ -107,6 +117,11 @@ public class RecoveryAgendaMultifuncionAnotacionController {
         	plazoMinimoAutotarea = plazo.getPlazo();
         }
         
+        Boolean valorParametro= false;
+        valorParametro= proxyFactory.proxy(RecoveryAnotacionApi.class).getConfiVentanaAnotaciones();
+
+       
+        model.put("parametroCreacionTareaUnicaAnotacion", valorParametro);
         model.put("id", id);
         model.put("codUg", codUg);
         model.put("listaGestores", listaGestoresWeb);

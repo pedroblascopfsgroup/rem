@@ -24,7 +24,10 @@ import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.ZonaManager;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -59,6 +62,12 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 	
 	@Autowired
 	private ExpedienteContratoDao expedienteContratoDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ZonaManager zonaManager;
 
 	/**
 	 * Busca expedients que contengan un determinado contrato
@@ -499,4 +508,40 @@ public class EXTExpedienteManager extends BaseExpedienteManager implements EXTEx
 		}
 		return expediente;
 	}
+	
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ES_GESTOR_DE_LA_FASE_ACTUAL)
+	@Override
+	public boolean esGestorDeLaFaseDelExpediente(Long idExpediente){
+		Expediente exp = extExpedienteDao.get(idExpediente);
+		Long idGestor = exp.getIdGestorActual();
+		String codigoZona = exp.getOficina().getZona().getCodigo();
+		return usuarioLogadoEsPrimerDeLaZonaPerfil(idGestor, codigoZona);
+	}
+
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ES_SUPERVISOR_DE_LA_FASE_ACTUAL)
+	@Override
+	public boolean esSupervisorDeLaFaseDelExpediente(Long idExpediente) {
+		Expediente exp = extExpedienteDao.get(idExpediente);
+		Long idSupervisor = exp.getIdSupervisorActual();
+		String codigoZona = exp.getOficina().getZona().getCodigo();
+		return usuarioLogadoEsPrimerDeLaZonaPerfil(idSupervisor, codigoZona);
+	}
+	
+	private boolean usuarioLogadoEsPrimerDeLaZonaPerfil(Long idPerfil, String codigoZona){
+		
+		if(!Checks.esNulo(idPerfil) && !Checks.esNulo(codigoZona)){
+			List<ZonaUsuarioPerfil> zups = zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(idPerfil, codigoZona);
+			for(ZonaUsuarioPerfil zup : zups){
+				if(!Checks.esNulo(zup) && zup.getUsuario().equals(usuarioManager.getUsuarioLogado())){
+					return true;
+				}
+			}
+			
+			return false;
+			
+		}else{
+			return false;	
+		}
+	}
+	
 }

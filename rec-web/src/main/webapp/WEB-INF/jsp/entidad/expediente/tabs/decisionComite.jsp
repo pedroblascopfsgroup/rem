@@ -152,8 +152,13 @@
 	            e.stopEvent();
 	            var index = this.grid.getView().findRowIndex(t);
 	            var record = this.grid.store.getAt(index);
-              if (entidad.getData('decision.estaCongelado')){
-	            	
+	            
+	            var isBankia = false;
+			    <sec:authentication var="user" property="principal" />
+				<c:if test="${user.entidad.codigo eq 'BANKIA'}">
+			   		isBankia = true;
+				</c:if>
+              if ((entidad.getData('decision.estaCongelado')) || (isBankia && data.toolbar.tipoExpediente == "RECU")){
 	            	if (!record.data[this.dataIndex] || (record.data[this.dataIndex] && !record.data['incluidoBck']) ){
 	            		record.set(this.dataIndex, !record.data[this.dataIndex]);
 	            		contratosSinActuacion = armarArrayContratosSinActuacion(contratosSinActuacion,record.data["idContrato"])
@@ -161,7 +166,7 @@
 	            	}else{
 	            		Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="dc.asuntos.listado.desmarcarSinActuacion"/>')
 	            	}
-            }
+              }
 	        }
 	    },
 	    renderer : function(v, p, record){
@@ -603,8 +608,8 @@
 		idProcSeleccionado = rec.get('idProcedimiento');
 		
 		var username = app.usuarioLogado.username;
-    	var isGestor = permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idGestorActual'));
-		var isSupervisor = permisosVisibilidadGestorSupervisor(entidad.getData('toolbar.idSupervisorActual'));
+		var isGestor = entidad.get("data").toolbar.esPrimerGestorFaseActual;
+		var isSupervisor = entidad.get("data").toolbar.esPrimerSupervisorFaseActual;
 		
 		if(idAsuntoSeleccionado!='') {
 
@@ -817,7 +822,7 @@
                                                                                                                                                                        
 	panel.getValue = function(){};
 	panel.setValue = function(){
-	
+		
 		btnEditar.disable();
 		btnBorrar.disable();
 		btnAltaProcedimiento.disable();
@@ -839,9 +844,8 @@
 		entidad.cacheOrLoad(entidad.getData(), asuntosStore, {id : entidad.getData("id"), idSesion : entidad.getData("decision.ultimaSesion") });
 
     var congelado = entidad.getData("decision.estaCongelado");
+    var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
 
-    var esGestorSupervisorDeFase = entidad.getData("esGestorSupervisorActual");
-    
     var isBankia = false;
     <sec:authentication var="user" property="principal" />
 	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
@@ -863,9 +867,7 @@
 	        </sec:authorize>
 	        ,[btnEditarObs, esGestorSupervisorDeFase]
 	    ]
-    	
     }else{
-    
         var visible = [
 	      [btnActuacion, congelado && esGestorSupervisorDeFase]
 			,[btnNuevo, congelado && esGestorSupervisorDeFase]
@@ -879,11 +881,8 @@
 	        </sec:authorize>
 	        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
 	    ]
-    	
     }
     
-
-
      entidad.setVisible(visible); 
 
     var contratosSinActuacion = entidad.getData("decision.contratosSinActuacion");

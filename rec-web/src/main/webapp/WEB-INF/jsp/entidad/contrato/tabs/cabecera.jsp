@@ -12,11 +12,11 @@
 (function(page,entidad){
 
  var labelStyle = 'width:100px;font-weight:bolder;margin-bottom:5px",width:375';
-
+ 
  function label(id,text){
     return app.creaLabel(text,"",  {id:'entidad-contrato-'+id, labelStyle:labelStyle});
-  }
-  
+ }
+
  var mensajeExceptuacionLabel = new Ext.form.Label({
 	   	text:'<s:message code="grupo.contratoExceptuado" text="**Este contrato está exceptuado de recobro" />'
 		,style:'font-weight:bold;font-size:13px;color:red;',id:'entidad-contrato-mensajeLabel'
@@ -55,6 +55,10 @@
  var contratoParaguas  = label('contratoParaguas','<s:message code="contrato.consulta.tabcabecera.contratoParaguas" text="**Contrato Paraguas"/>');
  var remunEsp  = label('remunEsp','<s:message code="contrato.consulta.tabcabecera.remunEsp" text="**Remuneración Gestión Esp."/>');
 
+var contratoBloqueado = new Ext.form.Label({
+		style:'font-weight:bolder;font-size:13px;color:red;margin-bottom:10px;margin-left:10px;',id:'entidad-contrato-contratoBloqueado'
+		,autoHeight:true
+	});
 
  primerTitular.autoHeight = true;
  estadoContrato.autoHeight = true;
@@ -78,6 +82,7 @@
  cccDomiciliacion.autoHeight = true
  contratoParaguas.autoHeight = true;
  remunEsp.autoHeight = true;
+ contratoBloqueado.hide();
 
  
  //DATOS FINANCIEROS
@@ -273,7 +278,7 @@
 		,autoHeight : true
 		,autoWidth : true
 		,defaults : {xtype : 'fieldset', autoHeight : true, border :true ,cellCls : 'vtop'}
-		,items:[ mensajeExceptuacionLabel,datosPrincipalesFieldSet,datosFinancierosFieldSet,gastosIntComFieldSet,otrosDatosFieldSet]
+		,items:[ mensajeExceptuacionLabel,contratoBloqueado,datosPrincipalesFieldSet,datosFinancierosFieldSet,gastosIntComFieldSet,otrosDatosFieldSet]
 		,nombreTab : 'cabecera'
 	});
   
@@ -307,6 +312,11 @@
   } else {
   	mensajeExceptuacionLabel.setVisible(false);
   }
+  
+ if(d.bloqueoContrato!=null && d.bloqueoContrato!=''){
+ 	contratoBloqueado.show();
+ 	contratoBloqueado.setText('Contrato bloqueado: '+d.bloqueoContrato);
+ }
   
   if(d.condEspec!=null)
   {  
@@ -424,7 +434,7 @@
   entidad.setLabel('motivoMarca', d.motivoMarca);
   entidad.setLabel('indicador', d.indicador);
   entidad.setLabel('contadorReincidencia',d.contadorReincidencia);
-  
+ 
  }
   return panel;
 })

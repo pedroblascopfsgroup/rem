@@ -78,6 +78,7 @@
 	
 	var cumplidoSelect = new Ext.form.ComboBox({
 				store:cumplidoStore
+				,hiddenName:'cumplidoSelect'
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,id:'cumplidoSelect'

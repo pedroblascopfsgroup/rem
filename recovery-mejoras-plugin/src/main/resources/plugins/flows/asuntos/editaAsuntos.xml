@@ -5,6 +5,7 @@
 	<!-- Emilio <var name="dtoAsunto" class="es.capgemini.pfs.asunto.dto.DtoAsunto"/>-->
 	<var name="EXTdtoAsunto" class="es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoAsunto"/>
 	
+	<input name="idExpediente" type="java.lang.Long"/>
 	<input name="idAsunto" type="java.lang.Long"/>
 	 	 
 	<view-state id="formulario" view="plugin/mejoras/asuntos/altaAsuntos">

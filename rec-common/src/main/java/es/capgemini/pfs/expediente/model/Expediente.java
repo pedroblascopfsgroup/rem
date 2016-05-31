@@ -396,7 +396,11 @@ public class Expediente implements Serializable, Auditable, Describible {
      */
     public Long getIdGestorActual() {
         Long idEstado = null;
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        Estado estadoActual = null;
+        if(arquetipo != null && arquetipo.getItinerario() != null){
+        	estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        }
+        
         if (estadoActual != null && estadoActual.getGestorPerfil() != null) {
             idEstado = estadoActual.getGestorPerfil().getId();
         }
@@ -408,7 +412,10 @@ public class Expediente implements Serializable, Auditable, Describible {
      * @return supervisor actual
      */
     public String getSupervisorActual() {
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        Estado estadoActual = null;
+        if(arquetipo != null && arquetipo.getItinerario() != null){
+        	estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());	
+        }
         if (estadoActual != null && estadoActual.getSupervisor() != null) { return estadoActual.getSupervisor().getDescripcion(); }
         return "";
     }
@@ -419,7 +426,10 @@ public class Expediente implements Serializable, Auditable, Describible {
      */
     public Long getIdSupervisorActual() {
         Long idEstado = null;
-        Estado estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        Estado estadoActual = null;
+        if(arquetipo != null && arquetipo.getItinerario() != null){
+        	estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+        }
         if (estadoActual != null && estadoActual.getSupervisor() != null) {
             idEstado = estadoActual.getSupervisor().getId();
         }

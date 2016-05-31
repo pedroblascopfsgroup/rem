@@ -535,24 +535,20 @@ public class ObjetivoManager {
      * retorna la lista de objetivos para el gestor.
      * @return lista de obejtivos
      */
-    @SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_OBJ_MGR_BUSCAR_OBJETIVOS_GESTOR)
     public List<Objetivo> buscarObjetivosGestor() {
         Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-        List<DDZona> zonas = (List<DDZona>) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_ZONAS_USUARIO_LOGADO);
-        return objetivoDao.buscarObjetivosPendientesGestor(usuario, zonas);
+        return objetivoDao.buscarObjetivosPendientesGestor(usuario);
     }
 
     /**
      * Devuelve la cantidad de objetivos pendientes para el gestor.
      * @return integer
      */
-    @SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_OBJ_MGR_OBTENER_CANTIDAD_OBJETIVOS_PENDIENTES)
-    public Integer obtenerCantidadObjetivosPendientes() {
+    public Long obtenerCantidadObjetivosPendientes() {
         Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-        List<DDZona> zonas = (List<DDZona>) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_ZONAS_USUARIO_LOGADO);
-        return objetivoDao.cantidadObjetivosPendientesGestor(usuario, zonas);
+        return objetivoDao.cantidadObjetivosPendientesGestor(usuario);
     }
 
     /**

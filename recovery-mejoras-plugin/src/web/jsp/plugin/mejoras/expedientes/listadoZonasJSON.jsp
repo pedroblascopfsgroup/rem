@@ -7,6 +7,7 @@
 		<json:object>
 			<json:property name="codigo" value="${zona.codigo}" />
 			<json:property name="descripcion" value="${zona.descripcion}" />
+			<json:property name="oficina" value="${zona.oficina.id}" />
 		</json:object>
 	</json:array>
 </fwk:json>

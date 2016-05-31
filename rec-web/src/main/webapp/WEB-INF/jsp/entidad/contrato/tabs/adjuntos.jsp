@@ -265,7 +265,7 @@
 	editarDescripcionAdjuntoContrato.disable();
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subir, borrar, editarDescripcionAdjuntoContrato</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_CONTRATOS">subir, borrar, editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: 448
 		,width : 600
 		,collapsible:true

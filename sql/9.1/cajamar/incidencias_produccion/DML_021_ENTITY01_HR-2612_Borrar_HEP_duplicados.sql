@@ -55,6 +55,7 @@ BEGIN
                  )';
        
   EXECUTE IMMEDIATE V_SQL;
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  BORRADOS DE HEP DUPLIS. '||SQL%ROWCOUNT||' Filas.');
   COMMIT;
   
   DBMS_OUTPUT.PUT_LINE('[FIN] HR-2612');        

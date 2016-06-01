@@ -35,7 +35,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP( 
-       T_TIPO_TAP('H015','H015_RegistrarPosesionYLanzamiento','valores[''H015_RegistrarPosesionYLanzamiento''][''comboOcupado''] == ''02'' && (valores[''H015_RegistrarPosesionYLanzamiento''][''fecha''] == null || valores[''H015_RegistrarPosesionYLanzamiento''][''comboFuerzaPublica''] == null || valores[''H015_RegistrarPosesionYLanzamiento''][''comboLanzamiento''] == null) ? ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Los campos <b>Fecha realizaci&oacute;n de la posesi&oacute;n</b>, <b>Necesario Fuerza P&uacute;blica</b> y <b>Lanzamiento Necesario</b> son obligatorios</div>'' : null','PRODUCTO-1760')
+       T_TIPO_TAP('H015','H015_RegistrarPosesionYLanzamiento','valores[''H015_RegistrarPosesionYLanzamiento''][''comboOcupado''] == ''02'' && (valores[''H015_RegistrarPosesionYLanzamiento''][''fecha''] == null || valores[''H015_RegistrarPosesionYLanzamiento''][''comboFuerzaPublica''] == null || valores[''H015_RegistrarPosesionYLanzamiento''][''comboLanzamiento''] == null) ? ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Los campos <b>Fecha realizaci&oacute;n de la posesi&oacute;n</b>, <b>Necesario Fuerza P&uacute;blica</b> y <b>Lanzamiento Necesario</b> son obligatorios</div>'' : null','PRODUCTO-1517')
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
     

@@ -19,6 +19,6 @@ public interface LiquidacionDao extends AbstractDao<LiquidacionPCO, Long> {
 	 * @param idContrato
 	 * @return
 	 */
-	LiquidacionPCO getLiquidacionDelContrato(Long idContrato);
+	LiquidacionPCO getLiquidacionDelContrato(Long idContrato, Long idProcPco);
 
 }

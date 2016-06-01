@@ -100,7 +100,6 @@
 	var listadoCodigoZonas = [];
 	
 	comboJerarquia.on('select',function(){
-		listadoCodigoZonas = [];
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
@@ -139,7 +138,7 @@
         ,disabled:true 
         ,allowBlank:true
         ,store:optionsZonasStore
-        ,width:240
+        ,width:220
         ,fieldLabel: '<s:message code="expedientes.listado.centros" text="**Centros"/>'
         ,tpl: zonasTemplate  
         ,forceSelection:true
@@ -204,6 +203,7 @@
 		text : '<s:message code="rec-web.direccion.form.incluir" text="Incluir" />'
 		,iconCls : 'icon_mas'
 		,disabled: true
+		,minWidth:60
 		,handler : function(){
 			incluirZona();
 			codZonaSel='';
@@ -226,6 +226,7 @@
 		text : '<s:message code="rec-web.direccion.form.excluir" text="Excluir" />'
 		,iconCls : 'icon_menos'
 		,disabled: true
+		,minWidth:60
 		,handler : function(){
 			if (zonaAExcluir >= 0) {
 				zonasStore.removeAt(zonaAExcluir);
@@ -651,6 +652,7 @@
 				}
 			}			
 			,limpiar: function() {
+			listadoCodigoZonas=[];
     		   app.resetCampos([      
 						comboJerarquia,
 						comboZonas

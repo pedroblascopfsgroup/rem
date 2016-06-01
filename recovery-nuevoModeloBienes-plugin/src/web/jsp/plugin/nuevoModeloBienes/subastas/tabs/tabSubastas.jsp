@@ -856,9 +856,9 @@
 			,selectedRowClass : 'x-grid-row-selected'	
 		})
 		,bbar:[ btnExpandAll, btnCollapseAll 
-				<sec:authorize ifNotGranted = "SOLO_CONSULTA">, btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
+				<sec:authorize ifAnyGranted = "ROLE_PUEDE_VER_BOTONES_SUBASTA_BIENES_LOTES">, btnAgregarBien, btnExcluirBien, btnInstrucLotes</sec:authorize>
 				<sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, btnGenerarInformeCierre , btnEnviarCierre</sec:authorize>
-				<sec:authorize ifNotGranted = "SOLO_CONSULTA">
+				<sec:authorize ifAnyGranted = "ROLE_PUEDE_VER_BOTONES_SUBASTA_ACCIONES">
 					<sec:authorize ifAllGranted="MENU_ACC_MULTIPLES_SUBASTA">
 						,btnAccionesSubasta
 					</sec:authorize>

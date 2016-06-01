@@ -397,5 +397,4 @@ public class SubastaCalculoManager {
 		return acumulado;
 		
 	}
-	
 }

@@ -7,7 +7,7 @@ TRAILING NULLCOLS
 (
      MIG_PROP_CAB_ID                    SEQUENCE
    , ID_PROPUESTA                       POSITION(1:17)       INTEGER EXTERNAL "TO_NUMBER( LPAD( REPLACE(TO_CHAR(:ID_PROPUESTA),'+',''),16,'0'))"
-   , PROPONENTE                         POSITION(18:37)      CHAR "replace (replace(replace(TRIM(:PROPONENTE),';',' '), '\"',''),'''','')"
+   , PROPONENTE                         POSITION(18:37)      CHAR "replace (replace(replace(TRIM(NVL(:PROPONENTE,'SIN-DEFINIR')),';',' '), '\"',''),'''','')"
    , ESTADO_ACUERDO                     POSITION(38:54)      INTEGER EXTERNAL "TO_NUMBER( LPAD( REPLACE(TO_CHAR(:ESTADO_ACUERDO),'+',''),16,'0'))"
    , MOTIVO                             POSITION(55:2054)    CHAR "replace (replace(replace(TRIM(:MOTIVO),';',' '), '\"',''),'''','')"
    , FECHA_PROPUESTA                    POSITION(2055:2062)  DATE 'DDMMYYYY' nullif (FECHA_PROPUESTA=BLANKS) "replace( replace(:FECHA_PROPUESTA, '01010001', ''), '00000000', '')"  

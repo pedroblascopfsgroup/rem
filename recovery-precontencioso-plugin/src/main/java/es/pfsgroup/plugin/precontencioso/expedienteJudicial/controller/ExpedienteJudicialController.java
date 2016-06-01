@@ -138,7 +138,7 @@ public class ExpedienteJudicialController {
 	@RequestMapping
 	public String devolverPreparacion(@RequestParam(value = "idProcedimiento", required = true) Long idProcedimiento, ModelMap model) {
 		procedimientoPcoApi.devolverPreparacionPorProcedimientoId(idProcedimiento);
-//		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
+		proxyFactory.proxy(GestorTareasApi.class).recalcularTareasPreparacionDocumental(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
 		return DEFAULT;
 	}
 

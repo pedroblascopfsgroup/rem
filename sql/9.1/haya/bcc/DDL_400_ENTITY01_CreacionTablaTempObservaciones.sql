@@ -1,0 +1,80 @@
+--/*
+--##########################################
+--## AUTOR=CARLOS LOPEZ VIDAL
+--## FECHA_CREACION=20160415
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.3
+--## INCIDENCIA_LINK=CMREC-
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Creación de tablas 
+--##							TMP_OBS
+--##                               
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##        0.2 GMN Se pone el campo TMP_REF_TIPO_OBSERVACION a nullable
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+
+
+DECLARE
+
+ V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#'; 			-- Configuracion Esquema
+ V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; 		-- Configuracion Esquema Master
+ ITABLE_SPACE VARCHAR(25 CHAR) :='#TABLESPACE_INDEX#';
+ TABLA1 VARCHAR(30 CHAR) :='TMP_OBS';
+ err_num NUMBER;
+ err_msg VARCHAR2(2048 CHAR); 
+ V_MSQL VARCHAR2(8500 CHAR);
+ S_MSQL VARCHAR2(8500 CHAR);
+ V_EXISTE NUMBER (1);
+
+BEGIN 
+
+--Validamos si la tabla existe antes de crearla
+  SELECT COUNT(*) INTO V_EXISTE
+  FROM ALL_TABLES
+  WHERE TABLE_NAME = ''||TABLA1;
+
+     V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||TABLA1||' 
+        (	
+		TMP_ASU_ID               NUMBER(16,0) NOT NULL ENABLE,
+		TMP_TOM_DESCRIPCION      VARCHAR2(215 CHAR),
+		TMP_REF_ID_OBSERVACION   NUMBER(16,0) NOT NULL ENABLE,
+		TMP_ORDEN                NUMBER(16,0) NOT NULL ENABLE,
+		TMP_REF_TIPO_OBSERVACION VARCHAR2(10 BYTE) ,
+		TMP_FECHA_OBSERVACION    DATE,
+		CONSTRAINT PK_TMP_OBS PRIMARY KEY (TMP_ASU_ID, TMP_REF_ID_OBSERVACION, TMP_ORDEN) 
+	) SEGMENT CREATION IMMEDIATE 
+		PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING';
+
+  IF V_EXISTE = 0 THEN   
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA1||' CREADA');
+  ELSE   
+     EXECUTE IMMEDIATE ('DROP TABLE '||V_ESQUEMA||'.'||TABLA1 );
+     DBMS_OUTPUT.PUT_LINE(TABLA1||' BORRADA');
+
+     EXECUTE IMMEDIATE V_MSQL;
+     DBMS_OUTPUT.PUT_LINE(TABLA1||' CREADA');     
+  END IF;
+  
+--Fin crear tabla 1
+
+EXCEPTION
+WHEN OTHERS THEN  
+  err_num := SQLCODE;
+  err_msg := SQLERRM;
+
+  DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
+  DBMS_OUTPUT.put_line(err_msg);
+  
+  ROLLBACK;
+  RAISE;
+END;
+/
+EXIT;   

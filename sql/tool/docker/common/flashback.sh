@@ -26,7 +26,7 @@ case $FLASHBACK_OPTION in
 		rm -Rf /oradata/flash/*
 		;;
 	confirm)
-		sqlplus / as sysdba @/setup/SQL-SCRIPTS/do_confirm_flahsback.sql
+		sqlplus / as sysdba @/setup/SQL-SCRIPTS/do_confirm_flashback.sql
 		rm -Rf /oradata/flash/*
 		;;
 	*)

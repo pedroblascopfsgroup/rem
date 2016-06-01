@@ -20,7 +20,7 @@
 		,bodyStyle:'padding:5px;margin:5px'
 		,autoHeight:true
 		,autoWidth : true
-		,nombreTab : 'acuerdos'
+		,nombreTab : 'propuestas'
 		/*,items : [{items:acuerdosExpTabs
 				,border:false
 				,style:'margin-top: 7px; margin-left:5px'}

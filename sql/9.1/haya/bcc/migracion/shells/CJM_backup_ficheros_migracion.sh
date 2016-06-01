@@ -8,8 +8,8 @@ echo "Comienzo del backup"
 
 fecha="$1"
 dat_dir="dat/"
-bck_dir="../../transferencia/aprov_migracion/dat_backup/"
-aprov_dir="../../transferencia/aprov_migracion/"
+bck_dir="../../../transferencia/bcc/aprov_migracion/dat_backup/"
+aprov_dir="../../../transferencia/bcc/aprov_migracion/"
 
 echo "Directorio backup: ""$bck_dir"
 

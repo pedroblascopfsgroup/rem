@@ -477,8 +477,6 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 			return false;
 		}
 
-		// Comprueba que ha sido generado por la misma entidad
-		MEJProcedimiento prc = this.get(idProcedimiento);
 		// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente o en una de las
 		// que se permite la desparalización
 		DecisionProcedimiento decisionParalizacion = null;

@@ -48,6 +48,9 @@
 		<json:property name='comitesDelegarLen' value="${fn:length(comitesDelegar)==0}"/>
 		<json:property name='puedeMostrarSolapaMarcadoPoliticas' value="${puedeMostrarSolapaMarcadoPoliticas}"/>
 		<json:property name='puedeMostrarSolapaDecisionComite' value="${puedeMostrarSolapaDecisionComite}"/>
+		<json:property name='esPrimerGestorFaseActual' value="${esPrimerGestorFaseActual}"/>
+		<json:property name='esPrimerSupervisorFaseActual' value="${esPrimerSupervisorFaseActual}"/>
+		<json:property name='puedeMostrarElevarDelegarExpediente' value="${puedeMostrarElevarDelegarExpediente}"/>
 	</json:object>
 	<json:object name="cabecera">
 		<json:property name="codExpediente" value="${expediente.id}" />
@@ -87,6 +90,7 @@
 		<json:property name='telefono2' value="${expediente.oficina.telefono2}" />
 		<json:property name='domicilio' value="${expediente.oficina.domicilio}" />
 		<json:property name='domicilioPlaza' value="${expediente.oficina.domicilioPlaza}" />
+		<json:property name='idZona' value="${expediente.oficina.zona.id}" />
 	</json:object>
 	<json:object name="clientes">
 		<json:array name="clientes" items="${expediente.personas}" var="expedientePersona">	
@@ -187,7 +191,7 @@
 	<json:property name="esSupervisor" value="${esSupervisor}"/>
 	<json:property name="esGestor" value="${esGestor}"/>
 	<json:property name="esAgencia" value="${esAgencia}"/>
-	<json:property name="esGestorSupervisorActual" value="${esGestorSupervisorActual}"/>
+	<json:property name="esGestorSupervisorActual" value="${esPrimerGestorFaseActual || esPrimerSupervisorFaseActual}"/>
 	<json:array name= "estados" items = "${expediente.arquetipo.itinerario.estados}" var= "est">
 		<json:object>
 			<json:property name = "id" value = "${est.estadoItinerario.id }"/>

@@ -23,7 +23,9 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -46,6 +48,9 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
 
     @Autowired
     private UsuarioDao usuarioDao;
+    
+    @Autowired
+    private ZonaDao zonaDao;
 
     @Override
     public Long obtenerCantidadDeTareasPendientes(final DtoBuscarTareaNotificacion dto, final boolean conCarterizacion, final Usuario usuarioLogado) {
@@ -280,32 +285,38 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         //Parte Expedientes
         hb.append(" OR (");
         
-		if (!Checks.esNulo(dto.getZonas()) && dto.getZonas().size()>0) {
-			hb.append(" ((");
-			for (DDZona zonCodigo : dto.getZonas()) {
-				hb.append(" vtar.zonCodigo like '")
-						.append(zonCodigo.getCodigo()).append("%' OR");
-			}
-			hb.deleteCharAt(hb.length() - 1);
-			hb.deleteCharAt(hb.length() - 1);
-			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN ('");
-			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
-			hb.append("','");
-			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
-			hb.append("'))");
-		}
-		
-		if (!Checks.esNulo(dto.getPerfiles()) && dto.getPerfiles().size()>0) {
-			if (dto.getZonas().size()>0)
-				hb.append(" and ");
-			hb.append(" vtar.idPerfil IN (");
-			for (Perfil idPerfil : dto.getPerfiles()) {
-				hb.append(idPerfil.getId().toString()).append(",");
-			}		
-			hb.deleteCharAt(hb.length() - 1);
-			hb.append(") ");
-		}
-		hb.append("))" );
+        if(!Checks.estaVacio(dto.getUsuarioLogado().getZonaPerfil())){
+        	hb.append(" ((");
+        	boolean existUsuNivel = false;
+        	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
+        		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
+        			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");
+        			existUsuNivel = true;
+        		}
+        	}
+        	
+        	if(existUsuNivel){
+            	hb.deleteCharAt(hb.length() - 1);
+            	hb.deleteCharAt(hb.length() - 1);
+    			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN ('");
+    			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
+    			hb.append("','");
+    			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
+    			hb.append("'))");
+    			hb.append(")");
+        	}else{
+        		///Borramos el OR
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        	}
+        }
+        
+		hb.append(")" );
 		
         return hb;
     }

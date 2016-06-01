@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.api;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,16 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Map<String, String> tipoSupervisorProrroga;
 	private Set<String> tiposGestoresDeProcuradores;
 	private Set<String> perfilesConsulta;
+	private HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores;
+	private HashMap<String, HashMap<String, Set<String>>> perfilesGestoresEspeciales;
+	private HashMap<String, HashMap<String, Set<String>>> supervisorAsunto;
+	private HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto;
+	private HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto;
+	private Map<String, String> mapaContratoVigor;
+	private Map<String, String> mapaClasificacionDespachoPerfil;
+	private Map<String, String> mapaRelacionBankia;
+	private Map<String, String> mapaDescripcionIVA;
+	private Map<String, String> mapaCodEstAse;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -130,5 +141,98 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	 */
 	public void setPerfilesConsulta(Set<String> perfilesConsulta) {
 		this.perfilesConsulta = perfilesConsulta;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getTiposAsuntosTiposGestores() {
+		return tiposAsuntosTiposGestores;
+	}
+
+	public void setTiposAsuntosTiposGestores(
+			HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores) {
+		this.tiposAsuntosTiposGestores = tiposAsuntosTiposGestores;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getPerfilesGestoresEspeciales() {
+		return perfilesGestoresEspeciales;
+	}
+
+	public void setPerfilesGestoresEspeciales(
+			HashMap<String, HashMap<String, Set<String>>> perfilesGestoresEspeciales) {
+		this.perfilesGestoresEspeciales = perfilesGestoresEspeciales;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getSupervisorAsunto() {
+		return supervisorAsunto;
+	}
+
+	public void setSupervisorAsunto(
+			HashMap<String, HashMap<String, Set<String>>> supervisorAsunto) {
+		this.supervisorAsunto = supervisorAsunto;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getDespachoSupervisorAsunto() {
+		return despachoSupervisorAsunto;
+	}
+
+	public void setDespachoSupervisorAsunto(
+			HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto) {
+		this.despachoSupervisorAsunto = despachoSupervisorAsunto;
+	}
+
+	public HashMap<String, HashMap<String, Set<String>>> getTipoGestorSupervisorAsunto() {
+		return tipoGestorSupervisorAsunto;
+	}
+
+	public void setTipoGestorSupervisorAsunto(
+			HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto) {
+		this.tipoGestorSupervisorAsunto = tipoGestorSupervisorAsunto;
+	}
+
+	/**
+	 * PRODUCTO-1272 Getters and Setters para el mapeo del contrato en vigr, perfil despacho y relacion bankia 
+	 */
+	
+	public Map<String, String> getMapaContratoVigor() {
+		return mapaContratoVigor;
+	}
+
+	public void setMapaContratoVigor(Map<String, String> mapaContratoVigor) {
+		this.mapaContratoVigor = mapaContratoVigor;
+	}
+	
+	
+	public Map<String, String> getMapaClasificacionDespachoPerfil() {
+		return mapaClasificacionDespachoPerfil;
+	}
+
+	public void setMapaClasificacionDespachoPerfil(Map<String, String> mapaClasificacionDespachoPerfil) {
+		this.mapaClasificacionDespachoPerfil = mapaClasificacionDespachoPerfil;
+	}
+
+	
+	public Map<String, String> getMapaRelacionBankia() {
+		return mapaRelacionBankia;
+	}
+
+	public void setMapaRelacionBankia(Map<String, String> mapaRelacionBankia) {
+		this.mapaRelacionBankia = mapaRelacionBankia;
+	}
+
+	
+	public Map<String, String> getMapaDescripcionIVA() {
+		return mapaDescripcionIVA;
+	}
+
+	public void setMapaDescripcionIVA(Map<String, String> mapaDescripcionIva) {
+		this.mapaDescripcionIVA = mapaDescripcionIva;
+	}	
+	
+	
+	public Map<String, String> getMapaCodEstAse() {
+		return mapaCodEstAse;
+	}
+	
+	public void setMapaCodEstAse(Map<String, String> mapaCodEstAse) {
+		this.mapaCodEstAse = mapaCodEstAse;
 	}
 }

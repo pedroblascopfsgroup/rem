@@ -153,7 +153,7 @@
 						 , propio
 					 ]
 					 ,bbar : [
-						<sec:authorize ifNotGranted="SOLO_CONSULTA">btnGuardar,</sec:authorize> btnCancelar
+						<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_EDITAR_CONVENIO_GUARDAR">btnGuardar,</sec:authorize> btnCancelar
 					 ]
 				  } 
 			  ]

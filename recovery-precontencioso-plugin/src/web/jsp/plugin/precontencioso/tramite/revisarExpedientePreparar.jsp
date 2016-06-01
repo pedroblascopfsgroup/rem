@@ -102,39 +102,25 @@ if (muestraBotonGuardar==1){
 								,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.propuesto" text="**Procedimiento propuesto" />'
 						});
 		}
+	}
 
-	var agenciaExternaSi = '<fwk:const value="es.capgemini.pfs.procesosJudiciales.model.DDSiNo.SI" />';
+	var gestionJUDICIALIZAR = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial.JUDICIALIZAR" />';
 	
-	var agenciaExt = items[2];
+	var gestion = items[2];
 	var procedimientoProp = items[3];
 	
-	agenciaExt.on('select', function() {
+	gestion.on('select', function()
+	{
 		procedimientoProp.setValue('');
-		if(agenciaExt.getValue() == agenciaExternaSi) {
-			procedimientoProp.allowBlank = true;
-		}else{
+		if(gestion.getValue() == gestionJUDICIALIZAR) {
 			procedimientoProp.allowBlank = false;
+			procedimientoProp.setDisabled(false);
+		}
+		else{
+			procedimientoProp.allowBlank = true;
+			procedimientoProp.setDisabled(true);
 		}
 	});
-	
-	
-}
-
-
-var gestionJUDICIALIZAR = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDTipoGestionRevisarExpJudicial.JUDICIALIZAR" />';
-
-var gestion = items[2];
-var proc_iniciar = items[3];
-
-gestion.on('select', function() {
-	if(gestion.getValue() == gestionJUDICIALIZAR) {
-		proc_iniciar.allowBlank = false;
-	}else{
-		proc_iniciar.allowBlank = true;
-	}
-});
-
-
 
 <%@ include file="/WEB-INF/jsp/plugin/precontencioso/panelEdicion.jsp" %>
 

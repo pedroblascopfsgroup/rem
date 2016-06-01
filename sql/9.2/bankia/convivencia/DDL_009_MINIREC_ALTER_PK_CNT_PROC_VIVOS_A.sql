@@ -91,7 +91,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE ('[TRAZA] IDX_EXISTE ('||IDX_EXISTE||').');*/
 			-- Borramos la PK
 			DBMS_OUTPUT.PUT_LINE ('[INFO] '||V_ESQUEMA||'.'||TABLA||' Procedemos a borrar la PK ...');
-			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||' DROP CONSTRAINT '||PK_NAME ' DROP INDEX';
+			V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||TABLA||' DROP CONSTRAINT '||PK_NAME ||' DROP INDEX';
 			DBMS_OUTPUT.PUT_LINE ('[INFO] '||V_MSQL);
 			Execute Immediate V_MSQL;
 			commit;

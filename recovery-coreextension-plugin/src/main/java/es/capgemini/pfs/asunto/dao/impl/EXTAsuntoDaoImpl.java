@@ -750,24 +750,24 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and prc.asunto.id = asu.id ");
 			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
 			
-			if(dto.getNombrePersonaProcedimiento()!= ""){
+			if(!Checks.esNulo(dto.getNombrePersonaProcedimiento())){
 				
-				hql.append(" and persAfc.nombre like '%'|| :nomPers ||'%'");
+				hql.append(" and upper(persAfc.nombre) like '%'|| :nomPers ||'%'");
 				params.put("nomPers", dto.getNombrePersonaProcedimiento().toUpperCase());
 			}
 			
-			if(dto.getApellido1PersonaProcedimiento()!= ""){
-				hql.append(" and persAfc.apellido1 like '%'|| :ape1Pers ||'%'");
+			if(!Checks.esNulo(dto.getApellido1PersonaProcedimiento())){
+				hql.append(" and upper(persAfc.apellido1) like '%'|| :ape1Pers ||'%'");
 				params.put("ape1Pers", dto.getApellido1PersonaProcedimiento().toUpperCase());
 			}		
 					
-			if(dto.getApellido2PersonaProcedimiento()!= ""){
-				hql.append(" and persAfc.apellido2 like '%'|| :ape2Pers ||'%'");
+			if(!Checks.esNulo(dto.getApellido2PersonaProcedimiento())){
+				hql.append(" and upper(persAfc.apellido2) like '%'|| :ape2Pers ||'%'");
 				params.put("ape2Pers", dto.getApellido2PersonaProcedimiento().toUpperCase());
 			}
 			
-			if(dto.getDniPersonaProcedimiento()!="" && dto.getDniPersonaProcedimiento()!=null){
-				hql.append(" and persAfc.docId like '%'|| :dni ||'%'");
+			if(!Checks.esNulo(dto.getDniPersonaProcedimiento())){
+				hql.append(" and upper(persAfc.docId) like '%'|| :dni ||'%'");
 				params.put("dni", dto.getDniPersonaProcedimiento().toUpperCase());
 			}
 
@@ -1492,7 +1492,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
 			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
-		//Quito el último 'and' de la consulta ya que va a sobrar
+		//Quito el ï¿½ltimo 'and' de la consulta ya que va a sobrar
 		subSelect = subSelect.substring(0, subSelect.length() -4);
 		subSelect += ")";
 		

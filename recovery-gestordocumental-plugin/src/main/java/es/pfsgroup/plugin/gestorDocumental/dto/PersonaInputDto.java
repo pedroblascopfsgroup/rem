@@ -9,9 +9,11 @@ public class PersonaInputDto {
 	public static final String EVENTO_IDENTIFICADOR_PERSONA_ORIGEN = "ConsultaIdPersonaPorOrigen";
 	
 	public static final String ID_ORIGEN_NOS = "NOS";
+	public static final String ID_CLIENTE_SAREB = "SAREB";
 	
 	private String idPersonaOrigen;
 	private String idOrigen;
+	private String idCliente;
 	private String idPersonaHaya;
 	private String event;
 
@@ -31,6 +33,14 @@ public class PersonaInputDto {
 		this.idOrigen = idOrigen;
 	}
 
+	public String getIdCliente() {
+		return idCliente;
+	}
+	
+	public void setIdCliente(String idCliente) {
+		this.idCliente = idCliente;
+	}
+	
 	public String getIdPersonaHaya() {
 		return idPersonaHaya;
 	}

@@ -41,7 +41,8 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 		logger.info("LLamando al WS MAESTRO_ACTIVOS...Parametros de entrada...");
 		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
 		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
-		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
+		logger.info("ID_CLIENTE: " + dto.getIdCliente());
+		logger.info("ID_TIPO_ACTIVO: " + dto.getIdTipoActivo());
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_ACTIVOS);
 			String targetNamespace = getWSNamespace();
@@ -64,7 +65,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 	@Override
 	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
-		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdOrigen() + ", " + dto.getIdPersonaOrigen());
+		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdOrigen() + ", " + dto.getIdPersonaOrigen() + ", " + dto.getIdCliente());
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);

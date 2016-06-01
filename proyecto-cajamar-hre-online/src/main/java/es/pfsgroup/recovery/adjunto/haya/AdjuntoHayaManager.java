@@ -890,6 +890,7 @@ public class AdjuntoHayaManager {
 				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
 				input.setIdPersonaOrigen(persona.getDocId());
 				input.setIdOrigen(PersonaInputDto.ID_ORIGEN_NOS);
+				input.setIdCliente(PersonaInputDto.ID_CLIENTE_SAREB);
 				
 				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 				

@@ -159,6 +159,12 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		for (EntregaCalculoLiq ec : entregasCuenta) {
 			//Agregamos los cambios de tipos intermedios y se actualiza el tipo de interes
 			tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, ec.getFechaValor(), pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
+			//Actualizmos la fecha
+			if (cuerpo.size()>0) {
+				try {
+					fecha = DateFormat.toDate(cuerpo.get(cuerpo.size()-1).getFechaValor());
+				} catch (Exception e) {};
+			}
 			
 			//Ahora creamos el tramo para la entrega cuenta
 			LIQDtoTramoLiquidacion tramo = generarTramoParaEntrega(ec, fecha, tipoInt, request.getBaseCalculo(), pendientes);
@@ -171,7 +177,14 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		}
 		
 		//Ahora insertamos los cambios de tipo entre la ultima entrega y la fecha de calculo
-		tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);		
+		tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
+		//Actualizmos la fecha
+		if (cuerpo.size()>0) {
+			try {
+				fecha = DateFormat.toDate(cuerpo.get(cuerpo.size()-1).getFechaValor());
+			} catch (Exception e) {};
+		}
+
 		
 		//3.- Por último el tramo del Calculo de Deuda, desde la última fecha hasta la fecha Calculo
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();

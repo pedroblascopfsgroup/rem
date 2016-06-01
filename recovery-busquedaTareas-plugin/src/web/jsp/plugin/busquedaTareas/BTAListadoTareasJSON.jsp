@@ -24,6 +24,7 @@
 				<json:property name="fechaInicio" >
 					<fwk:date value="${tar.tarea.fechaInicio}"/>
 				</json:property>
+				<%-- FIXME Revisar nullPointer de Calendar.setTime (devuelve valores) --%>		
 				<json:property name="group">
 						<app:groupTareas value="${tar.tarea}" />
 				</json:property>

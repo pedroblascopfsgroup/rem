@@ -191,7 +191,7 @@ public class coreextensionManager implements coreextensionApi {
 		HashMap<String,Set<String>> map1= null;
 		HashMap<String, HashMap<String, Set<String>>> mapCompleto=null;
 		mapCompleto= coreProjectContext.getPerfilesGestoresEspeciales();
-		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+		if(mapCompleto!=null && !mapCompleto.isEmpty()){
 			map1= mapCompleto.get(codigoEntidadUsuario);
 		}
 		return map1;
@@ -274,8 +274,11 @@ public class coreextensionManager implements coreextensionApi {
 										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho));
 								
 							} else {
-								listaDespachos = genericDao.getList(DespachoExterno.class, 
-										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+//								listaDespachos = genericDao.getList(DespachoExterno.class, 
+//										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+//										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+								Order orden = new Order(OrderType.ASC,"id");
+								listaDespachos= genericDao.getListOrdered(DespachoExterno.class, orden, genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
 										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 								
 							}							

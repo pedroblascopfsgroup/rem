@@ -185,7 +185,7 @@ public class coreextensionController {
 	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
 	 * @return JSON
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "null" })
 	@RequestMapping
 	public String getListUsuariosDefectoByTipoAsunto(ModelMap model,String idTipoAsunto, String idExpediente,
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
@@ -194,6 +194,7 @@ public class coreextensionController {
 		
 		List<EXTDDTipoGestor> listadoTipoGestores = null;
 		List<DespachoExterno> listaDespachos = null;
+		List<DespachoExterno> listaDespachos2 = new ArrayList<DespachoExterno>();;
 		List<Usuario> listaUsuarios= null;
 		List<EXTDDTipoGestor> listadoTipoGestoresFinal= new ArrayList<EXTDDTipoGestor>();
 		List<DespachoExterno> listaDespachoFinal= new ArrayList<DespachoExterno>();
@@ -202,44 +203,59 @@ public class coreextensionController {
 		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		
 		for(EXTDDTipoGestor tipoGestor: listadoTipoGestores){
-			listaDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(tipoGestor.getId(), false);
-			for(DespachoExterno despacho: listaDespachos){
-				listaUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosPorDefectoData(despacho.getId(), false);
-				HashMap<String,Set<String>> perfilesMap= proxyFactory.proxy(coreextensionApi.class).getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
-				if(!perfilesMap.isEmpty() && Integer.parseInt(idTipoAsunto)==21){
-					Set<String> perfiles= perfilesMap.get(tipoGestor.getCodigo());
-					if(perfiles!=null && !perfiles.isEmpty()){
-						for(String perfil: perfiles){
-							Usuario usuarioFinal= new Usuario();
-							long idexp= Long.valueOf(idExpediente);
-							List<Usuario> usuarioFinales= proxyFactory.proxy(coreextensionApi.class).getUsuarioGestorOficinaExpedienteGestorDeuda(idexp, perfil);
-							if(!usuarioFinales.isEmpty()){
-								usuarioFinal= usuarioFinales.get(0); 
-								listadoTipoGestoresFinal.add(tipoGestor);
-								listaDespachoFinal.add(despacho);
-								listaUsuariosFinal.add(usuarioFinal);
+			if(tipoGestor!=null){
+				listaDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(tipoGestor.getId(), false);
+				if(listaDespachos!=null && listaDespachos.size()>0){
+					listaDespachos2.clear();
+					listaDespachos2.add(listaDespachos.get(0));
+				}
+				for(DespachoExterno despacho: listaDespachos2){
+					listaUsuarios=null;
+					listaUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosPorDefectoData(despacho.getId(), false);
+					if(listaUsuarios== null || listaUsuarios.size()==0){
+						List<Usuario> listaUsuariosNoDefecto= proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(despacho.getId(), false);
+						if(listaUsuariosNoDefecto!= null && listaUsuariosNoDefecto.size()!=0){
+							listaUsuarios.add(proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(despacho.getId(), false).get(0));
+						}
+					}
+					HashMap<String,Set<String>> perfilesMap= proxyFactory.proxy(coreextensionApi.class).getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
+					if(perfilesMap!=null && !perfilesMap.isEmpty() && Integer.parseInt(idTipoAsunto)==21){
+						Set<String> perfiles= perfilesMap.get(tipoGestor.getCodigo());
+						if(perfiles!=null && !perfiles.isEmpty()){
+							for(String perfil: perfiles){
+								Usuario usuarioFinal= new Usuario();
+								long idexp= Long.valueOf(idExpediente);
+								List<Usuario> usuarioFinales= proxyFactory.proxy(coreextensionApi.class).getUsuarioGestorOficinaExpedienteGestorDeuda(idexp, perfil);
+								if(!usuarioFinales.isEmpty()){
+									usuarioFinal= usuarioFinales.get(0); 
+									listadoTipoGestoresFinal.add(tipoGestor);
+									listaDespachoFinal.add(despacho);
+									listaUsuariosFinal.add(usuarioFinal);
+								}
+							}
+						}
+						else{
+							for(Usuario usuario: listaUsuarios){
+								
+								Usuario usuarioFinal= new Usuario();
+									usuarioFinal= usuario;
+									listadoTipoGestoresFinal.add(tipoGestor);
+									listaDespachoFinal.add(despacho);
+									listaUsuariosFinal.add(usuarioFinal);
 							}
 						}
 					}
 					else{
-						for(Usuario usuario: listaUsuarios){
-							
-							Usuario usuarioFinal= new Usuario();
-								usuarioFinal= usuario;
-								listadoTipoGestoresFinal.add(tipoGestor);
-								listaDespachoFinal.add(despacho);
-								listaUsuariosFinal.add(usuarioFinal);
+						if(listaUsuarios!= null && listaUsuarios.size()!=0){
+							for(Usuario usuario: listaUsuarios){
+								
+								Usuario usuarioFinal= new Usuario();
+									usuarioFinal= usuario;
+									listadoTipoGestoresFinal.add(tipoGestor);
+									listaDespachoFinal.add(despacho);
+									listaUsuariosFinal.add(usuarioFinal);
+							}
 						}
-					}
-				}
-				else{
-					for(Usuario usuario: listaUsuarios){
-						
-						Usuario usuarioFinal= new Usuario();
-							usuarioFinal= usuario;
-							listadoTipoGestoresFinal.add(tipoGestor);
-							listaDespachoFinal.add(despacho);
-							listaUsuariosFinal.add(usuarioFinal);
 					}
 				}
 			}

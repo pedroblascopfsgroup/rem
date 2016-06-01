@@ -1,0 +1,220 @@
+--/*
+--##########################################
+--## AUTOR=SERGIO NIETO
+--## FECHA_CREACION=20160524
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=PRODUCTO-1536
+--## PRODUCTO=NO
+--## Finalidad: DML
+--## 
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_TMP NUMBER(16); -- Vble. para validar la existencia de una tabla.      
+    V_TMP_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    
+    V_PEF_ID NUMBER(16); -- Vble. para guardar el id del perfil 
+    V_FUN_ID NUMBER(16); -- Vble. para guardar el id de la funcion 
+
+BEGIN
+	
+DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.PEF_PERFILES... Comprobaciones previas perfil procurador'); 
+
+    V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''FPFSRPROC''';
+
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    IF V_NUM_TABLAS = 1 THEN	  
+	
+	    V_SQL :='SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''FPFSRPROC''';
+	    -- Nos guardamos el id del perfil
+	    EXECUTE IMMEDIATE V_SQL INTO V_PEF_ID;
+	END IF;
+
+DBMS_OUTPUT.PUT_LINE('[INFO] Actualizar tabla fun_pef quitar funciones al perfil procurador');
+
+DBMS_OUTPUT.PUT_LINE('[INFO] Funcion ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES ');
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES'''; 
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS = 1 THEN	  
+
+		    V_SQL :='SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES'''; 
+		    EXECUTE IMMEDIATE V_SQL INTO V_FUN_ID;
+		    
+		    		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID = '||V_PEF_ID||''; 
+			    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	        IF V_NUM_TABLAS > 0 THEN	  
+	
+				V_MSQL := 'UPDATE '||V_ESQUEMA||'.FUN_PEF SET BORRADO=1,USUARIOBORRAR=''PRODUCTO-1536'',FECHABORRAR=SYSDATE  WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID='||V_PEF_ID||'';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] Registro modificado en '||V_ESQUEMA||'.FUN_PEF');
+				
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE('[INFO] No existe el registro en '||V_ESQUEMA||'.FUN_PEF');
+    		END IF;
+
+
+		ELSE 
+			DBMS_OUTPUT.PUT_LINE('[INFO] No existe la funcion en la tabla '||V_ESQUEMA_M||'.FUN_FUNCIONES.');
+
+   		END IF;
+   		
+DBMS_OUTPUT.PUT_LINE('[INFO] Funcion ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES ');
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES'''; 
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS = 1 THEN	  
+
+		    V_SQL :='SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES'''; 
+		    EXECUTE IMMEDIATE V_SQL INTO V_FUN_ID;
+		    
+		    		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID = '||V_PEF_ID||''; 
+			    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	        IF V_NUM_TABLAS > 0 THEN	  
+	
+				V_MSQL := 'UPDATE '||V_ESQUEMA||'.FUN_PEF SET BORRADO=1,USUARIOBORRAR=''PRODUCTO-1536'',FECHABORRAR=SYSDATE  WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID='||V_PEF_ID||'';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] Registro modificado en '||V_ESQUEMA||'.FUN_PEF');
+				
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE('[INFO] No existe el registro en '||V_ESQUEMA||'.FUN_PEF');
+    		END IF;
+
+
+		ELSE 
+			DBMS_OUTPUT.PUT_LINE('[INFO] No existe la funcion en la tabla '||V_ESQUEMA_M||'.FUN_FUNCIONES.');
+
+   		END IF;
+   		
+DBMS_OUTPUT.PUT_LINE('[INFO] Funcion ROLE_PUEDE_VER_TAB_ENTREGAS_ASUNTO ');
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_PUEDE_VER_TAB_ENTREGAS_ASUNTO'''; 
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS = 1 THEN	  
+
+		    V_SQL :='SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_PUEDE_VER_TAB_ENTREGAS_ASUNTO'''; 
+		    EXECUTE IMMEDIATE V_SQL INTO V_FUN_ID;
+		    
+		    		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID = '||V_PEF_ID||''; 
+			    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	        IF V_NUM_TABLAS > 0 THEN	  
+	
+				V_MSQL := 'UPDATE '||V_ESQUEMA||'.FUN_PEF SET BORRADO=1,USUARIOBORRAR=''PRODUCTO-1536'',FECHABORRAR=SYSDATE  WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID='||V_PEF_ID||'';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] Registro modificado en '||V_ESQUEMA||'.FUN_PEF');
+				
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE('[INFO] No existe el registro en '||V_ESQUEMA||'.FUN_PEF');
+    		END IF;
+
+
+		ELSE 
+			DBMS_OUTPUT.PUT_LINE('[INFO] No existe la funcion en la tabla '||V_ESQUEMA_M||'.FUN_FUNCIONES.');
+
+   		END IF;
+   		
+DBMS_OUTPUT.PUT_LINE('[INFO] Funcion ROLE_PUEDE_VER_TAB_CONTABILIDAD_COBROS ');
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_PUEDE_VER_TAB_CONTABILIDAD_COBROS'''; 
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS = 1 THEN	  
+
+		    V_SQL :='SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''ROLE_PUEDE_VER_TAB_CONTABILIDAD_COBROS'''; 
+		    EXECUTE IMMEDIATE V_SQL INTO V_FUN_ID;
+		    
+		    		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID = '||V_PEF_ID||''; 
+			    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	        IF V_NUM_TABLAS > 0 THEN	  
+	
+				V_MSQL := 'UPDATE '||V_ESQUEMA||'.FUN_PEF SET BORRADO=1,USUARIOBORRAR=''PRODUCTO-1536'',FECHABORRAR=SYSDATE  WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID='||V_PEF_ID||'';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] Registro modificado en '||V_ESQUEMA||'.FUN_PEF');
+				
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE('[INFO] No existe el registro en '||V_ESQUEMA||'.FUN_PEF');
+    		END IF;
+
+
+		ELSE 
+			DBMS_OUTPUT.PUT_LINE('[INFO] No existe la funcion en la tabla '||V_ESQUEMA_M||'.FUN_FUNCIONES.');
+
+   		END IF;
+   		
+DBMS_OUTPUT.PUT_LINE('[INFO] Funcion VER_TAB_CALCULO_LIQUIDACIONES ');
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''VER_TAB_CALCULO_LIQUIDACIONES'''; 
+		EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+        IF V_NUM_TABLAS = 1 THEN	  
+
+		    V_SQL :='SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''VER_TAB_CALCULO_LIQUIDACIONES'''; 
+		    EXECUTE IMMEDIATE V_SQL INTO V_FUN_ID;
+		    
+		    		V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID = '||V_PEF_ID||''; 
+			    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+	        IF V_NUM_TABLAS > 0 THEN	  
+	
+				V_MSQL := 'UPDATE '||V_ESQUEMA||'.FUN_PEF SET BORRADO=1,USUARIOBORRAR=''PRODUCTO-1536'',FECHABORRAR=SYSDATE  WHERE FUN_ID = '||V_FUN_ID||' AND PEF_ID='||V_PEF_ID||'';
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] Registro modificado en '||V_ESQUEMA||'.FUN_PEF');
+				
+			ELSE 
+				DBMS_OUTPUT.PUT_LINE('[INFO] No existe el registro en '||V_ESQUEMA||'.FUN_PEF');
+    		END IF;
+
+
+		ELSE 
+			DBMS_OUTPUT.PUT_LINE('[INFO] No existe la funcion en la tabla '||V_ESQUEMA_M||'.FUN_FUNCIONES.');
+
+   		END IF;
+	
+
+	
+COMMIT;
+
+DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.PUT_LINE('KO no modificado');
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT
+
+
+

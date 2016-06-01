@@ -45,6 +45,8 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
     public static final String TIPO_DACION_COMPRA_VENTA_DACION = "COMPVENDACION";
     public static final String TIPO_EFECTIVO_FONDOS_PROPIOS = "EFECFONPRO";
     public static final String TIPO_REGUL_PARCIAL = "REGU_PARCIAL";
+    public static final String TIPO_ENTREGA_LLAVES = "ENTLLAVES";
+    public static final String TIPO_CESION_REMATE = "11";
 
     @Id
     @Column(name = "DD_TPA_ID")
@@ -174,7 +176,9 @@ public class DDTipoAcuerdo implements Dictionary, Auditable {
 				this.codigo.equalsIgnoreCase(this.TIPO_DACION_EN_PAGO) ||
 				this.codigo.equalsIgnoreCase(this.TIPO_DACION_PARA_PAGO) ||
 				this.codigo.equalsIgnoreCase(this.TIPO_DACION_COMPRA_VENTA) ||
-				this.codigo.equalsIgnoreCase(this.TIPO_DACION_COMPRA_VENTA_DACION)) {
+				this.codigo.equalsIgnoreCase(this.TIPO_DACION_COMPRA_VENTA_DACION) ||
+				this.codigo.equalsIgnoreCase(this.TIPO_ENTREGA_LLAVES) ||
+				this.codigo.equalsIgnoreCase(this.TIPO_CESION_REMATE)) {
 			return true;
 		} else {
 			return false;

@@ -9,11 +9,20 @@
      `Y88P'  Y8888P   `Y88P'
     
     
-    Tener en cuenta que al ofuscar, las posiciones 7 y 32 de array deben ser ${bi.url} y ${bi.auth} respectivamente
+    Tener en cuenta que al ofuscar, las posiciones 1, 2, 3, 4, 5 y 6 del array deben ser ${bi.auth},${bi.url},${bi.u1},${bi.p1},${bi.u2},${bi.p2} respectivamente
     
     
 */
+
+var url1='1111';
+var url2='2222';
+var u1='3333';
+var p1='4444';
+var u2='5555';
+var p2='6666';
+
 var count=0;
+var lCartera="";
 
 function centeredWindowStyle() {
         return 'width='.concat(screen.width,',height=',screen.height,',top=0,left=0,titlebar=no,location=no,menubar=no,toolbar=no,scrollbars=yes');
@@ -21,21 +30,41 @@ function centeredWindowStyle() {
 
 function openRecBI() {
         if (count != 0) {
-                window.open('/pfs/recovery-bi/servlet/mstrWeb', '', centeredWindowStyle());
+                window.open(url1, '', centeredWindowStyle());
                 return;
         }
         count++;
         window.open('../js/plugin/bi/rec-bi.html', '', centeredWindowStyle());
 }
 
+function openRecBIHayaMulti(pCartera) {
+	if (lCartera != pCartera) {
+		count = 0;
+	}
+	lCartera = pCartera;
+	openRecBIHaya();
+}
+
 function openRecBIHaya() {
 
-        if (count != 0) {
-                window.open('/pfs/recovery-bi/servlet/mstrWeb', '', centeredWindowStyle());
-                return;
-        }
-        count++;
-        window.open('../js/plugin/bi/rec-biHaya.html', '', centeredWindowStyle());
+	var pagina = '../js/plugin/bi/rec-biHaya.html';
+	var pagina2 = url1;
+	
+    if (lCartera == "HAYA" || lCartera == "SAREB") {
+    	pagina = '../js/plugin/bi/rec-biHayaSareb.html';
+    	pagina2= url1;
+    } else if (lCartera == "CAJAMAR" || lCartera == "BCC") {
+    	pagina = '../js/plugin/bi/rec-biHayaBcc.html';
+    	pagina2= url1;
+    }
+
+    if (count != 0) {
+        window.open(pagina2, '', centeredWindowStyle());
+        return;
+    }
+    count++;    
+    window.open(pagina, '', centeredWindowStyle());
+
 }
 
 function createForm(url) {
@@ -71,13 +100,31 @@ function getParamFromURL(param) {
 }
 
 function login2RecBI() {
-	var form = createHiddenAuthForm('../../../recovery-bi/servlet/mstrWeb', 'PfYf7lC9kAUY', 'o8gkPlBGLe1yeIOYpPvi');
+	var form = createHiddenAuthForm(url2, u1, p1);
  	document.body.appendChild(form);
  	form.submit();
 }
 
 function login2RecBIHaya() {
-	var form = createHiddenAuthForm('../../../recovery-bi/servlet/mstrWeb', 'HaiGasdm6Lq', 'H9cp153TEvkEzT2F1y');
+
+	var form = createHiddenAuthForm(url2, u1, p1);
  	document.body.appendChild(form);
  	form.submit();
+
+} 
+
+function login2RecBIHayaSareb() {
+
+	var form = createHiddenAuthForm(url2, u1, u1);
+ 	document.body.appendChild(form);
+ 	form.submit();
+
+} 
+
+function login2RecBIHayaBcc() {
+
+	var form = createHiddenAuthForm(url2, u2, u2);
+ 	document.body.appendChild(form);
+ 	form.submit();
+
 } 

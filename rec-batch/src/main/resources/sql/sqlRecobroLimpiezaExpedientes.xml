@@ -1,49 +1,49 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-    <entry key="recobro.borrado.tmp_rec_exp_sin_personas_sub.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_personas_sub">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_PERSONAS_SUB'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_sin_riesgos_sub.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_riesgos_sub">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_RIESGOS_SUB'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_sin_contratos_sub.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_contratos_sub">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_CONTRATOS_SUB'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_sin_personas.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_personas">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_PERSONAS'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_sin_riesgos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_riesgos">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_RIESGOS'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_sin_contratos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_contratos">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_CONTRATOS'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_sin_cnt_activos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_sin_cnt_activos">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_SIN_CNT_ACTIVOS'); END;
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_cancelados.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_cancelados">
         <![CDATA[
             BEGIN OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_CANCELADOS'); END;
         ]]>
     </entry>
 
     <!-- PASO 2 Obtenemos los expedientes de recobro sin personas o que estas esten exceptuadas -->
-        <entry key="recobro.insert.tmp_rec_exp_sin_personas_sub.Oracle10gDialect">
+        <entry key="recobro.insert.tmp_rec_exp_sin_personas_sub">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_SIN_PERSONAS_SUB
@@ -56,7 +56,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_rec_exp_sin_personas.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_sin_personas">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_SIN_PERSONAS
@@ -72,7 +72,7 @@
     </entry>
 
     <!-- PASO 3 Obtenemos los expedientes de recobro sin contratos o que estos estan exceptuados -->
-    <entry key="recobro.insert.tmp_rec_exp_sin_contratos_sub.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_sin_contratos_sub">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_SIN_CONTRATOS_SUB
@@ -85,7 +85,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_rec_exp_sin_contratos.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_sin_contratos">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_SIN_CONTRATOS
@@ -100,7 +100,7 @@
         ]]>
     </entry>
     <!-- PASO 4 Obtenemos los expedientes de recobro regularizados (suma del riesgo de todos los contratos igual a 0 -->
-    <entry key="recobro.insert.tmp_rec_exp_sin_riesgos_sub.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_sin_riesgos_sub">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_SIN_RIESGOS_SUB
@@ -116,7 +116,7 @@
           END;
         ]]>
     </entry>
-    <entry key="recobro.insert.tmp_rec_exp_sin_riesgos.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_sin_riesgos">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_SIN_RIESGOS
@@ -127,7 +127,7 @@
         ]]>
     </entry>
     <!-- PASO 5 Obtenemos los expedientes que no tienen ningún contrato activo y que se deben de cancelar -->
-    <entry key="recobro.insert.tmp_rec_exp_sin_cnt_activos.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_sin_cnt_activos">
         <![CDATA[
           BEGIN
           INSERT INTO TMP_REC_EXP_SIN_CNT_ACTIVOS
@@ -148,7 +148,7 @@
         ]]>
     </entry>
     <!-- PASO 6 Juntar los expedientes obtenidos en la tabla TMP_REC_EXP_CANCELADOS -->
-    <entry key="recobro.insert.tmp_rec_exp_cancelados.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_cancelados">
         <![CDATA[
           BEGIN
             INSERT INTO TMP_REC_EXP_CANCELADOS

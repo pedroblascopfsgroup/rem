@@ -207,7 +207,11 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 					}
 				}
 				else if ("comboDetalle".equals(tev.getNombre())) {
-					comboDetalle = new String(tev.getValor());
+					if(!Checks.esNulo(tev.getValor())){
+						comboDetalle = tev.getValor();
+					}else{
+						comboDetalle = "";
+					}
 				}
 			}
 		}

@@ -296,7 +296,17 @@
 	<bean id="mapaTramiteSubastaTerceros_haya"
 		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
 		<property name="mapaTiposResoluciones">
-			<map>				
+			<map>
+				<entry key="R_SUB_TER_SENY_SUB">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_SUB_TER_SENY_SUB</value>
+							</property>
+						</bean>
+					</list>
+				</entry>				
 				<entry key="R_ESC_SOL_SUS_T">
 					<list>
 						<bean

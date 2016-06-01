@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.procuradores.tareas.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,24 +9,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.EXTAbstractTareaNotificacionManager;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
-import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.dao.UsuarioDao;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.EXTModelClassFactory;
 import es.pfsgroup.plugin.recovery.procuradores.configuracion.api.ConfiguracionDespachoExternoApi;
 import es.pfsgroup.plugin.recovery.procuradores.tareas.api.PCDProcuradoresApi;
 import es.pfsgroup.plugin.recovery.procuradores.tareas.dao.PCDProcuradoresDao;
 import es.pfsgroup.plugin.recovery.procuradores.tareas.dto.PCDProcuradoresDto;
 import es.pfsgroup.recovery.api.UsuarioApi;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
-import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
-import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 
 
 @Component
@@ -43,11 +42,25 @@ public class PCDProcuradoresManager extends EXTAbstractTareaNotificacionManager 
     @Autowired
     private EXTModelClassFactory modelClassFactory;
     
+    @Autowired
+	private GenericABMDao genericDao;
+
+    @Autowired
+	private EXTGrupoUsuariosDao grupoUsuarioDao;
+    
+    @Autowired
+    private UsuarioDao usuarioDao;
 
 	@Override
 	@BusinessOperation(PCD_COUNT_LISTADO_TAREAS_PENDIENTES)
 	public Long getCountListadoTareasPendientes(Long idUsuario) {
-		return pcdprocuradoresDao.getCountListadoTareasPendientesValidar(idUsuario);
+		Usuario usuarioLogado = usuarioDao.get(idUsuario);
+		List<Long> listaUsuariosGrupo=new ArrayList<Long>();
+		if(!Checks.esNulo(usuarioLogado)){
+			listaUsuariosGrupo=grupoUsuarioDao.getIdsUsuariosGrupoUsuario(usuarioLogado);
+			listaUsuariosGrupo.add(usuarioLogado.getId());
+		}
+		return pcdprocuradoresDao.getCountListadoTareasPendientesValidar(listaUsuariosGrupo);
 	}
 	
 	@Override
@@ -55,6 +68,14 @@ public class PCDProcuradoresManager extends EXTAbstractTareaNotificacionManager 
 	public Page getListadoTareasPendientesValidar(PCDProcuradoresDto dto){
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		dto.setUsuarioLogado(usuarioLogado);
+		
+		List<Long> listaUsuariosGrupo=new ArrayList<Long>();
+		if(!Checks.esNulo(usuarioLogado)){
+			listaUsuariosGrupo=grupoUsuarioDao.getIdsUsuariosGrupoUsuario(usuarioLogado);
+			listaUsuariosGrupo.add(usuarioLogado.getId());
+		}
+		dto.setListaUsuariosGrupo(listaUsuariosGrupo);
+		
 		Long idCategorizacion = configuracionDespachoExternoApi.activoCategorizacion();
 		dto.setIdCategorizacion(idCategorizacion);
 		Page p = pcdprocuradoresDao.getListadoTareasPendientesValidar(dto);
@@ -66,6 +87,14 @@ public class PCDProcuradoresManager extends EXTAbstractTareaNotificacionManager 
 	public Page getListadoTareasPendientesValidarPausadas(PCDProcuradoresDto dto){
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		dto.setUsuarioLogado(usuarioLogado);
+		
+		List<Long> listaUsuariosGrupo=new ArrayList<Long>();
+		if(!Checks.esNulo(usuarioLogado)){
+			listaUsuariosGrupo=grupoUsuarioDao.getIdsUsuariosGrupoUsuario(usuarioLogado);
+			listaUsuariosGrupo.add(usuarioLogado.getId());
+		}
+		dto.setListaUsuariosGrupo(listaUsuariosGrupo);
+		
 		Long idCategorizacion = configuracionDespachoExternoApi.activoCategorizacion();
 		dto.setIdCategorizacion(idCategorizacion);
 		Page p = pcdprocuradoresDao.getListadoTareasPendientesValidarPausadas(dto);

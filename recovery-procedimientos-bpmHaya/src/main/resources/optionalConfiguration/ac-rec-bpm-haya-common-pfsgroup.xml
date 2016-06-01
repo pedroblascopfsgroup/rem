@@ -919,6 +919,17 @@
 					}
 				}
 				
+				def dameValoresBPMPadrePCO(String codigo) {
+	            	def turnadoProcedimientoManager = ctx.getBean("turnadoProcuradoresManager");
+					return turnadoProcedimientoManager.dameValoresBPMPadrePCO(idProcedimiento, codigo);
+				}
+				
+				def comprobarSiLosDatosHanSidoCambiados = {
+					def turnadoProcedimientoManager = ctx.getBean("turnadoProcuradoresManager");
+					return turnadoProcedimientoManager.comprobarSiLosDatosHanSidoCambiados(idProcedimiento);
+				}
+				
+				
   			 ]]>
   			</value>
   		</list>

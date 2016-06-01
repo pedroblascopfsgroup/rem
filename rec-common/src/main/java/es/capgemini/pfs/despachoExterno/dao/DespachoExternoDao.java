@@ -2,6 +2,7 @@ package es.capgemini.pfs.despachoExterno.dao;
 
 import java.util.List;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -70,4 +71,12 @@ public interface DespachoExternoDao extends AbstractDao<DespachoExterno, Long> {
      * @return
      */
     List<GestorDespacho> buscaDespachosPorUsuario(Long idUsuario);
+    
+    
+    /**
+     * Devuelve los despachos de un tipo
+     * @param tipo
+     * @return
+     */
+    Page getDespachosExternosByTipo(String tipo,String query);
 }

@@ -176,7 +176,7 @@ var anyadirFechaFaltante = function(response){
 // ***  AÑADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
 // *************************************************************** //
 
-var observacionesProcurador = items[2 + offset];
+var observacionesProcurador = items[4 + offset];
 observacionesProcurador.setDisabled(true);
 
 var panelEdicion=new Ext.form.FormPanel({

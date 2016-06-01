@@ -636,7 +636,7 @@ Panel principal
 	
 	panel.getValue = function(){
 	}
-
+	
 	panel.setValue = function(){
 		//var data = entidad.get("data");
 		idProcedimiento = data.id;
@@ -650,7 +650,10 @@ Panel principal
 			btnVolver.setVisible(false);
 		}
 		recordResumenStore.webflow({idProcedimiento: data.id});
+	
 	}
+	
+		
 
   panel.getProcedimientoId = function(){
     return idProcedimiento;
@@ -661,5 +664,14 @@ Panel principal
  }
  
   page.add(panel); 
+  
+  Ext.onReady(function () {
+	if(data.isTrNotificacionPersonal){
+		resumenNotificacionGrid.getColumnModel().rows[0][2].header='<s:message code="plugin.masivo.notificacionDemandados.gridResumen.cabeceraNotificacionPersonal" text="**Notificación Personal"/>';	
+	
+		recordDetalleStore.webflow({idProcedimiento: data.id, idPersona: 0});
+		detalleNotificacionGrid.getColumnModel().rows[0][1].header='<s:message code="plugin.masivo.notificacionDemandados.gridResumen.cabeceraNotificacionPersonal" text="**Notificación Personal"/>';		
+  	}
+  });
   
 </fwk:page>

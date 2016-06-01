@@ -1,61 +1,61 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- PASO 1 - TRUNCADO TABLAS TEMPORALES -->
-    <entry key="recobro.borrado.tmp_rec_exp_rearquetipado.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_rearquetipado">
         <![CDATA[
             select 1 from dual
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_rotacion.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_rotacion">
         <![CDATA[
             select 1 from dual
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_desnormalizado_arq.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_desnormalizado_arq">
         <![CDATA[
            select 1 from dual
         ]]>
     </entry>
-    <entry key="recobro.borrado.tmp_rec_exp_asig_cartera.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_asig_cartera">
         <![CDATA[
             select 1 from dual
         ]]>
     </entry>
-    <entry key="recobro.recompile.tmp_rec_per_data_rule_engine.Oracle10gDialect">
+    <entry key="recobro.recompile.tmp_rec_per_data_rule_engine">
         <![CDATA[
            select 1 from dual
         ]]>
     </entry>
     <!-- Paso 2 - Calculo del nuevo arquetipo -->
-    <entry key="recobro.insert.tmp_rec_exp_desnormalizado_arq.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_desnormalizado_arq">
         <![CDATA[
          select 1 from dual
         ]]>
     </entry>
     <!-- PASO 3 - Rearquetipar expedientes -->
-    <entry key="recobro.create.tmp_arq_recobro.Oracle10gDialect">
+    <entry key="recobro.create.tmp_arq_recobro">
         <![CDATA[
            select 1 from dual
         ]]>
     </entry>
-    <entry key="recobro.insert.tmp_rec_exp_rearquetipado.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_rearquetipado">
         <![CDATA[
           select 1 from dual
         ]]>
     </entry>
 
-    <entry key="recobro.drop.tmp_arq_recobro.Oracle10gDialect">
+    <entry key="recobro.drop.tmp_arq_recobro">
         <![CDATA[
 	     select 1 from dual
         ]]>
     </entry>
     <!-- Paso 4 - Marcar expedientes para rotacion o para asignar a cartera -->
-    <entry key="recobro.insert.tmp_rec_exp_rotacion.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_rotacion">
         <![CDATA[
           select 1 from dual
         ]]>
     </entry>
-    <entry key="recobro.insert.tmp_rec_exp_asig_cartera.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_asig_cartera">
         <![CDATA[          
           select 1 from dual
         ]]>

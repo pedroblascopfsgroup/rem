@@ -77,10 +77,10 @@
       <bean parent="sql" p:key="scoring.desactivarTotales" />
     </property>
     <property name="crearRegistrosEnTablasTotalesQuery">
-      <bean parent="sql" p:key="scoring.crearRegistrosEnTablasTotales.${entity.dialect}" />
+      <bean parent="sql" p:key="scoring.crearRegistrosEnTablasTotales" />
     </property>
     <property name="crearRegistrosEnTablasParcialesQuery">
-      <bean parent="sql" p:key="scoring.crearRegistrosEnTablasParciales.${entity.dialect}" />
+      <bean parent="sql" p:key="scoring.crearRegistrosEnTablasParciales" />
     </property> 
     <property name="calcularPuntuacionTotalQuery">
       <bean parent="sql" p:key="scoring.calcularPuntuacionTotal" />
@@ -89,7 +89,7 @@
       <bean parent="sql" p:key="scoring.calcularRating" />
     </property>           
     <property name="calcularRangoQuery">
-      <bean parent="sql" p:key="scoring.calcularRango.${entity.dialect}" />
+      <bean parent="sql" p:key="scoring.calcularRango" />
     </property> 
     <property name="metricasValidasQuery">
       <bean parent="sql" p:key="ale-32.metricaValidas" />

@@ -57,7 +57,7 @@
     } --%>
     
     tipoDespacho.on('select', function(){
-    debugger;
+    
     	if(tipoDespacho.getValue() == ${idTipoLetrado}) {
     		pestanaAdicionales.setDisabled(false);
     	} else {

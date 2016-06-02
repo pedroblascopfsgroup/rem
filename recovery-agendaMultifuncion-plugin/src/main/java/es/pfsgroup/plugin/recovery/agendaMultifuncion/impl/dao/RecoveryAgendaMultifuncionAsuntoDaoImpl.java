@@ -35,7 +35,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.RecoveryAgendaMul
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 
 @Repository("RecoveryAgendaMultifuncionAsuntoDao")
-public class RecoveryAgendaMultifuncionAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements RecoveryAgendaMultifuncionAsuntoDao {
+public class RecoveryAgendaMultifuncionAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements RecoveryAgendaMultifuncionAsuntoDao{
 
     @Resource
     private PaginationManager paginationManager;
@@ -163,10 +163,15 @@ public class RecoveryAgendaMultifuncionAsuntoDaoImpl extends AbstractEntityDao<A
          */
 
         // CODIGO CONTRATO
-        if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
-            hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
-            params.put("filtroCnt", dto.getFiltroContrato());
+//        if (dto.getFiltroContrato() != null && Long.parseLong(dto.getFiltroContrato()) > 0L) {
+//            hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
+//            params.put("filtroCnt", dto.getFiltroContrato());
+//        }
+        if (dto.getFiltroContrato() != null && dto.getFiltroContrato() != "") {
+			hql.append(" and TO_CHAR(cnt.nroContrato) like '%"+dto.getFiltroContrato()+"%'");
+
         }
+        
         // FECHA DESDE
         if (dto.getFechaCreacionDesde() != null && !"".equals(dto.getFechaCreacionDesde())) {
             hql.append(" and asu.auditoria.fechaCrear >= :fechaCrearDesde");
@@ -304,10 +309,10 @@ public class RecoveryAgendaMultifuncionAsuntoDaoImpl extends AbstractEntityDao<A
         if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
             if (dto.getMaxSaldoTotalContratos() == null) {
-                dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+                dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
             }
             if (dto.getMinSaldoTotalContratos() == null) {
-                dto.setMinSaldoTotalContratos(0d);
+                dto.setMinSaldoTotalContratos(0f);
             }
 
             hql.append(" and a.id in ");
@@ -400,7 +405,7 @@ public class RecoveryAgendaMultifuncionAsuntoDaoImpl extends AbstractEntityDao<A
     }
 
     private boolean requiereContrato(DtoBusquedaAsunto dto) {
-        return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L)
+        return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.getFiltroContrato() !="")
         		);
     }
     

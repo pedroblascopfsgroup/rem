@@ -162,9 +162,9 @@
 	var filtroContrato = new Ext.form.NumberField({
 		fieldLabel:'<s:message code="menu.clientes.listado.filtrocontrato" text="**Nro. Contrato" />'
 		,enableKeyEvents: true
-		,maxLength:10
+		,maxLength:50
 		,style : 'margin:0px'
-		,autoCreate : {tag: "input", type: "text",maxLength:"10", autocomplete: "off"} 
+		,autoCreate : {tag: "input", type: "text",maxLength:"50", autocomplete: "off"} 
 		,listeners : {
 			keypress : function(target,e){
 					if(e.getKey() == e.ENTER) {
@@ -417,7 +417,7 @@
 				}
 				parametros['params'] = paramAux;
 				if (excel==1) {
-					var flow='expedientes/listadoExpedientesExcelDataDinamico';
+					var flow='expedientes/listadoExpedientesRecobroExcelDataDinamico';
                     
                     parametros['REPORT_NAME'] = 'busqueda.xls';
                     app.openBrowserWindow(flow,parametros);
@@ -452,7 +452,9 @@
 					,items: [txtCodExpediente,txtDescripcion,comboEstado,comboTipoPersona]
 				},{
 					layout:'form'
-					,items: [comboComite,comboGestion,comboSituacion]
+					,items: [comboComite,
+					<%-- comboGestion,--%>
+					comboSituacion]
 				}]
 		,listeners:{
 			getParametros: function(anadirParametros, hayError) {
@@ -573,7 +575,7 @@
 		    {	header: '<s:message code="expedientes.listado.descripcion" text="**Descripcion"/>', 
 		    	width: 132,sortable: true, dataIndex: 'descripcionExpediente'},
 			{	header: '<s:message code="expedientes.listado.itinerario" text="**Itinerario"/>', 
-				sortable: false, dataIndex: 'itinerario'},
+				sortable: false, dataIndex: 'itinerario', hidden: true},
 		    {	header: '<s:message code="expedientes.listado.fechacreacion" text="**Fecha Creacion"/>', 
 		    	width: 75,sortable: true, dataIndex: 'fechacrear'},
 		    {	header: '<s:message code="expedientes.listado.origen" text="**Origen"/>', 

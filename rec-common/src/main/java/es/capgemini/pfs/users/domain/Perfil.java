@@ -21,6 +21,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
+import org.hibernate.annotations.WhereJoinTable;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -65,6 +66,7 @@ public class Perfil implements Dictionary, Auditable {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "ZON_PEF_USU", schema = "${entity.schema}", joinColumns = { @JoinColumn(name = "PEF_ID") }, inverseJoinColumns = @JoinColumn(name = "USU_ID"))
+    @WhereJoinTable(clause = Auditoria.UNDELETED_RESTICTION)
     private Set<Usuario> usuarios = null;
 
     @Embedded

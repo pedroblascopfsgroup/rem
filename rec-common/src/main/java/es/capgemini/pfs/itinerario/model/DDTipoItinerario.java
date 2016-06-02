@@ -32,6 +32,7 @@ public class DDTipoItinerario implements Dictionary, Auditable {
     public static final String ITINERARIO_RECUPERACION = "REC";
     public static final String ITINERARIO_SEGUIMIENTO_SISTEMATICO = "SIS";
     public static final String ITINERARIO_SEGUIMIENTO_SINTOMATICO = "SIN";
+    public static final String ITINERARIO_GESTION_DEUDA = "DEU";
 
     public static final String ITINERARIO_ESPECIAL_SIN_GESTION = "000";
 
@@ -149,7 +150,8 @@ public class DDTipoItinerario implements Dictionary, Auditable {
      * @return
      */
     public Boolean getItinerarioSeguimiento() {
-        return !getItinerarioRecuperacion();
+    	return (ITINERARIO_SEGUIMIENTO_SINTOMATICO.equals(codigo) ||
+    			ITINERARIO_SEGUIMIENTO_SISTEMATICO.equals(codigo));
     }
 
     /**
@@ -158,6 +160,13 @@ public class DDTipoItinerario implements Dictionary, Auditable {
      */
     public Boolean getItinerarioRecuperacion() {
         return ITINERARIO_RECUPERACION.equals(codigo);
+    }
+    
+    /**
+     * Indica si el itinerario es de Gestión de deuda
+     */
+    public Boolean getItinerarioGestionDeuda() {
+    	return ITINERARIO_GESTION_DEUDA.equals(codigo);
     }
 
 }

@@ -77,15 +77,11 @@ err_num NUMBER;
 
 BEGIN 
 
- EXECUTE IMMEDIATE('TRUNCATE TABLE '||V_ESQUEMA|| '.'||TABLADD1||'');   
-  DBMS_OUTPUT.PUT_LINE('Limpieza de datos '||TABLADD1||' ');
+ EXECUTE IMMEDIATE('DELETE '||V_ESQUEMA|| '.'||TABLADD1||'');   
+ 
+ 
+ DBMS_OUTPUT.PUT_LINE('Limpieza de datos '||TABLADD1||' ');
   
-  
-
- 
-
- 
- 
  FOR I IN V_EIC.FIRST .. V_EIC.LAST
  LOOP
    V_TMP_EIC := V_EIC(I);
@@ -95,7 +91,7 @@ BEGIN
   
         V_MSQL1 := 'INSERT INTO ' ||V_ESQUEMA|| '.'||TABLADD1||' 
                     (DD_EIC_ID, DD_EIC_CODIGO, DD_EIC_DESCRIPCION, DD_EIC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
-                   VALUES (   S_'||SECUENCIA||'.NEXTVAL,'''
+                   VALUES (   ' ||V_ESQUEMA|| '.S_'||SECUENCIA||'.NEXTVAL,'''
                         ||V_TMP_EIC(1)||q'[',']'
                         ||V_TMP_EIC(2)||q'[',']'
                         ||V_TMP_EIC(3)||q'[',]'

@@ -40,6 +40,14 @@ public interface RecuperacionesConstantes {
 		public static final String INICIO_MSG = "Inicio del proceso de Creaci贸n expedientes de Recuperaci贸n ";
 		public static final String FIN_MSG = "El proceso de Creaci贸n expedientes de Recuperaci贸n para la entidad ";
 	}
+	
+	public static class ProcesoCreacionExpedientesRecuperacionesETL {
+		public static final String DESCRIPCION_PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL = "Ejecuta el proceso de creaci贸n expedientes correspondiente a los expedientes de Recuperaci贸n. Se debe indicar el workingCode";
+		public static final String PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_HANDLER = "procesoCreacionExpedientesRecuperacionesETLHandler";
+		public static final String PROCESO_CREACION_EXPEDIENTES_RECUPERACIONES_ETL_JOBNAME = "procesoCreacionExpedientesRecuperacionesETLJob";
+		public static final String INICIO_MSG = "Inicio del proceso de Creaci髇 expedientes de Recuperaci髇 ";
+		public static final String FIN_MSG = "El proceso de Creaci髇 expedientes de Recuperaci髇 para la entidad ";
+	}
 
 	public static class ProcesoRevisionClientesRecuperaciones {
 		public static final String DESCRIPCION_PROCESO_REVISION_CLIENTES_RECUPERACIONES = "Ejecuta el proceso de revisi贸n de clientes correspondiente a los expedientes de Recuperaci贸n. Se debe indicar el workingCode";

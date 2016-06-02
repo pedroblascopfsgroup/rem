@@ -798,10 +798,12 @@ public class TareaNotificacion implements Serializable, Auditable {
         //TODO Cuando se habilite el telecobro añadir las tareas pertinentes
         //TODO i18n
 
-        String tipoSolicitud = "";
+        String tipoSolicitud = getSubtipoTarea().getDescripcion();
         if (SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE.equals(getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE.equals(getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC.equals(getSubtipoTarea().getCodigoSubtarea())
+                || SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN.equals(getSubtipoTarea().getCodigoSubtarea())
+                || SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC.equals(getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO.equals(getSubtipoTarea().getCodigoSubtarea())) {
             tipoSolicitud = "Prorroga";
         } else if (SubtipoTarea.CODIGO_SOLICITUD_CANCELACION_EXPEDIENTE_DE_SUPERVISOR.equals(getSubtipoTarea().getCodigoSubtarea())) {

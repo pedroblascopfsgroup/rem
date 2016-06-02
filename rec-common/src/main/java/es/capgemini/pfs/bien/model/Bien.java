@@ -58,10 +58,10 @@ public class Bien implements Serializable, Auditable {
     private BigDecimal valorActual;
 
     @Column(name = "BIE_IMPORTE_CARGAS")
-    private Float importeCargas;
+    private BigDecimal importeCargas;
 
     @Column(name = "BIE_SUPERFICIE")
-    private Float superficie;
+    private BigDecimal superficie;
 
     @Column(name = "BIE_POBLACION")
     private String poblacion;
@@ -155,7 +155,7 @@ public class Bien implements Serializable, Auditable {
     /**
      * @return the importeCargas
      */
-    public Float getImporteCargas() {
+    public BigDecimal getImporteCargas() {
         return importeCargas;
     }
 
@@ -163,14 +163,14 @@ public class Bien implements Serializable, Auditable {
      * @param importeCargas
      *            the importeCargas to set
      */
-    public void setImporteCargas(Float importeCargas) {
+    public void setImporteCargas(BigDecimal importeCargas) {
         this.importeCargas = importeCargas;
     }
 
     /**
      * @return the superficie
      */
-    public Float getSuperficie() {
+    public BigDecimal getSuperficie() {
         return superficie;
     }
 
@@ -178,7 +178,7 @@ public class Bien implements Serializable, Auditable {
      * @param superficie
      *            the superficie to set
      */
-    public void setSuperficie(Float superficie) {
+    public void setSuperficie(BigDecimal superficie) {
         this.superficie = superficie;
     }
 

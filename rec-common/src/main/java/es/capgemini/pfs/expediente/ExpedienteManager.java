@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
+import org.springframework.security.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.exceptions.NonRollbackException;
@@ -102,6 +104,7 @@ import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaExpediente;
 import es.capgemini.pfs.politica.dto.DtoPersonaPoliticaUlt;
 import es.capgemini.pfs.politica.model.CicloMarcadoPolitica;
 import es.capgemini.pfs.politica.model.DDEstadoPolitica;
+import es.capgemini.pfs.politica.model.Objetivo;
 import es.capgemini.pfs.politica.model.Politica;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
@@ -111,10 +114,12 @@ import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.titulo.model.Titulo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.FormatUtils;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
@@ -174,6 +179,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     
     @Autowired
 	GenericABMDao genericDao;
+    
+    @Autowired
+    private UsuarioManager usuarioManager;
 
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -252,7 +260,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@SuppressWarnings("unchecked")
     @BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_FIND_EXPEDIENTES_PARA_EXCEL_DINAMICO)
     public List<Expediente> findExpedientesParaExcelDinamico(DtoBuscarExpedientes dto, String params) {
-        Page p = this.findExpedientesPaginatedDinamico(dto, params, 2000, false);
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_EXPEDIENTES);
+        int limit = Integer.parseInt(param.getValor());
+		Page p = this.findExpedientesPaginatedDinamico(dto, params, limit, false);
         return (List<Expediente>) p.getResults();
     }
     
@@ -756,6 +767,35 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     	return this.crearExpedienteManualSeg(idPersona,null);
     	
     }
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_CREAR_EXPEDIENTE_MANUAL_GESTION_DEUDA)
+	@Transactional(readOnly=false)
+	public Expediente crearExpedienteManualGestDeuda(Long idPersona, Long idArquetipo) {
+        // Se asigna como contrato de pase el de mayor riesgo de la persona de pase (artf554001)
+        List<Contrato> contratos = (List<Contrato>) executor.execute(
+                PrimariaBusinessOperation.BO_CNT_MGR_OBTENER_CONTRATOS_GENERACION_EXPEDIENTE_MANUAL, idPersona);
+        if (contratos.size()>0) {
+	        Contrato contratoMax = contratos.get(0);
+	        Float riesgoMax = 0F;
+	        for (Contrato contrato : contratos) {
+	            Float riesgo = contrato.getRiesgo();
+	            if (!Checks.esNulo(riesgo)) {
+		            if (riesgo > riesgoMax) {
+		                contratoMax = contrato;
+		                riesgoMax = riesgo;
+		            }
+	            }
+	        }
+	        // Creamos el expediente
+	        Expediente expediente = crearExpedienteManual(idPersona, contratoMax.getId(),idArquetipo);
+	       
+	        return expediente;
+        } else {
+        	return null;
+        }		
+	}
+	
     
 	/**
 	 * {@inheritDoc}
@@ -821,7 +861,11 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         		if (arquetipo!= null)
         			idArquetipo = arquetipo.getId();
         	}
-            executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE, idPersona, null, idArquetipo, true);
+        	if (!arquetipoDao.get(idArquetipo).getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) {
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE, idPersona, null, idArquetipo, true);
+        	} else {
+        		executor.execute(PrimariaBusinessOperation.BO_CLI_MGR_CREAR_CLIENTE_GEST_DEUDA, idPersona, null, idArquetipo, true);
+        	}
         } else {
         	if (idArquetipo==null)
         		idArquetipo = cliente.getArquetipo().getId();
@@ -844,29 +888,38 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         //Seteo el arquetipo del expediente
         Arquetipo arq = (Arquetipo) executor.execute(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET, idArquetipo);
         expediente.setArquetipo(arq);
-        // VRE
-        //Long oficina = obtenerMayorVRE(idContrato);
-        Contrato cnt = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
-
-        if (cnt != null) {
-            Oficina ofi = cnt.getOficina();
-            expediente.setOficina(ofi);
+        
+     // Seteamos el tipo de expediente
+        DDTipoExpediente tipo = null;
+        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
+        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
         } else {
-            //No existe el cliente aun, tomo la oficina del contrato
-            Contrato contrato = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
-            expediente.setOficina(contrato.getOficina());
+        	if (arq!=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()) {
+        		tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        	} else {
+        		tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+        	}
         }
-
+        expediente.setTipoExpediente(tipo); 
+        
+        //Seteamos la oficina
+        if(DDTipoExpediente.TIPO_EXPEDIENTE_GESTION_DEUDA.equals(expediente.getTipoExpediente().getCodigo()) || DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO.equals(expediente.getTipoExpediente().getCodigo())){
+        	if(!Checks.esNulo(persona) && !Checks.esNulo(persona.getOficinaGestora())){
+        		expediente.setOficina(persona.getOficinaGestora());
+        	}
+        }
+        if(Checks.esNulo(expediente.getOficina())){     	
+	        // VRE
+	        //Long oficina = obtenerMayorVRE(idContrato);
+	        Contrato cnt = (Contrato) executor.execute(PrimariaBusinessOperation.BO_CNT_MGR_GET, idContrato);
+	
+	        if (cnt != null) {
+	            expediente.setOficina(cnt.getOficina());
+	        } 
+        }
+        //TODO Revisar la forma de obtener el nombre del expediente para igualarlo al nuevo batch
         //Le seteamos el nombre ya que ahora no se obtiene a trav�s de una f�rmula
         setearNombreExpediente(expediente);
-        
-        // Seteamos el tipo de expediente
-        DDTipoExpediente tipo = null;
-        if(arq !=null && arq.getItinerario()!=null && arq.getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
-        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-        else
-        	tipo = genericDao.get(DDTipoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-        expediente.setTipoExpediente(tipo); 
 		
 		saveOrUpdate(expediente);
 
@@ -891,8 +944,12 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         eliminarProcesosClientesRelacionados(exp, Long.MIN_VALUE);
         Map<String, Object> param = new HashMap<String, Object>();
         param.put(ExpedienteBPMConstants.EXPEDIENTE_MANUAL_ID, exp.getId());
-
-        Long bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
+        Long bpmid = null;
+        if(exp.isGestionDeuda()){
+        	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_DEUDA_PROCESO, param);
+        }else{
+        	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
+        }
         exp.setExpProcessBpm(bpmid);
 
         saveOrUpdate(exp);
@@ -1336,6 +1393,22 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
         			regla.setCumple(cumplimiendoReglaFPDC(expediente, acuerdos));
         			if(!regla.getCumple()){ return false;}
+        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE)){
+        			
+        			List<String> estadosValidos = new ArrayList<String>();
+        			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+        			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+        			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+        			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+        			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+    	    		
+        			regla.setCumple(cumplimientoReglaGeneric( acuerdos, estadosValidos,DDEstadoAcuerdo.ACUERDO_ACEPTADO));
+        			
+        			if(!regla.getCumple()){ return false;}
+        			
+        		}else if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO) && estadoNuevo!= null && estadoNuevo.equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION)){
+        			regla.setCumple(cumplimientoReglaSANC(expediente, acuerdos));
+        			if(!regla.getCumple()){ return false;}
         		}
         	}
         }
@@ -1370,6 +1443,49 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         }
     }
 	
+    /**
+     * {@inheritDoc}
+     */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_REVISION_A_ENSANCION)
+    @Transactional(readOnly = false)
+    public void elevarExpedienteDeREaENSAN(Long idExpediente, Boolean isSupervisor) {
+        Expediente exp = expedienteDao.get(idExpediente);
+
+        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_REVISION_EXPEDIENTE, isSupervisor);
+        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+        
+        executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+        
+        /*El BPM debe cambiar el estado del itinerario en el expediente*/
+        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),ExpedienteBPMConstants.TRANSITION_ENVIARAENSANCION);
+        
+    }
+	
+	
+    /**
+     * {@inheritDoc}
+     */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_ENSANCION_A_SANCIONADO)
+    @Transactional(readOnly = false)
+    public void elevarExpedienteDeENSANaSANC(Long idExpediente, Boolean isSupervisor) {
+
+        Expediente exp = expedienteDao.get(idExpediente);
+
+        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, isSupervisor);
+        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+        
+        executor.execute(InternaBusinessOperation.BO_POL_MGR_MARCAR_POLITICAS_VIGENTES, exp, null, false);
+
+        //Verifico que tenga un comit� al cual elevar
+        DDZona zonaExpediente = exp.getOficina().getZona();
+        Comite comite = buscaComite(zonaExpediente, exp);
+        if (comite == null) { throw new BusinessOperationException("expediente.comiteInexistente"); }
+
+        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),ExpedienteBPMConstants.TRANSITION_ELEVAR_SANCIONADO);
+
+    }
+	
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -1386,6 +1502,141 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
 	                    ExpedienteBPMConstants.TRANSITION_ENVIARAFORMALIZARPROPUESTA);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_ELEVAR_EXPEDIENTE_DE_SANCIONADO_A_FORMALIZAR_PROPUESTA)
+	@Transactional(readOnly = false)
+	public void elevarExpedienteDeSancionadoAFormalizarPropuesta(Long idExpediente,Boolean isSupervisor) {
+		 
+		Expediente exp = expedienteDao.get(idExpediente);
+
+	        Boolean permitidoElevar = compruebaElevacion(exp, ExpedienteBPMConstants.STATE_SANCIONADO, isSupervisor);
+	        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+	        
+	        ///Comprobamos que al menos una propuesta esté en estado elevada (PENDIENTE)
+	        DDEstadoItinerario estadoItinerario = exp.getEstadoItinerario();
+	        Estado estado = (Estado) executor.execute(ConfiguracionBusinessOperation.BO_EST_MGR_GET, exp.getArquetipo().getItinerario(),
+	                estadoItinerario);
+	        List<ReglasElevacion> listadoReglas = expedienteDao.getReglasElevacion(estado);
+
+	        //Comprobamos una a una si las reglas se cumplen
+	        List<Acuerdo> acuerdos = genericDao.getList(Acuerdo.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", exp.getId()));
+	        
+	        for (ReglasElevacion regla : listadoReglas) {
+	        	   String codigoTipoRegla = regla.getTipoReglaElevacion().getCodigo();
+	               if(DDTipoReglasElevacion.MARCADO_GESTION_PROPUESTA.equals(codigoTipoRegla)){
+	            	   for(Acuerdo acu : acuerdos){
+	            		   if(acu.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
+	            			   permitidoElevar = false;
+	            		   }
+	            	   }
+	               }
+	        }
+	        
+	        if (!permitidoElevar) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+
+	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_ENVIARAFORMALIZARPROPUESTA);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_COMPLETAR_EXPEDIENTE)
+	@Transactional(readOnly = false)
+	public void devolverExpedienteDeSancionadoACompletarExpediente(Long idExpediente,String respuesta, Boolean isSupervisor) {
+		 
+			Expediente exp = expedienteDao.get(idExpediente);
+			
+	        Long bpmProcess = exp.getProcessBpm();
+	        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+	        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+	        if (ExpedienteBPMConstants.STATE_SANCIONADO.equals(node)) {
+
+	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_APROBADOCONCONDICIONES);
+	            
+	            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+	            Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_CE);
+	            
+	            if (idTareaAsociada != null) {
+	                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+	                if (tarea != null) {
+	                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+	                            SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE);
+	                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+	                    tarea.setDescripcionTarea(descripcionTarea);
+	                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+	                }
+	            }
+	            // *** *** //
+
+	            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+	        } else {
+	            logger.error("No se puede devoler a REVISION porque el expediente no esta en DECISION_COMITE");
+	            throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
+	        }
+
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_FORMALIZAR_PROPUESTA_A_SANCIONADO)
+	@Transactional(readOnly = false)
+	public void devolverExpedienteDeFormalizarPropuestaASancionado(Long idExpediente,Boolean isSupervisor) {
+		 
+			Expediente exp = expedienteDao.get(idExpediente);
+
+	        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, exp.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_DEVOLVER_SANCIONADO);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_SANCIONADO_A_EN_SANCION)
+	@Transactional(readOnly = false)
+	public void devolverExpedienteDeSancionadoAEnSancion(Long idExpediente,String respuesta, Boolean isSupervisor) {
+		 
+			Expediente exp = expedienteDao.get(idExpediente);
+			
+	        if(!isSupervisor){
+	        	Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_SANCIONADO, DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION);
+	        	if (!permitidoDevolver) { throw new BusinessOperationException("expediente.elevar.falloValidaciones"); }
+	        }
+
+			
+	        Long bpmProcess = exp.getProcessBpm();
+	        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+	        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+	        if (ExpedienteBPMConstants.STATE_SANCIONADO.equals(node)) {
+
+		        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVER_EN_SANCION);
+	            
+	            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+	            Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_ENSAN);
+	            
+	            if (idTareaAsociada != null) {
+	                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+	                if (tarea != null) {
+	                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+	                            SubtipoTarea.CODIGO_TAREA_EN_SANCION);
+	                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+	                    tarea.setDescripcionTarea(descripcionTarea);
+	                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+	                }
+	            }
+	            // *** *** //
+
+	            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+	        } else {
+	            logger.error("No se puede devoler a EN SANCION porque el expediente no esta en SANCIONADO");
+	            throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
+	        }
+	}
+	
 
 	/**
 	 * {@inheritDoc}
@@ -1564,6 +1815,53 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
         }
     }
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_DEVOLVER_EXPEDIENTE_DE_ENSANCION_A_REVISION)
+    @Transactional(readOnly = false)
+    public void devolverExpedienteDeEnSancionARevision(Long idExpediente, String respuesta, Boolean isSupervisor) {
+        
+		Expediente exp = expedienteDao.get(idExpediente);
+        List<Asunto> asuntos = exp.getAsuntos();
+        if (asuntos != null && asuntos.size() > 0) { throw new BusinessOperationException("expediente.devolucionRevision.invalida"); }
+        
+        //comprobamos si se cumple la regla de validacion al devolver a revision
+        if(!isSupervisor){
+        	Boolean permitidoDevolver = compruebaDevolucion(exp, ExpedienteBPMConstants.STATE_EN_SANCION, DDEstadoItinerario.ESTADO_REVISAR_EXPEDIENTE);
+            if (!permitidoDevolver) { throw new BusinessOperationException("expediente.devolver.falloEstadoPropuestas"); }	
+        }
+        
+        Long bpmProcess = exp.getProcessBpm();
+        if (bpmProcess == null) { throw new BusinessOperationException("expediente.bpmprocess.error"); }
+        
+        String node = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_ACTUAL_NODE, bpmProcess);
+        
+        if (ExpedienteBPMConstants.STATE_EN_SANCION.equals(node)) {
+
+            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, bpmProcess, ExpedienteBPMConstants.TRANSITION_DEVOLVERAREVISION);
+            
+            // *** Recuperamos la tarea generada en el BPM para cambiarle la descripción y ponerle los motivos de devolución ***
+            Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmProcess, TAREA_ASOCIADA_RE);
+            
+            if (idTareaAsociada != null) {
+                TareaNotificacion tarea = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, idTareaAsociada);
+                if (tarea != null) {
+                    SubtipoTarea subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE, SubtipoTarea.CODIGO_REVISAR_EXPEDIENE);
+                    String descripcionTarea = subtipoTarea.getDescripcionLarga() + " - Devuelto por los motivos " + respuesta;
+                    tarea.setDescripcionTarea(descripcionTarea);
+                    executor.execute(ComunBusinessOperation.BO_TAREA_MGR_SAVE_OR_UPDATE, tarea);
+                }
+            }
+
+            executor.execute(InternaBusinessOperation.BO_POL_MGR_DESHACER_ULTIMAS_POLITICAS, idExpediente);
+        } else {
+            logger.error("No se puede devoler a REVISION porque el expediente no esta en EN SANCION");
+            throw new BusinessOperationException("expediente.devolucionRevision.errorJBPM");
+        }
+    }
 
 	/**
 	 * {@inheritDoc}
@@ -1628,54 +1926,82 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
      * @return un Boolean indicando si se puede o no ver el tab de DC.
      */
     private Boolean puedeMostrarSolapasDecision(Long idExpediente, boolean solapaRecuperacion) {
-        Expediente exp = expedienteDao.get(idExpediente);
-
-        String nombreTab = "";
-        if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()) {
-            nombreTab = "DECISION DE COMITE";
-        } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()) {
-            nombreTab = "MARCADO DE POLITICAS";
-        }
-        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
-        //VALIDO PRECONDICIONES CU WEB-30
-        if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)
-                || (exp.getComite() == null || exp.getComite().getSesiones() == null || exp.getComite().getSesiones().size() == 0)) {
-            //No est� en decisión de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE "
-                    + "O PORQUE NO HAY SESIONES ABIERTAS DE EL COMITE");
-            return Boolean.FALSE;
-        }
-        if ((solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento())
-                || (!solapaRecuperacion && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion())) {
-            //No est� en decisión de comit� o no tiene sesiones abiertas.
-            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL EXPEDIENTE NO ESTÁ EN EL ITINERARIO CORRESPONDIENTE ");
-            return Boolean.FALSE;
-        }
-        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-        //VALIDO CONDICIONES DE ACTIVACION CU WEB-30
-        //La condici�n del estado ya la valid� en el if anterior
-        for (Perfil perfil : usuario.getPerfiles()) {
-            for (PuestosComite puestoComite : perfil.getPuestosComites()) {
-                //La condici�n de la sesion abierta tambi�n la valid� en el punto anterior
-                if (puestoComite.getComite().getId().equals(exp.getComite().getId()) && Comite.INICIADO.equals(exp.getComite().getEstado())) {
-                    if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()
-                            && !puestoComite.getComite().isComiteRecuperacion()) {
-                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
-                                + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE RECUPERACION");
-                        return Boolean.FALSE;
-                    } else if (exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioSeguimiento()
-                            && !puestoComite.getComite().isComiteSeguimiento()) {
-                        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE EL COMITE DEL EXPEDIENTE, O LOS "
-                                + "DEL USUARIO LOGUEADO NO SON DEL TIPO DE ITINERARIO DE SEGUIMIENTO");
-                        return Boolean.FALSE;
-                    }
-                    logger.debug("MUESTRO EL TAB " + nombreTab);
-                    return Boolean.TRUE;
+        Expediente exp = expedienteDao.get(idExpediente);   
+        
+        if(!Checks.esNulo(exp.getArquetipo().getItinerario()) && DDTipoItinerario.ITINERARIO_GESTION_DEUDA.equals(exp.getArquetipo().getItinerario().getdDtipoItinerario().getCodigo())){
+        	////Comprobaciones para los expedientes de Gestión de deuda
+        	if(!Checks.esNulo(exp.getEstadoItinerario()) && (exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA) || exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO))){
+        		return Boolean.TRUE;
+        	}else{
+        		return Boolean.FALSE;
+        	}
+        }else if(!Checks.esNulo(exp.getTipoExpediente()) && DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION.equals(exp.getTipoExpediente().getCodigo()) && "BANKIA".equals(usuarioManager.getUsuarioLogado().getEntidad().getCodigo())){
+        	return Boolean.TRUE;
+        }else if(!Checks.esNulo(exp.getArquetipo().getItinerario()) && exp.getArquetipo().getItinerario().getdDtipoItinerario().getItinerarioRecuperacion()){
+        	///Comprobaciones para expedientes de recuperacion
+        	if(exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
+            	
+        		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+        		
+                for (Perfil perfil : usuario.getPerfiles()) {
+                	if(exp.getIdGestorActual().equals(perfil.getId()) || exp.getIdSupervisorActual().equals(perfil.getId())){
+                		return Boolean.TRUE;
+                	}
                 }
-            }
+                
+                return Boolean.FALSE;
+                
+        	}else{
+        		return Boolean.FALSE;
+        	}
         }
-        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+        
+        ///Si el espediente no es de recuperacion o gestion de deuda no se muestra la pestaña
         return Boolean.FALSE;
+        }
+        
+    
+    /**
+     * Indica si se puede mostrar la PESTAÑA de decisión de comit� de la consulta de expediente.
+     * Cumple con los campos de precondiciones y activación del CU WEB-30,
+     * los permisos a nivel de funciones de perfil los maneja la vista con los tags.
+     * @param idExpediente Long: el id del expediente que se quiere ver.
+     * @param tipoItinerario String: tipo de itinerario del expediente
+     * @return un Boolean indicando si se puede o no ver el tab de DC.
+     */
+    private Boolean puedeMostrarMarcadoPoliticas(Long idExpediente) {
+        Expediente exp = expedienteDao.get(idExpediente);
+        
+        if(!exp.getRecuperacion()){
+        
+	        String nombreTab = "MARCADO DE POLITICAS";
+	        logger.debug("EVALUO SI DEBO MOSTRAR LA PESTAÑA " + nombreTab);
+	        
+	        Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+	        
+	        //VALIDO PRECONDICIONES CU WEB-30
+	       
+	    	if (!exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) && !exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO)){
+	
+	    		//No esta en decisión de comite o no tiene sesiones abiertas.
+	            logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO ESTA EN EL ESTADO CORRESPONDIENTE ");
+	            return Boolean.FALSE;
+	        }
+	       
+	        for (Perfil perfil : usuario.getPerfiles()) {
+	        	
+	        	if(exp.getGestorActual().equalsIgnoreCase(perfil.getDescripcion()) || exp.getSupervisorActual().equalsIgnoreCase(perfil.getDescripcion())){
+	        		logger.debug("MUESTRO EL TAB " + nombreTab);
+	        		return Boolean.TRUE;
+	        	}
+	        }
+	        logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA " + nombreTab + " PORQUE NO CORRESPONDE AL USUARIO " + usuario.getUsername());
+	        return Boolean.FALSE;
+        }else{
+        	logger.debug("NO SE PUEDE MOSTRAR LA PESTAÑA PORQUE ES EXPEDIENTE DE RECUPERACION");
+	        return Boolean.FALSE;
+        }
+        
     }
 
     /**
@@ -1691,7 +2017,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	 */
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_SOLAPA_MARCADO_POLITICA)
     public Boolean puedeMostrarSolapaMarcadoPoliticas(Long idExpediente) {
-        return puedeMostrarSolapasDecision(idExpediente, false);
+        return puedeMostrarMarcadoPoliticas(idExpediente);
     }
 
 	/**
@@ -1764,9 +2090,10 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_MANDAR_A_FIN_PROCESS, exp.getProcessBpm());
         }
         
-        //Si el expediente es de itinerario Seguimiento
-        if (exp.getTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO) 
-        			|| exp.getTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO)) {
+        //Si el expediente es de itinerario Seguimiento o Gestión de deuda
+        if (exp.getCodigoTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO) 
+        			|| exp.getCodigoTipoItinerario().equals(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO)
+        			|| exp.getCodigoTipoItinerario().equals(DDTipoItinerario.ITINERARIO_GESTION_DEUDA)) {
 	        //Cancelamos sus políticas
 	        List<CicloMarcadoPolitica> ciclos = cicloMarcadoPoliticaDao.getCiclosMarcadoExpediente(exp.getId());
 	        for (CicloMarcadoPolitica ciclo : ciclos) {
@@ -1868,7 +2195,18 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_UPDATE_AAA)
     @Transactional(readOnly = false)
     public void updateActitudAptitudActuacion(DtoActitudAptitudActuacion dtoAAA) {
-        actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
+		if(dtoAAA.getExp() != null){
+			Expediente exp = this.getExpediente(dtoAAA.getExp());
+			//Si el campo AAA de la tabla expediente tiene valor se actualiza si no se inserta uno nuevo.
+			if(exp != null && exp.getAaa() != null){
+				actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());		
+			}else{
+				exp.setAaa(dtoAAA.getAaa());
+				expedienteDao.saveOrUpdate(exp);
+				actitudAptitudActuacionDao.saveOrUpdate(dtoAAA.getAaa());
+			}
+		}
+        
     }
 
 	/**
@@ -1947,8 +2285,9 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Comite comite = (Comite) executor.execute(InternaBusinessOperation.BO_COMITE_MGR_GET_WITH_SESSIONS, exp.getComite().getId());
         if (exp.getEstaDecidido()) { throw new BusinessOperationException("expediente.tomarDecision.decisionYaTomada"); }
 
-        if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
-                "expediente.tomarDecision.estadoInvalido"); }
+        if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo()) && !DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equalsIgnoreCase(exp.getEstadoItinerario().getCodigo())) { 
+        	throw new BusinessOperationException("expediente.tomarDecision.estadoInvalido"); 
+        }
 
         if (!Comite.INICIADO.equalsIgnoreCase(comite.getEstado())) { throw new BusinessOperationException("expediente.tomarDecision.sesionInvalida"); }
         marcarSinActuacionContratosPasivosNoVencidos(exp);
@@ -1967,11 +2306,21 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         for (Asunto a : asuntos) {
             if (automatico || a.getProcedimientos().size() > 0) {
                 DDEstadoAsunto estadoAsuntoConfirmado = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                        DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO);
+                        DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO);
                 a.setEstadoAsunto(estadoAsuntoConfirmado);
                 a.setComite(comite);
                 a.setSupervisorComite(sesion.getSupervisorSesionComite());
                 executor.execute(ExternaBusinessOperation.BO_ASU_MGR_SAVE_OR_UDPATE, a);
+                if(!Checks.estaVacio(a.getProcedimientos())){ 
+                	for(Procedimiento proc : a.getProcedimientos()){
+                		if(!Checks.esNulo(proc.getPropuesta()) && !Checks.esNulo(proc.getPropuesta().getEstadoAcuerdo())){
+                			if(DDEstadoAcuerdo.ACUERDO_ACEPTADO.equals(proc.getPropuesta().getEstadoAcuerdo().getCodigo())){
+                				executor.execute("propuestaApi.cambiarEstadoPropuesta", proc.getPropuesta(), DDEstadoAcuerdo.ACUERDO_VIGENTE,true);
+                			}
+                		}
+                		
+                	}
+                }
                 /* *********CPI - 30/09/2015*******
                 AHORA NACEN LOS ASUNTOS SIEMPRE ACEPTADOS                
                 if (generaNotificacion) {
@@ -2180,17 +2529,29 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                 plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
                         PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_SEG);
             } else {
-                plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
+            	if (exp.isGestionDeuda()) {
+            		plazo = (PlazoTareasDefault)executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
+            				PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_GESTION_DEUDA);
+            	} else {
+            		plazo = (PlazoTareasDefault) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BUSCAR_PLAZO_TAREA_DEFAULT_POR_CODIGO,
                         PlazoTareasDefault.CODIGO_SOLICITUD_EXPEDIENTE_MANUAL);
+            	}
             }
+            
             executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DETERMINAR_BBDD);
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, per.getClienteActivo().getId());
             param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE);
+            /*param.put(TareaBPMConstants.ID_ENTIDAD_INFORMACION, exp.getId());
+            param.put(TareaBPMConstants.CODIGO_TIPO_ENTIDAD, DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);*/
             if (exp.getSeguimiento()) {
                 param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
             } else {
-                param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
+            	if (exp.isGestionDeuda()) {
+            		param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA);
+            	} else {
+            		param.put(TareaBPMConstants.CODIGO_SUBTIPO_TAREA, SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
+            	}
             }
             param.put(TareaBPMConstants.PLAZO_PROPUESTA, plazo.getPlazo());
 
@@ -2198,10 +2559,15 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             SubtipoTarea subtipoTarea;
             if (exp.getSeguimiento()) {
                 subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
-                        SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
-            } else {
-                subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
                         SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG);
+            } else {
+            	if (exp.isGestionDeuda()) {
+            		subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+            				SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_GESTION_DEUDA);
+            	} else {
+            		subtipoTarea = (SubtipoTarea) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET_SUBTIPO_TAREA_BY_CODE,
+                        SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL);
+            	}
             }
             String descripcion = subtipoTarea.getDescripcionLarga() + ". " + propuesta.getMotivo().getDescripcionLarga() + ". "
                     + propuesta.getObservaciones() + ".";
@@ -2244,9 +2610,13 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             Map<String, Object> param = new HashMap<String, Object>();
             param.put(ExpedienteBPMConstants.EXPEDIENTE_MANUAL_ID, exp.getId());
             param.put(ClienteBPMConstants.PERSONA_ID, per.getId());
-
-            Long bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
-            exp.setProcessBpm(bpmid);
+            Long bpmid = null;
+            if(exp.isGestionDeuda()){
+            	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_DEUDA_PROCESO, param);
+            }else{
+            	bpmid = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, ExpedienteBPMConstants.EXPEDIENTE_PROCESO, param);
+            }
+            	exp.setProcessBpm(bpmid);
             saveOrUpdate(exp);
 
             executor.execute(InternaBusinessOperation.BO_POL_MGR_INICIALIZAR_POLITICAS_EXPEDIENTE, exp);
@@ -2355,7 +2725,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             //Se rechaz� la solicitud de cancelaci�n
 
             //Si el expediente est� en DC, le devolvemos su estado Congelado
-            if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo())) {
+            if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo()) 
+            		|| DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo())) {
                 DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                         DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO);
                 expediente.setEstadoExpediente(estadoExpediente);
@@ -2822,6 +3193,42 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
                             		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT)){
                             			regla.setCumple(cumplimientoReglaDCFP(expediente, acuerdos));                            			
                             		}
+                            		
+                            		///de RE a ENSAN
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_EN_SANCION)){
+                            			List<String> estadosValidos = new ArrayList<String>();
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_PROPUESTO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+                        	    		
+                            			regla.setCumple(cumplimientoReglaGeneric( acuerdos, estadosValidos,DDEstadoAcuerdo.ACUERDO_PROPUESTO));                           			
+                            		}
+                            		
+                            		///SANC
+                            		if(expediente.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO)){
+                            			List<String> estadosValidos = new ArrayList<String>();
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_PROPUESTO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_ACEPTADO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_RECHAZADO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_CUMPLIDO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO);
+                            			estadosValidos.add(DDEstadoAcuerdo.ACUERDO_CANCELADO);
+                        	    		
+                            			regla.setCumple(cumplimientoReglaGeneric( acuerdos, estadosValidos,DDEstadoAcuerdo.ACUERDO_ACEPTADO)); 
+                            		}
+                            		
+                            	} else {
+                            		//Comprobamos si se cumple la regla Sancionar Propuesta
+                            		if (DDTipoReglasElevacion.MARCADO_SANCIONAR_PROPUESTA.equals(codigoTipoRegla)) {
+                            			//La relga se cumple si el expediente tiene una sanción con una propuesta
+                            			if (!Checks.esNulo(expediente.getSancion()) && !Checks.esNulo(expediente.getSancion().getDecision())) {
+                            				regla.setCumple(true);
+                            			} else {
+                            				regla.setCumple(false);
+                            			}
+                            		}
                             	}
                             }
                         }
@@ -3061,6 +3468,140 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 	  
     }
     
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario En sanción(ENSAN) a SANCIONADO (DC) o REVISAR EXPEDIENTE (RE) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una tenga el estado "vigente", "rechazada, "Cumplida" o "Incumplida"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaENSAN(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = false;
+    	int i = 0;
+    	
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+	    	for(Acuerdo acuerdo: acuerdos){
+	    		//Booleano que controla si hemos encontrado una propuesta en estado elevada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado cumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado incumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			i++;
+	    		}
+	    		
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+	    			i++;
+				}
+	    	}
+	    	
+	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
+	    	if(acuerdos.size() > 0 && acuerdos.size() == i){
+	    		cumple = true;
+	    	}else{
+	    		cumple = false;
+	    	}
+    	}    	
+    	
+    	return cumple;
+    }
+    
+    /**
+     * Decide si se ha cumplido la regla para el itinerario En sanción(ENSAN) a SANCIONADO (DC) o REVISAR EXPEDIENTE (RE) la cual consiste en comprobar si en las propuestas del expediente, siempre que exista alguna,
+     * al menos una tenga el estado "vigente", "rechazada, "Cumplida" o "Incumplida"
+     * @param expediente
+     * @param acuerdos
+     * @return
+     */
+    private boolean cumplimientoReglaSANC(Expediente expediente, List<Acuerdo> acuerdos){
+    	Boolean cumple = false;
+    	int i = 0;
+    	
+    	if(acuerdos != null){
+    		//recorremos las propuestas del expediente
+	    	for(Acuerdo acuerdo: acuerdos){
+	    		//Booleano que controla si hemos encontrado una propuesta en estado elevada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_VIGENTE)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado rechazada
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_RECHAZADO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado cumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_CUMPLIDO)){
+	    			i++;
+	    		}
+	    		//Booleano que controla si hemos encontrado una propuesta en estado incumplido
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equals(DDEstadoAcuerdo.ACUERDO_INCUMPLIDO)){
+	    			i++;
+	    		}
+	    		
+	    		//las que vengan en estado cancelado no cuentan por tanto se añaden a la lista para que se cumpla la regla
+	    		if(acuerdo.getEstadoAcuerdo().getCodigo().equalsIgnoreCase(DDEstadoAcuerdo.ACUERDO_CANCELADO)){
+	    			i++;
+				}
+	    	}
+	    	
+	    	//Comprobamos si las propuestas tienen el estado correcto (vigente, rechazado, cumplida, incumplida) para cumplir la regla
+	    	if(acuerdos.size() > 0 && acuerdos.size() == i){
+	    		cumple = true;
+	    	}else{
+	    		cumple = false;
+	    	}
+    	}    	
+    	
+    	return cumple;
+    }
+    
+    
+    private boolean cumplimientoReglaGeneric(List<Acuerdo> acuerdos, List<String> estadosValidos,String estadoObligatorio){
+    	Boolean cumple = false;
+    	Boolean elevadaEncontrada = false;
+    	int i = 0;
+    	if(acuerdos != null && !Checks.estaVacio(estadosValidos)){
+    		//recorremos las propuestas del expediente
+    		for (Acuerdo acuerdo : acuerdos){
+    			
+    			if(estadosValidos.contains(acuerdo.getEstadoAcuerdo().getCodigo())){
+    				i++;
+    			}
+    			
+    			if(!Checks.esNulo(estadoObligatorio) && estadoObligatorio.equals(acuerdo.getEstadoAcuerdo().getCodigo())){
+    				elevadaEncontrada = true;
+    			}
+
+    		}
+    	
+	    	//Para el caso de una sola propuesta tiene que ser obligatoria en estado "estadoObligatorio", sino no se cumple la regla
+	    	if(acuerdos.size() == 1 && elevadaEncontrada){
+	    		cumple = true;
+	    	}else if(acuerdos.size() == 1 && !elevadaEncontrada){
+	    		cumple = false;
+	    	}
+	    	
+	    	//Para el caso de mas de una propuesta, obligatoriamente tiene que haber una en estado "estadoObligatorio" y el resto en "estadosValidos"
+	    	if(acuerdos.size() > 1 && acuerdos.size() == i && elevadaEncontrada){
+	    		cumple = true;
+	    	}else if(acuerdos.size() > 1 && acuerdos.size() != i){
+	    		cumple = false;
+	    	} 	
+    	}
+    	
+    	return cumple;
+    }
+    
 
     /**
      * Decide si la pol�tica es v�lida en contenido (cumple con las reglas de objetivos, etc.).
@@ -3186,12 +3727,23 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Comite comite = (Comite) executor.execute(InternaBusinessOperation.BO_COMITE_MGR_GET_WITH_SESSIONS, expediente.getComite().getId());
         if (expediente.getEstaDecidido()) { throw new BusinessOperationException("expediente.tomarDecision.decisionYaTomada"); }
 
-        if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(expediente.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
+        if (expediente.isGestionDeuda()) {
+        	if (!DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equalsIgnoreCase(expediente.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
+        			"expediente.tomarDecision.estadoInvalido"); }
+        } else {
+        	if (!DDEstadoItinerario.ESTADO_DECISION_COMIT.equalsIgnoreCase(expediente.getEstadoItinerario().getCodigo())) { throw new BusinessOperationException(
                 "expediente.tomarDecision.estadoInvalido"); }
+        }
 
         if (!Comite.INICIADO.equalsIgnoreCase(comite.getEstado())) { throw new BusinessOperationException("expediente.tomarDecision.sesionInvalida"); }
 
-        Boolean permitidoElevar = compruebaElevacion(expediente, ExpedienteBPMConstants.DECISION_COMITE, true);
+        Boolean permitidoElevar = false;
+        
+        if (expediente.isGestionDeuda()) {
+        	permitidoElevar = compruebaElevacion(expediente, ExpedienteBPMConstants.SANCIONADO, true);
+        } else {
+        	permitidoElevar = compruebaElevacion(expediente, ExpedienteBPMConstants.DECISION_COMITE, true);
+        }
         if (!permitidoElevar) { throw new BusinessOperationException("expediente.cerrarDecisionPolitica.errorValidacion"); }
 
         Boolean politicasVigentes = (Boolean) executor
@@ -3204,16 +3756,21 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
             dc.setSesion(comite.getUltimaSesion());
             dc.setObservaciones("");
             executor.execute(InternaBusinessOperation.BO_DECISIONN_COMITE_MRG_SAVE, dc);
-
-            DDEstadoExpediente estadoDecidido = (DDEstadoExpediente) dictionaryManager.getByCode(DDEstadoExpediente.class,
-                    DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
             expediente.setDecisionComite(dc);
-            expediente.setEstadoExpediente(estadoDecidido);
+            
+            //Si el expediente no es de gestión de deuda, se decide
+            if (!expediente.isGestionDeuda()) {
+            	DDEstadoExpediente estadoDecidido = (DDEstadoExpediente) dictionaryManager.getByCode(DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO);
+            
+            	expediente.setEstadoExpediente(estadoDecidido);
+            }
             expedienteDao.saveOrUpdate(expediente);
 
-            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
-                    ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
-
+            if (!expediente.isGestionDeuda()) {
+	            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, expediente.getProcessBpm(),
+	                    ExpedienteBPMConstants.TRANSITION_TOMARDECISION);
+            }
+            
             //Si no se ha marcado como vigente, se lanza una excepci�n porque deber�a
         } else {
             logger.error("Alguna de las pol�ticas del expediente " + idExpediente
@@ -3223,6 +3780,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
         return true;
     }
+	
 
     /**
      * Marca todos los contratos del expediente como sin actuaci�n
@@ -3263,7 +3821,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     public List<DtoPersonaPoliticaExpediente> getPersonasPoliticasDelExpediente(Long idExpediente) {
         Expediente expediente = expedienteDao.get(idExpediente);
         List<DtoPersonaPoliticaExpediente> list = new ArrayList<DtoPersonaPoliticaExpediente>();
-        if (expediente.getSeguimiento()) {
+        if (expediente.getSeguimiento() || expediente.isGestionDeuda()) {
             DtoPersonaPoliticaExpediente dto;
             for (ExpedientePersona expedientePersona : expediente.getPersonas()) {
                 Long idPersona = expedientePersona.getPersona().getId();
@@ -3340,5 +3898,54 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         return nExp.longValue() == 0;
 
     }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_TIENE_EXPEDIENTE_GESTION_DEUDA)
+    public Boolean tieneExpedienteGestionDeuda(Long idPersona){
+    	
+    	Boolean resultado = false;
+    	List<Expediente> expedientes = null;
+    	
+    	expedientes = expedienteDao.obtenerExpedientesDeUnaPersona(idPersona);
+    	
+    	for(Expediente e: expedientes){
+    		Arquetipo arquetipo = e.getArquetipo();
+    		
+    		//Si el arquetipo del expediente es de seguimiento
+    		//y
+    		//el expediente esta (Activo/Bloqueado/Congelado)
+    		if(arquetipo !=null && arquetipo.getItinerario()!=null && arquetipo.getItinerario().getdDtipoItinerario().getItinerarioGestionDeuda()
+    				&& (e.getEstaEstadoActivo() || e.getEstaBloqueado() || e.getEstaCongelado())) {
+    			resultado = true;
+    			break;
+    		}
+    	}
+    	
+    	return resultado;
+    }
+
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_ELEVAR_DELEGAR_EXPEDIENTE)
+	@Override
+	public Boolean puedeMostrarelevarDelegarExpediente(Long idExpediente) {
+		
+		Expediente exp = expedienteDao.get(idExpediente);   	
+	
+		if(!Checks.esNulo(exp.getEstadoItinerario()) && (exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) || exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO))){
+    		
+			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+    		
+            for (Perfil perfil : usuario.getPerfiles()) {
+            	if(exp.getIdGestorActual().equals(perfil.getId()) || exp.getIdSupervisorActual().equals(perfil.getId())){
+            		return Boolean.TRUE;
+            	}
+            }
+			return Boolean.FALSE;
+    	}else{
+    		return Boolean.FALSE;
+    	}	
+
+	}
 
 }

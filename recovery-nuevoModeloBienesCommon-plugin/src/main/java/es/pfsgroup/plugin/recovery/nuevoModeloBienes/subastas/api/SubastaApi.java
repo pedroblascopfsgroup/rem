@@ -16,7 +16,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.informes.cierreDeuda.InformeValidacionCDDDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.AcuerdoCierreDeudaDto;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.dto.NMBDtoBuscarLotesSubastas;
@@ -272,6 +271,6 @@ public interface SubastaApi {
 	
 	@BusinessOperationDefinition(BO_SUBIR_PLANTILLA_INSTRUCCIONES)
 	String upload(WebFileItem uploadForm);
-	
 
+	boolean comprobarLimiteXLS(NMBDtoBuscarSubastas b);
 }

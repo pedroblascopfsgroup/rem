@@ -75,10 +75,14 @@ public class Main {
 
         //Iniciamos el contexto Spring
         context = new ClassPathXmlApplicationContext(new String[] { "ac-application-config.xml" });
-        
-        String startJobExecutor = ((Properties)ApplicationContextUtil.getBean("appProperties")).getProperty("batch.jbpm.startJobExecutor");
-        if(Boolean.parseBoolean(startJobExecutor)){
-            ((JBPMProcessManager)ApplicationContextUtil.getBean(JBPMProcessManager.BEAN_KEY)).startJobExecutor();
+        String value = System.getProperty("ignoreJobExecutor");
+        if ((value == null) || (! "true".equals(value))) {
+	        String startJobExecutor = ((Properties)ApplicationContextUtil.getBean("appProperties")).getProperty("batch.jbpm.startJobExecutor");
+	        if(Boolean.parseBoolean(startJobExecutor)){
+	            ((JBPMProcessManager)ApplicationContextUtil.getBean(JBPMProcessManager.BEAN_KEY)).startJobExecutor();
+	        }
+        }else{
+        	logger.info("JobExecutor ignored!");
         }
         
 

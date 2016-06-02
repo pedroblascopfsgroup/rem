@@ -195,6 +195,12 @@ public class AdjudicacionHandlerDelegateManager implements AdjudicacionHandlerDe
 	}
 	
 	@Override
+	@BusinessOperation(BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_CONTABILIDAD)
+	public void insertarFechaContabilidad(Long prcId, Date valor) {
+		//Este método se implementa en el nuevoModeloBienes
+	}
+	
+	@Override
 	@BusinessOperation(BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_NOTIFICACION_DECRETO)
 	public void insertarFechaNotificacionDecreto(Long prcId, Date valor) {
 		//Este método se implementa en el nuevoModeloBienes

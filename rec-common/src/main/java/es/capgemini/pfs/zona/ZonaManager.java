@@ -1,21 +1,27 @@
 package es.capgemini.pfs.zona;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
+import es.capgemini.pfs.diccionarios.comparator.IDictionaryComparator;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.NivelDao;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 
 /**
@@ -94,7 +100,12 @@ public class ZonaManager {
         if (idNivel == null || idNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
         Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
                 .getCodigoZonas();
-        return zonaDao.buscarZonasPorCodigoNivel(idNivel, codigoZonasUsuario);
+        
+        IDictionaryComparator dictionaryComparator = DictionaryComparatorFactory.getInstance().create(DictionaryComparatorFactory.COMPARATOR_BY_DESCRIPCION);
+        List<DDZona> zonas = zonaDao.buscarZonasPorCodigoNivel(idNivel, codigoZonasUsuario);
+        Collections.sort(zonas, dictionaryComparator);
+        
+        return zonas; 
     }
 
     /**
@@ -221,9 +232,10 @@ public class ZonaManager {
      */
     @BusinessOperation(ConfiguracionBusinessOperation.BO_ZONA_MGR_GET_ZONA_TERRITORIAL)
     public DDZona getZonaTerritorial(DDZona zona) {
+    	Entidad entidad = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO)).getEntidad();
         if (!Checks.esNulo(zona)) {
         	DDZona zPadre = zona.getZonaPadre();
-        	if (!Checks.esNulo(zPadre)) {
+        	if (!Checks.esNulo(zPadre) && entidad.getDescripcion().equals("BANKIA")) {
 	        	if (Nivel.NIVEL_TERRITORIO.toString().equals(zPadre.getNivel().getCodigo())) {
 
 	        		DDZona zonaTerritorial = zPadre;
@@ -234,9 +246,27 @@ public class ZonaManager {
 
 					return zPadre;
 	        	}        	
+        	}else if(!Checks.esNulo(zPadre)){
+        		DDZona zonaTerritorial = zPadre;
+				Oficina oficinaTerritorial = (!Checks.esNulo(zonaTerritorial)) ? zonaTerritorial.getOficina() : null;
+				
+				// TERRITORIAL
+				zPadre.setDescripcion(oficinaTerritorial.getCodDescripOficina(true, true));
+
+				return zPadre;
         	}
         }
         return null;
+    }
+    
+    
+    /**
+     * Devuelve la primera zona usuario perfil existe dado un perfil y una zona. Navegando en el árbol desde el nodo que se le pasa hacia los padres, comprobando que tengan dicho perfil
+     * @param idPerfil
+     * @param codigoZona
+     */
+    public List<ZonaUsuarioPerfil> getZonasPerfilesUsuariosPrimerNivelExistente(Long idPerfil, String codigoZona){
+    	return zonaDao.getZonasPerfilesUsuariosPrimerNivelExistente(idPerfil, codigoZona);
     }
 
 }

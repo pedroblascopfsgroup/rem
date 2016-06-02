@@ -275,7 +275,7 @@ dividida en tres partes:<o:p></o:p></span></p>
 
 
 
-<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">1.<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Datos b&aacute;sicos del modelo<o:p></o:p></span></p>
+<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">1.<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Datos b&aacute;sicos del modelo<o:p></o:p></span></p>
 
 
 
@@ -285,7 +285,7 @@ dividida en tres partes:<o:p></o:p></span></p>
 
 
 
-<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">2.<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Arquetipos<span style="">&nbsp; </span>que<span style="">&nbsp;
+<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">2.<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Arquetipos<span style="">&nbsp; </span>que<span style="">&nbsp;
 </span>forman el modelo<o:p></o:p></span></p>
 
 
@@ -301,13 +301,13 @@ dividida en tres partes:<o:p></o:p></span></p>
 
 
 
-<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">3.<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Opciones que se pueden realizar sobre el
+<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">3.<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Opciones que se pueden realizar sobre el
 modelo<o:p></o:p></span></p>
 
 
 
 
-<p class="MsoListParagraphCxSpLast" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style=""><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><o:p>&nbsp;</o:p></span></p>
+<p class="MsoListParagraphCxSpLast" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style=""><span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><o:p>&nbsp;</o:p></span></p>
 
 <p class="MsoListParagraphCxSpLast" style="text-indent: -18pt;"><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><o:p></o:p></span></p>
 
@@ -391,7 +391,7 @@ aqu&iacute; se puede:</span><span style="font-size: 12pt; font-family: &quot;Ari
 
 
 
-<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Insertar
+<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Insertar
 arquetipos a la lista:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> Pulsando el bot&oacute;n
 &ldquo;Insertar arquetipos&rdquo; se abre una ventana emergente con una lista doble donde
 aparecen todos los arquetipos<span style="">&nbsp; </span>dados de
@@ -416,7 +416,7 @@ pertenecen al modelo. <o:p></o:p></span></p>
 
 
 
-<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Subir
+<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Subir
 o bajar la prioridad de cada arquetipo:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> Con las flechas arriba y
 abajo, se selecciona un arquetipo y se puede modificar su prioridad.<o:p></o:p></span></p>
 
@@ -428,7 +428,7 @@ abajo, se selecciona un arquetipo y se puede modificar su prioridad.<o:p></o:p><
 
 
 
-<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Eliminar
+<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Eliminar
 un arquetipo de la lista:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> Pulsando el bot&oacute;n
 &ldquo;Borrar&rdquo; se borra el arquetipo de la lista del modelo. El arquetipo seguir&aacute;
 existiendo, simplemente ya no estar&aacute; dado de alta en este modelo.<o:p></o:p></span></p>
@@ -446,7 +446,7 @@ existiendo, simplemente ya no estar&aacute; dado de alta en este modelo.<o:p></o
 
 
 
-<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Modificar
+<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Modificar
 itinerario, nivel <span style="">&nbsp;</span>y plazo de disparo:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">
 Al pulsar sobre el bot&oacute;n &ldquo;Modificar&rdquo; se abre una ventana emergente con la tabla
 de arquetipos en la que se pueden modificar los campos: itinerario, nivel y
@@ -504,7 +504,7 @@ modificados en la tabla de arquetipos.</span><span style="font-size: 12pt; line-
 
 
 
-<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Liberar:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">&nbsp;
+<p class="MsoListParagraphCxSpFirst" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Liberar:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"><span style="">&nbsp;
 </span>Se puede liberar un modelo cuyo estado sea<span style="">&nbsp; </span>&ldquo;PRUEBAS&rdquo;. Esto significa que el modelo pasa
 a estar en estado &ldquo;VIGENTE&rdquo;. Los modelos en estado &ldquo;VIGENTE&rdquo; o &ldquo;HIST&Oacute;RICO&rdquo; no
 se pueden liberar. Si se quiere liberar un modelo que est&eacute; en estado
@@ -518,7 +518,7 @@ se pueden liberar. Si se quiere liberar un modelo que est&eacute; en estado
 
 
 
-<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Simular:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> La simulaci&oacute;n muestra una tabla donde
+<p class="MsoListParagraphCxSpMiddle" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Simular:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> La simulaci&oacute;n muestra una tabla donde
 indica la cantidad de clientes que caer&aacute;n dentro de cada arquetipo<span style="">&nbsp; </span>de los modelos que estamos simulando y el que
 est&aacute; &ldquo;VIGENTE&rdquo; para as&iacute; poder realizar una comparaci&oacute;n antes de liberar el
 modelo.<o:p></o:p></span></p>
@@ -546,7 +546,7 @@ modelo.<o:p></o:p></span></p>
 
 
 
-<p class="MsoListParagraphCxSpLast" style="text-indent: -18pt;"><!--[if !supportLists]--><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Crear una copia:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> Se crea una copia del modelo con el
+<p class="MsoListParagraphCxSpLast" style="text-indent: -18pt;"><%--[if !supportLists]--%><span style="font-size: 12pt; line-height: 115%; font-family: Symbol;"><span style="">&middot;<span style="font-family: &quot;Times New Roman&quot;; font-style: normal; font-variant: normal; font-weight: normal; font-size: 7pt; line-height: normal; font-size-adjust: none; font-stretch: normal;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></span><span dir="ltr"></span><b style=""><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;">Crear una copia:</span></b><span style="font-size: 12pt; line-height: 115%; font-family: &quot;Arial&quot;,&quot;sans-serif&quot;;"> Se crea una copia del modelo con el
 nombre &ldquo;copia_modeloX&rdquo;.<o:p></o:p></span></p>
 
 

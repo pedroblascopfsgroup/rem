@@ -120,6 +120,15 @@
 			,value:'${procedimiento.asunto.id}'
 		</c:if>
 	});
+	
+
+	var codTipoAsu = new Ext.form.Hidden({
+		name:'codigoTipoAsunto'
+		<c:if test="${asunto != null && asunto.tipoAsunto != null}">
+        	,value:'${asunto.tipoAsunto.codigo}'
+		</c:if>
+	});
+	
 
 	var saldoARecuperar = 
 		app.creaNumber('saldorecuperar',
@@ -237,6 +246,101 @@
 	});
 
 
+	<%-- Comobo para seleccionar propuestas, solo estara visible si el tipo de asunto es ACUERDO --%>
+	
+	var propuestaRecord = Ext.data.Record.create([
+		 {name:'fechaPropuesta'}
+		,{name:'solicitante'}
+		,{name:'idAcuerdo'}
+	]);
+	
+	var optionsPropuestasStore = page.getStore({
+	       flow: 'propuestas/getPropuestasElevadasDelExpediente'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'acuerdos'
+	    }, propuestaRecord)    
+	});
+	
+	var  TIPO_ASUNTO_ACUERDO = "<fwk:const value="es.capgemini.pfs.asunto.model.DDTiposAsunto.ACUERDO" />";
+	
+	var propuestaTemplate = new Ext.XTemplate(
+        '<tpl for="."><div class="search-item">',
+            '<p>{fechaPropuesta}&nbsp;&nbsp;---&nbsp;&nbsp;{solicitante}</p>',
+        '</div></tpl>'
+    );
+
+
+	var comboPropuestas = new Ext.form.ComboBox({
+	    hiddenName:'propuesta'
+	    ,hiddenValue: 'null'
+	    <app:test id="propuestasCombo" addComa="true" />
+	    ,store: optionsPropuestasStore
+	    ,displayField:'fechaPropuesta'
+	    ,tpl:propuestaTemplate
+	    ,mode: 'local'
+	    ,triggerAction: 'all'
+	    ,hidden:true
+	    ,emptyText:'----'
+	    ,valueField: 'idAcuerdo'
+		,width:250
+		,labelStyle:labelStyle
+	    ,editable : false
+	    ,itemSelector: 'div.search-item'
+		,fieldLabel : '<s:message code="procedimientos.edicion.propuestas" text="**Propuestas" />'
+		,onSelect: function(record) {
+			if(record.data.idAcuerdo != null){
+				comboPropuestas.setValue(record.data.idAcuerdo);
+				comboPropuestas.collapse();
+				comboPropuestas.focus();
+				Ext.Ajax.request({
+					url : page.resolveUrl('propuestas/contratosIncluidosEnLosTerminosDeLaPropuesta'), 
+					params : {
+								idPropuesta:record.data.idAcuerdo
+							},
+					method: 'POST',
+					success: function ( result, request ) {
+							var resultado = Ext.decode(result.responseText);
+							var contratos = new Array();
+							for(i=0;i < resultado.contratos.length; i++){
+								contratos.push(resultado.contratos[i].id);
+							}
+							var position = 0;
+							contratosStore.each( function(record){
+								if(contratos.indexOf(record.data.id) != -1){
+									myCboxSelModelContratos.selectRow(position,true);
+								}else if(myCboxSelModelContratos.isSelected( position )){
+									myCboxSelModelContratos.deselectRow(position,true);
+								}
+								position++;
+	    					});
+					}
+				});
+			}else{
+				comboPropuestas.collapse();
+				comboPropuestas.focus();			
+			}
+		}
+	});
+	
+	optionsPropuestasStore.on('load', function(){
+	  optionsPropuestasStore.add(new optionsPropuestasStore.recordType({
+	    fechaPropuesta: '',
+	    solicitante: '',
+	    idAcuerdo: null
+	  }, 0));
+	  comboPropuestas.setValue('${procedimiento.propuesta.id}');
+	});
+	
+	if(${asunto != null && asunto.tipoAsunto != null}){
+		codAsu = "${asunto.tipoAsunto.codigo}";
+		if(codAsu == TIPO_ASUNTO_ACUERDO){
+			optionsPropuestasStore.webflow({idExpediente:${idExpediente}});
+			comboPropuestas.setVisible(true);
+			saldoARecuperar.setVisible(false);
+			recuperacion.setVisible(false);
+			meses.setVisible(false);
+		}
+	}
 
 	var dictTipoActuacion = <app:dict value="${tiposActuacion}" />;
 
@@ -325,11 +429,23 @@
 				if ('${procedimiento.tipoProcedimiento.codigo}' != '')
 				{
 					comboTipoProcedimiento.setValue('${procedimiento.tipoProcedimiento.codigo}');
+					if('${procedimiento.tipoProcedimiento.codigo}' == "NOLIT"){
+						var el = Ext.getCmp("tmp");
+						el.setVisible(true);
+						fieldSetLitigar.show();
+					}
+				}
+				if('${procedimiento.tipoActuacion.codigo}' == "PCO"){
+					var el = Ext.getCmp("tmp");
+					el.setVisible(true);
+					fieldSetPco.show();
+					if('${procedimientoPco}' != null){
+						comboTipoAccionPropuestaAIniciar.fireEvent('select', comboTipoAccionPropuestaAIniciar);
+					}
 				}
 			}
 		});
 	}
-
 	
 	//Si no puede modificar el valor pq no está en conformación lo revertimos
 	comboTipoProcedimiento.on('change', function(){
@@ -395,63 +511,59 @@
 
 /** DEFINICION DEL CHECK COLUM PARA LA LISTA DE CONTRATOS**/	
 	
-	Ext.grid.CheckColumn2 = function(config){
-    	Ext.apply(this, config);
-	    if(!this.id){
-	        this.id = Ext.id();
-			}
-	    this.renderer = this.renderer.createDelegate(this);
-	};	
-
-	Ext.grid.CheckColumn2.prototype ={
-    	init : function(grid){
-        	this.grid = grid;
-        	this.grid.on('render', function(){
-        	    var view = this.grid.getView();
-    	        view.mainBody.on('mousedown', this.onMouseDown, this);
-        	}, this);
-    	},
-			
-    	onMouseDown : function(e, t){
-			if (!enConformacion) return;
-           	if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
-            	e.stopEvent();
-            	var index = this.grid.getView().findRowIndex(t);
-            	var record = this.grid.store.getAt(index);
-            	contratosSeleccionados = rearmarArray(contratosSeleccionados,record.data['id']);
-				cexSeleccionados = rearmarArray(cexSeleccionados,record.data['idCex']);
-            	contratosSeleccionadosString = armarString(contratosSeleccionados);
-            	//Falta el campo hidden para agregar al fieldSetActuacion
-            	seleccionContratos.setValue(cexSeleccionados);
-            	record.set(this.dataIndex, !eval(record.data[this.dataIndex]));
-            	clientesIncluirStore.webflow({
-						contratos:contratosSeleccionadosString,
-						idProcedimiento:<c:if test="${procedimiento!=null}">'${procedimiento.id}'</c:if>
-						                <c:if test="${procedimiento==null}">'0'</c:if>
+ 
+	var myCboxSelModelContratos = new Ext.grid.CheckboxSelectionModel({
+  		singleSelect: false,
+  		header:''
 	});
-				// Recalculamos los saldos recuperados para el procedimiento
-				var totalSaldoOriginalVencido = new Number(sOrigVenc.getValue());
-				var totalSaldoOriginalNoVencido = new Number(sOrigNoVenc.getValue());
-				if(record.data['seleccionado']==true) {
-					totalSaldoOriginalVencido += record.data['saldoIrregular'];
-					totalSaldoOriginalNoVencido += record.data['saldoNoVencido'];
-				} else {
-					totalSaldoOriginalVencido -= record.data['saldoIrregular'];
-					totalSaldoOriginalNoVencido -= record.data['saldoNoVencido'];
-				}
-				sOrigVenc.setValue(totalSaldoOriginalVencido);
-				sOrigNoVenc.setValue(totalSaldoOriginalNoVencido);
-				saldoOriginalVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalVencido));
-				saldoOriginalNoVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalNoVencido));
-           	}
-    	},
 	
-	    renderer : function(v, p, record){
-        	p.css += ' x-grid3-check-col-td'; 
-	       	return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'"> </div>';
-	   	}
-	};
-
+    
+    var actualizaDatosContratosMarcados = function(checked, record){
+    
+    	if (!enConformacion) return;
+     	
+        contratosSeleccionados = rearmarArray(contratosSeleccionados,record.data['id']);
+		cexSeleccionados = rearmarArray(cexSeleccionados,record.data['idCex']);
+        contratosSeleccionadosString = armarString(contratosSeleccionados);
+        
+        //Falta el campo hidden para agregar al fieldSetActuacion
+        seleccionContratos.setValue(cexSeleccionados);
+        record.set(this.dataIndex, !eval(record.data[this.dataIndex]));
+        clientesIncluirStore.webflow({
+			contratos:contratosSeleccionadosString,
+			idProcedimiento:<c:if test="${procedimiento!=null}">'${procedimiento.id}'</c:if>
+		                <c:if test="${procedimiento==null}">'0'</c:if>
+		});
+		
+		// Recalculamos los saldos recuperados para el procedimiento
+		var totalSaldoOriginalVencido = new Number(sOrigVenc.getValue());
+		var totalSaldoOriginalNoVencido = new Number(sOrigNoVenc.getValue());
+		
+		if(checked) {
+			totalSaldoOriginalVencido += record.data['saldoIrregular'];
+			totalSaldoOriginalNoVencido += record.data['saldoNoVencido'];
+		} else {
+			totalSaldoOriginalVencido -= record.data['saldoIrregular'];
+			totalSaldoOriginalNoVencido -= record.data['saldoNoVencido'];
+		}
+		
+		sOrigVenc.setValue(totalSaldoOriginalVencido);
+		sOrigNoVenc.setValue(totalSaldoOriginalNoVencido);
+		saldoOriginalVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalVencido));
+		saldoOriginalNoVencido.setValue(app.format.moneyRenderer(totalSaldoOriginalNoVencido));
+    
+    };
+    
+    var contratosRowselectListener = function (el, rowIndex, r){
+		actualizaDatosContratosMarcados(true, r);
+    };
+    
+    var contratosRowDeselectListener = function (el, rowIndex, r){
+		actualizaDatosContratosMarcados(false, r);
+    };
+	
+	myCboxSelModelContratos.addListener('rowselect', contratosRowselectListener);
+	myCboxSelModelContratos.addListener('rowdeselect', contratosRowDeselectListener);
 
 
 /******/
@@ -527,6 +639,7 @@
 
 	contratosStore.webflow({idExpediente:${idExpediente}, idProcedimiento:'${procedimiento.id}'});
 
+<%--
 	var checkColumnContratos = new Ext.grid.CheckColumn2({
 		header : '<s:message code="procedimientos.edicion.grid.incluido" text="**Incluir" />'
 		,width: 100,dataIndex : 'seleccionado'
@@ -558,6 +671,36 @@
 			  Ext.grid.GridPanel.prototype.doLayout.call(this);
 		}
 	});
+ --%>	
+ 
+ 	var contratosCm = new Ext.grid.ColumnModel([
+		{dataIndex : 'idCex', hidden:true, fixed:true}
+		,{dataIndex : 'id', hidden:true, fixed:true}
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.codigo" text="**Contrato"/>',width: 200, dataIndex : 'cc' }
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.tipo" text="**Tipo"/>',width: 200, dataIndex : 'tipo' }
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.saldoVencido" text="**Saldo Vencido"/>',width: 125, dataIndex : 'saldoIrregular', renderer: app.format.moneyRenderer, align:'right' }
+		,{header : '<s:message code="procedimientos.edicion.gridContratos.saldoTotal" text="**Saldo Total"/>',width: 125, dataIndex : 'saldoTotal' , renderer: app.format.moneyRenderer, align:'right' }
+		,myCboxSelModelContratos
+	]);
+	
+	var contratosGrid = app.crearEditorGrid(contratosStore,contratosCm,{
+        title:'<s:message code="procedimientos.edicion.grid.contratos.titulo" text="**Contratos a incluir" />'
+		,sm: myCboxSelModelContratos
+        ,cls:'cursor_pointer'
+		,style:'padding-right:10px'
+        ,iconCls:'icon_personas'
+        ,height:130
+        ,width: 650
+        ,parentWidth:885
+		,loadMask: true
+        ,viewConfig: {forceFit: true}
+        ,autoExpand:true
+        ,clicksToEdit: 1
+       	,style:'padding-top:10px'
+		,cls:'cursor_pointer'
+		,iconCls : 'icon_contratos'
+		,autoWidth: true
+    });
 
 	var inicializarContratosPersonas = function() {
 		for (var i=0; i < contratosStore.getTotalCount(); i++){
@@ -619,6 +762,361 @@
 			
 		]
 	});
+	
+	<%--DESARROLLO PRODUCTO 1089------------------------------%>
+	
+	var prioridadRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name : 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var prioridadStore = page.getStore({
+		flow: 'expedientejudicial/getDiccionarioPrioridad',
+		reader: new Ext.data.JsonReader({
+			root: 'prioridad'
+		}, prioridadRecord)
+	});
+
+	var comboPrioridad = new Ext.form.ComboBox({
+		name:'prioridad',
+	    hiddenName:'prioridad',
+		store: prioridadStore,
+		displayField: 'descripcion',
+		mode: 'local',
+		triggerAction: 'all',
+		valueField: 'codigo',
+		emptyText:'----',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		autoSelect: true,
+		fieldLabel: '<s:message code="procedimientos.edicion.prioridad" text="**Prioridad" />'
+		<%--<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.prioridad.descripcion}'
+		</c:if> --%>
+		});
+		
+	
+	comboPrioridad.on('afterrender', function(combo) {
+		prioridadStore.webflow();
+	});
+	prioridadStore.on('load',function(ds,records,o){
+		<c:if test="${procedimientoPco == null}" >
+			comboPrioridad.setValue(records[2].data.codigo);
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+			comboPrioridad.setValue('${procedimientoPco.prioridad.codigo}');
+		</c:if>
+   	});
+
+	
+	var preparacionRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name : 'codigo'},
+		{name: 'descripcion'}
+	]);
+
+	var preparacionStore = page.getStore({
+		flow: 'expedientejudicial/getDiccionarioPreparacion',
+		reader: new Ext.data.JsonReader({
+			root: 'preparacion'
+		}, preparacionRecord)
+	});
+
+	var comboPreparacion = new Ext.form.ComboBox({
+		name:'preparacion',
+	    hiddenName:'preparacion',
+		store: preparacionStore,
+		displayField: 'descripcion',
+		mode: 'local',
+		triggerAction: 'all',
+		valueField: 'codigo',
+		emptyText:'----',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		fieldLabel: '<s:message code="procedimientos.edicion.preparacion" text="**Preparacion" />'
+		<%--<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoPreparacion.descripcion}'
+		</c:if> --%>
+	});
+	
+	comboPreparacion.on('afterrender', function(combo) {
+		preparacionStore.webflow();
+	}); 
+	
+	preparacionStore.on('load',function(ds,records,o){
+		<c:if test="${procedimientoPco == null}" >
+			comboPreparacion.setValue(records[2].data.codigo);
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+				comboPreparacion.setValue('${procedimientoPco.tipoPreparacion.codigo}');
+		</c:if>
+   	});
+	
+	var comboTipoAccionPropuestaAIniciar = new Ext.form.ComboBox({
+	    name:'tipoAccionPropuesta'
+	    ,hiddenName:'tipoAccionPropuesta'
+	    ,store: optionsTipoActuacionStore
+	    ,displayField:'descripcion'
+	    ,mode: 'local'
+	    ,triggerAction: 'all'
+	    ,emptyText:'----'
+	    ,valueField: 'codigo'
+	    ,labelStyle:labelStyle
+	    ,allowBlank: true
+		,fieldLabel : '<s:message code="procedimientos.edicion.accionPropuesta" text="**Tipo acción propuesta a iniciar" />'
+		<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoProcPropuesto.tipoActuacion.codigo}'
+		</c:if>
+		
+	});
+	
+	var tipoProcedimientoRecord2 = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var optionsTipoProcedimientoIniciarStore =	page.getStore({
+	       flow: 'procedimientos/buscarTiposProcedimiento'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tiposProcedimiento'
+	    }, tipoProcedimientoRecord)
+	       
+	});
+	
+	comboTipoAccionPropuestaAIniciar.on('select',function(){
+		var codigo=comboTipoAccionPropuestaAIniciar.getValue();
+		optionsTipoProcedimientoIniciarStore.webflow({codigo:codigo})
+		comboTipoActuacionPropuestaAIniciar.reset();
+		comboTipoActuacionPropuestaAIniciar.enable();
+	});
+	
+	var comboTipoActuacionPropuestaAIniciar = new Ext.form.ComboBox({
+	    name:'tipoActuacionPropuesta',
+	    hiddenName:'tipoActuacionPropuesta',
+	    store: optionsTipoProcedimientoIniciarStore,
+	    displayField: 'descripcion',
+	    mode: 'local',
+	    triggerAction: 'all',
+	    emptyText:'----',
+		valueField: 'codigo',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		fieldLabel : '<s:message code="procedimientos.edicion.actuacionPropuesta" text="**Tipo actuación propuesta a iniciar" />'
+		<%--<c:if test="${procedimientoPco != null}" >
+					,value:'${procedimientoPco.tipoProcPropuesto.codigo}'
+		</c:if> --%>
+	});
+	
+	optionsTipoProcedimientoIniciarStore.on('load',function(ds,records,o){
+		<c:if test="${procedimientoPco != null}" >
+					var val="^"+'${procedimientoPco.tipoProcPropuesto.codigo}'+"$"; 
+					var newval=new RegExp(val);
+					var result = optionsTipoProcedimientoIniciarStore.find('codigo',newval);
+					if(result != -1){
+						comboTipoActuacionPropuestaAIniciar.setValue('${procedimientoPco.tipoProcPropuesto.codigo}');
+					}else{
+						comboTipoActuacionPropuestaAIniciar.setValue(null);
+					}
+					
+		</c:if>
+   	});
+	
+    var chkBoxPreturnado = new Ext.form.Checkbox({
+    	name:'preturnado'
+    	,labelStyle:labelStyle
+        ,fieldLabel:'<s:message code="procedimientos.edicion.preTurnado" text="**Pre-turnar letrado" />'
+        <c:if test="${procedimientoPco!=null}" >
+        	<c:if test="${procedimientoPco.preturnado == true}" >
+        			,checked:true
+			</c:if>
+		</c:if>
+    });
+	
+	var chkBoxOrdinario = new Ext.form.Checkbox({
+		name:'turnadoOrdinario'
+		,labelStyle:labelStyle
+        ,fieldLabel:'<s:message code="procedimientos.edicion.turnadoOrdinario" text="**Turnado ordinario" />'
+        <c:if test="${procedimientoPco!=null}" >
+        	<c:if test="${procedimientoPco.preturnado != true}" >
+        			,checked:true
+			</c:if>
+		</c:if>
+    });
+    
+	var fieldSetPco =new Ext.form.FieldSet({
+		title:'<s:message code="procedimientos.edicion.adicionalPCO" text="**Adicional PCO" />'
+		//,autoHeight:true
+		,hidden:true
+		,height:280
+		,autoShow:true
+		,bodyStyle:'padding:5px;cellspacing:20px;'
+		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+		,items:[{
+				layout:'form'
+				,bodyStyle:'padding:5px;cellspacing:20px;margin-right:5px;'
+				,autoHeight:true
+				,autoWidth:true
+				,items:
+				[
+					comboPrioridad
+					,comboPreparacion
+					,comboTipoAccionPropuestaAIniciar
+					,comboTipoActuacionPropuestaAIniciar
+					,chkBoxOrdinario
+					,chkBoxPreturnado
+				]
+				,style : 'margin-right:10px'
+			}
+		]
+	});
+	
+	var motivoRecord = Ext.data.Record.create([
+		{name: 'id'},
+		{name : 'codigo'},
+		{name: 'descripcion'}
+	]);
+	
+	var motivoStore = page.getStore({
+		flow: 'mejactuacion/getDiccionarioMotivos',
+		reader: new Ext.data.JsonReader({
+			root: 'motivos'
+		}, motivoRecord)
+	});
+	
+	var comboMotivo = new Ext.form.ComboBox({
+		name:'motivo',
+	    hiddenName:'motivo',
+		store: motivoStore,
+		displayField: 'descripcion',
+		mode: 'local',
+		triggerAction: 'all',
+		valueField: 'codigo',
+		labelStyle:labelStyle,
+		allowBlank: true,
+		fieldLabel: '<s:message code="procedimientos.edicion.motivo" text="**Motivo" />'
+		<%--<c:if test="${procedimiento!=null}" >
+			,value:'${procedimiento.motivoNoLitigar.descripcion}'
+		</c:if> --%> 
+	});
+	
+	comboMotivo.on('afterrender', function(combo) {
+		motivoStore.webflow();
+	});
+	
+	motivoStore.on('load',function(ds,records,o){
+		<c:if test="${procedimiento!=null}" >
+			comboMotivo.setValue('${procedimiento.motivoNoLitigar.codigo}');
+		</c:if>
+   	});
+	
+	var observaciones = new Ext.form.TextArea({
+		name:'observaciones',
+		hideLabel:true
+		,labelSeparator: ''
+		,fieldLabel:''
+		,width: 400
+		,height: 100
+		,maxLength: 500
+		,maxLengthText: 500
+		,readOnly: false
+		,labelStyle: ''
+		,value:''
+		,allowBlank:true
+		<c:if test="${procedimiento!=null}" >
+			,value:'<s:message text="${procedimiento.observacionesNoLitigar}" javaScriptEscape="true" />'
+		</c:if>	
+	});
+	
+		var fieldSetLitigar =new Ext.form.FieldSet({
+		title:'<s:message code="procedimientos.edicion.adicionalLitigar" text="**Adicional no litigar" />'
+		//,autoHeight:true
+		,height:180
+		,hidden:true
+		,autoShow:true
+		,bodyStyle:'padding:5px;cellspacing:20px;'
+		,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+		,items:[{
+				layout:'form'
+				,bodyStyle:'padding:5px;cellspacing:20px;margin-right:5px;'
+				,autoHeight:true
+				,autoWidth:true
+				,items:
+				[
+					comboMotivo
+					,observaciones
+				]
+				,style : 'margin-right:10px'
+				
+			}
+			
+		]
+	});
+	
+	tipoActuacion.on('select',function(){
+		var codigo=tipoActuacion.getValue();
+		optionsTipoProcedimientoStore.webflow({codigo:codigo})
+		comboTipoProcedimiento.reset();
+		comboMotivo.reset();
+		observaciones.reset();
+		comboPrioridad.reset();
+		comboPreparacion.reset();
+		comboTipoAccionPropuestaAIniciar.reset();
+		comboTipoActuacionPropuestaAIniciar.reset();
+		chkBoxOrdinario.reset();
+		chkBoxPreturnado.reset();
+		var el = Ext.getCmp("tmp");
+		fieldSetLitigar.hide();
+		if(tipoActuacion.getValue() == "PCO"){
+			el.setVisible(true);
+			fieldSetPco.setVisible(true);
+			fieldSetPco.show();
+		}else{
+			el.setVisible(false);
+			fieldSetPco.hide();
+		}
+	});
+	
+	comboTipoProcedimiento.on('select',function(){
+		var codigo=comboTipoProcedimiento.getValue();
+		var el = Ext.getCmp("tmp");
+		if(comboTipoProcedimiento.getValue() == "NOLIT"){
+			el.setVisible(true);
+			fieldSetLitigar.show();
+		}else{
+			if(tipoActuacion.getValue() != "PCO"){
+				el.setVisible(false);
+				comboMotivo.reset();
+			}
+			fieldSetLitigar.hide();
+			observaciones.reset();
+		}
+	});
+	
+	var seleccionado = chkBoxOrdinario.getValue();
+	if(seleccionado){
+		chkBoxPreturnado.disable();
+		chkBoxPreturnado.reset();
+	} 
+	chkBoxOrdinario.on('check',function(){
+		if (chkBoxOrdinario.getValue()== true)
+		{
+			chkBoxPreturnado.disable();
+			chkBoxPreturnado.setValue(null);
+		}else{
+			chkBoxPreturnado.enable();
+		}
+	});
+	chkBoxPreturnado.on('check',function(){
+		if (chkBoxPreturnado.getValue()== true)
+		{
+			chkBoxOrdinario.setValue(null);
+			chkBoxOrdinario.disable();
+		}else{
+			chkBoxOrdinario.enable();
+		}
+	});
+	<%----------------------------------------------------- --%>
 
 	var fieldSetActuacion =new Ext.form.FieldSet({
 		title:'<s:message code="procedimientos.edicion.tipoactuacion" text="**Tipo Actuacion" />'
@@ -638,6 +1136,7 @@
 					,comboTipoReclamacion
 					//,asuntoLabel
 					,comboAsuntos
+					,comboPropuestas
 					//,idAsuntoH
 					,seleccionPersonas
 					,seleccionContratos
@@ -645,6 +1144,7 @@
 					,enConformacionHidden
 					,sOrigVenc
 					,sOrigNoVenc
+					,codTipoAsu
 				]
 				,style : 'margin-right:10px'
 				
@@ -729,11 +1229,14 @@
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-
 			//habilitaComponentes(true);
-			
 			//VALIDACIONES
 			var errores="";
+			if(observaciones.getValue() != null){
+				if(observaciones.getValue().length>500){
+					errores+="<br>El campo observaciones no puede ser tan largo";
+				}
+			}
 			if(!comboTipoProcedimiento.validate())
 				errores+="<br>Tipo de procedimiento obligatorio";
 			else{
@@ -753,6 +1256,7 @@
 					}
 				}
 			}
+			
 			if(errores!=""){
 				Ext.Msg.alert("Errores",errores);
 				return;
@@ -762,7 +1266,9 @@
 			page.submit({
 				eventName : 'updateProcedimiento'
 				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.DONE) }
+				,success : function(){ 
+						page.fireEvent(app.event.DONE)
+					 }
 			});
 
 			//habilitaComponentes(false);
@@ -800,9 +1306,17 @@
 						 ,width:370 
 						 ,border:false
 					}
-					
+					,{
+						border:false
+						,width:480
+						,items:[fieldSetPco, fieldSetLitigar]
+						,hidden:true
+						,id:'tmp'
+						,autoHeight:true
+					} 
 				]
-			},{
+			}
+			,{
 				border:false
 				,items:contratosGrid
 			}

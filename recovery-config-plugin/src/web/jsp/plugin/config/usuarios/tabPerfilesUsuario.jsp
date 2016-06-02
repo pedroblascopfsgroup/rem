@@ -50,7 +50,7 @@
     					parms.zpuid = gridPerfiles.getSelectionModel().getSelected().get('id');
     					parms.password = rta;
     					page.webflow({
-							flow: 'plugin/config/usuarios/ADMborrarCentroUsuario'
+							flow: 'plugin/config/usuarios/ADMborrarCentroUsuarioSeguro'
 							,params: parms
 							,success : function(){ 
 								gridPerfiles.store.webflow(parms); 

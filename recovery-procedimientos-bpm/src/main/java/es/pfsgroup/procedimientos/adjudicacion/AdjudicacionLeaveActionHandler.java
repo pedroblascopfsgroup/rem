@@ -88,8 +88,24 @@ public class AdjudicacionLeaveActionHandler extends PROGenericLeaveActionHandler
 				}
 			}
 
+			
+		}else if ("P413_ContabilizarCierreDeuda".equals(executionContext.getNode().getName())) {
+
+			if (!Checks.esNulo(listado)) {
+				for (TareaExternaValor tev : listado) {
+					try {
+						if ("fecha".equals(tev.getNombre()) && !Checks.esNulo(tev.getValor())) {
+							Date fecha = formatter.parse(tev.getValor());
+							executor.execute(AdjudicacionHandlerDelegateApi.BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_CONTABILIDAD, prc.getId(), fecha);
+
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 			// Items de Tarea2: Registrar Envio de Llaves
-		} else if ("P417_RegistrarEnvioLlaves".equals(executionContext.getNode().getName())) {
+		}else if ("P417_RegistrarEnvioLlaves".equals(executionContext.getNode().getName())) {
 
 			if (!Checks.esNulo(listado)) {
 				for (TareaExternaValor tev : listado) {

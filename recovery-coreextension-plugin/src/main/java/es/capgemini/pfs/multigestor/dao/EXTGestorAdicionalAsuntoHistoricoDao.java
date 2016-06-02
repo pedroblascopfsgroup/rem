@@ -16,13 +16,24 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 public interface EXTGestorAdicionalAsuntoHistoricoDao extends AbstractDao<EXTGestorAdicionalAsuntoHistorico, Long>{
 
 	/**
-	 * Acutaliza el valor del campo fechaHasta para todos los objetos del histórico que cumple con las condiciones de filtrado.
+	 * Acutaliza el valor del campo fechaHasta para todos los objetos del histï¿½rico que cumple con las condiciones de filtrado.
 	 * Filtrado por idAsunto e idTipoGestor.
 	 *
 	 * @param idAsunto
 	 * @param idTipoGestor
 	 */
 	void actualizaFechaHasta(Long idAsunto, Long idTipoGestor);
+	
+	/**
+	 * Acutaliza el valor del campo fechaHasta para todos los objetos del histï¿½rico que cumple con las condiciones de filtrado.
+	 * Filtrado por idAsunto e idTipoGestor.
+	 *
+	 * @param idAsunto
+	 * @param idTipoGestor
+	 * @param idGestor
+	 * 
+	 */
+	void actualizaFechaHastaIdGestor(Long idAsunto, Long idTipoGestor, Long idGestor);
 
 	/**
 	 * Dao que devuelve una lista de {@link EXTGestorAdicionalAsuntoHistorico} ordenada por 
@@ -33,5 +44,12 @@ public interface EXTGestorAdicionalAsuntoHistoricoDao extends AbstractDao<EXTGes
 	 * @return Lista de {@link EXTGestorAdicionalAsuntoHistorico}
 	 */
 	List<EXTGestorAdicionalAsuntoHistorico> getListOrderedByAsunto(Long idAsunto);
+	
+	/**
+	 * Comprueba si un Asunto ha tenido algun gestor que peretece a un despacho Integral
+	 * @param idAsunto id del asunto
+	 * @return True si el asunto ha tenido asignadot un despacho integral (del historico GAH)
+	 */
+	boolean hayAlgunDespachoIntegral(Long idAsunto);
 
 }

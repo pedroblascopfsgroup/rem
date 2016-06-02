@@ -1,5 +1,6 @@
 package es.capgemini.pfs.mapaGlobalOficina.dao.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,7 @@ import es.capgemini.pfs.mapaGlobalOficina.model.MapaGlobalOficina;
 @Repository("MapaGlobalOficinaDao")
 public class MapaGlobalOficinaDaoImpl extends AbstractEntityDao<MapaGlobalOficina, Long> implements MapaGlobalOficinaDao {
 
-    protected static final SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
+    protected SimpleDateFormat DF = new SimpleDateFormat("dd/MM/yyyy");
 
     /**
      * {@inheritDoc}
@@ -102,9 +103,9 @@ public class MapaGlobalOficinaDaoImpl extends AbstractEntityDao<MapaGlobalOficin
      * @param groupBy columnas a agrupar, deben incluir las columnas a mostrar
      * @param orderBy columnas a order, deben ser algunas de las columnas a mostrar
      * @return lista de DtoExportRow
-     * @throws Exception e
+     * @throws ParseException 
      */
-    private List<DtoExportRow> buscarAgrupando(DtoBuscarMapaGlobalOficina dto, String columnas, String groupBy, String orderBy) throws Exception {
+    private List<DtoExportRow> buscarAgrupando(DtoBuscarMapaGlobalOficina dto, String columnas, String groupBy, String orderBy) throws ParseException{
         HashMap<String, Object> parameters = new HashMap<String, Object>();
         String hql = "select " + columnas;
         hql += ", sum(m.cantidadClientes), sum(m.cantidadContratos), sum(m.sumaPosVivaNoVencida + m.sumaPosVivaVencida), sum(m.sumaPosVivaVencida) ";
@@ -117,8 +118,9 @@ public class MapaGlobalOficinaDaoImpl extends AbstractEntityDao<MapaGlobalOficin
 
     /**
      * Crea el HQL para la busqueda SIN EL FROM y completa el map de parámetros.
+     * @throws ParseException 
      */
-    private String createHqlAndCompleteParameters(DtoBuscarMapaGlobalOficina dto, HashMap<String, Object> parameters) throws Exception {
+    private String createHqlAndCompleteParameters(DtoBuscarMapaGlobalOficina dto, HashMap<String, Object> parameters) throws ParseException{
         String hql = " MapaGlobalOficina m where m.auditoria.borrado = false ";
 
         if (!emtpyString(dto.getFecha())) {

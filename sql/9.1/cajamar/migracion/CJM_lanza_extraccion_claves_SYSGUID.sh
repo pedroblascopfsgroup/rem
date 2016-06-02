@@ -8,6 +8,7 @@ export NLS_LANG=SPANISH_SPAIN.AL32UTF8
 
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.AL32UTF8"
 
+cd /recovery/batch-server/migracion
 sh_dir="shells/"
 
 echo "[INFO] INICIO EXTRACCION SYSGUID  $0" `date` 

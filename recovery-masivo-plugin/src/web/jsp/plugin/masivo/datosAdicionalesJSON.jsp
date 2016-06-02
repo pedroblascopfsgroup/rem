@@ -7,7 +7,15 @@
 <fwk:json>
 	<json:array name="datosAdicionales" items="${datosPersistidos}" var="datos">
 		<json:object>
-			<json:property name="conTestimonio" value="${datos.valor}" />
+			<c:if test="${datos.nombreDato=='conTestimonio'}">
+				<json:property name="conTestimonio" value="${datos.valor}" />
+			</c:if>
+			<c:if test="${datos.nombreDato=='cuantiaLetrado'}">
+				<json:property name="cuantiaLetrado" value="${datos.valor}" />
+			</c:if>
+			<c:if test="${datos.nombreDato=='cuantiaProcurador'}">
+				<json:property name="cuantiaProcurador" value="${datos.valor}" />
+			</c:if>
 		</json:object>
 	</json:array>	
 </fwk:json>

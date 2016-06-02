@@ -17,15 +17,11 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.Direccion;
-import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 
 @Entity
 @Table(name = "PCO_BUR_ENVIO", schema = "${entity.schema}")
@@ -72,6 +68,12 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	@Column(name = "PCO_BUR_ENVIO_CONTENIDO")
 	private String contenidoBurofax;
 
+	@Column(name = "PCO_BUR_ACUSE_RECIBO")
+	private Long acuseRecibo;
+
+	@Column(name = "PCO_BUR_REF_EXTERNA_ENVIO")
+	private String refExternaEnvio;
+
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
 
@@ -81,7 +83,8 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
+	@Column(name = "PCO_BUR_MANUAL")
+	private Boolean manual;
 
 	/*
 	 * GETTERS & SETTERS
@@ -143,6 +146,22 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 		this.fechaAcuse = fechaAcuse;
 	}
 
+	public Long getAcuseRecibo() {
+		return acuseRecibo;
+	}
+
+	public void setAcuseRecibo(Long acuseRecibo) {
+		this.acuseRecibo = acuseRecibo;
+	}
+
+	public String getRefExternaEnvio() {
+		return refExternaEnvio;
+	}
+
+	public void setRefExternaEnvio(String refExternaEnvio) {
+		this.refExternaEnvio = refExternaEnvio;
+	}
+
 	public String getSysGuid() {
 		return sysGuid;
 	}
@@ -179,5 +198,12 @@ public class EnvioBurofaxPCO implements Serializable, Auditable {
 		this.contenidoBurofax = contenidoBurofax;
 	}
 
+	public Boolean getManual() {
+		return manual;
+	}
+
+	public void setManual(Boolean manual) {
+		this.manual = manual;
+	}
 	
 }

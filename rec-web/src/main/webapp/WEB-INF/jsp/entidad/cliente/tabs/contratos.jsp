@@ -19,7 +19,7 @@
 		,nombreTab : 'contratosPanel'        
     });
 
-    var limit = 10;
+    var limit = 500;
 
     var Contrato = Ext.data.Record.create([
          {name:'id'}
@@ -64,6 +64,7 @@
         ,reader: new Ext.data.JsonReader({
             root: 'contratos'
             ,totalProperty : 'total'
+            ,id: 'rowIndex'
         }, Contrato)
         ,storeId : name
        });
@@ -78,15 +79,20 @@
 	tipoRiesgo.INDIRECTO = 'riesgoIndirecto';
 	tipoRiesgo.PASIVO = 'riesgoPasivo';
 		
-	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO);});
-	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO);});
-	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO);});
+	contratoRiesgoDirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoDirecto, riesgosDirectosGrid, false, tipoRiesgo.DIRECTO, data.numContratos);});
+	contratoRiesgoIndirecto.on('load', function(){muestraDatosTitulo(contratoRiesgoIndirecto, riesgosIndGrid, false, tipoRiesgo.INDIRECTO, countContratos(contratoRiesgoIndirecto));});
+	contratoRiesgoPasivo.on('load', function(){muestraDatosTitulo(contratoRiesgoPasivo, riesgosDirectosPasivosGrid, true, tipoRiesgo.PASIVO, contratoRiesgoPasivo.getTotalCount());});
 
     var contratosRDCm= new Ext.grid.ColumnModel([
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 160,  dataIndex: 'cc', id:'colCodigoContrato'},
             {header: '<s:message code="contratos.fechaDato" text="**Fecha dato" />', width: 160,  dataIndex: 'fechaDato', id:'colFechaDato'},
             {header: '<s:message code="contratos.tipo" text="**Tipo" />', width: 120,  dataIndex: 'tipo'},
-            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            <sec:authorize ifAllGranted="PERSONALIZACION-BCC">	
+            	{header: '<s:message code="contratos.disponible" text="**Disponible" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            </sec:authorize>
+            <sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+            	{header: '<s:message code="contratos.condicionesEspeciales" text="**Disponible" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            </sec:authorize>
             {header: '<s:message code="contratos.saldoirr" text="**Saldo Irregular" />', width: 120, dataIndex: 'saldoIrregular',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.saldotot" text="**Saldo No Vencido" />', width: 120,  dataIndex: 'saldoNoVencido',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.diasirr" text="**Dias Irregular" />', width: 90,  dataIndex: 'diasIrregular'},
@@ -118,7 +124,12 @@
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 160,  dataIndex: 'cc', id:'colCodigoContrato'},
             {header: '<s:message code="contratos.fechaDato" text="**Fecha dato" />', width: 160,  dataIndex: 'fechaDato', id:'colFechaDato'},
             {header: '<s:message code="contratos.tipo" text="**Tipo" />', width: 120,  dataIndex: 'tipo'},
-            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            <sec:authorize ifAllGranted="PERSONALIZACION-BCC">	
+            	{header: '<s:message code="contratos.disponible" text="**Disponible" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            </sec:authorize>
+            <sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+            	{header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            </sec:authorize>
             {header: '<s:message code="contratos.pasivo.saldoirr" text="**Saldo Haber" />', width: 120, dataIndex: 'saldoPasivo',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.pasivo.saldotot" text="**Saldo Irregular" />', width: 120,  dataIndex: 'saldoNoVencido',renderer: app.format.moneyRenderer,align:'right',hidden:true},
             {header: '<s:message code="contratos.diasirr" text="**Dias Irregular" />', width: 120,  dataIndex: 'diasIrregular'},
@@ -150,7 +161,12 @@
             {header: '<s:message code="contratos.cc" text="**Codigo" />', width: 170,  dataIndex: 'cc', id:'colCodigoContrato'},
             {header: '<s:message code="contratos.fechaDato" text="**Fecha dato" />', width: 160,  dataIndex: 'fechaDato', id:'colFechaDato'},
             {header: '<s:message code="contratos.tipo" text="**Tipo" />', width: 120,  dataIndex: 'tipo'},
-            {header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            <sec:authorize ifAllGranted="PERSONALIZACION-BCC">	
+                {header: '<s:message code="contratos.disponible" text="**Disponible" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            </sec:authorize>
+            <sec:authorize ifNotGranted="PERSONALIZACION-BCC">
+           		{header: '<s:message code="contratos.condicionesEspeciales" text="**Disposicion" />', width: 120,  dataIndex: 'condEspec',renderer: app.format.moneyRenderer,align:'right'},
+            </sec:authorize>
             {header: '<s:message code="contratos.saldoirr" text="**Saldo Irregular" />', width: 120, dataIndex: 'saldoIrregular',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.saldotot" text="**Saldo No Vencido" />', width: 120,  dataIndex: 'saldoNoVencido',renderer: app.format.moneyRenderer,align:'right'},
             {header: '<s:message code="contratos.diasirr" text="**Dias Irregular" />', width: 120,  dataIndex: 'diasIrregular'},
@@ -249,7 +265,7 @@
         });
 	}
 
-	function muestraDatosTitulo(store, grid, pasivo, tipo){
+	function muestraDatosTitulo(store, grid, pasivo, tipo, total){
 		var texto = '';
 		// inicializar titulos
 		switch(tipo){
@@ -264,8 +280,7 @@
 				break;
 		}
 		grid.setTitle(texto);
-		
-		var total = store.getTotalCount();
+			
 		var rec = store.getAt(store.getRange().length-1);
 		
 		if (total == null || rec == null) return;
@@ -297,6 +312,20 @@
 	    texto += '&nbsp;]';
 		grid.setTitle(texto);
 	};
+	
+	function countContratos(store){
+		var data = store.data;
+		var items = data.items;
+		var nContratos = 0;	
+		for(var i=0;i < items.length;i++){
+        	var item = items[i];
+            var idContrato = item.json["id"];
+            if(idContrato != null && idContrato != ""){
+            	nContratos++;
+            }
+        }
+        return nContratos;
+	}
 
 	panel.getValue = function(){ 
 		return { 

@@ -4,6 +4,6 @@
 text : '<s:message code="main.toolbar.buscar.expedientesRecobro" text="**Expedientes" />' 
 		,iconCls : 'icon_expedientes'
 		,handler : function(){
-				app.openTab("<s:message code="expedientes" text="**Expedientes"/>", "expedientes/listadoExpedientesRecobro",{},{id:'busqueda_expedientes',iconCls:'icon_busquedas'});
+				app.openTab("<s:message code="expedientesRecobro" text="**Expedientes Recobro"/>", "expedientes/listadoExpedientesRecobro",{},{id:'busqueda_expedientes_recobro',iconCls:'icon_busquedas'});
 		}
 	

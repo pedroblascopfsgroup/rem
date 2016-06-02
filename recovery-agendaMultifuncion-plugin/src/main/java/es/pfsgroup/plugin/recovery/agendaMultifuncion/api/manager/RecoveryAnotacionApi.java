@@ -19,6 +19,7 @@ public interface RecoveryAnotacionApi {
 	final static String AMF_CREATE_RESPUESTA 		= "es.pfsgroup.plugin.recovery.agendaMultifuncion.anotacion.createRespuesta";
 	final static String AMF_GET_ANOTACIONES_AGENDA  = "es.pfsgroup.plugin.recovery.agendaMultifuncion.anotacion.getAnotacionesAgenda";
 	static final String AMF_GET_TIPO_ANOTACION_BY_CODIGO = "es.pfsgroup.plugin.recovery.agendaMultifuncion.anotacion.getTipoAnotacionByCodigo";
+	static final String CONF_VENTANA_ANOTACIONES = "es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.getConfiVentanaAnotaciones";
 	
 	/**
 	 * Recupera los usuarios cuyo nombre contiene el texto query
@@ -31,13 +32,13 @@ public interface RecoveryAnotacionApi {
 	public Collection<? extends Usuario> getUsuarios(String query);
 
 	/**
-	 * Método para crear una anotación
+	 * Mï¿½todo para crear una anotaciï¿½n
 	 * 
 	 * @param dto
 	 * @return
 	 */
 	@BusinessOperationDefinition(AMF_CREATE_ANOTACION)
-	public void createAnotacion(DtoCrearAnotacionInfo dto);
+	public List<Long> createAnotacion(DtoCrearAnotacionInfo dto);
 
 	@BusinessOperationDefinition(AMF_CREATE_RESPUESTA)
 	public void createRespuesta(DtoCrearAnotacionRespuestaTareaInfo dto);
@@ -46,17 +47,17 @@ public interface RecoveryAnotacionApi {
 	public List<DDTipoAnotacion> getListaTiposAnotacion();
 
 	/**
-	 * Devuelve las anotaciones que haya para una determinada unidad de gestión
+	 * Devuelve las anotaciones que haya para una determinada unidad de gestiï¿½n
 	 * 
 	 * @param tipoUnidadGestion
-	 *            Tipo de la unidad de gestión
+	 *            Tipo de la unidad de gestiï¿½n
 	 * @param idUnidadGestion
-	 *            Identificador de la unidad de gestión
+	 *            Identificador de la unidad de gestiï¿½n
 	 * @param tipoAnotacion
 	 *            Tipos de anotaciones que queremos devolver. Si no
-	 *            especificamos ningún tipo, se van a devolver todas las
-	 *            anotaciones relativas a la unidad de gestión. Si se
-	 *            especifican uno o más tipos se devolverán sólo esas.
+	 *            especificamos ningï¿½n tipo, se van a devolver todas las
+	 *            anotaciones relativas a la unidad de gestiï¿½n. Si se
+	 *            especifican uno o mï¿½s tipos se devolverï¿½n sï¿½lo esas.
 	 * @return
 	 */
 	@BusinessOperationDefinition(AMF_GET_ANOTACIONES_AGENDA)
@@ -66,7 +67,7 @@ public interface RecoveryAnotacionApi {
 	
 	
 	/**
-	 * Devuelve el tipo de anotación dado el código
+	 * Devuelve el tipo de anotaciï¿½n dado el cï¿½digo
 	 * @param codigo
 	 * @return
 	 */
@@ -74,11 +75,14 @@ public interface RecoveryAnotacionApi {
 	public DDTipoAnotacion getTipoAnotacionByCodigo(String codigo);
 	
 	/**
-	 * Devuelve el  código de litigio del asunto
+	 * Devuelve el  cï¿½digo de litigio del asunto
 	 * @param codigo
 	 * @return
 	 */
 	@BusinessOperationDefinition(AMF_GET_CODIGO_LITIGIO)
 	public String getCodigoLitigioAsu(Long id);
+	
+	@BusinessOperationDefinition(CONF_VENTANA_ANOTACIONES)
+	public Boolean getConfiVentanaAnotaciones();
 
 }

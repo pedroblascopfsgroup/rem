@@ -11,6 +11,8 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.tareaNotificacion.EXTTareaNotificacionManager;
@@ -159,7 +161,15 @@ public class SimulacionInteraccionesEXTTNM {
      */
     public void simulaCreateProrroga(Long idProrroga) {
         Prorroga mockProrroga = mock(Prorroga.class);
+        TareaNotificacion mockTareaAsociada = mock(TareaNotificacion.class);
+        TareaExterna mockTareaExterna = mock(TareaExterna.class);
+        TareaProcedimiento mockTareaProcedimiento = mock(TareaProcedimiento.class);
+        
         when(mockProrroga.getId()).thenReturn(idProrroga);
+		when(mockProrroga.getTareaAsociada()).thenReturn(mockTareaAsociada);
+		when(mockTareaAsociada.getTareaExterna()).thenReturn(mockTareaExterna);
+		when(mockTareaExterna.getTareaProcedimiento()).thenReturn(mockTareaProcedimiento);
+		when(mockTareaProcedimiento.getId()).thenReturn(1L);
         when(mockExecutor.execute(eq(InternaBusinessOperation.BO_PRORR_MGR_CREAR_NUEVA_PRORROGA), any(DtoSolicitarProrroga.class))).thenReturn(mockProrroga);
     }
 

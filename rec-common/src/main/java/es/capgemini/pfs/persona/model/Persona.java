@@ -355,6 +355,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	@OneToMany(mappedBy = "persona", fetch = FetchType.LAZY)
 	@JoinColumn(name = "PER_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<PersonaGrupo> grupos;
 
 	@Transient
@@ -519,6 +520,10 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	@LazyToOne(LazyToOneOption.PROXY)
 	private PersonaFormulas formulas;
 	
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_SIC_ID")
+	private DDSituacConcursal sitConcursal;	
 
 	/**
 	 * @return the id
@@ -1433,24 +1438,7 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 
 	}
 
-	/**
-	 * Compara si ambas personas son el mismo.
-	 * 
-	 * @param persona
-	 *            Persona
-	 * @return boolean
-	 */
-	public boolean equals(Persona persona) {
-		if (id == null || persona == null || persona.getId() == null) {
-			throw new RuntimeException("No se puede comparar personas null");
-		}
-		if (id.longValue() == persona.getId().longValue()) {
-			return true;
-		}
-		return false;
-	}
 
-	// TODO Revisar si es necesario la sobrecarga del equals
 	/**
 	 * Compara si ambas personas son el mismo.
 	 * 
@@ -1460,8 +1448,17 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 	 */
 	@Override
 	public boolean equals(Object persona) {
+		if(persona == null){
+			return false;
+		}
+		if(this.getClass() != persona.getClass()){
+			return false;
+		}
 		Persona p = (Persona) persona;
-		return equals(p);
+		if (id.longValue() == p.getId().longValue()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -3106,4 +3103,17 @@ public class Persona implements Serializable, Auditable, Describible, FieldHandl
 		this.personasTelefono = personasTelefono;
 	}
 
+	/**
+	 * @return the sitConcursal
+	 */
+	public DDSituacConcursal getSitConcursal() {
+		return sitConcursal;
+	}
+
+	/**
+	 * @param sitConcursal the sitConcursal to set
+	 */
+	public void setSitConcursal(DDSituacConcursal sitConcursal) {
+		this.sitConcursal = sitConcursal;
+	}
 }

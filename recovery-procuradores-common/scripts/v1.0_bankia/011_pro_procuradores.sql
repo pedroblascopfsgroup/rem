@@ -1,0 +1,71 @@
+CREATE TABLE PRO_PROCURADORES
+(
+  PRO_ID  NUMBER(16),
+  NOMBRE  VARCHAR2(50 CHAR)
+)
+TABLESPACE BANK01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX PK_PRO_PROCURADORES ON PRO_PROCURADORES
+(PRO_ID)
+LOGGING
+TABLESPACE BANK_IDX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE PRO_PROCURADORES ADD (
+  CONSTRAINT PRO_PROCURADORES_PK
+ PRIMARY KEY
+ (PRO_ID));
+
+
+SET DEFINE OFF;
+Insert into PRO_PROCURADORES
+   (PRO_ID, NOMBRE)
+ Values
+   (1, 'Procurador 1');
+Insert into PRO_PROCURADORES
+   (PRO_ID, NOMBRE)
+ Values
+   (2, 'Procurador 2');
+Insert into PRO_PROCURADORES
+   (PRO_ID, NOMBRE)
+ Values
+   (3, 'Procurador 3');
+Insert into PRO_PROCURADORES
+   (PRO_ID, NOMBRE)
+ Values
+   (4, 'Procurador 4');
+Insert into PRO_PROCURADORES
+   (PRO_ID, NOMBRE)
+ Values
+   (5, 'Procurador 5');
+COMMIT;

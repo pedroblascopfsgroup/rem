@@ -4,7 +4,9 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
- 
+<%@ taglib prefix="pfs" tagdir="/WEB-INF/tags/pfs"%>
+<%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms" %>
+
 (function(){
 	var limit=25;
 	
@@ -27,8 +29,9 @@
 				store:optionsTipoGestorStore
 				,displayField:'descripcion'
 				,valueField:'id'
-				,mode: 'remote'
-				,editable: false
+				,mode: 'local'
+				,forceSelection: true
+				,editable: true
 				,emptyText:'---'
 				,triggerAction: 'all'
 				,fieldLabel : '<s:message code="ext.asuntos.busqueda.filtro.tipoGestor" text="**Tipo de gestor"/>'
@@ -73,9 +76,10 @@
 				store:optionsDespachoStore
 				,displayField:'descripcion'
 				,valueField:'cod'
-				,mode: 'remote'
+				,mode: 'local'
 				,emptyText:'---'
-				,editable: false
+				,forceSelection: true
+				,editable: true
 				,triggerAction: 'all'
 				,disabled:true
 				,resizable:true
@@ -170,6 +174,53 @@
 
 
 
+	<%-- PRODUCTO-1273 - Nuevos campos  --%>
+	<pfs:datefield labelKey="plugin.coreextension.multigestor.fechaDesde" label="**Fecha alta desde" name="fechaAltaDesde" />
+	<pfs:datefield labelKey="plugin.coreextension.multigestor.fechaHasta" label="**Fecha alta hasta" name="fechaAltaHasta" />
+	var fechaAltaFieldSet = new Ext.form.FieldSet({
+		title : '<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.fechaAlta.text" text="**Fecha Alta" />'
+		,layout:'column'
+		,autoHeight:true
+		,border:true
+		,bodyStyle:'padding:3px;cellspacing:20px;'
+		,viewConfig : { columns : 1 }
+		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:300 }
+		,items : [{items:[fechaAltaDesde, fechaAltaHasta]}]
+		,doLayout:function() {
+				var margin = 40;
+				this.setWidth(340-margin);
+				Ext.Panel.prototype.doLayout.call(this);
+		}
+	});
+	
+	
+	var documentoCif = app.creaText('documentoCif', '<s:message code="plugin.config.despachoExternoExtras.field.documento" text="**documentoCif" />'); 
+	
+	//Listado de Estados, viene del flow
+	var dictTipoAsunto = <app:dict value="${tiposDocumentos}" blankElement="true" blankElementValue="" blankElementText="---"/>;
+	
+	
+	//store generico de combo diccionario
+	var comboTipoAsuntoStore = new Ext.data.JsonStore({
+	       fields: ['id', 'descripcion']
+	       ,root: 'diccionario'
+	       ,data : dictTipoAsunto
+	});
+	
+	//Campo Combo Estados
+	var tipoDocumento = new Ext.form.ComboBox({
+				store: comboTipoAsuntoStore
+				,displayField:'descripcion'
+				,valueField:'descripcion'
+				,mode: 'local'
+				,editable: false
+				,emptyText:'---'
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="plugin.config.despachoExternoExtras.field.tipoDocumento" text="**Tipo Documento"/>'
+				<app:test id="comboTipoDocumento" addComa="true"/>
+	});
+
+
 var recargarComboGestores = function(){
 	
 		
@@ -187,6 +238,18 @@ var recargarComboGestores = function(){
 			return true;
 		}
 		if (comboTiposGestor.getValue() != '' ){
+			return true;
+		}
+		if (fechaAltaHasta.getValue() != '' ){
+			return true;
+		}
+		if (fechaAltaDesde.getValue() != '' ){
+			return true;
+		}
+		if(tipoDocumento.getValue() != '') {
+			return true;
+		}
+		if(documentoCif.getValue() != '') {
 			return true;
 		}
 			
@@ -207,7 +270,10 @@ var recargarComboGestores = function(){
 			comboDespachos:comboDespachos.getValue()
 			,comboGestor:comboGestor.getValue()
 			,comboTiposGestor:comboTiposGestor.getValue()
-			
+			,fechaAltaHasta: fechaAltaHasta.getValue()
+			,fechaAltaDesde: fechaAltaDesde.getValue()
+			,tipoDocumento: tipoDocumento.getValue() 
+			,documentoCif: documentoCif.getValue()
 		};
 	};
 	
@@ -219,16 +285,16 @@ var recargarComboGestores = function(){
 		,autoWidth:true
 		,layout:'table'
 		,title : '<s:message code="asuntos.busqueda.filtros.tabs.filtrosGestores.title" text="**Filtro gestores" />'
-		,layoutConfig:{columns:1}
+		,layoutConfig:{columns:2}
 	    ,header: false
 	    ,border:false
 		//,titleCollapse : true
 		//,collapsible:true
-		,bodyStyle:'padding:5px;cellspacing:10px'
-		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:10px;padding-right:10px;padding-top:1px;padding-bottom:1px;cellspacing:10px'}
-		,items:[{items:[comboTiposGestor]}
-				,{items:[comboDespachos]}
-				,{items:[comboGestor]}
+		,bodyStyle:'padding:5px;cellspacing:20px'
+		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
+		,items:[{items:[comboTiposGestor, comboDespachos,comboGestor]}
+				,{items:[tipoDocumento, documentoCif, fechaAltaFieldSet]}
+				
 		]
 		,listeners:{	
 			getParametros: function(anadirParametros, hayError) {
@@ -247,7 +313,10 @@ var recargarComboGestores = function(){
     		           comboDespachos
     		           ,comboGestor
     		           ,comboTiposGestor
-    		           
+    		           ,fechaAltaDesde
+    		           ,fechaAltaHasta
+    		           ,tipoDocumento
+    		           ,documentoCif
 	           ]); 
 	           comboGestor.setDisabled(true);
 	           comboDespachos.setDisabled(true);

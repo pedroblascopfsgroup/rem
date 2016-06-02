@@ -1,18 +1,20 @@
 
 
 -- ajustes en despachos
+
+update cm01.des_despacho_externo set dd_tde_id = (select dd_tde_id from cmmaster.dd_tde_tipo_despacho where dd_tde_codigo = 'D-SUADMCON')
+where des_despacho = 'Despacho Supervisor administracion contable';
+
 --insetrtamos el tipo despacho SUP_PCO
 
 insert into CMMASTER.dd_tde_tipo_despacho tde (tde.DD_TDE_ID, tde.DD_TDE_CODIGO, tde.DD_TDE_DESCRIPCION, tde.DD_TDE_DESCRIPCION_LARGA, tde.FECHACREAR, tde.usuariocrear)
 values (CMMASTER.s_dd_tde_tipo_despacho.nextval, 'SUP_PCO', 'Supervisor expediente judicial', 'Supervisor expediente judicial', sysdate, 'SAG');
 
-/*
 insert into CM01.TGP_TIPO_GESTOR_PROPIEDAD tgp (tgp.TGP_ID, dd_tge_id, tgp_clave, tgp_valor, usuariocrear, fechacrear)
 values 
 (CM01.s_TGP_TIPO_GESTOR_PROPIEDAD.nextval, (select dd_tge_id from CMMASTER.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUP_PCO'),
  'DES_VALIDOS', (select tde.dd_tde_codigo from CMMASTER.dd_tde_tipo_despacho tde where tde.dd_tde_codigo = 'SUP_PCO'),
  'SAG', sysdate);
-*/
 
 --ponemos los tipos de desopachos que faltan.
 

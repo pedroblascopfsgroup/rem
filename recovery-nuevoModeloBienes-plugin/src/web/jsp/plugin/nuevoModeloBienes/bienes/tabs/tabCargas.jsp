@@ -401,7 +401,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCargas.cargas.revisionCargas.titulo" text="**Revision de cargas"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400}
-	    ,items : [{items:[fechaMatricula,sinCargas,observaciones<sec:authorize ifNotGranted="SOLO_CONSULTA">,btnEditarRevisionCarga</sec:authorize>]}]
+	    ,items : [{items:[fechaMatricula,sinCargas,observaciones<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTON_EDITAR_REVISION_CARGA">,btnEditarRevisionCarga</sec:authorize>]}]
 	});
 
 	<%-- PROPUESTA DE CANCELACION DE CARGAS --%>
@@ -459,7 +459,7 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabCargas.cargas.propuestaCancelacion.titulo" text="**Propuesta de cancelacion de cargas"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400}
-	    ,items : [{items:[resumen, propuesta<sec:authorize ifNotGranted="SOLO_CONSULTA">,btnEditarPropuestaCancelacionCarga</sec:authorize>]}]
+	    ,items : [{items:[resumen, propuesta<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTON_EDITAR_PROPUESTA_CANCEL_CARGA">,btnEditarPropuestaCancelacionCarga</sec:authorize>]}]
 	});
 	
 	var infoAdicionalCargas = new Ext.Panel({

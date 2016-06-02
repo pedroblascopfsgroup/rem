@@ -201,6 +201,12 @@ public class NMBPersonaManager extends BusinessOperationOverrider<PersonaApi> im
 	}
 
 	@Override
+	public List<Persona> getPersonasByDni(String dni) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public Boolean getAccionFSRByIdPersona(Long idPersona) {
 		// TODO Auto-generated method stub
 		return null;

@@ -227,11 +227,13 @@ public class EXTTareaNotifiacionDaoImpl extends
 	public Date buscarFechaFinEstadoExpediente(Long idExpediente) {
 		List<Object> params = new ArrayList<Object>();
 		String query = "select tn from TareaNotificacion tn left join  tn.expediente.estadoItinerario est where tn.estadoItinerario.codigo = est.codigo and tn.expediente.id = ? and tn.auditoria.borrado = 0";
-		query += " and tn.subtipoTarea.codigoSubtarea in ( ?, ?, ?)";
+		query += " and tn.subtipoTarea.codigoSubtarea in ( ?, ?, ?, ?, ?)";
 		params.add(idExpediente);
 		params.add(SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE);
 		params.add(SubtipoTarea.CODIGO_REVISAR_EXPEDIENE);
 		params.add(SubtipoTarea.CODIGO_DECISION_COMITE);
+		params.add(SubtipoTarea.CODIGO_TAREA_EN_SANCION);
+		params.add(SubtipoTarea.CODIGO_TAREA_SANCIONADO);
 		List<TareaNotificacion> tareas = getHibernateTemplate().find(query,
 				params.toArray());
 		if (tareas != null && tareas.size() > 0) {
@@ -557,11 +559,13 @@ public class EXTTareaNotifiacionDaoImpl extends
 		List<Object> params = new ArrayList<Object>();
 		String query = "select tn from TareaNotificacion tn where tn.expediente.id = ?";
 		query += " and tn.auditoria.borrado = false ";
-		query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?)";
+		query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?, ?, ?)";
 		params.add(idExpediente);
 		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
 		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
 		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+		params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
 		List<TareaNotificacion> notificaciones = getHibernateTemplate().find(
 				query, params.toArray());
 
@@ -1452,6 +1456,7 @@ public class EXTTareaNotifiacionDaoImpl extends
 		cancelarTareas(notificaciones);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<TareaNotificacion> getListByAsunto(Long idAsunto) {
 		String hql = "FROM TareaNotificacion t WHERE t.asunto.id = ?";
@@ -1604,24 +1609,6 @@ public class EXTTareaNotifiacionDaoImpl extends
 		hql.append(")");
 	}
 
-	private void filtroTareasEnEsperaAntiguo(DtoBuscarTareaNotificacion dto,
-			HashMap<String, Object> params, StringBuffer hql) {
-		// hql.append(" join gaa.tipoGestor.supervisados ges ");
-		// hql
-		// .append("where gaa.id in ("
-		// + getIdGaaSupervisoresDeUsuarioLogado("usuarioLogado")
-		// + ")");
-		// + " or gaa.id in ("
-		// + getIdGaaGestoresSupervisadosPorUsuarioLogado("usuarioLogado")
-		// + ")");
-		hql.append(" (asu in (");
-		hql.append("select a from EXTGestorAdicionalAsunto gaa join gaa.asunto a ");
-		hql.append("where ((gaa.gestor.usuario.id = :usuarioLogado) and (gaa.tipoGestor.codigo != 'SUP') and (tn.subtipoTarea.tipoGestor.codigo = 'SUP'))"
-				+ " or ((tn.subtipoTarea.tipoGestor.codigo = 'GEXT') and (gaa.tipoGestor.codigo = 'SUP') and (gaa.gestor.usuario.id = :usuarioLogado))");
-		hql.append("))");
-		params.put("usuarioLogado", dto.getUsuarioLogado().getId());
-	}
-
 	private void filtroTareasPendientes(DtoBuscarTareaNotificacion dto,
 			HashMap<String, Object> params, StringBuffer hql) {
 		hql.append(" (asu in (");
@@ -1639,13 +1626,6 @@ public class EXTTareaNotifiacionDaoImpl extends
 		hql.append("where (ges.gestorSupervisado.id = tn.subtipoTarea.tipoGestor.id) and (gaa.gestor.usuario.id = :usuarioLogado)");
 		hql.append("))");
 		params.put("usuarioLogado", dto.getUsuarioLogado().getId());
-	}
-
-	private String getIdGaaSupervisoresDeUsuarioLogado(String paramUsuarioLogado) {
-		return "select gaa.id from EXTGestorAdicionalAsunto gaa "
-				+ " join gaa.tipoGestor.supervisados ges"
-				+ " where tn.subtipoTarea.tipoGestor.id = gaa.tipoGestor.id"
-				+ " and gaa.asunto.id";
 	}
 	
 	/**

@@ -28,10 +28,10 @@ new Ext.Button({
 					app.openBrowserWindow(flow,params);
 			  }
 			 }				
-      		,
+      		
  
       		<sec:authorize ifAllGranted="EXPORTAR_FICHAGLOBAL">
-      		{text:'<s:message code="plugin.mejoras.asuntos.btnExportarFichaGlobal" text="**Exportar ficha global" />'
+      		, {text:'<s:message code="plugin.mejoras.asuntos.btnExportarFichaGlobal" text="**Exportar ficha global" />'
       		  ,iconCls:'icon_pdf'
       		  ,handler : function() {
 					var flow = 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.exportarFichaGlobal';
@@ -39,8 +39,9 @@ new Ext.Button({
 					app.openBrowserWindow(flow,params);
 			  }
 			 }	
-      		,</sec:authorize>
-      		<sec:authorize ifAllGranted="EXPORTAR_COMUNICACIONES">{ 
+      		</sec:authorize>
+      		<sec:authorize ifAllGranted="EXPORTAR_COMUNICACIONES">
+      		, { 
       		text:'<s:message code="plugin.mejoras.asuntos.exportarComunicaciones" text="**Exportar comunicaciones" />'
         	,iconCls:'icon_pdf'
 			,condition: ''
@@ -49,9 +50,9 @@ new Ext.Button({
 				var params = {id:data.id};
 				app.openBrowserWindow(flow,params);
 			}}
-      		,</sec:authorize>
+      		</sec:authorize>
       		<sec:authorize ifAllGranted="EXPORTAR_HISTORICO">
-      		{text:'<s:message code="plugin.mejoras.asuntos.exportarHistorico" text="**Exportar hist�rico" />'
+      		, {text:'<s:message code="plugin.mejoras.asuntos.exportarHistorico" text="**Exportar hist�rico" />'
 		        ,iconCls:'icon_pdf'
 				,condition: ''
 		        ,handler: function() {

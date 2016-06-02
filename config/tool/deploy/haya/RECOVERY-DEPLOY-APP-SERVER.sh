@@ -26,6 +26,7 @@ BCC_DIR_PLANTILLAS=$BASE_DIR/bcc/plantillas/
 
 INTEGRATION_INPUT=$FILES_BASE_DIR/integration/messages/input
 INTEGRATION_OUTPUT=$FILES_BASE_DIR/integration/messages/output
+FILES_TEMPORARYPATH=$BASE_DIR/pfs/temporaryFiles
 
 echo "Copiando fichero de configuración ..."
 cp config/$1/devon.properties $BASE_DIR/
@@ -44,15 +45,22 @@ cp -r plantillas/bcc/* $BCC_DIR_PLANTILLAS
 chmod -R og+rwx $SAREB_DIR_PLANTILLAS
 chmod -R og+rwx $BCC_DIR_PLANTILLAS
 
-echo "Creando directorios para mensajería"
-mkdir -p $INTEGRATION_INPUT
-mkdir -p $INTEGRATION_OUTPUT
-chmod -R og+rwx $INTEGRATION_INPUT
-chmod -R og+rwx $INTEGRATION_OUTPUT
+if [ ! -e $FILES_TEMPORARYPATH ]; then
+    echo "Creando directorio de ficheros temporales"
+    mkdir -p $FILES_TEMPORARYPATH
+fi 
 
-#echo "Copiando ficheros WAR ..."
-#if [ -f war/pfs.war ]; then
-#    cp war/pfs.war /wlapps/applications/PFS/
-#fi
+if [ ! -e $INTEGRATION_INPUT ]; then
+    echo "Creando directorios para mensajería"
+    mkdir -p $INTEGRATION_INPUT
+    mkdir -p $INTEGRATION_OUTPUT
+    chmod -R og+rwx $INTEGRATION_INPUT
+    chmod -R og+rwx $INTEGRATION_OUTPUT
+fi
+
+echo "Copiando ficheros WAR ..."
+if [ -f war/pfs.war ]; then
+    cp war/pfs.war $BASE_DIR/
+fi
 
 cd $LOCAL_PATH

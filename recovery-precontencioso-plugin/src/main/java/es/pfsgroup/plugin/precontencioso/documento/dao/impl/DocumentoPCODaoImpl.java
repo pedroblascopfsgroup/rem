@@ -9,7 +9,9 @@ import org.springframework.stereotype.Repository;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.persona.model.Persona;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.precontencioso.documento.dao.DocumentoPCODao;
+import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
@@ -45,8 +47,23 @@ public class DocumentoPCODaoImpl extends AbstractEntityDao<DocumentoPCO, Long> i
 	 * @return lista documentos
 	 */
     @SuppressWarnings("unchecked")    
-    public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO){
+    public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCO(Long idProcedimientoPCO, Long idTipoDocumento){
         String hql = "from DocumentoPCO d where d.procedimientoPCO.procedimiento.id = ? and d.auditoria.borrado = 0 ";
+        if(!Checks.esNulo(idTipoDocumento)){hql += " and d.tipoDocumento.id = "+idTipoDocumento;}
+        List<DocumentoPCO> documentosProc = getHibernateTemplate().find(hql, idProcedimientoPCO);
+  
+		return documentosProc;    	
+    }
+    
+	/**
+	 * Obtener los documentos de un procedimientoPCO No descartados
+	 * 
+	 * @param idProcedimientoPCO
+	 * @return lista documentos
+	 */
+    @SuppressWarnings("unchecked")    
+    public List<DocumentoPCO> getDocumentosPorIdProcedimientoPCONoDescartados(Long idProcedimientoPCO){
+        String hql = "from DocumentoPCO d where d.procedimientoPCO.id = ? and d.auditoria.borrado = 0 and d.estadoDocumento.codigo != '" + DDEstadoDocumentoPCO.DESCARTADO + "'";
         List<DocumentoPCO> documentosProc = getHibernateTemplate().find(hql, idProcedimientoPCO);
   
 		return documentosProc;    	

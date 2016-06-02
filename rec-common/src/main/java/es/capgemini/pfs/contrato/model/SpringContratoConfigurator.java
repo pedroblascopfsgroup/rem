@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.APPConstants;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.recovery.common.api.CommonProjectContext;
 
 /**
@@ -33,5 +34,7 @@ public class SpringContratoConfigurator implements ApplicationContextAware {
 		
 		// Se setea el projectContext
 		Contrato.setProjectContext(projectContext);
+		
+		EXTDDTipoGestor.setProjectContext(projectContext);
 	}	
 }

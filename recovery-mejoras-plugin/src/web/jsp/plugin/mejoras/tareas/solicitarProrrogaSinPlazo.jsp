@@ -65,10 +65,7 @@
 		,items : [
 		 	txtEntidad,txtDescripcionEntidad,txtSituacion,txtFechaVenc
 		]
-	});
-	
-	
-	
+	});	
 	
 	var label = new Ext.form.Label({
 	   	text:'<s:message code="solicitarprorroga.descripcion" text="**Solicitar prorroga" />'
@@ -119,7 +116,7 @@
 		//dias maximo de prorroga
 		//,maxValue : maxDate
 		,name:'fechaPropuesta'	
-		//,value:endDate   //TODO: Descomentar para activar que se abra el calendario por la primera fecha posible
+		,value:endDate   //TODO: Descomentar para activar que se abra el calendario por la primera fecha posible
 	});
 	
 	var titulodescripcion = new Ext.form.Label({
@@ -131,9 +128,7 @@
 	   	text:'<s:message code="solicitarprorroga.errorFecha" text="**La tarea está vencida y no es posible solicitar una prorroga para ella" />'
 		,style:'color:red;font-weight:bolder; font-size:11',bodyStyle:'padding:5px'
 		,hidden: true
-	});
-
-				
+	});				
 			
 	var descripcion = new Ext.form.TextArea({
 		width:550
@@ -146,6 +141,7 @@
 		,name:'descripcionCausa'
 		
 	});
+	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
@@ -153,7 +149,8 @@
 			page.submit({
 				eventName : 'cancel'
 				,formPanel : panelEdicion
-				,success : function(){ page.fireEvent(app.event.CANCEL); } 	
+				,success : function(){ 
+					page.fireEvent(app.event.CANCEL); } 	
 			});
 		}
 	});

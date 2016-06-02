@@ -18,6 +18,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -29,6 +30,7 @@ import es.capgemini.pfs.persona.model.Persona;
 @Entity
 @Table(name = "PER_GCL", schema = "${entity.schema}")
 @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class PersonaGrupo implements Serializable, Auditable {
 
     private static final long serialVersionUID = -5596170844767184502L;

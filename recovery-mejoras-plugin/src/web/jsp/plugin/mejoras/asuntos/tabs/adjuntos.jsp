@@ -177,6 +177,38 @@
 	});
 
 	subir.on('click', function(){
+	
+		var comboTipoFichero = new Ext.form.ComboBox(
+			{
+				xtype:'combo'
+				,name:'comboTipoFichero'
+				<app:test id="tipoProcedimientoCombo" addComa="true" />
+				,hiddenName:'comboTipoFichero'
+				,store:tipoFicheroStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,emptyText:'----'
+				,width:250
+				,resizable:true
+				,triggerAction: 'all'
+				,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+			}
+		);
+		
+		var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
+		var fechaCaducidad = new Ext.form.DateField({
+    		xtype: 'datefield'
+            ,fieldLabel: '<s:message code="fichero.upload.fechaCaducidad" text="**Fecha de caducidad" />'
+            ,name: 'fechaCaducidad'
+            ,submitFormat: 'd/m/Y'
+ 			,format : 'd/m/Y'
+ 			,renderer: date_renderer
+ 			,hideMode: 'offsets'
+    	});
+    	
+    	fechaCaducidad.setVisible(false);
+
 	    var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -185,24 +217,11 @@
 		        ,defaults: {
 		            allowBlank: false
 		            ,msgTarget: 'side'
-					,height:45
+					,height:25
 		        }
-		        ,items: [{
-						xtype:'combo'
-						,name:'comboTipoFichero'
-						<app:test id="tipoProcedimientoCombo" addComa="true" />
-						,hiddenName:'comboTipoFichero'
-						,store:tipoFicheroStore
-						,displayField:'descripcion'
-						,valueField:'codigo'
-						,mode: 'local'
-						,emptyText:'----'
-						,width:250
-						,resizable:true
-						,triggerAction: 'all'
-						,allowBlank:true
-						,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'}
-,{
+		        ,items: [
+		        	comboTipoFichero
+		        	,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -213,7 +232,11 @@
 			                iconCls: 'icon_mas'
 			            }
 			            ,bodyStyle: 'width:50px;'
-		        },{xtype: 'hidden', name:'id', value:panel.getAsuntoId()}]
+		        }
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">			     
+		    	,fechaCaducidad
+</sec:authorize>		        
+		        ,{xtype: 'hidden', name:'id', value:panel.getAsuntoId()}]
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
@@ -237,11 +260,35 @@
 		        }]
 		    });
 
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		    
+		comboTipoFichero.on('select', function(){
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('adjuntoasunto/isFechaCaducidadVisible')
+				,params: {codigoFichero:this.value}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					
+					if(r.fechaCaducidadVisible) {
+						fechaCaducidad.setVisible(true);
+						fechaCaducidad.allowBlank = false;
+					}		
+					else {
+						fechaCaducidad.setVisible(false);
+						fechaCaducidad.allowBlank = true;
+					}									
+				}
+			});
+		});
+</sec:authorize>		    
+
 		var win =new Ext.Window({
 		         width:400
 				,minWidth:400
-		        ,height:125
-				,minHeight:125
+		        ,height:180
+				,minHeight:180
 		        ,layout:'fit'
 		        ,border:false
 		        ,closable:true
@@ -267,8 +314,54 @@
 	    }, tipoFicheroRecord)
 	       
 	});
+	
+	var tipoDocRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+		
+	]);
+	
+	var tipoDocStore =	page.getStore({
+	       flow: 'adjuntoasunto/getTiposDeDocumentoAdjuntoProcedimiento'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	    }, tipoDocRecord)
+	});
 
 	subirAdjuntoPersona.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
+		
+		var comboTipoFichero = new Ext.form.ComboBox(
+			{
+				xtype:'combo'
+				,name:'comboTipoDoc'
+				<app:test id="tipoDocCombo" addComa="true" />
+				,hiddenName:'comboTipoDoc'
+				,store:tipoDocStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,emptyText:'----'
+				,width:250
+				,resizable:true
+				,triggerAction: 'all'
+				,fieldLabel : 'Tipo documento'
+			}
+		);
+		
+		var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
+		var fechaCaducidad = new Ext.form.DateField({
+    		xtype: 'datefield'
+            ,fieldLabel: '<s:message code="fichero.upload.fechaCaducidad" text="**Fecha de caducidad" />'
+            ,name: 'fechaCaducidad'
+            ,submitFormat: 'd/m/Y'
+ 			,format : 'd/m/Y'
+ 			,renderer: date_renderer
+ 			,hideMode: 'offsets'
+    	});
+    	
+    	fechaCaducidad.setVisible(false);
+				
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -279,7 +372,9 @@
 		            ,msgTarget: 'side'
 			    ,height:45
 		        }
-		        ,items: [{
+		        ,items: [
+		        	comboTipoFichero
+		        	,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -290,7 +385,11 @@
 			                iconCls: 'icon_mas'
 			            }
 			            ,bodyStyle: 'width:50px;'
-		        },{xtype: 'hidden', name:'id', value:idPersona}]
+		        }
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">			     
+			    ,fechaCaducidad
+</sec:authorize>
+				,{xtype: 'hidden', name:'id', value:idPersona}]
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
@@ -313,12 +412,36 @@
 		            }
 		        }]
 		    });
+		    
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		    
+		comboTipoFichero.on('select', function(){
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('adjuntoasunto/isFechaCaducidadVisible')
+				,params: {codigoFichero:this.value}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					
+					if(r.fechaCaducidadVisible) {
+						fechaCaducidad.setVisible(true);
+						fechaCaducidad.allowBlank = false;
+					}		
+					else {
+						fechaCaducidad.setVisible(false);
+						fechaCaducidad.allowBlank = true;
+					}									
+				}
+			});
+		});
+</sec:authorize>			    
 
 		var win =new Ext.Window({
 		         width:400
 				,minWidth:400
-		        ,height:125
-				,minHeight:125
+		        ,height:180
+				,minHeight:180
 		        ,layout:'fit'
 		        ,border:false
 		        ,closable:true
@@ -331,6 +454,39 @@
 	});
 
 	subirAdjuntoExpediente.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE" />'});
+		
+		var comboTipoFichero = new Ext.form.ComboBox(
+			{
+				xtype:'combo'
+				,name:'comboTipoDoc'
+				<app:test id="tipoDocCombo" addComa="true" />
+				,hiddenName:'comboTipoDoc'
+				,store:tipoDocStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,emptyText:'----'
+				,width:250
+				,resizable:true
+				,triggerAction: 'all'
+				,fieldLabel : 'Tipo documento'
+			}
+		);
+		
+		var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
+		var fechaCaducidad = new Ext.form.DateField({
+    		xtype: 'datefield'
+            ,fieldLabel: '<s:message code="fichero.upload.fechaCaducidad" text="**Fecha de caducidad" />'
+            ,name: 'fechaCaducidad'
+            ,submitFormat: 'd/m/Y'
+ 			,format : 'd/m/Y'
+ 			,renderer: date_renderer
+ 			,hideMode: 'offsets'
+    	});
+    	
+    	fechaCaducidad.setVisible(false);
+		
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -339,9 +495,11 @@
 		        ,defaults: {
 		            allowBlank: false
 		            ,msgTarget: 'side'
-					,height:45
+					,height:25
 		        }
-		        ,items: [{
+		        ,items: [
+		        	comboTipoFichero
+		        	,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -352,7 +510,11 @@
 			                iconCls: 'icon_mas'
 			            }
 			            ,bodyStyle: 'width:50px;'
-		        },{xtype: 'hidden', name:'id', value:idExpediente}]
+		        }
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">			     
+		    	,fechaCaducidad
+</sec:authorize>		        
+		        ,{xtype: 'hidden', name:'id', value:idExpediente}]
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
@@ -375,12 +537,36 @@
 		            }
 		        }]
 		    });
+		    
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		    
+		comboTipoFichero.on('select', function(){
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('adjuntoasunto/isFechaCaducidadVisible')
+				,params: {codigoFichero:this.value}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					
+					if(r.fechaCaducidadVisible) {
+						fechaCaducidad.setVisible(true);
+						fechaCaducidad.allowBlank = false;
+					}		
+					else {
+						fechaCaducidad.setVisible(false);
+						fechaCaducidad.allowBlank = true;
+					}									
+				}
+			});
+		});
+</sec:authorize>	
 
 		var win =new Ext.Window({
 		         width:400
 			,minWidth:400
-		        ,height:125
-			,minHeight:125
+		        ,height:180
+			,minHeight:180
 		        ,layout:'fit'
 		        ,border:false
 		        ,closable:true
@@ -393,6 +579,39 @@
 	});
 
 	subirAdjuntoContrato.on('click', function(){
+		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO" />'});
+		
+		var comboTipoFichero = new Ext.form.ComboBox(
+			{
+				xtype:'combo'
+				,name:'comboTipoDoc'
+				<app:test id="tipoDocCombo" addComa="true" />
+				,hiddenName:'comboTipoDoc'
+				,store:tipoDocStore
+				,displayField:'descripcion'
+				,valueField:'codigo'
+				,mode: 'remote'
+				,emptyText:'----'
+				,width:250
+				,resizable:true
+				,triggerAction: 'all'
+				,fieldLabel : 'Tipo documento'
+			}
+		);
+		
+		var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
+		var fechaCaducidad = new Ext.form.DateField({
+    		xtype: 'datefield'
+            ,fieldLabel: '<s:message code="fichero.upload.fechaCaducidad" text="**Fecha de caducidad" />'
+            ,name: 'fechaCaducidad'
+            ,submitFormat: 'd/m/Y'
+ 			,format : 'd/m/Y'
+ 			,renderer: date_renderer
+ 			,hideMode: 'offsets'
+    	});
+    	
+    	fechaCaducidad.setVisible(false);
+		
 		var upload = new Ext.FormPanel({
 		        fileUpload: true
 		        ,height: 55
@@ -401,9 +620,11 @@
 		        ,defaults: {
 		           allowBlank: false
 		           ,msgTarget: 'side'
-		           ,height:45
+		           ,height:25
 		        }
-		        ,items: [{
+		        ,items: [
+		        	comboTipoFichero
+		        	,{
 			            xtype: 'fileuploadfield'
 			            ,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
 			            ,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
@@ -414,7 +635,11 @@
 			                iconCls: 'icon_mas'
 			            }
 			            ,bodyStyle: 'width:50px;'
-		        },{xtype: 'hidden', name:'id', value:idContrato}]
+		        }
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">			     
+		    	,fechaCaducidad
+</sec:authorize>		        
+		        ,{xtype: 'hidden', name:'id', value:idContrato}]
 		        ,buttons: [{
 		            text: 'Subir',
 		            handler: function(){
@@ -437,12 +662,36 @@
 		            }
 		        }]
 		    });
+		    
+<sec:authorize ifAllGranted="PERSONALIZACION-BCC">		    
+		comboTipoFichero.on('select', function(){
+		
+			Ext.Ajax.request({
+				url: page.resolveUrl('adjuntoasunto/isFechaCaducidadVisible')
+				,params: {codigoFichero:this.value}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					
+					if(r.fechaCaducidadVisible) {
+						fechaCaducidad.setVisible(true);
+						fechaCaducidad.allowBlank = false;
+					}		
+					else {
+						fechaCaducidad.setVisible(false);
+						fechaCaducidad.allowBlank = true;
+					}									
+				}
+			});
+		});
+</sec:authorize>
 
 		var win =new Ext.Window({
 		         width:400
 				,minWidth:400
-		        ,height:125
-				,minHeight:125
+		        ,height:180
+				,minHeight:180
 		        ,layout:'fit'
 		        ,border:false
 		        ,closable:true
@@ -529,7 +778,7 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -579,7 +828,7 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_PERSONAS">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -629,7 +878,7 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_EXPEDIENTES">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -679,7 +928,7 @@
 	
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
-		,bbar : [<sec:authorize ifNotGranted="SOLO_CONSULTA">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_CONTRATOS">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -712,7 +961,7 @@
 	
 	grid.on('rowdblclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
-		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId="+panel.getAsuntoId()+"&id="+rec.get('id'));
+		window.open("/pfs/bajarAdjuntoAsunto.htm?asuntoId="+panel.getAsuntoId()+"&id="+rec.get('id')+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 	});
 
 	gridPersonas.on('rowdblclick', function(grid, rowIndex, e){
@@ -728,7 +977,7 @@
 			var id = rec.get('id');
 			if(id!=null && id!='') {
 				// Abrimos el adjunto
-				window.open("/pfs/bajarAdjuntoPersona.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoPersona.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
@@ -765,7 +1014,7 @@
 			// Abrimos el adjunto
 			var id = rec.get('id');
 			if(id!=null && id!='') {
-				window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoExpediente.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
@@ -802,12 +1051,13 @@
 			var id = rec.get('id');
 			if(id!=null && id!='') {
 				// Abrimos el adjunto
-				window.open("/pfs/bajarAdjuntoContrato.htm?&id="+id);
+				window.open("/pfs/bajarAdjuntoContrato.htm?&id="+id+"&nombre="+rec.data.nombre+"&extension="+rec.data.contentType);
 			}
 		}
 	});
 
 	gridContratos.on('rowclick', function(grid, rowIndex, e){
+
 		var rec = grid.getStore().getAt(rowIndex);
 		var descripcionEntidad = rec.get('descripcionEntidad');
 		if(descripcionEntidad==null || descripcionEntidad=='') {
@@ -823,6 +1073,30 @@
 			editarDescripcionAdjuntoContrato.enable();
 		}
 	});
+	
+	var gestionarGrid = function(sm) {
+
+		if(sm.selections.getCount() > 0) {
+			var ds = sm.grid.store;
+            var index = ds.indexOf(sm.getSelected(), true);
+			sm.grid.fireEvent('rowclick', sm.grid, index);
+		}
+		else {
+			sm.grid.bottomToolbar.setDisabled(true);
+		}
+	}
+	
+	gridContratos.getSelectionModel().on('selectionchange', gestionarGrid);
+	gridExpedientes.getSelectionModel().on('selectionchange', gestionarGrid);
+	gridPersonas.getSelectionModel().on('selectionchange', gestionarGrid);
+		
+	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
+		borrar.setVisible(false);
+		editarDescripcionAdjuntoAsunto.setVisible(false);
+		editarDescripcionAdjuntoPersona.setVisible(false);
+		editarDescripcionAdjuntoExpediente.setVisible(false);
+		editarDescripcionAdjuntoContrato.setVisible(false);
+	</sec:authorize>
 
 	function addPanel2Panel(grid){
 		panel.add (new Ext.Panel({

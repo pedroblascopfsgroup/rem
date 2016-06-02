@@ -50,6 +50,9 @@
             for (var tab=0; tab < asuntoTabPanel.items.length; tab++) {
                 asuntoTabPanel.items.get(tab).fireEvent('limpiar');
             }
+            asuntosStore.removeAll();
+            botonesTabla.hide();
+            columMemoryPlugin.idArray = [];
         }
     });
     
@@ -127,40 +130,34 @@
             var anadirParametros = function(newParametros) {
                 for (var i in newParametros) {
                     hayParametros = true;
-					
                     parametros[i] = newParametros[i];
                     if(i == 'params'){
-                    	
                     	parametrosTab[j] = newParametros[i];
                     	j++;
                     }
                 }
-                
-                
             };
-            
             var error=false;
-            
             var hayError = function() {
                 error = true;
             };
-            
-            for (var tab=0;tab < asuntoTabPanel.items.length && error==false;tab++) {
-            	 asuntoTabPanel.items.get(tab).fireEvent('getParametros', anadirParametros, hayError);
-            }
-            
+			try {
+        		for (var tab=0;tab < asuntoTabPanel.items.length && error==false;tab++) {
+        	 		asuntoTabPanel.items.get(tab).fireEvent('getParametros', anadirParametros, hayError);
+        		}
+    		}catch(e){
+        		fwk.log(e);
+    		}
             if (hayParametros) {
-			
-			var y = 0;
+				var y = 0;
 				var paramAux;
 				for(var i in parametrosTab){
 						paramAux = paramAux+'_param_'+parametrosTab[i];	
 				}
 				parametros['params'] = paramAux;
-			
                 panelFiltros.collapse(true);
                 botonesTabla.show();
-				
+                asuntosStore.removeAll();
 				asuntosStore.webflow(parametros); 
 				parametrosTab = new Array();            
                 
@@ -236,21 +233,21 @@
     	    var apellido2Str = separa[1]; 
     	    var nombreStr    = separa[2]; 
     	    
-    	    if(apellido1Str != null && apellido1Str.length > 0)
+    	    if(apellido1Str.length > 0 && apellido1Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + apellido1Str;
     	    }
-    	    if( apellido2Str != null && apellido2Str.length > 0)
+    	    if(apellido2Str.length > 0 && apellido2Str != "null")
     	    {
     	       apellidosNombreStr = apellidosNombreStr + " " + apellido2Str;
     	    }
     	    
-    	    if(apellidosNombreStr!= null && apellidosNombreStr.length > 0)
+    	    if(apellidosNombreStr.length > 0)
     	    {
     	       apellidosNombreStr = apellidosNombreStr + ", ";
     	    }
     	    
-    	    if(nombreStr!= null && nombreStr.length > 0)
+    	    if(nombreStr.length > 0)
     	    {
     	       apellidosNombreStr = apellidosNombreStr + nombreStr;
     	    }
@@ -260,12 +257,14 @@
     	return apellidosNombreStr;    		
     } 
 
+<%--
 	var checlCambioGestor_edit = new Ext.grid.CheckColumn({ 
 		header: '<s:message code="asuntos.listado.check.cambioGestor" text="**Cambiar gestor" />'
 		,dataIndex: 'revisada'
 		,width: 50
 		,sortable: true   
 	});
+--%>
 	
    var rendererChechkbox = function(value, metaData, record, rowIndex, colIndex, store){ 
         if(parseInt(value) == 1){ 

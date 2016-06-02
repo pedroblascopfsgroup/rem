@@ -17,7 +17,8 @@
             <json:property name="tipoPrc" value="${d.tipoPrc}"/>
             <json:property name="desEstadoPrc" value="${d.desEstadoPrc}"/>
             <json:property name="codEstadoPrc" value="${d.codEstadoPrc }"/>      
-            <json:property name="idTarea" value="${d.idTarea}"/>     
+            <json:property name="idTarea" value="${d.idTarea}"/>
+            <json:property name="tarTarea" value="${d.tarTarea}"/>    
         </json:object>
     </json:array>
 </fwk:json>

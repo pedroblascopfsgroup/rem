@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.precontencioso.liquidacion.dto.DDPropietarioPCODto;
 
 
 /**
@@ -45,6 +46,5 @@ public interface PrecontenciosoProjectContext {
 	 * @return mapa con todos los datos de visibilida de los botones
 	 */
 	public Map<String, Boolean> getVisibilidadBotonesPorSeccionYUsuario(String seccion, Usuario usuario);
-
 
 }

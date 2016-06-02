@@ -28,6 +28,7 @@ import es.pfgroup.batch.shell.SynchronizedCheckStatus;
 import es.pfgroup.monioring.bach.load.BatchExecutionData;
 import es.pfgroup.monioring.bach.load.CheckStatusApp;
 import es.pfgroup.monioring.bach.load.CheckStatusResult;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 import es.pfgroup.monioring.bach.load.logic.CheckStatusLogic;
 import es.pfgroup.monioring.bach.load.persistence.CheckStatusPersitenceService;
@@ -99,16 +100,13 @@ public class LaunchViaJMXTests {
 			simulateSuccessExecution(iEntidad);
 			// OK
 
-			final LauncherExitStatus status = launcher.launch(auth, url, mbean,
-					jobName + "=" + entidad, jobName);
+			final LauncherExitStatus status = launcher.launch(auth, url, mbean, jobName + "=" + entidad, jobName);
 
-			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor
-					.forClass(JMXConnectionInfo.class);
+			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor.forClass(JMXConnectionInfo.class);
 
 			verifyCorrectLaunch(captor);
 
-			assertEquals("El código de error no es el esperado",
-					LauncherExitStatus.OK, status);
+			assertEquals("El código de error no es el esperado", LauncherExitStatus.OK, status);
 		} catch (CheckStatusWrongArgumentsException e) {
 			// Aqui no se producirán excepciones
 		}
@@ -128,33 +126,35 @@ public class LaunchViaJMXTests {
 			final String job2 = "myjob2";
 			final String job3 = "myjob3";
 			final String job4 = "myjob4";
-			
-			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3).append(",").append(job4).toString();
-			
-			simulaCheckStatus(new RunJobInfo(iEntidad, job1), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job2), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job3), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job4), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
 
-			final LauncherExitStatus status = launcher.launch(auth, url, mbean,
-					jobName + "=" + entidad, jobsList);
+			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3)
+					.append(",").append(job4).toString();
 
-			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor
-					.forClass(JMXConnectionInfo.class);
+			simulaCheckStatus(new RunJobInfo(iEntidad, job1),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job2),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job3),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job4),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+
+			final LauncherExitStatus status = launcher.launch(auth, url, mbean, jobName + "=" + entidad, jobsList);
+
+			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor.forClass(JMXConnectionInfo.class);
 
 			verifyCorrectLaunch(captor);
 
-			assertEquals("El código de error no es el esperado",
-					LauncherExitStatus.OK, status);
+			assertEquals("El código de error no es el esperado", LauncherExitStatus.OK, status);
 		} catch (CheckStatusWrongArgumentsException e) {
 			// Aqui no se producirán excepciones
 		}
 
 	}
-	
-	
+
 	/**
-	 * En este test sólo se monitorizan varios jobs, no se lanza ninguno a través de JMX
+	 * En este test sólo se monitorizan varios jobs, no se lanza ninguno a
+	 * través de JMX
 	 */
 	@Test
 	public void test_OnlyMonitor_Success_NJobMonitoring() {
@@ -165,29 +165,33 @@ public class LaunchViaJMXTests {
 			final String job2 = "myjob2";
 			final String job3 = "myjob3";
 			final String job4 = "myjob4";
-			
-			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3).append(",").append(job4).toString();
-			
-			simulaCheckStatus(new RunJobInfo(iEntidad, job1), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job2), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job3), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job4), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
 
-			final LauncherExitStatus status = launcher.launch("-", "-", "-",
-					"=" + entidad, jobsList);
+			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3)
+					.append(",").append(job4).toString();
+
+			simulaCheckStatus(new RunJobInfo(iEntidad, job1),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job2),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job3),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job4),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+
+			final LauncherExitStatus status = launcher.launch("-", "-", "-", "=" + entidad, jobsList);
 
 			verifyNoLaunch();
 
-			assertEquals("El código de error no es el esperado",
-					LauncherExitStatus.OK, status);
+			assertEquals("El código de error no es el esperado", LauncherExitStatus.OK, status);
 		} catch (CheckStatusWrongArgumentsException e) {
 			// Aqui no se producirán excepciones
 		}
 
 	}
-	
+
 	/**
-	 * En este test sólo se monitorizan varios jobs, no se lanza ninguno a través de JMX
+	 * En este test sólo se monitorizan varios jobs, no se lanza ninguno a
+	 * través de JMX
 	 */
 	@Test
 	public void test_OnlyMonitor_Failure_NJobMonitoring() {
@@ -198,20 +202,20 @@ public class LaunchViaJMXTests {
 			final String job2 = "myjob2";
 			final String job3 = "myjob3";
 			final String job4 = "myjob4";
-			
-			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3).append(",").append(job4).toString();
-			
-			simulaCheckStatus(new RunJobInfo(iEntidad, job1), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job2), new BatchExecutionData[] {new BatchExecutionData(true, true, true, false)});
 
+			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3)
+					.append(",").append(job4).toString();
 
-			final LauncherExitStatus status = launcher.launch("-", "-", "-",
-					"=" + entidad, jobsList);
+			simulaCheckStatus(new RunJobInfo(iEntidad, job1),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job2),
+					new BatchExecutionData[] { new BatchExecutionData(true, true, true, false) });
+
+			final LauncherExitStatus status = launcher.launch("-", "-", "-", "=" + entidad, jobsList);
 
 			verifyNoLaunch();
 
-			assertEquals("El código de error no es el esperado",
-					LauncherExitStatus.ERROR, status);
+			assertEquals("El código de error no es el esperado", LauncherExitStatus.ERROR, status);
 		} catch (CheckStatusWrongArgumentsException e) {
 			// Aqui no se producirán excepciones
 		}
@@ -230,28 +234,28 @@ public class LaunchViaJMXTests {
 			final String job2 = "myjob2";
 			final String job3 = "myjob3";
 			final String job4 = "myjob4";
-			
-			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3).append(",").append(job4).toString();
-			
-			simulaCheckStatus(new RunJobInfo(iEntidad, job1), new BatchExecutionData[] {new BatchExecutionData(true, false, true, false)});
-			simulaCheckStatus(new RunJobInfo(iEntidad, job2), new BatchExecutionData[] {new BatchExecutionData(true, true, true, false)});
 
-			final LauncherExitStatus status = launcher.launch(auth, url, mbean,
-					jobName + "=" + entidad, jobsList);
+			final String jobsList = new StringBuilder().append(job1).append(",").append(job2).append(",").append(job3)
+					.append(",").append(job4).toString();
 
-			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor
-					.forClass(JMXConnectionInfo.class);
+			simulaCheckStatus(new RunJobInfo(iEntidad, job1),
+					new BatchExecutionData[] { new BatchExecutionData(true, false, true, false) });
+			simulaCheckStatus(new RunJobInfo(iEntidad, job2),
+					new BatchExecutionData[] { new BatchExecutionData(true, true, true, false) });
+
+			final LauncherExitStatus status = launcher.launch(auth, url, mbean, jobName + "=" + entidad, jobsList);
+
+			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor.forClass(JMXConnectionInfo.class);
 
 			verifyCorrectLaunch(captor);
 
-			assertEquals("El código de error no es el esperado",
-					LauncherExitStatus.ERROR, status);
+			assertEquals("El código de error no es el esperado", LauncherExitStatus.ERROR, status);
 		} catch (CheckStatusWrongArgumentsException e) {
 			// Aqui no se producirán excepciones
 		}
 
 	}
-	
+
 	/**
 	 * Invoca un job que previamente está parado y finaliza con un error.
 	 */
@@ -262,16 +266,13 @@ public class LaunchViaJMXTests {
 
 			simulateExecutionFailure(iEntidad);
 
-			final LauncherExitStatus status = launcher.launch(auth, url, mbean,
-					jobName + "=" + entidad, jobName);
+			final LauncherExitStatus status = launcher.launch(auth, url, mbean, jobName + "=" + entidad, jobName);
 
-			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor
-					.forClass(JMXConnectionInfo.class);
+			ArgumentCaptor<JMXConnectionInfo> captor = ArgumentCaptor.forClass(JMXConnectionInfo.class);
 
 			verifyCorrectLaunch(captor);
 
-			assertEquals("El código de error no es el esperado",
-					LauncherExitStatus.ERROR, status);
+			assertEquals("El código de error no es el esperado", LauncherExitStatus.ERROR, status);
 		} catch (CheckStatusWrongArgumentsException e) {
 			// Aqui no se producirán excepciones
 		}
@@ -286,59 +287,58 @@ public class LaunchViaJMXTests {
 		assertEquals(mbean, captor.getValue().getJmxMBean());
 		assertEquals(jobName + "=" + entidad, captor.getValue().getJmxCall());
 	}
-	
+
 	private void verifyNoLaunch() {
 		verifyZeroInteractions(jmxClient);
 
 	}
 
-	private void simulateSuccessExecution(Integer iEntidad)
-			throws CheckStatusWrongArgumentsException {
+	private void simulateSuccessExecution(Integer iEntidad) throws CheckStatusWrongArgumentsException {
 		simulaCheckStatus(new RunJobInfo(iEntidad, jobName),
-				new BatchExecutionData[] {
-						new BatchExecutionData(false, false, false, false), // Aún
-																		// no
-																		// ha
-																		// empezado
+				new BatchExecutionData[] { new BatchExecutionData(false, false, false, false), // Aún
+						// no
+						// ha
+						// empezado
 						new BatchExecutionData(false, false, false, false),
 						new BatchExecutionData(true, false, false, false), // Empieza
-																	// a
-																	// ejecutarse
+						// a
+						// ejecutarse
 						new BatchExecutionData(true, false, false, false),
 						new BatchExecutionData(true, false, true, false) }); // Finaliza
 	}
 
-	private void simulateExecutionFailure(Integer iEntidad)
-			throws CheckStatusWrongArgumentsException {
+	private void simulateExecutionFailure(Integer iEntidad) throws CheckStatusWrongArgumentsException {
 		simulaCheckStatus(new RunJobInfo(iEntidad, jobName),
-				new BatchExecutionData[] {
-						new BatchExecutionData(false, false, false, false), // Aún
-																		// no
-																		// ha
-																		// empezado
+				new BatchExecutionData[] { new BatchExecutionData(false, false, false, false), // Aún
+						// no
+						// ha
+						// empezado
 						new BatchExecutionData(false, false, false, false),
 						new BatchExecutionData(true, false, false, false), // Empieza
-																	// a
-																	// ejecutarse
+						// a
+						// ejecutarse
 						new BatchExecutionData(true, false, false, false),
 						new BatchExecutionData(true, true, true, false) }); // Finaliza
-																		// Con
-																		// errores
+		// Con
+		// errores
 	}
 
-	private void simulaCheckStatus(final RunJobInfo runInfo,
-			final BatchExecutionData[] execution)
+	private void simulaCheckStatus(final RunJobInfo runInfo, final BatchExecutionData[] execution)
 			throws CheckStatusWrongArgumentsException {
 
 		// Aún no se ha empezado a ejecutar
-		OngoingStubbing<BatchExecutionData> stub = when(bmock
-				.getExecutionInfo(eq(runInfo.getEntidad()),
-						eq(runInfo.getJob()), any(Date.class)));
+		OngoingStubbing<BatchExecutionData> stub;
+		try {
+			stub = when(bmock.getExecutionInfo(eq(runInfo.getEntidad()), eq(runInfo.getJob()), any(Date.class)));
 
-		if (execution != null) {
-			for (int i = 0; i < execution.length; i++) {
-				stub = stub.thenReturn(execution[i]);
+			if (execution != null) {
+				for (int i = 0; i < execution.length; i++) {
+					stub = stub.thenReturn(execution[i]);
+				}
 			}
+		} catch (CheckStatusRecoverableException e) {
+			fail("Excepción inesperada");
+			e.printStackTrace();
 		}
 	}
 }

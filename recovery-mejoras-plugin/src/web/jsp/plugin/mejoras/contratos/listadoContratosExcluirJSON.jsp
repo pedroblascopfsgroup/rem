@@ -10,9 +10,11 @@
                     <json:property name="excluir" value="${false}" />
                     <json:property name="codigoContrato" value="${ec.contrato.codigoContrato}" />
                     <json:property name="tipoProducto" value="${ec.contrato.tipoProducto.descripcion}" />
+<c:if test="${ec.contrato.lastMovimiento != null}">                    
                     <json:property name="saldoIrregular" value="${ec.contrato.lastMovimiento.posVivaVencidaAbsoluta}" />
                     <json:property name="diasIrregular" value="${ec.contrato.diasIrregular}" />
                     <json:property name="riesgo" value="${ec.contrato.lastMovimiento.riesgo}" />
+</c:if>                    
 					<json:property name="estadoContrato" value="${ec.contrato.estadoContrato.descripcion}"/>
 					<json:property name="titular" value="${ec.contrato.primerTitular.apellidoNombre}"/>
 					<json:property name="estadoFinanciero" value="${ec.contrato.estadoFinanciero.descripcion}"/>

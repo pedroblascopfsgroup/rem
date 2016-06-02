@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -32,6 +33,7 @@ import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.FichaAceptacion;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comite.dao.ComiteDao;
@@ -44,9 +46,11 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
@@ -64,6 +68,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired
+	private CoreProjectContext context;
 
 	@Autowired(required = false)
 	private List<EXTBusquedaAsuntoFiltroDinamico> filtrosBusquedaDinamica;
@@ -177,9 +184,19 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		 */
 
 		// CODIGO CONTRATO
-		if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
-			hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
-			params.put("filtroCnt", dto.getFiltroContrato());
+//		if (dto.getFiltroContrato() != null && Long.parseLong(dto.getFiltroContrato()) > 0L) {
+//			hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
+//			params.put("filtroCnt", dto.getFiltroContrato());
+//		}
+//		
+		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
+			hql.append(" and TO_CHAR(cnt.nroContrato) like '%'|| :numeroContrato ||'%'");
+			params.put("numeroContrato", dto.getFiltroContrato());
+
+			
+			//hql.append(" and TO_CHAR(cnt.nroContrato) like '%"+dto.getFiltroContrato()+"%'");
+			
+			
 		}
 		// FECHA DESDE
 		if (dto.getFechaCreacionDesde() != null
@@ -252,10 +269,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			// Codigo de procedimiento en juzgado
 			if (dto.getCodigoProcedimientoEnJuzgado() != null
 					&& !dto.getCodigoProcedimientoEnJuzgado().equals("")) {
-				hql.append(" and (");
-				hql.append(" prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
-				hql.append(" ) ");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%'|| :codProcJuz ||'%')");
+				params.put("codProcJuz", dto.getCodigoProcedimientoEnJuzgado());
+				
+//				hql.append(" and (");
+//				hql.append(" prc.codigoProcedimientoEnJuzgado like '%"
+//						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
+//				hql.append(" ) ");
 			}
 			// Tipos de procedimiento
 			if (dto.getTiposProcedimiento() != null
@@ -282,10 +303,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
 			if (dto.getMaxSaldoTotalContratos() == null) {
-				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+				dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
-				dto.setMinSaldoTotalContratos(0d);
+				dto.setMinSaldoTotalContratos(0f);
 			}
 
 			hql.append(" and a.id in ");
@@ -314,10 +335,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" ( ");
 			hql.append(" select max(m2.fechaExtraccion) from Movimiento m2 where m2.contrato.id = m.contrato.id  ");
 			hql.append(" ) ");
+			hql.append(" AND (m.posVivaVencida + m.posVivaNoVencida) BETWEEN :minSaldoTotalCnt AND :maxSaldoTotalCnt ");
 			hql.append(" group by a.id ");
-			hql.append(" having (");
-			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
-			hql.append(" ) ");
 			hql.append(" ) ");
 
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());
@@ -381,12 +400,37 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				|| (dto.getAnyoProcedimientoEnJuzgado() != null && !dto
 						.getAnyoProcedimientoEnJuzgado().equals(""))
 				|| (dto.getTiposProcedimiento() != null && dto
-						.getTiposProcedimiento().size() > 0);
+						.getTiposProcedimiento().size() > 0
+				|| (dto.getComboDecisionesFinalizacion()) != null && !dto
+						.getComboDecisionesFinalizacion().equals("")
+						);
 	}
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
-		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto
-				.getFiltroContrato() > 0L) || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
+		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.
+				getFiltroContrato() != "") || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
+	}
+	
+	private boolean requierePersona(EXTDtoBusquedaAsunto dto) {
+		return (dto.getNombrePersonaProcedimiento() != null && !dto
+						.getNombrePersonaProcedimiento().equals("") ||
+						dto.getApellido1PersonaProcedimiento() != null &&
+						!dto.getApellido1PersonaProcedimiento().equals("")) ||
+						dto.getApellido2PersonaProcedimiento() != null &&
+						!dto.getApellido2PersonaProcedimiento().equals("")||
+						dto.getDniPersonaProcedimiento() != null &&
+						!dto.getDniPersonaProcedimiento().equals("");
+	}
+	
+	private boolean requiereDecisionFinalizar(EXTDtoBusquedaAsunto dto){
+		return (dto.getComboDecisionesFinalizacion()!=null && 
+				!dto.getComboDecisionesFinalizacion().equals("")
+				
+				);
+	}
+	
+	private String getIdDecisionProcedimiento(String codigo){
+		return "select cdf.id from DDCausaDecisionFinalizar cdf where cdf.codigo = '"+codigo+"'";
 	}
 
 	private String filtroGestorSupervisorAsuntoMonoGestor(
@@ -461,9 +505,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		StringBuilder subhql = new StringBuilder(
 				"select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu ");
 		String and = "";
-		subhql.append(" where gaa.asunto = asu.id and ");
+		subhql.append(" where gaa.asunto = asu.id ");
 		if (!Checks.esNulo(comboTiposGestor)) {
-			subhql.append("gaa.tipoGestor = '" + comboTiposGestor + "'");
+			subhql.append(" and gaa.tipoGestor = '" + comboTiposGestor + "'");
 			and = " and ";
 		}
 		if (!Checks.esNulo(comboGestor)) {
@@ -486,7 +530,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones) {
 		
-		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null);
+		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, null, null);
 		
 	}
 	
@@ -494,13 +538,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	public Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones,
-			String codigoEstadoAsunto) {
+			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = new EXTAsunto();
 
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setGestor(gestorDespacho);
 		extAsunto.setProcurador(procurador);
+		extAsunto.setTipoAsunto(tipoAsunto);
 		// extAsunto.setGestoresAsunto(gestoresAsunto);
 
 		// Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -544,7 +589,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	@Override
 	public Long modificarAsunto(Long idAsunto, GestorDespacho gestorDespacho,
 			GestorDespacho supervisor, GestorDespacho procurador,
-			String nombreAsunto, String observaciones) {
+			String nombreAsunto, String observaciones, DDTiposAsunto tipoAsunto) {
 		EXTAsunto extAsunto = (EXTAsunto) get(idAsunto);
 		if (!Checks.esNulo(gestorDespacho)
 				&& (gestorDespacho.getId().longValue() != extAsunto.getGestor()
@@ -555,6 +600,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		extAsunto.setObservacion(observaciones);
 		extAsunto.setSupervisor(supervisor);
 		extAsunto.setNombre(nombreAsunto);
+		extAsunto.setTipoAsunto(tipoAsunto);
 
 		// Gestores adicionales Asunto
 		// List<EXTGestorAdicionalAsunto> gestoresAsuntoGet =
@@ -596,6 +642,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 				usuarioLogado, dto, paramsDinamicos);
 		StringBuffer hql = (StringBuffer) params.get("hql");
 		params.remove("hql");
+		
+		
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				hql.toString(), dto, params);
 	}
@@ -659,10 +707,17 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 
 		hql.append(" (select distinct asu.id from Asunto asu");
-
-		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
+		
+		
+		if (requiereProcedimiento(dto) || requierePersona(dto) || requiereContrato(dto)) {
 			hql.append(", Procedimiento prc ");
 		}
+		
+		if(requiereDecisionFinalizar(dto)){
+			hql.append(", DecisionProcedimiento dp");
+		}
+				
+		
 		if (requiereContrato(dto)) {
 			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt ");
 		}
@@ -678,7 +733,46 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(", BatchAcuerdoCierreDeuda cdd2, DDResultadoValidacionNuse rvn ,BatchCDDResultadoNuse crn ");
 		}
 		
+//		if(requierePersona(dto)){
+//		hql.append(", IN(prc.personasAfectadas) persAfc");
+//	}
+		
+		if(requierePersona(dto)){
+			hql.append(" JOIN prc.personasAfectadas persAfc");
+		}
+	
+		
 		hql.append(" where asu.auditoria." + Auditoria.UNDELETED_RESTICTION);
+		
+		
+		
+		if(requierePersona(dto)){
+			hql.append(" and prc.asunto.id = asu.id ");
+			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
+			
+			if(dto.getNombrePersonaProcedimiento()!= ""){
+				
+				hql.append(" and persAfc.nombre like '%'|| :nomPers ||'%'");
+				params.put("nomPers", dto.getNombrePersonaProcedimiento().toUpperCase());
+			}
+			
+			if(dto.getApellido1PersonaProcedimiento()!= ""){
+				hql.append(" and persAfc.apellido1 like '%'|| :ape1Pers ||'%'");
+				params.put("ape1Pers", dto.getApellido1PersonaProcedimiento().toUpperCase());
+			}		
+					
+			if(dto.getApellido2PersonaProcedimiento()!= ""){
+				hql.append(" and persAfc.apellido2 like '%'|| :ape2Pers ||'%'");
+				params.put("ape2Pers", dto.getApellido2PersonaProcedimiento().toUpperCase());
+			}
+			
+			if(dto.getDniPersonaProcedimiento()!="" && dto.getDniPersonaProcedimiento()!=null){
+				hql.append(" and persAfc.docId like '%'|| :dni ||'%'");
+				params.put("dni", dto.getDniPersonaProcedimiento().toUpperCase());
+			}
+
+		}
+			
 
 		if (requiereContrato(dto) || requiereProcedimiento(dto)) {
 			hql.append(" and prc.asunto.id = asu.id ");
@@ -703,11 +797,18 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and cdd2.id = crn.batchAcuerdoCierreDeuda.id ");
 			hql.append(" and asu.id = cdd2.asunto.id ");
 			hql.append(" and crn.resultado = rvn.codigo and crn.descripcionResultado = rvn.descripcion ");
-			
-			hql.append(" and crn.id in ( ");
-			hql.append(" select max(crn1.id) ");
+			hql.append(" and crn.fechaResultado = ( ");
+			hql.append(" select MAX(crn1.fechaResultado) ");
 			hql.append(" from  BatchCDDResultadoNuse crn1 ");
-			hql.append(" group by crn1.codigoExterno, crn1.batchAcuerdoCierreDeuda.id ) ");			
+			hql.append(" WHERE crn.codigoExterno = crn1.codigoExterno) ");			
+		}
+		
+		
+		//COMBO DECISIONFINALIZAR
+		
+		if(dto.getComboDecisionesFinalizacion()!=null && !dto.getComboDecisionesFinalizacion().equals("")){
+			hql.append(" and prc.id = dp.procedimiento");
+			hql.append(" and dp.causaDecisionFinalizar IN ("+getIdDecisionProcedimiento(dto.getComboDecisionesFinalizacion())+")");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -800,10 +901,20 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		 */
 
 		// CODIGO CONTRATO
-		if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
-			hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
-			params.put("filtroCnt", dto.getFiltroContrato());
+//		if (dto.getFiltroContrato() != null && dto.getFiltroContrato() > 0L) {
+//			hql.append(" and cnt.nroContrato like '%'|| :filtroCnt ||'%'");
+//			params.put("filtroCnt", dto.getFiltroContrato());
+//		}
+		
+		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
+			
+			hql.append(" and cnt.nroContrato like '%'|| :nroContrato ||'%'");
+			params.put("nroContrato", dto.getFiltroContrato());
+			
+			
 		}
+		
+		
 		// FECHA DESDE
 		if (dto.getFechaCreacionDesde() != null
 				&& !"".equals(dto.getFechaCreacionDesde())) {
@@ -917,7 +1028,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 		// FILTRO DE ZONAS
 		if (dto.getJerarquia() != null && dto.getJerarquia().length() > 0) {
-			hql.append(" and cnt.zona.nivel.codigo <= :nivelId");
+			hql.append(" and cnt.zona.nivel.codigo >= :nivelId");
 			params.put("nivelId", Integer.valueOf(dto.getJerarquia()));
 
 			if (dto.getCodigoZonas().size() > 0) {
@@ -938,30 +1049,36 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			// Codigo de procedimiento en juzgado
 			if (dto.getCodigoProcedimientoEnJuzgado() != null
 					&& !dto.getCodigoProcedimientoEnJuzgado().equals("")) {
-				hql.append(" and (");
-				hql.append(" prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getCodigoProcedimientoEnJuzgado() + "%' ");
-				hql.append(" ) ");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%'|| :codProcJuz ||'%')");
+				params.put("codProcJuz", dto.getCodigoProcedimientoEnJuzgado());
+				
 			}
 			// UGAS-188
 			if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())
 					&& !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%-%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%/%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%')");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+
+				//hql.append(" or prc.codigoProcedimientoEnJuzgado= '"+dto.getNumeroProcedimientoEnJuzgado()+"/"+dto.getAnyoProcedimientoEnJuzgado()+"' )");
+
+				
+//				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
+//				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
+				
 			} else if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())) {
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%-%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"
-						+ dto.getNumeroProcedimientoEnJuzgado() + "%/%')");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%')");
+//				params.put("numProcJuz", dto.getNumeroProcedimientoEnJuzgado());
+				
 			} else if (!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())) {
-				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%'");
-				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"
-						+ dto.getAnyoProcedimientoEnJuzgado() + "%')");
+				
+				hql.append(" and (prc.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+				hql.append(" or prc.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%')");
+//				params.put("anyoProjuz", dto.getAnyoProcedimientoEnJuzgado());
+
 			}
 
 			// Tipos de procedimiento
@@ -989,10 +1106,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if (requiereProcedimiento(dto) && requiereFiltrarPorSaldoTotal(dto)) {
 
 			if (dto.getMaxSaldoTotalContratos() == null) {
-				dto.setMaxSaldoTotalContratos((double) Integer.MAX_VALUE);
+				dto.setMaxSaldoTotalContratos((float) Integer.MAX_VALUE);
 			}
 			if (dto.getMinSaldoTotalContratos() == null) {
-				dto.setMinSaldoTotalContratos(0d);
+				dto.setMinSaldoTotalContratos(0f);
 			}
 
 			hql.append(" and a.id in ");
@@ -1021,10 +1138,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" ( ");
 			hql.append(" select max(m2.fechaExtraccion) from Movimiento m2 where m2.contrato.id = m.contrato.id  ");
 			hql.append(" ) ");
+			hql.append(" AND (m.posVivaVencida + m.posVivaNoVencida) BETWEEN :minSaldoTotalCnt and :maxSaldoTotalCnt ");
 			hql.append(" group by a.id ");
-			hql.append(" having (");
-			hql.append(" sum(m.posVivaVencida + m.posVivaNoVencida) between :minSaldoTotalCnt and :maxSaldoTotalCnt ");
-			hql.append(" ) ");
 			hql.append(" ) ");
 
 			params.put("minSaldoTotalCnt", dto.getMinSaldoTotalContratos());
@@ -1056,7 +1171,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 					new BigDecimal(dto.getMaxImporteEstimado()));
 
 		}
-
+		//Si se ha introducido algun dato de pestanya Letrados (DespachoExternoExtras)
+		if(requiereDespachoExtras(dto)) {
+			hql.append(" and a.id in ");
+			hql.append("(");
+			hql.append(getIdsAsuntosByDespachoExtras(dto));
+			hql.append(")");
+		}
+		
 		params.put("hql", hql);
 
 		return params;
@@ -1258,5 +1380,168 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             
             return new String();
         }
+	
+	private boolean requiereDespachoExtras(EXTDtoBusquedaAsunto dto) {
+		return !Checks.esNulo(dto.getTipoDocumento()) || !Checks.esNulo(dto.getDocumentoCif()) || !Checks.esNulo(dto.getFechaAltaDesde()) || 
+				!Checks.esNulo(dto.getFechaAltaHasta()) || (!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias().length > 0) || !Checks.esNulo(dto.getClasificacionPerfil()) || 
+					!Checks.esNulo(dto.getClasificacionPerfil()) || !Checks.esNulo(dto.getCodEstAse()) || !Checks.esNulo(dto.getContratoVigor()) || !Checks.esNulo(dto.getServicioIntegral()) || 
+						!Checks.esNulo(dto.getRelacionBankia()) || !Checks.esNulo(dto.getOficinaContacto()) || !Checks.esNulo(dto.getEntidadContacto()) || 
+							!Checks.esNulo(dto.getEntidadLiquidacion()) || !Checks.esNulo(dto.getOficinaLiquidacion()) || !Checks.esNulo(dto.getDigconLiquidacion()) || !Checks.esNulo(dto.getCuentaLiquidacion()) || 
+								!Checks.esNulo(dto.getEntidadProvisiones()) || !Checks.esNulo(dto.getOficinaProvisiones()) || !Checks.esNulo(dto.getDigconProvisiones()) || !Checks.esNulo(dto.getCuentaProvisiones()) || 
+									!Checks.esNulo(dto.getEntidadEntregas()) || !Checks.esNulo(dto.getOficinaEntregas()) || !Checks.esNulo(dto.getDigconEntregas()) || !Checks.esNulo(dto.getCuentaEntregas()) || 
+										!Checks.esNulo(dto.getCentroRecuperacion()) || !Checks.esNulo(dto.getAsesoria());
+	}
+	
+	private String getIdsAsuntosByDespachoExtras(EXTDtoBusquedaAsunto dto) {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+		Date fecha = null;
+		
+		String  subSelect = "select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu "
+				+ "where asu.auditoria.borrado=0 and gaa.asunto = asu.id and "
+				+ " gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
+		
+		if(!Checks.esNulo(dto.getTipoDocumento())) {
+			subSelect += "UPPER(dee.tipoDocumento.descripcion) like UPPER('%"+ dto.getTipoDocumento() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDocumentoCif())) {
+			subSelect += "UPPER(dee.documentoCif) like UPPER('%"+ dto.getDocumentoCif() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getFechaAltaDesde())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaDesde());
+				subSelect += "dee.fechaAlta >= to_Date('" + dto.getFechaAltaDesde() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaDesde del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getFechaAltaHasta())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaHasta());
+				subSelect += "dee.fechaAlta <= to_Date('" + dto.getFechaAltaHasta() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaHasta del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
+			subSelect += "dee.clasifPerfil IN ("+ this.getListaMapeoValores(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil()) +") and ";
+		}
+		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
+			subSelect += "dee.clasifConcursos = "+ Integer.parseInt(dto.getClasificacionConcursos()) +" and ";
+		}
+		if(!Checks.esNulo(dto.getCodEstAse())) {
+			subSelect += "dee.codEstAse = '"+ getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()) +"' and ";
+		}
+		if(!Checks.esNulo(dto.getContratoVigor())) {
+			subSelect += "dee.contratoVigor IN ("+ this.getListaMapeoValores(context.getMapaContratoVigor(),dto.getContratoVigor()) +") and ";
+		}
+		if(!Checks.esNulo(dto.getServicioIntegral())) {
+			subSelect += "dee.servicioIntegral = "+ Integer.parseInt(dto.getServicioIntegral()) +" and ";
+		}
+		if(!Checks.esNulo(dto.getRelacionBankia())) {
+			subSelect += "dee.relacionBankia IN ("+ this.getListaMapeoValores(context.getMapaRelacionBankia(),dto.getRelacionBankia()) +") and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaContacto())) {
+			subSelect += "UPPER(dee.oficinaContacto) like UPPER('%"+ dto.getOficinaContacto() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadContacto())) {
+			subSelect += "UPPER(dee.entidadContacto) like UPPER('%"+ dto.getEntidadContacto() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadLiquidacion())) {
+			subSelect += "UPPER(dee.entidadLiquidacion) like UPPER('%"+ dto.getEntidadLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaLiquidacion())) {
+			subSelect += "UPPER(dee.oficinaLiquidacion) like UPPER('%"+ dto.getOficinaLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDigconLiquidacion())) {
+			subSelect += "UPPER(dee.digconLiquidacion) like UPPER('%"+ dto.getDigconLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCuentaLiquidacion())) {
+			subSelect += "UPPER(dee.cuentaLiquidacion) like UPPER('%"+ dto.getCuentaLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadProvisiones())) {
+			subSelect += "UPPER(dee.entidadProvisiones) like UPPER('%"+ dto.getEntidadProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaProvisiones())) {
+			subSelect += "UPPER(dee.oficinaProvisiones) like UPPER('%"+ dto.getOficinaProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDigconProvisiones())) {
+			subSelect += "UPPER(dee.digconProvisiones) like UPPER('%"+ dto.getDigconProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCuentaProvisiones())) {
+			subSelect += "UPPER(dee.cuentaProvisiones) like UPPER('%"+ dto.getCuentaProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadEntregas())) {
+			subSelect += "UPPER(dee.entidadEntregas) like UPPER('%"+ dto.getEntidadEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaEntregas())) {
+			subSelect += "UPPER(dee.oficinaEntregas) like UPPER('%"+ dto.getOficinaEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDigconEntregas())) {
+			subSelect += "UPPER(dee.digconEntregas) like UPPER('%"+ dto.getDigconEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCuentaEntregas())) {
+			subSelect += "UPPER(dee.cuentaEntregas) like UPPER('%"+ dto.getCuentaEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCentroRecuperacion())) {
+			subSelect += "UPPER(dee.centroRecuperacion) like UPPER('%"+ dto.getCentroRecuperacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getAsesoria())) {
+			subSelect += "dee.asesoria = "+ Integer.parseInt(dto.getAsesoria()) +" and ";
+		}
+		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
+			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
+		}
+		//Quito el último 'and' de la consulta ya que va a sobrar
+		subSelect = subSelect.substring(0, subSelect.length() -4);
+		subSelect += ")";
+		
+		return subSelect;
+	}
+	
+	/**
+	 * Consulta que devuelve despachos que actuen en las provincias filtradas.
+	 * @param provincias
+	 * @return
+	 */
+	private String getProvinciasFromDespachoExtras(String[] provincias) {
+		String subSelect = "select dea.despacho.id from DespachoExtrasAmbito dea where dea.auditoria.borrado=0 and dea.provincia.codigo in (";
+		for(int i=0; i<provincias.length; i++) {
+			subSelect += provincias[i] +", ";
+		}
+		subSelect = subSelect.substring(0, subSelect.length() - 2);
+		subSelect += ")";
+		
+		return subSelect;
+	}
+	
+	/**
+	 * De un mapa de Strings, devuelve la KEY a partir del VALUE.
+	 * @param mapa
+	 * @param valor
+	 * @return
+	 */
+	private String getKeyByValue(Map<String,String> mapa, String valor) {
+		
+		for(Map.Entry<String,String> map : mapa.entrySet()){
+			if( valor.equals(map.getValue()))
+				return map.getKey();
+		}
+		
+		return null;
+	}
+	
+	private String getListaMapeoValores(Map<String,String> mapa, String valores) {
+		String[] array = valores.split(",");
+		String listaMapeada = "";
+		for(int i=0; i< array.length;i++) {
+			listaMapeada += Integer.parseInt(getKeyByValue(mapa,array[i]));
+			if(i < array.length - 1) {
+				listaMapeada += ",";
+			}
+		}
+		
+		return listaMapeada;
+	}
         
 }

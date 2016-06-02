@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -21,6 +22,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -50,7 +52,9 @@ public class Itinerario implements Serializable, Auditable {
 
     @OneToMany(mappedBy = "itinerario")
     @JoinColumn(name = "ITI_ID")
-    private List<Estado> estados;
+    @OrderBy("estadoItinerario ASC")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<Estado> estados; 
 
     @ManyToOne
     @JoinColumn(name = "DD_TIT_ID")

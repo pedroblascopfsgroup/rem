@@ -29,6 +29,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.ProcedimientoBien;
@@ -153,7 +154,15 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private Set<AdjuntoAsunto> adjuntos;
     
-    @Transient
+    @Column(name="PRC_REMOTO")
+    private Integer prcRemoto; 
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACU_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Acuerdo propuesta;
+
+	@Transient
     private Boolean activo;
 
 
@@ -626,6 +635,17 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
 
         return false;
     }
+    
+    /**
+     * Comprueba si el procedimiento se encuentra en estado cancelado
+     * @return boolean
+     */
+    public boolean getEstaEstadoCancelado() {
+    	String codigoEstadoProcedimiento = estadoProcedimiento.getCodigo();
+    	if (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(codigoEstadoProcedimiento)) { return true; }
+    	
+    	return false;
+    }
 
     /**
      * Comprueba si el procedimiento se encuentra en estado propuesto.
@@ -647,6 +667,13 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
         if (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_EN_CONFORMACION.equals(codigoEstadoProcedimiento)) { return true; }
 
         return false;
+    }
+    
+    public boolean getEsPrecontencioso() {
+    	String codigoTipoProc = tipoProcedimiento.getCodigo();
+    	if (TipoProcedimiento.TIPO_PRECONTENCIOSO.equals(codigoTipoProc)) { return true; }
+    	
+    	return false;
     }
 
     /**
@@ -739,5 +766,20 @@ public class Procedimiento implements Serializable, Auditable, Comparable<Proced
 		this.activo = activo;
 	}
 	
+	 public Integer getPrcRemoto() {
+		return prcRemoto;
+	}
+
+	public void setPrcRemoto(Integer prcRemoto) {
+		this.prcRemoto = prcRemoto;
+	}
+	
+	public Acuerdo getPropuesta() {
+		return propuesta;
+	}
+
+	public void setPropuesta(Acuerdo propuesta) {
+		this.propuesta = propuesta;
+	}
 
 }

@@ -29,6 +29,9 @@ var bottomBar = [];
 					return;
 				}
 			}
+			
+			procedimientoIniciar.setDisabled(false);
+			
 			//page.fireEvent(app.event.DONE);
 			page.submit({
 				eventName : 'ok'
@@ -67,6 +70,37 @@ var procedimientoIniciar = items[6];
 
 procedimientoPropuesto.setDisabled(true);
 
+var dsProcedimientos = new Ext.data.Store({
+			autoLoad:true,
+			proxy: new Ext.data.HttpProxy({
+				url: page.resolveUrl('expedientejudicial/getTiposProcedimientoAsignacionDeGestores')
+			}),
+			reader: new Ext.data.JsonReader({
+				root: 'listadoProcedimientos'
+				,totalProperty: 'total'
+			}, [
+				{name: 'codigo', mapping: 'codigo'},
+				{name: 'descripcion', mapping: 'descripcion'}
+			])
+		});
+	
+items[6] = new Ext.form.ComboBox({
+							name:procedimientoIniciar.name
+							,hiddenName:procedimientoIniciar.name
+							,disabled:procedimientoIniciar.disabled
+							,value:procedimientoIniciar.value
+							,allowBlank : true
+							,store:dsProcedimientos
+							,displayField:'descripcion'
+							,valueField:'codigo'
+							,mode: 'local'
+							,emptyText:''
+							,triggerAction: 'all'
+							,fieldLabel : '<s:message code="plugin.precontencioso.asignar.gestor.procedimiento.iniciar" text="**Procedimiento a iniciar" />'
+					});
+					
+procedimientoIniciar = items[6];					
+
 docCompleta.on('select', function() {
 	if(docCompleta.getValue() == resultadoDocCompletaNO) {
 		fechaRecep.allowBlank = false;
@@ -76,9 +110,12 @@ docCompleta.on('select', function() {
 		tipoProblema.allowBlank = false;
 		tipoProblema.setDisabled(false);
 		procedimientoPropuesto.allowBlank = false;
-		procedimientoIniciar.allowBlank = true;
-		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		
+		if(procedimientoPropuesto.getValue() != '') { 
+			procedimientoIniciar.allowBlank = true;
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
 	}else{
 		fechaRecep.allowBlank = false;
 		docCompleta.allowBlank = false;
@@ -93,8 +130,10 @@ docCompleta.on('select', function() {
 		if(tipoProblema.getValue() == cambioProcedimiento) {
 			procedimientoIniciar.setDisabled(false);
 		} else {
-			procedimientoIniciar.setDisabled(true);
-			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+			if(procedimientoPropuesto.getValue() != '') {
+				procedimientoIniciar.setDisabled(true);
+				procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+			}
 		}
 	}
 });
@@ -104,8 +143,10 @@ tipoProblema.on('select', function() {
 	if(tipoProblema.getValue() == cambioProcedimiento) {
 		procedimientoIniciar.setDisabled(false);
 	}else{
-		procedimientoIniciar.setDisabled(true);
-		procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		if(procedimientoPropuesto.getValue() != '') {
+			procedimientoIniciar.setDisabled(true);
+			procedimientoIniciar.setValue(procedimientoPropuesto.getValue());
+		}
 	}
 });
 

@@ -41,6 +41,8 @@ public interface ExpedienteBPMConstants extends BPMContants {
     String TIMER_TAREA_RE = "TIMER_RE";
     String TIMER_TAREA_DC = "TIMER_DC";
     String TIMER_TAREA_FP = "TIMER_FP";
+    String TIMER_TAREA_ENSAN = "TIMER_ENSAN";
+    String TIMER_TAREA_SANC = "TIMER_SANC";
     String NEW_TIMER_TIME = "prorrogaEnSegundos";
     String FECHA_PROPUESTA = "fechaPropuesta";
     String RESPUESTA_DEVOLVER_CE = "respuestaDevolverCE";

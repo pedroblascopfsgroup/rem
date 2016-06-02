@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -9,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.FrameworkException;
+import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
@@ -27,6 +30,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
+import es.pfsgroup.plugin.precontencioso.liquidacion.api.DatosLiquidacionExtraApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.assembler.LiquidacionAssembler;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dao.LiquidacionDao;
@@ -37,7 +41,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 
-@Service
+@Service("liquidacionManager")
 public class LiquidacionManager implements LiquidacionApi {
 
 	@Autowired
@@ -53,6 +57,9 @@ public class LiquidacionManager implements LiquidacionApi {
 	private ProcedimientoPCODao procedimientoPCODao;
 	
 	@Autowired
+	private ProcedimientoDao procedimientoDao;
+	
+	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
@@ -64,14 +71,26 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
 	
+	@Autowired(required = false)
+	private DatosLiquidacionExtraApi datosLiquidacionExtraApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public List<LiquidacionDTO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 		List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
-
 		List<LiquidacionDTO> liquidacionesDto = LiquidacionAssembler.entityToDto(liquidaciones);
+		if (!Checks.esNulo(datosLiquidacionExtraApi)) {
+			datosLiquidacionExtraApi.agregarDatosExtra(liquidacionesDto);
+		}
 		return liquidacionesDto;
+	}
+	
+	@Override
+	@BusinessOperation("plugin.liquidaciones.liquidacionManager.getLiquidacionByCnt")
+	public LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idProc) {
+		ProcedimientoPCO prcPCO = genericDao.get(ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));
+		return liquidacionDao.getLiquidacionDelContrato(cntId, prcPCO.getId());
 	}
 
 	@Override
@@ -253,5 +272,65 @@ public class LiquidacionManager implements LiquidacionApi {
 			logger.error("Error en el método visar: " + e.getMessage());
 			throw new FrameworkException("Ocurrió un error inesperado durante la operación. Por favor, vuelva a intentarlo más tarde.");
 		}
+	}
+
+	@Override
+	public BigDecimal getTotalLiquidacionPCO(Long idProcedimientoPCO) {
+		ProcedimientoPCO pco = procedimientoPCODao.getProcedimientoPcoPorIdProcedimiento(idProcedimientoPCO);
+		// Sumatorio de todas las liquidaciones del procedimiento
+		
+		//Obtenemos las liquidaciones
+		
+		BigDecimal total = new BigDecimal(0);
+		if(!Checks.esNulo(pco)){
+			List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(pco.getId());
+			
+			for (LiquidacionPCO liquidacion : liquidaciones) {
+				if(!Checks.esNulo(liquidacion.getTotal())){
+					total = total.add(liquidacion.getTotal());
+				}
+			}
+		}
+
+		return total;
+	}
+
+	@Override
+	public BigDecimal getTotalLiquidacion(Long idProcedimiento) {
+		//Obtenemos el procedimiento del id 
+		Procedimiento proc = this.procedimientoDao.get(idProcedimiento);
+		if (!Checks.esNulo(proc)) {
+			if (!Checks.esNulo(proc.getAsunto())) {
+				//Si tenemos asunto, obtenemos los procedimientos del asunto
+				List<Procedimiento> procAsunto = proc.getAsunto().getProcedimientos();
+				
+				// Nos almacenamos el número de tareas del procedimiento, para quedarnos con la mayor
+				int maxNumTareas = -1;
+				Procedimiento procPrecontencioso = null;
+				
+				//Ahora descartamos los procedimientos que no sean de tipo precontencioso o que estén cancelados
+				for (Procedimiento procedimiento : procAsunto) {
+					if (!procedimiento.getEstaEstadoCancelado()) {
+						if (procedimiento.getEsPrecontencioso()) {
+							//Si su número de tareas es mayor que otro que hayamos encontrado previamente, lo seleccionamos
+							if (!Checks.esNulo(procedimiento.getTareas())) {
+								 if (procedimiento.getTareas().size() > maxNumTareas) {
+									 procPrecontencioso = procedimiento;
+									 maxNumTareas = procedimiento.getTareas().size();
+								 }
+							}
+						}
+					}
+				}
+				
+				//Si hemos localizado el procedimiento precontencioso del asunto
+				if (!Checks.esNulo(procPrecontencioso)) {
+					return this.getTotalLiquidacionPCO(procPrecontencioso.getId());
+				}
+			}
+		}
+		
+		//En caso que no encontramos el procedimiento precontencioso del asunto
+		return null;
 	}
 }

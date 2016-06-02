@@ -16,6 +16,7 @@
              <evaluate expression="usuario.entidad.configValue('logo')" result="flowScope.logo" />
              <evaluate expression="executor.execute('propuestaApi.listadoPropuestasRealizadasByExpedienteId', id)" result="flowScope.gestionesPrevias" />
              <evaluate expression="executor.execute('propuestaApi.listadoPropuestasExplorarByExpedienteId', id)" result="flowScope.actuacionesExplorar" />
+             <evaluate expression="executor.execute('mejacuerdo.listadoPropuestasByExpedienteId', id)" result="flowScope.propuestas" />
     	</on-entry>
     </end-state>
 

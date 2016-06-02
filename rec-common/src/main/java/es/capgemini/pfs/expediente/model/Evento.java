@@ -86,6 +86,8 @@ public class Evento implements Serializable {
         if (SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_REVISAR_EXPEDIENE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_DECISION_COMITE.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
+                || SubtipoTarea.CODIGO_TAREA_EN_SANCION.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
+                || SubtipoTarea.CODIGO_TAREA_SANCIONADO.equals(tarea.getSubtipoTarea().getCodigoSubtarea())
                 || SubtipoTarea.CODIGO_FORMALIZAR_PROPUESTA.equals(tarea.getSubtipoTarea().getCodigoSubtarea())) {
 
         			return tarea.getSubtipoTarea().getDescripcionLarga();

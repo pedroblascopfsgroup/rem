@@ -90,6 +90,10 @@
 			<artifactId>devon-bpm</artifactId>
 			<classifier>jdk16</classifier>
 		</dependency>	
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-nuevoModeloBienesCommon-plugin</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>

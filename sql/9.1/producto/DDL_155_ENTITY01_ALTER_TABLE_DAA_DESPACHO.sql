@@ -1,0 +1,98 @@
+--/*
+--##########################################
+--## AUTOR=Jorge Ros
+--## FECHA_CREACION=20160129
+--## ARTEFACTO=web
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=PRODUCTO-577
+--## PRODUCTO=SI
+--## Finalidad: Alteracion tabla 
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_COUNT NUMBER(16); -- Vble. para validar la existencia de una tabla.  
+    V_STRING VARCHAR2(10); -- Vble. para validar la existencia de si el campo es nulo
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+
+    BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.DAA_DESPACHO_AMBITO_ACTUACION...');
+
+	---- Se añade campo ETC_ID_LITIGIO
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = ''ETC_ID_LITIGIO'' AND TABLE_NAME = ''DAA_DESPACHO_AMBITO_ACTUACION''';
+		  
+	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+	IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] El campo ETC_ID_LITIGIO ya existe en la tabla');
+	ELSE 
+		V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.DAA_DESPACHO_AMBITO_ACTUACION ADD ETC_ID_LITIGIO NUMBER(16,0)';
+		EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.DAA_DESPACHO_AMBITO_ACTUACION... Columna ETC_ID_LITIGIO agregada');
+	END IF;
+	
+	---- Se añade campo ETC_ID_CONCURSO
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = ''ETC_ID_CONCURSO'' AND TABLE_NAME = ''DAA_DESPACHO_AMBITO_ACTUACION''';
+		  
+	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+	IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] El campo ETC_ID_CONCURSO ya existe en la tabla');
+	ELSE 
+		V_SQL := 'ALTER TABLE '||V_ESQUEMA||'.DAA_DESPACHO_AMBITO_ACTUACION ADD ETC_ID_CONCURSO NUMBER(16,0)';
+		EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.DAA_DESPACHO_AMBITO_ACTUACION... Columna ETC_ID_CONCURSO agregada');
+	END IF;
+	
+	
+	
+	-- Agregamos las FK para las dos columnas
+	V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = ''DAA_DESPACHO_AMBITO_ACTUACION'' AND CONSTRAINT_NAME = ''FK_ETC_ID_LIT'' AND OWNER='''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+	IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] La constraint ya existe en la tabla');
+	ELSE
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.DAA_DESPACHO_AMBITO_ACTUACION ADD CONSTRAINT FK_ETC_ID_LIT FOREIGN KEY (ETC_ID_LITIGIO) REFERENCES ' || V_ESQUEMA || '.ETC_ESQUEMA_TURNADO_CONFIG (ETC_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.DAA_DESPACHO_AMBITO_ACTUACION... FK_ETC_ID_LIT Constraint agregada');
+	END IF;
+	
+	V_SQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE TABLE_NAME = ''DAA_DESPACHO_AMBITO_ACTUACION'' AND CONSTRAINT_NAME = ''FK_ETC_ID_CON'' AND OWNER='''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+	IF V_COUNT > 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] La constraint ya existe en la tabla');
+	ELSE
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.DAA_DESPACHO_AMBITO_ACTUACION ADD CONSTRAINT FK_ETC_ID_CON FOREIGN KEY (ETC_ID_CONCURSO) REFERENCES ' || V_ESQUEMA || '.ETC_ESQUEMA_TURNADO_CONFIG (ETC_ID)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Tabla ' || V_ESQUEMA || '.DAA_DESPACHO_AMBITO_ACTUACION... FK_ETC_ID_CON Constraint agregada');
+	END IF;
+    
+	COMMIT;
+		
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
+END;
+/
+EXIT;

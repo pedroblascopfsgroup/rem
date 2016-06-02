@@ -10,10 +10,15 @@
 
 <fwk:page>
 
-	var factoriaFormularios = new es.pfs.plugins.masivo.FactoriaFormularios();
+	if(${tieneProcurador}){
+		var factoriaFormularios = new es.pfs.plugins.procuradores.FactoriaFormularios();
+		var ayuda= { html:'<div style="font-size:0.75em;">${html}</div>', border:false};
+	}else{
+		var factoriaFormularios = new es.pfs.plugins.masivo.FactoriaFormularios();	
+		var ayuda= { html:'<div style="font-size:0.75em;">${html}<br/><br/></div>', border:false};
+	}
+
 	//var controlador = new es.pfs.plugins.masivo.ControladorAsincrono();
-	
-	var ayuda= { html:'<div style="font-size:0.75em;">${html}<br/><br/></div>', border:false};
 	
 	var idInput = '${idInput}';
 	
@@ -56,8 +61,13 @@
     }); 
     
     datosResolucion.doLayout();
-    datosResolucion.add(factoriaFormularios.getFormItems('${idTipoResolucion}','${idAsunto}', '${codigoTipoProc}', '${codigoPlaza}','${idProcedimiento}'));
-	factoriaFormularios.updateStores();
+    if(${tieneProcurador}){
+		datosResolucion.add(factoriaFormularios.getFormItems('${idTipoResolucion}','${idAsunto}', '${codigoTipoProc}', '${codigoPlaza}','${idProcedimiento}',true));
+	}else{
+		datosResolucion.add(factoriaFormularios.getFormItems('${idTipoResolucion}','${idAsunto}', '${codigoTipoProc}', '${codigoPlaza}','${idProcedimiento}'));
+		factoriaFormularios.updateStores();
+	}
+	
 	
 	
 	var btnCancelar= new Ext.Button({
@@ -123,6 +133,10 @@ Ext.onReady(function(){
 				if (itemsFormPanel[i].isXType('combo')) {
 					itemsFormPanel[i].fireEvent('select',itemsFormPanel[i]);
 				}
+			}
+			
+			if(${tieneProcurador}){
+				factoriaFormularios.updateStores('${idTipoResolucion}');
 			}
 
 		}

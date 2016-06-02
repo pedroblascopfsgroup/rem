@@ -79,6 +79,10 @@
 	var itinerarioMV		= label('itinerarioMV',	'<s:message code="expedientes.consulta.tabcabecera.itinerarioMV" text="**Iti. Metas Volantes"/>',cfg);
 	var fechaMaxEnAgencia	= label('fechaMaxEnAgencia',	'<s:message code="expedientes.consulta.tabcabecera.fechaMaxEnAgencia" text="**F. Max. en Agencia"/>',cfg);
 	var fechaMaxCobroParcial= label('fechaMaxCobroParcial',	'<s:message code="expedientes.consulta.tabcabecera.fechaMaxCobroParcial" text="**F. Max. Cobro Parcial"/>',cfg);
+	
+	<%-- PRODUCTO-567 --%>
+	var arquetipoExp		= label('arquetipoExp',	'<s:message code="expedientes.consulta.tabcabecera.arquetipo" text="**Arquetipo" />',cfg);
+	var itinerarioExp		= label('itinerarioExp','<s:message code="expedientes.consulta.tabcabecera.itinerario" text="**Itinerario" />',cfg);
 		
 
 	var datosPrincipalesFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosPrincipales" text="**Datos Principales"/>'
@@ -96,12 +100,18 @@
 				  		,fechaVencimiento
 				  		,oficina
 				  		,oficinaDir
-				  		,oficinaTel]},
+				  		,oficinaTel
+				  		]},
 				  {items:[diasVencido,
 				  		  gestor,volRiesgos,volRiesgosVenc
 				  		  ,comite
 				  		  ,fechaMaxCobroParcial
-				  		  ,fechaMaxEnAgencia]}
+				  		  ,fechaMaxEnAgencia
+				  		<sec:authorize ifAllGranted="ROLE_VER_ARQUETIPO_EXPEDIENTE">
+				  			,arquetipoExp
+				  			,itinerarioExp
+				  		</sec:authorize>
+				  		  ]}
 		]);
 		
 	var datosRecobroFieldSet = fieldSet('<s:message code="menu.clientes.consultacliente.menu.DatosRecobro" text="**Datos Recobro"/>'
@@ -191,7 +201,11 @@
 		diasVencido.setVisible(false);
 		comite.setVisible(false);
 		fechaVencimiento.setVisible(false);
+		arquetipoExp.setVisible(false);
+		itinerarioExp.setVisible(false);
 	} else {
+	
+	
 		datosRecobroFieldSet.setVisible(false);
 		tipoExpediente.setVisible(false);
 		fechaMaxEnAgencia.setVisible(false);
@@ -202,6 +216,10 @@
 		comite.setVisible(true);
 		fechaVencimiento.setVisible(true);
 		
+		entidad.setLabel('arquetipoExp',cabecera.arquetipoExp);
+		entidad.setLabel('itinerarioExp',cabecera.itinearioExp);
+		arquetipoExp.setVisible(true);
+		itinerarioExp.setVisible(true);		
 	}
 	
   };

@@ -585,24 +585,22 @@
 		///Ocultamos todos los botones
 		ocultarBotones();
 	
-		/////Llamada ajax para obtener el proponente, validador y decisor del acuerdo y el id y tipo de gestor del usuario logado
+		/////Llamada ajax para obtener si el usuario logado es proponente, validador o decisior del acuerdo
        	
        	Ext.Ajax.request({
 			url: page.resolveUrl('mejacuerdo/getConfigUsersAcuerdoAsunto')
 			,method: 'POST'
 			,params:{
-						idTipoDespachoProponente : idTipoDespacho
-						,idAsunto:panel.getAsuntoId()
+						idAsunto:panel.getAsuntoId()
 					}
 			,success: function (result, request){
 						
 				
 				var config = Ext.util.JSON.decode(result.responseText);
-				var tipoDespachoPropAcuerdo = config.tiposDespachosAcuerdoAsunto.proponente;
-				var tipoDespachoValidadorAcuerdo = config.tiposDespachosAcuerdoAsunto.validador;
-				var tipoDespachoDecisorAcuerdo = config.tiposDespachosAcuerdoAsunto.decisor;
+				var esProponente = config.tiposDespachosAcuerdoAsunto.esProponente;
+				var esValidador = config.tiposDespachosAcuerdoAsunto.esValidador;
+				var esDecisor = config.tiposDespachosAcuerdoAsunto.esDecisor;
 				var userLogado = config.userLogado.id;
-				var tipoDespachoLogado = config.userLogado.idTipoDespacho;
 				var noPuedeModificar = true;
 				
 
@@ -613,24 +611,24 @@
 					
 					noPuedeModificar = false;
 					
-					if(tipoDespachoLogado == tipoDespachoDecisorAcuerdo){
+					if(esDecisor){
 						btnVigenteAcuerdo.setVisible(true);
 						btnProponerAcuerdo.setVisible(false);
-					}else if(tipoDespachoLogado == tipoDespachoValidadorAcuerdo){
+					}else if(esValidador){
 						btnAceptarAcuerdo.setVisible(true);
 						btnProponerAcuerdo.setVisible(false);
 					} 
 					
 				}
 				
-				if((tipoDespachoLogado == tipoDespachoValidadorAcuerdo || tipoDespachoLogado == tipoDespachoDecisorAcuerdo) && codigoEstado == app.codigoAcuerdoPropuesto){
+				if((esValidador || esDecisor) && codigoEstado == app.codigoAcuerdoPropuesto){
 					btnAceptarAcuerdo.setVisible(true);
 					btnRechazarAcuerdo.setVisible(true);
 					
 					noPuedeModificar = false;
 				}
 
-				if(tipoDespachoLogado == tipoDespachoDecisorAcuerdo && codigoEstado == app.codigoAcuerdoAceptado){
+				if(esDecisor && codigoEstado == app.codigoAcuerdoAceptado){
 					btnVigenteAcuerdo.setVisible(true);
 					btnRechazarAcuerdo.setVisible(true);
 					
@@ -640,7 +638,7 @@
 				var estadoVigente = false;
 				
 				btnRegistrarFinalizacionAcuerdo.setVisible(false);
-				if(tipoDespachoLogado == tipoDespachoPropAcuerdo && codigoEstado == app.codigoAcuerdoVigente){
+				if(esProponente && codigoEstado == app.codigoAcuerdoVigente){
 					
 					btnRegistrarFinalizacionAcuerdo.setVisible(true);
 					estadoVigente = true;
@@ -648,7 +646,7 @@
 				}
 				
 				var noPuedeEditarEstGest = true;
-				if(codigoEstado == app.codigoAcuerdoVigente && tipoDespachoLogado == tipoDespachoPropAcuerdo){
+				if(codigoEstado == app.codigoAcuerdoVigente && esProponente){
 					noPuedeEditarEstGest = false;
 				}
 				
@@ -664,7 +662,7 @@
 				});
 			
 				terminosTab = new Ext.Panel({
-					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
+					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminosAcuerdos" text="**Términos"/>'
 					,id:'asunto-terminosTabs-${asunto.id}'
 					,autoHeight:true
 					,autoWidth: true
@@ -698,10 +696,14 @@
 				store.on('load', function(){  
 					for (var i=0; i < store.data.length; i++) {
 						datos = store.getAt(i);
-						
 						if(datos.get('codigoTipoAcuerdo') == "PLAN_PAGO"){
 							if(Boolean(estadoVigente)){
 								btnCumplimientoAcuerdo.setVisible(true);
+							}
+							if (panel != null){
+								if(cumplimientoAcuerdo != null){
+									terminosTab.remove(cumplimientoAcuerdo);
+								}
 							}
 							cumplimientoAcuerdo = recargarCumplimientoAcuerdo(idAcuerdo);
 							terminosTab.add(cumplimientoAcuerdo);
@@ -838,6 +840,14 @@
 
 	panel.setVisibleTab = function(data){
 		return data.aceptacion.estaAceptado;
+	}
+	
+	panel.setVisibleTab = function(data){
+		if(data.toolbar.esAsuntoAcuerdo){
+			return false;
+		}else{
+			return true;
+		}
 	}
 
 	return panel;

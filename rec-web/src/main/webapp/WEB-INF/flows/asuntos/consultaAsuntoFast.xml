@@ -12,6 +12,8 @@
 	    	<evaluate expression="requestParameters.acuerdos" result="flowScope.acuerdos"/>
 	    	<evaluate expression="true" result="flowScope.readOnly"/>
 	    	<evaluate expression="executor.execute('asuntosManager.get',id)" result="flowScope.asunto" />
+	    	<evaluate expression="executor.execute('asuntosManager.getGestorDespachoGestorAsunto',id)" result="flowScope.gestorDespacho" />
+	    	<evaluate expression="executor.execute('asuntosManager.getGestorDespachoSupervisorAsunto',id)" result="flowScope.supervisorDespacho" />
 	    	<evaluate expression="executor.execute('asuntosManager.puedoDevolverAsunto',id)" result="flowScope.puedoDevolver" />
 	    	<evaluate expression="executor.execute('asuntosManager.puedeTomarAccionAsunto',id)" result="flowScope.puedeTomarAccion" />
 	    	<evaluate expression="executor.execute('asuntosManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
@@ -27,7 +29,10 @@
                 <evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.esTitulizada',id)" result="flowScope.titulizada" />
                 <evaluate expression="executor.execute('es.pfsgroup.recovery.ext.api.asunto.getFondo',id)" result="flowScope.fondo" />
                 <evaluate expression="executor.execute('asuntosManager.getMsgErrorEnvioCDDCabecera',id)" result="flowScope.msgErrorEnvioCDD" />
-                <evaluate expression="executor.execute('MEJAsuntosManager.puedeFinalizarAsunto',id)" result="flowScope.puedeFinalizarAsunto" />                
+                <evaluate expression="executor.execute('MEJAsuntosManager.puedeFinalizarAsunto',id)" result="flowScope.puedeFinalizarAsunto" /> 
+                <evaluate expression="executor.execute('AsuntoAcuerdoManager.asuntoOrigen',id)" result="flowScope.asuntoOrigen" />
+                <evaluate expression="executor.execute('AsuntoAcuerdoManager.expedienteOrigen',id)" result="flowScope.expedienteOrigen" />
+                <evaluate expression="executor.execute('AsuntoAcuerdoManager.esAsuntoAcuerdo',id)" result="flowScope.esAsuntoAcuerdo" />
 	    </on-entry>
     </end-state> 	
     

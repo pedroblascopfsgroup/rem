@@ -42,6 +42,7 @@ public class PlazoTareasDefault implements Serializable, Auditable {
     public static final String CODIGO_PLAZO_PRORROGA_EXTERNA = "13";
     public static final String CODIGO_PLAZO_PRORROGA_DEFAULT = "14";
     public static final String CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_SEG = "15";
+    public static final String CODIGO_SOLICITUD_EXPEDIENTE_MANUAL_GESTION_DEUDA = "EXPMGDEUDA";
     public static final String CODIGO_PLAZO_PROPUESTA_OBJETIVO = "16";
     public static final String CODIGO_PLAZO_PROPUESTA_BORRADO_OBJETIVO = "17";
     public static final String CODIGO_PLAZO_PROPUESTA_CUMPLIMIENTO_OBJETIVO = "18";

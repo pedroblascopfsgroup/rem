@@ -21,12 +21,17 @@
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoAsunto')" result="flowScope.estados"/>
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTiposAsunto')" result="flowScope.tipoAsunto"/>
 			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCausaDecisionFinalizar')" result="flowScope.decisionesFinalizar"/>
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
 			<evaluate expression="executor.execute('tipoProcedimientoManager.getTipoProcedimientos')" result="flowScope.tipoProcedimientos" />
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getTabs')" result="flowScope.tabs"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoLeft')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoRight')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getMapasDespachoExtras')"	result="flowScope.mapasDespExtras" />
+			<evaluate expression="executor.execute('ADMDiccionariosManager.getSiNo')" result="flowScope.ddSiNo" />	
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDProvincias')" result="flowScope.listaProvincias" />
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDTipoDocumento')" result="flowScope.tiposDocumentos" />
 		</on-entry>
 	</end-state> 
     
@@ -40,6 +45,7 @@
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTiposAsunto')" result="flowScope.tipoAsunto"/>
 			<!--  <evaluate expression="executor.execute('dictionaryManager.getList', 'EXTDDTipoGestor')" result="flowScope.tiposGestor"/>-->
 			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCausaDecisionFinalizar')" result="flowScope.decisionesFinalizar"/>
 			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
 			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
 			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDSiNo')" result="flowScope.sino" />
@@ -47,6 +53,10 @@
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getTabs')" result="flowScope.tabs"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoLeft')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoRight')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getMapasDespachoExtras')"	result="flowScope.mapasDespExtras" />
+			<evaluate expression="executor.execute('ADMDiccionariosManager.getSiNo')" result="flowScope.ddSiNo" />	
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDProvincias')" result="flowScope.listaProvincias" />
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDTipoDocumento')" result="flowScope.tiposDocumentos" />
 		</on-entry>
 	</end-state> 
     

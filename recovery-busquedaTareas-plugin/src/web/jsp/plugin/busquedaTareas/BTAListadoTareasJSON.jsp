@@ -11,14 +11,13 @@
 			<json:property name="descripcion" value="${tar.tarea.descripcionEntidad}" />
 			<json:property name="subtipo" value="${tar.tarea.subtipoTarea.descripcion}" />
 			<json:property name="codigoSubtipoTarea" value="${tar.tarea.subtipoTarea.codigoSubtarea}" />
-			
 			<%-- Si es gestion de vencidos, entra en el grupo "esta semana" --%>
-			<c:if test='${tar.tarea.subtipoTarea.codigoSubtarea == 1 || tar.tarea.subtipoTarea.codigoSubtarea == 98 || tar.tarea.subtipoTarea.codigoSubtarea == 99}'>
+			<c:if test='${tar.tarea.subtipoTarea.codigoSubtarea == "1" || tar.tarea.subtipoTarea.codigoSubtarea == "98" || tar.tarea.subtipoTarea.codigoSubtarea == "99"}'>
 				<json:property name="group" value="2" />
 				<json:property name="descripcionTarea" value="${tar.tarea.tarea}"/>
 				<json:property name="descripcion" value="${tar.tarea.descripcionTarea}" />
 			</c:if>
-			<c:if test='${tar.tarea.subtipoTarea.codigoSubtarea != 1 && tar.tarea.subtipoTarea.codigoSubtarea != 98 && tar.tarea.subtipoTarea.codigoSubtarea != 99}'>
+			<c:if test='${tar.tarea.subtipoTarea.codigoSubtarea != "1" && tar.tarea.subtipoTarea.codigoSubtarea != "98" && tar.tarea.subtipoTarea.codigoSubtarea != "99"}'>
 				<json:property name="fechaFin" >
 					<fwk:date value="${tar.tarea.fechaFin}"/>
 				</json:property>
@@ -62,7 +61,6 @@
 												  ${tar.tarea.expediente.oficina.zona.descripcion}
 												  ${tar.tarea.asunto.gestor.despachoExterno.zona.descripcion}" />
 			</c:if>
-			
 		</json:object>
 	</json:array>
 </fwk:json>

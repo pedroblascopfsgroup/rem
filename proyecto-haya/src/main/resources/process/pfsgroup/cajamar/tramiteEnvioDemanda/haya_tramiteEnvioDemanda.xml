@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process-definition name="hcj_tramiteEnvioDemanda" xmlns="urn:jbpm.org:jpdl-3.2">
+
+
+
+	<start-state name="Inicio">
+		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="avanzaBPM"></transition>
+	</start-state>
+
+
+	<state name="HC106_RedactarDemandaAdjuntarDocu">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>bccPrecontenciosoLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="HC106_RevisarCompletitudDocu" name="avanzaBPM"></transition>
+		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="activarAlerta"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<state name="HC106_RevisarCompletitudDocu">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="HC106_RevisarCompletitudDocuDecision" name="avanzaBPM"></transition>
+		<transition to="HC106_RevisarCompletitudDocu" name="activarAlerta"></transition>
+		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="vueltaAtras"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+
+	<decision name="HC106_RevisarCompletitudDocuDecision" expression="#{HC106_RevisarCompletitudDocuDecision}">
+		<transition to="HC106_BPMTramiteProvisionFondosProcurador" name="completa"></transition>
+		<transition to="HC106_RedactarDemandaAdjuntarDocu" name="incompleta"></transition>
+	</decision>
+	
+	<state name="HC106_BPMTramiteProvisionFondosProcurador">
+		<event type="node-enter">
+         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericEnterActionHandler</targetBean>
+        	 </action>
+      	</event>
+      	<event type="node-leave">
+	         	<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
+            	<targetBean>genericLeaveActionHandler</targetBean>
+        	 </action>
+      	</event>
+		<transition to="Fin" name="hcj_tramiteProvisionFondosProcurador"></transition>
+	</state>
+
+
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>endProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+
+</process-definition>

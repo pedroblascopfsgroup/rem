@@ -18,12 +18,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_GES_GESTION_ASUNTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class DDGestionAsunto implements Auditable, Dictionary {
-
-
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 4211859349586243742L;
+
+	public static final String HAYA = "HAYA";
+	public static final String BANKIA = "BANKIA";
 
 	@Id
 	@Column(name = "DD_GES_ID")

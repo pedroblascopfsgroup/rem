@@ -8,6 +8,7 @@ import es.pfgroup.monioring.bach.load.CSConfigSingleton;
 import es.pfgroup.monioring.bach.load.dao.CheckStatusDao;
 import es.pfgroup.monioring.bach.load.dao.model.CheckStatusTuple;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusErrorType;
+import es.pfgroup.monioring.bach.load.exceptions.CheckStatusRecoverableException;
 import es.pfgroup.monioring.bach.load.exceptions.CheckStatusWrongArgumentsException;
 
 /**
@@ -30,7 +31,7 @@ public class CheckStatusLogicImpl implements CheckStatusLogic {
     }
 
     @Override
-    public boolean hasErrors(final Integer entity, final String jobName, final Date lastTime) throws CheckStatusWrongArgumentsException {
+    public boolean hasErrors(final Integer entity, final String jobName, final Date lastTime) throws CheckStatusWrongArgumentsException, CheckStatusRecoverableException {
 
         if ((entity == null) || (jobName == null) || ("".equals(jobName))) {
             throw new CheckStatusWrongArgumentsException();
@@ -46,7 +47,7 @@ public class CheckStatusLogicImpl implements CheckStatusLogic {
     }
 
     @Override
-    public BatchExecutionData getExecutionInfo(final Integer entity, final String jobName, final Date lastTime) throws CheckStatusWrongArgumentsException {
+    public BatchExecutionData getExecutionInfo(final Integer entity, final String jobName, final Date lastTime) throws CheckStatusWrongArgumentsException, CheckStatusRecoverableException {
         if ((entity == null) || (jobName == null) || ("".equals(jobName))) {
             throw new CheckStatusWrongArgumentsException();
         }

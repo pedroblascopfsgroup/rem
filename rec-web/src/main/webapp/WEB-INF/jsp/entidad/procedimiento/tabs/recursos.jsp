@@ -94,7 +94,7 @@
 
   
 
-  var buttonBar = [ btnNuevoRecurso, btnEditarRecurso ];
+  var buttonBar = [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTON_RECURSO_NUEVO"> btnNuevoRecurso,</sec:authorize> btnEditarRecurso ];
 
   var recursosGrid = app.crearGrid(recursosStore,recursosCm,{
       title:'<s:message code="procedimiento.recursos.grid" text="**Recursos ya existentes en el procedimiento" />'
@@ -141,6 +141,14 @@
 
   panel.getProcedimientoId = function(){
     return entidad.get("data").id;
+  }
+  
+  panel.setVisibleTab = function(data){
+  if(data.esProcedimientoAcuerdo){
+    	return false;
+    }else{
+    	return true;
+    }
   }
 
   return panel;

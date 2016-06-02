@@ -31,6 +31,8 @@ import es.pfsgroup.recovery.hrebcc.model.Vencidos;
 @Service
 public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 
+	private static final String SIN_RIESGO_OPERACIONAL_NO_PROCEDE = "00";
+
 	@Autowired
 	EXTContratoDao contratoDao;
 	
@@ -156,6 +158,7 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	 * Comprobamos que todos los contratos del asunto del procedimiento tienen un riesgo operacional asociado
 	 */
 	@Override
+	@Transactional(readOnly = false)
 	public Boolean comprobarRiesgoProcedimiento(Long idProcedimiento) {
 		Boolean resultado = true;
 		
@@ -165,8 +168,15 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		} else {
 			Set<Contrato> contratos = prc.getAsunto().getContratos();
 			for (Contrato contrato : contratos) {
-				if (Checks.esNulo(this.obtenerRiesgoOperacionalContrato(contrato.getId()))) {
-					resultado = false;
+				Long idContrato = contrato.getId();
+				if (Checks.esNulo(this.obtenerRiesgoOperacionalContrato(idContrato))) {
+					// Modificado según CMREC-1472 
+					ActualizarRiesgoOperacionalDto dto = new ActualizarRiesgoOperacionalDto();
+					dto.setCodRiesgoOperacional(SIN_RIESGO_OPERACIONAL_NO_PROCEDE);
+					dto.setIdContrato(idContrato);
+					dto.setEnviarDatos(true);
+					actualizarRiesgoOperacional(dto);
+					// resultado = false;
 				}
 			}
 		}

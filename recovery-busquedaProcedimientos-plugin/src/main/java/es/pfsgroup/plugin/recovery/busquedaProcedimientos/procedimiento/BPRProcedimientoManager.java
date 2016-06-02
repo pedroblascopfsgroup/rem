@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.Query;
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.hibernate.pagination.PageHibernate;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
@@ -20,16 +23,17 @@ import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.asunto.model.DDTipoReclamacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comite.model.Comite;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -55,6 +59,9 @@ public class BPRProcedimientoManager  implements BPRProcedimientoApi {
 
 	@Autowired
 	ApiProxyFactory proxyFactory;
+	
+	@Resource
+    private MessageService messageService;
 
 	@BusinessOperation(PluginBusquedaProcedimientosBusinessOperations.BPR_MGR_LISTATIPOSPROC)
 	public List<TipoProcedimiento> listaProcedimientos() {
@@ -102,10 +109,18 @@ public class BPRProcedimientoManager  implements BPRProcedimientoApi {
 	public List<Procedimiento> buscaProcedimientosParaExcel(
 			BPRDtoBusquedaProcedimientos dto) {
 		EventFactory.onMethodStart(this.getClass());
-		dto.setLimit(Integer.MAX_VALUE - 1);
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_PROCEDIMIENTOS);
+		int limit = Integer.parseInt(param.getValor());
+        dto.setLimit(limit);
 		List<Procedimiento> listaRetorno = new ArrayList<Procedimiento>();
 		PageHibernate page = (PageHibernate) procedimientoDao.findProcedimientos(proxyFactory.proxy(
 				UsuarioApi.class).getUsuarioLogado(), dto);
+		
+		if(page.getTotalCount()>limit){
+			throw new UserException(messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado1") +limit+" "+ messageService.getMessage("plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"));
+		}
+		
 		listaRetorno.addAll((List<Procedimiento>) page.getResults());
 		listaRetorno.remove(null);
 		EventFactory.onMethodStop(this.getClass());

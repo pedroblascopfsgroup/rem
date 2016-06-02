@@ -74,9 +74,9 @@ public class CambiosGestoresController {
 	public String abreVentanaBuscadorAsuntos(@RequestParam(value = "listaAsuntos", required = true) List<Long> listaAsuntos,
 			@RequestParam(value = "idDespacho", required = true) Long idDespacho, ModelMap map) {	
 		List<EXTDDTipoGestor> tiposGestor = proxyFactory.proxy(CambioMasivoGestoresAsuntoApi.class).getTiposGestor();
-		List<DespachoExterno> despachos = proxyFactory.proxy(CambioMasivoGestoresAsuntoApi.class).getTodosLosDespachos();
+		//List<DespachoExterno> despachos = proxyFactory.proxy(CambioMasivoGestoresAsuntoApi.class).getTodosLosDespachos();
 		map.put("tiposGestor", tiposGestor);
-		map.put("despachos", despachos);
+		//map.put("despachos", despachos);
 		map.put("listaAsuntos", listaAsuntos);
 		map.put("idDespacho", idDespacho);
 		return JSP_VENTANA_CAMBIO_GESTORES_BUSCADOR_ASUNTOS;

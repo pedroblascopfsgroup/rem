@@ -47,16 +47,19 @@ public class PuntuacionTotalDaoImpl extends AbstractEntityDao<PuntuacionTotal, L
     @SuppressWarnings("unchecked")
     public List<Date> getFechasPuntuacionTotal(Long idPersona, List<Date> fechas) {
         String hql = "select distinct fechaProcesado from PuntuacionTotal where persona.id = :idPersona";
-        String[] params = new String[fechas.size() + 1];
-        Object[] values = new Object[fechas.size() + 1];
+//        String[] params = new String[fechas.size() + 1];
+//        Object[] values = new Object[fechas.size() + 1];
+        String[] params = new String[1];
+        Object[] values = new Object[1];
+        
         params[0] = "idPersona";
         values[0] = idPersona;
 
-        for (int i = 0; i < fechas.size(); i++) {
-            hql += " and fechaProcesado != :fecha" + i;
-            params[i + 1] = "fecha" + i;
-            values[i + 1] = fechas.get(i);
-        }
+//        for (int i = 0; i < fechas.size(); i++) {
+//            hql += " and fechaProcesado != :fecha" + i;
+//            params[i + 1] = "fecha" + i;
+//            values[i + 1] = fechas.get(i);
+//        }
 
         hql += " order by fechaProcesado DESC";
 

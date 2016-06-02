@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.bienes;
 
 import java.math.BigDecimal;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoNMBBien extends WebDto {
@@ -14,7 +15,7 @@ public class DtoNMBBien extends WebDto {
     private Long id;
     private String tipoBien; 
     private BigDecimal valorActual;
-    private Float importeCargas;
+    private BigDecimal importeCargas;
     private String descripcionBien;
     private String fechaVerificacion;
     private Float participacionNMB;
@@ -31,7 +32,7 @@ public class DtoNMBBien extends WebDto {
 	
     
 	/* campos propios de Bien */
-	private Float bieSuperficie;	
+	private BigDecimal bieSuperficie;	
 	private Integer participacion;
 	private String referenciaCatastral;
     private String datosRegistrales;
@@ -40,9 +41,9 @@ public class DtoNMBBien extends WebDto {
     /* Datos registrales */
     private String referenciaCatastralBien;   
 	
-    private Float superficie;
+    private BigDecimal superficie;
 	
-    private Float superficieConstruida;
+    private BigDecimal superficieConstruida;
 	
 	private String tomo;
 	
@@ -102,15 +103,15 @@ public class DtoNMBBien extends WebDto {
     /* Datos Valoracion */
     private String fechaValorSubjetivo;
 	
-    private Float importeValorSubjetivo;
+    private BigDecimal importeValorSubjetivo;
 	
     private String fechaValorApreciacion;
 	
-    private Float importeValorApreciacion;
+    private BigDecimal importeValorApreciacion;
 	
     private String fechaValorTasacion;
 	
-    private Float importeValorTasacion;
+    private BigDecimal importeValorTasacion;
 
     private boolean solvenciaNoEncontrada;
     private boolean obraEnCurso;
@@ -121,7 +122,7 @@ public class DtoNMBBien extends WebDto {
     
     private String observaciones;
     
-    private Float  valorTasacionExterna;
+    private BigDecimal  valorTasacionExterna;
     private String fechaTasacionExterna;
     private String tasadora            ;
     private String fechaSolicitudTasacion;
@@ -143,7 +144,7 @@ public class DtoNMBBien extends WebDto {
     private String desIAE;
     private String tipoProdBancario;
    	private String tipoInmueble;
-   	private Float valoracion;
+   	private BigDecimal valoracion;
    	private String entidad;
    	private String numCuenta;
    	private String matricula;
@@ -201,11 +202,11 @@ public class DtoNMBBien extends WebDto {
 		this.viviendaHabitual = viviendaHabitual;
 	}
 
-	public Float getValorTasacionExterna() {
+	public BigDecimal getValorTasacionExterna() {
 		return valorTasacionExterna;
 	}
 
-	public void setValorTasacionExterna(Float valorTasacionExterna) {
+	public void setValorTasacionExterna(BigDecimal valorTasacionExterna) {
 		this.valorTasacionExterna = valorTasacionExterna;
 	}
 
@@ -277,19 +278,19 @@ public class DtoNMBBien extends WebDto {
 		this.referenciaCatastralBien = referenciaCatastralBien;
 	}
 
-	public Float getSuperficie() {
+	public BigDecimal getSuperficie() {
 		return superficie;
 	}
 
-	public void setSuperficie(Float superficie) {
+	public void setSuperficie(BigDecimal superficie) {
 		this.superficie = superficie;
 	}
 
-	public Float getSuperficieConstruida() {
+	public BigDecimal getSuperficieConstruida() {
 		return superficieConstruida;
 	}
 
-	public void setSuperficieConstruida(Float superficieConstruida) {
+	public void setSuperficieConstruida(BigDecimal superficieConstruida) {
 		this.superficieConstruida = superficieConstruida;
 	}
 
@@ -501,11 +502,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaValorSubjetivo = fechaValorSubjetivo;
 	}
 
-	public Float getImporteValorSubjetivo() {
+	public BigDecimal getImporteValorSubjetivo() {
 		return importeValorSubjetivo;
 	}
 
-	public void setImporteValorSubjetivo(Float importeValorSubjetivo) {
+	public void setImporteValorSubjetivo(BigDecimal importeValorSubjetivo) {
 		this.importeValorSubjetivo = importeValorSubjetivo;
 	}
 
@@ -517,11 +518,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaValorApreciacion = fechaValorApreciacion;
 	}
 
-	public Float getImporteValorApreciacion() {
+	public BigDecimal getImporteValorApreciacion() {
 		return importeValorApreciacion;
 	}
 
-	public void setImporteValorApreciacion(Float importeValorApreciacion) {
+	public void setImporteValorApreciacion(BigDecimal importeValorApreciacion) {
 		this.importeValorApreciacion = importeValorApreciacion;
 	}
 
@@ -533,11 +534,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaValorTasacion = fechaValorTasacion;
 	}
 
-	public Float getImporteValorTasacion() {
+	public BigDecimal getImporteValorTasacion() {
 		return importeValorTasacion;
 	}
 
-	public void setImporteValorTasacion(Float importeValorTasacion) {
+	public void setImporteValorTasacion(BigDecimal importeValorTasacion) {
 		this.importeValorTasacion = importeValorTasacion;
 	}
 
@@ -557,11 +558,11 @@ public class DtoNMBBien extends WebDto {
 		this.valorActual = valorActual;
 	}
 
-	public Float getImporteCargas() {
+	public BigDecimal getImporteCargas() {
 		return importeCargas;
 	}
 
-	public void setImporteCargas(Float importeCargas) {
+	public void setImporteCargas(BigDecimal importeCargas) {
 		this.importeCargas = importeCargas;
 	}
 
@@ -589,11 +590,11 @@ public class DtoNMBBien extends WebDto {
 		this.fechaVerificacion = fechaVerificacion;
 	}
 
-	public Float getBieSuperficie() {
+	public BigDecimal getBieSuperficie() {
 		return bieSuperficie;
 	}
 
-	public void setBieSuperficie(Float bieSuperficie) {
+	public void setBieSuperficie(BigDecimal bieSuperficie) {
 		this.bieSuperficie = bieSuperficie;
 	}
 
@@ -713,11 +714,11 @@ public class DtoNMBBien extends WebDto {
 		this.tipoInmueble = tipoInmueble;
 	}
 
-	public Float getValoracion() {
+	public BigDecimal getValoracion() {
 		return valoracion;
 	}
 
-	public void setValoracion(Float valoracion) {
+	public void setValoracion(BigDecimal valoracion) {
 		this.valoracion = valoracion;
 	}
 

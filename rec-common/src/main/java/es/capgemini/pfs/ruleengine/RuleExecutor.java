@@ -1,4 +1,4 @@
-package es.capgemini.pfs.ruleengine;
+  package es.capgemini.pfs.ruleengine;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -71,6 +71,28 @@ public class RuleExecutor {
 
         return sql.toString();
     }
+    
+    @BusinessOperation
+    public String generateMostPriorityBaseRule(String ruleDefinition) {
+        StringBuffer sql = new StringBuffer();
+        sql.append("SELECT " + getConfig().getColumnFromRef());
+        sql.append(" FROM " + getConfig().getTableFrom());
+        sql.append(" WHERE ");
+        if (!(getConfig().isJsonDefinition() || getConfig().isXmlDefinition())) {
+            logger.error("No se ha encontrado forma de convertir el tipo:" + getConfig().getRuleDefinitionType());
+            throw new ValidationException();
+        }
+        if (getConfig().isJsonDefinition()) {
+            sql.append(rcUtil.JSONToRule(ruleDefinition, getConfig()).generateSQL());
+        }
+        if (getConfig().isXmlDefinition()) {
+            sql.append(rcUtil.XMLToRule(ruleDefinition, getConfig()).generateSQL());
+        }
+        
+        return sql.toString();
+    }
+    
+    
 
     public RuleResult execRule(RuleEndState endState, List<RuleFilter> filters) {
         RuleResult result = new RuleResult(endState.getName());
@@ -147,8 +169,9 @@ public class RuleExecutor {
         return result;
     }
 
+        
     @BusinessOperation
-    public RuleResult checkRule(String ruleDefinition) {
+    public RuleResult checkRule(String ruleDefinition,List<String> morePriorityRules) {
         RuleResult result = new RuleResult("CHECK_RULE");
         result.start();
 
@@ -161,6 +184,13 @@ public class RuleExecutor {
             result.finishWithErrors(e);
             return result;
         }
+        
+        //Filtramos los valores obtenido en las reglas con mas prioridad
+        if(morePriorityRules != null && morePriorityRules.size() > 0){
+        	for(String rule :morePriorityRules){
+        		sql = sql.append(" AND ").append(getConfig().getColumnFromRef()).append(" NOT IN (").append(rule).append(")");
+        	}
+        }
 
         Connection connection = null;
         try {
@@ -172,14 +202,14 @@ public class RuleExecutor {
         }
 
         int rows = -1;
+        ResultSet rs = null;
         try {
             connection.setAutoCommit(false);
             logger.info("Comprobando regla");
             logger.info("                [" + sql.toString() + "]");
-            ResultSet rs = connection.prepareStatement(sql.toString()).executeQuery();
+            rs = connection.prepareStatement(sql.toString()).executeQuery();
             rs.next();
             rows = rs.getInt(1);
-            rs.close();
             result.finishOK(rows);
             logger.info("-> Regla comprobada! - [Rows: " + rows + ", Tiempo: " + result.getTimeInSeconds() + " segs]");
 
@@ -188,6 +218,13 @@ public class RuleExecutor {
             result.finishWithErrors(e);
             return result;
         } finally {
+        	if (rs != null){
+        		try {
+					rs.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+        	}
             if (connection != null) {
                 try {
                     connection.close();

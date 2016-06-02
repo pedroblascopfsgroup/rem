@@ -75,5 +75,20 @@ public class MSVResolucionDaoImpl extends AbstractEntityDao<MSVResolucion, Long>
 		return hb;
 	}
 
+	@Override
+	public List<MSVResolucion> getResolucionesPendientesValidar(Long idTarea, List<String> tipoResolucionAccionBaned) {
+		
+		HQLBuilder hb = new HQLBuilder("from MSVResolucion res");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "res.tarea.id", idTarea);
+		HQLBuilder.addFiltroIgualQue(hb, "res.auditoria.borrado", false);
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "res.estadoResolucion.codigo", MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+		
+		for(String trab :  tipoResolucionAccionBaned){
+			hb.appendWhere(" res.tipoResolucion.tipoAccion.codigo != '"+trab+"' ");
+		}
+		
+		return HibernateQueryUtils.list(this,hb);
+	}
+
 	
 }

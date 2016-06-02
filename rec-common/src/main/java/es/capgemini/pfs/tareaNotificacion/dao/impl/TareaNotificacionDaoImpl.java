@@ -29,7 +29,6 @@ import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.utils.StringUtils;
 import es.capgemini.pfs.zona.model.DDZona;
-import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Implementación del dao de notificaciones para Hibenate.
@@ -195,11 +194,12 @@ public class TareaNotificacionDaoImpl extends AbstractEntityDao<TareaNotificacio
     public Date buscarFechaFinEstadoExpediente(Long idExpediente) {
         List<Object> params = new ArrayList<Object>();
         String query = "select tn from TareaNotificacion tn left join  tn.expediente.estadoItinerario est where tn.estadoItinerario.codigo = est.codigo and tn.expediente.id = ? and tn.auditoria.borrado = 0";
-        query += " and tn.subtipoTarea.codigoSubtarea in ( ?, ?, ?)";
+        query += " and tn.subtipoTarea.codigoSubtarea in ( ?, ?, ?, ?, ?)";
         params.add(idExpediente);
         params.add(SubtipoTarea.CODIGO_COMPLETAR_EXPEDIENTE);
         params.add(SubtipoTarea.CODIGO_REVISAR_EXPEDIENE);
         params.add(SubtipoTarea.CODIGO_DECISION_COMITE);
+        params.add(SubtipoTarea.CODIGO_TAREA_SANCIONADO);
         List<TareaNotificacion> tareas = getHibernateTemplate().find(query, params.toArray());
         if (tareas != null && tareas.size() > 0) { return tareas.get(0).getFechaVenc(); }
         return new Date();
@@ -455,11 +455,14 @@ public class TareaNotificacionDaoImpl extends AbstractEntityDao<TareaNotificacio
         List<Object> params = new ArrayList<Object>();
         String query = "select tn from TareaNotificacion tn where tn.expediente.id = ?";
         query += " and tn.auditoria.borrado = false ";
-        query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?)";
+        query += " and tn.subtipoTarea.codigoSubtarea in (?, ?, ?, ?, ?, ?)";
         params.add(idExpediente);
         params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_CE);
         params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_RE);
         params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_DC);
+        params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_FP);
+        params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_ENSAN);
+        params.add(SubtipoTarea.CODIGO_SOLICITAR_PRORROGA_SANC);
         List<TareaNotificacion> notificaciones = getHibernateTemplate().find(query, params.toArray());
 
         return notificaciones;

@@ -27,6 +27,7 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDPrioridad;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
@@ -105,6 +106,11 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	@OrderBy(clause = "PCO_PRC_HEP_FECHA_INCIO DESC")
 	private List<HistoricoEstadoProcedimientoPCO> estadosPreparacionProc;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_PRI_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private DDPrioridad prioridad;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -120,26 +126,52 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	 */
 
 	@Formula(value = 
-		" (SELECT MIN(dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion)" +
-		" FROM   pco_prc_hep_histor_est_prep " +
-		"       INNER JOIN pco_prc_procedimientos " +
-		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
-		"       INNER JOIN dd_pco_prc_estado_preparacion " +
-		"               ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
-		" WHERE  pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
-		"       AND pco_prc_procedimientos.borrado = 0 " +
-		"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
-		"       AND dd_pco_prc_estado_preparacion.borrado = 0 " +
-		"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
+			"			(SELECT DISTINCT dd_pco_prc_estado_preparacion.dd_pco_pep_descripcion " +
+			"					FROM pco_prc_hep_histor_est_prep " +
+			"					INNER JOIN pco_prc_procedimientos " +
+			"					ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"					INNER JOIN dd_pco_prc_estado_preparacion " +
+			"					ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			"					WHERE pco_prc_procedimientos.borrado           = 0 " +
+			"					AND pco_prc_hep_histor_est_prep.borrado        = 0 " +
+			"					AND dd_pco_prc_estado_preparacion.borrado      = 0 " +
+			"					AND pco_prc_procedimientos.pco_prc_id          = PCO_PRC_ID " +
+			"					AND NOT EXISTS " +
+			"					  (SELECT 1 " +
+			"					  FROM pco_prc_hep_histor_est_prep hep " +
+			"					  WHERE pco_prc_procedimientos.pco_prc_id = hep.pco_prc_id " +
+			"					  AND hep.pco_prc_hep_fecha_incio         > pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio " +
+			"					  AND hep.borrado        = 0 " +
+			"			)) ")
 	private String estadoActual;
+	
+	@Formula(value = 
+			"			(SELECT DISTINCT dd_pco_prc_estado_preparacion.dd_pco_pep_codigo " +
+			"					FROM pco_prc_hep_histor_est_prep " +
+			"					INNER JOIN pco_prc_procedimientos " +
+			"					ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
+			"					INNER JOIN dd_pco_prc_estado_preparacion " +
+			"					ON dd_pco_prc_estado_preparacion.dd_pco_pep_id = pco_prc_hep_histor_est_prep.dd_pco_pep_id " +
+			"					WHERE pco_prc_procedimientos.borrado           = 0 " +
+			"					AND pco_prc_hep_histor_est_prep.borrado        = 0 " +
+			"					AND dd_pco_prc_estado_preparacion.borrado      = 0 " +
+			"					AND pco_prc_procedimientos.pco_prc_id          = PCO_PRC_ID " +
+			"					AND NOT EXISTS " +
+			"					  (SELECT 1 " +
+			"					  FROM pco_prc_hep_histor_est_prep hep " +
+			"					  WHERE pco_prc_procedimientos.pco_prc_id = hep.pco_prc_id " +
+			"					  AND hep.pco_prc_hep_fecha_incio         > pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio " +
+			"					  AND hep.borrado        = 0 " +
+			"			)) ")
+	private String codigoEstadoActual;
 
 	@Formula(value = 
-		" (SELECT min(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +
+		" (SELECT max(pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_incio)" +
 		" FROM   pco_prc_hep_histor_est_prep " +
 		"       INNER JOIN pco_prc_procedimientos " +
 		"               ON pco_prc_procedimientos.pco_prc_id = pco_prc_hep_histor_est_prep.pco_prc_id " +
-		" WHERE  pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +
-		"       AND pco_prc_procedimientos.borrado = 0 " +
+		" WHERE  pco_prc_procedimientos.borrado = 0 " +
+		//"       AND pco_prc_hep_histor_est_prep.pco_prc_hep_fecha_fin IS NULL " +//como se calculaba antes
 		"       AND pco_prc_hep_histor_est_prep.borrado = 0 " +
 		"       AND pco_prc_procedimientos.pco_prc_id = PCO_PRC_ID ) ")
 	private Date fechaEstadoActual;
@@ -269,7 +301,10 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 	private Date fechaCancelado;
 	
 	@Formula(value = 
-			"(SELECT MIN(TEV.tev_valor) " +
+			"(SELECT CASE Min(TEV.TEV_VALOR )" +
+			" WHEN 'S' THEN '01'" +
+			" WHEN 'N' THEN '0'" +
+			" ELSE MIN(TEV.tev_valor) END" +
 			" FROM   tev_tarea_externa_valor TEV " +
 			"       join tex_tarea_externa TEX " +
 			"         ON TEV.tex_id = TEX.tex_id " +
@@ -479,5 +514,13 @@ public class ProcedimientoPCO implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public DDPrioridad getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(DDPrioridad prioridad) {
+		this.prioridad = prioridad;
 	}
 }

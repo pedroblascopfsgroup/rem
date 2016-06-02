@@ -6,7 +6,7 @@
         <on-entry>
         	<evaluate expression="executor.execute('fileUploadUtils.extractHttpServletRequest', externalContext)" result="flowScope.hsr"/>
             <evaluate expression="executor.execute('fileUpload.fileUpload', hsr)" result="flowScope.uploadForm" />
-            <evaluate expression="executor.execute('personaManager.upload', uploadForm)" result="flowScope.resultado" />
+            <evaluate expression="executor.execute('adjuntosManager.uploadPersona', uploadForm)" result="flowScope.resultado" />
             <evaluate expression="externalContext.getSessionMap().put('resultado', resultado)"/>            
         </on-entry>
     </end-state>

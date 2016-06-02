@@ -25,6 +25,7 @@ import javax.persistence.Version;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.WhereJoinTable;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.userdetails.UserDetails;
 
@@ -89,6 +90,7 @@ public class UsuarioSecurity implements SecurityUserInfo, UserDetails, Serializa
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ZON_PEF_USU", schema = "${entity.schema}", joinColumns = { @JoinColumn(name = "USU_ID") }, inverseJoinColumns = @JoinColumn(name = "PEF_ID"))
+    @WhereJoinTable(clause = Auditoria.UNDELETED_RESTICTION)
     private Set<PerfilSecurity> perfiles = null;
 
     @Embedded

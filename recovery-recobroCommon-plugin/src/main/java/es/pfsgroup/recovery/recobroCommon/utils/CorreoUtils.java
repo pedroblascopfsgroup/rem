@@ -59,7 +59,7 @@ public class CorreoUtils {
 	//private static final String MSG_FROM = "pedro.blasco@pfsgroup.es"; //"sv00154@cm.es"
 	// Message.RecipientType.TO,new InternetAddress("cplazag@bankia.com"));
 	
-	public static CorreoUtils dameInstancia() {
+	public static synchronized CorreoUtils dameInstancia() {
 		if (correo == null) {
 			correo = new CorreoUtils();
 		}

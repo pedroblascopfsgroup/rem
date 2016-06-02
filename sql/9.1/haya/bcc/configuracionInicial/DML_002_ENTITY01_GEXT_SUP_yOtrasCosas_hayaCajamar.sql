@@ -1,5 +1,4 @@
-
--- actualizar la configuraci�n para utilizar los TGE SUP y GEXT
+-- actualizar la configuración para utilizar los TGE SUP y GEXT
 
 -- GEXT
 
@@ -36,6 +35,8 @@ values
  'DES_VALIDOS', (select tde.dd_tde_codigo from hayamaster.dd_tde_tipo_despacho tde where tde.dd_tde_codigo = 'D-SUCONGE'),
  'SAG', sysdate);
  
+UPDATE TAP_TAREA_PROCEDIMIENTO tap SET tap.DD_TSUP_ID = (select dd_tge_id from hayamaster.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUP'), usuariomodificar = 'SAG', fechamodificar = sysdate WHERE tap.DD_TSUP_ID = (select dd_tge_id from hayamaster.DD_TGE_TIPO_GESTOR where dd_tge_codigo = 'SUCONGE'); 
+ 
 -- insertar usuario administrador
 insert into hayamaster.usu_usuarios (usu_id, entidad_id, usu_username, usu_password, usu_nombre,usu_apellido1,usu_apellido2,usu_mail, usuariocrear,fechacrear, usu_externo, usu_grupo)  values  ( hayamaster.s_usu_usuarios.nextval, (select ID from HAYAMASTER.ENTIDAD where DESCRIPCION = 'CAJAMAR'),'HAYACAJAMAR','1234','HAYACAJAMAR','','','' , 'JSV', sysdate, 0,0);
 
@@ -43,8 +44,8 @@ insert into HAYA02.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id,  zpu.usu_id,zpu.pef_
 
 -- actualizar algunos TGE
 
-update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor Asesor�a jur�dica', dd_tge_descripcion_larga = 'CJ - Supervisor Asesor�a jur�dica' where dd_tge_codigo = 'SAJUR';
+update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor Asesoría jurídica', dd_tge_descripcion_larga = 'CJ - Supervisor Asesoría jurídica' where dd_tge_codigo = 'SAJUR';
 
-update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor HRE gesti�n llaves', dd_tge_descripcion_larga = 'CJ - Supervisor HRE gesti�n llaves', borrado = 0, usuarioborrar = null, fechaborrar = null where dd_tge_codigo = 'SPGL';
+update hayamaster.dd_tge_tipo_gestor set dd_tge_descripcion = 'CJ - Supervisor HRE gestión llaves', dd_tge_descripcion_larga = 'CJ - Supervisor HRE gestión llaves', borrado = 0, usuarioborrar = null, fechaborrar = null where dd_tge_codigo = 'SPGL';
 
 update hayamaster.dd_tge_tipo_gestor set borrado = 1, usuarioborrar = 'SAG', fechaborrar = sysdate where dd_tge_codigo in ('CJ-GESEXT','CJ-SUEXT');

@@ -29,10 +29,12 @@ import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.cliente.model.Cliente;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.core.api.registro.ClaveValor;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -40,6 +42,7 @@ import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionCustomTemplate;
@@ -109,6 +112,9 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	
 	@Autowired
 	private Executor executor;	
+	
+	@Autowired
+	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils;
 
 	@Override
 	@BusinessOperation(AMF_GET_USUARIOS)
@@ -119,8 +125,10 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 	@Override
 	@BusinessOperation(AMF_CREATE_ANOTACION)
 	@Transactional(readOnly = false)
-	public void createAnotacion(DtoCrearAnotacionInfo dto) {
-
+	//public void createAnotacion(DtoCrearAnotacionInfo dto) {
+	public List<Long> createAnotacion(DtoCrearAnotacionInfo dto) {
+		List<Long> listaTareas = new ArrayList<Long>();
+		
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class)
 				.getUsuarioLogado();
 
@@ -315,6 +323,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 									dto.getAsuntoMail(), usuarioLogado.getId(),
 									false, SUBTIPO_ANOTACION_AUTOTAREA,
 									user.getFecha());
+							listaTareas.add(idTarea); // Metemos la tarea creada en la lista de tareas.
 							dejarTraza(
 									usuarioLogado.getId(),
 									AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
@@ -333,6 +342,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 							Long idTarea = crearTarea(idUg, codUg,
 									dto.getAsuntoMail(), user.getId(), true,
 									SUBTIPO_ANOTACION_TAREA, user.getFecha());
+							listaTareas.add(idTarea); // Metemos la tarea creada en la lista de tareas.
 							// crearTarea(asunto.getId(), dto.getAsuntoMail(),
 							// usuarioLogado.getId(), true,
 							// SUBTIPO_ANOTACION_TAREA_EN_ESPERA,
@@ -356,6 +366,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						Long idTarea = crearTarea(idUg, codUg,
 								dto.getAsuntoMail(), user.getId(), false,
 								SUBTIPO_ANOTACION_NOTIFICACION, user.getFecha());
+						listaTareas.add(idTarea); // Metemos la tarea creada en la lista de tareas.
 						dejarTraza(
 								usuarioLogado.getId(),
 								AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_NOTIFICACION,
@@ -410,7 +421,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 						 StringUtils.collectionToCommaDelimitedString(mailsCC), dto.getAsuntoMail(), ug, nombre, HtmlUtils.htmlUnescape(dto.getCuerpoEmail()),
 						dto);
 				
-				AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
+				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos( null, mailsPara, mailsCC,
 						asuntoMail, cuerpoEmail, dto.getAdjuntosList());
 				
 				/*DIANA: Nuevo m�todo para a�adir adjuntos al email
@@ -439,6 +450,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 			}
 		}
 
+		return listaTareas;
 	}
 
 
@@ -990,6 +1002,22 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 			}
 		}
 		return null;
+	}
+	
+	@BusinessOperation(CONF_VENTANA_ANOTACIONES)
+	public Boolean getConfiVentanaAnotaciones(){
+		
+		String parametroCreacionTareaUnicaAnotacion= Parametrizacion.CREACION_TAREA_UNICA_ANOTACION;
+        
+        try {
+		    Parametrizacion param = (Parametrizacion) executor.execute(
+		            ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, parametroCreacionTareaUnicaAnotacion);
+		    return Boolean.valueOf(param.getValor());
+		} catch (Exception e) {
+		    logger.warn("No esta parametrizado el la configuración de la ventana Crear Anotación, se toma un valor por defecto 'false'");
+		    return false;
+		}
+		
 	}
 
 }

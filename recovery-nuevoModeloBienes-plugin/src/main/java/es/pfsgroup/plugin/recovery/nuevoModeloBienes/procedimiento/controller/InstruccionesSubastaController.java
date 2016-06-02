@@ -134,9 +134,12 @@ public class InstruccionesSubastaController {
 		
 		dtoInstrucciones.setIdBien(idBien);
 		dtoInstrucciones.setIdProcedimiento(idProcedimiento);
-		dtoInstrucciones.setCargasAnteriores(bien.getImporteCargas());		
-		if (!Checks.esNulo(bien.getDatosRegistralesActivo())) dtoInstrucciones.setFechaInscripcion(bien.getDatosRegistralesActivo().getFechaInscripcion());
-		if (!Checks.esNulo(bien.getValoracionActiva())) dtoInstrucciones.setPeritacionActual(bien.getValoracionActiva().getImporteValorTasacion());
+		if (!Checks.esNulo(bien.getImporteCargas()))
+			dtoInstrucciones.setCargasAnteriores(bien.getImporteCargas().floatValue());		
+		if (!Checks.esNulo(bien.getDatosRegistralesActivo())) 
+			dtoInstrucciones.setFechaInscripcion(bien.getDatosRegistralesActivo().getFechaInscripcion());
+		if (!Checks.esNulo(bien.getValoracionActiva()) && !Checks.esNulo(bien.getValoracionActiva().getImporteValorTasacion())) 
+			dtoInstrucciones.setPeritacionActual(bien.getValoracionActiva().getImporteValorTasacion().floatValue());
 		dtoInstrucciones.setPrincipal(procedimiento.getSaldoRecuperacion());
 		
 	}

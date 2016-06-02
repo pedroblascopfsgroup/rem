@@ -19,6 +19,7 @@
    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/expediente/processdefinition.xml" p:version="-1" />
    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/tareaSolicitada/processdefinition.xml" p:version="3000" />
    <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/objetivoPolitica/processdefinition.xml" p:version="3000" />
+   <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/expedienteDeuda/expedienteDeuda.xml" p:version="-1" />
    
    
    <!-- Creamos la configuración jBPM -->

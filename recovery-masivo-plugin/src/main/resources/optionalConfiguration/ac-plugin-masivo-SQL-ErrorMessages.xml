@@ -34,5 +34,12 @@
 	<bean id="MSVSQLpendienteETJ" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El contrato ya está pendiente de alta lote ETJ."/>
 	<bean id="MSVSQLNoTareaAnterior" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No se puede reorganizar un procedimiento a una tarea anterior a la última procesada."/>
 	<bean id="MSVSQLVAriosProcBO" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="Existen varios procedimientos de BO activos para este contrato"/>
+	
+	<!-- Añadido 17/03/2016, IVÁN -->
+	<bean id="MSVSQLNoExisteAcreditado" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el acreditado"/>
+	<bean id="MSVSQLNoExisteUsuarioGestor" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="No existe el usuario gestor"/>
+	<bean id="MSVSQLAcreditadoEnExpediente" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El acreditado ya se encuentra en un expediente en gestion"/>
+	<bean id="MSVSQLGestorSinPerfilCarterizar" class="es.pfsgroup.plugin.recovery.masivo.bvfactory.types.MSVResultadoValidacionSQLERROR" p:errorMessage="El usuario gestor no tiene el perfil de Carterizar acreditados"/>
+	
 </beans>
 

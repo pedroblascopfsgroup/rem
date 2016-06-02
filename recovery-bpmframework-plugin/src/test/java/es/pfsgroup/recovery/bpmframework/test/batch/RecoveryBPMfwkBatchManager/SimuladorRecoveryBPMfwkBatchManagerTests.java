@@ -19,7 +19,6 @@ import es.pfsgroup.recovery.bpmframework.exceptions.RecoveryBPMfwkError;
 import es.pfsgroup.recovery.bpmframework.input.RecoveryBPMfwkInputApi;
 import es.pfsgroup.recovery.bpmframework.input.model.RecoveryBPMfwkInput;
 import es.pfsgroup.recovery.bpmframework.test.AbstractRecoveryBPMSimulador;
-import es.pfsgroup.recovery.bpmframework.test.batch.RecoveryBPMfwkBatchManager.bo.ProcesaPeticionesPendientesTest;
 
 /**
  * Simulador de interacciones del manager con otros
@@ -112,18 +111,14 @@ public class SimuladorRecoveryBPMfwkBatchManagerTests extends AbstractRecoveryBP
 
         Long idToken1 = 1000L;
         when(mockPeticionInicial.getIdToken()).thenReturn(idToken1);
-        when(mockPeticionInicial.getOnStartBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_START_PROCESS);
         when(mockPeticionInicial.getOnSuccessBo()).thenReturn(null);
         when(mockPeticionInicial.getOnErrorBo()).thenReturn(null);
-        when(mockPeticionInicial.getOnEndBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_END_PROCESS);
         when(mockPeticionInicial.getInput()).thenReturn(mockInput);
 
         Long idToken2 = 2000L;
         when(mockPeticionFinal.getIdToken()).thenReturn(idToken2);
-        when(mockPeticionFinal.getOnStartBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_START_PROCESS);
         when(mockPeticionFinal.getOnSuccessBo()).thenReturn(null);
         when(mockPeticionFinal.getOnErrorBo()).thenReturn(null);
-        when(mockPeticionFinal.getOnEndBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_END_PROCESS);
         when(mockPeticionFinal.getInput()).thenReturn(mockInput);
 
         when(mockRecoveryBPMRunApi.procesaInput(any(RecoveryBPMfwkInputInfo.class))).thenReturn(1L);
@@ -149,10 +144,7 @@ public class SimuladorRecoveryBPMfwkBatchManagerTests extends AbstractRecoveryBP
 
         Long idToken1 = 1000L;
         when(mockPeticionInicial.getIdToken()).thenReturn(idToken1);
-        when(mockPeticionInicial.getOnStartBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_START_PROCESS);
-        when(mockPeticionInicial.getOnSuccessBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_SUCCESS);
         when(mockPeticionInicial.getOnErrorBo()).thenReturn(null);
-        when(mockPeticionInicial.getOnEndBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_END_PROCESS);
         when(mockPeticionInicial.getInput()).thenReturn(mockInput);
 
         when(mockRecoveryBPMRunApi.procesaInput(any(RecoveryBPMfwkInputInfo.class))).thenReturn(1L);
@@ -178,15 +170,10 @@ public class SimuladorRecoveryBPMfwkBatchManagerTests extends AbstractRecoveryBP
         when(listaPeticionesBatch.get(1)).thenReturn(mockPeticionInicial);
 
         Long idToken1 = 1000L;
-        when(mockPeticionInicial.getIdToken()).thenReturn(idToken1);
-        when(mockPeticionInicial.getOnStartBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_START_PROCESS);
-        when(mockPeticionInicial.getOnSuccessBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_SUCCESS);
-        when(mockPeticionInicial.getOnErrorBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_ERROR);
-        when(mockPeticionInicial.getOnEndBo()).thenReturn(ProcesaPeticionesPendientesTest.BO_ON_END_PROCESS);
         when(mockPeticionInicial.getInput()).thenReturn(mockInput);
 
         try {
-            doThrow(new RuntimeException(ProcesaPeticionesPendientesTest.MENSAJE_ERROR)).when(mockRecoveryBPMRunApi).procesaInput(any(RecoveryBPMfwkInputInfo.class));
+            doThrow(new RuntimeException("")).when(mockRecoveryBPMRunApi).procesaInput(any(RecoveryBPMfwkInputInfo.class));
         } catch (RecoveryBPMfwkError e) {
             // No se va a producir nunca un error aqu�
         }
@@ -195,7 +182,7 @@ public class SimuladorRecoveryBPMfwkBatchManagerTests extends AbstractRecoveryBP
 
 	public void seLanzaUnaExcepcion() {
 		
-		doThrow(new RuntimeException(ProcesaPeticionesPendientesTest.MENSAJE_ERROR)).when(mockGenericDao).createFilter(FilterType.EQUALS, "procesado", RecoveryBPMfwkPeticionBatch.NO_PROCESADO);
+		doThrow(new RuntimeException("")).when(mockGenericDao).createFilter(FilterType.EQUALS, "procesado", RecoveryBPMfwkPeticionBatch.NO_PROCESADO);
 		
 	}
 

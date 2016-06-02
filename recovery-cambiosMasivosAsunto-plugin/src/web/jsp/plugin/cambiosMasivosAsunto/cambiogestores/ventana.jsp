@@ -45,8 +45,8 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
-		,emptyText:'Seleccionar'
+		,editable: true
+		,emptyText:'---'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
 		code="plugin.cambiosMasivosAsuntos.cambiogestores.tipoGestor"
@@ -55,77 +55,55 @@
 	});
 	
 	
-	var despachosRecord = Ext.data.Record.create([
-		 {name:'id'}
-		,{name:'tipo'}
-		,{name:'codigo'}
-		,{name:'nombre'}
+	//store generico de combo diccionario
+	var optionsDespachosRecord = Ext.data.Record.create([
+		 {name:'cod'}
+		,{name:'descripcion'}
 	]);
 	
+	var optionsDespachoStoreOriginal = page.getStore({
+	       flow: 'coreextension/getListTipoDespachoData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoDespachos'
+	    }, optionsDespachosRecord)	       
+	});
 	
-	var optionsDespachosStore = page.getStore({
-		reader: new Ext.data.JsonReader({
-			root : 'data'
-	      }, despachosRecord)
-	     }); 
-
-
-	var cargaoptionsDespachos = function() {
-	     var despachosJSON = <json:array name="data" items="${despachos}"
-		var="rec">
-		<json:object>
-			<json:property name="id" value="${rec.id}" />
-			<json:property name="nombre" value="${rec.despacho}" />
-		</json:object>
-	</json:array>
-	     optionsDespachosStore.loadData({data:despachosJSON});
-	}
-	cargaoptionsDespachos .defer(1);
+	var optionsDespachoStoreDestino = page.getStore({
+	       flow: 'coreextension/getListTipoDespachoData'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listadoDespachos'
+	    }, optionsDespachosRecord)	       
+	});
 	
+
 	var comboDespachosOriginal = new Ext.form.ComboBox({
-		store:optionsDespachosStore
-		,displayField:'nombre'
-		,valueField:'id'
+		store:optionsDespachoStoreOriginal
+		,displayField:'descripcion'
+		,valueField:'cod'
 		,mode: 'local'
-		,width: comboWidth
-		,resizable: true
+		,emptyText:'---'
 		,forceSelection: true
-		,editable: false
-		,emptyText:'Seleccionar'
+		,editable: true
 		,triggerAction: 'all'
-		,fieldLabel: '<s:message
-		code="plugin.cambiosMasivosAsuntos.cambiogestores.despacho"
-		text="**Despacho" />'
-		,allowBlank : false
 		,disabled:true
-		,typeAhead: true
-		,forceSelection: false
-		,triggerAction: 'all'
-		,enableKeyEvents: true
-		,editable:true
+		,resizable:true
+		,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+		<app:test id="comboDespachos" addComa="true"/>
 	});
 	
 	var comboDespachosDestino = new Ext.form.ComboBox({
-		store:optionsDespachosStore
-		,displayField:'nombre'
-		,valueField:'id'
+		store:optionsDespachoStoreDestino
+		,displayField:'descripcion'
+		,valueField:'cod'
 		,mode: 'local'
-		,width: comboWidth
-		,resizable: true
+		,emptyText:'---'
 		,forceSelection: true
-		,editable: false
-		,emptyText:'Seleccionar'
+		,editable: true
 		,triggerAction: 'all'
-		,fieldLabel: '<s:message
-		code="plugin.cambiosMasivosAsuntos.cambiogestores.despacho"
-		text="**Despacho" />'
-		,allowBlank : false
-		,disabled: true
-		,typeAhead: true
-		,forceSelection: false
-		,triggerAction: 'all'
-		,enableKeyEvents: true
-		,editable:true
+		,disabled:true
+		,resizable:true
+		,fieldLabel : '<s:message code="asuntos.busqueda.filtro.despacho" text="**Despacho"/>'
+		<app:test id="comboDespachos" addComa="true"/>
 	});
 	 
 	 
@@ -159,8 +137,8 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
-		,emptyText:'Seleccionar'
+		,editable: true
+		,emptyText:'---'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
 		code="plugin.cambiosMasivosAsuntos.cambiogestores.usuario"
@@ -177,8 +155,8 @@
 		,width: comboWidth
 		,resizable: true
 		,forceSelection: true
-		,editable: false
-		,emptyText:'Seleccionar'
+		,editable: true
+		,emptyText:'---'
 		,triggerAction: 'all'
 		,fieldLabel: '<s:message
 		code="plugin.cambiosMasivosAsuntos.cambiogestores.usuario"
@@ -212,7 +190,8 @@
         ,width:comboWidth
         ,fieldLabel: '<s:message code="plugin.cambiosMasivosAsuntos.cambiogestores.usuario" text="**Usuario"/>'
         ,tpl: usuarioTemplate  
-        ,forceSelection:true
+		,forceSelection: true
+		,editable: true
         ,style:'padding:0px;margin:0px;'
         ,anchor: '100%'
         ,allowBlank:false
@@ -437,21 +416,31 @@
 	
 	<%-- comboGestorOriginal.show();--%>
 	
-	comboDespachosOriginal.tipoGestor = null;
-	comboDespachosDestino.tipoGestor = null;
-	
-	
 	comboTipoGestor.on('select', function(){
+		comboDespachosOriginal.reset();
+		optionsDespachoStoreOriginal.webflow({'idTipoGestor': comboTipoGestor.getValue(), 'incluirBorrados': true}); 
+		
+		comboDespachosDestino.reset();
+		optionsDespachoStoreDestino.webflow({'idTipoGestor': comboTipoGestor.getValue(), 'incluirBorrados': true}); 
+
+		comboGestorOriginal.reset();
+		comboGestorOriginal.setValue('');
+		optionsGestorOriginalStore.removeAll();
+		
+		comboGestorDestino.reset();
+		comboGestorDestino.setValue('');
+		optionsGestorOriginalStore.removeAll();
+		optionsGestorDestinoStore.removeAll();
+
+		comboDespachosOriginal.setDisabled(false);		
+		comboDespachosDestino.setDisabled(false);		
 		if (this.value) {
 			comboDespachosOriginal.setDisabled(false);
-			if (comboDespachosOriginal.getValue()){
-				optionsGestorOriginalStore.webflow({despacho:comboDespachosOriginal.getValue(), tipoGestor:this.value});
-			}
+			comboDespachosDestino.setDisabled(false);
 		}else{
 			comboDespachosOriginal.setDisabled(true);
+			comboDespachosDestino.setDisabled(true);
 		}
-		comboDespachosOriginal.tipoGestor = this.value;
-		comboDespachosDestino.tipoGestor = this.value;
 	});
 	
 	comboDespachosOriginal.on('select',function(){

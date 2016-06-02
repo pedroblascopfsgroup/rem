@@ -14,6 +14,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.pagination.Page;
 
 import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
+import es.pfsgroup.plugin.recovery.busquedaTareas.BTABusquedaTareaManager;
 import es.pfsgroup.plugin.recovery.busquedaTareas.dto.BTADtoBusquedaTareas;
 
 @Controller
@@ -24,9 +25,12 @@ public class BTABusquedaTareasController {
 	
     @Autowired
 	private Executor executor;
-    
+
     @Autowired
     private DTOFactory dtoFactory;
+
+    @Autowired
+    private BTABusquedaTareaManager btaBusquedaTareaManager;
 
     
     @SuppressWarnings("unchecked")
@@ -39,7 +43,8 @@ public class BTABusquedaTareasController {
 			dto = dtoFactory.creaYRellenaDTO("busquedaTareas", request, BTADtoBusquedaTareas.class);
 			
 			// Llamada al manager
-		   	Page page = (Page) executor.execute("plugin.busquedaTareas.BTABusquedaTareaManager.BuscarTareas", dto);
+		   	Page page = (Page) btaBusquedaTareaManager.buscarTareas(dto);
+			//Page page = (Page) executor.execute("plugin.busquedaTareas.BTABusquedaTareaManager.BuscarTareas", dto);
 		   	
 		   	model.put("tareas", page);
 		   	

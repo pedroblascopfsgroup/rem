@@ -32,6 +32,9 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.adjuntos.api.AdjuntoApi;
 import es.capgemini.pfs.asunto.dao.EXTAsuntoDao;
 import es.capgemini.pfs.asunto.dto.DtoAsunto;
 import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
@@ -41,14 +44,13 @@ import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.contrato.model.AdjuntoContrato;
-import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -59,22 +61,23 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
-import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
-import es.capgemini.pfs.iplus.IPLUSAdjuntoAuxDto;
 import es.capgemini.pfs.iplus.IPLUSUtils;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
+import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
-import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procedimiento.dao.EXTProcedimientoDao;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.registro.HistoricoAsuntoBuilder;
 import es.capgemini.pfs.registro.HistoricoAsuntoDto;
@@ -84,6 +87,7 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -97,16 +101,18 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
-import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJFinalizarAsuntoDto;
+import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.ConfiguradorPropuesta;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
+import es.pfsgroup.recovery.common.api.CommonProjectContext;
 import es.pfsgroup.recovery.ext.api.asunto.EXTAsuntoApi;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimiento;
 import es.pfsgroup.recovery.ext.api.asunto.EXTHistoricoProcedimientoApi;
@@ -116,14 +122,15 @@ import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
+import es.pfsgroup.recovery.integration.Guid;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
-import es.capgemini.devon.hibernate.pagination.PageHibernate;
 
 @Component
 public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> implements es.pfsgroup.recovery.api.AsuntoApi, AsuntoApi, EXTAsuntoApi {
@@ -147,12 +154,15 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private EXTProcedimientoDao procedimientoDao;
-
+	
 	@Autowired
-	private GenericABMDao genericdDao;
+	private AcuerdoDao acuerdoDao;
 
 	@Autowired
 	private EXTGestorAdicionalAsuntoDao gestorAdicionalAsuntoDao;
+	
+	@Autowired
+	EXTGestorAdicionalAsuntoHistoricoDao gestorAdicionalAsuntoHistoricoDao;
 
 	@Autowired(required = false)
 	private List<ModificacionAsuntoListener> listeners;
@@ -188,6 +198,18 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private DecisionProcedimientoManager decisionProcedimientoManager;
+	
+	@Autowired
+	private AdjuntoApi adjuntosApi;
+	
+	@Autowired
+	private CommonProjectContext commonProjectContext;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
+	@Autowired
+	private GestorDespachoDao gestorDespachoDao;
 	
 	@Override
 	public String managerName() {
@@ -292,7 +314,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				
 				if (dto.getIdTarea() != null) {
 					map.put("idTarea", dto.getIdTarea());
-					EXTTareaNotificacion tarea = genericdDao.get(EXTTareaNotificacion.class, genericdDao.createFilter(FilterType.EQUALS, "id", dto.getIdTarea()));
+					EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTarea()));
 					map.put("destinatarioTarea", tarea.getDestinatarioTarea().getApellidoNombre());
 				}
 				if (dto.getIdTraza() != null) {
@@ -339,8 +361,61 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_ASU_MGR_GET)
 	public Asunto get(Long id) {
 		EventFactory.onMethodStart(this.getClass());
-		return parent().get(id);
+		// Obtener asunto.
+    	Asunto asunto = asuntoDao.get(id);
+        return asunto;
 	}
+	
+	@Override
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_GESTORASUNTO)
+	public GestorDespacho getGestorDespachoGestorAsunto(Long idAsunto){
+		GestorDespacho gestorDespacho = null;
+		Asunto asunto = asuntoDao.get(idAsunto);
+		
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+			String tipoGestor = commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_GESTOR);
+			if(!Checks.esNulo(tipoGestor)){
+	    		return this.getGestorDespachoAsunto(idAsunto,tipoGestor);
+	    	}
+	    	
+		}
+		return gestorDespacho;		
+	}
+	
+	@Override
+	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORDESPACHO_SUPERVISORASUNTO)
+	public GestorDespacho getGestorDespachoSupervisorAsunto(Long idAsunto){
+		GestorDespacho gestorDespacho = null;
+		Asunto asunto = asuntoDao.get(idAsunto);
+		
+		if(!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getTipoAsunto())){
+			// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+			String tipoGestor = commonProjectContext.getGestorYSupervisorPorTipoAsuntoYEntidad(asunto.getTipoAsunto().getCodigo(), usuarioManager.getUsuarioLogado().getEntidad().getCodigo()).get(CommonProjectContext.SELECCIONAR_SUPERVISOR);
+	    	if(!Checks.esNulo(tipoGestor)){
+	    		return this.getGestorDespachoAsunto(idAsunto,tipoGestor);
+	    	}
+	    	
+		}
+		return gestorDespacho;		
+	}
+	
+	public GestorDespacho getGestorDespachoAsunto(Long idAsunto, String tipoGestor){
+		GestorDespacho gestorDespacho = null;
+		
+		// Obtener usuarios gestor por entidad y tipo de asunto del projectContext.
+    	List<Usuario> usuGestList = gestorAdicionalAsuntoDao.findGestoresByAsunto(idAsunto, tipoGestor);
+    	if(!Checks.estaVacio(usuGestList)){
+    		Usuario usuGestor = usuGestList.get(0);
+    		// Obtener gestor despacho para el gestor 
+    		List<GestorDespacho> gestDespachoList = gestorDespachoDao.getGestorDespachoByUsuId(usuGestor.getId());
+    		if(!Checks.estaVacio(gestDespachoList)){
+    			gestorDespacho = gestDespachoList.get(0);
+    		}
+    	}
+		return gestorDespacho;		
+	}
+
 
 	private Collection<? extends HistoricoAsuntoInfo> getHistoricoProcedimiento(Procedimiento p) {
 
@@ -467,103 +542,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSMAPEADOS)
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
-		//List<EXTAdjuntoDto> adjuntosConBorrado = new ArrayList<EXTAdjuntoDto>();
-
-		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-
-		Boolean borrarOtrosUsu = true;
-		
-		if (iplus == null || !iplus.instalado()) {
-			borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
-		}
-
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
-		
-		if (iplus != null && iplus.instalado()) {
-			Set<AdjuntoAsunto> setAdjuntos = obtieneAdjuntosIplus(asunto.getId());
-			for (AdjuntoAsunto adjuntoAsunto : setAdjuntos) {
-				adjuntoAsunto.setAsunto(asunto);
-				IPLUSAdjuntoAuxDto dtoAux = iplus.completarInformacionAdjunto(asunto.getId(), adjuntoAsunto.getDescripcion());
-				Procedimiento procedimiento = dtoAux.getProc();
-				adjuntoAsunto.setProcedimiento(procedimiento);
-				String contentType = dtoAux.getContentType();
-				adjuntoAsunto.setContentType(contentType);
-				Long longitud = dtoAux.getLongitud();
-				adjuntoAsunto.setLength(longitud);
-				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
-				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
-			}
-			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
-		}
-		else{
-			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu));
-		}
-//		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
-//		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
-//		if (iplus != null && iplus.instalado()) {
-//			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
-//		} else {
-//			adjuntosRecovery2 = adjuntosRecovery;
-//		}
-//		adjuntosAsunto.addAll(adjuntosRecovery2);
-		
-		return ordenaListado(adjuntosAsunto);
-
-//		Comparator<AdjuntoAsunto> comparador = new Comparator<AdjuntoAsunto>() {
-//			@Override
-//			public int compare(AdjuntoAsunto o1, AdjuntoAsunto o2) {
-//				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-//					return 0;
-//				} else if (Checks.esNulo(o1)) {
-//					return -1;
-//				} else if (Checks.esNulo(o2)) {
-//					return 1;
-//				} else {
-//					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-//				}
-//			}
-//		};
-//		Collections.sort(adjuntosAsunto, comparador);
-//		
-//		for (final AdjuntoAsunto aa : adjuntosAsunto) {
-//			EXTAdjuntoDto dto = new EXTAdjuntoDto() {
-//				@Override
-//				public Boolean getPuedeBorrar() {
-//					if (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
-//						return true;
-//					} else {
-//						return false;
-//					}
-//				}
-//
-//				@Override
-//				public Object getAdjunto() {
-//					return aa;
-//				}
-//				
-//				@Override
-//				public String getTipoDocumento() {
-//					if (aa instanceof EXTAdjuntoAsunto) {
-//						if (((EXTAdjuntoAsunto) aa).getTipoFichero() != null)
-//							return ((EXTAdjuntoAsunto) aa).getTipoFichero().getDescripcion();
-//						else
-//							return "";
-//					} else
-//						return "";
-//
-//				}
-//			};
-//			adjuntosConBorrado.add(dto);
-//		}
-//		return adjuntosConBorrado;
+			return adjuntosApi.getAdjuntosConBorrado(id);
 	}
 	
-	private Set<AdjuntoAsunto> obtieneAdjuntosIplus(Long id) {
-		String idProcedi = iplus.obtenerIdAsuntoExterno(id);
-		Set<AdjuntoAsunto> adjuntos = iplus.listarAdjuntosIplus(idProcedi);
-		return adjuntos;
-	}
 
 	private List<? extends EXTAdjuntoDto> ordenaListado(List<EXTAdjuntoDto> adjuntosAsunto) {
 		Comparator<EXTAdjuntoDto> comparador = new Comparator<EXTAdjuntoDto>() {
@@ -641,6 +622,16 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 					else 
 						return null;
 				}
+
+				@Override
+				public String getRefCentera() {
+					return null;
+				}
+
+				@Override
+				public String getNombreTipoDoc() {
+					return null;
+				}
 			};
 			result.add(dto);
 		}
@@ -664,159 +655,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSCONTRATOS)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
-		Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoContrato> comparador = new Comparator<AdjuntoContrato>() {
-			@Override
-			public int compare(AdjuntoContrato o1, AdjuntoContrato o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-		if (!Checks.esNulo(asunto)) {
-			List<Contrato> contratos = new ArrayList<Contrato>();
-			contratos.addAll(asunto.getContratos());
-			for (final Contrato c : contratos) {
-				final List<AdjuntoContrato> adjuntos = c.getAdjuntosAsList();
-				Collections.sort(adjuntos, comparador);
-				ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-					@Override
-					public Long getId() {
-						return c.getId();
-					}
-
-					@Override
-					public String getDescripcion() {
-						return c.getDescripcion();
-					}
-
-					@Override
-					public List getAdjuntosAsList() {
-						return adjuntos;
-					}
-
-					@Override
-					public List getAdjuntos() {
-						return adjuntos;
-					}
-				};
-				adjuntosMapeados.add(dto);
-			}
-		}
-		return adjuntosMapeados;
+		return adjuntosApi.getAdjuntosContratosAsu(id);
 	}
 
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSPERSONA)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosPersonaAsu(Long id) {
-		List<Persona> personas = proxyFactory.proxy(AsuntoApi.class).obtenerPersonasDeUnAsunto(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoPersona> comparador = new Comparator<AdjuntoPersona>() {
-			@Override
-			public int compare(AdjuntoPersona o1, AdjuntoPersona o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-
-		for (final Persona p : personas) {
-			final List<AdjuntoPersona> adjuntos = p.getAdjuntosAsList();
-			Collections.sort(adjuntos, comparador);
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return p.getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return p.getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return adjuntos;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return adjuntos;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-
-		return adjuntosMapeados;
+		return adjuntosApi.getAdjuntosPersonaAsu(id);
 	}
 
 	@Override
 	@BusinessOperation(BO_CORE_ASUNTO_ADJUNTOSEXPEDIENTE)
 	public List<ExtAdjuntoGenericoDto> getAdjuntosExpedienteAsu(Long id) {
-		final Asunto asunto = proxyFactory.proxy(AsuntoApi.class).get(id);
-		List<ExtAdjuntoGenericoDto> adjuntosMapeados = new ArrayList<ExtAdjuntoGenericoDto>();
-
-		Comparator<AdjuntoExpediente> comparador = new Comparator<AdjuntoExpediente>() {
-			@Override
-			public int compare(AdjuntoExpediente o1, AdjuntoExpediente o2) {
-				if (Checks.esNulo(o1) && Checks.esNulo(o2)) {
-					return 0;
-				} else if (Checks.esNulo(o1)) {
-					return -1;
-				} else if (Checks.esNulo(o2)) {
-					return 1;
-				} else {
-					return o2.getAuditoria().getFechaCrear().compareTo(o1.getAuditoria().getFechaCrear());
-				}
-			}
-		};
-		if (!Checks.esNulo(asunto) && !Checks.esNulo(asunto.getExpediente()) && !Checks.estaVacio(asunto.getExpediente().getAdjuntosAsList())) {
-			final List<AdjuntoExpediente> adjuntosExp = asunto.getExpediente().getAdjuntosAsList();
-			Collections.sort(adjuntosExp, comparador);
-
-			ExtAdjuntoGenericoDto dto = new ExtAdjuntoGenericoDto() {
-
-				@Override
-				public Long getId() {
-					return asunto.getExpediente().getId();
-				}
-
-				@Override
-				public String getDescripcion() {
-					return asunto.getExpediente().getDescripcion();
-				}
-
-				@Override
-				public List getAdjuntosAsList() {
-					return adjuntosExp;
-				}
-
-				@Override
-				public List getAdjuntos() {
-					return adjuntosExp;
-				}
-			};
-			adjuntosMapeados.add(dto);
-		}
-
-		return adjuntosMapeados;
+		return adjuntosApi.getAdjuntosExpedienteAsu(id); 
 	}
 
 	@Override
@@ -928,7 +779,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 		if (this.modeloMultiGestor == null) {
 			// workaround, por defecto siempre es multigestor.
-			//List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericdDao.getList(EXTGestorAdicionalAsunto.class);
+			//List<EXTGestorAdicionalAsunto> gestoreAdicionales = genericDao.getList(EXTGestorAdicionalAsunto.class);
 			this.modeloMultiGestor = true;//!Checks.estaVacio(gestoreAdicionales);
 		}
 		return modeloMultiGestor;
@@ -937,8 +788,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(EXT_MGR_ASUNTO_GET_GESTORES_ADICIONALES_ASUNTO)
 	@Override
 	public List<EXTGestorAdicionalAsunto> getGestoresAdicionalesAsunto(Long idAsunto) {
-		Filter filtroAsunto = genericdDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
-		return genericdDao.getList(EXTGestorAdicionalAsunto.class, filtroAsunto);
+		Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto);
+		return genericDao.getList(EXTGestorAdicionalAsunto.class, filtroAsunto);
 	}
 
 	private boolean buscaUsuario(Usuario usuario, List<GestorDespacho> lista) {
@@ -984,14 +835,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return tiposProcedimiento;
 	}
 	
-	private Set<String> getTipoAsunto(DtoBusquedaAsunto dtoBusquedaAsuntos) {
-		Set<String> tipoAsunto = null;
-		if (dtoBusquedaAsuntos.getComboTipoAsunto() != null && dtoBusquedaAsuntos.getComboTipoAsunto().trim().length() > 0) {
-			tipoAsunto = new HashSet<String>(Arrays.asList((dtoBusquedaAsuntos.getComboTipoAsunto().split(","))));
-		}
-		return tipoAsunto;
-	}
-
 	private boolean tieneValorGestorUnico(Asunto asunto) {
 		if (asunto == null) {
 			return false;
@@ -1088,20 +931,20 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			throw new GenericRollbackException("altaAsunto.error.nombreDuplicado");
 
 		if (dtoAsunto.getIdGestor() != null) {
-			Filter f1 = genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdGestor());
-			gd = genericdDao.get(GestorDespacho.class, f1);
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdGestor());
+			gd = genericDao.get(GestorDespacho.class, f1);
 		}
 
 		if (dtoAsunto.getIdSupervisor() != null) {
-			Filter f2 = genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdSupervisor());
-			sup = genericdDao.get(GestorDespacho.class, f2);
+			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdSupervisor());
+			sup = genericDao.get(GestorDespacho.class, f2);
 		}
 
 		GestorDespacho procurador = null;
 
 		if (dtoAsunto.getIdProcurador() != null) {
-			Filter f3 = genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdProcurador());
-			procurador = genericdDao.get(GestorDespacho.class, f3);
+			Filter f3 = genericDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdProcurador());
+			procurador = genericDao.get(GestorDespacho.class, f3);
 		}
 
 //		GestorDespacho gdCEXP = null;
@@ -1110,13 +953,13 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dtoAsunto = (EXTDtoAsunto) dtoAsunto;
 
 //			if (((EXTDtoAsunto) dtoAsunto).getIdGestorConfeccionExpediente() != null) {
-//				Filter f4 = genericdDao.createFilter(FilterType.EQUALS, "id", ((EXTDtoAsunto) dtoAsunto).getIdGestorConfeccionExpediente());
-//				gdCEXP = genericdDao.get(GestorDespacho.class, f4);
+//				Filter f4 = genericDao.createFilter(FilterType.EQUALS, "id", ((EXTDtoAsunto) dtoAsunto).getIdGestorConfeccionExpediente());
+//				gdCEXP = genericDao.get(GestorDespacho.class, f4);
 //			}
 //
 //			if (((EXTDtoAsunto) dtoAsunto).getIdSupervisorConfeccionExpediente() != null) {
-//				Filter f5 = genericdDao.createFilter(FilterType.EQUALS, "id", ((EXTDtoAsunto) dtoAsunto).getIdSupervisorConfeccionExpediente());
-//				supCEXP = genericdDao.get(GestorDespacho.class, f5);
+//				Filter f5 = genericDao.createFilter(FilterType.EQUALS, "id", ((EXTDtoAsunto) dtoAsunto).getIdSupervisorConfeccionExpediente());
+//				supCEXP = genericDao.get(GestorDespacho.class, f5);
 //			}
 
 		}
@@ -1129,15 +972,22 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			sup = null;
 			procurador = null;
 		}
+		
+		DDTiposAsunto tipoDeAsunto = null;
+		
+		if(!Checks.esNulo(dtoAsunto.getTipoDeAsunto())){
+			tipoDeAsunto = genericDao.get(DDTiposAsunto.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getTipoDeAsunto()));
+		}
 
 		if (Checks.esNulo(dtoAsunto.getIdAsunto())) // CREAR EXTASUNTO
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
-			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto());
+			
+			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
-			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones());
+			id = asuntoDao.modificarAsunto(dtoAsunto.getIdAsunto(), gd, sup, procurador, dtoAsunto.getNombreAsunto(), dtoAsunto.getObservaciones(), tipoDeAsunto);
 		}
 
 		if (modeloMultiGestor()) {
@@ -1172,12 +1022,63 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
 			gaa.setAsunto(asu);
 			
-			EXTDDTipoGestor tipoGestor = genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
+			EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
 			gaa.setTipoGestor(tipoGestor);
 			
-			GestorDespacho gestor = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
-																		, genericdDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
+			GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
+																		, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
 			gaa.setGestor(gestor);
+			
+			List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
+			
+
+			
+			EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
+			gaah.setGestor(gaa.getGestor());
+			gaah.setAuditoria(Auditoria.getNewInstance());
+			gaah.setAsunto(gaa.getAsunto());
+			gaah.setTipoGestor(gaa.getTipoGestor());
+			gaah.setFechaDesde(new Date());
+			
+			Boolean existe= false;
+			Boolean existeConFechaHasta= false;
+			Boolean existeConFechaHastaVacio= false;
+			List<String> gestoresBorrados= Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
+			List<String> tipogestoresBorrados= Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+			for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+				
+				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
+					existe= true;
+					if(ges.getFechaHasta()!=null){
+						existeConFechaHasta= true;
+					}
+					if(ges.getFechaHasta()==null){
+						existeConFechaHastaVacio= true;
+					}
+				}
+				
+				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
+					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+					
+				}
+				
+				if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
+					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
+				}
+				
+				
+			}
+			
+			
+			if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
+				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+			}
+			
+//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+//			}
+			
+			
 			gestorAdicionalAsuntoDao.save(gaa);
 		}
 		
@@ -1191,17 +1092,17 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		if (asu instanceof EXTAsunto) {
 			Long idGestor = dtoAsunto.getIdProcurador();
 			if (!Checks.esNulo(idGestor)) {
-				GestorDespacho gestor = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "id", idGestor));
-				EXTDDTipoGestor tipoGestor = genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROCURADOR));
-				Filter filtroAsunto = genericdDao.createFilter(FilterType.EQUALS, "asunto.id", dtoAsunto.getIdAsunto());
-				Filter filtroTipoGestor = genericdDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestor.getId());
-				EXTGestorAdicionalAsunto gaa = genericdDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
+				GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", idGestor));
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROCURADOR));
+				Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", dtoAsunto.getIdAsunto());
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestor.getId());
+				EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
 				if (Checks.esNulo(gaa)) {
 					gaa = new EXTGestorAdicionalAsunto();
 					gaa.setAsunto(asu);
 					gaa.setTipoGestor(tipoGestor);
 					gaa.setGestor(gestor);
-					genericdDao.save(EXTGestorAdicionalAsunto.class, gaa);
+					genericDao.save(EXTGestorAdicionalAsunto.class, gaa);
 				}else{
 					gaa.setGestor(gestor);
 					gestorAdicionalAsuntoDao.saveOrUpdate(gaa);
@@ -1221,7 +1122,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				if (dtoAsunto.getIdGestor().equals(asu.getGestor().getId()))
 					throw new BusinessOperationException("asuntos.procuradordistinto");
 			} else {
-				GestorDespacho nuevoProcurador = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdProcurador()));
+				GestorDespacho nuevoProcurador = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoAsunto.getIdProcurador()));
 				asu.setProcurador(nuevoProcurador);
 			}
 		}
@@ -1242,17 +1143,17 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			}
 			// if(!Checks.esNulo(dtoAsunto.getIdGestor())){
 			if (!Checks.esNulo(idGestor)) {
-				GestorDespacho gestor = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "id", idGestor));
-				EXTDDTipoGestor tipoGestor = genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", strEXTDDTipoGestor));
-				Filter filtroAsunto = genericdDao.createFilter(FilterType.EQUALS, "asunto.id", dtoAsunto.getIdAsunto());
-				Filter filtroTipoGestor = genericdDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestor.getId());
-				EXTGestorAdicionalAsunto gaa = genericdDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
+				GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", idGestor));
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", strEXTDDTipoGestor));
+				Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", dtoAsunto.getIdAsunto());
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestor.getId());
+				EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
 				if (Checks.esNulo(gaa)) {
 					gaa = new EXTGestorAdicionalAsunto();
 					gaa.setAsunto(asu);
 					gaa.setTipoGestor(tipoGestor);
 					gaa.setGestor(gestor);
-					genericdDao.save(EXTGestorAdicionalAsunto.class, gaa);
+					genericDao.save(EXTGestorAdicionalAsunto.class, gaa);
 				} else {
 					if (!gaa.getGestor().getId().equals(dtoAsunto.getIdGestor())) {
 						borrarFavoritosAsunto(asu);
@@ -1273,8 +1174,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			 * throw new
 			 * BusinessOperationException("asuntos.procuradordistinto"); } else
 			 * { GestorDespacho nuevoProcurador =
-			 * genericdDao.get(GestorDespacho.class,
-			 * genericdDao.createFilter(FilterType.EQUALS, "id",
+			 * genericDao.get(GestorDespacho.class,
+			 * genericDao.createFilter(FilterType.EQUALS, "id",
 			 * dtoAsunto.getIdProcurador()));
 			 * asu.setProcurador(nuevoProcurador); }
 			 * 
@@ -1300,20 +1201,20 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			// if(!Checks.esNulo(dto.getIdSupervisor())){
 			if (!Checks.esNulo(idSupervisor)) {
 				// GestorDespacho supervisor =
-				// genericdDao.get(GestorDespacho.class,
-				// genericdDao.createFilter(FilterType.EQUALS, "id",
+				// genericDao.get(GestorDespacho.class,
+				// genericDao.createFilter(FilterType.EQUALS, "id",
 				// dto.getIdSupervisor()));
-				GestorDespacho supervisor = genericdDao.get(GestorDespacho.class, genericdDao.createFilter(FilterType.EQUALS, "id", idSupervisor));
-				EXTDDTipoGestor tipoGestor = genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", strEXTDDTipoGestor));
-				Filter filtroAsunto = genericdDao.createFilter(FilterType.EQUALS, "asunto.id", dto.getIdAsunto());
-				Filter filtroTipoGestor = genericdDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestor.getId());
-				EXTGestorAdicionalAsunto gaa = genericdDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
+				GestorDespacho supervisor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "id", idSupervisor));
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", strEXTDDTipoGestor));
+				Filter filtroAsunto = genericDao.createFilter(FilterType.EQUALS, "asunto.id", dto.getIdAsunto());
+				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestor.getId());
+				EXTGestorAdicionalAsunto gaa = genericDao.get(EXTGestorAdicionalAsunto.class, filtroAsunto, filtroTipoGestor);
 				if (Checks.esNulo(gaa)) {
 					gaa = new EXTGestorAdicionalAsunto();
 					gaa.setAsunto(asu);
 					gaa.setTipoGestor(tipoGestor);
 					gaa.setGestor(supervisor);
-					genericdDao.save(EXTGestorAdicionalAsunto.class, gaa);
+					genericDao.save(EXTGestorAdicionalAsunto.class, gaa);
 				} else {
 					HistoricoCambiosAsunto his = new HistoricoCambiosAsunto();
 					his.setSupervisorOrigen(gaa.getGestor());
@@ -1338,9 +1239,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	 * 
 	 * extGestorAdicional.setGestor(gestorGenerico);
 	 * 
-	 * Filter f1 = genericdDao.createFilter(FilterType.EQUALS, "codigo",
+	 * Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
 	 * extTipoGestorStr);
-	 * extGestorAdicional.setTipoGestor(genericdDao.get(EXTDDTipoGestor.class,
+	 * extGestorAdicional.setTipoGestor(genericDao.get(EXTDDTipoGestor.class,
 	 * f1));
 	 * 
 	 * return extGestorAdicional; }
@@ -1559,7 +1460,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		if (Checks.esNulo(codigo)) {
 			return null;
 		} else {
-			return genericdDao.get(EXTDDTipoGestor.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", codigo));
+			return genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigo));
 		}
 	}
 
@@ -1597,7 +1498,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dto.setIdsUsuariosGrupos(idGrpsUsuario);
 		}
 		
-		return asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+		Page asuntos = asuntoDao.buscarAsuntosPaginatedDinamico(usuarioLogado, dto, params);
+		
+		return asuntos;
 	}
 	
     /**
@@ -1629,7 +1532,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
         EXTAdjuntoAsunto adjuntoAsunto = new EXTAdjuntoAsunto(fileItem);
         
         if (comboTipoFichero != null) {
-			DDTipoFicheroAdjunto tipoFicheroAdjunto = genericdDao.get(DDTipoFicheroAdjunto.class, genericdDao.createFilter(FilterType.EQUALS, "codigo", comboTipoFichero));
+			DDTipoFicheroAdjunto tipoFicheroAdjunto = genericDao.get(DDTipoFicheroAdjunto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", comboTipoFichero));
 			adjuntoAsunto.setTipoFichero(tipoFicheroAdjunto);
 		}
 		
@@ -1683,6 +1586,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_GET_BIENES_AS_LIST)
 	public List<Bien> getBienesDeUnAsunto(Long idAsunto) {
@@ -1731,7 +1635,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		
 		return false;*/
-		int numeroSubastas = genericdDao.getList(Subasta.class, genericdDao.createFilter(FilterType.EQUALS, "asunto.id", asuId),genericdDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false)).size();
+		int numeroSubastas = genericDao.getList(Subasta.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", asuId),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false)).size();
 		if(numeroSubastas > 0){
 			return true;
 		}
@@ -1759,9 +1663,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	public List<Procedimiento> obtenerActuacionesAsuntoOptimizado(Long asuId) {
 
 		//List<DtoProcedimiento> listado = new ArrayList<DtoProcedimiento>();
-		List<Procedimiento> list = genericdDao.getList(Procedimiento.class, 
-				genericdDao.createFilter(FilterType.EQUALS, "asunto.id", asuId),
-				genericdDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<Procedimiento> list = genericDao.getList(Procedimiento.class, 
+				genericDao.createFilter(FilterType.EQUALS, "asunto.id", asuId),
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 		for (Procedimiento p : list) {
 			p.setActivo(isProcedimientoActivo(p));
 		}
@@ -1829,7 +1733,6 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Boolean isProcedimientoActivo(Procedimiento prc) {
 
 		MEJProcedimiento procedimiento = (MEJProcedimiento) prc;
@@ -1865,7 +1768,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@BusinessOperation(BO_CORE_ASUNTO_CONTIENE_PROVISIONES)
 	public Boolean contieneProvisiones(Long asuId) {
 		try{
-			Provisiones prov = genericdDao.get(Provisiones.class, genericdDao.createFilter(FilterType.EQUALS, "asunto.id", asuId), genericdDao.createFilter(FilterType.EQUALS, "borrado", false));
+			Provisiones prov = genericDao.get(Provisiones.class, genericDao.createFilter(FilterType.EQUALS, "asunto.id", asuId), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 			if(!Checks.esNulo(prov)){
 				if(Checks.esNulo(prov.getFechaBaja())){
 					return true;
@@ -1969,6 +1872,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	}		
 
 
+
 	
 	/**
 	 * esUsuarioGestorDecision
@@ -1990,7 +1894,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		//Obtenemos los TGE de las subtareas indicadas en el XML
 		for (String st : staC) {
 			
-			EXTSubtipoTarea extSubtipoTarea = genericdDao.get(EXTSubtipoTarea.class, genericdDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
+			EXTSubtipoTarea extSubtipoTarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", st));
 			if (extSubtipoTarea!=null) {
 				listaCodigosGestor.add(extSubtipoTarea.getTipoGestor().getCodigo());
 			}
@@ -2040,14 +1944,14 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 
 	public EXTAsunto getAsuntoByGuid(String guid) {
-		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "guid", guid);
-		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "guid", guid);
+		EXTAsunto extAsunto = genericDao.get(EXTAsunto.class, filter);
 		return extAsunto;
 	}
 
 	public EXTAsunto getAsuntoById(Long id) {
-		Filter filter = genericdDao.createFilter(FilterType.EQUALS, "id", id);
-		EXTAsunto extAsunto = genericdDao.get(EXTAsunto.class, filter);
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
+		EXTAsunto extAsunto = genericDao.get(EXTAsunto.class, filter);
 		return extAsunto;
 	}
 
@@ -2150,7 +2054,15 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
-				mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+				
+				if(sincronizar) {
+					mejDecisionProcedimientoManager.aceptarPropuesta(dtoDecisionProcedimiento);
+				}
+				else {
+					ConfiguradorPropuesta configuradorPropuesta = new ConfiguradorPropuesta();
+					configuradorPropuesta.setConfiguracion(ConfiguradorPropuesta.SIN_ENVIO_DATOS);
+					mejDecisionProcedimientoManager.aceptarPropuestaSinControl(dtoDecisionProcedimiento, configuradorPropuesta);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.error("Ha habido un error al cerrar los procedimientos. "
@@ -2169,6 +2081,30 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			//Se evalúa si existen provisiones -> Se establece estado = "Gestion finalizada"
 			if ( prov != null && (Checks.esNulo(prov.getFechaBaja() )) ){
 				estado = (DDEstadoAsunto)diccionarioApi.dameValorDiccionarioByCod(DDEstadoAsunto.class, DDEstadoAsunto.ESTADO_ASUNTO_GESTION_FINALIZADA);
+			}
+			//Se comprueba que el asunto es de tipo acuerdo
+			if("ACU".equals(asunto.getTipoAsunto().getCodigo())){
+				
+				boolean cumplido = false;
+				//Comprobamos el cumplimiento
+				if(!Checks.esNulo(dto.getCumplidoSelect())){
+					if(DDSiNo.SI.equals(dto.getCumplidoSelect())){
+						cumplido = true;
+					}
+				}
+				//Recuperamos el acuerdo del grid para cambiar su estado
+				EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "asunto", asunto));
+				
+				String estadoAcuerdo = null;
+				if(cumplido){
+					estadoAcuerdo = DDEstadoAcuerdo.ACUERDO_CUMPLIDO;				
+		        }else{
+		        	estadoAcuerdo = DDEstadoAcuerdo.ACUERDO_INCUMPLIDO;
+		        }
+				DDEstadoAcuerdo estadoAcuerdoFinalizado = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+		                DDEstadoAcuerdo.class, estadoAcuerdo);
+				acuerdo.setEstadoAcuerdo(estadoAcuerdoFinalizado);
+				acuerdoDao.save(acuerdo);
 			}
 
 			asunto.setEstadoAsunto(estado);
@@ -2249,5 +2185,49 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		}
 		return null;
 	}
+	
+	public EXTAsunto prepareGuid(Asunto asunto) {
+		
+		EXTAsunto extAsu =  EXTAsunto.instanceOf(asunto);
+		
+		if (Checks.esNulo(extAsu.getGuid())) {
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getAsuntoByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+
+			extAsu.setGuid(guid);
+			asuntoDao.save(extAsu);
+		}
+		
+		return extAsu;
+	}
+	
+	public Boolean tieneProcurador(Long idAsunto){
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(idAsunto);
+		if(!gestores.isEmpty()){
+			for(EXTGestorAdicionalAsunto gestor : gestores){
+				if(gestor != null && gestor.getTipoGestor() != null && coreProjectContext.getTiposGestorProcurador().contains(gestor.getTipoGestor().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+
+	public boolean tieneActorEnAsunto(Long id, Set<String> listadoGestores) {
+		List<EXTGestorAdicionalAsunto> gestores = getGestoresAdicionalesAsunto(id);
+		if(!gestores.isEmpty()){
+			for(EXTGestorAdicionalAsunto gestor : gestores){
+				if(gestor != null && gestor.getTipoGestor() != null && listadoGestores.contains(gestor.getTipoGestor().getCodigo())){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 }
+

@@ -35,7 +35,7 @@ public class MSVAltaAsunto implements Serializable{
 	
 	private static DecimalFormat format;
 
-	public static MSVAltaAsunto create(Map<String, Object> map) {
+	public static synchronized MSVAltaAsunto create(Map<String, Object> map) {
 		
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(new Locale("es"));
 		//symbols.setDecimalSeparator(',');

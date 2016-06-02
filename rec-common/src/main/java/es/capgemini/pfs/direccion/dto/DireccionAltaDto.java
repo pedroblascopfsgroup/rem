@@ -3,6 +3,8 @@ package es.capgemini.pfs.direccion.dto;
 import java.util.HashSet;
 import java.util.Set;
 
+import es.pfsgroup.commons.utils.Checks;
+
 public class DireccionAltaDto {
 
 	private String provincia;
@@ -18,6 +20,7 @@ public class DireccionAltaDto {
 	private String puerta;
 	private String origen;
 	private String listaIdPersonas;
+	private String listaIdPersonasManuales;
 
 	public String getProvincia() {
 		return provincia;
@@ -97,21 +100,49 @@ public class DireccionAltaDto {
 	public void setListaIdPersonas(String listaIdPersonas) {
 		this.listaIdPersonas = listaIdPersonas;
 	}
+	public String getListaIdPersonasManuales() {
+		return listaIdPersonasManuales;
+	}
+	public void setListaIdPersonasManuales(String listaIdPersonasManuales) {
+		this.listaIdPersonasManuales = listaIdPersonasManuales;
+	}
 	
 	public Set<Long> getSetIdPersonas() {
 		
 		Set<Long> setIdPersonas = new HashSet<Long>();
-		String[] arrayIdsPers = this.listaIdPersonas.split(",");
-		for (String idPers : arrayIdsPers) {
-			String strId = idPers.trim();
-			if (!strId.equals("")) {
-				try {
-					Long id = Long.parseLong(strId);
-					setIdPersonas.add(id);
-				} catch (NumberFormatException e) {}
+		if(!Checks.esNulo(this.listaIdPersonas)){
+			String[] arrayIdsPers = this.listaIdPersonas.split(",");
+			for (String idPers : arrayIdsPers) {
+				String strId = idPers.trim();
+				if (!strId.equals("")) {
+					try {
+						Long id = Long.parseLong(strId);
+						setIdPersonas.add(id);
+					} catch (NumberFormatException e) {}
+				}
+			}	
+		}
+
+		return setIdPersonas;
+	}
+	
+	public Set<Long> getSetIdPersonasManuales() {
+		
+		Set<Long> setIdPersonasManuales = new HashSet<Long>();
+		if(!Checks.esNulo(this.listaIdPersonasManuales)){
+			String[] arrayIdsPers = this.listaIdPersonasManuales.split(",");
+			for (String idPers : arrayIdsPers) {
+				String strId = idPers.trim();
+				if (!strId.equals("")) {
+					try {
+						Long id = Long.parseLong(strId);
+						setIdPersonasManuales.add(id);
+					} catch (NumberFormatException e) {}
+				}
 			}
 		}
-		return setIdPersonas;
+
+		return setIdPersonasManuales;
 	}
 	
 }

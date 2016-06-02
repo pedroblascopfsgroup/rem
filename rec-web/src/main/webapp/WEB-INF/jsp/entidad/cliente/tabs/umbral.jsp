@@ -38,9 +38,9 @@
 	
 	var labelStyle='font-weight:bolder;';
 	
-	var importeUmbralField = new Ext.form.NumberField({
+	var importeUmbralField = new Ext.form.Label({
 		fieldLabel:'<s:message code="plugin.mejoras.clientes.umbral.importe" text="**Importe" />'
-		,value:''
+		,text: ''
 		,name:'persona.importeUmbral'
 		,labelStyle:labelStyle
 		,readOnly:true
@@ -143,7 +143,7 @@
 	
 	panel.setValue = function(){
 	  var data=entidad.get("data");
-      importeUmbralField.setValue(data.umbral.importeUmbral);
+	  importeUmbralField.setText(app.format.moneyRenderer(data.umbral.importeUmbral));
       fechaUmbralField.setValue(data.umbral.fechaUmbral);
       observaciones.setValue(data.umbral.comentarioUmbral);
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteCostas" width="1486" height="877">
+<root-container name="hcj_tramiteCostas" width="1539" height="910">
   <node name="Inicio" x="50" y="46" width="132" height="36">
     <edge>
       <label x="-29" y="-21"/>
@@ -11,12 +11,12 @@
       <label x="-101" y="10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
+      <label x="-80" y="5"/>
     </edge>
     <edge>
       <label x="-37" y="-309"/>
-      <bendpoint w1="650" h1="0" w2="297" h2="-666"/>
-      <bendpoint w1="649" h1="662" w2="296" h2="-4"/>
+      <bendpoint w1="966" h1="3" w2="613" h2="-663"/>
+      <bendpoint w1="969" h1="663" w2="616" h2="-3"/>
     </edge>
   </node>
   <node name="H007_TasacionCostas" x="305" y="148" width="167" height="36">
@@ -28,12 +28,8 @@
     </edge>
     <edge>
       <label x="-29" y="-270"/>
-      <bendpoint w1="637" h1="-2" w2="285" h2="-569"/>
-      <bendpoint w1="638" h1="563" w2="286" h2="-4"/>
-    </edge>
-    <edge>
-      <label x="-69" y="-9"/>
-      <bendpoint w1="-166" h1="-52" w2="-165" h2="47"/>
+      <bendpoint w1="936" h1="0" w2="601" h2="-567"/>
+      <bendpoint w1="940" h1="553" w2="605" h2="-14"/>
     </edge>
   </node>
   <node name="H007_ConfirmarNotificacion" x="278" y="247" width="205" height="36">
@@ -45,8 +41,8 @@
     </edge>
     <edge>
       <label x="-29" y="-223"/>
-      <bendpoint w1="636" h1="-1" w2="285" h2="-473"/>
-      <bendpoint w1="637" h1="471" w2="286" h2="-1"/>
+      <bendpoint w1="1032" h1="-34" w2="689" h2="-502"/>
+      <bendpoint w1="1041" h1="504" w2="698" h2="36"/>
     </edge>
     <edge>
       <label x="-66" y="-30"/>
@@ -75,8 +71,8 @@
     </edge>
     <edge>
       <label x="-23" y="-137"/>
-      <bendpoint w1="631" h1="0" w2="279" h2="-289"/>
-      <bendpoint w1="630" h1="287" w2="278" h2="-2"/>
+      <bendpoint w1="1070" h1="-103" w2="718" h2="-392"/>
+      <bendpoint w1="1077" h1="348" w2="725" h2="59"/>
     </edge>
     <edge>
       <label x="-29" y="-44"/>
@@ -104,7 +100,7 @@
     </edge>
     <edge>
       <label x="-59" y="14"/>
-      <bendpoint w1="219" h1="71" w2="249" h2="-160"/>
+      <bendpoint w1="192" h1="72" w2="222" h2="-159"/>
     </edge>
     <edge>
       <label x="22" y="-17"/>
@@ -140,13 +136,69 @@
       <label x="-67" y="-9"/>
     </edge>
     <edge>
-      <label x="-4" y="9"/>
-      <bendpoint w1="-192" h1="-22" w2="-191" h2="39"/>
-    </edge>
-    <edge>
       <label x="5" y="-10"/>
       <bendpoint w1="91" h1="56" w2="113" h2="-101"/>
     </edge>
   </node>
-  <node name="Fin" x="657" y="715" width="132" height="36"/>
+  <node name="fork1" x="696" y="91" width="84" height="26">
+    <edge>
+      <label x="16" y="-20"/>
+    </edge>
+    <edge>
+      <label x="-8" y="-21"/>
+      <bendpoint w1="-153" h1="41" w2="197" h2="-21"/>
+    </edge>
+  </node>
+  <node name="H007_RevisionCostas" x="811" y="122" width="248" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="426" h1="13" w2="494" h2="-576"/>
+      <bendpoint w1="427" h1="580" w2="495" h2="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="575" h1="4" w2="643" h2="-585"/>
+      <bendpoint w1="583" h1="604" w2="651" h2="15"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork2" x="1045" y="525" width="99" height="27">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-21" y="-11"/>
+    </edge>
+  </node>
+  <node name="H007_PostSolicitudTasacion" x="1060" y="608" width="197" height="36">
+    <edge>
+      <label x="8" y="0"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="13" y="2"/>
+      <bendpoint w1="-136" h1="93" w2="233" h2="-42"/>
+    </edge>
+  </node>
+  <node name="TasacionProcu" x="492" y="89" width="123" height="31">
+    <edge>
+      <label x="15" y="-30"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="AutoFirmeProcu" x="1074" y="412" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="569" y="813" width="132" height="36"/>
 </root-container>

@@ -27,6 +27,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.DDTipoIntervencion;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.persona.model.PersonaManual;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
 @Entity
@@ -53,6 +54,11 @@ public class BurofaxPCO implements Serializable, Auditable {
 	private Persona demandado;
 	
 	@ManyToOne
+	@JoinColumn(name = "PEM_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private PersonaManual demandadoManual;
+
+	@ManyToOne
 	@JoinColumn(name = "CNT_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private Contrato contrato;
@@ -70,6 +76,9 @@ public class BurofaxPCO implements Serializable, Auditable {
 	@OneToMany(mappedBy = "burofax", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private List<EnvioBurofaxPCO> enviosBurofax;
+	
+	@Column(name = "ES_PERSONA_MANUAL")
+	private boolean esPersonaManual;
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
@@ -162,5 +171,21 @@ public class BurofaxPCO implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public PersonaManual getDemandadoManual() {
+		return demandadoManual;
+	}
+
+	public void setDemandadoManual(PersonaManual demandadoManual) {
+		this.demandadoManual = demandadoManual;
+	}
+	
+	public boolean isEsPersonaManual() {
+		return esPersonaManual;
+	}
+
+	public void setEsPersonaManual(boolean esPersonaManual) {
+		this.esPersonaManual = esPersonaManual;
 	}
 }

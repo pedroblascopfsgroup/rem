@@ -370,6 +370,7 @@ public class PROBaseActionHandler implements ActionHandler {
      */
     protected TareaExterna getTareaExterna(ExecutionContext executionContext) {
         Long idTarea = getIdTareaExterna(executionContext);
+        System.out.println(this.getClass().getSimpleName() + "id_tarea : " + idTarea);
         if (idTarea != null) {
             return proxyFactory.proxy(TareaExternaApi.class).get(getIdTareaExterna(executionContext));
         }
@@ -379,17 +380,37 @@ public class PROBaseActionHandler implements ActionHandler {
 
     private Long getIdTareaExterna(ExecutionContext executionContext) {
         final String name = executionContext.getNode().getName().replaceAll("Decision$", "");
+        System.out.println(this.getClass().getSimpleName() + "name : " + name);
+        logger.info(this.getClass().getSimpleName() + "name : " + name);
+        
         final Long idToken = executionContext.getToken().getId();
+        
+        System.out.println(this.getClass().getSimpleName() + "idToken : " + idToken);
+        logger.info(this.getClass().getSimpleName() + "idToken : " + idToken);
 
         // Esto permite tener asociación robusta para cada tarea en el contexto JBPM.
         // Manteniendo sólo el ID de tarea no funciona bien cuando una misma tarea la replicamos N veces en un contexto.
         // Ahora se almacenerá esa correspondencia de la siguiente forma: idTAREA_token = idtareaexterna
         // Se mantiene compatibilidad hacia atrás
         String shortTokenName = String.format("id%s", name);
+        System.out.println(this.getClass().getSimpleName() + "shortTokenName : " + shortTokenName);
+        logger.info(this.getClass().getSimpleName() + "shortTokenName : " + shortTokenName);
+        
         String uniqueTokenName = String.format("id%s.%d", name, idToken);
+        System.out.println(this.getClass().getSimpleName() + "uniqueTokenName : " + uniqueTokenName);
+        logger.info(this.getClass().getSimpleName() + "uniqueTokenName : " + uniqueTokenName);
+        
         Long tex_id = (Long)executionContext.getVariable(uniqueTokenName);
+        System.out.println(this.getClass().getSimpleName() + "tex_id : " + tex_id);
+        logger.info(this.getClass().getSimpleName() + "tex_id : " + tex_id);
+        
         if (tex_id == null) {
+        	System.out.println(this.getClass().getSimpleName() + "tex_id es nulo, la obtengo por el shortTokenName");
+        	logger.info(this.getClass().getSimpleName() + "tex_id es nulo, la obtengo por el shortTokenName");
+        	
         	tex_id = (Long)executionContext.getVariable(shortTokenName);
+        	System.out.println(this.getClass().getSimpleName() + "tex_id : " + tex_id);
+        	logger.info(this.getClass().getSimpleName() + "tex_id : " + tex_id);
         }
         return tex_id;
     }

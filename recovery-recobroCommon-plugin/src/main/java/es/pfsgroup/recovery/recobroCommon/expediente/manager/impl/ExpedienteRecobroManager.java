@@ -196,12 +196,17 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 		Persona persona = (Persona) executor.execute(PrimariaBusinessOperation.BO_PER_MGR_GET, idPersona);
 		Expediente expediente = expedienteDao.get(idExpediente);
 		String codigoSubtipoTarea;
-		if (expediente.getSeguimiento()) {
-			codigoSubtipoTarea = "501"; // FIXME
-										// SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG;
+		if (expediente.isGestionDeuda()) {
+			codigoSubtipoTarea = "SOLEXPMGDEUDA";
 		} else {
-			codigoSubtipoTarea = SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL;
+			if (expediente.getSeguimiento()) {
+				codigoSubtipoTarea = "501"; // FIXME
+											// SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL_SEG;
+			} else {
+				codigoSubtipoTarea = SubtipoTarea.CODIGO_TAREA_PEDIDO_EXPEDIENTE_MANUAL;
+			}
 		}
+		
 		Cliente clienteActivo = persona.getClienteActivo();
 		cancelacionExp(idExpediente, true);
 
@@ -1882,7 +1887,7 @@ public class ExpedienteRecobroManager implements ExpedienteRecobroApi {
 	public Boolean esGestorRecobroExpediente(Long idExpediente, Long idUsuario) {
 		GestorExpediente gestor = this.getGestorRecobroActualExpediente(idExpediente);
 		if (!Checks.esNulo(gestor) && !Checks.esNulo(idUsuario)){
-			if (idUsuario.equals(gestor.getUsuario().getId())){
+			if (!Checks.esNulo(gestor.getUsuario()) && idUsuario.equals(gestor.getUsuario().getId())){
 				return true;
 			}
 		}

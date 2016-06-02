@@ -2,11 +2,13 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-	<input name="id" required="true" type="java.lang.Long" />
+	<input name="id" required="true" type="java.lang.String"/>
+	<input name="nombre" required="false" type="java.lang.String"/>
+	<input name="extension" required="false" type="java.lang.String"/>
 
     <end-state id="listado" view="file">
 		<on-entry>
-			<evaluate expression="executor.execute('contratoManager.downloadAdjunto', id)" result="flowScope.fileItem" />
+			<evaluate expression="executor.execute('adjuntosManager.bajarAdjuntoContrato', id, nombre, extension)" result="flowScope.fileItem" />
 		</on-entry>
 	</end-state>
 

@@ -143,4 +143,13 @@ public class ArquetipoManager {
     	return arquetipoDao.getListSeguimiento();
     }
     
+    /**
+     * Devuelve una lista con los arquetipos de gestión de deuda
+     * @return
+     */    
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_ARQ_MGR_GET_LIST_GESTDEUDA)
+    public List<Arquetipo> getListGestDeuda() {
+    	return arquetipoDao.getListGestDeuda();
+    }
+    
 }

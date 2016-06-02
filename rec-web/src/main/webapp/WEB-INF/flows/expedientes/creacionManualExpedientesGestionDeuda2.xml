@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+	
+	<!--
+	<input name="idExpediente" type="java.lang.Long" />
+	<input name="idPersona" type="java.lang.Long" />
+	<input name="codigoMotivo" type="java.lang.String" />
+	<input name="observaciones" type="java.lang.String" />
+	<input name="idPropuesta" type="java.lang.Long" />
+	<input name="isSupervisor" type="java.lang.Boolean" />
+	-->
+	
+	<var name="dto" class="es.capgemini.pfs.expediente.dto.DtoCreacionManualExpediente" />
+	
+	<end-state id="update" view="default">
+    	
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+			<evaluate expression="executor.execute('expedienteManager.proponerActivarExpediente', dto)" />
+		</on-entry>
+	</end-state>
+	   
+</flow>

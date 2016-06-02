@@ -28,6 +28,7 @@ import es.capgemini.pfs.expediente.BusquedaExpedienteFiltroDinamico;
 import es.capgemini.pfs.expediente.dao.ExpedienteDao;
 import es.capgemini.pfs.expediente.dto.DtoBuscarExpedientes;
 import es.capgemini.pfs.expediente.model.DDEstadoExpediente;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
@@ -1045,6 +1046,8 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         }
 
         hql.append(" where exp.auditoria.borrado = 0 ");
+        //Que no sean de recobro
+        hql.append(" and not exp.tipoExpediente.codigo = '" + DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO +"' ");
 
         /***
 		 * La lista de los parámetros dinánmicos debe venir de la siguiente manera
@@ -1600,7 +1603,7 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
                hql.append(" and (gae.usuario.id = "+ usuarioLogueado.getId());
                hql.append("  or gae.usuario.id in (");
                hql.append(" select egu.grupo.id from EXTGrupoUsuarios egu where egu.usuario.id = " + usuarioLogueado.getId());
-               hql.append(" and egu.auditoria.borrado = false )) ");
+               hql.append(" and egu.auditoria.borrado = false and egu.usuario.entidad.id = egu.grupo.entidad.id)) ");
                return hql.toString();
 	}
 

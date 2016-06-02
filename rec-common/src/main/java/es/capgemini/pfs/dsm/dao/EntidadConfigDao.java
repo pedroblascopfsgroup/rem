@@ -9,4 +9,6 @@ import es.capgemini.pfs.dsm.model.EntidadConfig;
  */
 public interface EntidadConfigDao extends AbstractDao<EntidadConfig, Long> {
 
+	EntidadConfig findByEntidad(Long idEntidad);
+
 }

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -28,13 +29,13 @@ public interface NMBInformacionRegistralBienInfo {
 	 * Superficie completa
 	 * @return
 	 */
-	Float getSuperficie();
+	BigDecimal getSuperficie();
 
 	/**
 	 * Superficie construida
 	 * @return
 	 */
-	Float getSuperficieConstruida();
+	BigDecimal getSuperficieConstruida();
 	
 	/**
 	 * Tomo

@@ -41,5 +41,6 @@ public interface EXTContratoApi {
 	public static final String EXT_BO_CNT_BUSCAR_CONTRATO_AVANZADO = "es.pfsgroup.recovery.ext.api.contrato.buscarContratos";
 	@BusinessOperationDefinition(EXT_BO_CNT_BUSCAR_CONTRATO_AVANZADO)
 	Page buscarContratosAvanzado(EXTBusquedaContratosDto dto);
-	
+
+	public Page getEfectosContrato(Long idContrato, Integer start, Integer limit);
 }

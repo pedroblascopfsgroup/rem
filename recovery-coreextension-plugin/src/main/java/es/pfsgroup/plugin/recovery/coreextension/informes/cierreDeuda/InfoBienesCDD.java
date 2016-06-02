@@ -26,6 +26,7 @@ public class InfoBienesCDD {
 	private String resultadoAdjudicacion;
 	private String importeAdjudicacion;
 	private String fechaTestimonioAdjudicacionSareb;
+	private String codigoDocAdjudicacion;
 	
 	private String localidadDatosRegistrales;
 	private String provinciaDatosRegistrales;
@@ -144,7 +145,15 @@ public class InfoBienesCDD {
 			String fechaTestimonioAdjudicacionSareb) {
 		this.fechaTestimonioAdjudicacionSareb = fechaTestimonioAdjudicacionSareb;
 	}
-	
+			
+	public String getCodigoDocAdjudicacion() {
+		return codigoDocAdjudicacion;
+	}
+
+	public void setCodigoDocAdjudicacion(String codigoDocAdjudicacion) {
+		this.codigoDocAdjudicacion = codigoDocAdjudicacion;
+	}
+
 	public String getPais() {
 		return pais;
 	}

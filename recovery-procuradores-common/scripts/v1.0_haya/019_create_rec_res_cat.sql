@@ -1,0 +1,115 @@
+ALTER TABLE haya01.REC_RES_CAT
+ DROP PRIMARY KEY CASCADE;
+DROP TABLE haya01.REC_RES_CAT CASCADE CONSTRAINTS;
+
+CREATE TABLE haya01.REC_RES_CAT
+(
+  REC_ID  NUMBER(16)                            NOT NULL,
+  RES_ID  NUMBER(16)                            NOT NULL,
+  CAT_ID  NUMBER(16)                            NOT NULL
+)
+TABLESPACE haya01
+PCTUSED    0
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX haya01.REC_RES_CAT_PK ON haya01.REC_RES_CAT
+(REC_ID)
+LOGGING
+TABLESPACE haya01
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX haya01.REC_RES_CAT_UNIQUE ON haya01.REC_RES_CAT
+(RES_ID)
+LOGGING
+TABLESPACE haya_idx
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            NEXT             1M
+            MINEXTENTS       1
+            MAXEXTENTS       UNLIMITED
+            PCTINCREASE      0
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE haya01.REC_RES_CAT ADD (
+  CONSTRAINT REC_RES_CAT_PK
+ PRIMARY KEY
+ (REC_ID)
+    USING INDEX 
+    TABLESPACE haya01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ),
+  CONSTRAINT REC_RES_CAT_UNIQUE
+ UNIQUE (RES_ID)
+    USING INDEX 
+    TABLESPACE haya01
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                NEXT             1M
+                MINEXTENTS       1
+                MAXEXTENTS       UNLIMITED
+                PCTINCREASE      0
+               ));
+
+ALTER TABLE haya01.REC_RES_CAT ADD (
+  CONSTRAINT REC_RES_CAT_RESOLUCION_FK 
+ FOREIGN KEY (RES_ID) 
+ REFERENCES haya01.RES_RESOLUCIONES_MASIVO (RES_ID),
+  CONSTRAINT REC_RES_CAT_CATEGORIAS_FK 
+ FOREIGN KEY (CAT_ID) 
+ REFERENCES haya01.CAT_CATEGORIAS (CAT_ID));
+ 
+ 
+DROP SEQUENCE haya01.S_REC_RES_CAT;
+
+CREATE SEQUENCE haya01.S_REC_RES_CAT
+  START WITH 1
+  MAXVALUE 9999999999999999999999999999
+  MINVALUE 1
+  NOCYCLE
+  NOCACHE
+  NOORDER;

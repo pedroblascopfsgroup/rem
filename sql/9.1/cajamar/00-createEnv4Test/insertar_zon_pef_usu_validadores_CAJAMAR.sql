@@ -58,4 +58,7 @@ insert into CM01.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id, zpu.pef_id, zpu.usu_id
 insert into CM01.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id, zpu.pef_id, zpu.usu_id, zpu.usuariocrear, zpu.fechacrear)values ( CM01.s_zon_pef_usu.nextval, (select max(zon_id) from CM01.zon_zonificacion where zon_cod ='01'),(SELECT pef_id FROM CM01.pef_perfiles WHERE PEF_DESCRIPCION = 'Supervisor' and borrado = 0),(SELECT usu_id FROM CMMASTER.usu_usuarios WHERE usu_username = 'val.DIRHRE') , 'JSV', sysdate );
 insert into CM01.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id, zpu.pef_id, zpu.usu_id, zpu.usuariocrear, zpu.fechacrear)values ( CM01.s_zon_pef_usu.nextval, (select max(zon_id) from CM01.zon_zonificacion where zon_cod ='01'),(SELECT pef_id FROM CM01.pef_perfiles WHERE PEF_DESCRIPCION = 'Gestor Externo' and borrado = 0),(SELECT usu_id FROM CMMASTER.usu_usuarios WHERE usu_username = 'val.GEHREIN') , 'JSV', sysdate );
 
+insert into CM01.zon_pef_usu zpu (zpu.zpu_id, zpu.zon_id, zpu.pef_id, zpu.usu_id, zpu.usuariocrear, zpu.fechacrear)values 
+( CM01.s_zon_pef_usu.nextval, (select max(zon_id) from CM01.zon_zonificacion where zon_cod ='01'),(SELECT pef_id FROM CM01.pef_perfiles WHERE PEF_CODIGO = 'SER_CENTRALES' and borrado = 0),(SELECT usu_id FROM CMMASTER.usu_usuarios WHERE usu_username = 'val.servcentrales') , 'CPI', sysdate );
+
 commit;

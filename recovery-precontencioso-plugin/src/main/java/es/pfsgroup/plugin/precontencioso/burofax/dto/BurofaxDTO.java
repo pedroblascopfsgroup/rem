@@ -9,7 +9,7 @@ public class BurofaxDTO extends WebDto{
 	
 	private static final long serialVersionUID = 4065164471137337436L;
 	
-	private Long id;
+	private String id;
 	private Long idBurofax;
 	private Long idEnvio;
 	private Long idCliente;
@@ -19,6 +19,7 @@ public class BurofaxDTO extends WebDto{
 	private String tipoIntervencion;
 	private String contrato;
 	private String estado;
+	private String refExternaEnvio;
 	private String direccion;
 	private String tipo;
 	private String tipoDescripcion;
@@ -26,6 +27,11 @@ public class BurofaxDTO extends WebDto{
 	private Date fechaEnvio;
 	private Date fechaAcuse;
 	private String resultado;
+	private String esPersonaManual;
+	private boolean tienePersona;
+
+	// id ADJ_ADJUNTOS
+	private Long acuseRecibo;
 	
 	
 	public String getCliente() {
@@ -115,10 +121,10 @@ public class BurofaxDTO extends WebDto{
 	public void setIdEnvio(Long idEnvio) {
 		this.idEnvio = idEnvio;
 	}
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	
@@ -134,7 +140,36 @@ public class BurofaxDTO extends WebDto{
 	public void setTipoDescripcion(String tipoDescripcion) {
 		this.tipoDescripcion = tipoDescripcion;
 	}
+	public Long getAcuseRecibo() {
+		return acuseRecibo;
+	}
+	public void setAcuseRecibo(Long acuseRecibo) {
+		this.acuseRecibo = acuseRecibo;
+	}
+	public String getRefExternaEnvio() {
+		return refExternaEnvio;
+	}
+	public void setRefExternaEnvio(String refExternaEnvio) {
+		this.refExternaEnvio = refExternaEnvio;
+	}
 
+	public String getEsPersonaManual() {
+		return esPersonaManual;
+	}
+	public void setEsPersonaManual(String esPersonaManual) {
+		this.esPersonaManual = esPersonaManual;
+	}
+
+	public boolean isTienePersona() {
+		return tienePersona;
+	}
+	public void setTienePersona(boolean tienePersona) {
+		this.tienePersona = tienePersona;
+	}
 	
-
+	@Override
+	public String toString() {
+		
+		return "id: " + id + "; idBurofax: " + idBurofax + "; idEnvio: " + idEnvio + "; idCliente: " + idCliente + "; idDireccion: " + idDireccion + "; idTipoBurofax: " + idTipoBurofax +  "; cliente: " + cliente + "; tipoIntervencion: " + "; contrato: " + contrato + "; estado: " + estado + "; refExternaEnvio: " + refExternaEnvio + "; direccion: " + direccion + "; tipo: " + tipo + "; tipoDescripcion: "+ tipoDescripcion + "; fechaSolicitud: " + fechaSolicitud + "; fechaEnvio: " + fechaEnvio + "; fechaAcuse: " + fechaAcuse + "; resultado: " + resultado + "; esPersonaManual: " + esPersonaManual + "; tienePersona: " + tienePersona;
+	}
 }

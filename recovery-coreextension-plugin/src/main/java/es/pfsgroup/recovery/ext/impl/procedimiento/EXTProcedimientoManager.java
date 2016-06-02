@@ -213,8 +213,13 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 		MEJProcedimiento mejProc = MEJProcedimiento.instanceOf(procedimiento);
 		boolean modificados = false;
 		if (Checks.esNulo(mejProc.getGuid())) {
-			//logger.debug(String.format("[INTEGRACION] Asignando nuevo GUID para procedimiento %d", procedimiento.getId()));
-			mejProc.setGuid(Guid.getNewInstance().toString());
+
+			String guid = Guid.getNewInstance().toString();
+			while(getProcedimientoByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+
+			mejProc.setGuid(guid);
 			modificados = true;
 		}
 		
@@ -472,8 +477,6 @@ public class EXTProcedimientoManager implements EXTProcedimientoApi {
 			return false;
 		}
 
-		// Comprueba que ha sido generado por la misma entidad
-		MEJProcedimiento prc = this.get(idProcedimiento);
 		// Se recupera la decisión de paralización para comprobar si se ha tomado desde la misma entidad en que estamos actualmente o en una de las
 		// que se permite la desparalización
 		DecisionProcedimiento decisionParalizacion = null;

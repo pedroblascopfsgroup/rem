@@ -4,6 +4,7 @@ import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -17,14 +18,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
 import es.capgemini.pfs.despachoExterno.DespachoExternoManager;
+import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.dsm.EntidadManager;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
@@ -37,7 +43,11 @@ import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.NivelDao;
+import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -48,6 +58,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -61,8 +72,6 @@ public class coreextensionManager implements coreextensionApi {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	
-
 	@Autowired
 	GenericABMDao genericDao;
 	
@@ -93,6 +102,24 @@ public class coreextensionManager implements coreextensionApi {
 	@Autowired
 	CoreProjectContext coreProjectContext;
 	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private EntidadManager entidadManager;
+	
+	@Autowired
+	private AcuerdoDao acuerdoDao;
+	
+	@Autowired
+	private DespachoExternoDao despachoExternoDao;
+	
+	@Autowired
+	private NivelDao nivelDao;
+	
+	@Autowired
+	private MEJAcuerdoManager mejAcuerdoManager;
+	 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
 	public List<EXTDDTipoGestor> getList(String ugCodigo) {		
@@ -143,10 +170,68 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL)
 	public List<EXTDDTipoGestor> getListTipoGestorAdicional() {
 		
-		Order order = new Order(OrderType.ASC, "descripcion");
-		List<EXTDDTipoGestor> listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<Entidad> listEnt = genericDao.getList(Entidad.class);//entidadManager.getListaEntidades();
+		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
+		
+		if(!Checks.esNulo(listEnt) && listEnt.size()>1){
+			Entidad entidad = genericDao.get(Entidad.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getEntidad().getId()));
+			listado = entidad.getTiposDeGestores();
+		}else{
+			Order order = new Order(OrderType.ASC, "descripcion");
+			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));	
+		}
+		
 		
 		return listado;
+	}
+	
+	@BusinessOperation(GET_LIST_PERFILES_GESTORES_ESPECIALES)
+	public HashMap<String,Set<String>> getListPerfilesGestoresEspeciales(String codigoEntidadUsuario){
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto=null;
+		mapCompleto= coreProjectContext.getPerfilesGestoresEspeciales();
+		if(mapCompleto!=null && !mapCompleto.isEmpty()){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+		}
+		return map1;
+	}
+	
+	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL_POR_ASUNTO)
+	public List<EXTDDTipoGestor> getListTipoGestorAdicionalPorAsunto(String idTipoAsunto) {
+		
+		List<EXTDDTipoGestor> listadoPrueba= new ArrayList<EXTDDTipoGestor>();
+		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores= coreProjectContext.getTiposAsuntosTiposGestores();
+		HashMap<String,Set<String>> codigoEntidadusuario= null;
+		if(tiposAsuntosTiposGestores!=null){
+			codigoEntidadusuario= tiposAsuntosTiposGestores.get(codigoEntidadUsuario);
+		}
+		if(codigoEntidadusuario!=null){
+			Set<String> set1= codigoEntidadusuario.get(idTipoAsunto);
+			
+	
+			for(String codigoTipoGestor:set1 ){
+				EXTDDTipoGestor tipoGestor= tipoGestorManager.getByCod(codigoTipoGestor);
+				listadoPrueba.add(tipoGestor);
+			}
+		}
+		
+//		List<Entidad> listEnt = genericDao.getList(Entidad.class);//entidadManager.getListaEntidades();
+//		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
+//		
+//		if(!Checks.esNulo(listEnt) && listEnt.size()>1){
+//			Entidad entidad = genericDao.get(Entidad.class, 
+//					genericDao.createFilter(FilterType.EQUALS, "id", usuarioManager.getUsuarioLogado().getEntidad().getId()));
+//			listado = entidad.getTiposDeGestores();
+//		}else{
+//			Order order = new Order(OrderType.ASC, "descripcion");
+//			listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));	
+//		}
+		
+		
+		return listadoPrueba;//listado;
+		
 	}
 
 
@@ -189,8 +274,11 @@ public class coreextensionManager implements coreextensionApi {
 										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho));
 								
 							} else {
-								listaDespachos = genericDao.getList(DespachoExterno.class, 
-										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+//								listaDespachos = genericDao.getList(DespachoExterno.class, 
+//										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+//										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+								Order orden = new Order(OrderType.ASC,"id");
+								listaDespachos= genericDao.getListOrdered(DespachoExterno.class, orden, genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
 										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 								
 							}							
@@ -556,6 +644,104 @@ public class coreextensionManager implements coreextensionApi {
 		
 		
 	}
+	
+	@Override
+	@BusinessOperation(GET_LIST_ALL_USUARIOS_POR_DEFECTO)
+	public List<Usuario> getListAllUsuariosPorDefectoData(long idTipoDespacho, boolean incluirBorrados) {
+		
+		List<Usuario> listaUsuarios = gestoresDao.getGestoresPorDefectoByDespacho(idTipoDespacho, incluirBorrados);
+		if (listaUsuarios.size() > 0 ){
+			Locale locale = new Locale("es_ES");
+			Collator c = Collator.getInstance();
+			c.setStrength(Collator.PRIMARY);
+			Collections.sort(listaUsuarios, new EXTUsuarioComparatorByApellidosNombre(c));
+		}
+		return listaUsuarios;
+		
+		
+	}
+	
+	@Override
+	@BusinessOperation(GET_USUARIO_GESTOR_OFICINA_EXPEDIENTE)
+	public List<Usuario> getUsuarioGestorOficinaExpedienteGestorDeuda(long idExpediente, String codigoPerfil){
+		List<Usuario> usuarios= gestoresDao.getGestorOficinaExpedienteGestorDeuda(idExpediente, codigoPerfil);
+		return usuarios;
+		
+	}
+	
+	@Override
+	@BusinessOperation(GET_SUPERVISOR_GESTOR_ADICIONAL_POR_CODIGO_ENTIDAD)
+	public Usuario getSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto){
+		Usuario supervisor=null;
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto= coreProjectContext.getSupervisorAsunto();
+		
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+			if(map1!=null){
+				Set<String> map2= map1.get(idTipoAsunto);
+				if(map2!=null){
+					for(String usuario: map2){
+						supervisor= usuarioManager.getByUsername(usuario);
+					}
+				}
+			}
+		}
+		
+		return supervisor;
+	}
+	
+	
+	
+	@Override
+	@BusinessOperation(GET_TIPO_GESTOR_SUPERVISOR_POR_CODIGO_ENTIDAD)
+	public EXTDDTipoGestor getTipoGestorSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto){
+		EXTDDTipoGestor tipoGestor= null;
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto= coreProjectContext.getTipoGestorSupervisorAsunto();
+		
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+			if(map1!= null){
+				Set<String> map2= map1.get(idTipoAsunto);
+				if(map2!=null){
+					for(String tipo: map2){
+						tipoGestor= tipoGestorManager.getByCod(tipo);
+					}
+				}
+			}
+		}
+		
+		return tipoGestor;
+	}
+	
+	@Override
+	@BusinessOperation(GET_DESPACHO_SUPERVISOR_POR_CODIGO_ENTIDAD)
+	public DespachoExterno getDespachoSupervisorPorAsuntoEntidad(String codigoEntidadUsuario, String idTipoAsunto){
+		DespachoExterno despachoSupervisor= new DespachoExterno();
+		HashMap<String,Set<String>> map1= null;
+		HashMap<String, HashMap<String, Set<String>>> mapCompleto= coreProjectContext.getDespachoSupervisorAsunto();
+		
+		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+			map1= mapCompleto.get(codigoEntidadUsuario);
+			if(map1!= null){
+				Set<String> map2= map1.get(idTipoAsunto);
+				if(map2!=null){
+					for(String desDespacho: map2){
+						List<DespachoExterno> listaDespachos = despachoExternoManager.getDespachosExternos();
+						for(DespachoExterno despacho: listaDespachos){
+							if(despacho.getDescripcion().equals(desDespacho)){
+								despachoSupervisor= despacho;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return despachoSupervisor;
+	}
+
 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_PROCEDIMIENTO_BY_PROPIEDAD_ASUNTO)
@@ -669,5 +855,36 @@ public class coreextensionManager implements coreextensionApi {
 		
 		return ranking;
 	}*/
+
+	@BusinessOperation(GET_LIST_BUSQUEDA_TERMINOS)
+	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario) {
+		
+		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario);
+		List<TerminoAcuerdo> listaTerminos=(List<TerminoAcuerdo>) page.getResults();
+		return page;
+	}
+	
+	@BusinessOperation(GET_LIST_BUSQUEDA_DESPACHOS_EXTERNOS_BY_TIPO)
+	public Page getDespachosExternosByTipo(String tipo, String query) {
+		Assertions.assertNotNull(tipo,
+				"tipoDespacho: no puede ser NULL");
+		return despachoExternoDao.getDespachosExternosByTipo(tipo,query);
+
+	}
+	
+	@BusinessOperation(GET_LIST_BUSQUEDA_TIPOSACUERDO_BY_ENTIDAD)
+	public Page getTipoAcuerdosByEntidad(String codigo){
+		
+		PageSql tiposAcuerdo = new PageSql();
+		tiposAcuerdo.setResults(mejAcuerdoManager.getListTipoAcuerdoByEntidad(codigo));
+		return tiposAcuerdo;
+	}
+	
+	@BusinessOperation(GET_CODIGO_NIVEL_POR_DESCRIPCION)
+	public Integer getCodigoNivelPorDescripcion(String descripcion) {
+	
+		return nivelDao.buscarCodigoNivelPorDescripcion(descripcion);
+
+	}
 
 }

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import es.capgemini.pfs.persona.model.DDSituacConcursal;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.plugin.recovery.coreextension.model.DDSituacConcursal;
 
 @Controller
 public class clienteController {

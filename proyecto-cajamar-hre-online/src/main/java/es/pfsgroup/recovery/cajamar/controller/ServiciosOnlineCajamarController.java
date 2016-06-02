@@ -63,7 +63,7 @@ public class ServiciosOnlineCajamarController {
 			@RequestParam(value = "observaciones", required = false) String observaciones,
 			ModelMap map) 
 	{
-		Boolean res = serviciosOnlineCajamar.solicitarTasacion(idBien, cuenta, persona, telefono, observaciones);
+		String res = serviciosOnlineCajamar.solicitarTasacion(idBien, cuenta, persona, telefono, observaciones);
 		map.put("solicitudRealizada", res);
 		return SOLICITAR_TASACION_JSON;
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.oficina.model.Oficina;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 
@@ -51,5 +52,12 @@ public interface EXTExpedientesApi {
 	 */
 	@BusinessOperationDefinition(BO_CORE_EXPEDIENTE_CAMBIAR_OFICINA_EXP)
 	public void cambiarOficinaExpediente(Long idExpediente,Long idOficina);
+	
+	/**
+	 * 
+	 * @param id del expediente
+	 * @return Expediente a partir del id
+	 */
+	public Expediente getExpediente(Long id);
 
 }

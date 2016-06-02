@@ -259,7 +259,7 @@ var esProveedorSolvencia = false;
       ,[{items:[datosRiesgoDirectoFieldSet, volRiesgoIndirecto,volExisteRiesgo
       	// ,volRiesgoOtrasEnt,volRiesgoDaniadoOtrasEnt      	
       	]},
-      {items:[pasivoVista, pasivoPlazo,politica,ratingExterno,fechaReferenciaRating]} ]);
+      {items:[pasivoVista, pasivoPlazo,politica<sec:authorize ifNotGranted="PERSONALIZACION-BCC">,ratingExterno,fechaReferenciaRating</sec:authorize>]} ]);
 
    panel.add({items:[mensajeLabel],border:false});	
    panel.add({items:[mensajeExceptuacionLabel],border:false});	

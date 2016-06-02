@@ -33,6 +33,9 @@ public class TipoProcedimiento implements Serializable, Auditable {
      */
     private static final long serialVersionUID = -8961132998182577279L;
 
+    public static final String TIPO_PRECONTENCIOSO = "PCO";
+    public static final String TIPO_NO_LITIGAR = "NOLIT";
+    
     @Id
     @Column(name = "DD_TPO_ID")
     private Long id;

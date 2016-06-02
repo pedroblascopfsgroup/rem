@@ -51,6 +51,7 @@ public interface AdjudicacionHandlerDelegateApi {
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_FECHA_ENVIO_DECRETO_ADICION = "es.pfsgroup.recovery.adjudicacion.fechaEnvioDecretoAdicion";
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_SITUACION_TITULO = "es.pfsgroup.recovery.adjudicacion.situacionTitulo";
 	public static final String BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_GESTORIA = "es.pfsgroup.recovery.adjudicacion.insertarGestoria";
+	public static final String BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_CONTABILIDAD = "es.pfsgroup.recovery.adjudicacion.fechaContabilidad";
 	
 	/**
 	 * Inserta fecha presentacion en las cargas de un bien
@@ -190,6 +191,9 @@ public interface AdjudicacionHandlerDelegateApi {
 	
 	@BusinessOperationDefinition(BO_ADJUDICACION_HANDLER_INSERT_SITUACION_TITULO)
 	public void insertarSituacionTitulo(Long prcId, String valor);
+	
+	@BusinessOperationDefinition(BO_ADJUDICACION_HANDLER_INSERT_ADJUDICACION_FECHA_CONTABILIDAD)
+	public void insertarFechaContabilidad(Long prcId, Date valor);
 	
 	/**
 	 * Inserta gestoría

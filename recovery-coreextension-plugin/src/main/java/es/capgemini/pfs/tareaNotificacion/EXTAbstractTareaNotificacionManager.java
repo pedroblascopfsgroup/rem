@@ -38,6 +38,7 @@ import es.pfsgroup.recovery.api.UsuarioApi;
 import es.pfsgroup.recovery.ext.api.persona.EXTPersonaApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareas;
 import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareasApi;
+import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.VTARBusquedaOptimizadaTareasDao;
 import es.pfsgroup.recovery.ext.impl.optimizacionBuzones.dao.impl.ResultadoBusquedaTareasBuzonesDto;
 
@@ -76,32 +77,58 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		return executor;
 	}
 
-	protected Page busquedaGenericaTareas(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected Page busquedaGenericaTareas(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
 		EventFactory.onMethodStart(this.getClass());
 
 		Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
-		List<Perfil> perfiles = usuarioLogado.getPerfiles();
-		List<DDZona> zonas = usuarioLogado.getZonas();
+		List<Perfil> perfiles = new ArrayList<Perfil>(); 
+		List<DDZona> zonas = new ArrayList<DDZona>();
+		
+		for(ZonaUsuarioPerfil zup : usuarioLogado.getZonaPerfil()) {
+		
+			if(projectContext.getPerfilesConsulta() != null) {
+				
+				if(!projectContext.getPerfilesConsulta().contains(zup.getPerfil().getCodigo())) {
+				
+					if(!perfiles.contains(zup.getPerfil())) {
+						perfiles.add(zup.getPerfil());
+					}
+					
+					zonas.add(zup.getZona());
+				}
+			}
+			else {
+				perfiles.add(zup.getPerfil());
+				zonas.add(zup.getZona());
+			}
+		}
+		
 		dto.setPerfiles(perfiles);
 		dto.setZonas(zonas);
 		dto.setUsuarioLogado(usuarioLogado);
 		List listaRetorno = new ArrayList();
 
-		Page page;
+		Page page = null;
 		if (dto.getTraerGestionVencidos() != null && dto.getTraerGestionVencidos()) {
 			agregarTareasGestionVencidosSeguimiento(dto, listaRetorno, opcion);
 
 			if (proxyFactory.proxy(EXTOpcionesBusquedaTareasApi.class).tieneOpcion(EXTOpcionesBusquedaTareas.getBuzonesTareasOptimizados(), usuarioLogado))
 				informarCategoriaTarea(listaRetorno);
 
+			listaRetorno = removeTareasDuplicadas(listaRetorno);
+
 			page = new PageSql();
 			((PageSql) page).setResults(listaRetorno);
 			((PageSql) page).setTotalCount(listaRetorno.size());
 		} else {
-			page = obtenerTareasPendientes(dto, opcion, modelClass);
+			
+			if(perfiles.size() > 0 && zonas.size() > 0) {
+				page = obtenerTareasPendientes(dto, opcion, modelClass);
+			}
 			
 			if (page != null) {
-				listaRetorno.addAll(page.getResults());
+				listaRetorno.addAll(removeTareasDuplicadas(page.getResults()));
 				
 				if (proxyFactory.proxy(EXTOpcionesBusquedaTareasApi.class).tieneOpcion(EXTOpcionesBusquedaTareas.getBuzonesTareasOptimizados(), usuarioLogado))
 					informarCategoriaTarea(listaRetorno);
@@ -128,6 +155,25 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		//castToExtTareaNotificacion(page);
 		EventFactory.onMethodStop(this.getClass());
 		return page;
+	}
+
+	private List removeTareasDuplicadas(final List lista) {
+		final List listaRetorno = new ArrayList();
+		final List<Long> listaIds = new ArrayList<Long>();
+		for (Object tarea : lista) {
+			try {
+				Method metodoGet = tarea.getClass().getMethod("getId", null);
+				final Long tarId = (Long)metodoGet.invoke(tarea, null);
+				if(!listaIds.contains(tarId)){
+					listaIds.add(tarId);
+					listaRetorno.add(tarea);
+				}
+			}catch (final Exception e) {
+				logger.error(e.getMessage());
+				return lista;
+			}
+		}
+		return listaRetorno;
 	}
 
 	protected List<Long> obtenerCantidadDeTareasPendientesGenerico(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion) {
@@ -263,7 +309,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 		}
 	}
 
-	private PageHibernate obtenerTareasPendientes(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends ResultadoBusquedaTareasBuzonesDto> modelClass) {
+	private PageHibernate obtenerTareasPendientes(final DtoBuscarTareaNotificacion dto, final EXTOpcionesBusquedaTareas opcion, final Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass) {
 		boolean conCarterizacion = false;
 		Usuario u = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		if (opcion != null) {
@@ -335,6 +381,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 * Rellena el campo Categoria Tarea, según las categorías definidas en ac-plugin-coreextension-projectContext.xml
 	 * @param lista
 	 */
+	@SuppressWarnings("rawtypes")
 	protected void informarCategoriaTarea(final List lista) {
 		for (Object tarea : lista) {
 			try {
@@ -361,6 +408,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 * @param zona
 	 *            zona
 	 */
+	@SuppressWarnings("deprecation")
 	protected void replaceGestorInListOpt(final List<ResultadoBusquedaTareasBuzonesDto> lista, final Usuario usuario) {
 		for (ResultadoBusquedaTareasBuzonesDto tarea : lista) {
 			if (tarea.getDescGestor() != null && tarea.getDescGestor().trim().length() > 0) {
@@ -412,6 +460,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 	 * @param zona
 	 *            zona
 	 */
+	@SuppressWarnings("deprecation")
 	protected void replaceSupervisorInListOpt(final List<ResultadoBusquedaTareasBuzonesDto> lista, final Usuario usuario) {
 		for (ResultadoBusquedaTareasBuzonesDto tarea : lista) {
 			if (tarea.getDescSupervisor() != null && tarea.getDescSupervisor().trim().length() > 0) {

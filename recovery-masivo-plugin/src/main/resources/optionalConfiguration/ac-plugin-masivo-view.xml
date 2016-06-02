@@ -27,18 +27,20 @@
 
 	<bean p:entity="menu" p:name="masivo" p:order="500"
 		p:fileName="/WEB-INF/jsp/plugin/masivo/menu/menuMasivo.jsp" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		p:permission="MENU_MASIVO_GENERAL" />
+		p:permission="MENU_MASIVO_GENERAL" /> 
+		<!--MENU_MASIVO_GENERAL-->
 
 	<bean p:entity="menu" p:name="masivo/procesadoTareas" p:order="510"
 		p:fileName="/WEB-INF/jsp/plugin/masivo/menu/procesadoTareasArchivo-menu.jsp"
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
-		p:permission="PROCESADO_TAREAS" />
-
+		p:permission="PROCESADO_TAREAS" /> 
+		<!--PROCESADO_TAREAS-->
+<!--  
 	<bean p:entity="menu" p:name="masivo/procesadoArchivos" p:order="511"
 		p:fileName="/WEB-INF/jsp/plugin/masivo/menu/procesadoResoluciones-menu.jsp"
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		p:permission="PROCESADO_RESOLUCIONES" />
-
+-->
 	<bean parent="clasesDiccionarioAnotadas">
 		<property name="sourceList">
 			<list merge="true">

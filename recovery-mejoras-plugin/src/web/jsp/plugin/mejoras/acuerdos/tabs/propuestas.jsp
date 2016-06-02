@@ -20,7 +20,7 @@
 		,bodyStyle:'padding:5px;margin:5px'
 		,autoHeight:true
 		,autoWidth : true
-		,nombreTab : 'acuerdos'
+		,nombreTab : 'propuestas'
 		/*,items : [{items:acuerdosExpTabs
 				,border:false
 				,style:'margin-top: 7px; margin-left:5px'}
@@ -321,7 +321,6 @@
 	var panelAnteriorExpTerminos;
 	var cumplimientoAcuerdo;
 	
-	
 	propuestasGrid.on('rowclick', function(grid, rowIndex, e) {
 	
 				ocultarBotones();
@@ -330,7 +329,8 @@
 				panel.remove(panelAnteriorExpTerminos); 
 
 				terminosExpTab = new Ext.Panel({
-					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Términos"/>'
+					title:'<s:message code="plugin.mejoras.acuerdos.tabTerminos" text="**Solucion"/>'
+				
 					,id:'expediente-terminosTabs-'+entidad.get("data").id
 					,autoHeight:true
 					,autoWidth: true
@@ -371,6 +371,11 @@
 				
 				if(panel.getFaseActualExpediente() == app.estItinerario.ESTADO_FORMALIZAR_PROPUESTA){
 					noPuedeEditarEstadoGestion = false;
+					if(panel.getFaseActualExpediente()){
+						noPuedeModificar = false;
+					}else{
+						noPuedeModificar = true
+					}
 				}
 				
 				if((panel.getFaseActualExpediente() == app.estItinerario.ESTADO_REVISAR_EXPEDIENTE && codigoEstado == app.codigoAcuerdoPropuesto && panel.esGestorSupervisorActual()) ||
@@ -463,11 +468,11 @@
 	}
 
 	panel.esSupervisor = function(){
-		return entidad.get("data").toolbar.esSupervisor;
+		return entidad.get("data").esSupervisor;
 	}
 
 	panel.esGestor = function(){
-		return entidad.get("data").toolbar.esGestor;
+		return entidad.get("data").esGestor;
 	}
 	
 	panel.getUsuarioLogado = function(){
@@ -486,5 +491,17 @@
 		return entidad.get("data").toolbar.estadoExpediente;	
 	}
 
+	panel.setVisibleTab = function(data){
+		var visible = entidad.get("data").toolbar.tipoExpediente != 'REC';
+		<sec:authorize ifAnyGranted="PERSONALIZACION-BCC, PERSONALIZACION-HY">
+			if(entidad.get("data").toolbar.tipoExpediente == 'RECU' || entidad.get("data").toolbar.tipoExpediente === 'GESDEU'){
+				visible = true;
+			}else{
+				visible = false;
+			}
+		</sec:authorize>
+		return visible;
+   	}
+   	
 	return panel;
 })

@@ -50,6 +50,7 @@
 	var localidad = new Ext.form.ComboBox({
 		store:comboLocalidadStore
 		,name:'localidad'
+		,hiddenName:'localidad'
 		,displayField:'descripcion'
 		,valueField:'id'
 		,allowBlank : false

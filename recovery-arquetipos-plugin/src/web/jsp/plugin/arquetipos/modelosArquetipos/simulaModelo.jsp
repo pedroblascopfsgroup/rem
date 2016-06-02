@@ -9,15 +9,16 @@
 <%@ taglib prefix="pfsforms" tagdir="/WEB-INF/tags/pfs/forms"%>
 
 <fwk:page>
-	 Ext.util.CSS.createStyleSheet("button.icon_simular { background-image: url('../img/plugin/arquetipos/start_simula.png');}");
+	Ext.Ajax.timeout=25*60*1000; //Timeout de 25 minutos
+	Ext.util.CSS.createStyleSheet("button.icon_simular { background-image: url('../img/plugin/arquetipos/start_simula.png');}");
 	
 	 
-	 var resultadoSimulacion = new Ext.data.Record.create([
+	var resultadoSimulacion = new Ext.data.Record.create([
 		{name:'arquetipo'}
 		,{name:'clientes'}
 	]); 
 	 
-	 var columnas = new Ext.grid.ColumnModel([
+	var columnas = new Ext.grid.ColumnModel([
 		{header : '<s:message code="plugin.arquetipos.modelo.simula.arquetipo" text="**Arquetipo"/>', dataIndex: 'arquetipo', width:225}
 		,{header : '<s:message code="plugin.arquetipos.modelo.simula.clientes" text="**Clientes"/>', dataIndex: 'clientes', width: 75}
 	]);

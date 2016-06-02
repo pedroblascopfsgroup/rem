@@ -38,6 +38,7 @@ import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.HistoricoCambiosAsunto;
 import es.capgemini.pfs.asunto.model.ObservacionAceptacion;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -63,6 +64,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.PlazoTareasDefault;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -71,6 +73,11 @@ import es.capgemini.pfs.tareaNotificacion.process.TareaBPMConstants;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.ZipUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.Checks;
 
 
 /**
@@ -109,6 +116,10 @@ public class AsuntosManager {
     
     @Autowired
     private ZipUtils zipUtils;
+    
+	@Autowired
+	private GenericABMDao genericDao;
+
 
     /**
      * Actualiza el estado del asunto (abierto o cerrado) en función de sus procedimientos (abiertos o cerrados)
@@ -499,7 +510,7 @@ public class AsuntosManager {
             if (!usuarioLogado.equals(usuarioGestor)) { throw new BusinessOperationException("asunto.aceptacion.usuarioErroneo"); }
         }
         //Validar que estoy en el estado Confirmado
-        if (!DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO.equals(asunto.getEstadoAsunto().getCodigo())) { throw new BusinessOperationException(
+       /* if (!DDEstadoAsunto.ESTADO_ASUNTO_CONFIRMADO.equals(asunto.getEstadoAsunto().getCodigo())) { throw new BusinessOperationException(
                 "asunto.aceptacion.estadoErroneo"); }
         //Cambiar de estado el asunto
         DDEstadoAsunto estadoAsuntoAceptado = (DDEstadoAsunto) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
@@ -507,7 +518,7 @@ public class AsuntosManager {
         DDEstadoAsunto estadoAceptado = estadoAsuntoAceptado;
         asunto.setEstadoAsunto(estadoAceptado);
         executor.execute(ExternaBusinessOperation.BO_ASU_MGR_SAVE_OR_UDPATE, asunto);
-        //this.saveOrUpdateAsunto(asunto);
+        //this.saveOrUpdateAsunto(asunto);*/
 
         //Finalizo la tarea de confirmacion de asunto.
         if (!automatico) {
@@ -526,9 +537,11 @@ public class AsuntosManager {
                 Long idBPM = proc.getProcessBPM();
                 if (idBPM != null)
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
-            }
+            }else {
             //Lanzo el proceso bpm asociado.
-            executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
+            	executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
+            }
+            
         }
     }
 
@@ -581,11 +594,13 @@ public class AsuntosManager {
         Usuario usuarioLogado = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
         for (TareaNotificacion tarea : asunto.getTareas()) {
             SubtipoTarea subtipo = tarea.getSubtipoTarea();
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
-                if (usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
-            }
-            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
-                if (usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+            if(subtipo != null){
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_GESTOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getGestor()) && usuarioLogado.equals(asunto.getGestor().getUsuario())) { return true; }
+	            }
+	            if (SubtipoTarea.CODIGO_ACEPTAR_ASUNTO_SUPERVISOR.equals(subtipo.getCodigoSubtarea())) {
+	                if (!Checks.esNulo(asunto.getSupervisor()) && usuarioLogado.equals(asunto.getSupervisor().getUsuario())) { return true; }
+	            }
             }
         }
         return false;
@@ -927,6 +942,8 @@ public class AsuntosManager {
      * @param adjuntoId adjunto
      * @return file
      */
+    
+    /*
     @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_BAJAR_ADJUNTO)
     public FileItem bajarAdjunto(Long asuntoId, Long adjuntoId) {
         Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, asuntoId);
@@ -939,6 +956,8 @@ public class AsuntosManager {
             return adjunto;
         }
     }
+    Se traslada esta funcionalidad a AdjuntosApi
+    */
 
    
     
@@ -1276,5 +1295,15 @@ public class AsuntosManager {
             asunto.setSupervisor(newSupervisor);
             asuntoDao.saveOrUpdate(asunto);
         }
+    }
+    
+    /**
+     * Obtiene los tipos de asunto
+     * @return lista de tipos de asunto
+     */
+    @BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_GET_LIST_TIPOS_ASUNTO)
+    public List<DDTiposAsunto> obtenerListadoTiposDeAsunto() {
+		Order orderDescripcion = new Order(OrderType.ASC, "descripcion"); 
+		return genericDao.getListOrdered(DDTiposAsunto.class, orderDescripcion,genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
     }
 }

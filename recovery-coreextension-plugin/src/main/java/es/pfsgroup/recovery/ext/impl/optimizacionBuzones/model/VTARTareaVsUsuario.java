@@ -184,7 +184,16 @@ public class VTARTareaVsUsuario {
     @Column(name="PEF_ID", insertable=false, updatable = false)
     private Long idPerfil;
     
-    @ManyToOne
+    @Column(name="SPR_ID", insertable=false, updatable = false)
+    private Long idProrroga;
+    
+    @Column(name="DD_TAC_ID", insertable=false, updatable = false)
+    private Long idActuacion;
+    
+    @Column(name="DD_TPO_ID", insertable=false, updatable = false)
+    private Long idProcedimiento;
+
+	@ManyToOne
     @JoinColumn(name = "PRC_ID")
     private Procedimiento procedimiento;    
 
@@ -590,6 +599,14 @@ public class VTARTareaVsUsuario {
 
 	public void setIdPerfil(Long idPerfil) {
 		this.idPerfil = idPerfil;
-	}    
+	} 
+	
+    public Long getIdProrroga() {
+		return idProrroga;
+	}
+
+	public void setIdProrroga(Long idProrroga) {
+		this.idProrroga = idProrroga;
+	}
     
 }

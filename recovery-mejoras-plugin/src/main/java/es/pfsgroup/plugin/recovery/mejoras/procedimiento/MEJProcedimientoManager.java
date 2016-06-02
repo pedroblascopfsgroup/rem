@@ -18,6 +18,9 @@ import es.capgemini.devon.bpm.ProcessManager;
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.devon.web.DynamicElementManager;
 import es.capgemini.pfs.BPMContants;
+import es.capgemini.pfs.actitudAptitudActuacion.model.DDMotivoNoLitigar;
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.dao.EstadoProcedimientoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoContratoExpedienteDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
@@ -58,8 +61,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.MEJConstantes;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.api.PropuestaApi;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.dao.MEJProcedimientoContratoExpedienteDao;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.MEJExpedienteFacade;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.dto.MEJDtoBloquearProcedimientos;
@@ -121,7 +126,15 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	
 	@Autowired
 	private DecisionProcedimientoManager decisionProcedimientoManager;
+	
+	@Autowired
+	private AcuerdoDao propuestaDao;
 
+	@Autowired
+	private PropuestaApi propuestaApi;
+	
+	@Autowired
+	private UtilDiccionarioApi diccionarioApi;
 
 	
 	@BusinessOperation("procedimiento.buttons")
@@ -228,6 +241,16 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 	@Transactional(readOnly = false)
 	public Long salvarProcedimiento(ProcedimientoDto dto) {
 		MEJProcedimiento p = saveOrUpdateProcedimiento(dto);
+		
+		///Si tenemos una propuesta asociada al procedimiento
+		if(!Checks.esNulo(dto.getPropuesta())){
+			///Asociamos la propuesta al asunto
+			propuestaApi.asignaPropuestaAlAsunto(dto.getPropuesta(),dto.getAsunto());
+			
+			///Asociamos la propuesta al procedimiento
+			Acuerdo propuesta = propuestaDao.get(dto.getPropuesta());
+			p.setPropuesta(propuesta);
+		}
 
 		// Al crear una nueva lista borramos la anterior (de contratos
 		// relacionados con el proc.)
@@ -323,6 +346,24 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 			p.setSaldoOriginalNoVencido(dto.getSaldoOriginalNoVencido());
 		}
 
+		//GUARDAMOS LA NUEVA INFORMACION PRODCUTO-1089
+		if(!Checks.esNulo(dto.getTipoProcedimiento())){
+			if(dto.getTipoProcedimiento().equals("NOLIT")){
+				//estamos en un procemiento de no litigar, guardamos motivo y observaciones
+				if(!Checks.esNulo(dto.getMotivo())){
+					DDMotivoNoLitigar ddMotivo;
+					ddMotivo = (DDMotivoNoLitigar) diccionarioApi.dameValorDiccionarioByCod(DDMotivoNoLitigar.class, dto.getMotivo());
+					if(Checks.esNulo(ddMotivo)){
+						ddMotivo = (DDMotivoNoLitigar) diccionarioApi.dameValorDiccionarioByDes(DDMotivoNoLitigar.class, dto.getMotivo());
+					}
+					p.setMotivoNoLitigar(ddMotivo);
+				}
+				if(!Checks.esNulo(dto.getObservaciones())){
+					p.setObservacionesNoLitigar(dto.getObservaciones());
+				}
+			}
+		}
+		//------------------------------------------------------
 		procedimientoDao.saveOrUpdate(p);
 		return p;
 	}

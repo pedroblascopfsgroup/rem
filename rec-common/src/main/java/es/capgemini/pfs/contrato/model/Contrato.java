@@ -710,7 +710,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return monto Float: riesgo o deuda total del contrato, <code>0</code> si no tiene deuda.
      */
     public Float getRiesgo() {
-        return getLastMovimiento().getRiesgo();
+    	if (!Checks.esNulo(getLastMovimiento())) {
+    		return getLastMovimiento().getRiesgo();
+    	} else {
+    		return null;
+    	}
     }
 
     /**
@@ -1150,10 +1154,13 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
      * @return the expedienteContrato
      */
     public ExpedienteContrato getExpedienteContratoActivo() {
-        for (ExpedienteContrato exp : expedienteContratos) {
-            if (!DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(exp.getExpediente().getEstadoExpediente().getCodigo())) { return exp; }
+	    for (ExpedienteContrato exp : expedienteContratos) {
+	    	if(exp.getExpediente() != null && exp.getExpediente().getEstadoExpediente() != null) {
+	            if (!DDEstadoExpediente.ESTADO_EXPEDIENTE_CANCELADO.equals(exp.getExpediente().getEstadoExpediente().getCodigo())) { return exp; }
+	    	}
         }
-        return null;
+
+    	return null;
     }
 
     /**
@@ -2001,12 +2008,11 @@ public class Contrato implements Serializable, Auditable, Comparable<Contrato>, 
 		this.contratoAnterior = contratoAnterior;
 	}
 
-	public static void setAppProperties(final Properties p) {
-		appProperties = p;
-		
+	public static synchronized void setAppProperties(final Properties p) {
+		appProperties = p;	
 	}	
 
-	public static void setProjectContext(final CommonProjectContext commonProjectContext) 
+	public static synchronized void setProjectContext(final CommonProjectContext commonProjectContext) 
 	{
 		projectContext = commonProjectContext;
 	}

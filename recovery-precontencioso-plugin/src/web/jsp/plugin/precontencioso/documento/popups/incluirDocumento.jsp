@@ -158,7 +158,8 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	 	parametros.numFinca = numFinca.getValue();
 	 	parametros.numRegistro = numRegistro.getValue();
 	 	parametros.plaza = plaza.getValue();
-	 	parametros.idufir = idufir.getValue();	 	
+	 	parametros.idufir = idufir.getValue();
+	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();	 	
 	 	
 		parametros.idPrc = data.id;
 
@@ -273,7 +274,7 @@ var gridDocs = new Ext.grid.GridPanel({
 		,height:150
 	});
 
-   var tipoDocRecord = Ext.data.Record.create([
+  <%--  var tipoDocRecord = Ext.data.Record.create([
          {name:'codigo'}
         ,{name:'descripcion'}
     ]);
@@ -281,16 +282,88 @@ var gridDocs = new Ext.grid.GridPanel({
     var optionsTipoDocStore = page.getStore({
            flow: 'expedientes/buscarTiposDocumento'
            ,reader: new Ext.data.JsonReader({root : 'tiposDocumento'}, tipoDocRecord)           
-    }); 
+    }); --%>
     
     var style='margin-bottom:1px;margin-top:1px';
     var labelStyle='width:100';
-    
-<pfsforms:ddCombo name="comboTipoDocumento"
-		labelKey="precontencioso.grid.documento.incluirDocumento.tipodocumento" 
- 		label="**Tipo Documento" value="" dd="${tiposDocumento}" 
+
+	
+	var listadoTiposDocumento = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var tiposDeDocumentoStore = page.getStore({
+	       flow: 'documentopco/getTiposDocumentoPorTipoActuacion'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tipoFicherosAdjunto'
+	    }, listadoTiposDocumento)	      
+	});
+	
+	tiposDeDocumentoStore.webflow({'idPCO':  data.precontencioso.id });
+	
+	var comboTipoDocumento = new Ext.form.ComboBox({
+		name:'comboTipoDocumento'
+        ,store: tiposDeDocumentoStore
+        ,mode:'local'
+        ,triggerAction:'all'
+        ,editable: true
+        ,fieldLabel: '<s:message code="precontencioso.grid.documento.incluirDocumento.tipodocumento" text="**Tipo Documento" />'
+        ,displayField:'descripcion'
+        ,valueField: 'codigo'
+        ,enableKeyEvents: true
+        ,labelStyle: labelStyle
+        ,doQuery : function(q, forceAll){
+	        q = Ext.isEmpty(q) ? '' : q;
+	        var qe = {
+	            query: q,
+	            forceAll: forceAll,
+	            combo: this,
+	            cancel:false
+	        };
+	        if(this.fireEvent('beforequery', qe)===false || qe.cancel){
+	            return false;
+	        }
+	        q = qe.query;
+	        forceAll = qe.forceAll;
+	        if(forceAll === true || (q.length >= this.minChars)){
+	            if(this.lastQuery !== q){
+	                this.lastQuery = q;
+	                if(this.mode == 'local'){
+	                    this.selectedIndex = -1;
+	                    if(forceAll){
+	                        this.store.clearFilter();
+	                    }else{
+                      		this.store.filterBy(function(record){
+									var desc = record.get('descripcion').toLowerCase();
+									if (desc.indexOf(comboTipoDocumento.getRawValue().toLowerCase()) > -1) {
+										return true;
+									}else{
+										return false;
+									}
+								});
+	                    }
+	                    this.onLoad();
+	                }else{
+	                    this.store.baseParams[this.queryParam] = q;
+	                    this.store.load({
+	                        params: this.getParams(q)
+	                    });
+	                    this.expand();
+	                }
+	            }else{
+	                this.selectedIndex = -1;
+	                this.onLoad();
+	            }
+	        }
+	    }
+    });
+	
+	<pfsforms:ddCombo name="comboProvinciaNotario"
+		labelKey="precontencioso.grid.documento.incluirDocumento.localidadNotario" 
+ 		label="**Localidad Notario" value="" dd="${listaProvincias}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
-	comboTipoDocumento.labelStyle=labelStyle;
+	comboProvinciaNotario.labelStyle=labelStyle;
 	    
 	var protocolo = new Ext.form.TextField({
 		name : 'protocolo'
@@ -410,7 +483,7 @@ var gridDocs = new Ext.grid.GridPanel({
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
 		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza]}
-				,{items: [ protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	
 	

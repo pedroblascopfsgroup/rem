@@ -102,7 +102,11 @@ public class Usuario implements Serializable, Auditable {
     @OneToMany(mappedBy = "usuario")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ZonaUsuarioPerfil> zonaPerfil;
-
+    
+    @OneToMany(mappedBy = "usuario")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<UsuEntidad> usuEntidad;
+    
     @Embedded
     private Auditoria auditoria;
 
@@ -346,6 +350,14 @@ public class Usuario implements Serializable, Auditable {
     public void setZonaPerfil(List<ZonaUsuarioPerfil> zonaPerfil) {
         this.zonaPerfil = zonaPerfil;
     }
+    
+    public List<UsuEntidad> getUsuEntidad() {
+		return usuEntidad;
+	}
+    
+    public void setUsuEntidad(List<UsuEntidad> usuEntidad) {
+		this.usuEntidad = usuEntidad;
+	}
 
     /**
      * devuelve los perfiles del usuario.

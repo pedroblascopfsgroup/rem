@@ -15,7 +15,7 @@ import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.decisionProcedimiento.model.DDEstadoDecision;
-
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
@@ -68,7 +68,7 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 result.add(hProcedimiento);
             }
         } catch (DataAccessException e) {
-            logger.error("Error al consultar el hist�rico de tareas de un procedimiento", e);
+            logger.error("Error al consultar el histórico de tareas de un procedimiento", e);
         }
         return result;
 	}
@@ -153,7 +153,7 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 //Peticiones de prorroga
                 + HistoricoProcedimiento.TIPO_ENTIDAD_PETICION_PRORROGA
                 + ", SPR.SPR_ID, TAR.TAR_ID, 0, TAR.PRC_ID, '"
-                + ms.getMessage("historicoProcedimiento.peticionProrroga", new Object[] {}, "**Petici�n de prorroga", MessageUtils.DEFAULT_LOCALE)
+                + ms.getMessage("historicoProcedimiento.peticionProrroga", new Object[] {}, "**Petición de prorroga", MessageUtils.DEFAULT_LOCALE)
                 + "', SPR.FECHACREAR, SPR.FECHACREAR, null, null, SPR.USUARIOCREAR, TAR.USUARIOBORRAR, null, STA9.DD_STA_CODIGO AS STA_CODIGO, TAR.TAR_DESCRIPCION AS TAR_DESCRIPCION, NULL FROM TAR_TAREAS_NOTIFICACIONES TAR, SPR_SOLICITUD_PRORROGA SPR, ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA9 "
                 + "WHERE SPR.TAR_ID = TAR.TAR_ID AND TAR.PRC_ID IS NOT NULL AND TAR.DD_STA_ID = STA9.DD_STA_ID"
                 + "    UNION SELECT "
@@ -191,14 +191,18 @@ public class HistoricoProcedimientoExtDaoImpl extends AbstractEntityDao<EXTHisto
                 //Peticiones de decision
                 + HistoricoProcedimiento.TIPO_ENTIDAD_PETICION_DECISION
                 + ", DPR.DPR_ID, DPR.DPR_ID, 0, PRC.PRC_ID, '"
-                + ms.getMessage("historicoProcedimiento.propuestaDecision", new Object[] {}, "**Propuesta de decisi�n", MessageUtils.DEFAULT_LOCALE)
-                + "', DPR.FECHACREAR, DPR.FECHACREAR, null, null, DPR.USUARIOCREAR, DPR.USUARIOMODIFICAR, null, null, null, NULL FROM DPR_DECISIONES_PROCEDIMIENTOS DPR, PRC_PROCEDIMIENTOS PRC"
-                + ", ${master.schema}.DD_EDE_ESTADOS_DECISION EDE "
-                + "WHERE DPR.PRC_ID = PRC.PRC_ID AND DPR.DD_EDE_ID = EDE.DD_EDE_ID "
+                + ms.getMessage("historicoProcedimiento.propuestaDecision", new Object[] {}, "**Propuesta de decisión", MessageUtils.DEFAULT_LOCALE)
+                + "', DPR.FECHACREAR, DPR.FECHACREAR, null, null, CASE WHEN ASU.SUP_ID IS NOT NULL THEN (SELECT USU.USU_USERNAME FROM USD_USUARIOS_DESPACHOS USD, ${master.schema}.USU_USUARIOS USU WHERE ASU.SUP_ID = USD.USD_ID AND USD.USU_ID = USU.USU_ID) "
+                + " ELSE (SELECT DISTINCT USU.USU_USERNAME FROM GAA_GESTOR_ADICIONAL_ASUNTO GAA, ${master.schema}.DD_TGE_TIPO_GESTOR TGE, USD_USUARIOS_DESPACHOS USD, ${master.schema}.USU_USUARIOS USU WHERE GAA.ASU_ID = PRC.ASU_ID AND GAA.DD_TGE_ID = TGE.DD_TGE_ID "
+                + " AND TGE.DD_TGE_CODIGO = '" + EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR + "' AND GAA.USD_ID = USD.USD_ID AND USD.USU_ID = USU.USU_ID) END, CASE WHEN ASU.SUP_ID IS NOT NULL THEN (SELECT USU.USU_USERNAME FROM USD_USUARIOS_DESPACHOS USD, ${master.schema}.USU_USUARIOS USU WHERE ASU.SUP_ID = USD.USD_ID AND USD.USU_ID = USU.USU_ID) "
+                + " ELSE (SELECT DISTINCT USU.USU_USERNAME FROM GAA_GESTOR_ADICIONAL_ASUNTO GAA, ${master.schema}.DD_TGE_TIPO_GESTOR TGE, USD_USUARIOS_DESPACHOS USD, ${master.schema}.USU_USUARIOS USU WHERE GAA.ASU_ID = PRC.ASU_ID AND GAA.DD_TGE_ID = TGE.DD_TGE_ID "
+                + " AND TGE.DD_TGE_CODIGO = '" + EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR + "' AND GAA.USD_ID = USD.USD_ID AND USD.USU_ID = USU.USU_ID) END, null, null, null, NULL FROM DPR_DECISIONES_PROCEDIMIENTOS DPR, PRC_PROCEDIMIENTOS PRC"
+                + ", ${master.schema}.DD_EDE_ESTADOS_DECISION EDE, ASU_ASUNTOS ASU "
+                + "WHERE DPR.PRC_ID = PRC.PRC_ID AND DPR.DD_EDE_ID = EDE.DD_EDE_ID AND PRC.ASU_ID = ASU.ASU_ID"
                 + "    UNION SELECT "
                 //Respuestas de decision
                 + HistoricoProcedimiento.TIPO_ENTIDAD_RESPUESTA_DECISION + ", DPR.DPR_ID, DPR.DPR_ID, 1, PRC.PRC_ID, '"
-                + ms.getMessage("historicoProcedimiento.respuestaDecision", new Object[] {}, "**Respuesta de decisi�n", MessageUtils.DEFAULT_LOCALE)
+                + ms.getMessage("historicoProcedimiento.respuestaDecision", new Object[] {}, "**Respuesta de decisión", MessageUtils.DEFAULT_LOCALE)
                 + "', DPR.FECHAMODIFICAR, DPR.FECHACREAR, null, DPR.FECHAMODIFICAR, DPR.USUARIOMODIFICAR, DPR.USUARIOMODIFICAR, null, null, null, NULL FROM DPR_DECISIONES_PROCEDIMIENTOS DPR"
                 + ", PRC_PROCEDIMIENTOS PRC, ${master.schema}.DD_EDE_ESTADOS_DECISION EDE "
                 + "WHERE DPR.PRC_ID = PRC.PRC_ID AND DPR.DD_EDE_ID = EDE.DD_EDE_ID AND EDE.DD_EDE_CODIGO <> '" + DDEstadoDecision.ESTADO_PROPUESTO

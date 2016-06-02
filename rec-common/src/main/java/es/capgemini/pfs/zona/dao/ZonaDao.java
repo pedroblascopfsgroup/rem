@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 
 /**
  * Interfaz dao para las Zonas.
@@ -77,4 +79,38 @@ public interface ZonaDao extends AbstractDao<DDZona, Long> {
      * @return
      */
     Boolean existePerfilZona(Long idZona, Long idPerfil);
+    
+    List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, Set<String> codigoZonasUsuario, String codDesc);
+    
+    /**
+     * Método que devuelve las zonas a partir del usuario y el perfil
+     * @param idUsuario
+     * @param codPerfil
+     * @return
+     */
+    List<DDZona> getZonaPorUsuarioPerfil(Long idUsuario, String codPerfil);
+    
+    /**
+     * 
+     * Guarda un nuevo registro en ZON_PEF_USU, si no existe ya (se comrpueba que no haya ya un registro con la zona,
+     * el perfil, y el usuario pasados por parametro)
+     * @param zona
+     * @param usuario
+     * @param codPerfil
+     */
+    void guardarNuevoZonaPerfilUsuario(DDZona zona, Usuario usuario, String codPerfil);
+    
+    /**
+     * Devuelve la primera zona usuario perfil existe dado un perfil y una zona. Navegando en el árbol desde el nodo que se le pasa hacia los padres, comprobando que tengan dicho perfil
+     * @param idPerfil
+     * @param codigoZona
+     */
+    public List<ZonaUsuarioPerfil> getZonasPerfilesUsuariosPrimerNivelExistente(Long idPerfil, String codigoZona);
+    
+    
+    /**
+     * Devuelve true o false según si la zon pef usu que se le pasa es la de nivel más bajo dado el perfil y la zona
+     * @param zonPefUsu
+     */
+    public boolean userEstaEnElNivelMasBajoZonaPerfil(ZonaUsuarioPerfil zonPefUsu);
 }

@@ -26,8 +26,26 @@ public class EXTDtoAsunto extends DtoAsunto{
 	private Long idGestorConfeccionExpediente;
 	private Long idSupervisorConfeccionExpediente;
 	private String tipoDespacho;
-    private List<Map<String,Long>> listaGestoresId = new ArrayList<Map<String,Long>>();	
+    private List<Map<String,Long>> listaGestoresId = new ArrayList<Map<String,Long>>();
+    private String idGestorBorrado;
+    private String idTipoGestorBorrado;
+    
+    
 	
+	
+
+	public String getIdGestorBorrado() {
+		return idGestorBorrado;
+	}
+	public void setIdGestorBorrado(String idGestorBorrado) {
+		this.idGestorBorrado = idGestorBorrado;
+	}
+	public String getIdTipoGestorBorrado() {
+		return idTipoGestorBorrado;
+	}
+	public void setIdTipoGestorBorrado(String idTipoGestorBorrado) {
+		this.idTipoGestorBorrado = idTipoGestorBorrado;
+	}
 	public void setIdGestorConfeccionExpediente(
 			Long idGestorConfeccionExpediente) {
 		this.idGestorConfeccionExpediente = idGestorConfeccionExpediente;
@@ -100,10 +118,10 @@ public class EXTDtoAsunto extends DtoAsunto{
         	validateSaveAsuntoEXT(context);
         }
         
-        if (listaGestoresId.size() == 0) {
-            context.addMessage(new MessageBuilder().code(ID_GESTORES_NO_AGREGADOS).error().source("altaAsunto.gestores.vacio").defaultText(
-                    "**Debe agregar algún gestor para el asunto.").build());
-        }
+//        if (listaGestoresId.size() == 0) {
+//            context.addMessage(new MessageBuilder().code(ID_GESTORES_NO_AGREGADOS).error().source("altaAsunto.gestores.vacio").defaultText(
+//                    "**Debe agregar algún gestor para el asunto.").build());
+//        }
         
         
         if (context.getAllMessages().length > 0) { throw new ValidationException(ErrorMessageUtils.convertMessages(context.getAllMessages())); }

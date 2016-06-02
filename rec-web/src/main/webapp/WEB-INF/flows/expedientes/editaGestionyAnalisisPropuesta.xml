@@ -5,6 +5,7 @@
 	<var name="aaa" class="es.capgemini.pfs.actitudAptitudActuacion.model.ActitudAptitudActuacion" />
 	<var name="dtoActitudAptitudActuacion" class="es.capgemini.pfs.actitudAptitudActuacion.dto.DtoActitudAptitudActuacion" />
 	<input name="id" type="java.lang.Long"/>
+	<input name ="expId" type="java.lang.Long"/>
 	
 	<decision-state id="newOrEdit">
 		<if test="id!=null" then="buscar" else="formulario"/>
@@ -27,10 +28,14 @@
     		<binding property="aaa.comentariosSituacion"/>
     		<binding property="aaa.propuestaActuacion"/>
     		<binding property="aaa.descripcionTipoAyudaActuacion"/>
+    		<binding property="exp"/>
     	</binder>
+    	
+  
     	
     	<on-entry>
     		<set name="dtoActitudAptitudActuacion.aaa" value="aaa" />
+    		<set name="dtoActitudAptitudActuacion.exp" value="expId"/>
     		<set name="flowScope.view" value="'expedientes/editaGestionyAnalisisPropuesta'" />
     	</on-entry>
     	<on-render>

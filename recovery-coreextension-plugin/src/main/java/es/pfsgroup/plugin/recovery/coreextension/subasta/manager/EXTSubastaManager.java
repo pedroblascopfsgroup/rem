@@ -151,7 +151,13 @@ public class EXTSubastaManager {
 	
 	public Subasta prepareGuid(Subasta subasta) {
 		if (Checks.esNulo(subasta.getGuid())) {
-			subasta.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			while(getSubastaByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			subasta.setGuid(guid);
 			subastaDao.saveOrUpdate(subasta);
 		}
 
@@ -166,7 +172,14 @@ public class EXTSubastaManager {
 	
 	public LoteSubasta prepareGuid(LoteSubasta lote) {
 		if (Checks.esNulo(lote.getGuid())) {
-			lote.setGuid(Guid.getNewInstance().toString());
+			
+			String guid = Guid.getNewInstance().toString();
+			
+			while(getLoteSubastaByGuid(guid) != null) {
+				guid = Guid.getNewInstance().toString();
+			}
+			
+			lote.setGuid(guid);
 			genericDao.save(LoteSubasta.class, lote);
 		}
 		return lote;

@@ -60,6 +60,36 @@ public class CirbeManager {
         }
         return cirbeDao.getFechasExtraccionPersona(idPersona, f1, f2, f3);
     }
+    
+    /**
+     * @param idPersona Long
+     * @param fecha1 String
+     * @param fecha2 String
+     * @param fecha3 String
+     * @return List Date: todas las fechas de actualización cirbe
+     * donde el cliente tenga una carga.
+     */
+    @BusinessOperation(PrimariaBusinessOperation.BO_CIRBE_MGR_GET_FECHAS_ACTUALIZACION_PERSONA)
+    public List<Date> getFechasActualizacionPersona(Long idPersona, String fecha1, String fecha2, String fecha3) {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+        Date f1 = null;
+        Date f2 = null;
+        Date f3 = null;
+        try {
+            if (fecha1 != null) {
+                f1 = sdf1.parse(fecha1);
+            }
+            if (fecha2 != null) {
+                f2 = sdf1.parse(fecha2);
+            }
+            if (fecha3 != null) {
+                f3 = sdf1.parse(fecha3);
+            }
+        } catch (ParseException e) {
+
+        }
+        return cirbeDao.getFechasActualizacionPersona(idPersona, f1, f2, f3);
+    }
 
     /**
      * @param idPersona Long

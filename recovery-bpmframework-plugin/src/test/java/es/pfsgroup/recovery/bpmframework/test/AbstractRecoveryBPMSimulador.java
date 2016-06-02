@@ -9,7 +9,6 @@ import es.pfsgroup.recovery.bpmframework.api.dto.RecoveryBPMfwkInputDto;
 import es.pfsgroup.recovery.bpmframework.exceptions.RecoveryBPMfwkError;
 import es.pfsgroup.recovery.bpmframework.input.RecoveryBPMfwkInputApi;
 import es.pfsgroup.recovery.bpmframework.input.model.RecoveryBPMfwkInput;
-import es.pfsgroup.recovery.bpmframework.test.batch.RecoveryBPMfwkBatchManager.bo.ProcesaPeticionesPendientesTest;
 
 /**
  * Clase genérica con código compartido entre todos los simuladores de interacciones
@@ -43,7 +42,7 @@ public class AbstractRecoveryBPMSimulador {
     
 	public void seLanzaUnError() throws RecoveryBPMfwkError {
 
-		doThrow(new RuntimeException(ProcesaPeticionesPendientesTest.MENSAJE_ERROR)).when(mockInputManager).saveInput(any(RecoveryBPMfwkInputDto.class));
+		doThrow(new RuntimeException("")).when(mockInputManager).saveInput(any(RecoveryBPMfwkInputDto.class));
 		
 	}
 

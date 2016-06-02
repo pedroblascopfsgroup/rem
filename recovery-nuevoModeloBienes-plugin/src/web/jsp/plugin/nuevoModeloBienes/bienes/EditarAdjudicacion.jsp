@@ -238,6 +238,15 @@
 			,style:'margin:0px'
 			,minValue: fechaMinima			
 		});
+		
+	var fechaContabilidad =new Ext.ux.form.XDateField({
+			fieldLabel:'<s:message code="bienesAdjudicacion.fechaContabilidad" text="**fechaContabilidad" />'
+			,labelStyle: labelStyle
+			,name:'bien.fechaContabilidad'
+			,value:	'<fwk:date value="${NMBbien.adjudicacion.fechaContabilidad}"/>'
+			,style:'margin:0px'
+			,minValue: fechaMinima			
+		});
 	
 	var diccionarioRecord = Ext.data.Record.create([
 		{name : 'id'}
@@ -383,6 +392,20 @@
 			,labelStyle:labelStyle
 			,width: 100		
 	});
+
+	var postores = new Ext.form.ComboBox({
+			store: sinoStore
+			,mode:'local'
+			,displayField: 'descripcion'
+			,valueField: 'codigo'
+			,resizable: false
+			,triggerAction : 'all'
+			,name : 'postores'
+			,fieldLabel:'<s:message code="bienesAdjudicacion.postores" text="**Con postores"/>'
+			,value : '${NMBbien.adjudicacion.postores}' == '' ? '' : '${NMBbien.adjudicacion.postores}' == 'true' ? 'Si' : 'No'
+			,labelStyle:labelStyle
+			,width: 100		
+	});	
 	
 			
 	//selector persona
@@ -506,6 +529,7 @@
 		parametros.fechaRecepcionDepositario = fechaRecepcionDepositario.getValue() ? fechaRecepcionDepositario.getValue().format('d/m/Y') : '';
 		parametros.fechaEnvioDepositario = fechaEnvioDepositario.getValue() ? fechaEnvioDepositario.getValue().format('d/m/Y') : '';
 		parametros.fechaRecepcionDepositarioFinal = fechaRecepcionDepositarioFinal.getValue() ? fechaRecepcionDepositarioFinal.getValue().format('d/m/Y') : '';
+		parametros.fechaContabilidad = fechaContabilidad.getValue() ? fechaContabilidad.getValue().format('d/m/Y') : '';
 		
 	    parametros.ocupado = ocupado.getValue() == '' ? null : ocupado.getValue() == 'Si' || ocupado.getValue() == '01' ? true : false ;
 		parametros.posiblePosesion = posiblePosesion.getValue() == '' ? null : posiblePosesion.getValue() == 'Si' || posiblePosesion.getValue() == '01'? true : false ;
@@ -516,6 +540,8 @@
 		parametros.existeInquilino = existeInquilino.getValue() == '' ? null : existeInquilino.getValue() == 'Si' || existeInquilino.getValue() == '01' ? true : false ;
 		parametros.llavesNecesarias = llavesNecesarias.getValue() == '' ? null : llavesNecesarias.getValue() == 'Si' || llavesNecesarias.getValue() == '01' ? true : false ;
 		parametros.cesionRemate = cesionRemate.getValue() == '' ? null : cesionRemate.getValue() == 'Si' || cesionRemate.getValue() == '01' ? true : false ;
+		parametros.postores = postores.getValue() == '' ? null : postores.getValue() == 'Si' || postores.getValue() == '01' ? true : false ;
+		
 		
 		//selector persona
 		parametros.gestoriaAdjudicataria = gestoriaAdjudicataria.getValue();
@@ -552,10 +578,16 @@
 		}
 		,title:'<s:message code="plugin.nuevoModeloBienes.fichaBien.tabAdjudicacion.datosEconomicos.titulo" text="**Datos de adjudicaci�n"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375}
-	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion]},
+	    ,items : [{items:[fechaDecretoNoFirme,fechaDecretoFirme,gestoriaAdjudicataria,fechaEntregaGestor,fechaPresentacionHacienda,fechaSegundaPresentacion, txtImporteAdjudicacion,fechaContabilidad]},
 				  {items:[entidadAdjudicataria,<sec:authorize ifAllGranted="VER_DOC_ADJUDICACION">tipoDocAdjudicacion,</sec:authorize>fondo,fechaPresentacionRegistro,fechaRecepcionTitulo,fechaInscripcionTitulo,fechaEnvioAdicion,situacionTitulo,cesionRemate,importeCesionRemate]}
 				 ]
 	});
+	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+		datosAdjudicacion.items.items[1].add(postores);
+        datosAdjudicacion.doLayout();
+	}
 	
 	var datosPosesion = new Ext.form.FieldSet({
 		autoHeight:true
@@ -628,7 +660,8 @@
 			|| fechaRealizacionPosesion.getValue() < fechaMinima || fechaSolicitudLanzamiento.getValue() < fechaMinima || fechaSenalamientoLanzamiento.getValue() < fechaMinima
 			|| fechaRealizacionLanzamiento.getValue() < fechaMinima || fechaSolicitudMoratoria.getValue() < fechaMinima || fechaResolucionMoratoria.getValue() < fechaMinima 
 			|| fechaContratoArrendamiento.getValue() < fechaMinima || fechaCambioCerradura.getValue() < fechaMinima || fechaEnvioLLaves.getValue() < fechaMinima
-			|| fechaRecepcionDepositario.getValue() < fechaMinima || fechaEnvioDepositario.getValue() < fechaMinima || fechaRecepcionDepositarioFinal.getValue() < fechaMinima) {
+			|| fechaRecepcionDepositario.getValue() < fechaMinima || fechaEnvioDepositario.getValue() < fechaMinima || fechaRecepcionDepositarioFinal.getValue() < fechaMinima 
+			|| fechaContabilidad.getValue() < fechaMinima) {
 			
 				return 1;
 		}
@@ -719,6 +752,7 @@
 	txtImporteAdjudicacion.setDisabled(false);
 	cesionRemate.setDisabled(false);
 	importeCesionRemate.setDisabled(false);
+    postores.setDisabled(false);
     entidadAdjudicataria.setDisabled(false);
     fondo.setDisabled(true);
     fechaPresentacionRegistro.setDisabled(true);
@@ -739,6 +773,7 @@
 	fechaSolicitudMoratoria.setDisabled(true);
 	resolucionMoratoria.setDisabled(true);
 	fechaResolucionMoratoria.setDisabled(true);
+	fechaContabilidad.setDisabled(true);
 	necesariaFuerzaPublica.setDisabled(true);
 	existeInquilino.setDisabled(true);
 	fechaContratoArrendamiento.setDisabled(true);
@@ -763,7 +798,8 @@
 		txtImporteAdjudicacion.setDisabled(false);
 		cesionRemate.setDisabled(false);
 		importeCesionRemate.setDisabled(false);
-	    entidadAdjudicataria.setDisabled(false);
+	    postores.setDisabled(false);
+		entidadAdjudicataria.setDisabled(false);
 	    fondo.setDisabled(false);
 	    fechaPresentacionRegistro.setDisabled(false);
 	    fechaRecepcionTitulo.setDisabled(false);
@@ -783,6 +819,7 @@
 		fechaSolicitudMoratoria.setDisabled(false);
 		resolucionMoratoria.setDisabled(false);
 		fechaResolucionMoratoria.setDisabled(false);
+		fechaContabilidad.setDisabled(false);
 		necesariaFuerzaPublica.setDisabled(false);
 		existeInquilino.setDisabled(false);
 		fechaContratoArrendamiento.setDisabled(false);

@@ -3,7 +3,7 @@ package es.pfsgroup.plugin.recovery.coreextension.test.dao.coreextensionManager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class GetListUsuariosDataTest extends AbstractCoreextensionManagerTest {
 		List<Usuario> result = coreextensionManager.getListUsuariosData(idTipoDespacho);
 		
 		assertNotNull(result);
-		assertSame(result, listado);
+		assertEquals(result, listado);
 		
 	}
 	
@@ -64,10 +64,11 @@ public class GetListUsuariosDataTest extends AbstractCoreextensionManagerTest {
 
 		List<Usuario> listado = this.initListado();
 		List<Usuario> listadoInicial = new ArrayList<Usuario>(listado);
+		listadoInicial.addAll(listado);
 		
 		Long idTipoDespacho = RandomUtils.nextLong();
 		
-		when(mockGestoresDao.getGestoresByDespacho(idTipoDespacho)).thenReturn(listado);
+		when(mockGestoresDao.getGestoresByDespacho(eq(idTipoDespacho),any(Boolean.class))).thenReturn(listado);
 		
 		List<Usuario> result = coreextensionManager.getListUsuariosData(idTipoDespacho);
 		

@@ -98,6 +98,14 @@ public class ExpedienteContrato implements Serializable, Auditable {
      */
     @Override
     public boolean equals(Object o) {
+    	if(o == null){
+    		return false;
+    	}
+    	
+    	if(this.getClass() != o.getClass()){
+    		return false;
+    	}
+    	
         return equals((ExpedienteContrato) o);
     }
 

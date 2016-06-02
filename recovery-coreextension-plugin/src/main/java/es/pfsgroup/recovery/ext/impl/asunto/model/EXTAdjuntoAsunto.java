@@ -33,6 +33,9 @@ public class EXTAdjuntoAsunto extends AdjuntoAsunto {
     @Column(name = "RES_ID")
 	private Long idResolucion;
     
+    @Column(name = "BPM_IPT_ID")
+	private Long bpmInputId;
+    
 	public DDTipoFicheroAdjunto getTipoFichero() {
 		return tipoFichero;
 	}
@@ -47,6 +50,14 @@ public class EXTAdjuntoAsunto extends AdjuntoAsunto {
 
 	public void setIdResolucion(Long idResolucion) {
 		this.idResolucion = idResolucion;
+	}
+
+	public Long getBpmInputId() {
+		return bpmInputId;
+	}
+
+	public void setBpmInputId(Long bpmInputId) {
+		this.bpmInputId = bpmInputId;
 	}
     
  }

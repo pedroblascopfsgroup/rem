@@ -866,9 +866,25 @@
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);
+
 	
 	// Se habilita el botón Proponer Instrucciones sólamente cuando se ha seleccionado un lote.
 	gridLotes.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
+		
+		<%-- Quitamos el color de fondo marcado --%>
+		for(r=0; r < gridLotes.getView().getRows().length; r++){
+			for(c=0; c < gridLotes.getColumnModel().config.length; c++){
+				var cellselected = gridLotes.getView().getCell(r,c);
+				cellselected.style.backgroundColor = '#473729';
+			}
+		}
+
+		<%-- Marcamos la fila seleccionada --%>
+		for(i=0; i < gridLotes.getColumnModel().config.length; i++){
+			var cellselected = gridLotes.getView().getCell(rowIndex,i);
+			cellselected.style.backgroundColor = '#777777';
+		}
+		
 		btnInstrucLotes.setDisabled(false);
 	});
 	
@@ -1008,7 +1024,8 @@
 		        autoHeight: true,
 		        cm: bienesCM
 		        <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, sm: smCheckBien </sec:authorize>
-		    });        
+		    });   
+		         
 		    gridXLote.render(row);
 		    
 		    gridXLote.on('rowdblclick', function(grid, rowIndex, e) {
@@ -1019,6 +1036,7 @@
 		    	app.abreBien(idBien, idBien + ' ' + tipoBien);
 		    	
 		    });	
+		    
 		       
 		  }
 		  

@@ -27,8 +27,9 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 
 
 /**
- * Clase que representa un despacho externo.
- * @author pamuller
+ * Clase que representa los ambitos (provincias, comunidades) en las que trabaja un despacho y 
+ * los esquemas de turnado que tiene asociados.
+ * @author jros
  *
  */
 @Entity

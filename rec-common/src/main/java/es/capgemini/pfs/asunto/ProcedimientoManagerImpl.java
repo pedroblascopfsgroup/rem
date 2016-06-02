@@ -465,12 +465,14 @@ public class ProcedimientoManagerImpl implements ProcedimientoManager {
 			DDEstadoProcedimiento estadoProcedimiento = (DDEstadoProcedimiento) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE, DDEstadoProcedimiento.class,
 					DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_ACEPTADO);
 			procedimiento.setEstadoProcedimiento(estadoProcedimiento);
-
+			
 			String nombreJBPM = procedimiento.getTipoProcedimiento().getXmlJbpm();
-			Map<String, Object> param = new HashMap<String, Object>();
-			param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, idProcedimiento);
-			Long idBPM = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, nombreJBPM, param);
-			procedimiento.setProcessBPM(idBPM);
+			if(!Checks.esNulo(nombreJBPM)){
+				Map<String, Object> param = new HashMap<String, Object>();
+				param.put(BPMContants.PROCEDIMIENTO_TAREA_EXTERNA, idProcedimiento);
+				Long idBPM = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_CREATE_PROCESS, nombreJBPM, param);
+				procedimiento.setProcessBPM(idBPM);
+			}
 
 			this.saveOrUpdateProcedimiento(procedimiento);
 

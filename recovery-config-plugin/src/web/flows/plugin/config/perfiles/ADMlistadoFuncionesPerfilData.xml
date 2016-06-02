@@ -4,13 +4,14 @@
 
     <!--<var name="dto" class="es.capgemini.pfs.cliente.dto.DtoBuscarClientes"/> -->
     
-    <input name="id" type="java.lang.Long"/>
+    <var name="dto" class="es.pfsgroup.plugin.recovery.config.perfiles.dto.ADMDtoBuscaPerfil"/>
     
     <!--a partir de este momento sólo enviamos ajax -->
     <end-state id="listado" view="plugin/config/perfiles/listadoFuncionesPerfilJSON" >
     	<secured attributes="ROLE_ADMIN" match="any" />
 		<on-entry>
-			<evaluate expression="executor.execute('ADMPerfilManager.buscaFuncionesPerfil',id)" result="flowScope.funciones" />
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+			<evaluate expression="executor.execute('ADMPerfilManager.buscaFuncionesPerfil',dto)" result="flowScope.funciones" />
 		</on-entry>
 	</end-state>
 	

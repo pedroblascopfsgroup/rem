@@ -1634,6 +1634,23 @@
                 </dependencies>-->
             </plugin>
             <!-- JETTY PLUGIN (end) -->
+            <!-- Plugin Docker de PFS -->
+            <plugin>
+				<groupId>es.pfsgroup.maven</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.1-SNAPSHOT</version>
+				<configuration>
+					<DB>${b}</DB>
+					<cliente>${docker.cliente}</cliente>
+					<war>pfs-${project.version}</war>
+					<dumpsDir>${dumpsDir}</dumpsDir>
+					<directory>${directory}</directory>
+					<tag>${tag}</tag>
+					<container>${container}</container>
+					<port>${port}</port>
+					<dumpName>${dumpName}</dumpName>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -1662,6 +1679,9 @@
 		</profile>
 		<profile>
 			<id>bankia</id>
+			<properties>
+				<docker.cliente>bankia</docker.cliente>
+			</properties>
 			<dependencies>
 				<!-- Versión de AspectJ -->
 				<dependency>
@@ -2095,6 +2115,9 @@
 		</profile>
 		<profile>
 			<id>haya</id>
+			<properties>
+				<docker.cliente>haya</docker.cliente>
+			</properties>
 			<dependencies>
 				<!--  PARA JMS **************** -->
 				<dependency>
@@ -2309,6 +2332,9 @@
 		</profile>
 		<profile>
 			<id>cajamar</id>
+			<properties>
+				<docker.cliente>cajamar</docker.cliente>
+			</properties>
 			<dependencies>
 				<!--  PARA JMS **************** -->
 				<dependency>

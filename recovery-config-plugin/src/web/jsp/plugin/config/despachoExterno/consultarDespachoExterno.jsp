@@ -46,7 +46,11 @@
 				<pfslayout:includetab name="tabEsquemaTurnado">
 					<%@ include file="tabEsquemaTurnado.jsp"%>
 				</pfslayout:includetab>
-
+				
+				<pfslayout:includetab name="tabDatosAdicionales">
+					<%@ include file="tabDatosAdicionalesDespacho.jsp"%>
+				</pfslayout:includetab>
+				tabsDespacho.insert(1,tabDatosAdicionales);
 				tabsDespacho.add(tabEsquemaTurnado);
 			</c:if>
 

@@ -55,4 +55,6 @@ public interface LiquidacionAvanzadoApi {
 
 	@Transactional(readOnly = false)
 	void eliminarLiquidacion(Long idCalculoLiquidacion);
+	
+	void copiarLiquidacion(Long idCalculoLiquidacion);
 }

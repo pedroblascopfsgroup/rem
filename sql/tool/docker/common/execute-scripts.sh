@@ -55,7 +55,7 @@ function run_scripts() {
 		echo "<Docker [$CONTAINER_NAME]>: Ejecutando $sh"
 		cd $(dirname $sh)
 		rm -Rf *.log
-		$sh admin@orcl admin@orcl
+		$sh admin@orcl admin@orcl admin@orcl
 		err_code=$?
 		log_script_output
 		if [[ $err_code -ne 0 ]]; then

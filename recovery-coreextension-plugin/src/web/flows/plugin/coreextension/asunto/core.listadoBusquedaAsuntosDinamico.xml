@@ -18,6 +18,10 @@
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getTabs')" result="flowScope.tabs"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoLeft')" result="flowScope.buttonsLeft"/>
 			<evaluate expression="executor.execute('es.pfsgroup.recovery.ext.impl.asunto.web.getButtonsAsuntoRight')" result="flowScope.buttonsRight"/>
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getMapasDespachoExtras')"	result="flowScope.mapasDespExtras" />
+			<evaluate expression="executor.execute('ADMDiccionariosManager.getSiNo')" result="flowScope.ddSiNo" />	
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDProvincias')" result="flowScope.listaProvincias" />
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDTipoDocumento')" result="flowScope.tiposDocumentos" />
 		</on-entry>
 	</end-state> 
     

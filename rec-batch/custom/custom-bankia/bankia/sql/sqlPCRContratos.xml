@@ -3,7 +3,7 @@
 <!-- BAYM -38 (Jaime Sánchez-cuenca): Construcción Técnica: Carga P.C.R. CONTRATOS - Gestión del Cambio en la Numeración del Contrato
 	 Este UPDATe que implementa esta BAYM hay que hacerlo lo primero para que no se puedan producir errores de CLAVE DUPLICADA. -->
 	 
-<entry key="pcr.cambioNumeracion.contratos.Oracle10gDialect">
+<entry key="pcr.cambioNumeracion.contratos">
     <![CDATA[
 		UPDATE CNT_CONTRATOS A
 		 SET (A.CNT_CONTRATO,
@@ -34,7 +34,7 @@
 	<!-- FIN  BAYM -38 -->
 	
 	<!--BAYM-99 (Jaime Sánchez-Cuenca): Construcción Técnica: Carga P.C.R. CONTRATOS - Modificar pasaje a producción. -->
-    <entry key="pcr.estFinanAnt.contratos.Oracle10gDialect">
+    <entry key="pcr.estFinanAnt.contratos">
     <!-- ANTES DEL INSERT O UPDATE DE CONTRATOS, HAY QUE "DETECTAR" SI HAY CAMBIO DEL ESTADO FINANCIERO. AÑADO ESTA ENTRY: -->
 	<![CDATA[
 		MERGE INTO TMP_CNT_CONTRATOS UPP_DATA USING
@@ -52,7 +52,7 @@
         ]]>
     </entry>
 	
-    <entry key="pcr.insert.contratos.Oracle10gDialect">
+    <entry key="pcr.insert.contratos">
     <![CDATA[
 		insert  /*+ APPEND PARALLEL(cnt_contratos, 16) PQ_DISTRIBUTE(cnt_contratos, NONE) */ into cnt_contratos(
             CNT_ID, 
@@ -195,7 +195,7 @@
         ]]>
     </entry>
 	
-    <entry key="pcr.update.contratos.Oracle10gDialect">
+    <entry key="pcr.update.contratos">
   <!-- Agregar fix de oracle para que actualice el campo dd_esc_id  -->
     <![CDATA[
 UPDATE cnt_contratos c SET (
@@ -339,7 +339,7 @@ UPDATE cnt_contratos c SET (
       ]]>
     </entry>
 	
-    <entry key="pcr.insert.movimientos.Oracle10gDialect">
+    <entry key="pcr.insert.movimientos">
     <![CDATA[     
              insert /*+ APPEND PARALLEL(mov_movimientos, 16) PQ_DISTRIBUTE(mov_movimientos, NONE) */ into mov_movimientos (
                     MOV_ID, 
@@ -445,7 +445,7 @@ UPDATE cnt_contratos c SET (
     </entry>
 	
 	<!-- BAYM-104 (Jaime Sánchez-Cuenca): Construcción Técnica: Carga P.C.R. CONTRATOS - Desactivación de contratos que vuelven a llegar.-->
-	 <entry key="pcr.deactivate1.contratos.Oracle10gDialect">
+	 <entry key="pcr.deactivate1.contratos">
       <![CDATA[
         UPDATE CNT_CONTRATOS A
 		 SET (A.DD_ESC_ID,
@@ -595,7 +595,7 @@ UPDATE cnt_contratos c SET (
       ]]>
     </entry>
    <!-- EJD:> Proyecto Bankia  -->     
-    <entry key="cnt-02.loadDateValidator.Oracle10gDialect">
+    <entry key="cnt-02.loadDateValidator">
       <![CDATA[
          SELECT TMP_CNT_FECHA_EXTRACCION AS ERROR_FIELD,
 			   (tmp_cnt_cod_entidad ||'-'|| LPAD(TO_CHAR(X.TMP_CNT_CODIGO_PROPIETARIO),5,'0')||LPAD(X.TMP_CNT_TIPO_PRODUCTO,5,'0')||LPAD(TO_CHAR(X.tmp_cnt_contrato),17,'0')||LPAD(TO_CHAR(X.TMP_CNT_NUM_ESPEC),15,'0')) AS ENTITY_CODE      

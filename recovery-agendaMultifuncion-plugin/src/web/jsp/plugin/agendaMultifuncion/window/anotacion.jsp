@@ -18,6 +18,7 @@
 	var idUg = '${id}';
 	var codUg = '${codUg}';
 	var tamanyoMaximoAdjustos='${tamanyoMaximoAdjustos}';
+	var parametroTareaUnica = '${parametroCreacionTareaUnicaAnotacion}';
 	
 	<%--Restricción de poner una fecha como mínimo con 3 días de tiempo a partir de hoy --%>
 	var plazoMinimoAutotarea = '${plazoMinimoAutotarea}';
@@ -394,6 +395,32 @@
         ,width:80
         ,required: false
     });
+
+    
+    if(parametroTareaUnica=='true'){
+    	fechaTodas.hide();
+    }
+    
+    fechaGrid.on('change', function(){
+	    if(parametroTareaUnica=='true'){
+		    for(var i=0; i<=gridUsuarios.getStore().getTotalCount()-1; i++){
+		    	
+		    	if(gridUsuarios.getSelectionModel().getSelected().get('fecha')==''){
+			    	if(gridUsuarios.getStore().getAt(i).get('fecha')!= ''){
+			    		Ext.Msg.show({
+							   		title:'Aviso',
+							   		msg: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.soloUnaTarea" text="**Solo es posible añadir Fecha a un usuario" />',
+							   		buttons: Ext.Msg.OK
+						});
+			    		fechaGrid.setValue('');
+			    	}
+			    }
+			    
+		    }
+		}
+    	
+    });
+    
     
     fechaTodas.on('change', function( field, newValue, oldValue ) {
         if (newValue != '') {
@@ -594,7 +621,7 @@
 	
 	
 	var store = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntos'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntos'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'
@@ -602,7 +629,7 @@
 	});
 
 	var storePersonas = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntosPersona'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntosPersonas'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'
@@ -610,7 +637,7 @@
 	});
 
 	var storeExpedientes = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntosExpedientes'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntosExpedientes'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'
@@ -618,7 +645,7 @@
 	});
 
 	var storeContratos = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntosContratos'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntosContratos'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'

@@ -14,10 +14,18 @@ text : 'Recovery-BI'
 			accesoBI = true;
 		</sec:authorize>
 
-		if(accesoBIHaya) {
-			openRecBIHaya();
-		}else if(accesoBI){
-			openRecBI();
+		cartera = "";
+		if (document.getElementById('comboEntidad') != null) {
+			cartera = document.getElementById('comboEntidad').value;
+		}
+		if (cartera != "" && (accesoBIHaya || accesoBI)) {
+		   openRecBIHayaMulti(cartera);
+		} else {
+			if(accesoBIHaya) {
+				openRecBIHaya();
+			}else if(accesoBI){
+				openRecBI();
+			}
 		}
 	}
 	

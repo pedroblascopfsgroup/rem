@@ -38,7 +38,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;

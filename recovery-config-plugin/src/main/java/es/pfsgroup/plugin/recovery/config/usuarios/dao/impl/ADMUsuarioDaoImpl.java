@@ -10,6 +10,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.utils.CollectionUtils;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.Conversiones;
@@ -49,16 +50,24 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "u.usuarioExterno", dtoBusquedaUsuario.getUsuarioExterno());
 		
-		if (!Checks.esNulo(dtoBusquedaUsuario.getDespachosExternos())){
-			//if ((dtoBusquedaUsuario.getUsuarioExterno() != null) && (dtoBusquedaUsuario.getUsuarioExterno()) ) {
-				hb.appendWhere("u in (select gd.usuario from GestorDespacho gd where gd.despachoExterno.id in (" + dtoBusquedaUsuario.getDespachosExternos() + ") and gd.auditoria.borrado = 0)");
-			//}
+
+		if (!Checks.esNulo(dtoBusquedaUsuario.getDespachosExternos()) && !Checks.esNulo(dtoBusquedaUsuario.getComboGestor())){
+			hb.appendWhere("u.id in (select gd.usuario.id from GestorDespacho gd where gd.despachoExterno.id in (" + dtoBusquedaUsuario.getDespachosExternos() + ") and gd.usuario.id in (" + dtoBusquedaUsuario.getComboGestor() + "))");
+		}else{
+			if (!Checks.esNulo(dtoBusquedaUsuario.getDespachosExternos())){
+				//if ((dtoBusquedaUsuario.getUsuarioExterno() != null) && (dtoBusquedaUsuario.getUsuarioExterno()) ) {
+					hb.appendWhere("u.id in (select gd.usuario.id from GestorDespacho gd where gd.despachoExterno.id in (" + dtoBusquedaUsuario.getDespachosExternos() + "))");
+				//}
+			}
+
 		}
 		
-
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "z.perfil",Conversiones.createLongCollection(dtoBusquedaUsuario.getPerfiles(), ",") );
 		
-		HQLBuilder.addFiltroWhereInSiNotNull(hb, "z.zona", Conversiones.createLongCollection(dtoBusquedaUsuario.getCentros(), ","));
+		//HQLBuilder.addFiltroWhereInSiNotNull(hb, "z.zona", Conversiones.createLongCollection(dtoBusquedaUsuario.getCentros(), ","));
+		if(!Checks.esNulo(dtoBusquedaUsuario.getCentros())){
+			hb.appendWhere("z.zona.codigo IN ( " + (CollectionUtils.convertListToListString(dtoBusquedaUsuario.getCentros())) + ")");
+		}
 
 		return HibernateQueryUtils.page(this, hb, dtoBusquedaUsuario);
 	}

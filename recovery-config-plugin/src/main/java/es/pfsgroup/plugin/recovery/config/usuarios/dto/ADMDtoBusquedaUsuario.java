@@ -30,6 +30,16 @@ public class ADMDtoBusquedaUsuario extends WebDto {
 	private String despachosExternos;
 
 	private Long id;
+	
+	private String comboGestor;
+
+	public String getComboGestor() {
+		return comboGestor;
+	}
+
+	public void setComboGestor(String comboGestor) {
+		this.comboGestor = comboGestor;
+	}
 
 	public String getUsername() {
 		return username;

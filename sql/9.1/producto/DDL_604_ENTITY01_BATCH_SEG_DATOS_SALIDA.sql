@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=LUIS RUIZ
---## FECHA_CREACION=20160411
+--## FECHA_CREACION=20160527
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2.3
---## INCIDENCIA_LINK=PRODUCTO-801
+--## VERSION_ARTEFACTO=9.2.5
+--## INCIDENCIA_LINK=PRODUCTO-1087
 --## PRODUCTO=SI
 --##
 --## Finalidad: DDL

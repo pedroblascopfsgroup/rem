@@ -29,6 +29,7 @@ public class Funcion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public static final String FUNCION_POLITICA_SUPERUSUARIO = "POLITICA_SUPER";
+    public static final String FUNCION_SOLO_VER_TAREAS_PROPIAS = "VER_SOLO_TAREAS_PROPIAS";
 
     @Id
     @Column(name = "FUN_ID")

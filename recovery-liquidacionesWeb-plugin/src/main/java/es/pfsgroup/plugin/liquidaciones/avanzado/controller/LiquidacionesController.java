@@ -186,5 +186,11 @@ public class LiquidacionesController {
 		
 		return DEFAULT;
 	}
+	
+	@RequestMapping
+	public String copiarLiquidacion(ModelMap model, Long idCalculoLiquidacion) {
+		liquidacionApi.copiarLiquidacion(idCalculoLiquidacion);
+		return DEFAULT;
+	}
 
 }

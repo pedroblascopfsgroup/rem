@@ -23,6 +23,8 @@
 
 			<evaluate expression="executor.execute('plugin.mejoras.web.procuradores.pluginProcuradoresIsInstall')" result="flowScope.moduloProcuradoresActivado" />
 			<evaluate expression="executor.execute('parametrizacionManager.buscarParametroPorNombre', 'codigoTipoDespachoLetradoValido').valor" result="flowScope.codigoTipoDespachoLetradoValido" />
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.dameDespachoExtras',id)" result="flowScope.despachoExtras"/>
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.dameAmbitoDespachoExtras',id)" result="flowScope.ambitoDespachoExtras"/>
 		</on-entry>
 	</end-state >
 </flow>

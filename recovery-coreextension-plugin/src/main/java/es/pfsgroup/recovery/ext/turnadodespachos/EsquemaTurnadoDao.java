@@ -47,4 +47,12 @@ public interface EsquemaTurnadoDao extends AbstractDao<EsquemaTurnado, Long> {
 	 * 
 	 */
 	void limpiarTurnadoTodosLosDespachos();
+	
+
+	/**
+	 * Asigna un procurador al asunto pasado como parámetro teniendo en cuenta la configuración del esquema de turnado vigente
+	 * 
+	 * @param idAsunto
+	 */
+	void turnarProcurador(Long idAsunto, String username);
 }

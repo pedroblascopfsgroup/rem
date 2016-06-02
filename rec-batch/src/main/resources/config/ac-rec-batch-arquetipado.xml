@@ -43,7 +43,7 @@
       <bean parent="sql" p:key="antecedentes.buscarUltimoAntecedente" />
     </property>
     <property name="insertarNuevoAntecedenteQuery">
-      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedente.${entity.dialect}" />
+      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedente" />
     </property>
     <property name="updateAntecedenteEnPersonaQuery">
       <bean parent="sql" p:key="antecedentes.updateAntecedenteEnPersona" />
@@ -52,10 +52,10 @@
       <bean parent="sql" p:key="antecedentes.incrementarAntecedente" />
     </property>
     <property name="insertarNuevoAntecedenteInternoQuery">
-      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedenteInterno.${entity.dialect}" />
+      <bean parent="sql" p:key="antecedentes.insertarNuevoAntecedenteInterno" />
     </property>
     <property name="updateAntecedenteInternoQuery">
-      <bean parent="sql" p:key="antecedentes.updateAntecedenteInterno.${entity.dialect}" />
+      <bean parent="sql" p:key="antecedentes.updateAntecedenteInterno" />
     </property>
   </bean>    
   <bean id="clientesDao" class="es.capgemini.pfs.batch.revisar.clientes.dao.impl.ClientesBatchDaoImpl">
@@ -94,10 +94,10 @@
       <bean parent="sql" p:key="clientes.buscarPersonaCliente" />
     </property>
     <property name="insertarNuevosContratosVencidosQuery">
-      <bean parent="sql" p:key="clientes.insertarNuevosContratosVencidos.${entity.dialect}" />
+      <bean parent="sql" p:key="clientes.insertarNuevosContratosVencidos" />
     </property>    
     <property name="insertarNuevosContratosQuery">
-      <bean parent="sql" p:key="clientes.insertarNuevosContratos.${entity.dialect}" />
+      <bean parent="sql" p:key="clientes.insertarNuevosContratos" />
     </property>    
     <property name="buscarContratosOrdenadoFechaPosVencidaQuery">
       <bean parent="sql" p:key="clientes.buscarContratosOrdenadoFechaPosVencida" />
@@ -116,11 +116,11 @@
     </property>
 
     <property name="cargaContratosVolumenValidatorQuery">
-      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.estadisticas.${entity.dialect}" />
+      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.estadisticas" />
     </property>
 
     <property name="insertValidacionCargaQuery">
-      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.insertValidacion.${entity.dialect}" />
+      <bean parent="sql" p:key="validacion.cargaContratosVolumenValidator.insertValidacion" />
     </property>
   </bean>
   
@@ -134,16 +134,16 @@
     </property>
     <!--  Querys de registro de recuperaciones  -->
     <property name="registrarRecuperacionQuery">
-      <bean parent="sql" p:key="contratos.registrarRecuperacion.${entity.dialect}" />
+      <bean parent="sql" p:key="contratos.registrarRecuperacion" />
     </property>
     <property name="buscarSaldoProcedimientoAsuntoQuery">
       <bean parent="sql" p:key="contratos.buscarSaldoProcedimientoAsunto" />
     </property>
     <property name="buscarRecuperacionesQuery">
-      <bean parent="sql" p:key="contratos.buscarRecuperaciones.${entity.dialect}" />
+      <bean parent="sql" p:key="contratos.buscarRecuperaciones" />
     </property>
     <property name="buscarIdRecuperacionesQuery">
-      <bean parent="sql" p:key="contratos.buscarIdRecuperaciones.${entity.dialect}" />
+      <bean parent="sql" p:key="contratos.buscarIdRecuperaciones" />
     </property>
   </bean>  
   
@@ -163,7 +163,7 @@
   <bean id="movimientosDao" class="es.capgemini.pfs.batch.revisar.movimientos.dao.impl.MovimientosBatchDaoImpl">
     <property name="dataSource" ref="entityDataSource" />
     <property name="buscarDiasPosVencidaQuery">
-      <bean parent="sql" p:key="movimientos.buscarDiasPosVencida.${entity.dialect}" />
+      <bean parent="sql" p:key="movimientos.buscarDiasPosVencida" />
     </property>
     <property name="buscarDiasDescubiertoMovimientoQuery">
       <bean parent="sql" p:key="movimientos.diasDescubiertoMovimiento" />
@@ -182,16 +182,16 @@
   <bean id="resumenDao" class="es.capgemini.pfs.batch.analisis.dao.impl.ResumenDaoImpl">
 		<property name="dataSource" ref="entityDataSource" />
 		<property name="realizarAnalisisQuery">
-              <bean parent="sql" p:key="analisis.realizarResumenClientes.${entity.dialect}" />
+              <bean parent="sql" p:key="analisis.realizarResumenClientes" />
         </property>
         <property name="borrarAnalisisQuery">
-             <bean parent="sql" p:key="analisis.borrarResumenClientes.${entity.dialect}" />
+             <bean parent="sql" p:key="analisis.borrarResumenClientes" />
         </property> 
       <property name="realizarAnalisisExternaQuery">
-              <bean parent="sql" p:key="analisis.realizarResumenExterna.${entity.dialect}" />
+              <bean parent="sql" p:key="analisis.realizarResumenExterna" />
         </property>
         <property name="borrarAnalisisExternaQuery">
-             <bean parent="sql" p:key="analisis.borrarResumenExterna.${entity.dialect}" />
+             <bean parent="sql" p:key="analisis.borrarResumenExterna" />
         </property> 
   </bean>	
   

@@ -84,7 +84,12 @@ if [ `expr index $PW '@'` -gt 0 ] ; then
 fi
 
 if [ `expr index $PW '/'` -gt 0 ] ; then
-    ESQUEMA_EJECUCION=`echo $PW | cut -f1 -d/`
+    ESQUEMA_FICHERO=`echo $nombreFichero | cut -d_ -f3`
+    if [[ $ESQUEMA_FICHERO == "MINIREC" ]]; then
+        ESQUEMA_EJECUCION="MINIREC"
+    else
+        ESQUEMA_EJECUCION=`echo $PW | cut -f1 -d/`
+    fi
     ESQUEMA=$ESQUEMA_EJECUCION
     PW=`echo $PW | cut -f2 -d/`
 else
@@ -132,8 +137,13 @@ if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
     executionPass="\$1"
     executionPassWin="%1"
 elif [[ $ESQUEMA_EJECUCION == 'MINIREC' ]]; then
-    executionPass="\$3"
-    executionPassWin="%3"
+    if [[ "$MULTIENTIDAD" != "" ]]; then
+        executionPass="\$4"
+        executionPassWin="%4"
+    else
+        executionPass="\$3"
+        executionPassWin="%3"
+    fi
 else
     executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
     executionPassWin="%$((${ESQUEMA_EJECUCION: -1} + 1))"

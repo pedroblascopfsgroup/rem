@@ -588,7 +588,7 @@
 		</property>		
 		<property name="tiposGestoresDeProcuradores">
 			<set>
-				<value>GESPROC</value>
+				<value>PROC</value>
 			</set>
 		</property>
 		<property name="perfilesConsulta">

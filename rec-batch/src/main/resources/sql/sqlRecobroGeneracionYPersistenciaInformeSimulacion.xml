@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <entry key="recobro.simulacion.borrado.batch_rcf_entrada_final.Oracle10gDialect">
+    <entry key="recobro.simulacion.borrado.batch_rcf_entrada_final">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_TABLE('TRUNCATE','BATCH_RCF_ENTRADA');
@@ -9,7 +9,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.simulacion.creacion.batch_rcf_entrada_final.Oracle10gDialect">
+    <entry key="recobro.simulacion.creacion.batch_rcf_entrada_final">
         <![CDATA[
             Begin
 
@@ -108,7 +108,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.simulacion.carga.detalle_simulacion.Oracle10gDialect">
+    <entry key="recobro.simulacion.carga.detalle_simulacion">
         <![CDATA[
             DECLARE
                 -- Vble. para validar la existencia de las Tablas.

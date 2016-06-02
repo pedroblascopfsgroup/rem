@@ -566,8 +566,11 @@ public class AdjuntoHayaManager {
 		}else{
 			claseExpe = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PERSONA_JURIDICA;
 		}
-
-		uploadGestorDoc(getIdClienteHaya(persona), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, uploadForm.getParameter("comboTipoDoc"));
+		if(Checks.esNulo(getIdClienteHaya(persona))) {
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+		}else{
+			uploadGestorDoc(getIdClienteHaya(persona), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, uploadForm.getParameter("comboTipoDoc"));			
+		}
 
 		return null;
 	}
@@ -579,7 +582,11 @@ public class AdjuntoHayaManager {
 
 	public String uploadContrato(WebFileItem uploadForm) {
 		Contrato contrato = contratoDao.get(Long.parseLong(uploadForm.getParameter("id")));
-		uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));
+		if(Checks.esNulo(getIdActivoHaya(contrato))) {
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+		}else{
+			uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));			
+		}
 		return null;
 	}
 
@@ -622,11 +629,13 @@ public class AdjuntoHayaManager {
 	private String getClaseExpedienteByProcedimientoPadre(Procedimiento prc) {
 		String claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 		Procedimiento padre = prc.getProcedimientoPadre();
-		while(Checks.esNulo(claseExp)) {
-			if(cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
-				padre = padre.getProcedimientoPadre();
-			}else{
-				claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
+		if(!Checks.esNulo(padre)) {
+			while(Checks.esNulo(claseExp)) {
+				if(cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo()) == null){
+					padre = padre.getProcedimientoPadre();
+				}else{
+					claseExp = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(padre.getTipoProcedimiento().getCodigo());
+				}
 			}
 		}
 		return claseExp;
@@ -850,14 +859,15 @@ public class AdjuntoHayaManager {
 		}	
 
 	 private Long getIdActivoHaya(Contrato contrato) {
-			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId()));
+			List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId()));
 
-			if(contenedor == null) {
+			if(Checks.estaVacio(contenedor)) {
 				ActivoInputDto input = new ActivoInputDto();
 				input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
 				input.setIdActivoOrigen(contrato.getNroContrato().substring(17, 27));
-				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
-				
+				input.setIdOrigen(ActivoInputDto.ID_ORIGEN_SAREB);
+				input.setIdCliente(ActivoInputDto.ID_CLIENTE_NOS);
+				input.setIdTipoActivo(ActivoInputDto.ID_TIPO_ACTIVO_RED);
 				ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
 				
 				if(output.getIdActivoHaya() == null) {
@@ -866,20 +876,21 @@ public class AdjuntoHayaManager {
 				insertarContenedor(Integer.valueOf(output.getIdActivoHaya()), null, contrato, null, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO);
 				return new Long(output.getIdActivoHaya());
 			}
-			return contenedor.getIdExterno();
+			return contenedor.get(0).getIdExterno();
 			
 	 }
 	 
 	 
 	 private Long getIdClienteHaya(Persona persona) {
 
-			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", persona.getId()));
+		 List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "persona.id", persona.getId()));
 			
-			if(contenedor == null) {
+			if(Checks.estaVacio(contenedor)) {
 				PersonaInputDto input = new PersonaInputDto();
-				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
-				input.setIdIntervinienteOrigen(persona.getDocId());
-				input.setIdOrigen(GestorDocumentalConstants.CODIGO_ID_ORIGEN);
+				input.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+				input.setIdPersonaOrigen(persona.getDocId());
+				input.setIdOrigen(PersonaInputDto.ID_ORIGEN_NOS);
+				input.setIdCliente(PersonaInputDto.ID_CLIENTE_SAREB);
 				
 				PersonaOutputDto output = gestorDocumentalMaestroApi.ejecutarPersona(input);
 				
@@ -889,7 +900,7 @@ public class AdjuntoHayaManager {
 				insertarContenedor(Integer.valueOf(output.getIdIntervinienteHaya()), null, null, persona, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, getClaseExpPersona(persona));
 				return new Long(output.getIdIntervinienteHaya());
 			}
-			return contenedor.getIdExterno();
+			return contenedor.get(0).getIdExterno();
 	 }
 	 
 	 private void insertarContenedor(Integer idExpediente, Asunto asun, Contrato contrato, Persona persona, String tipoExp, String claseExp) {

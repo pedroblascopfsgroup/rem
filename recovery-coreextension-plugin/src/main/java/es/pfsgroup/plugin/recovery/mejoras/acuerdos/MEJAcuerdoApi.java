@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.recovery.mejoras.acuerdos;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -166,5 +165,5 @@ public interface MEJAcuerdoApi {
 	public String getFechaPaseMora(Long idContrato);
 	
 	public boolean usuarioEstaEnGAA(Usuario user, Long idAsunto, String codTipoGestor);
-
+	
 }

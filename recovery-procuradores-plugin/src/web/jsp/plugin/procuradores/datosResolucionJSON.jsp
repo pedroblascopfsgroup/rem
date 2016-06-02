@@ -24,7 +24,18 @@
 			<json:property name="plaza" value="${resolucion.plaza}" />
 			<json:property name="principal" value="${resolucion.principal}"/>
 			<c:if test="${(resolucion.nombreFichero != null)}">
-			<json:property name="file" value="${resolucion.nombreTipoAdjunto}"/>
+				<json:property name="file" value="${resolucion.nombreTipoAdjunto}"/>
+				<json:property name="fileId" value="${resolucion.adjuntoFinal.id}"/>
+			</c:if>
+			<c:if test="${(resolucion.adjuntosResolucion != null)}">
+				<json:array name="adjuntosResolucion" items="${resolucion.adjuntosResolucion}" var="obs">
+					 <json:object>
+						<json:property name="nombreFichero">${obs.nombre}</json:property>
+						<json:property name="tipoFicheroCodigo">${obs.tipoFichero.codigo}</json:property>
+						<json:property name="file">${obs.nombre} - ${obs.tipoFichero.descripcion}</json:property>
+						<json:property name="id" value="${obs.id}" />
+					 </json:object>
+				</json:array>
 			</c:if>
 			<c:if test="${resolucion.asunto != null}">
 				<json:property name="asunto" value="${resolucion.asunto.nombre}" />

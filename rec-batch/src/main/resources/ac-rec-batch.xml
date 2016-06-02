@@ -80,7 +80,7 @@
   <bean id="errorChannelBatchHandler" class="es.capgemini.pfs.batch.events.ErrorChannelBatchHandler"> 
     <property name="dataSource" ref="entityDataSource" />
     <property name="query">
-      <bean parent="sql" p:key="incidencias.insert.${entity.dialect}" />
+      <bean parent="sql" p:key="incidencias.insert" />
     </property>
   </bean>
 
@@ -88,13 +88,13 @@
     <property name="dataSource" ref="entityDataSource" />
     <property name="bindings" value="fechaExtraccion=extractTime" />
     <property name="desmarcarScript">
-      <bean parent="sql" p:key="ficheroCargado.desmarcar.${entity.dialect}" />
+      <bean parent="sql" p:key="ficheroCargado.desmarcar" />
     </property>
     <property name="insertarScript">
-      <bean parent="sql" p:key="ficheroCargado.insert.${entity.dialect}" />
+      <bean parent="sql" p:key="ficheroCargado.insert" />
     </property>
     <property name="ultimoIdScript">
-      <bean parent="sql" p:key="ficheroCargado.ultimoId.${entity.dialect}" />		
+      <bean parent="sql" p:key="ficheroCargado.ultimoId" />		
     </property>
   </bean>
 

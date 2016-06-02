@@ -207,8 +207,16 @@ es.pfs.plugins.procuradores.ControladorAsincrono = Ext.extend(Object,{  //Step 1
     				,fnOk: funcionCallBack
     				,fnError: errorCallBack
     				,success: function (result, request){
-    				var r = Ext.util.JSON.decode(result.responseText);
-    				request.fnOk(r);
+	    				var r = Ext.util.JSON.decode(result.responseText);
+	    				//Si es correcto llega un id numerico
+	    				if(!isNaN(parseFloat(r.resultado)) && isFinite(r.resultado)){
+	    					request.fnOk(r);
+	    				}
+	    				//Si el tamaño es superior al permitido llega el mensaje de error
+	    				else{
+	            			Ext.Msg.alert('Error', r.resultado);
+	    				}
+    				
     				 }
     				 ,error : function (result, request){
     					alert("error nuevoProceso");

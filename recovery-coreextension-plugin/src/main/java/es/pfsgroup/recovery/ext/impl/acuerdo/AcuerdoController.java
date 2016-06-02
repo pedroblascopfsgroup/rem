@@ -3,16 +3,21 @@ package es.pfsgroup.recovery.ext.impl.acuerdo;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dao.DDTipoAcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
+import es.capgemini.pfs.acuerdo.dto.DtoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
@@ -23,17 +28,20 @@ import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.Nivel;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 
 @Controller
 public class AcuerdoController {
 
 	private static final String LISTADO_BUSQUEDA_ACUERDOS = "plugin/coreextension/acuerdo/listadoBusquedaAcuerdos";
+	private static final String JSON_RESPUESTA  ="generico/respuestaJSON";
 	
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -52,6 +60,12 @@ public class AcuerdoController {
 	
 	@Autowired
 	private	DDTipoAcuerdoDao tipoAcuerdoDao;
+	
+	@Autowired
+	private MEJAcuerdoApi mejAcuerdoApi;
+	
+	@Resource
+	private MessageService messageService;
 	
 	@RequestMapping
 	public String listadoBusquedaAcuerdos(WebRequest request, ModelMap model) {
@@ -95,6 +109,16 @@ public class AcuerdoController {
 			tiposSolicitante.add(tipoSol);
 		}
 		return tiposSolicitante;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+    public String crearAcuerdo(DtoAcuerdo dto, ModelMap model) {
+		Long idAcuerdo = mejAcuerdoApi.guardarAcuerdo(dto);
+		if(Checks.esNulo(idAcuerdo)){
+			model.put("respuesta", messageService.getMessage("plugin.mejoras.acuerdos.crear.usuario.no.tiene.despacho",null));
+		}
+		return JSON_RESPUESTA;
 	}
 	
 }

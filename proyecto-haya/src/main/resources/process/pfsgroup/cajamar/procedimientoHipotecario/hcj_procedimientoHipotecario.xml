@@ -54,6 +54,7 @@
 	<decision name="H001_AutoDespachandoEjecucionDecision" expression="#{H001_AutoDespachandoEjecucionDecision}">
 		<transition to="H001_AutoDespachandoDecision" name="NO"></transition>
 		<transition to="fork1" name="SI"></transition>
+		<transition to="fork3" name="notificaPersonal"></transition>
 	</decision>
 
 	<node name="H001_AutoDespachandoDecision">
@@ -110,6 +111,27 @@
 			</action>
 		</event>
 		<transition to="H001_ConfirmarSiExisteOposicion" name="tramiteNotificacionV4"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
+	
+	<state name="H001_BPMTramiteNotificacionPersonal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H001_ConfirmarSiExisteOposicion" name="hcj_tramiteNotificacionPersonal"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -242,6 +264,11 @@
 	<fork name="fork1">
 		<transition to="H001_RegistrarCertificadoCargas" name="cumplimentarMtoCC"></transition>
 		<transition to="H001_ConfirmarNotificacionReqPago" name="confirmarNotificacionAutoDespEjec"></transition>
+	</fork>
+	
+	<fork name="fork3">
+		<transition to="H001_RegistrarCertificadoCargas" name="cumplimentarMtoCC"></transition>
+		<transition to="H001_BPMTramiteNotificacionPersonal" name="notificaPersonal"></transition>
 	</fork>
 
 	<state name="H001_ContactarAcreedorPref">
@@ -401,8 +428,35 @@
 
 	<decision name="H001_DemandaCertificacionCargasDecision" expression="#{H001_DemandaCertificacionCargasDecision}">
 		<transition to="fork2" name="SI"></transition>
+		<transition to="fork4" name="ANTI"></transition>
 		<transition to="H001_AutoDespachandoEjecucion" name="NO"></transition>
 	</decision>
+
+	<fork name="fork4">
+		<transition to="H001_AutoDespachandoEjecucion" name="autoDespachando"></transition>
+		<transition to="H001_BPMAnticipoFondos" name="antiFondos"></transition>
+	</fork>
+
+	<state name="H001_BPMAnticipoFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>	
+		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+		<transition to="Fin" name="Fin"></transition>
+	</state>
 
 	<decision name="H001_ResolucionFirmeDecision" expression="#{H001_ResolucionFirmeDecision}">
 		<transition to="H001_BPMTramiteSubasta" name="favorable"></transition>

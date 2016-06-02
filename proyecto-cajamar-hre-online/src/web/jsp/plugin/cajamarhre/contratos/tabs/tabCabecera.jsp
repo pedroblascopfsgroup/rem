@@ -154,12 +154,19 @@
 	var extra5    = label('extra5','<s:message code="contrato.consulta.tabcabecera.extra5" text="**Extra5"/>');
 	var extra6    = label('extra6','<s:message code="contrato.consulta.tabcabecera.extra6" text="**Extra6"/>');
 
+	//HAYA CAJAMAR estos campos tienen otras labels
+	<c:if test="${usuario.entidad.codigo eq 'HCJ'}">
+		var numextra1    = label('numextra1','<s:message code="contrato.consulta.tabcabecera.brutocontable" text="**Valor Bruto Contable"/>');
+		var numextra3    = label('numextra3','<s:message code="contrato.consulta.tabcabecera.netocontable" text="**Valor Neto Contable"/>');	
+	</c:if>
+
 	//BANKIA ampliacion campos extra
-	
-	var numextra1    = label('numextra1','<s:message code="contrato.consulta.tabcabecera.numextra1" text="**NumExtra1"/>');
-	<%-- var numextra2    = label('numextra2','<s:message code="contrato.consulta.tabcabecera.numextra2" text="**NumExtra2"/>');--%>
-	var numextra3    = label('numextra3','<s:message code="contrato.consulta.tabcabecera.numextra3" text="**NumExtra3"/>');
-	
+	<c:if test="${usuario.entidad.codigo ne 'HCJ'}">
+		var numextra1    = label('numextra1','<s:message code="contrato.consulta.tabcabecera.numextra1" text="**NumExtra1"/>');
+		<%-- var numextra2    = label('numextra2','<s:message code="contrato.consulta.tabcabecera.numextra2" text="**NumExtra2"/>');--%>
+		var numextra3    = label('numextra3','<s:message code="contrato.consulta.tabcabecera.numextra3" text="**NumExtra3"/>');
+	</c:if>
+
 	var dateextra1    = label('dateextra1','<s:message code="contrato.consulta.tabcabecera.dateextra1" text="**DateExtra1"/>');
 	
 	var charextra1    = label('charextra1','<s:message code="contrato.consulta.tabcabecera.charextra1" text="**Charextra1"/>');
@@ -244,7 +251,11 @@
    ,title:'<s:message code="contrato.consulta.tabcabecera.datosFinancieros" text="**Datos Financieros"/>'
    ,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375,style:'padding:10px; margin:10px'}
       ,items : [{items:[moneda, posVivaNoVencida, posVivaVencida, dispuesto, limiteDescubierto, saldoPasivo,limiteInicial,limiteFinal,saldoExcedido,deudaExigible,deudaIrregular,ltvInicial,ltvFinal,riesgoGarantizado<sec:authorize ifNotGranted="OCULTAR_DATOS_CONTRATO">, saldoDudoso,extra1,provision,provisionPorcentaje</sec:authorize>]},
-       {items:[entregasCuenta,interesesEntregasCuenta,pendienteDesembolso,sistemaAmort,tipoInteres,interesFijoVariable,importeCuota,periodicidadCuota,numCuotasVencidas,fechaInicioPVV,estadoFinanciero,estadoFinAnterior,garantia1,garantia2]}
+       {items:[entregasCuenta,interesesEntregasCuenta,pendienteDesembolso,sistemaAmort,tipoInteres,interesFijoVariable,importeCuota,periodicidadCuota,numCuotasVencidas,fechaInicioPVV,estadoFinanciero,estadoFinAnterior,garantia1,garantia2
+		  <c:if test="${usuario.entidad.codigo eq 'HCJ'}">
+		  	,numextra1,numextra3
+		  </c:if>       
+       ]}
       ]
       ,bbar : [
 			btnConsultarSaldo
@@ -282,7 +293,9 @@
 	   ,title:'<s:message code="contrato.consulta.tabcabecera.otrosDatos" text="**Otros Datos"/>'
 	   ,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:375, style:'padding:10px; margin:10px'}
 		  ,items : [{items:[domiciExt,domiciExtFecha,fechaIniEpiIrregular,gestionEspecial,remunEsp
-		  ,numextra1<%-- ,numextra2--%>,numextra3
+		  <c:if test="${usuario.entidad.codigo ne 'HCJ'}">
+		  	,numextra1<%-- ,numextra2--%>,numextra3
+		  </c:if>
 		  ,dateextra1
 		  ,flagextra1,flagextra2,flagextra3,indicador]},
 		   {items:[domiciExtTotal,contratoAnt,motivoRenum,riesgo

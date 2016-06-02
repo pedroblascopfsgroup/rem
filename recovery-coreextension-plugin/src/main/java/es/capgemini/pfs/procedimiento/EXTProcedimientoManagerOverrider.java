@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -250,6 +249,22 @@ public class EXTProcedimientoManagerOverrider extends
 	@BusinessOperation(BO_CORE_PROCEDIMIENTO_ADJUNTOSMAPEADOS)
 	public List<? extends AdjuntoDto> getAdjuntosConBorradoByPrcId(Long prcId) {
 		return adjuntosApi.getAdjuntosConBorradoByPrcId(prcId);
-	}	
+	}
+	
+	
+	@BusinessOperation(ExternaBusinessOperation.BO_PRC_MGR_ES_TR_NOTIFICACION_PERSONAL)
+	@Override
+	public Boolean compruebaTrNotificacionPersonal(Long idProcedimiento){	
+		boolean isTrNotificacionPersonal=false;
+		if(!Checks.esNulo(idProcedimiento)){
+			Procedimiento prc=getProcedimiento(idProcedimiento);
+			if(prc.getTipoProcedimiento().getCodigo().equals("HC108")){
+				isTrNotificacionPersonal=true;
+			}
+		}
+		
+		return isTrNotificacionPersonal;
+		
+	}
 	
 }

@@ -2,20 +2,18 @@ package es.pfsgroup.plugin.recovery.procuradores.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.devon.pagination.PaginationParamsImpl;
@@ -39,12 +37,8 @@ import es.capgemini.pfs.procesosJudiciales.model.DDImpugnacion1;
 import es.capgemini.pfs.procesosJudiciales.model.DDPositivoNegativo;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.prorroga.model.CausaProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.web.genericForm.DtoGenericForm;
-import es.capgemini.pfs.web.genericForm.GenericForm;
-import es.capgemini.pfs.procesosJudiciales.model.GenericFormItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
@@ -56,14 +50,12 @@ import es.pfsgroup.plugin.recovery.masivo.api.MSVDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
-import es.pfsgroup.plugin.recovery.masivo.model.MSVCampoDinamico;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDMotivoInadmision;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDMotivosArchivo;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDRequerimientoPrevio;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.dto.MSVTipoResolucionDto;
-import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.GenericFormManagerApi;
 import es.pfsgroup.plugin.recovery.mejoras.web.genericForm.MEJGenericFormManager;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
@@ -73,10 +65,8 @@ import es.pfsgroup.plugin.recovery.procuradores.configuracion.api.ConfiguracionD
 import es.pfsgroup.plugin.recovery.procuradores.procesado.api.PCDResolucionProcuradorApi;
 import es.pfsgroup.procedimientos.model.DDIndebidaExcesiva;
 import es.pfsgroup.recovery.api.UsuarioApi;
-import es.pfsgroup.recovery.bpmframework.config.model.RecoveryBPMfwkDDTipoAccion;
 import es.pfsgroup.recovery.bpmframework.datosprc.RecoveryBPMfwkDatosProcedimientoApi;
 import es.pfsgroup.recovery.bpmframework.datosprc.model.RecoveryBPMfwkDatosProcedimiento;
-import es.capgemini.devon.exception.FrameworkException;
 
 /**
  * @author manuel
@@ -187,6 +177,8 @@ public class PCDProcesadoResolucionesController {
 
 	private static final String JSON_GRABAR_PROCESAR_ERROR = "plugin/procuradores/datosResolucionErrorJSON";
 	
+	private static final String JSON_RESULTADO_PROCESADO = "plugin/procuradores/resultadoProcesadoJSON";
+	
 	
 	@Autowired
 	private ApiProxyFactory apiProxyFactory;
@@ -212,6 +204,8 @@ public class PCDProcesadoResolucionesController {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionario;
 	
+	@Autowired
+	private PCDResolucionProcuradorApi pcdResolucioneProcuradorApi;
 	
 	/**
 	 * Muestra la pantalla de procesado de resoluciones.
@@ -352,6 +346,7 @@ public class PCDProcesadoResolucionesController {
 	 * @param model
 	 * @return String validacion
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String dameValidacion(Long idResolucion, ModelMap model) throws Exception{
 		
@@ -377,6 +372,7 @@ public class PCDProcesadoResolucionesController {
 	 * @param model
 	 * @return String validacion JBPM
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String dameValidacionJBPM(Long idResolucion, ModelMap model) throws Exception{
 		
@@ -501,23 +497,25 @@ public class PCDProcesadoResolucionesController {
 	 * @return 
 	 * @throws Exception 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String adjuntaFicheroResolucion(MSVResolucionesDto dtoResolucion, ModelMap model) throws Exception{
 		
 		MSVResolucion msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).getResolucion(dtoResolucion.getIdResolucion());
-		
+		/*
 		//Se sobreescribe el fichero del procurador.
 		if(!Checks.esNulo(dtoResolucion.getIdFichero()) && !Checks.esNulo(msvResolucion.getAdjuntoFinal()))
 		{
 			apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
 			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
 		}else{
-			//El gestor adjunta un fichero y no había
-			if(!Checks.esNulo(dtoResolucion.getIdFichero()))
-			{
-				msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
-			}
+			//El gestor adjunta un fichero y no había*/
+		if(!Checks.esNulo(dtoResolucion.getIdFichero()))
+		{
+			msvResolucion = apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).adjuntaFicheroResolucuion(dtoResolucion);
+			model.put("resolucion", msvResolucion);
 		}
+		//}
 
 		return JSON_GRABAR_PROCESAR;
 	}
@@ -599,9 +597,9 @@ public class PCDProcesadoResolucionesController {
     public String getAsuntosInstant(Boolean check, String query, ModelMap model) {
     	
     	if(check)
-    		model.put("data", apiProxyFactory.proxy(MSVAsuntoAllApi.class).getAsuntos(query));
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoAllApi.class).getAsuntosGrupoUsuarios(query));
     	else
-    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntos(query));
+    		model.put("data", apiProxyFactory.proxy(MSVAsuntoApi.class).getAsuntosGrupoUsuarios(query));
         
         return JSON_LISTA_ASUNTOS;
     }
@@ -1161,8 +1159,9 @@ public class PCDProcesadoResolucionesController {
 		//msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).guardarDatos(dtoResolucion); //Guarda el fichero y ya lo tenemos guardado.
 		msvResolucion = apiProxyFactory.proxy(MSVResolucionApi.class).guardarResolucion(dtoResolucion);
 		
-		if(!Checks.esNulo(msvResolucion.getNombreFichero()))
-				apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
+		//if(!Checks.esNulo(msvResolucion.getNombreFichero()))
+		//Borrar todos los adjuntos asociados a la resolucion
+		apiProxyFactory.proxy(PCDResolucionProcuradorApi.class).borrarAdjunto(msvResolucion);
 		
 		apiProxyFactory.proxy(PCDProcesadoResolucionesApi.class).generarTarea(dtoResolucion);
 		
@@ -1194,6 +1193,13 @@ public class PCDProcesadoResolucionesController {
 		
 		return JSON_GRABAR_PROCESAR;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String cancelar(String idsFicheros, ModelMap model, WebRequest request) throws Exception{
+		pcdResolucioneProcuradorApi.borrarAdjuntoResolucion(idsFicheros);
+		return JSON_GRABAR_PROCESAR;
+	}
 
     @RequestMapping
     public String getDictionary(String dictionary, ModelMap model) throws ClassNotFoundException {
@@ -1214,4 +1220,30 @@ public class PCDProcesadoResolucionesController {
 
         return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
     }
+    
+    
+    @SuppressWarnings("unchecked")
+	@RequestMapping
+	public String obtenerDatoTarea(Long idProcedimiento, String nombreCampoInput, ModelMap model) throws Throwable{
+	
+    	Map<String, Map<String, String>> datos = mejGenericFormManager.getValoresTareas(idProcedimiento);
+
+    	String resultado="";
+    	
+    	for (Map.Entry<String, Map<String,String>> entry : datos.entrySet())
+		{
+			for (Map.Entry<String, String> cmps : entry.getValue().entrySet())
+			{
+				if(cmps.getKey().equals(nombreCampoInput)){
+					resultado=cmps.getValue();
+				}
+			}
+		}
+ 
+		model.put("resultado", resultado);
+	
+		return JSON_RESULTADO_PROCESADO;
+
+	}
+    
 }

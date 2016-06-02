@@ -45,7 +45,7 @@ create or replace package body OPERACION_DDL as
     fdbk := DBMS_SQL.EXECUTE (cur);
     Commit;
     DBMS_SQL.CLOSE_CURSOR (cur);
-         
+
   end ejecuta_str;
 
   --** Procedimiento para insercion en log
@@ -54,38 +54,38 @@ create or replace package body OPERACION_DDL as
                                         , ESQUEMA IN VARCHAR2
                                         , OBJETO IN VARCHAR2
                                         , PARAMETROS IN VARCHAR2
-                                        , ESTADO IN VARCHAR2) 
+                                        , ESTADO IN VARCHAR2)
   as
-  
+
     V_SID NUMBER;
     V_ESQUEMA VARCHAR2(30);
-    
+
   begin
-  
+
     /* DEFINICION DE LA TABLA DESTINO Y LA SECUENCIA ID:
-      
+
         CREATE TABLE LOG_OPERACION_DLL
-          ( FILA_ID Number not null,
-            FECHA TIMESTAMP not null,
-            NUM_SID number not null,
-            TIPO VARCHAR2(100),
-            OPERACION VARCHAR2(100),
-            ESQUEMA VARCHAR2(100),
-            OBJETO VARCHAR2(100),
-            PARAMETROS VARCHAR2(250),
-            ESTADO VARCHAR(250)
-          ); 
+          ( FILA_ID     NUMBER     not null,
+            FECHA       TIMESTAMP  not null,
+            NUM_SID     NUMBER     not null,
+            TIPO        VARCHAR2(100),
+            OPERACION   VARCHAR2(100),
+            ESQUEMA     VARCHAR2(100),
+            OBJETO      VARCHAR2(100),
+            PARAMETROS  VARCHAR2(250),
+            ESTADO      VARCHAR(250)
+          );
 
           CREATE SEQUENCE INCR_LOG_OPERACION_DLL
             MINVALUE 1
-            INCREMENT BY 1 
+            INCREMENT BY 1
             START WITH 1
-            nomaxvalue;    
+            nomaxvalue;
     */
-    
+
     select sys_context('USERENV','SID') INTO V_SID from dual;
     --select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
-    
+
     /*
     insert into LOG_OPERACION_DLL (FILA_ID, FECHA, NUM_SID, TIPO, OPERACION, ESQUEMA, OBJETO, PARAMETROS, ESTADO)
          values ( INCR_LOG_OPERACION_DLL.nextval
@@ -97,28 +97,29 @@ create or replace package body OPERACION_DDL as
                 , substr(OBJETO, 1, 100)
                 , substr(PARAMETROS, 1, 250)
                 , substr(ESTADO, 1, 250));
-                
+
                 */
-    commit;   
-    
+    commit;
+
   end insertar_log_operacion_dll;
-  
+
 
   -- ==========================
   --  Operaciones sobre tablas
   -- ==========================
   procedure DDL_Table ( operacion  IN VARCHAR2
-                   --   , esquema    IN VARCHAR2
+                 --   , esquema    IN VARCHAR2
                       , nombre     IN VARCHAR2
                       , parametros IN VARCHAR2  DEFAULT NULL)
-                     -- , O_ERROR_STATUS OUT VARCHAR2)
   is
 
-    V_OPERACION VARCHAR2(100);
-    V_ESQUEMA VARCHAR2(100);
-    V_NOMBRE VARCHAR2(100);
-    V_PARAMETROS VARCHAR2(250);
-    V_TIPO VARCHAR2(100);
+    V_OPERACION  VARCHAR2(100);
+    V_ESQUEMA    VARCHAR2(100);
+    V_NOMBRE     VARCHAR2(100);
+    V_PARAMETROS VARCHAR2(4000);
+    V_TIPO       VARCHAR2(100);
+    V_EST_PERC   NUMBER(3);
+    V_FC_STAT    CHAR(10);
 
 
   begin
@@ -127,39 +128,65 @@ create or replace package body OPERACION_DDL as
     V_NOMBRE := upper(nombre);
     V_PARAMETROS := upper(parametros);
     V_TIPO := 'TABLE';
-    
+
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
 
-    if V_OPERACION in ('DROP', 'TRUNCATE') then
-      If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
-          Then OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
-               --**LOG
-               execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
-               using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
-          Else DBMS_OUTPUT.PUT_LINE(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
-               raise OBJECTNOTEXISTS; 
-        End If;
+    if V_OPERACION not in ('DROP','CREATE','TRUNCATE','ANALYZE','STATS')
+     Then Raise PARAMETERS_NUMBER;
+    End if;
+
+    if V_OPERACION = 'DROP' then
+     If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
+      then OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE);
+           --**Log
+           execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
+           using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
+      else DBMS_OUTPUT.PUT_LINE(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+           raise OBJECTNOTEXISTS;
+     End if;
     end if;
 
+    if V_OPERACION = 'TRUNCATE' then
+      If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
+          Then OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE);
+               --**Log
+               execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
+               using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
+          Else DBMS_OUTPUT.PUT_LINE(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' ' || V_PARAMETROS||'');
+               raise OBJECTNOTEXISTS;
+        End If;
+    end if;
 
     if V_OPERACION in ('CREATE') then
         If not OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
           Then OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' (' || V_PARAMETROS || ')');
-               --**LOG
-               execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+               --**Log
+               execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
           Else Raise OBJECTEXISTS;
         End If;
     end if;
-	
-	if V_OPERACION in ('ANALYZE') then
+
+    if V_OPERACION in ('ANALYZE','STATS') then
+
+      select decode(trim(translate(V_PARAMETROS,'0123456789',' ')),null, to_number(nvl(V_PARAMETROS,'20')),null)
+      into V_EST_PERC from dual;
+      DBMS_OUTPUT.PUT_LINE(V_EST_PERC);
+
       If OPERACION_DDL.Existe_Objeto('TABLE', v_esquema, v_nombre)
-          Then OPERACION_DDL.ejecuta_str(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || ' COMPUTE STATISTICS');
+          Then
+               select nvl(to_char(last_analyzed,'DD/MM/YYYY'),'Null') into V_FC_STAT from all_tables where table_name = V_NOMBRE;
+               DBMS_OUTPUT.PUT_LINE('Ultima toma de estadísticas: '||V_FC_STAT);
+
+               SYS.DBMS_STATS.GATHER_TABLE_STATS (ownname => V_ESQUEMA, tabname => V_NOMBRE, estimate_percent => V_EST_PERC);
+
+               select nvl(to_char(last_analyzed,'DD/MM/YYYY'),'Null') into V_FC_STAT from all_tables where table_name = V_NOMBRE;
+               DBMS_OUTPUT.PUT_LINE('Nueva toma de estadísticas: '||V_FC_STAT);
                --**LOG
-               execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+               execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
           Else DBMS_OUTPUT.PUT_LINE(''|| V_OPERACION || ' TABLE ' || V_ESQUEMA || '.' || V_NOMBRE || '');
-               raise OBJECTNOTEXISTS; 
+               raise OBJECTNOTEXISTS;
         End If;
     end if;
 
@@ -192,7 +219,6 @@ create or replace package body OPERACION_DDL as
                       , parametros IN VARCHAR2 DEFAULT NULL
                       , desactivar IN VARCHAR2 DEFAULT 'S'
                       , tipo_index IN VARCHAR2 DEFAULT NULL)
-                      --, O_ERROR_STATUS OUT VARCHAR2)
   is
 
     V_OPERACION VARCHAR2(100);
@@ -212,8 +238,12 @@ create or replace package body OPERACION_DDL as
     V_DESACTIVAR := upper(desactivar);
     V_TIPO_INDEX := upper(tipo_index);
     V_TIPO := upper(tipo_index)||' INDEX';
-    
+
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
+
+    if V_OPERACION not in ('DROP','CREATE')
+     Then Raise PARAMETERS_NUMBER;
+    End if;
 
     if V_OPERACION = 'DROP' then
       If OPERACION_DDL.Existe_Objeto('INDEX', v_esquema, v_nombre)
@@ -221,11 +251,11 @@ create or replace package body OPERACION_DDL as
           If V_DESACTIVAR = 'S'
            then OPERACION_DDL.ejecuta_str('ALTER INDEX ' || v_esquema || '.' || v_nombre || ' UNUSABLE');
                 --**LOG
-                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                 using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
            else OPERACION_DDL.ejecuta_str('DROP INDEX ' || v_esquema || '.' || v_nombre||'');
                 --**LOG
-                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                 using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
           End if;
        Else Raise OBJECTNOTEXISTS;
@@ -238,7 +268,7 @@ create or replace package body OPERACION_DDL as
           If OPERACION_DDL.Existe_Objeto('INDEX', v_esquema, v_nombre)
            Then OPERACION_DDL.ejecuta_str('ALTER INDEX ' || v_esquema || '.' || v_nombre || ' REBUILD PARALLEL');
                 --**LOG
-                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+                execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                 using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
            Else Raise OBJECTNOTEXISTS;
           End If;
@@ -246,7 +276,7 @@ create or replace package body OPERACION_DDL as
           If not OPERACION_DDL.Existe_Objeto('INDEX', v_esquema, v_nombre)
              Then OPERACION_DDL.ejecuta_str('CREATE '|| v_tipo_index ||' INDEX ' || v_esquema || '.' || v_nombre || ' on ' || v_esquema || '.' || v_parametros ||'');
                   --**LOG
-                  execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+                  execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                   using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
              Else Raise OBJECTEXISTS;
           End If;
@@ -303,10 +333,10 @@ create or replace package body OPERACION_DDL as
 
     --** Asignamos valor a las variables
     v_operacion  := UPPER(operacion);
-    v_nombre     := UPPER(nombre); 
+    v_nombre     := UPPER(nombre);
     v_sentencia  := consulta;
     v_tipo       := 'MATERIALIZED VIEW';
-    
+
     select sys_context('USERENV','CURRENT_USER') into V_ESQUEMA from dual;
 
     If primary_key_b = 'S' Then v_primary_key := 'WITH PRIMARY KEY';
@@ -320,7 +350,7 @@ create or replace package body OPERACION_DDL as
     If logging_b = 'S' Then v_logging := 'LOGGING';
      Elsif logging_b = 'N' Then v_logging := 'NOLOGGING';
     End If;
-    
+
     v_parametros := v_primary_key||' '||v_refresh||' '||v_logging;
 
     --** Ejecución
@@ -354,15 +384,15 @@ create or replace package body OPERACION_DDL as
       End If;
      Else
      If v_operacion in ('REFRESH','REFRESCA','REFRESCAR')
-        Then 
+        Then
          If v_esquema is not null and v_nombre is not null
-          Then 
+          Then
            If OPERACION_DDL.Existe_Objeto('MATERIALIZED VIEW', v_esquema, v_nombre)
             Then DBMS_OUTPUT.PUT_LINE('BEGIN DBMS_MVIEW.REFRESH('''||v_nombre||''', ''C''); END;');
                  --OPERACION_DDL.ejecuta_str('BEGIN DBMS_MVIEW.REFRESH('''||v_nombre||''', ''C''); END;');
                  Execute Immediate 'BEGIN DBMS_MVIEW.REFRESH('''||v_nombre||''', ''C''); END;';
                  --**LOG
-                 execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;' 
+                 execute immediate 'BEGIN OPERACION_DDL.INSERTAR_LOG_OPERACION_DLL(:TIPO, :OPERACION, :ESQUEMA, :OBJETO, :PARAMETROS, :ESTADO); END;'
                  using in V_TIPO, V_OPERACION, V_ESQUEMA, V_NOMBRE, V_PARAMETROS, 'OK';
             Else Raise OBJECTNOTEXISTS;
            End If;
@@ -399,7 +429,7 @@ create or replace package body OPERACION_DDL as
         err_num := SQLCODE;
         err_msg := SQLERRM;
         DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
-        DBMS_OUTPUT.put_line(O_ERROR_STATUS);
+        DBMS_OUTPUT.put_line(O_ERROR_STATUS||'. '||err_msg);
         raise;
 
   end DDL_Materialized_View;

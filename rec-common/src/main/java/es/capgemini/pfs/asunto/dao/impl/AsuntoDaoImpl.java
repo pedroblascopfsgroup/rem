@@ -417,8 +417,8 @@ public class AsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements As
     @SuppressWarnings("unchecked")
     public TareaNotificacion buscarTareaPendiente(Long idAsunto, Long usuarioLogado) {
         String hql = "Select t from TareaNotificacion t, Asunto a where " + "t.asunto = a " + "and a.id = ? " + "and ((a.gestor.usuario.id = ? "
-                + "and t.subtipoTarea.codigoSubtarea = " + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR + ") " + "or "
-                + "(a.supervisor.usuario.id = ? " + "and t.subtipoTarea.codigoSubtarea = " + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_GESTOR + ")) "
+                + "and t.subtipoTarea.codigoSubtarea = '" + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR + "') " + "or "
+                + "(a.supervisor.usuario.id = ? " + "and t.subtipoTarea.codigoSubtarea = '" + SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_GESTOR + "')) "
                 + "and t.auditoria.borrado = 0";
         List<TareaNotificacion> tareas = getHibernateTemplate().find(hql, new Object[] { idAsunto, usuarioLogado, usuarioLogado });
         if (tareas.size() > 0) { return tareas.get(0); }

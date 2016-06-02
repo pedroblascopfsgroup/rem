@@ -67,6 +67,16 @@
 				 return procedimientoPcoManager.comprobarExisteLetrado(idProcedimiento);
 			}
 			
+			def existeTipoGestor(String codigo) {
+				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.existeTipoGestor(idProcedimiento, codigo);
+			}
+			
+			def existeTipoGestorMensaje(String codigo) {
+            	def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
+				 return procedimientoPcoManager.existeTipoGestorMensaje(codigo);
+            }
+			
 			def dameFechaSolicitudExpediente = {
 				 def procedimientoPcoManager = ctx.getBean("procedimientoPcoManager");
 				 return procedimientoPcoManager.dameFechaSolicitudExpediente(idProcedimiento);

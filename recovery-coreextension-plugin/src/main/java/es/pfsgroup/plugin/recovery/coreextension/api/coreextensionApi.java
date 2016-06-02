@@ -54,7 +54,6 @@ public interface coreextensionApi {
 	String GET_LIST_BUSQUEDA_TERMINOS = "plugin.recovery.coreextension.api.listBusquedaAcuerdosData";
 	String GET_LIST_BUSQUEDA_DESPACHOS_EXTERNOS_BY_TIPO = "plugin.recovery.coreextension.api.getDespachosExternosByTipo";
 	String GET_LIST_BUSQUEDA_TIPOSACUERDO_BY_ENTIDAD = "plugin.recovery.coreextension.api.getTipoAcuerdosByEntidad";
-	String GET_CODIGO_NIVEL_POR_DESCRIPCION = "plugin.recovery.coreextension.api.getCodigoNivelPorDescripcion";
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
 	List<EXTDDTipoGestor> getList(String ugCodigo);
@@ -250,7 +249,6 @@ public interface coreextensionApi {
 	@BusinessOperationDefinition(GET_LIST_BUSQUEDA_TIPOSACUERDO_BY_ENTIDAD)
 	Page getTipoAcuerdosByEntidad(String codigo);
 	
-	@BusinessOperationDefinition(GET_CODIGO_NIVEL_POR_DESCRIPCION)
-	Integer getCodigoNivelPorDescripcion(String descripcion);
+	public Page getListAllUsersPaginated(UsuarioDto usuarioDto);
 	
 }

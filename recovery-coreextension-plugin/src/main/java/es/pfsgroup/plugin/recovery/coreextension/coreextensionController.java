@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -27,6 +28,7 @@ import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
@@ -43,12 +45,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
 @Controller
@@ -82,6 +87,12 @@ public class coreextensionController {
 	
 	@Autowired
     private Executor executor;
+
+    @Autowired
+	private EXTDDTipoGestorApi tipoGestorApi;
+
+	@Autowired
+	private coreextensionApi coreextensionApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -154,6 +165,19 @@ public class coreextensionController {
 		}
 		//////
 		
+		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
+		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
+		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)){
+			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+			while(iter.hasNext()){
+				DespachoExterno elemento = iter.next();
+				if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
+					iter.remove();
+				}
+			}
+		}
+				
 		model.put("listadoDespachos", listadoDespachos);
 		return TIPO_DESPACHO_JSON;
 	}
@@ -613,6 +637,22 @@ public class coreextensionController {
 		
 		model.put("tiposAcuerdo", tiposAcuerdo);
 		return JSON_LISTADO_TIPOS_ACUERDO;
+	}
+
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios 
+	 * @param model
+	 * @param UsuarioDto 
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListAllUsersPaginated(ModelMap model, UsuarioDto usuarioDto){
+		
+		Page page = coreextensionApi.getListAllUsersPaginated(usuarioDto);
+		model.put("pagina", page);
+		
+		return TIPO_USUARIO_PAGINATED_JSON;
 	}
 	
 	@SuppressWarnings("unchecked")

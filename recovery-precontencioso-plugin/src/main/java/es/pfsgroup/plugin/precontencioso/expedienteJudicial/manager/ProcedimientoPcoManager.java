@@ -43,6 +43,7 @@ import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
@@ -763,6 +764,45 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			logger.error(e.getMessage());
 		}
 		return resultado;
+	}
+	
+	/**
+	 * Comprueba que el asunto correspondiente al procedimiento tenga el gestor indicado por el código
+	 * @param idProcedimiento 
+	 * @param codigoGestor
+	 * @return true o false
+	 */
+	public Boolean existeTipoGestor(Long idProcedimiento, String codigoGestor) {
+		Boolean resultado = false;
+		try {
+			Procedimiento proc = procedimientoManager.getProcedimiento(idProcedimiento);
+			Long idAsunto = proc.getAsunto().getId();
+			//Se recupera la lista de gestores del asunto en concreto
+			List<String> listaTiposGestores = procedimientoPcoDao.getTiposGestoresAsunto(idAsunto);
+			if (listaTiposGestores.contains(codigoGestor)) {
+				resultado = true;
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return resultado;
+	}
+	
+	/**
+	 * Devuelve un mensaje u otro dependiendo de si el gestor existe en la bbdd o no
+	 * @param codigoGestor
+	 * @return string
+	 */
+	public String existeTipoGestorMensaje(String codigoGestor) {
+
+		// Mensaje de validación
+		String mensajeValidacion = "Para completar esta tarea deberá haber un ";
+		// Se recupera el gestor mediante el codigo
+		EXTDDTipoGestor gestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor));
+		// Incluye en el mensaje la descripción del gestor.
+		mensajeValidacion = mensajeValidacion.concat(gestor.getDescripcion());
+		mensajeValidacion = mensajeValidacion.concat(" asignado al asunto");
+		return mensajeValidacion;
 	}
 	
 	private List<DocumentoPCO> obtenerNuevosDocumentos(ProcedimientoPCO procedimientoPco, 

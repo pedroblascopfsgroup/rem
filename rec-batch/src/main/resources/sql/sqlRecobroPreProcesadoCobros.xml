@@ -1,7 +1,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <!-- Preprocesado de los cobros para la facturación a agencias  -->
-    <entry key="recobro.preprocesado_cobros.Oracle10gDialect">
+    <entry key="recobro.preprocesado_cobros">
         <![CDATA[
 BEGIN
   PREPROCESADO_COBROS_FACT();

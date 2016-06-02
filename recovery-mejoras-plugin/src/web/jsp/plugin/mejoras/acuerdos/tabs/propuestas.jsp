@@ -392,10 +392,11 @@
 				}
 
 				
-				
-				panelAnteriorExpTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar, noPuedeEditarEstadoGestion);
+				<%--PRODUCTO-1477 --%>
+				<%--recogemos el codigo del estado para saber si podremos mostrar botones o no --%>
+				var codEstadoPropuesta = rec.get('codigoEstado');
+				panelAnteriorExpTerminos = recargarAcuerdoTerminos(idAcuerdo,noPuedeModificar, noPuedeEditarEstadoGestion, codEstadoPropuesta);
 	    		terminosExpTab.add(panelAnteriorExpTerminos); 
-	    		
 	    		acuerdosExpTabs.setActiveTab(terminosExpTab);
 	    		acuerdosExpTabs.setHeight('auto');
 	    		
@@ -422,15 +423,19 @@
 					
 			   	});
 		
-	});
+	});<%----------------fin del onclick de propuestasgrid --%>
 
 	
-	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar,noPuedeEditarEstadoGestion){
+	var recargarAcuerdoTerminos = function(idAcuerdo,noPuedeModificar,noPuedeEditarEstadoGestion, codEstadoPropuesta){
 		
 		<%@ include file="/WEB-INF/jsp/plugin/mejoras/acuerdos/detalleTerminos.jsp" %>
 
-		var panTerminosExp = crearTerminosAsuntos(noPuedeModificar,true,noPuedeEditarEstadoGestion);
-
+		var panTerminosExp = crearTerminosAsuntos(noPuedeModificar,true,noPuedeEditarEstadoGestion, codEstadoPropuesta);
+		<%--PRODUCTO-1477 --%>
+		var selModel = panTerminosExp.terminosAcuerdoGrid.getSelectionModel();
+		if(!(selModel > 0)){
+			panTerminosExp.terminosAcuerdoGrid.bottomToolbar.disable();
+		}
 		return panTerminosExp;
 		
 	};	

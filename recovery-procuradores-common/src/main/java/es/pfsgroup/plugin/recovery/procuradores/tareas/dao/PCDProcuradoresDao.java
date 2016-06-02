@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.recovery.procuradores.tareas.dao;
 
+import java.util.List;
+
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion;
@@ -12,7 +14,7 @@ public interface PCDProcuradoresDao  extends AbstractDao<PCDProcuradores, Long>{
 
 	public Page getListadoTareasPendientesValidar(PCDProcuradoresDto dto);
 
-	public Long getCountListadoTareasPendientesValidar(Long idUsuario);
+	public Long getCountListadoTareasPendientesValidar(List<Long> listaUsuariosGrupo);
 	
 //	public Page buscarTareasPendientes(DtoBuscarTareaNotificacion dto, String comboEstado, Long comboCtgResol, Long idCategorizacion);
 	public Page buscarTareasPendientes(DtoBuscarTareaNotificacion dto, String comboEstado, Long comboCtgResol, Long idCategorizacion, Usuario usuarioLogado, Class<? extends DtoResultadoBusquedaTareasBuzones> modelClass);

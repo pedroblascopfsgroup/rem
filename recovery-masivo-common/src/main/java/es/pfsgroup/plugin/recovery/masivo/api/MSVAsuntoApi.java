@@ -20,6 +20,8 @@ public interface MSVAsuntoApi {
 	public static final String MSV_ASUNTO_CANCELA_ASUNTO_CON_MOTIVO = "es.pfsgroup.plugin.recovery.masivo.api.cancelaAsuntoConMotivo";
 	public static final String MSV_ASUNTO_PARALIZA_ASUNTO = "es.pfsgroup.plugin.recovery.masivo.api.paralizaAsunto";
 	public static final String MSV_USUARIO_MASIVO = "MASIVO";
+	public static final String MSV_BO_CONSULTAR_ASUNTOS_GRUPOS = "es.pfsgroup.plugin.recovery.masivo.api.consultarAsuntosGrupos";
+
 	
 	/**
 	 * Devuelve si el estado del asunto es vÃ¡lido o no (recibe el nombre del asunto)
@@ -60,5 +62,13 @@ public interface MSVAsuntoApi {
 	 */
 	@BusinessOperationDefinition(MSV_ASUNTO_PARALIZA_ASUNTO)
 	public void paralizaAsunto(Asunto asunto, Date fechaParalizacion);
+	
+	/**
+	 * Devuelve la lista de asuntos que pertenecen al usuario logueado y a su grupo y además que concuerdan con la expresión pasada
+	 * (Puede incluir nombre de asunto, plaza, juzgado, auto
+	 * @return boolean
+	 */
+	@BusinessOperationDefinition(MSV_BO_CONSULTAR_ASUNTOS_GRUPOS)
+	public Collection<? extends MSVAsunto> getAsuntosGrupoUsuarios(String query);
 
 }

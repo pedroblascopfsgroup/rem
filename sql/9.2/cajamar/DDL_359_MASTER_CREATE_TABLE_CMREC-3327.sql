@@ -33,7 +33,7 @@ DECLARE
 
 BEGIN 
 
-   EXECUTE IMMEDIATE ('grant insert, references, select, update on '||V_ESQUEMA_M||'.'||TABLA1||' to '||V_ESQUEMA_M||''); 
+   EXECUTE IMMEDIATE ('grant insert, references, select, update on '||V_ESQUEMA_M||'.'||TABLA1||' to '||V_ESQUEMA||''); 
    
 EXCEPTION
 WHEN OTHERS THEN  

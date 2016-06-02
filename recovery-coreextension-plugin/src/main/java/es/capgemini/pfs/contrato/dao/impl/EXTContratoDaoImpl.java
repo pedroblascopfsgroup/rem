@@ -926,78 +926,8 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	private String createHQLNroContrato(String nroContrato,
 			Map<String, Object> params) {
 		String cadReturn = "";
-		// Si las propiedades están seteadas por la clase
-		// SpringContratoConfigurator las comprobamos
-		String formatoSubstringStart = null;
-		String formatoSubstringEnd = null;
-		if (appProperties != null) {
-			formatoSubstringStart = appProperties
-					.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_INI);
-			formatoSubstringEnd = appProperties
-					.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_FIN);
-		}
-
 		String campoBusqueda = getCampoDeBusqueda("c.nroContrato");
-
-		if (!Checks.esNulo(formatoSubstringStart)
-				|| !Checks.esNulo(formatoSubstringEnd)) {
-			formatoSubstringStart = (Checks.esNulo(formatoSubstringStart) || ""
-					.equals(formatoSubstringStart)) ? "1" : String
-					.valueOf(Integer.parseInt(formatoSubstringStart) + 1);
-
-			formatoSubstringEnd = (Checks.esNulo(formatoSubstringEnd) || ""
-					.equals(formatoSubstringEnd)) ? ""
-					: ","
-							+ String.valueOf((Integer
-									.parseInt(formatoSubstringEnd) - Integer
-									.parseInt(formatoSubstringStart)) + 1);
-
-			/*
-			 * Trasladamos la construcción de la cadena de búsqueda fuera del
-			 * IF. Simplificamos la cadena de búsqueda para que sea menos
-			 * costosa en Oracle.
-			 * 
-			 * cadReturn = " and (substr(c.nroContrato," + formatoSubstringStart
-			 * + formatoSubstringEnd + ") like '%" +
-			 * nroContrato.trim().replaceFirst("^0*", "") + "%'" +
-			 * " or substr(c.nroContrato," + formatoSubstringStart +
-			 * formatoSubstringEnd + ") like '%" + nroContrato.trim() + "%'" +
-			 * " or substr(c.nroContrato," + formatoSubstringStart +
-			 * formatoSubstringEnd + ") like '%" + nroContrato.replaceAll(" ",
-			 * "").trim() .replaceFirst("^0*", "") + "%' )";
-			 */
-
-			campoBusqueda = "substr(" + campoBusqueda + ","
-					+ formatoSubstringStart + formatoSubstringEnd + ")";
-
-		} else {
-			/*
-			 * Trasladamos la construcción de la cadena de búsqueda fuera del
-			 * IF. Simplificamos la cadena de búsqueda para que sea menos
-			 * costosa en Oracle.
-			 * 
-			 * cadReturn = " and (c.nroContrato like " + "'%" +
-			 * nroContrato.trim().replaceFirst("^0*", "") + "%'" +
-			 * " or c.nroContrato like " + "'%" + nroContrato.trim() + "%'" +
-			 * " or c.nroContrato like " + "'%" + nroContrato.replaceAll(" ",
-			 * "").trim() .replaceFirst("^0*", "") + "%')";
-			 */
-
-			/*
-			 * cadReturn = " and (c.nroContrato like :ncontrato1" +
-			 * " or c.nroContrato like :ncontrato2" +
-			 * " or c.nroContrato like :ncontrato3 )";
-			 * 
-			 * params.put("ncontrato1", "%" +
-			 * nroContrato.trim().replaceFirst("^0*", "") + "%");
-			 * 
-			 * params.put("ncontrato2", "%" + nroContrato.trim() + "%");
-			 * 
-			 * params.put( "ncontrato3", "%" + nroContrato.replaceAll(" ",
-			 * "").trim() .replaceFirst("^0*", "") + "%");
-			 */
-
-		}
+		
 		if (queremosOptimizarLike()) {
 			// Estrategia de LIKE original, con y sin paso de variables
 			final String valueToFind = nroContrato.replaceAll(" ", "").trim()

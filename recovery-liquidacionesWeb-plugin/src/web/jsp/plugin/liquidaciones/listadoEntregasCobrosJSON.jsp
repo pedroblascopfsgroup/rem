@@ -14,7 +14,10 @@
 		<c:if test="${rec.estado != null}">
 			<json:property name="estado" value="${rec.estado.descripcion}"/>
 		</c:if>
-		<json:property name="tipoGenerico" value="Genérico"/>
+		<json:property name="tipoGenerico" value="GenÃ©rico"/>
+		<c:if test="${rec.tipoCobroPago != null}">
+			<json:property name="tipoCobro" value="${rec.tipoCobroPago.descripcion}"/>
+		</c:if>
 		<c:if test="${rec.subTipo != null}">
 			<json:property name="subTipo" value="${rec.subTipo.descripcion}"/>
 		</c:if>
@@ -22,7 +25,6 @@
 		<json:property name="fecha" >
 			<fwk:date value="${rec.fecha}"/>
 		</json:property>
-	<c:if test="${rec.class.simpleName == 'LIQCobroPago'}">
 		<json:property name="fechaValor" >
 			<fwk:date value="${rec.fechaValor}"/>
 		</json:property>
@@ -45,7 +47,7 @@
 		<json:property name="capitalNoVencido" value="${rec.capitalNoVencido}"/>
 		<json:property name="comisiones" value="${rec.comisiones}"/>
 		<json:property name="nominal" value="${rec.capital + rec.capitalNoVencido}"/>
-		<json:property name="totalEntrega" value="${rec.capital + rec.capitalNoVencido + rec.interesesOrdinarios + rec.interesesMoratorios + rec.impuestos + rec.gastosProcurador + rec.gastosAbogado + rec.gastosOtros}"/>
+		<json:property name="totalEntrega" value="${rec.capital + rec.capitalNoVencido + rec.interesesOrdinarios + rec.interesesMoratorios + rec.impuestos}"/>
 		<json:property name="gastosProcurador" value="${rec.gastosProcurador}"/>
 		<json:property name="gastosAbogado" value="${rec.gastosAbogado}"/>
 		<json:property name="gastosOtros" value="${rec.gastosOtros}"/>
@@ -54,7 +56,6 @@
 			<json:property name="tipoEntrega" value="${rec.tipoEntrega.descripcion}"/>
 		</c:if>
 		<json:property name="conceptoEntrega" value="${rec.conceptoEntrega}"/>
-	</c:if>
 		
 	</json:object>
 	</json:array>

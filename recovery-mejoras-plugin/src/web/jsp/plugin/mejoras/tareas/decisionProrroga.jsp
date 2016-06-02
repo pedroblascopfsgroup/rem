@@ -26,6 +26,38 @@
 		var idTareaOriginalH = new Ext.form.Hidden({name:'idTareaOriginal', value :'${idTareaOriginal}'}) ;
 	</c:if>
 
+	if(motivo=="" && fechaPropuesta==""){
+		fechaVencimiento="";
+		descripcionEntidad= "";
+		
+		
+		Ext.Ajax.request({
+	    	url: page.resolveUrl('bpm/buscarDatosTarea')
+	        ,params: {id: idTareaOriginal}
+	        ,success: function(result, request){ 
+	        	var r = Ext.util.JSON.decode(result.responseText);
+	            var idProrroga= r.datos.idProrroga;
+	            descrTareaOriginal.setValue(r.datos.descripcion);
+				Ext.Ajax.request({
+			    	url: page.resolveUrl('bpm/buscarDatosProrroga')
+			        ,params: {id: idProrroga}
+			        ,success: function(result, request){ 
+			         	var r2 = Ext.util.JSON.decode(result.responseText);
+			            var fechaVencimientoTareaOriginal= r2.datos.fechaVencimientoTareaAsociada.split(' ')[0];
+			            f2= fechaVencimientoTareaOriginal.split('-');
+			            fVencimientoFinal= f2[2]+"/"+f2[1]+"/"+f2[0];
+			                    	
+			            txtFechaVencimiento.setValue(fVencimientoFinal);
+			            motivoSolicitud.setValue(r2.datos.motivo);
+			            fechaPropuesta.setValue(r2.datos.fechaPropuesta);
+			            txtDescripcionEntidad.setValue(r2.datos.descripcionTareaAsociada);
+					}
+	   			});		
+			}
+	   	});
+   	}
+   	
+   	
 	//Tipo de entidad (Cliente | Expediente | Asunto )
 	var strTipoEntidad="";
 	var descripcionEntidad="";

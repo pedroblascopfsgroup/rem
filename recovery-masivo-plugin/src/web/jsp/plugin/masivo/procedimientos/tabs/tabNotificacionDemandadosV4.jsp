@@ -99,7 +99,8 @@ var recordResumen = Ext.data.Record.create([
 	{name: 'fechaSolicitudAvDomiciliaria'},
 	{name: 'resultadoAvDomiciliaria'},
 	{name: 'fechaSolicitudReqEdicto'},
-	{name: 'resultadoReqEdicto'}
+	{name: 'resultadoReqEdicto'},
+	{name: 'trNotificacionPersonal'}
 ]);
     
 var recordResumenStore = page.getStore({
@@ -560,6 +561,13 @@ Panel principal
 		}
 		botonEditar.setVisible(data.esGestor || data.esSupervisor);
 		recordResumenStore.webflow({idProcedimiento: idProcedimiento});
+		
+	  	if(data.isTrNotificacionPersonal){
+			resumenNotificacionGrid.getColumnModel().rows[0][2].header='<s:message code="plugin.masivo.notificacionDemandados.gridResumen.cabeceraNotificacionPersonal" text="**Notificación Personal"/>';	
+		
+			recordDetalleStore.webflow({idProcedimiento: idProcedimiento, idPersona: 0});
+			detalleNotificacionGrid.getColumnModel().rows[0][1].header='<s:message code="plugin.masivo.notificacionDemandados.gridResumen.cabeceraNotificacionPersonal" text="**Notificación Personal"/>';		
+	  	}
 	}
 
   panel.getProcedimientoId = function(){
@@ -570,7 +578,7 @@ Panel principal
 
    
  panel.setVisibleTab = function(data){
-    return (data.cabecera.procedimientoCodigo == 'P400' || data.cabecera.procedimiento == 'T. notificación demandados') ? true : false;
+    return (data.cabecera.procedimientoCodigo == 'P400' || data.cabecera.procedimientoCodigo == 'HC108' || data.cabecera.procedimiento == 'T. notificación demandados' || data.cabecera.procedimiento == 'T. notificación personal') ? true : false;
  }
 
   return panel;

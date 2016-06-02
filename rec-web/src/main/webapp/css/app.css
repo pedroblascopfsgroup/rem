@@ -824,3 +824,22 @@ button.icon_checkbox_on, .icon_checkbox_on {
 	background-repeat: no-repeat;
 	background-position: right;
 }
+
+.icon_pendientes_validar{
+  background: transparent url('icon_pendientes_validar_tab.png') no-repeat !important;
+  margin-left : 0px;
+}
+
+.icon_delegacion_tareas{
+  background: transparent url('delegacion_tareas.png') no-repeat;
+}
+* html .icon_delegacion_tareas{
+  background: transparent url('delegacion_tareas.png') no-repeat;
+}
+
+.icon_historico_delegaciones{
+  background: transparent url('historico-delegaciones.png') no-repeat;
+}
+* html .icon_historico_delegaciones{
+  background: transparent url('historico-delegaciones.png') no-repeat;
+}

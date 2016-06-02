@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.mejoras.evento.model;
 
 import es.capgemini.pfs.expediente.model.Evento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJRegistro;
 
 public class MEJEvento extends Evento{
 	
@@ -25,6 +26,11 @@ public class MEJEvento extends Evento{
         setIdTraza(idTraza);
         setTipoAnotacion(tipoAnotacion);
     }
+	
+	public MEJEvento(Long idregistro, int tipoEvento){
+		 setIdRegistro(idregistro);
+		 setTipoEvento(tipoEvento);
+		}
 
 	public void setIdTraza(Long idTraza) {
 		this.idTraza = idTraza;
@@ -41,5 +47,8 @@ public class MEJEvento extends Evento{
 	public void setTipoAnotacion(String tipoAnotacion) {
 		this.tipoAnotacion = tipoAnotacion;
 	}
+
+
+	
 
 }

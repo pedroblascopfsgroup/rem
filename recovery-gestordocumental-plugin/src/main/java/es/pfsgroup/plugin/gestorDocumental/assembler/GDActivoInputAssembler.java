@@ -28,10 +28,10 @@ public class GDActivoInputAssembler {
 	
 	private static Parameters getParameters(ActivoInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
-		if(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN.equals(inputDto.getEvent())) {
-			parameters.getParameter().add(getActivoOrigen(inputDto.getIdActivoOrigen()));
-			parameters.getParameter().add(getOrigen(inputDto.getIdOrigen()));
-		}
+		parameters.getParameter().add(getActivoOrigen(inputDto.getIdActivoOrigen()));
+		parameters.getParameter().add(getOrigen(inputDto.getIdOrigen()));
+		parameters.getParameter().add(getCliente(inputDto.getIdCliente()));
+		parameters.getParameter().add(getTipoActivo(inputDto.getIdTipoActivo()));
 		parameters.getParameter().add(getActivoHaya(inputDto.getIdActivoHaya()));
 		return parameters;
 	}	
@@ -50,6 +50,22 @@ public class GDActivoInputAssembler {
 		origen.setFormat(ActivoInputDto.FORMATO_STRING);
 		origen.setValue(idOrigen);
 		return origen;
+	}
+	
+	private static KeyValuePair getCliente(String idCliente) {
+		KeyValuePair activoHaya = new KeyValuePair();
+		activoHaya.setCode(ActivoInputDto.ID_CLIENTE);
+		activoHaya.setFormat(ActivoInputDto.FORMATO_STRING);
+		activoHaya.setValue(idCliente);
+		return activoHaya;
+	}
+	
+	private static KeyValuePair getTipoActivo(String idTipoActivo) {
+		KeyValuePair activoHaya = new KeyValuePair();
+		activoHaya.setCode(ActivoInputDto.ID_TIPO_ACTIVO);
+		activoHaya.setFormat(ActivoInputDto.FORMATO_STRING);
+		activoHaya.setValue(idTipoActivo);
+		return activoHaya;
 	}
 	
 	private static KeyValuePair getActivoHaya(String idActivoHaya) {

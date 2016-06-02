@@ -7,7 +7,7 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="pfsformat" tagdir="/WEB-INF/tags/pfs/format" %>
 
-var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEstadoGestion){
+var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEstadoGestion, codEstadoPropuesta){
    var ambito = entidad.id;
    var codigoAsunto = data.cabecera.tipoAsuntoCodigo;
    
@@ -239,7 +239,8 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 								,params:{idTerminoAcuerdo:idTerminoSeleccionado}
 								,success: function(){
 									terminosAcuerdoStore.webflow({idAcuerdo : acuerdoSeleccionado});
-									btnBorrarTermino.disable();									
+									btnBorrarTermino.disable();
+									btnVerTermino.disable();											
 									//cantidadAsuntos = asuntosStore.getCount();
 									//contratosStore.on('load',cargarArrayInicial);
 									//contratosStore.webflow({id:${asunto.id}});
@@ -380,8 +381,9 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
    terminosAcuerdoGrid.on('rowclick', function(grid, rowIndex, e){
 		var rec = grid.getStore().getAt(rowIndex);
 		idTerminoSeleccionado = rec.get('id');
-
-		if(idTerminoSeleccionado!='') {
+		<%--PRODUCTO-1477 --%>
+		<%-- añadimos  codEstadoPropuesta a la condicion--%>
+		if(idTerminoSeleccionado!='' && codEstadoPropuesta != "03") { <%-- el codigo de estar en elevado es 03. si está elevado no permitimos los botones --%>
 			btnBorrarTermino.enable();
 			btnVerTermino.enable();
 			btnEditarEstado.enable();

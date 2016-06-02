@@ -311,6 +311,5 @@ public class DespachoExterno implements Serializable, Auditable {
 
 	public void setTurnadoCodigoCalidadLitigios(String turnadoCodigoCalidadLitigios) {
 		this.turnadoCodigoCalidadLitigios = turnadoCodigoCalidadLitigios;
-	}
-    
+	}    
 }

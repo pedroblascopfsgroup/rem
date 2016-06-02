@@ -118,6 +118,25 @@ Ext.onReady(function(){
 			panelEdicion.getForm().reset();
 			panelEdicion.getForm().setValues(r.resolucion);
 			
+			
+			if(r.resolucion.adjuntosResolucion != null){
+				var panel = Ext.getCmp('d_file_right');
+				for(i = 0; i < r.resolucion.adjuntosResolucion.length; i++){
+				    var campo = new Ext.form.Label({
+			   		   html: '<a href="/pfs/procuradores/descargarAdjunto.htm?idResolucion='+r.resolucion.adjuntosResolucion[i].idResolucion+'&idAdjunto='+r.resolucion.adjuntosResolucion[i].id+'")>'+r.resolucion.adjuntosResolucion[i].tipoFicheroCodigo + '&nbsp;' + '-' + '&nbsp;' + r.resolucion.adjuntosResolucion[i].nombreFichero+'</a>'+ '&nbsp;' + '<img src="/${appProperties.appName}/img/plugin/masivo/Ok-icon.png"/>',
+			   		   width:250,
+			   		   style: 'font-size:12px;'
+			   	    }); 
+			   	    var borrarCampo = new Ext.form.Label({
+	   					html: "",
+  		   					style: 'float:left;font-size:12px;margin-left:2px;'
+				  	});
+				  	panel.add(borrarCampo);
+				    panel.add(campo);
+				  	panel.doLayout();
+				}
+			}
+			
 			var itemsFormPanel = panelEdicion.getForm().items.items;
 			for (i = 0; i < itemsFormPanel.length; i++) {
 				if (itemsFormPanel[i].isXType('combo')) {

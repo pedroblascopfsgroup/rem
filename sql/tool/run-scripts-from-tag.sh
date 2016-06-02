@@ -155,7 +155,9 @@ if [ "$1" != "null" ]; then
     if [ -d sql/**/producto/procs_y_vistas/ ]; then
         for file in `git diff $1 --name-only sql/**/producto/procs_y_vistas/*.sql`
         do
-            if [ "$MULTIENTIDAD" != "" ] ; then
+            filename=`basename $file`
+            schema=`echo $filename | cut -d_ -f3`
+            if [[ "$MULTIENTIDAD" != "" ]] && [[ ! $schema =~ ^MASTER$ ]] ; then
                 IFS=',' read -a entidades <<< "$MULTIENTIDAD"
                 for entidad in "${entidades[@]}"
                 do
@@ -170,7 +172,9 @@ if [ "$1" != "null" ]; then
 
     for file in `git diff $1 --name-only sql/**/producto/$DIRECTORIO*.sql`
     do
-        if [ "$MULTIENTIDAD" != "" ] ; then
+        filename=`basename $file`
+        schema=`echo $filename | cut -d_ -f3`
+        if [[ "$MULTIENTIDAD" != "" ]] && [[ ! $schema =~ ^MASTER$ ]] ; then
             IFS=',' read -a entidades <<< "$MULTIENTIDAD"
             for entidad in "${entidades[@]}"
             do
@@ -186,7 +190,9 @@ if [ "$1" != "null" ]; then
     if [ -d sql/**/$CUSTOMER_IN_LOWERCASE/procs_y_vistas ]; then
         for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/procs_y_vistas/*.sql`
         do
-            if [ "$MULTIENTIDAD" != "" ] ; then
+            filename=`basename $file`
+            schema=`echo $filename | cut -d_ -f3`
+            if [[ "$MULTIENTIDAD" != "" ]] && [[ ! $schema =~ ^MASTER$ ]] ; then
                 IFS=',' read -a entidades <<< "$MULTIENTIDAD"
                 for entidad in "${entidades[@]}"
                 do
@@ -201,7 +207,9 @@ if [ "$1" != "null" ]; then
 
     for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$DIRECTORIO*.sql`
     do
-        if [ "$MULTIENTIDAD" != "" ] ; then
+        filename=`basename $file`
+        schema=`echo $filename | cut -d_ -f3`
+        if [[ "$MULTIENTIDAD" != "" ]] && [[ ! $schema =~ ^MASTER$ ]] ; then
             IFS=',' read -a entidades <<< "$MULTIENTIDAD"
             for entidad in "${entidades[@]}"
             do
@@ -238,7 +246,9 @@ if [ "$1" != "null" ]; then
 else
     for file in `cat SQLs-list.txt`
     do
-        if [ "$MULTIENTIDAD" != "" ] ; then
+        filename=`basename $file`
+        schema=`echo $filename | cut -d_ -f3`
+        if [[ "$MULTIENTIDAD" != "" ]] && [[ ! $schema =~ ^MASTER$ ]] ; then
             IFS=',' read -a entidades <<< "$MULTIENTIDAD"
             for entidad in "${entidades[@]}"
             do
@@ -312,6 +322,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             exit 1
         fi
     done < $BASEDIR/tmp/list-from-tag.txt
+    echo ""
+    echo "---------------------------------------------------"
     mkdir -p $BASEDIR/tmp/package/DB/scripts/
     mkdir -p $BASEDIR/tmp/package/DDL/scripts/
     mkdir -p $BASEDIR/tmp/package/DML/scripts/
@@ -330,6 +342,11 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     fi
     if [ $2 == 'BANKIA' ]; then
         cp $BASEDIR/scripts/DxL-scripts-BK.sh $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+    elif [ $2 == 'HAYA' ]; then
+        entities=$(($entities + 2))
+        sed -e s/#NUMBER#/"${entities}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+        passtring="$passtring ""MINIREC_pass@host:port\/sid"
+        sed -e s/#ENTITY#/"${passtring}"/g -i $BASEDIR/tmp/package/DDL/DDL-scripts.sh
     else
         entities=$(($entities + 1))
         sed -e s/#NUMBER#/"${entities}"/g $BASEDIR/scripts/DxL-scripts.sh > $BASEDIR/tmp/package/DDL/DDL-scripts.sh
@@ -384,7 +401,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
-            zip DDL-scripts.zip -r DDL 
+            zip --quiet DDL-scripts.zip -r DDL 
             cd -
         fi
     fi
@@ -400,13 +417,13 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
 
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
-            zip DML-scripts.zip -r DML 
+            zip --quiet DML-scripts.zip -r DML 
             cd -
         fi
     fi     
     if [[ $UNIFIED_PACKAGE != 'false' ]]; then
         cd $BASEDIR/tmp/package
-        zip DB-scripts.zip -r DB
+        zip --quiet DB-scripts.zip -r DB
         cd -
     fi
     echo ""

@@ -10,6 +10,7 @@
   <json:property name="id" value="${contrato.id}" />
   <json:property name="nombreTab" value="${nombreTab}" />
   <json:object name="cabecera">
+  	<json:property name="bloqueoContrato" value="${bloqueoContrato}" />
     <json:property name="primerTitular" value="${contrato.primerTitular}" />
     <%-- Se cambia el codigo de contrato por el nro. de contrato, ya que ahora esta todo el codigo en el campo CNT_CONTRATO --%>
     <json:property name="codigoContrato" value="${contrato.codigoContrato}" />

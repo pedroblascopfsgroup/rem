@@ -968,7 +968,7 @@
 				var params ={
 								idEntidadInformacion: rec.get('idEntidad')
 								,isConsulta:false
-								,fechaVencimiento: app.format.dateRenderer(rec.get('fechaVenc'))
+								,fechaVencimiento: rec.get('fechaVenc')
 								,fechaCreacion: rec.get('fcreacionEntidad')
 								,situacion:'Asunto' 
 								,destareaOri:  rec.get(nombreTareaField)
@@ -976,7 +976,8 @@
 								,fechaPropuesta: rec.get('fechaPropuesta')
 								,motivo: rec.get('motivo')
 								,idTareaOriginal: rec.get('id')	
-								,descripcion:"Toma decision procedimiento"		
+								,descripcion: ""
+								,subtipo: rec.get('codigoSubtipoTarea')		
 								,codigoTipoProrroga: '<fwk:const value="es.capgemini.pfs.prorroga.model.DDTipoProrroga.TIPO_PRORROGA_EXTERNA" />'
 						}
 			btnQuickAceptarProrroga.setHandler(function(){
@@ -1012,7 +1013,7 @@
 					var params ={
 							idEntidadInformacion: rec.get('idEntidad')
 							,isConsulta:false
-							,fechaVencimiento: app.format.dateRenderer(rec.get('fechaVenc'))
+							,fechaVencimiento: rec.get('fechaVenc')
 							,fechaCreacion: rec.get('fcreacionEntidad')
 							,situacion:'Asunto' 
 							,destareaOri:  rec.get(nombreTareaField)
@@ -1020,7 +1021,7 @@
 							,fechaPropuesta: rec.get('fechaPropuesta')
 							,motivo: rec.get('motivo')
 							,idTareaOriginal: rec.get('id')	
-							,descripcion:"Toma decision procedimiento"		
+							,descripcion: ""		
 							,codigoTipoProrroga: '<fwk:const value="es.capgemini.pfs.prorroga.model.DDTipoProrroga.TIPO_PRORROGA_EXTERNA" />'
 					}
 					btnQuickAceptarProrroga.setHandler(function(){

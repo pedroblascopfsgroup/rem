@@ -3926,4 +3926,26 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
     	return resultado;
     }
 
+	@BusinessOperation(InternaBusinessOperation.BO_EXP_MGR_PUEDE_MOSTRAR_ELEVAR_DELEGAR_EXPEDIENTE)
+	@Override
+	public Boolean puedeMostrarelevarDelegarExpediente(Long idExpediente) {
+		
+		Expediente exp = expedienteDao.get(idExpediente);   	
+	
+		if(!Checks.esNulo(exp.getEstadoItinerario()) && (exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_DECISION_COMIT) || exp.getEstadoItinerario().getCodigo().equals(DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO))){
+    		
+			Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+    		
+            for (Perfil perfil : usuario.getPerfiles()) {
+            	if(exp.getIdGestorActual().equals(perfil.getId()) || exp.getIdSupervisorActual().equals(perfil.getId())){
+            		return Boolean.TRUE;
+            	}
+            }
+			return Boolean.FALSE;
+    	}else{
+    		return Boolean.FALSE;
+    	}	
+
+	}
+
 }

@@ -84,7 +84,12 @@ if [ `expr index $PW '@'` -gt 0 ] ; then
 fi
 
 if [ `expr index $PW '/'` -gt 0 ] ; then
-    ESQUEMA_EJECUCION=`echo $PW | cut -f1 -d/`
+    ESQUEMA_FICHERO=`echo $nombreFichero | cut -d_ -f3`
+    if [[ $ESQUEMA_FICHERO == "MINIREC" ]]; then
+        ESQUEMA_EJECUCION="MINIREC"
+    else
+        ESQUEMA_EJECUCION=`echo $PW | cut -f1 -d/`
+    fi
     ESQUEMA=$ESQUEMA_EJECUCION
     PW=`echo $PW | cut -f2 -d/`
 else
@@ -132,8 +137,13 @@ if [[ $ESQUEMA_EJECUCION =~ MASTER$ ]]; then
     executionPass="\$1"
     executionPassWin="%1"
 elif [[ $ESQUEMA_EJECUCION == 'MINIREC' ]]; then
-    executionPass="\$3"
-    executionPassWin="%3"
+    if [[ "$MULTIENTIDAD" != "" ]]; then
+        executionPass="\$4"
+        executionPassWin="%4"
+    else
+        executionPass="\$3"
+        executionPassWin="%3"
+    fi
 else
     executionPass="\$$((${ESQUEMA_EJECUCION: -1} + 1))"
     executionPassWin="%$((${ESQUEMA_EJECUCION: -1} + 1))"
@@ -160,7 +170,6 @@ fi
 
 # Si se trata de un script de procs_y_vistas
 if [[ ${NOMBRE_SCRIPT} =~ ^DDL_[0-9]+_[^_]+_(SP|MV|VI)_[^\.]+\.sql$ ]] ; then
-
     # Registro
     PASO3=reg3.sql
     sed -e s/#ESQUEMA#/${ESQUEMA_REGISTRO}/g "$BASEDIR/${PASO3}" > "$BASEDIR/${regFile}${PASO3}"
@@ -191,6 +200,7 @@ if [[ ${NOMBRE_SCRIPT} =~ ^DDL_[0-9]+_[^_]+_(SP|MV|VI)_[^\.]+\.sql$ ]] ; then
         echo "exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.sh
         echo "exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}-one-user.sh
         echo "echo 'exit' | sqlplus $ESQUEMA_EJECUCION/$executionPassWin @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.bat
+        echo "echo \" -- : $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh ${executionFile}.bat > /dev/null
     fi
 
     exit 0

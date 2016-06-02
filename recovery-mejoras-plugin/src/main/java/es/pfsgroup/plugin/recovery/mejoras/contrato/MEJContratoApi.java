@@ -5,9 +5,11 @@ import java.util.List;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
+import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.mejoras.contrato.dto.MEJBusquedaContratosDto;
 import es.pfsgroup.recovery.ext.impl.contrato.model.AtipicoContrato;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 public interface MEJContratoApi {
 	
@@ -42,4 +44,6 @@ public interface MEJContratoApi {
     @BusinessOperationDefinition(MEJ_BUSCAR_ATIPICOS_CONTRATO)
 	public List<AtipicoContrato> getAtipicosContrato(Long idContrato);
     
+    @BusinessOperationDefinition(PrimariaBusinessOperation.BO_CNT_GET_ESTADO_BLOQUEO)
+    public String getEstadoBloqueo(Long idContrato);
 }

@@ -13,7 +13,7 @@
   						<property name="scripts">
   							<list>
   								<map>
-  									<entry key="sql"><bean parent="sql" p:key="recobro.preprocesado_cobros.${entity.dialect}"/></entry>
+  									<entry key="sql"><bean parent="sql" p:key="recobro.preprocesado_cobros"/></entry>
   									<entry key="message" value="recobro.preprocesado_cobros"/>
   									<entry key="severidad" value="error"/>
   								</map>

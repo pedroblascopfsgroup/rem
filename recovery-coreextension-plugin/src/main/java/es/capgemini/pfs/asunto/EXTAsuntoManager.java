@@ -315,7 +315,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				if (dto.getIdTarea() != null) {
 					map.put("idTarea", dto.getIdTarea());
 					EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTarea()));
-					map.put("destinatarioTarea", tarea.getDestinatarioTarea().getApellidoNombre());
+					if(tarea.getDestinatarioTarea() != null){
+						map.put("destinatarioTarea", tarea.getDestinatarioTarea().getApellidoNombre());
+					}
 				}
 				if (dto.getIdTraza() != null) {
 					map.put("idTraza", dto.getIdTraza());

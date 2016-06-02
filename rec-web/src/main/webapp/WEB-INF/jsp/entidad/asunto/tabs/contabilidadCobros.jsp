@@ -27,7 +27,6 @@
    	panel.esSupervisor = function(){ return entidad.get("data").toolbar.esSupervisor; }
    	panel.esGestor = function(){ return entidad.get("data").toolbar.esGestor; }
 	var estadoAsunto='${asunto.estadoAsunto.codigo}';
-	var cobroSinNotificar = false;
 	<sec:authentication var="user" property="principal" />
 	var userLogado = '${user.username}';
 	panel.getValue = function(){}
@@ -80,6 +79,9 @@
 			,{name:"quitaOperacionesEnTramite"}
 			,{name:"operacionesEnTramite"}
 			,{name:"totalQuita"}
+			,{name:"tarID"}
+			,{name:"contabilizado"}
+			,{name:"estadoCobro"}
 	]);
 	
 	<%-- Store Grid --%>
@@ -90,52 +92,12 @@
 		,reader : new Ext.data.JsonReader({root:'listado'}, contabilidadCobros)
 	});
 	
-	contabilidadCobrosStore.on( 'load', function( store, records, options ) {
-		<%-- Comprobar si existen cobros sin notificar --%>
-		Ext.Ajax.request({
-    				url: page.resolveUrl('contabilidadcobros/comprobarCobroSinNotificar')
-   					,params: {id: panel.getAsuntoId()}
-  					,method: 'POST'
-   					,success: function (data){
-	   					var result = JSON.parse(data.responseText);
-	   					cobroSinNotificar = result.boolResponse;
-	   					if(result.boolResponse){
-	   						btnEnviarContabilidad.setDisabled(false);
-	   					}else{
-	   						btnEnviarContabilidad.setDisabled(true);
-	   					}
-   					}
-   					,error : function (data){
-   					}
-       				,failure: function (data){
-	   				}
-				});
-		
-		<%-- Comprobar si existen cobros sin contabilizar --%>
-		Ext.Ajax.request({
-    				url: page.resolveUrl('contabilidadcobros/comprobarCobroSinContabilizar')
-   					,params: {id: panel.getAsuntoId()}
-  					,method: 'POST'
-   					,success: function (data){
-	   					var result = JSON.parse(data.responseText);
-	   					if(result.boolResponse){
-	   						btnContabilizar.setDisabled(false);
-	   					}else{
-	   						btnContabilizar.setDisabled(true);
-	   					}
-   					}
-   					,error : function (data){
-   					}
-       				,failure: function (data){
-	   				}
-				});
-	});  
-	
 	entidad.cacheStore(contabilidadCobrosStore);
 
 	<%-- Columnas Grid --%>
 	var contabilidadCobrosCm = new Ext.grid.ColumnModel([
-		{header : '<s:message code="contabilidad.fechaEntrega" text="**Fecha Entrega"/>', dataIndex : 'fechaEntrega'}
+		{header : '<s:message code="contabilidad.id" text="**ID"/>', dataIndex : 'id'}
+		,{header : '<s:message code="contabilidad.fechaEntrega" text="**Fecha Entrega"/>', dataIndex : 'fechaEntrega'}
 		,{header : '<s:message code="contabilidad.fechaValor" text="**Fecha Valor"/>', dataIndex : 'fechaValor'}
 		,{header : '<s:message code="contabilidad.tipoEntrega" text="**Tipo Entrega"/>', dataIndex : 'tipoEntrega'}
 		,{header : '<s:message code="contabilidad.conceptoEntrega" text="**Concepto Entrega"/>', dataIndex : 'conceptoEntrega'}
@@ -161,6 +123,7 @@
 		,{header : '<s:message code="contabilidad.numMandamiento" text="**NºMandamiento"/>', dataIndex : 'numMandamiento'}
 		,{header : '<s:message code="contabilidad.numCheque" text="**NºCheque"/>', dataIndex : 'numCheque'}
 		,{header : '<s:message code="contabilidad.observaciones" text="**Observaciones"/>', dataIndex : 'observaciones', hidden:true}
+		,{header : '<s:message code="contabilidad.estadoCobro" text="**Estado"/>', dataIndex : 'estadoCobro'}
 		,{hidden:true, dataIndex : 'usuarioCrear'}
 	]);
 	 
@@ -192,7 +155,7 @@
 				var rec =  contabilidadCobrosGrid.getSelectionModel().getSelected();
 				if (!rec) return;
 				var usuCrear = rec.get("usuarioCrear");
-				var id = rec.get("id");<%-- TODO: enviar el usuCrear y/o Supervisor u obtenerlo desde esta jsp padre y crear func para poner todos los campos a 'readOnly(true)' si no es de los usus anteriores. --%>
+				var id = rec.get("id");
 				var editable = false;
 				if(usuCrear === userLogado || panel.esSupervisor()){
 					<%-- Si el usuario actual es quien lo ha creado o es el supervisor del asunto--%>
@@ -229,7 +192,7 @@
 				w.on(app.event.CANCEL, function(){ w.close(); });
 		}
 	});
-	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
+	<%-- Por defecto deshabilitado hasta que se selecciona elemento del grid --%>
 	btnEditarVer.setDisabled(true);
 	
 	var btnBorrar = app.crearBotonBorrar({
@@ -240,7 +203,7 @@
 		}
 		,page : page
 	});
-	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
+	<%-- Por defecto deshabilitado hasta que se selecciona elemento del grid --%>
 	btnBorrar.setDisabled(true);
 	
 	var btnEnviarContabilidad = new Ext.Button({
@@ -248,8 +211,15 @@
 		 ,iconCls : 'icon_asuntos'
 		 ,cls: 'x-btn-text-icon'
 		 ,handler:function(){
+		 		var rec =  contabilidadCobrosGrid.getSelectionModel().getSelections();
+				if (!rec) return;
+				var ids = [];
+				for(var i=0; i < rec.length; i++){
+					ids.push(rec[i].get("id"));
+				}
 				var parametros = {
-						idEntidad: panel.getAsuntoId()
+						ids: ids
+						,idEntidad: panel.getAsuntoId()
 				};
 				Ext.Ajax.request({
     				url: page.resolveUrl('contabilidadcobros/crearNuevaTarea')
@@ -264,7 +234,7 @@
    							Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', result.message);
    						}
    						btnEnviarContabilidad.setDisabled(true);
-   						cobroSinNotificar = false;
+   						contabilidadCobrosStore.webflow({id:panel.getAsuntoId()});
    					}
    					,error : function (data){
    						Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgNuevaTareaError" text="**No se ha podido generar una nueva tarea para el gestor de contabilidad" />');
@@ -275,14 +245,23 @@
 				});
 		}
 	});
+	<%-- Por defecto deshabilitado hasta que se selecciona elemento del grid --%>
+	btnEnviarContabilidad.setDisabled(true);
 	
 	var btnContabilizar = new Ext.Button({
 		 text: '<s:message code="contabilidad.contabilizarCobros" text="**Contabilizar Cobros" />'
 		 ,iconCls : 'icon_asuntos'
 		 ,cls: 'x-btn-text-icon'
 		 ,handler:function(){
+		 		var rec =  contabilidadCobrosGrid.getSelectionModel().getSelections();
+				if (!rec) return;
+				var ids = [];
+				for(var i=0; i < rec.length; i++){
+					ids.push(rec[i].get("id"));
+				}
 				var parametros = {
-						asunto: panel.getAsuntoId()
+						ids: ids
+						,asunto: panel.getAsuntoId()
 				};
 				Ext.Ajax.request({
     				url: page.resolveUrl('contabilidadcobros/contabilizarCobros')
@@ -296,6 +275,8 @@
    						} else {
    							Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', result.message);
 	   					}
+	   					btnContabilizar.setDisabled(true);
+	   					contabilidadCobrosStore.webflow({id:panel.getAsuntoId()});
    					}
    					,error : function (data){
    						Ext.MessageBox.alert('<s:message code="contabilidad.msgNuevaTareaErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgcontabilizarCobrosError" text="**No se ha podido marcar los cobros como contabilizados" />');
@@ -307,17 +288,19 @@
 		}
 	});
 	
-	<%-- Por defecto desahabilitado hasta que se selecciona elemento del grid --%>
-	btnEnviarContabilidad.setDisabled(true);
+	<%-- Por defecto deshabilitado hasta que se selecciona elemento del grid --%>
+	btnContabilizar.setDisabled(true);
 
 	<%-- Grid --%>
 	var contabilidadCobrosGrid = app.crearGrid(contabilidadCobrosStore,contabilidadCobrosCm,{
-		title:'<s:message code="contabilidad.grid.titulo" text="**Contabilidad Cobros" />'
+		id: 'contabilidadCobrosGrid'
+		,title:'<s:message code="contabilidad.grid.titulo" text="**Contabilidad Cobros" />'
 		,height : 420
 		,style:'padding-right:10px'
 		,width: '100%'
 		,autoScroll: true
 		,minColumnWidth: 200
+		,sm: new Ext.grid.RowSelectionModel({singleSelect:false})
 		,bbar:[btnEditarVer
 			<sec:authorize ifAllGranted="ROLE_PUEDE_VER_BOTONES_GRID_CONTABILIDAD_COBRO">,btnNuevo,btnBorrar</sec:authorize>
 
@@ -338,15 +321,50 @@
 			<%-- Si el usuario actual NO es quien lo ha creado o NO es el supervisor del asunto --%>
 			btnBorrar.setDisabled(true);
 		}
+		
 		<%-- Habilitar siempre el boton de 'Ver / Editar' al seleccionar un cobro --%>
 		btnEditarVer.setDisabled(false);
-		<%-- Habilitar el boton de 'Enviar a Contabilidad' solo si existen tareas no enviadas --%>
-		if(cobroSinNotificar){
-			btnEnviarContabilidad.setDisabled(false);
-		}
+		
+		
+		var cobrosList = grid.getSelectionModel().getSelections();
+		
+		<%-- Comprobar el estado de los cobros seleccionados para permitir enviar a contabilizar --%>
+		var btnEnviarContabilizarEnable = true;
+		for (var i=0; i < cobrosList.length; i++) {
+            var itemTarID = cobrosList[i].get("tarID");
+            <%-- Si existe algun cobro ya notificado en la seleccion no habilitar boton --%>
+            if(itemTarID != null && itemTarID != ""){
+            	btnEnviarContabilizarEnable = false;
+            }
+        }
+        
+        if(btnEnviarContabilizarEnable){
+        	btnEnviarContabilidad.setDisabled(false);
+        } else {
+        	btnEnviarContabilidad.setDisabled(true);
+        }
+        
+        <%-- Comprobar el estado de los cobros seleccionados para permitir contabilizar los cobros --%>
+		var btnContabilizarEnable = true;
+		for (var i=0; i < cobrosList.length; i++) {
+            var itemCont = cobrosList[i].get("contabilizado");
+            var itemTarID = cobrosList[i].get("tarID");
+            <%-- Si existe algun cobro ya contabilizado en la seleccion no habilitar boton --%>
+            <%-- Tambien comprobar que haya sido enviado a contabilizar primero --%>
+            if(itemCont || (itemTarID == null || itemTarID === "")){
+            	btnContabilizarEnable = false;
+            }
+        }
+        
+        if(btnContabilizarEnable){
+        	btnContabilizar.setDisabled(false);
+        } else {
+        	btnContabilizar.setDisabled(true);
+        }
+
 	});
 	
 	panel.add(contabilidadCobrosGrid);
-  
+	
 	return panel;
 })

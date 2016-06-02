@@ -55,9 +55,10 @@ public interface ContabilidadCobrosApi {
 	 * Genera una nueva Tarea Notificacion de Contabilidad Cobro.
 	 * 
 	 * @param dto
+	 * @param id : ID del cobro.
 	 * @throws STAContabilidadException 
 	 */
-	void crearTarea(DtoGenerarTarea dto) throws STAContabilidadException;
+	void crearTarea(DtoGenerarTarea dto, Long id) throws STAContabilidadException;
 	
 	/**
 	 * Finaliza las tareas asociadas a los cobros y pone el estado de contabilizado
@@ -67,14 +68,5 @@ public interface ContabilidadCobrosApi {
 	 * @throws Exception 
 	 */
 	void contabilizarCobrosYFinalizarTareas(DtoContabilidadCobros dto) throws STAContabilidadException;
-	
-	/**
-	 * Obtiene una lista de Contabilidad Cobros por asunto ID donde el campo
-	 * de la tarea asociada no esta vacio y no han sido contabilizados.
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	List<ContabilidadCobros> getListadoContabilidadCobrosParaTareas(DtoContabilidadCobros dto);
 
 }

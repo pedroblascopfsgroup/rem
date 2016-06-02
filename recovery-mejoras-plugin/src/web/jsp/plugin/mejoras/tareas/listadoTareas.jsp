@@ -1494,6 +1494,20 @@
 						break;
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO:
 						app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'contabilidadcobros');
+						if (Ext.getCmp('contabilidadCobrosGrid').getStore()!=undefined) {
+							Ext.getCmp('contabilidadCobrosGrid').getStore().on('load', function() {
+								var selModel = Ext.getCmp('contabilidadCobrosGrid').getSelectionModel();
+								var store = Ext.getCmp('contabilidadCobrosGrid').getStore();
+								var idTarea = rec.get('id');
+								
+								for(var i=0; i < store.getCount(); i++){
+									if(store.getAt(i).get('tarID') == idTarea){
+										selModel.selectRow(i);
+										break;
+									}
+								}
+							});
+						}
 						break;
 
 					default:

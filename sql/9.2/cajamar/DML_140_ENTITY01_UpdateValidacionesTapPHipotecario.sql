@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160601
+--## FECHA_CREACION=20160602
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1760
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP( 
-       T_TIPO_TAP('H001','H001_DemandaCertificacionCargas','valores[''H001_DemandaCertificacionCargas''][''provisionFondos'']==DDSiNo.SI ? ''SI'' : ''NO''','valores[''H001_DemandaCertificacionCargas''][''notPersonal''] == DDSiNo.SI ? (existeTipoGestor("CENTROPROCURA") ? null : ''Para este asunto no se permite la notificaci&oacute;n personal'') : null','PRODUCTO-1760')
+       T_TIPO_TAP('H001','H001_DemandaCertificacionCargas','valores[''H001_DemandaCertificacionCargas''][''provisionFondos'']==DDSiNo.SI ? (existeTipoGestor("CENTROPROCURA") ? ''ANTI'' : ''SI'') : ''NO''','valores[''H001_DemandaCertificacionCargas''][''notPersonal''] == DDSiNo.SI ? (existeTipoGestor("CENTROPROCURA") ? null : ''Para este asunto no se permite la notificaci&oacute;n personal'') : null','PRODUCTO-1760')
       ,T_TIPO_TAP('H001','H001_AutoDespachandoEjecucion','valores[''H001_AutoDespachandoEjecucion''][''comboResultado''] == DDSiNo.SI ? (valores[''H001_DemandaCertificacionCargas''][''notPersonal''] == DDSiNo.SI ? (existeTipoGestor("CENTROPROCURA") ? ''notificaPersonal'' : ''SI'') : ''SI'') : ''NO''',null,'PRODUCTO-1760')
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;

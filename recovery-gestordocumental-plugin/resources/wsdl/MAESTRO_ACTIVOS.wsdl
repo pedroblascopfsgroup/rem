@@ -47,10 +47,8 @@
 
 	<wsdl:service name="wsWS">
 		<wsdl:port binding="ws:wsBinding" name="ws">
-			<soap:address location="http://10.10.25.196:8080/WSMaestroActivos/ws"/>
+			<soap:address location="http://HRE_SAREB_WS_DOC_IP:8080/WSMaestroActivos/ws"/>
 		</wsdl:port>
 	</wsdl:service>
-
-
 
 </wsdl:definitions>

@@ -51,12 +51,13 @@
                               ,{width: 140,height: 140});    
     tipoGestor.disable();
     
-    <%-- Desactiva este combo si se ha abierto esta pantalla para modificar al despacho --%>
+    <%-- Desactiva este combo si se ha abierto esta pantalla para modificar al despacho
     if(tipoDespacho.getValue() != '') {
     	tipoDespacho.setDisabled(true);
-    }
+    } --%>
     
     tipoDespacho.on('select', function(){
+    debugger;
     	if(tipoDespacho.getValue() == ${idTipoLetrado}) {
     		pestanaAdicionales.setDisabled(false);
     	} else {
@@ -274,7 +275,9 @@
 	consultaGestorProp(${despacho.tipoDespacho.id});
 	
 	tipoDespacho.on('select',function(combo, record, index ){
-		consultaGestorProp(combo.getValue());						 
+		if(combo.getValue() != '') {
+			consultaGestorProp(combo.getValue());
+			}						 
 	});
 	
 	var pestanaPrincipal = new Ext.Panel({

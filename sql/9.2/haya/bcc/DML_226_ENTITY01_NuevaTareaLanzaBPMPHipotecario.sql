@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20160601
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=PRODUCTO-1093
+--## INCIDENCIA_LINK=PRODUCTO-1794
 --## PRODUCTO=NO
 --##
 --## Finalidad: BPM - PHipotecario (Nueva tarea que lanza bpm)

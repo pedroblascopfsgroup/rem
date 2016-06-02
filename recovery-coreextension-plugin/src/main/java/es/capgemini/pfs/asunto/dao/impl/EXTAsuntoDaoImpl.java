@@ -407,8 +407,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	}
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
-		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.
-				getFiltroContrato() != "") || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
+		return (dto.getCodigoZonas().size() > 0 || !Checks.esNulo(dto.getFiltroContrato()) || (!Checks.esNulo(dto.getJerarquia()) && dto.getJerarquia().length() > 0));
 	}
 	
 	private boolean requierePersona(EXTDtoBusquedaAsunto dto) {
@@ -906,7 +905,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 //			params.put("filtroCnt", dto.getFiltroContrato());
 //		}
 		
-		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
+		if (!Checks.esNulo(dto.getFiltroContrato())) {
 			
 			hql.append(" and cnt.nroContrato like '%'|| :nroContrato ||'%'");
 			params.put("nroContrato", dto.getFiltroContrato());

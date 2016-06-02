@@ -100,12 +100,12 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}
 		// Avanzamos BPM
-		System.out.println(this.getClass().getSimpleName() + "Vamos a avanzar el BPM, el token actual es: " + executionContext.getToken().getId());
-		System.out.println(this.getClass().getSimpleName() + "La transicion es: " + executionContext.getTransition().getId());
-		System.out.println(this.getClass().getSimpleName() + "El nodo es: " + executionContext.getNode().getId());
-		logger.info(this.getClass().getSimpleName() + "Vamos a avanzar el BPM, el token actual es: " + executionContext.getToken().getId());
-		logger.info(this.getClass().getSimpleName() + "La transicion es: " + executionContext.getTransition().getId());
-		logger.info(this.getClass().getSimpleName() + "El nodo es: " + executionContext.getNode().getId());
+		System.out.println(this.getClass().getSimpleName() + "Vamos a avanzar el BPM, el token actual es: " + (!Checks.esNulo(executionContext.getToken()) ? executionContext.getToken().getId() : "null"));
+		System.out.println(this.getClass().getSimpleName() + "La transicion es: " + (!Checks.esNulo(executionContext.getTransition()) ? executionContext.getTransition().getId() : "null"));
+		System.out.println(this.getClass().getSimpleName() + "El nodo es: " + (!Checks.esNulo(executionContext.getNode()) ? executionContext.getNode().getId() : "null"));
+		logger.info(this.getClass().getSimpleName() + "Vamos a avanzar el BPM, el token actual es: " + (!Checks.esNulo(executionContext.getToken()) ? executionContext.getToken().getId() : "null"));
+		logger.info(this.getClass().getSimpleName() + "La transicion es: " + (!Checks.esNulo(executionContext.getTransition()) ? executionContext.getTransition().getId() : "null"));
+		logger.info(this.getClass().getSimpleName() + "El nodo es: " + (!Checks.esNulo(executionContext.getNode()) ? executionContext.getNode().getId() : "null"));
 		
 		executionContext.getToken().signal();
 	}

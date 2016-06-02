@@ -13,7 +13,6 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.liquidaciones.api.ContabilidadCobrosApi;
 import es.pfsgroup.plugin.recovery.liquidaciones.dto.DtoContabilidadCobros;
 import es.pfsgroup.plugin.recovery.liquidaciones.excepciones.STAContabilidadException;
@@ -29,7 +28,6 @@ public class ContabilidadCobrosController {
 	private static final String CONTABILIDAD_COBROS_JSON = "plugin/liquidaciones/listadoContabilidadCobrosJSON";
 	private static final String NEW_CONTABILIDAD_COBRO = "plugin/liquidaciones/contabilidadCobro";
 	private static final String JSON_RESPUESTA  ="plugin/liquidaciones/respuestaJSON";
-	private static final String GENERIC_BOOL_JSON  ="plugin/liquidaciones/genericBooleanJSON";
 	private static final String DEFAULT = "default";
 
 	
@@ -108,9 +106,11 @@ public class ContabilidadCobrosController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String crearNuevaTarea(ModelMap model, DtoGenerarTarea dto) {
+	public String crearNuevaTarea(ModelMap model, DtoGenerarTarea dto, Long[] ids) {
 		try{
-			contabilidadCobrosApi.crearTarea(dto);
+			for(Long id : ids){
+				contabilidadCobrosApi.crearTarea(dto, id);
+			}
 		}catch(STAContabilidadException e){
 			model.put("message", messageService.getMessage("contabilidad.cobros.mensaje.error.staContabilidadCobros",null));
 			model.put("msgOK", false);
@@ -124,57 +124,12 @@ public class ContabilidadCobrosController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String comprobarCobroSinNotificar(ModelMap model, DtoContabilidadCobros dto){
-		// Comprobar si dentro de la lista existen cobros sin la tarea asignada.
-		// Significa que no se han enviado todavia a contabilizar y se habilita el boton de enviar a contabilizar.
-		
-		List<ContabilidadCobros> ccoList = (List<ContabilidadCobros>) contabilidadCobrosApi.getListadoContabilidadCobros(dto);
-				
-		// Por defecto no se habilita el boton.
-		Boolean notificado = false;
-		
-		for(ContabilidadCobros c : ccoList){
-			if(Checks.esNulo(c.getTarID())){
-				// Si existe algun cobro sin notificar se permite el uso del boton.
-				notificado = true;
-				break;
-			}
-		}
-		
-		model.put("boolResponse", notificado);
-		
-		return GENERIC_BOOL_JSON;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String comprobarCobroSinContabilizar(ModelMap model, DtoContabilidadCobros dto){
-		// Comprobar si dentro de la lista existen cobros sin contabilizar.
-		// Habilita por ende el boton de contabilizar.
-		
-		List<ContabilidadCobros> ccoList = (List<ContabilidadCobros>) contabilidadCobrosApi.getListadoContabilidadCobros(dto);
-		
-		// Por defecto no se habilita el boton.
-		Boolean contabilizado = false;
-		
-		for(ContabilidadCobros c : ccoList){
-			if(!c.getContabilizado() && !Checks.esNulo(c.getTarID())){
-				// Si existe algun cobro sin notificar pero si se ha enviado/preparado se permite el uso del boton.
-				contabilizado = true;
-				break;
-			}
-		}
-		
-		model.put("boolResponse", contabilizado);
-		
-		return GENERIC_BOOL_JSON;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping
-	public String contabilizarCobros(ModelMap model, DtoContabilidadCobros dto){
+	public String contabilizarCobros(ModelMap model, DtoContabilidadCobros dto, Long[] ids){
 		try{
-			contabilidadCobrosApi.contabilizarCobrosYFinalizarTareas(dto);
+			for(Long id : ids){
+				dto.setId(id);
+				contabilidadCobrosApi.contabilizarCobrosYFinalizarTareas(dto);
+			}
 		}catch(STAContabilidadException e){
 			if(e.getMessage().equals(STAContabilidadException.COBROS_NO_ENVIADOS)){
 				model.put("message", messageService.getMessage("contabilidad.msgcontabilizarCobrosNoEnviadosError",null));

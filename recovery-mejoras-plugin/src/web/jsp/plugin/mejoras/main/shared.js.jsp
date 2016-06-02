@@ -1380,7 +1380,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 				,cm:columnModel
 			    ,clicksToEdit:1
 			    ,resizable:true
-			    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+			    ,sm: config.sm || new Ext.grid.RowSelectionModel({singleSelect:true})
 			    //,width: config.width || (columnModel.getTotalWidth()+25)
 				,autoWidth:true
 			    //,width:200

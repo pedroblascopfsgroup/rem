@@ -41,8 +41,8 @@ else
    do
 	mascaraSem=$DIR_INPUT_AUX/$fichero$mascara$extensionSem
         mascaraZip=$DIR_INPUT_AUX/$fichero$mascara$extensionZip
-        ficheroSem=`ls -Art $mascaraSem | tail -n 1`
-        ficheroZip=`ls -Art $mascaraZip | tail -n 1`
+        ficheroSem=`ls -A $mascaraSem | tail -n 1`
+        ficheroZip=`ls -A $mascaraZip | tail -n 1`
 
 	sed -i 's/ //g' $ficheroSem
 	mv $ficheroZip $DIR_DESTINO

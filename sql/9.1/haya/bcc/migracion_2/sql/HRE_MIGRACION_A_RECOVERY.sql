@@ -21,6 +21,7 @@
 --##       20160210 - 0.8 GMN Se filtra por marca HAYA y motivos ('EX','CN','IM','AR','MA','SC')
 --##       20160321 - 0.9 GMN CMREC-2850: Se filtra por marca HAYA y motivos ('EX','CN','IM','AR','MA') EXCLUIMOs LA MARCA SC
 --##       20160329 - 0.10 GMN Se incluye AL (ALCALA) en el filtro HAYA
+--##       20160556 - 0.11 JTD nueva marca Haya 'CA'
 --##########################################
 --*/
 
@@ -360,7 +361,7 @@ BEGIN
                and cnt.dd_ges_id = b.dd_ges_id 
                and cnt.dd_cre_id = r.dd_cre_id
                and b.dd_ges_codigo = ''HAYA'' 
-               and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''AL'') ) MARCA
+               and r.dd_cre_codigo  in (''EX'',''CN'',''IM'',''AR'',''MA'',''AL'',''CA'') ) MARCA
      WHERE MAE.CD_PROCEDIMIENTO = PRC.CD_PROCEDIMIENTO
        AND PRC.CD_PROCEDIMIENTO = MARCA.CD_PROCEDIMIENTO');
 

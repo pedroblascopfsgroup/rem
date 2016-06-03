@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
@@ -30,6 +32,8 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 
 	@Autowired
 	private RestClientApi restClientApi;
+	
+	protected final Log logger = LogFactory.getLog(getClass());
 	
 	private static final String USUARIO_PATH = "usuario=";
 	private static final String PASSWORD_PATH = "password=";
@@ -75,6 +79,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 				throw new GestorDocumentalException(respuesta.getMensajeError());
 			}
 		}catch(Exception e) {
+			logger.error("error documentosExpediente ", e);
 			return new RespuestaDocumentosExpedientes();
 		}
 		return respuesta;
@@ -121,6 +126,7 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 				throw new GestorDocumentalException(respuesta.getMensajeError());
 			}
 		}catch(Exception e) {
+			logger.error("error crearDocumento ", e);
 			return null;
 		}
 		return respuesta;

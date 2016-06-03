@@ -58,6 +58,9 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
+		} catch (Exception e) {
+			output = null;
+			logger.error("No se puede conectar con el MAESTRO_ACTIVOS ", e);
 		}
 		return GDActivoOutputAssembler.outputToDtoActivo(output);
 	}
@@ -88,6 +91,9 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			}
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
+		} catch (Exception e) {
+			output = null;
+			logger.error("No se puede conectar con el MAESTRO_PERSONAS ", e);
 		}
 		return GDPersonaOutputAssembler.outputToDtoPersona(output);
 	}

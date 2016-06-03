@@ -638,7 +638,7 @@ public class AdjuntoHayaManager {
 			}
 			return respuesta.getDocumentos();
 		} catch (GestorDocumentalException e) {
-			logger.error("getAdjuntosConBorradoByPrcId error: " + e);
+			logger.error("documentosExpediente error: " + e);
 		}
 		return null;
 	}
@@ -658,9 +658,7 @@ public class AdjuntoHayaManager {
 					creando = true;					
 				}
 			} catch (GestorDocumentalException e) {
-				if (!e.getMessage().contains(idAsunto)) {
-					e.printStackTrace();
-				}
+				logger.error("crearPropuesta error: " + e);
 			}		
 		}
 		return creando;
@@ -798,10 +796,9 @@ public class AdjuntoHayaManager {
 		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
 		try {
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
-			if(respuesta == null) {
-				
+			if(respuesta != null) {
+				uploadDoc(tipoEntidad, uploadForm, new Long(respuesta.getIdDocumento()));				
 			}
-			uploadDoc(tipoEntidad, uploadForm, new Long(respuesta.getIdDocumento()));
 		} catch (GestorDocumentalException e) {
 			logger.error("upload error: " + e);
 		}

@@ -39,7 +39,7 @@
 	
 	var perfil = app.creaDblSelect(perfilDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
-		 ,{width:50,<app:test id="perfil" />});
+		 ,{width:50});
 	
 	<pfsforms:ddCombo name="concursos"
 		labelKey="plugin.config.despachoExternoExtras.field.concursos"
@@ -77,7 +77,7 @@
 	
 	var contratoVigor = app.creaDblSelect(contratosDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'
-		 ,{width:100,height:80,<app:test id="contratoVigor" />});
+		 ,{width:100,height:80});
 	 
 	<pfsforms:ddCombo name="servicioIntegral"
 		labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral"
@@ -108,7 +108,7 @@
 	
 	var relacionBankia = app.creaDblSelect(relacionBankiaDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
-		 ,{width:100,height:120,<app:test id="relacionBankia" />});
+		 ,{width:100,height:120});
 
 	<pfsforms:ddCombo name="tieneAsesoria"
 		labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria"

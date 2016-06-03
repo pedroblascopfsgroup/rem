@@ -774,18 +774,17 @@ BEGIN
     using (select distinct CNT_ID
             from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex,
                  '||V_DATASTAGE||'.PRC_CEX pcex, 
-                 tmp_H_PRE pre, 
-                 (SELECT distinct PCO.PRC_ID
+                 (select PRC_ID
+                    from '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS 
+                    where trunc(FECHACREAR) <= '''||fecha||''' and BORRADO = 0) pre, 
+                 (SELECT PCO.PRC_ID
                      FROM '||V_DATASTAGE||'.PCO_PRC_PROCEDIMIENTOS PCO, 
-                          '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP,
-                          '||V_DATASTAGE||'.DD_PCO_PRC_ESTADO_PREPARACION PCE
+                          '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP HEP
                       WHERE PCO.PCO_PRC_ID = HEP.PCO_PRC_ID
-                        AND HEP.DD_PCO_PEP_ID = PCE.DD_PCO_PEP_ID 
-                        AND PCE.DD_PCO_PEP_CODIGO = ''FI''
+                        AND trunc(PCO.FECHACREAR) <= '''||fecha||''' and PCO.BORRADO = 0
+						AND HEP.DD_PCO_PEP_ID = 5 
                         AND PCO_PRC_HEP_FECHA_FIN IS NULL) a
-             where pre.PROCEDIMIENTO_ID(+) = pcex.PRC_ID
-                and pre.PROCEDIMIENTO_ID is not null
-                and pre.DIA_ID(+) = '''||fecha||''' 
+             where pre.PRC_ID = pcex.PRC_ID
                 and cex.CEX_ID(+) = pcex.CEX_ID
                 and cex.CEX_ID is not null
                 and PCEX.PRC_ID = a.PRC_ID(+)
@@ -793,7 +792,7 @@ BEGIN
           ) hprc
     on (h.CONTRATO_ID = hprc.CNT_ID)
     when matched then update set h.PERIMETRO_GES_PRE_ID = 1
-    where h.DIA_ID = '''||fecha||'''';
+    ';
     commit;
     
     

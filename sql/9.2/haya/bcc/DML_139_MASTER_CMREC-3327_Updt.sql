@@ -80,8 +80,7 @@ BEGIN
     DBMS_OUTPUT.put_line('[FIN PROCEDIMIENTO]-------------CMREC-3327-----------'); 
     DBMS_OUTPUT.put_line(ERR_MSG);
     ROLLBACK;
-    RAISE;   
-    
+    RAISE;     
 END;
 /
 EXIT;

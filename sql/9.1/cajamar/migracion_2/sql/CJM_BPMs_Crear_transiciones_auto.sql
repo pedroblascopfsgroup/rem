@@ -53,7 +53,7 @@ V_TEXT1:= 'insert into '||V_ESQUEMA_M||'.jbpm_transition (id_, name_, processdef
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition aux on nd.id_ = aux.from_ ' ||
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition tr on nd.id_ = tr.from_ and tr.name_ = ''activarProrroga'' ' ||
 	'where tar.borrado = 0 and (tar.tar_tarea_finalizada is null or tar.tar_tarea_finalizada = 0) and tar.prc_id is not null ' ||
-	'    and tap.tap_autoprorroga = 1 and tr.id_ is null ' ||
+	'     and tr.id_ is null ' ||
 	'group by nd.id_,nd.processdefinition_)';
 execute immediate V_TEXT1;
 
@@ -72,7 +72,7 @@ V_TEXT1:= 'insert into '||V_ESQUEMA_M||'.jbpm_transition (id_, name_, processdef
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition aux on nd.id_ = aux.from_ ' ||
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition tr on nd.id_ = tr.from_ and tr.name_ = ''aplazarTareas'' ' ||
 	'where tar.borrado = 0 and (tar.tar_tarea_finalizada is null or tar.tar_tarea_finalizada = 0) and tar.prc_id is not null ' ||
-	'    and tap.tap_autoprorroga = 1 and tr.id_ is null ' ||
+	'     and tr.id_ is null ' ||
 	'group by nd.id_,nd.processdefinition_)';
 execute immediate V_TEXT1;
 
@@ -91,7 +91,7 @@ V_TEXT1:= 'insert into '||V_ESQUEMA_M||'.jbpm_transition (id_, name_, processdef
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition aux on nd.id_ = aux.from_ ' ||
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition tr on nd.id_ = tr.from_ and tr.name_ = ''paralizarTareas'' ' ||
 	'where tar.borrado = 0 and (tar.tar_tarea_finalizada is null or tar.tar_tarea_finalizada = 0) and tar.prc_id is not null ' ||
-	'    and tap.tap_autoprorroga = 1 and tr.id_ is null ' ||
+	'     and tr.id_ is null ' ||
 	'group by nd.id_,nd.processdefinition_)';
 execute immediate V_TEXT1;
 
@@ -110,13 +110,13 @@ V_TEXT1:= 'insert into '||V_ESQUEMA_M||'.jbpm_transition (id_, name_, processdef
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition aux on nd.id_ = aux.from_ ' ||
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition tr on nd.id_ = tr.from_ and tr.name_ = ''activarTareas'' ' ||
 	'where tar.borrado = 0 and (tar.tar_tarea_finalizada is null or tar.tar_tarea_finalizada = 0) and tar.prc_id is not null ' ||
-	'    and tap.tap_autoprorroga = 1 and tr.id_ is null ' ||
+	'     and tr.id_ is null ' ||
 	'group by nd.id_,nd.processdefinition_)';
 execute immediate V_TEXT1;
 
 DBMS_OUTPUT.PUT_LINE('[INSERT transicion activarAlerta...]');
 V_TEXT1:= 'insert into '||V_ESQUEMA_M||'.jbpm_transition (id_, name_, processdefinition_, from_, to_, fromindex_) ' ||
-	'select '||V_ESQUEMA_M||'.hibernate_sequence.nextval id_, ''activarTareas'' name_, pd processdefinition_, nd from_, nd to_, (max_fromindex + 1) fromindex_ ' ||
+	'select '||V_ESQUEMA_M||'.hibernate_sequence.nextval id_, ''activarAlerta'' name_, pd processdefinition_, nd from_, nd to_, (max_fromindex + 1) fromindex_ ' ||
 	'from ( ' ||
 	'select nd.id_ nd, nd.processdefinition_ pd, max(aux.fromindex_) max_fromindex ' ||
 	'from '||V_ESQUEMA||'.tar_tareas_notificaciones tar ' ||
@@ -129,7 +129,7 @@ V_TEXT1:= 'insert into '||V_ESQUEMA_M||'.jbpm_transition (id_, name_, processdef
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition aux on nd.id_ = aux.from_ ' ||
 	'    left join '||V_ESQUEMA_M||'.jbpm_transition tr on nd.id_ = tr.from_ and tr.name_ = ''activarAlerta'' ' ||
 	'where tar.borrado = 0 and (tar.tar_tarea_finalizada is null or tar.tar_tarea_finalizada = 0) and tar.prc_id is not null ' ||
-	'    and tap.tap_autoprorroga = 1 and tr.id_ is null ' ||
+	'     and tr.id_ is null ' ||
 	'group by nd.id_,nd.processdefinition_)';
 execute immediate V_TEXT1;
 

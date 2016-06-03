@@ -3581,7 +3581,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 406 : T. Posesión interina (CAJAMAR): HC105_AlegacionesDisconformidad
     this.arrayCampos.push([
         {"xtype":'datefield',"name": "d_fecha", "fieldLabel": "Fecha escrito", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAlegaciones","fieldLabel":"Finaliza posesión",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboAlegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
+        ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAlegaciones","fieldLabel":"Presenta alegaciones",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboAlegaciones'+this.idFactoria,displayField:'descripcion',valueField:'codigo'} 
     ]);
     
     // id: 407 : T. Posesión interina (CAJAMAR): HC105_ConfirmaFechaVista

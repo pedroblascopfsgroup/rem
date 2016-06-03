@@ -119,16 +119,21 @@ public class GestorDocumentalServicioExpedientesManager implements GestorDocumen
 		serverRequest.setPath(getPathCrearPropuesta(crearPropuesta));
 		serverRequest.setMultipart(getMultipartCrearPropuesta(crearPropuesta));
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
-		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
-		try {
-			Thread.sleep(15000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			if (!respuesta.getMensajeError().contains("An item with the name")) {
-				throw new GestorDocumentalException(respuesta.getMensajeError());
+		RespuestaCrearExpediente respuesta = null;
+		try{
+			respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+			try {
+				Thread.sleep(15000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			if(!Checks.esNulo(respuesta.getCodigoError())) {
+				if (!respuesta.getMensajeError().contains("An item with the name")) {
+					throw new GestorDocumentalException(respuesta.getMensajeError());
+				}
+			}
+		}catch(Exception e) {
+			return null;
 		}
 		return respuesta;
 	}

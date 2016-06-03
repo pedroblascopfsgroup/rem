@@ -55,23 +55,27 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 		serverRequest.setMethod(RestClientManager.METHOD_GET);
 		serverRequest.setPath(getPathDocExp(cabecera, docExpDto));
 		serverRequest.setResponseClass(RespuestaDocumentosExpedientes.class);
-		RespuestaDocumentosExpedientes respuesta = (RespuestaDocumentosExpedientes) getResponse(serverRequest);
-
-		int mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
-		int vecesIntento = 0;
-		while(mantenerEspera >= 0 && vecesIntento < 5) {
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		RespuestaDocumentosExpedientes respuesta = new RespuestaDocumentosExpedientes();
+		try{
+			respuesta = (RespuestaDocumentosExpedientes) getResponse(serverRequest);
+			int mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+			int vecesIntento = 0;
+			while(mantenerEspera >= 0 && vecesIntento < 5) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				respuesta = (RespuestaDocumentosExpedientes) restClientApi.getResponse(serverRequest);
+				mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+				vecesIntento++;
+			}			
+			
+			if(!Checks.esNulo(respuesta.getCodigoError())) {
+				throw new GestorDocumentalException(respuesta.getMensajeError());
 			}
-			respuesta = (RespuestaDocumentosExpedientes) restClientApi.getResponse(serverRequest);
-			mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
-			vecesIntento++;
-		}			
-	
-		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+		}catch(Exception e) {
+			return new RespuestaDocumentosExpedientes();
 		}
 		return respuesta;
 	}
@@ -97,23 +101,27 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 		serverRequest.setPath(getPathCrearDoc(cabecera));
 		serverRequest.setMultipart(getMultipartCrearDocumento(crearDoc));
 		serverRequest.setResponseClass(RespuestaCrearDocumento.class);
-		RespuestaCrearDocumento respuesta = (RespuestaCrearDocumento) getResponse(serverRequest);
-		
-		int mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
-		int vecesIntento = 0;
-		while(mantenerEspera >= 0 && vecesIntento < 5) {
-			try {
-				Thread.sleep(10000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		RespuestaCrearDocumento respuesta = null;
+		try{
+			respuesta = (RespuestaCrearDocumento) getResponse(serverRequest);
+			int mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+			int vecesIntento = 0;
+			while(mantenerEspera >= 0 && vecesIntento < 5) {
+				try {
+					Thread.sleep(10000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				respuesta = (RespuestaCrearDocumento) restClientApi.getResponse(serverRequest);
+				mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
+				vecesIntento++;
 			}
-			respuesta = (RespuestaCrearDocumento) restClientApi.getResponse(serverRequest);
-			mantenerEspera = respuesta.getMensajeError().indexOf(EXCEPTION_TIEMPO_ESPERA_CREAR_SERVICIO);
-			vecesIntento++;
-		}
-		
-		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			
+			if(!Checks.esNulo(respuesta.getCodigoError())) {
+				throw new GestorDocumentalException(respuesta.getMensajeError());
+			}
+		}catch(Exception e) {
+			return null;
 		}
 		return respuesta;
 	}

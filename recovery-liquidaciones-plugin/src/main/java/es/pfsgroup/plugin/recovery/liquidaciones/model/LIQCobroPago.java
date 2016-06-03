@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -23,14 +24,10 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.cobropago.model.CobroPago;
 import es.capgemini.pfs.cobropago.model.DDEstadoCobroPago;
 import es.capgemini.pfs.cobropago.model.DDSubtipoCobroPago;
-
-
 import es.capgemini.pfs.cobropago.model.DDTipoCobroPago;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableConceptoEntrega;
 import es.pfsgroup.recovery.hrebcc.model.DDAdjContableTipoEntrega;
 
@@ -168,6 +165,9 @@ public class LIQCobroPago implements Auditable, Serializable{
     @ManyToOne
     @JoinColumn(name = "DD_TCP_ID")
     private DDTipoCobroPago tipoCobroPago;
+    
+    @Transient
+    private Float nominal;
 
 	public Long getId() {
 		return id;
@@ -447,6 +447,14 @@ public class LIQCobroPago implements Auditable, Serializable{
 
 	public void setTipoCobroPago(DDTipoCobroPago tipoCobroPago) {
 		this.tipoCobroPago = tipoCobroPago;
+	}
+
+	public Float getNominal() {
+		return nominal;
+	}
+
+	public void setNominal(Float nominal) {
+		this.nominal = nominal;
 	}
     
 	

@@ -50,3 +50,7 @@ done
 rm *.zip
 cd $LOCAL_PATH
 cp scripts/batch/*.sh /recovery/batch-server/programas/
+mkdir -p /recovery/transferencia/integration/contingency/input
+mkdir -p /recovery/transferencia/integration/contingency/output
+chmod a+rwx /recovery/transferencia/integration/contingency/input
+chmod a+rwx /recovery/transferencia/integration/contingency/output

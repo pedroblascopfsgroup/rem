@@ -25,7 +25,7 @@ mv $QUEUE_DIR_OUTPUT/$QUEUE_NAME/*.msg $QUEUE_DIR_OUTPUT/$QUEUE_NAME/log/$YEAR/$
 mv $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/**/*.msg $QUEUE_DIR_OUTPUT/$QUEUE_NAME/log/$YEAR/$MONTH/$DAY/manual/
 
 # Compress
-zip -j MESSAGES-$ENTITY_CODE-$YEAR$MONTH$DAY.zip $TMP_DIR/*.msg
+zip -j MESSAGES-$ENTITY_CODE.zip $TMP_DIR/*.msg
 
 # Cleaning
 rm -rf $TMP_DIR

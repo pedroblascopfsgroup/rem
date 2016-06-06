@@ -111,7 +111,6 @@ docCompleta.on('select', function() {
 		fechaEnvio.setDisabled(false);
 		tipoProblema.allowBlank = false;
 		tipoProblema.setDisabled(false);
-		procedimientoPropuesto.allowBlank = false;
 		
 		if(procedimientoPropuesto.getValue() != '') { 
 			procedimientoIniciar.allowBlank = true;
@@ -126,7 +125,6 @@ docCompleta.on('select', function() {
 		tipoProblema.allowBlank = true;
 		tipoProblema.setDisabled(true);
 		tipoProblema.setValue('');
-		procedimientoPropuesto.allowBlank = false;
 		procedimientoIniciar.allowBlank = false;
 		if(tipoProblema.getValue() == cambioProcedimiento) {
 			procedimientoIniciar.readOnly = false;

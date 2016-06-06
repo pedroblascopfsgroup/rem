@@ -2,11 +2,11 @@
 	
 	<%-- PRODUCTO-1272 Campos visibles solo para BANKIA por ahora --%>
 	
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.contratoVigor" label="**Contrato en vigor" name="contratoVigor" value="${despachoExtras.contratoVigor}" readOnly="true" width="230" labelWidth="180"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral" label="**Servicio integral" name="servicioIntegral" value="${despachoExtras.servicioIntegral}" readOnly="true" width="230" labelWidth="180"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.concursos" label="**Concursos" name="concursos" value="${despachoExtras.clasifDespachoConcursos}" readOnly="true" labelWidth="80"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.perfil" label="**Perfil" name="perfil" value="${despachoExtras.clasifDespachoPerfil}" readOnly="true" labelWidth="80"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.codEstAse" label="**Estado letrado" name="codEstAse" value="${despachoExtras.codEstAse}" readOnly="true" width="230" labelWidth="180"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.contratoVigor" label="**Contrato en vigor" name="contratoVigor" value="${despachoExtras.contratoVigor}" readOnly="true" width="200" labelWidth="120"	/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral" label="**Servicio integral" name="servicioIntegral" value="${despachoExtras.servicioIntegral}" readOnly="true" width="200" labelWidth="120"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.concursos" label="**Concursos" name="concursos" value="${despachoExtras.clasifDespachoConcursos}" readOnly="true" labelWidth="120"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.perfil" label="**Perfil" name="perfil" value="${despachoExtras.clasifDespachoPerfil}" readOnly="true" labelWidth="120"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.codEstAse" label="**Estado letrado" name="codEstAse" value="${despachoExtras.codEstAse}" readOnly="true" width="200" labelWidth="120"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.oficinaContacto" label="**Oficina Contacto" name="oficinaContacto" value="${despachoExtras.oficinaContacto}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.entidadContacto" label="**Entidad Contacto" name="entidadContacto" value="${despachoExtras.entidadContacto}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.entidadLiquidacion" label="**Entidad liquidacion" name="entidadLiquidacion" value="${despachoExtras.entidadLiquidacion}" readOnly="true" width="230" labelWidth="180"/>
@@ -23,15 +23,15 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.cuentaEntregas" label="**Cuenta entregas" name="cuentaEntregas" value="${despachoExtras.cuentaEntregas}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.centroRecuperacion" label="**Centro Recuperacion" name="centroRecuperacion" value="${despachoExtras.centroRecuperacion}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria" label="**Asesoria" name="tieneAsesoria" value="${despachoExtras.asesoria}" readOnly="true" width="230" labelWidth="180"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.impuesto" label="**impuesto" name="impuesto" value="${despachoExtras.ivaDescripcion}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.irpfAplicado" label="**irpfAplicado" name="irpfAplicado" value="${despachoExtras.irpfAplicado}" readOnly="true" width="230" labelWidth="180"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fechaServicioIntegral" label="**Fecha SI" name="fechaServicioIntegral" value="${despachoExtras.fechaServicioIntegral}" readOnly="true" width="230" labelWidth="180"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fechaServicioIntegral" label="**Fecha SI" name="fechaServicioIntegral" value="${despachoExtras.fechaServicioIntegral}" readOnly="true" width="200" labelWidth="120"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.relacionBankia" label="**Relacion Bankia" name="relacionBankia" value="${despachoExtras.relacionBankia}" readOnly="true" width="230" labelWidth="180"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.impuesto" label="**impuesto" name="impuesto" value="${despachoExtras.ivaDescripcion}" readOnly="true" width="200" labelWidth="120"/>
 	
 	
 	var clasificacionFieldSet = new Ext.form.FieldSet({
 		autoHeight:'true'
-		,width:190
+		,width:220
 		,style:'padding:5px'
  		,border:true
 		//,layout : 'table'
@@ -44,10 +44,25 @@
 		,items : [concursos,perfil]
 	});	
 	
+	var servicioIntegralFieldSet = new Ext.form.FieldSet({
+		autoHeight:'true'
+		,width:220
+		,style:'padding:5px'
+ 		,border:true
+		//,layout : 'table'
+		,layoutConfig:{
+			columns:1
+		}
+		,title : '<s:message code="plugin.config.despachoExternoExtras.field.servicioIntegral" text="**Servicio Integral" />'
+		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:170}
+		//,items : [{items:concursos},{items:perfil}]
+		,items : [servicioIntegral, fechaServicioIntegral]
+	});	
 	
 	
 	
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.provincias" label="**Provincias" name="provinciasGrid" value="${ambitoDespachoExtras[0].descripcion}" readOnly="true" width="150" labelWidth="80"/>	
+	
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.provincias" label="**Provincias" name="provinciasGrid" value="${ambitoDespachoExtras[0].descripcion}" readOnly="true" width="200" labelWidth="120"/>	
 	<%-- 
 	PRODUCTO-1274 ; BKREC-2291
 
@@ -124,9 +139,9 @@
 			on_success="recargar" />
 	 --%>
 	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
-		<pfs:items items="clasificacionFieldSet, provinciasGrid"/>
-		<pfs:items items="contratoVigor, servicioIntegral, codEstAse, oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion" />
-		<pfs:items items="entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+		<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, codEstAse, impuesto, servicioIntegralFieldSet"/>
+		<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
+		<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
 		
 	</pfs:panel>	
 </pfslayout:tabpage>

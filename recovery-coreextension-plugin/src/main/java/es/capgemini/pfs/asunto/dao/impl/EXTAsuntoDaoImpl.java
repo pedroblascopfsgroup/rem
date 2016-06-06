@@ -1398,7 +1398,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		String  subSelect = "select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu "
 				+ "where asu.auditoria.borrado=0 and gaa.asunto = asu.id and "
-				+ " gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
+				+ "gaa.tipoGestor = (select tge.id from EXTDDTipoGestor tge where tge.codigo='GEXT' and tge.auditoria.borrado=0) and "
+				+ "gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
 		
 		if(!Checks.esNulo(dto.getTipoDocumento())) {
 			subSelect += "UPPER(dee.tipoDocumento.descripcion) like UPPER('%"+ dto.getTipoDocumento() +"%') and ";
@@ -1491,6 +1492,26 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
 			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
+		if(!Checks.esNulo(dto.getImpuesto())) {
+			subSelect += "dee.descripcionIVA = '"+ getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto()) +"' and ";
+		}
+		if(!Checks.esNulo(dto.getFechaAltaSIDesde())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaSIDesde());
+				subSelect += "dee.fechaServicioIntegral >= to_Date('" + dto.getFechaAltaSIDesde() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaSIDesde del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getFechaAltaSIHasta())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaSIHasta());
+				subSelect += "dee.fechaServicioIntegral <= to_Date('" + dto.getFechaAltaSIHasta() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaSIHasta del letrado: ", e);
+			}
+		}
+		
 		//Quito el �ltimo 'and' de la consulta ya que va a sobrar
 		subSelect = subSelect.substring(0, subSelect.length() -4);
 		subSelect += ")";

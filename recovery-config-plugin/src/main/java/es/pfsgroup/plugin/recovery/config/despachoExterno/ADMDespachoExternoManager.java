@@ -752,7 +752,7 @@ public class ADMDespachoExternoManager {
 			}
 		}
 		//Si no es de Tipo Letrado no aplica
-		if(dto.getTipoDespacho() != getIdTipoLetrado()) {
+		if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
 			return desExtras;
 		}
 		
@@ -912,7 +912,19 @@ public class ADMDespachoExternoManager {
 		
 		return idLetrado;
 	}
-	
+	@BusinessOperation("ADMDespachoExternoManager.getIdTipoProcurador")
+	public Long getIdTipoProcurador() {
+		Long idLetrado = null;
+		
+		for(DDTipoDespachoExterno tipo : tipoDespachoDao.getList()) {
+			if(tipo.getCodigo().equals("2")) {
+				return tipo.getId();
+			}
+		}
+		
+		return idLetrado;
+	}
+
 	/**
 	 * Transforma el dto en la entidad DespachoExternoExtras, el dto incluso tanto despacho como despachoExtras, pero
 	 * este metodo solo coge la parte que se guardará en DES_DESPACHO_EXTRAS
@@ -996,12 +1008,29 @@ public class ADMDespachoExternoManager {
 		else {
 			desExtras.setServicioIntegral(null);
 		}
+		if (!Checks.esNulo(dto.getFechaServicioIntegral())) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+				Date fechaServicioIntegral = formatter.parse(dto.getFechaServicioIntegral());
+				desExtras.setFechaServicioIntegral(fechaServicioIntegral);
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha Alta ", e);
+			}
+		}
+		else {
+			desExtras.setFechaServicioIntegral(null);
+		}
+		
 		if(!Checks.esNulo(dto.getContratoVigor())) {
 			desExtras.setContratoVigor(Integer.parseInt(
 					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
 		}
 		else {
 			desExtras.setContratoVigor(null);
+		}
+		if(!Checks.esNulo(dto.getImpuesto())) {
+			desExtras.setDescripcionIVA(Integer.parseInt(
+					this.getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto())));
 		}
 		
 		return desExtras;

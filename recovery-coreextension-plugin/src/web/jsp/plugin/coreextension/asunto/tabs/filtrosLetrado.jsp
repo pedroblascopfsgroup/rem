@@ -83,6 +83,27 @@
 		labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral"
 		label="**servicioIntegral" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
 		
+	<pfs:datefield labelKey="plugin.coreextension.multigestor.fechaDesde" label="**Fecha alta desde" name="fechaAltaSIDesde" />
+	<pfs:datefield labelKey="plugin.coreextension.multigestor.fechaHasta" label="**Fecha alta hasta" name="fechaAltaSIHasta" />
+	fechaAltaSIDesde.setDisabled(true);
+	fechaAltaSIHasta.setDisabled(true);
+	var fechaAltaSIFieldSet = new Ext.form.FieldSet({
+		title : '<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.fechaIntegral.text" text="**Fecha Alta SI" />'
+		,layout:'column'
+		,autoHeight:true
+		,border:true
+		,bodyStyle:'padding:3px;cellspacing:20px;'
+		,viewConfig : { columns : 1 }
+		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:300 }
+		,items : [{items:[servicioIntegral, fechaAltaSIDesde, fechaAltaSIHasta]}]
+		,doLayout:function() {
+				var margin = 40;
+				this.setWidth(340-margin);
+				Ext.Panel.prototype.doLayout.call(this);
+		}
+	});	
+		
+		
 	var codEstAseStore = 
 		<json:array name="ddCodEstAse" items="${mapasDespExtras[2]}" var="d">	
 			 	  <json:property name="descripcion" value="${d}" />
@@ -108,11 +129,41 @@
 	
 	var relacionBankia = app.creaDblSelect(relacionBankiaDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
-		 ,{width:100,height:120});
+		 ,{width:100,height:110});
 
 	<pfsforms:ddCombo name="tieneAsesoria"
 		labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria"
 		label="**tieneAsesoria" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
+		
+	var impuestoStore = 
+		<json:array name="ddImpuesto" items="${mapasDespExtras[3]}" var="d">	
+			 	  <json:property name="descripcion" value="${d}" />
+		</json:array>;
+	
+	var impuesto=new Ext.form.ComboBox({
+		store: impuestoStore
+		,triggerAction : 'all'
+		,mode:'local'
+		//,labelSeparator:""
+		,fieldLabel:'<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.impuesto.text" text="**Impuesto" />'
+		,width:150
+	});		
+	
+		
+	servicioIntegral.on('select',function() {
+
+		if(servicioIntegral.getValue() != 1) {
+			fechaAltaSIDesde.setValue();
+			fechaAltaSIHasta.setValue();
+			fechaAltaSIDesde.setDisabled(true);
+			fechaAltaSIHasta.setDisabled(true);
+		}
+		else {
+			fechaAltaSIDesde.setDisabled(false);
+			fechaAltaSIHasta.setDisabled(false);
+		}
+	});	
+		
 
 	var validarEmptyForm = function(){
 	
@@ -186,6 +237,15 @@
 		if(contratoVigor.getValue() != '') {
 			return true;
 		}
+		if (fechaAltaSIHasta.getValue() != '' ){
+			return true;
+		}
+		if (fechaAltaSIDesde.getValue() != '' ){
+			return true;
+		}
+		if(impuesto.getValue() != '') {
+			return true;
+		}
 			
 		return false;
 	}catch(err){
@@ -224,6 +284,9 @@
 			,cuentaEntregas: cuentaEntregas.getValue()
 			,centroRecuperacion: centroRecuperacion.getValue()
 			,asesoria: tieneAsesoria.getValue()
+			,fechaAltaSIHasta: fechaAltaSIHasta.getValue()
+			,fechaAltaSIDesde: fechaAltaSIDesde.getValue()
+			,impuesto: impuesto.getValue()
 		};
 	};
 
@@ -233,7 +296,7 @@
 		,layout:'table'
 		,title : '<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.title" text="**Filtro letrados" />'
 		,id: 'tabLetradosBuscadorAsuntos'
-		,layoutConfig:{columns:4}
+		,layoutConfig:{columns:3}
 	    ,header: false
 	    ,border:false
 		//,titleCollapse : true
@@ -241,10 +304,10 @@
 		,bodyStyle:'padding:5px;cellspacing:20px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
 		,items:[ 
-				{items: [ contratoVigor, servicioIntegral, codEstAse, tieneAsesoria, relacionBankia]}
-				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones ]}
-				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion]}
-				,{items: [  clasifDespachoFieldSet, comboProvincias ]}
+				{items: [ contratoVigor, relacionBankia, codEstAse, tieneAsesoria, impuesto, clasifDespachoFieldSet]}
+				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, fechaAltaSIFieldSet ]}
+				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, comboProvincias]}
+				
 		]
 		,listeners:{	
 			getParametros: function(anadirParametros, hayError) {
@@ -283,6 +346,9 @@
     		           ,relacionBankia
     		           ,perfil
     		           ,concursos
+    		           ,impuesto
+    		           ,fechaAltaSIDesde
+    		           ,fechaAltaSIHasta
 	           ]); 
     		}
 		}

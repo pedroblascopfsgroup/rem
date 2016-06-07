@@ -757,11 +757,11 @@ public class AdjuntoHayaManager {
 			claseExpe = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PERSONA_JURIDICA;
 		}
 		if(Checks.esNulo(getIdClienteHaya(persona))) {
-			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
 		}else{
 			RespuestaCrearDocumento respuesta = uploadGestorDoc(getIdClienteHaya(persona), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, uploadForm.getParameter("comboTipoDoc"));			
 			if(respuesta == null) {
-				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
 			}
 		}
 
@@ -776,11 +776,11 @@ public class AdjuntoHayaManager {
 	public String uploadContrato(WebFileItem uploadForm) {
 		Contrato contrato = contratoDao.get(Long.parseLong(uploadForm.getParameter("id")));
 		if(Checks.esNulo(getIdActivoHaya(contrato))) {
-			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
 		}else{
 			RespuestaCrearDocumento respuesta = uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));
 			if(respuesta == null) {
-				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
 			}
 		}
 		return null;

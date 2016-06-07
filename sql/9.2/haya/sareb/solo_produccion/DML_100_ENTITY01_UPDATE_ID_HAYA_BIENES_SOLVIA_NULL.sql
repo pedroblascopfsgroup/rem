@@ -43,7 +43,7 @@ using
 select ID_BIEN_RECOVERY from PFSRECOVERY.TMP_BIENES_SOLVIA
 )b
 on (a.bie_id=b.id_bien_recovery)
-when matched then update set bie_entidad_id=null;';
+when matched then update set bie_entidad_id=null';
     
     EXECUTE IMMEDIATE V_MSQL;
     

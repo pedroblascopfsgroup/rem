@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1901
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --##
 --## Finalidad: Actualizacion masiva bie:numero_activo
 --## INSTRUCCIONES: 

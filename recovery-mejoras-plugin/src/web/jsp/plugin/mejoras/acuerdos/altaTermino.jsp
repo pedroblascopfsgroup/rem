@@ -110,7 +110,7 @@
 				    		var campo = app.creaText(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo , '', {id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo, allowBlank:!camposDynamics.camposTerminoAcuerdo[i].obligatorio});
 				    		break;
 				    	case 'fecha':
-				    		var campo = new Ext.form.DateField({
+				    		var campo = new Ext.ux.form.XDateField({
 											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,name: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,value : ''

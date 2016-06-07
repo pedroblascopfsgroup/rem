@@ -877,6 +877,12 @@
 	panel.getValue = function() {}
 
 	panel.setValue = function(){
+		borrar.disable();
+		editarDescripcionAdjuntoExpediente.disable();
+		editarDescripcionAdjuntoPersona.disable();
+		editarDescripcionAdjuntoContrato.disable();
+		subirAdjuntoPersona.disable();
+		subirAdjuntoContrato.disable();
 		var data = entidad.get("data");
 		entidad.cacheOrLoad(data, store, {id : panel.getExpedienteId()} ); 
 		entidad.cacheOrLoad(data, storePersonas, {id : panel.getExpedienteId()} ); 

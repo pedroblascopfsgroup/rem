@@ -416,9 +416,16 @@
   entidad.setLabel('extra5',d.extra5); 
   entidad.setLabel('extra6',d.extra6); 
   
-  entidad.setLabel('numextra1',d.numextra1);
-  <%-- entidad.setLabel('numextra2',d.numextra2);--%>
-  entidad.setLabel('numextra3',d.numextra3);
+  <c:if test="${usuario.entidad.codigo eq 'HCJ'}">
+  	entidad.setLabel('numextra1',app.format.moneyRenderer(''+d.numextra1));
+  	entidad.setLabel('numextra3',app.format.moneyRenderer(''+d.numextra1));
+  </c:if>
+  
+  <c:if test="${usuario.entidad.codigo ne 'HCJ'}">
+  	entidad.setLabel('numextra1',d.numextra1);
+  	<%-- entidad.setLabel('numextra2',d.numextra2);--%>
+  	entidad.setLabel('numextra3',d.numextra3);
+  </c:if>
   entidad.setLabel('dateextra1',d.dateextra1);
   entidad.setLabel('charextra1',d.charextra1);
   entidad.setLabel('charextra2',d.charextra2);

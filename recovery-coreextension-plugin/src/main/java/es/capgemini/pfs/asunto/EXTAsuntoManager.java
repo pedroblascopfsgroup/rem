@@ -2050,9 +2050,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			
 			dtoDecisionProcedimiento.setStrEstadoDecision("02");
 
-			
 			DecisionProcedimiento decisionProcedimiento = decisionProcedimientoManager.getInstance(proc.getId());
-
+			
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
@@ -2110,6 +2109,12 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			}
 
 			asunto.setEstadoAsunto(estado);
+			
+			DDCausaDecisionFinalizar causaDecisionFinalizar = new DDCausaDecisionFinalizar();
+			causaDecisionFinalizar=genericDao.get(DDCausaDecisionFinalizar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", getCodigoCausaDecisionByDescripcion(dto.getMotivoFinalizacion())));
+			causaDecisionFinalizar.setId(causaDecisionFinalizar.getId());
+			asunto.setCausaDecisionFinalizar(causaDecisionFinalizar);
+			
 			try {
 				asuntoDao.save(asunto);
 

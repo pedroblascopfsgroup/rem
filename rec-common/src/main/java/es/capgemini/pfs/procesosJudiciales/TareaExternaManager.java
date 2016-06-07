@@ -125,12 +125,8 @@ public class TareaExternaManager {
             }
         } else {
             //Lanzamos el signal al token maestro
-        	try{
         		executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
-        	}
-        	catch(FrameworkException e){
-        		throw new BusinessOperationException("No es posible cancelar la tarea dado que faltan fechas requeridas en las tareas anteriores. Puede derivar en una nueva actuación si lo cree conveniente.");
-        	}
+        	
         }
     }
 

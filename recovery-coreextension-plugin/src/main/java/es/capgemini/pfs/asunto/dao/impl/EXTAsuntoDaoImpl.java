@@ -807,8 +807,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		//COMBO DECISIONFINALIZAR
 		
 		if(dto.getComboDecisionesFinalizacion()!=null && !dto.getComboDecisionesFinalizacion().equals("")){
-			hql.append(" and prc.id = dp.procedimiento");
-			hql.append(" and dp.causaDecisionFinalizar IN ("+getIdDecisionProcedimiento(dto.getComboDecisionesFinalizacion())+")");
+			//hql.append(" and prc.id = dp.procedimiento");
+			hql.append(" and asu.causaDecisionFinalizar.id IN ("+getIdDecisionProcedimiento(dto.getComboDecisionesFinalizacion())+")");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)
@@ -1492,7 +1492,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
 			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
-		//Quito el último 'and' de la consulta ya que va a sobrar
+		//Quito el ï¿½ltimo 'and' de la consulta ya que va a sobrar
 		subSelect = subSelect.substring(0, subSelect.length() -4);
 		subSelect += ")";
 		

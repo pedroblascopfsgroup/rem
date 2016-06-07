@@ -436,6 +436,11 @@
 				<value>PROC</value>
 			</set>
 		</property>
+		<property name="tiposGestorCentroProcura">
+			<set>
+				<value>CENTROPROCURA</value>
+			</set>
+		</property>
 		<property name="tipoGestorLetrado">
 			<set>
 				<value>GEXT</value>

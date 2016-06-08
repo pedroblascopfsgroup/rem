@@ -40,6 +40,7 @@ public class DtoBusquedaAsunto extends PaginationParamsImpl {
 
     public static final String SALIDA_XLS = "xls";
     public static final String SALIDA_LISTADO = "listado";
+    public static final int XLS_WAIT_TIME = 30000;
 
     
     

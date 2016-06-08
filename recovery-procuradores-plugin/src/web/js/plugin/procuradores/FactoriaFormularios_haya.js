@@ -4052,6 +4052,12 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
      ,{"xtype":'combo',"store":storeSINO,"name":"d_notPersonal","fieldLabel":"Notificación personal","autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_notPersonal'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}         
      ]);
 	
+    //id: 461 : Trámite de Adjudicación - HCJ : Registrar presentación en hacienda H005_RegistrarPresentacionHacienda
+    this.arrayCampos.push([
+     {"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+     ,{"xtype":'combo',"store":storeSINO,"name":"d_comboLiquidacion","fieldLabel":"Liquidación del testimonio","autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboLiquidacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}         
+     ]);
+    
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){
 			this.arrayCampos.push([]);

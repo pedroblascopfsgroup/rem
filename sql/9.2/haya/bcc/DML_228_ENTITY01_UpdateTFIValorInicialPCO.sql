@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-1869
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Quita la validacion del campo proc_propuesto en la tarea PCO_RegistrarTomaDec
+--## Finalidad: BPM - Actualiza el valor inicial de las tareas PCO_RegistrarTomaDec y PCO_ValidarCambioProc
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -36,7 +36,8 @@ DECLARE
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
 
-        T_TIPO_TFI('PCO_RegistrarTomaDec','5',null,null,'PRODUCTO-1869')
+        T_TIPO_TFI('PCO_RegistrarTomaDec','5','(valores[''PCO_RevisarExpedientePreparar''] !=null && valores[''PCO_RevisarExpedientePreparar''][''proc_iniciar''] !=null) ? valores[''PCO_RevisarExpedientePreparar''][''proc_iniciar''] : dameProcedimientoPropuesto()','PRODUCTO-1869')
+       ,T_TIPO_TFI('PCO_ValidarCambioProc','2','(valores[''PCO_RevisarExpedientePreparar''] !=null && valores[''PCO_RevisarExpedientePreparar''][''proc_iniciar''] !=null) ? valores[''PCO_RevisarExpedientePreparar''][''proc_iniciar''] : dameProcedimientoPropuesto()','PRODUCTO-1869')
 
         ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;
@@ -54,9 +55,8 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         IF V_NUM_TABLAS > 0 THEN        
         
-          V_SQL := 'UPDATE '||V_ESQUEMA||'.'||VAR_TABLENAME||' SET TFI_ERROR_VALIDACION=''' || REPLACE(TRIM(V_TMP_TIPO_TFI(3)),'''','''''') || ''',' ||
-          ' TFI_VALIDACION=''' || REPLACE(TRIM(V_TMP_TIPO_TFI(4)),'''','''''') || ''',' ||
-          ' USUARIOMODIFICAR=''' || REPLACE(TRIM(V_TMP_TIPO_TFI(5)),'''','''''') || ''',' ||
+          V_SQL := 'UPDATE '||V_ESQUEMA||'.'||VAR_TABLENAME||' SET TFI_VALOR_INICIAL=''' || REPLACE(TRIM(V_TMP_TIPO_TFI(3)),'''','''''') || ''',' ||
+          ' USUARIOMODIFICAR=''' || REPLACE(TRIM(V_TMP_TIPO_TFI(4)),'''','''''') || ''',' ||
           ' FECHAMODIFICAR=sysdate ' ||
           ' WHERE TAP_ID = (SELECT TAP_ID FROM ' || V_ESQUEMA || '.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||TRIM(V_TMP_TIPO_TFI(1))||''') and TFI_ORDEN = '||TRIM(V_TMP_TIPO_TFI(2));
       --DBMS_OUTPUT.PUT_LINE(V_SQL);

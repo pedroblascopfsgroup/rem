@@ -61,4 +61,6 @@ public interface CoreProjectContext {
 	public Map<String, String> getMapaRelacionBankia();
 	public Map<String, String> getMapaDescripcionIVA();
 	public Map<String, String> getMapaCodEstAse();
+		
+	Set<String> getTiposGestorCentroProcura();
 }

@@ -319,7 +319,7 @@
         ,handler: function() {
 			if(validarForm()|| (panelFiltros.validate && panelFiltros.validate())){
 				if(validaFechasVenc()){
-					
+					btnExportarXls.setDisabled(true)
 					conversionOperadores();
                     			var params ;
 			        	if(isBusqueda)
@@ -341,6 +341,8 @@
 					parametros['fechaVencDesdeOperador'] = operadorFechaDesde;
 					parametros['fechaVencimientoHasta'] = app.format.dateRenderer(fechaVencHasta.getValue());
 					parametros['fechaVencimientoHastaOperador'] = operadorFechaHasta;
+					parametros.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+					parametros.succesFunction=function(){btnExportarXls.setDisabled(false)}
 					
 					Ext.Ajax.request({
 						url: page.resolveUrl('tareanotificacion/exportacionTareasExcelCount')

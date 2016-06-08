@@ -515,6 +515,16 @@
 						</bean>
 					</list>
 				</entry>
+				<entry key="R_AD_REG_RES_HA">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_AD_REG_RES_HA</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>

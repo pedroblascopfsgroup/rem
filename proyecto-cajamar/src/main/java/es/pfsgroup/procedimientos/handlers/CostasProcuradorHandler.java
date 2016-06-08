@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.procedimientos.PROBaseActionHandler;
-import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 public class CostasProcuradorHandler extends PROBaseActionHandler {
 
@@ -19,12 +19,15 @@ public class CostasProcuradorHandler extends PROBaseActionHandler {
 	
 	@Autowired
 	private EXTAsuntoManager extAsuntoManager;
+	
+	@Autowired
+	private CoreProjectContext coreProjectContext;	
 
 	@Override
 	public void run(ExecutionContext executionContext) throws Exception {
 		Procedimiento prc = getProcedimiento(executionContext);
-		if(!Checks.esNulo(prc.getAsunto())){
-			if(extAsuntoManager.tieneProcurador(prc.getAsunto().getId())){	
+		if(!Checks.esNulo(prc.getAsunto())){ 
+			if(extAsuntoManager.tieneActorEnAsunto(prc.getAsunto().getId(), coreProjectContext.getTiposGestorCentroProcura())){	
 				executionContext.getToken().signal("avanzaConProcu");
 			}else{
 				executionContext.getToken().signal("avanza");

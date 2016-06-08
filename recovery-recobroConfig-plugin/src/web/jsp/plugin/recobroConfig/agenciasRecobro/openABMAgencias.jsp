@@ -72,9 +72,12 @@
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
+        			btnExportarXls.setDisabled(true)
 					var params=getParametros();
 					var flow='agencia/exportAgencia';
 	        		//var flow='recobroagencia/buscarAgencia';
+	        		params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+					params.succesFunction=function(){btnExportarXls.setDisabled(false)}
 	        		app.openBrowserWindow(flow,params);	
                 }
              }

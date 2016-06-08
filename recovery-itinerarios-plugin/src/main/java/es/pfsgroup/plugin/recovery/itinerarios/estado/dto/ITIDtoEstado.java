@@ -21,6 +21,7 @@ public class ITIDtoEstado extends WebDto{
 	private Long estadoTelecobro;
 	private Long decisionComiteAutomatico;
 	private Boolean telecobro;
+	private String permiteCancelar;
 	
 	public void setId(Long id) {
 		this.id = id;
@@ -93,6 +94,12 @@ public class ITIDtoEstado extends WebDto{
 	}
 	public String getSupervisorNombre() {
 		return supervisorNombre;
+	}
+	public String getPermiteCancelar() {
+		return permiteCancelar;
+	}
+	public void setPermiteCancelar(String permiteCancelar) {
+		this.permiteCancelar = permiteCancelar;
 	}
 	
 }

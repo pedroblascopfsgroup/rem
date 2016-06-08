@@ -398,6 +398,16 @@ var crearTerminosAsuntos=function(noPuedeModificar, esPropuesta, noPuedeEditarEs
 		var contratosIncluidos = transformParamInc();
 		var rec = grid.getStore().getAt(rowIndex);
 		idTerminoSeleccionado = rec.get('id');
+		
+		<%-- En caso de elegir una solucion hija de la solucion principal (las que no tienen tipo y subtipo informado)
+			Se busca, hasta obtener el id de la solucion padre --%>
+		var count = 1;
+		while(idTerminoSeleccionado == '') {
+			var aux = grid.getStore().getAt(rowIndex-count);
+			idTerminoSeleccionado = aux.get('id');
+			count++;
+		}
+		
 			//var ambito = entidad.id;
      	   	var w = app.openWindow({
 	          flow : 'mejacuerdo/openDetalleTermino'

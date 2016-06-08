@@ -531,6 +531,8 @@
 					var flow='expedientes/listadoExpedientesExcelDataDinamico';
                     
                     parametros['REPORT_NAME'] = 'busqueda.xls';
+                    parametros.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+					parametros.succesFunction=function(){Ext.getCmp('btnXLSExport').setDisabled(false)}
                     app.openBrowserWindow(flow,parametros);
 				} else {
 					panelFiltros.collapse(true);

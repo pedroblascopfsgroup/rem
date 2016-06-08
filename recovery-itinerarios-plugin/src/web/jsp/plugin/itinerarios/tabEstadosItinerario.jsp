@@ -19,6 +19,7 @@
 		<pfs:defineTextColumn name="gestor_nombre"/>
 		<pfs:defineTextColumn name="supervisor_nombre"/>
 		<pfs:defineTextColumn name="plazo"/>
+		<pfs:defineTextColumn name="permiteCancelarText"/>
 	</pfs:defineRecordType>
 	
 	<pfs:defineParameters name="itinerarioParams" paramId="${itinerario.id}"/>	
@@ -40,7 +41,8 @@
 			dataIndex="supervisor_nombre" caption="**Perfil del supervisor"/>
 		<pfs:defineHeader captionKey="plugin.itinerarios.estados.plazo" sortable="false" 
 			dataIndex="plazo" caption="**Plazo"/>
-		
+		<pfs:defineHeader captionKey="plugin.itinerarios.estados.permite.cancelar" sortable="false" 
+			dataIndex="permiteCancelarText" caption="**Cancelar expediente"/>
 	</pfs:defineColumnModel>
 	<%-- 
 	var recargar = function (){

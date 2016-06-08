@@ -13,6 +13,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private List<String> tiposPrcAdjudicados;
 	private Set<String> tiposGestorGestoria;
 	private Set<String> tiposGestorProcurador;
+	private Set<String> tiposGestorCentroProcura;
 	private Set<String> entidadesDesparalizacion;
 	private List<String> codigosDocumentosConFechaCaducidad;
 	private Set<String> tipoGestorLetrado;
@@ -234,5 +235,13 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	
 	public void setMapaCodEstAse(Map<String, String> mapaCodEstAse) {
 		this.mapaCodEstAse = mapaCodEstAse;
+	}
+
+	public Set<String> getTiposGestorCentroProcura() {
+		return tiposGestorCentroProcura;
+	}
+
+	public void setTiposGestorCentroProcura(Set<String> tiposGestorCentroProcura) {
+		this.tiposGestorCentroProcura = tiposGestorCentroProcura;
 	}
 }

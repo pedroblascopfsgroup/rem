@@ -956,7 +956,6 @@ app.downloadFile = function(config){
     //Si en el config tenemos una función success la ejecutamos a los x milisegundos después del submit
     Ext.defer(function(){
         //fp.close();
-        debugger;
         if (config.succesFunction) {
      		config.succesFunction();
      	}
@@ -981,6 +980,16 @@ app.openBrowserWindow = function(flow, params){
 	}
 
 	window.open(url);
+	
+
+	var tiempo = params.tiempoSuccess || 100;
+    
+    // Si en el params tenemos una función success la ejecutamos a los x milisegundos después del submit
+    Ext.defer(function(){
+        if (params.succesFunction) {
+     		params.succesFunction();
+     	}
+    }, tiempo);
 }
 
 

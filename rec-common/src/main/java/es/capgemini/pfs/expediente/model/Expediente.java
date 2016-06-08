@@ -1174,4 +1174,21 @@ public class Expediente implements Serializable, Auditable, Describible {
 	public void setSancion(Sancion sancion) {
 		this.sancion = sancion;
 	}
+	
+    /**
+     * Comprueba si en el estado actual se permite cancelar el expediente
+     * @return permite cancelar
+     */
+    public Boolean getPermiteCancelar() {
+    	
+    	Estado estadoActual= null;
+    	
+    	if(arquetipo != null && arquetipo.getItinerario() != null){
+    		estadoActual = arquetipo.getItinerario().getEstado(this.getEstadoItinerario().getCodigo());
+    	}
+    	
+        
+        if (estadoActual != null && estadoActual.getPermiteCancelar() != null) { return estadoActual.getPermiteCancelar(); }
+        return true;
+    }
 }

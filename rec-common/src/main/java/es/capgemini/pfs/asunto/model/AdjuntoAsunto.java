@@ -82,7 +82,12 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 	@Transient
 	private String nombreTipoDoc;
 
-
+	@Column(name = "RES_ID")
+	private Long idResolucion;
+    
+    @Column(name = "BPM_IPT_ID")
+	private Long bpmInputId;
+	
     /**
      * Constructor vacio.
      */
@@ -261,5 +266,21 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 	
 	public void setNombreTipoDoc(String nombreTipoDoc) {
 		this.nombreTipoDoc = nombreTipoDoc;
+	}
+
+	public Long getIdResolucion() {
+		return idResolucion;
+	}
+
+	public void setIdResolucion(Long idResolucion) {
+		this.idResolucion = idResolucion;
+	}
+
+	public Long getBpmInputId() {
+		return bpmInputId;
+	}
+
+	public void setBpmInputId(Long bpmInputId) {
+		this.bpmInputId = bpmInputId;
 	}
 }

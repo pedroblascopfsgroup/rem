@@ -392,6 +392,7 @@
 		comboZonas.disable(true);
 	</c:if>
 
+
     var btnExportarXLS=new Ext.Button({
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
@@ -401,6 +402,9 @@
 						if (validaMinMax()){
 		                    var params=getParametros();
 							params.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
+							params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+							params.succesFunction=function(){btnExportarXLS.setDisabled(false)};
+							btnExportarXLS.setDisabled(true);
 		                    app.openBrowserWindow(flow,params);
 						}else{
 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');

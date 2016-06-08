@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=PEDROBLASCO
---## FECHA_CREACION=201
+--## FECHA_CREACION=20160608
 --## ARTEFACTO=haya-sareb
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1365

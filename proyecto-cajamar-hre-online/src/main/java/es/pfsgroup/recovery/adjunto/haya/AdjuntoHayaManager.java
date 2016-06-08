@@ -913,8 +913,8 @@ public class AdjuntoHayaManager {
 		boolean resultado = false;
 		String claseExpe = cajamarHreProjectContext.getMapaClasesExpeGesDoc().get(prc.getTipoProcedimiento().getCodigo());
 		if(!Checks.esNulo(claseExpe)) {
-			ContenedorGestorDocumental contenedor = genericDao.get(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "asunto", prc.getAsunto()), genericDao.createFilter(FilterType.EQUALS, "codigoClase", claseExpe));
-			if(Checks.esNulo(contenedor)) {
+			List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "asunto", prc.getAsunto()), genericDao.createFilter(FilterType.EQUALS, "codigoClase", claseExpe));
+			if(Checks.estaVacio(contenedor)) {
 				resultado = true;	
 			}
 		}

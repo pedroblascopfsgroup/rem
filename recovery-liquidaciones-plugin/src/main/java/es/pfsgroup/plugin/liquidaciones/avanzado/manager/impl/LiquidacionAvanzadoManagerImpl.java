@@ -381,9 +381,17 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		Calendar calFin = Calendar.getInstance();
 		calFin.setTime(fechaFin);
 		
-		long diffMili = calFin.getTimeInMillis() - calInicio.getTimeInMillis();
+		/*long diffMili = calFin.getTimeInMillis() - calInicio.getTimeInMillis();
 		
-		return (int) (diffMili / (24 * 60 * 60 * 1000));
+		return (int) (diffMili / (24 * 60 * 60 * 1000));*/
+		
+		int dias = 0;
+		while (calInicio.before(calFin)) {
+			dias++;
+			calInicio.add(Calendar.DATE, 1);
+		}
+		
+		return dias;
 	}
 	
 	private BigDecimal calcularInteresesDemora(BigDecimal saldo, int dias, Float tipoDemora, int baseCalculo) {
@@ -397,6 +405,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	private Float AgregarcambiosTipoEntreFechas(CalculoLiquidacion request, Date fechaDesde, Date fechaHasta, BigDecimal saldo, BigDecimal intereses, List<LIQDtoTramoLiquidacion> cuerpo, Float tipoInt) {
 		Calendar c = Calendar.getInstance();
 		Date fecha = fechaDesde;
+		Date fechaAnt = fechaDesde;
 		Float tipo = tipoInt; 
 		
 		//Mientras tengamos cambios de interes entre la fecha y la entregaCuenta
@@ -412,14 +421,14 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 				tramoCambioTipo.setDescripcion("Cambio inter\u00E9s de demora");
 				tramoCambioTipo.setSaldo(saldo);
 				tramoCambioTipo.setInteresesPendientes(intereses);
-				tramoCambioTipo.setDias(diferenciaDias(fecha, fechaCambio));
+				tramoCambioTipo.setDias(diferenciaDias(fechaAnt, fechaCambio));
 				tramoCambioTipo.setTipoDemora(tipo);
 				tramoCambioTipo.setInteresesDemora(calcularInteresesDemora(saldo, tramoCambioTipo.getDias(),tipo, request.getBaseCalculo()));
 				
 				//Avanzamos la fecha y actualizamos el tipoInt
-				fecha = fechaCambio;
+				fechaAnt = fechaCambio;
 				//Avanzamos un día
-				c.setTime(fecha); 
+				c.setTime(fechaCambio); 
 				c.add(Calendar.DATE, 1);
 				fecha = c.getTime();				
 				tipo = cambioTipoInteres.getTipoInteres();

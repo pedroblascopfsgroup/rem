@@ -219,11 +219,11 @@ public class AdjuntoHayaManager {
 		adjAsu.setNombre(idenDoc.getIdentificacionDocumento().getNombreNodo());
 		adjAsu.setAsunto(idenDoc.getAsunto());
 		String matricula = idenDoc.getIdentificacionDocumento().getTipoExpediente() + "-" + idenDoc.getIdentificacionDocumento().getSerieDocumental() + "-" + idenDoc.getIdentificacionDocumento().getTdn1() + "-" + idenDoc.getIdentificacionDocumento().getTdn2();
-		MapeoTipoContenedor mapeo = genericDao.get(MapeoTipoContenedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoTDN2", matricula));
-		if(Checks.esNulo(mapeo)) {
+		List<MapeoTipoContenedor> mapeo = genericDao.getList(MapeoTipoContenedor.class, genericDao.createFilter(FilterType.EQUALS, "codigoTDN2", matricula));
+		if(Checks.estaVacio(mapeo)) {
 			adjAsu.setTipoFichero(null);
 		}else{
-			adjAsu.setTipoFichero(mapeo.getTipoFichero());			
+			adjAsu.setTipoFichero(mapeo.get(0).getTipoFichero());			
 		}
 		adjAsu.setServicerId(new Long(idenDoc.getIdentificacionDocumento().getIdentificadorNodo()));
 		Auditoria.save(adjAsu);
@@ -297,7 +297,7 @@ public class AdjuntoHayaManager {
 					if(aa.getTipoAdjuntoEntidad() != null) {
 						return aa.getTipoAdjuntoEntidad().getDescripcion();
 					}
-					return null;
+					return "";
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -493,7 +493,7 @@ public class AdjuntoHayaManager {
 					if(aa.getTipoAdjuntoEntidad() != null) {
 						return aa.getTipoAdjuntoEntidad().getDescripcion();
 					}
-					return null;
+					return "";
 				}
 			};
 			adjuntosConBorrado.add(dto);

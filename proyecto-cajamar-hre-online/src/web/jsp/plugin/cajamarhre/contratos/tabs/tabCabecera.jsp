@@ -417,8 +417,18 @@
   entidad.setLabel('extra6',d.extra6); 
   
   <c:if test="${usuario.entidad.codigo eq 'HCJ'}">
-  	entidad.setLabel('numextra1',app.format.moneyRenderer(''+d.numextra1));
-  	entidad.setLabel('numextra3',app.format.moneyRenderer(''+d.numextra1));
+  	var valorBruto = parseFloat(d.numextra1);
+  	var valorNeto = parseFloat(d.numextra3);
+  	if(isNaN(valorBruto)){
+  		entidad.setLabel('numextra1',app.format.moneyRenderer(''+d.numextra1));
+  	}else{
+  		entidad.setLabel('numextra1',app.format.moneyRenderer(''+valorBruto));
+  	}
+  	if(isNaN(valorNeto)){
+  		entidad.setLabel('numextra3',app.format.moneyRenderer(''+d.numextra3));
+  	}else{
+  		entidad.setLabel('numextra3',app.format.moneyRenderer(''+valorNeto));
+  	}
   </c:if>
   
   <c:if test="${usuario.entidad.codigo ne 'HCJ'}">

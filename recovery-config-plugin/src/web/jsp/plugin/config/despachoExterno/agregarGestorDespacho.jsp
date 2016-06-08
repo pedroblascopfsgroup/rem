@@ -108,7 +108,14 @@
    			descripcionUsuario: desUsuarioSel,
    			username: usernameSel
    		});
-		if(!listadocodigoUsuarios.includes(codUsuarioSel)) {
+   		var noEstaIncluido = true;
+   		debugger;
+   		for(var i=0; i< listadocodigoUsuarios.length; i++) {
+   			if(listadocodigoUsuarios[i] == codUsuarioSel) {
+   				noEstaIncluido=false;
+   			}
+   		}
+   		if(noEstaIncluido) {
 			usuariosStore.insert(0, p);
 			listadocodigoUsuarios.push(codUsuarioSel);
 		}

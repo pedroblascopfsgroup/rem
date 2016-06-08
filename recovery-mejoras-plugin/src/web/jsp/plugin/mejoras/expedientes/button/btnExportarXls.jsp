@@ -5,7 +5,9 @@
 new Ext.Button({
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a XLS" />'
         ,iconCls:'icon_exportar_csv'
-        ,handler: function() {	
+        ,id:'btnXLSExport'
+        ,handler: function() {
+        	Ext.getCmp('btnXLSExport').setDisabled(true);
         	buscarFunc(1);
         } 
             

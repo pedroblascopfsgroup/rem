@@ -798,6 +798,8 @@
             <sec:authorize ifAllGranted="ROLE_PROVEEDOR_SOLVENCIA">
 				var flow='clientes/plugin.mejoras.clientes.exportClientesSolvencias';
 			</sec:authorize>
+			params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+            params.succesFunction=function(){Ext.getCmp('btnXLSExport').setDisabled(false)}
             app.openBrowserWindow(flow,params);
 		}
 		busquedaClientesMask.hide();

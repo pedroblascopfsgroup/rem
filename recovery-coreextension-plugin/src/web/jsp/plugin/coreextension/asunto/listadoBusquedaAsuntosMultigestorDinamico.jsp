@@ -92,7 +92,7 @@
             }
             
             if (hayParametros) {
-			
+				btnExportarXLS.setDisabled(true);
 				var y = 0;
 				var paramAux;
 				for(var i in parametrosTab){
@@ -112,15 +112,17 @@
 						    var flow = '/pfs/extasunto/exportarExcelAsuntos';
              			
 							parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
+							params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+							params.succesFunction=function(){btnExportarXLS.setDisabled(false)};
+							btnExportarXLS.setDisabled(true);
     			            app.openBrowserWindow(flow,parametros);
-    			            
     			            parametrosTab = new Array();            
 				   		}
 			    		else {
 			    			if(r.count != undefined && r.limit != undefined) {
 			    				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>', '<s:message code="plugin.coreextension.asuntos.exportarExcel.limiteSuperado1"/>' + r.limit + ' <s:message code="plugin.coreextension.asuntos.exportarExcel.limiteSuperado2"/>');
 			    			}
-			    				
+			    			btnExportarXLS.setDisabled(false);
 			    			return false;
 			    		}	
 		    		}
@@ -131,8 +133,6 @@
             }
         }
     });
-    
-    
     
     var btnBuscar=app.crearBotonBuscar({
         handler : function() {

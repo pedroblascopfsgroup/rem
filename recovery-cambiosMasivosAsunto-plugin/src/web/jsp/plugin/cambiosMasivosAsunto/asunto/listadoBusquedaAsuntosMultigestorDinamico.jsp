@@ -110,7 +110,9 @@
                
                 parametros.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
                 
-                
+                params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+				params.succesFunction=function(){btnExportarXLS.setDisabled(false)};
+				btnExportarXLS.setDisabled(true);
                 
                 app.openBrowserWindow(flow,parametros);
                     

@@ -650,6 +650,8 @@ var formBusquedaContratos=function(){
 		{
 	        var params=getParametros();
 	        var flow='contratos/exportContratos';
+	        params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+			params.succesFunction=function(){Ext.getCmp('btnXLSExport').setDisabled(false)}
 	        app.openBrowserWindow(flow,params);
 		}
 		busquedaContratosMask.hide();

@@ -2,10 +2,10 @@
 --##########################################
 --## AUTOR=NOMBRE APELLIDOS
 --## FECHA_CREACION=YYYYMMDD
---## ARTEFACTO=[online|batch]
+--## ARTEFACTO=online
 --## VERSION_ARTEFACTO=X.X.X_rcXX
---## INCIDENCIA_LINK=PROJECTKEY-ISSUENUMBER
---## PRODUCTO=[SI|NO]
+--## INCIDENCIA_LINK=HR-2532
+--## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  

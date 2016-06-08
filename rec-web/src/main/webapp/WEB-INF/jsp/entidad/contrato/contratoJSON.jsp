@@ -217,6 +217,8 @@
 	    		 </c:if>
     		</c:if>    		
     	</sec:authorize>
+    	<json:property name="isTipoExpedienteCorrecto" value="${isTipoExpedienteCorrecto}" />
+    	<json:property name="isTipoAsuntoCorrecto" value="${isTipoAsuntoCorrecto}" />
 	</json:object>
   
 </fwk:json>

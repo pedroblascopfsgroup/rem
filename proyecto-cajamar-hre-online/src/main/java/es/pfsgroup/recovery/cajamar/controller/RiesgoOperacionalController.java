@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.hrebcc.api.RiesgoOperacionalApi;
 import es.pfsgroup.recovery.hrebcc.dto.ActualizarRiesgoOperacionalDto;
+import es.pfsgroup.recovery.hrebcc.model.CntRiesgoOperacional;
 import es.pfsgroup.recovery.hrebcc.model.DDRiesgoOperacional;
 
 @Controller
@@ -25,23 +26,27 @@ public class RiesgoOperacionalController {
 	
 	@RequestMapping
 	public String actualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
+		
+		riesgoOperacionalManager.borrarRiesgoOperacional(dto);
+		
 		riesgoOperacionalManager.actualizarRiesgoOperacional(dto);
 		
 		return "default";
 		
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping 
 	public String obtenerRiesgoOperacionalContrato(Long cntId, ModelMap map) {
-		DDRiesgoOperacional riesgoOperacional = riesgoOperacionalManager.obtenerRiesgoOperacionalContrato(cntId);
+		CntRiesgoOperacional riesgoOperacionalCnt = riesgoOperacionalManager.getRiesgoOperacionalContrato(cntId);
 		
 		ArrayList<DDRiesgoOperacional> ddRiesgoOperacional = (ArrayList<DDRiesgoOperacional>) utilDiccionario.dameValoresDiccionario(DDRiesgoOperacional.class);
 		
 		map.put("ddriesgoOperacional", ddRiesgoOperacional);
 		map.put("cntId", cntId);
 		
-		map.put("riesgoOperacional", riesgoOperacional);
+		map.put("riesgoOperacionalCnt", riesgoOperacionalCnt);
 		
 		return JSP_EDITAR_RIESGO_OPERACIONAL;
 	}

@@ -35,6 +35,9 @@
 								<json:property name="tipoFichero" value="${entity.adjuntosAsList[0].tipoAdjuntoEntidad.descripcion}" />
 							</c:if>
 						</c:if>
+						<c:if test="${entity.adjuntosAsList[0].adjunto != null}">
+							<json:property name="idAdjunto" value="${entity.adjuntosAsList[0].adjunto.id}" />
+						</c:if>
 					</c:if>
 			</json:object>
 			<c:if test="${entity.adjuntos!=null}">
@@ -63,6 +66,9 @@
 								<c:if test="${adj.tipoAdjuntoEntidad != null}">
 									<json:property name="tipoFichero" value="${adj.tipoAdjuntoEntidad.descripcion}" />
 								</c:if>
+							</c:if>
+							<c:if test="${adj.adjunto != null}">
+								<json:property name="idAdjunto" value="${adj.adjunto.id}" />
 							</c:if>
 			            </json:object>
 					</c:if>

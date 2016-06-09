@@ -18,7 +18,7 @@ public class ContabilidadCobrosDaoImpl extends AbstractEntityDao<ContabilidadCob
 	public List<ContabilidadCobros> getListadoContabilidadCobrosByASUID(DtoContabilidadCobros dto) {
 		HQLBuilder hb = new HQLBuilder("from ContabilidadCobros cco");
 		hb.appendWhere("cco.asunto.id = "+dto.getId() + " and cco.auditoria.borrado = 0 "); // ID de asunto y borrado.
-		hb.orderBy("fechaValor", HQLBuilder.ORDER_DESC);
+		hb.orderBy("id", HQLBuilder.ORDER_ASC);
 
 		return HibernateQueryUtils.list(this, hb);
 	}
@@ -32,27 +32,14 @@ public class ContabilidadCobrosDaoImpl extends AbstractEntityDao<ContabilidadCob
 	}
 
 	@Override
-	public void actualizarTARIDByASUID(Long asuID, Long tareaID) {
+	public void actualizarTARIDByASUIDandCobroID(Long asuID, Long tareaID, Long id) {
 		HQLBuilder hb = new HQLBuilder("from ContabilidadCobros cco");
 		hb.appendWhere("cco.asunto.id = "+ asuID + " and cco.auditoria.borrado = 0 " + // ID de asunto y borrado.
+		"and cco.id = " + id + " " + // ID del cobro.
 		"and cco.tarID is null"); // Cobros no asociados con anterioridad.
 		
-		List<ContabilidadCobros> ccoList = HibernateQueryUtils.list(this, hb);
-		
-		for(ContabilidadCobros c : ccoList){
-			c.setTarID(tareaID);
-		}
-	}
-
-	@Override
-	public List<ContabilidadCobros> getListadoContabilidadCobrosParaTareas(
-			DtoContabilidadCobros dto) {
-		HQLBuilder hb = new HQLBuilder("from ContabilidadCobros cco");
-		hb.appendWhere("cco.asunto.id = "+ dto.getAsunto() + " and cco.auditoria.borrado = 0 " + // ID de asunto y borrado.
-		"and cco.tarID is not null " + // Cobros asociados a una tarea.
-		"and cco.contabilizado = 0"); // Cobros no contabilizados.
-
-		return HibernateQueryUtils.list(this, hb);
+		ContabilidadCobros cco = HibernateQueryUtils.uniqueResult(this, hb);
+		cco.setTarID(tareaID); // Guardar el ID de la tarea asociada.
 	}
 	
 }

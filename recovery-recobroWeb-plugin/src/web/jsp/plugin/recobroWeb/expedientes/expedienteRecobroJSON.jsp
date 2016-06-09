@@ -51,6 +51,7 @@
 		<json:property name='esPrimerGestorFaseActual' value="${esPrimerGestorFaseActual}"/>
 		<json:property name='esPrimerSupervisorFaseActual' value="${esPrimerSupervisorFaseActual}"/>
 		<json:property name='puedeMostrarElevarDelegarExpediente' value="${puedeMostrarElevarDelegarExpediente}"/>
+		<json:property name='permiteCancelar' value="${expediente.permiteCancelar}" />
 	</json:object>
 	<json:object name="cabecera">
 		<json:property name="codExpediente" value="${expediente.id}" />

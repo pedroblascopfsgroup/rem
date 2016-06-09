@@ -71,6 +71,7 @@
  	 	return entidad.get("data").id;
  	};
  	
+ 	var mostrarBtnRiesgoOp;
     var btnModificarRiesgoOperacional = new Ext.Button({
  		text: '<s:message code = "contrato.consulta.tabOtrosDatos.modifRiesgoOper" text="**Modificar riesgo operacional"/>'
  		,iconCls: 'icon_edit'
@@ -127,7 +128,7 @@
 	
 	panel.getValue = function() {
 	}
-
+	
 	panel.setValue = function() {
   		var data=entidad.get("data");
   		var d=data.otrosDatos;
@@ -186,6 +187,10 @@
   		entidad.setLabel('riesgoOperacional', d.descripcionRiesgo);
   		entidad.setLabel('tipoVencido', d.tipoVencido);
   		entidad.setLabel('tramoPrevio', d.tramoPrevio);
+  		
+  		
+  		btnModificarRiesgoOperacional.setVisible(d.isTipoExpedienteCorrecto || d.isTipoAsuntoCorrecto);
+  		
  	}
  	
   	return panel;

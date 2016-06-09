@@ -10,14 +10,32 @@
 
 <fwk:page>
 
-	<pfsforms:textfield name="nombre" labelKey="plugin.mejoras.asunto.editarAdjuntoExpediente.nombre" 
+	var nombre = new Ext.form.DisplayField({
+		fieldLabel : '<s:message code='plugin.mejoras.asunto.editarAdjuntoExpediente.nombre' text='**Nombre' />',
+    	labelStyle: 'font-weight:bolder',
+    	value:'<s:message text="${adjunto.nombre}" javaScriptEscape="true" />'
+	});
+	
+	var contentType = new Ext.form.DisplayField({
+		fieldLabel : '<s:message code='plugin.mejoras.asunto.editarAdjuntoExpediente.contenetType' text='**Tipo de contenido' />',
+    	labelStyle: 'font-weight:bolder',
+    	value:'<s:message text="${adjunto.contentType}" javaScriptEscape="true" />'
+	}); 
+	
+	var length = new Ext.form.DisplayField({
+		fieldLabel : '<s:message code='plugin.mejoras.asunto.editarAdjuntoExpediente.length' text='**Tamaño' />',
+    	labelStyle: 'font-weight:bolder',
+    	value:'<s:message text="${adjunto.length}" javaScriptEscape="true" />'
+	});
+
+<%-- 	<pfsforms:textfield name="nombre" labelKey="plugin.mejoras.asunto.editarAdjuntoExpediente.nombre" 
 		label="**Nombre" value="${adjunto.nombre}" readOnly="true"/>
 		
 	<pfsforms:textfield name="contentType" labelKey="plugin.mejoras.asunto.editarAdjuntoExpediente.contenetType" 
 		label="**Tipo de contenido" value="${adjunto.contentType}" readOnly="true"/>
 		
 	<pfsforms:textfield name="length" labelKey="plugin.mejoras.asunto.editarAdjuntoExpediente.length" 
-		label="**Tamaño" value="${adjunto.length}" readOnly="true"/>
+		label="**Tamaño" value="${adjunto.length}" readOnly="true"/> --%>
 	
 	<%-- 
 	<pfsforms:textfield name="descripcion" labelKey="plugin.mejoras.asunto.editarAdjuntoExpediente.descripcion" 

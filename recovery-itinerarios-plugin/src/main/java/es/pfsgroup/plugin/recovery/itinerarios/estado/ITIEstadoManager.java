@@ -12,6 +12,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.comite.model.DecisionComiteAutomatico;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.itinerario.model.Estado;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.telecobro.model.EstadoTelecobro;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.pfsgroup.commons.utils.Checks;
@@ -185,6 +186,13 @@ public class ITIEstadoManager {
 			}
 			if(estado.getPlazo()!=null){
 				est.setPlazo(estado.getPlazo());
+			}
+			if(estado.getPermiteCancelar()!=null){
+				if(DDSiNo.SI.equals(estado.getPermiteCancelar())){
+					est.setPermiteCancelar(true);	
+				}else if(DDSiNo.NO.equals(estado.getPermiteCancelar())){
+					est.setPermiteCancelar(false);
+				}
 			}
 			estadoDao.saveOrUpdate(est);
 		}

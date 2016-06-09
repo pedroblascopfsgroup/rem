@@ -37,6 +37,17 @@
 		<json:property name="totalQuita" value="${rec.totalQuita}"/>
 		<json:property name="quitaOperacionesEnTramite" value="${rec.quitaOperacionesEnTramite}"/>
 		<json:property name="operacionesEnTramite" value="${rec.operacionesEnTramite}"/>
+		<json:property name="tarID" value="${rec.tarID}"/>
+		<json:property name="contabilizado" value="${rec.contabilizado}"/>
+		<c:if test="${rec.tarID == null}">
+			<json:property name="estadoCobro" value="Pte. envío"/>
+		</c:if>
+		<c:if test="${rec.tarID != null && rec.contabilizado == false}">
+			<json:property name="estadoCobro" value="Pte. Contabilizar"/>
+		</c:if>
+		<c:if test="${rec.tarID != null && rec.contabilizado == true}">
+			<json:property name="estadoCobro" value="Contabilizado"/>
+		</c:if>
 		
 	</json:object>
 	</json:array>

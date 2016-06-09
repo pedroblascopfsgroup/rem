@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=201600524
+--## FECHA_CREACION=201600603
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1395
@@ -221,6 +221,8 @@ p_tpo_id_parametro       #ESQUEMA#.dd_tpo_tipo_procedimiento.dd_tpo_id%TYPE;
 v_total_tmp                 NUMBER;
 p_plazas_esquema_generico   #ESQUEMA#.tup_ept_esquema_plazas_tpo.ept_id%TYPE;
 
+p_frase_hist VARCHAR2(100 CHAR):= 'TURNADO';
+
 BEGIN
   EXECUTE IMMEDIATE 'truncate table #ESQUEMA#.TUP_TMP_CALCULOS_TURN_PROCU';
    --antes que nada recupero el id del asunto
@@ -341,7 +343,7 @@ OPEN crs_obtener_total_tmp ();
 ---------------------------
 IF p_plazas_esquema IS NULL OR v_total_tmp = 0
 THEN--------QUIERE DECIR QUE NO HAY ENCONTRADO UNA REGLA APROPIADA
-
+  
  OPEN crs_plazas_esquema_generico (p_esquema_vigente);
 
    FETCH crs_plazas_esquema_generico
@@ -352,6 +354,7 @@ THEN--------QUIERE DECIR QUE NO HAY ENCONTRADO UNA REGLA APROPIADA
    IF p_plazas_esquema_generico IS NOT NULL --SI NO ES NULO LO ASIGNAMOS A p_plazas_esquema QUE ES CON EL QUE REALIZAREMOS CÁLCULOS
    THEN
       p_plazas_esquema := p_plazas_esquema_generico;
+      p_frase_hist := 'TURNADO POR CASO GENÉRICO';
    END IF;
 END IF;
 -------------------------------
@@ -487,14 +490,32 @@ THEN
                     WHERE tge.dd_tge_codigo = p_tge_codigo);
             END IF;
             CLOSE crs_relacion_existente;
+
+            -----------------------------------------------------------------------------
+            ------------------------INSERTAMOS EN HISTÓRICO
+            -----------------------------------------------------------------------------
+            insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
+                  values (#ESQUEMA#.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, p_frase_hist);
+
   ELSE
   --SI ENTRAMOS EN ESTE ELSE, QUIERE DECIR QUE HAY DATOS GENÉRICOS PERO NO CONTEMPLAN EL IMPORTE
   DBMS_OUTPUT.put_line ('NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE');
+  insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
+                  values (#ESQUEMA#.s_TUP_HIS_HISTORICO.NEXTVAL,p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE');
   END IF;
 ELSE
 DBMS_OUTPUT.put_line ('NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA');
+insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
+    values (#ESQUEMA#.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA');
 END IF;
 commit;
+EXCEPTION
+   WHEN OTHERS
+   THEN
+      DBMS_OUTPUT.put_line ('ERROR: ' || TO_CHAR (SQLCODE));
+      DBMS_OUTPUT.put_line (SQLERRM);
+      ROLLBACK;
+      RAISE;
 END asignacion_turnado_procu;
 
 /

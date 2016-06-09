@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.recovery.liquidaciones;
 
 import java.sql.Date;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -145,7 +144,7 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void crearTarea(DtoGenerarTarea dto) throws STAContabilidadException{
+	public void crearTarea(DtoGenerarTarea dto, Long id) throws STAContabilidadException{
 		// Preparar los datos de la tarea.
 		EXTTareaNotificacion tarea = new EXTTareaNotificacion();
 		
@@ -169,8 +168,8 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
         
         tarea.setEspera(false);
         tarea.setAlerta(false);
-        tarea.setTarea(subtipoTarea.getDescripcion());
-        tarea.setDescripcionTarea(subtipoTarea.getDescripcionLarga());
+        tarea.setTarea(subtipoTarea.getDescripcion() + " [" + String.valueOf(id) + "]");
+        tarea.setDescripcionTarea(subtipoTarea.getDescripcionLarga() + " [" + String.valueOf(id) + "]");
         tarea.setCodigoTarea(subtipoTarea.getTipoTarea().getCodigoTarea());
         tarea.setSubtipoTarea(subtipoTarea);
         DDTipoEntidad tipoEntidad = (DDTipoEntidad) dictionary.getByCode(DDTipoEntidad.class, DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
@@ -200,62 +199,46 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
         }
         
         // Guardar la tarea y obtener la tarea una vez guardada con el ID.
-        updateCCOTARID(genericDao.save(EXTTareaNotificacion.class, tarea));
+        updateCCOTARID(genericDao.save(EXTTareaNotificacion.class, tarea), id);
 	}
 	
 	/**
 	 * Este metodo recibe una tarea y utiliza su ID para ponerlo en el campo
 	 * TAR_ID de la tabla CCO_CONTABILDIAD_COBROS para cada cobro donde el
-	 * 'ASU_ID' sea el mismo que la tarea trae, de esta manera quedan asociados
-	 * cobro y tarea. SOLO SE ASOCIAN AQUELLOS COBROS QUE NO LO ESTABAN CON
-	 * ANTERIORIDAD.
+	 * 'ASU_ID' sea el mismo que la tarea trae y el ID del cobro corresponda,
+	 * de esta manera quedan asociados cobro y tarea.
+	 * Tambien se regula que los cobros no estuvieran asociados con anterioridad.
 	 * 
 	 * @param tarea : objeto EXTTareaNotificacion que contiene la tar_ID y
 	 * 					el ASU_ID necesario.
 	 */
-	private void updateCCOTARID(EXTTareaNotificacion tarea){
-		this.contabilidadCobrosDao.actualizarTARIDByASUID(tarea.getAsunto().getId(), tarea.getId());
+	private void updateCCOTARID(EXTTareaNotificacion tarea, Long id){
+		this.contabilidadCobrosDao.actualizarTARIDByASUIDandCobroID(tarea.getAsunto().getId(), tarea.getId(), id);
 	}
 
 	@Override
 	@Transactional(readOnly = false)
 	public void contabilizarCobrosYFinalizarTareas(DtoContabilidadCobros dto) throws STAContabilidadException{
 		// Obtener lista de cobros por ID de asunto.
-		List<ContabilidadCobros> ccoList = (List<ContabilidadCobros>) this.getListadoContabilidadCobrosParaTareas(dto);
-		List<Long> tareasParaFinalizarList = new ArrayList<Long>();
+		ContabilidadCobros cco = this.contabilidadCobrosDao.getContabilidadCobroByID(dto);
 		
-		if(!Checks.estaVacio(ccoList)){
-			// Obtener los distintos tar_id.
-			for(ContabilidadCobros c : ccoList){
-				if(!tareasParaFinalizarList.contains(c.getTarID())){
-					tareasParaFinalizarList.add(c.getTarID());
-				}
+		if(!Checks.esNulo(cco)){
+			// Obtener el TAR_ID.
+			Long tarId = cco.getTarID();
+			
+			// Usar el TAR_ID para finalizar las tarea asociada.
+			if(!Checks.esNulo(tarId)){
+				EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id" , tarId));
+				tarea.setTareaFinalizada(true);
+				tarea.setFechaFin(new Date(System.currentTimeMillis()));
+			}else{
+				// Las tareas no se han enviado a contabilizar todavia.
+				throw new STAContabilidadException(STAContabilidadException.COBROS_NO_ENVIADOS);
 			}
 			
-			// Usar el TAR_ID para finalizar las tareas asociadas.
-			if(!Checks.estaVacio(tareasParaFinalizarList)){
-				
-				for(int i = 0; i < tareasParaFinalizarList.size(); i++){
-					EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id" , tareasParaFinalizarList.get(i)));
-					tarea.setTareaFinalizada(true);
-					tarea.setFechaFin(new Date(System.currentTimeMillis()));
-				}
-			}
-			
-			// Contabilizar todos los cobros.
-			for(ContabilidadCobros c : ccoList){
-				c.setContabilizado(true);
-			}
-		}else{
-			// Las tareas no se han enviado a contabilizar todavia.
-			throw new STAContabilidadException(STAContabilidadException.COBROS_NO_ENVIADOS);
+			// Marcar como contabilizado el cobro.
+			cco.setContabilizado(true);
 		}
-	}
-
-	@Override
-	public List<ContabilidadCobros> getListadoContabilidadCobrosParaTareas(
-			DtoContabilidadCobros dto) {
-		return (List<ContabilidadCobros>) contabilidadCobrosDao.getListadoContabilidadCobrosParaTareas(dto);
 	}
 
 }

@@ -31,13 +31,23 @@
 		,width:170
 		,listWidth: '500'
 		,editable: false
-		<c:if test="${riesgoOperacional !=null}" >
-			,value:${riesgoOperacional.codigo}
+		<c:if test="${riesgoOperacionalCnt !=null}" >
+			,value:'${riesgoOperacionalCnt.riesgoOperacional.codigo}'
 		</c:if>
 		,fieldLabel: '<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional" />'
 		,labelStyle:labelStyle
 	});
 	
+	var observaciones = new Ext.form.TextArea({
+		fieldLabel:'<s:message code="plugin.cajamar.bienes.observaciones" text="**Observaciones" />'
+		<app:test id="observaciones" addComa="true" />
+		,name: 'observaciones'
+		,width:170
+		,height: 150
+		,maxLength: 3500
+		,labelStyle:labelStyle
+		,value:'${riesgoOperacionalCnt.observaciones}'
+	});
 	
 	
 	var validarForm = function(){
@@ -65,7 +75,7 @@
 
 				page.webflow({
 					flow: 'riesgooperacional/actualizarRiesgoOperacional'
-					,params : {idContrato:${cntId}, codRiesgoOperacional: getParametros()}
+					,params : {idContrato:${cntId}, codRiesgoOperacional: getParametros(),observaciones:observaciones.getValue()}
 					,success: function(){
 						page.fireEvent(app.event.DONE);
 					}			
@@ -83,7 +93,7 @@
 	});
 	
 	var datos = new Ext.form.FieldSet({
-		height:60
+		height:300
 		,width:365
 		,style:'padding:0px'
   	   	,border:true
@@ -94,11 +104,11 @@
 		}
 		,title:'<s:message code="contrato.consulta.tabOtrosDatos.datos" text="**Datos"/>'
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:350}
-	    ,items : [{items:[comboRiesgoOperacional]}]
+	    ,items : [{items:[comboRiesgoOperacional,observaciones]}]
 	});
 
 	var panelEdicion = new Ext.form.FormPanel({
-		height: 125
+		height: 250
 		,autoWidth: true
 		,bodyStyle: 'padding:5px;cellspacing:20px;'
 		,border: true

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -19,7 +20,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.persistence.CascadeType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -27,6 +27,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
@@ -120,7 +121,7 @@ public class MSVResolucion implements Auditable, Serializable{
     @JoinColumn(name = "RES_TAR_ID")
     private TareaNotificacion tareaNotificacion;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="idResolucion")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="idResolucion", targetEntity = AdjuntoAsunto.class)
     @Where(clause= Auditoria.UNDELETED_RESTICTION)
     private List<EXTAdjuntoAsunto> adjuntosResolucion;
 

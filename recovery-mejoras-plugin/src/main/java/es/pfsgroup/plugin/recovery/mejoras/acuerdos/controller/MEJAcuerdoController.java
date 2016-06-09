@@ -54,7 +54,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
-import es.pfsgroup.plugin.recovery.mejoras.acuerdos.manager.CamposTerminoTipoacuerdoDTO;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
@@ -422,11 +421,8 @@ public class MEJAcuerdoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getCamposDinamicosTerminosPorTipoAcuerdo(ModelMap model, Long idTipoAcuerdo){
-		List<CamposTerminoTipoacuerdoDTO> listaCampos =  new ArrayList<CamposTerminoTipoacuerdoDTO>();
-		for(CamposTerminoTipoAcuerdo campos:terminoOperacionesManager.getCamposOperacionesPorTipoAcuerdo(idTipoAcuerdo)){
-			listaCampos.add(new CamposTerminoTipoacuerdoDTO(campos));
-		}
-		model.put("operacionesPorTipo", listaCampos );
+		
+		model.put("operacionesPorTipo", terminoOperacionesManager.getCamposOperacionesPorTipoAcuerdo(idTipoAcuerdo) );
 		return JSON_LIST_CAMPOS_DINAMICOS_TERMINOS_POR_TIPO_ACUERDO;
 	}
 	

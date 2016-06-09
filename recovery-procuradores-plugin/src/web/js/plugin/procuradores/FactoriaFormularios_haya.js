@@ -2233,7 +2233,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                    ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtrar:true}
 		                    ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtrar:true}
 		                    ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtrar:true}
-	                      ]);
+		                    ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Solicitar provision fondos","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}
+		                    ]);
 	
 	//id: 277 : PROCEDIMIENTO VERBAL: CONFIRMAR ADMISIÓN DE DEMANDA
 	this.arrayCampos.push([

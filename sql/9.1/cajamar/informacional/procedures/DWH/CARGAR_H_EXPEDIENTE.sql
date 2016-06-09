@@ -4,8 +4,8 @@ create or replace PROCEDURE CARGAR_H_EXPEDIENTE (DATE_START in date, DATE_END in
 -- Autor: Fran Gutiérrez, PFS group
 -- Fecha creación: Julio 2014
 -- Responsable ultima modificacion: María Villanueva, PFS group
--- Fecha última modificación:03/05/2016
--- Motivos del cambio: Se añade dir_territorial_id
+-- Fecha última modificación:03/06/2016
+-- Motivos del cambio: Se corrige error , se estaba updateando tmp_h_cnt en lugar de TMP_H_EXP en los nulos de direccion territorial
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_EXP
@@ -452,7 +452,7 @@ BEGIN
     WHEN MATCHED THEN UPDATE SET DIR_TERRITORIAL_ID = DIR_TERR.ZON_ID';
     COMMIT;
 
-     UPDATE TMP_H_CNT
+     UPDATE TMP_H_EXP
        SET DIR_TERRITORIAL_ID = -1
     WHERE DIR_TERRITORIAL_ID IS NULL;
 

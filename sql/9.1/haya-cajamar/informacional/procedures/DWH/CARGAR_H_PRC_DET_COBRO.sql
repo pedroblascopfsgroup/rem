@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PRC_DET_COBRO(DATE_START IN date, DATE_END 
 -- Autor: María Villanueva, PFS Group
 -- Fecha creación: Julio 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 24/11/2015
--- Motivos del cambio: USUARIO PROPIETARIO
+-- Fecha ultima modificacion: 01/06/2016
+-- Motivos del cambio: Modificaciones de Cajamar
 -- Cliente: Recovery BI HAYA
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_PRC_DET_COBRO.
@@ -18,9 +18,11 @@ DECLARE
   V_ROWCOUNT NUMBER;
   
   V_NUM_ROW NUMBER(10);
+
    V_DATASTAGE VARCHAR2(100);
   V_NUMBER  NUMBER(16,0);
   nCount NUMBER;
+
 
    V_SQL VARCHAR2(16000);
 
@@ -84,6 +86,8 @@ BEGIN
     
  -- ---------------------- Cobros nuevos ----------------------
     -- Borrado indices TMP_H_PRC_DET_COBRO
+
+
     	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_H_PRC_DET_COBRO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
@@ -118,7 +122,7 @@ INTO TMP_H_PRC_DET_COBRO
   cnt.COBRO_ID,
   cnt.FECHA_COBRO,
   prc.FECHA_CREACION_ASUNTO as FECHA_ASUNTO,
-  cnt.TIPO_COBRO_DET_ID as TIPO_COBRO_DETALLE_ID,
+  NVL(cnt.TIPO_COBRO_DET_ID,-1) as TIPO_COBRO_DETALLE_ID,
   cnt.NUM_COBROS,
   cnt.IMPORTE_COBRO,
   (cnt.FECHA_COBRO -prc.FECHA_CREACION_ASUNTO) as NUM_DIAS_CREACION_ASU_COBRO
@@ -134,12 +138,19 @@ from
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_PRC_DET_COBRO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     
      -- Crear indices TMP_H_PRC_DET_COBRO
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_DET_COBRO_IX'', ''TMP_H_PRC_DET_COBRO (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
 			
     
 
    -- Borrado indices H_PRC_DET_COBRO
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_COBRO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
      commit;        
@@ -193,7 +204,12 @@ from
   
        -- Crear indices H_PRC_DET_COBRO
        
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_IX'', ''H_PRC_DET_COBRO (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     
     -- -------------------------- CÁLCULO DEL RESTO DE PERIODOS ----------------------------
@@ -215,6 +231,7 @@ from
  
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -256,6 +273,8 @@ from
     select min(DIA_H) into min_dia_semana from TMP_FECHA where SEMANA_H = semana;
      
     -- Borrado indices H_PRC_DET_COBRO_SEMANA
+
+
     	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_COBRO_SEMANA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;	
@@ -306,7 +325,12 @@ where (FECHA_COBRO between min_dia_semana and max_dia_semana);
  
      
     -- Crear indices H_PRC_DET_COBRO_SEMANA
+
+
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_SEMANA_IX'', ''H_PRC_DET_COBRO_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
     
@@ -323,6 +347,8 @@ close c_semana;
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_COBRO_MES. Empieza bucle', 3;
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -362,6 +388,8 @@ close c_semana;
       select min(DIA_H) into min_dia_mes from TMP_FECHA where MES_H = mes;
       
       -- Borrado indices H_PRC_DET_COBRO_MES
+
+
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_COBRO_MES_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     
@@ -408,7 +436,12 @@ INTO H_PRC_DET_COBRO_MES
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_COBRO_MES. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     
     -- Crear indices H_PRC_DET_COBRO_MES
+
+
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_MES_IX'', ''H_PRC_DET_COBRO_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
       
@@ -427,6 +460,8 @@ INTO H_PRC_DET_COBRO_MES
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_COBRO_TRIMESTRE. Empieza bucle', 3;
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -465,6 +500,8 @@ INTO H_PRC_DET_COBRO_MES
       select min(DIA_H) into min_dia_trimestre from TMP_FECHA where TRIMESTRE_H = trimestre;
 
       -- Borrado indices H_PRC_DET_COBRO_TRIMESTRE
+
+
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_COBRO_TRIMESTRE_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
       commit;
@@ -512,7 +549,12 @@ FROM H_PRC_DET_COBRO
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_COBRO_TRIMESTRE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
       
       -- Crear indices H_PRC_DET_COBRO_TRIMESTRE
+
+
        V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_TRIMESTRE_IX'', ''H_PRC_DET_COBRO_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;    
     
@@ -532,6 +574,8 @@ FROM H_PRC_DET_COBRO
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_COBRO_ANIO. Empieza bucle', 3;
   
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
+
+
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
@@ -571,6 +615,8 @@ FROM H_PRC_DET_COBRO
       select min(DIA_H) into min_dia_anio from TMP_FECHA where ANIO_H = anio;
     
       -- Borrado indices H_PRC_DET_COBRO_ANIO
+
+
      	   
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PRC_DET_COBRO_ANIO_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
@@ -619,7 +665,12 @@ FROM H_PRC_DET_COBRO
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PRC_DET_COBRO_ANIO. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
       
         -- Crear indices H_PRC_DET_COBRO_ANIO
+
+
      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_ANIO_IX'', ''H_PRC_DET_COBRO_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+
+
+
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;       
     

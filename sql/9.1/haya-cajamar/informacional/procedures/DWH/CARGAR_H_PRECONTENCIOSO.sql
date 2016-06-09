@@ -262,7 +262,7 @@ execute immediate 'merge into  TMP_PRE_FECHA_ESTADO t3
                       JOIN '||V_DATASTAGE||'.GAA_GESTOR_ADICIONAL_ASUNTO GAA ON GAA.USD_ID = USD.USD_ID
                       JOIN '||V_DATASTAGE||'.DD_TGE_TIPO_GESTOR TGES ON GAA.DD_TGE_ID = TGES.DD_TGE_ID
                       JOIN '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS PRC ON GAA.ASU_ID = PRC.ASU_ID
-                      WHERE TGES.DD_TGE_DESCRIPCION = ''CJ - Gestor de Documentación''';
+                      WHERE TGES.DD_TGE_DESCRIPCION = ''Gestor expediente judicial''';
 
     UPDATE TMP_H_PRE a SET GESTOR_PRE_ID = (SELECT GESTOR_PRC_ID FROM TMP_PRC_GESTOR b WHERE a.PROCEDIMIENTO_ID =  b.PROCEDIMIENTO_ID);
       commit;

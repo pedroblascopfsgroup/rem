@@ -3,8 +3,8 @@ create or replace procedure CARGAR_H_PER(DATE_START IN date, DATE_END IN date, O
   -- Autor: Maria Villanueva, PFS Group
   -- Fecha creación:Septiembre 2015
   -- Responsable ultima modificacion: María Villanueva, PFS Group
-  -- Fecha ultima modificacion: 19/04/2016
-  -- Motivos del cambio: SE MODIFICA el tramo de puntuación
+  -- Fecha ultima modificacion: 06/06/2016
+  -- Motivos del cambio: SE AÑADE PUNTUACION
   -- Cliente: Recovery BI CAJAMAR
   --
   -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER.
@@ -129,7 +129,8 @@ begin
                           TRAMO_PUNTUACION_ID,    
                           TRAMO_ALERTA_ID,    
                           NUM_CLIENTES,
-                          ARQUETIPO_PERSONA_ID  
+                          ARQUETIPO_PERSONA_ID,
+                          PUNTUACION  
                           )  
                           select
                           '''||fecha||''',
@@ -146,7 +147,8 @@ begin
                           -1, 
                           -1, 
                            1,
-                          -1
+                          -1,
+                          0
                       from '||v_datastage||'.PER_PERSONAS PER, '||v_datastage||'.ZON_ZONIFICACION ZON
                       where PER.BORRADO = 0
                       AND PER.OFI_ID = ZON.OFI_ID (+)';
@@ -313,6 +315,7 @@ begin
                          where pun.per_id=pun2.per_id and trunc(pun.FECHACREAR)=pun2.FECHACREAR) ale
                    on (per.PERSONA_ID = ale.PER_ID)
                    when matched then update
+
                     set per.TRAMO_PUNTUACION_ID = (case when PUNTUACION is null or  PUNTUACION = 0 then 1
                                                        when PUNTUACION > 0  and PUNTUACION < 100 then 2
                                                        when PUNTUACION >= 100 and PUNTUACION <= 300 then 3
@@ -322,8 +325,11 @@ begin
                                                        when PUNTUACION > 1000 and PUNTUACION <= 2000 then 7
                                                        when PUNTUACION > 2000 and PUNTUACION <= 3000 then 8
                                                        when PUNTUACION > 3000 then 9
-                                                       else -1 end)
+                                                       else -1 end),
+                        per.PUNTUACION=ale.PUNTUACION
                    where per.DIA_ID = '''||fecha||'''';
+
+
 
       v_rowcount := sql%rowcount;
       --Log_Proceso
@@ -362,7 +368,8 @@ begin
             VOLUMEN_RIESGO,
             POS_VENCIDA,
             POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
           )
       select  DIA_ID,
           FECHA_CARGA_DATOS,
@@ -382,7 +389,8 @@ begin
           VOLUMEN_RIESGO,
           POS_VENCIDA,
           POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
         from TMP_H_PER
         where dia_id = fecha;
       v_rowcount   := sql%rowcount;
@@ -490,7 +498,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
               VOLUMEN_RIESGO,
               POS_VENCIDA,
               POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
             )
         select SEMANA,
             MAX_DIA_SEMANA,
@@ -510,7 +519,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
             VOLUMEN_RIESGO,
             POS_VENCIDA,
             POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
         from H_PER
         where dia_id = max_dia_semana;
         
@@ -642,7 +652,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
                 VOLUMEN_RIESGO,
                 POS_VENCIDA,
                 POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
               )
           select  MES,
               MAX_DIA_MES,
@@ -662,7 +673,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
               VOLUMEN_RIESGO,
               POS_VENCIDA,
               POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
           from H_PER
           where dia_id = max_dia_mes;
           
@@ -795,7 +807,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
             VOLUMEN_RIESGO,
             POS_VENCIDA,
             POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
           )
       select TRIMESTRE,
           MAX_DIA_TRIMESTRE,
@@ -815,7 +828,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
           VOLUMEN_RIESGO,
           POS_VENCIDA,
           POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
         from H_PER
         where dia_id = max_dia_trimestre;
       v_rowcount := sql%rowcount;
@@ -928,7 +942,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
             VOLUMEN_RIESGO,
             POS_VENCIDA,
             POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
           )
       select anio,
           max_dia_anio,
@@ -948,7 +963,8 @@ execute immediate 'BEGIN Insertar_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TA
           VOLUMEN_RIESGO,
           POS_VENCIDA,
           POS_NO_VENCIDA,
-            ARQUETIPO_PERSONA_ID
+            ARQUETIPO_PERSONA_ID,
+            PUNTUACION
         from H_PER
         where dia_id = max_dia_anio;
         

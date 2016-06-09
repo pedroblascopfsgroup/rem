@@ -9,32 +9,48 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <fwk:page>
-	debugger;
+
+	<pfsforms:textfield
+	labelKey="plugin.procuradores.turnado.descripcionEsquema"
+	label="**Descripci&oacute;n esquema"
+	name="nombreEsquema"
+	value="${nombreEsquema}"/>
+	
 	<c:if test="${idEsquema==null}" >
-	var idEsquema = null;	
+	var idEsquema = null;
+	nombreEsquema.setDisabled(false);	
 	</c:if>
 	<c:if test="${idEsquema!=null}" >
 	var idEsquema = ${idEsquema};
+	nombreEsquema.setDisabled(true);
 	</c:if>
+	
+	var idsTuplasBorradas = [];
+	var idsRangosBorrados = [];
+	var idsRangosCreados = [];
+	var modificacionesRangos = [];
+	var idsTuplasConfigDefinitivas = [];
 
-	<pfsforms:textfield
-		labelKey="plugin.procuradores.turnado.tipoProcedimiento**"
-		label="**Nombre del esquema"
-		name="nombreEsquema"
-		value="${nombreEsquema}"
-		readOnly="false" />
+	var nombreEsquemaHz = app.creaPanelHz({style : "margin-left:4px;margin-top:4px;margin-bottom:4px;"},[{html:"<b><s:message code="plugin.procuradores.turnado.descripcionEsquema" text="**Descripci&oacute;n esquema"/></b>"+":", border: false, width : 133, cls: 'x-form-item', style: "margin-top:4px;"}
+					  ,nombreEsquema]);
 	
 	var nombreEsquemaPanel = new Ext.form.FieldSet({
-		title : '<s:message code="plugin.procuradores.turnado.tipoProcedimiento**" text="**Información esquema" />'
+		title : '<s:message code="plugin.procuradores.turnado.informacionTurnado" text="**Información esquema" />'
 		,layout:'table'
 		,autoHeight:true
 		,border:true
 		,bodyStyle:'padding:3px;cellspacing:20px;'
 		,collapsible : true
-		,collapsed : false
+		,collapsed : true
 		,viewConfig : { columns : 1 }
-		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:200 }
-		,items : [nombreEsquema]
+		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false}
+		,items : [nombreEsquemaHz]
+		,listeners: {
+			expand:  function(){
+				turnadoFiltrosFieldSet.collapse(true);
+				infoConfiguracionTurnado.collapse(true);	
+			}
+		}	
 		,doLayout:function() {
 				var margin = 40;
 				this.setWidth(900-margin);
@@ -45,23 +61,43 @@
 	<%@ include file="panelFiltrosPlazaTPO.jsp" %>
 	<%@ include file="panelNuevaConfiguracion.jsp" %>
 	
-	var gestionPanelSuperior = function(){
+	var gestionPanelSuperior = function(funcion){
+		
 		infoConfiguracionTurnado.setVisible(!infoConfiguracionTurnado.isVisible());
 		turnadoFiltrosFieldSet.setVisible(!turnadoFiltrosFieldSet.isVisible());
-		
+		if(funcion==1){
+			//Limpiar rangos
+			rangosStore.removeAll()
+			//Limpiar panel de nueva configuracion
+			cmbPlazas.clearValue();
+			botonAddPlaza.setDisabled(true);
+			botonRemovePlaza.setDisabled(true);
+			cmbTPO.clearValue();
+			botonAddTPO.setDisabled(true);
+			botonRemoveTPO.setDisabled(true);
+			Ext.getCmp('turn_procu_lista_procedimientos').removeAll();
+			Ext.getCmp('turn_procu_lista_plazas').removeAll();
+			gestionarPanelNuevaPlaza();
+			gestionarPanelNuevoTPO();
+		}
 		if(infoConfiguracionTurnado.isVisible()){
+			infoConfiguracionTurnado.expand(true);
 			if(rangosGrid.getSelectionModel().hasSelection()) rangosGrid.getSelectionModel().clearSelections();
 			rangosStore.removeAll();
+			btnNuevo.setDisabled(true);
+			btnBorrarRango.setDisabled(true);
+			btnEditarRango.setDisabled(true);
 		}
 	};
 	
 	<%-- Botones grids --%>
 	var btnNuevo = new Ext.Button({
-			text : '<s:message code="app.nuevo" text="**Nuevo" />'
+			text : '<s:message code="plugin.procuradores.turnado.nuevoRango" text="**Nuevo rango" />'
 			,iconCls : 'icon_mas'
+			,disabled: true
 			,handler : function(){
 				btnNuevo.setDisabled(true);
-				gestionarPanelEdicionRangos(false, 'NEW', rangosGrid.getSelectionModel().getSelected());
+				gestionarPanelEdicionRangos(false, 'NEW', rangosGrid.getSelectionModel().getSelected(),null);
 			}
 	});
 	
@@ -69,12 +105,14 @@
 			text : '<s:message code="app.borrar" text="**Borrar" />'
 			,iconCls : 'icon_menos'
 			,disabled: true
-			,handler : function(){			
-					Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarBorrarPlaza**" text="**Borrar rango" />', '<s:message code="plugin.procuradores.turnado.mensajeConfirmarBorrarPlaza**" text="**Estas seguro que desa borrar el rango seleccionado?" />', this.evaluateAndSend);
+			,handler : function(){
+					Ext.Msg.minWidth=360;			
+					Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarBorrarRango" text="**Borrar rango" />', '<s:message code="plugin.procuradores.turnado.mensajeConfirmarBorrarRango" text="**Estas seguro que desa borrar el rango seleccionado?" />', this.evaluateAndSend);
 			}
 			,evaluateAndSend: function(seguir) {      			
 	         			if(seguir== 'yes') {
-	         				//TODO BORRAR REGLA
+	         				//Borrado logico de la regla
+	         				borrarRango(rangosGrid.getSelectionModel().getSelected().data.rangoId);
 						}
 	    	} 
 	});
@@ -84,72 +122,109 @@
 			,disabled: true
 			,handler : function(){
 				btnEditarRango.setDisabled(true);
-				gestionarPanelEdicionRangos(false, 'EDIT', rangosGrid.getSelectionModel().getSelected());
+				//Obtener todas las entradas del store con mismos identificadores de rango
+				Ext.Ajax.request({
+					url: '/pfs/turnadoprocuradores/getIdsRangosRelacionados.htm'
+					,params: {
+								idConfig: rangosGrid.getSelectionModel().getSelected().data.rangoId
+							}
+					,method: 'POST'
+					,success: function (result, request){
+						var r = Ext.util.JSON.decode(result.responseText);
+						////Obtener ids/codigos de los despachos y porcentajes
+						var listaDespachosUpdate = [];
+						for(var i=0; i< r.idsRangos.length; i++){
+							listaDespachosUpdate.push(r.idsRangos[i].idRango);
+						}
+						gestionarPanelEdicionRangos(false, 'EDIT', rangosGrid.getSelectionModel().getSelected(),listaDespachosUpdate);
+					}
+					,error: function(result, request){
+						Ext.Msg.minWidth=360;
+						Ext.Msg.alert("Error","Error");
+					}
+				});
 			}
 	});
 	
 		
 	var btnNuevaConfiguracion = new Ext.Button({
-			text : '<s:message code="app.nuevo**" text="**Crear nueva configuración" />'
+			text : '<s:message code="plugin.procuradores.turnado.btn.nuevaConfiguracion" text="**Crear nueva configuraci&oacute;n" />'
 			,iconCls : 'icon_mas'
 			,handler : function(){
 				btnNuevaConfiguracion.setDisabled(true);
 				btnNuevaConfiguracion.setVisible(false);
-				btnGuardarNuevaConfiguracion.setDisabled(false);
 				btnGuardarNuevaConfiguracion.setVisible(true);
 				btnCancelarNuevaConfiguracion.setDisabled(false);
 				btnCancelarNuevaConfiguracion.setVisible(true);
-				gestionPanelSuperior();
+				gestionPanelSuperior(0);
 			}
 	});
 	
 	var btnGuardarNuevaConfiguracion = new Ext.Button({
-			text : '<s:message code="app.nuevo**" text="**Guardar nueva configuración" />'
+			text : '<s:message code="plugin.procuradores.turnado.btn.guardarNuevaConfiguracion" text="**Guardar nueva configuración" />'
 			,iconCls : 'icon_ok'
 			,disabled: true
 			,hidden: true
 			,handler : function(){
-				<%-- Reset de las variable auxilaries que permiten la cancelacion de nuevas configuraciones --%>
-				nuevasPlazasConfig = [];
-				idsTuplasConfig = [];
-				<%-- Guardar nueva configuracion (aplicar cambios) --%>
+				<%-- Pasar de las variables de nueva configuracion, a las totales y reiniciarlas --%>
+				idsTuplasConfigDefinitivas=idsTuplasConfig;
+				idsTuplasConfig=[];
+				idsTuplasBorradas = idsTuplasBorradasConfig;
+				idsTuplasBorradasConfig = [];
+				idsRangosBorrados = idsRangosBorradosConfig;
+				idsRangosBorradosConfig = [];
+				nuevasPlazasConfig=[];
+				<%-- Gestion botones--%>
 				btnGuardarNuevaConfiguracion.setDisabled(true);
 				btnGuardarNuevaConfiguracion.setVisible(false);
 				btnCancelarNuevaConfiguracion.setDisabled(true);
 				btnCancelarNuevaConfiguracion.setVisible(false);
 				btnNuevaConfiguracion.setDisabled(false);
 				btnNuevaConfiguracion.setVisible(true);
-				gestionPanelSuperior();
+				btnGuardar.setDisabled(false);
+				
+				gestionPanelSuperior(1);
+				plazasStore.webflow({ idEsquema : idEsquema });
+				tposStore.removeAll();
+				//Webflob para cargar el grid
+				rangosStore.webflow({idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()});
 			}
 	});
 	
 	var btnCancelarNuevaConfiguracion = new Ext.Button({
-			text : '<s:message code="app.nuevo**" text="**Cancelar nueva configuración" />'
+			text : '<s:message code="plugin.procuradores.turnado.btn.cancelarNuevaConfiguracion" text="**Cancelar nueva configuraci&oacute;n" />'
 			,iconCls : 'icon_cancel'
 			,disabled: true
 			,hidden: true
 			,handler : function(){
-				<%-- Cancelar  modificaciones realizadas --%>
-				//TODO
-				<%-- Reset de las variable auxilaries que permiten la cancelacion de nuevas configuraciones --%>	
-				nuevasPlazasConfig = [];
-				idsTuplasConfig = [];
 				<%-- Cancelar nueva configuracion (deshacer cambios) --%>
-				btnGuardarNuevaConfiguracion.setDisabled(true);
-				btnGuardarNuevaConfiguracion.setVisible(false);
-				btnCancelarNuevaConfiguracion.setDisabled(true);
-				btnCancelarNuevaConfiguracion.setVisible(false);
-				btnNuevaConfiguracion.setDisabled(false);
-				btnNuevaConfiguracion.setVisible(true);
-				gestionPanelSuperior();
+				Ext.Msg.minWidth=360;			
+				Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarCancelacion" text="**Confirmacr cancelación" />', '<s:message code="plugin.procuradores.turnado.confirmarCancelacionMsg" text="**Estas seguro que desea cancelar los cambios?" />', this.evaluateAndSend);
+			}
+			,evaluateAndSend: function(seguir) {
+				if(seguir){
+					cancelarModificacion(1);
+					//Gestion botones
+					btnGuardarNuevaConfiguracion.setDisabled(true);
+					btnGuardarNuevaConfiguracion.setVisible(false);
+					btnCancelarNuevaConfiguracion.setDisabled(true);
+					btnCancelarNuevaConfiguracion.setVisible(false);
+					btnNuevaConfiguracion.setDisabled(false);
+					btnNuevaConfiguracion.setVisible(true);
+					gestionPanelSuperior(1);
+				}
 			}
 	});
 	
 	<%-- Grid rangos --%>
 	var rango = Ext.data.Record.create([
 		 {name:'id'}
+		 ,{name:'idPlazaTpo'}
 		 ,{name:'plaza'}
+		 ,{name:'plazaId'}
 		 ,{name:'tipoProcedimiento'}
+		 ,{name:'tipoProcedimientoId'}
+		 ,{name:'rangoId'}
 		 ,{name:'importeDesde'}
 		 ,{name:'importeHasta'}
 		 ,{name:'despacho'}
@@ -167,12 +242,12 @@
 	
 	var rangosCm = new Ext.grid.ColumnModel([	    
 		{header: 'Id', dataIndex: 'id', hidden: true}
-		,{header: 'plaza', dataIndex: 'plaza',hidden: true, sortable: false}
-		,{header: '<s:message code="plugin.config.rangoturnado.buscador.grid.descripcion" text="**T. Procedimiento"/>', dataIndex: 'tipoProcedimiento', sortable: false}
-		,{header: '<s:message code="plugin.config.rangoturnado.buscador.grid.estado_cod" text="**Imp. minimo"/>', dataIndex: 'importeDesde', sortable: false}
-		,{header: '<s:message code="plugin.config.rangoturnado.buscador.grid.estado_des" text="**Imp. maximo"/>', dataIndex: 'importeHasta', sortable: false}
-		,{header: '<s:message code="plugin.config.rangoturnado.buscador.grid.fechaSolicitud" text="**Despacho"/>', dataIndex: 'despacho', sortable: false}
-		,{header: '<s:message code="plugin.config.rangoturnado.buscador.grid.usuario" text="**Porcentaje"/>', dataIndex: 'porcentaje', sortable: false}
+		,{header: '<s:message code="plugin.procuradores.turnado.grids.plaza" text="**Plaza"/>', dataIndex: 'plaza', width: 50, sortable: false}
+		,{header: '<s:message code="plugin.procuradores.turnado.grids.tpo" text="**T. Procedimiento"/>', dataIndex: 'tipoProcedimiento', width: 50, sortable: false}
+		,{header: '<s:message code="plugin.procuradores.turnado.impoMinimo" text="**Imp. minimo"/>', dataIndex: 'importeDesde', width: 20, sortable: false}
+		,{header: '<s:message code="plugin.procuradores.turnado.impoMaximo" text="**Imp. maximo"/>', dataIndex: 'importeHasta', width: 20, sortable: false}
+		,{header: '<s:message code="plugin.procuradores.turnado.despacho" text="**Despacho"/>', dataIndex: 'despacho', width: 50, sortable: false}
+		,{header: '<s:message code="plugin.procuradores.turnado.grids.porcentaje" text="**%"/>', dataIndex: 'porcentaje', width: 15, sortable: false}
 	]);
 	
 	var sm = new Ext.grid.RowSelectionModel({
@@ -180,17 +255,20 @@
 		,singleSelect: true
         ,listeners: {
             rowselect: function(p, rowIndex, r) {
-            	gestionarPanelEdicionRangos(true);
             	if (!this.hasSelection()) {
-            		gestionarPanelEdicionRangos(true, '', '');
-            		btnBorrarRango.setDisabled(true);
-				btnEditarRango.setDisabled(true);
             		return;
             	}
-            	var borrable = r.data.borrable;
-            	var activable = r.data.activable;
-				btnBorrarRango.setDisabled(false);
-				btnEditarRango.setDisabled(false);
+            	if(r.data.importeDesde!=null && r.data.importeDesde!=""){
+					btnBorrarRango.setDisabled(false);
+					if(!infoConfiguracionTurnado.isVisible()){
+						btnEditarRango.setDisabled(false);
+					}
+				}
+				else{
+					btnBorrarRango.setDisabled(true);
+					btnEditarRango.setDisabled(true);
+				}
+				btnNuevo.setDisabled(false);
             }
          }
 	});
@@ -198,7 +276,7 @@
 	var rangosGrid = new Ext.grid.EditorGridPanel({
 		store: rangosStore
 		,cm: rangosCm
-		,title:'<s:message code="" text="**Lista rangos"/>'
+		,title:'<s:message code="plugin.procuradores.turnado.listaRangos" text="**Lista rangos"/>'
 		,stripeRows: true
 		,height:300
 		,resizable:false
@@ -215,11 +293,11 @@
 		//,clicksToEdit:0
 		,selModel: sm
 		,bbar : [btnNuevo,btnBorrarRango,btnEditarRango,btnNuevaConfiguracion,btnGuardarNuevaConfiguracion,btnCancelarNuevaConfiguracion]
-		,view: new Ext.grid.GroupingView({
-			forceFit:true
-			,hideGroupedColumn: true
-			,groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
-		})
+		//,view: new Ext.grid.GroupingView({
+			//forceFit:true
+			//,hideGroupedColumn: true
+			//,groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+		//})
 		,doLayout:function() {
 				var margin = 40;
 				this.setWidth(650-margin);
@@ -240,27 +318,125 @@
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
-		,handler : function(){page.fireEvent(app.event.CANCEL);}
+		,handler : function(){
+			<%-- Cancelar configuraciones realizada --%>
+			Ext.Msg.minWidth=360;			
+			Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarCancelacion" text="**Confirmar cancelación" />', '<s:message code="plugin.procuradores.turnado.confirmarCancelacionMsg" text="**Estas seguro que desea cancelar los cambios?" />', this.evaluateAndSend);
+		}
+		,evaluateAndSend: function(seguir) {
+			if(seguir){
+				cancelarModificacion(0);
+			}	
+		}
 	});
 	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
+		,disabled: true
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			<%--Ext.Ajax.request({
-				url: page.resolveUrl(''),
-				params: {
-					id:''									
-				},
-				method: 'POST',
-				success: function ( result, request ) {
-					page.fireEvent(app.event.DONE);
-				}
-			});
-			 --%>				
+			mainPanel.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
+			if(!infoConfiguracionTurnado.isVisible()){
+				//Cerrar ventana
+				page.fireEvent(app.event.DONE);
+			}
+			else{
+				Ext.Msg.minWidth=360;
+				Ext.Msg.alert('Advertencia', '<s:message code="plugin.procuradores.turnado.errorConfiguracionEnCurso" text="**Por favor, guarde o cancele la nueva configuración en curso" />' );
+			}
 		}
 		<app:test id="btnGuardarABM" addComa="true"/>
 	});
+	
+	<%-- Funciones --%>
+	function borrarRango(idConfig){
+		mainPanel.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
+		var params = {idConfig: idConfig};
+		if(infoConfiguracionTurnado.isVisible()) params.idsplazasTpo = idsTuplasConfig;
+		Ext.Ajax.request({
+			url: '/pfs/turnadoprocuradores/borrarRangoConfigEsquema.htm'
+			,params: params
+			,method: 'POST'
+			,success: function (result, request){
+				var r = Ext.util.JSON.decode(result.responseText);
+				//Guardar ids de tuplas y rangos
+				for(var i=0; i< r.idsRangos.length; i++){
+					idsRangosBorrados.push(r.idsRangos[i].idRango);
+				}
+				//Webflob para cargar el grid
+				rangosStore.webflow({idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()});
+				btnGuardar.setDisabled(false);
+				if(infoConfiguracionTurnado.isVisible()) gestionarPanelNuevoTPO();
+				mainPanel.container.unmask();
+			}
+			,error: function(result, request){
+				Ext.Msg.minWidth=360;
+				Ext.Msg.alert("Error","Error borrando");
+				mainPanel.container.unmask();
+			}
+		});
+	}
+	
+	function cancelarModificacion(flag){
+		mainPanel.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
+		var params = {};
+		<%-- Si se trata de cancelacion de una nueva configuracion --%>
+		if(flag==1){
+			params.idsTuplasConfig = idsTuplasConfig;
+			params.idsTuplasBorradasConfig = idsTuplasBorradasConfig;
+			params.idsRangosBorradosConfig = idsRangosBorradosConfig;
+		}
+		else{
+			<%-- Si se trata de cancelacion de toda la sesion --%>
+			if(infoConfiguracionTurnado.isVisible()){
+				params.idsTuplasConfig = idsTuplasConfig;
+				params.idsTuplasBorradasConfig = idsTuplasBorradasConfig;
+				params.idsRangosBorradosConfig = idsRangosBorradosConfig;	
+			}
+			params.idsTuplasBorradas = idsTuplasBorradas;
+			params.idsRangosBorrados = idsRangosBorrados;
+			params.idsRangosCreados = idsRangosCreados; 
+			params.modificacionesRangos = modificacionesRangos;
+			params.idsTuplasConfigDefinitivas = idsTuplasConfigDefinitivas;
+		}
+		Ext.Ajax.request({
+			url: '/pfs/turnadoprocuradores/cancelarEdicionEsquema.htm'
+			,params: params
+			,method: 'POST'
+			,success: function (result, request){
+				var r = Ext.util.JSON.decode(result.responseText);
+				//Resetear las variables que sean necesario
+				if(flag==1){
+					idsTuplasConfig = [];
+					idsTuplasBorradasConfig = [];
+					idsRangosBorradosConfig = [];
+				}
+				else{
+					idsTuplasConfig = [];
+					idsTuplasBorradasConfig = [];
+					idsRangosBorradosConfig = [];
+					idsTuplasBorradas = [];
+					idsTuplasBorradas = [];
+					idsRangosCreados = [];
+					modificacionesRangos = [];
+					idsTuplasConfigDefinitivas = [];
+				}
+				nuevasPlazasConfig=[];
+				//Webflob para cargar el grid
+				rangosStore.webflow({idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()});
+				//Cerrar ventana si se trata de cancelacion de la sesion
+				if(flag!=1){
+					page.fireEvent(app.event.CANCEL);
+				}
+				mainPanel.container.unmask();
+			}
+			,error: function(result, request){
+				Ext.Msg.minWidth=360;
+				Ext.Msg.alert("Error","Error cancelando");
+				mainPanel.container.unmask();
+			}
+		});
+	}
 	
 	var mainPanel = new Ext.FormPanel({
 		autoHeight:true
@@ -275,6 +451,6 @@
 	
 	page.add(mainPanel);
 	
-	rangosStore.webflow({idEsquema : idEsquema,  idPlaza : '', idTPO : ''});
+	rangosStore.webflow({idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()});
 	
 </fwk:page>

@@ -8,7 +8,7 @@
 	});
 	
 	var importeMinimo = new Ext.form.NumberField({
-		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.deudaIrregular**" text="**Imp. minimo" />'
+		fieldLabel:'<s:message code="plugin.procuradores.turnado.impoMinimo" text="**Imp. mínimo" />'
 		,allowNegative:false
 		,allowDecimals:true
 		,value:''
@@ -16,11 +16,11 @@
 		,labelStyle:labelStyle
 		,maxValue:99999999999999
 		,minValue: 0.01
-		,width: 100
+		,width: 120
 	});
 	
 	var importeMaximo = new Ext.form.NumberField({
-		fieldLabel:'<s:message code="plugin.cajamar.listadoPreProyectado.datosGenerales.deudaIrregular**" text="**Imp. maximo" />'
+		fieldLabel:'<s:message code="plugin.procuradores.turnado.impoMaximo" text="**Imp. máximo" />'
 		,allowNegative:false
 		,allowDecimals:true
 		,value:''
@@ -28,11 +28,11 @@
 		,labelStyle:labelStyle
 		,maxValue:99999999999999
 		,minValue: 0.01
-		,width: 100
+		,width: 120
 	});
 	
 	var cmbFieldLabel = new Ext.form.Label({
-		fieldLabel : '<s:message code="plugin.procuradores.turnado.plaza**" text="**Despachos" />'
+		fieldLabel : '<s:message code="plugin.procuradores.turnado.despachos" text="**Despachos" />'
 		,labelStyle:labelStyle
 	});
     
@@ -45,7 +45,7 @@
 	    ,triggerAction: 'all'
 	    ,emptyText:'----'
 	    ,obligatory: true
-		,width:150
+		,width:170
 		,allowBlank:false
 	    ,editable : false
 		,listeners: {
@@ -62,7 +62,7 @@
         ,handler : function(){
 			if(cmbDespachos.getValue().trim()!='' && cmbDespachos.getValue()!=null){
 				var item = despachosStore.getAt(despachosStore.find('id', cmbDespachos.getValue()));
-        		configDespachosPanel.add(crearTuplaDespacho(item.get('id'),item.get('nombre')));
+        		configDespachosPanel.add(crearTuplaDespacho(item.get('id'),item.get('nombre'),null));
         		configDespachosPanel.doLayout();
         		//Se actualizan botones
         		dimeSiDespachoYaSeleccionado(item.get('id'));
@@ -86,13 +86,23 @@
     
     var despachosPanel = app.creaPanelHz({style : "margin-top:4px;margin-bottom:4px;"},[cmbDespachos, {style : "margin-right:4px;"},botonAddDespacho, botonRemoveDespacho]);
 	
+	var action = "ADD";
 	var btnGuardarRangos =  new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
 				if(!validarPorcentajes()){
-					alert("**Advertencia: el total de porcentajes de los despachos debe ser 100%");
-				}				
+					Ext.Msg.minWidth=360;
+					Ext.Msg.alert('Advertencia','<s:message code="plugin.procuradores.turnado.mensajeErrorPorcentajes" text="**El total de porcentajes de los despachos debe ser 100%" />');
+				}
+				else if(!validaImportes()){
+					Ext.Msg.minWidth=360;
+					Ext.Msg.alert('Advertencia','<s:message code="plugin.procuradores.turnado.mensajeErrorImportes" text="**Por favor, revise los importes introducidos" />');
+				}	
+				else{
+					//Llamada al save rango
+					guardarOrUpdateRango(action);
+				}			
 			}
 	});
 	
@@ -100,14 +110,12 @@
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
 		,handler : function(){
-			rangoImportesFieldSet.setDisabled(true);
-			importeMinimo.reset();
-			importeMaximo.reset();
+			gestionarPanelEdicionRangos(true,"NEW",null,null);
 		}
 	});
 	
 	var configDespachosPanel = new Ext.form.FieldSet({
-		width: 205
+		width: 225
 		,height:100
 		,border:true
 		,hidde: true
@@ -124,7 +132,7 @@
 	});
 	
 	var rangoImportesFieldSet = new Ext.Panel({
-		title:'<s:message code="plugin.config.despachoExterno.turnado.ventana.panelLitigios.titulo**" text="**Configuracion rango" />'
+		title:'<s:message code="plugin.procuradores.turnado.tituloConfRangos" text="**Configuración rango" />'
 		,height:290
 		,border:true
 		,disabled: true
@@ -142,7 +150,7 @@
 	var arrayDespachosAux = [];
 	
 	<%-- Funcion crear tupla de despacho-porcentaje --%>
-    var crearTuplaDespacho = function(id, despacho){
+    var crearTuplaDespacho = function(id, despacho,porcentaje){
 		//Añadir id del despacho que se va a añadir al array auxiliar
 		arrayDespachosAux.push(id);  
 		return despachoHzPanel = app.creaPanelHz({itemId:'despacho-panel-'+id, style : "margin-top:4px;margin-bottom:4px;"}
@@ -152,7 +160,8 @@
     					,fieldLabel: despacho
 	                	,name: 'item-porcentaje-'+id
 	                	,maxValue: 100
-		                ,minValue: 0
+		                ,minValue: 0.01
+		                ,value: porcentaje
 		                ,width:50 
 		                ,itemId: 'item-porcentaje-'+id
 		                ,listeners: {
@@ -181,7 +190,7 @@
 		}
 	}
 	
-	<%-- Funcion validar si plaza ya seleccionada --%>
+	<%-- Funcion validar si despacho ya seleccionada --%>
     var dimeSiDespachoYaSeleccionado = function(idDespacho){
     	var flag;
     	var despachoItem = rangoImportesFieldSet.find('itemId','despacho-panel-'+idDespacho);
@@ -191,9 +200,17 @@
 		botonRemoveDespacho.setDisabled(!flag);	
     }
     
+    <%-- Funcion que resetea el panel de despachos seleccionado --%>
+   	var resetDespachosPanel = function(){
+   		if(arrayDespachosAux.length>0){
+			while(arrayDespachosAux.length>0){
+				eliminarTuplaDespacho(arrayDespachosAux[0]);
+			}
+		}
+   	}
+    
 	<%-- Funcion validar si el total de porcentajes seleccionados es 100 --%>
 	var validarPorcentajes = function(){
-		debugger;
 		var sumatorio = 0;
 		
 		if(arrayDespachosAux.length>0){
@@ -208,17 +225,125 @@
 		return (sumatorio==100);
 	}
 	
+	<%-- Funcion que valida los importes introducidos --%>
+	var validaImportes = function(){
+		if(importeMaximo.validate() 
+			&& importeMaximo.getValue()!=null && importeMaximo.getValue()!="" && importeMinimo.validate() 
+			&& importeMinimo.getValue()!=null && importeMinimo.getValue()!="" && importeMinimo.validate()
+			&& importeMinimo.getValue()< importeMaximo.getValue()) return true;
+		return false;
+	}
+	
+	<%-- Funcion que devuelve un array de "despacho_porcentaje" --%>
+	var dameRelacionDespachoPorcentaje = function(){
+		var lista = [];
+		
+		if(arrayDespachosAux.length>0){
+			for(i = 0; i< arrayDespachosAux.length;i++){
+				var item = rangoImportesFieldSet.find('itemId','item-porcentaje-'+arrayDespachosAux[i]);
+				if(item.length>0){
+					lista.push(arrayDespachosAux[i]+"_"+item[0].getValue());
+				}
+			}
+		}
+		
+		return lista;
+	}
+	
+	<%-- Funcion guardar o actualizar rango --%>
+	var guardarOrUpdateRango = function(action){
+		mainPanel.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
+		var src = "";
+		var params= {
+				impMin: importeMinimo.getValue()
+				,impMax: importeMaximo.getValue()
+				,arrayDespachos: dameRelacionDespachoPorcentaje()
+		};
+		if(action=="ADD"){
+			src="/pfs/turnadoprocuradores/addRangoConfigEsquema.htm";
+			<%-- Cuando es nueva configuracion, añadir rangos a todas las tuplas creadas, y ademas, mostrar solo rangos, sin tuplas --%>
+			if(infoConfiguracionTurnado.isVisible()){
+				params.idsplazasTpo=idsTuplasConfig;
+			}
+			else params.idConf=rangosGrid.getSelectionModel().getSelected().data.idPlazaTpo;
+		}
+		else if(action=="UPD"){
+			src="/pfs/turnadoprocuradores/updateRangoConfigEsquema.htm";
+			params.idConf=rangosGrid.getSelectionModel().getSelected().data.rangoId;
+		}
+		Ext.Ajax.request({
+			url: src
+			,params: params
+			,method: 'POST'
+			,success: function (result, request){
+				var r = Ext.util.JSON.decode(result.responseText);
+				if(r.fwk!=null && r.fwk.fwkExceptions!=null && r.fwk.fwkExceptions[0]!=null){
+					Ext.Msg.minWidth=360;
+					Ext.Msg.alert('Advertencia', r.fwk.fwkExceptions[0]);
+				}
+				else{
+					if(action=="UPD"){
+						//Guardar ids nuevos, borrados y modificaciones
+						//Borrados
+						for(var i=0; i< r.idsRangosBorrados.length; i++){
+							idsRangosBorrados.push(r.idsRangosBorrados[i].idRango);
+						}
+						//Modificados
+						for(var i=0; i< r.modificacionesRangos.length; i++){
+							modificacionesRangos.push(r.modificacionesRangos[i].idRango);
+						}
+					}
+					if(!infoConfiguracionTurnado.isVisible()){
+						//Guardar ids nuevos
+						for(var i=0; i< r.idsRangos.length; i++){
+							idsRangosCreados.push(r.idsRangos[i].idRango);
+						}
+					}
+				  	gestionarPanelEdicionRangos(true,"NEW",null,null);
+				  	//Webflob para cargar el grid
+					if(infoConfiguracionTurnado.isVisible()){
+						rangosStore.webflow({idEsquema : idEsquema, idsPlazas:nuevasPlazasConfig, nuevaConfig : infoConfiguracionTurnado.isVisible()});
+					}
+					else rangosStore.webflow({idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()});
+					btnGuardar.setDisabled(false);
+				}
+				mainPanel.container.unmask();	
+			}
+			,error: function(result, request){
+				mainPanel.container.unmask();
+				Ext.Msg.minWidth=360;
+				Ext.Msg.alert("Error","Error comprobando si ya existe configuracion para la plaza seleccionada");
+			}
+		});
+	}
+	
 	<%--Fin funciones --%>
 	
-	var gestionarPanelEdicionRangos = function(flag, operacion, value){
-		debugger;
+	var gestionarPanelEdicionRangos = function(flag, operacion, value,despachos){
+		plazasGrid.setDisabled(!flag);
+		tposGrid.setDisabled(!flag);
+		rangosGrid.setDisabled(!flag);
+		if(flag){
+			if(rangosGrid.getSelectionModel().hasSelection()) rangosGrid.getSelectionModel().clearSelections();
+		}
 		rangoImportesFieldSet.setDisabled(flag);
 		if(operacion == 'EDIT'){
+			action="UPD";
 			importeMinimo.setValue(value.data.importeDesde);
 			importeMaximo.setValue(value.data.importeHasta);
+			for(var i=0; i< despachos.length;i++){
+				var despacho = despachos[i].split("_");
+				configDespachosPanel.add(crearTuplaDespacho(despacho[0],despacho[1],despacho[2]));
+        		configDespachosPanel.doLayout();
+       		}
+       		if(infoConfiguracionTurnado.isVisible()) gestionarPanelNuevoTPO();
 		}
 		else if (operacion == 'NEW'){
+			action="ADD";
 			importeMinimo.reset();
 			importeMaximo.reset();
+			cmbDespachos.reset();
+			resetDespachosPanel();
+			if(infoConfiguracionTurnado.isVisible()) gestionarPanelNuevoTPO();
 		}
 	}

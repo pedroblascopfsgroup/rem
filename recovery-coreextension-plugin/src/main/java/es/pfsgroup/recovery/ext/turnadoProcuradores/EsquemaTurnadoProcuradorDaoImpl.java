@@ -3,7 +3,6 @@ package es.pfsgroup.recovery.ext.turnadoProcuradores;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -66,7 +65,8 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 
 		return esquemaVigente;
 	}
-
+	
+	/*
 	private void setSortBusquedaEsquemas(EsquemaTurnadoBusquedaDto dto) {
 		if (dto.getSort() != null) {
 			if (dto.getSort().equals("valorSubasta")) {
@@ -78,6 +78,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 			dto.setSort("esq.id");
 		}
 	}
+	*/
 	
 	@Override
 	public Page buscarEsquemasTurnado(EsquemaTurnadoBusquedaDto dto, Usuario usuLogado) {
@@ -219,26 +220,12 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	
 	@SuppressWarnings("unchecked")
 	@Override
-    public Collection<? extends TipoPlaza> getPlazas(String query) {
+    public List<TipoPlaza> getPlazas(String query) {
         StringBuilder hql = new StringBuilder();
         hql.append("from TipoPlaza ");
         hql.append("where auditoria.borrado = false ");
         hql.append("and descripcion like '%" + query.toUpperCase() + "%' ");
         hql.append("order by descripcion");
-
-        Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
-
-        return q.list();
-    }
-	
-	@SuppressWarnings("unchecked")
-	@Override
-    public Collection<? extends TipoProcedimiento> getTPOs(String query) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("from TipoProcedimiento ");
-        hql.append("where auditoria.borrado = false ");
-        hql.append("and upper(descripcion) like '%" + query.toUpperCase() + "%' ");
-        hql.append("order by codigo");
 
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 
@@ -254,8 +241,26 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
         hql.append("and ept.esquemaTurnadoProcurador.id ="+idEsquema+" ");
 
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
-
-        return q.list();
+        List<TipoPlaza> listaPlazas = q.list();
+        
+        //Añadir la plaza por defecto si existe
+        hql = new StringBuilder();
+        hql.append("select count(*) from EsquemaPlazasTpo ept ");
+        hql.append("where ept.auditoria.borrado = false ");
+        hql.append("and ept.esquemaTurnadoProcurador.id ="+idEsquema+" ");
+        hql.append("and ept.tipoPlaza.id is null");
+        
+        q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
+        int result = Integer.parseInt(q.uniqueResult().toString());
+        if(result>0){
+        	TipoPlaza plaza = new TipoPlaza();
+        	plaza.setDescripcion("PLAZA POR DEFECTO");
+        	plaza.setDescripcionLarga("PLAZA POR DEFECTO");
+        	plaza.setCodigo("default");
+        	plaza.setId(Long.parseLong("-1"));
+        	listaPlazas.add(plaza);
+        }
+        return listaPlazas;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -265,11 +270,37 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 		hql.append("select ept.tipoProcedimiento from EsquemaPlazasTpo ept ");
         hql.append("where ept.auditoria.borrado = false ");
         hql.append("and ept.esquemaTurnadoProcurador.id ="+idEsquema+" ");
-        hql.append("and ept.tipoPlaza.id ="+idPlaza+" ");
+        if(idPlaza==-1){
+        	hql.append("and ept.tipoPlaza.id is null ");
+        }
+        else hql.append("and ept.tipoPlaza.id ="+idPlaza+" ");
         
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
-
-        return q.list();
+        List<TipoProcedimiento> listaTpo = q.list();
+        
+        //Añadir la tpo por defecto si existe
+        hql = new StringBuilder();
+        hql.append("select count(*) from EsquemaPlazasTpo ept ");
+        hql.append("where ept.auditoria.borrado = false ");
+        hql.append("and ept.esquemaTurnadoProcurador.id ="+idEsquema+" ");
+        if(idPlaza==-1){
+        	hql.append("and ept.tipoPlaza.id is null ");
+        }
+        else hql.append("and ept.tipoPlaza.id ="+idPlaza+" ");
+        hql.append("and ept.tipoProcedimiento.id =null");
+        
+        q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
+        int result = Integer.parseInt(q.uniqueResult().toString());
+        if(result>0){
+        	TipoProcedimiento tpo = new TipoProcedimiento();
+        	tpo.setDescripcion("PROCEDIMIENTO POR DEFECTO");
+        	tpo.setDescripcionLarga("PROCEDIMIENTO POR DEFECTO");
+        	tpo.setCodigo("default");
+        	tpo.setId(Long.parseLong("-1"));
+        	listaTpo.add(tpo);
+        }
+        
+        return listaTpo;
 	}
 	
 	/*
@@ -319,7 +350,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 		if(!Checks.estaVacio(idsPlazasTpo)){
 			//Delete de TUP_TPC_TURNADO_PROCU_CONFIG
 			StringBuilder hql = new StringBuilder();
-			hql.append("delete conf from TurnadoProcuradorConfig conf ");
+			hql.append("delete from TurnadoProcuradorConfig conf ");
 	        hql.append("where conf.esquemaPlazasTpo.id in (");
 	        for(int i = 0; i<idsPlazasTpo.size(); i++) {
 	        	if(i==0) hql.append(idsPlazasTpo.get(i));
@@ -331,7 +362,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	        
 	        //Delete de TUP_EPT_ESQUEMA_PLAZAS_TPO
 	        hql = new StringBuilder();
-			hql.append("delete ept from EsquemaPlazasTpo ept ");
+			hql.append("delete from EsquemaPlazasTpo ept ");
 	        hql.append("where ept.id in (");
 	        for(int i = 0; i<idsPlazasTpo.size(); i++) {
 	        	if(i==0) hql.append(idsPlazasTpo.get(i));
@@ -342,13 +373,57 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	        q.executeUpdate();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TurnadoProcuradorConfig> dameListaRangosRelacionados(TurnadoProcuradorConfig config, List<Long> listIdsPlazaTpo){
+		StringBuilder hql = new StringBuilder();
+		hql.append("from TurnadoProcuradorConfig tpc ");
+		if(!Checks.estaVacio(listIdsPlazaTpo)){
+			hql.append("where tpc.esquemaPlazasTpo.id in (");
+	        for(int i = 0; i<listIdsPlazaTpo.size(); i++) {
+	        	if(i==0) hql.append(listIdsPlazaTpo.get(i));
+	        	else hql.append(","+listIdsPlazaTpo.get(i));
+	        }
+	        hql.append(") ");
+		}
+		else{
+			hql.append("where tpc.esquemaPlazasTpo.id = "+config.getEsquemaPlazasTpo().getId()+" ");
+		}
+		hql.append("and tpc.esquemaPlazasTpo.esquemaTurnadoProcurador.id = "+config.getEsquemaPlazasTpo().getEsquemaTurnadoProcurador().getId()+" ");
+		if(config.getEsquemaPlazasTpo().getTipoPlaza()==null){
+			hql.append("and tpc.esquemaPlazasTpo.tipoPlaza.id is null ");
+        }
+		else {
+			hql.append("and tpc.esquemaPlazasTpo.tipoPlaza.id = "+config.getEsquemaPlazasTpo().getTipoPlaza().getId()+" ");
+		}
+		if(config.getEsquemaPlazasTpo().getTipoProcedimiento()==null){
+			hql.append("and tpc.esquemaPlazasTpo.tipoProcedimiento.id is null ");
+        }
+		else {
+			hql.append("and tpc.esquemaPlazasTpo.tipoProcedimiento.id = "+config.getEsquemaPlazasTpo().getTipoProcedimiento().getId()+" ");
+		}
+		hql.append("and tpc.importeDesde = "+config.getImporteDesde()+" ");
+		hql.append("and tpc.importeHasta = "+config.getImporteHasta()+" ");
+		hql.append("and tpc.auditoria.borrado = false");
+        
+        Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
+        List<TurnadoProcuradorConfig> listaRangos = q.list();
+        
+		return listaRangos;
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> getIdsEPTPorCodigoPlaza(String plazaCod) {
+	public List<Long> getIdsEPTPorIdPlaza(Long idPlaza, Long idEsquema) {
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ept.id from EsquemaPlazasTpo ept ");
-        hql.append("where ept.tipoPlaza.codigo = '"+plazaCod+"'");
+		hql.append("where ept.esquemaTurnadoProcurador.id= "+idEsquema+" " );
+		if(idPlaza==-1){
+        	hql.append("and ept.tipoPlaza.id is null ");
+        }
+        else hql.append("and ept.tipoPlaza.id = "+idPlaza+" " );
+        hql.append("and ept.auditoria.borrado = false");
         
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
         List<Long> list = q.list();
@@ -357,19 +432,55 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> getIdsEPTPorCodigoTPO(String tpoCod, String[] arrayPlazas) {
+	public List<Long> getIdsEPTPorIdTPO(Long idTpo, Long[] idsPlazas, Long idEsquema) {
+		boolean aux = false;
+		boolean aux_1 = false;
 		StringBuilder hql = new StringBuilder();
 		hql.append("select ept.id from EsquemaPlazasTpo ept ");
-		hql.append("where ept.tipoProcedimiento.codigo = '"+tpoCod+"'");
-        hql.append("and ept.tipoPlaza.codigo in (");
-        for(int i = 0; i<arrayPlazas.length; i++) {
-        	if(i==0) hql.append("'"+arrayPlazas[i]+"'");
-        	else hql.append(",'"+arrayPlazas[i]+"'");
+		hql.append("where ept.esquemaTurnadoProcurador.id= "+idEsquema+" " );
+		hql.append("and ept.auditoria.borrado = false ");
+		if(idTpo==-1){
+			hql.append("and ept.tipoProcedimiento.id is null ");
         }
-        hql.append(")");
+		else hql.append("and ept.tipoProcedimiento.id = "+idTpo+" ");
+		
+        for(int i = 0; i<idsPlazas.length; i++) {
+        	if(idsPlazas[i]!=-1){
+        		if(!aux){
+	        		aux=true;
+	        		hql.append("and ept.tipoPlaza.id in (");
+	        		hql.append(idsPlazas[i]);
+        		}
+        		else{
+        			hql.append(","+idsPlazas[i]);
+        		}
+        	}
+        	else aux_1=true;
+        }
+        if(aux) hql.append(") ");
+	    if(aux_1){
+        	hql.append("and ept.tipoPlaza.id is null ");
+        }
         
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
         List<Long> list = q.list();
         return list;
+	}
+
+	@Override
+	public void borrarRangosFisico(List<Long> listIdsRC) {
+		if(!Checks.estaVacio(listIdsRC)){
+			//Delete de TUP_TPC_TURNADO_PROCU_CONFIG
+			StringBuilder hql = new StringBuilder();
+			hql.append("delete from TurnadoProcuradorConfig conf ");
+	        hql.append("where conf.id in (");
+	        for(int i = 0; i<listIdsRC.size(); i++) {
+	        	if(i==0) hql.append(listIdsRC.get(i));
+	        	else hql.append(","+listIdsRC.get(i));
+	        }
+	        hql.append(")");
+	        Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
+	        q.executeUpdate();
+		}
 	}
 }

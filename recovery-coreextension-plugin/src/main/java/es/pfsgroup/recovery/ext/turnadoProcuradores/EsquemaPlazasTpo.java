@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -24,6 +25,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.pfsgroup.commons.utils.Checks;
 
 @Entity
 @Table(name = "TUP_EPT_ESQUEMA_PLAZAS_TPO", schema = "${entity.schema}")
@@ -56,9 +58,9 @@ public class EsquemaPlazasTpo implements Serializable, Auditable {
 	@Column(name = "EPT_GRUPO_ASIGNADO")
 	private float grupoAsignado;
 
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "EPT_ID")
+	@OneToMany(mappedBy= "esquemaPlazasTpo", fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@OrderBy("importeDesde")
 	private List<TurnadoProcuradorConfig> configuracion;
 	
 //    @OneToMany(mappedBy = "esquema", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -127,6 +129,40 @@ public class EsquemaPlazasTpo implements Serializable, Auditable {
 
 	public void setConfiguracion(List<TurnadoProcuradorConfig> configuracion) {
 		this.configuracion = configuracion;
-	}	
+	}
+	
+	/**
+	 * Comprueba si el par plaza-tpo ya dispone de un rango de importes que se solape con el dado y que no sean de la lista dada
+	 * @param impMin  Importe desde de la regla
+	 * @param impMax  Importe hasta de la regla
+	 * @param listaRangos
+	 * @return
+	 */
+	public boolean importesSolapados(Double impMin, Double impMax, List<TurnadoProcuradorConfig> listaRangos) {
+		if (Checks.estaVacio(this.configuracion)) return false;
+		for (TurnadoProcuradorConfig config : configuracion) {
+			//Si se le pasa una lista de rangos a excluir en la comparacion
+			if(!Checks.estaVacio(listaRangos)){
+				boolean excluyente = false;
+				for(TurnadoProcuradorConfig configExcluyente : listaRangos){
+					if(config.getId().equals(configExcluyente.getId())){
+						excluyente=true;
+					}
+				}
+				if (!excluyente && impMin<=config.getImporteHasta() 
+						 && impMax>=config.getImporteDesde()) {
+						return true;
+				}
+			}
+			//Si no hay 
+			else {
+				if (impMin<=config.getImporteHasta() 
+					 && impMax>=config.getImporteDesde()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	} 
 		
 }

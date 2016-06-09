@@ -1,8 +1,9 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -28,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.DDTipoPrcIniciador;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
@@ -310,7 +313,6 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		return true;
 	}
 	
-
 	@Override
 	public Boolean comprobarSiLosDatosHanSidoCambiados(Long prcId) {
 		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", prcId));
@@ -386,19 +388,25 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 	
 	@Override
-	public List<TipoPlaza> getPlazasEsquemaTurnadoProcu(){
-		List<TipoPlaza> listaPlazas = genericDao.getList(TipoPlaza.class, genericDao
-				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		if(!Checks.estaVacio(listaPlazas)){
-			return listaPlazas;
-		}
-		return null;
-	}
-	
-	@Override
 	public List<TipoProcedimiento> getTPOsEsquemaTurnadoProcu(){
 		List<TipoProcedimiento> listaTpo = genericDao.getList(TipoProcedimiento.class, genericDao
 				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		
+		List<DDTipoPrcIniciador> listaTposIniciadores = genericDao.getList(DDTipoPrcIniciador.class, genericDao
+				.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		
+		HashSet<String> hs = new HashSet<String>(listaTposIniciadores.size());
+		for(DDTipoPrcIniciador o : listaTposIniciadores) {
+		    hs.add(o.getCodigo());
+		}
+		
+		if(!Checks.estaVacio(listaTpo) && !Checks.estaVacio(listaTposIniciadores)){
+			Iterator<TipoProcedimiento> iter = listaTpo.iterator();
+			while(iter.hasNext()){
+				if(!hs.contains(iter.next().getCodigo())) iter.remove();
+			}
+		}
+		
 		if(!Checks.estaVacio(listaTpo)){
 			return listaTpo;
 		}
@@ -406,13 +414,21 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 	
 	@Override
-	public Collection<? extends TipoPlaza> getPlazas(String query) {
-		return esquemaTurnadoProcuradorDao.getPlazas(query);
-	}
-
-	@Override
-	public Collection<? extends TipoProcedimiento> getTPOs(String query) {
-		return esquemaTurnadoProcuradorDao.getTPOs(query);
+	public List<TipoPlaza> getPlazas(String query, Boolean otrasPlazasPresentes, Boolean plazaDefectoPresente) {
+		List<TipoPlaza> listaPlazas= new ArrayList<TipoPlaza>();
+		
+		if(!plazaDefectoPresente){
+			listaPlazas = esquemaTurnadoProcuradorDao.getPlazas(query);
+		}
+		if(!otrasPlazasPresentes || plazaDefectoPresente){
+			TipoPlaza plaza = new TipoPlaza();
+        	plaza.setDescripcion("PLAZA POR DEFECTO");
+        	plaza.setDescripcionLarga("PLAZA POR DEFECTO");
+        	plaza.setCodigo("default");
+        	plaza.setId(Long.parseLong("-1"));
+        	listaPlazas.add(plaza);
+		}
+		return listaPlazas;
 	}
 
 	@Override
@@ -428,27 +444,56 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	public List<EsquemaPlazasTpo> getRangosGrid(Long idEsquema, Long idPlaza, Long idTPO) {
+	public List<EsquemaPlazasTpo> getRangosGrid(Long idEsquema, List<Long> idsPlazas, List<Long> idsTPOs) {
 		
 		//Get esquema
 		EsquemaTurnadoProcurador esquemaTurnado = genericDao.get(EsquemaTurnadoProcurador.class, genericDao
 				.createFilter(FilterType.EQUALS, "id", idEsquema));
 		//Sobre el esquema, filtrar por plaza o tpo si se requiere
-		List<EsquemaPlazasTpo> listaConfiguracion = esquemaTurnado.getConfiguracion();
-		if(!Checks.esNulo(idPlaza)){
+		List<EsquemaPlazasTpo> listaConfiguracion = esquemaTurnado.configuracionOrdenada();
+		if(!Checks.estaVacio(idsPlazas)){
 			Iterator<EsquemaPlazasTpo> iter = listaConfiguracion.iterator();
 			while(iter.hasNext()){
-				if(!iter.next().getTipoPlaza().getId().equals(idPlaza)) iter.remove();
+				EsquemaPlazasTpo ept = iter.next();
+				boolean stop = false;
+				for(int i =0; i<idsPlazas.size() && !stop; i++){
+					if(idsPlazas.get(i)==-1){
+						if(ept.getTipoPlaza()==null) stop=true;
+					}
+					else if(ept.getTipoPlaza()==null){
+						if(idsPlazas.get(i)==-1) stop=true;
+					}
+					else if(ept.getTipoPlaza().getId().equals(idsPlazas.get(i))) {
+						stop=true;
+					}
+				}
+				if(!stop){
+					iter.remove();
+				}
 			}
 		}
-		if(!Checks.esNulo(idTPO)){
+		if(!Checks.estaVacio(idsTPOs)){
 			Iterator<EsquemaPlazasTpo> iter = listaConfiguracion.iterator();
-			while(iter.hasNext()){
-				if(!iter.next().getTipoProcedimiento().getId().equals(idTPO)) iter.remove();
+			for(int x = 0; x<listaConfiguracion.size();x++){
+				EsquemaPlazasTpo ept = iter.next();
+				boolean stop = false;
+				for(int i =0; i<idsTPOs.size() && !stop; i++){
+					if(idsTPOs.get(i)==-1){
+						if(ept.getTipoProcedimiento()==null) stop=true;
+					}
+					else if(ept.getTipoProcedimiento()==null){
+						if(idsTPOs.get(i)==-1) stop=true;
+					}
+					else if(ept.getTipoProcedimiento().getId().equals(idsTPOs.get(i))) {
+						stop=true;
+					}
+				}
+				if(!stop){
+					iter.remove();
+				}
 			}
 		}
 		
-		//List<TurnadoProcuradorConfig> list = esquemaTurnadoProcuradorDao.getRangosPorPlazaTPOEsquema(idEsquema,idPlaza,idTPO);
 		return (!Checks.estaVacio(listaConfiguracion) ? listaConfiguracion : null);
 	}
 
@@ -473,23 +518,35 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	@Transactional
-	public List<Long> añadirNuevoTpoAPlazas(Long idEsquema, String codTPO, String[] arrayPlazas) {
+	public List<Long> añadirNuevoTpoAPlazas(Long idEsquema, Long idTpo, Long[] arrayPlazas) {
 		//Lista de ids pares plaza-tpo insertados
 		List<Long> idsPlazasTpo = new ArrayList<Long>();
 		
 		//Recuperar procedimiento
-		TipoProcedimiento tpo = genericDao.get(TipoProcedimiento.class, genericDao
-				.createFilter(FilterType.EQUALS, "codigo", codTPO));
+		TipoProcedimiento tpo = null;
+		if(idTpo==-1) {
+			tpo = null;
+		}
+		else{
+			tpo = genericDao.get(TipoProcedimiento.class, genericDao
+					.createFilter(FilterType.EQUALS, "id", idTpo));
+		}
+		
 		//Recuperar esquema
 		EsquemaTurnadoProcurador esquema = genericDao.get(EsquemaTurnadoProcurador.class, genericDao
 				.createFilter(FilterType.EQUALS, "id", idEsquema));
 		
 		TipoPlaza plaza;
 		EsquemaPlazasTpo plazaTpo;
-		//Crear pares plaza-tpo
+		//Crear pares plaza-tp
 		for(int i = 0; i < arrayPlazas.length; i++){
-			plaza = genericDao.get(TipoPlaza.class, genericDao
-					.createFilter(FilterType.EQUALS, "codigo", arrayPlazas[i]));
+			if(arrayPlazas[i]==-1) {
+				plaza = null;
+			}
+			else{
+				plaza = genericDao.get(TipoPlaza.class, genericDao
+						.createFilter(FilterType.EQUALS, "id", arrayPlazas[i]));
+			}
 			//Crear plaza-tpo
 		    plazaTpo = new EsquemaPlazasTpo();
 		    plazaTpo.setEsquemaTurnadoProcurador(esquema);
@@ -504,31 +561,303 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	@Transactional
-	public List<Long> borrarConfigParaPlazaOTpo(Long idEsquema, String plazaCod, String tpoCod, String[] arrayPlazas) {
-		//Lista de ids pares plaza-tpo insertados
+	public List<Long> borrarConfigParaPlazaOTpo(Long idEsquema, Long idPlaza, Long idTpo, Long[] arrayPlazas) {
+		//Lista de ids pares plaza-tpo borrados
 		List<Long> idsPlazasTpo = null;
 		
-		if(!Checks.esNulo(plazaCod)){
+		if(!Checks.esNulo(idPlaza)){
 			//Get ids de las tuplas que van a ser borradas
-			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorCodigoPlaza(plazaCod);
+			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorIdPlaza(idPlaza,idEsquema);
 		}
-		if(!Checks.esNulo(tpoCod)){
+		if(!Checks.esNulo(idTpo)){
 			//Get ids de las tuplas que van a ser borradas
-			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorCodigoTPO(tpoCod,arrayPlazas);
+			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorIdTPO(idTpo,arrayPlazas,idEsquema);
 		}
 		//Borrado fisico de toda la configuracion relacionada con los pares plazas-tpo dados
 		if(!Checks.estaVacio(idsPlazasTpo)) esquemaTurnadoProcuradorDao.borradoFisicoConfigPlazaTPO(idsPlazasTpo);
 		
 		return idsPlazasTpo;
 	}
+	
+	@Override
+	public void borrarConfigParaPlazaOTpo(List<Long> idsPlazaTpo){
+		 esquemaTurnadoProcuradorDao.borradoFisicoConfigPlazaTPO(idsPlazaTpo);
+	}
 
 	@Override
-	public Boolean checkSiPlazaYaTieneConfiguracion(Long idEsquema, String plazaCod) {
-		List<EsquemaPlazasTpo> listaConfig = genericDao.getList(EsquemaPlazasTpo.class, 
-									genericDao.createFilter(FilterType.EQUALS, "esquemaTurnadoProcurador.id", idEsquema),
-									genericDao.createFilter(FilterType.EQUALS, "tipoPlaza.codigo", plazaCod));
+	@Transactional
+	public HashMap<String,List<Long>> borrarConfigParaPlazaOTpoLogico(Long idEsquema, Long idPlaza, Long idTpo) {
+		List<Long> idsPlazasTpo = null;
+		List<Long> idsRangos = new ArrayList<Long>();
 		
-		if(!Checks.estaVacio(listaConfig)) return true;
+		if(!Checks.esNulo(idPlaza)){
+			//Get ids de las tuplas que van a ser borradas
+			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorIdPlaza(idPlaza,idEsquema);
+		}
+		if(!Checks.esNulo(idTpo)){
+			//Get ids de las tuplas que van a ser borradas
+			Long[] arrayPlazas = new Long[]{idPlaza};
+			idsPlazasTpo = esquemaTurnadoProcuradorDao.getIdsEPTPorIdTPO(idTpo,arrayPlazas,idEsquema);
+		}
+		//Borrado logico de toda la informacion relacionada con los pares plazas-tpo dados
+		if(!Checks.estaVacio(idsPlazasTpo)){
+			List<TurnadoProcuradorConfig> listaConfig;
+			for(Long id : idsPlazasTpo){
+				listaConfig = genericDao.getList(TurnadoProcuradorConfig.class, genericDao
+						.createFilter(FilterType.EQUALS, "esquemaPlazasTpo.id", id));
+				for(TurnadoProcuradorConfig conf : listaConfig)	{
+					genericDao.deleteById(TurnadoProcuradorConfig.class,conf.getId());
+					//Guardar ids de los rangos borrados logicamente
+					idsRangos.add(conf.getId());
+				}
+				genericDao.deleteById(EsquemaPlazasTpo.class, id);
+			}
+		}
+		HashMap<String,List<Long>> map = new HashMap<String,List<Long>>();
+		map.put("plazasTposBorrados", idsPlazasTpo);
+		map.put("rangosBorrados", idsRangos);
+		
+		return map;
+	}
+
+	@Override
+	public Boolean checkSiPlazaYaTieneConfiguracion(Long idEsquema, Long idPlaza) {
+		List<Long> list = esquemaTurnadoProcuradorDao.getIdsEPTPorIdPlaza(idPlaza, idEsquema);
+		if(!Checks.estaVacio(list)) return true;
 		else return false;
 	}
+
+	@Override
+	@Transactional
+	public List<Long> addRangoConfigEsquema(List<Long> idsPlazasTpo, Long idConf, Double impMin, Double impMax,String[] arrayDespachos) {
+		List<Long> idsRangos = new ArrayList<Long>();
+		if(Checks.estaVacio(idsPlazasTpo)){
+			idsPlazasTpo = new ArrayList<Long>();
+			idsPlazasTpo.add(idConf);
+		}
+		
+		for(Long id : idsPlazasTpo){
+			EsquemaPlazasTpo plazasTpo = genericDao.get(EsquemaPlazasTpo.class,
+					genericDao.createFilter(FilterType.EQUALS, "id", id));
+			boolean existe = false;
+			
+			//Comprueba si ya existe regla que entre en conflicto con esta
+			logger.debug(String.format("Comprobando si rango de importes se solapa con regla existente..."));
+			existe = plazasTpo.importesSolapados(impMin,impMax,null);
+			
+			if(!existe){
+				//NO EXISTE: Se crea la nueva regla
+				logger.debug(String.format("Creando nueva regla..."));
+				TurnadoProcuradorConfig config = null;
+				Usuario usu = null;
+				Double porc = null;
+				
+				for(String tuplaDespachoPorcentaje : arrayDespachos){
+					String[] aux = tuplaDespachoPorcentaje.split("_");
+					usu = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(aux[0])));
+					porc = Double.parseDouble(aux[1]);
+					config = new TurnadoProcuradorConfig();
+					config.setEsquemaPlazasTpo(plazasTpo);
+					config.setImporteDesde(impMin);
+					config.setImporteHasta(impMax);
+					config.setPorcentaje(porc);
+					config.setUsuario(usu);
+					genericDao.save(TurnadoProcuradorConfig.class, config);
+					idsRangos.add(config.getId());
+				}
+			}
+			else{
+				//ENTRA EN CONFLICTO: Se lanza excepcion y se informa al usuario
+				logger.warn(String.format("El rango de importes especificado [%.2f - %.2f] se solapa con una regla ya existente", impMin ,impMax));
+				throw new BusinessOperationException(String.format("El rango de importes especificado [%.2f - %.2f] se solapa con una regla ya existente", impMin ,impMax));
+			}
+		}
+		return idsRangos;
+	}
+	
+	@Override
+	@Transactional
+	public HashMap<String, List<String>> updateRangoConfigEsquema(Long idConf, Double impMin, Double impMax,String[] arrayDespachos){
+		//Varaibles para almacenar los cambios
+		List<String> modificaciones = new ArrayList<String>();
+		List<String> borrados = new ArrayList<String>();
+		List<String> creados = new ArrayList<String>();
+		//Recuperar todas las reglas asociadas a la recibida
+		List<TurnadoProcuradorConfig> listaRangos = getIdsRangosRelacionados(idConf, null);
+		
+		//Comprueba si ya existe regla que entre en conflicto con esta y que no sean las reglas dadas
+		logger.debug(String.format("Comprobando si rango de importes se solapa con regla existente..."));
+		if(listaRangos.get(0).getEsquemaPlazasTpo().importesSolapados(impMin,impMax,listaRangos)) throw new BusinessOperationException(String.format("El rango de importes especificado [%.2f - %.2f] se solapa con una regla ya existente", impMin ,impMax));
+		
+		//Lista de ids despachos - porcentajes que nos servira para las validaciones
+		List<String[]> listaDespachos = new ArrayList<String[]>();
+		for(String tuplaDespachoPorcentaje : arrayDespachos){
+			listaDespachos.add(tuplaDespachoPorcentaje.split("_"));
+		}
+		for(TurnadoProcuradorConfig rango: listaRangos){
+			boolean parar = false;
+			int aux = -1;
+			//Comprobar si el despacho del rango aun seguira existiendo ( su existencia en la lista de despachos)
+			for(int i = 0; i<listaDespachos.size() && !parar; i++){
+				if(listaDespachos.get(i)[0].equals(rango.getUsuario().getId())){
+					aux=i;
+					parar=true;
+				}
+			}
+			//Si va a seguir existiendo: se modifica con los nuevos campos
+			if(aux!=-1){
+				//Guardar el id, y los valores anteriores, para posibles cancelaciones
+				modificaciones.add(rango.getId().toString()
+						+"_"+rango.getImporteDesde().toString()
+						+"_"+rango.getImporteHasta().toString()
+						+"_"+rango.getPorcentaje());
+				rango.setImporteDesde(impMin);
+				rango.setImporteHasta(impMax);
+				rango.setPorcentaje(Double.parseDouble(listaDespachos.get(aux)[1]));
+				genericDao.update(TurnadoProcuradorConfig.class, rango);
+				listaDespachos.remove(aux);
+			}
+			//Si no, se borra logicamente
+			else {
+				//Guardar el id, para posibles cancelaciones
+				borrados.add(rango.getId().toString());
+				genericDao.deleteById(TurnadoProcuradorConfig.class, rango.getId());
+			}
+		}
+		//Creacion de nuevas reglas
+		Usuario usu = null;
+		TurnadoProcuradorConfig newConfig = null;
+		for(String[] despacho : listaDespachos){
+			usu = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(despacho[0])));
+			newConfig= new TurnadoProcuradorConfig();
+			newConfig.setEsquemaPlazasTpo(listaRangos.get(0).getEsquemaPlazasTpo());
+			newConfig.setImporteDesde(impMin);
+			newConfig.setImporteHasta(impMax);
+			newConfig.setPorcentaje(Double.parseDouble(despacho[1]));
+			newConfig.setUsuario(usu);
+			genericDao.save(TurnadoProcuradorConfig.class, newConfig);
+			//Guardar el id, para posibles cancelaciones
+			creados.add(newConfig.getId().toString());
+		}
+		
+		//Return
+		HashMap<String,List<String>> mapaFinal = new HashMap<String, List<String>>();
+		mapaFinal.put("modificaciones",modificaciones);
+		mapaFinal.put("borrados", borrados);
+		mapaFinal.put("creados", creados);
+		return mapaFinal;
+	}
+
+	@Override
+	@Transactional
+	public List<Long> borrarRangoConfigEsquema(Long idConfig, List<Long> listIdsPlazaTpo) {
+		List<Long> idsBorrados = new ArrayList<Long>();
+		//Recuperar todas las reglas asociadas a la recibida
+		List<TurnadoProcuradorConfig> listaRangos = getIdsRangosRelacionados(idConfig,listIdsPlazaTpo);
+		
+		for(TurnadoProcuradorConfig rango: listaRangos){
+			//Guardar el id, para posibles cancelaciones
+			idsBorrados.add(rango.getId());
+			genericDao.deleteById(TurnadoProcuradorConfig.class, rango.getId());
+		}
+		
+		return idsBorrados;
+	}
+
+	@Override
+	public List<TurnadoProcuradorConfig> getIdsRangosRelacionados(Long idConfig, List<Long> listIdsPlazaTpo) {
+		TurnadoProcuradorConfig config = genericDao.get(TurnadoProcuradorConfig.class, genericDao
+				.createFilter(FilterType.EQUALS, "id", idConfig));
+		List<TurnadoProcuradorConfig> listaRangos = esquemaTurnadoProcuradorDao.dameListaRangosRelacionados(config,listIdsPlazaTpo);
+		return listaRangos;
+	}
+
+	@Override
+	@Transactional
+	public void reactivarPlazasTPO(List<Long> listIdsTBC) {
+		EsquemaPlazasTpo ept = null;
+		for(Long id : listIdsTBC){
+			if(!Checks.esNulo(id)){
+				ept = genericDao.get(EsquemaPlazasTpo.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+				ept.getAuditoria().setBorrado(false);
+				ept.getAuditoria().setFechaBorrar(null);
+				ept.getAuditoria().setUsuarioBorrar(null);
+				genericDao.update(EsquemaPlazasTpo.class, ept);
+			}
+		}
+	}
+	
+	@Override
+	@Transactional
+	public void reactivarRangos(List<Long> listIdsRBC) {
+		TurnadoProcuradorConfig tpc = null;
+		for(Long id : listIdsRBC){
+			if(!Checks.esNulo(id)){
+				tpc = genericDao.get(TurnadoProcuradorConfig.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+				tpc.getAuditoria().setBorrado(false);
+				tpc.getAuditoria().setFechaBorrar(null);
+				tpc.getAuditoria().setUsuarioBorrar(null);
+				genericDao.update(TurnadoProcuradorConfig.class, tpc);
+			}
+		}
+	}
+
+	@Override
+	public void borrarRangosFisico(List<Long> listIdsRC) {
+		esquemaTurnadoProcuradorDao.borrarRangosFisico(listIdsRC);
+	}
+	
+	@Override
+	public void modificarRangosCancelacion(List<String> listModRangos) {
+		TurnadoProcuradorConfig tpc = null;
+		String[] aux = null;
+		for(int i = listModRangos.size()-1;i>=0;i--){
+			if(!Checks.esNulo(listModRangos.get(i))){
+				aux=listModRangos.get(i).split("_");
+				tpc = genericDao.get(TurnadoProcuradorConfig.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(aux[0])));
+				if(!Checks.esNulo(tpc)){
+					tpc.setImporteDesde(Double.parseDouble(aux[1]));
+					tpc.setImporteHasta(Double.parseDouble(aux[2]));
+					tpc.setPorcentaje(Double.parseDouble(aux[3]));
+					genericDao.save(TurnadoProcuradorConfig.class, tpc);
+				}
+			}
+		}
+	}
+
+	@Override
+	public List<TipoProcedimiento> getTPODisponiblesByPlaza(Long idEsquema, Long idPlaza) {
+		List<TipoProcedimiento> listaTposDisponibles;
+		List<TipoProcedimiento> listaTposYaExistentes = getTPOsGrid(idEsquema,idPlaza);
+		
+		//Si idPlaza=-1 ("PLAZA POR DEFECTO") solo se esta disponible el tpo "PROCEDIMIENTO POR DEFECTO"
+		//FIXME Cambiar si se desea poder asignar el tpo por defecto a cualquier plaza (añadir el tpo por defecto a ambos casos)
+		if(idPlaza!=-1){
+			listaTposDisponibles = getTPOsEsquemaTurnadoProcu();
+		}
+		else {
+			listaTposDisponibles = new ArrayList<TipoProcedimiento>();
+			TipoProcedimiento tpo = new TipoProcedimiento();
+        	tpo.setDescripcion("PROCEDIMIENTO POR DEFECTO");
+        	tpo.setDescripcionLarga("PROCEDIMIENTO POR DEFECTO");
+        	tpo.setCodigo("default");
+        	tpo.setId(Long.parseLong("-1"));
+        	listaTposDisponibles.add(tpo);
+		}
+		
+		HashSet<Long> hs = new HashSet<Long>(listaTposYaExistentes.size());
+		for(TipoProcedimiento o : listaTposYaExistentes) {
+		    hs.add(o.getId());
+		}
+		
+		if(!Checks.estaVacio(listaTposDisponibles) && !Checks.estaVacio(listaTposYaExistentes)){
+			Iterator<TipoProcedimiento> iter = listaTposDisponibles.iterator();
+			while(iter.hasNext()){
+				if(hs.contains(iter.next().getId())) iter.remove();
+			}
+		}
+		
+		return listaTposDisponibles;
+	}	
+	
 }

@@ -829,3 +829,8 @@ button.icon_checkbox_on, .icon_checkbox_on {
   background: transparent url('icon_pendientes_validar_tab.png') no-repeat !important;
   margin-left : 0px;
 }
+
+.icon_engranaje{
+  background: transparent url('page_gear.png') no-repeat !important;
+  margin-left : 0px;
+}

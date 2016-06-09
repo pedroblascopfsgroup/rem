@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
-import java.util.Collection;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
@@ -54,16 +53,12 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	 */
 	void limpiarTurnadoTodosLosDespachos();
 	
-	Collection<? extends TipoPlaza> getPlazas(String query);
-	
-	Collection<? extends TipoProcedimiento> getTPOs(String query);
+	List<TipoPlaza> getPlazas(String query);
 
 	List<TipoPlaza> getPlazasEquema(Long idEsquema);
 
 	List<TipoProcedimiento> getTiposProcedimientoPorPlazaEsquema(Long idEsquema, Long idPlaza);
-	/*
-	List<TurnadoProcuradorConfig> getRangosPorPlazaTPOEsquema(Long idEsquema, Long idPlaza, Long idTPO);
-	*/
+	
 	List<Usuario> getDespachosProcuradores(List<String> despachosValidos);
 	
 	/**
@@ -72,19 +67,36 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	 * @param plazaCod
 	 */
 	void borradoFisicoConfigPlazaTPO(List<Long> idsPlazasTpo);
-
-	/**
-	 * Devuelve todos los ids de las tuplas de TUP_EPT_ESQUEMA_PLAZAS_TPO que pertenezcan a la plaza especificada con el plazaCod
-	 * @param plazaCod
-	 * @return
-	 */
-	List<Long> getIdsEPTPorCodigoPlaza(String plazaCod);
 	
 	/**
-	 * Devuelve todos los ids de las tuplas de TUP_EPT_ESQUEMA_PLAZAS_TPO que pertenezcan al TPO especificado con el tpoCod
-	 * @param tpoCod
+	 * Dado un rango de configuracion devuelve todos los relacionados con este
+	 * @param config
+	 * @param listIdsPlazaTpo 
 	 * @return
 	 */
-	List<Long> getIdsEPTPorCodigoTPO(String tpoCod, String[] arrayPlazas);
+	List<TurnadoProcuradorConfig> dameListaRangosRelacionados(TurnadoProcuradorConfig config, List<Long> listIdsPlazaTpo);
+	
+	/**
+	 * Devuelve todos los ids de las tuplas de TUP_EPT_ESQUEMA_PLAZAS_TPO que pertenezcan a la plaza especificada con el idPlaza
+	 * @param idPlaza
+	 * @param idEsquema 
+	 * @return
+	 */
+	List<Long> getIdsEPTPorIdPlaza(Long idPlaza, Long idEsquema);
+	
+	/**
+	 * Devuelve todos los ids de las tuplas de TUP_EPT_ESQUEMA_PLAZAS_TPO que pertenezcan a las plazas especificada con el idTPO
+	 * @param idTpo
+	 * @param idsPlazas
+	 * @param idEsquema 
+	 * @return
+	 */
+	List<Long> getIdsEPTPorIdTPO(Long idTpo, Long[] idsPlazas, Long idEsquema);
+	
+	/**
+	 * Borra todos los rangos de los ids que recibe en la lista
+	 * @param listIdsRC
+	 */
+	void borrarRangosFisico(List<Long> listIdsRC);
 	
 }

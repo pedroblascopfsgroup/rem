@@ -361,7 +361,7 @@
 	var esquemasStore = page.getStore({
 		 flow: 'turnadodespachos/buscarEsquemas' 
 		,limit: limit
-		,remoteSort: true
+		,remoteSort: false
 		,reader: new Ext.data.JsonReader({
 	    	 root : 'esquemas'
 	    	,totalProperty : 'total'

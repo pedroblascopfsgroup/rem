@@ -131,28 +131,32 @@
 	
 	//PANEL GRID RESULTADOS ********************************************************************
 	
-	var ventanaEdicion = function(id) {
+	var ventanaEdicion = function(id,title) {
 		var w = app.openWindow({
 			flow : 'turnadoprocuradores/openDetalleEsquemaTurnado'
 			,width :  900
 			,resizable:false
 			,closable: true
-			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza**" text="Detalles esquema" />'
-			,params : {idEsquema:1}
+			,x:200
+		    ,y:15
+			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza**" text="Detalles esquema" />'+': '+title
+			,params : {idEsquema:id}
 			,autoScroll: 'auto'
 		});
 		w.on(app.event.DONE, function(){
 			w.close();
 			esquemasStore.webflow(getParametrosDto());
 		});
-		w.on(app.event.CANCEL, function(){ w.close(); });
+		w.on(app.event.CANCEL, function(){ 
+			w.close(); 
+		});
 	};
 
 	var btnNuevo = new Ext.Button({
 			text : '<s:message code="app.nuevo" text="**Nuevo" />'
 			,iconCls : 'icon_mas'
 			,handler : function(){
-				ventanaEdicion(null);
+				ventanaEdicion(null,null);
 			}
 	});
 	var btnBorrar = new Ext.Button({
@@ -266,7 +270,7 @@
 	var esquemasStore = page.getStore({
 		 flow: 'turnadoprocuradores/buscarEsquemas' 
 		,limit: limit
-		,remoteSort: true
+		,remoteSort: false
 		,reader: new Ext.data.JsonReader({
 	    	 root : 'esquemas'
 	    	,totalProperty : 'total'
@@ -331,8 +335,9 @@
 		rowdblclick: function(grid, rowIndex, e) {
 		   	var rec = grid.getStore().getAt(rowIndex);
 		   	currentRowId = rec.get('id');
+		   	currentRowTitle = rec.get('descripcion');
 		   	if (currentRowId!=null){
-				ventanaEdicion(currentRowId);
+				ventanaEdicion(currentRowId,currentRowTitle);
 			}
 		}
 		,rowclick : function(grid, rowIndex, e) {

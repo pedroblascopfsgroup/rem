@@ -28,10 +28,6 @@
 		  p:fileName="/WEB-INF/jsp/plugin/procedimientos/concursal/tabConcursoConveniosFast.jsp" 
 		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		  p:permission="TAB_ASUNTO_CONVENIOS"  />
-		  
-	<bean p:entity="menu" p:name="configuracion/esquemasTurnadoProcuradores" p:order="560"
-		p:fileName="/WEB-INF/jsp/plugin/procuradores/turnado/listadoEsquemasTurnadoProcuradores-menu.jsp"
-		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission=""/>
 
 	<bean parent="clasesDiccionarioAnotadas">
 	    <property name="sourceList">

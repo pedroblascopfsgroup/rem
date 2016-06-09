@@ -1,6 +1,8 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
 
 @Entity
@@ -132,6 +135,25 @@ public class EsquemaTurnadoProcurador implements Serializable, Auditable {
 	public void setConfiguracion(List<EsquemaPlazasTpo> configuracion) {
 		this.configuracion = configuracion;
 	}
+	
+	/**
+	 * Recupera la lista de configuraciones ordenada y agrupada por plaza
+	 * 
+	 */
+	public List<EsquemaPlazasTpo> configuracionOrdenada(){
+		Collections.sort(this.configuracion,
+                new Comparator<EsquemaPlazasTpo>()
+                {
+                    public int compare(EsquemaPlazasTpo f1, EsquemaPlazasTpo f2)
+                    {	
+                    	if(Checks.esNulo(f1.getTipoPlaza())) return -1;
+                    	if(Checks.esNulo(f2.getTipoPlaza())) return -1;
+                        return f1.getTipoPlaza().getDescripcion().compareTo(f2.getTipoPlaza().getDescripcion());
+                    }        
+                });
+		return this.configuracion;
+	}
+	
 	/*
 	/**
 	 * Recupera una configuración por el Id. Null en caso de no encontrarla.

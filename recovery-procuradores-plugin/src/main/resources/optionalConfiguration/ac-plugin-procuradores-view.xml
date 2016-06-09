@@ -126,6 +126,14 @@
 		p:priority="3" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		 />
 		
+		<!-- PRODUCTO-1366 
+			Pestaña de busqueda y configuracion de esquema de turnado de procuradores
+		-->
+		<bean p:entity="menu" p:name="esquemasTurnadoProcuradores" p:order="560"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/turnado/listadoEsquemasTurnadoProcuradores-menu.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="VER_TAB_BUSCADOR_TURNADO_PROCU"/>
+		
 <!--		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
 <!--			p:order="900" -->
 <!--			p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->

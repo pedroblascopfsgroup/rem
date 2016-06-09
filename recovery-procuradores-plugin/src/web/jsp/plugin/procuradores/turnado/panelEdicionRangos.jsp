@@ -303,7 +303,16 @@
 					if(infoConfiguracionTurnado.isVisible()){
 						rangosStore.webflow({idEsquema : idEsquema, idsPlazas:nuevasPlazasConfig, nuevaConfig : infoConfiguracionTurnado.isVisible()});
 					}
-					else rangosStore.webflow({idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()});
+					else{
+					 var paramRangos = {idEsquema : idEsquema, nuevaConfig : infoConfiguracionTurnado.isVisible()}
+					 if(plazasGrid.getSelectionModel().hasSelection()){
+					 	paramRangos.idsPlazas = plazasGrid.getSelectionModel().getSelected().data.id;
+					 }
+					 if(tposGrid.getSelectionModel().hasSelection()){
+					 	paramRangos.idsTPOs = tposGrid.getSelectionModel().getSelected().data.id;
+					 }
+					 rangosStore.webflow(paramRangos);
+					}
 					btnGuardar.setDisabled(false);
 				}
 				mainPanel.container.unmask();	

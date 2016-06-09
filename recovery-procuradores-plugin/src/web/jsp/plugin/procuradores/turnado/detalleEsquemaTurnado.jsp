@@ -258,7 +258,7 @@
             	if (!this.hasSelection()) {
             		return;
             	}
-            	if(r.data.importeDesde!=null && r.data.importeDesde!=""){
+            	if(r.data.rangoId!=""){
 					btnBorrarRango.setDisabled(false);
 					if(!infoConfiguracionTurnado.isVisible()){
 						btnEditarRango.setDisabled(false);

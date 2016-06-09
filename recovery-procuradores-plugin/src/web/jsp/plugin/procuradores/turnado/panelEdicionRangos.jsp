@@ -15,7 +15,7 @@
 		,name:'impoMin'
 		,labelStyle:labelStyle
 		,maxValue:99999999999999
-		,minValue: 0.01
+		,minValue: 0
 		,width: 120
 	});
 	
@@ -27,7 +27,7 @@
 		,name:'impoMax'
 		,labelStyle:labelStyle
 		,maxValue:99999999999999
-		,minValue: 0.01
+		,minValue: 0
 		,width: 120
 	});
 	

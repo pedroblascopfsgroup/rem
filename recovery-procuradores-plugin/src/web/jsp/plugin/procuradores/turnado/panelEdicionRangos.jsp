@@ -228,8 +228,7 @@
 	<%-- Funcion que valida los importes introducidos --%>
 	var validaImportes = function(){
 		if(importeMaximo.validate() 
-			&& importeMaximo.getValue()!=null && importeMaximo.getValue()!="" && importeMinimo.validate() 
-			&& importeMinimo.getValue()!=null && importeMinimo.getValue()!="" && importeMinimo.validate()
+		    && importeMinimo.validate()
 			&& importeMinimo.getValue()< importeMaximo.getValue()) return true;
 		return false;
 	}

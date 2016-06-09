@@ -274,8 +274,8 @@
 						<value>823</value>
 						<value>824</value>
 						<value>825</value>
-						<value>PCO_DPREDOC</value>						
-						<value>PCO_DPREDOC</value>
+						<value>PCO_DPREDOC</value>	
+						<value>CJ-814</value>
 						
 						<!-- HRE-BCC -->
 						<value>DGCONGE</value>
@@ -332,7 +332,6 @@
 						<value>TGCTRGE</value>
 						<value>TGGESDOC</value>
 						<value>CJ-104</value>
-						<value>CJ-814</value>
 						<value>GEXT</value>
 						<value>CJ-812</value>
 						<value>TSAEST</value>

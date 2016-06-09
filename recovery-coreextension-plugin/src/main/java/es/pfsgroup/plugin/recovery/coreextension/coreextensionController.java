@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import com.ibatis.sqlmap.engine.mapping.sql.dynamic.elements.IsEmptyTagHandler;
+
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -28,6 +30,7 @@ import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
+import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
@@ -91,6 +94,9 @@ public class coreextensionController {
 
 	@Autowired
 	private coreextensionApi coreextensionApi;
+    
+    @Autowired
+    private GestorAdicionalAsuntoApi gestorAdicionalApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -145,7 +151,8 @@ public class coreextensionController {
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
 			@RequestParam(value="adicional", required=false) Boolean adicional,
 			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional,
-			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados,
+			@RequestParam(value="idAsunto", required=false) Long idAsunto){
 		
 		List<DespachoExterno> listadoDespachos = null;
 		
@@ -164,9 +171,18 @@ public class coreextensionController {
 		//////
 		
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
+		//PRODUCTO-1969 Además, si el asunto NO tiene CENTROPROCURA asignado, debemos mostrar TODOS los despachos
+		List<Usuario> usu;
+		String codigoGestor=null;
+		EXTDDTipoGestor tipoGestorCentroProcura=tipoGestorApi.getByCod("CENTROPROCURA");
+		if(!Checks.esNulo(tipoGestorCentroProcura)){
+			codigoGestor = tipoGestorCentroProcura.getCodigo();
+		}
+		usu = gestorAdicionalApi.findGestoresByAsunto(idAsunto,codigoGestor);
+		
 		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
-		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)){
+		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor) && !Checks.estaVacio(usu)){
 			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
 			while(iter.hasNext()){
 				DespachoExterno elemento = iter.next();

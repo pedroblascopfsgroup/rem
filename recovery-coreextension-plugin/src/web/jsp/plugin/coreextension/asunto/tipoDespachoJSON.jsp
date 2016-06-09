@@ -13,6 +13,7 @@
 			<json:property name="domicilio" value="${rec.domicilio}" />
 			<json:property name="localidad" value="${rec.domicilioPlaza}" />
 			<json:property name="telefono" value="${rec.telefono1}" />
+			<json:property name="inputUsuario" value="${rec.flagInputDescripcionUsuario}" />
 		</json:object>
 	</json:array>
 </fwk:json>			

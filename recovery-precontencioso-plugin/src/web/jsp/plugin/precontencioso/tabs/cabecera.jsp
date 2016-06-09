@@ -387,6 +387,7 @@
 			<sec:authorize ifAllGranted="GENERAR_DOC_PRECONTENCIOSO">
 				Ext.Element.get('prc-btnGenerarDocPrecontencioso-padre').show();
 			</sec:authorize>
+			
 
 		} else {
 			panelProcedimientoPrecontencioso.hide();
@@ -408,9 +409,9 @@
 			procedimientoJuzgado.label.update('<s:message code="procedimiento.tabcabecera.procjuzgado" text="**Nro. Proc. en Juzgado"/>');
 			procedimientoInterno.setValue();
 			entidad.setLabel('procedimientoInterno', entidad.get("data").cabecera.procedimientoInterno);
-			if(Ext.Element.get('prc-btnAccionesPrecontencioso-padre') != null) {
+			<%-- if(Ext.Element.get('prc-btnAccionesPrecontencioso-padre') != null) {
 				Ext.Element.get('prc-btnAccionesPrecontencioso-padre').hide();
-			}
+			} --%>
 		}
 	}
 	

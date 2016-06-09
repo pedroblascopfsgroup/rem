@@ -7,13 +7,42 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-mascara='_'$ENTIDAD'_'$1
 extensionSem=".sem"
 extensionZip=".zip"
 
 OIFS=$IFS
 IFS=','
 arrayFicheros=$ficheros
+
+dia_anterior=`date --date="$1 - 1 day" +%Y%m%d`
+mascara='_'$ENTIDAD'_'$dia_anterior
+
+# Comprobacion de fin de proceso anterior (ficheros en directorio backup)
+hora_limite=`date --date="60 minutes" +%Y%m%d%H%M%S`
+hora_actual=`date +%Y%m%d%H%M%S`
+echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
+
+for fichero in $arrayFicheros
+do
+    ficheroSem=$DIR_HRE_BACKUP$fichero$mascara$extensionSem
+    ficheroZip=$DIR_HRE_BACKUP$fichero$mascara$extensionZip
+
+    echo "Esperando..."
+    echo "$ficheroSem"
+    echo "$ficheroZip"
+    while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do
+       sleep 10
+       hora_actual=`date +%Y%m%d%H%M%S`
+    done
+done
+
+if [ "$hora_actual" -ge "$hora_limite" ]
+then
+   echo "$(basename $0) Error: Tiempo limite de espera alcanzado: el proceso anterior de VENCIDOS no ha finalizado"
+   exit 1
+fi
+
+mascara='_'$ENTIDAD'_'$1
 
 #Calculo de hora limite
 hora_limite=`date --date="$MAX_WAITING_MINUTES minutes" +%Y%m%d%H%M%S`
@@ -25,11 +54,12 @@ do
 	ficheroSem=$DIR_INPUT_AUX$fichero$mascara$extensionSem
     ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
 
+    echo "Esperando..."
     echo "$ficheroSem"
-    while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do
+    echo "$ficheroZip"
+	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do
 	   sleep 10
 	   hora_actual=`date +%Y%m%d%H%M%S`
-	   #echo "$hora_actual"
 	done
 done
 

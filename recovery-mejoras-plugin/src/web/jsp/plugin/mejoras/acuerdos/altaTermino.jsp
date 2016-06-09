@@ -192,7 +192,13 @@
 				
 	       		if("${operacionesPorTipo}"!=null && "${operacionesPorTipo}"!=''){
 		       		<c:forEach var="operacion" items="${operacionesPorTipo}">
-				    	Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+		       			if('${operacion.campo.tipoCampo}' == 'fecha'){
+		       				var valorfecha = '${operacion.valor}';
+		       				valorfecha = valorfecha.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");
+				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue(valorfecha);
+				    	}else{
+				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+				    	}
 				    	Ext.getCmp('${operacion.campo.nombreCampo}').setDisabled(false);
 					</c:forEach>
 		       	}

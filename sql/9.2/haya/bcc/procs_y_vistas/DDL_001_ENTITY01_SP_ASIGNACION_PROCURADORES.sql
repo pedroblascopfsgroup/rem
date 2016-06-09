@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=201600603
+--## FECHA_CREACION=201600609
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1395

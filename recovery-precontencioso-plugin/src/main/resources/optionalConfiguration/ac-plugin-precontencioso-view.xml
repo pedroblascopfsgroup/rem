@@ -31,12 +31,12 @@
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="TAB_PRECONTENCIOSO" />
 
-	<bean p:entity="menu" p:name="busquedas/busquedaPrecontencioso" p:order="1500"
+	<bean p:entity="menu" p:name="busquedas/busquedaPrecontencioso" p:order="190"
 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaExpPrecontencioso.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="BUSQUEDA_PRECONTENCIOSO" />
 
-	<bean p:entity="menu" p:name="busquedas/busquedaElementosPco" p:order="1600"
+	<bean p:entity="menu" p:name="busquedas/busquedaElementosPco" p:order="170"
 		p:fileName="/WEB-INF/jsp/plugin/precontencioso/busquedas/menuBusquedaElementosPco.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" 
 		p:permission="BUSQUEDA_PRECONTENCIOSO" />

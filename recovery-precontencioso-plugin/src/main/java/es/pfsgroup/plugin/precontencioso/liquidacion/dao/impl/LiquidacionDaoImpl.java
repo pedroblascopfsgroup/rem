@@ -27,13 +27,19 @@ public class LiquidacionDaoImpl extends AbstractEntityDao<LiquidacionPCO, Long> 
 	}
 
 	@Override
-	public LiquidacionPCO getLiquidacionDelContrato(Long idContrato) {
+	public LiquidacionPCO getLiquidacionDelContrato(Long idContrato, Long idProcPco) {
 		
 		Criteria query = getSession().createCriteria(LiquidacionPCO.class);
 		query.createAlias("contrato", "contrato");
 		query.add(Restrictions.eq("contrato.id", idContrato));
+		query.add(Restrictions.eq("procedimientoPCO.id", idProcPco));
 
-		LiquidacionPCO liquidacion = (LiquidacionPCO) query.uniqueResult();
+		LiquidacionPCO liquidacion = null;
+		try {
+			liquidacion = (LiquidacionPCO) query.uniqueResult();
+		} catch (Exception e) {
+			logger.error("LiquidacionDaoImpl.getLiquidacionDelContrato]: " + e.getMessage());
+		}
 		return liquidacion;
 	}
 }

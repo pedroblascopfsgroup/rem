@@ -2,16 +2,17 @@
 <flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
 
-	
-	<var name="dtoGuardarGrupoUsuario" class="es.pfsgroup.plugin.recovery.config.usuarios.dto.ADMDiccionarioGrupoUsuario" />
-	
+	<!-- <var name="dtoGuardarGrupoUsuario" class="es.pfsgroup.plugin.recovery.config.usuarios.dto.ADMDiccionarioGrupoUsuario" /> -->
+	<input name="idusuario" type="java.lang.Long"/>
+	<input name="grupo" type="java.lang.String" />
     
     <!--a partir de este momento sólo enviamos ajax -->
     <end-state id="listado" view="default" >
     	<secured attributes="ROLE_ADMIN" match="any" />
-		<on-entry>
-			<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoGuardarGrupoUsuario)" />
-			<evaluate expression="executor.execute('ADMUsuarioManager.guardaGrupo',dtoGuardarGrupoUsuario)" result="flowScope.pagina"/>
+		<on-entry> 
+			<!--  <evaluate expression="binder.bindAndValidate(flowRequestContext,dtoGuardarGrupoUsuario)" /> -->
+			<evaluate expression="executor.execute('pfsconverter.createLongCollection',grupo,',')" result="flowScope.grupo"/>
+			<evaluate expression="executor.execute('ADMUsuarioManager.guardaGrupo',idusuario, grupo)" result="flowScope.pagina"/>
 			
 		</on-entry>
 	</end-state>

@@ -71,14 +71,14 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setFechaServicioIntegral(!Checks.esNulo(despachoExtras.getFechaServicioIntegral()) ? formateoFecha(despachoExtras.getFechaServicioIntegral()) : null);
 		despachoExtrasDto.setIrpfAplicado(!Checks.esNulo(despachoExtras.getIrpf()) ? despachoExtras.getIrpf().toString() : null);
 		if(!Checks.esNulo(despachoExtras.getDescripcionIVA())) {
-			despachoExtrasDto.setIvaDescripcion(context.getMapaDescripcionIVA().get(despachoExtras.getDescripcionIVA()));
+			despachoExtrasDto.setIvaDescripcion(context.getMapaDescripcionIVA().get(despachoExtras.getDescripcionIVA().toString()));
 		}
 		else {
 			despachoExtrasDto.setIvaDescripcion("");
 		}
 		despachoExtrasDto.setOficinaContacto(despachoExtras.getOficinaContacto());
 		despachoExtrasDto.setOficinaEntregas(despachoExtras.getOficinaEntregas());
-		despachoExtrasDto.setOficinaLiquidacion(despachoExtras.getOficinaContacto());
+		despachoExtrasDto.setOficinaLiquidacion(despachoExtras.getOficinaLiquidacion());
 		despachoExtrasDto.setOficinaProvisiones(despachoExtras.getOficinaProvisiones());
 		if(!Checks.esNulo(despachoExtras.getRelacionBankia())) {
 			despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));

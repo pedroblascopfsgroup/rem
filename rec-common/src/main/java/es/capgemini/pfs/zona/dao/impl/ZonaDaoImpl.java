@@ -314,7 +314,7 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
 						+" FROM ZON_ZONIFICACION zz "
 						+" WHERE zz.borrado = 0 "
 						+" START WITH zz.ZON_COD = '"+zonPefUsu.getZona().getCodigo()+"' "
-						+" CONNECT BY NOCYCLE PRIOR zz.ZON_PID = zz.ZON_ID "
+						+" CONNECT BY NOCYCLE PRIOR  zz.ZON_ID = zz.ZON_PID "
 						
 						+" UNION "
 						
@@ -330,7 +330,7 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
 						  +" WHERE CONNECT_BY_ISCYCLE = 1 "
 						  +" AND zz4.borrado = 0 "
 						  +" START WITH zz4.ZON_COD = '"+zonPefUsu.getZona().getCodigo()+"' "
-						  +" CONNECT BY NOCYCLE PRIOR zz4.ZON_PID = zz4.ZON_ID "
+						  +" CONNECT BY NOCYCLE PRIOR zz4.ZON_ID = zz4.ZON_PID "
 						  +" )zz5 "
 						  +" ON zz3.ZON_ID = zz5.ZON_PID "
 					+" ), "
@@ -340,11 +340,10 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
 							  +" FROM zon_pef_usu zpu "
 					    		+" INNER JOIN zz2 ON zz2.zon_id = zpu.zon_id "
 					    		+" WHERE zpu.PEF_ID = "+zonPefUsu.getPerfil().getId()+" "
-					    		+" AND zpu.USU_ID = "+zonPefUsu.getUsuario().getId()+" "
 					    		+" AND zpu.borrado  = 0 "
 					    +" ) "
 		
-		+" SELECT * FROM zonasPerfil WHERE nivel = (SELECT MIN(nivel) from zonasPerfil) ";
+		+" SELECT * FROM zonasPerfil WHERE nivel = (SELECT MAX(nivel) from zonasPerfil) AND USU_ID = "+zonPefUsu.getUsuario().getId();
 		
 		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
 		List<ZonaUsuarioPerfil> results = sqlQuery.addEntity(ZonaUsuarioPerfil.class).list();

@@ -174,9 +174,10 @@
 					Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="acuerdos.conclusiones.observaciones.error"/>');
 				}				
 	      		else if (validarEnvio()){
-		      		page.webflow({
-		      			flow:'plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.guardarAcuerdo'
-		      			,params:{
+	      		
+	      			page.webflow({
+						flow: 'acuerdo/crearAcuerdo', 
+						params:{
 				      			<c:if test="${idAsunto!=null}">
 				      				idAsunto:${idAsunto},
 				      			</c:if>
@@ -192,11 +193,20 @@
 		      				   ,idAcuerdo:${acuerdo.id}
 		      				   </c:if>
 		      				   ,fechaLimite:app.format.dateRenderer(fechaLimite.getValue())
-		      				}
-		      			,success: function(){
-	            		   page.fireEvent(app.event.DONE);
-	            		}	
-		      		});
+		      			},
+						success: function ( result, request) {
+							if(result.respuesta.respuesta==''){
+								page.fireEvent(app.event.DONE);
+							}else{
+								Ext.Msg.show({
+									title: fwk.constant.alert,
+									msg: result.respuesta.respuesta,
+									buttons: Ext.Msg.OK
+								});
+							}
+						}
+					});
+	      		
 	      		}else{
 	      			<c:if test="${!(esGestor && acuerdo.estaVigente)}">
 	      				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="plugin.mejoras.acuerdos.conclusiones.faltanDatosSinTipoAcuerdo" text="**Debe rellenar los datos"/>');

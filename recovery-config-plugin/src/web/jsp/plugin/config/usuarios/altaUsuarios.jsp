@@ -128,7 +128,10 @@
 		}
 	});
 	
-
+	<%-- Se deshabilita despachoExterno y tipoDespacho. Habilitar si se vuelve a requerir 
+	despachoExterno="despachoExterno"
+		tipoDespacho="tipoDespacho"
+	--%>
 	<pfs:defineParameters name="parametros" paramId="${usuario.id}" 
 		username="username"
 		password="password"
@@ -138,16 +141,15 @@
 		email="email"
 		usuarioExterno="usuarioExterno"
 		usuarioGrupo="usuarioGrupo"
-		despachoExterno="despachoExterno"
-		tipoDespacho="tipoDespacho"
+		
 		permiteGuardar="permiteGuardar"
 		tipoTab="tipoTab"
 		/>
 
-
+	<%-- Quitado de rightColumns: ,tipoDespacho,despachoExterno --%>
 	<pfs:editForm saveOrUpdateFlow="plugin/config/usuarios/ADMguardarUsuario"
 			leftColumFields="username,password,nombre,apellido1,apellido2"
-			rightColumFields="usuarioGrupo,email,usuarioExterno,tipoDespacho,despachoExterno"
+			rightColumFields="usuarioGrupo,email,usuarioExterno"
 			parameters="parametros"
 			onSuccessMode="tabConMsgGuardando"
 			tab_flow="plugin/config/usuarios/ADMconsultarUsuario"

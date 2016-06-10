@@ -38,7 +38,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -722,7 +721,11 @@ public class ADMDespachoExternoManager {
 		
 		List<String> listaProvinciasDespacho = new LinkedList<String>();
 		for(DDProvincia provincia : despachoExtrasDao.getProvinciasDespachoExtras(idDespacho)) {
-			listaProvinciasDespacho.add(provincia.getCodigo());
+			/* PRODUCTO-1274 ; BKREC-2291
+			 * Cambiar la linea cuando se requiera multiples provincias para un despacho
+			 * listaProvinciasDespacho.add(provincia.getCodigo());
+			 * */
+			listaProvinciasDespacho.add(provincia.getId().toString());
 		}
 		
 		return listaProvinciasDespacho;
@@ -749,7 +752,7 @@ public class ADMDespachoExternoManager {
 			}
 		}
 		//Si no es de Tipo Letrado no aplica
-		if(dto.getTipoDespacho() != getIdTipoLetrado()) {
+		if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
 			return desExtras;
 		}
 		
@@ -846,7 +849,13 @@ public class ADMDespachoExternoManager {
 			for(String codProvincia : provincias) {
 				if(!extrasAmbitoDao.isDespachoEnProvincia(codProvincia, idDespacho)) {				
 					despachoExtrasAmbito = new DespachoExtrasAmbito();
-					despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+					/*PRODUCTO-1274 ; BKREC-2291
+					 * Se modifica para que coja por id, si al final se requieren mas de una provincia por despacho, cambiar el setter
+					* de provincia, en vez de por id, por codigo.
+					* 
+					* despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+					*/
+					despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(codProvincia))));
 					despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
 					
 					extrasAmbitoDao.saveOrUpdate(despachoExtrasAmbito);
@@ -868,11 +877,17 @@ public class ADMDespachoExternoManager {
 		}
 		List<String> provinciasSobrantes = new ArrayList<String>();
 		for(DespachoExtrasAmbito ambito : listaAmbitoExtras) {
-			if(!listaCodProvincias.contains(ambito.getProvincia().getCodigo())) {
+			/*
+			 * PRODUCTO-1274 ; BKREC-2291
+			 * Cambiar la linea comentada cuando vaya a ser por multiples provincias
+			 * if(!listaCodProvincias.contains(ambito.getProvincia().getCodigo())) {
+			 */
+			if(!listaCodProvincias.contains(ambito.getProvincia().getId())) {
 				ambito.getAuditoria().setBorrado(true);
 				extrasAmbitoDao.saveOrUpdate(ambito);	
 			} else {
-				provinciasSobrantes.add(ambito.getProvincia().getCodigo());
+				//provinciasSobrantes.add(ambito.getProvincia().getCodigo());
+				provinciasSobrantes.add(ambito.getProvincia().getId().toString());
 			}
 		}
 		listaCodProvincias.removeAll(provinciasSobrantes);
@@ -897,7 +912,19 @@ public class ADMDespachoExternoManager {
 		
 		return idLetrado;
 	}
-	
+	@BusinessOperation("ADMDespachoExternoManager.getIdTipoProcurador")
+	public Long getIdTipoProcurador() {
+		Long idLetrado = null;
+		
+		for(DDTipoDespachoExterno tipo : tipoDespachoDao.getList()) {
+			if(tipo.getCodigo().equals("2")) {
+				return tipo.getId();
+			}
+		}
+		
+		return idLetrado;
+	}
+
 	/**
 	 * Transforma el dto en la entidad DespachoExternoExtras, el dto incluso tanto despacho como despachoExtras, pero
 	 * este metodo solo coge la parte que se guardará en DES_DESPACHO_EXTRAS
@@ -981,12 +1008,29 @@ public class ADMDespachoExternoManager {
 		else {
 			desExtras.setServicioIntegral(null);
 		}
+		if (!Checks.esNulo(dto.getFechaServicioIntegral())) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+				Date fechaServicioIntegral = formatter.parse(dto.getFechaServicioIntegral());
+				desExtras.setFechaServicioIntegral(fechaServicioIntegral);
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha Alta ", e);
+			}
+		}
+		else {
+			desExtras.setFechaServicioIntegral(null);
+		}
+		
 		if(!Checks.esNulo(dto.getContratoVigor())) {
 			desExtras.setContratoVigor(Integer.parseInt(
 					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
 		}
 		else {
 			desExtras.setContratoVigor(null);
+		}
+		if(!Checks.esNulo(dto.getImpuesto())) {
+			desExtras.setDescripcionIVA(Integer.parseInt(
+					this.getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto())));
 		}
 		
 		return desExtras;

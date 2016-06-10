@@ -3,10 +3,10 @@ package es.pfsgroup.plugin.recovery.config.despachoExterno.dao;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
-
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoBusquedaDespachoExterno;
 
 public interface ADMDespachoExternoDao extends AbstractDao<DespachoExterno, Long> {
@@ -54,5 +54,12 @@ public interface ADMDespachoExternoDao extends AbstractDao<DespachoExterno, Long
 	 * @return Devuelve una lista vacía si no existen despachos del tipo especificado, o si el tipo no existe.
 	 */
 	public List<DespachoExterno> getByTipo(Long idTipo);
+	
+	/**
+	 * Recupera despachos por el nombre (combo dinamico)
+	 * @param filtro
+	 * @return
+	 */
+	public List<DespachoExterno> getListByNombre(String filtro);
 
 }

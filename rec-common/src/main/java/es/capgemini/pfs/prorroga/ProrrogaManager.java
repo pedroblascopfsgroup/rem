@@ -152,6 +152,7 @@ public class ProrrogaManager {
         }
         RespuestaProrroga respuesta = respuestaProrrogaDao.buscarPorCodigo(dto.getCodigoRespuesta());
         prorroga.setRespuestaProrroga(respuesta);
+        prorroga.setObservacionesRespuesta(dto.getDescripcionCausa());
         prorrogaDao.delete(prorroga);
         return prorroga;
     }

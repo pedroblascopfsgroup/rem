@@ -457,6 +457,8 @@
 	panel.setValue = function(){
 		var data = entidad.get("data");
 		entidad.cacheOrLoad(data,tareasProcStore, {idProcedimiento : panel.getProcedimientoId()});
+		
+		tareasProcStore.webflow({idProcedimiento:panel.getProcedimientoId()});
 
 		var visible = [
 			[ btnProrroga, data.procedimientoAceptado && data.esGestor  ]

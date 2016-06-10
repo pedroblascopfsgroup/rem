@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alberto Soler
---## FECHA_CREACION=201600603
+--## FECHA_CREACION=201600609
 --## ARTEFACTO=producto
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1395
@@ -494,18 +494,18 @@ THEN
             -----------------------------------------------------------------------------
             ------------------------INSERTAMOS EN HISTÓRICO
             -----------------------------------------------------------------------------
-            insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
+            insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
                   values (#ESQUEMA#.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, p_frase_hist);
 
   ELSE
   --SI ENTRAMOS EN ESTE ELSE, QUIERE DECIR QUE HAY DATOS GENÉRICOS PERO NO CONTEMPLAN EL IMPORTE
   DBMS_OUTPUT.put_line ('NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE');
-  insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
+  insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
                   values (#ESQUEMA#.s_TUP_HIS_HISTORICO.NEXTVAL,p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE');
   END IF;
 ELSE
 DBMS_OUTPUT.put_line ('NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA');
-insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
+insert into #ESQUEMA#.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
     values (#ESQUEMA#.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA');
 END IF;
 commit;

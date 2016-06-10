@@ -76,6 +76,9 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 
 	@Column(name = "SYS_GUID")
 	private String sysGuid;
+	
+	@Column(name = "PCO_DOC_ACTOR_DESCRIPCION")
+	private String actorDescripcion;
 
 	@Version
 	private Integer version;
@@ -193,6 +196,14 @@ public class SolicitudDocumentoPCO implements Serializable, Auditable {
 
 	public void setSysGuid(String sysGuid) {
 		this.sysGuid = sysGuid;
+	}
+	
+	public String getActorDescripcion() {
+		return actorDescripcion;
+	}
+	
+	public void setActorDescripcion(String actorDescripcion) {
+		this.actorDescripcion = actorDescripcion;
 	}
 
 	public GestorDespacho getSolicitante() {

@@ -72,8 +72,44 @@ function(entidad,page){
 	toolbar.add(app.crearBotonAyuda());
 
 	toolbar.setValue = function(){
-		
+	
 		var data = entidad.get("data");
+		if(!data.hayPrecontencioso){
+			for(i=0; i < buttonsL_procedimiento.length;i++){
+				if(buttonsL_procedimiento[i].id == "prc-btnAccionesPrecontencioso-padre"){
+					buttonsL_procedimiento[i].hide();
+				}
+				if(buttonsL_procedimiento[i].id == "prc-btnGenerarDocPrecontencioso-padre"){
+					buttonsL_procedimiento[i].hide();
+				}
+			}
+		}
+		else{
+			<sec:authorize ifAllGranted="GENERAR_DOC_PRECONTENCIOSO">
+				for(i=0; i < buttonsL_procedimiento.length;i++){
+					if(buttonsL_procedimiento[i].id == "prc-btnGenerarDocPrecontencioso-padre"){
+						buttonsL_procedimiento[i].show();
+					}
+				}
+			</sec:authorize>
+			
+			if(data.esExpedienteEditable){
+				<sec:authorize ifAllGranted="ACCIONES_PRECONTENCIOSO">
+				for(i=0; i < buttonsL_procedimiento.length;i++){
+					if(buttonsL_procedimiento[i].id == "prc-btnAccionesPrecontencioso-padre"){
+						buttonsL_procedimiento[i].show();
+					}
+				}
+				</sec:authorize>
+			}
+			<%-- else{
+				for(i=0; i < buttonsL_procedimiento.length;i++){
+					if(buttonsL_procedimiento[i].id == "prc-btnAccionesPrecontencioso-padre"){
+						buttonsL_procedimiento[i].hide();
+					}
+			}
+			} --%>
+		}
 		
 		var visible = [
 			<sec:authorize ifAllGranted="COMUNICACION_boton">

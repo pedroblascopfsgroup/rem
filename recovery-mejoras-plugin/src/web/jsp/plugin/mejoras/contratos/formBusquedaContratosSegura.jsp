@@ -139,7 +139,7 @@ var formBusquedaContratos=function(){
 	 	name : 'jerarquia', 
 	 	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
 
-	 	var comboJerarquiaAdministrativa = app.creaCombo({triggerAction: 'all',
+	var comboJerarquiaAdministrativa = app.creaCombo({triggerAction: 'all',
 	 	data:jerarquia, 
 	 	value:jerarquia.diccionario[0].codigo, 
 	 	name : 'jerarquia', 
@@ -163,6 +163,13 @@ var formBusquedaContratos=function(){
     debugger;
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
+			comboZonas.reset();
+			optionsZonasStore.load({
+				params:{
+				idJerarquia: comboJerarquia.getValue()
+				,query: ''
+				}
+			});
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
 		}else{
 			comboZonas.setDisabled(true);
@@ -172,6 +179,13 @@ var formBusquedaContratos=function(){
     comboJerarquiaAdministrativa.on('select',function(){
 		if(comboJerarquiaAdministrativa.value != '') {
 			comboZonasAdm.setDisabled(false);
+			comboZonasAdm.reset();
+			optionsZonasAdmStore.load({
+				params:{
+				idJerarquia: comboJerarquiaAdministrativa.getValue()
+				,query: ''
+				}
+			});
 			optionsZonasAdmStore.setBaseParam('idJerarquia', comboJerarquiaAdministrativa.getValue());
 		}else{
 			comboZonasAdm.setDisabled(true);
@@ -208,21 +222,46 @@ var formBusquedaContratos=function(){
         '</div></tpl>'
     );
  	
+ 	var busquedaZonasActiva = false;
     var optionsZonasStore = page.getStore({
 	       flow: 'mejexpediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
-	    }, zonasRecord)
-	       
+	    }, zonasRecord)   
 	});
 	
-	 var optionsZonasAdmStore = page.getStore({
+	optionsZonasStore.on('beforeload', function(store, options){
+		
+       if (busquedaZonasActiva){
+          return false;
+       } else{
+          busquedaZonasActiva = true;
+       }
+   	});
+   
+   	optionsZonasStore.on('load', function(store, records, options){
+       busquedaZonasActiva = false;
+   	});
+	
+	var busquedaZonasAdmStore = false;
+	var optionsZonasAdmStore = page.getStore({
 	       flow: 'mejexpediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
-	    }, zonasAdmRecord)
-	       
+	    }, zonasAdmRecord)  
 	});
+	
+	optionsZonasAdmStore.on('beforeload', function(store, options){
+       if (busquedaZonasAdmStore){
+          return false;
+       } else{
+          busquedaZonasAdmStore = true;
+       }
+    });
+   	
+	optionsZonasAdmStore.on('load', function(store, records, options){
+       busquedaZonasAdmStore = false;
+ 	});
 
   	//Combo de zonas
     var comboZonas = new Ext.form.ComboBox({
@@ -240,6 +279,7 @@ var formBusquedaContratos=function(){
         ,hideTrigger:true     
         ,minChars: 2 
         ,hidden:false
+        ,queryDelay:800
         ,maxLength:256 
         ,itemSelector: 'div.search-item'
         ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
@@ -266,6 +306,7 @@ var formBusquedaContratos=function(){
         ,hideTrigger:true     
         ,minChars: 2 
         ,hidden:false
+        ,queryDelay:800
         ,maxLength:256 
         ,itemSelector: 'div.search-item'
         ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'

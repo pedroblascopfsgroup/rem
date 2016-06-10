@@ -39,6 +39,7 @@
  	
  	//otros
  	var riesgoOperacional = label('riesgoOperacional','<s:message code="contrato.consulta.tabOtrosDatos.riesgoOperacional" text="**Riesgo Operacional"/>');
+ 	var observacionesRiesgo = label('observacionesRiesgo','<s:message code="plugin.cajamar.bienes.observaciones" text="**Observaciones"/>');
  	var tipoVencido = label('tipoVencido','<s:message code="contrato.consulta.tabOtrosDatos.tipoVencido" text="**Tipo Vencido"/>');
  	var tramoPrevio = label('tramoPrevio','<s:message code="contrato.consulta.tabOtrosDatos.tramoPrevio" text="**Tramo Previo"/>');
  	
@@ -71,7 +72,6 @@
  	 	return entidad.get("data").id;
  	};
  	
- 	var mostrarBtnRiesgoOp;
     var btnModificarRiesgoOperacional = new Ext.Button({
  		text: '<s:message code = "contrato.consulta.tabOtrosDatos.modifRiesgoOper" text="**Modificar riesgo operacional"/>'
  		,iconCls: 'icon_edit'
@@ -107,7 +107,7 @@
 		,layoutConfig:{columns:2}
 		,title:''
 		,defaults : {xtype : 'fieldset', autoHeight : true, border : false ,cellCls : 'vtop',width:400, style:'padding:10px; margin:10px'}
-		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra4,odDateExtra6, odNumExtra4, odNumExtra6, odNumExtra8, riesgoOperacional,tipoVencido]}
+		,items : [{items:[contratoNivel2, odCharExtra9, odFlagExtra4, odDateExtra3, odDateExtra4,odDateExtra6, odNumExtra4, odNumExtra6, odNumExtra8, riesgoOperacional,observacionesRiesgo,tipoVencido]}
 				, {items:[odCharExtra7, odCharExtra10, odFlagExtra5, odFlagExtra7, odDateExtra2, odDateExtra9, odDateExtra5, odDateExtra7, odNumExtra5, odNumExtra7, tramoPrevio]}]
 	});
 	  
@@ -185,6 +185,7 @@
   		entidad.setLabel('odNumExtra8', d.numextra8);
   		
   		entidad.setLabel('riesgoOperacional', d.descripcionRiesgo);
+  		entidad.setLabel('observacionesRiesgo', d.observacionesRiesgo);
   		entidad.setLabel('tipoVencido', d.tipoVencido);
   		entidad.setLabel('tramoPrevio', d.tramoPrevio);
   		

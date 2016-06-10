@@ -120,6 +120,11 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 			h.put("descripcion", riesgo.getDescripcion());
 			h.put("descripcionLarga", riesgo.getDescripcionLarga());
 			h.put("auditoria", riesgo.getAuditoria());
+			if (!Checks.esNulo(cntId)) {
+				CntRiesgoOperacional cntRiesgo = genericDao.get(CntRiesgoOperacional.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", cntId)
+						,genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				h.put("observaciones", cntRiesgo.getObservaciones());
+			}
 		}
 		
 		return h;

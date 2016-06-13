@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=JOSE MANUEL PEREZ BARBERÁ
+--## AUTOR=JOSE MANUEL PEREZ BARBERÁ 
 --## FECHA_CREACION=20160511
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.3

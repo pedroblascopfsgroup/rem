@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=DANIEL ALBERT PÉREZ
+--## AUTOR=DANIEL ALBERT PÉREZ 
 --## FECHA_CREACION=20160512
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2

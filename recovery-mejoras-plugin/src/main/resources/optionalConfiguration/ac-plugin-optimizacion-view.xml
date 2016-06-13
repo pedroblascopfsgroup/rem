@@ -39,6 +39,11 @@
 	<bean p:entity="tabs.contrato.fast" p:name="atipicosContrato"  p:order="111" 
 		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/tabAtipicos.jsp" 
 		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="TAB_ATIPICOS" />
+		
+		
+	<bean p:entity="tabs.contrato.fast" p:name="fsrContrato"  p:order="600" 
+		p:fileName="/WEB-INF/jsp/entidad/contrato/tabs/accionesFSR.jsp" 
+		p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="VER_TAB_FSR_CONTRATO"/>
 
 	<!-- CLIENTES FAST -->	
 	
@@ -95,6 +100,10 @@
 	<bean p:entity="tabs.cliente.fast" p:name="adjuntosCliente" p:order="1200" 
 		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/adjuntos.jsp" 
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="tabs.cliente.fast" p:name="accionesFSR" p:order="1300" p:permission="VER_TAB_FSR_CLIENTE"
+		p:fileName="/WEB-INF/jsp/entidad/cliente/tabs/accionesFSR.jsp" 
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 		
 	<!--
 	<bean p:entity="tabs.cliente.fast" p:name="adjuntosCliente" p:order="1200" 

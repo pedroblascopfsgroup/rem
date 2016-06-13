@@ -207,6 +207,7 @@
     	<sec:authorize ifAllGranted="TAB_CONTRATO_OTROS,PERSONALIZACION-BCC">
     		<c:if test="${not empty riesgo}">
     			<json:property name="descripcionRiesgo" value="${riesgo.descripcion}"/>
+    			<json:property name="observacionesRiesgo" value="${riesgo.observaciones}"/>
     		</c:if>
     		<c:if test="${not empty vencido}">
     			<c:if test="${not empty vencido.tipoVencido}">
@@ -217,6 +218,20 @@
 	    		 </c:if>
     		</c:if>    		
     	</sec:authorize>
+    	<json:property name="isTipoExpedienteCorrecto" value="${isTipoExpedienteCorrecto}" />
+    	<json:property name="isTipoAsuntoCorrecto" value="${isTipoAsuntoCorrecto}" />
 	</json:object>
+	<json:array name="accionesFSRContrato" items="${accionesFSRContrato}" var="acc">
+		<json:object>
+			<json:property name="descripcion" value="${acc.descripcion}" />
+			<json:property name="codigo" value="${acc.codigo}" />
+		</json:object>
+	</json:array>
+	<json:array name="allAccionesFSR" items="${allAccionesFSR}" var="acc">
+		<json:object>
+			<json:property name="descripcion" value="${acc.descripcion}" />
+			<json:property name="codigo" value="${acc.codigo}" />
+		</json:object>
+	</json:array>
   
 </fwk:json>

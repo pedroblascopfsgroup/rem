@@ -155,7 +155,8 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerTipoInteresPrestamo(Contrato contrato, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = numberInstance.format(contrato.getTipoInteres());
+			EXTContrato econtrato = genericDao.get(EXTContrato.class, genericDao.createFilter(FilterType.EQUALS, "id", contrato.getId()));
+			resultado = econtrato.getNumextra4();
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
@@ -266,7 +267,8 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 
 	private String obtenerTipoInteresDemora(Contrato contrato,	String campo) {
 		
-		String resultado = noDisponible(campo);
+		//String resultado = noDisponible(campo);
+		String resultado = "0";
 		if (!Checks.esNulo(contrato.getInteresesDemora())) {
 			resultado = contrato.getInteresesDemora(); 
 		}

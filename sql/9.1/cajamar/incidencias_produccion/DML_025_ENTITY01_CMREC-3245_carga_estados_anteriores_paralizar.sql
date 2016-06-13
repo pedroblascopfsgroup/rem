@@ -12,7 +12,7 @@
 --## VERSIONES:
 --##        0.1 20151126 GMN Versión inicial
 --##########################################
---*/
+-- --*/
 
 -- 1. Cargamos estados anteriores a la paralización
 -- 2. Actualizamos la TAR y la TEX con borrado = 1
@@ -21,18 +21,15 @@
 /*******************************  INSERTAMOS ESTADOS EN LA HEP  ***************************************/
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
-SET SERVEROUTPUT ON
-set timing ON
-set linesize 2000
-SET VERIFY OFF
-set feedback on
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
 
 DECLARE
 
     V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    V_ESQUEMA VARCHAR2(25 CHAR):=   '#ESQUEMA#';             -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';         -- Configuracion Esquema Master 
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
@@ -69,6 +66,8 @@ INSERT INTO CM01.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO
         );    
         
 
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 1');
+
 --121 -- ENVIADO
 -- TAP_CODIGO = 'PCO_RegistrarTomaDec'
 
@@ -95,6 +94,7 @@ UPDATE CM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = 'CMREC-3245'
                              );
 
 -- ACTUALIZAMOS la TAREA EN  LA TEX
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 2');
 
 UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
                                              , FECHAMODIFICAR = systimestamp
@@ -118,7 +118,7 @@ UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
                                        )
                              );
 
-         
+         DBMS_OUTPUT.PUT_LINE('EJECUTADO 3');
 /*************************************/
 /** INSERTAR ESTADO EN PREPARACION  **/
 /*************************************/      
@@ -152,7 +152,7 @@ INSERT INTO CM01.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO
  -- 2483   PREPARACION     
  
  --ACTUALIZAMOS LA TAR TAREAS_ NOTIFICACIONES
- 
+ DBMS_OUTPUT.PUT_LINE('EJECUTADO 4');
 
 UPDATE CM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = 'CMREC-3245'
                                         , FECHAMODIFICAR = systimestamp
@@ -176,8 +176,7 @@ UPDATE CM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = 'CMREC-3245'
                                 and exp.FECHA_REALIZ_ESTUDIO_SOLV IS not NULL 
                              );
                              
-                             commit;
-
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 5');
 
 UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
                                              , FECHAMODIFICAR = systimestamp
@@ -202,7 +201,7 @@ UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
                                             and exp.FECHA_REALIZ_ESTUDIO_SOLV IS not NULL 
                                        )
                              );
- 
+ DBMS_OUTPUT.PUT_LINE('EJECUTADO 6');
 
 /*************************************/
 /** INSERTAR ESTADO EN ESTUDIO  **/
@@ -237,6 +236,7 @@ INSERT INTO CM01.PCO_PRC_HEP_HISTOR_EST_PREP (PCO_PRC_HEP_ID, PCO_PRC_ID, DD_PCO
 
 
 -- PARALIZAMOS LAS TAREAS
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 7');
 
 UPDATE CM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = 'CMREC-3245'
                                         , FECHAMODIFICAR = systimestamp
@@ -259,6 +259,7 @@ UPDATE CM01.TAR_TAREAS_NOTIFICACIONES SET USUARIOMODIFICAR = 'CMREC-3245'
 
              
 -- PARALIZAMOS LAS TAREAS_EXTERNAS
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 8');
 
 UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
                                              , FECHAMODIFICAR = systimestamp
@@ -282,7 +283,7 @@ UPDATE CM01.TEX_TAREA_EXTERNA SET  USUARIOMODIFICAR = 'CMREC-3245'
                              );
                              
 
-                             
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 9');                             
                              
 --Corregimos fechas que coinciden y hacen fallar la aplicación
 
@@ -311,22 +312,24 @@ select hep.pco_prc_hep_id from pco_oks
   where trunc(hep.pco_prc_hep_fecha_incio) = trunc(hep.pco_prc_hep_fecha_fin)
 );
 
+DBMS_OUTPUT.PUT_LINE('EJECUTADO 10');
 
 commit;                             
                              
                              
-EXCEPTION
-     WHEN OTHERS THEN
-          ERR_NUM := SQLCODE;
-          ERR_MSG := SQLERRM;
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
-          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(ERR_MSG);
-          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(V_SQL);
-          ROLLBACK;
-          RAISE;   
-END;
-/
 
-EXIT;
+EXCEPTION
+
+ WHEN OTHERS THEN
+   err_num := SQLCODE;
+   err_msg := SQLERRM;
+
+   DBMS_OUTPUT.put_line('Error:'||TO_CHAR(err_num));
+   DBMS_OUTPUT.put_line(err_msg);
+
+   ROLLBACK;
+   RAISE;
+ END;
+  /
+ EXIT;
+

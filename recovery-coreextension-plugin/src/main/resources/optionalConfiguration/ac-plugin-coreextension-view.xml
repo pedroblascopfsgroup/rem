@@ -54,7 +54,7 @@
 		p:permission="MENU-DIRECCION-ASUNTO" />
 		
 	<bean p:entity="menu" p:name="busquedas/acuerdos" 
-		p:order="3500" p:fileName="/WEB-INF/jsp/plugin/coreextension/acuerdo/acuerdos_menu.jsp" 
+		p:order="110" p:fileName="/WEB-INF/jsp/plugin/coreextension/acuerdo/acuerdos_menu.jsp" 
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		p:permission="MENU-LIST-ACU"/>
 	

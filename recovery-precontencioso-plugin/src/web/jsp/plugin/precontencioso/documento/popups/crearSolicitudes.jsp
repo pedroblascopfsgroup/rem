@@ -62,7 +62,7 @@
 	}
 
 	var getParametros = function() {
-		
+		debugger;
 	 	var parametros = {};
 	 	
 	 	var arrayIdDocumentos=new Array();	
@@ -70,6 +70,7 @@
 		var arrayIdDocumentos = Ext.encode(arrayIdDocumentos);		
 	 	parametros.arrayIdDocumentos = arrayIdDocumentos;
 	 	parametros.actor = comboUsuario.getValue();
+	 	parametros.inputUsuarioTipoDespacho = inputUsuarioTipoDespacho.getValue();
 	 	if(fechaSolicitud.getValue()!=null && fechaSolicitud.getValue()!= '') parametros.fechaSolicitud = fechaSolicitud.getValue().format('d/m/Y');
 	 	parametros.tipogestor = comboTipoGestor.getValue();
 	 	parametros.idDespacho = comboTipoDespacho.getValue();
@@ -184,13 +185,33 @@
 		tipoDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue()});
 	});
 
-	comboTipoDespacho.on('select', function() {
-		usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
-
-		comboUsuario.reset();
-		comboUsuario.setDisabled(false);
+	var inputUsuarioTipoDespacho = new Ext.form.TextField({
+		name : 'inputUsuarioTipoDespacho'
+		,value : '<s:message text="" javaScriptEscape="true" />'
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.crearSolicitudes.actor" text="**Actor" />'
+		,hidden: true
 	});
-	   
+	
+	comboTipoDespacho.on('select', function(combo, records) {
+		if(records.json.inputUsuario) {
+			comboUsuario.setVisible(false);
+			comboUsuario.allowBlank=true;
+			inputUsuarioTipoDespacho.setVisible(true);
+			inputUsuarioTipoDespacho.allowBlank=false;
+			inputUsuarioTipoDespacho.reset();
+			comboUsuario.reset();
+		}else{
+			usuarioStore.webflow({'idTipoDespacho': comboTipoDespacho.getValue()});
+			comboUsuario.reset();
+			comboUsuario.setDisabled(false);
+			comboUsuario.setVisible(true);
+			comboUsuario.allowBlank=false;
+			inputUsuarioTipoDespacho.setVisible(false);
+			inputUsuarioTipoDespacho.allowBlank=true;
+			inputUsuarioTipoDespacho.reset();
+		}
+	});
+	
 	var fechaSolicitud = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,allowBlank: false
@@ -200,15 +221,13 @@
 	});
 	
 
-
-
 	var panelEdicion = new Ext.FormPanel({
 		layout:'table'
 		,layoutConfig:{columns:2}
 		,border:false
    	    ,width: 400
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ comboTipoGestor, comboTipoDespacho, comboUsuario, fechaSolicitud]}
+		,items:[{items: [ comboTipoGestor, comboTipoDespacho, comboUsuario, inputUsuarioTipoDespacho, fechaSolicitud]}
 		]
 	});	
 

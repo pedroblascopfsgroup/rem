@@ -2047,7 +2047,8 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
         Expediente exp = this.getExpediente(idExpediente);
 
         //Si el expediente est� en DC, le devolvemos su estado Congelado
-        if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(exp.getEstadoItinerario().getCodigo())) {
+        if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(exp.getEstadoItinerario().getCodigo()) || DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(exp.getEstadoItinerario().getCodigo())
+        			|| DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(exp.getEstadoItinerario().getCodigo())) {
 
             DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                     DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO);
@@ -2726,7 +2727,7 @@ public class ExpedienteManager implements ExpedienteBPMConstants, ExpedienteMana
 
             //Si el expediente est� en DC, le devolvemos su estado Congelado
             if (DDEstadoItinerario.ESTADO_DECISION_COMIT.equals(expediente.getEstadoItinerario().getCodigo()) 
-            		|| DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo())) {
+            		|| DDEstadoItinerario.ESTADO_ITINERARIO_SANCIONADO.equals(expediente.getEstadoItinerario().getCodigo()) || DDEstadoItinerario.ESTADO_FORMALIZAR_PROPUESTA.equals(expediente.getEstadoItinerario().getCodigo())) {
                 DDEstadoExpediente estadoExpediente = (DDEstadoExpediente) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                         DDEstadoExpediente.class, DDEstadoExpediente.ESTADO_EXPEDIENTE_CONGELADO);
                 expediente.setEstadoExpediente(estadoExpediente);

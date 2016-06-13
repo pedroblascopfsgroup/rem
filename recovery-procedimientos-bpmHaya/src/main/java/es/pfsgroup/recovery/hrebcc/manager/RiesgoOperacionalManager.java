@@ -11,13 +11,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.EXTContratoDao;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.EXTContrato;
+import es.capgemini.pfs.expediente.model.DDTipoExpediente;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.haya.integration.bpm.IntegracionBpmService;
@@ -54,7 +60,7 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 	private IntegracionBpmService bpmIntegracionService;
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly=false)
 	public void actualizarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto) {
 		if (!Checks.esNulo(dto.getIdContrato()) && !Checks.esNulo(dto.getCodRiesgoOperacional())) {
 			//Obtenemos el contrato enviado
@@ -65,24 +71,36 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 			
 			//Si tenemos ambos objetos actualizamos el contrato
 			if (!Checks.esNulo(contrato) && !Checks.esNulo(riesgoOperacional)) {
-				//Primero obtenemos la relación del contrato con algún riesgo operacional
-				CntRiesgoOperacional cntRiesgo = genericDao.get(CntRiesgoOperacional.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId())
-															,genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-				if (!Checks.esNulo(cntRiesgo)) {
-					//Si ya tiene uno lo borramos
-					genericDao.deleteById(CntRiesgoOperacional.class, cntRiesgo.getId());
-				}
 				
 				//Ahora creamos un nuevo registro
-				cntRiesgo = new CntRiesgoOperacional();
+				CntRiesgoOperacional cntRiesgo = new CntRiesgoOperacional();
 				cntRiesgo.setContrato(contrato);
 				cntRiesgo.setRiesgoOperacional(riesgoOperacional);
+				cntRiesgo.setObservaciones(dto.getObservaciones());
 				
 				genericDao.save(CntRiesgoOperacional.class, cntRiesgo);
 				
 				if(dto.isEnviarDatos()) {
 					bpmIntegracionService.enviarDatos(dto);
 				}
+			}
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void borrarRiesgoOperacional(ActualizarRiesgoOperacionalDto dto){
+		//Obtenemos el contrato enviado
+		EXTContrato contrato = (EXTContrato)contratoDao.get(dto.getIdContrato());
+
+		//Si tenemos ambos objetos actualizamos el contrato
+		if (!Checks.esNulo(contrato)) {
+			//Primero obtenemos la relación del contrato con algún riesgo operacional
+			CntRiesgoOperacional cntRiesgo = genericDao.get(CntRiesgoOperacional.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", contrato.getId())
+														,genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			if (!Checks.esNulo(cntRiesgo)) {
+				//Si ya tiene uno lo borramos
+				genericDao.deleteById(CntRiesgoOperacional.class, cntRiesgo.getId());
 			}
 		}
 	}
@@ -102,6 +120,11 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 			h.put("descripcion", riesgo.getDescripcion());
 			h.put("descripcionLarga", riesgo.getDescripcionLarga());
 			h.put("auditoria", riesgo.getAuditoria());
+			if (!Checks.esNulo(cntId)) {
+				CntRiesgoOperacional cntRiesgo = genericDao.get(CntRiesgoOperacional.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", cntId)
+						,genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				h.put("observaciones", cntRiesgo.getObservaciones());
+			}
 		}
 		
 		return h;
@@ -118,6 +141,23 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 			if (!Checks.esNulo(cntRiesgo)) {
 				//Si tiene un riesgo se devuelve
 				resultado = cntRiesgo.getRiesgoOperacional();
+			}
+		}
+		
+		return resultado;
+	}
+	
+	public CntRiesgoOperacional getRiesgoOperacionalContrato(Long cntId) {
+		CntRiesgoOperacional resultado = null;
+		
+		if (!Checks.esNulo(cntId)) {
+			//Obtenemos el riesgo operacional del contrato
+			CntRiesgoOperacional cntRiesgo = genericDao.get(CntRiesgoOperacional.class, genericDao.createFilter(FilterType.EQUALS, "contrato.id", cntId)
+					,genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			
+			if (!Checks.esNulo(cntRiesgo)) {
+				//Si tiene un riesgo se devuelve
+				resultado = cntRiesgo;
 			}
 		}
 		
@@ -182,5 +222,53 @@ public class RiesgoOperacionalManager implements RiesgoOperacionalApi {
 		}
 		
 		return resultado;
+	}
+	
+	@Override
+	@BusinessOperation(overrides=PrimariaBusinessOperation.BO_CNT_MGR_COMPRUEBA_TIPO_EXP)
+	public Boolean compruebaTipoExpediente(Long idContrato){
+		Boolean flag=false;
+		Filter filterCnt=genericDao.createFilter(FilterType.EQUALS, "id", idContrato);
+		Contrato cnt=genericDao.get(Contrato.class, filterCnt);
+		
+		List<ExpedienteContrato> listaExpedientes=cnt.getExpedienteContratos();
+		for(ExpedienteContrato expCnt: listaExpedientes){
+			if(!Checks.esNulo(expCnt.getExpediente().getTipoExpediente())){
+				String tipoExpediente=expCnt.getExpediente().getTipoExpediente().getCodigo();
+				if(tipoExpediente.equals(DDTipoExpediente.TIPO_EXPEDIENTE_RECUPERACION) || tipoExpediente.equals(DDTipoExpediente.TIPO_EXPEDIENTE_SEGUIMIENTO)){
+					flag=true;
+					break;
+				}
+			}
+		}
+		
+		return flag;
+	}
+	
+	@Override
+	@BusinessOperation(overrides=PrimariaBusinessOperation.BO_CNT_MGR_COMPRUEBA_TIPO_ASUNTO)
+	public Boolean compruebaAsunto(Long idContrato){
+		Boolean flag=false;
+		Filter filterCnt=genericDao.createFilter(FilterType.EQUALS, "id", idContrato);
+		Contrato cnt=genericDao.get(Contrato.class, filterCnt);
+		
+		List<Asunto> listaAsuntos=cnt.getAsuntosActivos();
+		for(Asunto asu:listaAsuntos){
+			if(!Checks.esNulo(asu.getTipoAsunto())){
+				if(asu.getTipoAsunto().getCodigo().equals(DDTiposAsunto.CONCURSAL) || asu.getTipoAsunto().getCodigo().equals(DDTiposAsunto.LITIGIO)){
+					List<Procedimiento> listaProcedimientos=asu.getProcedimientos();
+					for(Procedimiento prc: listaProcedimientos){
+						if(prc.getTipoProcedimiento().getCodigo().equals(TipoProcedimiento.TIPO_PRECONTENCIOSO)){
+							flag=true;
+							break;
+						}
+					}
+					
+				}
+			}
+		
+		}
+		
+		return flag;
 	}
 }

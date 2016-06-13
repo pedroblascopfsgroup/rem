@@ -39,6 +39,7 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 		String importeDemanda = "";
 		String procIniciar = "";
 		String partidoJudicial = "";
+		boolean primeraVuelta = true;
 		
 		for (TareaExterna tarea : tareas) {
 			if (tarea.getTareaProcedimiento().getCodigo().contains("RedactarDemandaAdjuntarDocu")) {
@@ -59,35 +60,7 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 		}
 		for (TareaExterna tarea : tareas) {
 			if(tarea.getTareaProcedimiento().getCodigo().contains("ValidarAsignacion")){
-				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
-				for (EXTTareaExternaValor valor : valores) {
-					if ("importeDemanda".equals(valor.getNombre())) {
-						if(!importeDemanda.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
-						}
-					}
-					else if ("proc_a_iniciar".equals(valor.getNombre())) {
-						if(!procIniciar.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
-						}
-					}
-					else if ("partidoJudicial".equals(valor.getNombre())) {
-						if(!partidoJudicial.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
-						}
-					}
-				}
-				break;
-			}		
-		}
-
-		List<TareaExterna> tareasPadrePCO = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
-		
-		for (TareaExterna tarea : tareasPadrePCO) {
-			if (tarea.getTareaProcedimiento().getCodigo().contains("ValidarAsignacion")) {
+				primeraVuelta=false;
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if ("importeDemanda".equals(valor.getNombre())) {
@@ -112,6 +85,38 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 				break;
 			}
 		}
+		if(primeraVuelta){
+			List<TareaExterna> tareasPadrePCO = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
+			
+			for (TareaExterna tareaPadre : tareasPadrePCO) {
+				if (tareaPadre.getTareaProcedimiento().getCodigo().contains("ValidarAsignacion")) {
+					List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tareaPadre.getId());
+					for (EXTTareaExternaValor valor : valores) {
+						if ("importeDemanda".equals(valor.getNombre())) {
+							if(!importeDemanda.equals(valor.getValor())){
+								executionContext.getToken().signal("nuevo");
+								return "";
+							}
+						}
+						else if ("proc_a_iniciar".equals(valor.getNombre())) {
+							if(!procIniciar.equals(valor.getValor())){
+								executionContext.getToken().signal("nuevo");
+								return "";
+							}
+						}
+						else if ("partidoJudicial".equals(valor.getNombre())) {
+							if(!partidoJudicial.equals(valor.getValor())){
+								executionContext.getToken().signal("nuevo");
+								return "";
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		
 		executionContext.getToken().signal("normal");
 		return "";
 	}

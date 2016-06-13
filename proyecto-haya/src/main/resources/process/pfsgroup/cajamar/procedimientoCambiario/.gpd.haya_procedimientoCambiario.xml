@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_procedimientoCambiario" width="1266" height="879">
+<root-container name="hcj_procedimientoCambiario" width="1266" height="885">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-66" y="-14"/>
@@ -180,6 +180,14 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
+  <node name="forkAnti" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="H016_BPMProvisionFondos" x="1005" y="143" width="203" height="36">
     <edge>
       <label x="-86" y="-254"/>
@@ -194,12 +202,23 @@
       <label x="6" y="-8"/>
     </edge>
   </node>
+  <node name="H016_BPMAnticipoFondos" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="H016_interposicionDemandaMasBienesDecision" x="668" y="0" width="358" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="-53" y="-9"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="Fin" x="1047" y="712" width="132" height="36"/>

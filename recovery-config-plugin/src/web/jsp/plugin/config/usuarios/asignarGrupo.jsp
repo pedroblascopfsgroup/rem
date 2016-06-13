@@ -11,24 +11,24 @@
 <fwk:page>
 	<pfsforms:textfield name="username" labelKey="plugin.config.usuarios.field.username" label="**Username"   value="${usuario.username}" readOnly="true"/>
 	
-	<pfs:hidden name="idusuario" value="${usuario.id}" />
-	
 	<pfsforms:textfield name="usuarioExterno" labelKey="plugin.config.usuarios.field.usuarioExterno" label="**Usuario Externo"   value="${usuario.usuarioExterno}" readOnly="true"/>
 	
-	<pfs:ddCombo  name="grupo" 
+	<pfs:dblselect name="grupo"
 		labelKey="plugin.config.usuarios.asignargrupo.control.grupo" 
 		label="**Grupo"
-		value="" 
-		dd="${grupos}" />
+		width="220" 
+		height="120" 
+		dd="${grupos}"/>
 
-	<pfs:defineParameters name="parametros" paramId="${usuario.id}" 
+	<pfs:hidden name="idusuario" value="${usuario.id}" />
+
+	<pfs:defineParameters name="parametros" paramId="" 
 		idusuario ="idusuario"
 		grupo="grupo" 
 		/>	
 
 	<pfs:editForm saveOrUpdateFlow="pfsadmin/usuarios/ADMguardarGrupo"
-		leftColumFields="username"
-		rightColumFields="grupo"
+		leftColumFields="username, grupo"
 		parameters="parametros" 
 		onSuccessMode="tabGenericoConMsgGuardando" />
 	

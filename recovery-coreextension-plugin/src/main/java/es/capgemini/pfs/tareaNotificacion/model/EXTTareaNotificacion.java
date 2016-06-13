@@ -423,7 +423,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 					return super.getDescGestor();
 				} else {
 					Usuario gestor = getNuevoGestor();
-					if (gestor != null) {
+					if (!Checks.esNulo(gestor)) {
 						return gestor.getApellidoNombre();
 					}
 				}
@@ -473,6 +473,7 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 				if (supervisor != null) {
 					return supervisor.getApellidoNombre();
 				}
+				
 			}
 		}
 		return null;
@@ -525,10 +526,9 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 
 	private String calcularSupervisorExpedienteAUX() {
 		Perfil perfil = null;
-		perfil = getExpediente().getArquetipo().getItinerario()
-				.getEstado(getCodigoEstadoItinerarioExpediente())
-				.getSupervisor();
-
+		if(!Checks.esNulo(getExpediente().getArquetipo().getItinerario().getEstado(getCodigoEstadoItinerarioExpediente()))){
+			perfil = getExpediente().getArquetipo().getItinerario().getEstado(getCodigoEstadoItinerarioExpediente()).getSupervisor();
+		}
 		if (perfil == null) {
 			return "";
 		}
@@ -944,9 +944,12 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
 				.equals(getCodigoTipoEntidad())) {
 			if (getExpediente() != null) {
-				perfil = getExpediente().getArquetipo().getItinerario()
-						.getEstado(getCodigoEstadoItinerario(getExpediente()))
-						.getSupervisor();
+				if (!Checks.esNulo(getExpediente().getArquetipo().getItinerario()
+						.getEstado(getCodigoEstadoItinerario(getExpediente())))){
+					perfil = getExpediente().getArquetipo().getItinerario()
+							.getEstado(getCodigoEstadoItinerario(getExpediente()))
+							.getSupervisor();
+				}
 			}
 		}
 		if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(getCodigoTipoEntidad())) {
@@ -982,9 +985,12 @@ public class EXTTareaNotificacion extends TareaNotificacion {
 		if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE
 				.equals(getCodigoTipoEntidad())) {
 			if (getExpediente() != null) {
-				perfil = getExpediente().getArquetipo().getItinerario()
-						.getEstado(getCodigoEstadoItinerario(getExpediente()))
-						.getGestorPerfil();
+				if (!Checks.esNulo(getExpediente().getArquetipo().getItinerario()
+						.getEstado(getCodigoEstadoItinerario(getExpediente())))){
+					perfil = getExpediente().getArquetipo().getItinerario()
+							.getEstado(getCodigoEstadoItinerario(getExpediente()))
+							.getGestorPerfil();
+				}
 			}
 		}
 		if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(getCodigoTipoEntidad())) {

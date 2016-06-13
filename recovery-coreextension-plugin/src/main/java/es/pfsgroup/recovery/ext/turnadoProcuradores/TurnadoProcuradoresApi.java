@@ -3,7 +3,6 @@ package es.pfsgroup.recovery.ext.turnadoProcuradores;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 
 public interface TurnadoProcuradoresApi {
 
@@ -34,14 +33,6 @@ public interface TurnadoProcuradoresApi {
 	EsquemaTurnadoProcurador getEsquemaVigente();
 
 	/**
-	 * Recupera un esquema de turnado por su ID
-	 * 
-	 * @param id
-	 * @return
-	 */
-	EsquemaTurnadoProcurador save(EsquemaTurnadoDto dto);
-
-	/**
 	 * Indica si es o no modificable
 	 * 
 	 * @param esquema
@@ -67,29 +58,6 @@ public interface TurnadoProcuradoresApi {
 	 * @param tpo TODO
 	 */
 	void turnarProcurador(Long idAsunto, String username, String plaza, String tpo) throws IllegalArgumentException, AplicarTurnadoException;
-
-	/**
-	 * Elimina un esquema
-	 * 
-	 * @param id
-	 */
-	void delete(Long id);
-
-	/**
-	 * Copia un esquema
-	 * 
-	 * @param id
-	 */
-	void copy(Long id);
-
-	/**
-	 * Comprueba si un esquema se puede o no activar.
-	 * 
-	 * @param id
-	 *            Id del esquema
-	 * @return True si se puede activar el esquema/false en caso contrario
-	 */
-	boolean checkActivarEsquema(Long id);
 
 	/**
 	 * Limpia el turnado de todos los despachos activos.

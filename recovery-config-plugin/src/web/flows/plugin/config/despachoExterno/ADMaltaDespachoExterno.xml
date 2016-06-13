@@ -21,6 +21,8 @@
 				result="flowScope.listaProvincias" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getIdTipoLetrado')" 
 				result="flowScope.idTipoLetrado" />	
+			<evaluate expression="executor.execute('ADMDespachoExternoManager.getIdTipoProcurador')" 
+				result="flowScope.idTipoProcurador" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDTipoDocumento')" 
 				result="flowScope.tiposDocumentos" />	
 		</on-entry>

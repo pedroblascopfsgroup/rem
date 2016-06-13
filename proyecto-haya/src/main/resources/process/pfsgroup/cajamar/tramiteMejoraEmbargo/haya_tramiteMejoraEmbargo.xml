@@ -108,7 +108,7 @@
 				<transicion>avanzaBPM</transicion>
 			</action>
 		</event>
-		<transition to="H046_registrarAnotacionRegistroDecision" name="avanzaBPM"></transition>
+		<transition to="H046_registrarAnotacionRegistro" name="avanzaBPM"></transition>
 	</node>
 
 	<end-state name="Fin">

@@ -21,9 +21,14 @@
 		<%@ include file="tabPerfilesUsuario.jsp" %>
 	</pfslayout:includetab>
 	
-	
+	<%-- PRODUCTO-1369 - En vez de la despachos supervisados por el usuario, se ha sustitudo por despachos Asociados al User
+	Pero no lo he borrado, si se requiere en un futuro, solo habrá que descomentar esta lina y ponerle otro name
 	<pfslayout:includetab name="tabDespachos">
 		<%@ include file="tabDespachosUsuario.jsp" %>
+	</pfslayout:includetab>
+	--%>
+	<pfslayout:includetab name="tabDespachos">
+		<%@ include file="tabDespachosAsociadosUsuario.jsp" %>
 	</pfslayout:includetab>
 	
 	<pfslayout:includetab name="tabGrupos">

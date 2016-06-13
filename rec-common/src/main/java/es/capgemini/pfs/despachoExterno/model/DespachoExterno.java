@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -76,6 +75,10 @@ public class DespachoExterno implements Serializable, Auditable {
     @JoinColumn(name = "ZON_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private DDZona zona;
+    
+    /* No le llamo codigo a secas, porque hay un getCodigo que devuelve el id. */
+    @Column(name = "DES_CODIGO")
+    private String codigoDespacho;
 
     @Column(name = "ETC_CON_CODIGO_IMPORTE")
     private String turnadoCodigoImporteConcursal;
@@ -88,6 +91,9 @@ public class DespachoExterno implements Serializable, Auditable {
     
     @Column(name = "ETC_LIT_CODIGO_CALIDAD")
     private String turnadoCodigoCalidadLitigios;
+    
+    @Column(name = "DES_FLAG_INPUT_DESC_USU")
+    private boolean flagInputDescripcionUsuario;
     
     @Version
     private Integer version;
@@ -311,5 +317,22 @@ public class DespachoExterno implements Serializable, Auditable {
 
 	public void setTurnadoCodigoCalidadLitigios(String turnadoCodigoCalidadLitigios) {
 		this.turnadoCodigoCalidadLitigios = turnadoCodigoCalidadLitigios;
+	}
+
+	public String getCodigoDespacho() {
+		return codigoDespacho;
+	}
+
+	public void setCodigoDespacho(String codigoDespacho) {
+		this.codigoDespacho = codigoDespacho;
 	}    
+	
+	public boolean isFlagInputDescripcionUsuario() {
+		return flagInputDescripcionUsuario;
+	}
+	
+	public void setFlagInputDescripcionUsuario(
+			boolean flagInputDescripcionUsuario) {
+		this.flagInputDescripcionUsuario = flagInputDescripcionUsuario;
+	}
 }

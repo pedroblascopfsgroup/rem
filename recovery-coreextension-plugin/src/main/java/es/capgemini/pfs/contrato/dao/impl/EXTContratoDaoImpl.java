@@ -204,26 +204,26 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			// Nombre
 			if (dto.getNombre() != null && dto.getNombre().trim().length() > 0) {
 //				hql.append(" and upper(p.nombre) like '%|| :nombre ||%'");
-				hql.append(" and upper(p.nombre) like '%"+dto.getNombre().replace("'", "''")+"%'");
+				hql.append(" and upper(p.nombre) like '%"+dto.getNombre().toUpperCase().replace("'", "''")+"%'");
 			//	params.put("nombre", dto.getNombre().trim().toUpperCase());
 			}
 			
 			// Apellido1
 			if (dto.getApellido1() != null
 					&& dto.getApellido1().trim().length() > 0) {
-				hql.append(" and upper(p.apellido1) like '%"+dto.getApellido1().replace("'", "''")+"%'");
+				hql.append(" and upper(p.apellido1) like '%"+dto.getApellido1().toUpperCase().replace("'", "''")+"%'");
 				//params.put("apellido1", dto.getApellido1().trim().toUpperCase());
 			}
 			// Apellido2
 			if (dto.getApellido2() != null
 					&& dto.getApellido2().trim().length() > 0) {
-				hql.append(" and upper(p.apellido2) like '%"+dto.getApellido2().replace("'", "''")+"%'");
+				hql.append(" and upper(p.apellido2) like '%"+dto.getApellido2().toUpperCase().replace("'", "''")+"%'");
 				//params.put("apellido2", dto.getApellido2().trim().toUpperCase());
 			}
 			// DNI
 			if (dto.getDocumento() != null
 					&& dto.getDocumento().trim().length() > 0) {
-				hql.append(" and upper(p.docId) like '%"+dto.getDocumento().replace("'", "''")+"%'");
+				hql.append(" and upper(p.docId) like '%"+dto.getDocumento().toUpperCase().replace("'", "''")+"%'");
 				//params.put("docId", dto.getDocumento().toUpperCase());
 			}
 
@@ -254,7 +254,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 			// Nombre del Expediente
 			if (dto.getDescripcionExpediente() != null
 					&& dto.getDescripcionExpediente().trim().length() > 0) {
-				hql.append(" and UPPER(e.descripcionExpediente) like '%"+dto.getDescripcionExpediente().replace("'", "''")+"%'");
+				hql.append(" and UPPER(e.descripcionExpediente) like '%"+dto.getDescripcionExpediente().toUpperCase().replace("'", "''")+"%'");
 				//params.put("descExp", dto.getDescripcionExpediente().toUpperCase());
 			}
 			
@@ -265,7 +265,7 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 				// Nombre del Asunto
 				if (dto.getNombreAsunto() != null
 						&& dto.getNombreAsunto().trim().length() > 0) {
-					hql.append(" and UPPER(asu.nombre) like '%"+dto.getNombreAsunto().replace("'", "''")+"%' and cex.sinActuacion = 0");
+					hql.append(" and UPPER(asu.nombre) like '%"+dto.getNombreAsunto().replace("'", "''").toUpperCase()+"%' and cex.sinActuacion = 0");
 					params.put("nombreAsu", dto.getNombreAsunto().toUpperCase());
 					hql.append(" and asu.estadoAsunto.codigo NOT IN ("
 							+ DDEstadoAsunto.ESTADO_ASUNTO_CANCELADO + ", "
@@ -926,78 +926,8 @@ public class EXTContratoDaoImpl extends AbstractEntityDao<Contrato, Long>
 	private String createHQLNroContrato(String nroContrato,
 			Map<String, Object> params) {
 		String cadReturn = "";
-		// Si las propiedades están seteadas por la clase
-		// SpringContratoConfigurator las comprobamos
-		String formatoSubstringStart = null;
-		String formatoSubstringEnd = null;
-		if (appProperties != null) {
-			formatoSubstringStart = appProperties
-					.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_INI);
-			formatoSubstringEnd = appProperties
-					.getProperty(APPConstants.CNT_PROP_FORMAT_SUBST_FIN);
-		}
-
 		String campoBusqueda = getCampoDeBusqueda("c.nroContrato");
-
-		if (!Checks.esNulo(formatoSubstringStart)
-				|| !Checks.esNulo(formatoSubstringEnd)) {
-			formatoSubstringStart = (Checks.esNulo(formatoSubstringStart) || ""
-					.equals(formatoSubstringStart)) ? "1" : String
-					.valueOf(Integer.parseInt(formatoSubstringStart) + 1);
-
-			formatoSubstringEnd = (Checks.esNulo(formatoSubstringEnd) || ""
-					.equals(formatoSubstringEnd)) ? ""
-					: ","
-							+ String.valueOf((Integer
-									.parseInt(formatoSubstringEnd) - Integer
-									.parseInt(formatoSubstringStart)) + 1);
-
-			/*
-			 * Trasladamos la construcción de la cadena de búsqueda fuera del
-			 * IF. Simplificamos la cadena de búsqueda para que sea menos
-			 * costosa en Oracle.
-			 * 
-			 * cadReturn = " and (substr(c.nroContrato," + formatoSubstringStart
-			 * + formatoSubstringEnd + ") like '%" +
-			 * nroContrato.trim().replaceFirst("^0*", "") + "%'" +
-			 * " or substr(c.nroContrato," + formatoSubstringStart +
-			 * formatoSubstringEnd + ") like '%" + nroContrato.trim() + "%'" +
-			 * " or substr(c.nroContrato," + formatoSubstringStart +
-			 * formatoSubstringEnd + ") like '%" + nroContrato.replaceAll(" ",
-			 * "").trim() .replaceFirst("^0*", "") + "%' )";
-			 */
-
-			campoBusqueda = "substr(" + campoBusqueda + ","
-					+ formatoSubstringStart + formatoSubstringEnd + ")";
-
-		} else {
-			/*
-			 * Trasladamos la construcción de la cadena de búsqueda fuera del
-			 * IF. Simplificamos la cadena de búsqueda para que sea menos
-			 * costosa en Oracle.
-			 * 
-			 * cadReturn = " and (c.nroContrato like " + "'%" +
-			 * nroContrato.trim().replaceFirst("^0*", "") + "%'" +
-			 * " or c.nroContrato like " + "'%" + nroContrato.trim() + "%'" +
-			 * " or c.nroContrato like " + "'%" + nroContrato.replaceAll(" ",
-			 * "").trim() .replaceFirst("^0*", "") + "%')";
-			 */
-
-			/*
-			 * cadReturn = " and (c.nroContrato like :ncontrato1" +
-			 * " or c.nroContrato like :ncontrato2" +
-			 * " or c.nroContrato like :ncontrato3 )";
-			 * 
-			 * params.put("ncontrato1", "%" +
-			 * nroContrato.trim().replaceFirst("^0*", "") + "%");
-			 * 
-			 * params.put("ncontrato2", "%" + nroContrato.trim() + "%");
-			 * 
-			 * params.put( "ncontrato3", "%" + nroContrato.replaceAll(" ",
-			 * "").trim() .replaceFirst("^0*", "") + "%");
-			 */
-
-		}
+		
 		if (queremosOptimizarLike()) {
 			// Estrategia de LIKE original, con y sin paso de variables
 			final String valueToFind = nroContrato.replaceAll(" ", "").trim()

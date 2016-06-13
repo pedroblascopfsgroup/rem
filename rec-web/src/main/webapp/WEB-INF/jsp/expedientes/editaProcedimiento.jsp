@@ -910,7 +910,6 @@
 	
 	optionsTipoProcedimientoIniciarStore.on('load',function(ds,records,o){
 		<c:if test="${procedimientoPco != null}" >
-					debugger;
 					var val="^"+'${procedimientoPco.tipoProcPropuesto.codigo}'+"$"; 
 					var newval=new RegExp(val);
 					var result = optionsTipoProcedimientoIniciarStore.find('codigo',newval);
@@ -937,6 +936,8 @@
 	var chkBoxOrdinario = new Ext.form.Checkbox({
 		name:'turnadoOrdinario'
 		,labelStyle:labelStyle
+		,checked:true
+		,value: true
         ,fieldLabel:'<s:message code="procedimientos.edicion.turnadoOrdinario" text="**Turnado ordinario" />'
         <c:if test="${procedimientoPco!=null}" >
         	<c:if test="${procedimientoPco.preturnado != true}" >
@@ -1018,14 +1019,14 @@
 		,fieldLabel:''
 		,width: 400
 		,height: 100
-		,maxLength: 100
-		,maxLengthText:  2500
+		,maxLength: 500
+		,maxLengthText: 500
 		,readOnly: false
 		,labelStyle: ''
 		,value:''
 		,allowBlank:true
 		<c:if test="${procedimiento!=null}" >
-			,value:'${procedimiento.observacionesNoLitigar}'
+			,value:'<s:message text="${procedimiento.observacionesNoLitigar}" javaScriptEscape="true" />'
 		</c:if>	
 	});
 	
@@ -1064,7 +1065,27 @@
 		comboPreparacion.reset();
 		comboTipoAccionPropuestaAIniciar.reset();
 		comboTipoActuacionPropuestaAIniciar.reset();
-		chkBoxOrdinario.reset();
+		debugger;
+		<c:if test="${procedimientoPco == null}" >
+			if(prioridadStore.getTotalCount() > 0){
+				comboPrioridad.setValue(prioridadStore.getAt(2).data.codigo);
+			}
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+			comboPrioridad.setValue('${procedimientoPco.prioridad.codigo}');
+		</c:if>
+		
+		<c:if test="${procedimientoPco == null}" >
+			if(preparacionStore.getTotalCount()>0){
+				comboPreparacion.setValue(preparacionStore.getAt(2).data.codigo);
+			}
+		</c:if>
+		<c:if test="${procedimientoPco != null}" >
+			comboPreparacion.setValue('${procedimientoPco.tipoPreparacion.codigo}');
+		</c:if>
+		
+		
+		chkBoxOrdinario.setValue(true);
 		chkBoxPreturnado.reset();
 		var el = Ext.getCmp("tmp");
 		fieldSetLitigar.hide();
@@ -1233,6 +1254,11 @@
 			//habilitaComponentes(true);
 			//VALIDACIONES
 			var errores="";
+			if(observaciones.getValue() != null){
+				if(observaciones.getValue().length>500){
+					errores+="<br>El campo observaciones no puede ser tan largo";
+				}
+			}
 			if(!comboTipoProcedimiento.validate())
 				errores+="<br>Tipo de procedimiento obligatorio";
 			else{
@@ -1280,7 +1306,9 @@
 	});
 	
 	var panelEdicion = new Ext.form.FormPanel({
-		autoHeight : true
+		autoHeight : false
+		,autoScroll: true
+		,height: 550
 		,autoWidth:true
 		,bodyStyle : 'padding:5px'
 		,border : false

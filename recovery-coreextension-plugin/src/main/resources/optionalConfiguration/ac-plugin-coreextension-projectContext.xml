@@ -12,6 +12,49 @@
 	
 	<bean id="coreProjectContextDefault" 
 		class="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContextImpl" abstract="true">
+		
+		<property name="tiposAsuntosTiposGestores">
+			<map>
+				<entry key="BANKIA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="01">	<!-- Tipo de Asunto (Litigio) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>GESTCDD</value>
+								<value>GESTESP</value>
+								<value>PREDOC</value>
+								<value>GESTLLA2</value>
+								<value>GESTLLA</value>
+								<value>GESTPROP</value>
+								<value>GEST</value>	
+								<value>GESTORIA_PREDOC</value>	
+								<value>SUP_ASIG_CONC</value>	
+								<value>SUP_PCO</value>	
+								<value>SUP</value>	
+								<value>SUPNVL2</value>							
+							</set>
+						</entry>
+						
+						<entry key="02">	<!-- Tipo de Asunto (Concursal) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>GESTCDD</value>
+								<value>GESTESP</value>
+								<value>PREDOC</value>
+								<value>GESTLLA2</value>
+								<value>GESTLLA</value>
+								<value>GESTPROP</value>
+								<value>GEST</value>	
+								<value>GESTORIA_PREDOC</value>	
+								<value>SUP_ASIG_CONC</value>	
+								<value>SUP_PCO</value>	
+								<value>SUP</value>	
+								<value>SUPNVL2</value>
+							</set>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
+		
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">

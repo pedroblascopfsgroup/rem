@@ -47,11 +47,16 @@
 				<json:property name="idTareaAsociada" value="${tar.tarea.tareaId.id}"/>
 				<json:property name="descripcionTareaAsociada" value="${tar.tarea.tareaId.descripcionTarea}"/>
 				<json:property name="emisor" value="${tar.tarea.emisor}"/>
-				<json:property name="supervisor" value="${tar.tarea.descSupervisor}"/>
-				<json:property name="diasVencido" value="${tar.tarea.diasVencido}"/>
+				<c:if test='${tar.tarea.descSupervisor != null}'>
+              		<json:property name="supervisor" value="${tar.tarea.descSupervisor}"/>
+                </c:if>				<json:property name="diasVencido" value="${tar.tarea.diasVencido}"/>
 				<json:property name="descripcionExpediente" value="${tar.tarea.expediente.descripcionExpediente}"/>
-				<json:property name="gestorId" value="${tar.tarea.gestor}"/>
-				<json:property name="supervisorId" value="${tar.tarea.supervisor}"/>						
+				<c:if test='${tar.tarea.gestor != null}'>       
+                	<json:property name="gestorId" value="${tar.tarea.gestor}"/>
+                </c:if>
+                <c:if test='${tar.tarea.supervisor != null}'>
+                	<json:property name="supervisorId" value="${tar.tarea.supervisor}"/>
+                </c:if>						
 				<json:property name="idEntidadPersona" value="${tar.tarea.idEntidadPersona}"/>
 				<json:property name="volumenRiesgo" value="${tar.tarea.volumenRiesgo}"/>
 				<json:property name="volumenRiesgoVencido" value="${tar.tarea.volumenRiesgoVencido}"/>

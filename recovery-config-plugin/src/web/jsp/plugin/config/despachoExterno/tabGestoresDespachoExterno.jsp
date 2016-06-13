@@ -129,7 +129,7 @@
 			title="**Gestores Asignados" 
 			collapsible="false" 
 			titleKey="plugin.config.despachoExterno.consultadespacho.gestoresdespacho.control.grid"
-			bbar="btCambia, btnAgregar" iconCls="icon_usuario" rowdblclick="opengestor"/>
+			bbar="btCambia, btnAgregar, btElimina" iconCls="icon_usuario" rowdblclick="opengestor"/>
 	
 	<pfsforms:textfield labelKey="plugin.config.despachoExterno.consultadespacho.gestoresdespacho.control.desdef" label="**Gestor por defecto" name="gesDef" value="${gestorDefecto.usuario.nombre!=null?gestorDefecto.usuario.apellidoNombre:gestorDefecto.usuario.username}" readOnly="true" width="300" labelWidth="120" />
 	

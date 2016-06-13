@@ -40,6 +40,7 @@ import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.recurso.model.Recurso;
 import es.capgemini.pfs.telecobro.model.SolicitudExclusionTelecobro;
 import es.capgemini.pfs.users.domain.Perfil;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que modela una tarea, notificación o alerta.
@@ -211,8 +212,11 @@ public class TareaNotificacion implements Serializable, Auditable {
      */
     public Long getPlazo() {
         if (DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE.equals(tipoEntidad.getCodigo())) {
-            if (expediente != null) { return getExpediente().getArquetipo().getItinerario().getEstado(expediente.getEstadoItinerario().getCodigo())
-                    .getPlazo(); }
+            if (expediente != null) { 
+            	if(!Checks.esNulo(getExpediente().getArquetipo().getItinerario().getEstado(expediente.getEstadoItinerario().getCodigo()))){
+            		return getExpediente().getArquetipo().getItinerario().getEstado(expediente.getEstadoItinerario().getCodigo()).getPlazo();
+            	}
+              }
         }
         if (DDTipoEntidad.CODIGO_ENTIDAD_CLIENTE.equals(tipoEntidad.getCodigo())) {
             if (cliente != null) { return getCliente().getArquetipo().getItinerario().getEstado(cliente.getEstadoItinerario().getCodigo()).getPlazo(); }
@@ -281,7 +285,9 @@ public class TareaNotificacion implements Serializable, Auditable {
             return "";
 
         }
-        Perfil per = getExpediente().getArquetipo().getItinerario().getEstado(expediente.getEstadoItinerario().getCodigo()).getGestorPerfil();
+        Perfil per = null;
+        if (!Checks.esNulo(getExpediente().getArquetipo().getItinerario().getEstado(expediente.getEstadoItinerario().getCodigo())))
+        	per = getExpediente().getArquetipo().getItinerario().getEstado(expediente.getEstadoItinerario().getCodigo()).getGestorPerfil();
         if (per != null) { return per.getDescripcion(); }
         return "";
 

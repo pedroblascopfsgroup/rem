@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.jamonapi.utils.Logger;
+
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -52,6 +54,8 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 		System.out.println(this.getClass().getSimpleName() + " llega a " + this.getNombreNodo(executionContext));
 		
 		Procedimiento prc = getProcedimiento(executionContext);
+		logger.info(this.getClass().getSimpleName() + " valor del prc: " + prc.getId());
+		System.out.println(this.getClass().getSimpleName() + " valor del prc: " + prc.getId());
 
 		if (PrecontenciosoBPMConstants.PCO_DecTipoProcAutomatica.equals(getNombreNodo(executionContext))) {
 			String valorDecision = pcoManager.dameTipoAsuntoPorProc(prc);
@@ -76,6 +80,12 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 			}
 		} else if (PrecontenciosoBPMConstants.PCO_PostTurnado.equals(getNombreNodo(executionContext))
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
+			
+			System.out.println(this.getClass().getSimpleName() + " Entro en el PostTurnado y el nodo es: " + getNombreNodo(executionContext));
+			logger.info(this.getClass().getSimpleName() + " Entro en el PostTurnado y el nodo es: " + getNombreNodo(executionContext));
+			System.out.println(this.getClass().getSimpleName() + " El asunto del prc es: " + prc.getAsunto().getId());
+			logger.info(this.getClass().getSimpleName() + " El asunto del prc es: " + prc.getAsunto().getId());
+			
 			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}else if (PrecontenciosoBPMConstants.P421_DecImporteConcursoAutomatica.equals(getNombreNodo(executionContext))
 				&& PrecontenciosoProjectContextImpl.RECOVERY_BANKIA.equals(precontenciosoContext.getRecovery())) {
@@ -90,6 +100,13 @@ public class PrecontenciosoUserDecisionActionHandler extends PROBaseActionHandle
 			turnadoDespachosManager.turnar(prc.getAsunto().getId(), usuarioManager.getUsuarioLogado().getUsername(), EXTDDTipoGestor.CODIGO_TIPO_GESTOR_EXTERNO);
 		}
 		// Avanzamos BPM
+		System.out.println(this.getClass().getSimpleName() + "Vamos a avanzar el BPM, el token actual es: " + (!Checks.esNulo(executionContext.getToken()) ? executionContext.getToken().getId() : "null"));
+		System.out.println(this.getClass().getSimpleName() + "La transicion es: " + (!Checks.esNulo(executionContext.getTransition()) ? executionContext.getTransition().getId() : "null"));
+		System.out.println(this.getClass().getSimpleName() + "El nodo es: " + (!Checks.esNulo(executionContext.getNode()) ? executionContext.getNode().getId() : "null"));
+		logger.info(this.getClass().getSimpleName() + "Vamos a avanzar el BPM, el token actual es: " + (!Checks.esNulo(executionContext.getToken()) ? executionContext.getToken().getId() : "null"));
+		logger.info(this.getClass().getSimpleName() + "La transicion es: " + (!Checks.esNulo(executionContext.getTransition()) ? executionContext.getTransition().getId() : "null"));
+		logger.info(this.getClass().getSimpleName() + "El nodo es: " + (!Checks.esNulo(executionContext.getNode()) ? executionContext.getNode().getId() : "null"));
+		
 		executionContext.getToken().signal();
 	}
 

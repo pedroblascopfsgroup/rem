@@ -440,8 +440,10 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 		solicitud.setDocumento(documento);
 		
-		GestorDespacho gestDespActor = obtenerGestorDespacho(solDto);
-		if (gestDespActor != null) {
+		if(Checks.esNulo(solDto.getActor())) {
+			solicitud.setActorDescripcion(solDto.getUsuarioTipoDespacho());			
+		}else{
+			GestorDespacho gestDespActor = obtenerGestorDespacho(solDto);
 			solicitud.setActor(gestDespActor);
 		}
 		

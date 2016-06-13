@@ -59,6 +59,9 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	private String cuentaEntregas;
 	private String centroRecuperacion;
 	private String asesoria;
+	private String impuesto;
+	private String fechaAltaSIDesde;
+	private String fechaAltaSIHasta;
 	
 	public String getComboDecisionesFinalizacion() {
 		return ComboDecisionesFinalizacion;
@@ -431,6 +434,32 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 		if(asesoria.equals("02")) {
 			this.asesoria = "0";
 		}
+	}
+
+	public String getImpuesto() {
+		return impuesto;
+	}
+
+	public void setImpuesto(String impuesto) {
+		this.impuesto = impuesto;
+	}
+
+	public String getFechaAltaSIDesde() {
+		return fechaAltaSIDesde;
+	}
+
+	public void setFechaAltaSIDesde(String fechaAltaSIDesde) {
+		fechaAltaSIDesde = fechaAltaSIDesde.replace("-", "/").substring(0, 10);
+		this.fechaAltaSIDesde = fechaAltaSIDesde;
+	}
+
+	public String getFechaAltaSIHasta() {
+		return fechaAltaSIHasta;
+	}
+
+	public void setFechaAltaSIHasta(String fechaAltaSIHasta) {
+		fechaAltaSIHasta = fechaAltaSIHasta.replace("-", "/").substring(0, 10);
+		this.fechaAltaSIHasta = fechaAltaSIHasta;
 	}
 
 }

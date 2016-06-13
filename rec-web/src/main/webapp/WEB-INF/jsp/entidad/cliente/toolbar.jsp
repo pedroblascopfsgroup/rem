@@ -207,13 +207,13 @@ function(entidad,page){
 					var tmpArqId = cmbArq.getValue();
 					wArq.hide();
 					openWizzard('expedientes/creacionManualExpedientesGestionDeuda','<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
-						,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:tmpArqId});
+						,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:true,idArquetipo:tmpArqId});
 				});
 				btnCancelar.on('click',function() {wArq.hide();});
 			} else {
 				<%-- Se lanza el wizard sin pasar por la ventana de selección del arquetipo (Si hay un expediente propuesto que es de tipo Gestión de Deuda --%>
 				openWizzard('expedientes/creacionManualExpedientesGestionDeuda','<s:message code="expedientes.creacion.gestiondeuda" text="**Expediente de Gestión de Deuda" />'
-							,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:proponer,idArquetipo:toolbar.getIdArquetipoPropuesto()});
+							,{idPersona: toolbar.getIdPersona(), isGestor:toolbar.isGestor(), isSupervisor:toolbar.isSupervisor(),proponer:true,idArquetipo:toolbar.getIdArquetipoPropuesto()});
 			}
 		}
 	});

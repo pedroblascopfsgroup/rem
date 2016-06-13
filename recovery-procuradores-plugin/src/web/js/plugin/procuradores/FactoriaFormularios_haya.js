@@ -2233,7 +2233,8 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		                    ,{"xtype":'numberfield',"name":"d_capitalVencido","fieldLabel":"Capital vencido (en el cierre)",allowBlank:false,filtrar:true}
 		                    ,{"xtype":'numberfield',"name":"d_interesesOrdinarios","fieldLabel":"Intereses Ordinarios (en el cierre)",allowBlank:false,filtrar:true}
 		                    ,{"xtype":'numberfield',"name":"d_interesesDemora","fieldLabel":"Intereses de demora (en el cierre)",allowBlank:false,filtrar:true}
-	                      ]);
+		                    ,{"xtype":'combo',"store":storeSINO,"name":"d_provisionFondos","fieldLabel":"Solicitar provisión fondos","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_provisionFondos'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}
+		                    ]);
 	
 	//id: 277 : PROCEDIMIENTO VERBAL: CONFIRMAR ADMISIÓN DE DEMANDA
 	this.arrayCampos.push([
@@ -2462,13 +2463,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 303 : T. MEJORA EMBARGO: Registro decreto de embargo
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes embargables",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes embargables",allowBlank:false,filtradoProcurador:true,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 304 : T. MEJORA EMBARGO: Registrar anotacion en registro
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha de anotación de los embargos",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes","fieldLabel":"Existen bienes no apremiados","autoload":true, mode:'local',"editable":false,triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":storeSINO,"name":"d_comboBienes",allowBlank:false,filtradoProcurador:true,"fieldLabel":"Existen bienes no apremiados","autoload":true, mode:'local',"editable":false,triggerAction:'all',resizable:true, id:'d_comboBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	

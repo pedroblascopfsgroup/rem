@@ -33,7 +33,6 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
@@ -55,7 +54,6 @@ import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
 @Controller
@@ -601,6 +599,7 @@ public class DocumentoPCOController {
 		String fechaSolicitud = request.getParameter("fechaSolicitud");
 		String idTipoGestor = request.getParameter("tipogestor");
 		String idDespacho = request.getParameter("idDespacho");
+		String usuarioTipoDespacho = request.getParameter("inputUsuarioTipoDespacho");
 		
 		Date fechaSolicitudDate = null;
 		try {
@@ -626,7 +625,8 @@ public class DocumentoPCOController {
 			solDto.setFechaSolicitud(fechaSolicitudDate);
 			solDto.setResultado(request.getParameter("resultado"));
 			solDto.setIdTipoGestor(new Long(idTipoGestor));
-			solDto.setIdDespachoExterno(new Long(idDespacho)); 
+			solDto.setIdDespachoExterno(new Long(idDespacho));
+			solDto.setUsuarioTipoDespacho(usuarioTipoDespacho);
 	
 			documentoPCOApi.saveCrearSolicitudes(solDto);
 		}

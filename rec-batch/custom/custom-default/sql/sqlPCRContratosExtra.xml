@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-    <entry key="pcr.ext.insert.codextra1.Oracle9iDialect">
+    <entry key="pcr.ext.insert.codextra1">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -25,7 +25,7 @@
     )
     ]]>
     </entry>
-	<entry key="pcr.ext.insert.codextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.codextra2">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -50,7 +50,7 @@
     )
     ]]>
     </entry>
-    <entry key="pcr.ext.insert.codextra3.Oracle9iDialect">
+    <entry key="pcr.ext.insert.codextra3">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -75,7 +75,7 @@
     )
     ]]>
     </entry>
-	<entry key="pcr.ext.insert.codextra4.Oracle9iDialect">
+	<entry key="pcr.ext.insert.codextra4">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -100,7 +100,7 @@
     )
     ]]>
     </entry>
-	<entry key="pcr.ext.insert.infextra1.Oracle9iDialect">
+	<entry key="pcr.ext.insert.infextra1">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -125,7 +125,7 @@
     )
     ]]>
     </entry>
-	<entry key="pcr.ext.insert.infextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.infextra2">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -150,7 +150,7 @@
     )
     ]]>
     </entry>
-	<entry key="pcr.ext.insert.infextra3.Oracle9iDialect">
+	<entry key="pcr.ext.insert.infextra3">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -175,7 +175,7 @@
     )
     ]]>
     </entry>
-    <entry key="pcr.ext.insert.infextra4.Oracle9iDialect">
+    <entry key="pcr.ext.insert.infextra4">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -200,7 +200,7 @@
     )
     ]]>
     </entry>
-	<entry key="pcr.ext.insert.infextra5.Oracle9iDialect">
+	<entry key="pcr.ext.insert.infextra5">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -225,7 +225,7 @@
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.infextra6.Oracle9iDialect">
+	<entry key="pcr.ext.insert.infextra6">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
 	SELECT
@@ -250,7 +250,7 @@
     )
     ]]>
     </entry> 
-	<entry key="pcr.ext.insert.numextra1.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra1">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -273,7 +273,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra2">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -296,7 +296,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra3.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra3">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -319,7 +319,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra4.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra4">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -342,7 +342,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra5.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra5">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -365,7 +365,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra6.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra6">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -388,7 +388,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra7.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra7">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -413,7 +413,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra8.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra8">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -438,7 +438,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra9.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra9">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -461,7 +461,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.numextra10.Oracle9iDialect">
+	<entry key="pcr.ext.insert.numextra10">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -486,7 +486,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra1.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra1">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -509,7 +509,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra2">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -532,7 +532,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra3.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra3">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -557,7 +557,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra4.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra4">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -582,7 +582,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra5.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra5">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -607,7 +607,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra6.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra6">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -632,7 +632,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra7.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra7">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -657,7 +657,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra8.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra8">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -682,7 +682,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra9.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra9">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -707,7 +707,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.dateextra10.Oracle9iDialect">
+	<entry key="pcr.ext.insert.dateextra10">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -732,7 +732,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra1.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra1">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -757,7 +757,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra2">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -782,7 +782,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra3.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra3">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -807,7 +807,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra4.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra4">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -832,7 +832,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra5.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra5">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -857,7 +857,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra6.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra6">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -882,7 +882,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra7.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra7">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -907,7 +907,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra8.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra8">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -932,7 +932,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra9.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra9">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -957,7 +957,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.flagextra10.Oracle9iDialect">
+	<entry key="pcr.ext.insert.flagextra10">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -982,7 +982,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra1.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra1">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -1005,7 +1005,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra2">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1030,7 +1030,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra3.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra3">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -1053,7 +1053,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra4.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra4">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -1076,7 +1076,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra5.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra5">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -1099,7 +1099,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra6.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra6">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -1122,7 +1122,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra7.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra7">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1147,7 +1147,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra8.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra8">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1172,7 +1172,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra9.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra9">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1197,7 +1197,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.charextra10.Oracle9iDialect">
+	<entry key="pcr.ext.insert.charextra10">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1222,7 +1222,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra1.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra1">
     <![CDATA[
 MERGE INTO EXT_IAC_INFO_ADD_CONTRATO IAC USING 
 (SELECT
@@ -1245,7 +1245,7 @@ INSERT (IAC.IAC_ID,IAC.DD_IFC_ID,IAC.CNT_ID,IAC.IAC_VALUE,IAC.USUARIOCREAR,IAC.F
 VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VALUE,TMP.USUARIOCREAR,TMP.FECHACREAR,TMP.BORRADO)
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra2.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra2">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1270,7 +1270,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra3.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra3">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1295,7 +1295,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra4.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra4">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1320,7 +1320,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra5.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra5">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1345,7 +1345,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra6.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra6">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1370,7 +1370,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra7.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra7">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1395,7 +1395,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra8.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra8">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1420,7 +1420,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra9.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra9">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1445,7 +1445,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.insert.lcharextra10.Oracle9iDialect">
+	<entry key="pcr.ext.insert.lcharextra10">
     <![CDATA[
     INSERT INTO EXT_IAC_INFO_ADD_CONTRATO (IAC_ID,DD_IFC_ID,CNT_ID,IAC_VALUE,USUARIOCREAR,FECHACREAR,BORRADO)
         SELECT
@@ -1470,7 +1470,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
     )
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra1.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra1">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra1) extra_valor, IAC.IAC_ID
@@ -1491,7 +1491,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra2.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra2">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra2) extra_valor, IAC.IAC_ID
@@ -1512,7 +1512,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra3.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra3">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra3) extra_valor, IAC.IAC_ID
@@ -1533,7 +1533,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra4.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra4">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra4) extra_valor, IAC.IAC_ID
@@ -1554,7 +1554,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra5.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra5">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra5) extra_valor, IAC.IAC_ID
@@ -1575,7 +1575,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra6.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra6">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra6) extra_valor, IAC.IAC_ID
@@ -1596,7 +1596,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra7.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra7">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra7) extra_valor, IAC.IAC_ID
@@ -1617,7 +1617,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra8.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra8">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra8) extra_valor, IAC.IAC_ID
@@ -1638,7 +1638,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra9.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra9">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra9) extra_valor, IAC.IAC_ID
@@ -1659,7 +1659,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.numextra10.Oracle9iDialect">
+	<entry key="pcr.ext.update.numextra10">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(tmp_cnt_num_extra10) extra_valor, IAC.IAC_ID
@@ -1680,7 +1680,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra1.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra1">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA1) extra_valor, IAC.IAC_ID
@@ -1701,7 +1701,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra2.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra2">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA2) extra_valor, IAC.IAC_ID
@@ -1722,7 +1722,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra3.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra3">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA3) extra_valor, IAC.IAC_ID
@@ -1743,7 +1743,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra4.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra4">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA4) extra_valor, IAC.IAC_ID
@@ -1764,7 +1764,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra5.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra5">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA5) extra_valor, IAC.IAC_ID
@@ -1785,7 +1785,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra6.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra6">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA6) extra_valor, IAC.IAC_ID
@@ -1806,7 +1806,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra7.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra7">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA7) extra_valor, IAC.IAC_ID
@@ -1827,7 +1827,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra8.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra8">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA8) extra_valor, IAC.IAC_ID
@@ -1848,7 +1848,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra9.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra9">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA9) extra_valor, IAC.IAC_ID
@@ -1869,7 +1869,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.dateextra10.Oracle9iDialect">
+	<entry key="pcr.ext.update.dateextra10">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_DATE_EXTRA10) extra_valor, IAC.IAC_ID
@@ -1890,7 +1890,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra1.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra1">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA1) extra_valor, IAC.IAC_ID
@@ -1911,7 +1911,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra2.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra2">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA2) extra_valor, IAC.IAC_ID
@@ -1932,7 +1932,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra3.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra3">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA3) extra_valor, IAC.IAC_ID
@@ -1953,7 +1953,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra4.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra4">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA4) extra_valor, IAC.IAC_ID
@@ -1974,7 +1974,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra5.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra5">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA5) extra_valor, IAC.IAC_ID
@@ -1995,7 +1995,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra6.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra6">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA6) extra_valor, IAC.IAC_ID
@@ -2016,7 +2016,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra7.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra7">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA7) extra_valor, IAC.IAC_ID
@@ -2037,7 +2037,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra8.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra8">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA8) extra_valor, IAC.IAC_ID
@@ -2058,7 +2058,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra9.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra9">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA9) extra_valor, IAC.IAC_ID
@@ -2079,7 +2079,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.flagextra10.Oracle9iDialect">
+	<entry key="pcr.ext.update.flagextra10">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_FLAG_EXTRA10) extra_valor, IAC.IAC_ID
@@ -2100,7 +2100,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra1.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra1">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA1) extra_valor, IAC.IAC_ID
@@ -2121,7 +2121,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra2.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra2">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA2) extra_valor, IAC.IAC_ID
@@ -2142,7 +2142,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra3.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra3">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA3) extra_valor, IAC.IAC_ID
@@ -2163,7 +2163,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra4.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra4">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA4) extra_valor, IAC.IAC_ID
@@ -2184,7 +2184,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra5.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra5">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA5) extra_valor, IAC.IAC_ID
@@ -2205,7 +2205,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra6.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra6">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA6) extra_valor, IAC.IAC_ID
@@ -2226,7 +2226,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra7.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra7">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA7) extra_valor, IAC.IAC_ID
@@ -2247,7 +2247,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra8.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra8">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA8) extra_valor, IAC.IAC_ID
@@ -2268,7 +2268,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra9.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra9">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA9) extra_valor, IAC.IAC_ID
@@ -2289,7 +2289,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.charextra10.Oracle9iDialect">
+	<entry key="pcr.ext.update.charextra10">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_CHAR_EXTRA10) extra_valor, IAC.IAC_ID
@@ -2310,7 +2310,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra1.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra1">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA1) extra_valor, IAC.IAC_ID
@@ -2331,7 +2331,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra2.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra2">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA2) extra_valor, IAC.IAC_ID
@@ -2352,7 +2352,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra3.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra3">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA3) extra_valor, IAC.IAC_ID
@@ -2373,7 +2373,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra4.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra4">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA4) extra_valor, IAC.IAC_ID
@@ -2394,7 +2394,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra5.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra5">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA5) extra_valor, IAC.IAC_ID
@@ -2415,7 +2415,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra6.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra6">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA6) extra_valor, IAC.IAC_ID
@@ -2436,7 +2436,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra7.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra7">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA7) extra_valor, IAC.IAC_ID
@@ -2457,7 +2457,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra8.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra8">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA8) extra_valor, IAC.IAC_ID
@@ -2478,7 +2478,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>  
-	<entry key="pcr.ext.update.lcharextra9.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra9">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA9) extra_valor, IAC.IAC_ID
@@ -2499,7 +2499,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
            ,iac_for_update.fechamodificar = systimestamp
     ]]>
     </entry>
-	<entry key="pcr.ext.update.lcharextra10.Oracle9iDialect">
+	<entry key="pcr.ext.update.lcharextra10">
     <![CDATA[
     merge into ext_iac_info_add_contrato iac_for_update
     using (SELECT trim(TMP_CNT_LCHAR_EXTRA10) extra_valor, IAC.IAC_ID
@@ -2538,7 +2538,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
 	    and not exists (select * from h_mov_movimientos where cnt_id = c.cnt_id and mov_fecha_extraccion = m.mov_fecha_extraccion)
    	 ]]>
     </entry>
-    <entry key="pcr.insert.contratosNew.Oracle9iDialect">
+    <entry key="pcr.insert.contratosNew">
     <![CDATA[
             insert into cnt_contratos(
                 CNT_ID, CNT_FECHA_EXTRACCION,CNT_COD_ENTIDAD,OFI_ID,CNT_COD_OFICINA,
@@ -2603,7 +2603,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
                   and c.borrado = 0 )
         ]]>
     </entry>
-    <entry key="pcr.update.contratosNew.Oracle9iDialect">
+    <entry key="pcr.update.contratosNew">
   <!-- Agregar fix de oracle para que actualice el campo dd_esc_id  -->
     <![CDATA[
         UPDATE cnt_contratos c
@@ -2686,7 +2686,7 @@ VALUES (S_EXT_IAC_INFO_ADD_CONTRATO.NEXTVAL,TMP.DD_IFC_ID,TMP.CNT_ID,TMP.IAC_VAL
         AND (c.cnt_contrato, c.cnt_cod_oficina) IN (SELECT tmp_cnt_contrato, TMP_CNT_COD_OFICINA FROM tmp_cnt_contratos)
       ]]>
     </entry>
-    <entry key="pcr.insert.movimientosNew.Oracle9iDialect">
+    <entry key="pcr.insert.movimientosNew">
     <![CDATA[       
                 insert into mov_movimientos (
                     MOV_ID, 

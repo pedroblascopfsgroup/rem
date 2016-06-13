@@ -10,11 +10,12 @@
 	var style='text-align:left;font-weight:bolder;width:140';
 	
 	var validarForm = function() {
-
-		if(comboCausasImpago.getValue() == null || comboCausasImpago.getValue()== '' ){
+		if(comboTipoAyuda.getValue() == null || comboTipoAyuda.getValue()== '') {
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar el campo Actitud Frente al Pago." code="expedientes.consulta.tabgestion.tipoayuda.incompleto"/>');
 			return false;
 		}
-		if(comboTipoAyuda.getValue() == null || comboTipoAyuda.getValue()== '') {
+		if(comboCausasImpago.getValue() == null || comboCausasImpago.getValue()== '' ){
+			Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar el campo Causas del impago." code="expedientes.consulta.tabgestion.causasimpago.incompleto"/>');
 			return false;
 		}
 		return true;
@@ -28,9 +29,7 @@
 				 eventName : 'update'
 				,formPanel : panelEdicion
 				,success : function(){page.fireEvent(app.event.DONE) }
-			});
-			}else{
-				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message text="**Debe completar todos los campos obligatorios." code="bienesCliente.form.camposIncompletos"/>');
+				});
 			}
 		}
 		<app:test id="btnGuardarABM" addComa="true"/>

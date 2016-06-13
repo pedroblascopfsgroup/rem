@@ -13,6 +13,9 @@
 			<evaluate
 				expression="executor.execute('ADMDespachoExternoManager.guardaDespachoExterno',dto)"
 				result="flowScope.despacho" />
+			<evaluate
+				expression="executor.execute('ADMDespachoExternoManager.guardarExtrasDespacho',dto,despacho.id)"
+				result="flowScope.despachoExtras" />
 		</on-entry>
 	</end-state>
 </flow>

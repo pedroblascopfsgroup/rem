@@ -22,7 +22,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaTurnadoProcurador;
 
 @Entity
 @Table(name = "ETC_ESQUEMA_TURNADO_CONFIG", schema = "${entity.schema}")
@@ -48,10 +47,6 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable, Dictionary
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ETU_ID")
 	private EsquemaTurnado esquema;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "ETP_ID")
-	private EsquemaTurnadoProcurador esquemaProcurador;
 
 	@Column(name = "ETC_TIPO")
 	private String tipo;
@@ -85,14 +80,6 @@ public class EsquemaTurnadoConfig implements Serializable, Auditable, Dictionary
 
 	public void setEsquema(EsquemaTurnado esquema) {
 		this.esquema = esquema;
-	}
-	
-	public EsquemaTurnadoProcurador getEsquemaProcurador() {
-		return esquemaProcurador;
-	}
-
-	public void setEsquemaProcurador(EsquemaTurnadoProcurador esquemaProcurador) {
-		this.esquemaProcurador = esquemaProcurador;
 	}
 
 	public String getTipo() {

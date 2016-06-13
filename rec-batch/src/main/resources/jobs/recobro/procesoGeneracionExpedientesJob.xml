@@ -17,7 +17,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.idxdrop.jobGeneracionExpedientes.${entity.dialect}" />
+												p:key="recobro.idxdrop.jobGeneracionExpedientes" />
 										</entry>
 										<entry key="message" value="recobro.idxdrop.jobGeneracionExpedientes" />
 										<entry key="severidad" value="error" />
@@ -27,7 +27,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.truncate.batch_datos_salida.${entity.dialect}" />
+												p:key="recobro.truncate.batch_datos_salida" />
 										</entry>
 										<entry key="message" value="recobro.truncate.batch_datos_salida" />
 										<entry key="severidad" value="error" />
@@ -35,7 +35,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext.${entity.dialect}" />
+												p:key="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext" />
 										</entry>
 										<entry key="message" value="recobro.truncate.tmp_rec_cnt_libres_arq_rec_ext" />
 										<entry key="severidad" value="error" />
@@ -43,7 +43,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_per_arquetipo.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_per_arquetipo" />
 										</entry>
 										<entry key="message" value="recobro.borrado.tmp_per_arquetipo" />
 										<entry key="severidad" value="error" />
@@ -51,7 +51,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_per_filtradas.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_per_filtradas" />
 										</entry>
 										<entry key="message" value="recobro.borrado.tmp_per_filtradas" />
 										<entry key="severidad" value="error" />
@@ -59,7 +59,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.borrado.tmp_cnt_per_validas.${entity.dialect}" />
+												p:key="recobro.borrado.tmp_cnt_per_validas" />
 										</entry>
 										<entry key="message" value="recobro.borrado.tmp_cnt_per_validas" />
 										<entry key="severidad" value="error" />
@@ -69,7 +69,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext.${entity.dialect}" />
+												p:key="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_rec_cnt_libres_arq_rec_ext" />
 										<entry key="severidad" value="error" />
@@ -78,7 +78,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext.${entity.dialect}" />
+												p:key="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext" />
 										</entry>
 										<entry key="message" value="recobro.idxcreate.tmp_rec_cnt_libres_arq_rec_ext" />
 										<entry key="severidad" value="error" />
@@ -87,7 +87,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_per_arquetipo.${entity.dialect}" />
+												p:key="recobro.insert.tmp_per_arquetipo" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_per_arquetipo" />
 										<entry key="severidad" value="error" />
@@ -96,7 +96,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_per_filtradas.${entity.dialect}" />
+												p:key="recobro.insert.tmp_per_filtradas" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_per_filtradas" />
 										<entry key="severidad" value="error" />
@@ -105,7 +105,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.idxcreate.tmp_per_filtradas.${entity.dialect}" />
+												p:key="recobro.idxcreate.tmp_per_filtradas" />
 										</entry>
 										<entry key="message" value="recobro.idxcreate.tmp_per_filtradas" />
 										<entry key="severidad" value="error" />
@@ -114,7 +114,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.tmp_cnt_per_validas.${entity.dialect}" />
+												p:key="recobro.insert.tmp_cnt_per_validas" />
 										</entry>
 										<entry key="message" value="recobro.insert.tmp_cnt_per_validas" />
 										<entry key="severidad" value="error" />
@@ -123,7 +123,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.idxcreate.tmp_cnt_per_validas.${entity.dialect}" />
+												p:key="recobro.idxcreate.tmp_cnt_per_validas" />
 										</entry>
 										<entry key="message" value="recobro.idxcreate.tmp_cnt_per_validas" />
 										<entry key="severidad" value="error" />
@@ -133,7 +133,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.insert.batch_datos_salida.${entity.dialect}" />
+												p:key="recobro.insert.batch_datos_salida" />
 										</entry>
 										<entry key="message" value="recobro.insert.batch_datos_salida" />
 										<entry key="severidad" value="error" />
@@ -141,7 +141,7 @@
 									<map>
 										<entry key="sql">
 											<bean parent="sql"
-												p:key="recobro.idxcreate.batch_datos_salida.${entity.dialect}" />
+												p:key="recobro.idxcreate.batch_datos_salida" />
 										</entry>
 										<entry key="message" value="recobro.idxcreate.batch_datos_salida" />
 										<entry key="severidad" value="error" />

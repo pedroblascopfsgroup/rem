@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byName" default-merge="true">
+
+	<bean id="procesoRevisionExpedientesRecuperacionesJob" parent="batch.simpleJob"
+		scope="prototype">
+		<property name="steps">
+			<list>
+				<bean parent="batch.taskletStep" scope="prototype">
+					<property name="tasklet">
+						<bean parent="batch.task.MultipleSqlScript" p:dataSource-ref="entityDataSource">
+							<property name="scripts">
+								<!-- Lista de scripts SQL ha ejecutar -->
+								<list>									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpRevision" />
+										<entry key="severidad" value="error" />
+									</map>		
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.obtenerExpActivos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPMovRevisados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.revisarMovimientos" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarMovimientos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.informarContratosReducidos" />
+										<entry key="severidad" value="error" />
+									</map>									
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.antecedentes.incrementar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.antecedentes.actualizar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.limpiarTMPExpAcancelar" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.cancelados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.revisarContratosPase.saldados" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarBPM" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarTareas" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarContratos" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.borrarExpedientes" />
+										<entry key="severidad" value="error" />
+									</map>
+									<map>
+										<entry key="sql">
+											<bean parent="sql"
+												p:key="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion" />
+										</entry>
+										<entry key="message" value="expedientes.recuperacion.revisionExpedientes.cancelarExpedientes.crearNotificacion" />
+										<entry key="severidad" value="error" />
+									</map>
+									
+								</list>
+							</property>
+						</bean>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+
+
+</beans>

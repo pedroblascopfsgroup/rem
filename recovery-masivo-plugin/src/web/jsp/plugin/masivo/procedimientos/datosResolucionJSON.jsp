@@ -11,5 +11,16 @@
 			<c:forEach var="campo" items="${campos}">
 				<json:property name="${campo.nombre}" value="${campo.value}" />
 			</c:forEach>
+			<c:if test="${(adjuntosResolucion != null)}">
+				<json:array name="adjuntosResolucion" items="${adjuntosResolucion}" var="obs">
+					 <json:object>
+						<json:property name="nombreFichero">${obs.nombre}</json:property>
+						<json:property name="tipoFicheroCodigo">${obs.tipoFichero.codigo}</json:property>
+						<json:property name="file">${obs.nombre} - ${obs.tipoFichero.descripcion}</json:property>
+						<json:property name="id" value="${obs.id}" />
+						<json:property name="idResolucion" value="${obs.idResolucion}" />
+					 </json:object>
+				</json:array>
+			</c:if>
 		</json:object>
 </fwk:json>	

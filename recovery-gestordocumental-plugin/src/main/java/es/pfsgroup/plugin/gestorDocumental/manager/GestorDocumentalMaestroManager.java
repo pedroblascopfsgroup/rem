@@ -41,7 +41,8 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 		logger.info("LLamando al WS MAESTRO_ACTIVOS...Parametros de entrada...");
 		logger.info("ID_ACTIVO_ORIGEN: " + dto.getIdActivoOrigen());
 		logger.info("ID_ORIGEN: " + dto.getIdOrigen());
-		logger.info("ID_ACTIVO_HAYA: " + dto.getIdActivoHaya());
+		logger.info("ID_CLIENTE: " + dto.getIdCliente());
+		logger.info("ID_TIPO_ACTIVO: " + dto.getIdTipoActivo());
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_ACTIVOS);
 			String targetNamespace = getWSNamespace();
@@ -57,6 +58,9 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
+		} catch (Exception e) {
+			output = null;
+			logger.error("No se puede conectar con el MAESTRO_ACTIVOS ", e);
 		}
 		return GDActivoOutputAssembler.outputToDtoActivo(output);
 	}
@@ -64,7 +68,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 	@Override
 	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
-		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdOrigen() + ", " + dto.getIdIntervinienteOrigen());
+		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdOrigen() + ", " + dto.getIdPersonaOrigen() + ", " + dto.getIdCliente());
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
@@ -79,7 +83,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			output = servicePort.processEvent(input);
 			
 			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-			if (output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+			if (output.getParameters() != null && output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
 				logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
 			} else {
 				logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
@@ -87,6 +91,9 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			}
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
+		} catch (Exception e) {
+			output = null;
+			logger.error("No se puede conectar con el MAESTRO_PERSONAS ", e);
 		}
 		return GDPersonaOutputAssembler.outputToDtoPersona(output);
 	}

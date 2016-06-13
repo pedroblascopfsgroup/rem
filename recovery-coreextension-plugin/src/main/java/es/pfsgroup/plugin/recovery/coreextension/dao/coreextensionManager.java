@@ -46,6 +46,7 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.dao.NivelDao;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -112,6 +113,9 @@ public class coreextensionManager implements coreextensionApi {
 	
 	@Autowired
 	private DespachoExternoDao despachoExternoDao;
+	
+	@Autowired
+	private NivelDao nivelDao;
 	
 	@Autowired
 	private MEJAcuerdoManager mejAcuerdoManager;
@@ -187,7 +191,7 @@ public class coreextensionManager implements coreextensionApi {
 		HashMap<String,Set<String>> map1= null;
 		HashMap<String, HashMap<String, Set<String>>> mapCompleto=null;
 		mapCompleto= coreProjectContext.getPerfilesGestoresEspeciales();
-		if(!mapCompleto.isEmpty() && mapCompleto!=null){
+		if(mapCompleto!=null && !mapCompleto.isEmpty()){
 			map1= mapCompleto.get(codigoEntidadUsuario);
 		}
 		return map1;
@@ -198,10 +202,13 @@ public class coreextensionManager implements coreextensionApi {
 		
 		List<EXTDDTipoGestor> listadoPrueba= new ArrayList<EXTDDTipoGestor>();
 		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
-		HashMap<String, HashMap<String, Set<String>>> prueba= coreProjectContext.getTiposAsuntosTiposGestores();
-		HashMap<String,Set<String>> map1= prueba.get(codigoEntidadUsuario);
-		if(map1!=null){
-			Set<String> set1= map1.get(idTipoAsunto);
+		HashMap<String, HashMap<String, Set<String>>> tiposAsuntosTiposGestores= coreProjectContext.getTiposAsuntosTiposGestores();
+		HashMap<String,Set<String>> codigoEntidadusuario= null;
+		if(tiposAsuntosTiposGestores!=null){
+			codigoEntidadusuario= tiposAsuntosTiposGestores.get(codigoEntidadUsuario);
+		}
+		if(codigoEntidadusuario!=null){
+			Set<String> set1= codigoEntidadusuario.get(idTipoAsunto);
 			
 	
 			for(String codigoTipoGestor:set1 ){
@@ -267,8 +274,11 @@ public class coreextensionManager implements coreextensionApi {
 										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho));
 								
 							} else {
-								listaDespachos = genericDao.getList(DespachoExterno.class, 
-										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+//								listaDespachos = genericDao.getList(DespachoExterno.class, 
+//										genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
+//										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+								Order orden = new Order(OrderType.ASC,"id");
+								listaDespachos= genericDao.getListOrdered(DespachoExterno.class, orden, genericDao.createFilter(FilterType.EQUALS, "tipoDespacho.codigo", tipoDespacho),
 										genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 								
 							}							
@@ -873,6 +883,13 @@ public class coreextensionManager implements coreextensionApi {
 		PageSql tiposAcuerdo = new PageSql();
 		tiposAcuerdo.setResults(mejAcuerdoManager.getListTipoAcuerdoByEntidad(codigo));
 		return tiposAcuerdo;
+	}
+	
+	@BusinessOperation(GET_CODIGO_NIVEL_POR_DESCRIPCION)
+	public Integer getCodigoNivelPorDescripcion(String descripcion) {
+	
+		return nivelDao.buscarCodigoNivelPorDescripcion(descripcion);
+
 	}
 
 }

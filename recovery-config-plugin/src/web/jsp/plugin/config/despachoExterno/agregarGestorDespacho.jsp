@@ -108,8 +108,10 @@
    			descripcionUsuario: desUsuarioSel,
    			username: usernameSel
    		});
-		usuariosStore.insert(0, p);
-		listadocodigoUsuarios.push(codUsuarioSel);
+		if(!listadocodigoUsuarios.includes(codUsuarioSel)) {
+			usuariosStore.insert(0, p);
+			listadocodigoUsuarios.push(codUsuarioSel);
+		}
 	}
 
 	var btnIncluir = new Ext.Button({

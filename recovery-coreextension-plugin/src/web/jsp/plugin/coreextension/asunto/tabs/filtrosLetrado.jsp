@@ -12,41 +12,6 @@
 	var limit=25;
 	var config = {width: 90, height: 150, labelStyle:"width:1px", padding:5};
 	
-	//Campo Nombre Despacho-Letrado
-	<%--var nombreDespacho = new Ext.form.TextField({
-		fieldLabel:'<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.despacho.text" text="**Despacho" />'
-		,name:'nombre'
-		,listeners:{
-			specialkey: function(f,e){  
-	            if (e.getKey() == e.ENTER) {
-	                buscarFunc();
-	            }  
-	        } 
-		}
-		<app:test id="nombreLetrado" addComa="true"/>
-	});
-	
-	<pfs:datefield labelKey="plugin.coreextension.multigestor.fechaDesde" label="**Fecha alta desde" name="fechaAltaDesde" />
-	<pfs:datefield labelKey="plugin.coreextension.multigestor.fechaHasta" label="**Fecha alta hasta" name="fechaAltaHasta" />
-	var fechaAltaFieldSet = new Ext.form.FieldSet({
-		title : '<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.fechaAlta.text" text="**Fecha Alta" />'
-		,layout:'column'
-		,autoHeight:true
-		,border:true
-		,bodyStyle:'padding:3px;cellspacing:20px;'
-		,viewConfig : { columns : 1 }
-		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:300 }
-		,items : [{items:[fechaAltaDesde, fechaAltaHasta]}]
-		,doLayout:function() {
-				var margin = 40;
-				this.setWidth(340-margin);
-				Ext.Panel.prototype.doLayout.call(this);
-		}
-	});
-	
-	var tipoDocumento = app.creaText('tipoDocumento', '<s:message code="plugin.config.despachoExternoExtras.field.tipoDocumento" text="**tipoDocumento" />'); 
-	var documentoCif = app.creaText('documentoCif', '<s:message code="plugin.config.despachoExternoExtras.field.documento" text="**documentoCif" />'); 
- --%>	
 	var oficinaContacto = app.creaText('oficinaContacto', '<s:message code="plugin.config.despachoExternoExtras.field.oficinaContacto" text="**Oficina Contacto" />'); 
 	var entidadContacto = app.creaText('entidadContacto', '<s:message code="plugin.config.despachoExternoExtras.field.entidadContacto" text="**entidadContacto" />'); 
 	var entidadLiquidacion = app.creaText('entidadLiquidacion', '<s:message code="plugin.config.despachoExternoExtras.field.entidadLiquidacion" text="**entidadLiquidacion" />'); 
@@ -62,20 +27,19 @@
 	var oficinaEntregas = app.creaText('oficinaEntregas', '<s:message code="plugin.config.despachoExternoExtras.field.oficinaEntregas" text="**oficinaEntregas" />'); 
 	var cuentaEntregas = app.creaText('cuentaEntregas', '<s:message code="plugin.config.despachoExternoExtras.field.cuentaEntregas" text="**cuentaEntregas" />');
 	var centroRecuperacion = app.creaText('centroRecuperacion', '<s:message code="plugin.config.despachoExternoExtras.field.centroRecuperacion" text="**centroRecuperacion" />');
-	
-	var perfilStore = 
-		<json:array name="ddPerfil" items="${mapasDespExtras[1]}" var="d">	
+
+	var perfilDict = <json:object>
+		<json:array name="diccionario" items="${mapasDespExtras[1]}" var="d">	
+		 <json:object>
+		   <json:property name="codigo" value="${d}" />
 			<json:property name="descripcion" value="${d}" />
-		</json:array>;
+		 </json:object>
+		</json:array>
+	</json:object>;
 	
-	var perfil=new Ext.form.ComboBox({
-		store: perfilStore
-		,triggerAction : 'all'
-		,mode:'local'
-		//,labelSeparator:""
-		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
-		,width:125
-	})
+	var perfil = app.creaDblSelect(perfilDict
+		 ,'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
+		 ,{width:50,<app:test id="perfil" />});
 	
 	<pfsforms:ddCombo name="concursos"
 		labelKey="plugin.config.despachoExternoExtras.field.concursos"
@@ -102,20 +66,19 @@
     	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
     	,config);
 
-	var contratoStore =
-		<json:array name="ddContrato" items="${mapasDespExtras[0]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
-
-	var contratoVigor=new Ext.form.ComboBox({
-		store: contratoStore
-		,triggerAction : 'all'
-		,mode:'local'
-		//,labelSeparator:""
-		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'
-		,width:150
-	});
+	var contratosDict = <json:object>
+		<json:array name="diccionario" items="${mapasDespExtras[0]}" var="d">	
+		 <json:object>
+		   <json:property name="codigo" value="${d}" />
+			<json:property name="descripcion" value="${d}" />
+		 </json:object>
+		</json:array>
+	</json:object>;
 	
+	var contratoVigor = app.creaDblSelect(contratosDict
+		 ,'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'
+		 ,{width:100,height:80,<app:test id="contratoVigor" />});
+	 
 	<pfsforms:ddCombo name="servicioIntegral"
 		labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral"
 		label="**servicioIntegral" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
@@ -134,26 +97,25 @@
 		,width:150
 	});	
 		
-	var relacionBankiaStore = 
-		<json:array name="ddrelacionBankia" items="${mapasDespExtras[4]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+		var relacionBankiaDict = <json:object>
+		<json:array name="diccionario" items="${mapasDespExtras[4]}" var="d">	
+		 <json:object>
+		   <json:property name="codigo" value="${d}" />
+			<json:property name="descripcion" value="${d}" />
+		 </json:object>
+		</json:array>
+	</json:object>;
 	
-	var relacionBankia=new Ext.form.ComboBox({
-		store: relacionBankiaStore
-		,triggerAction : 'all'
-		,mode:'local'
-		//,labelSeparator:""
-		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
-		,width:150
-	});	
-	
+	var relacionBankia = app.creaDblSelect(relacionBankiaDict
+		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
+		 ,{width:100,height:120,<app:test id="relacionBankia" />});
+
 	<pfsforms:ddCombo name="tieneAsesoria"
 		labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria"
 		label="**tieneAsesoria" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
 
 	var validarEmptyForm = function(){
-	debugger;
+	
 	try{	
 		if (comboProvincias.getValue() != '' ){
 			return true;
@@ -221,6 +183,9 @@
 		if (tieneAsesoria.getValue() != '' ){
 			return true;
 		}
+		if(contratoVigor.getValue() != '') {
+			return true;
+		}
 			
 		return false;
 	}catch(err){
@@ -276,10 +241,10 @@
 		,bodyStyle:'padding:5px;cellspacing:20px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
 		,items:[ 
-				{items: [ contratoVigor, servicioIntegral, codEstAse, tieneAsesoria, relacionBankia, clasifDespachoFieldSet ]}
+				{items: [ contratoVigor, servicioIntegral, codEstAse, tieneAsesoria, relacionBankia]}
 				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones ]}
 				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion]}
-				,{items: [  comboProvincias]}
+				,{items: [  clasifDespachoFieldSet, comboProvincias ]}
 		]
 		,listeners:{	
 			getParametros: function(anadirParametros, hayError) {

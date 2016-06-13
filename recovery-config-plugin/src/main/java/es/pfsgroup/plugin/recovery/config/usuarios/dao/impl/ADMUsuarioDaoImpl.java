@@ -51,7 +51,7 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 		
 		if (!Checks.esNulo(dtoBusquedaUsuario.getDespachosExternos())){
 			//if ((dtoBusquedaUsuario.getUsuarioExterno() != null) && (dtoBusquedaUsuario.getUsuarioExterno()) ) {
-				hb.appendWhere("u in (select gd.usuario from GestorDespacho gd where gd.despachoExterno.id in (" + dtoBusquedaUsuario.getDespachosExternos() + "))");
+				hb.appendWhere("u in (select gd.usuario from GestorDespacho gd where gd.despachoExterno.id in (" + dtoBusquedaUsuario.getDespachosExternos() + ") and gd.auditoria.borrado = 0)");
 			//}
 		}
 		

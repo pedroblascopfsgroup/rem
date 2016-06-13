@@ -58,6 +58,7 @@ import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
+import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
 import es.capgemini.pfs.tareaNotificacion.dao.TareaNotificacionDao;
@@ -1117,6 +1118,10 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @Transactional(readOnly = false)
     public void proponerAcuerdo(Long idAcuerdo) throws EXTCrearTareaException {
         EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+        
+        //Validamos si la información de los términos es correcta para poder proponer el acuerdo
+        validarTerminosAcuerdo(acuerdo);
+        
         DDEstadoAcuerdo estadoAcuerdoPropuesto = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
                 DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_PROPUESTO);
         acuerdo.setEstadoAcuerdo(estadoAcuerdoPropuesto);    
@@ -1598,6 +1603,69 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 	
 	public List<AcuerdoConfigAsuntoUsers> getProponentesAcuerdo(){
 		return acuerdoDao.getProponentesAcuerdo();
+	}
+	
+	private void validarTerminosAcuerdo(EXTAcuerdo acuerdo) {
+		if (acuerdo!=null) {
+			//Obtenemos los terminos del acuerdo
+			List<TerminoAcuerdo> terminos = acuerdo.getTerminos();
+			if (!Checks.esNulo(terminos)) {
+				for (TerminoAcuerdo terminoAcuerdo : terminos) {
+					//Si el termino posee el campo cargasPosterioresAnteriores
+					ValoresCamposTermino vct = terminoAcuerdo.getValorTermino("cargasPosterioresAnteriores");
+					//Y es Sí = 1
+					if (!Checks.esNulo(vct) && vct.getValor().equals("1")) {
+						//Validar que los bienes tienen las cargas informadas
+						if (!CargasBienesInformadas(terminoAcuerdo)) {
+							throw new BusinessOperationException("acuerdos.terminos.cargasPosteriores");
+						}
+					}
+					
+					/*
+					//Si el termino posee el campo otrosBienesSolvencia
+					vct = terminoAcuerdo.getValorTermino("otrosBienesSolvencia");
+					//Y es Si = 1
+					if (!Checks.esNulo(vct) && vct.getValor().equals("1")) {
+						//Validar que el cliente tiener datos en la pestaña Solvencia
+						if (!OtrosBienesSolvenciaInformada(terminoAcuerdo)) {
+							throw new BusinessOperationException("acuerdos.terminos.otrosBienesSolvencia");
+						}
+					}
+					*/
+				}
+			}
+		}
+	}
+	
+	private boolean CargasBienesInformadas(TerminoAcuerdo termino) {
+		//Revisamos que todos los bienes del termino tienen informado el importe Cargas
+		List<TerminoBien> terminosBien = termino.getBienes();
+		for (TerminoBien tbien : terminosBien) {
+			if (!Checks.esNulo(tbien.getBien()))
+				if (!Checks.esNulo(tbien.getBien().getImporteCargas()))
+						return true;
+		}
+		
+		if (Checks.esNulo(termino.getBienes()) || termino.getBienes().size()==0) 
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean OtrosBienesSolvenciaInformada(TerminoAcuerdo termino) {
+		//Revisamos que todos las personas de pase de los contratos del término
+		//Tengan rellenada la información de Bienes y Solvencia
+		for (TerminoContrato tc : termino.getContratosTermino()) {
+			Persona titular = tc.getContrato().getPrimerTitular();
+			if (Checks.esNulo(titular.getBienes()))
+				return false;
+			if (titular.getBienes().size() == 0 || (Checks.esNulo(titular.getFechaVerifSolvencia()) && Checks.esNulo(titular.getFechaRevisionSolvencia())))
+				return false;
+		}
+		
+		
+		
+		return true;
 	}
 	
 }

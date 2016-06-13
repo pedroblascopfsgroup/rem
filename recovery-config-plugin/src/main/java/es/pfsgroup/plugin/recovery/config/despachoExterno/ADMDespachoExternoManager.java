@@ -722,7 +722,11 @@ public class ADMDespachoExternoManager {
 		
 		List<String> listaProvinciasDespacho = new LinkedList<String>();
 		for(DDProvincia provincia : despachoExtrasDao.getProvinciasDespachoExtras(idDespacho)) {
-			listaProvinciasDespacho.add(provincia.getCodigo());
+			/* PRODUCTO-1274 ; BKREC-2291
+			 * Cambiar la linea cuando se requiera multiples provincias para un despacho
+			 * listaProvinciasDespacho.add(provincia.getCodigo());
+			 * */
+			listaProvinciasDespacho.add(provincia.getId().toString());
 		}
 		
 		return listaProvinciasDespacho;
@@ -846,7 +850,13 @@ public class ADMDespachoExternoManager {
 			for(String codProvincia : provincias) {
 				if(!extrasAmbitoDao.isDespachoEnProvincia(codProvincia, idDespacho)) {				
 					despachoExtrasAmbito = new DespachoExtrasAmbito();
-					despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+					/*PRODUCTO-1274 ; BKREC-2291
+					 * Se modifica para que coja por id, si al final se requieren mas de una provincia por despacho, cambiar el setter
+					* de provincia, en vez de por id, por codigo.
+					* 
+					* despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+					*/
+					despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(codProvincia))));
 					despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
 					
 					extrasAmbitoDao.saveOrUpdate(despachoExtrasAmbito);
@@ -868,11 +878,17 @@ public class ADMDespachoExternoManager {
 		}
 		List<String> provinciasSobrantes = new ArrayList<String>();
 		for(DespachoExtrasAmbito ambito : listaAmbitoExtras) {
-			if(!listaCodProvincias.contains(ambito.getProvincia().getCodigo())) {
+			/*
+			 * PRODUCTO-1274 ; BKREC-2291
+			 * Cambiar la linea comentada cuando vaya a ser por multiples provincias
+			 * if(!listaCodProvincias.contains(ambito.getProvincia().getCodigo())) {
+			 */
+			if(!listaCodProvincias.contains(ambito.getProvincia().getId())) {
 				ambito.getAuditoria().setBorrado(true);
 				extrasAmbitoDao.saveOrUpdate(ambito);	
 			} else {
-				provinciasSobrantes.add(ambito.getProvincia().getCodigo());
+				//provinciasSobrantes.add(ambito.getProvincia().getCodigo());
+				provinciasSobrantes.add(ambito.getProvincia().getId().toString());
 			}
 		}
 		listaCodProvincias.removeAll(provinciasSobrantes);

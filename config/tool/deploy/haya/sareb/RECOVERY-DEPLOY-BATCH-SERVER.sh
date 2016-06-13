@@ -4,7 +4,7 @@ if [ "$#" -lt 1 ]; then
     echo ""
     echo "Uso: " $0 " <entorno>"
     echo ""
-    echo "   <entorno>: val2, pre, pro"
+    echo "   <entorno>: val02, pre, pro"
     echo "" 
     exit 1
 fi
@@ -49,4 +49,5 @@ rm *.zip
 cd $LOCAL_PATH
 cp scripts/batch/*.sh $DIR_BASE/batch-server/
 chmod a+rx $DIR_BASE/batch-server/*.sh
+chmod a+rx $DIR_BASE/batch-server/sareb/shells/ftp/*.sh
 cp jar/batch-shell*.jar $DIR_BASE/batch-server/sareb/shells/batch-shell.jar

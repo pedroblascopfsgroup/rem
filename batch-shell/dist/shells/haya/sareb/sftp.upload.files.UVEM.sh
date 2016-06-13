@@ -26,6 +26,8 @@ function download_files {
 	MASK=$3
     echo "Subiendo fichero $MASK hacia UVEM desde SFTP (${HOST})..."
 
+	cd $DIR_SHELLS
+
 	./ftp/ftp_put.sh $ORIGEN $DESTINO $MASK
 
 	cd $ORIGEN

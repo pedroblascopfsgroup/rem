@@ -111,6 +111,7 @@
 
 	<decision name="H020_ConfirmarNotifiReqPagoDecision" expression="#{H020_ConfirmarNotifiReqPagoDecision}">
 		<transition to="H020_BPMTramiteNotificacion" name="NO"></transition>
+		<transition to="H020_BPMTramiteNotificacionPersonal" name="PER"></transition>
 		<transition to="H020_ConfirmarSiExisteOposicion" name="SI"></transition>
 	</decision>
 
@@ -132,6 +133,26 @@
 			</action>
 		</event>
 		<transition to="H020_ConfirmarSiExisteOposicion" name="tramiteNotificacionV4"></transition>
+	</state>
+
+	<state name="H020_BPMTramiteNotificacionPersonal">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="H020_ConfirmarSiExisteOposicion" name="hcj_tramiteNotificacionPersonal"></transition>
 	</state>
 
 	<state name="H020_ConfirmarSiExisteOposicion">
@@ -290,11 +311,17 @@
 	<decision name="H020_InterposicionDemandaMasBienesDecision" expression="#{H020_InterposicionDemandaMasBienesDecision}">
 		<transition to="H020_AutoDespaEjecMasDecretoEmbargo" name="sinProvision"></transition>
 		<transition to="ForkInterposicionDemandaMasBienes" name="conProvision"></transition>
+		<transition to="ForkInterposicionDemandaMasBienesAnti" name="conAnticipo"></transition>
 	</decision>
 
 	<fork name="ForkInterposicionDemandaMasBienes">
 		<transition to="H020_AutoDespaEjecMasDecretoEmbargo" name="decreto"></transition>
 		<transition to="H020_BPMProvisionFondos" name="provision"></transition>
+	</fork>
+
+	<fork name="ForkInterposicionDemandaMasBienesAnti">
+		<transition to="H020_AutoDespaEjecMasDecretoEmbargo" name="decreto"></transition>
+		<transition to="H020_BPMAnticipoFondos" name="anticipo"></transition>
 	</fork>
 
 	<state name="H020_BPMProvisionFondos">
@@ -319,6 +346,26 @@
 		<transition to="H020_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
+	<state name="H020_BPMAnticipoFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+	</state>
 
 	<end-state name="Fin">
 		<event type="node-enter">

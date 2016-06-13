@@ -25,9 +25,11 @@ function download_files {
 	MASK=$3
         echo "Subiendo fichero $MASK hacia BANKIA desde SFTP (${HOST})..."
 
-	cd $ORIGEN
+	cd $DIR_SHELLS
 
 	./ftp/ftp_put.sh $ORIGEN $DESTINO $MASK
+
+	cd $ORIGEN
 
 	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_ENVIO)"
 	$RM -f $DIR_SFT_HAYA_ENVIO/$MASK

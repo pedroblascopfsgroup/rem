@@ -26,8 +26,12 @@ function download_files {
 
 	cd $ORIGEN
 	rm $MASK
-	
+
+	cd $DIR_SHELLS
+
 	./ftp/ftp_get_conv_files.sh $ORIGEN $DESTINO $MASK $BANDERA_T
+
+	cd $ORIGEN
 
 	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_RECEPCION)"
     $RM -f $DIR_SFT_HAYA_RECEPCION/$MASK

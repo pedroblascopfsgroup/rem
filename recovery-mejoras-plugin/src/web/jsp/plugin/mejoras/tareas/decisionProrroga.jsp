@@ -26,7 +26,7 @@
 		var idTareaOriginalH = new Ext.form.Hidden({name:'idTareaOriginal', value :'${idTareaOriginal}'}) ;
 	</c:if>
 
-	if(motivo=="" && fechaPropuesta==""){
+	if((motivo=="" && fechaPropuesta=="") || descripcion=='Solicitar Prorroga PRC'){
 		fechaVencimiento="";
 		descripcionEntidad= "";
 		

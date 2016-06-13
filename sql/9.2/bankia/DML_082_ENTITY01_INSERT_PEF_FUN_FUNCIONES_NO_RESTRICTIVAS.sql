@@ -31,7 +31,7 @@ BEGIN
 	
  	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando la funcion "ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES" a los perfiles que no esten borrados y no dispongan del antiguo rol "ROLE_OCULTAR_ARBOL_OBJETIVOS_PENDIENTES"...');
   	V_MSQL:= q'[INSERT INTO ]'||V_ESQUEMA||q'[.FUN_PEF(FUN_ID,PEF_ID,FP_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO)
-					SELECT (SELECT fun.FUN_ID FROM ]'||V_ESQUEMA_M||q'[.fun_funciones fun WHERE fun.FUN_DESCRIPCION = 'ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES'),pef.pef_id,s_fun_pef.nextval,0,'PRODUCTO-1293',sysdate,0 
+					SELECT (SELECT fun.FUN_ID FROM ]'||V_ESQUEMA_M||q'[.fun_funciones fun WHERE fun.FUN_DESCRIPCION = 'ROLE_MOSTRAR_ARBOL_OBJETIVOS_PENDIENTES'),pef.pef_id,]'||V_ESQUEMA||q'[.s_fun_pef.nextval,0,'PRODUCTO-1293',sysdate,0 
 					FROM ]'||V_ESQUEMA||q'[.pef_perfiles pef where pef.BORRADO= 0 and not exists 
 							(select * from ]'||V_ESQUEMA||q'[.fun_pef funPef where funPef.PEF_ID = pef.PEF_ID 
 							and funPef.FUN_ID in (SELECT fun.FUN_ID 
@@ -45,7 +45,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] Insertando la funcion "ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES" a los perfiles que no esten borrados y no dispongan del antiguo rol "ROLE_OCULTAR_ARBOL_GESTION_CLIENTES"...');
   	V_MSQL:= q'[INSERT INTO ]'||V_ESQUEMA||q'[.FUN_PEF(FUN_ID,PEF_ID,FP_ID,VERSION,USUARIOCREAR,FECHACREAR,BORRADO)
-					SELECT (SELECT fun.FUN_ID FROM ]'||V_ESQUEMA_M||q'[.fun_funciones fun WHERE fun.FUN_DESCRIPCION = 'ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES'),pef.pef_id,s_fun_pef.nextval,0,'PRODUCTO-1293',sysdate,0 
+					SELECT (SELECT fun.FUN_ID FROM ]'||V_ESQUEMA_M||q'[.fun_funciones fun WHERE fun.FUN_DESCRIPCION = 'ROLE_MOSTRAR_ARBOL_GESTION_CLIENTES'),pef.pef_id,]'||V_ESQUEMA||q'[.s_fun_pef.nextval,0,'PRODUCTO-1293',sysdate,0 
 					FROM ]'||V_ESQUEMA||q'[.pef_perfiles pef where pef.BORRADO= 0 and not exists 
 							(select * from ]'||V_ESQUEMA||q'[.fun_pef funPef where funPef.PEF_ID = pef.PEF_ID 
 							and funPef.FUN_ID in (SELECT fun.FUN_ID 

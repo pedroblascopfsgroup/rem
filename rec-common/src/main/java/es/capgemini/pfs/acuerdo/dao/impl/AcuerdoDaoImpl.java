@@ -205,8 +205,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		
 		//CONTRATO
 		if(cruzaContratos){
-			hql.append(" and ter.id=terCnt.termino.id and terCnt.contrato.nroContrato= '"
-					+ dto.getNroContrato() + "'  ");		
+			hql.append(" and ter.id=terCnt.termino.id and terCnt.contrato.nroContrato like '%" + dto.getNroContrato() + "%'");	
 		}
 		
 		//CLIENTE
@@ -247,39 +246,38 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		
 		//SOLICITANTES
 		if (cruzaDespachos) {			
-			hql.append(" and ter.acuerdo.gestorDespacho.despachoExterno.id IN (").append(dto.getSolicitantes()).append(") ");
+			hql.append(" and ter.acuerdo.gestorDespacho.despachoExterno.id in (" + dto.getSolicitantes() + ")) ");
 			}
 		
 		//FECHA PROPUESTA DESDE
-        if (dto.getFechaAltaDesde() != null && !"".equals(dto.getFechaAltaDesde())) {        		
-			 hql.append(" and ter.acuerdo.fechaPropuesta >= TO_DATE('"+dto.getFechaAltaDesde() + "','dd/MM/yyyy')" );    
-        }
-        
-        //FECHA PROPUESTA HASTA
-        if (dto.getFechaAltaHasta() != null && !"".equals(dto.getFechaAltaHasta())) {        		
-			 hql.append(" and ter.acuerdo.fechaPropuesta <= TO_DATE('"+dto.getFechaAltaHasta() + "','dd/MM/yyyy')" );    
-        }
-        
-        //FECHA ESTADO DESDE
-        if (dto.getFechaEstadoDesde() != null && !"".equals(dto.getFechaEstadoDesde())) {        		
-			 hql.append(" and ter.acuerdo.fechaEstado >= TO_DATE('"+dto.getFechaEstadoDesde() + "','dd/MM/yyyy')" );    
-        }
-        
-        //FECHA ESTADO HASTA
-        if (dto.getFechaEstadoHasta() != null && !"".equals(dto.getFechaEstadoHasta())) {        		
-			 hql.append(" and ter.acuerdo.fechaEstado <= TO_DATE('"+dto.getFechaEstadoHasta() + "','dd/MM/yyyy')" );    
-        }
-        
-        //FECHA VIGENCIA DESDE
-        if (dto.getFechaVigenciaDesde() != null && !"".equals(dto.getFechaVigenciaDesde())) {        		
-			 hql.append(" and ter.acuerdo.fechaLimite >= TO_DATE('"+dto.getFechaVigenciaDesde() + "','dd/MM/yyyy')" );    
-        }
-         
-        //FECHA VIGENCIA HASTA
-        if (dto.getFechaVigenciaHasta() != null && !"".equals(dto.getFechaVigenciaHasta())) {        		
-			 hql.append(" and ter.acuerdo.fechaLimite <= TO_DATE('"+dto.getFechaVigenciaHasta() + "','dd/MM/yyyy')" );    
-        }
-          
+		if (dto.getFechaAltaDesde() != null && !"".equals(dto.getFechaAltaDesde())) {        		
+			hql.append(" and ter.acuerdo.fechaPropuesta >= TO_DATE('"+dto.getFechaAltaDesde() + "','dd/MM/yyyy')" );    
+	    }   
+	    //FECHA PROPUESTA HASTA
+	    if (dto.getFechaAltaHasta() != null && !"".equals(dto.getFechaAltaHasta())) {        		
+			hql.append(" and ter.acuerdo.fechaPropuesta <= TO_DATE('"+dto.getFechaAltaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
+	    }
+		
+	
+	    //FECHA ESTADO DESDE
+	    if (dto.getFechaEstadoDesde() != null && !"".equals(dto.getFechaEstadoDesde())) {        		
+			hql.append(" and ter.acuerdo.fechaEstado >= TO_DATE('"+dto.getFechaEstadoDesde() + "','dd/MM/yyyy')" );    
+	    }        
+	    //FECHA ESTADO HASTA
+	    if (dto.getFechaEstadoHasta() != null && !"".equals(dto.getFechaEstadoHasta())) {        		
+			hql.append(" and ter.acuerdo.fechaEstado <= TO_DATE('"+dto.getFechaEstadoHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
+	    }
+				
+	        
+	    //FECHA VIGENCIA DESDE
+	    if (dto.getFechaVigenciaDesde() != null && !"".equals(dto.getFechaVigenciaDesde())) {        		
+			hql.append(" and ter.acuerdo.fechaLimite >= TO_DATE('"+dto.getFechaVigenciaDesde() + "','dd/MM/yyyy')" );  
+	    }
+	    //FECHA VIGENCIA HASTA
+	    if (dto.getFechaVigenciaHasta() != null && !"".equals(dto.getFechaVigenciaHasta())) {        		
+			hql.append(" and ter.acuerdo.fechaLimite <= TO_DATE('"+dto.getFechaVigenciaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );   
+	    } 
+	  
         // DESPACHO
         if (dto.getDespacho() != null && !"".equals(dto.getDespacho())) {
      		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosDelDespacho(new Long(dto.getDespacho())) + ")");

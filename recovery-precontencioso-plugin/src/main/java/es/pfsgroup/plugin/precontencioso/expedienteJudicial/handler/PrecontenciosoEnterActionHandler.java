@@ -87,7 +87,20 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		// executionContext.getNode().getName();
 
 		Procedimiento prc = getProcedimiento(executionContext);
+<<<<<<< HEAD
 		EXTTareaExterna tex = (EXTTareaExterna) getTareaExterna(executionContext);
+=======
+		
+		System.out.println(this.getClass().getSimpleName() + "El prc es: " + prc.getId());
+		logger.info(this.getClass().getSimpleName() + "El prc es: " + prc.getId());
+		
+		TareaExterna tex = getTareaExterna(executionContext);
+>>>>>>> origin/version-9.2.4
+		
+		System.out.println(this.getClass().getSimpleName() + "La tarea externa es: " + tex.getId());
+		logger.info(this.getClass().getSimpleName() + "La tarea externa es: " + tex.getId());
+		System.out.println(this.getClass().getSimpleName() + "La tarea de la tarea externa es: " + tex.getTareaProcedimiento().getCodigo());
+		logger.info(this.getClass().getSimpleName() + "La tarea de la tarea externa es: " + tex.getTareaProcedimiento().getCodigo());
 		
 		if (PrecontenciosoBPMConstants.PCO_PreTurnadoManual.equals(tex.getTareaProcedimiento().getCodigo())) {
 			

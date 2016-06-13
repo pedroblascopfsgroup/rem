@@ -80,7 +80,7 @@
 	contratos.on('select',function (){
 		Ext.Ajax.request({
 			url: page.resolveUrl('plugin.liquidaciones.avanzado.getliquidacion')
-			,params: {id: contratos.getValue()}
+			,params: {id: contratos.getValue(), idProc: actuaciones.getValue()}
 			,method: 'POST'
 			,success: function (result, request){
 				var r = Ext.util.JSON.decode(result.responseText);
@@ -137,16 +137,16 @@
 	
 	<pfs:button name="btAceptar" caption="**Aceptar"  captioneKey="plugin.liquidaciones.introducirdatos.action.aceptar" iconCls="icon_ok">
 		if (tipoDemoraCierre.value > 100) {
-			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
+			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidaciï¿½n" />','<s:message code="plugin.liquidaciones.introducirdatos.message.tipoDemoraCierre" text="**El valor del Tipo Demora al Cierre no puede ser superior al 100%" />');		
 		} 
 		else {
 		   	if( fechaCierre.getValue() > fechaDeLiquidacion.getValue()){
-				Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.introducirdatos.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre no puede ser posterior a la Fecha de Liquidación" />');
+				Ext.MessageBox.alert('Error','<s:message code="plugin.liquidaciones.introducirdatos.fechaCierreMayorfechaLiquidacion" text="**La Fecha de Cierre no puede ser posterior a la Fecha de Liquidaciï¿½n" />');
 				return false;
 			} else {		
 				if (validarForm()) {
 					if(isEdit.getValue() && (anteriorContrato.getValue()!=contratos.getValue() || anteriorFechaCierre.getValue()!=fechaCierre.getValue().format("d/m/Y") ||  anteriorFechaLiquidacion.getValue()!=fechaDeLiquidacion.getValue().format("d/m/Y"))){
-						Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidación" />');
+						Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidaciï¿½n" />','<s:message code="plugin.liquidaciones.introducirdatos.datos.modificados" text="**No es posible guardar los datos si se ha modificado el contrato, la fecha de cierre o la fecha de liquidaciï¿½n" />');
 					}else{
 						
 						fechaCierre.setValue(fechaCierre.getValue().format("d/m/Y"));	
@@ -182,7 +182,7 @@
 				      	
 					}
 				} else {
-					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+					Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidaciï¿½n" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
 				}
 			}	
 		}
@@ -210,12 +210,12 @@
 	<pfsforms:fieldset name="fieldOtrosGastos" caption="**Datos Cierre" captioneKey="plugin.liquidaciones.introducirdatos.control.otrosGastos" border="true" width="280" height="260"
 		items="costasLetrado,costasProcurador,otrosGastos" />
 	
-	<%--<pfsforms:numberfield name="baseCalculo" labelKey="plugin.liquidaciones.introducirdatos.control.baseCalculo" label="**Base de Cálculo" value="" obligatory="true" allowDecimals="true"/>  --%>
+	<%--<pfsforms:numberfield name="baseCalculo" labelKey="plugin.liquidaciones.introducirdatos.control.baseCalculo" label="**Base de Cï¿½lculo" value="" obligatory="true" allowDecimals="true"/>  --%>
 	var arrayValores = [{"id":'360',"value":'360'},{"id":'365',"value":'365'}];
-	<pfsforms:combo name="baseCalculo" root="" displayField="id" valueField="value" label="**Base de Cálculo" labelKey="plugin.liquidaciones.introducirdatos.control.baseCalculo"
+	<pfsforms:combo name="baseCalculo" root="" displayField="id" valueField="value" label="**Base de Cï¿½lculo" labelKey="plugin.liquidaciones.introducirdatos.control.baseCalculo"
 		value="360" dict="arrayValores" obligatory="true" width="133" forceSelection="true" />
 	baseCalculo.setEditable('false');
-	<pfsforms:datefield name="fechaDeLiquidacion" labelKey="plugin.liquidaciones.introducirdatos.control.fechaLiquidacion" label="**Fecha de liquidación" obligatory="true" />
+	<pfsforms:datefield name="fechaDeLiquidacion" labelKey="plugin.liquidaciones.introducirdatos.control.fechaLiquidacion" label="**Fecha de liquidaciï¿½n" obligatory="true" />
 	fechaDeLiquidacion.on('render', function() {this.validate();});
 	fechaDeLiquidacion.setValue(new Date());
 	<pfsforms:numberfield name="tipoDemoraCierre" labelKey="plugin.liquidaciones.introducirdatos.control.tipoDemoraCierre" label="**Tipo Demora al Cierre" value="" 
@@ -223,7 +223,7 @@
 	
 	<pfsforms:textfield name="nombre" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="150"/>
 
-	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parámetros Liquidación" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="280" height="260"
+	<pfsforms:fieldset name="fieldParametrosLiquidacion" caption="**Parï¿½metros Liquidaciï¿½n" captioneKey="plugin.liquidaciones.introducirdatos.control.parametrosLiquidacion" border="true" width="280" height="260"
 		items="baseCalculo,fechaDeLiquidacion,tipoDemoraCierre,nombre" />
 
 	var fieldImportes = new Ext.Panel({
@@ -253,7 +253,7 @@
 		
 	<pfs:defineColumnModel name="tiposInteresCM">
 		<pfs:defineHeader dataIndex="fecha" captionKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.fecha" caption="**Fecha" sortable="true" firstHeader="true" />
-		<pfs:defineHeader dataIndex="tipoInteres" captionKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.tipoInteres" caption="**Tipo de interés" sortable="true" /> 
+		<pfs:defineHeader dataIndex="tipoInteres" captionKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.tipoInteres" caption="**Tipo de interï¿½s" sortable="true" /> 
 	</pfs:defineColumnModel>
 	
 	var validarFormNewTipoInteres = function() {
@@ -268,7 +268,7 @@
 	
 	<pfs:button name="btnOkTipoInteres" captioneKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.agregar" caption="**Agregar" iconCls="icon_mas">
 		if (newTipoInteres.value > 100) {
-			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.nuevoTipoInteres" text="**El nuevo tipo de interés no puede ser superior al 100%" />');
+			Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidaciï¿½n" />','<s:message code="plugin.liquidaciones.introducirdatos.message.nuevoTipoInteres" text="**El nuevo tipo de interï¿½s no puede ser superior al 100%" />');
 		} else {
 			if (validarFormNewTipoInteres()) {
 			    var newTipoInteresRecord = tiposInteresStore.recordType;
@@ -284,7 +284,7 @@
 				newFecha.reset();
 				newTipoInteres.reset();
 			} else {
-				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidación" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
+				Ext.Msg.alert('<s:message code="plugin.liquidaciones.introducirdatos.window.title" text="**Generar liquidaciï¿½n" />','<s:message code="plugin.liquidaciones.introducirdatos.message.obligatorios" text="**Debe rellenar todos los campos obligatorios" />');
 			}
 		}
 	</pfs:button>
@@ -293,7 +293,7 @@
 		wNewTipoInteres.hide();
 	</pfs:button>	
 		
-	<pfsforms:numberfield name="newTipoInteres" labelKey="plugin.liquidaciones.introducirdatos.control.newTipoInteres.tipoInteres" label="**Nuevo tipo interés" value="" 
+	<pfsforms:numberfield name="newTipoInteres" labelKey="plugin.liquidaciones.introducirdatos.control.newTipoInteres.tipoInteres" label="**Nuevo tipo interï¿½s" value="" 
 		obligatory="true" allowDecimals="true" allowNegative="false" />
 	<pfsforms:datefield name="newFecha" labelKey="plugin.liquidaciones.introducirdatos.control.newTipoInteres.Fecha" label="**Fecha" obligatory="true" />
 	newFecha.on('render', function() {this.validate();});
@@ -314,18 +314,18 @@
 	var wNewTipoInteres = new Ext.Window({
 		width: 330
 		,closable: false
-		,title: '<s:message code="plugin.liquidaciones.introducirdatos.control.newTipoInteres.title" text="**Actualización de tipos de interés" />'
+		,title: '<s:message code="plugin.liquidaciones.introducirdatos.control.newTipoInteres.title" text="**Actualizaciï¿½n de tipos de interï¿½s" />'
 		,modal: true
 		,items: [panelNewTipoInteres]
 	});
 		
-	<pfs:button name="btnAddTipoInteres" captioneKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.agregar" caption="**Añadir" iconCls="icon_mas">
+	<pfs:button name="btnAddTipoInteres" captioneKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.agregar" caption="**Aï¿½adir" iconCls="icon_mas">
 		wNewTipoInteres.show();
 	</pfs:button>
 		
 	<pfs:button name="btnDelTipoInteres" captioneKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres.borrar" caption="**Borrar" iconCls="icon_menos">
 		if (gridTiposInteres.getSelectionModel().getCount()>0){
-			Ext.Msg.confirm('Borrar', '¿Esta seguro de eliminar este elemento?', function(btn){
+			Ext.Msg.confirm('Borrar', 'ï¿½Esta seguro de eliminar este elemento?', function(btn){
 				if (btn == 'yes'){
 	            	var sel=gridTiposInteres.getSelectionModel().getSelected();
 	            	tiposInteresStore.remove(sel);
@@ -336,7 +336,7 @@
 		
 	
 	<pfsforms:gridpanel name="gridTiposInteres" store="tiposInteresStore" columnModel="tiposInteresCM" width="500" bbar="[btnAddTipoInteres,btnDelTipoInteres]"
-		title="**Actualización de tipos de interés" titleKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres" />
+		title="**Actualizaciï¿½n de tipos de interï¿½s" titleKey="plugin.liquidaciones.introducirdatos.control.gridTiposInteres" />
  
  	
  	gridTiposInteres.on('render', function() {

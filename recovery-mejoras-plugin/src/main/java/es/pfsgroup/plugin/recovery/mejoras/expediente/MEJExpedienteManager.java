@@ -196,11 +196,17 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
     private void incluirEnExpedientePersona(Expediente expediente, Persona persona) {
 
         ExpedientePersona expedientePersona = new ExpedientePersona();
+        DDAmbitoExpediente ambitoExpediente= null;
         expedientePersona.setExpediente(expediente);
         expedientePersona.setPersona(persona);
         // Nuevo método para obtener el arquetipo de una persona
         Arquetipo arq = arquetipoDao.getArquetipoPorPersona(persona.getId());
-        DDAmbitoExpediente ambitoExpediente = arq.getItinerario().getAmbitoExpediente();
+        if(arq!=null){
+        	ambitoExpediente = arq.getItinerario().getAmbitoExpediente();
+        }
+        else{
+        	ambitoExpediente = expediente.getArquetipo().getItinerario().getAmbitoExpediente();
+        }
         expedientePersona.setAmbitoExpediente(ambitoExpediente);
         expedientePersona.setAuditoria(Auditoria.getNewInstance());
 
@@ -278,7 +284,7 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
     
     @BusinessOperation(OBTENER_ZONAS_JERARQUIA_BY_COD_OR_DESC)
     public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, String codDesc) {
-        if (idNivel == null || idNivel.longValue() == 0) { return new ArrayList<DDZona>(); }
+        if (idNivel == null) { return new ArrayList<DDZona>(); }
         Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO))
                 .getCodigoZonas();
         return zonaDao.getZonasJerarquiaByCodDesc(idNivel, codigoZonasUsuario, codDesc);

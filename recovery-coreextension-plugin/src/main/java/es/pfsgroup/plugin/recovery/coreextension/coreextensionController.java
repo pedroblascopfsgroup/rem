@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,6 +74,7 @@ public class coreextensionController {
 	private static final String LISTADO_BUSQUEDA_TERMINOS_JSON = "plugin/coreextension/acuerdo/listadoTerminosJSON";
 	private static final String JSON_LISTADO_DESPACHOS = "plugin/coreextension/acuerdo/listadoDespachosJSON";
 	private static final String JSON_LISTADO_TIPOS_ACUERDO = "plugin/coreextension/acuerdo/listadoTiposAcuerdoJSON";
+	private static final String JSON_CODIGO_NIVEL = "plugin/coreextension/listadoCodigoNivelJSON";
 
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -220,7 +222,7 @@ public class coreextensionController {
 	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
 	 * @return JSON
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "null" })
 	@RequestMapping
 	public String getListUsuariosDefectoByTipoAsunto(ModelMap model,String idTipoAsunto, String idExpediente,
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
@@ -229,6 +231,7 @@ public class coreextensionController {
 		
 		List<EXTDDTipoGestor> listadoTipoGestores = null;
 		List<DespachoExterno> listaDespachos = null;
+		List<DespachoExterno> listaDespachos2 = new ArrayList<DespachoExterno>();;
 		List<Usuario> listaUsuarios= null;
 		List<EXTDDTipoGestor> listadoTipoGestoresFinal= new ArrayList<EXTDDTipoGestor>();
 		List<DespachoExterno> listaDespachoFinal= new ArrayList<DespachoExterno>();
@@ -237,44 +240,59 @@ public class coreextensionController {
 		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		
 		for(EXTDDTipoGestor tipoGestor: listadoTipoGestores){
-			listaDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(tipoGestor.getId(), false);
-			for(DespachoExterno despacho: listaDespachos){
-				listaUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosPorDefectoData(despacho.getId(), false);
-				HashMap<String,Set<String>> perfilesMap= proxyFactory.proxy(coreextensionApi.class).getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
-				if(!perfilesMap.isEmpty() && Integer.parseInt(idTipoAsunto)==21){
-					Set<String> perfiles= perfilesMap.get(tipoGestor.getCodigo());
-					if(perfiles!=null && !perfiles.isEmpty()){
-						for(String perfil: perfiles){
-							Usuario usuarioFinal= new Usuario();
-							long idexp= Long.valueOf(idExpediente);
-							List<Usuario> usuarioFinales= proxyFactory.proxy(coreextensionApi.class).getUsuarioGestorOficinaExpedienteGestorDeuda(idexp, perfil);
-							if(!usuarioFinales.isEmpty()){
-								usuarioFinal= usuarioFinales.get(0); 
-								listadoTipoGestoresFinal.add(tipoGestor);
-								listaDespachoFinal.add(despacho);
-								listaUsuariosFinal.add(usuarioFinal);
+			if(tipoGestor!=null){
+				listaDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(tipoGestor.getId(), false);
+				if(listaDespachos!=null && listaDespachos.size()>0){
+					listaDespachos2.clear();
+					listaDespachos2.add(listaDespachos.get(0));
+				}
+				for(DespachoExterno despacho: listaDespachos2){
+					listaUsuarios=null;
+					listaUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosPorDefectoData(despacho.getId(), false);
+					if(listaUsuarios== null || listaUsuarios.size()==0){
+						List<Usuario> listaUsuariosNoDefecto= proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(despacho.getId(), false);
+						if(listaUsuariosNoDefecto!= null && listaUsuariosNoDefecto.size()!=0){
+							listaUsuarios.add(proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(despacho.getId(), false).get(0));
+						}
+					}
+					HashMap<String,Set<String>> perfilesMap= proxyFactory.proxy(coreextensionApi.class).getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
+					if(perfilesMap!=null && !perfilesMap.isEmpty() && Integer.parseInt(idTipoAsunto)==21){
+						Set<String> perfiles= perfilesMap.get(tipoGestor.getCodigo());
+						if(perfiles!=null && !perfiles.isEmpty()){
+							for(String perfil: perfiles){
+								Usuario usuarioFinal= new Usuario();
+								long idexp= Long.valueOf(idExpediente);
+								List<Usuario> usuarioFinales= proxyFactory.proxy(coreextensionApi.class).getUsuarioGestorOficinaExpedienteGestorDeuda(idexp, perfil);
+								if(!usuarioFinales.isEmpty()){
+									usuarioFinal= usuarioFinales.get(0); 
+									listadoTipoGestoresFinal.add(tipoGestor);
+									listaDespachoFinal.add(despacho);
+									listaUsuariosFinal.add(usuarioFinal);
+								}
+							}
+						}
+						else{
+							for(Usuario usuario: listaUsuarios){
+								
+								Usuario usuarioFinal= new Usuario();
+									usuarioFinal= usuario;
+									listadoTipoGestoresFinal.add(tipoGestor);
+									listaDespachoFinal.add(despacho);
+									listaUsuariosFinal.add(usuarioFinal);
 							}
 						}
 					}
 					else{
-						for(Usuario usuario: listaUsuarios){
-							
-							Usuario usuarioFinal= new Usuario();
-								usuarioFinal= usuario;
-								listadoTipoGestoresFinal.add(tipoGestor);
-								listaDespachoFinal.add(despacho);
-								listaUsuariosFinal.add(usuarioFinal);
+						if(listaUsuarios!= null && listaUsuarios.size()!=0){
+							for(Usuario usuario: listaUsuarios){
+								
+								Usuario usuarioFinal= new Usuario();
+									usuarioFinal= usuario;
+									listadoTipoGestoresFinal.add(tipoGestor);
+									listaDespachoFinal.add(despacho);
+									listaUsuariosFinal.add(usuarioFinal);
+							}
 						}
-					}
-				}
-				else{
-					for(Usuario usuario: listaUsuarios){
-						
-						Usuario usuarioFinal= new Usuario();
-							usuarioFinal= usuario;
-							listadoTipoGestoresFinal.add(tipoGestor);
-							listaDespachoFinal.add(despacho);
-							listaUsuariosFinal.add(usuarioFinal);
 					}
 				}
 			}
@@ -579,16 +597,18 @@ public class coreextensionController {
 				}			
 			}
 			
+			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			
 			if(!Checks.esNulo(acuerdo.getFechaPropuesta())){
-				fechaAlta=acuerdo.getFechaPropuesta().toString();
+				fechaAlta=format.format(acuerdo.getFechaPropuesta());
 			}
 			
 			if(!Checks.esNulo(acuerdo.getFechaEstado())){
-				fechaEstado=acuerdo.getFechaEstado().toString();
+				fechaEstado=format.format(acuerdo.getFechaEstado());
 			}
 			
 			if(!Checks.esNulo(acuerdo.getFechaLimite())){
-				fechaVigencia=acuerdo.getFechaLimite().toString();
+				fechaVigencia=format.format(acuerdo.getFechaLimite());
 			}
 			
 			terminos.setIdTermino(idTermino);
@@ -630,6 +650,15 @@ public class coreextensionController {
 		
 		model.put("tiposAcuerdo", tiposAcuerdo);
 		return JSON_LISTADO_TIPOS_ACUERDO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getCodigoNivelPorDescripcion(String descripcion, ModelMap model) {
+
+		Integer codigo= proxyFactory.proxy(coreextensionApi.class).getCodigoNivelPorDescripcion(descripcion);
+		model.put("codigo", codigo);
+		return JSON_CODIGO_NIVEL;
 	}
 	
 }

@@ -98,6 +98,7 @@
         ,minValue : minDate
         ,width:125
         ,disabled:true
+        ,enableKeyEvents: true
     });
 	    
     var usuariosCm = new Ext.grid.ColumnModel({
@@ -401,7 +402,30 @@
     	fechaTodas.hide();
     }
     
-    fechaGrid.on('change', function(){
+    fechaGrid.on('focus', function(){
+ 
+	    if(parametroTareaUnica=='true'){
+		    for(var i=0; i<=gridUsuarios.getStore().getTotalCount()-1; i++){
+		    	
+		    	if(gridUsuarios.getSelectionModel().getSelected().get('fecha')==''){
+			    	if(gridUsuarios.getStore().getAt(i).get('fecha')!= ''){
+			    		Ext.Msg.show({
+							   		title:'Aviso',
+							   		msg: '<s:message code="plugin.agendaMultifuncion.nuevaAnotacion.soloUnaTarea" text="**Solo es posible añadir Fecha a un usuario" />',
+							   		buttons: Ext.Msg.OK
+						});
+			    		fechaGrid.setValue('');
+			    	}
+			    }
+			    
+		    }
+		}
+    	
+    });
+    
+    
+   fechaGrid.on('keydown', function(){
+ 
 	    if(parametroTareaUnica=='true'){
 		    for(var i=0; i<=gridUsuarios.getStore().getTotalCount()-1; i++){
 		    	

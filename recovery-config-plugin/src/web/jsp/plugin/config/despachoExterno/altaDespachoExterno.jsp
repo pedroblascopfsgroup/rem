@@ -51,13 +51,14 @@
                               ,{width: 140,height: 140});    
     tipoGestor.disable();
     
-    <%-- Desactiva este combo si se ha abierto esta pantalla para modificar al despacho --%>
+    <%-- Desactiva este combo si se ha abierto esta pantalla para modificar al despacho
     if(tipoDespacho.getValue() != '') {
     	tipoDespacho.setDisabled(true);
-    }
+    } --%>
     
     tipoDespacho.on('select', function(){
-    	if(tipoDespacho.getValue() == ${idTipoLetrado}) {
+    
+    	if(tipoDespacho.getValue() == ${idTipoLetrado} || tipoDespacho.getValue() == ${idTipoProcurador}) {
     		pestanaAdicionales.setDisabled(false);
     	} else {
     		pestanaAdicionales.setDisabled(true);
@@ -65,6 +66,8 @@
     	}
     	
     });
+    
+    <pfsforms:textfield labelKey="plugin.config.despachoExterno.field.codigoDespacho" label="**Codigo de despacho" name="codigoDespacho" value="${despacho.codigoDespacho}" readOnly="true" />
     
     <%-- PRODUCTO-1274 Nuevos campos Despacho_Externo_Extras --%>	
 	<pfs:textfield labelKey="plugin.config.despachoExternoExtras.field.fax" label="**Fax" name="fax" value="${despachoExtras.fax}" maxLength="100" />	
@@ -89,7 +92,8 @@
 	<pfs:textfield labelKey="plugin.config.despachoExternoExtras.field.cuentaEntregas" label="**Cuenta entregas" name="cuentaEntregas" value="${despachoExtras.cuentaEntregas}" maxLength="10" />
 	<pfs:textfield labelKey="plugin.config.despachoExternoExtras.field.centroRecuperacion" label="**Centro Recuperacion" name="centroRecuperacion" value="${despachoExtras.centroRecuperacion}" maxLength="60" />
 	<pfs:textfield labelKey="plugin.config.despachoExternoExtras.field.irpfAplicado" label="**irpfAplicado" name="irpfAplicado" value="${despachoExtras.irpfAplicado}" />
-	<pfs:datefield labelKey="plugin.config.despachoExternoExtras.field.fechaServicioIntegral" label="**Fecha SI" name="fechaServicioIntegral" value="${despachoExtras.fechaServicioIntegral}" />
+	<pfs:datefield labelKey="plugin.config.despachoExternoExtras.field.fechaServicioIntegral" label="**Fecha SI" name="fechaServicioIntegral"  />
+	fechaServicioIntegral.setValue('${despachoExtras.fechaServicioIntegral}');
 	
 	<pfsforms:ddCombo name="tipoDocumento"
 		labelKey="plugin.config.despachoExternoExtras.field.tipoDocumento" label="**Tipo de documento"
@@ -123,8 +127,39 @@
 	
 	<pfsforms:ddCombo name="servicioIntegral"
 		labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral"
-		label="**servicioIntegral" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
-	servicioIntegral.setValue('${despachoExtras.servicioIntegral}');
+		label="**servicioIntegral" value="" dd="${ddSiNo}" width="125" propertyCodigo="codigo"/>
+	servicioIntegral.setValue('${despachoExtras.servicioIntegral}');	
+	
+	if(servicioIntegral.getValue() != 'Si') {
+	
+		fechaServicioIntegral.setDisabled(true);
+	}
+	
+	servicioIntegral.on('select',function() {
+		if(servicioIntegral.getValue() != 1) {
+			fechaServicioIntegral.setValue();
+			fechaServicioIntegral.setDisabled(true);
+		}
+		else {
+			fechaServicioIntegral.setDisabled(false);
+		}
+	});	
+	
+	var servicionIntegralFieldSet = new Ext.form.FieldSet({
+		title : '<s:message code="plugin.config.despachoExternoExtras.field.servicioIntegral" text="**Servicio Integral" />'
+		,layout:'column'
+		,autoHeight:true
+		,border:true
+		,bodyStyle:'padding:3px;cellspacing:20px;'
+		,viewConfig : { columns : 1 }
+		,defaults :  {xtype : 'fieldset', autoHeight : true, border : false, width:300 }
+		,items : [{items:[servicioIntegral, fechaServicioIntegral]}]
+		,doLayout:function() {
+				var margin = 40;
+				this.setWidth(340-margin);
+				Ext.Panel.prototype.doLayout.call(this);
+		}
+	});    
 	
 	<%-- PRODUCTO-1274 Combos con valores que se mapean por ac-plugin-coreextension-projectContext.xml--%>
 	var contratoStore =
@@ -204,7 +239,22 @@
 		,value:'${despachoExtras.relacionBankia}'
 	});
 
-	   	
+
+	<pfsforms:ddCombo name="comboProvincias"
+		labelKey="plugin.config.despachoExterno.turnado.ventana.provincias" label="**Provincias"  width="150"
+		value="" dd="${listaProvincias}" />
+	comboProvincias.setValue('${ambitoDespachoExtras[0]}');	
+	
+<%--
+ 	PRODUCTO-1274 ; BKREC-2291
+
+	Cuando se quieran multiples provincias por despacho, descomentar esta parte, y eleminar el combo anterior a este comentario.
+	La lógica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
+	Manager: ADMDespachoExternoManager 
+	Métodos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
+	
+	Vistas modificadas: altaDespachoExterno.jsp ; tabDatosAdicionalesDespacho.jsp
+
 	var provinciasData = <app:dict value="${listaProvincias}" />;
     var comboProvincias = app.creaDblSelect(provinciasData 
     	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
@@ -217,7 +267,8 @@
 	];
 
 	comboProvincias.setValue(arrayProvinciasLetrado);
- 
+  --%>
+  
 	var clasifDespachoFieldSet = new Ext.form.FieldSet({
 		title : '<s:message code="plugin.config.despachoExternoExtras.fieldSet.title" text="**Clasif Despacho" />'
 		,layout:'column'
@@ -258,7 +309,9 @@
 	consultaGestorProp(${despacho.tipoDespacho.id});
 	
 	tipoDespacho.on('select',function(combo, record, index ){
-		consultaGestorProp(combo.getValue());						 
+		if(combo.getValue() != '') {
+			consultaGestorProp(combo.getValue());
+			}						 
 	});
 	
 	var pestanaPrincipal = new Ext.Panel({
@@ -268,7 +321,7 @@
 			,layout:'table'
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:500'}
-			,items:[ {items: [despacho,tipoDespacho,tipoGestor,tipoDocumento, documentoCif, fechaAlta ]}
+			,items:[ {items: [despacho, <c:if test="${despacho.codigoDespacho != null}">codigoDespacho,</c:if> tipoDespacho,tipoGestor,tipoDocumento, documentoCif, fechaAlta ]}
 					,{items: [tipoVia,domicilio,domicilioPlaza,codigoPostal,personaContacto,telefono1,telefono2, fax, correoElectronico	]}
 				   ]
 		});
@@ -280,14 +333,14 @@
 			,layout:'table'
 			,layoutConfig:{columns:3}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
-			,items:[ {items: [clasifDespachoFieldSet, comboProvincias,contratoVigor, servicioIntegral, codEstAse]}
+			,items:[ {items: [clasifDespachoFieldSet, comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
 					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
 				   ]
 		});
 	
 	pestanaAdicionales.setDisabled(true);
-	if(tipoDespacho.getValue() == ${idTipoLetrado}) {
+	if(tipoDespacho.getValue() == ${idTipoLetrado} || tipoDespacho.getValue() == ${idTipoProcurador}) {
 		pestanaAdicionales.setDisabled(false);
 	}
 	
@@ -359,6 +412,7 @@
 		perfil.setValue('');
 		concursos.setValue('');
 		codEstAse.setValue('');
+		impuesto.setValue('')
 		contratoVigor.setValue('');
 		servicioIntegral.setValue('');
 		fechaServicioIntegral.setValue('');
@@ -407,6 +461,7 @@
 		parametros.clasificacionPerfil=perfil.getValue();
 		parametros.clasificacionConcursos=concursos.getValue();
 		parametros.codEstAse=codEstAse.getValue();
+		parametros.impuesto=impuesto.getValue();
 		parametros.contratoVigor=contratoVigor.getValue();
 		parametros.servicioIntegral=servicioIntegral.getValue();
 		parametros.fechaServicioIntegral=fechaServicioIntegral.getValue();

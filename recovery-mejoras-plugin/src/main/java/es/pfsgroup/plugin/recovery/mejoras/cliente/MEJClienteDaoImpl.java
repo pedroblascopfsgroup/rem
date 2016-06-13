@@ -23,6 +23,7 @@ import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.contrato.model.DDEstadoContrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
+import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.persona.dto.EXTDtoClienteResultado;
@@ -33,6 +34,7 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.mejoras.cliente.dao.MEJClienteDao;
 import es.pfsgroup.plugin.recovery.mejoras.cliente.dto.MEJBuscarClientesDto;
@@ -356,6 +358,31 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 			hql.append(" WHERE p.borrado = 0 ");
 		}
 
+		// Filtrar por la misma oficina que el usuario logueado (MiCartera).
+		// Tan solo si no se ha definido una jerarquia.
+		if(!busquedaJerarquizada || Checks.esNulo(clientes.getJerarquia())){
+			if(clientes.getMiCartera()){
+				if(!Checks.esNulo(usuarioLogueado)){
+					List<DDZona> zonasUserLogueado = usuarioLogueado.getZonas();
+					List<Oficina> oficinas = new ArrayList<Oficina>();
+					if(!Checks.estaVacio(zonasUserLogueado)){
+						for(DDZona zona : zonasUserLogueado){
+							oficinas.add(zona.getOficina());
+						}
+
+						hql.append("and p.OFI_ID IN (");
+						for(int i=0;i < oficinas.size(); i++){
+							hql.append(String.valueOf(oficinas.get(i).getId()));
+							if(i < (oficinas.size()-1)){
+								hql.append(",");
+							}
+						}
+						hql.append(")");
+					}
+				}
+			}
+		}
+		
 		/*
 		 * FIXME Comentamos esta parte para quitar de momento la zonificaciÃ³n
 		 */ 
@@ -1412,29 +1439,45 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		}
 
 		if (jerarquia != null) {
-			// Si es primer titular del contrato de pase buscamos directamente
-			// en los clientes
-			if (clientes.getIsPrimerTitContratoPase() != null
-					&& clientes.getIsPrimerTitContratoPase().booleanValue()) {
-				if (pasoDeVariables()) {
-					filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = :no_borrado "
-							+ jerarquia;
-				} else {
-					filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = 0 "
-							+ jerarquia;
-				}
-			} else {
-				if (pasoDeVariables()) {
-					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
-							+ " WHERE cp.borrado = :no_borrado and c.borrado = :no_borrado and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
-							+ jerarquia;
-				} else {
+			// Filtrar por el origen de la oficina.
+			if(!Checks.esNulo(clientes.getOrigen())){
+				if(clientes.getOrigen().equals("CENGESCLI")){// Centro gestor del cliente.
+					// Si es primer titular del contrato de pase buscamos directamente
+					// en los clientes
+					if (clientes.getIsPrimerTitContratoPase() != null
+							&& clientes.getIsPrimerTitContratoPase().booleanValue()) {
+						if (pasoDeVariables()) {
+							filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = :no_borrado "
+									+ jerarquia;
+						} else {
+							filtroJerarquia = "SELECT cli.per_id FROM CLI_CLIENTES cli JOIN OFI_OFICINAS o ON cli.ofi_id = o.ofi_id JOIN ZON_ZONIFICACION zon ON zon.ofi_id = o.ofi_id WHERE cli.borrado = 0 "
+									+ jerarquia;
+						}
+					} else {
+						if (pasoDeVariables()) {
+							filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
+									+ " WHERE cp.borrado = :no_borrado and c.borrado = :no_borrado and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
+									+ jerarquia;
+						} else {
 
-					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
+							filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon "
+									+ " WHERE cp.borrado = 0 and c.borrado = 0 and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
+									+ jerarquia;
+						}
+					}
+				} else if(clientes.getOrigen().equals("CENCONTABCONTR")) {// Centro contable del contrato.
+					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon, OFI_OFICINAS ofi "
 							+ " WHERE cp.borrado = 0 and c.borrado = 0 and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
+							+ " and c.OFI_ID_CONTABLE = ofi.OFI_ID and ofi.OFI_ID = zon.OFI_ID "
+							+ jerarquia;
+				} else if(clientes.getOrigen().equals("CENADMCONTR")) {// Centro administrativo del contrato.
+					filtroJerarquia = "SELECT cp.per_id FROM CNT_CONTRATOS c, CPE_CONTRATOS_PERSONAS cp, ZON_ZONIFICACION zon, OFI_OFICINAS ofi "
+							+ " WHERE cp.borrado = 0 and c.borrado = 0 and cp.cnt_id = c.cnt_id AND c.ZON_ID = zon.ZON_ID "
+							+ " and c.OFI_ID_ADMIN = ofi.OFI_ID and ofi.OFI_ID = zon.OFI_ID "
 							+ jerarquia;
 				}
 			}
+			
 
 		}
 		return filtroJerarquia;

@@ -271,6 +271,17 @@
 	<bean p:entity="plugin.mejoras.web.public.buttons.left" p:name="btnCancelar"
 		p:order="2" p:fileName="/WEB-INF/jsp/plugin/mejoras/main/button/btnCancelar.jsp"
 		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
+		
+	<bean p:entity="plugin.mejoras.web.clientes.busqueda.buttons.left" p:name="separador"
+		p:order="5" p:fileName="/WEB-INF/jsp/main/menus/separador.jsp"
+	  	class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+	  	p:permission="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES" />
+		
+	<bean p:entity="plugin.mejoras.web.clientes.busqueda.buttons.left"
+	    p:name="chkbxMiCartera" p:order="6"
+		p:fileName="/WEB-INF/jsp/plugin/mejoras/clientes/button/chkbxMiCartera.jsp"
+		p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES" />
 
 	<!--  este jsp se ha movido ya al rec-web
 	<bean p:entity="tabs.cliente.fast" p:name="cabecera" p:order="100"

@@ -149,15 +149,15 @@ public class EsquemaPlazasTpo implements Serializable, Auditable {
 						excluyente=true;
 					}
 				}
-				if (!excluyente && impMin<=config.getImporteHasta() 
-						 && impMax>=config.getImporteDesde()) {
+				if (!excluyente && impMin<config.getImporteHasta() 
+						 && impMax>config.getImporteDesde()) {
 						return true;
 				}
 			}
 			//Si no hay 
 			else {
-				if (impMin<=config.getImporteHasta() 
-					 && impMax>=config.getImporteDesde()) {
+				if (impMin<config.getImporteHasta() 
+					 && impMax>config.getImporteDesde()) {
 					return true;
 				}
 			}

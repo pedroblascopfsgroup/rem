@@ -178,13 +178,13 @@ public interface TurnadoProcuradoresApi {
 	EsquemaTurnadoProcurador getEsquemaById(Long id);
 	
 	/**
-	 * Añadir una configuracion plaza-tpo nueva a un esquema de turnado de procuradores
+	 * Aï¿½adir una configuracion plaza-tpo nueva a un esquema de turnado de procuradores
 	 * @param idEsquema
 	 * @param idTpo
 	 * @param arrayPlazas
 	 * @return 
 	 */
-	List<Long> añadirNuevoTpoAPlazas(Long idEsquema, Long idTpo, Long[] arrayPlazas);
+	List<Long> anyadirNuevoTpoAPlazas(Long idEsquema, Long idTpo, Long[] arrayPlazas);
 	
 	/**
 	 * Borrado fisico de todas las configuraciones plaza-tpo relacionadas con el tpo o plaza recibido
@@ -207,7 +207,7 @@ public interface TurnadoProcuradoresApi {
 	Boolean checkSiPlazaYaTieneConfiguracion(Long idEsquema, Long idPlaza);
 
 	/**
-	 * Añade nuevo rango de configuracion al esquema
+	 * Aï¿½ade nuevo rango de configuracion al esquema
 	 * @param idsplazasTpo
 	 * @param idConf 
 	 * @param impMin
@@ -278,7 +278,7 @@ public interface TurnadoProcuradoresApi {
 	void modificarRangosCancelacion(List<String> listModRangos);
 	
 	/**
-	 * Dados un idEsquema y un idPlaza devuelve los tipos de procedimientos que aun estan disponibles de añadir
+	 * Dados un idEsquema y un idPlaza devuelve los tipos de procedimientos que aun estan disponibles de aï¿½adir
 	 * @param idEsquema
 	 * @param idPlaza
 	 * @return

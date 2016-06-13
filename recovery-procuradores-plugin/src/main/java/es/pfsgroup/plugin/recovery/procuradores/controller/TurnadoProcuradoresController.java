@@ -190,7 +190,7 @@ public class TurnadoProcuradoresController {
 			@RequestParam(value = "idTpo", required = true) Long idTpo,
 			@RequestParam(value = "arrayPlazas", required = true) Long[] arrayPlazas ,ModelMap model) {
 		//Guardar el tpo para todas las plazas disponibles
-		List<Long> idTuplas = turnadoPocuradoresMang.añadirNuevoTpoAPlazas(idEsquema,idTpo,arrayPlazas);
+		List<Long> idTuplas = turnadoPocuradoresMang.anyadirNuevoTpoAPlazas(idEsquema,idTpo,arrayPlazas);
 		
 		model.put("idTuplas", idTuplas);
 		return JSON_ESQUEMA_TURNADO_CONFIG;

@@ -518,7 +518,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	@Override
 	@Transactional
-	public List<Long> añadirNuevoTpoAPlazas(Long idEsquema, Long idTpo, Long[] arrayPlazas) {
+	public List<Long> anyadirNuevoTpoAPlazas(Long idEsquema, Long idTpo, Long[] arrayPlazas) {
 		//Lista de ids pares plaza-tpo insertados
 		List<Long> idsPlazasTpo = new ArrayList<Long>();
 		
@@ -831,7 +831,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		List<TipoProcedimiento> listaTposYaExistentes = getTPOsGrid(idEsquema,idPlaza);
 		
 		//Si idPlaza=-1 ("PLAZA POR DEFECTO") solo se esta disponible el tpo "PROCEDIMIENTO POR DEFECTO"
-		//FIXME Cambiar si se desea poder asignar el tpo por defecto a cualquier plaza (añadir el tpo por defecto a ambos casos)
+		//FIXME Cambiar si se desea poder asignar el tpo por defecto a cualquier plaza (aï¿½adir el tpo por defecto a ambos casos)
 		if(idPlaza!=-1){
 			listaTposDisponibles = getTPOsEsquemaTurnadoProcu();
 		}

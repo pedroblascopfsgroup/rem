@@ -111,6 +111,8 @@
 			}
 			,evaluateAndSend: function(seguir) {      			
 	         			if(seguir== 'yes') {
+         					btnBorrarRango.setDisabled(true);
+							btnEditarRango.setDisabled(true);
 	         				//Borrado logico de la regla
 	         				borrarRango(rangosGrid.getSelectionModel().getSelected().data.rangoId);
 						}
@@ -122,6 +124,7 @@
 			,disabled: true
 			,handler : function(){
 				btnEditarRango.setDisabled(true);
+         		btnBorrarRango.setDisabled(true);
 				//Obtener todas las entradas del store con mismos identificadores de rango
 				Ext.Ajax.request({
 					url: '/pfs/turnadoprocuradores/getIdsRangosRelacionados.htm'

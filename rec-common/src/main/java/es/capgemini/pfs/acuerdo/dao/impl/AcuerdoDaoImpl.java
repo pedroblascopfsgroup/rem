@@ -1,19 +1,38 @@
 package es.capgemini.pfs.acuerdo.dao.impl;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.annotation.Resource;
 
 import org.hibernate.Hibernate;
 import org.hibernate.SQLQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.hibernate.pagination.PaginationManager;
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PaginationParams;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
+import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.utils.CollectionUtils;
+import es.capgemini.pfs.utils.StringUtils;
 import es.pfsgroup.commons.utils.Checks;
 
 /**
@@ -23,6 +42,9 @@ import es.pfsgroup.commons.utils.Checks;
 @Repository("AcuerdoDao")
 public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements AcuerdoDao {
 
+	@Resource
+	private PaginationManager paginationManager;
+	
     /**
      * Busca Acuerdos de un asunto.
      * @param idAsunto id del asunto
@@ -122,6 +144,259 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	    
 	    SQLQuery sqlQuery = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(query.toString());
 	    return (String) sqlQuery.uniqueResult();
+    }
+	
+	//Devuelve solo el código de asunto y expediente.
+	 public List<DDEntidadAcuerdo> getListEntidadAcuerdo(){
+		 
+	       	String hql = "from DDEntidadAcuerdo where auditoria.borrado = 0";
+	   		List<DDEntidadAcuerdo> lista = getHibernateTemplate().find(hql);
+		 	List<DDEntidadAcuerdo> lista2= null;
+		 
+		 	for(int i=0;i<lista.size();i++)
+		 	{
+		 		if(!lista.get(i).getCodigo().equals(lista.get(i).CODIGO_ENTIDAD_ASUNTO) && !lista.get(i).getCodigo().equals(lista.get(i).CODIGO_ENTIDAD_EXPEDIENTE)){
+		 			lista.remove(i);
+				 }
+		 	}
+		 	
+	   		return lista;
+	    }
+
+	public Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario) {
+		Page page = paginationManager.getHibernatePage(getHibernateTemplate(), 
+				generarHQLBuscarAcuerdos(terminosFiltroDto,usuario), terminosFiltroDto);
+		return page;
+	}
+	
+	private String generarHQLBuscarAcuerdos(DTOTerminosFiltro dto, Usuario usuarioLogueado) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		boolean cruzaContratos = (!Checks.esNulo(dto.getNroContrato()));
+		boolean cruzaClientes= (!Checks.esNulo(dto.getNroCliente()));
+		boolean cruzaTipoAcuerdo= (!Checks.esNulo(dto.getTipoAcuerdo()));
+		boolean cruzaTipoTermino= (!Checks.esNulo(dto.getTipoTermino()));
+		boolean cruzaDespachos = (!Checks.esNulo(dto.getSolicitantes()) || !StringUtils.emtpyString(dto.getSolicitantes()));
+		boolean cruzaEstado = (!Checks.esNulo(dto.getEstado()));
+		boolean cruzaJerarquia = (!Checks.esNulo(dto.getJerarquia()));
+		boolean cruzaCentros = (!Checks.esNulo(dto.getCentros()));
+		
+		hql.append("select distinct ter ");
+		
+		// LAS TABLAS QUE NECESITO
+		hql.append("from TerminoAcuerdo ter ");
+		
+		if(cruzaContratos){
+			hql.append(", TerminoContrato terCnt");
+		}
+		
+		if(cruzaClientes){
+			if(!cruzaContratos){
+				hql.append(", TerminoContrato terCnt");
+			}
+			hql.append(", ClienteContrato cliCnt");
+		}
+		
+		hql.append(" where 1=1 ");
+		
+		
+		//// FILTROS /////
+		
+		//CONTRATO
+		if(cruzaContratos){
+			hql.append(" and ter.id=terCnt.termino.id and terCnt.contrato.nroContrato like '%" + dto.getNroContrato() + "%'");	
+		}
+		
+		//CLIENTE
+		if(cruzaClientes){
+			if(!cruzaContratos){
+				hql.append(" and ter.id=terCnt.termino.id ");
+			}
+			hql.append(" and terCnt.contrato.id=cliCnt.contrato.id and cliCnt.cliente.id= "+dto.getNroCliente());
+		}
+
+		//TIPO ACUERDO
+		if(cruzaTipoAcuerdo){
+			
+			if(dto.getTipoAcuerdo().equals("ASU")){
+				hql.append(" and ter.acuerdo.asunto.id is not null ");
+			}else{	
+				if(dto.getTipoAcuerdo().equals("EXP")){
+					hql.append(" and ter.acuerdo.expediente.id is not null ");
+				}else{	
+					if(dto.getTipoAcuerdo().equals("AMBAS")){
+						hql.append(" and (ter.acuerdo.expediente.id is not null or ter.acuerdo.asunto.id is not null) ");
+						}
+					}
+			}	
+		}else{
+			hql.append(" and (ter.acuerdo.expediente.id is not null or ter.acuerdo.asunto.id is not null) ");
+		}
+		
+		//TIPO TERMINO
+		if(cruzaTipoTermino){
+			hql.append(" and ter.acuerdo.tipoAcuerdo.codigo = '"+ dto.getTipoTermino() + "' ");
+		}
+		
+		//ESTADO
+		if(cruzaEstado){
+			hql.append(" and ter.acuerdo.estadoAcuerdo.codigo = '"+ dto.getEstado() + "' ");
+		}
+		
+		//SOLICITANTES
+		if (cruzaDespachos) {			
+			hql.append(" and ter.acuerdo.gestorDespacho.despachoExterno.id in (" + dto.getSolicitantes() + ")) ");
+			}
+		
+		//FECHA PROPUESTA DESDE
+		if (dto.getFechaAltaDesde() != null && !"".equals(dto.getFechaAltaDesde())) {        		
+			hql.append(" and ter.acuerdo.fechaPropuesta >= TO_DATE('"+dto.getFechaAltaDesde() + "','dd/MM/yyyy')" );    
+	    }   
+	    //FECHA PROPUESTA HASTA
+	    if (dto.getFechaAltaHasta() != null && !"".equals(dto.getFechaAltaHasta())) {        		
+			hql.append(" and ter.acuerdo.fechaPropuesta <= TO_DATE('"+dto.getFechaAltaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
+	    }
+		
+	
+	    //FECHA ESTADO DESDE
+	    if (dto.getFechaEstadoDesde() != null && !"".equals(dto.getFechaEstadoDesde())) {        		
+			hql.append(" and ter.acuerdo.fechaEstado >= TO_DATE('"+dto.getFechaEstadoDesde() + "','dd/MM/yyyy')" );    
+	    }        
+	    //FECHA ESTADO HASTA
+	    if (dto.getFechaEstadoHasta() != null && !"".equals(dto.getFechaEstadoHasta())) {        		
+			hql.append(" and ter.acuerdo.fechaEstado <= TO_DATE('"+dto.getFechaEstadoHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
+	    }
+				
+	        
+	    //FECHA VIGENCIA DESDE
+	    if (dto.getFechaVigenciaDesde() != null && !"".equals(dto.getFechaVigenciaDesde())) {        		
+			hql.append(" and ter.acuerdo.fechaLimite >= TO_DATE('"+dto.getFechaVigenciaDesde() + "','dd/MM/yyyy')" );  
+	    }
+	    //FECHA VIGENCIA HASTA
+	    if (dto.getFechaVigenciaHasta() != null && !"".equals(dto.getFechaVigenciaHasta())) {        		
+			hql.append(" and ter.acuerdo.fechaLimite <= TO_DATE('"+dto.getFechaVigenciaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );   
+	    } 
+	  
+        // DESPACHO
+        if (dto.getDespacho() != null && !"".equals(dto.getDespacho())) {
+     		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosDelDespacho(new Long(dto.getDespacho())) + ")");
+        }
+     
+        // GESTOR
+        if (!es.capgemini.pfs.utils.StringUtils.emtpyString(dto.getGestores()) || !es.capgemini.pfs.utils.StringUtils.emtpyString(dto.getTipoGestor())) {
+    		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosParaGestor(dto.getGestores(), dto.getTipoGestor()) + ")");
+        }
+     		
+        //VISIBILIDAD
+        /*
+        int cantZonas = dto.getCodigoZonas().size();
+            
+        if (cantZonas > 0) {
+                hql.append(" and ( ");
+                for (String codigoZ : dto.getCodigoZonas()) {
+                    hql.append(" ter.acuerdo.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
+                }
+                hql.deleteCharAt(hql.length() - 1);
+                hql.deleteCharAt(hql.length() - 1);
+                
+                hql.append(" or ter.acuerdo.expediente.id in ( ");
+                	hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
+    	        hql.append(" ) ");
+                
+    	        hql.append(" ) ");
+        }else{
+        		//GESTORES EXPEDIENTE
+    	    	hql.append(" and ter.acuerdo.expediente.id in ( ");
+    	        hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
+    	        hql.append(" ) ");
+            	}
+ */
+        //VISIBILIDAD
+        int cantZonas = dto.getCodigoZonas().size();
+        if (cantZonas > 0) {
+            hql.append(" and ( ");
+            for (String codigoZ : dto.getCodigoZonas()) {
+                hql.append(" ter.acuerdo.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
+            }
+            hql.deleteCharAt(hql.length() - 1);
+            hql.deleteCharAt(hql.length() - 1);
+            hql.append(" ) ");
+        }
+        
+        //JERARQUIA
+        if (!StringUtils.emtpyString(dto.getJerarquia())) {
+               	hql.append("  and ter.acuerdo.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
+        }  
+        
+        //hql.append(" order by ter.acuerdo.id desc ");
+                  
+		return hql.toString();
+	}
+	
+	 private String generaFiltroExpedientesPorGestor(Usuario usuLogado){
+         StringBuffer hql = new StringBuffer();
+         hql.append(" select exp.id from Expediente exp , EXTGestorEntidad ge ");
+         hql.append(" where exp.id = ge.unidadGestionId and ge.tipoEntidad.codigo = '").append(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE).append("' ");
+         hql.append(" and ge.gestor.id in (");
+         hql.append(obtenerListaUsuariosDelGrupo(usuLogado.getId()));
+         hql.append(")");
+         return hql.toString();
+  }
+	 
+	 @SuppressWarnings("unchecked")
+		private String obtenerListaUsuariosDelGrupo(Long id) {
+
+			StringBuffer sql = new StringBuffer();
+			StringBuffer resultado = new StringBuffer();
+			resultado.append(id).append(", ");
+			sql.append("select usu_id_grupo from ${master.schema}.gru_grupos_usuarios where usu_id_usuario=");
+			sql.append(id);
+			List resultados = getSession().createSQLQuery(sql.toString()).list();
+			for (Object idUsuario : resultados) {
+				resultado.append(idUsuario.toString()).append(", ");
+			}
+			return resultado.substring(0, resultado.length()-2).toString();
+		}
+	
+	private String getIdsAsuntosDelDespacho(Long idDespacho) {
+		return "select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu "
+				+ "where  gaa.asunto = asu.id and gaa.despachoExterno = " + idDespacho;
+	}
+	
+	private String getIdsAsuntosParaGestor(String comboGestor,
+			String comboTiposGestor) {
+		if (Checks.esNulo(comboTiposGestor) && Checks.esNulo(comboGestor)) {
+			throw new IllegalArgumentException(
+					"comboGestor y comboTiposGestor están vacíos.");
+		}
+		StringBuilder subhql = new StringBuilder(
+				"select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu ");
+		String and = "";
+		subhql.append(" where gaa.asunto = asu.id and ");
+		if (!Checks.esNulo(comboTiposGestor)) {
+			subhql.append("gaa.tipoGestor = '" + comboTiposGestor + "'");
+			and = " and ";
+		}
+		if (!Checks.esNulo(comboGestor)) {
+			subhql.append(and + "gaa.usuario in (");
+			StringTokenizer tokensGestores = new StringTokenizer(comboGestor,
+					",");
+			while (tokensGestores.hasMoreElements()) {
+				subhql.append(tokensGestores.nextToken());
+				if (tokensGestores.hasMoreElements()) {
+					subhql.append(",");
+				}
+			}
+			subhql.append(")");
+		}
+		return subhql.toString();
+	}
+
+	public List<AcuerdoConfigAsuntoUsers> getProponentesAcuerdo(){
+		String hql = "from AcuerdoConfigAsuntoUsers where auditoria.borrado = 0";
+        List<AcuerdoConfigAsuntoUsers> lista = getHibernateTemplate().find(hql);
+		return lista;
     }
 
 }

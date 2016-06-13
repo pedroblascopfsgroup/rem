@@ -537,8 +537,7 @@ public class AsuntosManager {
                 Long idBPM = proc.getProcessBPM();
                 if (idBPM != null)
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_PROCESS, idBPM, TareaBPMConstants.TRANSITION_TAREA_RESPONDIDA);
-            //TODO CAmbiar esto cuando exista BPM para este tipo
-            }else if(!TipoProcedimiento.TIPO_NO_LITIGAR.equals(proc.getTipoProcedimiento().getCodigo())){
+            }else {
             //Lanzo el proceso bpm asociado.
             	executor.execute(ExternaBusinessOperation.BO_PRC_MGR_ACEPTAR_PROCEDIMIENTO, proc.getId());
             }

@@ -287,23 +287,36 @@ public class VTARBusquedaOptimizadaTareasDaoImpl extends AbstractEntityDao<Tarea
         
         if(!Checks.estaVacio(dto.getUsuarioLogado().getZonaPerfil())){
         	hb.append(" ((");
+        	boolean existUsuNivel = false;
         	for(ZonaUsuarioPerfil zpu : dto.getUsuarioLogado().getZonaPerfil()){
         		if(zonaDao.userEstaEnElNivelMasBajoZonaPerfil(zpu)){
         			hb.append("(vtar.idPerfil = "+zpu.getPerfil().getId()+" and vtar.zonCodigo LIKE '"+zpu.getZona().getCodigo()+"%') OR");
+        			existUsuNivel = true;
         		}
         	}
         	
-        	hb.deleteCharAt(hb.length() - 1);
-        	hb.deleteCharAt(hb.length() - 1);
-        	
-			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN ('");
-			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
-			hb.append("','");
-			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
-			hb.append("'))");
+        	if(existUsuNivel){
+            	hb.deleteCharAt(hb.length() - 1);
+            	hb.deleteCharAt(hb.length() - 1);
+    			hb.append(" ) and vtar.subtipoTareaCodigoSubtarea NOT IN ('");
+    			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_TAREA);
+    			hb.append("','");
+    			hb.append(EXTSubtipoTarea.CODIGO_ANOTACION_NOTIFICACION);
+    			hb.append("'))");
+    			hb.append(")");
+        	}else{
+        		///Borramos el OR
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        		hb.deleteCharAt(hb.length() - 1);
+        	}
         }
         
-		hb.append("))" );
+		hb.append(")" );
 		
         return hb;
     }

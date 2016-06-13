@@ -132,6 +132,7 @@ public final class InternaBusinessOperation {
     public static final String BO_EXP_MGR_TIENE_EXPEDIENTE_GESTION_DEUDA = "expedienteManager.tieneExpedienteGestionDeuda";
     public static final String BO_EXP_MGR_ES_GESTOR_DE_LA_FASE_ACTUAL = "expedienteManager.esGestorDeLaFaseDelExpediente";
     public static final String BO_EXP_MGR_ES_SUPERVISOR_DE_LA_FASE_ACTUAL = "expedienteManager.esSupervisorDeLaFaseDelExpediente";
+    public static final String BO_EXP_MGR_PUEDE_MOSTRAR_ELEVAR_DELEGAR_EXPEDIENTE = "expedienteManager.puedeMostrarElevarDelegarExpediente";
     /*****************************************************************************
      ** PoliticaManager.
      ****************************************************************************/

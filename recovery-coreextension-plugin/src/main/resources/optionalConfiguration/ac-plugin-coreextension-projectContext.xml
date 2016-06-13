@@ -12,6 +12,49 @@
 	
 	<bean id="coreProjectContextDefault" 
 		class="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContextImpl" abstract="true">
+		
+		<property name="tiposAsuntosTiposGestores">
+			<map>
+				<entry key="BANKIA">	<!-- Codigo Entidad -->
+					<map>
+						<entry key="01">	<!-- Tipo de Asunto (Litigio) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>GESTCDD</value>
+								<value>GESTESP</value>
+								<value>PREDOC</value>
+								<value>GESTLLA2</value>
+								<value>GESTLLA</value>
+								<value>GESTPROP</value>
+								<value>GEST</value>	
+								<value>GESTORIA_PREDOC</value>	
+								<value>SUP_ASIG_CONC</value>	
+								<value>SUP_PCO</value>	
+								<value>SUP</value>	
+								<value>SUPNVL2</value>							
+							</set>
+						</entry>
+						
+						<entry key="02">	<!-- Tipo de Asunto (Concursal) -->
+							<set>	<!-- Tipos de Gestores -->
+								<value>GESTCDD</value>
+								<value>GESTESP</value>
+								<value>PREDOC</value>
+								<value>GESTLLA2</value>
+								<value>GESTLLA</value>
+								<value>GESTPROP</value>
+								<value>GEST</value>	
+								<value>GESTORIA_PREDOC</value>	
+								<value>SUP_ASIG_CONC</value>	
+								<value>SUP_PCO</value>	
+								<value>SUP</value>	
+								<value>SUPNVL2</value>
+							</set>
+						</entry>
+					</map>
+				</entry>
+			</map>
+		</property>
+		
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">
@@ -69,6 +112,42 @@
 				<entry key="SUP">
 					<value>41</value>
 				</entry>
+			</map>
+		</property>
+		<property name="mapaContratoVigor">
+			<map>
+				<entry key="0" value="Histórico Caja"/>
+				<entry key="1" value="Acuerdo 2011"/>
+				<entry key="2" value="2014"/>
+				<entry key="3" value="2015"/>
+			</map>
+		</property>
+		<property name="mapaClasificacionDespachoPerfil">
+			<map>
+				<entry key="0" value="A"/>
+				<entry key="1" value="B"/>
+				<entry key="2" value="C"/>
+			</map>
+		</property>
+		<property name="mapaRelacionBankia">
+			<map>
+				<entry key="0" value="En desvinculación"/>
+				<entry key="1" value="Sin turno"/>
+				<entry key="2" value="Sin acceso (a Recovery)"/>
+				<entry key="3" value="Turno activo"/>
+				<entry key="4" value="Histórico"/>
+			</map>
+		</property>
+		<property name="mapaDescripcionIVA">
+			<map>
+				<entry key="0" value="IGIC"/>
+				<entry key="1" value="IVA"/>
+			</map>
+		</property>
+		<property name="mapaCodEstAse">
+			<map>
+				<entry key="0" value="Alta"/>
+				<entry key="1" value="Baja"/>
 			</map>
 		</property>
 	</bean>  

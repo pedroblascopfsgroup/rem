@@ -590,7 +590,7 @@
 	}
 	
 	var tipoInsertado = function(idTipoGestor) {
-		if (gestorStore.find('tipoGestorId', idTipoGestor)==-1) {
+		if (gestorStore.findExact('tipoGestorId', idTipoGestor)==-1) {
 			return false;
 		} else {
 			return true;

@@ -159,6 +159,7 @@ public class Acuerdo implements Serializable, Auditable {
     
     @ManyToOne
     @JoinColumn(name = "USD_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
 	private GestorDespacho gestorDespacho;
 
     @ManyToOne

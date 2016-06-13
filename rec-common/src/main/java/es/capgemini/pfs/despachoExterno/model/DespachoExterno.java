@@ -76,6 +76,10 @@ public class DespachoExterno implements Serializable, Auditable {
     @JoinColumn(name = "ZON_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private DDZona zona;
+    
+    /* No le llamo codigo a secas, porque hay un getCodigo que devuelve el id. */
+    @Column(name = "DES_CODIGO")
+    private String codigoDespacho;
 
     @Column(name = "ETC_CON_CODIGO_IMPORTE")
     private String turnadoCodigoImporteConcursal;
@@ -312,5 +316,12 @@ public class DespachoExterno implements Serializable, Auditable {
 	public void setTurnadoCodigoCalidadLitigios(String turnadoCodigoCalidadLitigios) {
 		this.turnadoCodigoCalidadLitigios = turnadoCodigoCalidadLitigios;
 	}
-    
+
+	public String getCodigoDespacho() {
+		return codigoDespacho;
+	}
+
+	public void setCodigoDespacho(String codigoDespacho) {
+		this.codigoDespacho = codigoDespacho;
+	}    
 }

@@ -1,9 +1,13 @@
 package es.pfsgroup.plugin.recovery.config.despachoExterno;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -29,6 +33,8 @@ import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.multigestor.dao.EXTTipoGestorPropiedadDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTTipoGestorPropiedad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Assertions;
 import es.pfsgroup.commons.utils.Checks;
@@ -44,6 +50,14 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMGestorDespachoD
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMTipoDespachoExternoDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoBusquedaDespachoExterno;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoDespachoExterno;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExternoExtrasDao;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExtrasAmbitoDao;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dto.DespachoExternoExtrasDto;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExtrasAmbito;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.turnadodespachos.DespachoAmbitoActuacion;
@@ -88,6 +102,18 @@ public class ADMDespachoExternoManager {
 	
 	@Autowired
 	private EsquemaTurnadoDao esquemaTurnadoDao;
+	
+	@Autowired
+	private DespachoExternoExtrasDao despachoExtrasDao;
+	
+	@Autowired
+	private EXTGestoresDao gestoresDao;
+	
+	@Autowired
+	private CoreProjectContext context;
+	
+	@Autowired
+	private DespachoExtrasAmbitoDao extrasAmbitoDao;
 
 	public ADMDespachoExternoManager() {
 
@@ -316,6 +342,9 @@ public class ADMDespachoExternoManager {
 					"plugin.config.despachoExterno.admdespachoexternomanager.borrardespachoexterno.despachocongestores");
 		}
 		despachoExternoDao.deleteById(idDespachoExterno);
+		despachoExtrasDao.deleteById(idDespachoExterno);
+		extrasAmbitoDao.deleteById(idDespachoExterno);
+		
 	}
 
 	/**
@@ -641,5 +670,369 @@ public class ADMDespachoExternoManager {
 	public void guardarAmbitoActuacion(DespachoAmbitoActuacion despachoAmbitoActuacion)
 	{
 		despachoAmbitoActuacionDao.saveOrUpdate(despachoAmbitoActuacion);
+	}
+	
+	@BusinessOperation("ADMDespachoExternoManager.dameDespachoExtras")
+	public DespachoExternoExtrasDto dameDespachoExtras(Long idDespacho) {
+		
+		return despachoExtrasDao.getDtoDespachoExtras(idDespacho);
+	}
+	
+	/**
+	 * Devuelve una lista de usuarios externos, y que no existen ya en el despacho
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getGestoresExtList")
+	public List<Usuario> getGestoresExtList(Long idDespacho) {
+		List<Usuario> listaUsuarios = genericDao.getList(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "usuarioExterno", true));
+		List<Usuario> listaUsuariosExistentes = gestoresDao.getGestoresByDespacho(idDespacho);
+		
+		listaUsuarios.removeAll(listaUsuariosExistentes);
+		
+		return listaUsuarios;
+	}
+	
+	@Transactional(readOnly = false)
+	public void guardarGestorDespacho(GestorDespacho gestor) {
+		gestorDespachoDao.saveOrUpdate(gestor);
+	}
+	
+	/** 
+	 * PRODUCTO-1272
+	 * Devuelve el listado de las provincias del despacho
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.dameAmbitoDespachoExtras")
+	public List<DDProvincia> dameAmbitoDespachoExtras(Long idDespacho) {
+		
+		return despachoExtrasDao.getProvinciasDespachoExtras(idDespacho);
+	}
+	
+	/**
+	 * PRODUCTO-1274
+	 * Devuelve los codigos de provincias asociados al despacho
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.dameAmbitoDespachoExtrasCodigos")
+	public List<String> dameAmbitoDespachoExtrasCodigos(Long idDespacho) {
+		
+		List<String> listaProvinciasDespacho = new LinkedList<String>();
+		for(DDProvincia provincia : despachoExtrasDao.getProvinciasDespachoExtras(idDespacho)) {
+			/* PRODUCTO-1274 ; BKREC-2291
+			 * Cambiar la linea cuando se requiera multiples provincias para un despacho
+			 * listaProvinciasDespacho.add(provincia.getCodigo());
+			 * */
+			listaProvinciasDespacho.add(provincia.getId().toString());
+		}
+		
+		return listaProvinciasDespacho;
+	}
+	
+	
+	/** 
+	 * PRODUCTO-1274
+	 * Guarda Despacho Extras, a través del dto de DespachoExterno
+	 * @param idDespacho
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.guardarExtrasDespacho")
+	@Transactional(readOnly = false)
+	public DespachoExternoExtras guardarExtrasDespacho(ADMDtoDespachoExterno dto, Long idDespacho) {
+		DespachoExternoExtras desExtras;
+		if (dto.getId() == null) {
+			desExtras = new DespachoExternoExtras();
+		} else {
+			desExtras = despachoExtrasDao.get(dto.getId());
+			//Si todavía no hay registro en extras de este despacho, debemos inicializarlo para crearlo.
+			if(Checks.esNulo(desExtras)) {
+				desExtras = new DespachoExternoExtras();
+			}
+		}
+		//Si no es de Tipo Letrado no aplica
+		if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
+			return desExtras;
+		}
+		
+		desExtras.setId(idDespacho);
+		desExtras = this.transformaDtoAEntityDespachOExtras(dto, desExtras);
+		//Guardamos los extras del despacho
+		despachoExtrasDao.saveOrUpdate(desExtras);
+		
+		//Ahora guardamos las provincias de los extras del despacho (Para cuando se hace alta de un nuevo despacho)
+		if(dto.getId() == null && !Checks.esNulo(dto.getListaProvincias()) && !Checks.esNulo(dto.getListaProvincias()[0])) {
+			this.guardarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
+		}
+		else if(dto.getId() != null && !Checks.esNulo(dto.getListaProvincias()) /*&& !Checks.esNulo(dto.getListaProvincias()[0])*/){ 
+			//Actualizar el ambito (si quitan o añaden provicinas)
+			this.actualizarAmbitoDespachoExtras(dto.getListaProvincias(), idDespacho);
+		}
+		return desExtras;
+	}
+	
+	/**
+	 * De un mapa de Strings, devuelve la KEY a partir del VALUE.
+	 * @param mapa
+	 * @param valor
+	 * @return
+	 */
+	private String getKeyByValue(Map<String,String> mapa, String valor) {
+		
+		for(Map.Entry<String,String> map : mapa.entrySet()){
+			if( valor.equals(map.getValue()))
+				return map.getKey();
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * PRODUCTO-1274
+	 * Devuelve un listado con listas de mapas, para despachoExtras. 
+	 * ---Atención: Si en un futuro cambias el orden, afectará a los combos del jsp.
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getMapasDespachoExtras")
+	public List<List<String>> getMapasDespachoExtras() {
+		List<List<String>> listaMapas = new ArrayList<List<String>>();
+		
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaContratoVigor()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaClasificacionDespachoPerfil()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaCodEstAse()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaDescripcionIVA()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaRelacionBankia()));
+		
+		return listaMapas;
+	}
+	
+	/**
+	 * Rellena los valores de contexto según el mapa pasado por parámetro
+	 * @param mapa
+	 * @return
+	 */
+	private List<String> listaMapeadaDespachoExtras(Map<String,String> mapa) {
+		List<String> lista = new ArrayList<String>();
+		
+		for(Map.Entry<String,String> map : mapa.entrySet()){
+			lista.add(map.getValue());
+		}
+		
+		return lista;
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation("ADMDespachoExternoManager.getDDProvincias")
+	public List<DDProvincia> getDDProvincias() {
+		return proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDProvincia.class);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@BusinessOperation("ADMDespachoExternoManager.getDDTipoDocumento")
+	public List<DDTipoDocumento> getDDTipoDocumento() {
+		return proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDTipoDocumento.class);
+	}
+	
+	/**
+	 * Las provincias de los extras del despacho se guardan en una tabla a parte (DEA_DESPACHO_EXTRAS_AMBITO)
+	 * @param provincias
+	 * @param idDespacho
+	 */
+	private void guardarAmbitoDespachoExtras(String[] provincias, Long idDespacho) {
+		
+		DespachoExtrasAmbito despachoExtrasAmbito;
+		
+		if(provincias.length > 0 && provincias[0].length() >0) {
+			for(String codProvincia : provincias) {
+				if(!extrasAmbitoDao.isDespachoEnProvincia(codProvincia, idDespacho)) {				
+					despachoExtrasAmbito = new DespachoExtrasAmbito();
+					/*PRODUCTO-1274 ; BKREC-2291
+					 * Se modifica para que coja por id, si al final se requieren mas de una provincia por despacho, cambiar el setter
+					* de provincia, en vez de por id, por codigo.
+					* 
+					* despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codProvincia)));
+					*/
+					despachoExtrasAmbito.setProvincia(genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(codProvincia))));
+					despachoExtrasAmbito.setDespacho(despachoExternoDao.get(idDespacho));
+					
+					extrasAmbitoDao.saveOrUpdate(despachoExtrasAmbito);
+				}
+			}	
+		}
+	}
+	
+	/**
+	 * Actualiza Provincias dle ambito del despacho.
+	 * @param provincias
+	 * @param idDespacho
+	 */
+	private void actualizarAmbitoDespachoExtras(String[] provincias, Long idDespacho) {
+		List<DespachoExtrasAmbito> listaAmbitoExtras = genericDao.getList(DespachoExtrasAmbito.class, genericDao.createFilter(FilterType.EQUALS, "despacho.id", idDespacho));
+		List<String> listaCodProvincias = new ArrayList<String>();
+		for(int i=0; i< provincias.length; i++) {
+			listaCodProvincias.add(provincias[i]);
+		}
+		List<String> provinciasSobrantes = new ArrayList<String>();
+		for(DespachoExtrasAmbito ambito : listaAmbitoExtras) {
+			/*
+			 * PRODUCTO-1274 ; BKREC-2291
+			 * Cambiar la linea comentada cuando vaya a ser por multiples provincias
+			 * if(!listaCodProvincias.contains(ambito.getProvincia().getCodigo())) {
+			 */
+			if(!listaCodProvincias.contains(ambito.getProvincia().getId())) {
+				ambito.getAuditoria().setBorrado(true);
+				extrasAmbitoDao.saveOrUpdate(ambito);	
+			} else {
+				//provinciasSobrantes.add(ambito.getProvincia().getCodigo());
+				provinciasSobrantes.add(ambito.getProvincia().getId().toString());
+			}
+		}
+		listaCodProvincias.removeAll(provinciasSobrantes);
+		
+		this.guardarAmbitoDespachoExtras(listaCodProvincias.toArray(new String[listaCodProvincias.size()]), idDespacho);
+	}
+	
+	/**
+	 * Ya que al crear o editar un despacho, si es de tipo LETRADO, se mostrará
+	 * la pestanya datos Adicionales, con campos que solo tendrán este tipo de despachos.
+	 * @return
+	 */
+	@BusinessOperation("ADMDespachoExternoManager.getIdTipoLetrado")
+	public Long getIdTipoLetrado() {
+		Long idLetrado = null;
+		
+		for(DDTipoDespachoExterno tipo : tipoDespachoDao.getList()) {
+			if(tipo.getCodigo().equals("1")) {
+				return tipo.getId();
+			}
+		}
+		
+		return idLetrado;
+	}
+	@BusinessOperation("ADMDespachoExternoManager.getIdTipoProcurador")
+	public Long getIdTipoProcurador() {
+		Long idLetrado = null;
+		
+		for(DDTipoDespachoExterno tipo : tipoDespachoDao.getList()) {
+			if(tipo.getCodigo().equals("2")) {
+				return tipo.getId();
+			}
+		}
+		
+		return idLetrado;
+	}
+
+	/**
+	 * Transforma el dto en la entidad DespachoExternoExtras, el dto incluso tanto despacho como despachoExtras, pero
+	 * este metodo solo coge la parte que se guardará en DES_DESPACHO_EXTRAS
+	 * @param dto
+	 * @param desExtras
+	 * @return
+	 */
+	private DespachoExternoExtras transformaDtoAEntityDespachOExtras(ADMDtoDespachoExterno dto, DespachoExternoExtras desExtras) {
+		
+		desExtras.setFax(dto.getFax());
+		if (!Checks.esNulo(dto.getFechaAlta())) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+				Date fechaAlta = formatter.parse(dto.getFechaAlta());
+				desExtras.setFechaAlta(fechaAlta);
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha Alta ", e);
+			}
+		}
+		else {
+			desExtras.setFechaAlta(null);
+		}
+		desExtras.setCorreoElectronico(dto.getCorreoElectronico());
+		desExtras.setDocumentoCif(dto.getDocumentoCif());
+		if(!Checks.esNulo(dto.getTipoDocumento())) {
+			desExtras.setTipoDocumento(genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dto.getTipoDocumento()))));
+		}
+		else {
+			desExtras.setTipoDocumento(null);
+		}
+		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
+			desExtras.setClasifPerfil(Integer.parseInt(
+					this.getKeyByValue(context.getMapaClasificacionDespachoPerfil(), dto.getClasificacionPerfil())));
+		}
+		else {
+			desExtras.setClasifPerfil(null);
+		}
+		if(!Checks.esNulo(dto.getAsesoria())) {
+			desExtras.setAsesoria(Boolean.parseBoolean(dto.getAsesoria()));
+		}
+		else {
+			desExtras.setAsesoria(null);
+		}
+		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
+			desExtras.setClasifConcursos(Boolean.parseBoolean(dto.getClasificacionConcursos()));
+		}
+		else {
+			desExtras.setClasifConcursos(null);
+		}
+		if(!Checks.esNulo(dto.getCodEstAse())) {
+			desExtras.setCodEstAse(this.getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()));
+		}
+		else {
+			desExtras.setCodEstAse(null);
+		}
+		desExtras.setCuentaEntregas(dto.getCuentaEntregas());
+		desExtras.setCuentaLiquidacion(dto.getCuentaLiquidacion());
+		desExtras.setCuentaProvisiones(dto.getCuentaProvisiones());
+		desExtras.setDigconEntregas(dto.getDigconEntregas());
+		desExtras.setDigconLiquidacion(dto.getDigconLiquidacion());
+		desExtras.setDigconProvisiones(dto.getDigconProvisiones());
+		desExtras.setEntidadContacto(dto.getEntidadContacto());
+		desExtras.setEntidadEntregas(dto.getEntidadEntregas());
+		desExtras.setEntidadLiquidacion(dto.getEntidadLiquidacion());
+		desExtras.setEntidadProvisiones(dto.getEntidadProvisiones());
+		desExtras.setOficinaContacto(dto.getOficinaContacto());
+		desExtras.setOficinaEntregas(dto.getOficinaEntregas());
+		desExtras.setOficinaLiquidacion(dto.getOficinaLiquidacion());
+		desExtras.setOficinaProvisiones(dto.getOficinaProvisiones());
+		desExtras.setCentroRecuperacion(dto.getCentroRecuperacion());
+		if(!Checks.esNulo(dto.getRelacionBankia())) {
+			desExtras.setRelacionBankia(Integer.parseInt(
+					this.getKeyByValue(context.getMapaRelacionBankia(), dto.getRelacionBankia())));			
+		}
+		else {
+			desExtras.setRelacionBankia(null);
+		}
+		if(!Checks.esNulo(dto.getServicioIntegral())) {
+			desExtras.setServicioIntegral(Boolean.parseBoolean(dto.getServicioIntegral()));
+		}
+		else {
+			desExtras.setServicioIntegral(null);
+		}
+		if (!Checks.esNulo(dto.getFechaServicioIntegral())) {
+			try {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+				Date fechaServicioIntegral = formatter.parse(dto.getFechaServicioIntegral());
+				desExtras.setFechaServicioIntegral(fechaServicioIntegral);
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha Alta ", e);
+			}
+		}
+		else {
+			desExtras.setFechaServicioIntegral(null);
+		}
+		
+		if(!Checks.esNulo(dto.getContratoVigor())) {
+			desExtras.setContratoVigor(Integer.parseInt(
+					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
+		}
+		else {
+			desExtras.setContratoVigor(null);
+		}
+		if(!Checks.esNulo(dto.getImpuesto())) {
+			desExtras.setDescripcionIVA(Integer.parseInt(
+					this.getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto())));
+		}
+		
+		return desExtras;
 	}
 }

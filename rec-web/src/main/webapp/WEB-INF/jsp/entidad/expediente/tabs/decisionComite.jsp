@@ -152,8 +152,12 @@
 	            e.stopEvent();
 	            var index = this.grid.getView().findRowIndex(t);
 	            var record = this.grid.store.getAt(index);
-              if (entidad.getData('decision.estaCongelado')){
-	            	
+	            var isBankia = false;
+			    <sec:authentication var="user" property="principal" />
+				<c:if test="${user.entidad.codigo eq 'BANKIA'}">
+			   		isBankia = true;
+				</c:if>
+              if ((entidad.getData('decision.estaCongelado')) || (isBankia && data.toolbar.tipoExpediente == "RECU")){
 	            	if (!record.data[this.dataIndex] || (record.data[this.dataIndex] && !record.data['incluidoBck']) ){
 	            		record.set(this.dataIndex, !record.data[this.dataIndex]);
 	            		contratosSinActuacion = armarArrayContratosSinActuacion(contratosSinActuacion,record.data["idContrato"])
@@ -161,7 +165,7 @@
 	            	}else{
 	            		Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="dc.asuntos.listado.desmarcarSinActuacion"/>')
 	            	}
-            }
+              }
 	        }
 	    },
 	    renderer : function(v, p, record){
@@ -841,7 +845,6 @@
     var congelado = entidad.getData("decision.estaCongelado");
 
     var esGestorSupervisorDeFase = entidad.getData("esGestorSupervisorActual");
-    
     var isBankia = false;
     <sec:authentication var="user" property="principal" />
 	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
@@ -849,6 +852,7 @@
 	</c:if>
      
     if(isBankia && data.toolbar.tipoExpediente == "RECU"){
+    
         var visible = [
 	      [btnActuacion, esGestorSupervisorDeFase]
 			,[btnNuevo, esGestorSupervisorDeFase]
@@ -880,7 +884,7 @@
 	    ]
     }
 
-     entidad.setVisible(visible); 
+    entidad.setVisible(visible); 
 
     var contratosSinActuacion = entidad.getData("decision.contratosSinActuacion");
 		refrescaCheckBox(contratosSinActuacion);

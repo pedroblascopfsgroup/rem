@@ -11,6 +11,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -45,9 +46,11 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
@@ -65,6 +68,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	@Autowired
 	GenericABMDao genericDao;
+	
+	@Autowired
+	private CoreProjectContext context;
 
 	@Autowired(required = false)
 	private List<EXTBusquedaAsuntoFiltroDinamico> filtrosBusquedaDinamica;
@@ -401,8 +407,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	}
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
-		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.
-				getFiltroContrato() != "") || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
+		return (dto.getCodigoZonas().size() > 0 || !Checks.esNulo(dto.getFiltroContrato()) || (!Checks.esNulo(dto.getJerarquia()) && dto.getJerarquia().length() > 0));
 	}
 	
 	private boolean requierePersona(EXTDtoBusquedaAsunto dto) {
@@ -499,9 +504,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		StringBuilder subhql = new StringBuilder(
 				"select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu ");
 		String and = "";
-		subhql.append(" where gaa.asunto = asu.id and ");
+		subhql.append(" where gaa.asunto = asu.id ");
 		if (!Checks.esNulo(comboTiposGestor)) {
-			subhql.append("gaa.tipoGestor = '" + comboTiposGestor + "'");
+			subhql.append(" and gaa.tipoGestor = '" + comboTiposGestor + "'");
 			and = " and ";
 		}
 		if (!Checks.esNulo(comboGestor)) {
@@ -744,24 +749,24 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and prc.asunto.id = asu.id ");
 			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
 			
-			if(dto.getNombrePersonaProcedimiento()!= ""){
+			if(!Checks.esNulo(dto.getNombrePersonaProcedimiento())){
 				
-				hql.append(" and persAfc.nombre like '%'|| :nomPers ||'%'");
+				hql.append(" and upper(persAfc.nombre) like '%'|| :nomPers ||'%'");
 				params.put("nomPers", dto.getNombrePersonaProcedimiento().toUpperCase());
 			}
 			
-			if(dto.getApellido1PersonaProcedimiento()!= ""){
-				hql.append(" and persAfc.apellido1 like '%'|| :ape1Pers ||'%'");
+			if(!Checks.esNulo(dto.getApellido1PersonaProcedimiento())){
+				hql.append(" and upper(persAfc.apellido1) like '%'|| :ape1Pers ||'%'");
 				params.put("ape1Pers", dto.getApellido1PersonaProcedimiento().toUpperCase());
 			}		
 					
-			if(dto.getApellido2PersonaProcedimiento()!= ""){
-				hql.append(" and persAfc.apellido2 like '%'|| :ape2Pers ||'%'");
+			if(!Checks.esNulo(dto.getApellido2PersonaProcedimiento())){
+				hql.append(" and upper(persAfc.apellido2) like '%'|| :ape2Pers ||'%'");
 				params.put("ape2Pers", dto.getApellido2PersonaProcedimiento().toUpperCase());
 			}
 			
-			if(dto.getDniPersonaProcedimiento()!="" && dto.getDniPersonaProcedimiento()!=null){
-				hql.append(" and persAfc.docId like '%'|| :dni ||'%'");
+			if(!Checks.esNulo(dto.getDniPersonaProcedimiento())){
+				hql.append(" and upper(persAfc.docId) like '%'|| :dni ||'%'");
 				params.put("dni", dto.getDniPersonaProcedimiento().toUpperCase());
 			}
 
@@ -900,7 +905,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 //			params.put("filtroCnt", dto.getFiltroContrato());
 //		}
 		
-		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
+		if (!Checks.esNulo(dto.getFiltroContrato())) {
 			
 			hql.append(" and cnt.nroContrato like '%'|| :nroContrato ||'%'");
 			params.put("nroContrato", dto.getFiltroContrato());
@@ -1165,7 +1170,14 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 					new BigDecimal(dto.getMaxImporteEstimado()));
 
 		}
-
+		//Si se ha introducido algun dato de pestanya Letrados (DespachoExternoExtras)
+		if(requiereDespachoExtras(dto)) {
+			hql.append(" and a.id in ");
+			hql.append("(");
+			hql.append(getIdsAsuntosByDespachoExtras(dto));
+			hql.append(")");
+		}
+		
 		params.put("hql", hql);
 
 		return params;
@@ -1367,5 +1379,189 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
             
             return new String();
         }
+	
+	private boolean requiereDespachoExtras(EXTDtoBusquedaAsunto dto) {
+		return !Checks.esNulo(dto.getTipoDocumento()) || !Checks.esNulo(dto.getDocumentoCif()) || !Checks.esNulo(dto.getFechaAltaDesde()) || 
+				!Checks.esNulo(dto.getFechaAltaHasta()) || (!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias().length > 0) || !Checks.esNulo(dto.getClasificacionPerfil()) || 
+					!Checks.esNulo(dto.getClasificacionPerfil()) || !Checks.esNulo(dto.getCodEstAse()) || !Checks.esNulo(dto.getContratoVigor()) || !Checks.esNulo(dto.getServicioIntegral()) || 
+						!Checks.esNulo(dto.getRelacionBankia()) || !Checks.esNulo(dto.getOficinaContacto()) || !Checks.esNulo(dto.getEntidadContacto()) || 
+							!Checks.esNulo(dto.getEntidadLiquidacion()) || !Checks.esNulo(dto.getOficinaLiquidacion()) || !Checks.esNulo(dto.getDigconLiquidacion()) || !Checks.esNulo(dto.getCuentaLiquidacion()) || 
+								!Checks.esNulo(dto.getEntidadProvisiones()) || !Checks.esNulo(dto.getOficinaProvisiones()) || !Checks.esNulo(dto.getDigconProvisiones()) || !Checks.esNulo(dto.getCuentaProvisiones()) || 
+									!Checks.esNulo(dto.getEntidadEntregas()) || !Checks.esNulo(dto.getOficinaEntregas()) || !Checks.esNulo(dto.getDigconEntregas()) || !Checks.esNulo(dto.getCuentaEntregas()) || 
+										!Checks.esNulo(dto.getCentroRecuperacion()) || !Checks.esNulo(dto.getAsesoria());
+	}
+	
+	private String getIdsAsuntosByDespachoExtras(EXTDtoBusquedaAsunto dto) {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+		Date fecha = null;
+		
+		String  subSelect = "select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu "
+				+ "where asu.auditoria.borrado=0 and gaa.asunto = asu.id and "
+				+ "gaa.tipoGestor = (select tge.id from EXTDDTipoGestor tge where tge.codigo='GEXT' and tge.auditoria.borrado=0) and "
+				+ "gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
+		
+		if(!Checks.esNulo(dto.getTipoDocumento())) {
+			subSelect += "UPPER(dee.tipoDocumento.descripcion) like UPPER('%"+ dto.getTipoDocumento() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDocumentoCif())) {
+			subSelect += "UPPER(dee.documentoCif) like UPPER('%"+ dto.getDocumentoCif() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getFechaAltaDesde())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaDesde());
+				subSelect += "dee.fechaAlta >= to_Date('" + dto.getFechaAltaDesde() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaDesde del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getFechaAltaHasta())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaHasta());
+				subSelect += "dee.fechaAlta <= to_Date('" + dto.getFechaAltaHasta() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaHasta del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
+			subSelect += "dee.clasifPerfil IN ("+ this.getListaMapeoValores(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil()) +") and ";
+		}
+		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
+			subSelect += "dee.clasifConcursos = "+ Integer.parseInt(dto.getClasificacionConcursos()) +" and ";
+		}
+		if(!Checks.esNulo(dto.getCodEstAse())) {
+			subSelect += "dee.codEstAse = '"+ getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()) +"' and ";
+		}
+		if(!Checks.esNulo(dto.getContratoVigor())) {
+			subSelect += "dee.contratoVigor IN ("+ this.getListaMapeoValores(context.getMapaContratoVigor(),dto.getContratoVigor()) +") and ";
+		}
+		if(!Checks.esNulo(dto.getServicioIntegral())) {
+			subSelect += "dee.servicioIntegral = "+ Integer.parseInt(dto.getServicioIntegral()) +" and ";
+		}
+		if(!Checks.esNulo(dto.getRelacionBankia())) {
+			subSelect += "dee.relacionBankia IN ("+ this.getListaMapeoValores(context.getMapaRelacionBankia(),dto.getRelacionBankia()) +") and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaContacto())) {
+			subSelect += "UPPER(dee.oficinaContacto) like UPPER('%"+ dto.getOficinaContacto() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadContacto())) {
+			subSelect += "UPPER(dee.entidadContacto) like UPPER('%"+ dto.getEntidadContacto() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadLiquidacion())) {
+			subSelect += "UPPER(dee.entidadLiquidacion) like UPPER('%"+ dto.getEntidadLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaLiquidacion())) {
+			subSelect += "UPPER(dee.oficinaLiquidacion) like UPPER('%"+ dto.getOficinaLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDigconLiquidacion())) {
+			subSelect += "UPPER(dee.digconLiquidacion) like UPPER('%"+ dto.getDigconLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCuentaLiquidacion())) {
+			subSelect += "UPPER(dee.cuentaLiquidacion) like UPPER('%"+ dto.getCuentaLiquidacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadProvisiones())) {
+			subSelect += "UPPER(dee.entidadProvisiones) like UPPER('%"+ dto.getEntidadProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaProvisiones())) {
+			subSelect += "UPPER(dee.oficinaProvisiones) like UPPER('%"+ dto.getOficinaProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDigconProvisiones())) {
+			subSelect += "UPPER(dee.digconProvisiones) like UPPER('%"+ dto.getDigconProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCuentaProvisiones())) {
+			subSelect += "UPPER(dee.cuentaProvisiones) like UPPER('%"+ dto.getCuentaProvisiones() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getEntidadEntregas())) {
+			subSelect += "UPPER(dee.entidadEntregas) like UPPER('%"+ dto.getEntidadEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getOficinaEntregas())) {
+			subSelect += "UPPER(dee.oficinaEntregas) like UPPER('%"+ dto.getOficinaEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getDigconEntregas())) {
+			subSelect += "UPPER(dee.digconEntregas) like UPPER('%"+ dto.getDigconEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCuentaEntregas())) {
+			subSelect += "UPPER(dee.cuentaEntregas) like UPPER('%"+ dto.getCuentaEntregas() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getCentroRecuperacion())) {
+			subSelect += "UPPER(dee.centroRecuperacion) like UPPER('%"+ dto.getCentroRecuperacion() +"%') and ";
+		}
+		if(!Checks.esNulo(dto.getAsesoria())) {
+			subSelect += "dee.asesoria = "+ Integer.parseInt(dto.getAsesoria()) +" and ";
+		}
+		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
+			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
+		}
+		if(!Checks.esNulo(dto.getImpuesto())) {
+			subSelect += "dee.descripcionIVA = '"+ getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto()) +"' and ";
+		}
+		if(!Checks.esNulo(dto.getFechaAltaSIDesde())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaSIDesde());
+				subSelect += "dee.fechaServicioIntegral >= to_Date('" + dto.getFechaAltaSIDesde() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaSIDesde del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getFechaAltaSIHasta())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaSIHasta());
+				subSelect += "dee.fechaServicioIntegral <= to_Date('" + dto.getFechaAltaSIHasta() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaSIHasta del letrado: ", e);
+			}
+		}
+		
+		//Quito el �ltimo 'and' de la consulta ya que va a sobrar
+		subSelect = subSelect.substring(0, subSelect.length() -4);
+		subSelect += ")";
+		
+		return subSelect;
+	}
+	
+	/**
+	 * Consulta que devuelve despachos que actuen en las provincias filtradas.
+	 * @param provincias
+	 * @return
+	 */
+	private String getProvinciasFromDespachoExtras(String[] provincias) {
+		String subSelect = "select dea.despacho.id from DespachoExtrasAmbito dea where dea.auditoria.borrado=0 and dea.provincia.codigo in (";
+		for(int i=0; i<provincias.length; i++) {
+			subSelect += provincias[i] +", ";
+		}
+		subSelect = subSelect.substring(0, subSelect.length() - 2);
+		subSelect += ")";
+		
+		return subSelect;
+	}
+	
+	/**
+	 * De un mapa de Strings, devuelve la KEY a partir del VALUE.
+	 * @param mapa
+	 * @param valor
+	 * @return
+	 */
+	private String getKeyByValue(Map<String,String> mapa, String valor) {
+		
+		for(Map.Entry<String,String> map : mapa.entrySet()){
+			if( valor.equals(map.getValue()))
+				return map.getKey();
+		}
+		
+		return null;
+	}
+	
+	private String getListaMapeoValores(Map<String,String> mapa, String valores) {
+		String[] array = valores.split(",");
+		String listaMapeada = "";
+		for(int i=0; i< array.length;i++) {
+			listaMapeada += Integer.parseInt(getKeyByValue(mapa,array[i]));
+			if(i < array.length - 1) {
+				listaMapeada += ",";
+			}
+		}
+		
+		return listaMapeada;
+	}
         
 }

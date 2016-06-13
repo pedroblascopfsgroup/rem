@@ -110,7 +110,7 @@
 				    		var campo = app.creaText(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo , '', {id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo, allowBlank:!camposDynamics.camposTerminoAcuerdo[i].obligatorio});
 				    		break;
 				    	case 'fecha':
-				    		var campo = new Ext.form.DateField({
+				    		var campo = new Ext.ux.form.XDateField({
 											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,name: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,value : ''
@@ -192,16 +192,72 @@
 				
 	       		if("${operacionesPorTipo}"!=null && "${operacionesPorTipo}"!=''){
 		       		<c:forEach var="operacion" items="${operacionesPorTipo}">
-				    	Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+		       			if('${operacion.campo.tipoCampo}' == 'fecha'){
+		       				var valorfecha = '${operacion.valor}';
+		       				valorfecha = valorfecha.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");
+				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue(valorfecha);
+				    	}else{
+				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+				    	}
 				    	Ext.getCmp('${operacion.campo.nombreCampo}').setDisabled(false);
 					</c:forEach>
 		       	}
+		       	
+				if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+					var lblCargasPosterioresAnteriores = new Ext.form.Label({id:'lblCargasPosterioresAnteriores' ,text: '<s:message code="acuerdos.terminos.cargasPosteriores" text="**Debe introducir la informaci\u00F3n de cargas en la ficha del bien, pesta\u00F1a Cargas" />' ,hidden: true, style: labelStyle});
+					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.add(lblCargasPosterioresAnteriores);
+					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.doLayout();
+					
+					ocultarMostrarCamposCargas();
+					Ext.getCmp('cargasPosterioresAnteriores').on ('select', function(record, index ) {
+						ocultarMostrarCamposCargas();
+					});
+				}
 				
+				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+					var lblBienesSolvencia = new Ext.form.Label({id:'lblBienesSolvencia' ,text: '<s:message code="acuerdos.terminos.otrosBienesSolvencia" text="**Debe introducir la informaci\u00F3n de bienes y solvencias en la ficha del cliente, pesta\u00F1a Solvencia" />' ,hidden: true, style: labelStyle});
+					Ext.getCmp('otrosBienesSolvencia').ownerCt.add(lblBienesSolvencia);
+					Ext.getCmp('otrosBienesSolvencia').ownerCt.doLayout();
+				
+					ocultarMostrarCamposSolvencia();
+					Ext.getCmp('otrosBienesSolvencia').on ('select', function(record, index ) {
+						ocultarMostrarCamposSolvencia();
+					});
+				}		
+				
+				if (Ext.getCmp('datosContacto1')!=undefined) {
+					datosContacto1.maxLength = 9;
+				}
+				if (Ext.getCmp('datosContacto2')!=undefined) {
+					datosContacto2.maxLength = 9;
+				}
 			}
 			,error: function(){
 			}       				
 		});
-	};				
+	};
+	
+	var ocultarMostrarCamposCargas = function() {
+		if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+			//Mostramos la label de aviso solo si su valor = 1
+			if (Ext.getCmp('cargasPosterioresAnteriores').value != 1) {
+				if(Ext.getCmp('lblCargasPosterioresAnteriores')!=undefined) Ext.getCmp('lblCargasPosterioresAnteriores').setVisible(false);
+			} else {
+				if(Ext.getCmp('lblCargasPosterioresAnteriores')!=undefined) Ext.getCmp('lblCargasPosterioresAnteriores').setVisible(true);			
+			}
+		}
+	}
+	
+	var ocultarMostrarCamposSolvencia = function() {
+		if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+			//Mostramos el resto de campos solo si su valor = 1
+			if (Ext.getCmp('otrosBienesSolvencia').value != 1) {
+				if(Ext.getCmp('lblBienesSolvencia')!=undefined) Ext.getCmp('lblBienesSolvencia').setVisible(false);
+			} else {
+				if(Ext.getCmp('lblBienesSolvencia')!=undefined) Ext.getCmp('lblBienesSolvencia').setVisible(true);
+			}
+		}	
+	}
 	
 	var optionsSubtiposAcuerdosStore = page.getStore({
 	       flow: 'mejacuerdo/getListSubTiposAcuerdosData'
@@ -363,6 +419,39 @@
 					
 					return false;
        			}
+       			
+       			<%--
+       			if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
+       				if (Ext.getCmp('cargasPosterioresAnteriores').value==1) {
+       					//Poner aquí la comprobación si tiene Cargas en la pestaña Cargas del Bien
+       					if (valoracionCargas.value=='' || descripcionCargas.value=='') {
+       						Ext.Msg.show({
+       							title:'Aviso',
+       							msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.camposCargas.obligatorios" text="**Debe rellenar la información para la Carga" />',
+       							buttons: Ext.Msg.OK
+       						});
+       						return false;
+       					}
+       				}
+       			}
+       			 --%>
+       			
+       			<%--
+				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
+					if (Ext.getCmp('otrosBienesSolvencia').value==1) {
+						//Poner aquí la comprobación si tiene Otros Bienes/Solvencia en la pestaña correspondiente del cliente
+						if (valoracionBienesSolvencia.value=='' || descripcionBienesSolvencia.value=='') {
+      						Ext.Msg.show({
+       							title:'Aviso',
+       							msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.camposSolvencia.obligatorios" text="**Debe rellenar la información para Otros Bienes/Solvencia" />',
+       							buttons: Ext.Msg.OK
+       						});
+       						return false;						
+						}
+					}
+				}
+				--%>   			
+       			
        			<%--if(dateSolucionPrevista!=null &&  dateSolucionPrevista > fechaPaseMora && ambito!='asunto' ) {
        				var date = new Date(parseFloat(fechaPaseMora));
        				date = Ext.util.Format.date(date, "d/m/y");

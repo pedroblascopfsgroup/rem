@@ -11,20 +11,11 @@
 
 (function(page,entidad){
 
-	var labelStyle2='font-weight:bolder;width:100px';
-	
-	function label(id,text){
-		return app.creaLabel(text,"",  {id:'sancionar-'+id, labelStyle:labelStyle2});
-	}
-
-	var fechaElevacionSareb	= label('fechaElevacionSareb',	'<s:message code="expedientes.consulta.tabsancion.fecha.elevacion" text="**F. Elevación Sareb"/>',cfg);
-	
-
 	var fechaElevacionSareb = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**F. Elevación Sareb" />'
 		,style:'margin:0px'
-	});	
+	});
 	
 	var fechaSancionSareb = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
@@ -79,21 +70,6 @@
 		,readOnly : true
 	});
 	
-	btnModificar = new Ext.Button({
-			text: '<s:message code="expedientes.consulta.tabsancion.btnModificar" text="**Modificar" />'
-			,border:false
-			,hidden : true
-			,iconCls : 'icon_edit'
-			,cls: 'x-btn-text-icon'
-			,handler:function(){
-				observaciones.setReadOnly( false );
-				decionSancion.setReadOnly( false );
-				btnCancelar.setVisible(true);
-				btnGuardar.setVisible(true);
-				btnModificar.setVisible(false);
-	   	    }
-	});
-	
 	btnCancelar = new Ext.Button({
 			text: '<s:message code="expedientes.consulta.tabsancion.btnCancelar" text="**Cancelar" />'
 			,border:false
@@ -101,15 +77,7 @@
 			,cls: 'x-btn-text-icon'
 			,hidden : true 
 			,style:'margin-left:10px'
-			,handler:function(){
-				observaciones.setReadOnly(true);
-				decionSancion.setReadOnly(true);
-				btnCancelar.setVisible(false);
-				btnGuardar.setVisible(false);
-				btnModificar.setVisible(true);
-	   	    }
 	});
-	
 	
 	btnGuardar = new Ext.Button({
 			text: '<s:message code="expedientes.consulta.tabsancion.btnGuardar" text="**Guardar" />'

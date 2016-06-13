@@ -83,7 +83,6 @@
 
 	<decision name="H026_ConfirmarNotifiDemandaDecision" expression="#{H026_ConfirmarNotifiDemandaDecision}">
 		<transition to="H026_BPMtramiteNotificacion" name="NO"></transition>
-		<transition to="H026_BPMtramiteNotificacionPersonal" name="PER"></transition>
 		<transition to="H026_RegistrarJuicio" name="SI"></transition>
 	</decision>
 
@@ -103,24 +102,6 @@
 			</action>
 		</event>
 		<transition to="H026_RegistrarJuicio" name="tramiteNotificacionV4"></transition>
-	</state>
-
-	<state name="H026_BPMtramiteNotificacionPersonal">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
-			</action>
-		</event>
-		<transition to="H026_RegistrarJuicio" name="hcj_tramiteNotificacionPersonal"></transition>
 	</state>
 
 	<state name="H026_RegistrarJuicio">

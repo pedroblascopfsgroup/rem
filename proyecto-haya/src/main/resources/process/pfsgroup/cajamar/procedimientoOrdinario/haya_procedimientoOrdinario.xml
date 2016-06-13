@@ -101,26 +101,6 @@
 		<transition to="H024_ConfirmarOposicion" name="tramiteNotificacionV4"></transition>
 	</state>
 
-	<state name="H024_BPMTramiteNotificacionPersonal">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="H024_ConfirmarOposicion" name="hcj_tramiteNotificacionPersonal"></transition>
-	</state>
-
 	<state name="H024_ConfirmarOposicion">
 		<event type="node-enter">
 			<action name="miTarea"
@@ -242,7 +222,6 @@
 
 	<decision name="H024_ConfirmarNotDemandaDecision" expression="#{H024_ConfirmarNotDemandaDecision}">
 		<transition to="H024_BPMTramiteNotificacion" name="NO"></transition>
-		<transition to="H024_BPMTramiteNotificacionPersonal" name="PER"></transition>
 		<transition to="H024_ConfirmarOposicion" name="SI"></transition>
 	</decision>
 

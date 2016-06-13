@@ -88,7 +88,6 @@
 	<decision name="H018_ConfirmarNotificacionDecision" expression="#{H018_ConfirmarNotificacionDecision}">
 		<transition to="H018_RegistrarOposicion" name="SI"></transition>
 		<transition to="H018_BPMTramiteNotificacion" name="NO"></transition>
-		<transition to="H018_BPMTramiteNotificacionPersonal" name="PER"></transition>
 	</decision>
 
 	<state name="H018_BPMTramiteNotificacion">
@@ -107,24 +106,6 @@
 			</action>
 		</event>
 		<transition to="H018_RegistrarOposicion" name="tramiteNotificacionV4"></transition>
-	</state>
-
-	<state name="H018_BPMTramiteNotificacionPersonal">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
-			</action>
-		</event>
-		<transition to="H018_RegistrarOposicion" name="hcj_tramiteNotificacionPersonal"></transition>
 	</state>
 
 	<state name="H018_RegistrarOposicion">

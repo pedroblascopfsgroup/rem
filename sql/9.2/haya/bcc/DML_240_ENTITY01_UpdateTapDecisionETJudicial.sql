@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=PRODUCTO-1975
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Actualiza el procedimiento Verbal (CENTROPROCURA)
+--## Finalidad: BPM - Actualiza el procedimiento ETJudicial (CENTROPROCURA)
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial

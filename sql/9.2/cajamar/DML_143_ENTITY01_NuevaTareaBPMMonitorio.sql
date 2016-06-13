@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160615
+--## FECHA_CREACION=20160616
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1975
@@ -46,7 +46,7 @@ DECLARE
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
         T_TIPO_PLAZAS(null,null,'H022_BPMAnticipoFondos','300*24*60*60*1000L','0','0','PRODUCTO-1975')
-       ,T_TIPO_PLAZAS(null,null,'H022_BPMTramiteNotificacionPersonal','300*24*60*60*1000L','0','0','PRODUCTO-1975')
+       
     ); 
     V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
@@ -56,7 +56,6 @@ DECLARE
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     
     T_TIPO_TFI('H022_BPMAnticipoFondos','0','label','titulo','<div style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Se inicia el trámite anticipo de fondos y pago de suplidos.</p></div>',null,null,null,null,'0','PRODUCTO-1975')
-   ,T_TIPO_TFI('H022_BPMTramiteNotificacionPersonal','0','label','titulo','<div style="FONT-SIZE: 8pt; MARGIN-BOTTOM: 30px; FONT-FAMILY: Arial" align="justify"><p style="font-family: Arial; text-align: justify; margin-bottom: 10px; ">Se inicia el trámite notificación personal - HCJ.</p></div>',null,null,null,null,'0','PRODUCTO-1975')
        
     ); 
     V_TMP_TIPO_TFI T_TIPO_TFI;

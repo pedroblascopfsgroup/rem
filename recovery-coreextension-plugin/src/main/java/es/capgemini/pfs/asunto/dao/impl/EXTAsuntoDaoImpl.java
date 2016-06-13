@@ -1492,8 +1492,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
 			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
-<<<<<<< HEAD
-=======
 		if(!Checks.esNulo(dto.getImpuesto())) {
 			subSelect += "dee.descripcionIVA = '"+ getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto()) +"' and ";
 		}
@@ -1514,7 +1512,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 		}
 		
->>>>>>> origin/version-9.2.4
 		//Quito el �ltimo 'and' de la consulta ya que va a sobrar
 		subSelect = subSelect.substring(0, subSelect.length() -4);
 		subSelect += ")";

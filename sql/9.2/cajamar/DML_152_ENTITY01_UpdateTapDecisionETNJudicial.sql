@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160613
+--## FECHA_CREACION=20160614
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1975
@@ -36,7 +36,6 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP( 
        T_TIPO_TAP('H020','H020_InterposicionDemandaMasBienes','valores[''H020_InterposicionDemandaMasBienes''][''provisionFondos''] == DDSiNo.SI ? (existeTipoGestor("CENTROPROCURA") ? ''conAnticipo'' : ''conProvision'') : ''sinProvision''','PRODUCTO-1975')
-      ,T_TIPO_TAP('H020','H020_ConfirmarNotifiReqPago','valores[''H020_ConfirmarNotifiReqPago''][''comboConfirmacionReqPago''] == DDPositivoNegativo.POSITIVO ? ''SI'' : (existeTipoGestor("CENTROPROCURA") ? ''PER'' : ''NO'')','PRODUCTO-1975')
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
     

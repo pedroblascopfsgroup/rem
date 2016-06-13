@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_ejecucionTituloJudicial" width="1206" height="901">
+<root-container name="hcj_ejecucionTituloJudicial" width="1206" height="907">
   <node name="Inicio" x="7" y="-23" width="132" height="36">
     <edge>
       <label x="-84" y="-9"/>

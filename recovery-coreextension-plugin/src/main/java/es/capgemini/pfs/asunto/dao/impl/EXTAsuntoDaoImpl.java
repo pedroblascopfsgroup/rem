@@ -407,8 +407,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	}
 
 	private boolean requiereContrato(DtoBusquedaAsunto dto) {
-		return (dto.getCodigoZonas().size() > 0 || (dto.getFiltroContrato() != null && dto.
-				getFiltroContrato() != "") || (dto.getJerarquia() != null && dto.getJerarquia().length() > 0));
+		return (dto.getCodigoZonas().size() > 0 || !Checks.esNulo(dto.getFiltroContrato()) || (!Checks.esNulo(dto.getJerarquia()) && dto.getJerarquia().length() > 0));
 	}
 	
 	private boolean requierePersona(EXTDtoBusquedaAsunto dto) {
@@ -750,24 +749,24 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(" and prc.asunto.id = asu.id ");
 			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
 			
-			if(dto.getNombrePersonaProcedimiento()!= ""){
+			if(!Checks.esNulo(dto.getNombrePersonaProcedimiento())){
 				
-				hql.append(" and persAfc.nombre like '%'|| :nomPers ||'%'");
+				hql.append(" and upper(persAfc.nombre) like '%'|| :nomPers ||'%'");
 				params.put("nomPers", dto.getNombrePersonaProcedimiento().toUpperCase());
 			}
 			
-			if(dto.getApellido1PersonaProcedimiento()!= ""){
-				hql.append(" and persAfc.apellido1 like '%'|| :ape1Pers ||'%'");
+			if(!Checks.esNulo(dto.getApellido1PersonaProcedimiento())){
+				hql.append(" and upper(persAfc.apellido1) like '%'|| :ape1Pers ||'%'");
 				params.put("ape1Pers", dto.getApellido1PersonaProcedimiento().toUpperCase());
 			}		
 					
-			if(dto.getApellido2PersonaProcedimiento()!= ""){
-				hql.append(" and persAfc.apellido2 like '%'|| :ape2Pers ||'%'");
+			if(!Checks.esNulo(dto.getApellido2PersonaProcedimiento())){
+				hql.append(" and upper(persAfc.apellido2) like '%'|| :ape2Pers ||'%'");
 				params.put("ape2Pers", dto.getApellido2PersonaProcedimiento().toUpperCase());
 			}
 			
-			if(dto.getDniPersonaProcedimiento()!="" && dto.getDniPersonaProcedimiento()!=null){
-				hql.append(" and persAfc.docId like '%'|| :dni ||'%'");
+			if(!Checks.esNulo(dto.getDniPersonaProcedimiento())){
+				hql.append(" and upper(persAfc.docId) like '%'|| :dni ||'%'");
 				params.put("dni", dto.getDniPersonaProcedimiento().toUpperCase());
 			}
 
@@ -906,7 +905,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 //			params.put("filtroCnt", dto.getFiltroContrato());
 //		}
 		
-		if (dto.getFiltroContrato() != null && dto.getFiltroContrato()!="") {
+		if (!Checks.esNulo(dto.getFiltroContrato())) {
 			
 			hql.append(" and cnt.nroContrato like '%'|| :nroContrato ||'%'");
 			params.put("nroContrato", dto.getFiltroContrato());
@@ -1399,7 +1398,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		String  subSelect = "select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu "
 				+ "where asu.auditoria.borrado=0 and gaa.asunto = asu.id and "
-				+ " gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
+				+ "gaa.tipoGestor = (select tge.id from EXTDDTipoGestor tge where tge.codigo='GEXT' and tge.auditoria.borrado=0) and "
+				+ "gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
 		
 		if(!Checks.esNulo(dto.getTipoDocumento())) {
 			subSelect += "UPPER(dee.tipoDocumento.descripcion) like UPPER('%"+ dto.getTipoDocumento() +"%') and ";
@@ -1424,7 +1424,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 		}
 		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
-			subSelect += "dee.clasifPerfil = "+ Integer.parseInt(getKeyByValue(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil())) +" and ";
+			subSelect += "dee.clasifPerfil IN ("+ this.getListaMapeoValores(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
 			subSelect += "dee.clasifConcursos = "+ Integer.parseInt(dto.getClasificacionConcursos()) +" and ";
@@ -1433,13 +1433,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			subSelect += "dee.codEstAse = '"+ getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()) +"' and ";
 		}
 		if(!Checks.esNulo(dto.getContratoVigor())) {
-			subSelect += "dee.contratoVigor = "+ Integer.parseInt(getKeyByValue(context.getMapaContratoVigor(),dto.getContratoVigor())) +" and ";
+			subSelect += "dee.contratoVigor IN ("+ this.getListaMapeoValores(context.getMapaContratoVigor(),dto.getContratoVigor()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			subSelect += "dee.servicioIntegral = "+ Integer.parseInt(dto.getServicioIntegral()) +" and ";
 		}
 		if(!Checks.esNulo(dto.getRelacionBankia())) {
-			subSelect += "dee.relacionBankia = "+ Integer.parseInt(getKeyByValue(context.getMapaContratoVigor(),dto.getRelacionBankia())) +" and ";
+			subSelect += "dee.relacionBankia IN ("+ this.getListaMapeoValores(context.getMapaRelacionBankia(),dto.getRelacionBankia()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getOficinaContacto())) {
 			subSelect += "UPPER(dee.oficinaContacto) like UPPER('%"+ dto.getOficinaContacto() +"%') and ";
@@ -1492,7 +1492,27 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
 			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
-		//Quito el último 'and' de la consulta ya que va a sobrar
+		if(!Checks.esNulo(dto.getImpuesto())) {
+			subSelect += "dee.descripcionIVA = '"+ getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto()) +"' and ";
+		}
+		if(!Checks.esNulo(dto.getFechaAltaSIDesde())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaSIDesde());
+				subSelect += "dee.fechaServicioIntegral >= to_Date('" + dto.getFechaAltaSIDesde() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaSIDesde del letrado: ", e);
+			}
+		}
+		if(!Checks.esNulo(dto.getFechaAltaSIHasta())) {
+			try {
+				fecha = formatter.parse(dto.getFechaAltaSIHasta());
+				subSelect += "dee.fechaServicioIntegral <= to_Date('" + dto.getFechaAltaSIHasta() + "','yyyy/MM/dd') and ";
+			} catch (ParseException e) {
+				logger.error("Error parseando la fechaAltaSIHasta del letrado: ", e);
+			}
+		}
+		
+		//Quito el ï¿½ltimo 'and' de la consulta ya que va a sobrar
 		subSelect = subSelect.substring(0, subSelect.length() -4);
 		subSelect += ")";
 		
@@ -1529,6 +1549,19 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		
 		return null;
+	}
+	
+	private String getListaMapeoValores(Map<String,String> mapa, String valores) {
+		String[] array = valores.split(",");
+		String listaMapeada = "";
+		for(int i=0; i< array.length;i++) {
+			listaMapeada += Integer.parseInt(getKeyByValue(mapa,array[i]));
+			if(i < array.length - 1) {
+				listaMapeada += ",";
+			}
+		}
+		
+		return listaMapeada;
 	}
         
 }

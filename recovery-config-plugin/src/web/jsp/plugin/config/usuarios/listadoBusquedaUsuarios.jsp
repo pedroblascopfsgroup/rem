@@ -10,93 +10,9 @@
 
 <fwk:page>
 	
-	<pfs:textfield name="filtroUsername"
-			labelKey="plugin.config.usuarios.field.username" label="**Usuario"
-			value="" searchOnEnter="true" />
-	<pfs:textfield name="filtroNombre"
-			labelKey="plugin.config.usuarios.field.nombre" label="**Nombre"
-			value="" searchOnEnter="true" />
-	<pfs:textfield name="filtroApellido1"
-			labelKey="plugin.config.usuarios.field.apellido1"
-			label="**Primer Apellido" value="" searchOnEnter="true" />
-	<pfs:textfield name="filtroApellido2"
-			labelKey="plugin.config.usuarios.field.apellido2"
-			label="**Segundo Apellido" value="" searchOnEnter="true" />
-			
-	<pfsforms:ddCombo name="filtroExterno"
-		labelKey="plugin.config.usuarios.field.usuarioExterno"
-		label="**Usuario Externo" value="" dd="${ddSiNo}" width="50"  propertyCodigo="codigo"/>	
-		
-	<pfs:dblselect name="filtroDespacho"
-			labelKey="plugin.config.usuarios.busqueda.control.filtroDespacho" label="**Despacho"
-			dd="${despachos}" height="120" />
-			
-	filtroDespacho.setDisabled(true);
-	
-	<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
-	filtroDespacho.setDisabled(false);			
-	</sec:authorize>
-			
-	filtroExterno.on('select',function(){
-		if (filtroExterno.getValue() == '01'){
-			filtroDespacho.setDisabled(false);
-		}else{
-			filtroDespacho.setDisabled(true);
-			<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
-			filtroDespacho.setDisabled(false);			
-			</sec:authorize>
-		}
-	});	
-	
-	
-		
-	<pfs:dblselect name="filtroPerfil"
-			labelKey="plugin.config.usuarios.busqueda.control.filtroPerfil" label="**Perfil"
-			dd="${perfiles}" width="160" height="100"/>
-			
-	<pfs:ddCombo name="comboJerarquia" 
-		labelKey="plugin.config.usuarios.busqueda.control.comboJerarquia" label="**Jerarquia"
-		value="" dd="${niveles}" />
-	
-				
-	 var zonasRecord = Ext.data.Record.create([
-		 {name:'codigo'}
-		,{name:'descripcion'}
-	]);
-    
-    var optionsZonasStore = page.getStore({
-	       flow: 'plugin/config/usuarios/ADMbuscarZonas'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'zonas'
-	    }, zonasRecord)
-	       
-	});
-	
-	<pfs:dblselect name="filtroCentro"
-			labelKey="plugin.config.usuarios.busqueda.control.filtroCentro" label="**Centro"
-			dd="${zonas}" width="160" height="120" store="optionsZonasStore"/>
-	
-	<c:if test="${appProperties.runInSelenium==false}">
-		// Si estamos corriendo tests selenium esta función debe ser global para que
-		// pueda ser llamada desde el JUnit 
-		var
-	</c:if> recargarComboZonas = function(){
-		if (comboJerarquia.getValue()!=null && comboJerarquia.getValue()!=''){
-			optionsZonasStore.webflow({id:comboJerarquia.getValue()});
-		}else{
-			optionsZonasStore.webflow({id:0});
-		}
-	};
-	
-    recargarComboZonas();
-    
-    var limpiarYRecargar = function(){
-		//app.resetCampos([comboZonas]);
-		recargarComboZonas();
-	}
-	
-	comboJerarquia.on('select',limpiarYRecargar);
- 
+	<%@ include file="listadoBusquedaUsuariosDatosGenerales.jsp" %>
+	<%@ include file="listadoBusquedaUsuariosGestores.jsp" %>
+	<%@ include file="listadoBusquedaUsuariosJerarquia.jsp" %>
 	
 	<pfs:defineRecordType name="Usuario">
 			<pfs:defineTextColumn name="username" />
@@ -136,8 +52,9 @@
 	<pfs:defineParameters name="getParametros" paramId="id" 
 		username="filtroUsername" nombre="filtroNombre" 
 		apellido1="filtroApellido1" apellido2="filtroApellido2" 
-		usuarioExternoSINO="filtroExterno" despachosExternos="filtroDespacho"
-		perfiles="filtroPerfil" centros="filtroCentro" />
+		usuarioExternoSINO="filtroExterno" despachosExternos="comboDespachos"
+		perfiles="filtroPerfil" comboGestor="comboGestor" 
+		centros="listadoUsuariosId" />
 	
 	<pfs:buttonremove name="btBorrar" 
 		novalueMsg="**Debe seleccionar un valor de la tabla" 
@@ -149,7 +66,19 @@
 	
 	var buttonsR = <app:includeArray files="${buttonsRight}" />;
 	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
-			
+	
+	var filtroTabPanel=new Ext.TabPanel({
+		items:[filtrosTabDatosGenerales, filtrosTabGestores, filtrosTabJerarquia]
+		,id:'idTabFiltrosProcedimientos'
+		,layoutOnTabChange:true 
+		,autoScroll:true
+		,autoHeight:true
+		,autoWidth : true
+		,border : false	
+		,activeItem:1
+	});
+	
+	
 	<pfs:searchPage searchPanelTitle="**Búsqueda Usuarios"  searchPanelTitleKey="plugin.config.usuarios.busqueda.control.searchpanel.title" 
 			columnModel="usuariosCM" columns="2"
 			gridPanelTitleKey="plugin.config.usuarios.busqueda.control.grid.title" gridPanelTitle="**Usuarios" 
@@ -160,25 +89,56 @@
 			dataFlow="plugin/config/usuarios/ADMlistadoUsuariosData"
 			resultRootVar="usuarios" resultTotalVar="total"
 			recordType="Usuario" 
-			parameters="getParametros" 
+			parameters="getParametros"
 			newTabOnUpdate="true"
 			iconCls="icon_usuario"
 			gridName="usuariosGrid"
 			buttonDelete="btBorrar ">
 			<pfs:items
-			items="filtroUsername, filtroNombre,filtroApellido1,filtroApellido2,filtroExterno,filtroDespacho"
+			items="filtroTabPanel"
 			/>
-			<pfs:items
-			items="filtroPerfil,comboJerarquia,filtroCentro" 
-			/>
-			
 	</pfs:searchPage>
+	
+	var listadoUsuariosId = new Ext.form.Field({name:'listUsers',value:''});
+	
+	btnBuscar.on('click',function() {
+		listadoUsuariosId.setValue('');
+		for(var i=0 ; i < listadoCodigoZonas.length ; i++) {
+			if(i < listadoCodigoZonas.length-1)
+				listadoUsuariosId.setValue(listadoUsuariosId.getValue() + listadoCodigoZonas[i] + ',');
+			else
+				listadoUsuariosId.setValue(listadoUsuariosId.getValue() + listadoCodigoZonas[i]);
+		}
+		
+	});
+	
+	btnReset.on('click',function() {
+		
+		comboDespachos.reset();
+		optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': true}); 
+		comboGestor.reset();
+		comboTiposGestor.setValue('');
+		comboGestor.setValue('');
+		optionsGestoresStore.removeAll();
+		comboDespachos.setDisabled(true);
+		filtroPerfil.setValue('');
+		filtroPerfil.reset();
+		filtroApellido1.setValue('');
+		
+		comboJerarquia.setValue('');
+		optionsZonasStore.webflow({id:0});
+		zonasStore.removeAll();
+		listadoUsuariosId.setValue('');
+		listadoCodigoZonas=[];
+	});
+	
 	filtroForm.getTopToolbar().add(buttonsL,'->', buttonsR);
 	filtroForm.getTopToolbar().setHeight(filtroForm.getTopToolbar().getHeight());
 	
 	btnNuevo.setVisible(false);
     btBorrar.setVisible(false);
     
+    filtroTabPanel.setActiveTab(0);
+  
 </fwk:page>
-
 

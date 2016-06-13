@@ -255,26 +255,35 @@ public class ADMUsuarioManager {
 	 * 
 	 * @return
 	 */
+	
 	@Transactional(readOnly = false)
 	@BusinessOperation("ADMUsuarioManager.guardaGrupo")
-	public void guardaGrupo(ADMDiccionarioGrupoUsuario dto) {
-		boolean comprovacion = false;
-		if(!Checks.esNulo(dto.getIdusuario()) && !Checks.esNulo(dto.getGrupo())){
-			Usuario usu = getUsuario(dto.getIdusuario());
-			List<Long> idsGrupos = proxyFactory.proxy(EXTGrupoUsuariosApi.class).buscaIdsGrupos(usu);
-			Iterator<Long> it = idsGrupos.iterator();
-			while (it.hasNext()) {
-				Long id = (Long) it.next();
-				if(id.equals(dto.getGrupo())){
-					comprovacion = true;
-					break;
+	public void guardaGrupo(long idusuario,Collection<Long> grupo) {
+		
+		Usuario usu = getUsuario(idusuario);
+		List<Long> idsGrupos = proxyFactory.proxy(EXTGrupoUsuariosApi.class).buscaIdsGrupos(usu);
+		boolean comprobacion = false;
+
+		Iterator<Long> it = grupo.iterator();
+		while (it.hasNext()) {
+			Long idgrupo = (Long) it.next();
+			comprobacion=false;
+			if(!Checks.esNulo(idusuario) && !Checks.esNulo(grupo)){
+				
+				Iterator<Long> it2 = idsGrupos.iterator();
+				while (it2.hasNext()) {
+					Long id = (Long) it2.next();
+					if(id.equals(idgrupo)){
+						comprobacion = true;
+						break;
+					}
 				}
-			}
-			if(!comprovacion){
-				EXTGrupoUsuarios grupoUsuario = new EXTGrupoUsuarios();
-				grupoUsuario.setGrupo(getUsuario(dto.getGrupo()));
-				grupoUsuario.setUsuario(getUsuario(dto.getIdusuario()));
-				genericDao.save(EXTGrupoUsuarios.class, grupoUsuario);
+				if(!comprobacion){
+					EXTGrupoUsuarios grupoUsuario = new EXTGrupoUsuarios();
+					grupoUsuario.setGrupo(getUsuario(idgrupo));
+					grupoUsuario.setUsuario(getUsuario(idusuario));
+					genericDao.save(EXTGrupoUsuarios.class, grupoUsuario);
+				}
 			}
 		}
 	}

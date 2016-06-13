@@ -93,6 +93,8 @@ public class ADMDtoDespachoExterno extends WebDto {
 	private String centroRecuperacion;
 	
 	private String asesoria;
+	
+	private String impuesto;
     
     public Long getId() {
 		return id;
@@ -288,6 +290,7 @@ public class ADMDtoDespachoExterno extends WebDto {
 	}
 
 	public void setFechaServicioIntegral(String fechaServicioIntegral) {
+		fechaServicioIntegral = fechaServicioIntegral.replace("-", "/");
 		this.fechaServicioIntegral = fechaServicioIntegral;
 	}
 
@@ -430,6 +433,14 @@ public class ADMDtoDespachoExterno extends WebDto {
 		if(asesoria.equals("02") || asesoria.equals("No") ) {
 			this.asesoria = "false";
 		}
+	}
+
+	public String getImpuesto() {
+		return impuesto;
+	}
+
+	public void setImpuesto(String impuesto) {
+		this.impuesto = impuesto;
 	}
 
 }

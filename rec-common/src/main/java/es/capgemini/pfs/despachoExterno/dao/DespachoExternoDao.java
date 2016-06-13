@@ -72,6 +72,7 @@ public interface DespachoExternoDao extends AbstractDao<DespachoExterno, Long> {
      */
     List<GestorDespacho> buscaDespachosPorUsuario(Long idUsuario);
     
+
     
     /**
      * Devuelve los despachos de un tipo
@@ -79,4 +80,12 @@ public interface DespachoExternoDao extends AbstractDao<DespachoExterno, Long> {
      * @return
      */
     Page getDespachosExternosByTipo(String tipo,String query);
+
+    /**
+     * Devuelve los despapchos asociados al usuario
+     * @param idUsuario
+     * @return
+     */
+    List<DespachoExterno> getDespachosAsociadosAlUsuario(Long idUsuario);
+
 }

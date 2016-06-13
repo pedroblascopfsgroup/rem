@@ -67,8 +67,22 @@
 	    }, zonasRecord)
 	       
 	});
+	debugger;
 	
-	optionsZonasStore.setBaseParam('idJerarquia', 10);
+	Ext.Ajax.request({
+			url : page.resolveUrl('coreextension/getCodigoNivelPorDescripcion'), 
+			params : {descripcion: 'OFICINA'} ,
+			method: 'POST',
+			success: function ( result, request ) {
+				var r = Ext.util.JSON.decode(result.responseText);
+				optionsZonasStore.setBaseParam('idJerarquia', r.codigo);
+				debugger;
+				
+			}
+	});
+	
+	
+    
     
     //Combo de zonas
     var comboZonas = new Ext.form.ComboBox({

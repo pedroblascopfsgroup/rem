@@ -4,8 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import com.ibatis.sqlmap.engine.mapping.sql.dynamic.elements.IsEmptyTagHandler;
+
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -26,9 +28,10 @@ import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
+import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
@@ -47,11 +50,13 @@ import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.dao.coreextensionManager;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
+
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
 @Controller
@@ -81,10 +86,19 @@ public class coreextensionController {
 	private GenericABMDao genericDao;
 	
 	@Autowired
+	private	MEJAcuerdoManager mejAcuerdoManager;
+	
+	@Autowired
+    private Executor executor;
+
+    @Autowired
 	private EXTDDTipoGestorApi tipoGestorApi;
 
 	@Autowired
-    private Executor executor;
+	private coreextensionApi coreextensionApi;
+    
+    @Autowired
+    private GestorAdicionalAsuntoApi gestorAdicionalApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -139,7 +153,8 @@ public class coreextensionController {
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
 			@RequestParam(value="adicional", required=false) Boolean adicional,
 			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional,
-			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados){
+			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados,
+			@RequestParam(value="idAsunto", required=false) Long idAsunto){
 		
 		List<DespachoExterno> listadoDespachos = null;
 		
@@ -158,9 +173,18 @@ public class coreextensionController {
 		//////
 		
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
+		//PRODUCTO-1969 Además, si el asunto NO tiene CENTROPROCURA asignado, debemos mostrar TODOS los despachos
+		List<Usuario> usu;
+		String codigoGestor=null;
+		EXTDDTipoGestor tipoGestorCentroProcura=tipoGestorApi.getByCod("CENTROPROCURA");
+		if(!Checks.esNulo(tipoGestorCentroProcura)){
+			codigoGestor = tipoGestorCentroProcura.getCodigo();
+		}
+		usu = gestorAdicionalApi.findGestoresByAsunto(idAsunto,codigoGestor);
+		
 		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
-		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)){
+		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor) && !Checks.estaVacio(usu)){
 			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
 			while(iter.hasNext()){
 				DespachoExterno elemento = iter.next();
@@ -629,6 +653,22 @@ public class coreextensionController {
 		
 		model.put("tiposAcuerdo", tiposAcuerdo);
 		return JSON_LISTADO_TIPOS_ACUERDO;
+	}
+
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios 
+	 * @param model
+	 * @param UsuarioDto 
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListAllUsersPaginated(ModelMap model, UsuarioDto usuarioDto){
+		
+		Page page = coreextensionApi.getListAllUsersPaginated(usuarioDto);
+		model.put("pagina", page);
+		
+		return TIPO_USUARIO_PAGINATED_JSON;
 	}
 	
 	@SuppressWarnings("unchecked")

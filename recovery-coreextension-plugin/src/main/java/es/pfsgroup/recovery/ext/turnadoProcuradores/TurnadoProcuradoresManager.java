@@ -1,10 +1,7 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,16 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.procesosJudiciales.EXTTareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -32,9 +26,6 @@ import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
 import es.pfsgroup.recovery.ext.turnadodespachos.AplicarTurnadoException;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
 import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfig;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoConfigDto;
-import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 
 @Service ("turnadoProcuradoresManager")
 public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
@@ -70,78 +61,6 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	public EsquemaTurnadoProcurador get(Long id) {
 		return esquemaTurnadoProcuradorDao.get(id);
 	}
-
-	@Override
-	@Transactional(readOnly = false)
-	public EsquemaTurnadoProcurador save(EsquemaTurnadoDto dto) {
-
-		EsquemaTurnadoProcurador esquema = null;	
-		if (dto.getId()!=null) {
-			esquema = get(dto.getId());
-		} else {
-			esquema = new EsquemaTurnadoProcurador();
-			DDEstadoEsquemaTurnado estado = (DDEstadoEsquemaTurnado)diccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoEsquemaTurnado.class, DDEstadoEsquemaTurnado.ESTADO_DEFINICION);
-			esquema.setEstado(estado);
-		}
-
-		esquema.setDescripcion(dto.getDescripcion());
-
-		logger.debug("Guarda el esquema...");
-		esquemaTurnadoProcuradorDao.saveOrUpdate(esquema);
-		
-		if (esquema.getConfiguracion()!=null && esquema.getConfiguracion().size()>0) {
-			logger.debug("Elimina las configuraciones no existenes en el nuevo esquema...");
-			Set<Long> idsExistentes = new HashSet<Long>();
-			for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
-				if (dtoConfig.getId()==null) {
-					continue;
-				}
-				idsExistentes.add(dtoConfig.getId());
-			}
-			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
-				if (idsExistentes.contains(config.getId())) {
-					continue;
-				}
-				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
-			}
-			HibernateUtils.flush();
-		}
-
-		logger.debug("Se insertan las configuraciones de esquema actuales...");
-		for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
-			if (dtoConfig.getId()!=null) {
-				continue;
-			}
-			// insert
-			EsquemaTurnadoConfig config = new EsquemaTurnadoConfig();
-			config.setTipo(dtoConfig.getTipo());
-			config.setEsquemaProcurador(esquema);
-			config.setCodigo(dtoConfig.getCodigo());
-			config.setImporteDesde(dtoConfig.getImporteDesde());
-			config.setImporteHasta(dtoConfig.getImporteHasta());
-			config.setPorcentaje(dtoConfig.getPorcentaje());
-			genericDao.save(EsquemaTurnadoConfig.class, config);
-		}
-		
-		logger.debug("Se actualizan la configuraciones de esquema actuales...");
-		for (EsquemaTurnadoConfigDto dtoConfig : dto.getLineasConfiguracion()) {
-			if (dtoConfig.getId()==null) {
-				continue;
-			}
-			EsquemaTurnadoConfig config = esquema.getConfigById(dtoConfig.getId());
-			config.setCodigo(dtoConfig.getCodigo());
-			config.setImporteDesde(dtoConfig.getImporteDesde());
-			config.setImporteHasta(dtoConfig.getImporteHasta());
-			config.setPorcentaje(dtoConfig.getPorcentaje());
-			genericDao.save(EsquemaTurnadoConfig.class, config);
-		}
-		
-		esquema = esquemaTurnadoProcuradorDao.get(esquema.getId());
-		
-		return esquema;
-	}
-
 
 	@Override
 	@Transactional(readOnly = false)
@@ -192,87 +111,12 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 	}
 
 	@Override
-	@Transactional
-	public void delete(Long id) {
-		EsquemaTurnadoProcurador esquema = get(id);
-		esquemaTurnadoProcuradorDao.delete(esquema);
-		if (esquema.getConfiguracion()!=null) {
-			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
-				genericDao.deleteById(EsquemaTurnadoConfig.class, config.getId());
-			}
-		}
-	}
-
-	@Override
-	@Transactional
-	public void copy(Long id) {
-		EsquemaTurnadoProcurador esquema = get(id);
-		EsquemaTurnadoDto dto = new EsquemaTurnadoDto();
-		dto.setDescripcion("Copia de " + esquema.getDescripcion());
-		if (esquema.getConfiguracion()!=null) {
-			for (EsquemaTurnadoConfig config : esquema.getConfiguracion()) {
-				EsquemaTurnadoConfigDto configDto = new EsquemaTurnadoConfigDto();
-				configDto.setTipo(config.getTipo());
-				configDto.setCodigo(config.getCodigo());
-				configDto.setImporteDesde(config.getImporteDesde());
-				configDto.setImporteHasta(config.getImporteHasta());
-				configDto.setPorcentaje(config.getPorcentaje());
-				dto.getLineasConfiguracion().add(configDto);
-			}
-		}
-		this.save(dto);
-	}
-
-	@Override
 	public boolean isModificable(EsquemaTurnadoProcurador esquema) {
 		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
 		boolean modoConsulta = esquema.getId()!=null && 
 				(esquema.getEstado().getCodigo().equals(DDEstadoEsquemaTurnado.ESTADO_TERMINADO) ||
 				esquema.getAuditoria().getUsuarioCrear()==usuarioLogado.getUsername());
 		return modoConsulta;
-	}
-
-	@Override
-	public boolean checkActivarEsquema(Long id) {
-		EsquemaTurnadoProcurador esquema = this.get(id);
-		EsquemaTurnadoProcurador esquemaVigente = null;
-		try {
-			esquemaVigente = this.getEsquemaVigente();
-		} catch (IllegalArgumentException iae) {
-			logger.info(String.format("No existe esquema previo, activando esquema [%s]", esquema.getDescripcion()));
-			return true;
-		}
-		
-		// No se puede activar un esquema sin configuración
-		if (esquema.getConfiguracion()==null) {
-			logger.warn(String.format("No se puede activar el esquema [%d][%s] porque no tiene configuración", id, esquema.getDescripcion()));
-			return false;
-		}
-
-		List<String> codigosCI = new ArrayList<String>();
-		List<String> codigosCC = new ArrayList<String>();
-		List<String> codigosLI = new ArrayList<String>();
-		List<String> codigosLC = new ArrayList<String>();
-
-		// Recupera las configuraciones que desaparecen en el nuevo esquema.
-		for (EsquemaTurnadoConfig config : esquemaVigente.getConfiguracion()) {
-			if (esquema.contains(config)) {
-				continue;
-			}
-			if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_IMPORTE)) {
-				codigosCI.add(config.getCodigo());
-			} else if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_CONCURSAL_CALIDAD)) {
-				codigosCC.add(config.getCodigo());
-			} else if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_IMPORTE)) {
-				codigosLI.add(config.getCodigo());
-			} else if (config.getTipo().equals(EsquemaTurnadoConfig.TIPO_LITIGIOS_CALIDAD)) {
-				codigosLC.add(config.getCodigo());
-			}
-		}
-		
-		int total = esquemaTurnadoProcuradorDao.cuentaLetradosAsignados(codigosCI, codigosCC, codigosLI, codigosLC);
-		
-		return (total==0);
 	}
 
 	@Override

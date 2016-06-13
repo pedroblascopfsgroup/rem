@@ -14,6 +14,7 @@
 		<json:property name="idEntidad" value="${datos.tipoEntidad.codigo}"/>
 		<json:property name="descripcionTareaAsociada" value="${datos.tareaId.descripcionTarea}"/>
 		<json:property name="tipoTarea" value="${datos.subtipoTarea.tipoTarea.codigoTarea}"/>
+		<json:property name="idProrroga" value="${datos.prorroga.id}"/>
 
    </json:object>
 </fwk:json>

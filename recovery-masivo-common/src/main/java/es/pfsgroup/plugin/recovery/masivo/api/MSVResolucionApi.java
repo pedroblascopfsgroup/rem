@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 
 /**
  * Manager encargado de la gestión de las operaciones relacionadas con las resoluciones.
@@ -132,5 +133,12 @@ public interface MSVResolucionApi {
 	public MSVResolucion guardarAdjuntoResolucion(MSVResolucionesDto dtoResolucion);
 	
 	public void populateResolucion(MSVResolucion msvResolucion, MSVResolucionesDto dto);
+	
+	/**
+	 * Dado el id de un input BPM_IPT_INPUT, devuelve una lista de adjuntos asociados
+	 * @param idInput
+	 * @return
+	 */
+	public List<EXTAdjuntoAsunto> getAdjuntosAsociadoAlInput(Long idInput);
 
 }

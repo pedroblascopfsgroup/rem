@@ -34,7 +34,7 @@
                           where  dir_cod_direccion = TMP_DIR_COD_DIRECCION)
     ]]>
   </entry>
-  <entry key="insertDirecciones.Oracle10gDialect">
+  <entry key="insertDirecciones">
     <![CDATA[
         insert into dir_direcciones (
           DIR_ID, DD_LOC_ID, DD_PRV_ID, DD_TVI_ID, DIR_COD_DIRECCION, DIR_FECHA_EXTRACCION, DIR_DOMICILIO, DIR_DOM_N,
@@ -94,7 +94,7 @@
             and dir_direcciones.borrado = 0
     ]]>
   </entry>
-  <entry key="updateDirecciones.Oracle10gDialect">
+  <entry key="updateDirecciones">
     <![CDATA[
         UPDATE dir_direcciones
            SET (dir_direcciones.FECHAMODIFICAR, dir_direcciones.BORRADO, DD_LOC_ID, DD_PRV_ID, DD_TVI_ID, DIR_DOMICILIO,
@@ -128,7 +128,7 @@
         and tmp.TMP_DIR_COD_CLIENTE_ENTIDAD = per.PER_COD_CLIENTE_ENTIDAD
     ]]>
   </entry>
-  <entry key="insertRelacionDireccionPersona.Oracle10gDialect">
+  <entry key="insertRelacionDireccionPersona">
     <![CDATA[
         insert into DIR_PER (PER_ID, DIR_ID, USUARIOCREAR, FECHACREAR )
         select per.per_id, dir.dir_id, '${PasajeAProducciónUser}', sysdate from tmp_direcciones tmp, DIR_DIRECCIONES dir, PER_PERSONAS per
@@ -158,7 +158,7 @@
     <![CDATA[select (''||td.TMP_DIR_FECHA_EXTRACCION) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE
             from TMP_DIRECCIONES td where TMP_DIR_FECHA_EXTRACCION <> str_to_date(?,'%Y%m%d') ]]>
   </entry>
-  <entry key="dir-02.loadDateValidator.Oracle10gDialect">
+  <entry key="dir-02.loadDateValidator">
     <![CDATA[select (''||td.TMP_DIR_FECHA_EXTRACCION) as ERROR_FIELD, (td.TMP_DIR_COD_ENTIDAD || td.TMP_DIR_COD_DIRECCION) as ENTITY_CODE
             from TMP_DIRECCIONES td where TMP_DIR_FECHA_EXTRACCION <> to_date(?,'yyyyMMdd') ]]>
   </entry>

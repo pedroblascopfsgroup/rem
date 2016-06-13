@@ -778,6 +778,11 @@ public class coreextensionManager implements coreextensionApi {
 		return null;
 	}
 	
+	@Override
+	public Page getListAllUsersPaginated(UsuarioDto usuarioDto){
+		return gestoresDao.getAllGestores(usuarioDto);
+	}
+	
 	
 	/*
 	 * Los siguientes 2 métodos estan comentados porque al final no se han requerido, pero se mantienen para 

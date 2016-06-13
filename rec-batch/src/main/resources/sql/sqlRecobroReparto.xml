@@ -2,7 +2,7 @@
 <properties>
     <!-- Paso 1 - Truncado de las tablas temporales -->
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR -->
-    <entry key="recobro.borrado.tmp_rec_exp_reparto_car.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_car">
         <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_CAR');
@@ -10,7 +10,7 @@
         ]]>
     </entry>
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_CAR_VRE -->
-    <entry key="recobro.borrado.tmp_rec_exp_reparto_car_vre.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_car_vre">
         <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_CAR_VRE');
@@ -18,7 +18,7 @@
         ]]>
     </entry>
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_SUB -->
-    <entry key="recobro.borrado.tmp_rec_exp_reparto_sub.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_sub">
         <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_SUB');
@@ -26,7 +26,7 @@
         ]]>
     </entry>
     <!-- Truncado de la tabla TMP_REC_EXP_REPARTO_AGENCIAS -->
-    <entry key="recobro.borrado.tmp_rec_exp_reparto_agencias.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_reparto_agencias">
         <![CDATA[
         BEGIN
             OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_REPARTO_AGENCIAS');
@@ -35,7 +35,7 @@
     </entry>
 
     <!-- Paso 2 - Juntar los expedientes de TMP_REC_EXP_ASIG_CARTERA y BATCH_DATOS_SALIDA en TMP_REC_EXP_REPARTO_CAR -->
-    <entry key="recobro.insert.tmp_rec_exp_reparto_car.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_reparto_car">
         <![CDATA[
            BEGIN
             INSERT INTO TMP_REC_EXP_REPARTO_CAR (EXP_ID, CAR_ID)
@@ -49,7 +49,7 @@
     </entry>
 
     <!-- Paso 3 - Calcular el VRE de los expedientes para reparto  -->
-    <entry key="recobro.insert.tmp_rec_exp_reparto_car_vre.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_reparto_car_vre">
         <![CDATA[
            BEGIN
            INSERT INTO TMP_REC_EXP_REPARTO_CAR_VRE  (EXP_ID, CAR_ID, VRE)
@@ -71,7 +71,7 @@
     </entry>
 
     <!-- Paso 4 - Reparto de los expedientes en subcarteras -->
-    <entry key="recobro.reparto_expedientes_subcarteras.Oracle10gDialect">
+    <entry key="recobro.reparto_expedientes_subcarteras">
         <![CDATA[
             -- SET SERVEROUTPUT ON;
             DECLARE
@@ -239,7 +239,7 @@
     </entry>
 
     <!-- Paso 5 - Validar que se han repartido todos los expedientes en subcarteras  -->
-    <entry key="recobro.validate.tmp_rec_exp_reparto_sub.Oracle10gDialect">
+    <entry key="recobro.validate.tmp_rec_exp_reparto_sub">
         <![CDATA[
             DECLARE
               V_NUM_EXP_REPARTO NUMBER;
@@ -256,7 +256,7 @@
     </entry>
 
     <!-- Paso 6 - Validar que no existe un expediente repartido sin subcarpeta asignada -->
-    <entry key="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id.Oracle10gDialect">
+    <entry key="recobro.validate.tmp_rec_exp_reparto_sub_rcf_sca_id">
         <![CDATA[
             DECLARE
               V_NUM_NO_REPARTIDOS NUMBER;
@@ -271,7 +271,7 @@
     </entry>
 
     <!-- Paso 7 - Copiamos los expedientes de rotación en la tabla de consolidación del reparto -->
-    <entry key="recobro.insert.tmp_rec_exp_reparto_sub.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_reparto_sub">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_REPARTO_SUB
               (EXP_ID, CAR_ID, RCF_SCA_ID, RCF_AGE_ID_OLD, VRE)
@@ -284,7 +284,7 @@
     </entry>
 
     <!-- Paso 8 - Reparto de las subcarteras en agencias -->
-    <entry key="recobro.reparto_subcarteras_agencias.Oracle10gDialect">
+    <entry key="recobro.reparto_subcarteras_agencias">
         <![CDATA[
             -- SET SERVEROUTPUT ON;
             DECLARE
@@ -486,7 +486,7 @@
     </entry>
 
     <!-- Paso 9 - Validar que se han repartido todos los expedientes en agencias -->
-    <entry key="recobro.validate.tmp_rec_exp_reparto_agencias.Oracle10gDialect">
+    <entry key="recobro.validate.tmp_rec_exp_reparto_agencias">
         <![CDATA[
             DECLARE
               V_NUM_EXP_REPARTO NUMBER;
@@ -502,7 +502,7 @@
         ]]>
     </entry>
     <!-- Paso 10 - Validar que no existe un expediente repartido sin subcarpeta asignada ni agencia asignada -->
-    <entry key="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id.Oracle10gDialect">
+    <entry key="recobro.validate.tmp_rec_exp_reparto_agencias_rcf_sca_age_id">
         <![CDATA[
             DECLARE
               V_NUM_NO_REPARTIDOS NUMBER;

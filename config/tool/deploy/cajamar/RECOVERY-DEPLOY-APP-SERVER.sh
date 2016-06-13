@@ -34,7 +34,15 @@ if [ -f war/pfs.war ]; then
     cp war/pfs.war /wlapps/applications/PFS/
 fi
 if [ -f war/MicroStrategy.war ]; then
-    cp war/MicroStrategy.war /wlapps/applications/MS/
+    ENTORNO=`echo $1 | tr '[:lower:]' '[:upper:]'`
+    cd war
+    unzip MicroStrategy.war -d MicroStrategy
+    rm MicroStrategy.war
+    cd MicroStrategy
+    cp $LOCAL_PATH/mstr-conf/$ENTORNO/* WEB-INF/xml/
+    zip -r MicroStrategy.war *
+    cd $LOCAL_PATH
+    cp war/MicroStrategy/MicroStrategy.war /wlapps/applications/MS/
 fi
 
 cd $LOCAL_PATH

@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,7 +44,6 @@ import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVFileItem;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
 import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.api.MSVResolucionInputApi;
-import es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolucionesProc;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 import es.pfsgroup.recovery.api.TareaExternaApi;
@@ -497,6 +495,17 @@ public class MSVResolucionManager implements MSVResolucionApi {
 				idInput = proxyFactory.proxy(RecoveryBPMfwkRunApi.class).procesaInput(inputDto);
 			}
 			
+
+			//Asociamos lista de adjuntos de la resolucion si existen al input guardado
+			if(!Checks.esNulo(idInput)){
+		        List<EXTAdjuntoAsunto> listaAjuntos = msvResolucion.getAdjuntosResolucion();
+		        if(!Checks.estaVacio(listaAjuntos)){
+		        	for(EXTAdjuntoAsunto adjunto : listaAjuntos){
+		        		adjunto.setBpmInputId(idInput);
+		        		genericDao.update(EXTAdjuntoAsunto.class, adjunto);
+		        	}
+		        }
+			}
 			
 			//TODO - Guarda una relaci�n entre el input y la tarea. Desacoplar de tareas
 			if ((!Checks.esNulo(idInput)) && (!Checks.esNulo(msvResolucion.getTarea()))) {
@@ -726,4 +735,12 @@ public class MSVResolucionManager implements MSVResolucionApi {
 		return msvResolucion;
 	}
 
+	@Override
+	public List<EXTAdjuntoAsunto> getAdjuntosAsociadoAlInput(Long idInput) {
+		List<EXTAdjuntoAsunto> listaAdjuntos = genericDao.getList(EXTAdjuntoAsunto.class, genericDao
+				.createFilter(FilterType.EQUALS, "bpmInputId", idInput));
+		
+		return Checks.estaVacio(listaAdjuntos) ? null : listaAdjuntos ;
+	}
+	
 }

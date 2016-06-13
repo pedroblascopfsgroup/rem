@@ -645,7 +645,7 @@
 	
 	
 	var store = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntos'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntos'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'
@@ -653,7 +653,7 @@
 	});
 
 	var storePersonas = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntosPersona'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntosPersonas'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'
@@ -661,7 +661,7 @@
 	});
 
 	var storeExpedientes = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntosExpedientes'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntosExpedientes'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'
@@ -669,7 +669,7 @@
 	});
 
 	var storeContratos = page.getStore({
-		flow : 'recoveryagendaadjuntoscorreo/consultaAdjuntosContratos'
+		flow : 'plugin/mejoras/asuntos/plugin.mejoras.asuntos.consultaAdjuntosContratos'
 		,reader : new Ext.data.JsonReader({
 			root : 'adjuntos'
 			,totalProperty : 'total'

@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=PEDROBLASCO
---## FECHA_CREACION=201
+--## FECHA_CREACION=20160608
 --## ARTEFACTO=haya-sareb
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1365
@@ -215,7 +215,30 @@ T_TIPO_TPO('EN-04-FIAV-04','Imposiciones a plazo'),
 T_TIPO_TPO('EN-04-FICH-03','Declaración de bienes'),
 T_TIPO_TPO('EN-04-TASA-09','Tasación activo'),
 T_TIPO_TPO('EN-04-TASA-07','Informe valoración patrimonio'),
-T_TIPO_TPO('EN-04-IPLS-32','Justificante de datos patrimoniales')
+T_TIPO_TPO('EN-04-IPLS-32','Justificante de datos patrimoniales'), 
+
+T_TIPO_TPO('AF-05-IPLS-02','Carta de aval'),
+T_TIPO_TPO('AF-05-IPLS-03','Disposiciones'),
+T_TIPO_TPO('AF-05-IPLS-04','Documento de formalización'),
+T_TIPO_TPO('AF-05-IPLS-05','Ficha personalizada'),
+T_TIPO_TPO('AF-05-IPLS-06','Ficha precontractual'),
+T_TIPO_TPO('AF-05-IPLS-07','Información normalizada europea (INE)'),
+T_TIPO_TPO('AF-05-IPLS-08','Informes jurídicos'),
+T_TIPO_TPO('AF-05-IPLS-09','Oferta vinculante'),
+T_TIPO_TPO('AF-05-IPLS-10','Recuperaciones'),
+T_TIPO_TPO('AF-05-IPLS-11','Solicitud'),
+T_TIPO_TPO('AF-05-IPLS-12','Documento doc'),
+T_TIPO_TPO('AF-05-IPLS-13','Documento genérico'),
+T_TIPO_TPO('AF-05-IPLS-14','Transfer certificate provisional'),
+T_TIPO_TPO('AF-05-IPLS-34','Justificantes de compromisos de pago'),
+T_TIPO_TPO('AF-05-IPLS-35','Justificantes inversión/finalidad'),
+
+T_TIPO_TPO('EN-06-IPLS-29','Documentación RBE'),
+T_TIPO_TPO('EN-06-IPLS-30','Otras escrituras'),
+T_TIPO_TPO('EN-06-IPLS-31','Justificante de actividad'),
+T_TIPO_TPO('EN-06-IPLS-32','Justificante de datos patrimoniales'),
+T_TIPO_TPO('EN-06-IPLS-33','Justificante de ingresos')
+
     ); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 
@@ -402,7 +425,30 @@ T_REL('EN-04-FIAV-04','Persona'),
 T_REL('EN-04-FICH-03','Persona'),
 T_REL('EN-04-TASA-09','Persona'),
 T_REL('EN-04-TASA-07','Persona'),
-T_REL('EN-04-IPLS-32','Persona')
+T_REL('EN-04-IPLS-32','Persona'), 
+
+T_REL('AF-05-IPLS-02','Contrato'), 
+T_REL('AF-05-IPLS-03','Contrato'), 
+T_REL('AF-05-IPLS-04','Contrato'), 
+T_REL('AF-05-IPLS-05','Contrato'), 
+T_REL('AF-05-IPLS-06','Contrato'), 
+T_REL('AF-05-IPLS-07','Contrato'), 
+T_REL('AF-05-IPLS-08','Contrato'), 
+T_REL('AF-05-IPLS-09','Contrato'), 
+T_REL('AF-05-IPLS-10','Contrato'), 
+T_REL('AF-05-IPLS-11','Contrato'), 
+T_REL('AF-05-IPLS-12','Contrato'), 
+T_REL('AF-05-IPLS-13','Contrato'), 
+T_REL('AF-05-IPLS-14','Contrato'), 
+T_REL('AF-05-IPLS-34','Contrato'), 
+T_REL('AF-05-IPLS-35','Contrato'), 
+
+T_REL('EN-06-IPLS-29','Persona'), 
+T_REL('EN-06-IPLS-30','Persona'), 
+T_REL('EN-06-IPLS-31','Persona'), 
+T_REL('EN-06-IPLS-32','Persona'), 
+T_REL('EN-06-IPLS-33','Persona')
+
     ); 
     V_TMP_REL T_REL;
 

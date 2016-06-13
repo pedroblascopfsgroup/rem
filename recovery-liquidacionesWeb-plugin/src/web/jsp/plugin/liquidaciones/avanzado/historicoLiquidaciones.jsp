@@ -96,13 +96,34 @@
        }
    	});
    	
-   	<%--var btnCopiarLiquidacion = new Ext.Button({
+   	var btnCopiarLiquidacion = new Ext.Button({
        text:  '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.btn.copiar" text="**Copiar" />'
        <app:test id="btnCopiarLiquidacion" addComa="true" />
        ,iconCls : 'icon_edit'
        ,cls: 'x-btn-text-icon'
-       ,handler:function(){}
-   	}); --%>
+       ,handler:function(){
+          	if (historicoLiquidacionesGrid.getSelectionModel().getSelected()!=undefined) {
+	       		Ext.Msg.show({
+	   				title:'<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.copiar" text="**Copiar Calculo Liquidación" />',
+	   				msg: '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.copiar.confirmar" text="**¿Desea copiar este Calculo de Liquidación?" />',
+	   				buttons: Ext.Msg.YESNO,
+	   				fn: function(btn,text){
+						if (btn == 'yes'){
+							var idLiquidacion = historicoLiquidacionesGrid.getSelectionModel().getSelected().get('idLiquidacion');						   					
+		       				Ext.Ajax.request({
+								url: page.resolveUrl('liquidaciones/copiarLiquidacion')
+								,params: {idCalculoLiquidacion: idLiquidacion}
+								,method: 'POST'
+								,success: function (result, request){
+									historicoLiquidacionesGrid.getStore().reload();
+								}
+							});
+						}
+					}
+				});
+			}       
+       }
+   	});
    	
     var btnEliminarLiquidacion = new Ext.Button({
        text:  '<s:message code="plugin.liquidaciones.historicoLiquidaciones.grid.btn.eliminar" text="**Eliminar" />'
@@ -166,7 +187,7 @@
          ,bbar : [
         	 btnNuevaLiquidacion
         	,btnEditarLiquidacion
-        	<%-- ,btnCopiarLiquidacion--%>
+        	,btnCopiarLiquidacion
         	,btnEliminarLiquidacion
         	,btnCalcularLiquidacion
         	<%-- ,btnModificarLiquidacion--%>
@@ -330,11 +351,13 @@
 		
 		if(rowsSelectedHistorico.length > 0){
 			btnEditarLiquidacion.setDisabled(false);
+			btnCopiarLiquidacion.setDisabled(false);
 			btnEliminarLiquidacion.setDisabled(false);
 			btnCalcularLiquidacion.setDisabled(false);
 			btnNuevaEntrega.setDisabled(false);
 		}else{
 			btnEditarLiquidacion.setDisabled(true);
+			btnCopiarLiquidacion.setDisabled(true);
 			btnEliminarLiquidacion.setDisabled(true);
 			btnCalcularLiquidacion.setDisabled(true);
 			btnNuevaEntrega.setDisabled(true);

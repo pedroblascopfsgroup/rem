@@ -252,5 +252,7 @@ public interface coreextensionApi {
 	
 	@BusinessOperationDefinition(GET_CODIGO_NIVEL_POR_DESCRIPCION)
 	Integer getCodigoNivelPorDescripcion(String descripcion);
+
+	public Page getListAllUsersPaginated(UsuarioDto usuarioDto);
 	
 }

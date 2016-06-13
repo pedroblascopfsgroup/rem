@@ -287,16 +287,22 @@ public class ADMUsuarioManager {
 			}
 		}
 	}
-		
+	
+	
 	@BusinessOperation("ADMUsuarioManager.quitarGrupo")
 	@Transactional(readOnly = false)
 	public void quitarGrupo(Long idUsuario, Long idGrupoUsuario) {	
 		if(!Checks.esNulo(idUsuario) && !Checks.esNulo(idGrupoUsuario)){
-			EXTGrupoUsuarios grupo = genericDao.get(EXTGrupoUsuarios.class, 
-					genericDao.createFilter(FilterType.EQUALS, "grupo", getUsuario(idGrupoUsuario)),
-					genericDao.createFilter(FilterType.EQUALS, "usuario", getUsuario(idUsuario)),
-					genericDao.createFilter(FilterType.EQUALS, "borrado", false));			
-			if(!Checks.esNulo(grupo)){genericDao.deleteById(EXTGrupoUsuarios.class, grupo.getId());}
+			// Se obtiene una lista por si existe mas de una coincidencia. Las borra todas.
+			List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, 
+					genericDao.createFilter(FilterType.EQUALS, "grupo", getUsuario(idGrupoUsuario)), // Grupo.
+					genericDao.createFilter(FilterType.EQUALS, "usuario", getUsuario(idUsuario)), // Usuario.
+					genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false)); // No borrado.
+			if(!Checks.esNulo(grupos)){
+				for(EXTGrupoUsuarios gru: grupos){
+					genericDao.deleteById(EXTGrupoUsuarios.class, gru.getId());
+				}
+			}
 		}
 	}
 

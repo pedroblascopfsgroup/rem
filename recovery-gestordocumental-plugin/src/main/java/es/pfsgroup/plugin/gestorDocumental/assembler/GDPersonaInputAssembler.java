@@ -21,29 +21,26 @@ public class GDPersonaInputAssembler {
 		ProcessEventRequestType input = new ProcessEventRequestType();
 		input.setEventName(inputDto.getEvent());
 		input.setParameters(getParametersPersona(inputDto));
-		
 		return input;
 	}
 		
 	private static Parameters getParametersPersona(PersonaInputDto inputDto) {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
-		if(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN.equals(inputDto.getEvent())) {
-			parameters.getParameter().add(getIntervinienteOrigen(inputDto.getIdIntervinienteOrigen()));
-			parameters.getParameter().add(getPersonaCliente2(inputDto.getIdOrigen()));
-		}
-		parameters.getParameter().add(getIntervinienteHaya(inputDto.getIdIntervinienteHaya()));
+		parameters.getParameter().add(getPersonaOrigen(inputDto.getIdPersonaOrigen()));
+		parameters.getParameter().add(getOrigen(inputDto.getIdOrigen()));
+		parameters.getParameter().add(getIdPersonaHaya(inputDto.getIdPersonaHaya()));
 		return parameters;
 	}
 	
-	private static KeyValuePair getIntervinienteOrigen(String idIntervinienteOrigen) {
-		KeyValuePair intervinienteOrigen = new KeyValuePair();
-		intervinienteOrigen.setCode(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
-		intervinienteOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
-		intervinienteOrigen.setValue(idIntervinienteOrigen);
-		return intervinienteOrigen;
+	private static KeyValuePair getPersonaOrigen(String idPersonaOrigen) {
+		KeyValuePair personaOrigen = new KeyValuePair();
+		personaOrigen.setCode(PersonaInputDto.ID_PERSONA_ORIGEN);
+		personaOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
+		personaOrigen.setValue(idPersonaOrigen);
+		return personaOrigen;
 	}
 	
-	private static KeyValuePair getPersonaCliente2(String idOrigen) {
+	private static KeyValuePair getOrigen(String idOrigen) {
 		KeyValuePair origen = new KeyValuePair();
 		origen.setCode(PersonaInputDto.ID_ORIGEN);
 		origen.setFormat(PersonaInputDto.FORMATO_STRING);
@@ -51,11 +48,12 @@ public class GDPersonaInputAssembler {
 		return origen;
 	}
 	
-	private static KeyValuePair getIntervinienteHaya(String idIntervinienteHaya) {
-		KeyValuePair intervinienteHaya = new KeyValuePair();
-		intervinienteHaya.setCode(PersonaInputDto.ID_INTERVINIENTE_HAYA);
-		intervinienteHaya.setFormat(PersonaInputDto.FORMATO_STRING);
-		intervinienteHaya.setValue(idIntervinienteHaya);
-		return intervinienteHaya;
+	private static KeyValuePair getIdPersonaHaya(String idPersonaHaya) {
+		KeyValuePair origen = new KeyValuePair();
+		origen.setCode(PersonaInputDto.ID_PERSONA_HAYA);
+		origen.setFormat(PersonaInputDto.FORMATO_STRING);
+		origen.setValue(idPersonaHaya);
+		return origen;
 	}
+	
 }

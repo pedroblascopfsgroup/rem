@@ -115,7 +115,7 @@ function login2RecBIHaya() {
 
 function login2RecBIHayaSareb() {
 
-	var form = createHiddenAuthForm(url2, u1, u1);
+	var form = createHiddenAuthForm(url2, u1, p1);
  	document.body.appendChild(form);
  	form.submit();
 
@@ -123,7 +123,7 @@ function login2RecBIHayaSareb() {
 
 function login2RecBIHayaBcc() {
 
-	var form = createHiddenAuthForm(url2, u2, u2);
+	var form = createHiddenAuthForm(url2, u2, p2);
  	document.body.appendChild(form);
  	form.submit();
 

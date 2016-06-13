@@ -87,9 +87,11 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 		// executionContext.getNode().getName();
 
 		Procedimiento prc = getProcedimiento(executionContext);
-		EXTTareaExterna tex = (EXTTareaExterna) getTareaExterna(executionContext);
+		
 		System.out.println(this.getClass().getSimpleName() + "El prc es: " + prc.getId());
 		logger.info(this.getClass().getSimpleName() + "El prc es: " + prc.getId());
+		
+		EXTTareaExterna tex = (EXTTareaExterna) getTareaExterna(executionContext);
 		
 		System.out.println(this.getClass().getSimpleName() + "La tarea externa es: " + tex.getId());
 		logger.info(this.getClass().getSimpleName() + "La tarea externa es: " + tex.getId());

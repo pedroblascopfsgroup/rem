@@ -643,10 +643,10 @@
 		if(entidadAdjudicataria.getValue() == '2' && (cesionRemate.getValue() == 'Si' || cesionRemate.getValue() == '01')){
 			return 1;
 		}
-		
-		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && isFondoTitulizado){
+		<%-- Comentado para permitir poner cesion de remate a no cuando el bien tiene Adjudicación a entidad y pertenece a un fondo de titulización--%>
+<%-- 		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && isFondoTitulizado){
 			return 2;
-		}
+		} --%>
 		
 		return 0;
 	} 

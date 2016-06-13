@@ -30,6 +30,9 @@ public class EXTAdjuntoAsunto extends AdjuntoAsunto {
 	private DDTipoFicheroAdjunto tipoFichero;
 
     
+    @Column(name = "BPM_IPT_ID")
+	private Long bpmInputId;
+    
 	public DDTipoFicheroAdjunto getTipoFichero() {
 		return tipoFichero;
 	}
@@ -52,6 +55,14 @@ public class EXTAdjuntoAsunto extends AdjuntoAsunto {
 
 	public void setBpmInputId(Long bpmInputId) {
 		super.setBpmInputId(bpmInputId);
+	}
+
+	public Long getBpmInputId() {
+		return bpmInputId;
+	}
+
+	public void setBpmInputId(Long bpmInputId) {
+		this.bpmInputId = bpmInputId;
 	}
     
  }

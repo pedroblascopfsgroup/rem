@@ -799,16 +799,10 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		String mensajeValidacion = "Para completar esta tarea deberá haber un ";
 		// Se recupera el gestor mediante el codigo
 		EXTDDTipoGestor gestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestor));
-		//Se comprueba que el gestor no es nulo
-		if (!Checks.esNulo(gestor) ){
-			// Incluye en el mensaje la descripción del gestor.
-			mensajeValidacion = mensajeValidacion.concat(gestor.getDescripcion());
-			mensajeValidacion = mensajeValidacion.concat(" asignado al asunto");
-			return mensajeValidacion;
-		}else{
-			mensajeValidacion = "El gestor no existe o "+codigoGestor+" es erróneo";
-			return mensajeValidacion;
-		}
+		// Incluye en el mensaje la descripción del gestor.
+		mensajeValidacion = mensajeValidacion.concat(gestor.getDescripcion());
+		mensajeValidacion = mensajeValidacion.concat(" asignado al asunto");
+		return mensajeValidacion;
 	}
 	
 	private List<DocumentoPCO> obtenerNuevosDocumentos(ProcedimientoPCO procedimientoPco, 

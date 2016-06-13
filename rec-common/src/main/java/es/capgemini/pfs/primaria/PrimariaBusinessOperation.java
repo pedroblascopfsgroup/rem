@@ -115,6 +115,7 @@ public final class PrimariaBusinessOperation {
     public static final String BO_CNT_MGR_COMPRUEBA_TIPO_EXP = "riesgoOperacionalManager.compruebaTipoExpediente";
     public static final String BO_CNT_MGR_COMPRUEBA_TIPO_ASUNTO = "riesgoOperacionalManager.compruebaAsunto";
     public static final String BO_CNT_GET_ESTADO_BLOQUEO = "contratoManager.getEstadoBloqueo";
+    public static final String BO_CNT_GET_LIST_ACTUACION_FSR_ACTIVAS_CONTRATO = "contratoManager.getAccionesFSRDelContrato";
 
     /*****************************************************************************
      ** AntecedenteManager.

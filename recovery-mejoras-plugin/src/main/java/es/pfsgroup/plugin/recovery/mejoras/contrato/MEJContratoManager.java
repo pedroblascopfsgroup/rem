@@ -17,10 +17,13 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.contrato.dto.DtoBuscarContrato;
 import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.contrato.model.ContratoActuacionVigenteFSR;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.movimiento.model.Movimiento;
+import es.capgemini.pfs.persona.model.CavClientesActuacionesVigentesFSR;
+import es.capgemini.pfs.persona.model.DDTipoActuacionFSR;
 import es.capgemini.pfs.primaria.PrimariaBusinessOperation;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
@@ -148,6 +151,20 @@ public class MEJContratoManager extends
 		}else{
 			return null;
 		}
+	}
+
+	@Override
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_GET_LIST_ACTUACION_FSR_ACTIVAS_CONTRATO)
+	public List<DDTipoActuacionFSR> getAccionesFSRDelContrato(Long idContrato) {
+		
+		List<ContratoActuacionVigenteFSR> actuacionesFsr = genericDao.getList(ContratoActuacionVigenteFSR.class, genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false),genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato));
+		
+		///Obtenemos las relaciones existentes
+		List<DDTipoActuacionFSR> actuacionesActivas = new ArrayList<DDTipoActuacionFSR>();
+		for(ContratoActuacionVigenteFSR act : actuacionesFsr){
+			actuacionesActivas.add(act.getTipoActuacionFSR());
+		}
+		return actuacionesActivas;
 	}
 
     

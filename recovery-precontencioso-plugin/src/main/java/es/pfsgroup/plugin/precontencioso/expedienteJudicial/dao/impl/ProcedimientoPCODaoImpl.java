@@ -501,12 +501,14 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 				where.add(Restrictions.ge("solicitud.diasEnGestion", Integer.valueOf(filtro.getDocDiasGestion())));
 			}
 
-			if (!StringUtils.isBlank(filtro.getDocDespacho()) && !StringUtils.isBlank(filtro.getDocGestor())) {
+			if (!StringUtils.isBlank(filtro.getDocDespacho())) {
 				query.createAlias("solicitud.actor", "actor");
 				query.createAlias("actor.despachoExterno", "actorDespacho");
-				query.createAlias("actor.usuario", "actorUsuario");
-
 				where.add(Restrictions.eq("actorDespacho.id", Long.valueOf(filtro.getDocDespacho())));
+			}
+				
+			if (!StringUtils.isBlank(filtro.getDocGestor())) {
+				query.createAlias("actor.usuario", "actorUsuario");
 				where.add(Restrictions.in("actorUsuario.id", getListLongFromStringCsv(filtro.getDocGestor())));
 			}
 

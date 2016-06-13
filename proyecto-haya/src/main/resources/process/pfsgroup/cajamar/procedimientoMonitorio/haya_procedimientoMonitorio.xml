@@ -82,30 +82,9 @@
 		<transition to="H022_ConfirmarOposicionCuantia" name="tramiteNotificacionV4"></transition>
 	</state>
 
-	<state name="H022_BPMTramiteNotificacionPersonal">
-		<event type="node-enter">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericEnterActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea"
-				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
-				config-type="bean">
-				<targetBean>genericLeaveActionHandler
-				</targetBean>
-			</action>
-		</event>
-		<transition to="H022_ConfirmarOposicionCuantia" name="hcj_tramiteNotificacionPersonal"></transition>
-	</state>
-
 	<decision name="H022_ConfirmarNotificacionReqPagoDecision"
 		expression="#{H022_ConfirmarNotificacionReqPagoDecision}">
 		<transition to="H022_JBPMTramiteNotificacion" name="NO"></transition>
-		<transition to="H022_BPMTramiteNotificacionPersonal" name="PER"></transition>
 		<transition to="H022_ConfirmarOposicionCuantia" name="SI"></transition>
 	</decision>
 

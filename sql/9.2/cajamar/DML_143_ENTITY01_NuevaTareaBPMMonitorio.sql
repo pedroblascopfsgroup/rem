@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160602
+--## FECHA_CREACION=20160614
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1975
@@ -38,7 +38,7 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
         T_TIPO_TAP('H022','H022_BPMAnticipoFondos',null,null,null,null,'P460','0','Se inicia el trámite de anticipo de fondos y pago de suplidos','0','PRODUCTO-1975','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
-       ,T_TIPO_TAP('H022','H022_BPMTramiteNotificacionPersonal',null,null,null,null,'HC108','0','Se inicia el trámite de notificación personal','0','PRODUCTO-1975','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
+       ,T_TIPO_TAP('H022','DEL_H022_BPMTramiteNotificacionPersonal',null,null,null,null,'HC108','0','Se inicia el trámite de notificación personal','0','PRODUCTO-1975','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
     ); 
     V_TMP_TIPO_TAP T_TIPO_TAP;
 

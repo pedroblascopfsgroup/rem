@@ -19,9 +19,11 @@ echo "********************************************************"
 FICHEROS=('rechazos.dat' 'rechazos.txt')
 
 function download_files {
+	
 	ORIGEN=$1
 	DESTINO=$2
 	MASK=$3
+	BANDERA_T=$4
         echo "Descargando fichero $MASK desde SFTP (${HOST})..."
 
 	cd $ORIGEN

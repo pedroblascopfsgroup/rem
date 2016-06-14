@@ -48,7 +48,7 @@ if [ -f "$ficheroZip" ] ; then
    unzip $ficheroZip "$mascCONTRATOS" "$mascPERSONAS" "$mascRELACION" -d $DIR_DESTINO
 
    mv $ficheroZip $DIR_DESTINO
-   mv $ficheroSem $DIR_DESTINO
+   #mv $ficheroSem $DIR_DESTINO
 
    exit 0
 else 

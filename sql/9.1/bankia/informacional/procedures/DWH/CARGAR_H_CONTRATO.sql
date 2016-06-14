@@ -1048,8 +1048,8 @@ BEGIN
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
 
 
-    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_IX'', ''H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;
+    --V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_IX'', ''H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+    --execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
 
     --Log_Proceso
@@ -1059,7 +1059,7 @@ BEGIN
   close c_fecha;
 
   -- Crear indices H_CNT
-  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_IX'', ''H_CNT_IX (DIA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_CNT_IX'', ''H_CNT (DIA_ID, CONTRATO_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
 

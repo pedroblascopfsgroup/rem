@@ -1,10 +1,10 @@
 /*
 --##########################################
 --## AUTOR=Alejandro I?igo
---## FECHA_CREACION=20160606
+--## FECHA_CREACION=20160613
 --## ARTEFACTO=ETL
---## VERSION_ARTEFACTO=1.00
---## INCIDENCIA_LINK=BKREC-2290
+--## VERSION_ARTEFACTO=2.10
+--## INCIDENCIA_LINK=PRODUCTO-1449
 --## PRODUCTO=NO
 --##########################################
 --*/

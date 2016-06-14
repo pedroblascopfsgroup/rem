@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.precontencioso.liquidacion.manager;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.generar.DatosPlantillaFactory;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.precontencioso.tipoProdPlantilla.api.TipoProductoPlantillaApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.contrato.model.EXTDDTipoInfoContratoInfo;
 import es.pfsgroup.recovery.ext.impl.contrato.model.EXTDDTipoInfoContrato;
@@ -53,10 +55,19 @@ public class GenerarLiquidacionBankiaManager implements GenerarLiquidacionApi {
 	
 	@Autowired
 	private ParametrizacionApi parametrizacionApi;
+	
+	@Autowired
+	private TipoProductoPlantillaApi tipoProductoPlantillaApi;
 
 	@Override
-	public List<DDTipoLiquidacionPCO> getPlantillasLiquidacion(){
-		List<DDTipoLiquidacionPCO> plantillas = diccionarioApi.dameValoresDiccionario(DDTipoLiquidacionPCO.class);
+	public List<DDTipoLiquidacionPCO> getPlantillasLiquidacion(Long idLiquidacion){
+		List<DDTipoLiquidacionPCO> plantillas = new ArrayList<DDTipoLiquidacionPCO>();
+		if (Checks.esNulo(idLiquidacion)) {
+			plantillas = diccionarioApi.dameValoresDiccionario(DDTipoLiquidacionPCO.class);
+		} else {
+			LiquidacionPCO liq = liquidacionApi.getLiquidacionPCOById(idLiquidacion);
+			plantillas = tipoProductoPlantillaApi.dameValoresPosiblesTipoLiquidacion(liq.getContrato().getAplicativoOrigen());
+		}
 		return plantillas;
 	}
 

@@ -118,6 +118,8 @@ public class HistoricoAsuntoController {
 		model.put("situacion", request.getParameter("situacion"));
 		model.put("isConsulta", request.getParameter("isConsulta"));
 		model.put("fecha", request.getParameter("fecha"));
+		model.put("tarea", request.getParameter("tarea"));
+		model.put("idProrroga", request.getParameter("idProrroga"));
 
 		return DEFAULT_ABRE_DETALLE_JSP;
 	}

@@ -26,7 +26,7 @@
 		var idTareaOriginalH = new Ext.form.Hidden({name:'idTareaOriginal', value :'${idTareaOriginal}'}) ;
 	</c:if>
 
-	if(motivo=="" && fechaPropuesta==""){
+	if((motivo=="" && fechaPropuesta=="") || descripcion=='Solicitar Prorroga PRC'){
 		fechaVencimiento="";
 		descripcionEntidad= "";
 		
@@ -149,13 +149,25 @@
 	</c:if>
 	<c:if test="${isConsulta}">
 		
+		var descrRespuestaProrroga = new Ext.form.TextArea({
+			width:300
+			,fieldLabel:'<s:message code="decisionprorroga.observaciones.respuesta" text="**Observaciones" />'
+			,labelStyle:"font-weight:bolder"
+			,readOnly:true
+			,value: '<s:message text="${decisionProrroga.observacionesRespuesta}" javaScriptEscape="true" />'
+		});
+		
 		var aprobada=app.creaLabel('<s:message code="decisionprorroga.resolucion" text="**Resolucion" />','${decisionProrroga.respuestaProrroga.descripcion}' || '<s:message code="decisionprorroga.decisionpendiente" text="**Pendiente" />');		
+		
 		var fieldSetResolucion = new Ext.form.FieldSet({
 			title:'<s:message code="decisionprorroga.respuesta" text="**Respuesta" />'
-			,items:[aprobada]
+			,items:[aprobada,descrRespuestaProrroga]
 			,autoHeight:true
 			,autoWidth:true
 		});
+		
+		
+		
 	</c:if>
 	var items = { 
 		border : false

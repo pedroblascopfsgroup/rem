@@ -179,22 +179,24 @@ public class coreextensionController {
 		}
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
 		//PRODUCTO-1969 Además, si el asunto NO tiene CENTROPROCURA asignado, debemos mostrar TODOS los despachos
-		List<Usuario> usu;
-		String codigoGestor=null;
-		EXTDDTipoGestor tipoGestorCentroProcura=tipoGestorApi.getByCod("CENTROPROCURA");
-		if(!Checks.esNulo(tipoGestorCentroProcura)){
-			codigoGestor = tipoGestorCentroProcura.getCodigo();
-		}
-		usu = gestorAdicionalApi.findGestoresByAsunto(idAsunto,codigoGestor);
 		
 		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
-		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor) && !Checks.estaVacio(usu)){
-			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
-			while(iter.hasNext()){
-				DespachoExterno elemento = iter.next();
-				if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
-					iter.remove();
+		if(codEntidad.equals("HCJ") && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)){
+			List<Usuario> usu;
+			String codigoGestor=null;
+			EXTDDTipoGestor tipoGestorCentroProcura=tipoGestorApi.getByCod("CENTROPROCURA");
+			if(!Checks.esNulo(tipoGestorCentroProcura)){
+				codigoGestor = tipoGestorCentroProcura.getCodigo();
+			}
+			usu = gestorAdicionalApi.findGestoresByAsunto(idAsunto,codigoGestor);
+			if(!Checks.estaVacio(usu)){
+				Iterator<DespachoExterno> iter = listadoDespachos.iterator();
+				while(iter.hasNext()){
+					DespachoExterno elemento = iter.next();
+					if(!(elemento.getDespacho().equals("Medina Cuadros Procuradores")) && !(elemento.getDespacho().equals("ABA Procuradores")) && !(elemento.getDespacho().equals("Leticia Codias"))){
+						iter.remove();
+					}
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Generado automaticamente a las mié jul 23 13:32:51 CEST 2014
+# Generado automaticamente a las mié jul 23 13:32:50 CEST 2014
  
 MAX_WAITING_MINUTES=420
 ficheros=CIRBE

@@ -29,10 +29,12 @@ import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.cliente.model.Cliente;
+import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.persona.PersonaApi;
 import es.capgemini.pfs.core.api.registro.ClaveValor;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
@@ -40,6 +42,7 @@ import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionCustomTemplate;
@@ -999,6 +1002,22 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 			}
 		}
 		return null;
+	}
+	
+	@BusinessOperation(CONF_VENTANA_ANOTACIONES)
+	public Boolean getConfiVentanaAnotaciones(){
+		
+		String parametroCreacionTareaUnicaAnotacion= Parametrizacion.CREACION_TAREA_UNICA_ANOTACION;
+        
+        try {
+		    Parametrizacion param = (Parametrizacion) executor.execute(
+		            ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, parametroCreacionTareaUnicaAnotacion);
+		    return Boolean.valueOf(param.getValor());
+		} catch (Exception e) {
+		    logger.warn("No esta parametrizado el la configuración de la ventana Crear Anotación, se toma un valor por defecto 'false'");
+		    return false;
+		}
+		
 	}
 
 }

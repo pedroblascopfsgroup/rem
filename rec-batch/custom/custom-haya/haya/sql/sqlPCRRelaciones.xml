@@ -34,7 +34,7 @@
         ]]>
 	</entry>
 	
-	<entry key="pcr.dropIndex.relaciones.Oracle9iDialect">
+	<entry key="pcr.dropIndex.relaciones">
     <![CDATA[
     	BEGIN
 		  FOR c3 IN
@@ -53,7 +53,7 @@
         ]]>
 	</entry> 
 
-	<entry key="pcr.insert.relacionesOld.Oracle9iDialect"><![CDATA[
+	<entry key="pcr.insert.relacionesOld"><![CDATA[
             insert /*+ APPEND PARALLEL(cpe_contratos_personas, 16) PQ_DISTRIBUTE(cpe_contratos_personas, NONE) */ into cpe_contratos_personas(CPE_ID,
 			  PER_ID,
               CNT_ID,
@@ -89,7 +89,7 @@
         ]]>
 	</entry>
 	
-	<entry key="pcr.insert.relaciones.Oracle9iDialect"><![CDATA[
+	<entry key="pcr.insert.relaciones"><![CDATA[
 	 insert /*+ APPEND PARALLEL(cpe_contratos_personas, 16) PQ_DISTRIBUTE(cpe_contratos_personas, NONE) */ into cpe_contratos_personas(
 	  CPE_ID,
 	  PER_ID,
@@ -131,7 +131,7 @@
 	    AND CPE.PER_ID IS NULL  
         ]]>
 	</entry>
-	<entry key="pcr.createIndex.relaciones.Oracle9iDialect">
+	<entry key="pcr.createIndex.relaciones">
     <![CDATA[
     	BEGIN
 		EXECUTE IMMEDIATE('CREATE INDEX IDX_TMP_001 ON CPE_CONTRATOS_PERSONAS (DD_TIN_ID) PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS NOCOMPRESS LOGGING STORAGE( INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645 PCTINCREASE 0 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT) TABLESPACE HAYA01');
@@ -144,7 +144,7 @@
     	END;
         ]]>
 	</entry> 	
-	<entry key="pcr.update.relaciones.Oracle9iDialect"><![CDATA[
+	<entry key="pcr.update.relaciones"><![CDATA[
 			UPDATE cpe_contratos_personas cpe
 			               SET ( USUARIOMODIFICAR,
 							  FECHAMODIFICAR,
@@ -191,7 +191,7 @@
         FROM TMP_CNT_PER tcp
         WHERE TMP_CNT_PER_FECHA_EXTRACCION <> str_to_date(?,'%Y%m%d')]]>
 	</entry>
-	<entry key="cnt-per-02.loadDateValidator.Oracle9iDialect"><![CDATA[
+	<entry key="cnt-per-02.loadDateValidator"><![CDATA[
 		SELECT (''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||'-'|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE
         FROM TMP_CNT_PER tcp
         WHERE TMP_CNT_PER_FECHA_EXTRACCION <> to_date(?,'YYYYMMDD')]]>
@@ -225,7 +225,7 @@
         WHERE not exists (SELECT 1 FROM dd_pro_propietarios pro WHERE pro.DD_PRO_CODIGO = tcp.TMP_CNT_PER_COD_PROPIETARIO)
         ]]>
 	</entry>
-	<entry key="cnt-per-04.propietarioValidator.Oracle9iDialect"><![CDATA[
+	<entry key="cnt-per-04.propietarioValidator"><![CDATA[
         SELECT (''||tcp.TMP_CNT_PER_COD_PROPIETARIO) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||'-'|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE
         FROM tmp_cnt_per tcp
         WHERE not exists (SELECT 1 FROM dd_pro_propietarios pro WHERE pro.DD_PRO_CODIGO = tcp.TMP_CNT_PER_COD_PROPIETARIO)
@@ -237,7 +237,7 @@
         WHERE not exists (SELECT 1 FROM dd_tpe_tipo_prod_entidad tpe WHERE TRIM(UPPER(tpe.DD_TPE_CODIGO)) = TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO)))
         ]]>
 	</entry>
-	<entry key="cnt-per-05.ProductTypeValidator.Oracle9iDialect"><![CDATA[
+	<entry key="cnt-per-05.ProductTypeValidator"><![CDATA[
         SELECT (''||TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO))) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||'-'|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE
         FROM tmp_cnt_per tcp
         WHERE not exists (SELECT 1 FROM dd_tpe_tipo_prod_entidad tpe WHERE TRIM(UPPER(tpe.DD_TPE_CODIGO)) = TRIM(UPPER(tcp.TMP_CNT_PER_TIPO_PRODUCTO)))
@@ -258,7 +258,7 @@
 		        )
         ]]>
 	</entry>
-	<entry key="cnt-per-06.integridadValidator.Oracle9iDialect"><![CDATA[
+	<entry key="cnt-per-06.integridadValidator"><![CDATA[
         SELECT (''||tcp.TMP_CNT_PER_COD_PERSONA||TMP_CNT_PER_NUM_CONTRATO) as ERROR_FIELD,
           (tcp.TMP_CNT_PER_COD_PERSONA ||'-'|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE
 		FROM TMP_CNT_PER tcp
@@ -284,7 +284,7 @@
 		AND tcp.TMP_CNT_PER_COD_OFICINA <> c.TMP_CNT_COD_OFICINA
         ]]>
 	</entry>
-	<entry key="cnt-per-07.integridadCodOficinaValidator.Oracle9iDialect"><![CDATA[
+	<entry key="cnt-per-07.integridadCodOficinaValidator"><![CDATA[
         SELECT (''||t.TMP_CNT_PER_NUM_CONTRATO||t.TMP_CNT_PER_NUM_ESPEC) as ERROR_FIELD, (t.TMP_CNT_PER_COD_PERSONA ||'-'|| t.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE
         FROM TMP_CNT_PER t
         WHERE NOT EXISTS (SELECT 1

@@ -13,7 +13,13 @@
 		<json:property name="motivo" value="${datos.causaProrroga.descripcion}"/>
 		<json:property name="idTareaOriginal" value="${datos.tarea.id}"/>
 		<json:property name="descripcion" value="${datos.tarea.tarea}"/>
+		<json:property name="descripcionTareaAsociada" value="${datos.tareaAsociada.tarea}"/>
+		<json:property name="fechaVencimientoTareaAsociada" value="${datos.tareaAsociada.fechaVenc}"/>
 		<json:property name="fechaVencimiento"><fwk:date value="${datos.tarea.fechaVenc}"/></json:property>
 		<json:property name="idTareaAsociada" value="${datos.tarea.id}"/>
+		<json:property name="observacionesRespuesta" value="${datos.observacionesRespuesta}"/>
+		<json:property name="respuestaProrroga" value="${datos.respuestaProrroga.descripcion}"/>
+		
+		
 	</json:object>
 </fwk:json>

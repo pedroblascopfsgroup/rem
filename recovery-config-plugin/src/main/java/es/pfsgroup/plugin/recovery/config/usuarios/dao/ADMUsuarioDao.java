@@ -77,4 +77,10 @@ public interface ADMUsuarioDao extends AbstractDao<Usuario, Long> {
 	 */
 	public Usuario getByEntidad(Long idUsuario, Long idEntidad);
 
+	/**
+	 * Devuelve un listado de usuarios externos filtrados por nombre o apellido1 o apellido2
+	 * @param filtro
+	 * @return
+	 */
+	public List<Usuario> getListByExternosAndNombre(String filtro);
 }

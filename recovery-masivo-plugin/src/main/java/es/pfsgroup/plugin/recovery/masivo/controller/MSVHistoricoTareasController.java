@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.recovery.masivo.factories.MSVCodigoPostalPlazaFactory;
 import es.pfsgroup.plugin.recovery.mejoras.procuradores.MEJProcuradoresApi;
 import es.pfsgroup.recovery.bpmframework.input.RecoveryBPMfwkInputApi;
 import es.pfsgroup.recovery.bpmframework.input.model.RecoveryBPMfwkInput;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 
 /**
  * Controlador para mostrar el historico de tareas y resoluciones
@@ -47,6 +48,9 @@ public class MSVHistoricoTareasController {
 	
 	@Autowired
 	MSVCodigoPostalPlazaFactory msvCodigoPostalPlazaFactory;
+	
+	@Autowired
+	MSVResolucionApi msvResolucionMang;
  
 	/**
      * Metodo que devuelve el historico de Tareas
@@ -120,7 +124,7 @@ public class MSVHistoricoTareasController {
 	
 	@SuppressWarnings("unchecked")
     @RequestMapping
-    public String getDetalleResolucion(Long idInput, ModelMap model) {
+    public String getDetalleResolucion(Long idInput, ModelMap model){
     	RecoveryBPMfwkInput input = proxyFactory.proxy(RecoveryBPMfwkInputApi.class).get(idInput);
 
     	List<MSVHistItemResolucionDto> items = proxyFactory.proxy(MSVHistoricoTareasApi.class).getItemsDetalleInput(input);
@@ -128,6 +132,12 @@ public class MSVHistoricoTareasController {
     	if (!Checks.esNulo(adjunto)) {
     		model.put("nombreFichero", adjunto.getFileName());
     	}
+    	//Recuperar lista de adjuntos asociadas al input
+    	List<EXTAdjuntoAsunto> listaAdjuntos = msvResolucionMang.getAdjuntosAsociadoAlInput(idInput);
+    	if(!Checks.estaVacio(listaAdjuntos)){
+    		model.put("adjuntosResolucion",listaAdjuntos);
+    	}
+    	
     	model.put("campos", items);
     	return JSON_DATOS_RESOLUCION;
     }

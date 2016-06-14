@@ -359,6 +359,7 @@
 		return entidad.get("data").cabecera.codExpediente;
 	}
 	
+	debugger;
 	<sec:authorize ifAllGranted="EDITAR_GYA">
 	var btnEditarGyA = new Ext.Button({
            	text: '<s:message code="app.editar" text="**Editar" />'
@@ -390,11 +391,12 @@
 				,iconCls : 'icon_edit'
 			,cls: 'x-btn-text-icon'
 				,handler:function(){
+					debugger;
 				var w = app.openWindow({
 				  flow : 'expedientes/editaGestionyAnalisisRevisionPropuesta'
 				  ,width:650
 				  ,title : '<s:message code="expedientes.consulta.tabgestion.revision.edicion" text="**Editar Revisión de Gestion Analisis y Propuesta" />' 
-				  ,params : {id:entidad.getData("gestion.aaa")}
+				  ,params : {id:entidad.getData("gestion").aaa}
 				});
 				w.on(app.event.DONE, function(){
 				  w.close();
@@ -406,10 +408,11 @@
 	</sec:authorize>
 	
 	var refrescarGestionyAnalisis = function(){
-		formGestion.load({
+		<%--formGestion.load({
 				url : app.resolveFlow('expedientes/tabGestionyAnalisisData')
 				,params : {id : entidad.getData("id")}
-			});
+			}); --%>
+		entidad.refrescar();
 	};
 
 	var refrescarGestionyAnalisisRev = function(){
@@ -462,7 +465,8 @@
 		<sec:authorize ifAllGranted="EDITAR_GYA_REV">
 			if (estadoExpediente != app.estExpediente.ESTADO_CONGELADO && estadoExpediente != app.estExpediente.ESTADO_CANCELADO){
 				if ((estadoExpediente != app.estExpediente.ESTADO_CANCELADO && estadoExpediente != app.estExpediente.ESTADO_BLOQUEADO) && 
-					(estadoItinerario==app.estItinerario.ESTADO_RE) && (permisosVisibilidadGestorSupervisor(perfilGestor) || permisosVisibilidadGestorSupervisor(perfilSupervisor) ) ){
+					(estadoItinerario==app.estItinerario.ESTADO_RE) && (permisosVisibilidadGestorSupervisor(perfilGestor) || permisosVisibilidadGestorSupervisor(perfilSupervisor) ) &&
+					(entidad.getData("gestion").aaa!='') ){
 					btnEditarRevision.show(); 
 				}else{
 					btnEditarRevision.hide(); 

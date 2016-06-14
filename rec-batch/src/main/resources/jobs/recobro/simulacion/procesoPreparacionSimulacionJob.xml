@@ -18,68 +18,68 @@
 						<!-- Lista de scripts SQL ha ejecutar -->
 						<list>
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.control.proceso.simulacion.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.control.proceso.simulacion" /></entry>
 								<entry key="message" value="recobro.control.proceso.simulacion" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							<!-- VOLVEMOS A GENERAR LA VISTA DE BATCH_DATOS_EXP -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_exp" /></entry>
 								<entry key="message" value="recobro.simulacion.borrado.batch_datos_exp" />
 								<entry key="severidad" value="error"/>
 							</map>							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_exp" /></entry>
 								<entry key="message" value="recobro.simulacion.creacion.batch_datos_exp" />
 								<entry key="severidad" value="error"/>
 							</map>
 							<!-- BORRAMOS Y VOLVEMOS A GENERAR LA VISTA DE BATCH_DATOS_CNT_EXP -->	
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_cnt_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_cnt_exp" /></entry>
 								<entry key="message" value="recobro.simulacion.borrado.batch_datos_cnt_exp" />
 								<entry key="severidad" value="error"/>
 							</map>							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_cnt_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_cnt_exp" /></entry>
 								<entry key="message" value="recobro.simulacion.creacion.batch_datos_cnt_exp" />
 								<entry key="severidad" value="error"/>
 							</map>							
 							<!-- BORRAMOS Y VOLVEMOS A GENERAR LA VISTA DE BATCH_DATOS_PER_EXP -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_per_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_per_exp" /></entry>
 								<entry key="message" value="recobro.simulacion.borrado.batch_datos_per_exp" />
 								<entry key="severidad" value="error"/>
 							</map>							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_per_exp.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_per_exp" /></entry>
 								<entry key="message" value="recobro.simulacion.creacion.batch_datos_per_exp" />
 								<entry key="severidad" value="error"/>
 							</map>								
 							<!-- BORRAMOS Y VOLVEMOS A GENERAR LA VISTA DE BATCH_DATOS_EXP_MANUAL -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_exp_manual.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_datos_exp_manual" /></entry>
 								<entry key="message" value="recobro.simulacion.borrado.batch_datos_exp_manual" />
 								<entry key="severidad" value="error"/>
 							</map>							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_exp_manual.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_datos_exp_manual" /></entry>
 								<entry key="message" value="recobro.simulacion.creacion.batch_datos_exp_manual" />
 								<entry key="severidad" value="error"/>
 							</map>	
 							<!-- GENERAMOS LOS INDICES PARA ESTAS VISTAS -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.indices.vistas.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.indices.vistas" /></entry>
 								<entry key="message" value="recobro.simulacion.creacion.indices.vistas" />
 								<entry key="severidad" value="error"/>
 							</map>								
 							<!-- VOLVEMOS A GENERAR LA VISTA DE BATCH_RCF_ENTRADA -->
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_rcf_entrada.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.borrado.batch_rcf_entrada" /></entry>
 								<entry key="message" value="recobro.simulacion.borrado.batch_rcf_entrada" />
 								<entry key="severidad" value="error"/>
 							</map>							
 							<map>
-								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_rcf_entrada.${entity.dialect}" /></entry>
+								<entry key="sql"><bean parent="sql" p:key="recobro.simulacion.creacion.batch_rcf_entrada" /></entry>
 								<entry key="message" value="recobro.simulacion.creacion.batch_rcf_entrada" />
 								<entry key="severidad" value="error"/>
 							</map>

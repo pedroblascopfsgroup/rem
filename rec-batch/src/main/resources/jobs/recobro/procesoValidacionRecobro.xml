@@ -25,7 +25,7 @@
     <bean id="esquemas-01.unicoEsquemaLiberadoValidator" class="es.capgemini.pfs.batch.recobro.validator.BatchRecobroValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="esquemas-01.unicoEsquemaLiberadoValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="esquemas-01.unicoEsquemaLiberadoValidator" />
         </property>
         <property name="expectedNumber" value="1" />
         <property name="message" value="esquemas-01.unicoEsquemaLiberadoValidator" />

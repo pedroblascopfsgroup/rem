@@ -29,7 +29,6 @@ cp scripts/shells/* /recovery/batch-server/shells/
 sed -e "s/ENTORNO/$1/g" -i /recovery/batch-server/shells/unzip-messages-to-queue.sh
 sed -e "s/ENTORNO/$1/g" -i /recovery/batch-server/shells/zip-messages-from-queue.sh
 sed -e "s/ENTORNO/$1/g" -i /recovery/batch-server/shells/control-input-error-messages.sh
-sed -e "s/ENTORNO/$1/g" -i /recovery/batch-server/shells/control-output-error-messages.sh
 sed -e "s/ENTORNO/$1/g" -i /recovery/batch-server/shells/move-input-error-messages.sh
 sed -e "s/ENTORNO/$1/g" -i /recovery/batch-server/shells/move-output-error-messages.sh
 chmod a+rx /recovery/batch-server/shells/*.sh

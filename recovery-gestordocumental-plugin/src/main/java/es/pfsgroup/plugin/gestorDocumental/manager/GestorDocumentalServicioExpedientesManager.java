@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.gestorDocumental.manager;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpedie
 @Component
 public class GestorDocumentalServicioExpedientesManager implements GestorDocumentalServicioExpedientesApi {
 
+	
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	private static final String URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES = "rest.client.gestor.documental.expedientes";
 	
 	
@@ -119,16 +124,22 @@ public class GestorDocumentalServicioExpedientesManager implements GestorDocumen
 		serverRequest.setPath(getPathCrearPropuesta(crearPropuesta));
 		serverRequest.setMultipart(getMultipartCrearPropuesta(crearPropuesta));
 		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
-		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
-		try {
-			Thread.sleep(15000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			if (!respuesta.getMensajeError().contains("An item with the name")) {
-				throw new GestorDocumentalException(respuesta.getMensajeError());
+		RespuestaCrearExpediente respuesta = null;
+		try{
+			respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+			try {
+				Thread.sleep(15000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			if(!Checks.esNulo(respuesta.getCodigoError())) {
+				if (!respuesta.getMensajeError().contains("An item with the name")) {
+					throw new GestorDocumentalException(respuesta.getMensajeError());
+				}
+			}
+		}catch(Exception e) {
+			logger.error("error crearPropuesta ", e);
+			return null;
 		}
 		return respuesta;
 	}

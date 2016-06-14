@@ -1,6 +1,6 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-        <entry key="recobro.idxdrop.jobPersistenciaPreviaEnvio.Oracle10gDialect">
+        <entry key="recobro.idxdrop.jobPersistenciaPreviaEnvio">
         <![CDATA[
             DECLARE
               A_TABLES DBMS_SQL.VARCHAR2_TABLE;
@@ -37,7 +37,7 @@
 
     <!-- Paso 1: PROCESO DE TAREAS PREVIAS -->
     <!-- BORRAMOS LA TABLA TMP_REC_CONTRATOS_CONS_BAJA -->
-    <entry key="recobro.borrado.tmp_rec_contratos_cons_baja.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_contratos_cons_baja">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CONTRATOS_CONS_BAJA');
@@ -45,7 +45,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA TMPREC_FICHERO_CONTRATOS -->
-    <entry key="recobro.borrado.tmp_rec_fichero_contratos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_fichero_contratos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_FICHERO_CONTRATOS');
@@ -53,7 +53,7 @@
         ]]>
     </entry>
     <!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR_SUB -->
-    <entry key="recobro.borrado.tmp_rec_exp_age_mar_sub.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_age_mar_sub">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_AGE_MAR_SUB');
@@ -61,7 +61,7 @@
         ]]>
     </entry>
     <!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR -->
-    <entry key="recobro.borrado.tmp_rec_exp_age_mar.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_age_mar">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_AGE_MAR');
@@ -69,7 +69,7 @@
         ]]>
     </entry>
     <!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR_EXC -->
-    <entry key="recobro.borrado.tmp_rec_exp_age_mar_exc.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_age_mar_exc">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_AGE_MAR_EXC');
@@ -77,7 +77,7 @@
         ]]>
     </entry>
     <!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_MAR_GES -->
-    <entry key="recobro.borrado.tmp_rec_exp_age_mar_ges.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_age_mar_ges">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_AGE_MAR_GES');
@@ -85,7 +85,7 @@
         ]]>
     </entry>
     <!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_CNT -->
-    <entry key="recobro.borrado.tmp_rec_exp_age_cnt.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_age_cnt">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_AGE_CNT');
@@ -93,7 +93,7 @@
         ]]>
     </entry>
     <!-- BORRADO DE LA TABLA TMP_REC_EXP_AGE_CNT_EXC -->
-    <entry key="recobro.borrado.tmp_rec_exp_age_cnt_exc.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_exp_age_cnt_exc">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_EXP_AGE_CNT_EXC');
@@ -102,7 +102,7 @@
     </entry>
 
     <!-- BORRADO DE LA TABLA TMP_GAE_GAGER -->
-    <entry key="recobro.borrado.tmp_gae_gager.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_gae_gager">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_GAE_GAGER');
@@ -111,7 +111,7 @@
     </entry>
 
     <!-- BORRADO DE LA TABLA TMP_SAGER_INFO -->
-    <entry key="recobro.borrado.tmp_sager_info.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_sager_info">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_SAGER_INFO');
@@ -120,7 +120,7 @@
     </entry>
 
     <!-- BORRADO DE LA TABLA TMP_CICLOS_RECOBRO_PTES -->
-    <entry key="recobro.borrado.tmp_ciclos_recobro_ptes.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_ciclos_recobro_ptes">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CICLOS_RECOBRO_PTES');
@@ -129,7 +129,7 @@
     </entry>
 
     <!-- BORRADO DE LA TABLA TMP_CRE_NUEVOS -->
-    <entry key="recobro.borrado.tmp_cre_nuevos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_cre_nuevos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CRE_NUEVOS');
@@ -138,7 +138,7 @@
     </entry>
 
     <!-- BORRADO DE LA TABLA TMP_CRC_NUEVOS -->
-    <entry key="recobro.borrado.tmp_crc_nuevos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_crc_nuevos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CRC_NUEVOS');
@@ -147,7 +147,7 @@
     </entry>
 
     <!-- BORRADO DE LA TABLA TMP_CRP_NUEVOS -->
-    <entry key="recobro.borrado.tmp_crp_nuevos.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_crp_nuevos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_CRP_NUEVOS');
@@ -159,7 +159,7 @@
     <!-- GESTIÓN DE CICLOS DE RECOBRO Y CANCELACIÓN DE EXPEDIENTES -->
     <!-- ********************************************************* -->
     <!-- Cerramos ciclos de recobro para los expedientes que no estén activos -->
-    <entry key="recobro.cierre.ciclos.Oracle10gDialect">
+    <entry key="recobro.cierre.ciclos">
         <![CDATA[
             -- SET SERVEROUTPUT ON;
             DECLARE
@@ -226,7 +226,7 @@
         ]]>
     </entry>
 
-        <entry key="recobro.finalizar.ciclos_recobro_contrato_por_excepcion.Oracle10gDialect">
+        <entry key="recobro.finalizar.ciclos_recobro_contrato_por_excepcion">
         <![CDATA[
             /*
              * EXCEPTUAR CONTRATOS
@@ -335,7 +335,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.finalizar.ciclos_recobro_persona_por_excepcion.Oracle10gDialect">
+    <entry key="recobro.finalizar.ciclos_recobro_persona_por_excepcion">
         <![CDATA[
             /*
              * EXCEPTUAR PERSONAS
@@ -432,7 +432,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.ciclos_recobro_contrato_por_fin_excepcion.Oracle10gDialect">
+    <entry key="recobro.insert.ciclos_recobro_contrato_por_fin_excepcion">
         <![CDATA[
             declare
             begin
@@ -529,7 +529,7 @@
             end;
         ]]>
     </entry>
-    <entry key="recobro.insert.ciclos_recobro_persona_por_fin_excepcion.Oracle10gDialect">
+    <entry key="recobro.insert.ciclos_recobro_persona_por_fin_excepcion">
         <![CDATA[
             declare
             begin
@@ -629,7 +629,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.finalizar.ciclos_recobro_contrato_deuda_saldada.Oracle10gDialect">
+    <entry key="recobro.finalizar.ciclos_recobro_contrato_deuda_saldada">
         <![CDATA[
             /*
              * SALDAR DEUDA DE CONTRATOS
@@ -738,7 +738,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.finalizar.expediente_deuda_saldada.Oracle10gDialect">
+    <entry key="recobro.finalizar.expediente_deuda_saldada">
         <![CDATA[
             DECLARE
               /* CURSORES */
@@ -829,7 +829,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.finalizar.ciclos_recobro_rot_o_ra.Oracle10gDialect">
+    <entry key="recobro.finalizar.ciclos_recobro_rot_o_ra">
         <![CDATA[
             /*
              * Cierra los ciclos de deuda (exp, cnt y per) de aquellos expedientes que se tengan
@@ -927,7 +927,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.finalizar.ciclos_recobro_estado_no_recibido.Oracle10gDialect">
+    <entry key="recobro.finalizar.ciclos_recobro_estado_no_recibido">
         <![CDATA[
         DECLARE
          /*
@@ -1030,7 +1030,7 @@
     ]]>
     </entry>
 
-    <entry key="recobro.finalizar.ciclos_recobro_estado_cancelado.Oracle10gDialect">
+    <entry key="recobro.finalizar.ciclos_recobro_estado_cancelado">
         <![CDATA[
         DECLARE
         /*
@@ -1133,7 +1133,7 @@
     ]]>
     </entry>
 
-    <entry key="recobro.finalizar.ciclos_recobro_exp_sin_crc.Oracle10gDialect">
+    <entry key="recobro.finalizar.ciclos_recobro_exp_sin_crc">
         <![CDATA[
         DECLARE
         /*
@@ -1203,7 +1203,7 @@
     ]]>
     </entry>
 
-    <entry key="recobro.candelar_exp_sin_cre.Oracle10gDialect">
+    <entry key="recobro.candelar_exp_sin_cre">
         <![CDATA[
         DECLARE
             /*
@@ -1276,7 +1276,7 @@
     <!-- ******************************************************************* -->
 
     <!-- CONSOLIDAMOS LOS EXPEDIENTES CANCELADOS Y LOS REARQUETIPADOS QUE SON TODOS LOS POSIBLES CONTRATOS DE BAJA -->
-    <entry key="recobro.insert.tmp_rec_contratos_cons_baja.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_cons_baja">
         <![CDATA[
             INSERT INTO TMP_REC_CONTRATOS_CONS_BAJA (EXP_ID, CNT_ID, RCF_AGE_ID)
                 SELECT DISTINCT EXP_ID, CNT_ID, RCF_AGE_ID FROM (
@@ -1291,7 +1291,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_rec_contratos_cons_baja.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_rec_contratos_cons_baja">
         <![CDATA[
             BEGIN
                 -- Rebuid de indices
@@ -1308,7 +1308,7 @@
     </entry>
 
     <!-- GUARDAMOS EL REPARTO DEL DÍA ANTERIOR MENOS LAS POSIBLES BAJAS DE HOY EN UNA TABLA TEMPORAL PARA TRABAJAR CON ELLA -->
-    <entry key="recobro.insert.tmp_rec_fichero_contratos.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_fichero_contratos">
         <![CDATA[
             BEGIN
                 EXECUTE IMMEDIATE 'INSERT INTO TMP_REC_FICHERO_CONTRATOS (RCF_AGE_ID, RCF_SCA_ID, CNT_ENV_ID, CNT_COD_PROPIETARIO, DD_TPR_CODIGO, CNT_CONTRATO, CNT_ID)
@@ -1334,7 +1334,7 @@
          PARA DESPUÉS AÑADIRLOS A LA TABLA TMP_REC_EXP_AGE_MAR -->
     <!-- Partimos este paso en varios
 
-        <entry key="recobro.insert.tmp_rec_exp_age_mar.Oracle10gDialect">
+        <entry key="recobro.insert.tmp_rec_exp_age_mar">
         <![CDATA[
             INSERT  /*+ APPEND PARALLEL(TMP_REC_EXP_AGE_MAR_1, 16) PQ_DISTRIBUTE(TMP_REC_EXP_AGE_MAR_1, NONE) */ INTO TMP_REC_EXP_AGE_MAR
             SELECT DISTINCT RCF_AGE_ID, RCF_SCA_ID, EXP_ID, PER_ID FROM (
@@ -1361,7 +1361,7 @@
     </entry>
 
      -->
-    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_1.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_1">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_AGE_MAR_SUB
             (SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, CRP.PER_ID
@@ -1371,7 +1371,7 @@
             )
         ]]>
     </entry>
-    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_2.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_2">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_AGE_MAR_SUB
             (SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, SAL.PER_ID
@@ -1380,7 +1380,7 @@
             )
         ]]>
     </entry>
-    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_3.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_3">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_AGE_MAR_SUB
             (SELECT DISTINCT CRE.RCF_AGE_ID, TMP.RCF_SCA_ID, CRE.EXP_ID, CRP.PER_ID
@@ -1391,7 +1391,7 @@
             )
         ]]>
     </entry>
-    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_4.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar_sub_4">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_AGE_MAR_SUB
             (SELECT EXP.RCF_AGE_ID, EXP.RCF_SCA_ID, EXP.EXP_ID, CRP.PER_ID
@@ -1402,7 +1402,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_rec_exp_age_mar.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar">
         <![CDATA[
            BEGIN
             OPERACION_DDL.DDL_TABLE('STATS','TMP_REC_EXP_AGE_MAR_SUB');
@@ -1413,7 +1413,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_rec_exp_age_mar.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_rec_exp_age_mar">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_REC_EXP_AGE_MAR_1'); --rebuild
@@ -1426,7 +1426,7 @@
     </entry>
 
     <!-- EXCLUIMOS LAS PERSONAS EXCEPTUADAS Y LAS PERSONAS CUYA DEUDA IRREGULAR DE TODOS SUS CONTRATOS SEA = 0 -->
-    <entry key="recobro.insert.tmp_rec_exp_age_mar_exc.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar_exc">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_AGE_MAR_EXC
             SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID
@@ -1439,7 +1439,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_rec_exp_age_mar_exc.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_rec_exp_age_mar_exc">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_REC_EXP_AGE_MAR_EXC_1'); --rebuild
@@ -1452,7 +1452,7 @@
     </entry>
 
     <!-- MARCAMOS LAS PERSONAS QUE TIENEN GESTION COMPARTIDA -->
-    <entry key="recobro.insert.tmp_rec_exp_age_mar_ges.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_mar_ges">
         <![CDATA[
             INSERT INTO TMP_REC_EXP_AGE_MAR_GES
             (SELECT DISTINCT TMP.RCF_AGE_ID, TMP.RCF_SCA_ID, TMP.EXP_ID, TMP.PER_ID,
@@ -1463,7 +1463,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_rec_exp_age_mar_ges.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_rec_exp_age_mar_ges">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_REC_EXP_AGE_MAR_GES_1'); --rebuild
@@ -1476,7 +1476,7 @@
     </entry>
 
     <!-- DESNORMALIZAMOS LOS CONTRATOS EN LA TABLA TMP_REC_EXP_AGE_CNT -->
-    <entry key="recobro.insert.tmp_rec_exp_age_cnt.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_cnt">
         <![CDATA[
             BEGIN
              INSERT INTO TMP_REC_EXP_AGE_CNT
@@ -1499,7 +1499,7 @@
     </entry>
 
     <!-- EXCLUIMOS LOS CONTRATOS EXCEPTUADOS, LOS QUE TENGAN RIESGO = 0 Y LOS QUE TENGAN DEUDA IRREGULAR = 0 -->
-    <entry key="recobro.insert.tmp_rec_exp_age_cnt_exc.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_exp_age_cnt_exc">
         <![CDATA[
             BEGIN
                 EXECUTE IMMEDIATE
@@ -1523,7 +1523,7 @@
 
     <!-- Paso 2: PROCESO DE CALCULO DE BAJAS -->
     <!-- BORRAMOS LA TABLA TMP_REC_REPARTO_DIA_ANTERIOR -->
-    <entry key="recobro.borrado.tmp_rec_reparto_dia_anterior.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_reparto_dia_anterior">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_REPARTO_DIA_ANTERIOR');
@@ -1531,7 +1531,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA TMP_REC_CONTRATOS_BAJA -->
-    <entry key="recobro.borrado.tmp_rec_contratos_baja.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_contratos_baja">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CONTRATOS_BAJA');
@@ -1540,7 +1540,7 @@
     </entry>
 
     <!-- BORRAMOS LA TABLA TMP_REC_CONTRATOS_CONS_BAJA_MOT -->
-    <entry key="recobro.borrado.tmp_rec_contratos_baja_mot.Oracle10gDialect">
+    <entry key="recobro.borrado.tmp_rec_contratos_baja_mot">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','TMP_REC_CONTRATOS_BAJA_MOT');
@@ -1549,7 +1549,7 @@
     </entry>
 
     <!-- CARGAMOS EL REPARTO DEL DIA ANTERIOR DESDE LA TABLA DE HISTORICO DE REPARTO -->
-    <entry key="recobro.insert.tmp_rec_reparto_dia_anterior.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_reparto_dia_anterior">
         <![CDATA[
             declare
 
@@ -1578,7 +1578,7 @@
     </entry>
 
     <!-- CRUZAMOS POR AGENCIA LA TABLA DEL REPARTO DEL DÍA ANTERIOR JUNTO CON LA TABLA DEL REPARTO DE HOY Y LO QUE FALTE SON LAS BAJAS -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja">
         <![CDATA[
            begin
 
@@ -1600,56 +1600,56 @@
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE BAJA APROVISIONAMIENTO -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.baja_aprovisionamiento.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.baja_aprovisionamiento">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE PLAZO -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.rotacion.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.rotacion">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO CONTRATO EXCEPTUADO -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.contratos.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.contratos">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO PERSONA EXCEPTUADA -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.personas.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.exceptuados.personas">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE CAMPAÑA POR RUPTURA -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.ruptura.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.ruptura">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE FIN DE CAMPAÑA POR REARQUETIPACION -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.rearquetipacion.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.rearquetipacion">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DE CONTRATOS CON MOTIVO DE REGULARIZACIÓN -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.regularizacion.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.regularizacion">
         <![CDATA[
         select 1 from dual
         ]]>
     </entry>
 
     <!-- OBTENCIÓN DEL RESTO DEL MOTIVO OTROS PARA EL RESTO DE CONTRATOS -->
-    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.otros.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_rec_contratos_baja_mot.otros">
         <![CDATA[
         select 1 from dual
         ]]>
@@ -1658,7 +1658,7 @@
 
     <!-- Paso 3: PASAJE A PRODUCCIÓN DE TODOS LOS DATOS -->
     <!-- Subpaso 3.0 - Se desactivan todos los esquemas en extinción que no tengan ningún expediente activo  -->
-    <entry key="recobro.update.desactivar_esquemas.Oracle10gDialect">
+    <entry key="recobro.update.desactivar_esquemas">
         <![CDATA[
             declare
                 v_sql VARCHAR2(2000 CHAR);
@@ -1684,7 +1684,7 @@
         ]]>
     </entry>
     <!-- Subpaso 3.1 - Cancelar los expedientes rotos -->
-    <entry key="recobro.update.cancelar_expedientes.Oracle10gDialect">
+    <entry key="recobro.update.cancelar_expedientes">
         <![CDATA[
         declare
         begin
@@ -1733,7 +1733,7 @@
     </entry>
     <!-- Subpaso 3.2 - Actualizar Arq_id en tabla expedientes
     OBSOLETO, EL ARQUETIPO NO SE MANTIENE EN ESE CAMPO
-    <entry key="recobro.merge.exp_expendientes_tmp_rec_exp_rearquetipado.Oracle10gDialect">
+    <entry key="recobro.merge.exp_expendientes_tmp_rec_exp_rearquetipado">
         <![CDATA[
         declare
         begin
@@ -1751,7 +1751,7 @@
     <!-- Subpaso 3.3 - Insertar los nuevos clientes en CLI_CLIENTES
         ESTE PASO SE OMITE PORQUE EN PRINCIPIO NO ES NECESARIO... AL IGUAL QUE LA CREACIÓN EN CCL_CONTRATOS_CLIENTES...
         SI SE DETECTASE QUE FUESE NECESARIO SE ACTIVARIAN LAS QUERIES CORRESPONDIENTES
-    <entry key="recobro.insert.cli_clientes.Oracle10gDialect">
+    <entry key="recobro.insert.cli_clientes">
         <![CDATA[
             INSERT INTO CLI_CLIENTES (CLI_ID, PER_ID, ARQ_ID, DD_EST_ID, DD_ECL_ID, CLI_FECHA_EST_ID,
                 VERSION, USUARIOCREAR, FECHACREAR, BORRADO, CLI_FECHA_CREACION, CLI_TELECOBRO, OFI_ID )
@@ -1767,7 +1767,7 @@
     OJO: Esto no debe hacerse. El ARQ_ID de la PER_PERSONAS no es el arquetipo de recobro. Éste se persiste en la tabla
     ARP_ARQ_RECOBRO_PERSONA
 
-    <entry key="recobro.merge.per_personas_arq_id.Oracle10gDialect">
+    <entry key="recobro.merge.per_personas_arq_id">
         <![CDATA[
         declare
         begin
@@ -1785,7 +1785,7 @@
     <!-- Subpaso 3.5.1 - Creamos los nuevos expedientes en la tabla EXP_EXPEDIENTES
         ES POSIBLE QUE NECESITEMOS ALGÚN OTRO PASO PARA GENERAR EL REGISTRO ESPECÍFICO DEL EXPEDIENTE DE RECOBRO EN LA TABLA EXP_EXPEDIENTE_RECOBRO
     -->
-    <entry key="recobro.insert.exp_expedientes_nuevos.Oracle10gDialect">
+    <entry key="recobro.insert.exp_expedientes_nuevos">
         <![CDATA[
         /*
          * CREACIÓN DE EXPEDIENTES NUEVOS
@@ -1922,7 +1922,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.ciclos_recobro.Oracle10gDialect">
+    <entry key="recobro.insert.ciclos_recobro">
         <![CDATA[
         /*
          * ABRIR NUEVOS CICLOS DE RECOBRO SI HACE FALTA
@@ -2200,7 +2200,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.tmp_gae_gager.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_gae_gager">
         <![CDATA[
         BEGIN
             EXECUTE IMMEDIATE '
@@ -2218,7 +2218,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.actualizacion.gestores.Oracle10gDialect">
+    <entry key="recobro.actualizacion.gestores">
         <![CDATA[
         declare
             -- Cursor de expedientes sin gestor de recobro en ciclo de recobro
@@ -2356,7 +2356,7 @@
 
     <!-- Paso 4: CARGAR DE LAS TABLAS DE EXTRACCIÓN DE FICHEROS -->
     <!-- BORRAMOS LA TABLA REC_FICHERO_CONTRATOS -->
-    <entry key="recobro.borrado.rec_fichero_contratos.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_contratos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_CONTRATOS');
@@ -2366,7 +2366,7 @@
     </entry>
 
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_CONTRATO -->
-    <entry key="recobro.insert.tmp_sager_info.Oracle10gDialect">
+    <entry key="recobro.insert.tmp_sager_info">
         <![CDATA[
             INSERT INTO TMP_SAGER_INFO
             WITH GAGER AS (
@@ -2385,7 +2385,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.idxcreate.tmp_sager_info.Oracle10gDialect">
+    <entry key="recobro.idxcreate.tmp_sager_info">
         <![CDATA[
             BEGIN
                 OPERACION_DDL.DDL_INDEX('CREATE','IDX_TMP_SAGER_INFO_1'); --rebuild
@@ -2394,7 +2394,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.insert.rec_fichero_contratos.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_contratos">
 
         <![CDATA[
         declare
@@ -2545,7 +2545,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA REC_FICHERO_PERSONAS -->
-    <entry key="recobro.borrado.rec_fichero_personas.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_personas">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_PERSONAS');
@@ -2555,7 +2555,7 @@
 
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_PERSONAS -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_PERSONAS -->
-    <entry key="recobro.insert.rec_fichero_personas.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_personas">
         <![CDATA[
         declare
         begin
@@ -2642,7 +2642,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA REC_FICHERO_CONTRATOS_PERSONAS -->
-    <entry key="recobro.borrado.rec_fichero_contratos_personas.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_contratos_personas">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_CONTRATOS_PERSONAS');
@@ -2651,7 +2651,7 @@
     </entry>
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_CONTRATOS_PERSONAS -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_CONTRATOS_PERSONAS -->
-    <entry key="recobro.insert.rec_fichero_contratos_personas.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_contratos_personas">
         <![CDATA[
         declare
         begin
@@ -2711,7 +2711,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.rec_fichero_contratos_limpiar_sin_relaciones.Oracle10gDialect">
+    <entry key="recobro.rec_fichero_contratos_limpiar_sin_relaciones">
         <![CDATA[
         DECLARE
             /*
@@ -2786,7 +2786,7 @@
         ]]>
     </entry>
 
-    <entry key="recobro.rec_fichero_personas_limpiar_sin_relaciones.Oracle10gDialect">
+    <entry key="recobro.rec_fichero_personas_limpiar_sin_relaciones">
         <![CDATA[
         DECLARE
         /*
@@ -2848,7 +2848,7 @@
     </entry>
 
     <!-- BORRAMOS LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
-    <entry key="recobro.borrado.rec_fichero_contratos_bajas.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_contratos_bajas">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_CONTRATOS_BAJAS');
@@ -2857,7 +2857,7 @@
     </entry>
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_CONTRATOS_BAJAS -->
-    <entry key="recobro.insert.rec_fichero_contratos_bajas.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_contratos_bajas">
         <![CDATA[
         begin
 
@@ -2913,7 +2913,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA REC_FICHERO_PERSONAS_PALANCAS -->
-    <entry key="recobro.borrado.rec_fichero_palancas.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_palancas">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_PALANCAS');
@@ -2922,7 +2922,7 @@
     </entry>
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_PERSONAS_PALANCAS -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_PERSONAS_PALANCAS -->
-    <entry key="recobro.insert.rec_fichero_palancas.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_palancas">
         <![CDATA[
         declare
         begin
@@ -2981,7 +2981,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA REC_FICHERO_DIRECCIONES -->
-    <entry key="recobro.borrado.rec_fichero_direcciones.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_direcciones">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_DIRECCIONES');
@@ -2990,7 +2990,7 @@
     </entry>
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_DIRECCIONES -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_DIRECCIONES -->
-    <entry key="recobro.insert.rec_fichero_direcciones.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_direcciones">
         <![CDATA[
         declare
         begin
@@ -3079,7 +3079,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA REC_FICHERO_RECIBOS -->
-    <entry key="recobro.borrado.rec_fichero_recibos.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_recibos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_RECIBOS');
@@ -3088,7 +3088,7 @@
     </entry>
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_RECIBOS -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_RECIBOS -->
-    <entry key="recobro.insert.rec_fichero_recibos.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_recibos">
         <![CDATA[
         declare
         begin
@@ -3166,7 +3166,7 @@
         ]]>
     </entry>
     <!-- BORRAMOS LA TABLA REC_FICHERO_TELEFONOS -->
-    <entry key="recobro.borrado.rec_fichero_telefonos.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_telefonos">
         <![CDATA[
             begin
               OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_TELEFONOS');
@@ -3175,7 +3175,7 @@
     </entry>
     <!-- CARGAMOS EL REPARTO DE HOY EN LA TABLA REC_FICHERO_TELEFONOS -->
     <!-- OJO!! FALTA RELLENAR EL RESTO DE CAMPOS DE LA TABLA REC_FICHERO_TELEFONOS -->
-    <entry key="recobro.insert.rec_fichero_telefonos.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_telefonos">
         <![CDATA[
         declare
         begin
@@ -3234,13 +3234,13 @@
         ]]>
     </entry>
 
-    <entry key="recobro.borrado.rec_fichero_efectos.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_efectos">
         begin
          OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_EFECTOS');
         end;
     </entry>
 
-    <entry key="recobro.insert.rec_fichero_efectos.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_efectos">
         declare
         begin
             COMMIT;
@@ -3296,13 +3296,13 @@
         END;
     </entry>
 
-    <entry key="recobro.borrado.rec_fichero_efectos_personas.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_efectos_personas">
         begin
          OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_EFECTOS_PERSONAS');
         end;
     </entry>
 
-    <entry key="recobro.insert.rec_fichero_efectos_personas.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_efectos_personas">
         declare
         begin
             COMMIT;
@@ -3343,13 +3343,13 @@
         END;
     </entry>
 
-    <entry key="recobro.borrado.rec_fichero_disposiciones.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_disposiciones">
         begin
          OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_DISPOSICIONES');
         end;
     </entry>
 
-    <entry key="recobro.insert.rec_fichero_disposiciones.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_disposiciones">
         declare
         begin
             COMMIT;
@@ -3400,13 +3400,13 @@
         END;
     </entry>
 
-    <entry key="recobro.borrado.rec_fichero_adecuaciones.Oracle10gDialect">
+    <entry key="recobro.borrado.rec_fichero_adecuaciones">
         begin
          OPERACION_DDL.DDL_TABLE('TRUNCATE','REC_FICHERO_ADECUACIONES');
         end;
     </entry>
 
-    <entry key="recobro.insert.rec_fichero_adecuaciones.Oracle10gDialect">
+    <entry key="recobro.insert.rec_fichero_adecuaciones">
         declare
         begin
             COMMIT;

@@ -266,9 +266,11 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 
 	private String obtenerTipoInteresDemora(Contrato contrato,	String campo) {
 		
-		String resultado = noDisponible(campo);
-		if (!Checks.esNulo(contrato.getInteresesDemora())) {
-			resultado = contrato.getInteresesDemora(); 
+		//String resultado = noDisponible(campo);
+		String resultado = "0";
+		//PRODUCTO-2005
+		if (!Checks.esNulo(contrato.getMinutaLetrado())) {
+			resultado = contrato.getMinutaLetrado(); 
 		}
 		return resultado;
 	}
@@ -287,7 +289,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImportePrestamo(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
+			resultado = currencyInstance.format(liquidacion.getContrato().getLimiteInicial());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}

@@ -36,7 +36,7 @@
 			
 	<pfsforms:numberfield name="codigoPostal" 
 		labelKey="rec-web.direccion.form.codigoPostal" 
-		label="**Código Postal" 
+		label="**Cï¿½digo Postal" 
 		value="" 
 		allowDecimals="false" 
 		allowNegative="false"/>
@@ -82,7 +82,7 @@
 
 	<pfsforms:ddCombo name="tipoVia"
 		labelKey="rec-web.direccion.form.tipoVia" 
- 		label="**Tipo Vía" value="" dd="${tiposVia}" 
+ 		label="**Tipo Vï¿½a" value="" dd="${tiposVia}" 
 		propertyCodigo="id" propertyDescripcion="descripcion" />
 
 	<pfsforms:textfield name="domicilio"
@@ -90,7 +90,7 @@
 			value="" obligatory="true" width="350" />
 	
 	<pfsforms:textfield name="numero"
-			labelKey="rec-web.direccion.form.numero" label="**Número"
+			labelKey="rec-web.direccion.form.numero" label="**Nï¿½mero"
 			value="" obligatory="false" width="50" />
 	
 	<pfsforms:textfield name="portal"
@@ -109,10 +109,11 @@
 			labelKey="rec-web.direccion.form.puerta" label="**Puerta"
 			value="" obligatory="false" width="50" />
 				
-	var origen = app.creaText("origen","<s:message code="rec-web.direccion.form.origen" text="**Origen" />","Manual",{
-		width : 100
-		,readOnly: true
-	});
+	<pfsforms:textfield name="origen"
+			labelKey="rec-web.direccion.form.origen" label="**Origen"
+			value="Manual" obligatory="false" width="50" />
+	
+	origen.readOnly = true;
 	
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
@@ -137,7 +138,7 @@
 			Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.localidadObligatoria" text="**La localidad es obligatoria." />');
 			localidad.focus();
 		} else if (tipoVia.getValue() == '') {
-			Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.tipoViaObligatoria" text="**El tipo de vía es obligatorio." />');
+			Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.tipoViaObligatoria" text="**El tipo de vï¿½a es obligatorio." />');
 			tipoVia.focus();
 		} else {
 			panelEdicion.container.mask('<s:message code="fwk.ui.form.guardando" text="**Guardando" />');
@@ -157,7 +158,7 @@
 					                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.camposObligatorios" text="**Debe rellenar los campos obligatorios." />');
 					                break;
 					            case Ext.form.Action.CONNECT_FAILURE:
-					                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.errorComunicacion" text="**Error de comunicación" />');
+					                Ext.Msg.alert('Error', '<s:message code="rec-web.direccion.validacion.errorComunicacion" text="**Error de comunicaciï¿½n" />');
 					                break;
 					       }
 						}

@@ -45,7 +45,7 @@
     <bean id="ale-02.loadDateValidator" class="es.capgemini.pfs.batch.load.LoadDateValidatorTasklet" scope="prototype">
         <property name="dataSource" ref="entityDataSource" />
         <property name="query">
-            <bean parent="sql" p:key="ale-02.loadDateValidator.${entity.dialect}" />
+            <bean parent="sql" p:key="ale-02.loadDateValidator" />
         </property>
         <property name="bindings" value="fileName=csvFileAlertas" />
         <property name="message" value="ale-02.loadDateValidator" />

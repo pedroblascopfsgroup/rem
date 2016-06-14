@@ -143,7 +143,7 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 	 * Descripcion impuesto. Valores posibles:[0/1] --> [IGIC/IVA] - MAPEADOS en recovery
 	 */
 	@Column(name = "DEE_IVA_DES")
-	private String descripcionIVA;
+	private Integer descripcionIVA;
 	
 	@Column(name = "DEE_IRPF_APL")
 	private Float irpf;
@@ -394,11 +394,11 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.iva = iva;
 	}
 
-	public String getDescripcionIVA() {
+	public Integer getDescripcionIVA() {
 		return descripcionIVA;
 	}
 
-	public void setDescripcionIVA(String descripcionIVA) {
+	public void setDescripcionIVA(Integer descripcionIVA) {
 		this.descripcionIVA = descripcionIVA;
 	}
 

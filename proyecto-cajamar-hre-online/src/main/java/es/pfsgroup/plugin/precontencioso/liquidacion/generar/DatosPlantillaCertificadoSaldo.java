@@ -267,7 +267,8 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 
 	private String obtenerTipoInteresDemora(Contrato contrato,	String campo) {
 		
-		String resultado = noDisponible(campo);
+		//String resultado = noDisponible(campo);
+		String resultado = "0";
 		if (!Checks.esNulo(contrato.getInteresesDemora())) {
 			resultado = contrato.getInteresesDemora(); 
 		}

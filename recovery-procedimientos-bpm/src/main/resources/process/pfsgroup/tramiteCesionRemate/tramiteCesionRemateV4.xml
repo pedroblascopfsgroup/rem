@@ -53,11 +53,11 @@
 			<action name="miTarea"
 				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
 				config-type="bean">
-				<targetBean>genericLeaveActionHandler</targetBean>
+				<targetBean>cesionRemateLeaveActionHandler</targetBean>
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="P410_RealizacionCesionRemate" name="avanzaBPM"></transition>
+		<transition to="P410_ResenyarFechaComparecenciaDecision" name="avanzaBPM"></transition>
 		<transition to="P410_ResenyarFechaComparecencia" name="activarAlerta"></transition>
 		<transition to="P410_AperturaPlazo" name="vueltaAtras"></transition>
 	</state>
@@ -107,6 +107,11 @@
 	<decision name="P410_RealizacionCesionRemateDecision" expression="#{P410_RealizacionCesionRemateDecision}">
 		<transition to="P410_BPMTramiteAdjudicacion" name="SI"></transition>
 		<transition to="Decision1" name="NO"></transition>
+	</decision>
+
+	<decision name="P410_ResenyarFechaComparecenciaDecision" expression="#{P410_ResenyarFechaComparecenciaDecision}">
+		<transition to="P410_BPMTramiteAdjudicacion" name="SI"></transition>
+		<transition to="P410_RealizacionCesionRemate" name="NO"></transition>
 	</decision>
 
 

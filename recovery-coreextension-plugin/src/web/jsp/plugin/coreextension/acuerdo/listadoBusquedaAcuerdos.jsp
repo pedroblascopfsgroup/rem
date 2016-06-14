@@ -504,7 +504,7 @@
 	 	data:jerarquia, 
 	 	value:jerarquia.diccionario[0].codigo, 
 	 	name : 'jerarquia', 
-	 	fieldLabel : '<s:message code="menu.clientes.listado.filtro.jerarquia" text="**Jerarquia" />'});
+	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquía" />'});
 	 	
 	 var listadoCodigoZonas = [];
 	 	
@@ -547,7 +547,7 @@
         ,allowBlank:true
         ,store:optionsZonasStore
         ,width:220
-        ,fieldLabel: '<s:message code="menu.clientes.listado.filtro.centro" text="**Centro"/>'
+        ,fieldLabel: '<s:message code="acuerdo.busqueda.filtros.centro" text="**Centro"/>'
         ,tpl: zonasTemplate  
         ,forceSelection:true
         ,style:'padding:0px;margin:0px;'

@@ -86,6 +86,7 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 		Procedimiento prc = getProcedimiento(executionContext);
 		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
 		List<Long> bienesInsertados = new ArrayList<Long>(); 
+
 		if (executionContext.getNode().getName().contains("BPMTramiteAdjudicacion")) {
 			//
 			// Tenemos que crear un procedimiento adjudicación por cada uno de
@@ -121,10 +122,19 @@ public class SubastaV4EnterActionHandler extends PROGenericEnterActionHandler {
 						if(!bienesInsertados.contains(b.getId())){
 							
 							NMBBien nmbBien = genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", b.getBien().getId()));
-							if(nmbBien.getAdjudicacion().getCesionRemate()) {
-								
+							if(executionContext.getTransitionSource()!=null && executionContext.getTransitionSource().getName().contains("P410_ResenyarFechaComparecenciaDecision")){
 								creaProcedimientoAdjudicacion(prc, b.getBien());
 								bienesInsertados.add(b.getId());
+							}
+							else{
+								if(!Checks.esNulo(nmbBien) && !Checks.esNulo(nmbBien.getAdjudicacion())){
+									if(nmbBien.getAdjudicacion().getCesionRemate()) {
+										
+										creaProcedimientoAdjudicacion(prc, b.getBien());
+										bienesInsertados.add(b.getId());
+									}
+								}
+								
 							}
 						}
 					}

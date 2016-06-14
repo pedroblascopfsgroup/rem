@@ -80,7 +80,6 @@ public class EntregasController{
             for(LIQCobroPago lcp : lista){
             	lcp.setNominal(lcp.getCapital() + lcp.getCapitalNoVencido());
             }
-            
             model.put("listado", lista);
     
             return LISTADO_COBRO_PAGO_ENTREGAS_JSON; 

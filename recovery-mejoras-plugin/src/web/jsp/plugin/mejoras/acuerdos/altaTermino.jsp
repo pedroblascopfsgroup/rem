@@ -110,7 +110,7 @@
 				    		var campo = app.creaText(camposDynamics.camposTerminoAcuerdo[i].nombreCampo, camposDynamics.camposTerminoAcuerdo[i].labelCampo , '', {id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo, allowBlank:!camposDynamics.camposTerminoAcuerdo[i].obligatorio});
 				    		break;
 				    	case 'fecha':
-				    		var campo = new Ext.form.DateField({
+				    		var campo = new Ext.ux.form.XDateField({
 											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,name: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,value : ''
@@ -192,13 +192,19 @@
 				
 	       		if("${operacionesPorTipo}"!=null && "${operacionesPorTipo}"!=''){
 		       		<c:forEach var="operacion" items="${operacionesPorTipo}">
-				    	Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+		       			if('${operacion.campo.tipoCampo}' == 'fecha'){
+		       				var valorfecha = '${operacion.valor}';
+		       				valorfecha = valorfecha.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");
+				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue(valorfecha);
+				    	}else{
+				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+				    	}
 				    	Ext.getCmp('${operacion.campo.nombreCampo}').setDisabled(false);
 					</c:forEach>
 		       	}
 		       	
 				if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
-					var lblCargasPosterioresAnteriores = new Ext.form.Label({id:'lblCargasPosterioresAnteriores' ,text: '*Debe introducir la informaci\u00F3n de cargas en la ficha del bien, pesta\u00F1a Cargas' ,hidden: true, style: labelStyle});
+					var lblCargasPosterioresAnteriores = new Ext.form.Label({id:'lblCargasPosterioresAnteriores' ,text: '<s:message code="acuerdos.terminos.cargasPosteriores" text="**Debe introducir la informaci\u00F3n de cargas en la ficha del bien, pesta\u00F1a Cargas" />' ,hidden: true, style: labelStyle});
 					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.add(lblCargasPosterioresAnteriores);
 					Ext.getCmp('cargasPosterioresAnteriores').ownerCt.doLayout();
 					
@@ -209,7 +215,7 @@
 				}
 				
 				if (Ext.getCmp('otrosBienesSolvencia')!=undefined) {
-					var lblBienesSolvencia = new Ext.form.Label({id:'lblBienesSolvencia' ,text: '*Debe introducir la informaci\u00F3n de bienes y solvencias en la ficha del cliente, pesta\u00F1a Solvencia' ,hidden: true, style: labelStyle});
+					var lblBienesSolvencia = new Ext.form.Label({id:'lblBienesSolvencia' ,text: '<s:message code="acuerdos.terminos.otrosBienesSolvencia" text="**Debe introducir la informaci\u00F3n de bienes y solvencias en la ficha del cliente, pesta\u00F1a Solvencia" />' ,hidden: true, style: labelStyle});
 					Ext.getCmp('otrosBienesSolvencia').ownerCt.add(lblBienesSolvencia);
 					Ext.getCmp('otrosBienesSolvencia').ownerCt.doLayout();
 				

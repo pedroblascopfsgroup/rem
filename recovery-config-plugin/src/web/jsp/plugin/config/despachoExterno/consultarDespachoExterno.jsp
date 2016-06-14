@@ -23,6 +23,10 @@
 		<%@ include file="tabSupervisoresDespachoExterno.jsp"%>
 	</pfslayout:includetab>
 	
+	<pfslayout:includetab name="tabDatosAdicionales">
+		<%@ include file="tabDatosAdicionalesDespacho.jsp"%>
+	</pfslayout:includetab>
+	
 	<c:choose>
 
 		<%-- Es tipo despacho letrado --%>
@@ -47,9 +51,7 @@
 					<%@ include file="tabEsquemaTurnado.jsp"%>
 				</pfslayout:includetab>
 				
-				<pfslayout:includetab name="tabDatosAdicionales">
-					<%@ include file="tabDatosAdicionalesDespacho.jsp"%>
-				</pfslayout:includetab>
+				
 				tabsDespacho.insert(1,tabDatosAdicionales);
 				tabsDespacho.add(tabEsquemaTurnado);
 			</c:if>
@@ -68,7 +70,14 @@
 
 		<%-- Es tipo despacho procurador (no debe mostrar el tabSupervisores) --%>
 		<c:when test="${despacho.tipoDespacho.codigo == '2'}">
-			<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
+			<c:if test="${usuarioEntidad != 'BANKIA'}">
+				<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabGestores" />
+			</c:if>
+			
+			<%-- Si es BANKIA debe mostrar datosAdicionales --%>
+			<c:if test="${usuarioEntidad == 'BANKIA'}">
+				<pfslayout:tabpanel name="tabsDespacho" tabs="tabCabecera, tabDatosAdicionales, tabGestores" />
+			</c:if>
 		</c:when>
 
 		<%-- Por defecto y para todos los tipos restantes de despacho se muestra [tabCabecera, tabGestores] y tabSupervisores --%>

@@ -159,6 +159,12 @@
 		listadoCodigoZonas = []; --%>
 		if(comboJerarquia.value != '') {
 			comboZonas.setDisabled(false);
+			optionsZonasStore.load({
+				params:{
+				idJerarquia: comboJerarquia.getValue()
+				,query: 0
+				}
+			});
 			optionsZonasStore.setBaseParam('idJerarquia', comboJerarquia.getValue());
 		}else{
 			comboZonas.setDisabled(true);
@@ -180,14 +186,26 @@
         '</div></tpl>'
     );
     
-    
+    var busquedaZonasActiva = false;
     var optionsZonasStore = page.getStore({
 	       flow: 'mejexpediente/getZonasInstant'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'zonas'
 	    }, zonasRecord)
-	       
 	});
+	
+	optionsZonasStore.on('beforeload', function(store, options){
+		
+       if (busquedaZonasActiva){
+          return false;
+       } else{
+          busquedaZonasActiva = true;
+       }
+   	});
+   
+   	optionsZonasStore.on('load', function(store, records, options){
+       busquedaZonasActiva = false;
+   	});
     
     //Combo de zonas
     var comboZonas = new Ext.form.ComboBox({

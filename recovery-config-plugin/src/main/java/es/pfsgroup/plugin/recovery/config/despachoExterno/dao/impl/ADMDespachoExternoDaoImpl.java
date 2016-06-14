@@ -74,8 +74,8 @@ public class ADMDespachoExternoDaoImpl extends
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "desp.tipoDespacho.id", dto
 				.getTipoDespacho());
 
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "gd.usuario.username", dto
-				.getUsername(), true);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gd.usuario.username", dto
+				.getUsername());
 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "gd.usuario.nombre", dto
 				.getNombre(), true);
@@ -177,5 +177,15 @@ public class ADMDespachoExternoDaoImpl extends
 		if(!enc){
 			b.appendWhere("gd.usuario.usuarioExterno = true");
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DespachoExterno> getListByNombre(String filtro) {
+		
+		filtro = filtro.toUpperCase();
+		String hql = " from DespachoExterno des where des.auditoria.borrado = 0 and upper(des.despacho) like upper('%"+filtro+"%')";
+		
+		return getHibernateTemplate().find(hql);
 	}
 }

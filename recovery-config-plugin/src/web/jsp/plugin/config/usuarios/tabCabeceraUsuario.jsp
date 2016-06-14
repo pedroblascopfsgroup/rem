@@ -83,12 +83,14 @@
 		parameters="modUsuParams" windowTitle="**Modificar usuario"
 		on_success="recargar" />
 	
+	<%-- Se quitan los campos tipoDespacho y despacho. Si se vuelve a requerir, añadir tipoDespacho y despacho en items2 --%>
+	
 	<c:set var="items2" value="grupo,email,externo"/>
 	<c:if test="${usuario.usuarioExterno}">
-		<c:set var="items2" value="grupo,email,externo,tipoDespacho,despacho"/>
+		<c:set var="items2" value="grupo,email,externo"/>
 	</c:if>
 	<sec:authorize ifAllGranted="ROLE_DESACTIVAR_DEPENDENCIA_USU_EXTERNO">
-		<c:set var="items2" value="grupo,email,externo,tipoDespacho,despacho"/>
+		<c:set var="items2" value="grupo,email,externo"/>
 	</sec:authorize>
 	
 	<pfs:panel titleKey="plugin.config.usuarios.consulta.cabecera.control.datos" name="panel"

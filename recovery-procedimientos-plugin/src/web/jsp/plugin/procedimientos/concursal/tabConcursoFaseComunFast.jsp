@@ -283,7 +283,7 @@
 		btEditCreditoGestor.setDisabled(true);
 		btEditCreditoDefinitivo.setDisabled(true);
 		btAddCredito.setDisabled(true);
-		btRemoveCredito.setDisabled(true);
+		btRemoveCredito.setDisabled(false);
 
 		if (grid.getSelectionModel().getCount()>0){
 			var idCredito = grid.getSelectionModel().getSelected().get('idCredito');
@@ -291,7 +291,7 @@
 			var idContratoExpediente = grid.getSelectionModel().getSelected().get('idContratoExpediente');
 			if ((idProcedimiento != '') || (idContratoExpediente != '')){
 				btAddCredito.setDisabled(false);
-				btRemoveCredito.setDisabled(false);
+				btRemoveCredito.setDisabled(true);
 			}
 			if (idCredito != ''){
 				btEditCredito.setDisabled(false);

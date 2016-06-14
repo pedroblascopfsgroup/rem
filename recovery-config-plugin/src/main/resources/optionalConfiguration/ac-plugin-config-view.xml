@@ -36,5 +36,15 @@
 	<bean p:entity="menu" p:name="configuracion/perfiles" p:order="550"
 		p:fileName="/WEB-INF/jsp/plugin/config/menu/listadoBusquedaPerfiles-menu.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_ADMIN"/>
+		
+	<bean p:entity="menu" p:name="delegacion/delegar-tareas" p:order="560"
+		p:fileName="/WEB-INF/jsp/plugin/config/menu/crearDelegaciones-menu.jsp"
+		class="es.pfsgroup.web.menu.ElementoDinamicoPorFuncionYOperador" p:permission="DELEGAR-MIS-TAREAS,DELEGAR-CUALQUIER-TAREAS"
+		p:operador="OR"/>
+		
+	<bean p:entity="menu" p:name="delegacion/historico-delegaciones" p:order="570"
+		p:fileName="/WEB-INF/jsp/plugin/config/menu/verDelegaciones-menu.jsp"
+		class="es.pfsgroup.web.menu.ElementoDinamicoPorFuncionYOperador" p:permission="DELEGAR-MIS-TAREAS,DELEGAR-CUALQUIER-TAREAS"
+		p:operador="OR"/>	
 	
 </beans>

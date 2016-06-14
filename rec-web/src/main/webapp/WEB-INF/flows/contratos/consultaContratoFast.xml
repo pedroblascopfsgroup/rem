@@ -21,6 +21,8 @@
 			<!-- comprobamos si se muestra el boton de Riesgo Operacional -->
 			<evaluate expression="executor.execute('riesgoOperacionalManager.compruebaTipoExpediente', id)" result="flowScope.isTipoExpedienteCorrecto"/>
 			<evaluate expression="executor.execute('riesgoOperacionalManager.compruebaAsunto', id)" result="flowScope.isTipoAsuntoCorrecto"/>
+			<evaluate expression="executor.execute('personaManager.getAllAccionesFSR')" result="flowScope.allAccionesFSR" />
+			<evaluate expression="executor.execute('contratoManager.getAccionesFSRDelContrato', id)" result="flowScope.accionesFSRContrato" />
     	</on-entry>
     </end-state>
 </flow>

@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=María V.
---## FECHA_CREACION=20160523
+--## FECHA_CREACION=20160614
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=BI-82
+--## INCIDENCIA_LINK=CMREC-3393
 --## PRODUCTO=NO
 --## 
---## Finalidad: Se modifica TMP_PRE_FECHA_ESTADO
+--## Finalidad: Se modifica la carga de ESTADO_PREPARACION_ID
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,8 +21,8 @@ create or replace PROCEDURE CARGAR_H_PRECONTENCIOSO (DATE_START IN DATE, DATE_EN
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María V, PFS Group
--- Fecha ultima modificacion:23/05/16
--- Motivos del cambio: BI-82-Se modifica TMP_PRE_FECHA_ESTADO
+-- Fecha ultima modificacion:14/06/16
+-- Motivos del cambio: Se modifica la carga de ESTADO_PREPARACION_ID
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas de hechos de PreContencioso
@@ -160,18 +160,14 @@ BEGIN
     commit;
     
         execute immediate 'merge into TMP_PRE_FECHA_ESTADO t1
-                       using (select PCO_PRC_HEP_FECHA_INCIO, pco_prc_id, DD_PCO_PEP_ID
+                       using (
+                      select max(PCO_PRC_HEP_FECHA_INCIO) PCO_PRC_HEP_FECHA_INCIO, PCO_PRC_ID, max(DD_PCO_PEP_ID)DD_PCO_PEP_ID, max(pco_prc_hep_id) 
                       from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
-                      where PCO_PRC_HEP_FECHA_FIN is null
-                      and DD_PCO_PEP_ID<>5
-                      union 
-                      select max(PCO_PRC_HEP_FECHA_INCIO), pco_prc_id, max(DD_PCO_PEP_ID) 
-                      from '||V_DATASTAGE||'.PCO_PRC_HEP_HISTOR_EST_PREP 
-                      where DD_PCO_PEP_ID=5
+                      where DD_PCO_PEP_ID=5 or (PCO_PRC_HEP_FECHA_FIN is null
+                      and DD_PCO_PEP_ID<>5)
                       group by pco_prc_id) t2
-
                       on (t1.PCO_PRC_ID = t2.PCO_PRC_ID and t1.FECHA_ACTUAL_ESTADO = t2.PCO_PRC_HEP_FECHA_INCIO)
-                      when matched then update set t1.ESTADO_PREPARACION_ID = t2.DD_PCO_PEP_ID';
+                      when matched then update set t1.ESTADO_PREPARACION_ID = t2.DD_PCO_PEP_ID;';
 
 commit; 
 

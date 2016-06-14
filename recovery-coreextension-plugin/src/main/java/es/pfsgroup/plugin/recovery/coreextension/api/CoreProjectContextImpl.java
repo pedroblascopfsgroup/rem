@@ -25,6 +25,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private HashMap<String, HashMap<String, Set<String>>> supervisorAsunto;
 	private HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto;
 	private HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto;
+	private Map<String, List<String>> despachosProcuradores;
 	private Map<String, String> mapaContratoVigor;
 	private Map<String, String> mapaClasificacionDespachoPerfil;
 	private Map<String, String> mapaRelacionBankia;
@@ -200,7 +201,15 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setMapaContratoVigor(Map<String, String> mapaContratoVigor) {
 		this.mapaContratoVigor = mapaContratoVigor;
 	}
-	
+
+	@Override
+	public Map<String, List<String>> getDespachosProcuradores() {
+		return despachosProcuradores;
+	}
+
+	public void setDespachosProcuradores(Map<String, List<String>> despachosProcuradores) {
+		this.despachosProcuradores = despachosProcuradores;
+	}
 	
 	public Map<String, String> getMapaClasificacionDespachoPerfil() {
 		return mapaClasificacionDespachoPerfil;

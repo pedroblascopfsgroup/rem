@@ -12,7 +12,6 @@
 <fwk:page>
 
 	//VARS ********************************************************************
-	
 	var limit=25;	
 	var currentRowId;
 	
@@ -42,6 +41,9 @@
 			b=getParametrosDto();
 			esquemasStore.webflow(b);
 			page.fireEvent(app.event.DONE);
+			esquemasGrid.expand(true);
+            panelFiltros.collapse(true);
+			
 		}
 	});
 	var btnClean=new Ext.Button({
@@ -54,8 +56,8 @@
 	});
 	
 	<pfsforms:textfield
-		labelKey="plugin.config.esquematurnado.buscador.tabFiltros.nombreEsquema"
-		label="**Nombre esquema turnado"
+		labelKey="plugin.procuradores.turnado.descripcionEsquema"
+		label="**Descripci&oacute;n esquema"
 		name="txtNombreEsquema"
 		value=""
 		readOnly="false" />
@@ -72,9 +74,10 @@
 
 
 	var panelFiltros = new Ext.Panel({
-		title:'<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.titulo" text="**Buscador de esquemas de turnado" />'
+		title:'<s:message code="plugin.procuradores.turnado.title" text="**Buscador de esquemas de turnado de procuradores" />'
 		,collapsible:true
 		,collapsed: false
+		,titleCollapse : true
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'
@@ -93,6 +96,7 @@
 		,listeners:{	
 			beforeExpand:function(){
 				esquemasGrid.setHeight(125);
+				esquemasGrid.collapse(true);							
 			}
 			,beforeCollapse:function(){
 				esquemasGrid.setHeight(435);
@@ -127,26 +131,32 @@
 	
 	//PANEL GRID RESULTADOS ********************************************************************
 	
-	var ventanaEdicion = function(id) {
+	var ventanaEdicion = function(id,title) {
 		var w = app.openWindow({
-			flow : 'turnadodespachos/editarEsquema'
-			,width :  600
+			flow : 'turnadoprocuradores/openDetalleEsquemaTurnado'
+			,width :  900
+			,resizable:false
 			,closable: true
-			,title : '<s:message code="plugin.config.esquematurnado.ventana.editar" text="**Edición esquema" />'
-			,params : {id:id}
+			,x:200
+		    ,y:15
+			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza**" text="Detalles esquema" />'+': '+title
+			,params : {idEsquema:id}
+			,autoScroll: 'auto'
 		});
 		w.on(app.event.DONE, function(){
 			w.close();
 			esquemasStore.webflow(getParametrosDto());
 		});
-		w.on(app.event.CANCEL, function(){ w.close(); });
+		w.on(app.event.CANCEL, function(){ 
+			w.close(); 
+		});
 	};
 
 	var btnNuevo = new Ext.Button({
 			text : '<s:message code="app.nuevo" text="**Nuevo" />'
 			,iconCls : 'icon_mas'
 			,handler : function(){
-				ventanaEdicion(null);
+				ventanaEdicion(null,null);
 			}
 	});
 	var btnBorrar = new Ext.Button({
@@ -178,7 +188,7 @@
 					,function(boton){
 						if (boton=='yes') {
 			      			page.webflow({
-				      			flow:'turnadodespachos/copiarEsquema'
+				      			flow:'turnadoprocuradores/openEdicionRangos'
 				      			,params: {id:currentRowId}
 				      			,success: function(){
 			            		   page.fireEvent(app.event.DONE);
@@ -189,8 +199,9 @@
 					}, this);
 			}
 	});
+	btnCopiar.setDisabled(true);
+	
 
-	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_ACTIVAR">
 	var btnActivar = new Ext.Button({
 			text : '<s:message code="app.activar" text="**Activar" />'
 			,iconCls : 'icon_play'
@@ -240,108 +251,6 @@
 			}
 	});
 	btnActivar.setDisabled(true);
-	</sec:authorize>
-	
-	<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">
-	var arrayAcciones = new Array();
-	arrayAcciones[arrayAcciones.length] = {
-		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.descargar" text="**Descargar configuración de letrados" />'
-		,iconCls : 'icon_cambio_gestor'
-		,handler:function(){
-			var flow='/${appProperties.appName}/turnadodespachos/descargarConfiguracionDespachos';
-		    var params = "";
-		    	
-		    app.openBrowserWindow(flow,params);
-		    page.fireEvent(app.event.DONE);           	
-		}
-	};
-	
-	arrayAcciones[arrayAcciones.length] = {
-		text:'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar" text="**Cargar configuración de letrados" />'
-		,iconCls : 'icon_cambio_gestor'
-		,handler:function(){
-			var upload = new Ext.FormPanel({
-				fileUpload: true
-			    ,height: 55
-			    ,autoWidth: true
-			    ,bodyStyle: 'padding: 10px 10px 0 10px;'
-			    ,defaults: {
-			    	allowBlank: false
-			        ,msgTarget: 'side'
-					,height:45
-				}
-			    ,items: [{
-					xtype: 'fileuploadfield'
-					,emptyText: '<s:message code="fichero.upload.fileLabel.error" text="**Debe seleccionar un fichero" />'
-					,fieldLabel: '<s:message code="fichero.upload.fileLabel" text="**Fichero" />'
-					,name: 'file'
-					,path:'root'
-					,buttonText: ''
-					,buttonCfg: {
-					    iconCls: 'icon_mas'
-					}
-				    ,bodyStyle: 'width:50px;'
-			   	}
-			    ,{
-			    	xtype: 'hidden', name:'id', value:0
-			    }]
-			    ,buttons: [{
-					text: 'Subir',
-           			handler: function(){
-           				var params = "";            	
-                		if(upload.getForm().isValid()){
-	                		upload.getForm().submit({
-	                    		url:'/${appProperties.appName}/turnadodespachos/cargarConfiguracionDespachos.htm'
-	                    		,waitMsg: '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.procesando" text="**Procesando la información..." />'
-	                    		,params:params
-	                    		,success: function(upload, o){
-	                    			
-	                    			var resultado = Ext.decode(o.response.responseText);
-								
-									if (resultado.okko != "ok") {
-	                    				Ext.Msg.alert('<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion" text="*** Carga de configuración de letrados" />',
-	                    				'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion.error" text="** Se ha producido algun error al procesar el fichero de configuración" /><br/><br/>' + resultado.okko);
-	                    			} 
-	                    			else {
-	                    				Ext.Msg.alert('<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion" text="*** Carga de configuración de letrados" />',
-	                    				'<s:message code="plugin.config.esquematurnado.buscador.grid.boton.cargar.cargaConfiguracion.ok" text="*** Se ha procesado correctamente la información." />');
-	                    			}
-	                    			win.close();
-	                    		}
-                			});
-               			}
-          			}
-      			},
-			    {
-			    	text: 'Cancelar',
-				    handler: function(){
-				    	win.close();
-					}
-				}]
-			});
-	
-			var win =new Ext.Window({
-			         width:400
-					,minWidth:400
-			        ,height:125
-					,minHeight:125
-			        ,layout:'fit'
-			        ,border:false
-			        ,closable:true
-			        ,title:'<s:message code="adjuntos.nuevo" text="**Agregar fichero" />'
-					,iconCls:'icon-upload'
-					,items:[upload]
-					,modal : true
-			});
-			win.show();
-	}};
-	
-	var menuAcciones = {
-		text : '<s:message code="plugin.config.esquematurnado.buscador.grid.boton.acciones" text="**Acciones" />'
-		,menu : arrayAcciones
-	};
-	</sec:authorize>
-
 	btnBorrar.setDisabled(true);
 	btnActivar.setDisabled(true);
 	
@@ -359,7 +268,7 @@
 	]);				
 	
 	var esquemasStore = page.getStore({
-		 flow: 'turnadodespachos/buscarEsquemas' 
+		 flow: 'turnadoprocuradores/buscarEsquemas' 
 		,limit: limit
 		,remoteSort: false
 		,reader: new Ext.data.JsonReader({
@@ -376,7 +285,7 @@
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_cod" text="**Cod Estado"/>', dataIndex: 'id', hidden: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.estado_des" text="**Estado"/>', dataIndex: 'estado_des', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechaSolicitud" text="F.Alta"/>', dataIndex: 'fechaalta', sortable: true}
-		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.usuario" text="**Usuario"/>', dataIndex: 'usuario', sortable: true}
+		,{header: '<s:message code="plugin.config.esquematurnado.buscador.tabFiltros.autor" text="**Autor"/>', dataIndex: 'usuario', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechainivig" text="**F.Inicio Vigencia"/>', dataIndex: 'fechainivig', sortable: true}
 		,{header: '<s:message code="plugin.config.esquematurnado.buscador.grid.fechafinvig" text="**F.Fin Vigencia"/>', dataIndex: 'fechafinvig', sortable: true}
 	]);
@@ -392,9 +301,9 @@
             	var borrable = r.data.borrable;
             	var activable = r.data.activable;
 				btnBorrar.setDisabled(!borrable);
-				<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_ACTIVAR">				
+			
 				btnActivar.setDisabled(!activable);
-				</sec:authorize>
+			
             }
          }
 	});
@@ -402,32 +311,33 @@
 	var esquemasGrid = new Ext.grid.EditorGridPanel({
 		store: esquemasStore
 		,cm: esquemasCm
-		,title:'<s:message code="plugin.config.esquematurnado.buscador.tituloGrid" text="**Esquemas encontrados"/>'
+		,title:'<s:message code="plugin.procuradores.turnado.busquedaTitle" text="**Esquemas de turnado de procuradores encontrados"/>'
 		,stripeRows: true
 		,autoHeight:true
-		,resizable:false
-		,collapsible : false
-		,titleCollapse : false
+		,resizable:true
+		,collapsible : true
+		,collapsed : false
+		,titleCollapse : true
 		,dontResizeHeight:true
 		,cls:'cursor_pointer'
 		//,iconCls : 'icon_bienes'
 		,clickstoEdit: 1
-		,style:'padding: 10px;'
+		,style:'padding-bottom:10px; padding-right:10px;'
 		,viewConfig : {forceFit : true}
 		,monitorResize: true
 		//,clicksToEdit:0
 		,selModel: sm
-		,bbar : [pagingBar,btnNuevo,btnCopiar,btnBorrar
-			<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_ACTIVAR">,btnActivar</sec:authorize>
-			<sec:authorize ifAllGranted="ROLE_ESQUEMA_TURNADO_EDITAR">,menuAcciones</sec:authorize>]
+		,bbar : [pagingBar<%--,btnNuevo,btnCopiar,btnBorrar,btnActivar --%>
+			]
 	});
 	
 	esquemasGrid.on({
 		rowdblclick: function(grid, rowIndex, e) {
 		   	var rec = grid.getStore().getAt(rowIndex);
 		   	currentRowId = rec.get('id');
+		   	currentRowTitle = rec.get('descripcion');
 		   	if (currentRowId!=null){
-				ventanaEdicion(currentRowId);
+				ventanaEdicion(currentRowId,currentRowTitle);
 			}
 		}
 		,rowclick : function(grid, rowIndex, e) {

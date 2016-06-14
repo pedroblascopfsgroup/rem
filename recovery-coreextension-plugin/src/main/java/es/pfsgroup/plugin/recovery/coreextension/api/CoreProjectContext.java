@@ -50,7 +50,8 @@ public interface CoreProjectContext {
 	public HashMap<String, HashMap<String, Set<String>>> getSupervisorAsunto();
 	public HashMap<String, HashMap<String, Set<String>>> getDespachoSupervisorAsunto();
 	public HashMap<String, HashMap<String, Set<String>>> getTipoGestorSupervisorAsunto();
-	
+	public Map<String, List<String>> getDespachosProcuradores();
+
 	/**
 	 * PRODUCTO-1272 ; PRODUCTO-1274
 	 * Los siguientes 5 'mapas' hacen referencia  a los Extras del despacho
@@ -61,6 +62,6 @@ public interface CoreProjectContext {
 	public Map<String, String> getMapaRelacionBankia();
 	public Map<String, String> getMapaDescripcionIVA();
 	public Map<String, String> getMapaCodEstAse();
-		
+	
 	Set<String> getTiposGestorCentroProcura();
 }

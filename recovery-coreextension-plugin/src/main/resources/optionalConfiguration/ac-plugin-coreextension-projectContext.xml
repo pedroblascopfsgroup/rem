@@ -155,6 +155,17 @@
 				<entry key="1" value="Baja"/>
 			</map>
 		</property>
+		<property name="despachosProcuradores">
+			<map>
+				<entry key="HCJ">
+					<list>
+						<value>Medina Cuadros Procuradores</value>
+						<value>ABA Procuradores</value>
+						<value>Leticia Codias</value>
+					</list>
+				</entry>
+			</map>
+		</property>
 	</bean>  
 	
 		<!-- Implementaciones por defecto-->

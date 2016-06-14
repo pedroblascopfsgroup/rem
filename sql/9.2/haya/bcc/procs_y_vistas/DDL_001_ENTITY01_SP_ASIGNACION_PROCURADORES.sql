@@ -113,19 +113,19 @@ CURSOR crs_id_usu_ganador(p_importe_tarea NUMBER, p_esquema_vigente #ESQUEMA#.tu
    IS
       SELECT FIRST_VALUE (tpc.usu_id) OVER (ORDER BY tpc.usu_id DESC)
       FROM tup_tpc_turnado_procu_config tpc
-      WHERE tpc.ept_id = p_esquema_vigente and p_importe_tarea BETWEEN tpc.tpc_importe_desde and tpc.tpc_importe_hasta and tpc.borrado=0;
+      WHERE tpc.ept_id = p_esquema_vigente and p_importe_tarea >= tpc.tpc_importe_desde and p_importe_tarea < tpc.tpc_importe_hasta and tpc.borrado=0;
 
 CURSOR crs_id_usu_ganador_tmp(p_importe_tarea NUMBER, p_esquema_vigente #ESQUEMA#.tup_etp_esq_turnado_procu.etp_id%TYPE)
    IS
       SELECT tpc.usu_id
       FROM tup_tpc_turnado_procu_config tpc
-      WHERE tpc.ept_id = p_esquema_vigente and p_importe_tarea BETWEEN tpc.tpc_importe_desde and tpc.tpc_importe_hasta and tpc.borrado=0;
+      WHERE tpc.ept_id = p_esquema_vigente and p_importe_tarea >= tpc.tpc_importe_desde and p_importe_tarea < tpc.tpc_importe_hasta and tpc.borrado=0;
 
 CURSOR crs_resguardo_tmp(p_importe_tarea NUMBER, p_plazas_esquema #ESQUEMA#.tup_etp_esq_turnado_procu.etp_id%TYPE)
     IS
       select tpc.usu_id, tpc.tpc_porcentaje, null, null
       FROM tup_tpc_turnado_procu_config tpc
-      WHERE tpc.ept_id = p_plazas_esquema and p_importe_tarea BETWEEN tpc.tpc_importe_desde and tpc.tpc_importe_hasta and tpc.borrado=0;
+      WHERE tpc.ept_id = p_plazas_esquema and p_importe_tarea >= tpc.tpc_importe_desde and p_importe_tarea < tpc.tpc_importe_hasta and tpc.borrado=0;
       
 CURSOR crs_id_usu_tabla_tmp
    IS

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE MANUEL PEREZ BARBERA
---## FECHA_CREACION=20160613
+--## FECHA_CREACION=20160614
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-2196

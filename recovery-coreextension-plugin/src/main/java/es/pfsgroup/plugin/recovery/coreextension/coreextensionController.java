@@ -154,7 +154,8 @@ public class coreextensionController {
 			@RequestParam(value="adicional", required=false) Boolean adicional,
 			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional,
 			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados,
-			@RequestParam(value="idAsunto", required=false) Long idAsunto){
+			@RequestParam(value="idAsunto", required=false) Long idAsunto,
+			@RequestParam(value="estadoLetrado", required=false) Boolean estadoLetrado){
 		
 		List<DespachoExterno> listadoDespachos = null;
 		
@@ -162,6 +163,7 @@ public class coreextensionController {
 		if (adicional==null) adicional = false;
 		if (procuradorAdicional==null) procuradorAdicional = false;
 		if (incluirBorrados==null) incluirBorrados = false;
+		if (estadoLetrado==null) estadoLetrado = false;
 		
 		// POR USUARIO
 		if (porUsuario) {
@@ -171,7 +173,10 @@ public class coreextensionController {
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
 		//////
-		
+		//Solo incluimos los despachos con el estado del letrado/procurador = 0 (Alta)
+		if(estadoLetrado){
+			listadoDespachos=proxyFactory.proxy(coreextensionApi.class).getListaDespachosEstadoLetrado(listadoDespachos);
+		}
 		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven
 		//PRODUCTO-1969 Además, si el asunto NO tiene CENTROPROCURA asignado, debemos mostrar TODOS los despachos
 		List<Usuario> usu;

@@ -219,7 +219,7 @@
 		data = entidad.get("data");
 		comboTipoUsuario.reset();
 		comboTipoDespacho.reset();
-		optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue(), porUsuario: porUsuario, adicional: adicional, procuradorAdicional: procuradorAdicional, idAsunto : data.id}); 
+		optionsDespachoStore.webflow({'idTipoGestor': comboTipoGestor.getValue(), porUsuario: porUsuario, adicional: adicional, procuradorAdicional: procuradorAdicional, idAsunto : data.id,estadoLetrado:true}); 
 		
 		comboTipoDespacho.setDisabled(false);
 		

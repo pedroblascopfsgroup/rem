@@ -188,23 +188,39 @@
 	  	}
     }
     
+    var comprobarNumeroContratosRestantes=function(){
+    	debugger;
+		var store = contratosGrid.getStore();
+		var datos;
+		var numFilasSeleccionadas=0;
+		for (var i=0; i < store.data.length; i++) {
+			datos = store.getAt(i);
+			if(datos.get('excluir') == true) {
+	      		numFilasSeleccionadas=numFilasSeleccionadas+1
+			}
+		}
+		var contratosRestantes = store.data.length - numFilasSeleccionadas;
+		return contratosRestantes;
+	}
+	
     // No se permite excluir:
     // - el contrato de pase principal si se seleccionan varios de pase
     // - si solo existe un contrato de pase no se puede eliminar
+    <!-- PRODUCTO-1610 -->
+    <!-- Se va a poder excluir un contrato, incluido el de pase, siempre que quede al menos 1 contrato en el procedimiento -->
 	var btnExcluir = new Ext.Button({
 		text : '<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.button.excluir" text="**Excluir contratos seleccionados" />'
 		,iconCls:'icon_menos'
 		,cls: 'x-btn-text-icon'
 		,handler : function(){
 			if (comprobarSiHayFilSeleccionada()>=1){
-				if (comprobarSihayPase()==0) {
+				debugger;
+				if(comprobarNumeroContratosRestantes()>0){
+					<!-- si hay mas de un contrato restante, podemos excluir -->
 					Ext.Msg.confirm('<s:message code="expedientes.consulta.tabcabecera.otrosCont.excluirContratos" text="**Excluir contrato" />', '<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.button.excluir.confirmar" text="**¿Está seguro que desea excluir los contratos seleccionados?" />',excluir);
-				}else{
-					if (comprobarSiSeIncluyePasePrincipal()){
-						Ext.Msg.alert('<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.informacion" text="**Información"/>','<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.eliminarContratoPasePrincipal" text="**No puede eliminar el contrato de pase principal:"/>' + " " + obtenerPasePrincipal())
-					}else{
-						Ext.Msg.confirm('<s:message code="expedientes.consulta.tabcabecera.otrosCont.excluirContratos" text="**Excluir contrato" />', '<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.button.excluir.confirmar" text="**¿Está seguro que desea excluir los contratos seleccionados?" />',excluir);
-					}
+				}
+				else{
+					Ext.Msg.alert('<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.informacion" text="**Información"/>','<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.dejarSinContratos" text="**No es posible dejar sin contratos el procedimiento"/>')
 				}
 	      	}else{
 	      		Ext.Msg.alert('<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.informacion" text="**Información"/>','<s:message code="plugin.mejoras.procedimiento.excluirContrato.formulario.sinSeleccion" text="**Debe seleccionar algún contrato"/>')

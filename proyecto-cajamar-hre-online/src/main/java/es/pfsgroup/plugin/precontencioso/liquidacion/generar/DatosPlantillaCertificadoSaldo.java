@@ -268,8 +268,9 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		
 		//String resultado = noDisponible(campo);
 		String resultado = "0";
-		if (!Checks.esNulo(contrato.getInteresesDemora())) {
-			resultado = contrato.getInteresesDemora(); 
+		//PRODUCTO-2005
+		if (!Checks.esNulo(contrato.getMinutaLetrado())) {
+			resultado = contrato.getMinutaLetrado(); 
 		}
 		return resultado;
 	}

@@ -25,4 +25,6 @@ public interface MSVResolucionDao extends AbstractDao<MSVResolucion, Long>{
 	
 	public List<MSVResolucion> getResolucionesPendientesValidar(Long idTarea, List<String> tipoResolucionAccionBaned);
 
+	public Boolean comprobarValidacionMetodoClasico(Long id);
+
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
@@ -82,12 +83,28 @@ public class MSVResolucionDaoImpl extends AbstractEntityDao<MSVResolucion, Long>
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "res.tarea.id", idTarea);
 		HQLBuilder.addFiltroIgualQue(hb, "res.auditoria.borrado", false);
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "res.estadoResolucion.codigo", MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
-		
+
 		for(String trab :  tipoResolucionAccionBaned){
 			hb.appendWhere(" res.tipoResolucion.tipoAccion.codigo != '"+trab+"' ");
 		}
 		
 		return HibernateQueryUtils.list(this,hb);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean comprobarValidacionMetodoClasico(Long id) {
+		StringBuffer hql = new StringBuffer("select tar.id from TareaNotificacion tar "
+	               + " WHERE tar.id = "+ id + " and tar.fechaFin is not null and tar.tareaFinalizada = 1");
+		List<MSVResolucion> resol = getHibernateTemplate().find(hql.toString());
+		
+		
+		if(!Checks.esNulo(resol) && resol.size()>0) {
+			return true;
+		}        
+
+		
+		return false;
 	}
 
 	

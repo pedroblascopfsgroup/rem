@@ -361,23 +361,25 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		// Filtrar por la misma oficina que el usuario logueado (MiCartera).
 		// Tan solo si no se ha definido una jerarquia.
 		if(!busquedaJerarquizada || Checks.esNulo(clientes.getJerarquia())){
-			if(clientes.getMiCartera()){
-				if(!Checks.esNulo(usuarioLogueado)){
-					List<DDZona> zonasUserLogueado = usuarioLogueado.getZonas();
-					List<Oficina> oficinas = new ArrayList<Oficina>();
-					if(!Checks.estaVacio(zonasUserLogueado)){
-						for(DDZona zona : zonasUserLogueado){
-							oficinas.add(zona.getOficina());
-						}
-
-						hql.append("and p.OFI_ID IN (");
-						for(int i=0;i < oficinas.size(); i++){
-							hql.append(String.valueOf(oficinas.get(i).getId()));
-							if(i < (oficinas.size()-1)){
-								hql.append(",");
+			if(!Checks.esNulo(clientes.getMiCartera())){
+				if(clientes.getMiCartera()){
+					if(!Checks.esNulo(usuarioLogueado)){
+						List<DDZona> zonasUserLogueado = usuarioLogueado.getZonas();
+						List<Oficina> oficinas = new ArrayList<Oficina>();
+						if(!Checks.estaVacio(zonasUserLogueado)){
+							for(DDZona zona : zonasUserLogueado){
+								oficinas.add(zona.getOficina());
 							}
+	
+							hql.append("and p.OFI_ID IN (");
+							for(int i=0;i < oficinas.size(); i++){
+								hql.append(String.valueOf(oficinas.get(i).getId()));
+								if(i < (oficinas.size()-1)){
+									hql.append(",");
+								}
+							}
+							hql.append(")");
 						}
-						hql.append(")");
 					}
 				}
 			}

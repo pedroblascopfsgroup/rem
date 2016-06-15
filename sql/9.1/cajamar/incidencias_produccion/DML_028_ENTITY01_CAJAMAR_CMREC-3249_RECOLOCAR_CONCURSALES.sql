@@ -1974,7 +1974,7 @@ BEGIN
                               FROM '||v_VALORES.TABLA_MIG||'
                               WHERE CD_CONCURSO = '||v_CONCURSOS_VALORES.CD_CONCURSO;
                               
-               ELSIF INSTR(v_VALORES.CAMPO_INTERFAZ,'FECHA') > 0 OR INSTR(v_VALORES.CAMPO_INTERFAZ,'DECODE') > 0 THEN
+               ELSIF INSTR(v_VALORES.CAMPO_INTERFAZ,'FECHA') > 0 AND INSTR(v_VALORES.CAMPO_INTERFAZ,'DECODE') = 0 THEN
                 
                     v_SQL := 'SELECT TO_CHAR('||v_VALORES.CAMPO_INTERFAZ||',''DD-MM-RRRR'')
                               FROM '||v_VALORES.TABLA_MIG||'

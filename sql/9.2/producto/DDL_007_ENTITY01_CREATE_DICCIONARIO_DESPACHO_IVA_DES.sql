@@ -76,7 +76,7 @@ DECLARE
     V_MSQL := 'CREATE TABLE ' || V_ESQUEMA || '.DD_DID_DESPACHO_IVA_DES
 					(
 					  DD_DID_ID                 NUMBER(16)          NOT NULL,
-					  DD_DID_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+					  DD_DID_CODIGO             VARCHAR2(50 CHAR)   NOT NULL,
 					  DD_DID_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
 					  DD_DID_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
 					  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,

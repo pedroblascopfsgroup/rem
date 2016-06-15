@@ -76,7 +76,7 @@ DECLARE
     V_MSQL := 'CREATE TABLE ' || V_ESQUEMA || '.DD_DCP_DESPACHO_CLASI_PERFIL
 					(
 					  DD_DCP_ID                 NUMBER(16)          NOT NULL,
-					  DD_DCP_CODIGO             VARCHAR2(10 CHAR)   NOT NULL,
+					  DD_DCP_CODIGO             VARCHAR2(50 CHAR)   NOT NULL,
 					  DD_DCP_DESCRIPCION        VARCHAR2(50 CHAR)   NOT NULL,
 					  DD_DCP_DESCRIPCION_LARGA  VARCHAR2(200 CHAR)  NOT NULL,
 					  VERSION                   INTEGER             DEFAULT 0                     NOT NULL,

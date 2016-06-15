@@ -58,6 +58,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
@@ -890,6 +891,22 @@ public class coreextensionManager implements coreextensionApi {
 	
 		return nivelDao.buscarCodigoNivelPorDescripcion(descripcion);
 
+	}
+	
+	@BusinessOperation(GET_LIST_TIPO_DESPACHO_ESTADO_LETRADO)
+	public List<DespachoExterno> getListaDespachosEstadoLetrado(List<DespachoExterno> listaDespachos){
+		List<DespachoExterno> listaDespachosTmp=new ArrayList<DespachoExterno>();
+		for(int i=0;i<listaDespachos.size();i++){
+			DespachoExternoExtras dex = genericDao.get(DespachoExternoExtras.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", listaDespachos.get(i).getId()),
+					genericDao.createFilter(FilterType.EQUALS, "codEstAse", "0"));
+			
+			if(!Checks.esNulo(dex)){
+				listaDespachosTmp.add(listaDespachos.get(i));
+			}
+			
+		}
+		return listaDespachosTmp;
 	}
 
 }

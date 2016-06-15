@@ -25,6 +25,10 @@
 		,style:'font-weight:bolder; font-size:11; margin:10px 10px 10px 10px;'
 	});
 	
+	if (ocultarCombo()) {
+		labelInformativa.text = 'No existen plantillas definidas para ese tipo de liquidación.'
+	}
+	
 	var plantillasRecord = Ext.data.Record.create([
 		{name: 'id'},
 		{name : 'codigo'},
@@ -52,7 +56,7 @@
 	});
 	
 	comboPlantillas.on('afterrender', function(combo) {
-		plantillasStore.webflow();
+		plantillasStore.webflow({idLiquidacion:idLiquidacionSeleccionada});
 	});
 
 	<%-- Buttons --%>
@@ -72,6 +76,10 @@
 			}
 		}
 	});
+	if (ocultarCombo()) {
+		btnGuardar.setVisible(false);
+	}
+	
 	
 	var validarForm = function() {
 		var mensaje = '';

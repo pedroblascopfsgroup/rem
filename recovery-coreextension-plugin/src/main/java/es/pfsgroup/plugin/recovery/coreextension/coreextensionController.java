@@ -148,7 +148,8 @@ public class coreextensionController {
 			@RequestParam(value="adicional", required=false) Boolean adicional,
 			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional,
 			@RequestParam(value="incluirBorrados", required=false) Boolean incluirBorrados,
-			@RequestParam(value="idAsunto", required=false) Long idAsunto){
+			@RequestParam(value="idAsunto", required=false) Long idAsunto,
+			@RequestParam(value="estadoLetrado", required=false) Boolean estadoLetrado){
 		
 		List<DespachoExterno> listadoDespachos = null;
 		
@@ -156,6 +157,7 @@ public class coreextensionController {
 		if (adicional==null) adicional = false;
 		if (procuradorAdicional==null) procuradorAdicional = false;
 		if (incluirBorrados==null) incluirBorrados = false;
+		if (estadoLetrado==null) estadoLetrado = false;
 		
 		// POR USUARIO
 		if (porUsuario) {
@@ -165,24 +167,31 @@ public class coreextensionController {
 			listadoDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(idTipoGestor, incluirBorrados);
 		}
 		
-		//PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En ese caso, mostramos solo los despachos de procuradores que sirven, para ello usaremos el coreProjectContext
-		String codEntidad= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
-		EXTDDTipoGestor tipoGestor=tipoGestorApi.getByCod("PROC");
-		//PRODUCTO-1969 Además, si el asunto NO tiene CENTROPROCURA asignado, debemos mostrar TODOS los despachos
-		List<Usuario> usu;
-		String codigoGestor=null;
-		EXTDDTipoGestor tipoGestorCentroProcura=tipoGestorApi.getByCod("CENTROPROCURA");
-		if(!Checks.esNulo(tipoGestorCentroProcura)){
-			codigoGestor = tipoGestorCentroProcura.getCodigo();
-		}
-		usu = gestorAdicionalApi.findGestoresByAsunto(idAsunto,codigoGestor);
+		// PRODUCTO-1496 tenemos que ver si nos encontramos en HAYA-CAJAMAR. En
+		// ese caso, mostramos solo los despachos de procuradores que sirven,
+		// para ello usaremos el coreProjectContext
+		String codEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		EXTDDTipoGestor tipoGestor = tipoGestorApi.getByCod("PROC");
+
 		Map<String, List<String>> despachosProcuradores = coreProjectContext.getDespachosProcuradores();
-		if(despachosProcuradores.containsKey(codEntidad) && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor) && !Checks.estaVacio(usu)){
+		if (despachosProcuradores.containsKey(codEntidad) && !Checks.esNulo(tipoGestor) && tipoGestor.getId().equals(idTipoGestor)) {
+
+			// PRODUCTO-1969 Además, si el asunto NO tiene CENTROPROCURA
+			// asignado, debemos mostrar TODOS los despachos
+			List<Usuario> usu;
+			String codigoGestor = null;
+			EXTDDTipoGestor tipoGestorCentroProcura = tipoGestorApi.getByCod("CENTROPROCURA");
+			if (!Checks.esNulo(tipoGestorCentroProcura)) {
+				codigoGestor = tipoGestorCentroProcura.getCodigo();
+			}
+			usu = gestorAdicionalApi.findGestoresByAsunto(idAsunto, codigoGestor);
 			Iterator<DespachoExterno> iter = listadoDespachos.iterator();
 			List<String> despachosValidos = despachosProcuradores.get(codEntidad);
-			while(iter.hasNext()){
-				if(!despachosValidos.contains(iter.next().getDespacho())){
-					iter.remove();
+			if (!Checks.estaVacio(usu)) {
+				while (iter.hasNext()) {
+					if (!despachosValidos.contains(iter.next().getDespacho())) {
+						iter.remove();
+					}
 				}
 			}
 		}
@@ -218,7 +227,7 @@ public class coreextensionController {
 	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
 	 * @return JSON
 	 */
-	@SuppressWarnings({ "unchecked", "null" })
+	@SuppressWarnings({ "unchecked" })
 	@RequestMapping
 	public String getListUsuariosDefectoByTipoAsunto(ModelMap model,String idTipoAsunto, String idExpediente,
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,

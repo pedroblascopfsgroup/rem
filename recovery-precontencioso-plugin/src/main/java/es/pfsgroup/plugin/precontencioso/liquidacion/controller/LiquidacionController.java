@@ -248,14 +248,14 @@ public class LiquidacionController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getPlantillasLiquidacion(ModelMap model) {
+	public String getPlantillasLiquidacion(@RequestParam(value = "idLiquidacion", required = false) Long id, ModelMap model) {
 
 		if (generarLiquidacionApi == null) {
 			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
 			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
 		}
 
-		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion(id);
 		model.put("plantillas", plantillas);
 		return JSON_PLANTILLAS;
 	}
@@ -266,7 +266,7 @@ public class LiquidacionController {
 		List<DDTipoLiquidacionPCO> plantillas = null;
 
 		if (generarLiquidacionApi != null) {
-			plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+			plantillas = generarLiquidacionApi.getPlantillasLiquidacion(id);
 		}
 
 		model.put("ocultarCombo", Checks.estaVacio(plantillas));

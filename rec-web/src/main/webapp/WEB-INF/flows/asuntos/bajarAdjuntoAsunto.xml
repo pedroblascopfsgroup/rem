@@ -7,7 +7,7 @@
 	<input name="nombre" required="false" type="java.lang.String"/>
 	<input name="extension" required="false" type="java.lang.String"/>
 	    
-    <end-state id="listado" view="file" >
+    <end-state id="listado" view="filedownload" >
 		<on-entry>
 			<evaluate expression="executor.execute('adjuntosManager.bajarAdjuntoAsunto', asuntoId, id, nombre, extension)" result="flowScope.fileItem"/>
 		</on-entry>

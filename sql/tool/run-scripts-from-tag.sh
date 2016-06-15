@@ -265,7 +265,7 @@ if [ -f $BASEDIR/tmp/product-list-from-tag.txt ] ; then
     cat $BASEDIR/tmp/product-list-from-tag.txt | sort > $BASEDIR/tmp/list-from-tag.txt
 fi
 if [ -f $BASEDIR/tmp/product-list-from-tag-SPs.txt ] ; then
-    cat $BASEDIR/tmp/product-list-from-tag-SPs.txt | sort > $BASEDIR/tmp/list-from-tag.txt
+    cat $BASEDIR/tmp/product-list-from-tag-SPs.txt | sort >> $BASEDIR/tmp/list-from-tag.txt
 fi
 
 if [ -f $BASEDIR/tmp/customer-list-from-tag.txt ] ; then

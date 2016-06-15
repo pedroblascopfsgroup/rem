@@ -873,6 +873,7 @@ public class AdjuntoManager implements AdjuntoApi{
 				};
 				result.add(dto);
 			}
+
 		}
 		return result;
 	}

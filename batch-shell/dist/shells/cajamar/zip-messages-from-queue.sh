@@ -2,7 +2,7 @@
 
 ENTITY_CODE=0240
 QUEUE_DIR_OUTPUT=/recovery/transferencia/integration/messages/output
-TMP_DIR=/recovery/transferencia/tmp
+ZIP_DIR_OUTPUT=/recovery/transferencia/integration/contingency/output
 QUEUE_NAME=para.haya.ENTORNO
 
 DAY=$(date +%d)
@@ -15,9 +15,9 @@ if [ ! -d $QUEUE_DIR_OUTPUT/$QUEUE_NAME ]; then
 fi
 
 # Copy
-mkdir -p $TMP_DIR
-cp -r $QUEUE_DIR_OUTPUT/$QUEUE_NAME/*.msg $TMP_DIR/
-cp -r $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/**/*.msg $TMP_DIR/
+rm -rf $ZIP_DIR_OUTPUT/*
+cp -r $QUEUE_DIR_OUTPUT/$QUEUE_NAME/*.msg $ZIP_DIR_OUTPUT/
+cp -r $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/**/*.msg $ZIP_DIR_OUTPUT/
 
 # Logging
 mkdir -p $QUEUE_DIR_OUTPUT/$QUEUE_NAME/log/$YEAR/$MONTH/$DAY/manual/
@@ -25,8 +25,8 @@ mv $QUEUE_DIR_OUTPUT/$QUEUE_NAME/*.msg $QUEUE_DIR_OUTPUT/$QUEUE_NAME/log/$YEAR/$
 mv $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/**/*.msg $QUEUE_DIR_OUTPUT/$QUEUE_NAME/log/$YEAR/$MONTH/$DAY/manual/
 
 # Compress
-zip -j MESSAGES-$ENTITY_CODE-$YEAR$MONTH$DAY.zip $TMP_DIR/*.msg
+cd $ZIP_DIR_OUTPUT/
+zip -j MESSAGES-$ENTITY_CODE.zip *.msg
 
 # Cleaning
-rm -rf $TMP_DIR
 rm -rf $QUEUE_DIR_OUTPUT/$QUEUE_NAME/error/*

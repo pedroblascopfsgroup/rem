@@ -289,7 +289,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImportePrestamo(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = currencyInstance.format(liquidacion.getContrato().getLimiteInicial());
+			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}

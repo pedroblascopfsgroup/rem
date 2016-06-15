@@ -218,11 +218,19 @@
 	</json:object>
 	<json:object name="sancion">
 		<c:if test="${expediente.sancion!=null}">
+			<json:property name='idSancion' value="${expediente.sancion.id}" />
+			<json:property name='fechaElevacionSancion'>
+				<fwk:date value="${expediente.sancion.fechaElevacion}"/>
+			</json:property>
+			<json:property name='fechaSancion' >
+				<fwk:date value="${expediente.sancion.fechaSancion}"/>
+			</json:property>
+			<json:property name='numWorkFlowSancion' value="${expediente.sancion.numWorkFlow}" />
 			<json:property name='observaciones' value="${expediente.sancion.observaciones}" />
 			<c:if test="${expediente.sancion.decision!=null}">
 				<json:property name='codDecision' value="${expediente.sancion.decision.codigo}" />
 				<json:property name='descDecision' value="${expediente.sancion.decision.descripcion}" />
 			</c:if>
-		</c:if>
+		</c:if>		
 	</json:object>
 </fwk:json>

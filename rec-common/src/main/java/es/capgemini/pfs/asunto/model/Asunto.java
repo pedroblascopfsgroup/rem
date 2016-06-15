@@ -161,6 +161,7 @@ public class Asunto implements Serializable, Auditable {
     @Version
     private Integer version;
     
+    @Transient
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_DFI_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)

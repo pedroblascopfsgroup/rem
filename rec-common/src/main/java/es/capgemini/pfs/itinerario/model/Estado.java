@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -83,6 +84,7 @@ public class Estado implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ReglasVigenciaPolitica> reglasVigenciaPolitica;
     
+    @Transient
     @Column(name = "EST_PUEDE_CANCEL")
     private Boolean permiteCancelar;
 

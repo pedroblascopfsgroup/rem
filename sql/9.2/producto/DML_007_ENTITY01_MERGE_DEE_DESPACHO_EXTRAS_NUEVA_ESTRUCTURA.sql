@@ -27,12 +27,6 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 BEGIN
-	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DEE_DESPACHO_EXTRAS'' AND OWNER='''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM;
-	
-	IF V_NUM=1 THEN
-execute immediate'
-TRUNCATE TABLE '||V_ESQUEMA||'.DEE_DESPACHO_EXTRAS';
 
 
 DBMS_OUTPUT.PUT_LINE('[INFO] MERGEAMOS REGISTROS EN '||V_ESQUEMA||'.DEE_DESPACHO_EXTRAS');

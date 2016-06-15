@@ -244,8 +244,9 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 
 	private String obtenerFechaLiquidacion(LiquidacionPCO liquidacion, String campo) {
 		String resultado = "";
-		if (!Checks.esNulo(liquidacion.getFechaConfirmacion())) {
-			resultado = formateaFecha(liquidacion.getFechaConfirmacion());
+		//PRODUCTO-1592 (PEDRO) --> cambio getFechaConfirmacion() por getFechaCierre()
+		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
+			resultado = formateaFecha(liquidacion.getFechaCierre());
 		} else {
 			logger.debug(campo + " es nulo");
 			resultado = noDisponible(campo);
@@ -289,7 +290,8 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImportePrestamo(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
-			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
+			//PRODUCTO-1592 (PEDRO)
+			resultado = currencyInstance.format(liquidacion.getContrato().getLimiteInicial());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}

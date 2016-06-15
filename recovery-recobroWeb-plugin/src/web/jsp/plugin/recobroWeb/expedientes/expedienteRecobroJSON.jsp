@@ -204,6 +204,10 @@
 			<json:property name='observaciones' value="${expediente.sancion.observaciones}" />
 			<json:property name='codDecision' value="${expediente.sancion.decision.codigo}" />
 			<json:property name='descDecision' value="${expediente.sancion.decision.descripcion}" />
+			<json:property name='idSancion' value="${expediente.sancion.id}" />
+			<json:property name='fechaElevacionSancion' value="${expediente.sancion.fechaElevacion}" />
+			<json:property name='fechaSancion' value="${expediente.sancion.fechaSancion}" />
+			<json:property name='numWorkFlowSancion' value="${expediente.sancion.numWorkFlow}" />
 		</c:if>
 	</json:object>
 </fwk:json>

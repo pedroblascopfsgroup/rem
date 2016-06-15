@@ -41,9 +41,9 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
 import es.pfsgroup.plugin.recovery.mejoras.expediente.dao.MEJEventoDao;
+import es.pfsgroup.plugin.recovery.mejoras.expediente.dto.MEJExpedienteSancionDto;
 
 @Component
 public class MEJExpedienteManager implements MEJExpedienteApi {
@@ -286,31 +286,25 @@ public class MEJExpedienteManager implements MEJExpedienteApi {
 
 	@Override
 	@Transactional(readOnly = false)
-	public void guardaSancionExpediente(Long idExpediente, String codDecionSancion,String observaciones) {
+	public void guardaSancionExpediente(MEJExpedienteSancionDto dto) {
+		Sancion sancion = genericDao.get(Sancion.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getId()));
+		DDDecisionSancion decision = genericDao.get(DDDecisionSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getDecision()));
+		sancion.setDecision(decision);
+		sancion.setObservaciones(dto.getObservaciones());
+		sancion.setFechaElevacion(dto.getFechaElevacion());
+		sancion.setFechaSancion(dto.getFechaSancion());
+		sancion.setNumWorkFlow(dto.getnWorkFlow());
+		sancion.setAuditoria(Auditoria.getNewInstance());
+		sancionDao.saveOrUpdate(sancion);
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idExpediente);
-		Expediente exp = genericDao.get(Expediente.class, filtro);
-		
-		if(!Checks.esNulo(exp)){
-			
-			Filter filtroSancion = genericDao.createFilter(FilterType.EQUALS, "codigo", codDecionSancion);
-			DDDecisionSancion decision = genericDao.get(DDDecisionSancion.class, filtroSancion);
-			
-			Sancion sancion = new Sancion();
-			if(!Checks.esNulo(exp.getSancion())){
-				sancion = exp.getSancion();
-			}
-			
-			sancion.setDecision(decision);
-			sancion.setObservaciones(observaciones);
-			sancion.setAuditoria(Auditoria.getNewInstance());
-			sancionDao.saveOrUpdate(sancion);
-			
-			exp.setSancion(sancion);
-			genericDao.save(Expediente.class, exp);
-		}
-		
-		
+		Expediente exp = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
+		exp.setSancion(sancion);
+		genericDao.save(Expediente.class, exp);
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public Sancion getSancionExpedienteById(Long id) {
+		return genericDao.get(Sancion.class, genericDao.createFilter(FilterType.EQUALS, "id", id));		
+	}
 }

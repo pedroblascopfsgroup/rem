@@ -860,9 +860,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 					@Override
 					public String getRefCentera() {
-						if(aa.getServicerId() != null) {
-							return aa.getServicerId().toString();
-						}
 						return null;
 					}
 	

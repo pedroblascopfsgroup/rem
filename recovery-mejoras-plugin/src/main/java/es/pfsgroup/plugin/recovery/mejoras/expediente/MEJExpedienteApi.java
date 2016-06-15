@@ -4,9 +4,11 @@ import java.util.List;
 
 import es.capgemini.devon.web.DynamicElement;
 import es.capgemini.pfs.expediente.dto.DtoInclusionExclusionContratoExpediente;
+import es.capgemini.pfs.expediente.model.Sancion;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.recovery.mejoras.PluginMejorasBOConstants;
+import es.pfsgroup.plugin.recovery.mejoras.expediente.dto.MEJExpedienteSancionDto;
 
 public interface MEJExpedienteApi {
 	
@@ -45,6 +47,8 @@ public interface MEJExpedienteApi {
 	@BusinessOperationDefinition(OBTENER_ZONAS_JERARQUIA_BY_COD_OR_DESC)
 	public List<DDZona> getZonasJerarquiaByCodDesc(Integer idNivel, String codDesc);
 	
-	public void guardaSancionExpediente(Long idExpediente, String decionSancion, String observaciones);
+	public void guardaSancionExpediente(MEJExpedienteSancionDto sancionDto);
+	
+	public Sancion getSancionExpedienteById(Long id);
     
 }

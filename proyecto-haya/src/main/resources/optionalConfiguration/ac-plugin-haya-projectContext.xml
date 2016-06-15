@@ -430,6 +430,13 @@
 				<value>GGSAN</value>
 			</set>
 		</property>
+		<property name="tiposGestorGestoriaAdjudicacion">
+			<map>
+				<entry key="HAYA">
+					<value>GGADJ</value>
+				</entry>
+			</map>
+		</property>
 		<property name="tiposGestorProcurador">
 			<set>
 				<value>PROC</value>

@@ -64,4 +64,8 @@ public interface CoreProjectContext {
 	public Map<String, String> getMapaCodEstAse();
 	
 	Set<String> getTiposGestorCentroProcura();
+	
+	public Map<String, String> getTiposGestorGestoriaAdjudicacion();
+	
+	public void setTiposGestorGestoriaAdjudicacion(Map<String, String> tiposGestorGestoriaAdjudicacion);
 }

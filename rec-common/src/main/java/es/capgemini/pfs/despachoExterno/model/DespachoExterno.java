@@ -14,7 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -93,7 +92,6 @@ public class DespachoExterno implements Serializable, Auditable {
     @Column(name = "ETC_LIT_CODIGO_CALIDAD")
     private String turnadoCodigoCalidadLitigios;
     
-    @Transient
     @Column(name = "DES_FLAG_INPUT_DESC_USU")
     private boolean flagInputDescripcionUsuario;
     

@@ -47,7 +47,7 @@
 	var observaciones = new Ext.form.TextArea({
 		name: 'observaciones'
 		,value: ''
-		,width: 1000
+		,width: 350
 		,height: 125
 		,style:'margin-top:5px'
 		,hideLabel: true
@@ -73,8 +73,10 @@
 				}
 			});
 			w.on(app.event.DONE, function(){
+				panel.el.mask('<s:message code="fwk.ui.form.cargando" text="**Cargando.."/>','x-mask-loading');
 				w.close();
 				entidad.refrescar();
+				panel.el.unmask();
 			});
 			w.on(app.event.CANCEL, function(){ 
 				w.close(); 
@@ -84,10 +86,9 @@
 
 				     
 	var formSancion = fieldset('<s:message code="expedientes.consulta.tabsancion.titulo" text="**Sancionar"/>',
-		[{items:[<sec:authorize ifAllGranted="PERSONALIZACION-HY">fechaElevacionSareb, </sec:authorize> decionSancion, labelObs]},
-                 {items:[<sec:authorize ifAllGranted="PERSONALIZACION-HY">fechaSancionSareb, nWorkflow, </sec:authorize> observaciones]}
+		[{items:[<sec:authorize ifAllGranted="PERSONALIZACION-HY">fechaElevacionSareb, </sec:authorize> decionSancion, labelObs, observaciones]},
+                 {items:[<sec:authorize ifAllGranted="PERSONALIZACION-HY">fechaSancionSareb, nWorkflow </sec:authorize>]}
 	]);
-	
 
 	var panel = new Ext.Panel({
 			autoHeight:true
@@ -106,13 +107,12 @@
 	
 	panel.getValue = function(){};
 	panel.setValue = function(){
-		debugger;
 		var data= entidad.get("data");
-		decionSancion.setValue(data.sancion.descDecision);
-		fechaElevacionSareb.setValue(data.sancion.fechaElevacionSancion);
-		fechaSancionSareb.setValue(data.sancion.fechaSancion);
-		nWorkflow.setValue(data.sancion.numWorkFlowSancion);
-		observaciones.setValue(data.sancion.observaciones);
+		decionSancion.setValue(data.sancion.descDecision == undefined ? '' : data.sancion.descDecision);
+		fechaElevacionSareb.setValue(data.sancion.fechaElevacionSancion == undefined ? '' : data.sancion.fechaElevacionSancion);
+		fechaSancionSareb.setValue(data.sancion.fechaSancion == undefined ? '' : data.sancion.fechaSancion);
+		nWorkflow.setValue(data.sancion.numWorkFlowSancion == undefined ? '' : data.sancion.numWorkFlowSancion);
+		observaciones.setValue(data.sancion.observaciones == undefined ? '' : data.sancion.observaciones);
 		if(entidad.get("data").esGestorSupervisorActual && entidad.get("data").gestion.estadoItinerario == app.estItinerario.ESTADO_ITINERARIO_EN_SANCION){
 			btnModificar.setVisible(true);
 		}else{

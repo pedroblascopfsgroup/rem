@@ -43,6 +43,8 @@
     
     decSancionStore.webflow();
     
+    var codigoDecSancion = '${sancion.decision.codigo}';
+    
 	var decSancion = new Ext.form.ComboBox({
 		name:'decSancion'
         ,store: decSancionStore
@@ -52,21 +54,25 @@
         ,fieldLabel: '<s:message code="expedientes.consulta.tabsancion.decision" text="**Decisión" />'
         ,displayField:'descripcion'
         ,valueField: 'codigo'
-        ,labelStyle:'font-weight:bolder'
         ,height : 35
         ,width : 200
         ,value: '${sancion.decision.descripcion}'
     });
     
+    
+    decSancion.on('select', function(){
+		codigoDecSancion = decSancion.getValue();
+	});
+	
     var labelObervaciones = new Ext.form.Label({
 	   	text:'<s:message code="expedientes.consulta.tabsancion.observaciones" text="**Observaciones:"/>'
-		,style:'font-weight:bolder;font-family:tahoma,arial,helvetica,sans-serif;font-size:11px;'
+		,style:'font-family:tahoma,arial,helvetica,sans-serif;font-size:11px;'
 	});
 
 	var observacionesTextArea = new Ext.form.TextArea({
 		name: 'observaciones'
 		,value: '${sancion.observaciones}'
-		,width: 1000
+		,width: 350
 		,height: 125
 		,style:'margin-top:5px'
 		,hideLabel: true
@@ -77,8 +83,8 @@
 	 	p.idExpediente = '${idExpediente}';
 	 	p.id = '${sancion.id}';
 	 	p.fechaElevacion = fechaElevacionSareb.getValue() ? fechaElevacionSareb.getValue().format('d/m/Y') : '';
-	 	p.fechaSancion = fechaSancionSareb.getValue() ? fechaSancionSareb.getValue().format('d/m/Y') : '';;
-	 	p.decision = decSancion.getValue();
+	 	p.fechaSancion = fechaSancionSareb.getValue() ? fechaSancionSareb.getValue().format('d/m/Y') : '';
+		p.decision = codigoDecSancion;
 	 	p.nWorkFlow = nWorkFlow.getValue();
 	 	p.observaciones = observacionesTextArea.getValue();
 	    return p;
@@ -88,7 +94,6 @@
        text:  '<s:message code="app.guardar" text="**Guardar" />'
        ,iconCls : 'icon_ok'
        ,handler:function(){
-       		debugger;
 			if(decSancion.getValue() == ''){
 				Ext.Msg.alert('Error', '<s:message code="expedientes.consulta.tabsancion.msg.cmpTipo.required" text="**Debe indicar la decisi\u00F3n sobre la sanci\u00F3n." />');
 			}else if(app.decisionSancion.CODIGO_DECISION_SANCION_APROBADA_CON_CONDICIONES == decSancion.getValue() && observacionesTextArea.getValue()==''){
@@ -115,28 +120,30 @@
 					}
 	});
 	
-	var panelEdicion = new Ext.FormPanel({
-		layout:'table'
-		,layoutConfig:{columns:1}
-		,border:false
-   	    ,width: 400
-		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[<sec:authorize ifAllGranted="PERSONALIZACION-HY">fechaElevacionSareb, fechaSancionSareb, nWorkFlow, </sec:authorize> decSancion, labelObervaciones, observacionesTextArea]
-	});	
 	
-	var panel=new Ext.Panel({
-		border:false
-		,bodyStyle : 'padding:5px'
-		,autoHeight: true
-		,autoWidth:true
-		,defaults:{xtype:'fieldset',cellCls : 'vtop'}
-		,items:panelEdicion
-		,bbar:[btnGuardar, btnCancelar]
-	});	
+	var panelEdicion = new Ext.form.FormPanel({
+		bodyStyle : 'padding:10px'
+		,autoHeight : true
+		,items : [{
+				autoHeight:true
+				,layout:'table'
+				,layoutConfig:{columns:1}
+				,border:false
+				,bodyStyle:'padding:5px;cellspacing:20px;'
+				,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
+				,items:[{
+						layout:'form'
+						,bodyStyle:'padding:5px;cellspacing:10px'
+						,columnWidth:.5
+						,items:[<sec:authorize ifAllGranted="PERSONALIZACION-HY">fechaElevacionSareb, fechaSancionSareb, nWorkFlow, </sec:authorize> decSancion, labelObervaciones, observacionesTextArea]
+					}
+				]
+			}
+		]
+		,bbar : [btnGuardar, btnCancelar]
+	});
 	
 
-	page.add(panel);
-    
-	
+	page.add(panelEdicion);
 
 </fwk:page>

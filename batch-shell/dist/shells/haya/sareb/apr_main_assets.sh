@@ -6,7 +6,7 @@ ficheros=BIENES,BIENCNT,BIENPER
 
 #echo $(basename $0)
 
-mascara='_2038_'????????
+mascara='_'$ENTIDAD_AUXILIAR'_'????????
 extensionSem=".sem"
 extensionZip=".zip"
 

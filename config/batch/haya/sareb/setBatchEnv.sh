@@ -18,6 +18,7 @@ export PATH=$PATH:$ORACLE_HOME/bin
 
 # Código de la entidad
 export ENTIDAD=5074
+export ENTIDAD_AUXILIAR=2038
 
 # Shells
 export DIR_INPUT_AUX=$DIR_RAIZ/transferencia/sareb/aprov_auxiliar

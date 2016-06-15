@@ -127,22 +127,27 @@ do
                 if [ "${i}" = "PCR-5074-${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(PCR)'`)
                         file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "PCR-5074-${FECHA_PR}.sem"
+                        file_copy transferencia sareb troncal
                 fi
 				if [ "${i}" = "GCL-5074-${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(GCL)'`)
                         file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "GCL-5074-${FECHA_PR}.sem"
+                        file_copy transferencia sareb troncal
                 fi
 				if [ "${i}" = "ZONAS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(ZONAS)'`)
                         file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "ZONAS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb troncal
                 fi
 				if [ "${i}" = "OFICINAS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(OFICINAS)'`)
                         file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "OFICINAS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb troncal
                 fi
 				if [ "${i}" = "JERARQUIA_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(JERARQUIA)'`)
                         file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "JERARQUIA_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb troncal
                 fi
 done
 
@@ -195,30 +200,37 @@ do
                 if [ "${i}" = "DIRECCIONES_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(DIRECCIONES)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "DIRECCIONES_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "TELEFONOS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(TELEFONOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "TELEFONOS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "CANCELADOS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(CANCELADOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "CANCELADOS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "RECIBOS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(RECIBOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "RECIBOS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "EFECTOS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(EFECTOS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "EFECTOS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "EFECTOS_PERSONAS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(EFECTOS_PERSONAS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "EFECTOS_PERSONAS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
                 if [ "${i}" = "COBROS_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(COBROS)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "COBROS_5074_${FECHA_PR}.sem"
+                        file_copy transferencia sareb auxiliar
                 fi
 done
 

@@ -145,6 +145,10 @@ BORRADO	NUMBER(1,0)	NOT NULL
             FOREIGN KEY ('||V_TMP_TIPO(1)||')
             REFERENCES '||V_TMP_TIPO(2)||'('||V_TMP_TIPO(1)||')';
 			      DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.' || V_DDNAME|| ' modificado: FK  FK_DEE_'||V_TMP_TIPO(1)||' CREADA');
+
+    V_MSQL := 'CREATE INDEX ' || V_ESQUEMA || '.FK_DEE_'||V_TMP_TIPO(1)||' ON ' || V_ESQUEMA || '.' || V_DDNAME|| '
+					('||V_TMP_TIPO(1)||')  TABLESPACE ' || V_TS_INDEX;
+		EXECUTE IMMEDIATE V_MSQL;
 		
             END IF;	
        

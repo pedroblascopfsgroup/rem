@@ -346,6 +346,7 @@
 			else{
 				Ext.Msg.minWidth=360;
 				Ext.Msg.alert('Advertencia', '<s:message code="plugin.procuradores.turnado.errorConfiguracionEnCurso" text="**Por favor, guarde o cancele la nueva configuración en curso" />' );
+				mainPanel.container.unmask();
 			}
 		}
 		<app:test id="btnGuardarABM" addComa="true"/>

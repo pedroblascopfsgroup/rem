@@ -133,7 +133,11 @@ BEGIN
                tar.DD_TPO_ID
           From
            (
-           SELECT decode(tvr.usu_pendientes,null,tn.tar_id_dest,-1,tn.tar_id_dest,tvr.usu_pendientes) as USU_PENDIENTES
+           SELECT CASE
+                   WHEN sta.dd_sta_codigo in (''ACP_ACU'',''REV_ACU'',''GST_CIE_ACU'',''NOTIF_ACU'')
+                    THEN tn.tar_id_dest
+                   ELSE decode(tvr.usu_pendientes,null,tn.tar_id_dest,-1,tn.tar_id_dest,tvr.usu_pendientes)
+                  END as USU_PENDIENTES
                 , CASE
                      WHEN (NVL(tn.TAR_EN_ESPERA, 0) = 1)
                        THEN

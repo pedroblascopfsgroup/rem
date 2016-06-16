@@ -93,7 +93,12 @@ loop
       ----------------------------------------------------------
       v_fila := 0;
       begin
-         select tar_id into v_fila from CM01.tar_tareas_notificaciones where asu_id = v_asu_id and usuariocrear = 'PRODU-1806';
+         select tar.tar_id into v_fila 
+		   from CM01.tar_tareas_notificaciones tar, CM01.cco_contabilidad_cobros cco
+          where tar.tar_id = cco.tar_id
+		    and cco.asu_id = v_asu_id 
+            and cco.usuariocrear = 'PRODU-1806' 
+            and SUBSTR(cco_observaciones,0, 19) = 'ID_cobro:' || To_Char(c.id_cobro, '000000000');
       exception
       when others then
          v_fila := 0; 
@@ -108,14 +113,14 @@ loop
             (tar_id, asu_id, dd_est_id, dd_ein_id, dd_sta_id, tar_codigo, 
              tar_tarea,  tar_descripcion, tar_fecha_ini, tar_en_espera,
              tar_alerta, tar_emisor, version, usuariocrear, fechacrear, borrado, 
-             tar_fecha_venc, tar_fecha_venc_real, dtype)
+             tar_fecha_venc, tar_fecha_venc_real, dtype, tar_tarea_finalizada)
          VALUES
             (v_tar_id, v_asu_id, 
              (SELECT dd_est_id FROM CMMASTER.dd_est_estados_itinerarios WHERE dd_est_codigo = 'AS'), 
              (SELECT dd_ein_id FROM CMMASTER.dd_ein_entidad_informacion WHERE dd_ein_codigo = 3), v_sta_id, 1,
              'Contabilizar Cobros', 'Contabilización de Cobros', null, 0,
              0, v_emisor, 0, 'PRODU-1806', SYSDATE, 0, 
-             c.fecha_valor, c.fecha_cobro, 'EXTTareaNotificacion');
+             c.fecha_valor, c.fecha_cobro, 'EXTTareaNotificacion', 1);
       end if;
       
       -- CONTABILIDAD COBROS --

@@ -52,7 +52,7 @@ public class AtipicoContrato implements Serializable, Auditable {
 	private Long numeroSpec;
 
 	@Column(name = "ATC_IMPORTE_ATIPICO")
-	private Long importe;
+	private Float importe;
 
 	@Column(name = "ATC_FECHA_VALOR")
 	private Date fechaValor;
@@ -204,7 +204,7 @@ public class AtipicoContrato implements Serializable, Auditable {
 	/**
 	 * @return the importe
 	 */
-	public Long getImporte() {
+	public Float getImporte() {
 		return importe;
 	}
 
@@ -212,7 +212,7 @@ public class AtipicoContrato implements Serializable, Auditable {
 	 * @param importe
 	 *            the importe to set
 	 */
-	public void setImporte(Long importe) {
+	public void setImporte(Float importe) {
 		this.importe = importe;
 	}
 

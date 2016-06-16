@@ -97,6 +97,13 @@
 				<value>GEST</value>
 			</set>
 		</property>
+		<property name="tiposGestorGestoriaAdjudicacion">
+			<map>
+				<entry key="BANKIA">
+					<value>GEST</value>
+				</entry>
+			</map>
+		</property>
 		<property name="tiposGestorProcurador">
 			<set>
 				<value>PROC</value>

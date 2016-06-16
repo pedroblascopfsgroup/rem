@@ -256,5 +256,7 @@ public interface coreextensionApi {
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_DESPACHO_ESTADO_LETRADO)
 	List<DespachoExterno> getListaDespachosEstadoLetrado(List<DespachoExterno> listaDespachos);
+
+	Long getListTipoGestorGestoriaAdjudicacion();
 	
 }

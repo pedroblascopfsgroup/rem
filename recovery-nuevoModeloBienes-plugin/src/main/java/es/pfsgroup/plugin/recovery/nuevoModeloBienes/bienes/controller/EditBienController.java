@@ -143,6 +143,9 @@ public class EditBienController {
 	private TareaExternaValorDao tareaExternaValorDao;
 
 	@Autowired
+	private coreextensionApi coreExtensionApi;
+	
+	@Autowired
 	private NMBProjectContext nmbProjectContext;
 
 	@Autowired
@@ -4135,23 +4138,14 @@ public class EditBienController {
 	}
 
 	private List<Usuario> getGestoresAdjudicadicatarios() {
-		Long idTipoGestor = null;
-
-		// Tipo de usuario Gestor
-		List<EXTDDTipoGestor> listadoGestores = proxyFactory.proxy(
-				coreextensionApi.class).getListTipoGestorAdicional();
-		for (EXTDDTipoGestor tipoGestor : listadoGestores) {
-			if ("GEST".compareTo(tipoGestor.getCodigo()) == 0) {
-				idTipoGestor = tipoGestor.getId();
-			}
-		}
+		Long idTipoGestor = coreExtensionApi.getListTipoGestorGestoriaAdjudicacion();
 
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,
 				"auditoria.borrado", false);
 		Filter filtroDefecto = genericDao.createFilter(FilterType.EQUALS,
 				"gestorPorDefecto", true);
 
-		// Se qeuda con el usuario por defecto para cada despacho.
+		// Se queda con el usuario por defecto para cada despacho.
 		List<Usuario> listadoUsuarios = new ArrayList<Usuario>();
 		if (idTipoGestor != null) {
 			List<DespachoExterno> listadoDespachos = proxyFactory.proxy(

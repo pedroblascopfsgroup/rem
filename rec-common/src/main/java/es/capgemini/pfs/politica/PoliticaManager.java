@@ -1184,7 +1184,12 @@ public class PoliticaManager {
             politicaDao.update(politica);
 
             for (Objetivo objetivo : politica.getObjetivos()) {
-                if (objetivo.getProcessBpm() != null) {
+                /*Borramos las tareas de los objetivos*/
+                for (TareaNotificacion tarea : objetivo.getTareas()) {
+                	executor.execute(ComunBusinessOperation.BO_TAREA_MGR_BORRAR_NOTIFICACION_TAREA_BY_ID, tarea.getId());
+                }
+            	
+            	if (objetivo.getProcessBpm() != null) {
                     executor.execute(ComunBusinessOperation.BO_JBPM_MGR_DESTROY_PROCESS, objetivo.getProcessBpm());
                 }
             }

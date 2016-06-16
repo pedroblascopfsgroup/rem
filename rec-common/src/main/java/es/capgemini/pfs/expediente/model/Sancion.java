@@ -1,6 +1,7 @@
 package es.capgemini.pfs.expediente.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -8,8 +9,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
@@ -47,6 +46,15 @@ public class Sancion implements Serializable, Auditable {
     @JoinColumn(name = "DD_DES_ID")
     private DDDecisionSancion decision;
 	
+	@Column(name = "SAE_FECHA_ELEVACION")
+    private Date fechaElevacion;
+	
+	@Column(name = "SAE_FECHA_SANCION")
+    private Date fechaSancion;
+	
+	@Column(name = "SAE_NUMERO_WORK_FLOW")
+    private String numWorkFlow;
+	
 	@Column(name="SAE_OBSERVACION")
 	private String observaciones;
 
@@ -71,6 +79,30 @@ public class Sancion implements Serializable, Auditable {
 
 	public void setDecision(DDDecisionSancion decision) {
 		this.decision = decision;
+	}
+
+	public Date getFechaElevacion() {
+		return fechaElevacion;
+	}
+
+	public void setFechaElevacion(Date fechaElevacion) {
+		this.fechaElevacion = fechaElevacion;
+	}
+
+	public Date getFechaSancion() {
+		return fechaSancion;
+	}
+
+	public void setFechaSancion(Date fechaSancion) {
+		this.fechaSancion = fechaSancion;
+	}
+
+	public String getNumWorkFlow() {
+		return numWorkFlow;
+	}
+
+	public void setNumWorkFlow(String numWorkFlow) {
+		this.numWorkFlow = numWorkFlow;
 	}
 
 	public String getObservaciones() {

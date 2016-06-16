@@ -92,37 +92,16 @@ function file_copy {
 	TIPO3=$3
 	echo "Copiando $TIPO3...."
 	cd $DIR_SFT_HAYA_RECEPCION_APR/$TIPO3
-	cp *.* $DIR_RAIZ/$TIPO/$TIPO2/aprov_$TIPO3
+	cp -v *.* $DIR_RAIZ/$TIPO/$TIPO2/aprov_$TIPO3
 	mv *.* backup/  
 }
 
 if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
 
-#BANDERA_T=(`echo "$FICHEROS_T" | awk '{print $9}' | grep haya.txt`)
 BANDERA_T=(`echo "$FICHEROS_T" | awk '{print $9}' | grep .sem`)
 
 for i in "${BANDERA_T[@]}"
 do
-                #if [ "${i}" = "apr_env_pcr_haya.txt" ]; then
-				#	FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(PCR|OFICINAS|ZONAS)'`)
-				#	file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_pcr_haya.txt"
-                #	file_copy transferencia sareb troncal
-                #fi
-                #if [ "${i}" == "apr_env_convF2_proc_haya.txt" ]; then
-				#	FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(ALTA_PROCEDIMIENTOS_2|ALTA_PROCEDIMIENTOS_CONTRATOS|ALTA_PROCEDIMIENTOS_PERSONAS)'`)
-				#	file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_convF2_proc_haya.txt"
-                #    file_copy transferencia sareb troncal
-                #fi
-                #if [ "${i}" == "apr_env_convF2_bien_haya.txt" ]; then
-                #    FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(ALTA_PROCEDIMIENTOS_BIENES)'`)
-				#	file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_convF2_bien_haya.txt"
-                #    file_copy transferencia sareb troncal
-                #fi
-				#if [ "${i}" == "apr_env_grupos_haya.txt" ]; then
-                #    FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(GCL)'`)
-                #    file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_grupos_haya.txt"
-                #    file_copy transferencia sareb troncal
-                #fi
                 
                 if [ "${i}" = "PCR-5074-${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(PCR)'`)
@@ -151,52 +130,22 @@ do
                 fi
 done
 
-#BANDERA_A=(`echo "$FICHEROS_A" | awk '{print $9}' | grep haya.txt`)
+BANDERA_T=(`echo "$FICHEROS_T" | awk '{print $9}' | grep haya.txt`)
+
+for i in "${BANDERA_T[@]}"
+do                
+                if [ "${i}" == "apr_env_convF2_proc_haya.txt" ]; then
+					FILES_DOWN_AT=(`echo "$FICHEROS_T" | awk '{print $9}' | egrep -i '(ALTA_PROCEDIMIENTOS_2|ALTA_PROCEDIMIENTOS_CONTRATOS|ALTA_PROCEDIMIENTOS_PERSONAS)'`)
+					file_list "$(echo ${FILES_DOWN_AT[@]})" troncal "apr_env_convF2_proc_haya.txt"
+                    file_copy transferencia sareb troncal
+                fi
+done
+
 BANDERA_A=(`echo "$FICHEROS_A" | awk '{print $9}' | grep .sem`)
 
 for i in "${BANDERA_A[@]}"
 do
-                #if [ "${i}" = "apr_env_bien_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(BIEN)'`)
-				#	file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_bien_haya.txt"
-                #	file_copy transferencia sareb auxiliar
-                #fi
-                #if [ "${i}" = "apr_env_cirbe_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(CIRBE)'`)
-				#	file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_cirbe_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-                #if [ "${i}" = "apr_env_cobros_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(COBROS)'`)
-                #    file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_cobros_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-				#if [ "${i}" = "apr_env_dir_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(DIRECCIONES)'`)
-                #    file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_dir_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-                #if [ "${i}" = "apr_env_efec_cnt_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(EFECTOS_CONTRATOS)'`)
-                #    file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_efec_cnt_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-                #if [ "${i}" = "apr_env_efec_per_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(EFECTOS_PERSONAS)'`)
-                #    file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_efec_per_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-				#if [ "${i}" = "apr_env_rec_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(RECIBOS)'`)
-                #    file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_rec_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-				#if [ "${i}" = "apr_env_tlf_haya.txt" ]; then
-				#	FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(TELEFONOS)'`)
-                #    file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "apr_env_tlf_haya.txt"
-                #    file_copy transferencia sareb auxiliar
-                #fi
-                
+               
                 if [ "${i}" = "DIRECCIONES_5074_${FECHA_PR}.sem" ]; then
                         FILES_DOWN_AA=(`echo "$FICHEROS_A" | awk '{print $9}' | egrep -i '(DIRECCIONES)'`)
                         file_list "$(echo ${FILES_DOWN_AA[@]})" auxiliar "DIRECCIONES_5074_${FECHA_PR}.sem"

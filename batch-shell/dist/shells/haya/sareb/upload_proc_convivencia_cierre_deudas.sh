@@ -48,9 +48,11 @@ if [ -f $BANDERA ]; then
 			echo "Llamada sin parámetro SFTP. No mueve ficheros."
 		fi
 	done
-	echo "Eliminando bandera de ORIGEN $BANDERA"
-	echo " "
+	if [[ "$#" -gt 0 ]] && [[ "$1" -eq "-ftp" ]]; then
+		echo "Eliminando bandera de ORIGEN $BANDERA"
+		echo " "
         $RM -f $BANDERA
+    fi
 else
 	echo "El fichero bandera $BANDERA no existe."
 	echo " "

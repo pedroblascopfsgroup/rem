@@ -185,7 +185,7 @@
 				btnNuevaConfiguracion.setDisabled(false);
 				btnNuevaConfiguracion.setVisible(true);
 				btnGuardar.setDisabled(false);
-				
+				infoConfiguracionTurnado.expand(true);
 				gestionPanelSuperior(1);
 				plazasStore.webflow({ idEsquema : idEsquema });
 				tposStore.removeAll();
@@ -215,6 +215,7 @@
 					btnNuevaConfiguracion.setDisabled(false);
 					btnNuevaConfiguracion.setVisible(true);
 					gestionPanelSuperior(1);
+					infoConfiguracionTurnado.expand(true);
 				}
 			}
 	});

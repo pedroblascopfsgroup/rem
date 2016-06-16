@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,9 @@ import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
+import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOAcuerdoTermino;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
@@ -99,6 +103,9 @@ public class coreextensionController {
     
     @Autowired
     private GestorAdicionalAsuntoApi gestorAdicionalApi;
+    
+    @Autowired
+	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -107,6 +114,16 @@ public class coreextensionController {
 		List<EXTDDTipoGestor> listadoGestores = proxyFactory.proxy(coreextensionApi.class).getList(ugCodigo);
 		model.put("listadoGestores", listadoGestores);
 		
+		return TIPO_GESTOR_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListTipoGestorProponente(ModelMap model){
+		
+		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();
+		listado=proxyFactory.proxy(coreextensionApi.class).getListTipoGestorProponente();
+		model.put("listadoGestores", listado);
 		return TIPO_GESTOR_JSON;
 	}
 	
@@ -489,26 +506,41 @@ public class coreextensionController {
 		List<DTOTerminosResultado> results = new ArrayList<DTOTerminosResultado>();
 		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
     	EventFactory.onMethodStart(this.getClass());
+    	Set<String> zonas;
         if (terminosFiltroDto.getCentros() != null && terminosFiltroDto.getCentros().trim().length() > 0) {
-            StringTokenizer tokens = new StringTokenizer(terminosFiltroDto.getCentros(), ",");
+            /*
+        	StringTokenizer tokens = new StringTokenizer(terminosFiltroDto.getCentros(), ",");
             Set<String> zonas = new HashSet<String>();
             while (tokens.hasMoreTokens()) {
                 String zona = tokens.nextToken();
                 zonas.add(zona);
             }
-            terminosFiltroDto.setCodigoZonas(zonas);
-        } else {
-           
-        	terminosFiltroDto.setCodigoZonas(usuario.getCodigoZonas());
-        }
+            */
+        	List<String> list = Arrays.asList((terminosFiltroDto.getCentros()).split(","));
+			zonas = new HashSet<String>(list);
+			terminosFiltroDto.setCodigoZonas(zonas);
+		} else {
+			// Usuario usuario = (Usuario) executor
+			// .execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+			// zonas = usuario.getCodigoZonas();
+			zonas = new HashSet<String>();
+			terminosFiltroDto.setCodigoZonas(zonas);
+		}
+        
         EventFactory.onMethodStop(this.getClass());
-               
-		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario);
+        
+        List<Long> idGrpsUsuario = null;
+        if (usuario.getUsuarioExterno()) {
+			idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuario);
+		}
 		
-		results=preparaResultadosTerminos(page, terminosFiltroDto);
+		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario,idGrpsUsuario);
 		
-		model.put("results",results);
-		model.put("totalTerminos",page.getTotalCount());
+		//results=preparaResultadosTerminos(page, terminosFiltroDto);
+		
+		model.put("pagina",page);
+		//model.put("pagina",results);
+		//model.put("totalTerminos",page.getTotalCount());
 		
 		return LISTADO_BUSQUEDA_TERMINOS_JSON;
 	}
@@ -516,9 +548,10 @@ public class coreextensionController {
 	private List<DTOTerminosResultado> preparaResultadosTerminos(Page page,DTOTerminosFiltro terminosFiltroDto) {
 					
 		List<DTOTerminosResultado> results = new ArrayList<DTOTerminosResultado>();
-		List<TerminoAcuerdo> listadoTerminos = (List<TerminoAcuerdo>) page.getResults();
+		List<DTOAcuerdoTermino> listado = (List<DTOAcuerdoTermino>) page.getResults();
+		//List<TerminoAcuerdo> listadoTerminos = (List<TerminoAcuerdo>) page.getResults();
 		
-		for(int i=0;i<listadoTerminos.size();i++){
+		for(int i=0;i<listado.size();i++){
 			
 			DTOTerminosResultado terminos= new DTOTerminosResultado();
 
@@ -538,7 +571,22 @@ public class coreextensionController {
 			String fechaEstado="";
 			String fechaVigencia="";
 			String clientePase="";
+			DTOAcuerdoTermino tupla = new DTOAcuerdoTermino();
 			
+			tupla=(DTOAcuerdoTermino) page.getResults().get(i);
+			
+			//EXTAcuerdo acuerdo = listado.get(i).getAcuerdo();
+			TerminoAcuerdo termino= listado.get(i).getTermino();
+			
+			tupla.setAcuerdo(listado.get(i).getAcuerdo());
+			tupla.setTermino(listado.get(i).getTermino());
+			
+			idAcuerdo=tupla.getAcuerdo().getId().toString();
+			
+			if(!Checks.esNulo(tupla.getTermino())){
+				idTermino=tupla.getTermino().getId().toString();
+			}
+			/*
 			TerminoAcuerdo terminoAcuerdo = listadoTerminos.get(i);
 			
 			idTermino=terminoAcuerdo.getId().toString();
@@ -620,7 +668,7 @@ public class coreextensionController {
 			if(!Checks.esNulo(acuerdo.getFechaLimite())){
 				fechaVigencia=format.format(acuerdo.getFechaLimite());
 			}
-			
+			*/
 			terminos.setIdTermino(idTermino);
 			terminos.setIdAcuerdo(idAcuerdo);
 			terminos.setIdAsunto(idAsunto);

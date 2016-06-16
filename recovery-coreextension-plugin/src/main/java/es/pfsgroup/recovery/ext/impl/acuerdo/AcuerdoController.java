@@ -76,10 +76,11 @@ public class AcuerdoController {
 	@SuppressWarnings("unchecked")
 	private ModelMap rellenarFormBusqueda(ModelMap model) {
 		
+		/*
 		List<DDTipoDespachoExterno> tiposSolicitante = new ArrayList<DDTipoDespachoExterno>();
 		DDTipoDespachoExterno tipoSol = (DDTipoDespachoExterno) proxyFactory.proxy(UtilDiccionarioApi.class).dameValorDiccionarioByCod(DDTipoDespachoExterno.class,DDTipoDespachoExterno.CODIGO_DESPACHO_EXTERNO);
 		tiposSolicitante.add(tipoSol);
-		
+		*/
 		List<DDEstadoAcuerdo> estadosAcuerdo = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDEstadoAcuerdo.class);
 		List<DDZona> zonas = usuarioManager.getZonasUsuarioLogado();
 		List<Nivel> niveles = mejAcuerdoManager.getNiveles();
@@ -90,7 +91,7 @@ public class AcuerdoController {
 		List<DDTipoAcuerdo> listado = tipoAcuerdoDao.buscarTipoAcuerdoPorEntidad(codigoEntidadAmbas,codigoEntidadAmbas);
 		
 		model.put("tiposTerminos", listado);
-		model.put("tiposSolicitante", tiposSolicitante);
+		//model.put("tiposSolicitante", tiposSolicitante);
 		model.put("estadosAcuerdo", estadosAcuerdo);
 		model.put("zonas", zonas);
 		model.put("niveles", niveles);

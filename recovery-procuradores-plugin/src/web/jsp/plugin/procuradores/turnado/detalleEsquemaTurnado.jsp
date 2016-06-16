@@ -328,7 +328,7 @@
 			Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarCancelacion" text="**Confirmar cancelación" />', '<s:message code="plugin.procuradores.turnado.confirmarCancelacionMsg" text="**Estas seguro que desea cancelar los cambios?" />', this.evaluateAndSend);
 		}
 		,evaluateAndSend: function(seguir) {
-			if(seguir){
+			if(seguir == 'yes'){
 				cancelarModificacion(0);
 			}	
 		}

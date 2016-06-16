@@ -165,6 +165,19 @@ public class coreextensionManager implements coreextensionApi {
 		return sRet;
 	}
 
+	
+	@BusinessOperation(GET_LIST_TIPO_GESTOR_PROPONENTE_ACUERDO)
+	public List<EXTDDTipoGestor> getListTipoGestorProponente() {
+		
+		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();	
+		Order order = new Order(OrderType.ASC, "descripcion");
+		listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "DD_TGE_CODIGO", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));	
+		return listado;
+		}
+		
+		
+		
+	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListTipoGestorAdicional()
 	 */
@@ -863,9 +876,9 @@ public class coreextensionManager implements coreextensionApi {
 	}*/
 
 	@BusinessOperation(GET_LIST_BUSQUEDA_TERMINOS)
-	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario) {
+	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario,List<Long> idGrpsUsuario) {
 		
-		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario);
+		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario);
 		List<TerminoAcuerdo> listaTerminos=(List<TerminoAcuerdo>) page.getResults();
 		return page;
 	}

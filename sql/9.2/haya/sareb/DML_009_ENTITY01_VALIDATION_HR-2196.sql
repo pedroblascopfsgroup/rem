@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALBERT PÉREZ 
---## FECHA_CREACION=20160614
+--## FECHA_CREACION=20160616
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2.6
 --## INCIDENCIA_LINK=HR-2196
@@ -159,7 +159,7 @@ DECLARE
              --, T_JBV('per-34.tipoGestorOficinaValidator',1,'SELECT (''''''''||tp.TMP_PER_COD_ENT_OFI_GESTORA||TMP_PER_COD_OFICINA_GESTORA||TMP_PER_COD_SUBSEC_OFI_GESTORA) as ERROR_FIELD, (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE    FROM TMP_PER_PERSONAS tp    WHERE   tp.TMP_PER_TIPO_GESTOR = ''''EL DD_TPG_CODIGO QUE CORRESPONADA A "Oficina"''''   AND tp.TMP_PER_USUARIO_GESTOR IS NOT NULL   ',2,2,0)
              --, T_JBV('per-35.insertTipoPolitica',1,'INSERT INTO  TPL_TIPO_POLITICA TPL (TPL_ID, TPL_CODIGO, TEN_ID, TPL_DESCRIPCION, USUARIOCREAR, FECHACREAR, BORRADO) SELECT S_TPL_TIPO_POLITICA.NEXTVAL, TPL.TPL_CODIGO, 1 TEN_ID, TPL.TPL_DESCRIPCION, ''''#TOKEN_USR#'''', SYSTIMESTAMP, 0 FROM (SELECT DISTINCT ERROR_FIELD as TPL_CODIGO, ''''Tipo Política CNT pendiente de definir (''''||ERROR_FIELD||'''')'''' as TPL_DESCRIPCION from ( SELECT (trim(tp.tmp_per_politica_entidad)) as ERROR_FIELD,                                 (tp.TMP_PER_COD_ENTIDAD || tp.TMP_PER_COD_PERSONA) as ENTITY_CODE                          FROM TMP_PER_PERSONAS tp                          WHERE NOT EXISTS (                 SELECT 1                 FROM TPL_TIPO_POLITICA s                 WHERE s.TPL_CODIGO = trim(tp.tmp_per_politica_entidad)) AND tp.tmp_per_politica_entidad IS NOT NULL                   )           ) TPL  ',2,2,0)
              --, T_JBV('per-35.tipoPolitica',1,'SELECT TP.TMP_PER_POLITICA_ENTIDAD as ERROR_FIELD, (TP.TMP_PER_COD_ENTIDAD || TP.TMP_PER_COD_PERSONA) AS ENTITY_CODE   FROM TMP_PER_PERSONAS TP   WHERE NOT EXISTS (SELECT 1 FROM TPL_TIPO_POLITICA TPL     WHERE TP.TMP_PER_POLITICA_ENTIDAD = TPL.TPL_CODIGO)   ',2,2,0)
-             , T_JBV('per-36.codigoClienteEntidadValidation',1,'SELECT TMP.TMP_PER_COD_PERSONA AS ERROR_FIELD, TMP.TMP_PER_COD_PERSONA AS ENTITY_CODE, count(1) from BANK01.TMP_PER_PERSONAS TMP group by TMP.TMP_PER_COD_PERSONA having count(1) > 1  ',2,2,0)
+             , T_JBV('per-36.codigoClienteEntidadValidation',1,'SELECT TMP.TMP_PER_COD_PERSONA AS ERROR_FIELD, TMP.TMP_PER_COD_PERSONA AS ENTITY_CODE, count(1) from TMP_PER_PERSONAS TMP group by TMP.TMP_PER_COD_PERSONA having count(1) > 1  ',2,2,0)
 -- Validaciones de Relaciones
              , T_JBV('cnt-per-00.countValidator',1,'select count(1) from tmp_CNT_PER',3,2,0)
              , T_JBV('cnt-per-01.entityValidator',1,'SELECT (''''''''||tcp.TMP_CNT_PER_COD_ENTIDAD) as ERROR_FIELD, (tcp.TMP_CNT_PER_COD_PERSONA ||''''-''''|| tcp.TMP_CNT_PER_NUM_CONTRATO) as ENTITY_CODE     FROM tmp_cnt_per tcp     WHERE TMP_CNT_PER_COD_ENTIDAD <> #TOKEN_ENTITY# ',3,2,0)

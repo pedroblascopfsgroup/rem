@@ -22,10 +22,10 @@ DIR_BASE=/recovery/haya
 #Este fichero lo gobernará el equipo de Cajamar. Cualquier modificación comunicárselo.
 
 cp config/$1/config.ini $DIR_BASE/batch-server/sareb/programas/etl/config/
-unzip zip/batch*.zip
-rm -rf $DIR_BASE/batch-server/batch/*
-cp -r batch/* $DIR_BASE/batch-server/batch/
-chmod -R a+rwx $DIR_BASE/batch-server/batch/*
+#unzip zip/batch*.zip
+#rm -rf $DIR_BASE/batch-server/batch/*
+#cp -r batch/* $DIR_BASE/batch-server/batch/
+#chmod -R a+rwx $DIR_BASE/batch-server/batch/*
 cd $LOCAL_PATH
 rm -f $DIR_BASE/batch-server/sareb/shells/*.sh
 cp config/$1/setBatchEnv.sh $DIR_BASE/batch-server/sareb/shells/
@@ -47,7 +47,7 @@ do
 done
 rm *.zip
 cd $LOCAL_PATH
-cp scripts/batch/*.sh $DIR_BASE/batch-server/
-chmod a+rx $DIR_BASE/batch-server/*.sh
+#cp scripts/batch/*.sh $DIR_BASE/batch-server/
+#chmod a+rx $DIR_BASE/batch-server/*.sh
 chmod a+rx $DIR_BASE/batch-server/sareb/shells/ftp/*.sh
-cp jar/batch-shell*.jar $DIR_BASE/batch-server/sareb/shells/batch-shell.jar
+#cp jar/batch-shell*.jar $DIR_BASE/batch-server/sareb/shells/batch-shell.jar

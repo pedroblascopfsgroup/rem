@@ -8,25 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
-import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
-import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.dao.ZonaDao;
 import es.capgemini.pfs.zona.model.DDZona;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
 import es.pfsgroup.plugin.recovery.config.usuarios.dao.ADMUsuarioDao;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
-import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 
 @Controller
 public class ADMUsuarioController {
@@ -58,7 +47,7 @@ public class ADMUsuarioController {
 	public String getZonasInstant(Integer idJerarquia, String query, ModelMap model) {
 		
 		List<DDZona> zonas = new ArrayList<DDZona>();
-		if (idJerarquia == null || idJerarquia.longValue() == 0){
+		if (idJerarquia == null){
 			zonas= new ArrayList<DDZona>(); 
 		}else{
 			 Set<String> codigoZonasUsuario = ((Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO)).getCodigoZonas();

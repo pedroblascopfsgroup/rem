@@ -55,7 +55,6 @@ import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
-import es.pfsgroup.recovery.ext.impl.acuerdo.dto.DTOAcuerdoTermino;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
@@ -534,162 +533,13 @@ public class coreextensionController {
 			idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuario);
 		}
 		
-		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario,idGrpsUsuario);
-		
-		//results=preparaResultadosTerminos(page, terminosFiltroDto);
+		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario,idGrpsUsuario);	
 		
 		model.put("pagina",page);
-		//model.put("pagina",results);
-		//model.put("totalTerminos",page.getTotalCount());
 		
 		return LISTADO_BUSQUEDA_TERMINOS_JSON;
 	}
 
-	private List<DTOTerminosResultado> preparaResultadosTerminos(Page page,DTOTerminosFiltro terminosFiltroDto) {
-					
-		List<DTOTerminosResultado> results = new ArrayList<DTOTerminosResultado>();
-		List<DTOAcuerdoTermino> listado = (List<DTOAcuerdoTermino>) page.getResults();
-		//List<TerminoAcuerdo> listadoTerminos = (List<TerminoAcuerdo>) page.getResults();
-		
-		for(int i=0;i<listado.size();i++){
-			
-			DTOTerminosResultado terminos= new DTOTerminosResultado();
-
-			String idAcuerdo="";
-			String idTermino="";
-			String idAsunto="";
-			String nombreAsunto="";
-			String idExpediente="";
-			String tipoExpediente="";
-			String descripcionExpediente="";
-			String contratoPrincipal = "";
-			String tipoAcuerdo="";
-			String estado="";
-			String solicitante="";
-			String tipoSolicitante="";
-			String fechaAlta="";
-			String fechaEstado="";
-			String fechaVigencia="";
-			String clientePase="";
-			DTOAcuerdoTermino tupla = new DTOAcuerdoTermino();
-			
-			tupla=(DTOAcuerdoTermino) page.getResults().get(i);
-			
-			//EXTAcuerdo acuerdo = listado.get(i).getAcuerdo();
-			TerminoAcuerdo termino= listado.get(i).getTermino();
-			
-			tupla.setAcuerdo(listado.get(i).getAcuerdo());
-			tupla.setTermino(listado.get(i).getTermino());
-			
-			idAcuerdo=tupla.getAcuerdo().getId().toString();
-			
-			if(!Checks.esNulo(tupla.getTermino())){
-				idTermino=tupla.getTermino().getId().toString();
-			}
-			/*
-			TerminoAcuerdo terminoAcuerdo = listadoTerminos.get(i);
-			
-			idTermino=terminoAcuerdo.getId().toString();
-			idAcuerdo=terminoAcuerdo.getAcuerdo().getId().toString();
-			
-			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getAsunto())){
-				idAsunto=terminoAcuerdo.getAcuerdo().getAsunto().getId().toString();
-				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getAsunto().getNombre())){
-					nombreAsunto=terminoAcuerdo.getAcuerdo().getAsunto().getNombre();
-				}
-			}
-			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente())){
-				idExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getId().toString();
-				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente())){
-					tipoExpediente= terminoAcuerdo.getAcuerdo().getExpediente().getTipoExpediente().getCodigo();
-				}
-				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getExpediente().getDescripcion())){
-					descripcionExpediente=terminoAcuerdo.getAcuerdo().getExpediente().getDescripcion();
-				}			
-			}
-			
-			List<TerminoContrato> contratosTermino=terminoAcuerdo.getContratosTermino();
-			
-			Acuerdo acuerdo = terminoAcuerdo.getAcuerdo();
-			
-			Expediente expediente = acuerdo.getExpediente();
-			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getTipoAcuerdo())){
-				
-				if(!terminoAcuerdo.getAcuerdo().getTipoAcuerdo().getTipoEntidad().getCodigo().equals("ASU")){
-					if(!Checks.esNulo(expediente.getContratoPase())){	
-						if(expediente.getContratoPase().getContratoPersona().size()>0){
-							clientePase=expediente.getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
-						}			
-					}
-				}else{	
-					if(!Checks.esNulo(expediente.getContratoPase())){
-						Asunto asunto = acuerdo.getAsunto();
-						if(asunto.getExpediente().getContratoPase().getContratoPersona().size()>0){
-							clientePase=asunto.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50();
-						}
-					}
-				}
-			}
-			
-				
-			if(contratosTermino.size()!=0){
-				contratoPrincipal=contratosTermino.get(0).getContrato().getCodigoContrato();
-			}
-			
-			if(!Checks.esNulo(terminoAcuerdo.getAcuerdo())){
-				if(!Checks.esNulo(terminoAcuerdo.getAcuerdo().getTipoAcuerdo())){
-					tipoAcuerdo= terminoAcuerdo.getAcuerdo().getTipoAcuerdo().getDescripcion();
-				}	
-			}
-			
-			if(!Checks.esNulo(acuerdo.getEstadoAcuerdo())){
-				estado=acuerdo.getEstadoAcuerdo().getDescripcion();
-			}
-			
-			GestorDespacho gestorDespacho = acuerdo.getGestorDespacho();
-			if(!Checks.esNulo(gestorDespacho)){
-				DespachoExterno despachoExterno = gestorDespacho.getDespachoExterno();
-				if(!Checks.esNulo(despachoExterno)){
-					solicitante=despachoExterno.getDescripcion();	
-					tipoSolicitante=despachoExterno.getTipoDespacho().getDescripcion();
-				}			
-			}
-			
-			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			
-			if(!Checks.esNulo(acuerdo.getFechaPropuesta())){
-				fechaAlta=format.format(acuerdo.getFechaPropuesta());
-			}
-			
-			if(!Checks.esNulo(acuerdo.getFechaEstado())){
-				fechaEstado=format.format(acuerdo.getFechaEstado());
-			}
-			
-			if(!Checks.esNulo(acuerdo.getFechaLimite())){
-				fechaVigencia=format.format(acuerdo.getFechaLimite());
-			}
-			*/
-			terminos.setIdTermino(idTermino);
-			terminos.setIdAcuerdo(idAcuerdo);
-			terminos.setIdAsunto(idAsunto);
-			terminos.setNombreAsunto(nombreAsunto);
-			terminos.setIdExpediente(idExpediente);
-			terminos.setTipoExpediente(tipoExpediente);
-			terminos.setDescripcionExpediente(descripcionExpediente);
-			terminos.setIdContrato(contratoPrincipal);
-			terminos.setNroCliente(clientePase);
-			terminos.setTipoAcuerdo(tipoAcuerdo);
-			terminos.setSolicitante(solicitante);
-			terminos.setTipoSolicitante(tipoSolicitante);
-			terminos.setEstado(estado);
-			terminos.setFechaAlta(fechaAlta);
-			terminos.setFechaEstado(fechaEstado);
-			terminos.setFechaVigencia(fechaVigencia);
-			
-			results.add(terminos);
-		}
-		return results;
-	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping

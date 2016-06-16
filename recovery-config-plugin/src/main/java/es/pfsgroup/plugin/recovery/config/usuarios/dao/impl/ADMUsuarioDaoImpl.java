@@ -161,4 +161,17 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 		return getHibernateTemplate().find(hql);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Usuario> getListByNombre(String filtro) {
+		
+		filtro = filtro.toUpperCase();
+		String hql = " from Usuario u where u.auditoria.borrado = 0 and (upper(u.nombre) like '%";
+		hql += filtro+"%' or upper(u.apellido1) like '%";
+		hql += filtro+"%' or upper(u.apellido2) like '%";
+		hql += filtro+"%')";
+		
+		return getHibernateTemplate().find(hql);
+	}
+
 }

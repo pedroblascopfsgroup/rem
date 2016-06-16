@@ -179,8 +179,8 @@
 	});  
 	
 	<pfsforms:ddCombo name="comboProvinciaNotario"
-		labelKey="precontencioso.grid.documento.incluirDocumento.localidadNotario" 
- 		label="**Localidad Notario" value="${dtoDoc.provinciaNotario}" dd="${listaProvincias}" 
+		labelKey="precontencioso.grid.documento.incluirDocumento.provinciaNotario" 
+ 		label="**Provincia Notario" value="${dtoDoc.provinciaNotario}" dd="${listaProvincias}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 	comboProvinciaNotario.labelStyle=labelStyle;	
 

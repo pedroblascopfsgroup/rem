@@ -54,7 +54,7 @@
 	</end-state>
 
  	<!-- Retorna el archivo CSV -->
-    <end-state id="listadoCSV" view="file">
+    <end-state id="listadoCSV" view="filedownload">
 		<on-entry>
 			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
 			<evaluate expression="executor.execute('mapaGlobalOficinaManager.exportarACsv', dto)" result="flowScope.fileItem" />

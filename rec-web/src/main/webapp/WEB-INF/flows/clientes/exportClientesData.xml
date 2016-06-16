@@ -4,7 +4,7 @@
 
     <var name="dto" class="es.capgemini.pfs.cliente.dto.DtoBuscarClientes"/>
     
-    <end-state id="listado" view="file" >
+    <end-state id="listado" view="filedownload" >
 		<on-entry>
 			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
 			<evaluate expression="executor.execute('personaManager.exportClientes', dto)" result="flowScope.fileItem"/>

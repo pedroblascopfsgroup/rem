@@ -18,6 +18,9 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.tipoDocumento" label="**tipoDocumento" name="tipoDocumento" value="${despachoExtras.doc.descripcion}" readOnly="true" width="350" labelWidth="150"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.documento" label="**documento CIF" name="documentoCif" value="${despachoExtras.documentoCif}" readOnly="true" width="350" labelWidth="150"/>
 	
+	 <%--PRODUCTO-1913 --%>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.codEstAse" label="**Estado" name="codEstAse" value="${despachoExtras.codEstAse}" readOnly="true" width="230" labelWidth="180"/> 
+	
 	<%-- Fin Campos nuevos --%>
 	
 	<%-- Se cambia la forma de mostrar los tipos de Gestores, para que se muestre en una lista --%>
@@ -94,13 +97,13 @@
 	<c:if test="${despacho.codigoDespacho != null}">
 		<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.cabecera.control.datos" name="datos" columns="4" collapsible="" title="**Datos Despacho" bbar="btModificar" >
 			<pfs:items items="despacho, codigoDespacho, tipoDespacho, tiposGestorGrid, tipoDocumento, documentoCif, fechaAlta"/>
-			<pfs:items items="tipoVia, domicilio, domicilioPlaza, codigoPostal, personaContacto, telefono1,telefono2, fax, correoElectronico"/>		
+			<pfs:items items="tipoVia, domicilio, domicilioPlaza, codigoPostal, personaContacto, telefono1,telefono2, fax, correoElectronico,codEstAse"/>		
 		</pfs:panel>
 	</c:if>
 	<c:if test="${despacho.codigoDespacho == null}">		
 		<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.cabecera.control.datos" name="datos" columns="4" collapsible="" title="**Datos Despacho" bbar="btModificar" >
 			<pfs:items items="despacho, tipoDespacho, tiposGestorGrid, tipoDocumento, documentoCif, fechaAlta"/>
-			<pfs:items items="tipoVia, domicilio, domicilioPlaza, codigoPostal, personaContacto, telefono1,telefono2, fax, correoElectronico"/>		
+			<pfs:items items="tipoVia, domicilio, domicilioPlaza, codigoPostal, personaContacto, telefono1,telefono2, fax, correoElectronico,codEstAse"/>		
 		</pfs:panel>
 	</c:if>
 

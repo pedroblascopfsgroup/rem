@@ -142,7 +142,26 @@
     									<app:test id="idComboGestion" addComa="true"/>	
     								});
 
+	var origen = <app:dict value="${origen}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
+	var comboOrigen = app.creaCombo({data:origen, 
+    									triggerAction: 'all', 
+    									value:origen.diccionario[0].id, 
+    									name : 'origen', 
+    									fieldLabel : '<s:message code="expedientes.listado.origen" text="**Origen" />'
+    									<app:test id="idComboOrigen" addComa="true"/>	
+    								});
+    								
+	comboOrigen.on('select',function(){
+		if(comboOrigen.getValue() != ''){
+			comboJerarquia.setDisabled(false);
+			comboZonas.setDisabled(false);
+		} else {
+			comboJerarquia.setDisabled(true);
+			comboZonas.setDisabled(true);
+		}
+	});
+	
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
 	 var comboJerarquia = app.creaCombo({data:jerarquia, 
@@ -152,6 +171,8 @@
     									fieldLabel : '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
     									<app:test id="idComboJerarquia" addComa="true"/>	
     								});
+    comboJerarquia.setDisabled(true);								
+	
 	var listadoCodigoZonas = [];
 	
 	comboJerarquia.on('select',function(){
@@ -284,6 +305,9 @@
 			codZonaSel='';
    			desZonaSel='';
    			btnIncluir.setDisabled(true);
+   			<sec:authorize ifAllGranted="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES">
+				Ext.getCmp('chkbxMiCartera').reset();
+			</sec:authorize>
 			comboZonas.focus();
 		}
 	});
@@ -835,7 +859,7 @@
 		                params.start=0;
 		                params.limit=limit;
 		                clientesStore.webflow(params);
-						//Cerramos el panel de filtros y esto har� que se abra el listado de clientes
+						//Cerramos el panel de filtros y esto haria que se abra el listado de clientes
 					}else{
 						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 					}
@@ -913,7 +937,11 @@
     	if (tabJerarquia){
     		p.jerarquia=comboJerarquia.getValue();
 			p.codigoZona=listadoCodigoZonas.toString();
+			p.origen=comboOrigen.getValue();
     	}
+    	<sec:authorize ifAllGranted="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES">
+			p.miCartera=Ext.getCmp('chkbxMiCartera').getValue();
+		</sec:authorize>
     	return p;
     }
 	
@@ -1016,7 +1044,7 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [comboJerarquia, comboZonas]
+					,items: [comboOrigen, comboJerarquia, comboZonas]
 				},{
 					layout:'form'
 					,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
@@ -1214,6 +1242,9 @@
 	buttonsL[posBtnLimpiar].on('click', function(){
 		zonasStore.removeAll();
 		listadoCodigoZonas = [];
+		<sec:authorize ifAllGranted="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES">
+				Ext.getCmp('chkbxMiCartera').reset();
+		</sec:authorize>
 	});
 	
 	

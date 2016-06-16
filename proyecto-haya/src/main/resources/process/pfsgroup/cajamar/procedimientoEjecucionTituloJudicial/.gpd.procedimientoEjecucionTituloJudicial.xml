@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_ejecucionTituloJudicial" width="1206" height="901">
+<root-container name="hcj_ejecucionTituloJudicial" width="1207" height="907">
   <node name="Inicio" x="7" y="-23" width="132" height="36">
     <edge>
       <label x="-84" y="-9"/>
@@ -210,6 +210,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="ForkInterposicionDemanda" x="592" y="79" width="252" height="24">
     <edge>
@@ -219,12 +222,28 @@
       <label x="-31" y="-11"/>
     </edge>
   </node>
+  <node name="ForkInterposicionDemandaAnti" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
   <node name="H018_BPMProvisionFondos" x="999" y="36" width="192" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="87" y="-158"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="H018_BPMAnticipoFondos" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>

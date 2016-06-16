@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.recovery.procuradores.procesado.api.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,11 +15,14 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.hibernate.pagination.PageHibernate;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -28,6 +32,7 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVFileManagerApi;
 import es.pfsgroup.plugin.recovery.masivo.api.MSVResolucionApi;
 import es.pfsgroup.plugin.recovery.masivo.dao.MSVDDTipoResolucionDao;
@@ -37,6 +42,7 @@ import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoFiltroProcesos;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVDtoResultadoSubidaFicheroMasivo;
 import es.pfsgroup.plugin.recovery.masivo.dto.MSVResolucionesDto;
 import es.pfsgroup.plugin.recovery.masivo.model.ExcelFileBean;
+import es.pfsgroup.plugin.recovery.masivo.model.MSVDDEstadoProceso;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVDDTipoResolucion;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVFileItem;
 import es.pfsgroup.plugin.recovery.masivo.model.MSVResolucion;
@@ -73,6 +79,9 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@Autowired
 	private JBPMProcessManager jbpmManager;
 	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
 	@Override
 	@BusinessOperation(PCD_MSV_BO_MOSTRAR_RESOLUCIONES)
 	public	List<MSVResolucion> mostrarResoluciones() {
@@ -82,7 +91,27 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	@Override
 	@BusinessOperation(PCD_MSV_BO_MOSTRAR_RESOLUCIONES_PAGINATED)
 	public Page mostrarResoluciones(MSVDtoFiltroProcesos dto) {
-		return proxyFactory.proxy(MSVResolucionApi.class).mostrarResoluciones(dto);
+		PageHibernate mostrarResolucion = (PageHibernate) proxyFactory.proxy(MSVResolucionApi.class).mostrarResoluciones(dto);
+		ArrayList<MSVResolucion> listaResoluciones = new ArrayList<MSVResolucion>();
+		if(!Checks.esNulo(mostrarResolucion)){
+			listaResoluciones.addAll((List<MSVResolucion>) mostrarResolucion.getResults());
+			List<MSVResolucion> resoluciones = new ArrayList<MSVResolucion>();
+			MSVDDEstadoProceso estado = null;
+			for (MSVResolucion listaResolucion : listaResoluciones){
+				if ((MSVDDEstadoProceso.CODIGO_PTE_VALIDAR).equalsIgnoreCase(listaResolucion.getEstadoResolucion().getCodigo())){
+					estado = comprobarValidacionMetodoClasico(listaResolucion.getTareaNotificacion().getId());
+					listaResolucion.setEstadoResolucion(estado);
+					resoluciones.add(listaResolucion);
+				}
+				else {
+					resoluciones.add(listaResolucion);
+				}
+				
+			}
+			( (PageImpl) mostrarResolucion).setResults(resoluciones);
+		}
+		
+		return mostrarResolucion;
 	}
 
 	@Override
@@ -451,5 +480,21 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	private MSVFileItem getFile(Long idFichero) {
 		return proxyFactory.proxy(MSVFileManagerApi.class).getFile(idFichero);
 	}
-	
+
+	/**
+	 * Comprobar si se a validado la tarea mediante el metodo clásico
+	 * @param id
+	 * @return
+	 */
+	private MSVDDEstadoProceso comprobarValidacionMetodoClasico(Long id){
+		Boolean finalizado = msvResolucionDao.comprobarValidacionMetodoClasico(id);
+		MSVDDEstadoProceso estado;
+		if(finalizado){
+			estado = (MSVDDEstadoProceso) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDEstadoProceso.class, MSVDDEstadoProceso.CODIGO_PROCESADO);
+		}
+		else {
+			estado = (MSVDDEstadoProceso) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDEstadoProceso.class, MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);
+		}
+		return estado;
+	}
 }

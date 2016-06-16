@@ -14,6 +14,8 @@ public class MEJBuscarClientesDto extends DtoBuscarClientes{
 	private String propietario;
 	private String nominaPension;
 	private String apellidos;
+    private Boolean miCartera;
+    private String origen;
 
 	public String getConcurso() {
 		return concurso;
@@ -61,6 +63,22 @@ public class MEJBuscarClientesDto extends DtoBuscarClientes{
 
 	public void setApellidos(String apellidos) {
 		this.apellidos = apellidos;
+	}
+
+	public Boolean getMiCartera() {
+		return miCartera;
+	}
+
+	public void setMiCartera(Boolean miCartera) {
+		this.miCartera = miCartera;
+	}
+
+	public String getOrigen() {
+		return origen;
+	}
+
+	public void setOrigen(String origen) {
+		this.origen = origen;
 	}
 
 	

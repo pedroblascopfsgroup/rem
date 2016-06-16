@@ -39,6 +39,12 @@
 						<value>CONTACOBR</value>
 					</set>
 				</entry>
+				<entry key="ABRIR_HISTORICO_PROCEDIMIENTO">
+					<!-- Tareas tipo abrir historico -->
+					<set>
+						<value>PRORROGA</value>
+					</set>
+				</entry>
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">

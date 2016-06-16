@@ -1495,6 +1495,9 @@
 					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO:
 						app.abreAsuntoTab(rec.get('idEntidad'), rec.get('descripcion'),'contabilidadcobros');
 						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO:
+						app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'),'historico');
+						break;
 
 					default:
 				

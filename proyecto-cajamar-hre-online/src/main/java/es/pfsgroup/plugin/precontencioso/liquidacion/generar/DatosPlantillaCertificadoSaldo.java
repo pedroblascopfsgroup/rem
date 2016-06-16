@@ -94,7 +94,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(COMISAPER, obtenerTipoComision(liquidacion, COMISAPER));
 		datosDoc.put(FECVENCIM, obtenerFechaVencimiento(cnt, FECVENCIM));
 		datosDoc.put(FECHALIQTELEGRAM, obtenerFechaLiquidacion(liquidacion, FECHALIQTELEGRAM));
-		datosDoc.put(CAPITALCER, obtenerImportePrestamo(liquidacion, CAPITALCER));
+		datosDoc.put(CAPITALCER, obtenerImporteSumaCapital(liquidacion, CAPITALCER));	//PRODUCTO-1592 (PEDRO)
 		datosDoc.put(INTERESCER, obtenerImporteInteresesRemuneratorios(liquidacion, INTERESCER));
 		datosDoc.put(IMPINTERESTELEG, obtenerImporteIntereseCreditoDispuesto(liquidacion, IMPINTERESTELEG));
 		datosDoc.put(IMPCOMITELEG, obtenerImporteComisionesPagadas(liquidacion, IMPCOMITELEG));
@@ -297,6 +297,18 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		}
 		return resultado;
 	}
+
+	//PRODUCTO-1592 (PEDRO)
+	private String obtenerImporteSumaCapital(LiquidacionPCO liquidacion, String campo) {
+		String resultado = noDisponible(campo); 
+		try {
+			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
+		} catch (Exception e) {
+			logger.debug(campo + " error: " + e.getMessage());
+		}
+		return resultado;
+	}
+
 
 	private String obtenerFechaConfirmacion(LiquidacionPCO liq, String nombreCampo) {
 		String resultado = "";

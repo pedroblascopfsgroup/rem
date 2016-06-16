@@ -185,7 +185,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		boolean cruzaJerarquia = (!Checks.esNulo(dto.getJerarquia()));
 		boolean cruzaCentros = (!Checks.esNulo(dto.getCentros()));
 		
-		hql.append(" select acu, ter from");
+		hql.append(" select distinct acu, ter from");
 		hql.append(" Acuerdo acu left join acu.terminos ter");
 		
 		if(cruzaContratos){

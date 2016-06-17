@@ -136,7 +136,7 @@
 			flow : 'turnadoprocuradores/openDetalleEsquemaTurnado'
 			,width :  900
 			,resizable:false
-			,closable: true
+			,closable: false
 			,x:200
 		    ,y:15
 			,title : '<s:message code="plugin.procuradores.turnado.tabSeleccionarPlaza**" text="Detalles esquema" />'+': '+title

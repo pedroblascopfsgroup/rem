@@ -110,7 +110,7 @@
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
 		,iconCls : 'icon_cancel'
 		,handler : function(){
-			gestionarPanelEdicionRangos(true,"NEW",null,null);
+			gestionarPanelEdicionRangos(true,"CAN",null,null);
 		}
 	});
 	
@@ -353,5 +353,15 @@
 			cmbDespachos.reset();
 			resetDespachosPanel();
 			if(infoConfiguracionTurnado.isVisible()) gestionarPanelNuevoTPO();
+		}
+		else if (operacion == 'CAN'){
+			importeMinimo.reset();
+			importeMaximo.reset();
+			cmbDespachos.reset();
+			resetDespachosPanel();
+			if(infoConfiguracionTurnado.isVisible()){
+				Ext.getCmp('turn_procu_lista_procedimientos').setDisabled(!flag);
+				procedimientoPanel.setDisabled(!flag);
+			}
 		}
 	}

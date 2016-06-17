@@ -19,15 +19,21 @@ echo "********************************************************"
 FICHEROS=('rechazos.dat' 'rechazos.txt')
 
 function download_files {
+	
 	ORIGEN=$1
 	DESTINO=$2
 	MASK=$3
+	BANDERA_T=$4
         echo "Descargando fichero $MASK desde SFTP (${HOST})..."
 
 	cd $ORIGEN
 	rm $MASK
-	
+
+	cd $DIR_SHELLS
+
 	./ftp/ftp_get_conv_files.sh $ORIGEN $DESTINO $MASK $BANDERA_T
+
+	cd $ORIGEN
 
 	echo "Eliminando y copiando fichero de ORIGEN a SFTP_HAYA ($DIR_SFT_HAYA_RECEPCION)"
     $RM -f $DIR_SFT_HAYA_RECEPCION/$MASK

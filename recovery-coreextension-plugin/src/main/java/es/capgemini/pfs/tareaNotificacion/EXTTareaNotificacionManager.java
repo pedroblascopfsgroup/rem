@@ -231,7 +231,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             map.put(AceptarProrrogaListener.CLAVE_DETALLE, dto.getDescripcionCausa());
             if (tareaAsociada instanceof EXTTareaNotificacion) {
                 EXTTareaNotificacion tar = (EXTTareaNotificacion) tareaAsociada;
-                tar.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA));
+                tar.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA, genericDao));
                 this.saveOrUpdate(tar);
             } else {
                 tareaAsociada.setFechaVenc(dto.getFechaPropuesta());
@@ -753,7 +753,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             if (tipoCalculo == null) {
                 tipoCalculo = TIPO_CALCULO_FECHA_POR_DEFECTO;
             }
-            notificacionTarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo));
+            notificacionTarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo, genericDao)); 
         }
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);

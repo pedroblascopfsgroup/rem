@@ -1,8 +1,8 @@
 # Conf. Entorno
-export DIR_RAIZ=/recovery/map012 
+export DIR_RAIZ=/recovery/haya
 #/recovery/iap031 	[INTE] 
 #/recovery/haya 	[RSI, PRE Y PRO]
-export JAVA_HOME=/usr/java/jdk1.6.0_07
+export JAVA_HOME=/usr/java/jdk1.6.0_27
 #/usr/java/jdk1.6.0_07	[INTE, VAL01 y VAL02]   
 #/usr/java/jdk1.6.0_27	[PRE Y PRO]
 export PATH=$JAVA_HOME/bin:$PATH
@@ -11,13 +11,14 @@ export BATCH_USER=ops-haya
 export DEVON_HOME=$DIR_RAIZ/batch-server 
 export LANG=es_ES.UTF-8
 export NLS_LANG=SPANISH_SPAIN.AL32UTF8
-export ORACLE_HOME=/opt/sw/oracle/product/11.2.0/client_1
+export ORACLE_HOME=/opt/app/oracle/product/10.2.0/db_1
 #/opt/sw/oracle/product/11.2.0/client_1	[INTE, VAL01 y VAL02]
 #/opt/app/oracle/product/10.2.0/db_1	[PRE Y PRO]
 export PATH=$PATH:$ORACLE_HOME/bin
 
 # Código de la entidad
-export ENTIDAD=2038
+export ENTIDAD=5074
+export ENTIDAD_AUXILIAR=2038
 
 # Shells
 export DIR_INPUT_AUX=$DIR_RAIZ/transferencia/sareb/aprov_auxiliar

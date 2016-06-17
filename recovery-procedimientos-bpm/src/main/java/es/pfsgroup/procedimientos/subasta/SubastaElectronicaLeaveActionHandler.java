@@ -41,22 +41,19 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 	@Autowired
 	GenericABMDao genericDao;
 
-	@Autowired
-	private Executor executor;
-
     @Autowired
     private SubastaCalculoManager subastaCalculoManager;
 	
     @Autowired
     private IntegracionBpmService bpmIntegracionService;
     
-	private ExecutionContext executionContext;
+    @Autowired
+    private SubastaProcedimientoApi subastaProcedimientoApi;
+    
+    private ExecutionContext executionContext;
 
-
-	private final String TAP_SOLICITUD_SUBASTA = "P401_SolicitudSubasta";
-	private final String TAP_SENYALAMIENTO_SUBASTA = "P401_SenyalamientoSubasta";
-	private final String TAP_SOLICITUD_SUBASTA_SAREB = "P409_SolicitudSubasta";
-	private final String TAP_SENYALAMIENTO_SUBASTA_SAREB = "P409_SenyalamientoSubasta";
+	private final String TAP_SOLICITUD_SUBASTA = "P458_SolicitudSubasta";
+	private final String TAP_DECRETO_CONVOCATORIA_SUBASTA = "P458_DecretoConvocatoriaSubasta";
 	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass, ExecutionContext executionContext) {
@@ -82,9 +79,7 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 				tareaExterna.getTareaProcedimiento() != null && 
 				(
 				TAP_SOLICITUD_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-				TAP_SOLICITUD_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
-				TAP_SENYALAMIENTO_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) ||
-				TAP_SENYALAMIENTO_SUBASTA_SAREB.equals(tareaExterna.getTareaProcedimiento().getCodigo())
+				TAP_DECRETO_CONVOCATORIA_SUBASTA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
 				)) {
 			subastaCalculoManager.actualizarTipoSubasta(procedimiento);	
 		}
@@ -97,22 +92,34 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 		
 		Subasta sub = proxyFactory.proxy(SubastaProcedimientoApi.class).obtenerSubastaByPrcId(prc.getId());
 
-		if (executionContext.getNode().getName().contains("SolicitudSubasta") || executionContext.getNode().getName().contains("SenyalamientoSubasta")) {
-					
-		} else if (executionContext.getNode().getName().contains("AdjuntarInformeSubasta")) {
-			
-		} else if (executionContext.getNode().getName().contains("PrepararPropuestaSubasta")) {
-			
-		} else if (executionContext.getNode().getName().contains("ValidarPropuesta")) {
-			
-		} else if (executionContext.getNode().getName().contains("LecturaAceptacionInstrucciones")) {
-
-		} else if (executionContext.getNode().getName().contains("CelebracionSubasta")) {
-
-		} else if (executionContext.getNode().getName().contains("SuspenderSubasta")) {
-			
-		}
-
+		if (executionContext.getNode().getName().contains("SolicitudSubasta") || executionContext.getNode().getName().contains("DecretoConvocatoriaSubasta")) {
+			if (!Checks.esNulo(sub)) {
+				cambiaEstadoSubasta(sub, DDEstadoSubasta.PIN);
+				duplicaInfoSubasta(executionContext, sub);
+				subastaProcedimientoApi.determinarTipoSubasta(sub);
+			}
+		} else if (executionContext.getNode().getName().contains("AdjuntarNotasSimples") || executionContext.getNode().getName().contains("AdjuntarInformeFiscal")) {
+			if (!Checks.esNulo(sub)) {
+				cambiaEstadoSubasta(sub, DDEstadoSubasta.PPR);
+			}
+		} else if (executionContext.getNode().getName().contains("PrepararInformeSubasta")) {
+			if (!Checks.esNulo(sub)) {
+				cambiaEstadoSubasta(sub, DDEstadoSubasta.PCO);
+			}
+		} else if (executionContext.getNode().getName().contains("ValidarInformeSubasta")) {
+			if (!Checks.esNulo(sub)) {
+				cambiaEstadoSubasta(sub, obtenerEstadoSiguiente(executionContext, "ValidarInformeSubasta", "comboAceptarInforme"));
+			}
+		} else if (executionContext.getNode().getName().contains("RegistrarPagoTasaPublicacionBOE")) {
+			if (!Checks.esNulo(sub)) {
+				cambiaEstadoSubasta(sub, DDEstadoSubasta.PCE);
+			}
+		} else if (executionContext.getNode().getName().contains("RegistrarResultadoSubasta")) {
+			if (!Checks.esNulo(sub)) {
+				cambiaEstadoSubasta(sub, obtenerEstadoSiguiente(executionContext, "RegistrarResultadoSubasta", "comboDecision"));
+			}
+		} 
+		
 		genericDao.save(Subasta.class, sub);
 		bpmIntegracionService.enviarDatos(sub);
 	}
@@ -129,7 +136,7 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 		TareaExterna tex = getTareaExterna(executionContext);
 		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
 		if (!Checks.esNulo(listado)) {
-			if (tarea.contains("CelebracionSubasta")) {
+			if (tarea.contains("RegistrarResultadoSubasta")) {
 				for (TareaExternaValor tev : listado) {
 					if (DDSiNo.SI.equals(tev.getValor())) {
 						return DDEstadoSubasta.CEL;
@@ -138,7 +145,7 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 					}
 				}
 			}
-			if (tarea.contains("ValidarPropuesta")) {
+			if (tarea.contains("ValidarInformeSubasta")) {
 				for (TareaExternaValor tev : listado) {
 					if (DDResultadoComite.ACEPTADA.equals(tev.getValor())) {
 						return DDEstadoSubasta.PAC;
@@ -146,7 +153,6 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 						return DDEstadoSubasta.SUS;
 					}
 				}
-				return DDEstadoSubasta.PPR;
 			}
 		}
 		return null;
@@ -180,26 +186,6 @@ public class SubastaElectronicaLeaveActionHandler extends PROGenericLeaveActionH
 			}
 
 		}
-	}
-
-
-	/**
-	 * Cambia el estado de los lotes de la subasta de conformado a propuesta.
-	 * @param subasta
-	 */
-	protected void cambiaEstadoLotesSubasta(Subasta subasta) {
-		executor.execute("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.marcarLotesEstadoTrasPropuesta", subasta);
-	}
-	
-	/**
-	 * Cambia el estado de los lotes de la subasta de conformado a propuesta.
-	 * @param subasta
-	 */
-	protected void cambiaEstadoValidarLotesSubasta(Subasta subasta) {
-		TareaExterna tarea = getTareaExterna(executionContext);
-		String nombreDecision = getNombreNodo(executionContext) + "Decision";
-		String decision = (String)getVariable(nombreDecision, executionContext);
-		executor.execute("plugin.nuevoModeloBienes.subastas.manager.SubastaManager.marcarLotesEstadoTrasValidar", subasta, tarea, decision);
 	}
 	
 }

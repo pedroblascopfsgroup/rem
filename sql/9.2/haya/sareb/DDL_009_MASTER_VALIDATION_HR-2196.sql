@@ -43,18 +43,23 @@ BEGIN
   IF
     V_EXISTE = 1
     THEN
-      EXECUTE IMMEDIATE V_BORRAR;
-      EXECUTE IMMEDIATE V_MSQL;
       DBMS_OUTPUT.PUT_LINE('Existe la clave única. Se borrará y creará de nuevo.');
+      EXECUTE IMMEDIATE V_BORRAR;
+      DBMS_OUTPUT.PUT_LINE('Paso1');
+      EXECUTE IMMEDIATE V_MSQL;
+      DBMS_OUTPUT.PUT_LINE('Paso2');
     ELSE IF
       V_EXISTE = 0 AND V_EXISTE2 = 1
       THEN
-        EXECUTE IMMEDIATE V_BORRAR2;
-        EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('No existe la clave única, pero sí el índice asociado. Se borrará el índice y se creará la clave única.');
-      ELSE
+        EXECUTE IMMEDIATE V_BORRAR2;
+        DBMS_OUTPUT.PUT_LINE('Paso3');
         EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('Paso4');
+      ELSE
         DBMS_OUTPUT.PUT_LINE('No existe la clave única. Se creará.');
+        EXECUTE IMMEDIATE V_MSQL;
+        DBMS_OUTPUT.PUT_LINE('Paso5');
     END IF;
   END IF;
 

@@ -92,7 +92,7 @@
 	var seleccionado = false;
 	
 	var j=0;
-	var parametrosTab = new Array();
+	var parametrosTab = [];
 	
 	var btnMarcarTodas = new Ext.Button({
 	    text:'<s:message code="plugin.busquedaTareas.marcar" text="**Marcar todos los registros"/>'
@@ -118,7 +118,7 @@
 		}
 	});
 
-	var parametros = new Array();
+	var parametros = {};
 	var hayParametros = false;		
 
 	var deshabilitarTabGrupos = function(cte) {
@@ -131,7 +131,7 @@
 	}
 
 	var buscarFunc = function() {
-            parametros = new Array();
+            parametros = {};
             parametros['busquedaUsuario'] = '';
 			parametros['despacho'] = '';
 			parametros['gestores'] = '';
@@ -151,13 +151,15 @@
             var anadirParametros = function(newParametros) {
   
                 for (var i in newParametros) {
-                    hayParametros = true;
-                    parametros[i] = newParametros[i];
-                    if(i == 'params'){
-                    	
-                    	parametrosTab[j] = newParametros[i];
-                    	j++;
-                    }
+                	if (newParametros.hasOwnProperty(i)) {
+	                    hayParametros = true;
+	                    parametros[i] = newParametros[i];
+	                    if(i == 'params'){
+	                    	
+	                    	parametrosTab[j] = newParametros[i];
+	                    	j++;
+	                    }
+					}
                 }     
             };
             
@@ -178,7 +180,7 @@
 				
 				tareasStore.webflow(parametros); 
 				
-				parametrosTab = new Array();            
+				parametrosTab = [];            
                 flitrosPlegables.getTopToolbar().setDisabled(true);
             } else {
                 Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
@@ -261,7 +263,7 @@
 							var limit = data.limit;
 							if(count < limit){
 								app.openBrowserWindow('/pfs/btabusquedatareas/exportacionTareasPage', parametros);  
-								parametrosTab = new Array();    
+								parametrosTab = [];    
 							}else{
 								Ext.MessageBox.hide();
 								Ext.Msg.alert('<s:message code="plugin.busquedaTareas.error" text="**Error" />', '<s:message code="plugin.busquedaTareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l\EDmite m\E1ximo de " />'+ limit + ' '+

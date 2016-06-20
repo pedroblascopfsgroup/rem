@@ -1,13 +1,13 @@
 /*
 --##########################################
 --## AUTOR=Carlos Martos
---## FECHA_CREACION=20160615
+--## FECHA_CREACION=20160620
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=RECOVERY-12
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Establece el borrado logico para tarea en precontencioso
+--## Finalidad: BPM - Establece el borrado logico para tarea en precontencioso y envio demanda
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -36,6 +36,7 @@ DECLARE
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP( 
        T_TIPO_TAP('PCO','PCO_ValidarAsignacion','RECOVERY-12',1)
+      ,T_TIPO_TAP('HC106','HC106_ValidarAsignacion','RECOVERY-12',1)
     );
     V_TMP_TIPO_TAP T_TIPO_TAP;
     

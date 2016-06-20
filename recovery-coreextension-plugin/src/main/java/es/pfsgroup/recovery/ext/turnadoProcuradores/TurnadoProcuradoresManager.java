@@ -374,7 +374,7 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		List<TareaExterna> tareas = tareaExternaManager.obtenerTareasPorProcedimiento(prc.getProcedimientoPadre().getId());
 
 		for (TareaExterna tarea : tareas) {
-			if ("PCO_ValidarAsignacion".equals(tarea.getTareaProcedimiento().getCodigo())) {
+			if ("PCO_RegistrarTomaDec".equals(tarea.getTareaProcedimiento().getCodigo())) {
 				List<EXTTareaExternaValor> valores = subastaProcedimientoApi.obtenerValoresTareaByTexId(tarea.getId());
 				for (EXTTareaExternaValor valor : valores) {
 					if (codigo.equals(valor.getNombre())) {

@@ -9,3 +9,4 @@ if [ "$#" -ne 3 ]; then
     exit
 fi
 
+function run_scripts {

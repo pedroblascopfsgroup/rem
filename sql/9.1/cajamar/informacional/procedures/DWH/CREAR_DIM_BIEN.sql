@@ -2,9 +2,9 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
--- Fecha ultima modificacion: 02/12/2015
--- Motivos del cambio: CMREC - 1220 : Desarrollo - Informes específicos CM - Bienes y Subastas
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: D_BIE_VIVIENDA_HABITUAL
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension SUBASTA.
@@ -27,6 +27,9 @@ create or replace PROCEDURE CREAR_DIM_BIEN (error OUT VARCHAR2) AS
     -- D_BIE_ZONA
     -- D_BIE_OFICINA
     -- D_BIE_ENTIDAD
+	-- D_BIE_GARANTIA_NUM_OPE_BIE_AGR
+	-- D_BIE_GARANTIA_NUM_OPE_BIE
+  -- -- D_BIE_VIVIENDA_HABITUAL
     
 
 BEGIN
@@ -151,6 +154,7 @@ BEGIN
                          '' NUM_OPERACION_BIEN_ID NUMBER(16,0) NOT NULL,
                             NUM_OPERACION_BIEN_DESC VARCHAR2(50 CHAR),
                             NUM_OPERACION_BIEN_DESC_2 VARCHAR2(250 CHAR),
+							GARANTIA_NUM_OPE_BIE_ID NUMBER(16,0),
                         PRIMARY KEY (NUM_OPERACION_BIEN_ID)'', 
                       :error); END;';
     execute immediate V_SQL USING OUT error;
@@ -182,6 +186,33 @@ BEGIN
                       :error); END;';
     execute immediate V_SQL USING OUT error;
 
+	------------------------------ D_BIE_GARANTIA_NUM_OPE_BIE_AGR -------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE_AGR'', 
+						  ''GARANTIA_NUM_OPE_BIE_AGR_ID NUMBER(16,0) NOT NULL,
+                            GARANTIA_NUM_OPE_BIE_AGR_DESC VARCHAR2(50 CHAR),
+                            PRIMARY KEY (GARANTIA_NUM_OPE_BIE_AGR_ID)'', :error); END;'; 		 
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_GARANTIA_NUM_OPE_BIE_AGR');
+	  
+	  
+    ------------------------------ D_BIE_GARANTIA_NUM_OPE_BIE --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_GARANTIA_NUM_OPE_BIE'', 
+						  ''GARANTIA_NUM_OPE_BIE_ID NUMBER(16,0) NOT NULL,
+                            GARANTIA_NUM_OPE_BIE_DESC VARCHAR2(50 CHAR),
+                            GARANTIA_NUM_OPE_BIE_DESC_2 VARCHAR2(250 CHAR),
+                            GARANTIA_NUM_OPE_BIE_AGR_ID NUMBER(16,0),
+                            PRIMARY KEY (GARANTIA_NUM_OPE_BIE_ID)'', :error); END;'; 		 
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_GARANTIA_NUM_OPE_BIE');
+
+
+     ------------------------------ D_BIE_VIVIENDA_HABITUAL --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''D_BIE_VIVIENDA_HABITUAL'', 
+              ''VIVIENDA_HABITUAL_ID NUMBER(16,0) NOT NULL,
+                            VIVIENDA_HABITUAL_DESC VARCHAR2(50) ,
+                            PRIMARY KEY (VIVIENDA_HABITUAL_ID)'', :error); END;';     
+    execute immediate V_SQL USING OUT error;
+    DBMS_OUTPUT.PUT_LINE('---- Creacion tabla D_BIE_VIVIENDA_HABITUAL');
    
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

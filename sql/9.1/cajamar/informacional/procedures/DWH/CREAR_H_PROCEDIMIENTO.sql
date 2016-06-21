@@ -1,10 +1,11 @@
+
 create or replace PROCEDURE CREAR_H_PROCEDIMIENTO (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Gonzalo Martin, PFS Group
 -- Fecha creacion: Mayo 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 15/01/2016
--- Motivos del cambio: CMREC-1610 Añadimos detalle soluciones previstas a acuerdos
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 08/03/2016
+-- Motivos del cambio: Se añade  TMP_PRC_ITER_JERARQUIA
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Procedimiento
@@ -56,7 +57,8 @@ create or replace PROCEDURE CREAR_H_PROCEDIMIENTO (error OUT VARCHAR2) AS
     -- H_PRC_DET_ACUERD_SOL_MES
     -- H_PRC_DET_ACUERD_SOL_TRIMESTRE
     -- H_PRC_DET_ACUERD_SOL_ANIO
-	
+  --TMP_PRC_ITER_JERARQUIA
+  
 BEGIN
   declare
   nCount NUMBER;
@@ -74,7 +76,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC'',
-						  ''DIA_ID DATE NOT NULL,
+              ''DIA_ID DATE NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,                  -- Fecha ultimo dia cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,           -- ID de la primera fase del procedimiento (PRC_PRC_ID = ). Identifica al procedimiento (Secuencia de actuaciones)
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,                 -- ID de la fase con mayor prioridad (Si hay varias de igual prioridad la ultima cronologicamente)
@@ -106,7 +108,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -184,15 +186,16 @@ BEGIN
                               PRC_PARALIZADO_ID NUMBER(16,0) ,
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0) ,
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) 
+                              FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
+                              PROCURADOR_PRC_ID NUMBER(16,0)
 
                              )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_CM_DWH" 
+        SEGMENT CREATION IMMEDIATE 
+          
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_IX'', ''H_PRC (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -208,7 +211,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_H_PRC'',
-						  ''DIA_ID DATE NOT NULL,
+              ''DIA_ID DATE NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,                  -- Fecha ultimo dia cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,           -- ID de la primera fase del procedimiento (PRC_PRC_ID = ). Identifica al procedimiento (Secuencia de actuaciones)
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,                 -- ID de la fase con mayor prioridad (Si hay varias de igual prioridad la ultima cronologicamente)
@@ -240,7 +243,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -318,10 +321,11 @@ BEGIN
                               PRC_PARALIZADO_ID NUMBER(16,0) ,
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) 
+                              FASE_ACTUAL_AGR_ID NUMBER(16,0),
+                              PROCURADOR_PRC_ID NUMBER(16,0)
 
                                '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_PRC');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_IX'', ''TMP_H_PRC (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -337,7 +341,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_SEMANA'',
-						  ''SEMANA_ID NUMBER(16,0) NOT NULL,                     -- Mes de analisis
+              ''SEMANA_ID NUMBER(16,0) NOT NULL,                     -- Mes de analisis
                               FECHA_CARGA_DATOS DATE NOT NULL,                                    -- Fecha ultimo dia del mes cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,           -- ID de la primera fase del procedimiento (PRC_PRC_ID = ). Identifica al procedimiento (Secuencia de actuaciones)
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,                 -- ID de la fase con mayor prioridad (Si hay varias de igual prioridad la ultima cronologicamente)
@@ -369,7 +373,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -447,10 +451,11 @@ BEGIN
                               PRC_PARALIZADO_ID NUMBER(16,0) ,
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) 
+                              FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
+                              PROCURADOR_PRC_ID NUMBER(16,0)
 
                                '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_SEMANA');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_SEMANA_IX'', ''H_PRC_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -464,7 +469,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_MES'',
-						  ''MES_ID NUMBER(16,0) NOT NULL,                     -- Mes de analisis
+              ''MES_ID NUMBER(16,0) NOT NULL,                     -- Mes de analisis
                               FECHA_CARGA_DATOS DATE NOT NULL,                                    -- Fecha ultimo dia del mes cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,           -- ID de la primera fase del procedimiento (PRC_PRC_ID = ). Identifica al procedimiento (Secuencia de actuaciones)
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,                 -- ID de la fase con mayor prioridad (Si hay varias de igual prioridad la ultima cronologicamente)
@@ -496,7 +501,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -574,10 +579,11 @@ BEGIN
                               PRC_PARALIZADO_ID NUMBER(16,0) ,
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) 
+                              FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
+                              PROCURADOR_PRC_ID NUMBER(16,0)
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_MES');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_MES_IX'', ''H_PRC_MES (MES_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -590,7 +596,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_TRIMESTRE'',
-						  ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,               -- Trimestre de analisis
+              ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,               -- Trimestre de analisis
                               FECHA_CARGA_DATOS DATE NOT NULL,                  -- Fecha ultimo dia del trimestre cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,           -- ID de la primera fase del procedimiento (PRC_PRC_ID = ). Identifica al procedimiento (Secuencia de actuaciones)
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,                 -- ID de la fase con mayor prioridad (Si hay varias de igual prioridad la ultima cronologicamente)
@@ -622,7 +628,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -700,10 +706,11 @@ BEGIN
                               PRC_PARALIZADO_ID NUMBER(16,0) ,
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) 
+                              FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
+                              PROCURADOR_PRC_ID NUMBER(16,0)
 
                                '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_TRIMESTRE');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_TRIMESTRE_IX'', ''H_PRC_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -717,7 +724,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_ANIO'',
-						  ''ANIO_ID NUMBER(16,0) NOT NULL,                    -- Ano de aalisis
+              ''ANIO_ID NUMBER(16,0) NOT NULL,                    -- Ano de aalisis
                               FECHA_CARGA_DATOS DATE NOT NULL,                  -- Fecha ultimo dia del ano cargado
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,           -- ID de la primera fase del procedimiento (PRC_PRC_ID = ). Identifica al procedimiento (Secuencia de actuaciones)
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,                 -- ID de la fase con mayor prioridad (Si hay varias de igual prioridad la ultima cronologicamente)
@@ -749,7 +756,7 @@ BEGIN
                               FECHA_ULTIMA_POSICION_VENCIDA DATE ,              -- Fecha de la ultima posicion vencida asociada de los contratos asociados al procedimiento
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FECHA_ESTIMADA_COBRO DATE ,
-                              CONTEXTO_FASE VARCHAR2(250) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
+                              CONTEXTO_FASE VARCHAR2(600) ,                     -- Secuencia de fases (IDs de las fases del procedimiento)
                               NIVEL INTEGER ,                                   -- Nivel de profundidad en la jerarquia de fases del procedimiento
                               -- Dimensiones
                               ASUNTO_ID NUMBER(16,0) ,                          -- Asunto al que pertenece el procedimiento
@@ -827,10 +834,11 @@ BEGIN
                               PRC_PARALIZADO_ID NUMBER(16,0) ,
                               FECHA_PARALIZACION DATE,
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0),
-                              FASE_ACTUAL_AGR_ID NUMBER(16,0) 
+                              FASE_ACTUAL_AGR_ID NUMBER(16,0) ,
+                              PROCURADOR_PRC_ID NUMBER(16,0)
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_ANIO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_ANIO_IX'', ''H_PRC_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -843,7 +851,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_COBRO'',
-						  ''DIA_ID DATE NOT NULL,
+              ''DIA_ID DATE NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -856,13 +864,13 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+                COBRO_ID NUMBER(16,0))
                              SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_CM_DWH" 
+          
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_IX'', ''H_PRC_DET_COBRO (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -876,7 +884,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_H_PRC_DET_COBRO'',
-						  ''DIA_ID DATE NOT NULL,
+              ''DIA_ID DATE NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -889,10 +897,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+                COBRO_ID NUMBER(16,0)
 
                               '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_PRC_DET_COBRO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_DET_COBRO_IX'', ''TMP_H_PRC_DET_COBRO (DIA_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -905,7 +913,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_COBRO_SEMANA'',
-						  ''SEMANA_ID NUMBER(16,0) NOT NULL,
+              ''SEMANA_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -918,10 +926,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+                COBRO_ID NUMBER(16,0)
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_SEMANA');
 
 
@@ -936,7 +944,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_COBRO_MES'',
-						  ''MES_ID NUMBER(16,0) NOT NULL,
+              ''MES_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -949,10 +957,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+                COBRO_ID NUMBER(16,0)
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_MES');
 
 
@@ -967,7 +975,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_COBRO_TRIMESTRE'',
-						  ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
+              ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -980,10 +988,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+                COBRO_ID NUMBER(16,0)
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_TRIMESTRE');
 
 
@@ -998,7 +1006,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_COBRO_ANIO'',
-						  ''ANIO_ID NUMBER(16,0) NOT NULL,
+              ''ANIO_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -1011,10 +1019,10 @@ BEGIN
                               NUM_COBROS INTEGER ,
                               IMPORTE_COBRO NUMBER(15,2) ,
                               NUM_DIAS_CREACION_ASU_COBRO INTEGER,
-							  COBRO_ID NUMBER(16,0)
+                COBRO_ID NUMBER(16,0)
 
                                '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_COBRO_ANIO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_COBRO_ANIO_IX'', ''H_PRC_DET_COBRO_ANIO (ANIO_ID, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1027,19 +1035,19 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_CONTRATO'',
-						  ''DIA_ID DATE NOT NULL,
+              ''DIA_ID DATE NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
                               CONTRATO_ID NUMBER(16,0),
                               -- Metricas
-                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER
+                              NUM_CONTRATOS_PROCEDIMIENTO INTEGER)
                              SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_CM_DWH" 
+          
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_IX'', ''H_PRC_DET_CONTRATO (DIA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
@@ -1052,7 +1060,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_H_PRC_DET_CONTRATO'',
-						  ''DIA_ID DATE NOT NULL,
+              ''DIA_ID DATE NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -1061,7 +1069,7 @@ BEGIN
                               NUM_CONTRATOS_PROCEDIMIENTO INTEGER
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_PRC_DET_CONTRATO');
       
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_DET_CONTRATO_IX'', ''TMP_H_PRC_DET_CONTRATO (DIA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
@@ -1074,7 +1082,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_CONTRATO_SEMANA'',
-						  ''SEMANA_ID NUMBER(16,0) NOT NULL,
+              ''SEMANA_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -1083,7 +1091,7 @@ BEGIN
                               NUM_CONTRATOS_PROCEDIMIENTO INTEGER
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_SEMANA');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_SEMANA_IX'', ''H_PRC_DET_CONTRATO_SEMANA (SEMANA_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
@@ -1096,7 +1104,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_CONTRATO_MES'',
-						  ''MES_ID NUMBER(16,0) NOT NULL,
+              ''MES_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -1105,7 +1113,7 @@ BEGIN
                               NUM_CONTRATOS_PROCEDIMIENTO INTEGER
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_MES');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_MES_IX'', ''H_PRC_DET_CONTRATO_MES (MES_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
@@ -1118,7 +1126,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_CONTRATO_TRIMESTRE'',
-						  ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
+              ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -1127,7 +1135,7 @@ BEGIN
                               NUM_CONTRATOS_PROCEDIMIENTO INTEGER
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_TRIMESTRE');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_TRI_IX'', ''H_PRC_DET_CONTRATO_TRIMESTRE (TRIMESTRE_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
@@ -1140,7 +1148,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_CONTRATO_ANIO'',
-						  ''ANIO_ID NUMBER(16,0) NOT NULL,
+              ''ANIO_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
                               ASUNTO_ID NUMBER(16,0) NOT NULL,
@@ -1149,7 +1157,7 @@ BEGIN
                               NUM_CONTRATOS_PROCEDIMIENTO INTEGER
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_CONTRATO_ANIO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_CONTRATO_ANIO_IX'', ''H_PRC_DET_CONTRATO_ANIO (ANIO_ID, PROCEDIMIENTO_ID, CONTRATO_ID)'', ''S'', '''', :error); END;';
@@ -1163,25 +1171,25 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERDO'',
-						  ''DIA_ID DATE NOT NULL ENABLE, 
-							FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
-							ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							FECHA_PROPUESTA DATE, 
-						    TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
-							TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
-							GESTOR_PRC_ID NUMBER(16,0), 
-						    DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
-						    TIPO_GESTOR_PRC_ID NUMBER(16,0),
-						    TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0),
-							ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
-							SUPERVISOR_PRC_ID NUMBER(16,0),  
-							IMPORTE_ACORDADO NUMBER(16,2), 
-							SALDO_IMPAGADO NUMBER(16,2),
-						    SALDO_TOTAL NUMBER(16,2)
+              ''DIA_ID DATE NOT NULL ENABLE, 
+              FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
+              ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              FECHA_PROPUESTA DATE, 
+                TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
+              TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
+              GESTOR_PRC_ID NUMBER(16,0), 
+                DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
+                TIPO_GESTOR_PRC_ID NUMBER(16,0),
+                TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0),
+              ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
+              SUPERVISOR_PRC_ID NUMBER(16,0),  
+              IMPORTE_ACORDADO NUMBER(16,2), 
+              SALDO_IMPAGADO NUMBER(16,2),
+                SALDO_TOTAL NUMBER(16,2)
 
-						     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+                 '', :error); END;';
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_IX'', ''H_PRC_DET_ACUERDO (DIA_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1195,25 +1203,25 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_H_PRC_DET_ACUERDO'',
-						  ''DIA_ID DATE NOT NULL ENABLE, 
-							FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
-							ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							FECHA_PROPUESTA DATE, 
-							TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
-							TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
-							GESTOR_PRC_ID NUMBER(16,0), 
-							DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_GESTOR_PRC_ID NUMBER(16,0),
-							 TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0),
-							ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
-							SUPERVISOR_PRC_ID NUMBER(16,0),  
-							IMPORTE_ACORDADO NUMBER(16,2), 
-							SALDO_IMPAGADO NUMBER(16,2),
-						    SALDO_TOTAL NUMBER(16,2)
+              ''DIA_ID DATE NOT NULL ENABLE, 
+              FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
+              ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              FECHA_PROPUESTA DATE, 
+              TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
+              TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
+              GESTOR_PRC_ID NUMBER(16,0), 
+              DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_GESTOR_PRC_ID NUMBER(16,0),
+               TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0),
+              ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
+              SUPERVISOR_PRC_ID NUMBER(16,0),  
+              IMPORTE_ACORDADO NUMBER(16,2), 
+              SALDO_IMPAGADO NUMBER(16,2),
+                SALDO_TOTAL NUMBER(16,2)
 
-						     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+                 '', :error); END;';
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_PRC_DET_ACUERDO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_H_PRC_DET_ACUERDO_IX'', ''TMP_H_PRC_DET_ACUERDO (DIA_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1225,25 +1233,25 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERDO_SEMANA'',
-						  ''SEMANA_ID NUMBER(16,0) NOT NULL ENABLE,  
-							FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
-							ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							FECHA_PROPUESTA DATE, 
-							TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
-							TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
-							GESTOR_PRC_ID NUMBER(16,0), 
-							DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
-							ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
-							SUPERVISOR_PRC_ID NUMBER(16,0), 
-							IMPORTE_ACORDADO NUMBER(16,2), 
-							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+              ''SEMANA_ID NUMBER(16,0) NOT NULL ENABLE,  
+              FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
+              ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              FECHA_PROPUESTA DATE, 
+              TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
+              TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
+              GESTOR_PRC_ID NUMBER(16,0), 
+              DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
+              ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
+              SUPERVISOR_PRC_ID NUMBER(16,0), 
+              IMPORTE_ACORDADO NUMBER(16,2), 
+              SALDO_IMPAGADO NUMBER(16,2), 
+              SALDO_TOTAL NUMBER(16,2)
 
-						     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+                 '', :error); END;';
+     execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_SEMANA');
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_SEMANA_IX'', ''H_PRC_DET_ACUERDO_SEMANA (SEMANA_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1256,25 +1264,25 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERDO_MES'',
-						  ''MES_ID NUMBER(16,0) NOT NULL ENABLE,  
-							FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
-							ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							FECHA_PROPUESTA DATE, 
-							TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
-							TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
-							GESTOR_PRC_ID NUMBER(16,0), 
-							DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
-							ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
-							SUPERVISOR_PRC_ID NUMBER(16,0), 
-							IMPORTE_ACORDADO NUMBER(16,2), 
-							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+              ''MES_ID NUMBER(16,0) NOT NULL ENABLE,  
+              FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
+              ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              FECHA_PROPUESTA DATE, 
+              TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
+              TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
+              GESTOR_PRC_ID NUMBER(16,0), 
+              DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
+              ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
+              SUPERVISOR_PRC_ID NUMBER(16,0), 
+              IMPORTE_ACORDADO NUMBER(16,2), 
+              SALDO_IMPAGADO NUMBER(16,2), 
+              SALDO_TOTAL NUMBER(16,2)
 
-					 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+           '', :error); END;';
+     execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_MES');
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_MES_IX'', ''H_PRC_DET_ACUERDO_MES (MES_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1287,25 +1295,25 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERDO_TRIMESTRE '',
-						  ''TRIMESTRE_ID NUMBER(16,0) NOT NULL ENABLE,  
-							FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
-							ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							FECHA_PROPUESTA DATE, 
-							TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
-							TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
-							GESTOR_PRC_ID NUMBER(16,0), 
-							DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
-							ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
-							SUPERVISOR_PRC_ID NUMBER(16,0), 
-							IMPORTE_ACORDADO NUMBER(16,2), 
-							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+              ''TRIMESTRE_ID NUMBER(16,0) NOT NULL ENABLE,  
+              FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
+              ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              FECHA_PROPUESTA DATE, 
+              TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
+              TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
+              GESTOR_PRC_ID NUMBER(16,0), 
+              DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
+              ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
+              SUPERVISOR_PRC_ID NUMBER(16,0), 
+              IMPORTE_ACORDADO NUMBER(16,2), 
+              SALDO_IMPAGADO NUMBER(16,2), 
+              SALDO_TOTAL NUMBER(16,2)
 
-						    '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+                '', :error); END;';
+     execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_TRIMESTRE');
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_TRIMESTRE_IX'', ''H_PRC_DET_ACUERDO_TRIMESTRE (TRIMESTRE_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1318,25 +1326,25 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERDO_ANIO'',
-						  ''ANIO_ID NUMBER(16,0) NOT NULL ENABLE,  
-							FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
-							ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
-							FECHA_PROPUESTA DATE, 
-							TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
-							TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
-							GESTOR_PRC_ID NUMBER(16,0), 
-							DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_GESTOR_PRC_ID NUMBER(16,0), 
-							TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
-							ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
-							SUPERVISOR_PRC_ID NUMBER(16,0), 
-							IMPORTE_ACORDADO NUMBER(16,2), 
-							SALDO_IMPAGADO NUMBER(16,2), 
-							SALDO_TOTAL NUMBER(16,2)
+              ''ANIO_ID NUMBER(16,0) NOT NULL ENABLE,  
+              FECHA_CARGA_DATOS DATE NOT NULL ENABLE, 
+              ACUERDO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL ENABLE, 
+              FECHA_PROPUESTA DATE, 
+              TIPO_PROCEDIMIENTO_ID NUMBER(16,0), 
+              TIPO_ACUERDO_PRC_ID NUMBER(16,0), 
+              GESTOR_PRC_ID NUMBER(16,0), 
+              DESPACHO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_GESTOR_PRC_ID NUMBER(16,0), 
+              TIPO_DESP_GESTOR_PRC_ID NUMBER(16,0), 
+              ESTADO_ACUERDO_PRC_ID NUMBER(16,0), 
+              SUPERVISOR_PRC_ID NUMBER(16,0), 
+              IMPORTE_ACORDADO NUMBER(16,2), 
+              SALDO_IMPAGADO NUMBER(16,2), 
+              SALDO_TOTAL NUMBER(16,2)
 
-						     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+                 '', :error); END;';
+     execute immediate V_SQL USING OUT error;
      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERDO_ANIO');
 
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERDO_ANIO_IX'', ''H_PRC_DET_ACUERDO_ANIO (ANIO_ID, FECHA_PROPUESTA, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
@@ -1348,11 +1356,11 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_CODIGO_PRIORIDAD'',
-						    ''DD_TIPO_CODIGO VARCHAR2(50),
+                ''DD_TIPO_CODIGO VARCHAR2(50),
                               PRIORIDAD INTEGER
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_CODIGO_PRIORIDAD');
 
 
@@ -1362,7 +1370,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_JERARQUIA'',
-						    ''DIA_ID DATE NOT NULL,
+                ''DIA_ID DATE NOT NULL,
                               ITER NUMBER(16,0) NOT NULL,
                               FASE_ACTUAL NUMBER(16,0) ,
                               ULTIMA_FASE NUMBER(16,0) ,
@@ -1383,7 +1391,7 @@ BEGIN
                               FECHA_ULTIMA_ESTIMACION DATE ,
                               FASE_MAX_PRIORIDAD NUMBER(16,0) ,
                               NIVEL NUMBER(2,0) ,
-                              CONTEXTO varchar(300) ,
+                              CONTEXTO varchar(600) ,
                               CODIGO_FASE_ACTUAL varchar(20) ,
                               PRIORIDAD_FASE INTEGER ,
                               PRIORIDAD_PROCEDIMIENTO INTEGER ,
@@ -1409,7 +1417,7 @@ BEGIN
                               MOTIVO_PARALIZACION_ID  NUMBER(16,0)
 
                                 '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_JERARQUIA');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_JERARQUIA_ITER_IX'', ''TMP_PRC_JERARQUIA (DIA_ID, ITER)'', ''S'', '''', :error); END;';
@@ -1427,7 +1435,7 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_DETALLE'',
 
-						        ''ITER NUMBER(16,0)  ,
+                    ''ITER NUMBER(16,0)  ,
                                   FASE_ACTUAL NUMBER(16,0) ,
                                   ULT_TAR_CREADA NUMBER(16,0) ,
                                   ULT_TAR_FIN NUMBER(16,0) ,
@@ -1463,7 +1471,7 @@ BEGIN
                                   TITULAR_PROCEDIMIENTO NUMBER(16,0)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_DETALLE');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_DETALLE_IX'', ''TMP_PRC_DETALLE (ITER)'', ''S'', '''', :error); END;';
@@ -1478,7 +1486,7 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_TAREA'',
 
-						        ''ITER NUMBER(16,0) ,
+                    ''ITER NUMBER(16,0) ,
                                   FASE NUMBER(16,0) ,
                                   TAREA NUMBER(16,0) ,
                                   FECHA_INI TIMESTAMP ,
@@ -1493,7 +1501,7 @@ BEGIN
                                   FECHA_FORMULARIO DATE                         -- TEV_VALOR (TEV_TAREA_EXTERNA_VALOR)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_TAREA');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_TAREA_IX'', ''TMP_PRC_TAREA (ITER, TAREA)'', ''S'', '''', :error); END;';
@@ -1506,11 +1514,11 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_AUTO_PRORROGAS'',
-						        ''TAREA NUMBER(16,0),
+                    ''TAREA NUMBER(16,0),
                                   FECHA_AUTO_PRORROGA TIMESTAMP
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_AUTO_PRORROGAS');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_AUTO_PRORROGAS_IX'', ''TMP_PRC_AUTO_PRORROGAS (TAREA)'', ''S'', '''', :error); END;';
@@ -1524,7 +1532,7 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_CONTRATO'',
 
-						        ''ITER NUMBER(16,0) ,
+                    ''ITER NUMBER(16,0) ,
                                   CONTRATO NUMBER(16,0) ,
                                   CEX_ID NUMBER(16,0) ,
                                   MAX_MOV_ID NUMBER(16,0) ,
@@ -1538,7 +1546,7 @@ BEGIN
                                   FECHA_CONTABLE_LITIGIO DATE                   -- Fecha contable del litigio asociado al contrato
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_CONTRATO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_CONTRATO_IX'', ''TMP_PRC_CONTRATO (ITER, CONTRATO)'', ''S'', '''', :error); END;';
@@ -1554,14 +1562,14 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_CONCURSO_CONTRATO'',
 
-						        ''ITER NUMBER(16,0) ,
+                    ''ITER NUMBER(16,0) ,
                                   CONTRATO NUMBER(16,0),
                                   SALDO_CONCURSOS_VENCIDO NUMBER(14,2),
                                   SALDO_CONCURSOS_NO_VENCIDO NUMBER(14,2),
                                   DEMANDADO NUMBER(16,0)
 
                                    '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_CONCURSO_CONTRATO');
 
 
@@ -1576,11 +1584,11 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_CARTERA'',
-						        ''CONTRATO NUMBER(16,0),
+                    ''CONTRATO NUMBER(16,0),
                                   CARTERA NUMBER(16,0)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_CARTERA');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_CARTERA_IX'', ''TMP_PRC_CARTERA (CONTRATO)'', ''S'', '''', :error); END;';
@@ -1593,11 +1601,11 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_FECHA_CONTABLE_LITIGIO '',
-						        ''CONTRATO NUMBER(16,0),
+                    ''CONTRATO NUMBER(16,0),
                                   FECHA_CONTABLE_LITIGIO  DATE
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_FECHA_CONTABLE_LITIGIO ');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_FECHA_CONT_LIT_IX'', ''TMP_PRC_FECHA_CONTABLE_LITIGIO (CONTRATO)'', ''S'', '''', :error); END;';
@@ -1610,12 +1618,12 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_TITULAR'',
-						        ''PROCEDIMIENTO NUMBER(16,0),
+                    ''PROCEDIMIENTO NUMBER(16,0),
                                   CONTRATO NUMBER(16,0),
                                   TITULAR_PROCEDIMIENTO NUMBER(16,0)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_TITULAR');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_TITULAR_IX'', ''TMP_PRC_TITULAR (PROCEDIMIENTO)'', ''S'', '''', :error); END;';
@@ -1628,12 +1636,12 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_DEMANDADO'',
-						        ''PROCEDIMIENTO NUMBER(16,0),
+                    ''PROCEDIMIENTO NUMBER(16,0),
                                   CONTRATO NUMBER(16,0),
                                   DEMANDADO NUMBER(16,0)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_DEMANDADO');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_DEMANDADO_IX'', ''TMP_PRC_DEMANDADO (PROCEDIMIENTO, CONTRATO)'', ''S'', '''', :error); END;';
@@ -1647,13 +1655,13 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_COBROS'',
 
-						        ''FECHA_COBRO DATE,
+                    ''FECHA_COBRO DATE,
                                   CONTRATO NUMBER(16,0),
                                   IMPORTE NUMBER(15,2),
                                   REFERENCIA NUMBER(16,0)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_COBROS');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_COBROS_IX'', ''TMP_PRC_COBROS (CONTRATO)'', ''S'', '''', :error); END;';
@@ -1667,14 +1675,14 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_ESTIMACION'',
 
-						        ''ITER NUMBER(16,0),
+                    ''ITER NUMBER(16,0),
                                   FASE NUMBER(16,0),
                                   FECHA_ESTIMACION TIMESTAMP,
                                   IRG_CLAVE VARCHAR2(20),
                                   IRG_VALOR VARCHAR2(255)
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_ESTIMACION');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_ESTIMACION_IX'', ''TMP_PRC_ESTIMACION (ITER)'', ''S'', '''', :error); END;';
@@ -1688,14 +1696,14 @@ BEGIN
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_EXTRAS_RECOVERY_BI'',
 
-						        ''FECHA_VALOR DATE,
+                    ''FECHA_VALOR DATE,
                                   TIPO_ENTIDAD NUMBER(16,0) DEFAULT NULL,
                                   UNIDAD_GESTION NUMBER(16,0) DEFAULT NULL,
                                   DD_IFB_ID NUMBER(16,0) DEFAULT NULL,
                                   VALOR VARCHAR2(50) DEFAULT NULL
 
                                     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_EXTRAS_RECOVERY_BI');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_EXTRAS_RECOVERY_BI_IX'', ''TMP_PRC_EXTRAS_RECOVERY_BI (FECHA_VALOR, UNIDAD_GESTION)'', ''S'', '''', :error); END;';
@@ -1708,14 +1716,14 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_DECISION '',
-							 ''FASE_ACTUAL NUMBER(16,0), 
-							   FASE_PARALIZADA NUMBER(16,0), 
-							   FASE_FINALIZADA NUMBER(16,0), 
-							   FECHA_HASTA DATE,
-							   MOTIVO_PARALIZACION_ID NUMBER(16,0)
+               ''FASE_ACTUAL NUMBER(16,0), 
+                 FASE_PARALIZADA NUMBER(16,0), 
+                 FASE_FINALIZADA NUMBER(16,0), 
+                 FECHA_HASTA DATE,
+                 MOTIVO_PARALIZACION_ID NUMBER(16,0)
 
-						     '', :error); END;';
-		 execute immediate V_SQL USING OUT error;
+                 '', :error); END;';
+     execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_DECISION');
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_DECISION_IX'', ''TMP_PRC_DECISION (FASE_ACTUAL)'', ''S'', '''', :error); END;';
@@ -1724,7 +1732,7 @@ BEGIN
 
    ------------------------------ H_PRC_DET_ACUERD_SOL --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERD_SOL'', 
-              		    ''DIA_ID DATE NOT NULL,
+                      ''DIA_ID DATE NOT NULL,
                           FECHA_CARGA_DATOS DATE NOT NULL,
                           ACUERDO_ID NUMBER(16,0) NOT NULL,
                           PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -1739,12 +1747,12 @@ BEGIN
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERD_SOL');
 
 
-    	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_IX'', ''H_PRC_DET_ACUERD_SOL (DIA_ID, FECHA_SOL_PREVISTA_PRC, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
+          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_IX'', ''H_PRC_DET_ACUERD_SOL (DIA_ID, FECHA_SOL_PREVISTA_PRC, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion indice en H_PRC_DET_ACUERD_SOL');
@@ -1752,7 +1760,7 @@ BEGIN
 
    ------------------------------ TMP_PRC_DET_ACUERD_SOL --------------------------
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_DET_ACUERD_SOL'', 
-              		    ''DIA_ID DATE NOT NULL,
+                      ''DIA_ID DATE NOT NULL,
                           FECHA_CARGA_DATOS DATE NOT NULL,
                           ACUERDO_ID NUMBER(16,0) NOT NULL,
                           PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -1763,11 +1771,11 @@ BEGIN
                           -- Metricas
                           NUM_SOL_PREVISTA INTEGER
                             '', :error); END;';
-	execute immediate V_SQL USING OUT error;
+  execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_DET_ACUERD_SOL');
 
-    	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_DET_ACUERD_SOL_IX'', ''TMP_PRC_DET_ACUERD_SOL (DIA_ID, FECHA_SOL_PREVISTA_PRC, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
+          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_PRC_DET_ACUERD_SOL_IX'', ''TMP_PRC_DET_ACUERD_SOL (DIA_ID, FECHA_SOL_PREVISTA_PRC, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
 
 
@@ -1776,7 +1784,7 @@ BEGIN
 
    ------------------------------ H_PRC_DET_ACUERD_SOL_SEMANA --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMANA'', 
-              		    ''SEMANA_ID NUMBER(16,0) NOT NULL,
+                      ''SEMANA_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               ACUERDO_ID NUMBER(16,0) NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -1787,7 +1795,7 @@ BEGIN
                               -- Metricas
                               NUM_SOL_PREVISTA INTEGER
                             '', :error); END;';
-	execute immediate V_SQL USING OUT error;
+  execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERD_SOL_SEMANA');
 
@@ -1799,7 +1807,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
     
    ------------------------------ H_PRC_DET_ACUERD_SOL_MES --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERD_SOL_MES'', 
-              		    ''MES_ID NUMBER(16,0) NOT NULL,
+                      ''MES_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               ACUERDO_ID NUMBER(16,0) NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -1810,7 +1818,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
                               -- Metricas
                               NUM_SOL_PREVISTA INTEGER
                             '', :error); END;';
-	execute immediate V_SQL USING OUT error;
+  execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERD_SOL_MES');
 
@@ -1822,7 +1830,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
 
    ------------------------------ H_PRC_DET_ACUERD_SOL_TRIMESTRE --------------------------
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERD_SOL_TRIMESTRE'', 
-              		    ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
+                      ''TRIMESTRE_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               ACUERDO_ID NUMBER(16,0) NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -1833,7 +1841,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
                               -- Metricas
                               NUM_SOL_PREVISTA INTEGER
                             '', :error); END;';
-	execute immediate V_SQL USING OUT error;
+  execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERD_SOL_TRIMESTRE');
 
@@ -1845,7 +1853,7 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
 
    ------------------------------ H_PRC_DET_ACUERD_SOL_ANIO --------------------------
    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_PRC_DET_ACUERD_SOL_ANIO'', 
-              		    ''ANIO_ID NUMBER(16,0) NOT NULL,
+                      ''ANIO_ID NUMBER(16,0) NOT NULL,
                               FECHA_CARGA_DATOS DATE NOT NULL,
                               ACUERDO_ID NUMBER(16,0) NOT NULL,
                               PROCEDIMIENTO_ID NUMBER(16,0) NOT NULL,
@@ -1856,9 +1864,21 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_SEMA
                               -- Metricas
                               NUM_SOL_PREVISTA INTEGER
                             '', :error); END;';
-	execute immediate V_SQL USING OUT error;
+  execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRC_DET_ACUERD_SOL_ANIO');
+    
+  ------------------------------ TMP_PRC_ITER_JERARQUIA --------------------------
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_PRC_ITER_JERARQUIA'', 
+                      ''ITER NUMBER(16,0), 
+  MAX_PRIORIDAD NUMBER(16,0), 
+  MAX_FASE_ACTUAL NUMBER(16,0), 
+  NUM_FASES NUMBER(16,0), 
+  CANCELADO_FASE NUMBER(16,0)
+                            '', :error); END;';
+  execute immediate V_SQL USING OUT error;
+
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_PRC_ITER_JERARQUIA');   
 
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRC_DET_ACUERD_SOL_ANIO_IX'', '' H_PRC_DET_ACUERD_SOL_ANIO (ANIO_ID, FECHA_SOL_PREVISTA_PRC, PROCEDIMIENTO_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;

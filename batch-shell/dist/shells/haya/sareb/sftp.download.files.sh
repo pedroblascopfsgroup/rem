@@ -268,8 +268,8 @@ done
 #echo "Descarga ficheros APROVISIONAMIENTO TRONCAL"
 #file_list $FILES_DOWN_AT troncal
 
-#echo "Copia de ficheros a directorio ETL"
-#file_copy transferencia sareb auxiliar
+echo "Copia de ficheros a directorio transferencia"
+file_copy transferencia sareb auxiliar
 #file_copy transferencia sareb troncal
 
 else

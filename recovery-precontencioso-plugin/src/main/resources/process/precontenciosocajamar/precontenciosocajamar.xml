@@ -97,23 +97,9 @@
 
 	<decision name="PCO_RegistrarTomaDecDecision" expression="#{PCO_RegistrarTomaDecDecision}">
 		<transition to="PCO_RevisarSubsanacion" name="requiere_subsanar"/>
-		<transition to="PCO_ValidarAsignacion" name="ok"/>
+		<transition to="nodeConfirmarProcurador" name="ok"/>
 		<transition to="PCO_ValidarCambioProc" name="cambio_proc"></transition>
 	</decision>
-
-	<state name="PCO_ValidarAsignacion">
-		<event type="node-enter">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoEnterActionHandler</targetBean>
-			</action>
-		</event>
-		<event type="node-leave">
-			<action name="miTarea" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy" config-type="bean">
-				<targetBean>precontenciosoLeaveActionHandler</targetBean>
-			</action>
-		</event>
-		<transition to="nodeConfirmarProcurador" name="avanzaBPM"/>
-	</state>
 		
 	<node name="nodeConfirmarProcurador">
 		<action name="miTarea" config-type="bean"
@@ -194,7 +180,7 @@
 	<decision name="PCO_ValidarCambioProcDecision" expression="#{PCO_ValidarCambioProcDecision}">
 		<transition to="PCO_RegistrarTomaDec" name="no"/>
 		<transition to="PCO_SubsanarCambioProc" name="si_nueva_preparacion"/>
-		<transition to="PCO_ValidarAsignacion" name="si_sin_nueva_prep"></transition>
+		<transition to="nodeConfirmarProcurador" name="si_sin_nueva_prep"></transition>
 	</decision>
 	
 	

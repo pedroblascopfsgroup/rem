@@ -186,7 +186,7 @@ public class PrecontenciosoEnterActionHandler extends PROGenericEnterActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_RevisarExpedienteAsignarLetrado.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-		} else if (PrecontenciosoBPMConstants.PCO_ValidarAsignacion.equals(tex.getTareaProcedimiento().getCodigo())) {
+		} else if (PrecontenciosoBPMConstants.PCO_BPMTramiteEnvioDemanda.equals(tex.getTareaProcedimiento().getCodigo())) {
 			turnado(prc);
 		}
 		

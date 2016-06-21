@@ -178,6 +178,10 @@ var anyadirFechaFaltante = function(response){
 
 var observacionesProcurador = items[4 + offset];
 observacionesProcurador.setDisabled(true);
+var comboProc = items[2 + offset];
+var comboJuz = items[3 + offset];
+comboProc.readOnly = true;
+comboJuz.readOnly = true;
 
 var panelEdicion=new Ext.form.FormPanel({
 	autoHeight:true

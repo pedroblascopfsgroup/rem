@@ -145,8 +145,6 @@ public class PrecontenciosoLeaveActionHandler extends PROGenericLeaveActionHandl
 			
 		} else if (PrecontenciosoBPMConstants.PCO_SubsanarCambioProc.equals(tex.getTareaProcedimiento().getCodigo())) {
 			
-		} else if (PrecontenciosoBPMConstants.PCO_ValidarAsignacion.equals(tex.getTareaProcedimiento().getCodigo())) {
-			
 		} else if (PrecontenciosoBPMConstants.PCO_AsignacionGestores.equals(tex.getTareaProcedimiento().getCodigo())) {
 			if(PROYECTO_HAYA.equalsIgnoreCase(precontenciosoContext.getRecovery())){
 				if(!(!Checks.esNulo(prc.getAuditoria()) && USU_MIGRACION_PCO.equals(prc.getAuditoria().getUsuarioCrear()))){

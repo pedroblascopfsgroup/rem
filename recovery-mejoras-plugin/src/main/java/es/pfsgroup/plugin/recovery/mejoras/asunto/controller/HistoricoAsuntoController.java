@@ -20,6 +20,7 @@ import org.springframework.web.context.request.WebRequest;
 
 
 
+
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
@@ -89,6 +90,7 @@ public class HistoricoAsuntoController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private String getDefaultOpenHistoryView(ModelMap model, WebRequest request) {
 
 		EXTDtoGenerarTarea dto = new EXTDtoGenerarTarea();
@@ -120,6 +122,7 @@ public class HistoricoAsuntoController {
 		model.put("fecha", request.getParameter("fecha"));
 		model.put("tarea", request.getParameter("tarea"));
 		model.put("idProrroga", request.getParameter("idProrroga"));
+		model.put("idProcedimiento", request.getParameter("idProcedimiento"));
 
 		return DEFAULT_ABRE_DETALLE_JSP;
 	}

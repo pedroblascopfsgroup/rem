@@ -281,7 +281,7 @@
 						,width:650
 						,y:1 
 						,params : {
-								idEntidad: recStore.get('numeroProcedimiento')
+								idEntidad: recStore.get('idEntidad')
 								,codigoTipoEntidad: recStore.get('tipoEntidad')
 								,descripcion: recStore.get('descripcionTarea')
 								,fecha: recStore.get('fechaInicio')
@@ -293,6 +293,7 @@
 								,tipoTraza:recStore.get('tipoTraza')
 								,tarea:recStore.get('tarea')
 								,idProrroga:recStore.get('idEntidad')
+								,idProcedimiento:recStore.get('numeroProcedimiento')
 						}
 					});
 				} 

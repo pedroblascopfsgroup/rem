@@ -19,6 +19,7 @@
 		<json:property name="idTareaAsociada" value="${datos.tarea.id}"/>
 		<json:property name="observacionesRespuesta" value="${datos.observacionesRespuesta}"/>
 		<json:property name="respuestaProrroga" value="${datos.respuestaProrroga.descripcion}"/>
+		<json:property name="fechaVencimientoOriginal" value="${datos.fechaVencimientoOriginal}"/>
 		
 		
 	</json:object>

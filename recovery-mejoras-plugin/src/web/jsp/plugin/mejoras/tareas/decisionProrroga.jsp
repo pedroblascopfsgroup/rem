@@ -8,7 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <fwk:page>
-
+	
 	var labelStyle='font-weight:bolder;width:130';
 	var estiloTitulo = 'vertical-align:center';
 	var idTipoEntidad='${idTipoEntidadInformacion}';
@@ -43,11 +43,16 @@
 			        ,params: {id: idProrroga}
 			        ,success: function(result, request){ 
 			         	var r2 = Ext.util.JSON.decode(result.responseText);
-			            var fechaVencimientoTareaOriginal= r2.datos.fechaVencimientoTareaAsociada.split(' ')[0];
-			            f2= fechaVencimientoTareaOriginal.split('-');
-			            fVencimientoFinal= f2[2]+"/"+f2[1]+"/"+f2[0];
+						if(r2.datos.fechaVencimientoOriginal!=''){
+				            var fechaVencimientoOriginal= r2.datos.fechaVencimientoOriginal.split(' ')[0];
+							f3= fechaVencimientoOriginal.split('-');
+				            var fVencimientoOriginal= f3[2]+"/"+f3[1]+"/"+f3[0];
+			            }
+			            else{
+			            	var fVencimientoOriginal= '';
+			            }
 			                    	
-			            txtFechaVencimiento.setValue(fVencimientoFinal);
+			            txtFechaVencimiento.setValue(fVencimientoOriginal);
 			            motivoSolicitud.setValue(r2.datos.motivo);
 			            fechaPropuesta.setValue(r2.datos.fechaPropuesta);
 			            txtDescripcionEntidad.setValue(r2.datos.descripcionTareaAsociada);

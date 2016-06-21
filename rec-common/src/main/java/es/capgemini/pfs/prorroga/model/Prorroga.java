@@ -69,6 +69,9 @@ public class Prorroga implements Serializable, Auditable {
     
     @Column(name = "SPR_OBSERVACIONES_RESPUESTA")
     private String observacionesRespuesta;
+    
+    @Column(name = "SPR_FECHA_VENCIMIENTO_ORIGINAL")
+    private Date fechaVencimientoOriginal;
 
     @Embedded
     private Auditoria auditoria;
@@ -202,6 +205,16 @@ public class Prorroga implements Serializable, Auditable {
 	public void setObservacionesRespuesta(String observacionesRespuesta) {
 		this.observacionesRespuesta = observacionesRespuesta;
 	}
+
+	public Date getFechaVencimientoOriginal() {
+		return fechaVencimientoOriginal;
+	}
+
+	public void setFechaVencimientoOriginal(Date fechaVencimientoOriginal) {
+		this.fechaVencimientoOriginal = fechaVencimientoOriginal;
+	}
+	
+	
     
     
 }

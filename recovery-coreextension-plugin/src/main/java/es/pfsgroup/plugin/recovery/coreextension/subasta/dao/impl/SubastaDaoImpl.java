@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -869,8 +870,19 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				hqlWhere.append(" and zonaoficinacontable.oficina = oficinacontable ");
 			}
 
-			hqlWhere.append(" and zonaoficinacontable.codigo in ("
-					+ anyadirApostrofesParaSql(dto.getCodigoZona()) + ") ");
+			List<String> listaCodigosZonas = Arrays.asList(dto.getCodigoZona().split("\\s*,\\s*"));
+			
+			hqlWhere.append(" and (");
+			for(String codigoZona: listaCodigosZonas){
+				hqlWhere.append(" zonaoficinacontable.codigo like ("+anyadirApostrofesParaSql(codigoZona+"%")+ ") ");
+				hqlWhere.append(" or");
+			}
+			hqlWhere.delete(hqlWhere.length()-2, hqlWhere.length());
+			hqlWhere.append(" )");
+			
+			
+//			hqlWhere.append(" and zonaoficinacontable.codigo like ("
+//					+ anyadirApostrofesParaSql(dto.getCodigoZona()+"%") + ") ");
 		}
 
 		if (!StringUtils.emtpyString(dto.getCodigoZonaAdm())) {
@@ -884,9 +896,20 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				hqlFrom.append(", DDZona zonaoficinaadministrativa ");
 				hqlWhere.append(" and zonaoficinaadministrativa.oficina = oficinaadministrativa ");
 			}
+			
+			List<String> listaCodigosZonas = Arrays.asList(dto.getCodigoZonaAdm().split("\\s*,\\s*"));
+			
+			hqlWhere.append(" and (");
+			for(String codigoZona: listaCodigosZonas){
+				hqlWhere.append(" zonaoficinaadministrativa.codigo like ("+anyadirApostrofesParaSql(codigoZona+"%")+ ") ");
+				hqlWhere.append(" or");
+			}
+			hqlWhere.delete(hqlWhere.length()-2, hqlWhere.length());
+			hqlWhere.append(" )");
+			
 
-			hqlWhere.append(" and zonaoficinaadministrativa.codigo in ("
-					+ anyadirApostrofesParaSql(dto.getCodigoZona()) + ") ");
+//			hqlWhere.append(" and zonaoficinaadministrativa.codigo in ("
+//					+ anyadirApostrofesParaSql(dto.getCodigoZona()) + ") ");
 		}
 
 

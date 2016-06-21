@@ -152,7 +152,6 @@
 	            e.stopEvent();
 	            var index = this.grid.getView().findRowIndex(t);
 	            var record = this.grid.store.getAt(index);
-	            
 	            var isBankia = false;
 			    <sec:authentication var="user" property="principal" />
 				<c:if test="${user.entidad.codigo eq 'BANKIA'}">
@@ -844,8 +843,8 @@
 		entidad.cacheOrLoad(entidad.getData(), asuntosStore, {id : entidad.getData("id"), idSesion : entidad.getData("decision.ultimaSesion") });
 
     var congelado = entidad.getData("decision.estaCongelado");
-    var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
 
+    var esGestorSupervisorDeFase = entidad.getData("esGestorSupervisorActual");
     var isBankia = false;
     <sec:authentication var="user" property="principal" />
 	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
@@ -867,9 +866,11 @@
 	        </sec:authorize>
 	        ,[btnEditarObs, esGestorSupervisorDeFase]
 	    ]
+    	
     }else{
+    
         var visible = [
-	      [btnActuacion, congelado && esGestorSupervisorDeFase]
+	      	 [btnActuacion, congelado && esGestorSupervisorDeFase]
 			,[btnNuevo, congelado && esGestorSupervisorDeFase]
 	        ,[btnEditar, congelado && esGestorSupervisorDeFase]
 	        ,[btnBorrar, congelado && esGestorSupervisorDeFase]
@@ -882,8 +883,8 @@
 	        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
 	    ]
     }
-    
-     entidad.setVisible(visible); 
+
+    entidad.setVisible(visible); 
 
     var contratosSinActuacion = entidad.getData("decision.contratosSinActuacion");
 		refrescaCheckBox(contratosSinActuacion);

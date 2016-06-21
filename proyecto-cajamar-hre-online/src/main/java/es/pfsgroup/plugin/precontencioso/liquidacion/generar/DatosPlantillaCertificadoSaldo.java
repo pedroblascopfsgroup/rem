@@ -94,7 +94,7 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		datosDoc.put(COMISAPER, obtenerTipoComision(liquidacion, COMISAPER));
 		datosDoc.put(FECVENCIM, obtenerFechaVencimiento(cnt, FECVENCIM));
 		datosDoc.put(FECHALIQTELEGRAM, obtenerFechaLiquidacion(liquidacion, FECHALIQTELEGRAM));
-		datosDoc.put(CAPITALCER, obtenerImportePrestamo(liquidacion, CAPITALCER));
+		datosDoc.put(CAPITALCER, obtenerImporteSumaCapital(liquidacion, CAPITALCER));	//PRODUCTO-1592 (PEDRO)
 		datosDoc.put(INTERESCER, obtenerImporteInteresesRemuneratorios(liquidacion, INTERESCER));
 		datosDoc.put(IMPINTERESTELEG, obtenerImporteIntereseCreditoDispuesto(liquidacion, IMPINTERESTELEG));
 		datosDoc.put(IMPCOMITELEG, obtenerImporteComisionesPagadas(liquidacion, IMPCOMITELEG));
@@ -245,8 +245,9 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 
 	private String obtenerFechaLiquidacion(LiquidacionPCO liquidacion, String campo) {
 		String resultado = "";
-		if (!Checks.esNulo(liquidacion.getFechaConfirmacion())) {
-			resultado = formateaFecha(liquidacion.getFechaConfirmacion());
+		//PRODUCTO-1592 (PEDRO) --> cambio getFechaConfirmacion() por getFechaCierre()
+		if (!Checks.esNulo(liquidacion.getFechaCierre())) {
+			resultado = formateaFecha(liquidacion.getFechaCierre());
 		} else {
 			logger.debug(campo + " es nulo");
 			resultado = noDisponible(campo);
@@ -290,12 +291,25 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 	private String obtenerImportePrestamo(LiquidacionPCO liquidacion, String campo) {
 		String resultado = noDisponible(campo); 
 		try {
+			//PRODUCTO-1592 (PEDRO)
 			resultado = currencyInstance.format(liquidacion.getContrato().getLimiteInicial());
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}
 		return resultado;
 	}
+
+	//PRODUCTO-1592 (PEDRO)
+	private String obtenerImporteSumaCapital(LiquidacionPCO liquidacion, String campo) {
+		String resultado = noDisponible(campo); 
+		try {
+			resultado = numberInstance.format(liquidacion.getCapitalVencido().add(liquidacion.getCapitalNoVencido()));
+		} catch (Exception e) {
+			logger.debug(campo + " error: " + e.getMessage());
+		}
+		return resultado;
+	}
+
 
 	private String obtenerFechaConfirmacion(LiquidacionPCO liq, String nombreCampo) {
 		String resultado = "";

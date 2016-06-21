@@ -89,6 +89,7 @@ public class HistoricoAsuntoController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private String getDefaultOpenHistoryView(ModelMap model, WebRequest request) {
 
 		EXTDtoGenerarTarea dto = new EXTDtoGenerarTarea();
@@ -120,6 +121,7 @@ public class HistoricoAsuntoController {
 		model.put("fecha", request.getParameter("fecha"));
 		model.put("tarea", request.getParameter("tarea"));
 		model.put("idProrroga", request.getParameter("idProrroga"));
+		model.put("idProcedimiento", request.getParameter("idProcedimiento"));
 
 		return DEFAULT_ABRE_DETALLE_JSP;
 	}

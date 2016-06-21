@@ -8,6 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <fwk:page>
+
 	var isConsulta = false;
 	<c:if test="${isConsulta != null && isConsulta}">
 		isConsulta = true;
@@ -45,9 +46,16 @@
 			        ,params: {id: idProrroga}
 			        ,success: function(result, request){ 
 			         	var r2 = Ext.util.JSON.decode(result.responseText);
-			            var fechaVencimientoTareaOriginal= r2.datos.fechaVencimientoTareaAsociada.split(' ')[0];
-			            f2= fechaVencimientoTareaOriginal.split('-');
-			            fVencimientoFinal= f2[2]+"/"+f2[1]+"/"+f2[0];
+			         	if(r2.datos.fechaVencimientoOriginal!=''){
+			         		var fechaVencimientoTareaOriginal= r2.datos.fechaVencimientoOriginal.split(' ')[0];
+			            	f2= fechaVencimientoTareaOriginal.split('-');
+			            	var fVencimientoFinal= f2[2]+"/"+f2[1]+"/"+f2[0];
+			         	}
+			         	else{
+			         		var fVencimientoFinal='';
+			         	}
+			         	
+			            
 			            var fechaPropuesta= r2.datos.fechaPropuesta;
 			            var motivo= r2.datos.motivo;
 			            var destareaOri= r2.datos.destareaOri;
@@ -158,7 +166,7 @@
 	
 	
 	//textfield que va a contener el codigo de la entidad
-	var txtEntidad = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.codigoentidad" text="**Codigo" />','${data.idEntidad}');
+	var txtEntidad = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.codigoentidad" text="**Codigo" />','${idProcedimiento}');
 
 	//textfield que va a contener la situacion de la entidad
 	var txtSituacion = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.situacion" text="**Situacion" />'	,descEstado);

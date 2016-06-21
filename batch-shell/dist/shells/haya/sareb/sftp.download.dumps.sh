@@ -22,9 +22,11 @@ function download_files {
 	MASK=$3
         echo "Descargando fichero $MASK desde SFTP (${HOST})..."
 
-	cd $ORIGEN
+	cd $DIR_SHELLS
 
 	./ftp/ftp_get_dumps.sh $ORIGEN $DESTINO $MASK
+
+	cd $ORIGEN
 
 	rm -f $BANDERA
 }

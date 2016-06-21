@@ -112,7 +112,7 @@ function lanzarParaleloSinEsperar () {
 
 lanzar extract_pcr.sh
 lanzarParalelo apr_load_contract.sh apr_load_person.sh apr_load_relation.sh
-lanzar apr_validacion_pcr.sh
+lanzar apr_validacion_pcr_PCR.sh
 lanzarParalelo apr_pcr_contract.sh apr_pcr_person.sh
 lanzarParalelo apr_pcr_mov.sh apr_pcr_relation.sh
 lanzarParalelo rera_precal_arquet.sh apr_precalculo_pcr.sh

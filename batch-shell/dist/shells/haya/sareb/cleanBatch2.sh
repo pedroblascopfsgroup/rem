@@ -33,9 +33,9 @@ reinicio=SI
 if [ "$reinicio" == "SI" ] 
 then
       echo "*** Es necesario reiniciar el Batch"
-      $DIR_PROGRAMAS/stopBatch.sh
+      $DIR_RAIZ/batch-server/stopBatch.sh
       echo "*** Batch detenido"
-      $DIR_PROGRAMAS/run.sh
+      $DIR_RAIZ/batch-server/startBatch.sh
       echo "*** Batch arrancado de nuevo"
       set_diag DEBUG
       echo "*** Establecido valor de diagnostico"

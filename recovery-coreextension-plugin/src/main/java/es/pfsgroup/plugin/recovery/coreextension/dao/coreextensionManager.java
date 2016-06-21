@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -165,6 +166,33 @@ public class coreextensionManager implements coreextensionApi {
 		return sRet;
 	}
 
+	@Override
+	public Long getListTipoGestorGestoriaAdjudicacion(){
+		Long codGestor = null;
+		String tipoGestorGestoria = null;
+		
+		// Obtener el tipo de gestor por el projectContext.
+		Map<String, String> gestoresMap = coreProjectContext.getTiposGestorGestoriaAdjudicacion();
+		if(!Checks.estaVacio(gestoresMap)){
+			if(gestoresMap.containsKey(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion())){
+				tipoGestorGestoria = gestoresMap.get(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
+			}
+		}
+		
+		// Tipo de usuario Gestor
+		if(!Checks.esNulo(tipoGestorGestoria)){
+			List<EXTDDTipoGestor> listadoGestores = getListTipoGestorAdicional();
+			for (EXTDDTipoGestor tipoGestor : listadoGestores) {
+				if (tipoGestorGestoria.compareTo(tipoGestor.getCodigo()) == 0) {
+					codGestor = tipoGestor.getId();
+					break;
+				}
+			}
+		}
+		
+		return codGestor;
+	}
+	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListTipoGestorAdicional()
 	 */

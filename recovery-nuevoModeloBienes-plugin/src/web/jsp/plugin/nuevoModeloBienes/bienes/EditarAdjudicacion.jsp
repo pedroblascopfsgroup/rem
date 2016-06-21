@@ -422,7 +422,7 @@
 	});
 	
 	optionsGestoresStore.webflow();
-      
+      debugger;
     var gestoriaAdjudicataria = new Ext.form.ComboBox( {
 			store : optionsGestoresStore
 			,name : 'gestoriaAdjudicataria'
@@ -432,7 +432,7 @@
 			,value : '${NMBbien.adjudicacion.gestoriaAdjudicataria.id}'
 			,labelStyle:labelStyle
 			,width: 150
-			
+			,triggerAction : 'all'
 		});
 	
 	

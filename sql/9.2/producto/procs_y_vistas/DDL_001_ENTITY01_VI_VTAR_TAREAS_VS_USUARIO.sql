@@ -133,7 +133,11 @@ BEGIN
                tar.DD_TPO_ID
           From
            (
-           SELECT decode(tvr.tar_id,null,tn.tar_id_dest,tvr.usu_pendientes) as USU_PENDIENTES
+           SELECT CASE
+                   WHEN sta.dd_sta_codigo in (''ACP_ACU'',''REV_ACU'',''GST_CIE_ACU'',''NOTIF_ACU'')
+                    THEN tn.tar_id_dest
+                   ELSE decode(tvr.usu_pendientes,null,tn.tar_id_dest,-1,tn.tar_id_dest,tvr.usu_pendientes)
+                  END as USU_PENDIENTES
                 , CASE
                      WHEN (NVL(tn.TAR_EN_ESPERA, 0) = 1)
                        THEN
@@ -476,9 +480,18 @@ BEGIN
                ON tn.ASU_ID = asu.ASU_ID AND asu.BORRADO = 0
              LEFT JOIN (SELECT /*+ ORDERED */ vtar.tar_id,
                                max(decode(nvl(vtar.tar_alerta, 0), 1, nvl(vtap.dd_tsup_id, 3), -1)) as dd_tge_id_alerta,
-                               max(decode(nvl(vtap.dd_tge_id, 0), 0, decode(vsta.dd_tge_id, null, decode(vsta.dd_sta_gestor, 0, 3, 2), vsta.dd_tge_id), vtap.dd_tge_id)) as dd_tge_id_pendiente,
+                               max(CASE WHEN (vsta.dd_sta_id = 700 OR vsta.dd_sta_id = 701) THEN -1
+                                        WHEN nvl(vtap.dd_tge_id, 0) <> 0 THEN vtap.dd_tge_id
+                                        WHEN vsta.dd_tge_id IS NULL THEN decode(vsta.dd_sta_gestor,0,3,2)
+                                        ELSE vsta.dd_tge_id END) as  dd_tge_id_pendiente,
                                max(nvl(vtap.dd_tsup_id, 3)) as dd_tge_id_supervisor,
-                               max(decode(vges.dd_tge_id, decode(nvl(vtap.dd_tge_id, 0), 0, decode(vsta.dd_tge_id, null, decode(vsta.dd_sta_gestor, 0, 3, 2), vsta.dd_tge_id), vtap.dd_tge_id), vusd.usu_id, -1)) as usu_pendientes,
+                               max(decode(vges.dd_tge_id
+                                         ,CASE WHEN (vsta.dd_sta_id = 700 OR vsta.dd_sta_id = 701) THEN -1
+                                               WHEN NVL (vtap.dd_tge_id, 0) != 0 THEN vtap.dd_tge_id
+                                               WHEN vsta.dd_tge_id IS NULL THEN CASE vsta.dd_sta_gestor WHEN 0 THEN 3 ELSE 2 END
+                                               ELSE vsta.dd_tge_id
+                                          END, vusd.usu_id
+                                         ,-1)) as usu_pendientes,
                                max(decode(vges.dd_tge_id, decode(nvl(vtar.tar_alerta, 0), 1, nvl(vtap.dd_tsup_id, 3), -1), vusd.usu_id, -1)) as usu_alerta,
                                max(decode(vges.dd_tge_id, nvl(vtap.dd_tsup_id, 3), vusd.usu_id, -1)) as usu_supervisor
                           FROM '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES vtar
@@ -509,9 +522,17 @@ BEGIN
                            AND vein.dd_ein_codigo IN (''3'', ''5'', ''2'', ''9'', ''10'')
                            AND vges.usd_id = vusd.usd_id
                            AND vtar.asu_id = vges.asu_id
-                           AND (decode(vges.dd_tge_id, decode(nvl(vtap.dd_tge_id, 0), 0, decode(vsta.dd_tge_id, null, decode(vsta.dd_sta_gestor, 0, 3, 2), vsta.dd_tge_id), vtap.dd_tge_id), vusd.usu_id, -1) > 0
+                           AND (decode(vges.dd_tge_id
+                                     ,CASE WHEN (vsta.dd_sta_id = 700 OR vsta.dd_sta_id = 701) THEN -1
+                                           WHEN nvl(vtap.dd_tge_id, 0) <> 0 THEN vtap.dd_tge_id
+                                           WHEN vsta.dd_tge_id IS NULL THEN decode(vsta.dd_sta_gestor,0,3,2)
+                                           ELSE vsta.dd_tge_id
+                                      END, vusd.usu_id
+                                     ,-1) > 0
                                 OR
-                                decode(vges.dd_tge_id, decode(nvl(vtar.tar_alerta, 0), 1, nvl(vtap.dd_tsup_id, 3), -1), vusd.usu_id, -1) > 0)
+                                decode(vges.dd_tge_id
+                                      ,decode(nvl(vtar.tar_alerta, 0), 1, nvl(vtap.dd_tsup_id, 3), -1), vusd.usu_id
+                                      , -1) > 0)
                          GROUP BY vtar.tar_id) tvr
                ON tn.tar_id = tvr.tar_id
              LEFT JOIN '||V_ESQUEMA||'.PRC_PROCEDIMIENTOS prc

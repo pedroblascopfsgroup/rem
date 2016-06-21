@@ -185,7 +185,7 @@
 				btnNuevaConfiguracion.setDisabled(false);
 				btnNuevaConfiguracion.setVisible(true);
 				btnGuardar.setDisabled(false);
-				
+				infoConfiguracionTurnado.expand(true);
 				gestionPanelSuperior(1);
 				plazasStore.webflow({ idEsquema : idEsquema });
 				tposStore.removeAll();
@@ -202,10 +202,10 @@
 			,handler : function(){
 				<%-- Cancelar nueva configuracion (deshacer cambios) --%>
 				Ext.Msg.minWidth=360;			
-				Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarCancelacion" text="**Confirmacr cancelación" />', '<s:message code="plugin.procuradores.turnado.confirmarCancelacionMsg" text="**Estas seguro que desea cancelar los cambios?" />', this.evaluateAndSend);
+				Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarCancelacion" text="**Confirmar cancelación" />', '<s:message code="plugin.procuradores.turnado.confirmarCancelacionMsg" text="**Estas seguro que desea cancelar los cambios?" />', this.evaluateAndSend);
 			}
 			,evaluateAndSend: function(seguir) {
-				if(seguir){
+				if(seguir == 'yes'){
 					cancelarModificacion(1);
 					//Gestion botones
 					btnGuardarNuevaConfiguracion.setDisabled(true);
@@ -215,6 +215,7 @@
 					btnNuevaConfiguracion.setDisabled(false);
 					btnNuevaConfiguracion.setVisible(true);
 					gestionPanelSuperior(1);
+					infoConfiguracionTurnado.expand(true);
 				}
 			}
 	});
@@ -327,7 +328,7 @@
 			Ext.Msg.confirm('<s:message code="plugin.procuradores.turnado.confirmarCancelacion" text="**Confirmar cancelación" />', '<s:message code="plugin.procuradores.turnado.confirmarCancelacionMsg" text="**Estas seguro que desea cancelar los cambios?" />', this.evaluateAndSend);
 		}
 		,evaluateAndSend: function(seguir) {
-			if(seguir){
+			if(seguir == 'yes'){
 				cancelarModificacion(0);
 			}	
 		}
@@ -346,6 +347,7 @@
 			else{
 				Ext.Msg.minWidth=360;
 				Ext.Msg.alert('Advertencia', '<s:message code="plugin.procuradores.turnado.errorConfiguracionEnCurso" text="**Por favor, guarde o cancele la nueva configuración en curso" />' );
+				mainPanel.container.unmask();
 			}
 		}
 		<app:test id="btnGuardarABM" addComa="true"/>

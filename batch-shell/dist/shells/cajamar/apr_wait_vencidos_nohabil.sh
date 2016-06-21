@@ -45,7 +45,7 @@ done
 
 if [ "$hora_actual" -ge "$hora_limite" ]
 then
-   echo "$(basename $0) Error: Tiempo límite alcanzado: el proceso anterior de VENCIDOS aún no ha finalizado"
+   echo "$(basename $0) Error: Tiempo limite de espera alcanzado: el proceso anterior de VENCIDOS no ha finalizado"
    exit 1
 fi
 

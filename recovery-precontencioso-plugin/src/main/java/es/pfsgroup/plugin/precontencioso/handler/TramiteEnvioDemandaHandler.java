@@ -63,20 +63,20 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 				for (EXTTareaExternaValor valor : valores) {
 					if ("importeDemanda".equals(valor.getNombre())) {
 						if(!importeDemanda.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
+							/*executionContext.getToken().signal("nuevo");
+							return "";*/
 						}
 					}
 					else if ("proc_a_iniciar".equals(valor.getNombre())) {
 						if(!procIniciar.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
+							/*executionContext.getToken().signal("nuevo");
+							return "";*/
 						}
 					}
 					else if ("partidoJudicial".equals(valor.getNombre())) {
 						if(!partidoJudicial.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
+							/*executionContext.getToken().signal("nuevo");
+							return "";*/
 						}
 					}
 				}
@@ -92,20 +92,20 @@ public class TramiteEnvioDemandaHandler extends PROBaseActionHandler {
 				for (EXTTareaExternaValor valor : valores) {
 					if ("importeDemanda".equals(valor.getNombre())) {
 						if(!importeDemanda.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
+							/*executionContext.getToken().signal("nuevo");
+							return "";*/
 						}
 					}
 					else if ("proc_a_iniciar".equals(valor.getNombre())) {
 						if(!procIniciar.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
+							/*executionContext.getToken().signal("nuevo");
+							return "";*/
 						}
 					}
 					else if ("partidoJudicial".equals(valor.getNombre())) {
 						if(!partidoJudicial.equals(valor.getValor())){
-							executionContext.getToken().signal("nuevo");
-							return "";
+							/*executionContext.getToken().signal("nuevo");
+							return "";*/
 						}
 					}
 				}

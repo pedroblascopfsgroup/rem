@@ -179,6 +179,7 @@
 	<decision name="H022_InterposicionDemandaDecision" expression="#{H022_InterposicionDemandaDecision}">
 		<transition to="Fin" name="No"></transition>
 		<transition to="H022_BPMProvisionFondos" name="Si"></transition>
+		<transition to="H022_BPMAnticipoFondos" name="Anti"></transition>
 	</decision>
 
 	<state name="H022_BPMProvisionFondos">
@@ -201,6 +202,27 @@
 		<transition to="Fin" name="hcj_provisionFondos"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="H022_BPMProvisionFondos" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H022_BPMAnticipoFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<state name="H022_BPMOrdinario">

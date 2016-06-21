@@ -1,7 +1,6 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 
-
 create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
 
 	CURSOR c_PROCS IS
@@ -10,13 +9,12 @@ create or replace PROCEDURE      SP_MIG_A_TABLA_INTERMEDIA IS
                         DECODE(ULTIMO_HITO,'X',DECODE(TIPO_PROCEDIMIENTO,'P06',1,'P08',20,'P07',10,'P01',29,'P03',40,'P02',59),6,3,18,16,17,16,23,24,26,25,28,27,35,34,36,34,37,34, 42,41,44,43,45,43,46,43,48,47,49,43,50,43,51,50,52,51,54,53,55,53,56,53, -- aquí hasta Subasta
                                          63,DECODE(TIPO_PROCEDIMIENTO,'P01',38,'P03',57, TO_NUMBER(ULTIMO_HITO)),64,39,38,64,39,67,67,68,68,69, 57,64,58,67, TO_NUMBER(ULTIMO_HITO)) AS ULTIMO_HITO
                  FROM MIG_PROCEDIMIENTOS_CABECERA
- /*                UNION
+/*               UNION
                  SELECT CD_CONCURSO AS CD_PROCEDIMIENTO,
                         'P90' AS TIPO_PROCEDIMIENTO,
                         DECODE(SUBSTR(FASE_CONCURSO,1,INSTR(FASE_CONCURSO,'-')-1),'FASE COMUN',70,'FASE CONVENIO',73,'FASE LIQUIDACION',75) AS ULTIMO_HITO
                  FROM MIG_CONCURSOS_CABECERA */
-                 ORDER BY 1 
-				 ;
+                 ORDER BY 1;
 
 
   CURSOR c_PARAM_HITOS (p_TIPO_PROCEDIMIENTO IN VARCHAR2, p_ULTIMO_HITO IN NUMBER) IS
@@ -118,7 +116,7 @@ BEGIN
    -- MIGRACION A TABLA INTERMEDIA --
    ----------------------------------
 DBMS_OUTPUT.ENABLE(1000000);
-
+/*
   SELECT COUNT(1)
   INTO V_COUNT
   FROM USER_CONSTRAINTS
@@ -137,7 +135,7 @@ DBMS_OUTPUT.ENABLE(1000000);
   EXECUTE IMMEDIATE 'ALTER TABLE MIG_MAESTRA_HITOS_VALORES ADD CONSTRAINT FK_MIG_MAESTRA_HITOS FOREIGN KEY (TAR_ID) REFERENCES MIG_MAESTRA_HITOS(TAR_ID) ENABLE';
 
   V_COUNT := 0;
-
+*/
   SELECT COUNT(1)
   INTO V_COUNT
   FROM ALL_TABLES
@@ -1129,7 +1127,8 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                              IF v_TAR_FINALIZADA = 1 AND v_CONTROL NOT IN (2,3) AND (l.TEV_NOMBRE LIKE '%fecha%' OR l.TEV_NOMBRE = 'comboAtribuciones' OR l.TEV_NOMBRE = 'comboCelebrada'
                                 OR (k.DD_TPO_CODIGO = 'H009' AND (l.TEV_NOMBRE = 'comboResultado' OR l.TEV_NOMBRE = 'comboAdmitida' OR l.TEV_NOMBRE = 'observaciones' OR l.TEV_NOMBRE = 'comFavorable'))
-                                OR (k.DD_TPO_CODIGO = 'H033' AND l.TEV_NOMBRE = 'comboAlegaciones'))
+                                OR (k.DD_TPO_CODIGO = 'H033' AND l.TEV_NOMBRE = 'comboAlegaciones')
+                                OR (k.DD_TPO_CODIGO = 'H001' AND l.TEV_NOMBRE = 'comboResultado'))
                              THEN
 
                                 IF l.TEV_NOMBRE = 'comboAtribuciones' THEN
@@ -1323,6 +1322,9 @@ DBMS_OUTPUT.ENABLE(1000000);
                        ,l.ORDEN
                        ,l.TEV_NOMBRE
                        ,v_TEV_VALOR);
+                       
+                       
+                --DBMS_OUTPUT.PUT_LINE('k.TAP_CODIGO='||k.TAP_CODIGO||' - vTAR_ID= '|| v_TAR_ID|| 'l.TEV_NOMBRE= '||l.TEV_NOMBRE||' - l.TEV_ORDEN = '||l.ORDEN||' - V_TEV_VALOR = '||V_TEV_VALOR||' - v_CD_BIEN = '||v_CD_BIEN);
 
             END IF;
 
@@ -1681,6 +1683,13 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                         IF  (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 0) THEN
 
+                             SELECT MAX(TAR_ID)
+                             INTO v_TAR_ID
+                             FROM MIG_MAESTRA_HITOS
+                             WHERE CD_PROCEDIMIENTO = j.CD_PROCEDIMIENTO
+                             AND TAP_CODIGO = k.TAP_CODIGO
+                             AND CD_BIEN = v_CD_BIEN;
+
 
                              SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                              INTO v_TEV_ID
@@ -1704,6 +1713,8 @@ DBMS_OUTPUT.ENABLE(1000000);
                                    ,v_TEV_VALOR);
 
                         END IF;
+                        
+                        --DBMS_OUTPUT.PUT_LINE('k.TAP_CODIGO='||k.TAP_CODIGO||' - vTAR_ID= '|| v_TAR_ID|| 'l.TEV_NOMBRE= '||l.TEV_NOMBRE||' - l.TEV_ORDEN = '||l.ORDEN||' - V_TEV_VALOR = '||V_TEV_VALOR||' - v_CD_BIEN = '||v_CD_BIEN);
 
                         IF ((k.COD_HITO_ACTUAL = v_ULTIMO_HITO OR v_MAX_HITO_BIEN = v_ULTIMO_HITO ) AND v_TAR_FINALIZADA = 0 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 1) THEN --TAREA PENDIENTE X CADA BIEN
 
@@ -1838,3 +1849,4 @@ EXEC CM01.SP_MIG_A_TABLA_INTERMEDIA;
 
 
 EXIT;
+

@@ -291,6 +291,9 @@
 								,idTraza:recStore.get('idTraza')
 								,idTarea:recStore.get('idTarea')
 								,tipoTraza:recStore.get('tipoTraza')
+								,tarea:recStore.get('tarea')
+								,idProrroga:recStore.get('idEntidad')
+								,idProcedimiento:recStore.get('numeroProcedimiento')
 						}
 					});
 				} 

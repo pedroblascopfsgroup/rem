@@ -27,6 +27,7 @@ import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -398,5 +399,13 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
         List<AcuerdoConfigAsuntoUsers> lista = getHibernateTemplate().find(hql);
 		return lista;
     }
-
+	
+	 public List<DespachoExterno> getDespachosProponentesValidos(Usuario usuLogado){
+         String hql = " select gd.despachoExterno from GestorDespacho gd , AcuerdoConfigAsuntoUsers config "
+        		 		+" where gd.despachoExterno.tipoDespacho.id = config.proponente.id and gd.usuario.id = "+ usuLogado.getId()
+         				+" and gd.auditoria.borrado = false and config.auditoria.borrado = false ";
+         
+         List<DespachoExterno> despachos = getHibernateTemplate().find(hql);
+         return despachos;
+	 }
 }

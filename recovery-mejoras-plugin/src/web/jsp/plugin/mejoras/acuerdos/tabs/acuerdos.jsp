@@ -264,10 +264,55 @@
        		if (countTerminos > 0){
        		
        		Ext.Ajax.request({
-				url: page.resolveUrl('mejacuerdo/tieneConfiguracionProponerAcuerdo')
+				<%-- url: page.resolveUrl('mejacuerdo/tieneConfiguracionProponerAcuerdo')--%>
+				url: page.resolveUrl('mejacuerdo/getDespachosProponentesValidos')
 				,method: 'POST'
 				,success: function (result, request){
 					var respuesta = Ext.util.JSON.decode(result.responseText);
+					
+					if(respuesta.listadoDespachos.length == 0){
+						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
+					}else if(respuesta.listadoDespachos.length == 1){
+					<%-- 
+						deshabilitarBotones();
+			      	    page.webflow({
+			      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
+			      			,params:{
+			      				idAcuerdo:acuerdoSeleccionado
+			   				}
+			      			,success: function(){
+			           		 	acuerdosStore.on('load',despuesDeEvento);
+			           		 	acuerdosStore.webflow({id:panel.getAsuntoId()});
+			           		 	btnProponerAcuerdo.hide();
+			           		 	btnIncumplirAcuerdo.hide();
+			           		}
+			           		,error: function(){
+
+							}	
+				      	});
+						habilitarBotones();
+					--%>
+					}else if(respuesta.listadoDespachos.length > 1){
+					      
+		      	       var w = app.openWindow({
+				          flow : 'mejacuerdo/abreSelectDespachoProponente'
+				          ,closable:false
+				          ,width : 750
+				          ,title : '<s:message code="mejoras.plugin.acuerdos.proponer.despacho.title" text="**Role con el que propone el acuerdo" />'
+				          ,params : {idAcuerdo:acuerdoSeleccionado}
+				       });
+				       w.on(app.event.DONE, function(){
+				          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
+				          acuerdosStore.webflow({id:panel.getAsuntoId()});
+				          w.close();
+				       });
+			      	   w.on(app.event.CANCEL, function(){ w.close(); });
+	     	
+					   }
+					
+					debugger;
+					<%--
 					if(Boolean(respuesta.okko)){
 						deshabilitarBotones();
 			      	    page.webflow({
@@ -290,6 +335,7 @@
 						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
 	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
 					}
+					 --%>
 				}
 				,error: function(){
 	

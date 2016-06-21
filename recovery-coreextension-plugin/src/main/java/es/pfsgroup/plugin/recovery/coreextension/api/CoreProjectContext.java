@@ -17,6 +17,7 @@ public interface CoreProjectContext {
 	public static final String CATEGORIA_SUBTAREA_ABRIR_EXP = "ABRIR_EXP";
 	public static final String CATEGORIA_SUBTAREA_ABRIR_PER = "ABRIR_PER";
 	public static final String CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO = "ABRIR_COBROS_PAGOS";
+	public static final String CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO = "ABRIR_HISTORICO_PROCEDIMIENTO";
 	public static final String ENTIDAD = "HAYA";
 	public static final String TIPO_ASUNTO_LITIGIO = "01";
 	public static final String TIPO_ASUNTO_CONSURSAL = "02";

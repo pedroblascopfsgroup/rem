@@ -591,7 +591,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
         Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmid, TareaBPMConstants.ID_TAREA);
         TareaNotificacion tarea = get(idTareaAsociada);
-
+        prorroga.setFechaVencimientoOriginal(prorroga.getTareaAsociada().getFechaVenc());
         // param.put(TareaBPMConstants.DESCRIPCION_TAREA,
         // dto.getDescripcionCausa());
         tarea.setDescripcionTarea(dto.getDescripcionCausa());

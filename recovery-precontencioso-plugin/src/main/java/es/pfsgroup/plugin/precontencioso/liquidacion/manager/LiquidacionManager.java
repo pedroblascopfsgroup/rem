@@ -71,18 +71,12 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
 	
-	@Autowired(required = false)
-	private DatosLiquidacionExtraApi datosLiquidacionExtraApi;
-	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public List<LiquidacionDTO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 		List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<LiquidacionDTO> liquidacionesDto = LiquidacionAssembler.entityToDto(liquidaciones);
-		if (!Checks.esNulo(datosLiquidacionExtraApi)) {
-			datosLiquidacionExtraApi.agregarDatosExtra(liquidacionesDto);
-		}
 		return liquidacionesDto;
 	}
 	

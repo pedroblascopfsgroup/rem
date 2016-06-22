@@ -164,6 +164,32 @@
 	    	 root : 'diccionario'
 	    }, tipoDocRecord)
 	});
+	
+	var tipoDocStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoDocRecord)
+	});
+	
+	<%--RECOVERY-1005   Acota los resultados del store segun el texto introducido --%>
+	var acotarResultadosCombo = function(cadena, combo, storeCompleto, storeAux) {
+		 if (!Ext.isEmpty(cadena)){			            			            
+	        storeAux.removeAll();
+	        
+			storeCompleto.each(function(rec) {
+			    if (rec.data.descripcion.toUpperCase().indexOf(cadena.toUpperCase()) > -1) {
+			        storeAux.add(rec);
+			    }
+			});							
+            combo.bindStore(storeAux);    				            
+		}
+        else {
+        	combo.bindStore(storeCompleto); 
+        }
+       
+		combo.onLoad();
+	};
 
 	subir.on('click', function(){
 		var comboTipoFichero = new Ext.form.ComboBox(
@@ -172,15 +198,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoDocCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroExpediente'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroExpediente'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 	
@@ -303,11 +338,20 @@
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroExpedientePersona'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroExpedientePersona'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -424,15 +468,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoDocCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroExpedienteContrato'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroExpedienteContrato'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		

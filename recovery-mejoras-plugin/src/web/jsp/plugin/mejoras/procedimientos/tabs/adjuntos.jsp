@@ -183,10 +183,18 @@
 	]);
 	var tipoFicheroStore =	page.getStore({
 	       flow: 'adjuntoasunto/getTiposDeFicheroAdjuntoProcedimiento'
+	       //,autoload: true
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'diccionario'
 	    }, tipoFicheroRecord)
 	       
+	});
+	
+	var tipoFichStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoFicheroRecord)
 	});
 	
 	var tipoDocRecord = Ext.data.Record.create([
@@ -202,8 +210,34 @@
 	    }, tipoDocRecord)
 	});
 	
+	var tipoDocStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoDocRecord)
+	});
+	
+	<%--RECOVERY-1005   Acota los resultados del store segun el texto introducido --%>
+	var acotarResultadosCombo = function(cadena, combo, storeCompleto, storeAux) {
+		 if (!Ext.isEmpty(cadena)){			            			            
+	        storeAux.removeAll();
+	        
+			storeCompleto.each(function(rec) {
+			    if (rec.data.descripcion.toUpperCase().indexOf(cadena.toUpperCase()) > -1) {
+			        storeAux.add(rec);
+			    }
+			});							
+            combo.bindStore(storeAux);    				            
+		}
+        else {
+        	combo.bindStore(storeCompleto); 
+        }
+       
+		combo.onLoad();
+	};
+	
 	subir.on('click', function(){
-		
+	
 		var comboTipoFichero = new Ext.form.ComboBox(
 			{
 				xtype:'combo'
@@ -213,14 +247,24 @@
 				,store:tipoFicheroStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'remote'
-				,emptyText:'----'
+				,mode: 'local'
+				,emptyText:''
 				,width:250
 				,resizable:true
-				,triggerAction: 'all'
+				,triggerAction:'all'
 				,fieldLabel : 'Tipo fichero'
+				,id: 'idcomboTipoFicheroProcedimiento'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroProcedimiento'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoFicheroStore,tipoFichStoreAuxiliar);
+				}
 			}
 		);
+		
 		
 		var date_renderer = Ext.util.Format.dateRenderer('d/m/Y');
 		var fechaCaducidad = new Ext.form.DateField({
@@ -310,7 +354,7 @@
 				}
 			});
 		});
-</sec:authorize>		    
+</sec:authorize>	    
 
 		var win =new Ext.Window({
 		         width:400
@@ -336,15 +380,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoProcedimientoCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'remote'
-				,emptyText:'----'
+				,mode: 'local'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroProcedimientoPersona'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroProcedimientoPersona'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -463,12 +516,21 @@
 				,store:tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'remote'
-				,emptyText:'----'
+				,mode: 'local'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroProcedimientoExpediente'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroProcedimientoExpediente'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -587,12 +649,21 @@
 				,store:tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'remote'
-				,emptyText:'----'
+				,mode: 'local'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroProcedimientoContrato'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroProcedimientoContrato'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		

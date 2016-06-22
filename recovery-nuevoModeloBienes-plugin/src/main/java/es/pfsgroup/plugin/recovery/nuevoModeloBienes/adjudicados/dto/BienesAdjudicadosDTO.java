@@ -23,6 +23,7 @@ public class BienesAdjudicadosDTO  {
 	String tareaActivaSaneamiento;
 	String tareaActivaPosesion;
 	String tareaActivaLlaves;
+	String numFinca;
 	
 	public Long getId() {
 		return id;
@@ -107,6 +108,12 @@ public class BienesAdjudicadosDTO  {
 	}
 	public void setTareaActivaLlaves(String tareaActivaLlaves) {
 		this.tareaActivaLlaves = tareaActivaLlaves;
+	}
+	public String getNumFinca() {
+		return numFinca;
+	}
+	public void setNumFinca(String numFinca) {
+		this.numFinca = numFinca;
 	}
 	
 }

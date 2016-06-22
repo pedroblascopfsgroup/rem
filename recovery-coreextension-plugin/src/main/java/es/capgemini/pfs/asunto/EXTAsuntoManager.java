@@ -634,6 +634,14 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				public String getNombreTipoDoc() {
 					return null;
 				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
+				}
 			};
 			result.add(dto);
 		}

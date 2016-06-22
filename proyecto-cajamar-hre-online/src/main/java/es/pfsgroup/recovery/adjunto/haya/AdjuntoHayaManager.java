@@ -299,6 +299,15 @@ public class AdjuntoHayaManager {
 					}
 					return "";
 				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
+				}
+				
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -494,6 +503,14 @@ public class AdjuntoHayaManager {
 						return aa.getTipoAdjuntoEntidad().getDescripcion();
 					}
 					return "";
+				}
+
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -1060,6 +1077,15 @@ public class AdjuntoHayaManager {
 					public String getNombreTipoDoc() {
 						return null;
 					}
+
+					@Override
+					public Long getIdAdjuntoBlob() {
+						if(aa.getAdjunto() != null) {
+							return aa.getAdjunto().getId();
+						}
+						return null;
+					}
+					
 				};
 				result.add(dto);
 			}

@@ -106,7 +106,13 @@
    		//	,username: usernameSel
    		});
    		
-   		if(!listadocodigoDespachos.includes(codDespachoSel)) {
+   		var noEstaIncluido = true;	
+   		for(var i=0; i< listadocodigoDespachos.length; i++) {
+   			if(listadocodigoDespachos[i] == codDespachoSel) {
+   				noEstaIncluido=false;
+   			}
+   		}		
+   		if(noEstaIncluido) {
 			despachosStore.insert(0, p);
 			listadocodigoDespachos.push(codDespachoSel);
 		}

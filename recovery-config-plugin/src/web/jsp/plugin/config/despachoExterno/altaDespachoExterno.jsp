@@ -213,7 +213,7 @@
 			 	  <json:property name="descripcion" value="${d}" />
 		</json:array>;
 		
-	<!-- Este campo no se muestra, pero lo dejo, si lo piden en un futuro, solo hay que anyadir impuesto a los items de las pestanyas  -->
+	<%-- Este campo no se muestra, pero lo dejo, si lo piden en un futuro, solo hay que anyadir impuesto a los items de las pestanyas  --%>
 	var impuesto=new Ext.form.ComboBox({
 		store: impuestoStore
 		,triggerAction : 'all'

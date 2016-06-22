@@ -124,11 +124,11 @@ public class AdjuntoCajamarManager {
 			}else{
 				for(AdjuntoGridDto dto: listDto) {
 					String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
-					logger.debug("CNT El nombreAux es " + nombreAux);
+					logger.info("CNT El nombreAux es " + nombreAux);
 					List<AdjuntoContrato> listAdjCnt = adjuntoContratoDao.getAdjuntoContratoByIdNombreTipoDocumento(contrato.getId(), nombreAux, dto.getTipo());
 					if(!Checks.estaVacio(listAdjCnt)){
 						dto.setIdAdjuntoBlob(listAdjCnt.get(0).getAdjunto().getId());
-						logger.debug("CNT El idAdjuntoBlob es " + nombreAux);
+						logger.info("CNT El idAdjuntoBlob es " + nombreAux);
 					}			
 				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
@@ -148,11 +148,11 @@ public class AdjuntoCajamarManager {
 			}else{
 				for(AdjuntoGridDto dto: listDto) {
 					String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
-					logger.debug("PER El nombreAux es " + nombreAux);
+					logger.info("PER El nombreAux es " + nombreAux);
 					List<AdjuntoPersona> listAdjPer = adjuntoPersonaDao.getAdjuntoPersonaByIdNombreTipoDocumento(persona.getId(), nombreAux, dto.getTipo());
 					if(!Checks.estaVacio(listAdjPer)){
 						dto.setIdAdjuntoBlob(listAdjPer.get(0).getAdjunto().getId());
-						logger.debug("PER El idAdjuntoBlob es " + nombreAux);
+						logger.info("PER El idAdjuntoBlob es " + nombreAux);
 					}
 				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
@@ -176,11 +176,11 @@ public class AdjuntoCajamarManager {
 			}else{
 				for(AdjuntoGridDto dto: listDto) {
 					String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
-					logger.debug("EXP El nombreAux es " + nombreAux);
+					logger.info("EXP El nombreAux es " + nombreAux);
 					List<AdjuntoExpediente> listAdjExp = adjuntoExpedienteDao.getAdjuntoExpedienteByIdNombreTipoDocumento(expediente.getId(), nombreAux, dto.getTipo());
 					if(!Checks.estaVacio(listAdjExp)){
 						dto.setIdAdjuntoBlob(listAdjExp.get(0).getAdjunto().getId());
-						logger.debug("EXP El idAdjuntoBlob es " + nombreAux);
+						logger.info("EXP El idAdjuntoBlob es " + nombreAux);
 					}					
 				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, expediente.getId(), expediente.getDescripcion()));

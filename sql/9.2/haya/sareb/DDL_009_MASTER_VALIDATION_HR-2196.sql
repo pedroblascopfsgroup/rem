@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALBERT PEREZ 
---## FECHA_CREACION=20160430
+--## FECHA_CREACION=20160429
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-2196
 --## PRODUCTO=NO
 --## 
---## Finalidad: Borrado contratos Migración PCO
+--## Finalidad: Validación PCR
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial

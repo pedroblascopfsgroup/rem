@@ -11,12 +11,14 @@
 
 <fwk:page>
 
-	var maxWidth = 900;
+	var maxWidth = 1170;
 	var labelStyle='width:140';
 	var labelStyleShort='width:90';
 	
 	var idLote = new Ext.form.Hidden({name:'idLote', value :'${instrucciones.id}'}) ;
-		
+
+	var idLoteP = app.creaText("idLoteP", '<s:message code="subastas.instruccionesLoteSubasta.idlote" text="**Id. Lote"/>','${instrucciones.id}',{width:80,maxLength:16,labelStyle:labelStyleShort});
+	var numeroLote = app.creaText("numeroLote", '<s:message code="subastas.instruccionesLoteSubasta.lote" text="**Lote"/>','${instrucciones.numLote}',{width:80,maxLength:16,labelStyle:labelStyleShort});		
 	var txtPujaSinPostores = app.creaMoneda("pujaSinPostores", '<s:message code="subastas.instruccionesLoteSubasta.pujaSinPostores" text="**Puja sin postores"/>','${instrucciones.insPujaSinPostores}',{width:80,maxLength:16,labelStyle:labelStyle });
 	var mmPujaConPostores = app.creaMinMaxMoneda('<s:message code="subastas.instruccionesLoteSubasta.pujaConPostores" text="**Puja con postores" />', 'pujaConPostores',{width : 80,labelWidth:142});
 	mmPujaConPostores.min.setValue('${instrucciones.insPujaPostoresDesde}');
@@ -69,10 +71,11 @@
         ,collapsed: false
         ,layout:'table'
         ,layoutConfig:{
-				columns:3
+				columns:4
 			}
 		,defaults : {xtype : 'fieldset', autoHeight : false, border : false ,cellCls : 'vtop', height: 130, width:440}
-		,items : [{width: 340,items:[txtPujaSinPostores,mmPujaConPostores.panel,txtValorSubasta]},
+		,items : [{width: 270,items:[idLoteP, numeroLote]},
+				  {width: 340,items:[txtPujaSinPostores,mmPujaConPostores.panel,txtValorSubasta]},
 				  {width: 270,items:[txt50delTipoSub,txt60delTipoSub,txt70delTipoSub]},
 				  {width: 270,items:[cmbRiesgoConsigna,txtDeudaJudicial,txtEstadoLote,txtFechaEstado]}
 				 ]
@@ -92,7 +95,7 @@
        	,enableLists:false
        	,enableSourceEdit:false
     	,labelSeparator:''
-    	,width: 880
+    	,width: 1150
     	,height: 100
     	,value:'<s:message text="${instrucciones.observaciones}" javaScriptEscape="true" />'
 	});
@@ -187,6 +190,8 @@
 
 	page.add(panel);
 	
+	idLoteP.setDisabled(true);
+	numeroLote.setDisabled(true);
 	txt50delTipoSub.setDisabled(true);
 	txt60delTipoSub.setDisabled(true); 
 	txt70delTipoSub.setDisabled(true);

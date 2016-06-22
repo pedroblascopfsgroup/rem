@@ -51,12 +51,13 @@
 		 {name:'codigo'}
 		,{name:'descripcion'}
 		,{name:'oficina'}
+		,{name:'cod_oficina'}
 	]);
 	
 	//Template para el combo de zonas
     var zonasTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
 	

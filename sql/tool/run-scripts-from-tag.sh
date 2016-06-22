@@ -71,6 +71,13 @@ function registerSQLScript_SPs() {
     fi
 }
 
+function ending_script {
+    echo '}'
+    echo ''
+    echo 'run_scripts "$@" | tee output.log'
+    echo 'zip --quiet DB_logs_'$1'_$(date +"%y%m%d-%H%M%S").zip *.log'
+}
+
 clear
 
 if [ "$0" != "./sql/tool/$(basename $0)" ]; then
@@ -152,7 +159,7 @@ fi
 if [ "$1" != "null" ]; then
 
     #PRODUCTO
-    if [ -d sql/**/producto/procs_y_vistas/ ]; then
+    if [[ `find sql/**/producto/procs_y_vistas/ -name *.sql | wc -l` -ne 0 ]]; then
         for file in `git diff $1 --name-only sql/**/producto/procs_y_vistas/*.sql`
         do
             filename=`basename $file`
@@ -187,7 +194,7 @@ if [ "$1" != "null" ]; then
     done
     
     #CLIENTE
-    if [ -d sql/**/$CUSTOMER_IN_LOWERCASE/procs_y_vistas ]; then
+    if [[ `find sql/**/$CUSTOMER_IN_LOWERCASE/procs_y_vistas/ -name *.sql | wc -l` -ne 0 ]]; then
         for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/procs_y_vistas/*.sql`
         do
             filename=`basename $file`
@@ -228,7 +235,7 @@ if [ "$1" != "null" ]; then
         do
             SUBENTITY=`echo $entidad | tr '[:upper:]' '[:lower:]'`
 
-            if [ -d sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/procs_y_vistas ]; then
+            if [[ `find sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/procs_y_vistas/ -name *.sql | wc -l` -ne 0 ]]; then
                 for file in `git diff $1 --name-only sql/**/$CUSTOMER_IN_LOWERCASE/$SUBENTITY/procs_y_vistas/*.sql`
                 do
                     connectionParam=`getConnectionParam $file ${!entidad} $3`
@@ -354,11 +361,11 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     fi
     cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
     if [ $CUSTOMER_IN_UPPERCASE == 'CAJAMAR' ] ; then
-        echo "export NLS_LANG=SPANISH_SPAIN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-        echo "export NLS_DATE_FORMAT=\"DD/MM/RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
-        echo "export NLS_TIMESTAMP_FORMAT=\"DD/MM/RR HH24:MI:SSXFF\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo $'\t'"export NLS_LANG=SPANISH_SPAIN.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo $'\t'"export NLS_DATE_FORMAT=\"DD/MM/RR\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        echo $'\t'"export NLS_TIMESTAMP_FORMAT=\"DD/MM/RR HH24:MI:SSXFF\"" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
     else
-        echo "export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
+        echo $'\t'"export NLS_LANG=.AL32UTF8" | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null 
     fi
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
@@ -377,13 +384,13 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             KEY=`echo ${array[index]} | cut -d\; -f1`
             VALUE=`echo ${array[index]} | cut -d\; -f2`
             if [[ $KEY == '#ESQUEMA#' ]]; then
-               ESQUEMA=$VALUE
-                echo "exit | sqlplus -s -l $ESQUEMA/\$2 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
-                echo "exit | sqlplus -s -l \$1 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
+                ESQUEMA=$VALUE
+                echo $'\t'"exit | sqlplus -s -l $ESQUEMA/\$2 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
+                echo $'\t'"exit | sqlplus -s -l \$1 @./scripts/DDL_000_$ESQUEMA.sql" >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
             fi
         done
-        cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DDL/scripts/
-        cp $BASEDIR/tmp/DDL_000_$ESQUEMA.sql $BASEDIR/tmp/package/DB/scripts/
+        cp $BASEDIR/tmp/DDL_000_*.sql $BASEDIR/tmp/package/DDL/scripts/
+        cp $BASEDIR/tmp/DDL_000_*.sql $BASEDIR/tmp/package/DB/scripts/
 
         cat $BASEDIR/tmp/DDL-scripts.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts.sh
         cat $BASEDIR/tmp/DDL-scripts-one-user.sh >> $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh
@@ -399,6 +406,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
         cp $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
 
+        ending_script $1 | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
             zip --quiet DDL-scripts.zip -r DDL 
@@ -406,6 +415,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         fi
     fi
     if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
+        ending_script $1 | tee -a $BASEDIR/tmp/DML-scripts.sh $BASEDIR/tmp/DML-scripts-one-user.sh > /dev/null
         cat $BASEDIR/tmp/DML-scripts.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh > /dev/null
         cat $BASEDIR/tmp/DML-scripts-one-user.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
         if [[ $GENERATE_BAT == 'true' ]]; then
@@ -414,12 +424,16 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         fi
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DML/scripts/
         cp -r $BASEDIR/tmp/DML*reg*.sql $BASEDIR/tmp/package/DB/scripts/
+        cp -r $BASEDIR/tmp/DML_000*.sql $BASEDIR/tmp/package/DML/scripts/
+        cp -r $BASEDIR/tmp/DML_000*.sql $BASEDIR/tmp/package/DB/scripts/
 
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
             zip --quiet DML-scripts.zip -r DML 
             cd -
         fi
+    else
+        ending_script $1 | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
     fi     
     if [[ $UNIFIED_PACKAGE != 'false' ]]; then
         cd $BASEDIR/tmp/package

@@ -5,4 +5,4 @@ if [ "$#" -ne 1 ]; then
     exit
 fi
 
-
+function run_scripts {

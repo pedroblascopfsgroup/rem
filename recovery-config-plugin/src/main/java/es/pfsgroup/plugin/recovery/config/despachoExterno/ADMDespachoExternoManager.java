@@ -751,10 +751,10 @@ public class ADMDespachoExternoManager {
 				desExtras = new DespachoExternoExtras();
 			}
 		}
-		//Si no es de Tipo Letrado no aplica
-		if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
+		//Si no es de Tipo Letrado no aplica /*
+/*if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
 			return desExtras;
-		}
+		}*/
 		
 		desExtras.setId(idDespacho);
 		desExtras = this.transformaDtoAEntityDespachOExtras(dto, desExtras);

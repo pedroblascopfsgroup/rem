@@ -18,6 +18,9 @@ if [ $? -ne 0 ] ; then
 fi
 
 if [ -f $MAINSH ]; then
+	if [  -f $DIR_HRE_INPUT/BUROFAX_HAYA_* ]; then
+		mv  $DIR_HRE_INPUT/BUROFAX_HAYA_* /recovery/batch-server/control/etl/output/aprov-haya/
+    fi
     CLASS="$(cat $MAINSH | grep "^ java" | cut -f10 -d" ")"
     CLASS2=`echo $CLASS | sed -e 's/$ROOT_PATH/./g'`
     CLASEINICIO="$(cat $MAINSH | grep "^ java" | cut -f11 -d" ")"

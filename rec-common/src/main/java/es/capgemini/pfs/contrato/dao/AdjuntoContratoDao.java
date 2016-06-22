@@ -15,4 +15,9 @@ import es.capgemini.pfs.dao.AbstractDao;
 public interface AdjuntoContratoDao extends AbstractDao<AdjuntoContrato, Long> {
 
 	public List<AdjuntoContrato> getAdjuntoContratoByIdDocumento(List<Integer> idsDocumento);
+
+	List<AdjuntoContrato> getAdjuntoContratoByIdNombreTipoDocumento(
+			Long idContrato, String nombre, String tipoDocumento);
+
+	
 }

@@ -37,4 +37,20 @@ public class AdjuntoPersonaDaoImpl extends AbstractEntityDao<AdjuntoPersona, Lon
 		}
 		return new ArrayList<AdjuntoPersona>();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AdjuntoPersona> getAdjuntoPersonaByIdNombreTipoDocumento(Long idPersona, String nombre, String tipoDocumento) {
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select aa from AdjuntoPersona aa where aa.auditoria.borrado = false and aa.persona.id = ");
+		hql.append(idPersona);
+		hql.append(" and aa.nombre like '");
+		hql.append(nombre);
+		hql.append("%'");
+		hql.append(" and aa.tipoAdjuntoEntidad.codigo = '");
+		hql.append(tipoDocumento);
+		hql.append("'");
+		return getSession().createQuery(hql.toString()).list();
+	}
+	
 }

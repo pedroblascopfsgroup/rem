@@ -971,9 +971,8 @@ app.openBrowserWindow = function(flow, params){
 	var urlData="";
 
 	params = params || {};
-	
 	for(var x in params){
-		if (params.hasOwnProperty(x)) {
+		if (params[x] != undefined && params.hasOwnProperty(x) && (typeof params[x] != "function")) {
 			urlData +='&'+x+'='+params[x];
 		}
 	}

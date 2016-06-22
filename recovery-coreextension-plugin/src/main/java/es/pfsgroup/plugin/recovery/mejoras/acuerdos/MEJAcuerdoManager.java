@@ -336,7 +336,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, dto.getIdAsunto());
 			
 			acuerdo.setAsunto(asunto);
-			
+			/*
 			Order order = new Order(OrderType.ASC, "id");
 			List<EXTGestorAdicionalAsunto> gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false) );
 			
@@ -391,7 +391,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 
 			if(gestorAsunto != null){
 				acuerdo.setGestorDespacho(gestorAsunto.getGestor());
-			}
+			}*/
 
 		} else {
 			Expediente exp = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));
@@ -1124,70 +1124,30 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
     @BusinessOperation(BO_ACUERDO_MGR_PROPONER_ACUERDO)
     @Transactional(readOnly = false)
     public void proponerAcuerdo(Long idAcuerdo) throws EXTCrearTareaException {
-        EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
-        
-        //Validamos si la información de los términos es correcta para poder proponer el acuerdo
-        validarTerminosAcuerdo(acuerdo);
-        
-        DDEstadoAcuerdo estadoAcuerdoPropuesto = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
-                DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_PROPUESTO);
-        acuerdo.setEstadoAcuerdo(estadoAcuerdoPropuesto);    
+    	
+    	///A�adimos el proponente al acuerdo
+    	asignarUSDProponenteAlAcuerdo(idAcuerdo,null);
 
-		GestorDespacho gestorDespachoProponente = getUsuarioDestinatarioTarea(acuerdo, "proponente");
-		GestorDespacho gestorDespachoValidador = getUsuarioDestinatarioTarea(acuerdo, "validador");
-		GestorDespacho gestorDespachoDecisor = getUsuarioDestinatarioTarea(acuerdo, "decisor");
-		
-		acuerdoDao.save(acuerdo);
-		
-		if(!Checks.esNulo(gestorDespachoDecisor) && !Checks.esNulo(gestorDespachoValidador) && !Checks.esNulo(gestorDespachoProponente) && usuarioLogadoEsDelTipoDespacho(gestorDespachoDecisor.getDespachoExterno().getTipoDespacho())){
-			
-			////Metemos a el usuario como validador en la GAA
-	        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
-	        try {
-				proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoDecisor.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	        ///Metemos al usuario como decisor en la GAA
-	        EXTSubtipoTarea subtipotareaRev = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO));
-	        try {
-				proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotareaRev.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoDecisor.getUsuario().getId(), gestorDespachoDecisor.getDespachoExterno().getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+    	///Proponer
+    	proponer(idAcuerdo);
+    
+    }
+    
+    
+    /**
+     * Pasa un Acuerdo en estado En Conformación a Propuesto.
+     * @param idAcuerdo el id del acuerdo
+     * @param idDespacho
+     * @throws EXTCrearTareaException 
+     */
+    @Transactional(readOnly = false)
+    public void proponerAcuerdoConDespacho(Long idAcuerdo, Long idDespacho) throws EXTCrearTareaException {
+    	
+    	///A�adimos el proponente al acuerdo
+    	asignarUSDProponenteAlAcuerdo(idAcuerdo,idDespacho);
 
-			vigenteAcuerdo(acuerdo.getId());
-			
-		}else if(!Checks.esNulo(gestorDespachoDecisor) && !Checks.esNulo(gestorDespachoValidador) && !Checks.esNulo(gestorDespachoProponente) && usuarioLogadoEsDelTipoDespacho(gestorDespachoValidador.getDespachoExterno().getTipoDespacho())){
-			
-	        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
-	        try {
-				proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoValidador.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			aceptarAcuerdo(acuerdo.getId());
-			
-		}else if(!Checks.esNulo(gestorDespachoProponente) && !Checks.esNulo(gestorDespachoValidador) && usuarioLogadoEsDelTipoDespacho(gestorDespachoProponente.getDespachoExterno().getTipoDespacho())){
-			
-	    	Calendar calendar = new GregorianCalendar();
-	    	calendar.add(Calendar.DAY_OF_MONTH, 15);
-
-	    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Aceptaci\u00F3n del acuerdo "+acuerdo.getId(), gestorDespachoValidador.getUsuario().getId(), true, SubtipoTarea.CODIGO_ACEPTACION_ACUERDO, calendar.getTime());
-
-	        acuerdo.setIdJBPM(idJBPM);	
-	        acuerdoDao.save(acuerdo);
-	        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
-	        try {
-				proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoValidador.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-		}
-		
-
+    	///Proponer
+    	proponer(idAcuerdo);
     
     }
     
@@ -1678,6 +1638,140 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		
 		
 		return true;
+	}
+	
+	private void proponer(Long idAcuerdo) throws EXTCrearTareaException{
+		
+		 EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+	        
+	        //Validamos si la información de los términos es correcta para poder proponer el acuerdo
+	        validarTerminosAcuerdo(acuerdo);
+	        
+	        DDEstadoAcuerdo estadoAcuerdoPropuesto = (DDEstadoAcuerdo) executor.execute(ComunBusinessOperation.BO_DICTIONARY_GET_BY_CODE,
+	                DDEstadoAcuerdo.class, DDEstadoAcuerdo.ACUERDO_PROPUESTO);
+	        acuerdo.setEstadoAcuerdo(estadoAcuerdoPropuesto);    
+
+			GestorDespacho gestorDespachoProponente = getUsuarioDestinatarioTarea(acuerdo, "proponente");
+			GestorDespacho gestorDespachoValidador = getUsuarioDestinatarioTarea(acuerdo, "validador");
+			GestorDespacho gestorDespachoDecisor = getUsuarioDestinatarioTarea(acuerdo, "decisor");
+			
+			acuerdoDao.save(acuerdo);
+			
+			if(!Checks.esNulo(gestorDespachoDecisor) && !Checks.esNulo(gestorDespachoValidador) && !Checks.esNulo(gestorDespachoProponente) && usuarioLogadoEsDelTipoDespacho(gestorDespachoDecisor.getDespachoExterno().getTipoDespacho())){
+				
+				////Metemos a el usuario como validador en la GAA
+		        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
+		        try {
+					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoDecisor.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+		        ///Metemos al usuario como decisor en la GAA
+		        EXTSubtipoTarea subtipotareaRev = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_REVISION_ACUERDO_ACEPTADO));
+		        try {
+					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotareaRev.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoDecisor.getUsuario().getId(), gestorDespachoDecisor.getDespachoExterno().getId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				vigenteAcuerdo(acuerdo.getId());
+				
+			}else if(!Checks.esNulo(gestorDespachoDecisor) && !Checks.esNulo(gestorDespachoValidador) && !Checks.esNulo(gestorDespachoProponente) && usuarioLogadoEsDelTipoDespacho(gestorDespachoValidador.getDespachoExterno().getTipoDespacho())){
+				
+		        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
+		        try {
+					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoValidador.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				aceptarAcuerdo(acuerdo.getId());
+				
+			}else if(!Checks.esNulo(gestorDespachoProponente) && !Checks.esNulo(gestorDespachoValidador) && usuarioLogadoEsDelTipoDespacho(gestorDespachoProponente.getDespachoExterno().getTipoDespacho())){
+				
+		    	Calendar calendar = new GregorianCalendar();
+		    	calendar.add(Calendar.DAY_OF_MONTH, 15);
+
+		    	Long idJBPM = crearTarea(acuerdo.getAsunto().getId(), DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, "Aceptaci\u00F3n del acuerdo "+acuerdo.getId(), gestorDespachoValidador.getUsuario().getId(), true, SubtipoTarea.CODIGO_ACEPTACION_ACUERDO, calendar.getTime());
+
+		        acuerdo.setIdJBPM(idJBPM);	
+		        acuerdoDao.save(acuerdo);
+		        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
+		        try {
+					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoValidador.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		
+	}
+	
+	private void asignarUSDProponenteAlAcuerdo(Long idAcuerdo, Long idDespacho){
+		
+		Usuario user = usuarioManager.getUsuarioLogado();
+		EXTAcuerdo acuerdo = genericDao.get(EXTAcuerdo.class, genericDao.createFilter(FilterType.EQUALS, "id", idAcuerdo));
+		Asunto asunto = acuerdo.getAsunto();
+		
+		Order order = new Order(OrderType.ASC, "id");
+		List<EXTGestorAdicionalAsunto> gestoresAsunto =  new ArrayList<EXTGestorAdicionalAsunto>();
+		
+		///Obtenemos el tipo de gestor
+		EXTDDTipoGestor tipoGestorProponente = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));
+		
+		///Obtenemos el despacho externo
+		GestorDespacho gestorDespacho = null;
+		if(!Checks.esNulo(idDespacho)){
+			List<GestorDespacho> gestdesp = genericDao.getList(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idDespacho),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false));
+			if(!Checks.estaVacio(gestdesp)){
+				gestorDespacho = gestdesp.get(0);
+			}
+		}else{
+			Order orderGestDes = new Order(OrderType.ASC, "id");
+			List<GestorDespacho> gestdesp = genericDao.getListOrdered(GestorDespacho.class,orderGestDes, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false));
+	        
+			if(gestdesp.size()==1){
+				gestorDespacho = gestdesp.get(0);
+			}else if(gestdesp.size()>1){
+				gestorDespacho = gestdesp.get(0);
+				for(GestorDespacho gdp : gestdesp){
+					if(gdp.getGestorPorDefecto()){
+						gestorDespacho = gdp;
+						break;
+					}
+				}
+			}
+		}
+
+		
+        try {
+        	///Asignamos el gestor al asunto
+			if(!Checks.esNulo(gestorDespacho)){
+				proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(tipoGestorProponente.getId(),asunto.getId(),user.getId(), gestorDespacho.getDespachoExterno().getId());
+				gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", tipoGestorProponente.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		
+		EXTGestorAdicionalAsunto gestorAsunto = null;
+		if(gestoresAsunto.size()==1){
+			gestorAsunto = gestoresAsunto.get(0);
+		}else if(gestoresAsunto.size()>1){
+			gestorAsunto = gestoresAsunto.get(0);
+			for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
+				if(gaa.getGestor().getGestorPorDefecto()){
+					gestorAsunto = gaa;
+					break;
+				}
+			}
+		}
+
+		if(gestorAsunto != null){
+			acuerdo.setGestorDespacho(gestorAsunto.getGestor());
+		}
+
+		acuerdoDao.saveOrUpdate(acuerdo);
 	}
 	
 }

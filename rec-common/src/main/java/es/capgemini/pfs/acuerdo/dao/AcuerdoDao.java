@@ -6,6 +6,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
@@ -67,4 +68,5 @@ public interface AcuerdoDao extends AbstractDao<Acuerdo, Long> {
 	
 	List<AcuerdoConfigAsuntoUsers> getProponentesAcuerdo();
     
+	public List<DespachoExterno> getDespachosProponentesValidos(Usuario usuLogado);
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
+import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDMotivoRechazoAcuerdo;
@@ -31,6 +32,7 @@ import es.capgemini.pfs.contrato.model.DDSituacionGestion;
 import es.capgemini.pfs.contrato.model.DDTipoProducto;
 import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -78,6 +80,8 @@ public class MEJAcuerdoController {
 	static final String OK_KO_RESPUESTA_JSON = "plugin/coreextension/OkRespuestaJSON";
 	static final String JSON_LIST_DD_CONDICIONES_REMUNERACION ="plugin/mejoras/acuerdos/condicionesRemuneracionJSON";
 	static final String JSON_LIST_DD_SITUACION_GESTION ="plugin/mejoras/acuerdos/situacionGestionJSON";
+	private static final String TIPO_DESPACHO_JSON = "plugin/config/usuarios/tipoDespachoJSON";
+	static final String JSP_SELECT_DESPACHO_PROPONER_ACUERDO = "plugin/mejoras/acuerdos/selectDesPropAcuerdo";
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -93,6 +97,9 @@ public class MEJAcuerdoController {
 	@Autowired MEJAcuerdoApi mejAcuerdoApi;
 	
 	@Autowired private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private AcuerdoDao acuerdoDao;
 	
     /**
      * Pasa un acuerdo a estado Rechazado con motivo.
@@ -854,7 +861,7 @@ public class MEJAcuerdoController {
 		
     	GestorDespacho gestorDespacho = null;
     	Order order = new Order(OrderType.ASC, "id");
-    	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()));
+    	List<GestorDespacho> usuariosDespacho =  genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false));
     	
     	if(usuariosDespacho.size()==1){
 			
@@ -890,6 +897,7 @@ public class MEJAcuerdoController {
 		return OK_KO_RESPUESTA_JSON;
 	}
 	
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListDDCondicionesRemuneracionData(ModelMap model){
@@ -905,5 +913,27 @@ public class MEJAcuerdoController {
 		model.put("data", list);
 		return JSON_LIST_DD_SITUACION_GESTION;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getDespachosProponentesValidos(ModelMap model) {
+		Usuario user = usuarioManager.getUsuarioLogado();
+		List<DespachoExterno> despachos = acuerdoDao.getDespachosProponentesValidos(user);
+		model.put("listadoDespachos", despachos);
+		return TIPO_DESPACHO_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String abreSelectDespachoProponente(@RequestParam(value = "idAcuerdo", required = true) Long idAcuerdo, ModelMap map) {
+				
+		Usuario user = usuarioManager.getUsuarioLogado();
+		List<DespachoExterno> despachos = acuerdoDao.getDespachosProponentesValidos(user);
+		map.put("listadoDespachos", despachos);
+		map.put("idAcuerdo", idAcuerdo);
+		
+		return JSP_SELECT_DESPACHO_PROPONER_ACUERDO;
+	}
+	
 
 }

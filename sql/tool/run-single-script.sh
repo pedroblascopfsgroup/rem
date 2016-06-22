@@ -253,6 +253,7 @@ while read -r line
     do
         grep -i "$line" $1 > $BASEDIR/tmp/ocurrences.log
         if [ $? -eq 0 ]; then
+            echo ""
             echo "******** WARNING - Incluye "$line
             while read -r ocurrence
                 do

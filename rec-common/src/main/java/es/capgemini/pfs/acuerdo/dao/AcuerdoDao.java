@@ -64,7 +64,7 @@ public interface AcuerdoDao extends AbstractDao<Acuerdo, Long> {
      */
     List<DDEntidadAcuerdo> getListEntidadAcuerdo();
 
-	Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario);
+	Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario, List<Long> idGrpsUsuario);
 	
 	List<AcuerdoConfigAsuntoUsers> getProponentesAcuerdo();
     

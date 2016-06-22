@@ -285,6 +285,7 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 
 	public void setBpmInputId(Long bpmInputId) {
 		this.bpmInputId = bpmInputId;
+	}
 	
 	public Long getIdAdjuntoBlob() {
 		return idAdjuntoBlob;

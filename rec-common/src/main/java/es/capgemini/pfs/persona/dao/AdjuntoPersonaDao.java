@@ -13,4 +13,7 @@ public interface AdjuntoPersonaDao extends AbstractDao<AdjuntoPersona, Long> {
 	
 	public List<AdjuntoPersona> getAdjuntoPersonaByIdDocumento(List<Integer> idsDocumento);
 
+	List<AdjuntoPersona> getAdjuntoPersonaByIdNombreTipoDocumento(
+			Long idPersona, String nombre, String tipoDocumento);
+
 }

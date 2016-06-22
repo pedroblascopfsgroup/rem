@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL ALBERT PEREZ 
---## FECHA_CREACION=20160429
+--## FECHA_CREACION=20160430
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HR-2196
@@ -41,11 +41,13 @@ BEGIN
   V_BORRAR2 := 'DROP INDEX '||V_ESQUEMA_MASTER||'.'||KEY_INDICE;
   
   IF
-    V_EXISTE = 1
+    V_EXISTE = 1 AND V_EXISTE2 = 1
     THEN
-      DBMS_OUTPUT.PUT_LINE('Existe la clave única. Se borrará y creará de nuevo.');
+      DBMS_OUTPUT.PUT_LINE('Existe la clave única y el índice asociado. Se borrarán y crearán de nuevo.');
+      EXECUTE IMMEDIATE V_BORRAR2;
+      DBMS_OUTPUT.PUT_LINE('Paso1.1');
       EXECUTE IMMEDIATE V_BORRAR;
-      DBMS_OUTPUT.PUT_LINE('Paso1');
+      DBMS_OUTPUT.PUT_LINE('Paso1.2');
       EXECUTE IMMEDIATE V_MSQL;
       DBMS_OUTPUT.PUT_LINE('Paso2');
     ELSE IF
@@ -56,11 +58,20 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Paso3');
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('Paso4');
-      ELSE
-        DBMS_OUTPUT.PUT_LINE('No existe la clave única. Se creará.');
-        EXECUTE IMMEDIATE V_MSQL;
-        DBMS_OUTPUT.PUT_LINE('Paso5');
-    END IF;
+      ELSE IF
+		V_EXISTE = 1 AND V_EXISTE2 = 0
+		THEN
+			DBMS_OUTPUT.PUT_LINE('Existe la clave única. Se borrará y creará de nuevo.');
+			EXECUTE IMMEDIATE V_BORRAR;
+			DBMS_OUTPUT.PUT_LINE('Paso5');
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('Paso6');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('No existe la clave única. Se creará.');
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('Paso7');
+		END IF;
+	END IF;
   END IF;
 
 EXCEPTION

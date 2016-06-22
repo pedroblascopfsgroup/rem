@@ -271,10 +271,12 @@
 					var respuesta = Ext.util.JSON.decode(result.responseText);
 					
 					if(respuesta.listadoDespachos.length == 0){
+						
 						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
 	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
-					}else if(respuesta.listadoDespachos.length == 1){
-					<%-- 
+	                    	       
+					}else if(respuesta.listadoDespachos.length == 1){ 
+						
 						deshabilitarBotones();
 			      	    page.webflow({
 			      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
@@ -292,13 +294,13 @@
 							}	
 				      	});
 						habilitarBotones();
-					--%>
+						
 					}else if(respuesta.listadoDespachos.length > 1){
 					      
 		      	       var w = app.openWindow({
 				          flow : 'mejacuerdo/abreSelectDespachoProponente'
 				          ,closable:false
-				          ,width : 750
+				          ,width : 350
 				          ,title : '<s:message code="mejoras.plugin.acuerdos.proponer.despacho.title" text="**Role con el que propone el acuerdo" />'
 				          ,params : {idAcuerdo:acuerdoSeleccionado}
 				       });
@@ -310,8 +312,6 @@
 			      	   w.on(app.event.CANCEL, function(){ w.close(); });
 	     	
 					   }
-					
-					debugger;
 					<%--
 					if(Boolean(respuesta.okko)){
 						deshabilitarBotones();

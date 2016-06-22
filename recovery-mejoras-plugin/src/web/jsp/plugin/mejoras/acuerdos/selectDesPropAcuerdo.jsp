@@ -23,7 +23,7 @@
 		,handler : function(){	
 				if(validarForm()){
 			      	    page.webflow({
-			      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
+			      			flow:"acuerdo/proponer"
 			      			,params:{
 			      				idAcuerdo:idAcuerdo, idDespacho:despachoProponente.value
 			   				}

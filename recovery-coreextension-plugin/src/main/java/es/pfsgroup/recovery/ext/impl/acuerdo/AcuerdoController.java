@@ -22,6 +22,7 @@ import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
 import es.capgemini.pfs.acuerdo.model.DDSolicitante;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
+import es.capgemini.pfs.core.api.acuerdo.AcuerdoApi;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
@@ -36,6 +37,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoApi;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
+import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 
 @Controller
 public class AcuerdoController {
@@ -63,6 +65,9 @@ public class AcuerdoController {
 	
 	@Autowired
 	private MEJAcuerdoApi mejAcuerdoApi;
+	
+	@Autowired
+	private AcuerdoApi acuerdoApi;
 	
 	@Resource
 	private MessageService messageService;
@@ -119,6 +124,13 @@ public class AcuerdoController {
 			model.put("respuesta", messageService.getMessage("plugin.mejoras.acuerdos.crear.usuario.no.tiene.despacho",null));
 		}
 		return JSON_RESPUESTA;
+	}
+	
+
+	@RequestMapping
+    public String proponer(Long idAcuerdo, Long idDespacho, ModelMap model) throws EXTCrearTareaException {
+		mejAcuerdoApi.proponerAcuerdoConDespacho(idAcuerdo, idDespacho);
+		return "default";
 	}
 	
 }

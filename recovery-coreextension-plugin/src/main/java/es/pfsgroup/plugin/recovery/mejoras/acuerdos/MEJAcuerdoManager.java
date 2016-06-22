@@ -336,62 +336,6 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 			Asunto asunto = (Asunto) executor.execute(ExternaBusinessOperation.BO_ASU_MGR_GET, dto.getIdAsunto());
 			
 			acuerdo.setAsunto(asunto);
-			/*
-			Order order = new Order(OrderType.ASC, "id");
-			List<EXTGestorAdicionalAsunto> gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false) );
-			
-			if(gestoresAsunto.size()==0){
-				///No esta asignado el usuario como proponente al asunto
-		        
-				///Obtenemos el tipo de gestor
-				EXTDDTipoGestor tipoGestorProponente = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));
-				
-				///Obtenemos el despacho externo
-				Order orderGestDes = new Order(OrderType.ASC, "id");
-				List<GestorDespacho> gestdesp = genericDao.getListOrdered(GestorDespacho.class,orderGestDes, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false));
-		        
-				GestorDespacho gestorDespacho = null;
-				if(gestdesp.size()==1){
-					gestorDespacho = gestdesp.get(0);
-				}else if(gestdesp.size()>1){
-					gestorDespacho = gestdesp.get(0);
-					for(GestorDespacho gdp : gestdesp){
-						if(gdp.getGestorPorDefecto()){
-							gestorDespacho = gdp;
-							break;
-						}
-					}
-				}
-				
-		        try {
-		        	///Asignamos el gestor al asunto
-					if(gestdesp!=null && gestdesp.size()>0){
-						proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(tipoGestorProponente.getId(),asunto.getId(),user.getId(), gestorDespacho.getDespachoExterno().getId());
-						gestoresAsunto =  genericDao.getListOrdered(EXTGestorAdicionalAsunto.class,order, genericDao.createFilter(FilterType.EQUALS, "gestor.usuario.id", user.getId()), genericDao.createFilter(FilterType.EQUALS, "asunto.id",asunto.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false));
-					}else{
-						return null;
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			
-			EXTGestorAdicionalAsunto gestorAsunto = null;
-			if(gestoresAsunto.size()==1){
-				gestorAsunto = gestoresAsunto.get(0);
-			}else if(gestoresAsunto.size()>1){
-				gestorAsunto = gestoresAsunto.get(0);
-				for(EXTGestorAdicionalAsunto gaa : gestoresAsunto){
-					if(gaa.getGestor().getGestorPorDefecto()){
-						gestorAsunto = gaa;
-						break;
-					}
-				}
-			}
-
-			if(gestorAsunto != null){
-				acuerdo.setGestorDespacho(gestorAsunto.getGestor());
-			}*/
 
 		} else {
 			Expediente exp = genericDao.get(Expediente.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdExpediente()));

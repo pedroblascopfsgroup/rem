@@ -11,7 +11,7 @@
 (function(page,entidad){
 
 	var colorFondo = 'background-color: #473729;';
-	var winWidth = 920;
+	var winWidth = 1190;
 	var winWidthAgregarBien= 950;
 	var idSubasta;
 	var validacionCDD;

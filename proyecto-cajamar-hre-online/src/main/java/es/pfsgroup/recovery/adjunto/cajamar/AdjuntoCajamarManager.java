@@ -233,6 +233,9 @@ public class AdjuntoCajamarManager {
 		final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(prcId, procedimiento.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
 		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+		for(AdjuntoGridDto dto : listDto) {
+			dto.setIdAdjuntoBlob(1L);
+		}
 		return adjuntoAssembler.listAdjuntoGridDtoTOListAdjuntoDto(listDto,borrarOtrosUsu);	
 	}
 
@@ -249,7 +252,7 @@ public class AdjuntoCajamarManager {
 		List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 		
 		for(Persona persona : expedienteManagerApi.findPersonasByExpedienteId(id)){
-			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);	
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 			}else{
@@ -264,7 +267,7 @@ public class AdjuntoCajamarManager {
 		List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 		
 		for(Contrato contrato : expedienteManagerApi.findContratosRiesgoExpediente(id)){
-			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 			}else{

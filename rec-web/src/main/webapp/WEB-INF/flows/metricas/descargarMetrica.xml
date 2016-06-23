@@ -6,7 +6,7 @@
 
 	<input name="codigoTipoPersona" type="java.lang.String" />
 
-    <end-state id="file" view="file">
+    <end-state id="file" view="filedownload">
 		<on-entry>
 			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
 			<evaluate expression="executor.execute('metricaManager.descargarMetrica', dto)" result="flowScope.fileItem" />

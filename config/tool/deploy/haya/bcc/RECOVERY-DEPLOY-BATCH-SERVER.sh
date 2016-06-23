@@ -9,22 +9,16 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-if [[ ! -f config/$1/devon.properties ]] ; then
+if [[ ! -f config/$1/config.ini ]] ; then
     echo ""
-    echo "ERROR: no existe el fichero config/$1/devon.properties"
+    echo "ERROR: no existe el fichero config/$1/config.ini"
     exit 1
 fi
 
 LOCAL_PATH=`pwd`
 BASE_DIR=/recovery/haya/batch-server
 
-cp config/$1/devon.properties $BASE_DIR/
 cp config/$1/config.ini $BASE_DIR/bcc/programas/etl/config/
-unzip zip/batch*.zip
-rm -rf $BASE_DIR/batch/*
-cp -r batch/* $BASE_DIR/batch/
-chmod -R a+rwx $BASE_DIR/batch/*
-cd $LOCAL_PATH
 rm -f $BASE_DIR/bcc/shells/*.sh
 cp config/$1/setBatchEnv.sh $BASE_DIR/bcc/shells/
 cp scripts/shells/* $BASE_DIR/bcc/shells/
@@ -50,7 +44,3 @@ do
     chmod -fR a+rwx ${directory}
 done
 rm *.zip
-cd $LOCAL_PATH
-cp scripts/batch/*.sh $BASE_DIR/
-chmod a+rx $BASE_DIR/*.sh
-cp jar/batch-shell*.jar $BASE_DIR/bcc/shells/batch-shell.jar

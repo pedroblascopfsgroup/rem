@@ -30,7 +30,10 @@
 					<json:property name="tipoFichero" value="${dto.adjunto.tipoFichero.descripcion}" />
 				</c:if>
 			</c:if>
-			<c:if test="${dto.adjunto.adjunto!=null}">
+			<c:if test="${dto.idAdjuntoBlob!=null}">
+				<json:property name="idAdjunto" value="${dto.idAdjuntoBlob}" />
+			</c:if>
+			<c:if test="${dto.idAdjuntoBlob == null}">
 				<json:property name="idAdjunto" value="${dto.adjunto.adjunto.id}" />
 			</c:if>
 			<json:property name="prcId" value="${dto.adjunto.procedimiento.id}" />

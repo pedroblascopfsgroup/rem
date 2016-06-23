@@ -31,7 +31,7 @@ public class PrecontenciosoBPMConstants {
 	public static final String PCO_ResolverIncidenciaExpCONC = "PCO_ResolverIncidenciaExpCONC";
 	public static final String PCO_Campo_ProcPropuesto = "procPropuesto";
 	public static final String PCO_CerrarWorkflow = "PCO_CerrarWorkflow";
-	public static final String PCO_ValidarAsignacion= "PCO_ValidarAsignacion";
+	public static final String PCO_BPMTramiteEnvioDemanda= "PCO_BPMTramiteEnvioDemanda";
 
 	public static final String PCO_PRETURNADO = "PT";
 	public static final String PCO_PREPARACION = "PR";

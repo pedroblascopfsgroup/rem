@@ -109,7 +109,7 @@
    			username: usernameSel
    		});
    		var noEstaIncluido = true;
-   		debugger;
+   		
    		for(var i=0; i< listadocodigoUsuarios.length; i++) {
    			if(listadocodigoUsuarios[i] == codUsuarioSel) {
    				noEstaIncluido=false;

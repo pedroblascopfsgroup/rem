@@ -2323,13 +2323,13 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 284 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN DESFAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                      ]);
+	                       ,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_comboResultado","fieldLabel":"Resultado",filtrar:true,allowBlank:false,"autoload":true,readOnly:true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ]);
 	
 	//id: 285 : PROCEDIMIENTO VERBAL DESDE MONITORIO: REGISTRAR RESOLUCIÓN FAVORABLE
 	this.arrayCampos.push([
 	                       	{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
-	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"name":"d_comboResultado","fieldLabel":"Resultado",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       	,{"xtype":'combo',"store":this.storeDDFavorable,"value":"02","name":"d_comboResultado","fieldLabel":"Resultado",filtrar:true,allowBlank:false,"autoload":true,readOnly:true ,mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
 	                      ]);
 	
 	//id: 286 : PROCEDIMIENTO VERBAL DESDE MONITORIO: RESOLUCIÓN FIRME

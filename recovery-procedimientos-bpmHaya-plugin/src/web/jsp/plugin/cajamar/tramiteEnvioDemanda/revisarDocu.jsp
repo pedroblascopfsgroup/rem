@@ -52,6 +52,8 @@ var bottomBar = [];
 
 var campoImporte = items[1 + muestraBotonGuardar];
 campoImporte.readOnly = true;
+var comboDocuCompleta = items[2 + muestraBotonGuardar];
+comboDocuCompleta.allowBlank = false;
 
 
 </c:if>

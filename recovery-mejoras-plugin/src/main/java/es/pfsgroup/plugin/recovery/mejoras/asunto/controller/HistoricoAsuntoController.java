@@ -16,10 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
-
-
-
-
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
@@ -41,6 +37,7 @@ import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJHistoricoAsu
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJHistoricoAsuntoViewDtoComparator;
 import es.pfsgroup.plugin.recovery.mejoras.asunto.controller.dto.MEJHistoricoAsuntoViewDtoComparator.DateSortOrder;
 import es.pfsgroup.plugin.recovery.mejoras.tareas.MEJTareaApi;
+import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
 @Controller
 public class HistoricoAsuntoController {
@@ -63,6 +60,9 @@ public class HistoricoAsuntoController {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private EXTGrupoUsuariosDao gruposUsuarioDao;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -89,6 +89,7 @@ public class HistoricoAsuntoController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private String getDefaultOpenHistoryView(ModelMap model, WebRequest request) {
 
 		EXTDtoGenerarTarea dto = new EXTDtoGenerarTarea();
@@ -118,6 +119,9 @@ public class HistoricoAsuntoController {
 		model.put("situacion", request.getParameter("situacion"));
 		model.put("isConsulta", request.getParameter("isConsulta"));
 		model.put("fecha", request.getParameter("fecha"));
+		model.put("tarea", request.getParameter("tarea"));
+		model.put("idProrroga", request.getParameter("idProrroga"));
+		model.put("idProcedimiento", request.getParameter("idProcedimiento"));
 
 		return DEFAULT_ABRE_DETALLE_JSP;
 	}
@@ -131,6 +135,7 @@ public class HistoricoAsuntoController {
         return false;
     }
 
+	@SuppressWarnings("unused")
 	@RequestMapping
 	public String getHistoricoAgregadoAsunto(@RequestParam(value = "id", required = true) Long id, int limit, int start, String sort, ModelMap map) {
 
@@ -169,19 +174,23 @@ public class HistoricoAsuntoController {
 					mhaw.setDestinatarioTarea(tarea.getDestinatarioTarea().getUsername());
 				}
 				if (tienePermiso){
-
 					if("C".equals(mhaw.getGroup()) || "D".equals(mhaw.getGroup())){
-						if(mhaw.getIdTarea()!=null){
-						tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
-							if (user.equals(tarea.getDestinatarioTarea())){
-							historicos.add(mhaw);
-							} else {
-								size--;
+						List<Long> idsUsuariosGrupo = gruposUsuarioDao.getIdsUsuariosGrupoUsuario(user);
+						List<Usuario> usuarios = new ArrayList<Usuario>();
+						for (Long idUsuario : idsUsuariosGrupo){
+							usuarios.add(genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuario)));
+						}
+						for (Usuario usuario : usuarios){
+							if(mhaw.getIdTarea()!=null){
+								tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
+									if (usuario.equals(tarea.getDestinatarioTarea()) || usuario.getUsername().equals(tarea.getEmisor()) || usuario.getNombre().equals(tarea.getEmisor())){
+										historicos.add(mhaw);
+										break;
+									} 	
+							} else if (usuario.getUsername().equals(mhaw.getNombreUsuario()) || usuario.getNombre().equals(mhaw.getNombreUsuario())){
+								historicos.add(mhaw);
+								break;
 							}
-						} else if (user.getUsername().equals(mhaw.getNombreUsuario()) || user.getNombre().equals(mhaw.getNombreUsuario())){
-							historicos.add(mhaw);
-						} else {
-							size--;
 						}
 					} else {
 						historicos.add(mhaw);
@@ -190,6 +199,7 @@ public class HistoricoAsuntoController {
 					historicos.add(mhaw);
 				}
 			}
+			size = historicos.size();
 			if (historicos.size() >= start + limit) {
 				historicos = historicos.subList(start, start + limit);
 			}

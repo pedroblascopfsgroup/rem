@@ -25,7 +25,7 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 	@Override
 	public List<Usuario> getGestoresByDespacho(long idTipoDespacho) {
 				
-		return getGestoresByDespacho(idTipoDespacho, true);		
+		return getGestoresByDespacho(idTipoDespacho, false);		
 	}
 	
 	/* (non-Javadoc)

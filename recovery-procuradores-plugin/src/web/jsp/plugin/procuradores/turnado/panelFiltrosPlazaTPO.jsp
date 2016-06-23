@@ -207,7 +207,7 @@
                   xtype:'textfield',                 
                   name: 'descripcion',
                   id: 'descripcionFilterPlazaGrid',
-                  width: 50,
+                  width: 130,
                   style: 'margin-left:3px;',
                   enableKeyEvents: true,
                   listeners:{
@@ -316,7 +316,7 @@
                   xtype:'textfield',                 
                   name: 'descripcion',
                   id: 'descripcionFilterTPOGrid',
-                  width: 50,
+                  width: 130,
                   style: 'margin-left:3px;',
                   enableKeyEvents: true,
                   listeners:{

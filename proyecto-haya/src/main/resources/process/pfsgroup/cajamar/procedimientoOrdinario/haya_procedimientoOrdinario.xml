@@ -233,11 +233,17 @@
 	<decision name="H024_InterposicionDemandaDecision" expression="#{H024_InterposicionDemandaDecision}">
 		<transition to="H024_ConfirmarAdmision" name="sinProvision"></transition>
 		<transition to="ForkInterposicionDemanda" name="conProvision"></transition>
+		<transition to="ForkInterposicionDemandaAnti" name="conAnticipo"></transition>
 	</decision>
 
 	<fork name="ForkInterposicionDemanda">
 		<transition to="H024_ConfirmarAdmision" name="admision"></transition>
 		<transition to="H024_BPMProvisionFondos" name="provision"></transition>
+	</fork>
+
+	<fork name="ForkInterposicionDemandaAnti">
+		<transition to="H024_ConfirmarAdmision" name="admision"></transition>
+		<transition to="H024_BPMAnticipoFondos" name="anticipo"></transition>
 	</fork>
 
 	<state name="H024_BPMProvisionFondos">
@@ -260,6 +266,27 @@
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="Fin" name="hcj_provisionFondos"></transition>
 		<transition to="H024_BPMProvisionFondos" name="activarAlerta"></transition>
+	</state>
+
+	<state name="H024_BPMAnticipoFondos">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>genericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
 	</state>
 
 

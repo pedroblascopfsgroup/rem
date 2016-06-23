@@ -1055,7 +1055,7 @@
 	tareasGrid.on('rowdblclick', function(grid, rowIndex, e) {
 		//agregar funcionalidad....
 		var rec = grid.getStore().getAt(rowIndex);
-		
+		debugger;
 		var codigoSubtipoTarea = rec.get('codigoSubtipoTarea');
 		var categoriaTarea = rec.get('categoriaTarea');
 		
@@ -1286,6 +1286,8 @@
 			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_GESTOR:
 			case app.subtipoTarea.CODIGO_PROCEDIMIENTO_EXTERNO_SUPERVISOR:
 			case app.subtipoTarea.CODIGO_SOLICITAR_PRORROGA_PROCEDIMIENTO:
+				app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'),'historico');
+				break;
 			case app.subtipoTarea.CODIGO_TAREA_GESTOR_CONFECCION_EXPTE:
 			case app.subtipoTarea.CODIGO_TAREA_SUPERVISOR_CONFECCION_EXPTE:
 			case 'TCGA':
@@ -1478,6 +1480,7 @@
 			
 			// Por default abre una notificacion standard
 			default:
+				debugger;
 				//Seleccionarmos por tipo de Categoria Tarea
 				switch(categoriaTarea) {
 				
@@ -1510,6 +1513,10 @@
 								}
 							});
 						}
+						break;
+					case app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO:
+					debugger;
+						app.abreProcedimientoTab(rec.get('idEntidad'), rec.get('descripcion'),'historico');
 						break;
 
 					default:

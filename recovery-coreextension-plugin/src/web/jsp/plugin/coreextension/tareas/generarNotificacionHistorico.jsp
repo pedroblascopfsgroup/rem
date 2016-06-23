@@ -13,7 +13,76 @@
 	<c:if test="${isConsulta != null && isConsulta}">
 		isConsulta = true;
 	</c:if>
+	
+	var fechaVencimiento='';
+	var motivo= '';
+	var fechaPropuesta='';
+	var destareaOri='';
+	var tarea = '${tarea}';
+	var idProrroga = '${idProrroga}';
+	var descriTareaOri= '${data.descripcion}';
 
+	
+	
+	//textfield que va a contener la fecha de creacion de la entidad
+	var txtFechaVencimiento = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.fechavencimiento" text="**fecha Vencimiento" />', fechaVencimiento);
+	var motivoSolicitud=app.creaLabel('<s:message code="decisionprorroga.motivo" text="**motivo  prorroga" />',motivo);
+	var fechaPropuestaLabel=app.creaLabel('<s:message code="decisionprorroga.fecha" text="**Nueva Fecha propuesta" />',fechaPropuesta);
+	var descripcionTareaOriginal=app.creaLabel('<s:message code="comunicaciones.generarnotificacion.descripcionentidad" text="**Descripcion" />',descriTareaOri);
+	//textfield que va a contener la descripcion de la entidad
+
+	var detalleTareaOriginal = new Ext.form.TextArea({
+		width:300
+		,fieldLabel:'<s:message code="decisionprorroga.detalle" text="**detalle" />'
+		,labelStyle:"font-weight:bolder"
+		,readOnly:true
+		,value: '<s:message text="${destareaOri}" javaScriptEscape="true" />'
+	});
+	
+	if((tarea=='Petición de prorroga' || tarea=='Respuesta de prorroga') && idProrroga!='' && idProrroga!=null){
+		
+		Ext.Ajax.request({
+			    	url: page.resolveUrl('bpm/buscarDatosProrroga')
+			        ,params: {id: idProrroga}
+			        ,success: function(result, request){ 
+			         	var r2 = Ext.util.JSON.decode(result.responseText);
+			         	if(r2.datos.fechaVencimientoOriginal!=''){
+			         		var fechaVencimientoTareaOriginal= r2.datos.fechaVencimientoOriginal.split(' ')[0];
+			            	f2= fechaVencimientoTareaOriginal.split('-');
+			            	var fVencimientoFinal= f2[2]+"/"+f2[1]+"/"+f2[0];
+			         	}
+			         	else{
+			         		var fVencimientoFinal='';
+			         	}
+			         	
+			            
+			            var fechaPropuesta= r2.datos.fechaPropuesta;
+			            var motivo= r2.datos.motivo;
+			            var destareaOri= r2.datos.destareaOri;
+			            var resolucion= r2.datos.respuestaProrroga;
+						var observacionesRespuesta= r2.datos.observacionesRespuesta;
+						if(resolucion==null || resolucion==''){
+							resolucion= 'Pendiente';
+						}
+			            
+			            
+			            txtFechaVencimiento.setValue(fVencimientoFinal);
+			            motivoSolicitud.setValue(r2.datos.motivo);
+			            fechaPropuestaLabel.setValue(r2.datos.fechaPropuesta);
+			            detalleTareaOriginal.setValue(r2.datos.destareaOri);
+			            aprobada.setValue(resolucion);
+			            descrRespuestaProrroga.setValue(observacionesRespuesta);
+			            
+			            
+			                    	
+					}
+	   			});	
+		
+	}
+	
+
+	
+	
 	
 	var titulolabeltareaOriginal = new Ext.form.Label({
 	    	text:'<s:message code="ext.comunicaciones.generarnotificacion.textoComunicacion" text="**Breve descripcion" />'
@@ -91,9 +160,13 @@
 	if(tipoEntidad=='<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE" />'){
 		strTipoEntidad="Expediente";
 	}
+	if(tipoEntidad=='<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO" />'){
+		strTipoEntidad="Procedimiento";
+	}
+	
 	
 	//textfield que va a contener el codigo de la entidad
-	var txtEntidad = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.codigoentidad" text="**Codigo" />','${data.idEntidad}');
+	var txtEntidad = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.codigoentidad" text="**Codigo" />','${idProcedimiento}');
 
 	//textfield que va a contener la situacion de la entidad
 	var txtSituacion = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.situacion" text="**Situacion" />'	,descEstado);
@@ -102,11 +175,63 @@
 	var txtFechaCreacion = app.creaLabel('<s:message code="comunicaciones.generarnotificacion.fechacreacion" text="**fecha Creacion" />', fechaCrear);
 	
 	
+	<c:if test="${(tarea=='Petición de prorroga' || tarea=='Respuesta de prorroga')}">
+
+		
+		var descrRespuestaProrroga = new Ext.form.TextArea({
+			width:300
+			,fieldLabel:'<s:message code="decisionprorroga.detalle" text="**detalle" />'
+			,labelStyle:"font-weight:bolder"
+			,readOnly:true
+			,value: ''
+		});
+		
+		var aprobada=app.creaLabel('<s:message code="decisionprorroga.resolucion" text="**Resolucion" />','');		
+		
+		var fieldSetResolucion = new Ext.form.FieldSet({
+			title:'<s:message code="decisionprorroga.respuesta" text="**Respuesta" />'
+			,items:[aprobada,descrRespuestaProrroga]
+			,autoHeight:true
+			,autoWidth:true
+		});
+		
+		
+		
+	</c:if>
+	
+	var panelDatosEntidadProrroga = new Ext.form.FieldSet({
+		title:'<s:message code="comunicaciones.generarnotificacion.datosentidad" text="**Datos del" />'+" "+ strTipoEntidad
+		,items:[txtEntidad,descripcionTareaOriginal,txtSituacion,txtFechaVencimiento]
+		,autoHeight:true
+		,autoWidth:true
+	});
+	
+	var panelDatosProrroga = new Ext.form.FieldSet({
+		title:'<s:message code="decisionprorroga.datosprorroga" text="**Solicitud de prorroga" />'
+		,items:[motivoSolicitud,fechaPropuestaLabel,detalleTareaOriginal]
+		,autoHeight:true
+		,autoWidth:true
+	});
+	
 		
 	var panelDatosEntidad = new Ext.form.FieldSet({
 		title:'<s:message code="comunicaciones.generarnotificacion.datosentidad" text="**Datos del" />'+" "+ strTipoEntidad
 		,width:590
-		,items:app.creaFieldSet([txtEntidad,txtSituacion,txtFechaCreacion])
+		,items:app.creaFieldSet([
+			
+			<c:if test="${(tarea=='Petición de prorroga' || tarea=='Respuesta de prorroga')}">
+				txtEntidad
+				,descripcionTareaOriginal
+				,txtSituacion
+				,txtFechaVencimiento
+			</c:if>
+			<c:if test="${(tarea!='Petición de prorroga' && tarea!='Respuesta de prorroga')}">
+				txtEntidad
+				,txtSituacion
+				,txtFechaCreacion
+			</c:if>
+
+		])
 		,autoHeight:true
 	});
 	
@@ -138,12 +263,18 @@
 		,items : [
 			{ items : [
 				panelDatosEntidad
-				<c:if test="${muestraPreguntaOrigen}">
-				,tituloPreguntaOrigen
-				,labelPreguntaOrigen
+				<c:if test="${(tarea=='Petición de prorroga' || tarea=='Respuesta de prorroga')}">
+					,panelDatosProrroga
+					,fieldSetResolucion
 				</c:if>
-				,titulolabeltareaOriginal
-				,labeltareaOriginal
+				<c:if test="${muestraPreguntaOrigen}">
+					,tituloPreguntaOrigen
+					,labelPreguntaOrigen
+				</c:if>
+				<c:if test="${(tarea!='Petición de prorroga' && tarea!='Respuesta de prorroga')}">
+					,titulolabeltareaOriginal
+					,labeltareaOriginal
+				</c:if>
 				<c:if test="${puedeResponder}">
 					,titulodescripcion
 					,descripcion

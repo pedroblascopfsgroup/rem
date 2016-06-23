@@ -48,7 +48,7 @@
 	comboTiposGestor.on('select', function(){
 	
 		comboDespachos.reset();
-		optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': true}); 
+		optionsDespachoStore.webflow({'idTipoGestor': comboTiposGestor.getValue(), 'incluirBorrados': false}); 
 		
 		comboGestor.reset();
 		comboGestor.setValue('');

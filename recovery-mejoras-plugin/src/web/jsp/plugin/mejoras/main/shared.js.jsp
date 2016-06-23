@@ -202,6 +202,7 @@ app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:c
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_EXP" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_PER" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -970,9 +971,8 @@ app.openBrowserWindow = function(flow, params){
 	var urlData="";
 
 	params = params || {};
-	
 	for(var x in params){
-		if (params.hasOwnProperty(x)) {
+		if (params[x] != undefined && params.hasOwnProperty(x) && (typeof params[x] != "function")) {
 			urlData +='&'+x+'='+params[x];
 		}
 	}

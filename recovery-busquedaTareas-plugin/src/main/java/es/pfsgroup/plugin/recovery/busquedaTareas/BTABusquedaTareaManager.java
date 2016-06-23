@@ -49,6 +49,7 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.busquedaTareas.dao.BTASubtipoTareaDao;
 import es.pfsgroup.plugin.recovery.busquedaTareas.dao.BTATareaNotificacionDao;
@@ -608,14 +609,37 @@ public class BTABusquedaTareaManager {
 
     private void inicializaPoolExportacionExcel() {
         String fileNameExtension = ".xls";
-        exportarExcelPool = new ExportarTareasBean[Integer.parseInt(appProperties.getProperty(EXPORTAR_BTA_LIMITE_SIMULTANEO))];
+        exportarExcelPool = new ExportarTareasBean[Integer.parseInt(getLimiteTareasExportar(EXPORTAR_BTA_LIMITE_SIMULTANEO))];
         ExportarTareasBean bean = null;
         for (int i = 0; i < exportarExcelPool.length; i++) {
             bean = new ExportarTareasBean();
             bean.setEnUso(false);
-            bean.setRuta(appProperties.getProperty(EXPORTAR_BTA_RUTA) + i + fileNameExtension);
+            bean.setRuta(getLimiteTareasExportar(EXPORTAR_BTA_RUTA) + i + fileNameExtension);
             exportarExcelPool[i] = bean;
         }
 
-    } 
+    }
+    
+    /*
+	 * PRODUCTO-2082
+	 * Debido a que en diferentes devon, la cada del limite de busqueda de tareas esta nombrada de dos diferentes maneras
+	 * Ejemplo: [exportar.excel.limite.busqueda.tareas ; exportar.excel.limite.tareas]
+	 * Y como podría tener diversas consecuencias mantener ahroa misma una de ellas, aplico dicha función en caso de que no 
+	 * encuentre una, que busque con la otra cadena.
+	 */
+	public String getLimiteTareasExportar(String limiteTareasDevon) {
+		String limite = appProperties.getProperty(limiteTareasDevon);
+		if(!Checks.esNulo(limite)) {
+			return limite;
+		}
+		else {
+			if(limiteTareasDevon.contains("busqueda")) {
+				return appProperties.getProperty(limiteTareasDevon.replace("busqueda.", ""));
+			}
+			else {
+				return appProperties.getProperty(limiteTareasDevon.replace("limite", "limite.busqueda"));
+			}
+		}
+	}
+    
 }

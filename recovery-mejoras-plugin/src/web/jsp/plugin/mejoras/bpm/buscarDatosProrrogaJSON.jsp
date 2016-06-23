@@ -17,5 +17,10 @@
 		<json:property name="fechaVencimientoTareaAsociada" value="${datos.tareaAsociada.fechaVenc}"/>
 		<json:property name="fechaVencimiento"><fwk:date value="${datos.tarea.fechaVenc}"/></json:property>
 		<json:property name="idTareaAsociada" value="${datos.tarea.id}"/>
+		<json:property name="observacionesRespuesta" value="${datos.observacionesRespuesta}"/>
+		<json:property name="respuestaProrroga" value="${datos.respuestaProrroga.descripcion}"/>
+		<json:property name="fechaVencimientoOriginal" value="${datos.fechaVencimientoOriginal}"/>
+		
+		
 	</json:object>
 </fwk:json>

@@ -231,7 +231,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             map.put(AceptarProrrogaListener.CLAVE_DETALLE, dto.getDescripcionCausa());
             if (tareaAsociada instanceof EXTTareaNotificacion) {
                 EXTTareaNotificacion tar = (EXTTareaNotificacion) tareaAsociada;
-                tar.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA));
+                tar.setVencimiento(VencimientoUtils.getFecha(dto.getFechaPropuesta(), TipoCalculo.PRORROGA, genericDao));
                 this.saveOrUpdate(tar);
             } else {
                 tareaAsociada.setFechaVenc(dto.getFechaPropuesta());
@@ -591,7 +591,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
 
         Long idTareaAsociada = (Long) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_VARIABLES_TO_PROCESS, bpmid, TareaBPMConstants.ID_TAREA);
         TareaNotificacion tarea = get(idTareaAsociada);
-
+        prorroga.setFechaVencimientoOriginal(prorroga.getTareaAsociada().getFechaVenc());
         // param.put(TareaBPMConstants.DESCRIPCION_TAREA,
         // dto.getDescripcionCausa());
         tarea.setDescripcionTarea(dto.getDescripcionCausa());
@@ -753,7 +753,7 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             if (tipoCalculo == null) {
                 tipoCalculo = TIPO_CALCULO_FECHA_POR_DEFECTO;
             }
-            notificacionTarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo));
+            notificacionTarea.setVencimiento(VencimientoUtils.getFecha(fin, tipoCalculo, genericDao)); 
         }
         // Seteo la entidad en el campo que corresponda
         decodificarEntidadInformacion(idEntidad, codigoTipoEntidad, notificacionTarea);

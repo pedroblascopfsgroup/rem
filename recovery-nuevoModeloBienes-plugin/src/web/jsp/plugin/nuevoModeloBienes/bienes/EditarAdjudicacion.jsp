@@ -422,7 +422,7 @@
 	});
 	
 	optionsGestoresStore.webflow();
-      
+      debugger;
     var gestoriaAdjudicataria = new Ext.form.ComboBox( {
 			store : optionsGestoresStore
 			,name : 'gestoriaAdjudicataria'
@@ -432,7 +432,7 @@
 			,value : '${NMBbien.adjudicacion.gestoriaAdjudicataria.id}'
 			,labelStyle:labelStyle
 			,width: 150
-			
+			,triggerAction : 'all'
 		});
 	
 	
@@ -643,10 +643,12 @@
 		if(entidadAdjudicataria.getValue() == '2' && (cesionRemate.getValue() == 'Si' || cesionRemate.getValue() == '01')){
 			return 1;
 		}
-		<%-- Comentado para permitir poner cesion de remate a no cuando el bien tiene Adjudicación a entidad y pertenece a un fondo de titulización--%>
-<%-- 		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && isFondoTitulizado){
+		<%-- permitir poner cesion de remate a no cuando el bien tiene Adjudicación a entidad y pertenece a un fondo de titulización--%>
+		<sec:authorize ifNotGranted="SALTAR_VALIDACION_CESION_REMATE">
+		if(entidadAdjudicataria.getValue() == '1' && (cesionRemate.getValue() == 'No' || cesionRemate.getValue() == '02') && isFondoTitulizado){
 			return 2;
-		} --%>
+		} 
+		</sec:authorize> 
 		
 		return 0;
 	} 

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -58,6 +59,7 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
 import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
@@ -164,6 +166,44 @@ public class coreextensionManager implements coreextensionApi {
 		return sRet;
 	}
 
+
+	@Override
+	public Long getListTipoGestorGestoriaAdjudicacion(){
+		Long codGestor = null;
+		String tipoGestorGestoria = null;
+		
+		// Obtener el tipo de gestor por el projectContext.
+		Map<String, String> gestoresMap = coreProjectContext.getTiposGestorGestoriaAdjudicacion();
+		if(!Checks.estaVacio(gestoresMap)){
+			if(gestoresMap.containsKey(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion())){
+				tipoGestorGestoria = gestoresMap.get(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
+			}
+		}
+		
+		// Tipo de usuario Gestor
+		if(!Checks.esNulo(tipoGestorGestoria)){
+			List<EXTDDTipoGestor> listadoGestores = getListTipoGestorAdicional();
+			for (EXTDDTipoGestor tipoGestor : listadoGestores) {
+				if (tipoGestorGestoria.compareTo(tipoGestor.getCodigo()) == 0) {
+					codGestor = tipoGestor.getId();
+					break;
+				}
+			}
+		}
+		
+		return codGestor;
+	}
+
+	
+	@BusinessOperation(GET_LIST_TIPO_GESTOR_PROPONENTE_ACUERDO)
+	public List<EXTDDTipoGestor> getListTipoGestorProponente() {
+		
+		List<EXTDDTipoGestor> listado = new ArrayList<EXTDDTipoGestor>();	
+		Order order = new Order(OrderType.ASC, "descripcion");
+		listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "DD_TGE_CODIGO", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));	
+		return listado;
+	}
+		
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListTipoGestorAdicional()
 	 */
@@ -862,9 +902,9 @@ public class coreextensionManager implements coreextensionApi {
 	}*/
 
 	@BusinessOperation(GET_LIST_BUSQUEDA_TERMINOS)
-	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario) {
+	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario,List<Long> idGrpsUsuario) {
 		
-		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario);
+		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario);
 		List<TerminoAcuerdo> listaTerminos=(List<TerminoAcuerdo>) page.getResults();
 		return page;
 	}
@@ -890,6 +930,22 @@ public class coreextensionManager implements coreextensionApi {
 	
 		return nivelDao.buscarCodigoNivelPorDescripcion(descripcion);
 
+	}
+	
+	@BusinessOperation(GET_LIST_TIPO_DESPACHO_ESTADO_LETRADO)
+	public List<DespachoExterno> getListaDespachosEstadoLetrado(List<DespachoExterno> listaDespachos){
+		List<DespachoExterno> listaDespachosTmp=new ArrayList<DespachoExterno>();
+		for(int i=0;i<listaDespachos.size();i++){
+			DespachoExternoExtras dex = genericDao.get(DespachoExternoExtras.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", listaDespachos.get(i).getId()),
+					genericDao.createFilter(FilterType.EQUALS, "codEstAse", "0"));
+			
+			if(!Checks.esNulo(dex)){
+				listaDespachosTmp.add(listaDespachos.get(i));
+			}
+			
+		}
+		return listaDespachosTmp;
 	}
 
 }

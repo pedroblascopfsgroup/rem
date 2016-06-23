@@ -275,7 +275,6 @@
 						<value>824</value>
 						<value>825</value>
 						<value>PCO_DPREDOC</value>	
-						<value>CJ-814</value>
 						
 						<!-- HRE-BCC -->
 						<value>DGCONGE</value>
@@ -284,6 +283,7 @@
 						<value>CJ-819</value>
 						<value>DGAEST</value>
 						<value>CJ-DGAREO</value>
+						<value>CJ-814D</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_TAREA_PROCEDIMIENTO">
@@ -318,7 +318,7 @@
 						<value>1011</value>
 						<value>1021</value>
 						<value>1031</value>
-						<value>1041</value>
+						<value>1041</value>		
 						
 						<!-- HRE-BCC -->
 						<value>TDRECU</value>
@@ -331,7 +331,8 @@
 						<value>TGCONPR</value>
 						<value>TGCTRGE</value>
 						<value>TGGESDOC</value>
-						<value>CJ-104</value>
+						<value>CJ-104</value>				
+						<value>CJ-814</value>
 						<value>GEXT</value>
 						<value>CJ-812</value>
 						<value>TSAEST</value>
@@ -347,7 +348,31 @@
 						<value>CJ-TGESEXT</value>
 						<value>CJ-TSUEXT</value>
 						<value>TCP</value>
-						
+					</set>
+				</entry>
+				<entry key="ABRIR_EXP">
+					<set>
+						<value>FZAR_PPUESTA</value>
+						<value>ENSAN</value>
+						<value>SANC</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_PER">
+					<!-- Tareas tipo abrir cliente -->
+					<set>
+						<value>29</value>
+						<value>SOLEXPMGDEUDA</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_COBROS_PAGOS">
+					<!-- Tareas tipo abrir asunto -->
+					<set>
+						<value>CONTACOBR</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_HISTORICO_PROCEDIMIENTO">
+					<!-- Tareas tipo abrir historico -->
+					<set>
 						<!-- PRORROGAS -->
 						<value>RESPRO_GADM</value>
 						<value>RESPRO_SCON</value>
@@ -391,27 +416,6 @@
 						<value>CJ-SUEXT</value>
 						<value>RESPRO_SUCONGEN2</value>
 						<value>RESPRO_SUCONGE</value>
-						
-					</set>
-				</entry>
-				<entry key="ABRIR_EXP">
-					<set>
-						<value>FZAR_PPUESTA</value>
-						<value>ENSAN</value>
-						<value>SANC</value>
-					</set>
-				</entry>
-				<entry key="ABRIR_PER">
-					<!-- Tareas tipo abrir cliente -->
-					<set>
-						<value>29</value>
-						<value>SOLEXPMGDEUDA</value>
-					</set>
-				</entry>
-				<entry key="ABRIR_COBROS_PAGOS">
-					<!-- Tareas tipo abrir asunto -->
-					<set>
-						<value>CONTACOBR</value>
 					</set>
 				</entry>				
 			</map>
@@ -429,6 +433,13 @@
 				<value>GGADJ</value>
 				<value>GGSAN</value>
 			</set>
+		</property>
+		<property name="tiposGestorGestoriaAdjudicacion">
+			<map>
+				<entry key="HAYA">
+					<value>GGADJ</value>
+				</entry>
+			</map>
 		</property>
 		<property name="tiposGestorProcurador">
 			<set>

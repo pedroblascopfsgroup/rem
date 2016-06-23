@@ -33,7 +33,7 @@ public class DespachoExternoExtrasDto {
 	private String fechaServicioIntegral;
 	private String clasifDespachoConcursos;
 	private String clasifDespachoPerfil;
-	private String relacionBankia;
+	private String relacionEntidad;
 	private DDTipoDocumento doc;
 	
 	public String getFax() {
@@ -210,11 +210,11 @@ public class DespachoExternoExtrasDto {
 	public void setClasifDespachoPerfil(String clasifDespachoPerfil) {
 		this.clasifDespachoPerfil = clasifDespachoPerfil;
 	}
-	public String getRelacionBankia() {
-		return relacionBankia;
+	public String getRelacionEntidad() {
+		return relacionEntidad;
 	}
-	public void setRelacionBankia(String relacionBankia) {
-		this.relacionBankia = relacionBankia;
+	public void setRelacionEntidad(String relacionEntidad) {
+		this.relacionEntidad = relacionEntidad;
 	}
 	public DDTipoDocumento getDoc() {
 		return doc;

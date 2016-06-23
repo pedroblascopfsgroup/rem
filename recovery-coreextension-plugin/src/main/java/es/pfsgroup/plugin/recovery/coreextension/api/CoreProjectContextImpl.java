@@ -28,7 +28,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Map<String, List<String>> despachosProcuradores;
 	private Map<String, String> mapaContratoVigor;
 	private Map<String, String> mapaClasificacionDespachoPerfil;
-	private Map<String, String> mapaRelacionBankia;
+	private Map<String, String> mapaRelacionEntidad;
 	private Map<String, String> mapaDescripcionIVA;
 	private Map<String, String> mapaCodEstAse;
 	private Map<String, String> tiposGestorGestoriaAdjudicacion;
@@ -221,12 +221,12 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	}
 
 	
-	public Map<String, String> getMapaRelacionBankia() {
-		return mapaRelacionBankia;
+	public Map<String, String> getMapaRelacionEntidad() {
+		return mapaRelacionEntidad;
 	}
 
-	public void setMapaRelacionBankia(Map<String, String> mapaRelacionBankia) {
-		this.mapaRelacionBankia = mapaRelacionBankia;
+	public void setMapaRelacionEntidad(Map<String, String> mapaRelacionEntidad) {
+		this.mapaRelacionEntidad = mapaRelacionEntidad;
 	}
 
 	

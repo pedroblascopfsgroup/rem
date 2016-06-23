@@ -7,9 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -37,18 +40,26 @@ public class DespachoExternoExtras implements Serializable, Auditable {
 
 	@Id
 	@Column(name = "DEE_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "DespachoExternoExtrasGenerator")
+    @SequenceGenerator(name = "DespachoExternoExtrasGenerator", sequenceName = "S_DEE_DESPACHO_EXTRAS")
 	private Long id;
 
-	@Column(name = "DES_ID")
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DES_ID")
 	private DespachoExterno despachoExterno;
 
 	@Column(name = "DEE_FAX")
 	private String fax;
 
-	@Column(name = "DD_DCE_ID")
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DCE_ID")
 	private DespachoCodEstado codEstAse;
 
-	@Column(name = "DD_DCV_ID")
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DCV_ID")
 	private DespachoContratoVigor contratoVigor;
 
 	@Column(name = "DEE_SERVICIO_INTEGRAL")
@@ -60,10 +71,14 @@ public class DespachoExternoExtras implements Serializable, Auditable {
 	@Column(name = "DEE_CLASIF_CONCURSOS")
 	private Boolean clasifConcursos;
 
-	@Column(name = "DD_DCP_ID")
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DCP_ID")
 	private DespachoClasiPerfil clasifPerfil;
 
-	@Column(name = "DD_DRE_ID")
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DRE_ID")
 	private DespachoRelEntidad relacionEntidad;
 
 	@Column(name = "DEE_OFICINA_CONTACTO")
@@ -131,7 +146,9 @@ public class DespachoExternoExtras implements Serializable, Auditable {
 	@Column(name = "DEE_IVA_APL")
 	private Float iva;
 
-	@Column(name = "DD_DID_ID")
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DID_ID")
 	private DespachoIvaDes descripcionIVA;
 
 	@Column(name = "DEE_IRPF_APL")

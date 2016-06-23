@@ -425,99 +425,128 @@ create or replace PROCEDURE        REFRESH_DATA_RULE_ENGINE AS
                         JOIN  #ESQUEMA#.zon_zonificacion zonPN9 on zonPN8.zon_pid=zonPN9.zon_id
                         JOIN  #ESQUEMA#.niv_nivel nivN9 on zonPN9.niv_id=nivN9.niv_id) NIVELESPER ON NIVELESPER.PER_ID=PER.PER_ID
          LEFT JOIN (
-         			select
+         			select pp.persona_fsr_id, -- count(*) n
+    max(per_sin_accion) AS per_sin_accion,
+    max(per_no_localizado) AS per_no_localizado,
+    max(per_contactado_en_negociacion) AS per_contactado_en_negociacion,
+    max(per_compromiso_pago) AS per_compromiso_pago,
+    max(per_adecuacion) AS per_adecuacion,
+    max(per_dacion_en_pago) AS per_dacion_en_pago,
+    max(per_cancelalcion_con_quita) AS per_cancelalcion_con_quita,
+    max(per_pase_litigio) AS per_pase_litigio,
+    max(per_prefallido) AS per_prefallido,
+    max(per_illocalizable) AS per_illocalizable 
+from (
+        select 
             distinct cavcli.per_id AS persona_fsr_id,
             case
                 when fsr.dd_taf_codigo = '01' then cavcli.cav_id
-                else null
+                else null 
             end AS per_sin_accion,
             case
                 when fsr.dd_taf_codigo = '02' then cavcli.cav_id
-                else null
+                else null 
             end AS per_no_localizado,
             case
                 when fsr.dd_taf_codigo = '03' then cavcli.cav_id
-                else null
+                else null 
             end AS per_contactado_en_negociacion,
             case
                 when fsr.dd_taf_codigo = '04' then cavcli.cav_id
-                else null
+                else null 
             end AS per_compromiso_pago,
             case
                 when fsr.dd_taf_codigo = '05' then cavcli.cav_id
-                else null
+                else null 
             end AS per_adecuacion,
             case
                 when fsr.dd_taf_codigo = '06' then cavcli.cav_id
-                else null
+                else null 
             end AS per_dacion_en_pago,
             case
                 when fsr.dd_taf_codigo = '07' then cavcli.cav_id
-                else null
+                else null 
             end AS per_cancelalcion_con_quita,
             case
                 when fsr.dd_taf_codigo = '08' then cavcli.cav_id
-                else null
+                else null 
             end AS per_pase_litigio,
             case
                 when fsr.dd_taf_codigo = '09' then cavcli.cav_id
-                else null
+                else null 
             end AS per_prefallido,
             case
                 when fsr.dd_taf_codigo = '99' then cavcli.cav_id
-                else null
-            end AS per_illocalizable
-        FROM #ESQUEMA#.cav_clientes_actuac_vigent_fsr cavcli
-          left outer JOIN #ESQUEMA#.dd_taf_tipo_actuacion_fsr fsr ON fsr.dd_taf_id = cavcli.dd_taf_id
+                else null 
+            end AS per_illocalizable                                  
+        FROM #ESQUEMA#.cav_clientes_actuac_vigent_fsr cavcli -- on cavcli.per_id = person.per_id 
+          left outer JOIN #ESQUEMA#.dd_taf_tipo_actuacion_fsr fsr ON fsr.dd_taf_id = cavcli.dd_taf_id    
+		) pp 
+			group by pp.persona_fsr_id
          				
          			) PERSONAS_FSR ON PERSONAS_FSR.PERSONA_FSR_ID = PER.PER_ID
          	
          LEFT JOIN (
          			
-         			SELECT distinct
-        cnacnt.cnt_id AS contrato_fsr_id,
+         			select tt.contrato_fsr_id, -- count(*) n
+    max(cnt_sin_accion) AS cnt_sin_accion,
+    max(cnt_no_localizado) AS cnt_no_localizado,
+    max(cnt_contactado_en_negociacion) AS cnt_contactado_en_negociacion,
+    max(cnt_compromiso_pago) AS cnt_compromiso_pago,
+    max(cnt_adecuacion) AS cnt_adecuacion,
+    max(cnt_dacion_en_pago) AS cnt_dacion_en_pago,
+    max(cnt_cancelalcion_con_quita) AS cnt_cancelalcion_con_quita,
+    max(cnt_pase_litigio) AS cnt_pase_litigio,
+    max(cnt_prefallido) AS cnt_prefallido,
+    max(cnt_illocalizable) AS cnt_illocalizable 
+from (
+    SELECT distinct 
+        cnacnt.cnt_id AS contrato_fsr_id,    
         case
             when fsr.dd_taf_codigo = '01' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_sin_accion,
         case
             when fsr.dd_taf_codigo = '02' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_no_localizado,
         case
             when fsr.dd_taf_codigo = '03' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_contactado_en_negociacion,
         case
             when fsr.dd_taf_codigo = '04' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_compromiso_pago,
         case
             when fsr.dd_taf_codigo = '05' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_adecuacion,
         case
             when fsr.dd_taf_codigo = '06' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_dacion_en_pago,
         case
             when fsr.dd_taf_codigo = '07' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_cancelalcion_con_quita,
         case
             when fsr.dd_taf_codigo = '08' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_pase_litigio,
         case
             when fsr.dd_taf_codigo = '09' then cnacnt.CNA_ID
-            else null
+            else null 
         end AS cnt_prefallido,
         case
             when fsr.dd_taf_codigo = '99' then cnacnt.CNA_ID
-            else null
-        end AS cnt_illocalizable
-    FROM #ESQUEMA#.cna_cnt_actuac_vigent_fsr cnacnt
+            else null 
+        end AS cnt_illocalizable         
+    FROM #ESQUEMA#.cna_cnt_actuac_vigent_fsr cnacnt -- on cnacnt.cnt_id = contratos.cnt_id
         left outer join #ESQUEMA#.dd_taf_tipo_actuacion_fsr fsr ON fsr.dd_taf_id = cnacnt.dd_taf_id
+    -- where contratos.cnt_id = 5763259                
+) tt 
+group by tt.contrato_fsr_id
 					 	
          		) CONTRATOS_FSR ON CONTRATOS_FSR.CONTRATO_FSR_ID = cnt.CNT_ID
          

@@ -1,6 +1,7 @@
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <%@ taglib prefix="fwk" tagdir="/WEB-INF/tags/fwk" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <fwk:json>
 	<json:property name="total" value="${totalCount}" />
@@ -15,6 +16,22 @@
 			<json:property name="fechaEstado">
 				<fwk:date value="${p.fechaEstado}" />
 			</json:property>
+			<%-- Fecha Solicitud dependiendo del tipo de busqueda --%>
+			<c:if test="${p.burofax.fechaSolicitud != null}">
+				<json:property name="fechaSolicitud">
+					<fwk:date value="${p.burofax.fechaSolicitud}"/>
+				</json:property>
+			</c:if>
+			<c:if test="${p.documento.fechaSolicitud != null}">
+				<json:property name="fechaSolicitud">
+					<fwk:date value="${p.documento.fechaSolicitud}"/>
+				</json:property>
+			</c:if>
+			<c:if test="${p.liquidacion.fechaSolicitud != null}">
+				<json:property name="fechaSolicitud">
+					<fwk:date value="${p.liquidacion.fechaSolicitud}"/>
+				</json:property>
+			</c:if>
 			<json:property name="tipoProcPropuesto" value="${p.tipoProcPropuesto}" />
 			<json:property name="tipoPreparacion" value="${p.tipoPreparacion}" />
 			<json:property name="fechaInicioPreparacion">
@@ -64,9 +81,7 @@
 			<json:property name="burEstado" value="${p.burofax.estado}" />
 			<json:property name="burNif" value="${p.burofax.nif}" />
 			<json:property name="burApellidoNombre" value="${p.burofax.apellidoNombre}" />
-			<json:property name="burFechaSolicitud">
-				<fwk:date value="${p.burofax.fechaSolicitud}" />
-			</json:property>
+
 			<json:property name="burFechaEnvio">
 				<fwk:date value="${p.burofax.fechaEnvio}" />
 			</json:property>

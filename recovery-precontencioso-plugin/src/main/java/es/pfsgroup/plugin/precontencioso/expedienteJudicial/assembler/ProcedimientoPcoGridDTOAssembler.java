@@ -86,6 +86,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			docGridDto.setFechaResultado((Date) documento.get("fechaResultado"));
 			docGridDto.setFechaEnvio((Date) documento.get("fechaEnvio"));
 			docGridDto.setFechaRecepcion((Date) documento.get("fechaRecepcion"));
+			docGridDto.setFechaSolicitud((Date) documento.get("fechaSolicitud"));
 
 			prcPcoGridDto.setDocumento(docGridDto);
 
@@ -111,6 +112,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			liqGridDto.setFechaConfirmacion((Date) liquidacion.get("fechaConfirmacion"));
 			liqGridDto.setFechaCierre((Date) liquidacion.get("fechaCierre"));
 			liqGridDto.setFechaRecepcion((Date) liquidacion.get("fechaRecepcion"));
+			liqGridDto.setFechaSolicitud((Date) liquidacion.get("fechaSolicitud"));
 
 			if (liquidacion.get("total") != null) {
 				liqGridDto.setTotal(((BigDecimal) liquidacion.get("total")).floatValue());

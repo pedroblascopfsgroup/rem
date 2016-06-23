@@ -14,6 +14,7 @@ public class DocumentoGridDTO extends WebDto {
 	private Date fechaResultado;
 	private Date fechaEnvio;
 	private Date fechaRecepcion;
+	private Date fechaSolicitud;
 	private Boolean adjunto;
 	
 	public String getEstado() {
@@ -57,5 +58,11 @@ public class DocumentoGridDTO extends WebDto {
 	}
 	public void setAdjunto(Boolean adjunto) {
 		this.adjunto = adjunto;
+	}
+	public Date getFechaSolicitud() {
+		return fechaSolicitud;
+	}
+	public void setFechaSolicitud(Date fechaSolicitud) {
+		this.fechaSolicitud = fechaSolicitud;
 	}
 }

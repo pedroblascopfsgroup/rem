@@ -145,7 +145,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("resultadoSolicitud.descripcion").as("ultimaRespuesta"));
 		select.add(Projections.property("solicitud.actor").as("ultimoActor"));
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
-		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
+		select.add(Projections.property("solicitud.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
 
@@ -171,6 +171,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
 		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
 		select.add(Projections.property("liquidacion.fechaRecepcion").as("fechaRecepcion"));
+		select.add(Projections.property("liquidacion.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("liquidacion.total").as("total"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);

@@ -30,11 +30,27 @@
 	var tiposPersona = <app:dict value="${tiposPersona}" blankElement="true" blankElementValue="" blankElementText="---" />;
 	var comites = <app:dict value="${comites}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
-
+	var tiposEstadosItinerarioRecord = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+    
+    var tiposEstadosItinerarioStore = page.getStore({
+	       flow: 'itinerarios/getEstadosItiExpedientesByTipoItinerario'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'tiposEstadosItinerarios'
+	    }, tiposEstadosItinerarioRecord)
+	       
+	});
+	
+	var comboSituacion = app.creaDblSelect(null, '<s:message code="expedientes.listado.situacion" text="**Situacion" />',{store:tiposEstadosItinerarioStore});
+	<%-- 
 	var comboSituacion = app.creaDblSelect(situaciones
                               ,'<s:message code="expedientes.listado.situacion" text="**Situacion" />'
-                              ,{<app:test id="comboSituacion" />});
+                              ,{<app:test id="comboSituacion" />}); --%>
     
+	comboSituacion.setDisabled(true);
+	
 	var mmRiesgoTotal = app.creaMinMax('<s:message code="expedientes.listado.riesgoTotal" text="**Riesgo Total" />', 'riesgo',{width : 60});
 	var mmSVencido    = app.creaMinMax('<s:message code="expedientes.listado.sVencido" text="**S. Vencido" />', 'svencido',{width : 60});
 	
@@ -76,10 +92,26 @@
     									triggerAction: 'all', 
     									value:gestion.diccionario[0].codigo, 
     									name : 'codigoGestion', 
-    									fieldLabel : '<s:message code="expedientes.listado.gestion" text="**Gestion" />'
+    									fieldLabel : '<s:message code="expedientes.listado.tipoItinerario" text="**Tipo de itinerario" />'
     									<app:test id="idComboGestion" addComa="true"/>	
     								});
+    								
+    comboGestion.on('select', function(){
+    	if(comboGestion.getValue() != ""){
+    		app.resetCampos([comboSituacion]);
+    		comboSituacion.setDisabled(false);
+    		tiposEstadosItinerarioStore.load({
+								 params:{codigoTipoItinerario:comboGestion.getValue()}
+			});
+    	}
+    	else{
 
+    		app.resetCampos([comboSituacion]);
+    		tiposEstadosItinerarioStore.removeAll();
+    		comboSituacion.setDisabled(true);
+    	}    	
+    });
+    
 	
     var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
     
@@ -571,10 +603,10 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [txtCodExpediente,txtDescripcion,comboEstado,comboTipoPersona,comboFechaCreacion]
+					,items: [txtCodExpediente,txtDescripcion,comboEstado,comboTipoPersona,comboComite,comboFechaCreacion]
 				},{
 					layout:'form'
-					,items: [comboComite,comboGestion,comboSituacion]
+					,items: [comboGestion,comboSituacion,comboEstado]
 				}]
 		,listeners:{
 			getParametros: function(anadirParametros, hayError) {
@@ -592,7 +624,9 @@
     		           ,comboComite
     		           ,comboGestion
     		           ,comboSituacion
-	           ]); 
+	           ]);
+	           tiposEstadosItinerarioStore.removeAll();
+	           comboSituacion.setDisabled(true); 
     		}
 		}
 	});

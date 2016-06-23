@@ -35,5 +35,14 @@ public class DDEstadoItinerarioDaoImpl extends AbstractEntityDao<DDEstadoItinera
         String hsql = "from DDEstadoItinerario where tipoEntidad.codigo = ? and auditoria.borrado = false";
         return getHibernateTemplate().find(hsql, new Object[] {tipoEntidad});
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+	public List<DDEstadoItinerario> findByEntidadAndTipoItinerario(String tipoEntidad, String codigoTipoItinerario){	
+    	String hsql= "select distinct ddest from DDEstadoItinerario ddest, DDTipoItinerario  tip, Itinerario iti, Estado est where iti.dDtipoItinerario.id=tip.id and est.itinerario = iti and est.estadoItinerario = ddest and ddest.tipoEntidad.codigo= ? and est.estadoItinerario = ddest and tip.codigo = ?";
+    	String orderBy = " ORDER BY ddest.descripcion ";
+    	hsql= hsql+orderBy;
+    	return getHibernateTemplate().find(hsql, new Object[] {tipoEntidad,codigoTipoItinerario});
+    }
 
 }

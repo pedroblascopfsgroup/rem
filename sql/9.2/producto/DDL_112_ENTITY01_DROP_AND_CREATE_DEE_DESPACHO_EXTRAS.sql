@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RAFAEL ARACIL  
---## FECHA_CREACION=20160615
+--## FECHA_CREACION=20160616
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1963

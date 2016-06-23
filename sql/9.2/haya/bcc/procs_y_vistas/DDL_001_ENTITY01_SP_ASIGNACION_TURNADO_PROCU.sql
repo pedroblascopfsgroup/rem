@@ -142,9 +142,8 @@ CURSOR crs_id_usu_tabla_tmp
             join HAYA02.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.borrado=0
             join HAYAMASTER.DD_EAS_ESTADO_ASUNTOS eas on asu.dd_eas_id=eas.dd_eas_id and eas.dd_eas_codigo='03'
             join HAYA02.TUP_TMP_CALCULOS_TURN_PROCU tmp on tmp.usu_id = his.USU_ID_ASIGNADO
-            join haya02.dd_juz_juzgados_plaza juz on prc.dd_juz_id = juz.dd_juz_id
-            join haya02.dd_pla_plazas pla on juz.DD_PLA_ID = pla.dd_pla_id and pla.dd_pla_codigo = p_plaza_codigo
-            join haya02.dd_tpo_tipo_procedimiento tpo on prc.dd_tpo_id = tpo.dd_tpo_id and tpo.dd_tpo_codigo = p_tpo_codigo
+            join haya02.dd_pla_plazas pla on his.DD_PLA_ID = pla.dd_pla_id and pla.dd_pla_codigo = p_plaza_codigo
+            join haya02.dd_tpo_tipo_procedimiento tpo on his.dd_tpo_id = tpo.dd_tpo_id and tpo.dd_tpo_codigo = p_tpo_codigo
             group by tmp.usu_id, his.dd_pla_id, his.dd_tpo_id,tmp.porc_real;
 
 -- Calcular porcentaje asuntos correspondiente
@@ -156,9 +155,8 @@ CURSOR crs_id_usu_tabla_tmp
             join HAYA02.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.borrado=0
             join HAYAMASTER.DD_EAS_ESTADO_ASUNTOS eas on asu.dd_eas_id=eas.dd_eas_id and eas.dd_eas_codigo='03'
             join HAYA02.TUP_TMP_CALCULOS_TURN_PROCU tmp on tmp.usu_id = his.USU_ID_ASIGNADO
-            join haya02.dd_juz_juzgados_plaza juz on prc.dd_juz_id = juz.dd_juz_id
-            join haya02.dd_pla_plazas pla on juz.DD_PLA_ID = pla.dd_pla_id and pla.dd_pla_codigo = p_plaza_codigo
-            join haya02.dd_tpo_tipo_procedimiento tpo on prc.dd_tpo_id = tpo.dd_tpo_id and tpo.dd_tpo_codigo = p_tpo_codigo;
+            join haya02.dd_pla_plazas pla on his.DD_PLA_ID = pla.dd_pla_id and pla.dd_pla_codigo = p_plaza_codigo
+            join haya02.dd_tpo_tipo_procedimiento tpo on his.dd_tpo_id = tpo.dd_tpo_id and tpo.dd_tpo_codigo = p_tpo_codigo;
 
 -- Elige el usuario con mejor puntuacion
   CURSOR crs_usuario_puntos

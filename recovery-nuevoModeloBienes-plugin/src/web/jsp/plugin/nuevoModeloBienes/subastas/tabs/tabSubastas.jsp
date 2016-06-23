@@ -429,11 +429,12 @@
 				var idSubasta = gridSubastas.getSelectionModel().getSelected().get('id');
 	        	if (gridLotes.getSelectionModel().getCount()>0){
 					var idLote  = gridLotes.getSelectionModel().getSelected().get('idLote');
+					var numLote  = gridLotes.getSelectionModel().getSelected().get('numLote');
 					
 					var w = app.openWindow({
 						flow: 'subasta/winInstruccionesLoteSubasta'
 						,params: {idLote:idLote}
-						,title: '<s:message code="plugin.nuevoModeloBienes.subastas.subastasGrid.btnInstrucLotes" text="**Proponer Instrucciones" />'
+						,title: 'Proponer Instrucciones - Id:' + idLote + ' - Nº:' +  numLote
 						,width: winWidth
 					});
 					w.on(app.event.DONE, function() {

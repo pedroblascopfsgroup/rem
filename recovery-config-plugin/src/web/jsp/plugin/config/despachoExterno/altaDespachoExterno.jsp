@@ -502,7 +502,7 @@
 			//,deferredRender:false
 			,height: 350
 			//,autoWidth : true
-			,items:[ pestanaPrincipal<c:if test="${usuarioEntidad == 'BANKIA'}">,pestanaAdicionales</c:if>]
+			,items:[ pestanaPrincipal,pestanaAdicionales]
 		}
 		,bbar : [btnGuardarEditar, btnCancelar]
 	});	

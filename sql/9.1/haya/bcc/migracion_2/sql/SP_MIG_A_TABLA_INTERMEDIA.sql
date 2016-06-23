@@ -1128,7 +1128,8 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                              IF v_TAR_FINALIZADA = 1 AND v_CONTROL NOT IN (2,3) AND (l.TEV_NOMBRE LIKE '%fecha%' OR l.TEV_NOMBRE = 'comboAtribuciones' OR l.TEV_NOMBRE = 'comboCelebrada'
                                 OR (k.DD_TPO_CODIGO = 'H009' AND (l.TEV_NOMBRE = 'comboResultado' OR l.TEV_NOMBRE = 'comboAdmitida' OR l.TEV_NOMBRE = 'observaciones' OR l.TEV_NOMBRE = 'comFavorable'))
-                                OR (k.DD_TPO_CODIGO = 'H033' AND l.TEV_NOMBRE = 'comboAlegaciones'))
+                                OR (k.DD_TPO_CODIGO = 'H033' AND l.TEV_NOMBRE = 'comboAlegaciones')
+                                OR (k.DD_TPO_CODIGO = 'H001' AND l.TEV_NOMBRE = 'comboResultado'))
                              THEN
 
                                 IF l.TEV_NOMBRE = 'comboAtribuciones' THEN

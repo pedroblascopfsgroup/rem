@@ -46,7 +46,6 @@ import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -751,7 +750,7 @@ public class EditBienController {
 			dto.setViviendaHabitual(request.getParameter("viviendaHabitual"));
 
 		if (!Checks.esNulo(request.getParameter("tipoSubasta")))
-			dto.setTipoSubasta(new Float(request.getParameter("tipoSubasta")));
+			dto.setTipoSubasta(new BigDecimal(request.getParameter("tipoSubasta")));
 
 		if (!Checks.esNulo(request.getParameter("obraEnCurso")))
 			dto.setObraEnCurso(new Boolean(request.getParameter("obraEnCurso")));

@@ -358,7 +358,7 @@ public class SubastaCalculoManager {
 			if (nmbBien.getTipoSubasta()==null) {
 				continue;
 			}
-			float tipoSubasta = nmbBien.getTipoSubasta();
+			float tipoSubasta = nmbBien.getTipoSubasta().floatValue();
 			tipoSubasta = (float) (tipoSubasta * 0.6);
 			float diferenciaDeuda = (deudaTotal - tipoSubasta);
 			if ("1".equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {

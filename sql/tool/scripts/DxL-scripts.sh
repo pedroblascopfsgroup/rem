@@ -9,3 +9,4 @@ if [ "$#" -lt #NUMBER# ]; then
     exit
 fi
 
+function run_scripts {

@@ -286,7 +286,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 					// FILTRO JERARQUÍA Y ZONAS
 					if (cruzaJerarquia){
 						hql.append(" and (acu.asunto.id is not null or acu.expediente.id is not null) ");
-						hql.append(filtroJerarquiaZonasAcuerdosTodos(dto, hql, cruzaJerarquia));
+						hql.append(filtroJerarquiaZonasAcuerdosTodos(dto, cruzaJerarquia));
 					}else{
 						hql.append(" and (acu.asunto.id is not null or acu.expediente.id is not null) ");
 					}

@@ -343,8 +343,10 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		return hql.toString();
 	}
 	
-	private StringBuffer filtroJerarquiaZonasAcuerdosTodos(DTOTerminosFiltro dto, StringBuffer hql, boolean cruzaJerarquia) {
+	private StringBuffer filtroJerarquiaZonasAcuerdosTodos(DTOTerminosFiltro dto, boolean cruzaJerarquia) {
 
+		StringBuffer hql = new StringBuffer();
+		
 		// FILTRO JERARQUÍA Y ZONAS acuerdos asuntos	
 		hql.append(" and ((cnt.zona.nivel.codigo >= "+ dto.getJerarquia());
 

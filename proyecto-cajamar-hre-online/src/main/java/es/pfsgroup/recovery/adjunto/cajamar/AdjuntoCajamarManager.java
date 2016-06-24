@@ -129,7 +129,9 @@ public class AdjuntoCajamarManager {
 					if(!Checks.estaVacio(listAdjCnt)){
 						dto.setIdAdjuntoBlob(listAdjCnt.get(0).getAdjunto().getId());
 						logger.info("CNT El idAdjuntoBlob es " + nombreAux);
-					}			
+					}else{
+						dto.setIdAdjuntoBlob(1L);
+					}
 				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
 			}
@@ -153,6 +155,8 @@ public class AdjuntoCajamarManager {
 					if(!Checks.estaVacio(listAdjPer)){
 						dto.setIdAdjuntoBlob(listAdjPer.get(0).getAdjunto().getId());
 						logger.info("PER El idAdjuntoBlob es " + nombreAux);
+					}else{
+						dto.setIdAdjuntoBlob(1L);
 					}
 				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
@@ -181,6 +185,8 @@ public class AdjuntoCajamarManager {
 					if(!Checks.estaVacio(listAdjExp)){
 						dto.setIdAdjuntoBlob(listAdjExp.get(0).getAdjunto().getId());
 						logger.info("EXP El idAdjuntoBlob es " + nombreAux);
+					}else{
+						dto.setIdAdjuntoBlob(1L);
 					}					
 				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, expediente.getId(), expediente.getDescripcion()));
@@ -256,6 +262,9 @@ public class AdjuntoCajamarManager {
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 			}else{
+				for(AdjuntoGridDto dto : listDto) {
+					dto.setIdAdjuntoBlob(1L);
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
 			}
 		}
@@ -271,6 +280,9 @@ public class AdjuntoCajamarManager {
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 			}else{
+				for(AdjuntoGridDto dto : listDto) {
+					dto.setIdAdjuntoBlob(1L);
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
 			}
 		}		

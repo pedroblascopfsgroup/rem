@@ -108,7 +108,9 @@ public class AdjuntoCajamarManager {
 			List<EXTAdjuntoAsunto> listAdjAsu = adjuntoAsuntoDao.getAdjuntoAsuntoByIdNombreTipoDocumento(asunto.getId(), nombreAux, dto.getTipo());
 			if(!Checks.estaVacio(listAdjAsu)){
 				dto.setIdAdjuntoBlob(listAdjAsu.get(0).getAdjunto().getId());
-			}			
+			}else{
+				dto.setIdAdjuntoBlob(1L);
+			}		
 		}
 		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(listadoDocumentos, borrarOtrosUsu);
 	}

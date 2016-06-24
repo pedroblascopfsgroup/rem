@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160623
+--## FECHA_CREACION=20160624
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=RECOVERY-2159
+--## INCIDENCIA_LINK=RECOVERY-2130
 --## PRODUCTO=NO
 --## 
---## Finalidad: Se añade la puntuación
+--## Finalidad:  Corrección de carga paralizaciones
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -21,7 +21,7 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificación: María Villanueva, PFS Group
--- Fecha ultima modificación: 22/06/2016
+-- Fecha ultima modificación: 23/06/2016
 -- Motivos del cambio: Corrección de carga paralizaciones
 
 -- Cliente: Recovery BI Haya

@@ -794,11 +794,8 @@ public class EXTTareaNotificacionManager extends EXTAbstractTareaNotificacionMan
             tareaNotificacion.setProcedimiento(proc);
             tareaNotificacion.setAsunto(proc.getAsunto());
             tareaNotificacion.setEstadoItinerario(proc.getAsunto().getEstadoItinerario());
-            if (proc.getAsunto().getGestor() != null) {
-                tareaNotificacion.setEmisor(proc.getAsunto().getGestor().getUsuario().getApellidoNombre());
-            } else {
-            	tareaNotificacion.setEmisor("Automático");
-            }
+            Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+            tareaNotificacion.setEmisor(usuario.getApellidoNombre());
         }
         if (DDTipoEntidad.CODIGO_ENTIDAD_NOTIFICACION.equals(codigoTipoEntidad)) {
             Procedimiento proc = (Procedimiento) executor.execute(ExternaBusinessOperation.BO_PRC_MGR_GET_PROCEDIMIMENTO, idEntidad);

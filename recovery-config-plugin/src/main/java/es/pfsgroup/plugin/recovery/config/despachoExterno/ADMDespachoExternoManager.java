@@ -750,18 +750,18 @@ public class ADMDespachoExternoManager {
 		if (dto.getId() == null) {
 			desExtras = new DespachoExternoExtras();
 		} else {
-			desExtras = despachoExtrasDao.get(dto.getId());
+			desExtras = genericDao.get(DespachoExternoExtras.class, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", dto.getId()));
 			//Si todavía no hay registro en extras de este despacho, debemos inicializarlo para crearlo.
 			if(Checks.esNulo(desExtras)) {
 				desExtras = new DespachoExternoExtras();
 			}
 		}
 		//Si no es de Tipo Letrado no aplica /*
-/*if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
+		/*if(dto.getTipoDespacho() != getIdTipoLetrado() && dto.getTipoDespacho() != getIdTipoProcurador()) {
 			return desExtras;
 		}*/
 		
-		desExtras.setId(idDespacho);
+		desExtras.setDespachoExterno(genericDao.get(DespachoExterno.class, genericDao.createFilter(FilterType.EQUALS, "id", idDespacho)));
 		desExtras = this.transformaDtoAEntityDespachOExtras(dto, desExtras);
 		//Guardamos los extras del despacho
 		despachoExtrasDao.saveOrUpdate(desExtras);
@@ -783,6 +783,7 @@ public class ADMDespachoExternoManager {
 	 * @param valor
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private String getKeyByValue(Map<String,String> mapa, String valor) {
 		
 		for(Map.Entry<String,String> map : mapa.entrySet()){
@@ -1037,6 +1038,9 @@ public class ADMDespachoExternoManager {
 		if(!Checks.esNulo(dto.getImpuesto())) {
 			DespachoIvaDes ivaDes = genericDao.get(DespachoIvaDes.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getImpuesto()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 			desExtras.setDescripcionIVA(ivaDes);
+		}
+		else {
+			desExtras.setDescripcionIVA(null);
 		}
 		
 		return desExtras;

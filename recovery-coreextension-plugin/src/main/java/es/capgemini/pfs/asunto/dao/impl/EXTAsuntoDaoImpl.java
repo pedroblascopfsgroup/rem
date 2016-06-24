@@ -50,6 +50,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoCodEstado;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoIvaDes;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
@@ -1429,7 +1431,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			subSelect += "dee.clasifConcursos = "+ Integer.parseInt(dto.getClasificacionConcursos()) +" and ";
 		}
 		if(!Checks.esNulo(dto.getCodEstAse())) {
-			subSelect += "dee.codEstAse = '"+ getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()) +"' and ";
+			subSelect += "dee.codEstAse.codigo = '"+ genericDao.get(DespachoCodEstado.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstAse())) + "' and ";
 		}
 		if(!Checks.esNulo(dto.getContratoVigor())) {
 			subSelect += "dee.contratoVigor IN ("+ this.getListaMapeoValores(context.getMapaContratoVigor(),dto.getContratoVigor()) +") and ";
@@ -1489,10 +1491,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			subSelect += "dee.asesoria = "+ Integer.parseInt(dto.getAsesoria()) +" and ";
 		}
 		if(!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias()[0].length() > 0) {
-			subSelect += "dee.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
+			subSelect += "dee.despachoExterno.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
 		if(!Checks.esNulo(dto.getImpuesto())) {
-			subSelect += "dee.descripcionIVA = '"+ getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto()) +"' and ";
+			subSelect += "dee.descripcionIVA.codigo = '"+ genericDao.get(DespachoIvaDes.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getImpuesto())) +"' and ";
 		}
 		if(!Checks.esNulo(dto.getFechaAltaSIDesde())) {
 			try {

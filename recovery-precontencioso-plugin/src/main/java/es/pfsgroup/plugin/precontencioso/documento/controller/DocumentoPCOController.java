@@ -130,7 +130,15 @@ public class DocumentoPCOController {
 					
 					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
 					if (comprobarPermisosGestoria(isGestoria, sol)) {
-						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud));
+						if (solicitudesDoc.size()==0) {
+							esDocumento = true;
+						} else {
+							if (!solicitudesDoc.get(solicitudesDoc.size()-1).getIdDoc().equals(doc.getId())) {
+								esDocumento = true;
+							}
+						}
+						SolicitudDocumentoPCODto solicitudDoc = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud);
+						solicitudesDoc.add(solicitudDoc);
 					}
 
 					if (esDocumento) esDocumento = false;

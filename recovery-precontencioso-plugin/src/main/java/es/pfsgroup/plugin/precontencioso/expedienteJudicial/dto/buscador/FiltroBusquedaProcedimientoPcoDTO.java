@@ -159,8 +159,9 @@ public class FiltroBusquedaProcedimientoPcoDTO extends WebDto {
 			|| !StringUtils.emtpyString(getDocFechaEnvioHasta())
 			|| !StringUtils.emtpyString(getDocFechaRecepcionDesde())
 			|| !StringUtils.emtpyString(getDocFechaRecepcionHasta())
-			|| (!StringUtils.emtpyString(docDespacho) && !StringUtils.emtpyString(docGestor))
-			|| !StringUtils.emtpyString(getDocDiasGestion()));
+			|| !StringUtils.emtpyString(docDespacho)
+			|| !StringUtils.emtpyString(docGestor))
+			|| !StringUtils.emtpyString(getDocDiasGestion());
 		return filtroSolicitudInformado;
 	}
 

@@ -522,29 +522,31 @@
         Begin
          INSERT /*+append*/ INTO BATCH_DATOS_EXCEPTUADOS
          (per_id, cnt_id, dd_mob_id, dd_mob_codigo, dd_mob_borrado, exc_id)
-         SELECT
-          CAST (NULL AS NUMBER (16)) AS per_id,
-          CAST (cnt.cnt_id AS NUMBER (16)) AS cnt_id,
-          CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id,
-          CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
-          CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado,
-          exc.exc_id
-         FROM exc_exceptuacion exc
-          JOIN eco_exceptuacion_contrato cnt ON exc.exc_id = cnt.exc_id
-          LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
-         WHERE exc.borrado = 0 AND TRUNC (exc.exc_fecha_hasta) > TRUNC (SYSDATE)
-         UNION
-         SELECT
-          CAST (per.per_id AS NUMBER (16)) AS per_id,
-          CAST (NULL AS NUMBER (16)) AS cnt_id,
-          CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id,
-          CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
-          CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado,
-          exc.exc_id
-         FROM exc_exceptuacion exc
-          JOIN epe_exceptuacion_persona per ON exc.exc_id = per.exc_id
-          LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
-         WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE);
+         SELECT PER_ID, CNT_ID, DD_MOB_ID, DD_MOB_CODIGO, DD_MOB_BORRADO, MIN(EXC_ID) AS EXC_ID
+           FROM (SELECT
+                  CAST (NULL AS NUMBER (16)) AS per_id,
+                  CAST (cnt.cnt_id AS NUMBER (16)) AS cnt_id,
+                  CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id,
+                  CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
+                  CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado,
+                  exc.exc_id
+                 FROM exc_exceptuacion exc
+                  JOIN eco_exceptuacion_contrato cnt ON exc.exc_id = cnt.exc_id
+                  LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
+                 WHERE exc.borrado = 0 AND TRUNC (exc.exc_fecha_hasta) > TRUNC (SYSDATE)
+                 UNION
+                 SELECT
+                  CAST (per.per_id AS NUMBER (16)) AS per_id,
+                  CAST (NULL AS NUMBER (16)) AS cnt_id,
+                  CASE WHEN exc.dd_moe_id is null THEN 1 ELSE exc.dd_moe_id END AS dd_mob_id,
+                  CASE WHEN moe.dd_moe_codigo is null THEN '01' ELSE moe.dd_moe_codigo END AS dd_mob_codigo,
+                  CASE WHEN moe.borrado is null THEN 0 ELSE moe.borrado END AS dd_mob_borrado,
+                  exc.exc_id
+                 FROM exc_exceptuacion exc
+                  JOIN epe_exceptuacion_persona per ON exc.exc_id = per.exc_id
+                  LEFT JOIN dd_moe_motivo_exceptuacion moe ON exc.dd_moe_id = moe.dd_moe_id
+                 WHERE exc.borrado = 0 AND TRUNC (exc_fecha_hasta) > TRUNC (SYSDATE) )
+         GROUP BY PER_ID, CNT_ID, DD_MOB_ID, DD_MOB_CODIGO, DD_MOB_BORRADO;
 
          COMMIT;
          OPERACION_DDL.DDL_TABLE ('STATS','BATCH_DATOS_EXCEPTUADOS');

@@ -43,7 +43,14 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		else {
 			despachoExtrasDto.setClasifDespachoPerfil("");
 		}
-		despachoExtrasDto.setCodEstAse(despachoExtras.getCodEstAse().getDescripcion());
+		
+		if(!Checks.esNulo(despachoExtras.getCodEstAse())) {
+			despachoExtrasDto.setCodEstAse(despachoExtras.getCodEstAse().getDescripcion());
+		}
+		else {
+			despachoExtrasDto.setCodEstAse("");
+		}
+
 		if(!Checks.esNulo(despachoExtras.getContratoVigor())) {
 			despachoExtrasDto.setContratoVigor(despachoExtras.getContratoVigor().getDescripcion());
 		}

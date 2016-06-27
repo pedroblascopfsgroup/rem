@@ -144,14 +144,14 @@
 			<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
 				<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
 				<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
-				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad" />
 			</pfs:panel>
 		</c:when>
 		<c:otherwise>
 		 	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
 				<pfs:items items="provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
 				<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
-				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad" />
 			</pfs:panel>
 		</c:otherwise>
 	</c:choose>	

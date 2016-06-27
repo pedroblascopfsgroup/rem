@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.web.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -7,15 +11,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.pfs.asunto.ProcedimientoManager;
+import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
+import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
+import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionParalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.parametrizacion.ParametrizacionManager;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procedimiento.EXTProcedimientoManagerOverrider;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
 import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
+import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareas;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 
 @Controller
@@ -49,6 +59,9 @@ public class DecisionProcedimientoController {
 
 	@Autowired
 	private EXTProcedimientoManager extProcedimientoManager;
+	
+	@Autowired
+	private ParametrizacionApi parametrizacionApi;
 	
 	@RequestMapping
 	public String desparalizarProcedimiento(Long idProcedimiento){
@@ -150,4 +163,35 @@ public class DecisionProcedimientoController {
 		return VENTANA_DECISION;
 	}
 	
+	
+	@RequestMapping
+	public String listaFechasProcedimientos(String codigo,ModelMap map){
+		Parametrizacion tmp = null;
+		int valor = 0;
+		String fechaHasta = "";
+		SimpleDateFormat sdf1 = new SimpleDateFormat("dd/MM/yyyy");
+		Calendar fecha = Calendar.getInstance();
+		if (DDCausaDecisionParalizar.CODIGO_ATIPICO_GASTOS.equals(codigo) || DDCausaDecisionParalizar.CODIGO_CSR_ALTA_PARA_COMPROBAR.equals(codigo) || DDCausaDecisionParalizar.CODIGO_CARTERA_FALLIDA_ALCALA_GESCOBRO.equals(codigo)
+			|| DDCausaDecisionParalizar.CODIGO_CARTERA_FALLIDA_ULISES_ALKALI.equals(codigo) || DDCausaDecisionParalizar.CODIGO_PDTE_RESOLUCION.equals(codigo) || DDCausaDecisionParalizar.CODIGO_CONCURSO_ACREEDORES.equals(codigo)	){
+			tmp = parametrizacionApi.buscarParametroPorNombre("plazoParalizacionIndefinido");
+			fechaHasta = tmp.getValor();
+		}
+		else if (DDCausaDecisionParalizar.CODIGO_INSOLVENTE_PENDIENTE_ESTUDIO.equals(codigo)){
+			tmp = parametrizacionApi.buscarParametroPorNombre("plazoParalizacion6meses");
+			valor =  Integer.parseInt(tmp.getValor());
+			fecha.add(fecha.SECOND,valor);
+			fechaHasta = sdf1.format(fecha.getTime());
+			
+		}
+		
+		else if (DDCausaDecisionParalizar.CODIGO_INSOLVENTE_PENDIENTE_ASIGNACION.equals(codigo)){
+			tmp = parametrizacionApi.buscarParametroPorNombre("plazoParalizacion1mes");
+			valor =  Integer.parseInt(tmp.getValor());
+			fecha.add(fecha.SECOND,valor);
+			fechaHasta = sdf1.format(fecha.getTime());
+		}
+		 
+		map.put("fechaHasta", fechaHasta);
+		return "plugin/mejoras/procedimientos/procedimientoDesparalizableJSON";
+	}
 }

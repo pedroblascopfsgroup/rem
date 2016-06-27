@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.web.controller
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,19 +12,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import es.capgemini.pfs.asunto.ProcedimientoManager;
 import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
 import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
-import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionParalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
-import es.capgemini.pfs.parametrizacion.ParametrizacionManager;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procedimiento.EXTProcedimientoManagerOverrider;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.MEJDecisionProcedimientoManager;
 import es.pfsgroup.plugin.recovery.mejoras.decisionProcedimiento.dto.MEJDtoDecisionProcedimiento;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.MEJProcedimientoApi;
-import es.pfsgroup.recovery.ext.api.procedimiento.EXTProcedimientoApi;
-import es.pfsgroup.recovery.ext.api.tareas.EXTOpcionesBusquedaTareas;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 
 @Controller

@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=RECOVERY-1840
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:

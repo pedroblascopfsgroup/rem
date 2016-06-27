@@ -958,7 +958,7 @@
 			btnProponer.enable();
 		}
 	}
-	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
 	var validarDatosFormulario = function(){
 		var saldoRec=saldoARecuperar.getValue();
 		if (chkFinalizarOrigen.getValue()){
@@ -970,11 +970,13 @@
 		} else if(chkParalizarOrigen.getValue()){
 			if(comboCausasParalizar.getValue()){
 				if(fechaHasta.getValue()){
-					<%-- RECOVERY-1840 comprobación para hacer obligatorio el combo comentarios --%>
-					if(comboCausasParalizar.getValue()  === 'RD' && comentarios.getValue().trim() === ""){
-						Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="" text="**Debe rellenar el campo comentario y operación." />');
-					}else{
-						return true;
+					<%-- RECOVERY-1840 Unicamente para las entidades Haya-cajamar y Cajamar. Comprobación para hacer obligatorio el combo comentarios --%>
+					if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+						if(comboCausasParalizar.getValue()  === 'RD' && comentarios.getValue().trim() === ""){
+							Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.cometarioYoperacion" text="**Debe rellenar el campo comentario y operación relacionada." />');
+						}else{
+							return true;
+						}
 					}
 				}else{
 					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralizaciï¿½n." />');
@@ -991,38 +993,31 @@
 		
 		return false;
 	}
-	debugger;
 
-	<%-- RECOVERY-1840 Dependiendo del código de la causa de paralización hace una llamada al controller para asignarle una fecha u otra --%>
-	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+	<%-- RECOVERY-1840 Unicamente para las entidades Haya-cajamar y Cajamar. Dependiendo del código de la causa de paralización hace una llamada al controller para asignarle una fecha u otra --%>
 	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
-	comboCausasParalizar.on('select',function(){
-		var codigo = comboCausasParalizar.getValue();
-		Ext.Ajax.request({
-			url: page.resolveUrl('decisionprocedimiento/listaFechasProcedimientos')
-			,params: {codigo:codigo}
-			,method: 'POST'
-			,success: function (result, request)
-			{
-				var r = Ext.util.JSON.decode(result.responseText);
-				var fecha = r.fechaHasta;
-				fechaHasta.setValue(fecha);
-				
-			}
+		comboCausasParalizar.on('select',function(){
+			var codigo = comboCausasParalizar.getValue();
+			Ext.Ajax.request({
+				url: page.resolveUrl('decisionprocedimiento/listaFechasProcedimientos')
+				,params: {codigo:codigo}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					var fecha = r.fechaHasta;
+					fechaHasta.setValue(fecha);
+				}
+			});
+			 if (codigo == 'RD'){
+		         	comentarios.label.update('<s:message code="decisionProcedimiento.comentariosYoperaciones" text="**Comentario y operación" />'); 
+				 	comentarios.allowBlank=false;
+			 } else{
+			 	comentarios.label.update('<s:message code="decisionProcedimiento.comentarios" text="**Comentarios" />'); 
+				comentarios.allowBlank=true;		 
+				}
 		});
-	
-
-		 if (codigo == 'RD'){
-	         	comentarios.label.update('Comentario y operación'); 
-			 	comentarios.allowBlank=false;
-		 } else{
-		 	comentarios.label.update('<s:message code="decisionProcedimiento.comentarios" text="**Comentarios" />'); 
-			comentarios.allowBlank=true;		 }
-		 
-	});
 	}
-	
-	
 	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
@@ -1210,7 +1205,7 @@
 						, width: 200
 						}
 						,{
-							items:[comboCausasFinalizar,comboCausasParalizar,estadoDecision, fechaHasta<%--, operacion--%>]
+							items:[comboCausasFinalizar,comboCausasParalizar,estadoDecision, fechaHasta]
 							,width:280
 						}
 						,{

@@ -171,12 +171,14 @@
 		if (comboProvincias.getValue() != '' ){
 			return true;
 		}
+		<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
 		if (perfil.getValue() != '' ){
 			return true;
 		}
 		if (concursos.getValue() != '' ){
 			return true;
 		}
+		</c:if>
 		if (codEstAse.getValue() != '' ){
 			return true;
 		}
@@ -262,8 +264,10 @@
 	var getParametros = function() {
 		return {
 			listaProvincias: comboProvincias.getValue()
+			<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
 			,clasificacionPerfil: perfil.getValue()
 			,clasificacionConcursos: concursos.getValue()
+			</c:if>
 			,codEstAse: codEstAse.getValue()
 			,contratoVigor: contratoVigor.getValue()
 			,servicioIntegral: servicioIntegral.getValue()
@@ -344,8 +348,10 @@
     		           ,centroRecuperacion
     		           ,tieneAsesoria
     		           ,relacionBankia
-    		           ,perfil
-    		           ,concursos
+    		           <c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
+    		           		,perfil
+    		           		,concursos
+    		           	</c:if>
     		           ,impuesto
     		           ,fechaAltaSIDesde
     		           ,fechaAltaSIHasta

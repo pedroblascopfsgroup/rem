@@ -1097,7 +1097,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 
 		}
-		hql.append(" group by asu.id  ");
 
 		hql.append(")"); // El que cierra la subquery
 		// MAX MINS

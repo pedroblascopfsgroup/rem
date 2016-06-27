@@ -75,6 +75,10 @@ if [[ -d $PACKAGE_TAGS_DIR ]]; then
 	echo "<Docker [$CONTAINER_NAME] WARNING> Se van a ejecutar los scripts DxL por etapas."
 	run_scripts $PACKAGE_TAGS_DIR/run-scripts-package.sh
 elif [[ -d $PACKAGE_DIR ]]; then
+	# Se elimina el zip de los logs, la compresion de los logs solo aplica a produccion
+	sed -e 's@^zip --quiet@#zip --quiet@g' -i $PACKAGE_DIR/DDL/DDL-scripts.sh
+	sed -e 's@^zip --quiet@#zip --quiet@g' -i $PACKAGE_DIR/DML/DML-scripts.sh
+
 	run_scripts $PACKAGE_DIR/DDL/DDL-scripts.sh $PACKAGE_DIR/DML/DML-scripts.sh
 else
 	echo "<Docker [$CONTAINER_NAME] ERROR> $PACKAGE_DIR no existe."

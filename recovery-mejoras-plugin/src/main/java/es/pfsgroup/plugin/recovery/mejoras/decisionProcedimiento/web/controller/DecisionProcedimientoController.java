@@ -181,9 +181,7 @@ public class DecisionProcedimientoController {
 			valor =  Integer.parseInt(tmp.getValor());
 			fecha.add(fecha.SECOND,valor);
 			fechaHasta = sdf1.format(fecha.getTime());
-			
 		}
-		
 		else if (DDCausaDecisionParalizar.CODIGO_INSOLVENTE_PENDIENTE_ASIGNACION.equals(codigo)){
 			tmp = parametrizacionApi.buscarParametroPorNombre("plazoParalizacion1mes");
 			valor =  Integer.parseInt(tmp.getValor());

@@ -991,9 +991,11 @@
 		
 		return false;
 	}
-	
+	debugger;
 
 	<%-- RECOVERY-1840 Dependiendo del código de la causa de paralización hace una llamada al controller para asignarle una fecha u otra --%>
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
 	comboCausasParalizar.on('select',function(){
 		var codigo = comboCausasParalizar.getValue();
 		Ext.Ajax.request({
@@ -1008,6 +1010,7 @@
 				
 			}
 		});
+	
 
 		 if (codigo == 'RD'){
 	         	comentarios.label.update('Comentario y operación'); 
@@ -1017,6 +1020,7 @@
 			comentarios.allowBlank=true;		 }
 		 
 	});
+	}
 	
 	
 	

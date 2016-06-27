@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteCesionRemateV4" width="1073" height="644">
+<root-container name="tramiteCesionRemateV4" width="1224" height="817">
   <node name="Inicio" x="216" y="31" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -49,9 +49,13 @@
       <bendpoint w1="-138" h1="-77" w2="-136" h2="83"/>
     </edge>
   </node>
-  <node name="P410_RealizacionCesionRemate" x="165" y="366" width="242" height="36">
+  <node name="P410_RealizacionCesionRemate" x="80" y="500" width="242" height="36">
     <edge>
       <label x="5" y="-10"/>
+      <bendpoint w1="-189" h1="12" w2="-732" h2="117"/>
+      <bendpoint w1="-186" h1="297" w2="-729" h2="402"/>
+      <bendpoint w1="685" h1="287" w2="142" h2="392"/>
+      <bendpoint w1="781" h1="-92" w2="238" h2="13"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
@@ -60,18 +64,19 @@
     </edge>
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="-100" h1="-47" w2="-101" h2="51"/>
+      <bendpoint w1="-160" h1="0" w2="-246" h2="232"/>
+      <bendpoint w1="-158" h1="-234" w2="-244" h2="-2"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P410_BPMTramiteAdjudicacion" x="435" y="555" width="250" height="36">
+  <node name="P410_BPMTramiteAdjudicacion" x="492" y="617" width="250" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="P410_RealizacionCesionRemateDecision" x="43" y="508" width="284" height="36">
+  <node name="P410_RealizacionCesionRemateDecision" x="62" y="618" width="284" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -79,6 +84,14 @@
       <label x="5" y="-10"/>
       <bendpoint w1="152" h1="111" w2="-544" h2="445"/>
       <bendpoint w1="586" h1="111" w2="-22" h2="421"/>
+    </edge>
+  </node>
+  <node name="P410_ResenyarFechaComparecenciaDecision" x="157" y="363" width="292" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-38" y="-7"/>
     </edge>
   </node>
   <node name="Fin" x="678" y="395" width="132" height="36"/>

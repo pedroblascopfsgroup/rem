@@ -6,7 +6,6 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral" label="**Servicio integral" name="servicioIntegral" value="${despachoExtras.servicioIntegral}" readOnly="true" width="200" labelWidth="120"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.concursos" label="**Concursos" name="concursos" value="${despachoExtras.clasifDespachoConcursos}" readOnly="true" labelWidth="120"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.perfil" label="**Perfil" name="perfil" value="${despachoExtras.clasifDespachoPerfil}" readOnly="true" labelWidth="120"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.codEstAse" label="**Estado letrado" name="codEstAse" value="${despachoExtras.codEstAse}" readOnly="true" width="200" labelWidth="120"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.oficinaContacto" label="**Oficina Contacto" name="oficinaContacto" value="${despachoExtras.oficinaContacto}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.entidadContacto" label="**Entidad Contacto" name="entidadContacto" value="${despachoExtras.entidadContacto}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.entidadLiquidacion" label="**Entidad liquidacion" name="entidadLiquidacion" value="${despachoExtras.entidadLiquidacion}" readOnly="true" width="230" labelWidth="180"/>
@@ -139,7 +138,7 @@
 			on_success="recargar" />
 	 --%>
 	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
-		<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, codEstAse, impuesto, servicioIntegralFieldSet"/>
+		<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
 		<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
 		<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
 		

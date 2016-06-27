@@ -2,13 +2,10 @@ package es.pfsgroup.plugin.recovery.coreextension.api;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Asunto;
-import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -55,6 +52,9 @@ public interface coreextensionApi {
 	String GET_LIST_BUSQUEDA_DESPACHOS_EXTERNOS_BY_TIPO = "plugin.recovery.coreextension.api.getDespachosExternosByTipo";
 	String GET_LIST_BUSQUEDA_TIPOSACUERDO_BY_ENTIDAD = "plugin.recovery.coreextension.api.getTipoAcuerdosByEntidad";
 	String GET_CODIGO_NIVEL_POR_DESCRIPCION = "plugin.recovery.coreextension.api.getCodigoNivelPorDescripcion";
+	
+	String GET_LIST_TIPO_DESPACHO_ESTADO_LETRADO = "plugin.recovery.coreextension.api.getListaDespachosEstadoLetrado";   
+	String GET_LIST_TIPO_GESTOR_PROPONENTE_ACUERDO="plugin.recovery.coreextension.api.getListTipoGestorProponente";
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR)
 	List<EXTDDTipoGestor> getList(String ugCodigo);
@@ -242,7 +242,7 @@ public interface coreextensionApi {
 	List<Usuario> getListAllUsuariosPorDefectoData(long idTipoDespacho, boolean incluirBorrados);
 	
 	@BusinessOperationDefinition(GET_LIST_BUSQUEDA_TERMINOS)
-	Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario);
+	Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario, List<Long> idGrpsUsuario);
 	
 	@BusinessOperationDefinition(GET_LIST_BUSQUEDA_DESPACHOS_EXTERNOS_BY_TIPO)
 	Page getDespachosExternosByTipo(String tipo,String query);
@@ -250,9 +250,15 @@ public interface coreextensionApi {
 	@BusinessOperationDefinition(GET_LIST_BUSQUEDA_TIPOSACUERDO_BY_ENTIDAD)
 	Page getTipoAcuerdosByEntidad(String codigo);
 	
+	public Page getListAllUsersPaginated(UsuarioDto usuarioDto);
+
 	@BusinessOperationDefinition(GET_CODIGO_NIVEL_POR_DESCRIPCION)
 	Integer getCodigoNivelPorDescripcion(String descripcion);
-
-	public Page getListAllUsersPaginated(UsuarioDto usuarioDto);
 	
+	@BusinessOperationDefinition(GET_LIST_TIPO_DESPACHO_ESTADO_LETRADO)
+	List<DespachoExterno> getListaDespachosEstadoLetrado(List<DespachoExterno> listaDespachos);
+	
+	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR_PROPONENTE_ACUERDO)
+	List<EXTDDTipoGestor> getListTipoGestorProponente();
+
 }

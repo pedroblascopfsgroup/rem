@@ -153,6 +153,8 @@
 	</bean>
 	<bean id="cesionRemateV4EnterActionHandler" class="es.pfsgroup.procedimientos.subasta.CesionRemateV4EnterActionHandler">
     </bean>
+    <bean id="cesionRemateLeaveActionHandler" class="es.pfsgroup.procedimientos.cesionremate.CesionRemateLeaveActionHandler">
+    </bean>
 	
 	<bean id="iteradorActionHandlerA" class="es.pfsgroup.procedimientos.contratos.IteradorAActionHandler"></bean>
 	<bean id="iteradorActionHandlerB" class="es.pfsgroup.procedimientos.contratos.IteradorBActionHandler"></bean>

@@ -8,6 +8,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
@@ -18,7 +19,9 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.ADMDespachoExternoManager;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMDespachoExternoDao;
 import es.pfsgroup.plugin.recovery.config.usuarios.dao.ADMUsuarioDao;
@@ -65,7 +68,7 @@ public class ADMDespachoExternoController {
 	@RequestMapping
 	public String getUsuariosInstant(Integer idDespacho, String query, ModelMap model) {
 
-		List<Usuario> listaUsuarios = admUsuarioDao.getListByExternosAndNombre(query);
+		List<Usuario> listaUsuarios = admUsuarioDao.getListByNombre(query);
 		List<Usuario> listaUsuariosExistentes = extGestoresDao.getGestoresByDespacho(idDespacho);
 		
 		listaUsuarios.removeAll(listaUsuariosExistentes);
@@ -79,7 +82,17 @@ public class ADMDespachoExternoController {
 		String[] idUsuarios = listaUsuariosId.split(",");
 		
 		for(int i = 0; i < idUsuarios.length;i++) {
-			despachoManager.guardarGestorDespacho(this.rellenarGestor(Long.parseLong(id.toString()), Long.parseLong(idUsuarios[i])));
+			Order order = new Order(OrderType.ASC, "id");
+			List<GestorDespacho> gestDesps = genericDao.getListOrdered(GestorDespacho.class,order, genericDao.createFilter(FilterType.EQUALS, "usuario.id", Long.parseLong(idUsuarios[i])), genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", Long.parseLong(id.toString())));
+			///Si existe alguno borrado lo actualizamos
+			GestorDespacho gesDes = null;
+			if(!Checks.estaVacio(gestDesps)){
+				gesDes = gestDesps.get(0);
+				gesDes.setAuditoria(Auditoria.getNewInstance());
+			}else{
+				gesDes = this.rellenarGestor(Long.parseLong(id.toString()), Long.parseLong(idUsuarios[i]));
+			}
+			despachoManager.guardarGestorDespacho(gesDes);
 		}
 		
 		return DEFAULT;

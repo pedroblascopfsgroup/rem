@@ -287,8 +287,7 @@ public class ADMUsuarioManager {
 			}
 		}
 	}
-	
-	
+		
 	@BusinessOperation("ADMUsuarioManager.quitarGrupo")
 	@Transactional(readOnly = false)
 	public void quitarGrupo(Long idUsuario, Long idGrupoUsuario) {	

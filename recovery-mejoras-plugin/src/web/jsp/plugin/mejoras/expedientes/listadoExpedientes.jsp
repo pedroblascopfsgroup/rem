@@ -547,8 +547,6 @@
     			
 	var buttonsR = <app:includeArray files="${buttonsRight}" />;
 	var buttonsL = <app:includeArray files="${buttonsLeft}" />;
-
-	var tabsBusqueda = <app:includeArray files="${tabsBusqueda}" />
 	
 	//Agrego los filtros al panel
 	var filtrosTabDatosExpediente = new Ext.Panel({
@@ -678,8 +676,6 @@
 		,border : false	
 		,activeItem:0
 	});
-	
-	filtroTabPanel.add(tabsBusqueda);
 	
 	
 	 var panelFiltros =  new Ext.FormPanel({

@@ -972,9 +972,13 @@ app.openBrowserWindow = function(flow, params){
 	var urlData="";
 
 	params = params || {};
+	
 	for(var x in params){
-		urlData +='&'+x+'='+params[x];
+		if (params.hasOwnProperty(x)) {
+			urlData +='&'+x+'='+params[x];
+		}
 	}
+	
 
 	urlData = urlData.slice(1);
 	if (urlData.length){

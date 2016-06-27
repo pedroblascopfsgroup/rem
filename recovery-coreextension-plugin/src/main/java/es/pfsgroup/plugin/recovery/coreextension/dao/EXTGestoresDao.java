@@ -55,4 +55,12 @@ public interface EXTGestoresDao extends AbstractDao<Usuario, Long>{
 	 * */
 	public Page getAllGestores(UsuarioDto usuarioDto);
 
+	/**
+	 * Obtiene los usuarios de cierto despacho con una ordenación especial
+	 * 
+	 * @param usuarioDto
+	 * @return
+	 */
+	Page getListUsuariosPaginatedDataOrdenacionEspecial(UsuarioDto usuarioDto);
+
 }

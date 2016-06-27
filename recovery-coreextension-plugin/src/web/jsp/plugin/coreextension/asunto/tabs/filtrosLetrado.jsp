@@ -304,7 +304,7 @@
 		,bodyStyle:'padding:5px;cellspacing:20px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
 		,items:[ 
-				{items: [ contratoVigor, relacionEntidad, codEstAse, tieneAsesoria, impuesto, clasifDespachoFieldSet]}
+				{items: [ contratoVigor, relacionEntidad, codEstAse, tieneAsesoria, impuesto<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">, clasifDespachoFieldSet</c:if>]}
 				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, fechaAltaSIFieldSet ]}
 				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, comboProvincias]}
 				

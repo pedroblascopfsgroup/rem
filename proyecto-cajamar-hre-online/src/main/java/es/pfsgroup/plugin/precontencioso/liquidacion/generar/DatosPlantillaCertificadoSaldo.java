@@ -156,7 +156,9 @@ public class DatosPlantillaCertificadoSaldo extends DatosGenerarDocumentoCajamar
 		String resultado = noDisponible(campo); 
 		try {
 			EXTContrato econtrato = genericDao.get(EXTContrato.class, genericDao.createFilter(FilterType.EQUALS, "id", contrato.getId()));
-			resultado = econtrato.getNumextra4();
+			if (!Checks.esNulo(econtrato.getNumextra4())) {
+				resultado = econtrato.getNumextra4();
+			}
 		} catch (Exception e) {
 			logger.debug(campo + " error: " + e.getMessage());
 		}

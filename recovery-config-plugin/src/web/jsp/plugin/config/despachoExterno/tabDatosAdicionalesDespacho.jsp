@@ -66,9 +66,9 @@
 	PRODUCTO-1274 ; BKREC-2291
 
 	Cuando se quieran multiples provincias por despacho, descomentar esta parte, y eleminar el field anterior a este comentario.
-	La lógica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
+	La lï¿½gica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
 	Manager: ADMDespachoExternoManager 
-	Métodos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
+	Mï¿½todos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
 	
 	Vistas modificadas: altaDespachoExterno.jsp ; tabDatosAdicionalesDespacho.jsp
 	
@@ -137,10 +137,23 @@
 			defaultWidth="800"
 			on_success="recargar" />
 	 --%>
-	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
-		<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
-		<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
-		<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad" />
+
+	 <c:choose> 
+	 
+	 	<c:when test="${usuarioEntidad == 'BANKIA'}">
+			<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
+				<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
+				<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
+				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+			</pfs:panel>
+		</c:when>
+		<c:otherwise>
+		 	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
+				<pfs:items items="provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
+				<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
+				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+			</pfs:panel>
+		</c:otherwise>
+	</c:choose>	
 		
-	</pfs:panel>	
 </pfslayout:tabpage>

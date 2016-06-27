@@ -61,7 +61,9 @@
         	btnIncluir.setDisabled(false);
         	codDespachoSel=record.data.id;
         	desDespachoSel=record.data.despacho 
-        	//usernameSel=record.data.username;    	
+        	//usernameSel=record.data.username;
+        	
+        	this.setValue(desDespachoSel);    	
          }
     });	
     

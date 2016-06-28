@@ -2,7 +2,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Ruiz
---## FECHA_CREACION=20160613
+--## FECHA_CREACION=20160627
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.6
 --## INCIDENCIA_LINK=PRODUCTO-1797
@@ -141,25 +141,7 @@ BEGIN
                 , CASE
                      WHEN (NVL(tn.TAR_EN_ESPERA, 0) = 1)
                        THEN
-                         COALESCE((SELECT usu_id
-                                     FROM '||V_ESQUEMA_M||'.USU_USUARIOS usu
-                                    WHERE CASE
-                                             WHEN usu.usu_apellido1 IS NULL AND usu.usu_apellido2 IS NULL
-                                             THEN
-                                                usu.usu_nombre
-                                             WHEN usu.usu_apellido2 IS NULL
-                                             THEN
-                                                usu.usu_apellido1 || '', '' || usu.usu_nombre
-                                             WHEN usu.usu_apellido1 IS NULL
-                                             THEN
-                                                usu.usu_apellido2 || '', '' || usu.usu_nombre
-                                             ELSE
-                                                   usu.usu_apellido1
-                                                || '' ''
-                                                || usu.usu_apellido2
-                                                || '', ''
-                                                || usu.usu_nombre
-                                          END = tn.tar_emisor)
+                         COALESCE(esp.usu_id
                                  ,NVL((SELECT usu_id
                                          FROM '||V_ESQUEMA_M||'.USU_USUARIOS
                                         WHERE usu_username = tn.tar_emisor)
@@ -573,6 +555,8 @@ BEGIN
                ON tn.tar_id = tex.tar_id
              LEFT JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap
                ON tex.tap_id = tap.tap_id
+             LEFT JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES asoc
+               ON tn.tar_tar_id = asoc.tar_id AND asoc.borrado = 0
              LEFT JOIN '||V_ESQUEMA_M||'.USU_USUARIOS ges
                ON decode(tvr.tar_id,null,tn.tar_id_dest,tvr.usu_pendientes) = ges.usu_id
              LEFT JOIN '||V_ESQUEMA_M||'.USU_USUARIOS sup
@@ -580,8 +564,15 @@ BEGIN
                        THEN nvl(tap.dd_tsup_id, 3)
                        ELSE decode(tvr.tar_id,null,-1,tvr.usu_supervisor)
                   END = sup.usu_id
-             LEFT JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES asoc
-               ON tn.tar_tar_id = asoc.tar_id AND asoc.borrado = 0
+             LEFT JOIN '||V_ESQUEMA_M||'.USU_USUARIOS esp
+               ON CASE WHEN esp.usu_apellido1 IS NULL AND esp.usu_apellido2 IS NULL
+                       THEN esp.usu_nombre
+                       WHEN esp.usu_apellido2 IS NULL
+                       THEN esp.usu_apellido1||'', ''||esp.usu_nombre
+                       WHEN esp.usu_apellido1 IS NULL
+                       THEN esp.usu_apellido2||'', ''||esp.usu_nombre
+                       ELSE esp.usu_apellido1||'' ''||esp.usu_apellido2||'', ''||esp.usu_nombre
+                  END = tn.tar_emisor
             WHERE nvl(tn.tar_tarea_finalizada,0) = 0
               AND tn.borrado = 0
               AND  ( ein.dd_ein_codigo in (''1'',''2'',''7'')

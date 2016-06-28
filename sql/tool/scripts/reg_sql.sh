@@ -196,6 +196,7 @@ if [[ ${NOMBRE_SCRIPT} =~ ^DDL_[0-9]+_[^_]+_(SP|MV|VI)_[^\.]+\.sql$ ]] ; then
     if [[ $PACKAGE == 0 ]]; then
         echo "#####    Ejecución del script ${NOMBRE_SCRIPT}"  >> $BASEDIR/$nombreLog
         exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql >> $BASEDIR/$nombreLog
+        echo "   -- : $BASEDIR/$nombreLog"
     else
         echo $'\t'"exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.sh
         echo $'\t'"exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}-one-user.sh

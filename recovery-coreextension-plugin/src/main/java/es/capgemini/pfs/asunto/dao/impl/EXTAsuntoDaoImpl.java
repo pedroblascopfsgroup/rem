@@ -807,7 +807,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		if(dto.getComboDecisionesFinalizacion()!=null && !dto.getComboDecisionesFinalizacion().equals("")){
 			//hql.append(" and prc.id = dp.procedimiento");
-			hql.append(" and asu.causaDecisionFinalizar.id IN ("+getIdDecisionProcedimiento(dto.getComboDecisionesFinalizacion())+")");
+			hql.append(" and asu.causaDecisionFinalizar.codigo = '"+dto.getComboDecisionesFinalizacion()+"'");
 		}
 
 		// PERMISOS DEL USUARIO (en caso de que sea externo)

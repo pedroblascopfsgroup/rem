@@ -42,7 +42,7 @@ Ext.ux.form.HtmlLintEditor = Ext.extend(Ext.form.HtmlEditor, {
         {regex: /<(\/?title|\/?meta|\/?style|\/?st\d|\/?head|\/?html|\/?body|!\[)[^>]*?>/gi, replaceVal: ""},
         {regex: /(\n(\r)?){2,}/gi, replaceVal: ""},        
         {regex: /<o:p>/gi, replaceVal: ""},        
-        {regex: /<\/o:p>/gi, replaceVal: ""},        
+        {regex: /<\/o:p>/gi, replaceVal: ""}        
     ],
 
     syncValue : function(){

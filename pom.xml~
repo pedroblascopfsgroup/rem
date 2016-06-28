@@ -18,6 +18,7 @@
 				recovery-api-plugin
 				recovery-ayuda-plugin
 				recovery-burofax-plugin
+				recovery-diccionarios-plugin
 				recovery-liquidaciones-plugin
 				recovery-plazasJuzgados-plugin
 				recovery-plazosExterna-plugin
@@ -26,6 +27,7 @@
 			-->
 
 		<!-- OTROS -->
+		<diccionarios.version>1.0.2_rc2</diccionarios.version>
 		<plugin.ayuda.version>1.2.0_rc2</plugin.ayuda.version>
 		<plugin.burofax.version>1.1.0</plugin.burofax.version>
 		<plugin.liquidaciones.version>2.0.2</plugin.liquidaciones.version>
@@ -308,7 +310,7 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-diccionarios-plugin</artifactId>
-				<version>${project.version}</version>
+				<version>${diccionarios.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>

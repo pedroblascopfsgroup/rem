@@ -11,6 +11,6 @@ public interface GenerarLiquidacionApi {
 
 	public FileItem generarDocumento(Long idLiquidacion, Long idPlantilla);
 	
-	public List<DDTipoLiquidacionPCO> getPlantillasLiquidacion();
+	public List<DDTipoLiquidacionPCO> getPlantillasLiquidacion(Long idLiquidacion);
 	
 }

@@ -161,8 +161,9 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 			tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, ec.getFechaValor(), pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
 			//Actualizmos la fecha
 			if (cuerpo.size()>0) {
+				LIQDtoTramoLiquidacion tramoInsertado = cuerpo.get(cuerpo.size()-1);
 				try {
-					fecha = DateFormat.toDate(cuerpo.get(cuerpo.size()-1).getFechaValor());
+					fecha = DateFormat.toDate(tramoInsertado.getFechaValor());
 				} catch (Exception e) {};
 			}
 			
@@ -180,14 +181,16 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		tipoInt = this.AgregarcambiosTipoEntreFechas(request, fecha, fechaCalculo, pendientes.getSaldo(), pendientes.getIntereses(), cuerpo, tipoInt);
 		//Actualizmos la fecha
 		if (cuerpo.size()>0) {
+			LIQDtoTramoLiquidacion tramoInsertado = cuerpo.get(cuerpo.size()-1);
 			try {
-				fecha = DateFormat.toDate(cuerpo.get(cuerpo.size()-1).getFechaValor());
+				fecha = DateFormat.toDate(tramoInsertado.getFechaValor());
 			} catch (Exception e) {};
 		}
 
 		
 		//3.- Por último el tramo del Calculo de Deuda, desde la última fecha hasta la fecha Calculo
 		LIQDtoTramoLiquidacion ultTramo = new LIQDtoTramoLiquidacion();
+		
 		ultTramo.setFechaValor(DateFormat.toString(request.getFechaLiquidacion()));
 		ultTramo.setDescripcion("C\u00E1lculo deuda");
 		ultTramo.setSaldo(pendientes.getSaldo());
@@ -201,8 +204,11 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		ultTramo.setCostasProcuradorPendientes(pendientes.getCostasProcurador());
 		
 		ultTramo.setDias(diferenciaDias(fecha, fechaCalculo));
+		//El cierre incluye también el último día
+		ultTramo.setDias(ultTramo.getDias()+1);
 		ultTramo.setTipoDemora(tipoInt);
 		ultTramo.setInteresesDemora(calcularInteresesDemora(pendientes.getSaldo(), ultTramo.getDias(), tipoInt, request.getBaseCalculo()));
+
 		
 		cuerpo.add(ultTramo);
 		
@@ -290,7 +296,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 	private LIQDtoTramoLiquidacion tramoEntregaNoDesglosada(EntregaCalculoLiq ec, Date fechaAnt, Float tipoInt, int baseCalculo, LIQTramoPendientes pendientes) {
 		LIQDtoTramoLiquidacion tramo = new LIQDtoTramoLiquidacion();
 		
-		BigDecimal importeECRestante = (!Checks.esNulo(ec.getTotalEntrega())?ec.getTotalEntrega():BigDecimal.ZERO); 
+		BigDecimal importeECRestante = (!Checks.esNulo(ec.getTotalEntrega())?ec.getTotalEntrega():BigDecimal.ZERO);
 		
 		//De la entrega primero reducimos de los intereses demora cierre pendientes
 		if (importeECRestante.compareTo(pendientes.getIntDemoraCierre()) == 1) {
@@ -326,7 +332,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 		}
 		
 		tramo.setDias(diferenciaDias(fechaAnt, ec.getFechaValor()));
-		tramo.setInteresesDemora(calcularInteresesDemora(pendientes.getSaldo(), tramo.getDias(), tipoInt, baseCalculo));		
+		tramo.setInteresesDemora(calcularInteresesDemora(pendientes.getSaldo(), tramo.getDias(), tipoInt, baseCalculo));
 		
 		//Si todavia nos queda importe de la entrega
 		if (importeECRestante.compareTo(BigDecimal.ZERO) == 1) {
@@ -420,6 +426,7 @@ public class LiquidacionAvanzadoManagerImpl implements LiquidacionAvanzadoApi {
 				tramoCambioTipo.setFechaValor(DateFormat.toString(fechaCambio));
 				tramoCambioTipo.setDescripcion("Cambio inter\u00E9s de demora");
 				tramoCambioTipo.setSaldo(saldo);
+
 				tramoCambioTipo.setInteresesPendientes(intereses);
 				tramoCambioTipo.setDias(diferenciaDias(fechaAnt, fechaCambio));
 				tramoCambioTipo.setTipoDemora(tipo);

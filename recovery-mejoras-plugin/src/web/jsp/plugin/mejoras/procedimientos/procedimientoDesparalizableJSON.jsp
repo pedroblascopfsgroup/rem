@@ -7,4 +7,5 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <fwk:json>
 	   <json:property name="isDesparalizable" value="${isDesparalizable}" />
+	   <json:property name="fechaHasta" value="${fechaHasta}" />
 </fwk:json>

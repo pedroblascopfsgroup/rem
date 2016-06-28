@@ -202,6 +202,7 @@ app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_TAREA_PROCEDIMIENTO = '<fwk:c
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_EXP = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_EXP" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_PER = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_PER" />';
 app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_ASUNTOS_COBRO_PAGO" />';
+app.categoriaSubTipoTarea.CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO = '<fwk:const value ="es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext.CATEGORIA_SUBTAREA_ABRIR_HISTORICO_PROCEDIMIENTO" />';
 
 app.tipoDestinatario={};
 app.tipoDestinatario.CODIGO_DESTINATARIO_GESTOR = '<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion.CODIGO_DESTINATARIO_GESTOR" />';
@@ -968,12 +969,17 @@ abre una nueva ventana del navegador con el flow y par�metros que se le pasan
 app.openBrowserWindow = function(flow, params){
 	var url=flow+'.htm';
 	var urlData="";
-
-	params = params || {};
 	
+	params = params || {};
 	for(var x in params){
-		if (params.hasOwnProperty(x)) {
-			urlData +='&'+x+'='+params[x];
+		// Que no este indefinido, que tenga propiedad y que no sea una funcion.
+		if (params[x] != undefined && params.hasOwnProperty(x) && (typeof params[x] != "function")) {
+			// Si es tipo string que no sea una funcion en modo texto. Siempre contienen la palabra function.
+			if(typeof params[x] == "string" && params[x].indexOf("function") == -1){
+				urlData +='&'+x+'='+params[x];
+			} else if(typeof params[x] != "string"){ // Cualquier otro tipo pasa.
+				urlData +='&'+x+'='+params[x];
+			}
 		}
 	}
 	

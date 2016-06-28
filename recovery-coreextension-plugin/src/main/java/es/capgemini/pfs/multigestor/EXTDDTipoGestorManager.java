@@ -22,7 +22,7 @@ public class EXTDDTipoGestorManager implements EXTDDTipoGestorApi{
 	@Override
 	@BusinessOperation(EXT_BO_TIPOGESTOR_GETLIST)
 	public List<EXTDDTipoGestor> getList() {
-		List<EXTDDTipoGestor> listaTiposGestores = genericDao.getList(EXTDDTipoGestor.class);
+		List<EXTDDTipoGestor> listaTiposGestores = genericDao.getList(EXTDDTipoGestor.class,genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado",false));
 		
 		return listaTiposGestores;
 	}

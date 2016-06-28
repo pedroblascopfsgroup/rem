@@ -200,9 +200,9 @@ nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
 mkdir -p $BASEDIR/tmp
-if [[ $PACKAGE == 0 ]]; then
-    rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
-fi
+#if [[ $PACKAGE == 0 ]]; then
+#    rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
+#fi
 
 if [[ ! $FICHERO =~ ^.*procs_y_vistas.*$ ]] ; then
     if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then
@@ -253,6 +253,7 @@ while read -r line
     do
         grep -i "$line" $1 > $BASEDIR/tmp/ocurrences.log
         if [ $? -eq 0 ]; then
+            echo ""
             echo "******** WARNING - Incluye "$line
             while read -r ocurrence
                 do

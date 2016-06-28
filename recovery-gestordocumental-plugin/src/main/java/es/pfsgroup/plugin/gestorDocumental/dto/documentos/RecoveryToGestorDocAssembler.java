@@ -10,6 +10,8 @@ public class RecoveryToGestorDocAssembler {
 
 	private static final Log logger = LogFactory.getLog(RecoveryToGestorDocAssembler.class);
 	
+	private static final String PROCESO_CARGA = "WEB SERVICE RECOVERY";
+	
 	public static CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String id, String tipoExp, String claseExp) {
 
 		CabeceraPeticionRestClientDto cabecera = new CabeceraPeticionRestClientDto();
@@ -47,7 +49,7 @@ public class RecoveryToGestorDocAssembler {
 	private static String rellenarGeneralDocumento (String serie, String tdn1, String tdn2) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		sb.append(GestorDocumentalConstants.generalDocumento[5]).append("Bankia IPLUS").append(", ");
+		sb.append(GestorDocumentalConstants.generalDocumento[5]).append(PROCESO_CARGA).append(", ");
 		sb.append(GestorDocumentalConstants.generalDocumento[6]).append("ALTA").append(", ");
 		sb.append(GestorDocumentalConstants.generalDocumento[7]).append(serie).append(", ");
 		sb.append(GestorDocumentalConstants.generalDocumento[8]).append(tdn1).append(", ");

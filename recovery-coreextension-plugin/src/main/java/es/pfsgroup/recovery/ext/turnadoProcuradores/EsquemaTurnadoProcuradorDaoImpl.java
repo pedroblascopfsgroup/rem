@@ -239,11 +239,13 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
         hql.append("select ept.tipoPlaza from EsquemaPlazasTpo ept ");
         hql.append("where ept.auditoria.borrado = false ");
         hql.append("and ept.esquemaTurnadoProcurador.id ="+idEsquema+" ");
+        hql.append("order by ept.tipoPlaza.descripcion");
+        
 
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
         List<TipoPlaza> listaPlazas = q.list();
         
-        //Añadir la plaza por defecto si existe
+        //Agregar la plaza por defecto si existe
         hql = new StringBuilder();
         hql.append("select count(*) from EsquemaPlazasTpo ept ");
         hql.append("where ept.auditoria.borrado = false ");
@@ -278,7 +280,7 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
         Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
         List<TipoProcedimiento> listaTpo = q.list();
         
-        //Añadir la tpo por defecto si existe
+        //Agregar la tpo por defecto si existe
         hql = new StringBuilder();
         hql.append("select count(*) from EsquemaPlazasTpo ept ");
         hql.append("where ept.auditoria.borrado = false ");

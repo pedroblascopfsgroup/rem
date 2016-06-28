@@ -632,10 +632,14 @@
 		if(fechaEntrega.getValue() != null && fechaEntrega.getValue() != "" && fechaValor.getValue() != null && fechaValor.getValue() != "" &&
 		 totalEntrega.getValue() != 0 && totalEntrega.getValue() != "" && totalEntrega.getValue() != null){
 			return true;
-		} else {
-			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError" text="**Falta alg�n par�metro obligatorio" />');
-			return false;
+		} else if(fechaEntrega.getValue() == null || fechaEntrega.getValue() == "") {
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError.fechaentrega" text="**Fecha Entrega es obligatorio" />');		
+		} else if(fechaValor.getValue() == null || fechaValor.getValue() == "") {
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError.fechavalor" text="**Fecha Valor es obligatorio" />');
+		} else if(totalEntrega.getValue() == 0 || totalEntrega.getValue() == "" || totalEntrega.getValue() == null) {
+			Ext.MessageBox.alert('<s:message code="contabilidad.msgValidationErrorTitle" text="**Error" />', '<s:message code="contabilidad.msgValidationError.totalentrega" text="**Total Entrega es obligatorio" />');
 		}
+		return false;
 	}
 
 	<%-- Botones Ventana --%>
@@ -751,6 +755,7 @@
 	
 	<%-- Funcion para preparar la ventana en modo 'EDITAR' o 'VER' --%>
 	function establecerModoVentana(){
+		debugger;
 		var puedeEditar = ${puedeEditar};
 		
 		if(!puedeEditar){

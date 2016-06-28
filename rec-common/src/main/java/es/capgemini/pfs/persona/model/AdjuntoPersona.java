@@ -83,6 +83,9 @@ public class AdjuntoPersona implements Serializable, Auditable {
 	@Transient
 	private String nombreTipoDoc;
 	
+	@Transient
+	private Long idAdjuntoBlob;
+	
 
     /**
      * Constructor vacio.
@@ -275,5 +278,13 @@ public class AdjuntoPersona implements Serializable, Auditable {
 	
 	public void setServicerId(Long servicerId) {
 		this.servicerId = servicerId;
+	}
+	
+	public Long getIdAdjuntoBlob() {
+		return idAdjuntoBlob;
+	}
+	
+	public void setIdAdjuntoBlob(Long idAdjuntoBlob) {
+		this.idAdjuntoBlob = idAdjuntoBlob;
 	}
 }

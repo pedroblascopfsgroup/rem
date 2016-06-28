@@ -151,7 +151,29 @@
 						<value>TGESHREIN</value>
 						<value>TGESRIE</value>
 						<value>TDIRTERRIE</value>
-						<value>TDIRRIETERGCC</value>
+						<value>TDIRRIETERGCC</value>	
+					</set>
+				</entry>
+				<entry key="ABRIR_EXP">
+					<set>
+						<value>FZAR_PPUESTA</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_PER">
+					<!-- Tareas tipo abrir cliente -->
+					<set>
+						<value>29</value>
+					</set>
+				</entry>	
+				<entry key="ABRIR_COBROS_PAGOS">
+					<!-- Tareas tipo abrir asunto -->
+					<set>
+						<value>CONTACOBR</value>
+					</set>
+				</entry>
+				<entry key="ABRIR_HISTORICO_PROCEDIMIENTO">
+					<!-- Tareas tipo abrir historico -->
+					<set>
 						<!-- PRORROGAS -->
 						<value>RESPRO_SUHRE</value>
 						<value>RESPRO_SUP</value>
@@ -181,26 +203,8 @@
 						<value>RESPRO_DIRHRE</value>
 						<value>RESPRO_SUP_PCO</value>
 						<value>RESPRO_CM_GD_PCO</value>
-						
 					</set>
-				</entry>
-				<entry key="ABRIR_EXP">
-					<set>
-						<value>FZAR_PPUESTA</value>
-					</set>
-				</entry>
-				<entry key="ABRIR_PER">
-					<!-- Tareas tipo abrir cliente -->
-					<set>
-						<value>29</value>
-					</set>
-				</entry>	
-				<entry key="ABRIR_COBROS_PAGOS">
-					<!-- Tareas tipo abrir asunto -->
-					<set>
-						<value>CONTACOBR</value>
-					</set>
-				</entry>			
+				</entry>							
 			</map>
 		</property>
 		<property name="tiposProcedimientosAdjudicados">

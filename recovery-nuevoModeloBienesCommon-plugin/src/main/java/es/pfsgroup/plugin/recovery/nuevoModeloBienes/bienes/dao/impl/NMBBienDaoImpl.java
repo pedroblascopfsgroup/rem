@@ -80,7 +80,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         if(!Checks.esNulo(dto.getNumContrato()) || !Checks.esNulo(dto.getNifPrimerTitular())) {
         	hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".contratos biecnt "));
         }
-        
+   
         if (usuLogado.getUsuarioExterno()) {
 	        hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".procedimientos prcbie "));
 	        hql.append(" LEFT JOIN ".concat("prcbie").concat(".procedimiento prc"));
@@ -103,8 +103,10 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         
         if(!Checks.esNulo(dto.getPoblacion()) || !Checks.esNulo(dto.getCodPostal()) || !Checks.esNulo(dto.getDireccion()) || !Checks.esNulo(dto.getProvincia()) || !Checks.esNulo(dto.getLocalidad()) || !Checks.esNulo(dto.getCodigoPostal())) {
         	//hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".localizaciones loc "));
-        	hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".poblacion ='".concat(dto.getPoblacion())+"'"));
+        	//hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".poblacion ='".concat(dto.getPoblacion())+"'"));
         	
+        	hql.append(" AND UPPER(nmb.poblacion) = '|| :poblacion ||'");
+        	params.put("poblacion", dto.getPoblacion().toUpperCase());
         }
         
         if(dto.isSolvenciaNoEncontrada()){

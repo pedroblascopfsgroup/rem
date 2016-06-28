@@ -542,6 +542,14 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getNombreTipoDoc() {
 					return adj.getTipoAdjuntoEntidad().getDescripcion();
 				}
+
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(adj.getAdjunto() != null) {
+						return adj.getAdjunto().getId();
+					}
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -688,6 +696,14 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getNombreTipoDoc() {
 					return aa.getTipoAdjuntoEntidad().getDescripcion();
 				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -756,6 +772,14 @@ public class AdjuntoManager implements AdjuntoApi{
 				@Override
 				public String getNombreTipoDoc() {
 					return aa.getTipoAdjuntoEntidad().getDescripcion();
+				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -860,9 +884,6 @@ public class AdjuntoManager implements AdjuntoApi{
 	
 					@Override
 					public String getRefCentera() {
-						if(aa.getServicerId() != null) {
-							return aa.getServicerId().toString();
-						}
 						return null;
 					}
 	
@@ -870,9 +891,18 @@ public class AdjuntoManager implements AdjuntoApi{
 					public String getNombreTipoDoc() {
 						return null;
 					}
+				
+					@Override
+					public Long getIdAdjuntoBlob() {
+						if(aa.getAdjunto() != null) {
+							return aa.getAdjunto().getId();
+						}
+						return null;
+					}
 				};
 				result.add(dto);
 			}
+
 		}
 		return result;
 	}

@@ -8,7 +8,7 @@
 <%@ taglib uri="http://java.sun.com/jstl/fmt" prefix="fmt" %>
 
 <fwk:page>
-
+	
 	var labelStyle='font-weight:bolder;width:130';
 	var estiloTitulo = 'vertical-align:center';
 	var idTipoEntidad='${idTipoEntidadInformacion}';
@@ -26,7 +26,7 @@
 		var idTareaOriginalH = new Ext.form.Hidden({name:'idTareaOriginal', value :'${idTareaOriginal}'}) ;
 	</c:if>
 
-	if(motivo=="" && fechaPropuesta==""){
+	if((motivo=="" && fechaPropuesta=="") || descripcion=='Solicitar Prorroga PRC'){
 		fechaVencimiento="";
 		descripcionEntidad= "";
 		
@@ -43,11 +43,16 @@
 			        ,params: {id: idProrroga}
 			        ,success: function(result, request){ 
 			         	var r2 = Ext.util.JSON.decode(result.responseText);
-			            var fechaVencimientoTareaOriginal= r2.datos.fechaVencimientoTareaAsociada.split(' ')[0];
-			            f2= fechaVencimientoTareaOriginal.split('-');
-			            fVencimientoFinal= f2[2]+"/"+f2[1]+"/"+f2[0];
+						if(r2.datos.fechaVencimientoOriginal!=''){
+				            var fechaVencimientoOriginal= r2.datos.fechaVencimientoOriginal.split(' ')[0];
+							f3= fechaVencimientoOriginal.split('-');
+				            var fVencimientoOriginal= f3[2]+"/"+f3[1]+"/"+f3[0];
+			            }
+			            else{
+			            	var fVencimientoOriginal= '';
+			            }
 			                    	
-			            txtFechaVencimiento.setValue(fVencimientoFinal);
+			            txtFechaVencimiento.setValue(fVencimientoOriginal);
 			            motivoSolicitud.setValue(r2.datos.motivo);
 			            fechaPropuesta.setValue(r2.datos.fechaPropuesta);
 			            txtDescripcionEntidad.setValue(r2.datos.descripcionTareaAsociada);
@@ -149,13 +154,25 @@
 	</c:if>
 	<c:if test="${isConsulta}">
 		
+		var descrRespuestaProrroga = new Ext.form.TextArea({
+			width:300
+			,fieldLabel:'<s:message code="decisionprorroga.observaciones.respuesta" text="**Observaciones" />'
+			,labelStyle:"font-weight:bolder"
+			,readOnly:true
+			,value: '<s:message text="${decisionProrroga.observacionesRespuesta}" javaScriptEscape="true" />'
+		});
+		
 		var aprobada=app.creaLabel('<s:message code="decisionprorroga.resolucion" text="**Resolucion" />','${decisionProrroga.respuestaProrroga.descripcion}' || '<s:message code="decisionprorroga.decisionpendiente" text="**Pendiente" />');		
+		
 		var fieldSetResolucion = new Ext.form.FieldSet({
 			title:'<s:message code="decisionprorroga.respuesta" text="**Respuesta" />'
-			,items:[aprobada]
+			,items:[aprobada,descrRespuestaProrroga]
 			,autoHeight:true
 			,autoWidth:true
 		});
+		
+		
+		
 	</c:if>
 	var items = { 
 		border : false

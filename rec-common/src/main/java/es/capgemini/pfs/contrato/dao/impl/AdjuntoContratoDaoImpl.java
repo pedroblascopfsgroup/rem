@@ -37,4 +37,20 @@ public class AdjuntoContratoDaoImpl extends AbstractEntityDao<AdjuntoContrato, L
 		}
 		return new ArrayList<AdjuntoContrato>();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<AdjuntoContrato> getAdjuntoContratoByIdNombreTipoDocumento(Long idContrato, String nombre, String tipoDocumento) {
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select aa from AdjuntoContrato aa where aa.auditoria.borrado = false and aa.contrato.id = ");
+		hql.append(idContrato);
+		hql.append(" and aa.nombre like '");
+		hql.append(nombre);
+		hql.append("%'");
+		hql.append(" and aa.tipoAdjuntoEntidad.codigo = '");
+		hql.append(tipoDocumento);
+		hql.append("'");
+		return getSession().createQuery(hql.toString()).list();
+	}
+
 }

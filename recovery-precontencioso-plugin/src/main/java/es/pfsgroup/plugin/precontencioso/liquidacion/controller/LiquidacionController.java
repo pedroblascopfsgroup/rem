@@ -17,7 +17,9 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.core.api.parametrizacion.ParametrizacionApi;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -29,6 +31,9 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.api.LiquidacionApi;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDTipoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 
 @Controller
@@ -43,6 +48,8 @@ public class LiquidacionController {
 	private static final String JSP_SOLICITAR_LIQUIDACION = "plugin/precontencioso/liquidacion/popups/solicitarLiquidacion";
 	private static final String JSP_DOWNLOAD_FILE = "plugin/geninformes/download";
 	
+	private static final String TIPO_USUARIO_PAGINATED_JSON = "plugin/precontencioso/liquidacion/json/tipoUsuarioPaginatedJSON";
+
 	private static final String CODIGO_TIPO_GESTOR_APODERADO = "APOD";
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -65,6 +72,9 @@ public class LiquidacionController {
 	@Autowired
 	private GestorTareasApi gestorTareasManager;
 
+	@Autowired
+	private EXTGestoresDao gestoresDao;
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getLiquidacionesPorProcedimientoId(@RequestParam(value = "idProcedimientoPCO", required = true) Long idProcedimientoPCO, ModelMap model) {
@@ -248,14 +258,14 @@ public class LiquidacionController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
-	public String getPlantillasLiquidacion(ModelMap model) {
+	public String getPlantillasLiquidacion(@RequestParam(value = "idLiquidacion", required = false) Long id, ModelMap model) {
 
 		if (generarLiquidacionApi == null) {
 			logger.error("liquidacioncontroller.generar: No existe una implementacion para generar liquidaciones");
 			throw new BusinessOperationException("Not implemented generarLiquidacionApi");
 		}
 
-		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+		List<DDTipoLiquidacionPCO> plantillas = generarLiquidacionApi.getPlantillasLiquidacion(id);
 		model.put("plantillas", plantillas);
 		return JSON_PLANTILLAS;
 	}
@@ -266,11 +276,31 @@ public class LiquidacionController {
 		List<DDTipoLiquidacionPCO> plantillas = null;
 
 		if (generarLiquidacionApi != null) {
-			plantillas = generarLiquidacionApi.getPlantillasLiquidacion();
+			plantillas = generarLiquidacionApi.getPlantillasLiquidacion(id);
 		}
 
 		model.put("ocultarCombo", Checks.estaVacio(plantillas));
 		model.put("idLiquidacionSeleccionada", id);
 		return JSP_PLANTILLAS_LIQUIDACION;
 	}
+
+	/**
+	 * Controlador que devuelve un JSON con la lista de usuarios para un tipo de despacho. 
+	 * Soporta paginaci�n y b�squeda.
+	 * 
+	 * @param model
+	 * @param idTipoDespacho id del despacho. {@link DespachoExterno}
+	 * @return JSON
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String getListUsuariosPaginatedData(ModelMap model, UsuarioDto usuarioDto){
+		
+		Page page = gestoresDao.getListUsuariosPaginatedDataOrdenacionEspecial(usuarioDto);
+		model.put("pagina", page);
+				
+		return TIPO_USUARIO_PAGINATED_JSON;
+	}
+	
+
 }

@@ -38,8 +38,8 @@ public class GestionClientesManager {
 	@SuppressWarnings("rawtypes")
 	public List<GestionClientesCountDTO> getContadoresGestionVencidos() {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-
-		List<Map> contadores = dao.obtenerCantidadDeVencidosUsuario(usuario);
+		List<List<Object>> listaZonas= dao.obtenerZonasExistente(usuario);
+		List<Map> contadores = dao.obtenerCantidadDeVencidosUsuarioVistaVencidos(usuario,listaZonas);
 
 		ArrayList<GestionClientesCountDTO> result = new ArrayList<GestionClientesCountDTO>();
 		if (contadores != null) {
@@ -88,16 +88,19 @@ public class GestionClientesManager {
 
 	public Page getDatosVencidos(GestionClientesBusquedaDTO dto) {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_RECUPERACION, usuario, dto);
+		List<List<Object>> listaZonas= dao.obtenerZonasExistente(usuario);
+		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_RECUPERACION, usuario, dto,listaZonas);
 	}
 	
 	public Page getDatosSeguimientoSistematico(GestionClientesBusquedaDTO dto) {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO, usuario, dto);
+		List<List<Object>> listaZonas= dao.obtenerZonasExistente(usuario);
+		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SISTEMATICO, usuario, dto, listaZonas);
 	}
 	
 	public Page getDatosSeguimientoSintomatico(GestionClientesBusquedaDTO dto) {
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO, usuario, dto);
+		List<List<Object>> listaZonas= dao.obtenerZonasExistente(usuario);
+		return dao.obtenerListaGestionClientes(DDTipoItinerario.ITINERARIO_SEGUIMIENTO_SINTOMATICO, usuario, dto,listaZonas);
 	}
 }

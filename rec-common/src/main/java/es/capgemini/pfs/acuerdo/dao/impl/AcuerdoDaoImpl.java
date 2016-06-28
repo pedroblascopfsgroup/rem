@@ -25,8 +25,11 @@ import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.acuerdo.model.AcuerdoConfigAsuntoUsers;
 import es.capgemini.pfs.acuerdo.model.DDEstadoAcuerdo;
+import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -42,6 +45,9 @@ import es.pfsgroup.commons.utils.Checks;
 @Repository("AcuerdoDao")
 public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements AcuerdoDao {
 
+	private static final String TIPO_ACUERDO_EXP = "EXP";
+	private static final String TIPO_ACUERDO_AMBAS = "AMBAS";
+	private static final String TIPO_ACUERDO_ASU = "ASU";
 	@Resource
 	private PaginationManager paginationManager;
 	
@@ -163,13 +169,14 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	   		return lista;
 	    }
 
-	public Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario) {
+	public Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario, List<Long> idGrpsUsuario, String tipoAcuerdoDesc) {
 		Page page = paginationManager.getHibernatePage(getHibernateTemplate(), 
-				generarHQLBuscarAcuerdos(terminosFiltroDto,usuario), terminosFiltroDto);
+				generarHQLBuscarAcuerdos(terminosFiltroDto,usuario,idGrpsUsuario, tipoAcuerdoDesc), terminosFiltroDto);
 		return page;
 	}
 	
-	private String generarHQLBuscarAcuerdos(DTOTerminosFiltro dto, Usuario usuarioLogueado) {
+	
+	private String generarHQLBuscarAcuerdos(DTOTerminosFiltro dto, Usuario usuarioLogueado, List<Long> idGrpsUsuario, String tipoAcuerdoDesc) {
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -182,11 +189,14 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		boolean cruzaJerarquia = (!Checks.esNulo(dto.getJerarquia()));
 		boolean cruzaCentros = (!Checks.esNulo(dto.getCentros()));
 		
-		hql.append("select distinct ter ");
+		hql.append(" select distinct acu, ter from");
+		hql.append(" Acuerdo acu left join acu.terminos ter");
 		
-		// LAS TABLAS QUE NECESITO
-		hql.append("from TerminoAcuerdo ter ");
-		
+		if(cruzaTipoTermino){
+			hql.append(" left join acu.tipoAcuerdo tpa ");
+			hql.append(" left join ter.tipoAcuerdo tpt ");
+		}
+
 		if(cruzaContratos){
 			hql.append(", TerminoContrato terCnt");
 		}
@@ -198,9 +208,20 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 			hql.append(", ClienteContrato cliCnt");
 		}
 		
+		//para jerarquía y zonas de acuerdos de asuntos
+		if (requiereContrato(dto) && (dto.getTipoAcuerdo().equals(TIPO_ACUERDO_ASU) || dto.getTipoAcuerdo().equals(TIPO_ACUERDO_AMBAS))) {
+			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt, Procedimiento prc ");
+		}
+		
 		hql.append(" where 1=1 ");
 		
-		
+		if(cruzaJerarquia && (dto.getTipoAcuerdo().equals(TIPO_ACUERDO_ASU) || dto.getTipoAcuerdo().equals(TIPO_ACUERDO_AMBAS))){
+			hql.append(" and prc.asunto.id = acu.asunto.id ");
+			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
+			hql.append(" and prc.id = pce.procedimiento and cex.id = pce.expedienteContrato and cex.contrato.id = cnt.id ");
+			hql.append(" and cex.auditoria." + Auditoria.UNDELETED_RESTICTION);
+		}
+	
 		//// FILTROS /////
 		
 		//CONTRATO
@@ -215,122 +236,257 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 			}
 			hql.append(" and terCnt.contrato.id=cliCnt.contrato.id and cliCnt.cliente.id= "+dto.getNroCliente());
 		}
-
-		//TIPO ACUERDO
-		if(cruzaTipoAcuerdo){
-			
-			if(dto.getTipoAcuerdo().equals("ASU")){
-				hql.append(" and ter.acuerdo.asunto.id is not null ");
-			}else{	
-				if(dto.getTipoAcuerdo().equals("EXP")){
-					hql.append(" and ter.acuerdo.expediente.id is not null ");
-				}else{	
-					if(dto.getTipoAcuerdo().equals("AMBAS")){
-						hql.append(" and (ter.acuerdo.expediente.id is not null or ter.acuerdo.asunto.id is not null) ");
-						}
-					}
-			}	
-		}else{
-			hql.append(" and (ter.acuerdo.expediente.id is not null or ter.acuerdo.asunto.id is not null) ");
-		}
 		
+		//TIPO ACUERDO ASUNTO
+		if(dto.getTipoAcuerdo().equals(TIPO_ACUERDO_ASU)){
+			
+			hql.append(" and acu.asunto.id is not null ");	
+			//Si es usuario externo, se muestran los acuerdos de asuntos con restricciones
+			//PERMISOS DEL USUARIO
+			if (usuarioLogueado.getUsuarioExterno()) {
+				hql.append(filtroUsuarioExterno(usuarioLogueado, idGrpsUsuario));
+			}
+			
+			// FILTRO JERARQUÍA Y ZONAS
+			if (cruzaJerarquia) {				
+				hql.append(filtroJerarquiaZonaAcuerdosAsuntos(dto));
+			}
+				
+		}else{	
+			//TIPO ACUERDO EXPEDIENTE
+			if(dto.getTipoAcuerdo().equals(TIPO_ACUERDO_EXP)){
+				//Si es usuario externo, no se muestran acuerdos de expedientes
+				if (usuarioLogueado.getUsuarioExterno()) {
+					hql.append(" and 1=2 ");
+				}else{
+					//Si no es usuario externo, se muestran los acuerdos de expedientes
+					hql.append(" and acu.expediente.id is not null ");
+					
+					//FILTRO JERARQUIA Y ZONAS
+			        if (cruzaJerarquia) {
+			            hql.append(filtroJerarquiaZonaAcuerdosExpedientes(dto));
+			        }
+				}	
+			}else{
+				//TIPO ACUERDO AMBAS
+				//Si es usuario externo, solo se muestran acuerdos de asuntos con las restricciones correspondientes
+				if (usuarioLogueado.getUsuarioExterno()) {	
+					
+					//PERMISOS PARA ASUNTOS
+					hql.append(" and acu.asunto.id is not null ");
+					hql.append(filtroUsuarioExterno(usuarioLogueado, idGrpsUsuario));
+					
+					// FILTRO JERARQUÍA Y ZONAS
+					if (cruzaJerarquia) {				
+						hql.append(filtroJerarquiaZonaAcuerdosAsuntos(dto));
+					}
+					
+				}else{
+					//Si no es usuario externo, se muestran Acuerdos de asuntos y expedientes sin restricciones	salvo las de jerarquía				
+					// FILTRO JERARQUÍA Y ZONAS
+					if (cruzaJerarquia){
+						hql.append(" and (acu.asunto.id is not null or acu.expediente.id is not null) ");
+						hql.append(filtroJerarquiaZonasAcuerdosTodos(dto, cruzaJerarquia));
+					}else{
+						hql.append(" and (acu.asunto.id is not null or acu.expediente.id is not null) ");
+					}
+				}
+			}
+		}	
+			
 		//TIPO TERMINO
 		if(cruzaTipoTermino){
-			hql.append(" and ter.acuerdo.tipoAcuerdo.codigo = '"+ dto.getTipoTermino() + "' ");
-		}
-		
+			hql.append(" and (tpa.descripcion = '"+ tipoAcuerdoDesc + "' ");
+			hql.append(" or tpt.descripcion = '"+ tipoAcuerdoDesc + "') ");
+		}		
 		//ESTADO
 		if(cruzaEstado){
-			hql.append(" and ter.acuerdo.estadoAcuerdo.codigo = '"+ dto.getEstado() + "' ");
-		}
-		
+			hql.append(" and acu.estadoAcuerdo.codigo = '"+ dto.getEstado() + "' ");
+		}		
 		//SOLICITANTES
 		if (cruzaDespachos) {			
-			hql.append(" and ter.acuerdo.gestorDespacho.despachoExterno.id in (" + dto.getSolicitantes() + ")) ");
-			}
-		
+			hql.append(" and acu.gestorDespacho.despachoExterno.id in (" + dto.getSolicitantes() + ")) ");
+		}	
 		//FECHA PROPUESTA DESDE
 		if (dto.getFechaAltaDesde() != null && !"".equals(dto.getFechaAltaDesde())) {        		
-			hql.append(" and ter.acuerdo.fechaPropuesta >= TO_DATE('"+dto.getFechaAltaDesde() + "','dd/MM/yyyy')" );    
+			hql.append(" and acu.fechaPropuesta >= TO_DATE('"+dto.getFechaAltaDesde() + "','dd/MM/yyyy')" );    
 	    }   
 	    //FECHA PROPUESTA HASTA
 	    if (dto.getFechaAltaHasta() != null && !"".equals(dto.getFechaAltaHasta())) {        		
-			hql.append(" and ter.acuerdo.fechaPropuesta <= TO_DATE('"+dto.getFechaAltaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
-	    }
-		
-	
+			hql.append(" and acu.fechaPropuesta <= TO_DATE('"+dto.getFechaAltaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
+	    }	
 	    //FECHA ESTADO DESDE
 	    if (dto.getFechaEstadoDesde() != null && !"".equals(dto.getFechaEstadoDesde())) {        		
-			hql.append(" and ter.acuerdo.fechaEstado >= TO_DATE('"+dto.getFechaEstadoDesde() + "','dd/MM/yyyy')" );    
+			hql.append(" and acu.fechaEstado >= TO_DATE('"+dto.getFechaEstadoDesde() + "','dd/MM/yyyy')" );    
 	    }        
 	    //FECHA ESTADO HASTA
 	    if (dto.getFechaEstadoHasta() != null && !"".equals(dto.getFechaEstadoHasta())) {        		
-			hql.append(" and ter.acuerdo.fechaEstado <= TO_DATE('"+dto.getFechaEstadoHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
-	    }
-				
-	        
+			hql.append(" and acu.fechaEstado <= TO_DATE('"+dto.getFechaEstadoHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );    
+	    }	        
 	    //FECHA VIGENCIA DESDE
 	    if (dto.getFechaVigenciaDesde() != null && !"".equals(dto.getFechaVigenciaDesde())) {        		
-			hql.append(" and ter.acuerdo.fechaLimite >= TO_DATE('"+dto.getFechaVigenciaDesde() + "','dd/MM/yyyy')" );  
+			hql.append(" and acu.fechaLimite >= TO_DATE('"+dto.getFechaVigenciaDesde() + "','dd/MM/yyyy')" );  
 	    }
 	    //FECHA VIGENCIA HASTA
 	    if (dto.getFechaVigenciaHasta() != null && !"".equals(dto.getFechaVigenciaHasta())) {        		
-			hql.append(" and ter.acuerdo.fechaLimite <= TO_DATE('"+dto.getFechaVigenciaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );   
-	    } 
-	  
+			hql.append(" and acu.fechaLimite <= TO_DATE('"+dto.getFechaVigenciaHasta() + " 23:59:59','dd/MM/rrrr hh24:mi:ss')" );   
+	    } 	  
         // DESPACHO
         if (dto.getDespacho() != null && !"".equals(dto.getDespacho())) {
-     		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosDelDespacho(new Long(dto.getDespacho())) + ")");
-        }
-     
+     		hql.append(" and acu.asunto.id in (" + getIdsAsuntosDelDespacho(new Long(dto.getDespacho())) + ")");
+        }    
         // GESTOR
         if (!es.capgemini.pfs.utils.StringUtils.emtpyString(dto.getGestores()) || !es.capgemini.pfs.utils.StringUtils.emtpyString(dto.getTipoGestor())) {
-    		hql.append(" and ter.acuerdo.asunto.id in (" + getIdsAsuntosParaGestor(dto.getGestores(), dto.getTipoGestor()) + ")");
+    		hql.append(" and acu.asunto.id in (" + getIdsAsuntosParaGestor(dto.getGestores(), dto.getTipoGestor()) + ")");
         }
-     		
-        //VISIBILIDAD
-        /*
-        int cantZonas = dto.getCodigoZonas().size();
             
-        if (cantZonas > 0) {
-                hql.append(" and ( ");
-                for (String codigoZ : dto.getCodigoZonas()) {
-                    hql.append(" ter.acuerdo.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
-                }
-                hql.deleteCharAt(hql.length() - 1);
-                hql.deleteCharAt(hql.length() - 1);
-                
-                hql.append(" or ter.acuerdo.expediente.id in ( ");
-                	hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
-    	        hql.append(" ) ");
-                
-    	        hql.append(" ) ");
-        }else{
-        		//GESTORES EXPEDIENTE
-    	    	hql.append(" and ter.acuerdo.expediente.id in ( ");
-    	        hql.append(generaFiltroExpedientesPorGestor(usuarioLogueado));
-    	        hql.append(" ) ");
-            	}
- */
-        //VISIBILIDAD
-        int cantZonas = dto.getCodigoZonas().size();
-        if (cantZonas > 0) {
-            hql.append(" and ( ");
-            for (String codigoZ : dto.getCodigoZonas()) {
-                hql.append(" ter.acuerdo.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
-            }
-            hql.deleteCharAt(hql.length() - 1);
-            hql.deleteCharAt(hql.length() - 1);
-            hql.append(" ) ");
-        }
-        
-        //JERARQUIA
-        if (!StringUtils.emtpyString(dto.getJerarquia())) {
-               	hql.append("  and ter.acuerdo.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
-        }  
-        
-        //hql.append(" order by ter.acuerdo.id desc ");
-                  
+		return hql.toString();
+	}
+	
+	private StringBuffer filtroJerarquiaZonasAcuerdosTodos(DTOTerminosFiltro dto, boolean cruzaJerarquia) {
+
+		StringBuffer hql = new StringBuffer();
+		
+		// FILTRO JERARQUÍA Y ZONAS acuerdos asuntos	
+		hql.append(" and ((cnt.zona.nivel.codigo >= "+ dto.getJerarquia());
+
+		if (dto.getCodigoZonas().size() > 0) {
+			hql.append(" and ( ");
+			for (String codigoZ : dto.getCodigoZonas()) {
+				// si alguno de los contratos del asunto tiene alguna de las zonas
+				hql.append(" cnt.zona.codigo like '" + codigoZ + "%' OR");
+			}
+			hql.delete(hql.length() - 2, hql.length());
+			hql.append(" ) ");
+		}
+		hql.append(" ) ");
+		
+		//FILTRO JERARQUIA Y ZONAS acuerdos expedientes			        
+		hql.append(" or (acu.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
+			        
+		int cantZonas = dto.getCodigoZonas().size();
+		if (cantZonas > 0) {
+		    hql.append(" and ( ");
+		    for (String codigoZ : dto.getCodigoZonas()) {
+		        hql.append(" acu.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
+		    }
+		    hql.deleteCharAt(hql.length() - 1);
+		    hql.deleteCharAt(hql.length() - 1);
+		    hql.append(" ) ");
+		}
+		hql.append(" ) ");
+		hql.append(" ) ");
+		return hql;		
+	}
+
+	private StringBuffer filtroJerarquiaZonaAcuerdosExpedientes(DTOTerminosFiltro dto) {
+		
+		StringBuffer hql = new StringBuffer();
+
+		hql.append(" and acu.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
+		        
+		int cantZonas = dto.getCodigoZonas().size();
+		if (cantZonas > 0) {
+		    hql.append(" and ( ");
+		    for (String codigoZ : dto.getCodigoZonas()) {
+		        hql.append(" acu.expediente.oficina.zona.codigo like '" + codigoZ + "%' OR");
+		    }
+		    hql.deleteCharAt(hql.length() - 1);
+		    hql.deleteCharAt(hql.length() - 1);
+		    hql.append(" ) ");
+		}
+		return hql;
+	}
+
+	private StringBuffer filtroJerarquiaZonaAcuerdosAsuntos(DTOTerminosFiltro dto) {
+	
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" and (cnt.zona.nivel.codigo >= "+ dto.getJerarquia());
+
+		if (dto.getCodigoZonas().size() > 0) {
+			hql.append(" and ( ");
+			for (String codigoZ : dto.getCodigoZonas()) {
+				// si alguno de los contratos del asunto tiene alguna de las zonas
+				hql.append(" cnt.zona.codigo like '" + codigoZ + "%' OR");
+			}
+			hql.delete(hql.length() - 2, hql.length());
+			hql.append(" ) ");
+		}
+		hql.append(" ) ");
+		return hql;
+	}
+
+	private StringBuffer filtroUsuarioExterno(Usuario usuarioLogueado,
+			List<Long> idGrpsUsuario) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" and ("
+				+ filtroGestorSupervisorAsuntoMonoGestor(usuarioLogueado)
+				+ " or "
+				+ filtroGestorSupervisorAsuntoMultiGestor(usuarioLogueado)
+				+ " or "
+				+ filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(usuarioLogueado)
+				+ filtroGestorGrupo(idGrpsUsuario) + ")");
+		
+		return hql;
+	}
+	
+	private boolean requiereContrato(DTOTerminosFiltro dto) {
+		return (dto.getCodigoZonas().size() > 0 || (!Checks.esNulo(dto.getJerarquia()) && dto.getJerarquia().length() > 0));
+	}
+	
+	private String filtroGestorSupervisorAsuntoMonoGestor(
+			Usuario usuarioLogado) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" acu.asunto.id in (");
+		hql.append("select a.id from Asunto a ");
+		hql.append("where (a.gestor.usuario.id = "+ usuarioLogado.getId()+ ") or (a.supervisor.usuario.id = "+ usuarioLogado.getId());
+		hql.append("))");
+		return hql.toString();
+	}
+	
+	private String filtroGestorSupervisorAsuntoMultiGestor(
+			Usuario usuarioLogado) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" (acu.asunto.id in (");
+		hql.append("select gaa.asunto.id from EXTGestorAdicionalAsunto gaa  ");
+		hql.append("where gaa.gestor.usuario.id = "+ usuarioLogado.getId());
+		hql.append("))");
+		return hql.toString();
+	}
+	
+	private String filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(
+			Usuario usuarioLogado) {
+		StringBuilder hql = new StringBuilder();
+		hql.append(" (acu.asunto.id in (");
+		hql.append("select ge.unidadGestionId from EXTGestorEntidad ge");
+		hql.append(" where ge.tipoEntidad.codigo = "
+				+ DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO);
+		hql.append(" and ge.gestor.id = "+ usuarioLogado.getId());
+		hql.append("))");
+		return hql.toString();
+	}
+	
+	private String filtroGestorGrupo(List<Long> idsUsuariosGrupo) {
+		if (idsUsuariosGrupo == null || idsUsuariosGrupo.size() == 0)
+			return "";
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append("or (acu.asunto.id in (");
+		hql.append("select gaa.asunto.id from EXTGestorAdicionalAsunto gaa  ");
+		hql.append("where gaa.gestor.usuario.id IN (");
+
+		StringBuilder idsUsuarios = new StringBuilder();
+		for (Long idUsario : idsUsuariosGrupo) {
+			idsUsuarios.append("," + idUsario.toString());
+		}
+		if (idsUsuarios.length() > 1)
+			hql.append(idsUsuarios.deleteCharAt(0).toString());
+
+		hql.append(")))");
 		return hql.toString();
 	}
 	
@@ -398,5 +554,13 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
         List<AcuerdoConfigAsuntoUsers> lista = getHibernateTemplate().find(hql);
 		return lista;
     }
-
+	
+	 public List<DespachoExterno> getDespachosProponentesValidos(Usuario usuLogado){
+         String hql = " select gd.despachoExterno from GestorDespacho gd , AcuerdoConfigAsuntoUsers config "
+        		 		+" where gd.despachoExterno.tipoDespacho.id = config.proponente.id and gd.usuario.id = "+ usuLogado.getId()
+         				+" and gd.auditoria.borrado = false and config.auditoria.borrado = false ";
+         
+         List<DespachoExterno> despachos = getHibernateTemplate().find(hql);
+         return despachos;
+	 }
 }

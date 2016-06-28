@@ -105,8 +105,8 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	private static final String LITIGIO = "litigio";
 	private static final String CONCURSO = "concurso";
 	
-	private static final String PRETURNADO = "preturnado";
-	private static final String POSTURNADO = "posturnado";
+	public static final String PRETURNADO = "preturnado";
+	public static final String POSTURNADO = "posturnado";
 	
 	private static final String LETRADO = "GEXT";
 	private static final String SUPERVISOR = "SUP_PCO";

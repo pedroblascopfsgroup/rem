@@ -28,6 +28,9 @@
 	var idTipoAcuerdoFondosPropios ='${idTipoAcuerdoFondosPropios}';
 	var idTipoAcuerdoRegulParcial = '${idTipoAcuerdoRegulParcial}';
 	
+	var camposDynamics = [];
+	var objetosDinamicos = [];
+	
 	
 
     var tipoAcu = Ext.data.Record.create([
@@ -96,7 +99,8 @@
 					cmpRgt.el.remove();
 			   	}
 				
-				var camposDynamics = result;
+				camposDynamics = result;
+				objetosDinamicos = [];
 		
 				var dinamicElementsLeft = [];
 				var dinamicElementsRight = [];
@@ -111,8 +115,8 @@
 				    		break;
 				    	case 'fecha':
 				    		var campo = new Ext.ux.form.XDateField({
-											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
-											,name: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
+											//id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
+											name: camposDynamics.camposTerminoAcuerdo[i].nombreCampo
 											,value : ''
 											, allowBlank : !camposDynamics.camposTerminoAcuerdo[i].obligatorio
 											,blankText: 'campo fecha obligatorio'
@@ -124,7 +128,7 @@
 				    	case 'combobox':
 				    		var campo = new Ext.form.ComboBox({
 											id: camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
-											hiddenName : camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
+											//hiddenName : camposDynamics.camposTerminoAcuerdo[i].nombreCampo,
 											fieldLabel: camposDynamics.camposTerminoAcuerdo[i].labelCampo,
 										    triggerAction: 'all',
 										    mode: 'local',
@@ -161,6 +165,8 @@
 				    		
 				    }
 				    
+				    objetosDinamicos[camposDynamics.camposTerminoAcuerdo[i].nombreCampo] = campo;
+				    
 			    	if (i%2 == 0)
 			    			dinamicElementsLeft.push(campo);
 			    		else
@@ -195,11 +201,14 @@
 		       			if('${operacion.campo.tipoCampo}' == 'fecha'){
 		       				var valorfecha = '${operacion.valor}';
 		       				valorfecha = valorfecha.replace(/(\d*)-(\d*)-(\d*)/,"$3/$2/$1");
-				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue(valorfecha);
+				    		//Ext.getCmp('${operacion.campo.nombreCampo}').setValue(valorfecha);
+				    		objetosDinamicos['${operacion.campo.nombreCampo}'].setValue(valorfecha);
 				    	}else{
-				    		Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+				    		//Ext.getCmp('${operacion.campo.nombreCampo}').setValue('${operacion.valor}');
+				    		objetosDinamicos['${operacion.campo.nombreCampo}'].setValue('${operacion.valor}');
 				    	}
-				    	Ext.getCmp('${operacion.campo.nombreCampo}').setDisabled(false);
+				    	//Ext.getCmp('${operacion.campo.nombreCampo}').setDisabled(false);
+				    	objetosDinamicos['${operacion.campo.nombreCampo}'].setDisabled(false);
 					</c:forEach>
 		       	}
 		       	
@@ -396,6 +405,14 @@
 		,iconCls : 'icon_ok'
        ,cls: 'x-btn-text-icon'
        ,handler:function(){
+	       	//Para que la propiedad value se actualice antes de validar lanzaremos su evento salir del objeto
+	       	//Para los campos dinámicos de tipo fecha o combobox
+	       	for (var i=0;i < camposDynamics.camposTerminoAcuerdo.length; i++) {
+	       		if (camposDynamics.camposTerminoAcuerdo[i].tipoCampo == 'fecha' || camposDynamics.camposTerminoAcuerdo[i].tipoCampo == 'combobox') {
+	       			objetosDinamicos[camposDynamics.camposTerminoAcuerdo[i].nombreCampo].triggerBlur();
+	       		}
+	       	}
+	       	
        		var formulario = flujoFieldSet.getForm();
        		var fechaActual = new Date();
        		
@@ -418,6 +435,18 @@
 					});
 					
 					return false;
+       			}
+       			
+       			if (Ext.getCmp('importePrevistoRegularizar')!=undefined) {
+       				if (Ext.getCmp('importePrevistoRegularizar').value <= 0) {
+       					Ext.Msg.show({
+       						title:'Aviso',
+       						msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.importePrevistoRegularizar" text="**El campo Importe Previsto Regularizar debe ser mayor que 0" />',
+       						buttons: Ext.Msg.OK
+       					});
+       					return false;
+       					
+       				}
        			}
        			
        			<%--
@@ -486,7 +515,17 @@
        			}
        			else {
        		
-	       		var params = detalleFieldSet.getForm().getValues();
+	       		//var params = detalleFieldSet.getForm().getValues();
+	       		
+	       		var params = {};
+	       		for (var objectName in objetosDinamicos) {
+	       			if (objetosDinamicos.hasOwnProperty(objectName)) {
+		       			var object = objetosDinamicos[objectName];
+		       			var parameter = {};
+		       			parameter[objectName] = object.value;
+		       			Ext.apply(params, parameter);
+	       			}
+	       		}
 	       		
 	       		
 	       		Ext.apply(params, {idAcuerdo : '${idAcuerdo}' });

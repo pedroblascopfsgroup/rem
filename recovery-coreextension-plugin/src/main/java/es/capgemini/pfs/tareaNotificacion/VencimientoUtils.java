@@ -10,7 +10,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.tareaNotificacion.dao.FestivoDao;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 @Component
 public class VencimientoUtils implements ApplicationContextAware {
@@ -18,12 +22,13 @@ public class VencimientoUtils implements ApplicationContextAware {
 	public interface PoliticaVencimientoPasado {
 
 		boolean moveTomorrow();
+		int damePlazoSiTareaVencida(GenericABMDao genericDao);
 
 	}
 
 	private static class DefaultPoliticaVencimientoPasado implements
 			PoliticaVencimientoPasado {
-
+		
 		@Override
 		public boolean moveTomorrow() {
 			GregorianCalendar calendar = new GregorianCalendar();
@@ -31,6 +36,16 @@ public class VencimientoUtils implements ApplicationContextAware {
 			int hour = calendar.get(Calendar.HOUR_OF_DAY);
 			return hour >= 8;
 		}
+
+		@Override
+		public int damePlazoSiTareaVencida(GenericABMDao genericDao) {
+			String plazo = genericDao.get(Parametrizacion.class, genericDao.createFilter(FilterType.EQUALS, "nombre", "plazoSiTareaVencida"), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false)).getValor();
+			if(!Checks.esNulo(plazo)){
+				return Integer.parseInt(plazo);
+			}
+			return 1;
+		}
+		
 
 	}
 
@@ -44,6 +59,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 
 	@Autowired
 	private FestivoDao festivoDao;
+	
 
 	public static class Resultado implements VencimientoTarea {
 		private Date fechaCalculada;
@@ -71,7 +87,12 @@ public class VencimientoUtils implements ApplicationContextAware {
 	public void setFestivoDao(FestivoDao dao) {
 		festivoDao = dao;
 	}
+	
 
+	public static Resultado getFecha(Date fechaVenc, TipoCalculo tipo){
+		return getFecha(fechaVenc, tipo, null);
+	}
+			
 	/**
 	 * Calcula la fecha de vencimiento de la tarea a partir de un plazo, a
 	 * partir del momento actual
@@ -87,7 +108,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 	 * @return
 	 */
 	public static Resultado getFecha(long plazo, TipoCalculo tipo) {
-		return getFecha(new Date(System.currentTimeMillis() + plazo), tipo);
+		return getFecha(new Date(System.currentTimeMillis() + plazo), tipo, null);
 	}
 
 	/**
@@ -103,7 +124,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 	 *            </ul>
 	 * @return
 	 */
-	public static Resultado getFecha(Date fechaVenc, TipoCalculo tipo) {
+	public static Resultado getFecha(Date fechaVenc, TipoCalculo tipo, GenericABMDao genericDao) {
 		Resultado r = new Resultado();
 		if (tipo == null) {
 			tipo = TipoCalculo.NADA;
@@ -113,12 +134,12 @@ public class VencimientoUtils implements ApplicationContextAware {
 		switch (tipo) {
 		case TODO:
 			r.fechaReal = trataFindes(util.trataFestivos(fechaVenc));
-			r.fechaCalculada = trataAgosto(trataVencimientoPasado(r.fechaReal));
+			r.fechaCalculada = trataAgosto(trataVencimientoPasado(r.fechaReal, genericDao));
 			
 			break;
 		case NO_SALTAR_AGOSTO:
 			r.fechaReal = trataFindes(util.trataFestivos(fechaVenc));
-			r.fechaCalculada = trataVencimientoPasado(r.fechaReal);
+			r.fechaCalculada = trataVencimientoPasado(r.fechaReal, genericDao);
 			break;
 		case FEC_REALIZACION_FIJA:
 			r.fechaReal = fechaVenc;
@@ -126,7 +147,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 			break;
 		case FEC_REALIZACION_FIJA_NO_SALTAR_AGOSTO:
 			r.fechaReal = fechaVenc;
-			r.fechaCalculada = trataVencimientoPasado(fechaVenc);
+			r.fechaCalculada = trataVencimientoPasado(fechaVenc, genericDao);
 			break;
 		case PRORROGA:
 			r.fechaReal = null;
@@ -134,7 +155,7 @@ public class VencimientoUtils implements ApplicationContextAware {
 			break;
 		default:
 			r.fechaReal = fechaVenc;
-			r.fechaCalculada = trataVencimientoPasado(r.fechaReal);
+			r.fechaCalculada = trataVencimientoPasado(r.fechaReal, genericDao);
 		}
 		cambiaHoraVencimiento(r);
 		return r;
@@ -147,13 +168,17 @@ public class VencimientoUtils implements ApplicationContextAware {
 		cal.set(Calendar.MINUTE, 0);
 		r.fechaCalculada = cal.getTime();
 	}
+	
+	private static Date trataVencimientoPasado(Date fechaReal){
+		return trataVencimientoPasado(fechaReal, null);
+	}
 
-	private static Date trataVencimientoPasado(Date fechaReal) {
+	private static Date trataVencimientoPasado(Date fechaReal, GenericABMDao genericDao) {
 		if (venceEnElPasado(fechaReal)) {
 			if (getPoliticaVencimientoPasado().moveTomorrow()) {
 				GregorianCalendar calendar = new GregorianCalendar();
 				calendar.setTime(new Date());
-				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				calendar.add(Calendar.DAY_OF_YEAR, getPoliticaVencimientoPasado().damePlazoSiTareaVencida(genericDao));
 				return calendar.getTime();
 			} else {
 				return new Date();

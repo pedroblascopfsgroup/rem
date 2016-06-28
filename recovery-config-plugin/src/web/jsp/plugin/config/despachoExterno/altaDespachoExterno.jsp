@@ -213,7 +213,7 @@
 			 	  <json:property name="descripcion" value="${d}" />
 		</json:array>;
 		
-	<!-- Este campo no se muestra, pero lo dejo, si lo piden en un futuro, solo hay que anyadir impuesto a los items de las pestanyas  -->
+	<%-- Este campo no se muestra, pero lo dejo, si lo piden en un futuro, solo hay que anyadir impuesto a los items de las pestanyas  --%>
 	var impuesto=new Ext.form.ComboBox({
 		store: impuestoStore
 		,triggerAction : 'all'
@@ -322,10 +322,10 @@
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:500'}
 			,items:[ {items: [despacho, <c:if test="${despacho.codigoDespacho != null}">codigoDespacho,</c:if> tipoDespacho,tipoGestor,tipoDocumento, documentoCif, fechaAlta ]}
-					,{items: [tipoVia,domicilio,domicilioPlaza,codigoPostal,personaContacto,telefono1,telefono2, fax, correoElectronico	]}
+					,{items: [tipoVia,domicilio,domicilioPlaza,codigoPostal,personaContacto,telefono1,telefono2, fax, correoElectronico,codEstAse	]}
 				   ]
 		});
-	 
+
 	var pestanaAdicionales = new Ext.Panel({
 			title:'<s:message code="plugin.config.despachoExterno.consultadespacho.adicionales.title" text="**Datos adicionales" />'
 			,autoHeight:true
@@ -333,7 +333,7 @@
 			,layout:'table'
 			,layoutConfig:{columns:3}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
-			,items:[ {items: [clasifDespachoFieldSet, comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
+			,items:[ {items: [<c:if test="${usuarioEntidad == 'BANKIA'}">clasifDespachoFieldSet,</c:if> comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
 					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
 				   ]
@@ -502,7 +502,7 @@
 			//,deferredRender:false
 			,height: 350
 			//,autoWidth : true
-			,items:[ pestanaPrincipal<c:if test="${usuarioEntidad == 'BANKIA'}">,pestanaAdicionales</c:if>]
+			,items:[ pestanaPrincipal,pestanaAdicionales]
 		}
 		,bbar : [btnGuardarEditar, btnCancelar]
 	});	

@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -21,10 +20,8 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
-import es.capgemini.pfs.oficina.model.Oficina;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.registro.model.HistoricoProcedimiento;
-import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
@@ -345,7 +342,7 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 				
 			}
 
-                        //En caso de que ninguno de la lista esté marcado como titular, se toma el primero como tal
+                        //En caso de que ninguno de la lista estï¿½ marcado como titular, se toma el primero como tal
                         if (Checks.esNulo(listaTitulares)){
                             stub.setTitular (titularPorPrimero.getApellidoNombre());
                             System.out.println("[INFO] - Titular por primero de la lista: " + titularPorPrimero.getApellidoNombre());
@@ -503,7 +500,7 @@ public class InformeSubastaBean extends InformeSubastaCommon {
 									System.out.println("[INFO] - check lotebien - Deuda judicial:" + lb.getDeudaJudicial());
 								}
 								
-								Float tipoSubasta = nmbBienLote.getTipoSubasta();
+								Float tipoSubasta = nmbBienLote.getTipoSubasta().floatValue();
 								lb.setTipoSubasta(tipoSubasta);
 								System.out.println("[INFO] - check lotebien - Tipo subasta:" + lb.getTipoSubasta());
 								lb.setTipoSubasta50(Checks.esNulo(tipoSubasta) ? null : tipoSubasta * 0.50F);

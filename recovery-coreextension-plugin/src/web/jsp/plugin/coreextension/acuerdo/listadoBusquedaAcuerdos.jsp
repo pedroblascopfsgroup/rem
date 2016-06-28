@@ -17,20 +17,19 @@
 
 	//Campo Numero Cliente
 	<%--var codigoCliente = app.creaText('codigo', '<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cï¿½d. Cliente" />'); --%>
-	 var codigoCliente=app.creaNumber('codigo','<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cï¿½d. Cliente" />');
-
-	//Listado de tipos de Solicitante
-	var tiposSolicitante = <app:dict value="${tiposSolicitante}"/>;
-	
-	var tipoSolicitanteInicial = '';
-	if (tiposSolicitante.diccionario.length >= 1) {
-		tipoSolicitanteInicial = tiposSolicitante.diccionario[0].codigo; 
-	}
-	
-	var despachos=<app:dict value="${despachos}" />;
+	var codigoCliente=app.creaNumber('codigo','<s:message code="acuerdo.busqueda.filtro.cliente" text="**Cï¿½d. Cliente" />');
 	
 	//Listado de entidad_acuerdo
 	var entidadAcuerdo = <app:dict value="${listadoEntidadAcuerdo}" blankElement="false" blankElementValue="" blankElementText="---"/>;
+	
+	var entidadAcuerdoInicial = '';
+	if (entidadAcuerdo.diccionario.length >= 1) {
+		entidadAcuerdoInicial = entidadAcuerdo.diccionario[0].codigo; 
+	}
+
+	if(entidadAcuerdo.diccionario[0].codigo == 'AMBAS'){
+		entidadAcuerdo.diccionario[0].descripcion='Todos';
+	}
 	
 	//store generico de combo diccionario
 	var optionsEntidadAcuerdoStore = new Ext.data.JsonStore({
@@ -48,7 +47,8 @@
 				,mode: 'local'
 				,editable: false
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="acuerdo.busqueda.filtro.entidadAcuerdo" text="**Tipo de Acuerdo"/>'
+				,value: entidadAcuerdoInicial
+				,fieldLabel : '<s:message code="acuerdo.busqueda.filtro.entidadAcuerdo" text="**Origen"/>'
 				<app:test id="comboEntidadAcuerdo" addComa="true"/>
 	});
 	
@@ -92,163 +92,7 @@
 				,fieldLabel : '<s:message code="acuerdo.busqueda.filtro.terminoAcuerdo" text="**Tipo Termino"/>'
 				<app:test id="comboTiposAcuerdo" addComa="true"/>
 	});
-	
-	var comboTiposSolicitante = app.creaCombo({triggerAction: 'all',
-	 	data:tiposSolicitante, 
-	 	value:tipoSolicitanteInicial, 
-	 	name : 'tiposSolicitante', 
-	 	width:200,
-	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtro.tipoSolicitante" text="**Tipo Solicitante" />'});
-	 	
-	var listadoSolicitantes = [];
-	
-	comboTiposSolicitante.on('select',function(){
-		if(comboTiposSolicitante.value != '') {
-			comboSolicitantes.setDisabled(false);
-			optionsSolicitantesStore.setBaseParam('codigo', comboTiposSolicitante.getValue());
-		}else{
-			comboSolicitantes.setDisabled(true);
-		}
-	});
-	
-	var idSol='';
-	var codSolSel='';
-	var telSolSel='';
-	
-	var solicitantesRecord = Ext.data.Record.create([
-		 {name:'id'}
-		,{name:'despacho'}
-		,{name:'telefono1'}
-	]);
-	
-	//Template para el combo de solicitantes
-    var solicitantesTemplate = new Ext.XTemplate(
-        '<tpl for="."><div class="search-item">',
-            '<p>{despacho}&nbsp;&nbsp;&nbsp;</p><p>{telefono1}</p>',
-        '</div></tpl>'
-    );
-    
-    var optionsSolicitantesStore = page.getStore({
-	       flow: 'coreextension/getDespachosExternosByTipo'
-	       ,reader: new Ext.data.JsonReader({
-	    	 root : 'despachos'
-	    }, solicitantesRecord)
-	       
-	});
-
-	if (tiposSolicitante.diccionario.length >= 1) {
-		optionsSolicitantesStore.setBaseParam('codigo', comboTiposSolicitante.getValue());
-	}
-	
-	//Combo de solicitantes
-    var comboSolicitantes = new Ext.form.ComboBox({
-        name: 'comboSolicitantes'
-        ,disabled:false 
-        ,allowBlank:true
-        ,store:optionsSolicitantesStore
-        ,width:200
-        ,fieldLabel: '<s:message code="acuerdo.busqueda.filtro.solicitante" text="**Solicitante"/>'
-        ,tpl: solicitantesTemplate  
-        ,forceSelection:true
-        ,style:'padding:0px;margin:0px;'
-        ,enableKeyEvents: true
-        ,typeAhead: false
-        ,hideTrigger:true     
-        ,minChars: 4 
-        ,hidden:false
-        ,maxLength:256 
-        ,itemSelector: 'div.search-item'
-        ,loadingText: '<s:message code="app.buscando" text="**Buscando..."/>'
-        ,onSelect: function(record) {
-        	btnIncluirSol.setDisabled(false);
-        	idSol=record.data.id;
-        	codSolSel=record.data.despacho;
-        	telSolSel=record.data.telefono1;
-         }
-    });	
-    
-    var recordSolicitante = Ext.data.Record.create([
-		{name: 'idDespacho'},
-		{name: 'desDespacho'},
-		{name: 'telefono1Despacho'}
-	]);
-	
-	var solicitantesStore = page.getStore({
-		flow:''
-		,reader: new Ext.data.JsonReader({
-	  		root : 'data'
-		} 
-		, recordSolicitante)
-	});
-	
-	 var solicitantesCM = new Ext.grid.ColumnModel([
-	 	 {header : '<s:message code="acuerdo.busqueda.filtro.idSolicitante" text="**Id" />', dataIndex : 'idDespacho' ,sortable:false, hidden:true, width:10} 
-		,{header : '<s:message code="acuerdo.busqueda.filtro.solicitante" text="**Solicitante" />', dataIndex : 'desDespacho' ,sortable:false, hidden:false, width:180}
-		,{header : '<s:message code="acuerdo.busqueda.filtro.telefono" text="**Telefono" />', dataIndex : 'telefono1Despacho',sortable:false, hidden:false, width:120}
-	]);
-	
-	var solicitantesGrid = new Ext.grid.EditorGridPanel({
-	    title : '<s:message code="acuerdo.busqueda.filtro.solicitantes" text="**Solicitantes" />'
-	    ,cm: solicitantesCM
-	    ,store: solicitantesStore
-	    ,width: '300'
-	    ,height: 150
-	    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
-	    ,clicksToEdit: 1
-	});
-	
-	var incluirSolicitante = function() {
-	    var solicitanteAInsertar = solicitantesGrid.getStore().recordType;
-   		var p = new solicitanteAInsertar({
-   			idDespacho: idSol,
-   			desDespacho: codSolSel,
-   			telefono1Despacho: telSolSel
-   		});
-		solicitantesStore.insert(0, p);
-		listadoSolicitantes.push(idSol);
-	}
-	
 	 
-	 var btnIncluirSol = new Ext.Button({
-		text : '<s:message code="acuerdo.busqueda.btn.incluir" text="**Incluir" />'
-		,iconCls : 'icon_mas'
-		,disabled: true
-		,minWidth:60
-		,handler : function(){
-			incluirSolicitante();
-			idSol='';
-			codSolSel='';
-   			telSolSel='';
-   			btnIncluirSol.setDisabled(true);
-			comboSolicitantes.focus();
-		}
-	});
-	
-	var solicitanteAExcluir = -1;
-	var codSolicitanteExcluir = '';
-	
-	solicitantesGrid.on('cellclick', function(grid, rowIndex, columnIndex, e) {
-   		codSolicitanteExcluir = grid.selModel.selections.get(0).data.idDespacho;
-   		solicitanteAExcluir = rowIndex;
-   		btnExcluirSol.setDisabled(false);
-	});
-	
-	var btnExcluirSol = new Ext.Button({
-		text : '<s:message code="acuerdo.busqueda.btn.excluir" text="**Excluir" />'
-		,iconCls : 'icon_menos'
-		,disabled: true
-		,minWidth:60
-		,handler : function(){
-			if (solicitanteAExcluir >= 0) {
-				solicitantesStore.removeAt(solicitanteAExcluir);
-				listadoSolicitantes.remove(codSolicitanteExcluir);
-			}
-			solicitanteAExcluir = -1;
-	   		btnExcluirSol.setDisabled(true);
-		}
-	});
-	
-	
 	//Listado de estados del Acuerdo, viene del flow
 	var estadosAcuerdo = <app:dict value="${estadosAcuerdo}" blankElement="true" blankElementValue="" blankElementText="---"/>;
 	var tiposTerminos = <app:dict value="${tiposTerminos}" blankElement="true" blankElementValue="" blankElementText="---"/>;
@@ -333,7 +177,7 @@
 	]);
 	
 	var optionsTipoGestorStore = page.getStore({
-	       flow: 'coreextension/getListTipoGestorAdicionalData'
+	       flow: 'coreextension/getListTipoGestorProponente'
 	       ,reader: new Ext.data.JsonReader({
 	    	 root : 'listadoGestores'
 	    }, optionsTiposGestor)	       
@@ -386,7 +230,7 @@
 				,mode: 'local'
 				,emptyText:'---'
 				,forceSelection: true
-				,editable: false
+				,editable: true
 				,triggerAction: 'all'
 				,disabled:true
 				,resizable:true
@@ -504,7 +348,7 @@
 	 	data:jerarquia, 
 	 	value:jerarquia.diccionario[0].codigo, 
 	 	name : 'jerarquia', 
-	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquía" />'});
+	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquï¿½a" />'});
 	 	
 	 var listadoCodigoZonas = [];
 	 	
@@ -519,16 +363,18 @@
 	
 	var codZonaSel='';
 	var desZonaSel='';
+	var codOficina='';
 	
 	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'cod_oficina'}
 	]);
 	
 	//Template para el combo de zonas
     var zonasTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
     
@@ -563,6 +409,7 @@
         	btnIncluir.setDisabled(false);
         	codZonaSel=record.data.codigo;
         	desZonaSel=record.data.descripcion;
+        	codOficina=record.data.cod_oficina;
          }
     });	
     
@@ -581,7 +428,7 @@
 	});
 	
 	 var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Cï¿½digo" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Cï¿½digo oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
 		]);
 		
@@ -599,7 +446,8 @@
 	    var zonaAInsertar = zonasGrid.getStore().recordType;
    		var p = new zonaAInsertar({
    			codigoZona: codZonaSel,
-   			descripcionZona: desZonaSel
+   			descripcionZona: desZonaSel,
+   			codigoOficina: codOficina
    		});
 		zonasStore.insert(0, p);
 		listadoCodigoZonas.push(codZonaSel);
@@ -663,15 +511,6 @@
 			if (comboEstadosAcuerdo.getValue() != '' ){
 				return true;
 			}
-			if (comboTiposSolicitante.getValue() != '' ){
-				return true;
-			}
-			if (comboSolicitantes.getValue() != '' ){
-				return true;
-			}
-			if (listadoSolicitantes.length > 0 ){
-				return true;
-			}
 			if (fechaAltaDesde.getValue() != '' ){
 				return true;
 			}
@@ -724,8 +563,6 @@
         		p.nroCliente=codigoCliente.getValue();
         		p.tipoAcuerdo=comboEntidadAcuerdo.getValue();
         		p.tipoTermino=comboTiposAcuerdo.getValue();
-        		p.tipoSolicitante=comboTiposSolicitante.getValue();
-        		p.solicitantes=listadoSolicitantes.toString();
         		p.estado=comboEstadosAcuerdo.getValue();
         		p.fechaAltaDesde=app.format.dateRenderer(fechaAltaDesde.getValue());
         		p.fechaAltaHasta=app.format.dateRenderer(fechaAltaHasta.getValue());
@@ -747,13 +584,30 @@
         return p;
     };
     
+	var validarForm = function(){
+	debugger;
+		if(comboEntidadAcuerdo.getValue() == 'AMBAS'){
+			if ((comboJerarquia.getValue() != '' ) || (listadoCodigoZonas.length > 0 )) {
+				return false;
+			} else {
+				return true;
+			}
+		}else{
+			return true;
+		}
+	};
+	
 	
 	var buscarFunc = function()
 	{
-		panelFiltros.collapse(true);
-		var params= getParametros();
-		acuerdosStore.webflow(params);
-		pagingBar.show();	
+		if(validarForm()){
+			panelFiltros.collapse(true);
+			var params= getParametros();
+			acuerdosStore.webflow(params);
+			pagingBar.show();
+		}else{
+			Ext.Msg.alert('<s:message code="errores.criteriosIncompatibles" text="**Los criterios de jerarquÃ­a no se pueden usar con el origen Todos" />');
+		}
 	};
 	
 	var btnReset = app.crearBotonResetCampos([
@@ -761,8 +615,6 @@
 		,codigoCliente
 		,comboEntidadAcuerdo
 		,comboTiposAcuerdo
-		,comboSolicitantes
-		,comboTiposSolicitante
 		,comboEstadosAcuerdo
 		,fechaAltaDesde
 		,fechaAltaHasta
@@ -789,8 +641,6 @@
 		comboDespachos.setDisabled(true);
 		comboTiposAcuerdo.reset();
 		comboTiposAcuerdo.setDisabled(true);	
-		listadoSolicitantes= [];
-		solicitantesStore.removeAll();
 		gridAcuerdos.collapse(true);
 	});
 	
@@ -824,12 +674,7 @@
                     ,layoutConfig:{columns:2}
                     ,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form'}
 					,items: [{items:[fechaAltaDesde,fechaEstadoDesde,fechaVigenteDesde]}, {autoWidth: true,items:[fechaAltaHasta,fechaEstadoHasta,fechaVigenteHasta]}]				
-				},{
-					layout:'table'
-                    ,layoutConfig:{columns:2}
-                    ,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form'}
-					,items: [{items:[comboTiposSolicitante,comboSolicitantes,solicitantesGrid]},{autoWidth: true,items:[btnIncluirSol,btnExcluirSol]}]
-					}]
+				}]
 		
 	});
 	
@@ -839,7 +684,7 @@
 	<%--*************PESTAï¿½A DE GESTORES***************************************** --%>
 	tabGestores=false;
 	var filtrosTabGestores = new Ext.Panel({
-		title:'<s:message code="acuerdo.busqueda.filtros.gestores" text="**Gestores" />'
+		title:'<s:message code="acuerdo.busqueda.filtros.gestores" text="**Gestores del asunto" />'
 		,autoHeight:true
 		,bodyStyle:'padding: 10px'
 		,layout:'table'

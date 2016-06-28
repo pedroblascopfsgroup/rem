@@ -46,7 +46,6 @@ import es.capgemini.pfs.diccionarios.comparator.DictionaryComparatorFactory;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -142,6 +141,9 @@ public class EditBienController {
 	@Autowired
 	private TareaExternaValorDao tareaExternaValorDao;
 
+	@Autowired
+	private coreextensionApi coreExtensionApi;
+	
 	@Autowired
 	private NMBProjectContext nmbProjectContext;
 
@@ -748,7 +750,7 @@ public class EditBienController {
 			dto.setViviendaHabitual(request.getParameter("viviendaHabitual"));
 
 		if (!Checks.esNulo(request.getParameter("tipoSubasta")))
-			dto.setTipoSubasta(new Float(request.getParameter("tipoSubasta")));
+			dto.setTipoSubasta(new BigDecimal(request.getParameter("tipoSubasta")));
 
 		if (!Checks.esNulo(request.getParameter("obraEnCurso")))
 			dto.setObraEnCurso(new Boolean(request.getParameter("obraEnCurso")));
@@ -4135,23 +4137,14 @@ public class EditBienController {
 	}
 
 	private List<Usuario> getGestoresAdjudicadicatarios() {
-		Long idTipoGestor = null;
-
-		// Tipo de usuario Gestor
-		List<EXTDDTipoGestor> listadoGestores = proxyFactory.proxy(
-				coreextensionApi.class).getListTipoGestorAdicional();
-		for (EXTDDTipoGestor tipoGestor : listadoGestores) {
-			if ("GEST".compareTo(tipoGestor.getCodigo()) == 0) {
-				idTipoGestor = tipoGestor.getId();
-			}
-		}
+		Long idTipoGestor = coreExtensionApi.getListTipoGestorGestoriaAdjudicacion();
 
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS,
 				"auditoria.borrado", false);
 		Filter filtroDefecto = genericDao.createFilter(FilterType.EQUALS,
 				"gestorPorDefecto", true);
 
-		// Se qeuda con el usuario por defecto para cada despacho.
+		// Se queda con el usuario por defecto para cada despacho.
 		List<Usuario> listadoUsuarios = new ArrayList<Usuario>();
 		if (idTipoGestor != null) {
 			List<DespachoExterno> listadoDespachos = proxyFactory.proxy(

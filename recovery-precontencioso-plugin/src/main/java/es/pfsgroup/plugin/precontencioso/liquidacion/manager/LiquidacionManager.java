@@ -13,6 +13,7 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.FrameworkException;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
@@ -38,6 +39,7 @@ import es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionPro
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.api.ProcedimientoApi;
 
@@ -71,18 +73,12 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
 	
-	@Autowired(required = false)
-	private DatosLiquidacionExtraApi datosLiquidacionExtraApi;
-	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
 	public List<LiquidacionDTO> getLiquidacionesPorIdProcedimientoPCO(Long idProcedimientoPCO) {
 		List<LiquidacionPCO> liquidaciones = liquidacionDao.getLiquidacionesPorIdProcedimientoPCO(idProcedimientoPCO);
 		List<LiquidacionDTO> liquidacionesDto = LiquidacionAssembler.entityToDto(liquidaciones);
-		if (!Checks.esNulo(datosLiquidacionExtraApi)) {
-			datosLiquidacionExtraApi.agregarDatosExtra(liquidacionesDto);
-		}
 		return liquidacionesDto;
 	}
 	
@@ -333,4 +329,5 @@ public class LiquidacionManager implements LiquidacionApi {
 		//En caso que no encontramos el procedimiento precontencioso del asunto
 		return null;
 	}
+	
 }

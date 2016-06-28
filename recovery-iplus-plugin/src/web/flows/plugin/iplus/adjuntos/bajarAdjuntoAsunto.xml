@@ -6,7 +6,7 @@
 	<input name="nombre" required="true" type="java.lang.String"/>
 	<input name="descripcion" required="true" type="java.lang.String"/>
 	    
-    <end-state id="listado" view="file" >
+    <end-state id="listado" view="filedownload" >
 		<on-entry>
 			<evaluate expression="executor.execute('plugin.iplus.bajarAdjunto', asuntoId, nombre, descripcion)" result="flowScope.fileItem"/>
 		</on-entry>

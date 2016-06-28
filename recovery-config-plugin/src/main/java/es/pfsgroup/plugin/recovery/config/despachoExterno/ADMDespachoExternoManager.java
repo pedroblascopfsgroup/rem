@@ -50,7 +50,6 @@ import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMGestorDespachoD
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dao.ADMTipoDespachoExternoDao;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoBusquedaDespachoExterno;
 import es.pfsgroup.plugin.recovery.config.despachoExterno.dto.ADMDtoDespachoExterno;
-import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExternoExtrasDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExtrasAmbitoDao;
@@ -113,9 +112,6 @@ public class ADMDespachoExternoManager {
 	
 	@Autowired
 	private EXTGestoresDao gestoresDao;
-	
-	@Autowired
-	private CoreProjectContext context;
 	
 	@Autowired
 	private DespachoExtrasAmbitoDao extrasAmbitoDao;
@@ -793,42 +789,6 @@ public class ADMDespachoExternoManager {
 		
 		return null;
 	}
-	
-	/**
-	 * PRODUCTO-1274
-	 * Devuelve un listado con listas de mapas, para despachoExtras. 
-	 * ---Atención: Si en un futuro cambias el orden, afectará a los combos del jsp.
-	 * @return
-	 */
-	@BusinessOperation("ADMDespachoExternoManager.getMapasDespachoExtras")
-	public List<List<String>> getMapasDespachoExtras() {
-		List<List<String>> listaMapas = new ArrayList<List<String>>();
-		
-		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaContratoVigor()));
-		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaClasificacionDespachoPerfil()));
-		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaCodEstAse()));
-		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaDescripcionIVA()));
-		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaRelacionEntidad()));
-		
-		return listaMapas;
-	}
-	
-	/**
-	 * Rellena los valores de contexto según el mapa pasado por parámetro
-	 * @param mapa
-	 * @return
-	 */
-	private List<String> listaMapeadaDespachoExtras(Map<String,String> mapa) {
-		List<String> lista = new ArrayList<String>();
-		
-		for(Map.Entry<String,String> map : mapa.entrySet()){
-			lista.add(map.getValue());
-		}
-		
-		return lista;
-	}
-	
-	
 	
 	@SuppressWarnings("unchecked")
 	@BusinessOperation("ADMDespachoExternoManager.getDDProvincias")

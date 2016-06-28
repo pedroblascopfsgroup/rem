@@ -433,7 +433,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             cd -
         fi
     else
-        ending_script $1 | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+        ending_script $1 | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
     fi     
     if [[ $UNIFIED_PACKAGE != 'false' ]]; then
         cd $BASEDIR/tmp/package

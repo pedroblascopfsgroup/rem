@@ -58,7 +58,8 @@ BEGIN
                             NUM_CLIENTES NUMBER(16,0), 
                             VOLUMEN_RIESGO NUMBER(14,2) , 
                             POS_VENCIDA NUMBER(14,2) , 
-                            POS_NO_VENCIDA NUMBER(14,2) 
+                            POS_NO_VENCIDA NUMBER(14,2),
+                            PUNTUACION NUMBER(38,0) 
                           )
 			  SEGMENT CREATION IMMEDIATE 
 					TABLESPACE "RECOVERY_CM_DWH" 
@@ -97,7 +98,8 @@ BEGIN
                             NUM_CLIENTES NUMBER(16,0), 
                             VOLUMEN_RIESGO NUMBER(14,2), 
                             POS_VENCIDA NUMBER(14,2) , 
-                            POS_NO_VENCIDA NUMBER(14,2)
+                            POS_NO_VENCIDA NUMBER(14,2),
+                            PUNTUACION NUMBER(38,0) 
                             '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
 
@@ -131,7 +133,8 @@ BEGIN
                             NUM_CLIENTES NUMBER(16,0), 
                             VOLUMEN_RIESGO NUMBER(14,2) , 
                             POS_VENCIDA NUMBER(14,2) , 
-                            POS_NO_VENCIDA NUMBER(14,2) 
+                            POS_NO_VENCIDA NUMBER(14,2),
+                            PUNTUACION NUMBER(38,0)  
                           )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
                             TABLESPACE "RECOVERY_CM_DWH"   
@@ -169,7 +172,8 @@ BEGIN
                             NUM_CLIENTES NUMBER(16,0), 
                             VOLUMEN_RIESGO NUMBER(14,2) , 
                             POS_VENCIDA NUMBER(14,2) , 
-                            POS_NO_VENCIDA NUMBER(14,2) 
+                            POS_NO_VENCIDA NUMBER(14,2),
+                            PUNTUACION NUMBER(38,0)  
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
                            	TABLESPACE "RECOVERY_CM_DWH"   
@@ -209,7 +213,8 @@ BEGIN
                             NUM_CLIENTES NUMBER(16,0), 
                             VOLUMEN_RIESGO NUMBER(14,2) , 
                             POS_VENCIDA NUMBER(14,2) , 
-                            POS_NO_VENCIDA NUMBER(14,2) 
+                            POS_NO_VENCIDA NUMBER(14,2),
+                            PUNTUACION NUMBER(38,0)  
                              )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
                             	TABLESPACE "RECOVERY_CM_DWH"   
@@ -247,7 +252,8 @@ BEGIN
                               NUM_CLIENTES NUMBER(16,0), 
                               VOLUMEN_RIESGO NUMBER(14,2) , 
                               POS_VENCIDA NUMBER(14,2) , 
-                              POS_NO_VENCIDA NUMBER(14,2) 
+                              POS_NO_VENCIDA NUMBER(14,2),
+                              PUNTUACION NUMBER(38,0)  
                                 )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
                             	TABLESPACE "RECOVERY_CM_DWH"   

@@ -1,0 +1,778 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `Crear_H_Expediente` $$
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+SET NAMES UTF8 $$
+
+CREATE DEFINER=`bi_cdd`@`62.15.160.14` PROCEDURE `Crear_H_Expediente`(OUT o_error_status varchar(500))
+MY_BLOCK_DIM_EXP: BEGIN
+
+-- ===============================================================================================
+-- Autor: Gonzalo Martín, PFS Group
+-- Fecha creación: Julio 2014
+-- Responsable última modificación: 
+-- Fecha última modificación: 
+-- Motivos del cambio: 
+-- Cliente: Recovery BI Central de Demandas 
+--
+-- Descripción: Procedimiento almancenado que crea las tablas de la dimensión Expediente.
+-- ===============================================================================================
+DECLARE HAY_TABLA INT;
+DECLARE HAY INT;
+-- --------------------------------------------------------------------------------
+-- DEFINICIÓN DE LOS HANDLER DE ERROR
+-- --------------------------------------------------------------------------------
+DECLARE EXIT handler for 1062 set o_error_status := 'Error 1062: La tabla ya existe';
+DECLARE EXIT handler for 1048 set o_error_status := 'Error 1048: Has intentado insertar un valor nulo'; 
+DECLARE EXIT handler for 1318 set o_error_status := 'Error 1318: Número de parámetros incorrecto'; 
+
+-- --------------------------------------------------------------------------------
+-- DEFINICIÓN DEL HANDLER GENÉRICO DE ERROR
+-- --------------------------------------------------------------------------------
+DECLARE EXIT handler for sqlexception set o_error_status:= 'Se ha producido un error en el proceso';
+
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP. Nº [', HAY_TABLA, ']');
+end if;
+
+ CREATE TABLE H_EXP( 
+  `DIA_ID` DATE NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                    -- Fecha último día cargado
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL,                               -- ID del expediente
+  `FECHA_PROVISION` DATE NULL,
+  `FECHA_ENTRADA` DATE NULL, 
+  `FECHA_DEVOLUCION` DATE NULL, 
+  `FECHA_ESCANEADO_FIN` DATE NULL,
+  `FECHA_PREP_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_DOCUMENTACION` DATE NULL,
+  `FECHA_PARALIZACION` DATE NULL,  
+  -- Dimensiones
+  `CEDENTE_ID` DECIMAL(16,0) NULL ,
+  `PROVEEDOR_ID` DECIMAL(16,0) NULL ,
+  `EST_ENTRADA_ID` DECIMAL(16,0) NULL ,
+  `EST_HERRAMIENTA_ID` DECIMAL(16,0) NULL ,
+  `FASE_ID` DECIMAL(16,0) NULL ,
+  `EST_VIDA_ID` DECIMAL(16,0) NULL ,
+  `EST_GESTION_ID` DECIMAL(16,0) NULL ,
+  `PROCURADOR_ID` DECIMAL(16,0)  NULL ,
+  `TIPO_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,
+  `PLAZA_UNICO_ID` DECIMAL(16,0)  NULL ,
+  `PLAZA_ID` DECIMAL(16,0)  NULL ,
+  `JUZGADO_ID` DECIMAL(16,0)  NULL ,  
+  `EST_CONEXP_ID` DECIMAL(16,0)  NULL ,  
+  `SITUACION_CONEXP_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_EXPEDIENTES` INT NULL,  
+  `NUM_EXP_INICIADOS` INT NULL,
+  `IMPORTE_PROVISION` decimal(14,2) NULL,
+  `DEVOLUCION` decimal(14,2) NULL,
+  `IMPORTE_PRINCIPAL` decimal(14,2) NULL,
+  `IMPORTE_LIQUIDACION` decimal(14,2) NULL,
+  `BASE_IMPORTE` decimal(14,2) NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `DEJ_FECHA_DEMANDA` DATE NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA` DATE NULL,
+  `DEJ_FECHA_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `FECHA_ENTRADA_MES` DECIMAL(2,0) NULL,
+  `FECHA_ENTRADA_ANY` DECIMAL(4,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_CALC` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_CALC` DECIMAL(16,0) NULL,
+  `MAX_FECHA_RES_KO` DATE NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_ID` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_ID` DECIMAL(16,0) NULL,
+  `SIT_CUADRE_CARTERA_ID` DECIMAL(16,0) NULL,
+  /* Datos de factura */
+  `TIENE_FACTURA` DECIMAL(16,0) NULL,
+  `FACT_FECHA_FACTURA` DATE NULL, 
+  `FACT_FECHA_ENVIO` DATE NULL, 
+  `FACT_FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FACT_FECHA_ENVIO_PROCURADOR` DATE NULL,  
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `COL_DUMMY_FACT` decimal(16,0) NULL
+  /* FIN: Datos de factura */
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_SEMANA' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_SEMANA;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_SEMANA. Nº [', HAY_TABLA, ']');
+end if;
+
+ CREATE TABLE H_EXP_SEMANA( 
+  `SEMANA_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                    -- Fecha último día cargado
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL,                               -- ID del expediente
+  `FECHA_PROVISION` DATE NULL,
+  `FECHA_ENTRADA` DATE NULL, 
+  `FECHA_DEVOLUCION` DATE NULL, 
+  `FECHA_ESCANEADO_FIN` DATE NULL,
+  `FECHA_PREP_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_DOCUMENTACION` DATE NULL,
+  `FECHA_PARALIZACION` DATE NULL,  
+  -- Dimensiones
+  `CEDENTE_ID` DECIMAL(16,0) NULL ,
+  `PROVEEDOR_ID` DECIMAL(16,0) NULL ,
+  `EST_ENTRADA_ID` DECIMAL(16,0) NULL ,
+  `EST_HERRAMIENTA_ID` DECIMAL(16,0) NULL ,
+  `FASE_ID` DECIMAL(16,0) NULL ,
+  `EST_VIDA_ID` DECIMAL(16,0) NULL ,
+  `EST_GESTION_ID` DECIMAL(16,0) NULL ,
+  `PROCURADOR_ID` DECIMAL(16,0)  NULL ,
+  `TIPO_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,
+  `PLAZA_UNICO_ID` DECIMAL(16,0)  NULL ,
+  `PLAZA_ID` DECIMAL(16,0)  NULL ,
+  `JUZGADO_ID` DECIMAL(16,0)  NULL ,  
+  `EST_CONEXP_ID` DECIMAL(16,0)  NULL ,  
+  `SITUACION_CONEXP_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_EXPEDIENTES` INT NULL,  
+  `NUM_EXP_INICIADOS` INT NULL,
+  `IMPORTE_PROVISION` decimal(14,2) NULL,
+  `DEVOLUCION` decimal(14,2) NULL,
+  `IMPORTE_PRINCIPAL` decimal(14,2) NULL,
+  `IMPORTE_LIQUIDACION` decimal(14,2) NULL,
+  `BASE_IMPORTE` decimal(14,2) NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `DEJ_FECHA_DEMANDA` DATE NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA` DATE NULL,
+  `DEJ_FECHA_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `FECHA_ENTRADA_MES` DECIMAL(2,0) NULL,
+  `FECHA_ENTRADA_ANY` DECIMAL(4,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_CALC` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_CALC` DECIMAL(16,0) NULL,
+  `MAX_FECHA_RES_KO` DATE NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_ID` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_ID` DECIMAL(16,0) NULL,
+  `SIT_CUADRE_CARTERA_ID` DECIMAL(16,0) NULL,
+  /* Datos de factura */
+  `TIENE_FACTURA` DECIMAL(16,0) NULL,
+  `FACT_FECHA_FACTURA` DATE NULL, 
+  `FACT_FECHA_ENVIO` DATE NULL, 
+  `FACT_FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FACT_FECHA_ENVIO_PROCURADOR` DATE NULL,  
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `COL_DUMMY_FACT` decimal(16,0) NULL
+  /* FIN: Datos de factura */
+ );
+ 
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_MES' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_MES;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_MES. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_MES( 
+  `DIA_ID` DATE NULL,
+  `MES_ID` INT NOT NULL,    
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                    -- Fecha último día cargado
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL,                               -- ID del expediente
+  `FECHA_PROVISION` DATE NULL,
+  `FECHA_ENTRADA` DATE NULL, 
+  `FECHA_DEVOLUCION` DATE NULL, 
+  `FECHA_ESCANEADO_FIN` DATE NULL,
+  `FECHA_PREP_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_DOCUMENTACION` DATE NULL,
+  `FECHA_PARALIZACION` DATE NULL,  
+  -- Dimensiones
+  `CEDENTE_ID` DECIMAL(16,0) NULL ,
+  `PROVEEDOR_ID` DECIMAL(16,0) NULL ,
+  `EST_ENTRADA_ID` DECIMAL(16,0) NULL ,
+  `EST_HERRAMIENTA_ID` DECIMAL(16,0) NULL ,
+  `FASE_ID` DECIMAL(16,0) NULL ,
+  `EST_VIDA_ID` DECIMAL(16,0) NULL ,
+  `EST_GESTION_ID` DECIMAL(16,0) NULL ,
+  `PROCURADOR_ID` DECIMAL(16,0)  NULL ,
+  `TIPO_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,
+  `PLAZA_UNICO_ID` DECIMAL(16,0)  NULL ,
+  `PLAZA_ID` DECIMAL(16,0)  NULL ,
+  `JUZGADO_ID` DECIMAL(16,0)  NULL , 
+  `EST_CONEXP_ID` DECIMAL(16,0)  NULL ,  
+  `SITUACION_CONEXP_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_EXPEDIENTES` INT NULL,  
+  `NUM_EXP_INICIADOS` INT NULL,
+  `IMPORTE_PROVISION` decimal(14,2) NULL,
+  `DEVOLUCION` decimal(14,2) NULL,
+  `IMPORTE_PRINCIPAL` decimal(14,2) NULL,
+  `IMPORTE_LIQUIDACION` decimal(14,2) NULL,
+  `BASE_IMPORTE` decimal(14,2) NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `DEJ_FECHA_DEMANDA` DATE NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA` DATE NULL,
+  `DEJ_FECHA_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `FECHA_ENTRADA_MES` DECIMAL(2,0) NULL,
+  `FECHA_ENTRADA_ANY` DECIMAL(4,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_CALC` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_CALC` DECIMAL(16,0) NULL,
+  `MAX_FECHA_RES_KO` DATE NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_ID` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_ID` DECIMAL(16,0) NULL,
+  `SIT_CUADRE_CARTERA_ID` DECIMAL(16,0) NULL,
+  /* Datos de factura */
+  `TIENE_FACTURA` DECIMAL(16,0) NULL,
+  `FACT_FECHA_FACTURA` DATE NULL, 
+  `FACT_FECHA_ENVIO` DATE NULL, 
+  `FACT_FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FACT_FECHA_ENVIO_PROCURADOR` DATE NULL,  
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `COL_DUMMY_FACT` decimal(16,0) NULL
+  /* FIN: Datos de factura */
+ );
+ 
+ select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_TRIMESTRE' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_TRIMESTRE;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_TRIMESTRE. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_TRIMESTRE( 
+  `TRIMESTRE_ID` INT NOT NULL,   
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                    -- Fecha último día cargado
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL,                               -- ID del expediente
+  `FECHA_PROVISION` DATE NULL,
+  `FECHA_ENTRADA` DATE NULL, 
+  `FECHA_DEVOLUCION` DATE NULL, 
+  `FECHA_ESCANEADO_FIN` DATE NULL,
+  `FECHA_PREP_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_DOCUMENTACION` DATE NULL,
+  `FECHA_PARALIZACION` DATE NULL,  
+  -- Dimensiones
+  `CEDENTE_ID` DECIMAL(16,0) NULL ,
+  `PROVEEDOR_ID` DECIMAL(16,0) NULL ,
+  `EST_ENTRADA_ID` DECIMAL(16,0) NULL ,
+  `EST_HERRAMIENTA_ID` DECIMAL(16,0) NULL ,
+  `FASE_ID` DECIMAL(16,0) NULL ,
+  `EST_VIDA_ID` DECIMAL(16,0) NULL ,
+  `EST_GESTION_ID` DECIMAL(16,0) NULL ,
+  `PROCURADOR_ID` DECIMAL(16,0)  NULL ,
+  `TIPO_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,
+  `PLAZA_UNICO_ID` DECIMAL(16,0)  NULL ,
+  `PLAZA_ID` DECIMAL(16,0)  NULL ,
+  `JUZGADO_ID` DECIMAL(16,0)  NULL ,  
+  `EST_CONEXP_ID` DECIMAL(16,0)  NULL ,  
+  `SITUACION_CONEXP_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_EXPEDIENTES` INT NULL,  
+  `NUM_EXP_INICIADOS` INT NULL,
+  `IMPORTE_PROVISION` decimal(14,2) NULL,
+  `DEVOLUCION` decimal(14,2) NULL,
+  `IMPORTE_PRINCIPAL` decimal(14,2) NULL,
+  `IMPORTE_LIQUIDACION` decimal(14,2) NULL,
+  `BASE_IMPORTE` decimal(14,2) NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `DEJ_FECHA_DEMANDA` DATE NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA` DATE NULL,
+  `DEJ_FECHA_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `FECHA_ENTRADA_MES` DECIMAL(2,0) NULL,
+  `FECHA_ENTRADA_ANY` DECIMAL(4,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_CALC` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_CALC` DECIMAL(16,0) NULL,
+  `MAX_FECHA_RES_KO` DATE NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_ID` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_ID` DECIMAL(16,0) NULL,
+  `SIT_CUADRE_CARTERA_ID` DECIMAL(16,0) NULL,
+  /* Datos de factura */
+  `TIENE_FACTURA` DECIMAL(16,0) NULL,
+  `FACT_FECHA_FACTURA` DATE NULL, 
+  `FACT_FECHA_ENVIO` DATE NULL, 
+  `FACT_FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FACT_FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `COL_DUMMY_FACT` decimal(16,0) NULL
+  /* FIN: Datos de factura */
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_ANIO' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_ANIO;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_ANIO. Nº [', HAY_TABLA, ']');
+end if;
+
+  CREATE TABLE H_EXP_ANIO( 
+  `ANIO_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                    -- Fecha último día cargado
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL,                               -- ID del expediente
+  `FECHA_PROVISION` DATE NULL,
+  `FECHA_ENTRADA` DATE NULL, 
+  `FECHA_DEVOLUCION` DATE NULL, 
+  `FECHA_ESCANEADO_FIN` DATE NULL,
+  `FECHA_PREP_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_ENVIO_PROCURADOR` DATE NULL,
+  `FECHA_DOCUMENTACION` DATE NULL,
+  `FECHA_PARALIZACION` DATE NULL,  
+  -- Dimensiones
+  `CEDENTE_ID` DECIMAL(16,0) NULL ,
+  `PROVEEDOR_ID` DECIMAL(16,0) NULL ,
+  `EST_ENTRADA_ID` DECIMAL(16,0) NULL ,
+  `EST_HERRAMIENTA_ID` DECIMAL(16,0) NULL ,
+  `FASE_ID` DECIMAL(16,0) NULL ,
+  `EST_VIDA_ID` DECIMAL(16,0) NULL ,
+  `EST_GESTION_ID` DECIMAL(16,0) NULL ,
+  `PROCURADOR_ID` DECIMAL(16,0)  NULL ,
+  `TIPO_PROCEDIMIENTO_ID` DECIMAL(16,0) NULL ,
+  `PLAZA_UNICO_ID` DECIMAL(16,0)  NULL ,
+  `PLAZA_ID` DECIMAL(16,0)  NULL ,
+  `JUZGADO_ID` DECIMAL(16,0)  NULL , 
+  `EST_CONEXP_ID` DECIMAL(16,0)  NULL ,  
+  `SITUACION_CONEXP_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_EXPEDIENTES` INT NULL,  
+  `NUM_EXP_INICIADOS` INT NULL,
+  `IMPORTE_PROVISION` decimal(14,2) NULL,
+  `DEVOLUCION` decimal(14,2) NULL,
+  `IMPORTE_PRINCIPAL` decimal(14,2) NULL,
+  `IMPORTE_LIQUIDACION` decimal(14,2) NULL,
+  `BASE_IMPORTE` decimal(14,2) NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `DEJ_FECHA_DEMANDA` DATE NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA` DATE NULL,
+  `DEJ_FECHA_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_MES` DECIMAL(2,0) NULL,
+  `DEJ_FECHA_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `DEJ_FECHA_ENVIO_DEMANDA_ANY` DECIMAL(4,0) NULL,
+  `FECHA_ENTRADA_MES` DECIMAL(2,0) NULL,
+  `FECHA_ENTRADA_ANY` DECIMAL(4,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_CALC` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_FES` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_CALC` DECIMAL(16,0) NULL,
+  `MAX_FECHA_RES_KO` DATE NULL,
+  `DIAS_ENTRE_ENTRADA_ENVIO_ID` DECIMAL(16,0) NULL,
+  `DIAS_ENTRE_ENVIO_PRESEN_ID` DECIMAL(16,0) NULL,
+  `SIT_CUADRE_CARTERA_ID` DECIMAL(16,0) NULL,
+  /* Datos de factura */
+  `TIENE_FACTURA` DECIMAL(16,0) NULL,
+  `FACT_FECHA_FACTURA` DATE NULL, 
+  `FACT_FECHA_ENVIO` DATE NULL, 
+  `FACT_FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FACT_FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `COL_DUMMY_FACT` decimal(16,0) NULL
+  /* FIN: Datos de factura */
+ );
+ 
+ 
+--  ----------------------------  DETALLE KO ----------------------------
+
+
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_KO' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_KO;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_KO. Nº [', HAY_TABLA, ']');
+end if;
+
+ CREATE TABLE H_EXP_DET_KO( 
+  `DIA_ID` DATE NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_ALTA_KO` DATE NULL, 
+  `FECHA_VENCIMIENTO_KO` DATE NULL, 
+  `FECHA_RESOLUCION_KO` DATE NULL, 
+  -- Dimensiones
+  `MOTIVO_KO_ID` DECIMAL(16,0)  NULL , 
+  -- Métricas
+  `NUM_KO` INT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL 
+ );
+
+
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_KO_SEMANA' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_KO_SEMANA;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_KO_SEMANA. Nº [', HAY_TABLA, ']');
+end if;
+
+ CREATE TABLE H_EXP_DET_KO_SEMANA( 
+  `SEMANA_ID` INT NOT NULL,    
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_ALTA_KO` DATE NULL, 
+  `FECHA_VENCIMIENTO_KO` DATE NULL, 
+  `FECHA_RESOLUCION_KO` DATE NULL, 
+  -- Dimensiones
+  `MOTIVO_KO_ID` DECIMAL(16,0)  NULL , 
+  -- Métricas
+  `NUM_KO` INT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL 
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_KO_MES' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_KO_MES;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_KO_MES. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_DET_KO_MES( 
+  `MES_ID` INT NOT NULL,    
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_ALTA_KO` DATE NULL, 
+  `FECHA_VENCIMIENTO_KO` DATE NULL, 
+  `FECHA_RESOLUCION_KO` DATE NULL, 
+  -- Dimensiones
+  `MOTIVO_KO_ID` DECIMAL(16,0)  NULL , 
+  -- Métricas
+  `NUM_KO` INT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_KO_TRIMESTRE' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_KO_TRIMESTRE;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_KO_TRIMESTRE. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_DET_KO_TRIMESTRE( 
+  `TRIMESTRE_ID` INT NOT NULL,    
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_ALTA_KO` DATE NULL, 
+  `FECHA_VENCIMIENTO_KO` DATE NULL, 
+  `FECHA_RESOLUCION_KO` DATE NULL, 
+  -- Dimensiones
+  `MOTIVO_KO_ID` DECIMAL(16,0)  NULL , 
+  -- Métricas
+  `NUM_KO` INT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL 
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_KO_ANIO' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_KO_ANIO;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_KO_ANIO. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_DET_KO_ANIO( 
+  `ANIO_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_ALTA_KO` DATE NULL, 
+  `FECHA_VENCIMIENTO_KO` DATE NULL, 
+  `FECHA_RESOLUCION_KO` DATE NULL, 
+  -- Dimensiones
+  `MOTIVO_KO_ID` DECIMAL(16,0)  NULL , 
+  -- Métricas
+  `NUM_KO` INT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL 
+ );
+--  ----------------------------  DETALLE FACTURA ----------------------------
+
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_FACTURA' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_FACTURA;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_FACTURA. Nº [', HAY_TABLA, ']');
+end if; 
+
+ CREATE TABLE H_EXP_DET_FACTURA( 
+  `DIA_ID` DATE NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_FACTURA` DATE NULL, 
+  `FECHA_ENVIO` DATE NULL, 
+  `FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `COL_DUMMY_FACT` DECIMAL(16,0) NULL
+ );
+
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_FACTURA_SEMANA' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_FACTURA_SEMANA;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_FACTURA_SEMANA. Nº [', HAY_TABLA, ']');
+end if;
+
+ CREATE TABLE H_EXP_DET_FACTURA_SEMANA( 
+  `SEMANA_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_FACTURA` DATE NULL, 
+  `FECHA_ENVIO` DATE NULL, 
+  `FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `COL_DUMMY_FACT` DECIMAL(16,0) NULL 
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_FACTURA_MES' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_FACTURA_MES;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_FACTURA_MES. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_DET_FACTURA_MES( 
+  `MES_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_FACTURA` DATE NULL, 
+  `FECHA_ENVIO` DATE NULL, 
+  `FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `COL_DUMMY_FACT` DECIMAL(16,0) NULL 
+ );
+ 
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_FACTURA_TRIMESTRE' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_FACTURA_TRIMESTRE;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_FACTURA_TRIMESTRE. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_DET_FACTURA_TRIMESTRE( 
+  `TRIMESTRE_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_FACTURA` DATE NULL, 
+  `FECHA_ENVIO` DATE NULL, 
+  `FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `COL_DUMMY_FACT` DECIMAL(16,0) NULL 
+ );
+ 
+select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'H_EXP_DET_FACTURA_ANIO' and table_schema = 'bi_cdd_dwh';
+if (HAY_TABLA > 0) then 
+    DROP TABLE H_EXP_DET_FACTURA_ANIO;
+    set o_error_status:= concat('Se ha borrado la tabla H_EXP_DET_FACTURA_ANIO. Nº [', HAY_TABLA, ']');
+end if;
+ 
+  CREATE TABLE H_EXP_DET_FACTURA_ANIO( 
+  `ANIO_ID` INT NOT NULL,  
+  `FECHA_CARGA_DATOS` DATE NOT NULL,                                 
+  `EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL, 
+  `FECHA_FACTURA` DATE NULL, 
+  `FECHA_ENVIO` DATE NULL, 
+  `FECHA_RECLAMACION_PROCURADOR` DATE NULL, 
+  `FECHA_ENVIO_PROCURADOR` DATE NULL, 
+  -- Dimensiones
+  `FACTURA_ID` DECIMAL(16,0) NULL ,
+  `MOTIVO_FACTURA_ID` DECIMAL(16,0) NULL , 
+  `EST_FACTURA_ID` DECIMAL(16,0) NULL ,
+  -- Métricas
+  `NUM_FACTURA` INT NULL,
+  `FACT_BASE_IMP` decimal(10,0) DEFAULT NULL,
+  `FACT_DTO_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_IRPF` decimal(16,2) DEFAULT NULL,
+  `FACT_TOTAL_MINUTA` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE_LIQUIDACION` decimal(16,0) DEFAULT NULL,
+  `FACT_IMPORTE` decimal(16,0) DEFAULT NULL,
+  `FACT_TIPO_IVA` decimal(16,2) DEFAULT NULL,
+  `FACT_TIPO_RETENCION` decimal(16,2) DEFAULT NULL,
+  `FACT_IMPORTE_AJUSTE` decimal(16,2) DEFAULT NULL,
+  `FACT_IMP_PROVISION_PARCIAL` decimal(16,2) DEFAULT NULL,
+  `ENTIDAD_CEDENTE_ID` DECIMAL(16,0) NOT NULL,
+  `COL_DUMMY_FACT` DECIMAL(16,0) NULL 
+ );
+ 
+ /* Tabla temporal para rellenar la plaza unica */
+ select count(table_name) into HAY_TABLA from information_schema.tables where table_name = 'TMP_EXP_PL_UNICO' and table_schema = 'bi_cdd_dwh';
+ if (HAY_TABLA > 0) then 
+ 	DROP TABLE TMP_EXP_PL_UNICO;
+ end if;
+ CREATE TABLE TMP_EXP_PL_UNICO(                                 
+  	`EXPEDIENTE_ID` DECIMAL(16,0) NOT NULL
+ );
+ /*Indice para H_EXP */
+ select count(INDEX_NAME) into HAY from information_schema.statistics  where table_name = 'H_EXP' and table_schema = 'bi_cdd_dwh' and INDEX_NAME = 'H_EXP_PRO_IX';
+ select count(TABLE_NAME) into HAY_TABLA from information_schema.tables  where table_name = 'H_EXP' and table_schema = 'bi_cdd_dwh';
+ if (HAY < 1 && HAY_TABLA = 1) then 
+	CREATE INDEX H_EXP_PRO_IX ON H_EXP (EXPEDIENTE_ID, PROCURADOR_ID, PLAZA_ID, ENTIDAD_CEDENTE_ID);
+ end if; 
+ 
+END MY_BLOCK_DIM_EXP

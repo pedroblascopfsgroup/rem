@@ -200,9 +200,9 @@ nombreSinDirSinExt=${nombreFicheroSinDir%%.*}
 nombreSetEnv=setEnv_${nombreSinDirSinExt}.sh
 
 mkdir -p $BASEDIR/tmp
-if [[ $PACKAGE == 0 ]]; then
-    rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
-fi
+#if [[ $PACKAGE == 0 ]]; then
+#    rm -f $BASEDIR/tmp/*$nombreSinDirSinExt* 
+#fi
 
 if [[ ! $FICHERO =~ ^.*procs_y_vistas.*$ ]] ; then
     if [[ ! $nombreFicheroSinDir =~ ^D[MD]L_[0-9]+_[^_]+_[^\.]+\.sql$ ]] ; then

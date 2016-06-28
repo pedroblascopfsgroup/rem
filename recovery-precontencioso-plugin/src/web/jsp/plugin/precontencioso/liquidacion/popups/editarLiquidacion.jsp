@@ -181,7 +181,7 @@
 	]);
 
 	var usuarioStore = page.getStore({
-		flow: 'coreextension/getListUsuariosPaginatedData',
+		flow: 'liquidacion/getListUsuariosPaginatedData',
 		reader: new Ext.data.JsonReader({
 			root: 'listadoUsuarios'
 		}, usuarioRecord)

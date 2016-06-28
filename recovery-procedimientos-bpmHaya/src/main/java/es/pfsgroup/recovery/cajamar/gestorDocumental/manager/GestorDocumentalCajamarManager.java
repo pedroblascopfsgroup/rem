@@ -267,8 +267,10 @@ public class GestorDocumentalCajamarManager implements GestorDocumentalApi {
 		FileNameMap mimeTypes = URLConnection.getFileNameMap();
 		String mimeType = mimeTypes.getContentTypeFor("."+fileName);
 		if(Checks.esNulo(mimeType)) {
-			if("docx".equalsIgnoreCase(fileName)) {
+			if("docx".equalsIgnoreCase(fileName) || "doc".equalsIgnoreCase(fileName)) {
 				mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+			}else if("xlsx".equalsIgnoreCase(fileName) || "xls".equalsIgnoreCase(fileName)) {
+				mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 			}else if("msg".equalsIgnoreCase(fileName)) {
 				mimeType = "application/vnd.ms-outlook";
 			}

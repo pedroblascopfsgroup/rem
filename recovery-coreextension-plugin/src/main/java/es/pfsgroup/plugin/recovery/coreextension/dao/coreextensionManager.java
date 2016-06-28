@@ -21,6 +21,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -904,7 +905,15 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_BUSQUEDA_TERMINOS)
 	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario,List<Long> idGrpsUsuario) {
 		
-		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario);
+		String tipoTerminoDesc = "";
+		if (!Checks.esNulo(terminosFiltroDto.getTipoTermino())) {
+			final DDTipoAcuerdo tipoAcuerdo = genericDao.get(DDTipoAcuerdo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", terminosFiltroDto.getTipoTermino()));
+			if (!Checks.esNulo(tipoAcuerdo)) {
+				tipoTerminoDesc = tipoAcuerdo.getDescripcion();
+			}
+		}
+		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario, tipoTerminoDesc);
 		List<TerminoAcuerdo> listaTerminos=(List<TerminoAcuerdo>) page.getResults();
 		return page;
 	}

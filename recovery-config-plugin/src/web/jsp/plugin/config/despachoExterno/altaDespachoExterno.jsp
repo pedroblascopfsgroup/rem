@@ -325,7 +325,7 @@
 					,{items: [tipoVia,domicilio,domicilioPlaza,codigoPostal,personaContacto,telefono1,telefono2, fax, correoElectronico,codEstAse	]}
 				   ]
 		});
-	 
+
 	var pestanaAdicionales = new Ext.Panel({
 			title:'<s:message code="plugin.config.despachoExterno.consultadespacho.adicionales.title" text="**Datos adicionales" />'
 			,autoHeight:true
@@ -333,7 +333,7 @@
 			,layout:'table'
 			,layoutConfig:{columns:3}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
-			,items:[ {items: [clasifDespachoFieldSet, comboProvincias, contratoVigor, impuesto, servicionIntegralFieldSet]}
+			,items:[ {items: [<c:if test="${usuarioEntidad == 'BANKIA'}">clasifDespachoFieldSet,</c:if> comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
 					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
 				   ]
@@ -502,7 +502,7 @@
 			//,deferredRender:false
 			,height: 350
 			//,autoWidth : true
-			,items:[ pestanaPrincipal<c:if test="${usuarioEntidad == 'BANKIA'}">,pestanaAdicionales</c:if>]
+			,items:[ pestanaPrincipal,pestanaAdicionales]
 		}
 		,bbar : [btnGuardarEditar, btnCancelar]
 	});	

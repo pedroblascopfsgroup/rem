@@ -46,6 +46,7 @@ create or replace PROCEDURE CREAR_H_EXPEDIENTE (error OUT VARCHAR2) AS
     -- H_EXP_DET_CICLO_REC_MES
     -- H_EXP_DET_CICLO_REC_TRIMESTRE
     -- H_EXP_DET_CICLO_REC_ANIO
+	-- TMP_EXP_PER
     -- H_EXP_DET_CONTRATO
     -- H_EXP_DET_CONTRATO_SEMANA
     -- H_EXP_DET_CONTRATO_MES
@@ -709,7 +710,8 @@ BEGIN
                               IMPORTE_COMPROMETIDO NUMBER(14,2),
                               TIPO_GESTION NUMBER(16,0),
                               RESULTADO_ACTUACION NUMBER(16,0),
-                              MAX_PRIORIDAD_ACTUACION NUMBER(16,0)    
+                              MAX_PRIORIDAD_ACTUACION NUMBER(16,0),
+							  CNT_ES_PASE_ID NUMBER(16,0)
                              '', :error); END;';
 							 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_EXP_CNT');
@@ -948,8 +950,192 @@ BEGIN
       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CICLO_REC_ANIO_IX'', ''H_EXP_DET_CICLO_REC_ANIO (ANIO_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
     execute immediate V_SQL USING OUT error;
        
-    
+   ------------------------------ TMP_EXP_PER --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''TMP_EXP_PER'',
+						  ''EXPEDIENTE_ID NUMBER(16,0),
+                              PERSONA_ID NUMBER(16,0),
+                              PEX_ID NUMBER(16,0),
+                              PER_ES_PASE_ID NUMBER(16,0)
+                             '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_EXP_PER');
+
+     V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EXP_PER_EXP_IX'', ''TMP_EXP_PER (EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+       V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EXP_PER_PER_IX'', ''TMP_EXP_PER (PERSONA_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''TMP_EXP_PER_PEX_IX'', ''TMP_EXP_PER (PEX_ID, PERSONA_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+      DBMS_OUTPUT.PUT_LINE('---- Creacion indice en TMP_EXP_PER');
+
+    ------------------------------ H_EXP_DET_CONTRATO --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_CONTRATO'',
+						    ''DIA_ID DATE NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  CONTRATO_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_CONTRATOS NUMBER(16,0)
+                           '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CONTRATO_IX'', ''H_EXP_DET_CONTRATO (DIA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
+    ------------------------------ H_EXP_DET_CONTRATO_SEMANA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_CONTRATO_SEMANA'',
+							''SEMANA_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  CONTRATO_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_CONTRATOS NUMBER(16,0)
+                            '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CONTRATO_SEMANA_IX'', ''H_EXP_DET_CONTRATO_SEMANA (SEMANA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
         
+
+    ------------------------------ H_EXP_DET_CONTRATO_MES --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_CONTRATO_MES'',
+							''MES_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  CONTRATO_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_CONTRATOS NUMBER(16,0)
+                            '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CONTRATO_MES_IX'', ''H_EXP_DET_CONTRATO_MES (MES_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+        
+    
+    ------------------------------ H_EXP_DET_CONTRATO_TRIMESTRE --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_CONTRATO_TRIMESTRE '',
+							''TRIMESTRE_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  CONTRATO_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_CONTRATOS NUMBER(16,0)
+                            '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CONTRATO_TRI_IX'', ''H_EXP_DET_CONTRATO_TRIMESTRE (TRIMESTRE_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+       
+
+    ------------------------------ H_EXP_DET_CONTRATO_ANIO --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_CONTRATO_ANIO'',
+							''ANIO_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  CONTRATO_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_CONTRATOS NUMBER(16,0)
+                           '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_CONTRATO_ANIO_IX'', ''H_EXP_DET_CONTRATO_ANIO (ANIO_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+       
+	   
+    ------------------------------ H_EXP_DET_PERSONA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_PERSONA'',
+						    ''DIA_ID DATE NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  PERSONA_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_PERSONAS NUMBER(16,0)
+                           '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_PERSONA_IX'', ''H_EXP_DET_PERSONA (DIA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+	
+    ------------------------------ H_EXP_DET_PERSONA_SEMANA --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_PERSONA_SEMANA'',
+							''SEMANA_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  PERSONA_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_PERSONAS NUMBER(16,0)
+                            '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_PERSONA_SEMANA_IX'', ''H_EXP_DET_PERSONA_SEMANA (SEMANA_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+        
+
+    ------------------------------ H_EXP_DET_PERSONA_MES --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_PERSONA_MES'',
+							''MES_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  PERSONA_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_PERSONAS NUMBER(16,0)
+                            '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_PERSONA_MES_IX'', ''H_EXP_DET_PERSONA_MES (MES_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+        
+    
+    ------------------------------ H_EXP_DET_PERSONA_TRIMESTRE --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_PERSONA_TRIMESTRE '',
+							''TRIMESTRE_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  PERSONA_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_PERSONAS NUMBER(16,0)
+                            '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_PERSONA_TRI_IX'', ''H_EXP_DET_PERSONA_TRIMESTRE (TRIMESTRE_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+       
+
+    ------------------------------ H_EXP_DET_PERSONA_ANIO --------------------------
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''CREATE'', ''H_EXP_DET_PERSONA_ANIO'',
+							''ANIO_ID NUMBER(16,0) NOT NULL, 
+                              FECHA_CARGA_DATOS DATE NOT NULL, 
+                              EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
+							  PERSONA_ID NUMBER(16,0), 
+                              -- Dimensiones
+                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              -- Metricas  
+                              NUM_PERSONAS NUMBER(16,0)
+                           '', :error); END;';
+							 execute immediate V_SQL USING OUT error;
+
+      V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_EXP_DET_PERSONA_ANIO_IX'', ''H_EXP_DET_PERSONA_ANIO (ANIO_ID, EXPEDIENTE_ID)'', ''S'', '''', :error); END;';
+    execute immediate V_SQL USING OUT error;
+       
+	  
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
     

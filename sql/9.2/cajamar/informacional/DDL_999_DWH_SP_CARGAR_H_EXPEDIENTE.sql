@@ -772,9 +772,10 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
          GASTOS,
          DIR_TERRITORIAL_ID 
     from H_EXP where DIA_ID = max_dia_semana;
-    commit;
+
     V_ROWCOUNT := sql%rowcount;     
-  
+    commit;
+	
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_EXP_SEMANA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;   
 
@@ -1249,6 +1250,9 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
  --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_CNT_ANIO. Termina Creación de Indices', 4;
 
+
+  V_SQL :=  'BEGIN CARGAR_H_EXP_DET_CONTRATO('''||DATE_START||''', '''||DATE_END||''', :O_ERROR_STATUS); END;';
+  execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

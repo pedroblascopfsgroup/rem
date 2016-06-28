@@ -21,9 +21,9 @@ create or replace PROCEDURE CARGAR_H_EXPEDIENTE (DATE_START in date, DATE_END in
 -- ===============================================================================================
 -- Autor: Fran Gutiérrez, PFS group
 -- Fecha creación: Julio 2014
--- Responsable ultima modificacion: María Villanueva, PFS group
--- Fecha última modificación:03/06/2016
--- Motivos del cambio: Se corrige error , se estaba updateando tmp_h_cnt en lugar de TMP_H_EXP en los nulos de direccion territorial
+-- Responsable ultima modificacion: Pedro S., PFS group
+-- Fecha última modificación: 27/06/2016
+-- Motivos del cambio: Gestores, supervisores; y nuevos detalles expediente-contratos, expediente-personas.
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripción: Procedimiento almancenado que carga las tablas hechos H_EXP
@@ -163,7 +163,26 @@ BEGIN
 
    --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_EXP. Termina Creación de Indices', 4;
-            
+
+    execute immediate 'merge into TMP_H_EXP a
+    using (SELECT DISTINCT EXP.EXP_ID, E.PEF_ID_GESTOR, E.PEF_ID_SUPERVISOR
+			FROM '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP, 
+				 '||V_DATASTAGE||'.ARQ_ARQUETIPOS A, 
+				 '||V_DATASTAGE||'.ITI_ITINERARIOS I, 
+				 '||V_DATASTAGE||'.EST_ESTADOS E
+			WHERE EXP.ARQ_ID = A.ARQ_ID
+			  AND I.ITI_ID = A.ITI_ID 
+			  AND I.ITI_ID = E.ITI_ID 
+			  AND E.DD_EST_ID = EXP.DD_EST_ID
+		) b
+    on (b.EXP_ID = a.EXPEDIENTE_ID)   
+    when matched then update 
+        set a.SUPERVISOR_EXP_ID = b.PEF_ID_SUPERVISOR,
+		    a.GESTOR_EXP_ID = b.PEF_ID_GESTOR
+        where DIA_ID = '''||fecha||'''';
+    commit;
+	
+    /*        
     execute immediate 'merge into TMP_H_EXP a
     using (select gexp.EXP_ID, usu.USU_ID
             from '||V_DATASTAGE||'.GEH_GESTOR_ENTIDAD_HIST gent
@@ -202,7 +221,7 @@ BEGIN
         set a.SUPERVISOR_EXP_ID = b.USU_ID
         where DIA_ID = '''||fecha||'''';
     commit;
-    
+    */
     
     -- Borrado indices TMP_EXP_CNT  
         V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''TMP_EXP_CNT_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';

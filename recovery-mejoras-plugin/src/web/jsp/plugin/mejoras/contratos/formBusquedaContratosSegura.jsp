@@ -194,31 +194,36 @@ var formBusquedaContratos=function(){
 	
 	var codZonaSel='';
 	var desZonaSel='';
+	var codOficina='';
 	
 	var codZonaSelAdm='';
 	var desZonaSelAdm='';
+	var codOficinaAdm='';
 
+	debugger;
  	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'cod_oficina'}
 	]);
 	
 	var zonasAdmRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'cod_oficina'}
 	]);
 	
 	//Template para el combo de zonas
     var zonasTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
     
     //Template para el combo de zonas
     var zonasAdmTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
  	
@@ -287,6 +292,7 @@ var formBusquedaContratos=function(){
         	btnIncluir.setDisabled(false);
         	codZonaSel=record.data.codigo;
         	desZonaSel=record.data.descripcion;
+        	codOficina=record.data.cod_oficina;
          }
     });	
     
@@ -314,6 +320,7 @@ var formBusquedaContratos=function(){
         	btnAdmIncluir.setDisabled(false);
         	codZonaSelAdm=record.data.codigo;
         	desZonaSelAdm=record.data.descripcion;
+        	codOficinaAdm=record.data.cod_oficina;
          }
     });	
     
@@ -346,12 +353,12 @@ var formBusquedaContratos=function(){
 	});
  
       var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+      {header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Código oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
 	]);
 	
      var zonasAdmCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Código oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
 	]);
 	
@@ -379,7 +386,8 @@ var formBusquedaContratos=function(){
 	    var zonaAInsertar = zonasGrid.getStore().recordType;
    		var p = new zonaAInsertar({
    			codigoZona: codZonaSel,
-   			descripcionZona: desZonaSel
+   			descripcionZona: desZonaSel,
+   			codigoOficina: codOficina
    		});
 		zonasStore.insert(0, p);
 		listadoCodigoZonas.push(codZonaSel);
@@ -389,7 +397,8 @@ var formBusquedaContratos=function(){
 	    var zonaAInsertar = zonasAdmGrid.getStore().recordType;
    		var p = new zonaAInsertar({
    			codigoZona: codZonaSelAdm,
-   			descripcionZona: desZonaSelAdm
+   			descripcionZona: desZonaSelAdm,
+   			codigoOficina: codOficinaAdm
    		});
 		zonasAdmStore.insert(0, p);
 		listadoCodigoZonasAdm.push(codZonaSelAdm);
@@ -404,6 +413,7 @@ var formBusquedaContratos=function(){
 			incluirZona();
 			codZonaSel='';
    			desZonaSel='';
+   			codOficina='';
    			btnIncluir.setDisabled(true);
 			comboZonas.focus();
 		}
@@ -418,6 +428,7 @@ var formBusquedaContratos=function(){
 			incluirAdmZona();
 			codZonaSelAdm='';
    			desZonaSelAdm='';
+   			codOficinaAdm='';
    			btnAdmIncluir.setDisabled(true);
 			comboZonasAdm.focus();
 		}

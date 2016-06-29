@@ -189,7 +189,7 @@
 			name : 'observacionesEDP'
             ,fieldLabel: '<s:message code="precontencioso.grid.documento.editarDocumento.observaciones" text="**Observaciones" />'
             ,height : 60
-            ,width : 450
+            ,width : 170
             ,value : '<s:message text="${dtoDoc.observacionesEDP}" javaScriptEscape="true" />'
     });
 
@@ -201,7 +201,7 @@
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza, observacionesEDP]}
+		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_OBSERVACIONES_EDP">	,observacionesEDP</sec:authorize>]}
 				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	

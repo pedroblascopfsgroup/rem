@@ -102,6 +102,7 @@ public class DocumentoAssembler {
 		doc.setProtocolo(documento.getProtocolo());
 		doc.setTomo(documento.getTomo());
 		doc.setPlaza(documento.getPlaza());
+		doc.setObservacionesEDP(documento.getObservacionesEdp());
 		if (documento.getFechaEscritura()!=null)
 			doc.setFechaEscritura(webDateFormat.format(documento.getFechaEscritura()));
 		if(!Checks.esNulo(documento.getProvinciaNotario())){

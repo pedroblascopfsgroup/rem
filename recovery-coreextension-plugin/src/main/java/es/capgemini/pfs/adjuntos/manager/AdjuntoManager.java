@@ -545,9 +545,6 @@ public class AdjuntoManager implements AdjuntoApi{
 
 				@Override
 				public Long getIdAdjuntoBlob() {
-					if(adj.getAdjunto() != null) {
-						return adj.getAdjunto().getId();
-					}
 					return null;
 				}
 			};
@@ -699,9 +696,6 @@ public class AdjuntoManager implements AdjuntoApi{
 				
 				@Override
 				public Long getIdAdjuntoBlob() {
-					if(aa.getAdjunto() != null) {
-						return aa.getAdjunto().getId();
-					}
 					return null;
 				}
 			};
@@ -776,9 +770,6 @@ public class AdjuntoManager implements AdjuntoApi{
 				
 				@Override
 				public Long getIdAdjuntoBlob() {
-					if(aa.getAdjunto() != null) {
-						return aa.getAdjunto().getId();
-					}
 					return null;
 				}
 			};
@@ -894,9 +885,6 @@ public class AdjuntoManager implements AdjuntoApi{
 				
 					@Override
 					public Long getIdAdjuntoBlob() {
-						if(aa.getAdjunto() != null) {
-							return aa.getAdjunto().getId();
-						}
 						return null;
 					}
 				};

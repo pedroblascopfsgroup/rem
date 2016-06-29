@@ -872,7 +872,6 @@
 	// Se habilita el botón Proponer Instrucciones sólamente cuando se ha seleccionado un lote.
 	//gridLotes.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
 	gridLotes.on('rowclick', function(grid, rowIndex, e) {
-		debugger;
 		if(clicktratado == true){
 			clicktratado = false;
 		}else{
@@ -882,7 +881,6 @@
 	
 	function marcarLote(loteIndice){
 		<%-- Quitamos el color de fondo marcado --%>
-		debugger;
 		for(r=0; r < gridLotes.getView().getRows().length; r++){
 			for(c=0; c < gridLotes.getColumnModel().config.length; c++){
 				var cellselected = gridLotes.getView().getCell(r,c);
@@ -1049,7 +1047,6 @@
 		    });	
 		    
 		    gridXLote.on('rowclick', function(grid, rowIndex, e) {
-		    	debugger;
 		    	var rec = gridXLote.getStore().getAt(rowIndex);
 		    	var idLote = rec.get('idLoteBien');
 		    	var indice = gridLotes.store.find('idLote', idLote);

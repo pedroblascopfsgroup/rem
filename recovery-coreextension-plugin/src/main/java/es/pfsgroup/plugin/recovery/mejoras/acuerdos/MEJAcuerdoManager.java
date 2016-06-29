@@ -99,6 +99,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.tareas.EXTCrearTareaException;
 import es.pfsgroup.recovery.ext.api.tareas.EXTTareasApi;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.ACDAcuerdoDerivaciones;
@@ -214,6 +215,9 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 
 	@Autowired
 	ZonaDao zonaDao;
+	
+	@Autowired
+	EXTGrupoUsuariosApi grupoUsuario;
 	
 	/**
 	 * Pasa un acuerdo a estado Rechazado.
@@ -1470,12 +1474,19 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 		
 		Usuario user = usuarioManager.getUsuarioLogado();
 		
+		List<Long> gruposDelUser = grupoUsuario.buscaIdsGrupos(user);
+		gruposDelUser.add(user.getId());
+		
 		Order orderGestDes = new Order(OrderType.ASC, "id");
-		List<GestorDespacho> gestdesp = genericDao.getListOrdered(GestorDespacho.class,orderGestDes, genericDao.createFilter(FilterType.EQUALS, "usuario.id", user.getId()),genericDao.createFilter(FilterType.EQUALS, "despachoExterno.tipoDespacho.id", tipoDespachoExterno.getId()));
+		List<GestorDespacho> gestdesp = genericDao.getListOrdered(GestorDespacho.class,orderGestDes, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.tipoDespacho.id", tipoDespachoExterno.getId()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		
-		boolean res = (gestdesp.size()>0)? true:false;
+		for(GestorDespacho gd : gestdesp){
+			if(gruposDelUser.contains(gd.getUsuario().getId())){
+				return true;
+			}
+		}
 		
-		return res;
+		return false;
 	}
 	
 	@BusinessOperation(BO_ACUERDO_MGR_GET_FECHA_PASE_MORA)
@@ -1606,7 +1617,7 @@ public class MEJAcuerdoManager implements MEJAcuerdoApi {
 				////Metemos a el usuario como validador en la GAA
 		        EXTSubtipoTarea subtipotarea = genericDao.get(EXTSubtipoTarea.class, genericDao.createFilter(FilterType.EQUALS, "codigoSubtarea", SubtipoTarea.CODIGO_ACEPTACION_ACUERDO));
 		        try {
-					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoDecisor.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
+					proxyFactory.proxy(coreextensionApi.class).insertarGestorAdicionalAsunto(subtipotarea.getTipoGestor().getId(),acuerdo.getAsunto().getId(),gestorDespachoValidador.getUsuario().getId(), gestorDespachoValidador.getDespachoExterno().getId());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

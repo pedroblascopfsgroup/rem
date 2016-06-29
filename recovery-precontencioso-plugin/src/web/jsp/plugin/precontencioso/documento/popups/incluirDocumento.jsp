@@ -313,6 +313,7 @@ var gridDocs = new Ext.grid.GridPanel({
         ,valueField: 'codigo'
         ,enableKeyEvents: true
         ,labelStyle: labelStyle
+        ,disabled: '${esUsuarioTipoDespachoGestoria}'
         ,doQuery : function(q, forceAll){
 	        q = Ext.isEmpty(q) ? '' : q;
 	        var qe = {
@@ -367,12 +368,14 @@ var gridDocs = new Ext.grid.GridPanel({
 	    
 	var protocolo = new Ext.form.TextField({
 		name : 'protocolo'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.protocolo}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.protocolo" text="**Protocolo" />'
 	});    
 	
 	var notario = new Ext.form.TextField({
 		name : 'notario'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.notario}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.notario" text="**Notario" />'
 	});  
@@ -380,66 +383,77 @@ var gridDocs = new Ext.grid.GridPanel({
 	
 	var fechaEscritura = new Ext.ux.form.XDateField({
 		name : 'fechaEscritura'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.fechaEscritura" text="**Fecha escritura" />'
 		,style:'margin:0px'
 	});	
 	
 	var asiento = new Ext.form.TextField({
 		name : 'asiento'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.asiento}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.asiento" text="**Asiento" />'
 	});  
 	
 	var finca = new Ext.form.TextField({
 		name : 'finca'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.finca}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.finca" text="**Finca" />'
 	});  
 	
 	var tomo = new Ext.form.TextField({
 		name : 'tomo'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.tomo}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.tomo" text="**Tomo" />'
 	});  
 	
 	var libro = new Ext.form.TextField({
 		name : 'libro'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.libro}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.libro" text="**Libro" />'
 	}); 
 	
 	var folio = new Ext.form.TextField({
 		name : 'folio'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.folio}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.folio" text="**Folio" />'
 	});  
 	
 	var numFinca = new Ext.form.TextField({
 		name : 'numFinca'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.numFinca}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.numFinca" text="**Número Finca" />'
 	});  
 	
 	var numRegistro = new Ext.form.TextField({
 		name : 'numRegistro'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.numRegistro}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.numRegistro" text="**Número Registro" />'
 	});  
 	
 	var plaza = new Ext.form.TextField({
 		name : 'documento.plaza'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${plaza}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.plaza" text="**Plaza" />'
 	});  	
 	
 	var idufir = new Ext.form.TextField({
 		name : 'idufir'
+		,disabled: '${esUsuarioTipoDespachoGestoria}'
 		,value : '<s:message text="${dtoDoc.idufir}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.idufir" text="**IDUFIR" />'
 	});  	
 	
 	var observacionesEDP = new Ext.form.TextArea({
 			name : 'observacionesEDP'
+			,disabled: '${esUsuarioTipoDespachoGestoria}'
             ,fieldLabel: '<s:message code="precontencioso.grid.documento.incluirDocumento.observaciones" text="**Observaciones" />'
             ,height : 60
             ,width : 170

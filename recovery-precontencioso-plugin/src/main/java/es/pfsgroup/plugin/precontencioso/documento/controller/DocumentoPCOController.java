@@ -362,6 +362,7 @@ public class DocumentoPCOController {
 		//model.put("dtoDoc", docDto);
 		model.put("arrayIdDocumentos", arrayIdDocumentos);
 		model.put("DDResultado", proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class));
+		model.put("esUsuarioTipoDespachoGestoria", esUsuarioTipoDespachoGestoria());
 		
 		return CREAR_SOLICITUDES;
 	}

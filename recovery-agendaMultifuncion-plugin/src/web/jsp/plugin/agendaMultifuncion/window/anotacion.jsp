@@ -403,9 +403,8 @@
     }
     
     fechaGrid.on('focus', function(){
- 
 	    if(parametroTareaUnica=='true'){
-		    for(var i=0; i<=gridUsuarios.getStore().getTotalCount()-1; i++){
+		    for(var i=0; i<=gridUsuarios.getStore().getCount()-1; i++){
 		    	
 		    	if(gridUsuarios.getSelectionModel().getSelected().get('fecha')==''){
 			    	if(gridUsuarios.getStore().getAt(i).get('fecha')!= ''){
@@ -425,9 +424,8 @@
     
     
    fechaGrid.on('keydown', function(){
- 
 	    if(parametroTareaUnica=='true'){
-		    for(var i=0; i<=gridUsuarios.getStore().getTotalCount()-1; i++){
+		    for(var i=0; i<=gridUsuarios.getStore().getCount()-1; i++){
 		    	
 		    	if(gridUsuarios.getSelectionModel().getSelected().get('fecha')==''){
 			    	if(gridUsuarios.getStore().getAt(i).get('fecha')!= ''){

@@ -1254,6 +1254,9 @@ V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', 
   V_SQL :=  'BEGIN CARGAR_H_EXP_DET_CONTRATO('''||DATE_START||''', '''||DATE_END||''', :O_ERROR_STATUS); END;';
   execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
+  V_SQL :=  'BEGIN CARGAR_H_EXP_DET_PERSONA('''||DATE_START||''', '''||DATE_END||''', :O_ERROR_STATUS); END;';
+  execute immediate V_SQL USING OUT O_ERROR_STATUS;
+  
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;
  

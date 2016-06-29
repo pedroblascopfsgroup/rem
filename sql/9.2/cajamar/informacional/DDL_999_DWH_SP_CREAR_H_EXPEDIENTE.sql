@@ -1059,7 +1059,7 @@ BEGIN
                               EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
 							  PERSONA_ID NUMBER(16,0), 
                               -- Dimensiones
-                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              PER_ES_PASE_ID NUMBER(16,0), 
                               -- Metricas  
                               NUM_PERSONAS NUMBER(16,0)
                            '', :error); END;';
@@ -1075,7 +1075,7 @@ BEGIN
                               EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
 							  PERSONA_ID NUMBER(16,0), 
                               -- Dimensiones
-                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              PER_ES_PASE_ID NUMBER(16,0), 
                               -- Metricas  
                               NUM_PERSONAS NUMBER(16,0)
                             '', :error); END;';
@@ -1092,7 +1092,7 @@ BEGIN
                               EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
 							  PERSONA_ID NUMBER(16,0), 
                               -- Dimensiones
-                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              PER_ES_PASE_ID NUMBER(16,0), 
                               -- Metricas  
                               NUM_PERSONAS NUMBER(16,0)
                             '', :error); END;';
@@ -1109,7 +1109,7 @@ BEGIN
                               EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
 							  PERSONA_ID NUMBER(16,0), 
                               -- Dimensiones
-                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              PER_ES_PASE_ID NUMBER(16,0), 
                               -- Metricas  
                               NUM_PERSONAS NUMBER(16,0)
                             '', :error); END;';
@@ -1126,7 +1126,7 @@ BEGIN
                               EXPEDIENTE_ID NUMBER(16,0) NOT NULL, 
 							  PERSONA_ID NUMBER(16,0), 
                               -- Dimensiones
-                              CNT_ES_PASE_ID NUMBER(16,0), 
+                              PER_ES_PASE_ID NUMBER(16,0), 
                               -- Metricas  
                               NUM_PERSONAS NUMBER(16,0)
                            '', :error); END;';

@@ -22,15 +22,12 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.OrderBy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
-import es.pfsgroup.plugin.precontencioso.liquidacion.model.DDEstadoLiquidacionPCO;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 @Entity
@@ -110,6 +107,9 @@ public class DocumentoPCO implements Serializable, Auditable {
 		
 	@Column(name = "PCO_DOC_PDD_OBSERVACIONES")
 	private String observaciones;
+	
+	@Column(name = "PCO_DOC_PDD_OBSERVACIONES_EDP")
+	private String observacionesEdp;
 	
 	@OneToMany(mappedBy = "documento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -361,4 +361,11 @@ public class DocumentoPCO implements Serializable, Auditable {
 		this.provinciaNotario = provinciaNotario;
 	}
 
+	public String getObservacionesEdp() {
+		return observacionesEdp;
+	}
+	
+	public void setObservacionesEdp(String observacionesEdp) {
+		this.observacionesEdp = observacionesEdp;
+	}
 }

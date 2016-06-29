@@ -491,6 +491,7 @@ public class DocumentoPCOController {
 		docDto.setPlaza(webRequest.getParameter("plaza"));
 		docDto.setIdufir(webRequest.getParameter("idufir"));
 		docDto.setProvinciaNotario(webRequest.getParameter("provinciaNotario"));
+		docDto.setObservacionesEDP(webRequest.getParameter("observacionesEDP"));
 		
 		documentoPCOApi.editarDocumento(docDto);
 		
@@ -558,6 +559,7 @@ public class DocumentoPCOController {
 			docDto.setEstado(DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);
 			docDto.setContrato(contrato);
 			docDto.setId(idDocUG);
+			docDto.setObservacionesEDP(request.getParameter("observacionesEDP"));
 			
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}

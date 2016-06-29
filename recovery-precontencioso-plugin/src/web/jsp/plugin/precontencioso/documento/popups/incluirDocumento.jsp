@@ -160,8 +160,8 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();
 	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();	 	
-	 	
-		parametros.idPrc = data.id;
+	 	parametros.observacionesEDP = observacionesEDP.getValue();
+	 	parametros.idPrc = data.id;
 
 	 	return parametros;
 	 }	
@@ -437,6 +437,14 @@ var gridDocs = new Ext.grid.GridPanel({
 		,value : '<s:message text="${dtoDoc.idufir}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.idufir" text="**IDUFIR" />'
 	});  	
+	
+	var observacionesEDP = new Ext.form.TextArea({
+			name : 'observacionesEDP'
+            ,fieldLabel: '<s:message code="precontencioso.grid.documento.incluirDocumento.observaciones" text="**Observaciones" />'
+            ,height : 60
+            ,width : 450
+            ,value : '<s:message text="${dtoDoc.observacionesEDP}" javaScriptEscape="true" />'
+    });
 
 	
 	var panelSuperior={
@@ -482,7 +490,7 @@ var gridDocs = new Ext.grid.GridPanel({
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza]}
+		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza, observacionesEDP]}
 				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	

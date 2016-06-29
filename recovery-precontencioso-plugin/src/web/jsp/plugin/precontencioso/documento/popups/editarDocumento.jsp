@@ -101,6 +101,7 @@
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();
 	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();
+	 	parametros.observacionesEDP = observacionesEDP.getValue();
 	 	
 	 	return parametros;
 	 }	
@@ -183,7 +184,14 @@
  		label="**Localidad Notario" value="${dtoDoc.provinciaNotario}" dd="${listaProvincias}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 	comboProvinciaNotario.labelStyle=labelStyle;	
-
+	
+	var observacionesEDP = new Ext.form.TextArea({
+			name : 'observacionesEDP'
+            ,fieldLabel: '<s:message code="precontencioso.grid.documento.editarDocumento.observaciones" text="**Observaciones" />'
+            ,height : 60
+            ,width : 450
+            ,value : '<s:message text="${dtoDoc.observacionesEDP}" javaScriptEscape="true" />'
+    });
 
 	var panelEdicion = new Ext.form.FieldSet({
 		title:'<s:message code="precontencioso.grid.documento.editarDocumento.infoDocumentos" text="**Información Documentos" />'
@@ -193,7 +201,7 @@
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza]}
+		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza, observacionesEDP]}
 				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	

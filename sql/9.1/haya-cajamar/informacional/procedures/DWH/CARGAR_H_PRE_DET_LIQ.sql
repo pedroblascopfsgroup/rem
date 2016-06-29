@@ -2,7 +2,7 @@ create or replace PROCEDURE CARGAR_H_PRE_DET_LIQ(DATE_START IN date, DATE_END IN
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Responsable ultima modificacion: Maria Villanueva, PFS Group
 -- Fecha ultima modificacion: 16/11/2015
 -- Motivos del cambio: usuario propietario
 -- Cliente: Recovery BI Haya
@@ -157,7 +157,7 @@ DECLARE
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
     commit;    
 
-    -- Borrado del dï¿½a a insertar
+    -- Borrado del dia a insertar
     delete from H_PRE_DET_LIQ where DIA_ID = fecha;
     commit;   
     
@@ -659,7 +659,7 @@ close c_semana;
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
     
-  -- Bucle que recorre los aï¿½os
+  -- Bucle que recorre los aios
   open c_anio;
   loop --C_ANIO_LOOP
     fetch c_anio into anio;        
@@ -667,10 +667,10 @@ close c_semana;
   
     select max(DIA_H) into max_dia_anio from TMP_FECHA where ANIO_H = anio;
     
-    --Año anterior
+    --Anyo anterior
     select max(ANIO_ID) into anio_ant from H_PRE_DET_LIQ_ANIO where ANIO_ID < anio;
         
-    -- Borrado de loa aï¿½os a insertar
+    -- Borrado de loa aios a insertar
     delete from H_PRE_DET_LIQ_ANIO where ANIO_ID = anio;
     commit;
   

@@ -95,7 +95,7 @@ DECLARE
        execute immediate V_SQL USING OUT O_ERROR_STATUS;	
 
     --Log_Proceso
-    execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_PRC_DET_ACUERDO. Truncado de tabla y borrado de ï¿½ndices', 4;
+    execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_PRC_DET_ACUERDO. Truncado de tabla y borrado de indices', 4;
 
     execute immediate 'insert /*+ APPEND PARALLEL(PROCEDIMIENTO_ID_1, 16) PQ_DISTRIBUTE(pROCEDIMIENTO_ID_1, NONE) */ into TMP_H_PRC_DET_ACUERDO 
          (
@@ -175,7 +175,7 @@ select  ''' || fecha || ''',
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     commit;
       
-    -- Borrado del dï¿½a a insertar
+    -- Borrado del dia a insertar
     delete from H_PRC_DET_ACUERDO where DIA_ID = fecha;
     commit;   
             
@@ -225,7 +225,7 @@ INTO H_PRC_DET_ACUERDO
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;     
   
--- -------------------------- Cï¿½LCULO DEL RESTO DE PERIODOS ----------------------------
+-- -------------------------- CaLCULO DEL RESTO DE PERIODOS ----------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_CNT'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;	 
   insert into TMP_FECHA_CNT (DIA_CNT) select distinct(DIA_ID) from H_PRC_DET_ACUERDO;
@@ -246,7 +246,7 @@ INTO H_PRC_DET_ACUERDO
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
   insert into TMP_FECHA_AUX (SEMANA_AUX) select distinct SEMANA_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
-  -- Insert max dï¿½a anterior al periodo de carga - Periodo anterior de date_start 
+  -- Insert max daa anterior al periodo de carga - Periodo anterior de date_start 
   select max(SEMANA_ID) into V_NUMBER from H_PRC_DET_ACUERDO_SEMANA where SEMANA_ID < (select min(SEMANA_AUX) from TMP_FECHA_AUX);
   if(V_NUMBER) is not null then
     insert into TMP_FECHA_AUX (SEMANA_AUX) 
@@ -484,7 +484,7 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_mes;
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   insert into TMP_FECHA_AUX (TRIMESTRE_AUX) select distinct TRIMESTRE_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
-  -- Insert max dï¿½a anterior al periodo de carga - Periodo anterior de date_start 
+  -- Insert max dia anterior al periodo de carga - Periodo anterior de date_start 
   insert into TMP_FECHA_AUX (TRIMESTRE_AUX) select max(TRIMESTRE_ID) from H_PRC_DET_ACUERDO_TRIMESTRE where TRIMESTRE_ID < (select min(TRIMESTRE_AUX) from TMP_FECHA_AUX);
   commit;
   
@@ -599,7 +599,7 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_trimestre;
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
   insert into TMP_FECHA_AUX (ANIO_AUX) select distinct ANIO_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
-  -- Insert max dï¿½a anterior al periodo de carga - Periodo anterior de date_start 
+  -- Insert max dia anterior al periodo de carga - Periodo anterior de date_start 
   insert into TMP_FECHA_AUX (ANIO_AUX) select max(ANIO_ID) from H_PRC_DET_ACUERDO_ANIO where ANIO_ID < (select min(ANIO_AUX) from TMP_FECHA_AUX);
   commit;
   
@@ -617,7 +617,7 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_trimestre;
   commit;
  
  
-  -- Bucle que recorre los aï¿½os
+  -- Bucle que recorre los anyos
   open c_anio;
   loop --C_ANIO_LOOP
     fetch c_anio into anio;        
@@ -634,7 +634,7 @@ FROM H_PRC_DET_ACUERDO where DIA_ID = max_dia_trimestre;
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     commit;
     
-    -- Borrado de loa aï¿½os a insertar
+    -- Borrado de loa años a insertar
     delete from H_PRC_DET_ACUERDO_ANIO where ANIO_ID = anio;
     commit;
   

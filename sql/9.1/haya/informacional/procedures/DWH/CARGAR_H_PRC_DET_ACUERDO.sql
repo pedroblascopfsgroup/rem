@@ -164,7 +164,7 @@ select  ''' || fecha || ''',
          execute immediate V_SQL USING OUT O_ERROR_STATUS;		
     commit;
       
-    -- Borrado del dï¿½a a insertar
+    -- Borrado del día a insertar
     delete from H_PRC_DET_ACUERDO where DIA_ID = fecha;
     commit;   
             
@@ -209,7 +209,7 @@ INTO H_PRC_DET_ACUERDO
             execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;     
   
--- -------------------------- Cï¿½LCULO DEL RESTO DE PERIODOS ----------------------------
+-- -------------------------- CáLCULO DEL RESTO DE PERIODOS ----------------------------
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_CNT'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;	 
   insert into TMP_FECHA_CNT (DIA_CNT) select distinct(DIA_ID) from H_PRC_DET_ACUERDO;

@@ -98,7 +98,7 @@ BEGIN
     
 	
 	execute immediate 'merge into TMP_EXP_CNT a
-			using (SELECT DISTINCT EXP_ID, CNT_ID, CEX_PASE
+			using (SELECT DISTINCT EXP_ID, CNT_ID, NVL(CEX_PASE,-1) CEX_PASE
 			FROM '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE
 			WHERE BORRADO = 0 and FECHACREAR <= '''||fecha||''') b
     on (b.EXP_ID = a.EXPEDIENTE_ID and b.CNT_ID = a.CONTRATO)   

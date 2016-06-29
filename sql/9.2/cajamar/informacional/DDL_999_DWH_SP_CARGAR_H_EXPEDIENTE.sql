@@ -269,7 +269,7 @@ BEGIN
              mov.MOV_COMISIONES, 
              mov.MOV_GASTOS 
         from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex 
-        join '||V_CM01||'.H_MOV_MOVIMIENTOS mov on cex.CNT_ID = mov.CNT_ID
+        join '||V_CM01||'.H_MOV_MOVIMIENTOS mov on cex.CNT_ID = mov.CNT_ID and cex.BORRADO = 0 and cex.FECHACREAR <= ''' || max_dia_con_contratos || '''
         where mov.MOV_FECHA_EXTRACCION = ''' || max_dia_con_contratos || ''''; 
      
     V_ROWCOUNT := sql%rowcount;     
@@ -307,7 +307,7 @@ BEGIN
              mov.MOV_COMISIONES, 
              mov.MOV_GASTOS 
         from '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE cex 
-        join '||V_DATASTAGE||'.MOV_MOVIMIENTOS mov on cex.CNT_ID = mov.CNT_ID
+        join '||V_DATASTAGE||'.MOV_MOVIMIENTOS mov on cex.CNT_ID = mov.CNT_ID and cex.BORRADO = 0 and cex.FECHACREAR <= ''' || fecha || '''
         where mov.MOV_FECHA_EXTRACCION = '''||fecha||''''; 
 
     V_ROWCOUNT := sql%rowcount;     

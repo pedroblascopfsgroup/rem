@@ -122,7 +122,7 @@ BEGIN
         EXP_ID, 
         PER_ID,
         PEX_ID,
-        PEX_PASE
+        NVL(PEX_PASE,-1)
     from '||V_DATASTAGE||'.PEX_PERSONAS_EXPEDIENTE  
     where  trunc(FECHACREAR) <= '''||fecha||''' and BORRADO = 0';   
     

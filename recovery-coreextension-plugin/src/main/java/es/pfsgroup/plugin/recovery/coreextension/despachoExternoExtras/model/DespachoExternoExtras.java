@@ -7,9 +7,12 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -17,137 +20,140 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 
-
 /**
- * PRODUCTO-1272 - Clase que representa campos adicionales a DES_DESPACHO_EXTERNO
+ * PRODUCTO-1272 - Clase que representa campos adicionales a
+ * DES_DESPACHO_EXTERNO
+ * 
  * @author jros
  *
  */
 @Entity
 @Table(name = "DEE_DESPACHO_EXTRAS", schema = "${entity.schema}")
-//@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+// @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class DespachoExternoExtras implements Serializable, Auditable  {
+public class DespachoExternoExtras implements Serializable, Auditable {
 
 	private static final long serialVersionUID = -7347415357949976482L;
-	
+
 	@Id
-    @Column(name = "DES_ID")
+	@Column(name = "DEE_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "DespachoExternoExtrasGenerator")
+    @SequenceGenerator(name = "DespachoExternoExtrasGenerator", sequenceName = "S_DEE_DESPACHO_EXTRAS")
 	private Long id;
-	
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DES_ID")
+	private DespachoExterno despachoExterno;
+
 	@Column(name = "DEE_FAX")
 	private String fax;
-	
-	/**
-	 * Estado del letrado/procurador a nivel operativo. 
-	 * Valores posibles:[0/1] --> [Alta/Baja] - MAPEADOS en recovery (Si esta de Alta en recovery o se le ha dado de Baja)
-	 */
-	@Column(name = "DEE_COD_EST_ASE")
-	private String codEstAse;
-	
-	/**
-	 * Valores posibles:[0/1/2/3] --> [Historico Caja / Acuerdo 2011 / 2014 / 2015] - MAPEADOS en recovery
-	 */
-	@Column(name = "DEE_CONTRATO_VIGOR")
-	private Integer contratoVigor;
-	
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DCE_ID")
+	private DespachoCodEstado codEstAse;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DCV_ID")
+	private DespachoContratoVigor contratoVigor;
+
 	@Column(name = "DEE_SERVICIO_INTEGRAL")
 	private Boolean servicioIntegral;
-	
+
 	@Column(name = "DEE_FECHA_SERVICIO_INTEGRAL")
 	private Date fechaServicioIntegral;
-	
+
 	@Column(name = "DEE_CLASIF_CONCURSOS")
 	private Boolean clasifConcursos;
-	
-	/**
-	 * Tipo de perfil del despacho. Valores posibles:[0/1/2] --> [A/B/C] - MAPEADOS en recovery
-	 */
-	@Column(name = "DEE_CLASIF_PERFIL")
-    private Integer clasifPerfil;
-	
-	/**
-	 * Relacion Bankia. Valores posibles:[0/1/2/3/4] --> [En devinculacion/Sin turno/Sin acceso/Turno Activo/Historico] - MAPEADOS en recovery
-	 */
-	@Column(name = "DEE_REL_BANKIA")
-    private Integer relacionBankia;
-	
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DCP_ID")
+	private DespachoClasiPerfil clasifPerfil;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DRE_ID")
+	private DespachoRelEntidad relacionEntidad;
+
 	@Column(name = "DEE_OFICINA_CONTACTO")
-	private String	oficinaContacto;
-	
+	private String oficinaContacto;
+
 	@Column(name = "DEE_ENTIDAD_CONTACTO")
 	private String entidadContacto;
-	
+
 	@Column(name = "DEE_FECHA_ALTA")
 	private Date fechaAlta;
-	
+
 	@Column(name = "DEE_ENTIDAD_LIQUIDACION")
 	private String entidadLiquidacion;
-	
+
 	@Column(name = "DEE_OFICINA_LIQUIDACION")
 	private String oficinaLiquidacion;
-	
+
 	@Column(name = "DEE_DIGCON_LIQUIDACION")
 	private String digconLiquidacion;
-	
+
 	@Column(name = "DEE_CUENTA_LIQUIDACION")
 	private String cuentaLiquidacion;
-	
+
 	@Column(name = "DEE_ENTIDAD_PROVISIONES")
 	private String entidadProvisiones;
-	
+
 	@Column(name = "DEE_OFICINA_PROVISIONES")
 	private String oficinaProvisiones;
-	
+
 	@Column(name = "DEE_DIGCON_PROVISIONES")
 	private String digconProvisiones;
-	
+
 	@Column(name = "DEE_CUENTA_PROVISIONES")
 	private String cuentaProvisiones;
-	
+
 	@Column(name = "DEE_ENTIDAD_ENTREGAS")
 	private String entidadEntregas;
-	
+
 	@Column(name = "DEE_OFICINA_ENTREGAS")
 	private String oficinaEntregas;
-	
+
 	@Column(name = "DEE_DIGCON_ENTREGAS")
 	private String digconEntregas;
-	
+
 	@Column(name = "DEE_CUENTA_ENTREGAS")
 	private String cuentaEntregas;
-	
+
 	@Column(name = "DEE_CENTRO_RECUP")
 	private String centroRecuperacion;
-	
+
 	@Column(name = "DEE_CORREO_ELECTRONICO")
 	private String correoElectronico;
-	
+
 	@OneToOne(fetch = FetchType.LAZY)
-    @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    @JoinColumn(name = "DD_TDI_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_TDI_ID")
 	private DDTipoDocumento tipoDocumento;
-	
+
 	@Column(name = "DEE_DOCUMENTO")
 	private String documentoCif;
-	
+
 	@Column(name = "DEE_ASESORIA")
 	private Boolean asesoria;
-	
+
 	@Column(name = "DEE_IVA_APL")
 	private Float iva;
-	
-	/**
-	 * Descripcion impuesto. Valores posibles:[0/1] --> [IGIC/IVA] - MAPEADOS en recovery
-	 */
-	@Column(name = "DEE_IVA_DES")
-	private Integer descripcionIVA;
-	
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	@JoinColumn(name = "DD_DID_ID")
+	private DespachoIvaDes descripcionIVA;
+
 	@Column(name = "DEE_IRPF_APL")
 	private Float irpf;
-	
+
 	@Embedded
 	private Auditoria auditoria;
 
@@ -168,22 +174,6 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 
 	public void setFax(String fax) {
 		this.fax = fax;
-	}
-
-	public String getCodEstAse() {
-		return codEstAse;
-	}
-
-	public void setCodEstAse(String codEstAse) {
-		this.codEstAse = codEstAse;
-	}
-
-	public Integer getContratoVigor() {
-		return contratoVigor;
-	}
-
-	public void setContratoVigor(Integer contratoVigor) {
-		this.contratoVigor = contratoVigor;
 	}
 
 	public Boolean isServicioIntegral() {
@@ -208,22 +198,6 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 
 	public void setClasifConcursos(Boolean clasifConcursos) {
 		this.clasifConcursos = clasifConcursos;
-	}
-
-	public Integer getClasifPerfil() {
-		return clasifPerfil;
-	}
-
-	public void setClasifPerfil(Integer tipoPerfil) {
-		this.clasifPerfil = tipoPerfil;
-	}
-
-	public Integer getRelacionBankia() {
-		return relacionBankia;
-	}
-
-	public void setRelacionBankia(Integer relacionBankia) {
-		this.relacionBankia = relacionBankia;
 	}
 
 	public String getOficinaContacto() {
@@ -394,14 +368,6 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.iva = iva;
 	}
 
-	public Integer getDescripcionIVA() {
-		return descripcionIVA;
-	}
-
-	public void setDescripcionIVA(Integer descripcionIVA) {
-		this.descripcionIVA = descripcionIVA;
-	}
-
 	public Float getIrpf() {
 		return irpf;
 	}
@@ -426,6 +392,54 @@ public class DespachoExternoExtras implements Serializable, Auditable  {
 		this.version = version;
 	}
 
+	public DespachoExterno getDespachoExterno() {
+		return despachoExterno;
+	}
 
+	public void setDespachoExterno(DespachoExterno despachoExterno) {
+		this.despachoExterno = despachoExterno;
+	}
+
+	public DespachoCodEstado getCodEstAse() {
+		return codEstAse;
+	}
+
+	public void setCodEstAse(DespachoCodEstado codEstAse) {
+		this.codEstAse = codEstAse;
+	}
+
+	public DespachoContratoVigor getContratoVigor() {
+		return contratoVigor;
+	}
+
+	public void setContratoVigor(DespachoContratoVigor contratoVigor) {
+		this.contratoVigor = contratoVigor;
+	}
+
+	public DespachoClasiPerfil getClasifPerfil() {
+		return clasifPerfil;
+	}
+
+	public void setClasifPerfil(DespachoClasiPerfil clasifPerfil) {
+		this.clasifPerfil = clasifPerfil;
+	}
+
+	public DespachoRelEntidad getRelacionEntidad() {
+		return relacionEntidad;
+	}
+
+	public void setRelacionEntidad(DespachoRelEntidad relacionEntidad) {
+		this.relacionEntidad = relacionEntidad;
+	}
+
+	public DespachoIvaDes getDescripcionIVA() {
+		return descripcionIVA;
+	}
+
+	public void setDescripcionIVA(DespachoIvaDes descripcionIVA) {
+		this.descripcionIVA = descripcionIVA;
+	}
+	
+	
 
 }

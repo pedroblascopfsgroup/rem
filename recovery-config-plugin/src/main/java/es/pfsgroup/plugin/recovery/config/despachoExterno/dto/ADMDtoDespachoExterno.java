@@ -60,7 +60,7 @@ public class ADMDtoDespachoExterno extends WebDto {
     
     private String fechaServicioIntegral;
     
-    private String relacionBankia;
+    private String relacionEntidad;
     
 	private String	oficinaContacto;
 	
@@ -294,12 +294,12 @@ public class ADMDtoDespachoExterno extends WebDto {
 		this.fechaServicioIntegral = fechaServicioIntegral;
 	}
 
-	public String getRelacionBankia() {
-		return relacionBankia;
+	public String getRelacionEntidad() {
+		return relacionEntidad;
 	}
 
-	public void setRelacionBankia(String relacionBankia) {
-		this.relacionBankia = relacionBankia;
+	public void setRelacionEntidad(String relacionEntidad) {
+		this.relacionEntidad = relacionEntidad;
 	}
 
 	public String getOficinaContacto() {

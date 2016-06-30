@@ -271,7 +271,7 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 			}
 		}
 		sqlUsuarios.append("order by ");
-		sqlUsuarios.append("gd.usuario.apellido2 asc, gd.usuario.nombre asc, gd.usuario.apellido1 asc");
+		sqlUsuarios.append("gd.usuario.apellido2 desc, gd.usuario.apellido1 desc");
 		
 		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(sqlUsuarios.toString());
 		query.setParameter("idTipoDespacho", usuarioDto.getIdTipoDespacho());

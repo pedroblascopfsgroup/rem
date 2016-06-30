@@ -45,7 +45,12 @@
 				<fwk:date value="${p.documento.fechaRecepcion}" />
 			</json:property>
 			<json:property name="docAdjunto" value="${p.documento.adjunto}" />
-
+			<json:property name="docTipo" value="${p.documento.tipoDocumento}" />
+			<json:property name="docProdEntidad" value="${p.documento.tipoProductoEntidad}" />
+			<json:property name="docPropietario" value="${p.documento.propietario}" />
+			<json:property name="docNumContrato" value="${p.documento.numContrato}" />
+			<json:property name="docNumSpec" value="${p.documento.numSpec}" />
+			
 			<%-- Liquidaciones --%>
 			<json:property name="liqEstado" value="${p.liquidacion.estado}" />
 			<json:property name="liqContrato" value="${p.liquidacion.contrato}" />

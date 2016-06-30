@@ -35,7 +35,12 @@ var documentoPcoRecord = Ext.data.Record.create([
 	{name: 'docFechaResultado'},
 	{name: 'docFechaEnvio'},
 	{name: 'docFechaRecepcion'},
-	{name: 'docAdjunto'}
+	{name: 'docAdjunto'},
+	{name: 'docTipo'},
+	{name: 'docPropietario'},
+	{name: 'docProdEntidad'},
+	{name: 'docNumContrato'},
+	{name: 'docNumSpec'}
 ]);
 			
 var documentoPcoStore = page.getStore({
@@ -49,7 +54,7 @@ var documentoPcoStore = page.getStore({
 });
 
 var documentoPcoCm = new Ext.grid.ColumnModel([
-	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false},
+	{dataIndex: 'codigo', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.codigo" text="**Codigo"/>', sortable: false, hidden:true},
 	{dataIndex: 'nombreExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.nombre" text="**Nombre"/>', sortable: false},
 	{dataIndex: 'estadoExpediente', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.estado" text="**Estado exp."/>', sortable: false},
 	{dataIndex: 'importe', header: '<s:message code="plugin.precontencioso.grid.buscador.expjudicial.importe" text="**Importe"/>', sortable: true},
@@ -64,7 +69,12 @@ var documentoPcoCm = new Ext.grid.ColumnModel([
 	{dataIndex: 'docFechaResultado', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.resultado" text="**Fecha resultado"/>', sortable: false},
 	{dataIndex: 'docFechaEnvio', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.envio" text="**Fecha envio"/>', sortable: false},
 	{dataIndex: 'docFechaRecepcion', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.fecha.recepcion" text="**Fecha recepcion"/>', sortable: false},
-	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', renderer: OK_KO_Render, align:'center', sortable: false}
+	{dataIndex: 'docAdjunto', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.adjunto" text="**Adjunto"/>', renderer: OK_KO_Render, align:'center', sortable: false},
+	{dataIndex: 'docTipo', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.tipodocumento" text="**Tipo de documento"/>', sortable: false},
+	{dataIndex: 'docPropietario', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.propietario" text="**Propietario"/>', sortable: false},
+	{dataIndex: 'docProdEntidad', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.producto" text="**Producto"/>', sortable: false},
+	{dataIndex: 'docNumContrato', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.contrato" text="**Num Contrato"/>', sortable: false},
+	{dataIndex: 'docNumSpec', header: '<s:message code="plugin.precontencioso.grid.buscador.documento.numspec" text="**Aval-disposicion"/>', sortable: false}
 ]);
 
 var pagingBarDoc = fwk.ux.getPaging(documentoPcoStore);

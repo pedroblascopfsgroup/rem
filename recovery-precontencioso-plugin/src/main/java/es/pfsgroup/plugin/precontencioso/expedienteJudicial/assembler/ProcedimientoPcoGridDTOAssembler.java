@@ -86,6 +86,8 @@ public class ProcedimientoPcoGridDTOAssembler {
 			docGridDto.setFechaResultado((Date) documento.get("fechaResultado"));
 			docGridDto.setFechaEnvio((Date) documento.get("fechaEnvio"));
 			docGridDto.setFechaRecepcion((Date) documento.get("fechaRecepcion"));
+			//RECOVERY-21 Nuevos campos a mostrar en los resultados del buscador (Otros 4 se rellenan en ProcedimientoPcoManager)
+			docGridDto.setTipoDocumento(ObjectUtils.toString(documento.get("tipoDocumento")));
 
 			prcPcoGridDto.setDocumento(docGridDto);
 
@@ -178,4 +180,6 @@ public class ProcedimientoPcoGridDTOAssembler {
 
 		return prcPcoGridDto;
 	}
+	
+	
 }

@@ -15,6 +15,12 @@ public class DocumentoGridDTO extends WebDto {
 	private Date fechaEnvio;
 	private Date fechaRecepcion;
 	private Boolean adjunto;
+	//RECOVERY-21 Nuevos campos a mostrar en los resultados del buscador
+	private String tipoDocumento;
+	private String propietario;
+	private String tipoProductoEntidad;
+	private String numContrato;
+	private String numSpec;
 	
 	public String getEstado() {
 		return estado;
@@ -57,5 +63,36 @@ public class DocumentoGridDTO extends WebDto {
 	}
 	public void setAdjunto(Boolean adjunto) {
 		this.adjunto = adjunto;
+	}
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+	public String getPropietario() {
+		return propietario;
+	}
+	public void setPropietario(String propietario) {
+		this.propietario = propietario;
+	}
+	
+	public String getNumContrato() {
+		return numContrato;
+	}
+	public void setNumContrato(String numContrato) {
+		this.numContrato = numContrato;
+	}
+	public String getNumSpec() {
+		return numSpec;
+	}
+	public void setNumSpec(String numSpec) {
+		this.numSpec = numSpec;
+	}
+	public String getTipoProductoEntidad() {
+		return tipoProductoEntidad;
+	}
+	public void setTipoProductoEntidad(String tipoProductoEntidad) {
+		this.tipoProductoEntidad = tipoProductoEntidad;
 	}
 }

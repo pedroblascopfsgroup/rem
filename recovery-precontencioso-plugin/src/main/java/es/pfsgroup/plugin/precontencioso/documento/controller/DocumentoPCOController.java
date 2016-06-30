@@ -33,7 +33,6 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.precontencioso.documento.api.DocumentoPCOApi;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentosUGPCODto;
@@ -55,7 +54,6 @@ import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import es.pfsgroup.recovery.ext.api.tipoFicheroAdjunto.dao.DDTipoFicheroAdjuntoDao;
-import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
 
 @Controller
@@ -150,6 +148,8 @@ public class DocumentoPCOController {
 		}
 
 		model.put("solicitudesDocumento", solicitudesDoc);
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
@@ -286,7 +286,8 @@ public class DocumentoPCOController {
 		if(!Checks.esNulo(arrayIdSolicitudes)) {
 			model.put("arrayIdSolicitudes", arrayIdSolicitudes);			
 		}
-		
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return INFORMAR_DOC;
 	}
 	
@@ -315,9 +316,9 @@ public class DocumentoPCOController {
 		
 		model.put("unidadesGestion", listaUG);
 		model.put("listaProvincias", listaProvincias);
-		
 		model.put("dtoDoc", dto);
-		
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return INCLUIR_DOC;
 	}
 	
@@ -340,8 +341,8 @@ public class DocumentoPCOController {
 		model.put("listaProvincias", listaProvincias);
 		
 		model.put("dtoDoc", docDto);
-		
-		
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return EDITAR_DOC;
 	}
 		
@@ -362,8 +363,9 @@ public class DocumentoPCOController {
 		//model.put("dtoDoc", docDto);
 		model.put("arrayIdDocumentos", arrayIdDocumentos);
 		model.put("DDResultado", proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class));
-		model.put("esUsuarioTipoDespachoGestoria", esUsuarioTipoDespachoGestoria());
-		
+
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return CREAR_SOLICITUDES;
 	}
 		

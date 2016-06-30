@@ -221,4 +221,41 @@
 
 	page.add(panel);
 	
+	function estadoInicial() {
+		<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+			if(data.esGestoria) {
+				notario.setDisabled(true);
+				asiento.setDisabled(true);
+				finca.setDisabled(true);
+				numFinca.setDisabled(true);
+				numRegistro.setDisabled(true);
+				plaza.setDisabled(true);
+				comboProvinciaNotario.setDisabled(true);
+				protocolo.setDisabled(true);
+				fechaEscritura.setDisabled(true);
+				tomo.setDisabled(true);
+				libro.setDisabled(true);
+				folio.setDisabled(true);
+				idufir.setDisabled(true);
+				observacionesEDP.setDisabled(true);
+			}else{
+			 	notario.setDisabled(false);
+				asiento.setDisabled(false);
+				finca.setDisabled(false);
+				numFinca.setDisabled(false);
+				numRegistro.setDisabled(false);
+				plaza.setDisabled(false);
+				comboProvinciaNotario.setDisabled(false);
+				protocolo.setDisabled(false);
+				fechaEscritura.setDisabled(false);
+				tomo.setDisabled(false);
+				libro.setDisabled(false);
+				folio.setDisabled(false);
+				idufir.setDisabled(false);
+				observacionesEDP.setDisabled(false);
+			}
+		</c:if>
+	}
+	estadoInicial();
+	
 </fwk:page>

@@ -1,5 +1,6 @@
 package es.pfsgroup.procedimientos.subastaElectronica;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +43,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionHandlerDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubastaElec;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComiteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -59,6 +62,8 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
 	private final String SALIDA_SI = "si";
 	private final String SALIDA_NO = "no";
@@ -87,7 +92,11 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 	@Autowired
 	TramitesElectronicosApi tramitesElectronicosApi;
-
+	
+	@Autowired
+	SubastaProcedimientoApi subastaProcedimientoApi;
+	
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass,
 			ExecutionContext executionContext) {
@@ -99,6 +108,9 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 	private void personalizamosTramiteSubastaElectronica(ExecutionContext executionContext) {
 
+		Procedimiento prc = getProcedimiento(executionContext);
+		Subasta sub = subastaProcedimientoApi.obtenerSubastaByPrcId(prc.getId());
+		
 		if (executionContext.getNode().getName().contains("RevisarDocumentacion")) {
 			estableceContexto(executionContext);
 		} else if (executionContext.getNode().getName().contains("DictarInstruccionesSubastaYPagoTasa")) {
@@ -107,6 +119,22 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 			personalizamosRegResSubasta(executionContext);
 		} else if (executionContext.getNode().getName().contains("RegResulPresentacionEscrJuzgado")) {
 			personalizamosRegResEscJuzgado(executionContext);
+		} else if (executionContext.getNode().getName().contains("SolicitudSubasta")) {
+			duplicaInfoSubasta(executionContext, sub);
+		} else if (executionContext.getNode().getName().contains("DecretoConvocatoriaSubasta")) {
+			duplicaInfoSubasta(executionContext, sub);
+		} else if (executionContext.getNode().getName().contains("RegistrarPublicacionSubastaBOE")){
+			duplicaInfoSubasta(executionContext, sub);
+		}  else if (executionContext.getNode().getName().contains("ObtenerValidacionComite")) {
+			if (!Checks.esNulo(sub)) {
+				TareaExterna tex = getTareaExterna(executionContext);
+				List<TareaExternaValor> listadoValores = tex.getValores();
+				for(TareaExternaValor val : listadoValores){
+					if("comboResultadoComite".equals(val.getNombre())){
+						actualizarRevisionSubasta(sub, val.getValor());
+					}
+				}
+			}
 		}
 
 	}
@@ -190,6 +218,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		Boolean comboSubastaBienes = false;
 		Boolean suspension = true;
 		String comboDetalle = "";
+		String comboSuspension = "";
 		
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
@@ -212,13 +241,21 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 					}else{
 						comboDetalle = "";
 					}
+				} else if ("comboMotivo".equals(tev.getNombre())) {
+					if(!Checks.esNulo(tev.getValor())){
+						comboSuspension = tev.getValor();
+					}else{
+						comboSuspension = "";
+					}
 				}
 			}
 		}
 
 		if(suspension){
-			//Si suspendemos no hacemos nada
-		}else{
+			
+			DDMotivoSuspSubastaElec resCom = genericDao.get(DDMotivoSuspSubastaElec.class, genericDao.createFilter(FilterType.EQUALS,"codigo", comboSuspension), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			sub.setMotivoSuspensionElec(resCom);
+		} else{
 			//Si no, continuamos
 			modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores, comboDetalle);
 		}
@@ -265,7 +302,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				}
 				else if ("comboResultado".equals(tev.getNombre())) {
 					comboResultado = new String(tev.getValor());
-				}
+				} 
 			}
 		}
 		if("FAVC".equals(comboResultado) || "FAV".equals(comboResultado)){
@@ -494,6 +531,44 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		tex.setDetenida(false);
 		genericDao.save(TareaExterna.class, tex);
 
+	}
+	
+	private void duplicaInfoSubasta(ExecutionContext executionContext, Subasta sub) {
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
+		if (!Checks.esNulo(listado)) {
+			for (TareaExternaValor tev : listado) {
+				try {
+					if ("fechaNotificacionDecreto".equals(tev.getNombre())) {
+						sub.setFechaAnuncio(formatter.parse(tev.getValor()));
+					}
+					if ("fechaPublicacionBOE".equals(tev.getNombre())) {
+						sub.setFechaPublicacionBOE(formatter.parse(tev.getValor()));
+						sub.setTasacionElectronica(compruebaTasacionElectronica(formatter.parse(tev.getValor()),sub));
+					}
+					if ("fechaFinPeriodoPujas".equals(tev.getNombre())) {
+						sub.setFechaSenyalamiento(formatter.parse(tev.getValor()));
+					}
+					if ("fechaSolicitud".equals(tev.getNombre())) {
+						sub.setFechaSolicitud(formatter.parse(tev.getValor()));
+					}
+				} catch (Exception e) {
+					logger.error("duplicaInfoSubasta: "+e);
+				}
+			}
+
+		}
+	}
+	
+	private Boolean compruebaTasacionElectronica(Date fechaPubliBoe, Subasta sub) {
+		return subastaProcedimientoApi.compruebaTasacionElectronica(fechaPubliBoe,sub);
+	}
+
+	private void actualizarRevisionSubasta(Subasta sub, String resultado){
+		if(!Checks.esNulo(resultado)){
+			DDResultadoComiteSubasta resCom = genericDao.get(DDResultadoComiteSubasta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", resultado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				sub.setResultadoComiteSub(resCom);
+		}
 	}
 
 }

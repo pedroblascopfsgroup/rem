@@ -140,6 +140,7 @@ public class SubastaController {
 	
 		List<Subasta> subastas = subastaApi.getSubastasAsunto(id);	
 		map.put("subastas", subastas);		
+		map.put("usuarioEntidad",usuarioLogado.getUsuarioLogado().getEntidad().getCodigo());		
 		return SUBASTAS_JSON;
 	}
 	

@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## Author: Carlos Gil
+--## AUTOR=Carlos Gil
 --## FECHA_CREACION=20160520
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2

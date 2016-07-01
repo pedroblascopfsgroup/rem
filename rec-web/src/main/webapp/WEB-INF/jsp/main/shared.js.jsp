@@ -464,10 +464,10 @@ app.creaDblSelect = function(data,label, config){
         var rec, i, id;
         for(i = 0; i < val.length; i++) {
             id = val[i];
-            if(this.toStore.find('codigo',id)>=0) {
+            if(this.toStore.findExact('codigo',id)>=0) {
                 continue;
             }
-            rec = this.fromStore.find('codigo',id);
+            rec = this.fromStore.findExact('codigo',id);
             if(rec>=0) {
             	rec = this.fromStore.getAt(rec);
                 this.toStore.add(rec);

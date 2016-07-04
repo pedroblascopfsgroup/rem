@@ -100,17 +100,19 @@
 		<transition to="H046_espera" name="SI"></transition>
 	</decision>
 
-	<node name="H046_espera">
-		 <event type="node-enter">
+	<state name="H046_espera">
+        <event type="node-enter">
 			<action class="es.pfsgroup.procedimientos.GenericTimerDelayActionHandler" config-type="field">
 				<name>Timer de espera 42 meses</name>
 				<duration>42 months</duration>
 				<transicion>avanzaBPM</transicion>
 			</action>
 		</event>
-		<transition to="H046_registrarAnotacionRegistroDecision" name="avanzaBPM"></transition>
-	</node>
-
+		<transition to="H046_registrarAnotacionRegistro" name="avanzaBPM"></transition>
+		<transition to="H046_registrarAnotacionRegistro" name="vueltaAtras"></transition>
+		<transition to="H046_espera" name="activarAlerta"></transition>
+	</state>
+	
 	<end-state name="Fin">
 		<event type="node-enter">
 			<action name="myAction" config-type="bean"

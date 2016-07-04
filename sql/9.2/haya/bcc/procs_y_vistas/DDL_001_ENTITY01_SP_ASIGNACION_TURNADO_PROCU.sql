@@ -141,7 +141,7 @@ CURSOR crs_id_usu_tabla_tmp
             join HAYA02.prc_procedimientos prc on his.prc_id = prc.prc_id and prc.borrado=0
             join HAYA02.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.borrado=0
             join HAYAMASTER.DD_EAS_ESTADO_ASUNTOS eas on asu.dd_eas_id=eas.dd_eas_id and eas.dd_eas_codigo='03'
-            join HAYA02.TUP_TMP_CALCULOS_TURN_PROCU tmp on tmp.usu_id = his.USU_ID_ASIGNADO
+            join HAYA02.TUP_TMP_CALCULOS_TURN_PROCU tmp on tmp.usu_id = his.USU_ID_REAL
             join haya02.dd_pla_plazas pla on his.DD_PLA_ID = pla.dd_pla_id and pla.dd_pla_codigo = p_plaza_codigo
             join haya02.dd_tpo_tipo_procedimiento tpo on his.dd_tpo_id = tpo.dd_tpo_id and tpo.dd_tpo_codigo = p_tpo_codigo
             group by tmp.usu_id, his.dd_pla_id, his.dd_tpo_id,tmp.porc_real;
@@ -154,7 +154,7 @@ CURSOR crs_id_usu_tabla_tmp
             join HAYA02.prc_procedimientos prc on his.prc_id = prc.prc_id and prc.borrado=0
             join HAYA02.asu_asuntos asu on prc.asu_id = asu.asu_id and asu.borrado=0
             join HAYAMASTER.DD_EAS_ESTADO_ASUNTOS eas on asu.dd_eas_id=eas.dd_eas_id and eas.dd_eas_codigo='03'
-            join HAYA02.TUP_TMP_CALCULOS_TURN_PROCU tmp on tmp.usu_id = his.USU_ID_ASIGNADO
+            join HAYA02.TUP_TMP_CALCULOS_TURN_PROCU tmp on tmp.usu_id = his.USU_ID_REAL
             join haya02.dd_pla_plazas pla on his.DD_PLA_ID = pla.dd_pla_id and pla.dd_pla_codigo = p_plaza_codigo
             join haya02.dd_tpo_tipo_procedimiento tpo on his.dd_tpo_id = tpo.dd_tpo_id and tpo.dd_tpo_codigo = p_tpo_codigo;
 
@@ -232,7 +232,20 @@ p_frase_hist VARCHAR2(100 CHAR):= 'TURNADO';
 
 BEGIN
   EXECUTE IMMEDIATE 'truncate table HAYA02.TUP_TMP_CALCULOS_TURN_PROCU';
-   --antes que nada recupero el id del asunto
+  
+  --Actualizamos la situación real de los procuradores asignados en asuntos
+  EXECUTE IMMEDIATE 'MERGE INTO HAYA02.TUP_HIS_HISTORICO HIS USING (
+		SELECT ASU_ID, USU.USU_ID 
+		FROM HAYA02.gaa_gestor_adicional_asunto gaa 
+		join HAYA02.usd_usuarios_despachos usd on gaa.usd_id = usd.usd_id
+		join hayamaster.usu_usuarios usu on usd.usu_id = usu.usu_id
+		WHERE dd_tge_id = 4 
+		) TMP
+		ON (HIS.ASU_ID = TMP.ASU_ID)
+		  WHEN MATCHED THEN UPDATE SET HIS.USU_ID_REAL = TMP.USU_ID
+	';
+   
+  --antes que nada recupero el id del asunto
   --recupero los 3 usuarios posibles
   OPEN crs_asu_id ();
 
@@ -503,19 +516,19 @@ THEN
             -----------------------------------------------------------------------------
             ------------------------INSERTAMOS EN HISTÓRICO
             -----------------------------------------------------------------------------
-            insert into HAYA02.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
-                  values (HAYA02.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, p_frase_hist);
+            insert into HAYA02.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE, ASU_ID, USU_ID_REAL)
+                  values (HAYA02.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, p_frase_hist, p_asu_id, v_usuid_tabla_tmp);
 
   ELSE
   --SI ENTRAMOS EN ESTE ELSE, QUIERE DECIR QUE HAY DATOS GENÉRICOS PERO NO CONTEMPLAN EL IMPORTE
   DBMS_OUTPUT.put_line ('NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE');
-  insert into HAYA02.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
-                  values (HAYA02.s_TUP_HIS_HISTORICO.NEXTVAL,p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE');
+  insert into HAYA02.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE, ASU_ID, USU_ID_REAL)
+                  values (HAYA02.s_TUP_HIS_HISTORICO.NEXTVAL,p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY IMPORTE DE LA REGLA GENÉRICA QUE SE ACOPLE', p_asu_id, v_usuid_tabla_tmp);
   END IF;
 ELSE
 DBMS_OUTPUT.put_line ('NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA');
-insert into HAYA02.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE)
-    values (HAYA02.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA');
+insert into HAYA02.TUP_HIS_HISTORICO (HIS_ID, DD_PLA_ID, DD_TPO_ID, IMPORTE, EPT_ID, PRC_ID, USU_ID_ASIGNADO, USUARIOCREAR, FECHACREAR, MENSAJE, ASU_ID, USU_ID_REAL)
+    values (HAYA02.s_TUP_HIS_HISTORICO.NEXTVAL, p_plaza_id_parametro, p_tpo_id_parametro, p_importe_tarea, p_plazas_esquema, p_prc_id, v_usuid_tabla_tmp, p_username, SYSDATE, 'NO HACEMOS NADA PORQUE NO HAY MATCH CON NINGUNA REGLA Y TAMPOCO GENÉRICA', p_asu_id, v_usuid_tabla_tmp);
 END IF;
 commit;
 EXCEPTION

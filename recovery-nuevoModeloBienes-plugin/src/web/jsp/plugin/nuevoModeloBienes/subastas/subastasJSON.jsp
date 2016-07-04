@@ -11,14 +11,18 @@
             <json:property name="id" value="${s.id}" />
             <json:property name="numAutos" value="${s.procedimiento.codigoProcedimientoEnJuzgado}" />
             <%-- RECOVERY-2219 Comprobación para que dependiendo de a que entidad pertenece muestre unas cosas u otras --%>
-            <c:if test="${usuarioEntidad == 'HCJ'}">
 	            <c:if test="${s.tramitacion==true}">
 	            	<json:property name="tramitacion">
 	            		<s:message code="plugin.nuevoModeloBienes.subastas.sElectronica" text="**S. electrónica" />
 	            	</json:property>
 	        	    <json:property name="resultadoComite" value="${s.resultadoComiteSub.descripcion}" />	
 	           		<json:property name="motivoSuspension" value="${s.motivoSuspensionElec.descripcion}" />
-	                <json:property name="tasacion" value="${s.tasacionElectronica}" />       		
+	           		<c:if test="${usuarioEntidad == 'HCJ'}">
+	                <json:property name="tasacion" value="${s.tasacionElectronica}" />  
+	                </c:if>
+	                <c:if test="${usuarioEntidad != 'HCJ'}">
+       	            	<json:property name="tasacion" value="${s.tasacion}" />
+	                </c:if>	  		
 	            </c:if>	
 				<c:if test="${s.tramitacion==false || s.tramitacion==null}">
 					<json:property name="tramitacion">
@@ -28,14 +32,6 @@
 	           		<json:property name="motivoSuspension" value="${s.motivoSuspension.descripcion}" />
 	            	<json:property name="tasacion" value="${s.tasacion}" />	
 				</c:if>	
-			</c:if>
-			
-			<c:if test="${usuarioEntidad != 'HCJ'}">
-					<json:property name="tramitacion" value="" />
-		            <json:property name="resultadoComite" value="${s.resultadoComite.descripcion}" />
-	                <json:property name="motivoSuspension" value="${s.motivoSuspension.descripcion}" />
-	            	<json:property name="tasacion" value="${s.tasacion}" />
-				</c:if>
             <json:property name="idProcedimiento" value="${s.procedimiento.id}" />
             <json:property name="prcDescripcion" value="${s.procedimiento.nombreProcedimiento}" />
             <json:property name="tipo" value="${s.tipoSubasta.descripcion}" />

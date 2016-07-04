@@ -5,7 +5,7 @@
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=RECOVERY-2219
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DML para actualizar las subastas para añadirle un valor por defecto a 0 a la columna SUB_TRAMITACION 
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE

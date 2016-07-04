@@ -12,6 +12,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -819,21 +820,29 @@ public class AdjuntoHayaManager {
 	private RespuestaCrearDocumento uploadGestorDoc(Long idExpediente,String tipoExp, String claseExp, WebFileItem uploadForm, String tipoEntidad, String tipoFichero) {
 		logger.info("[AdjuntoHayaManager.uploadGestorDoc]: " + idExpediente + ", claseExp: " + claseExp + ", tipoEntidad: " + tipoEntidad + " , tipoFichero: " + tipoFichero);
 		RespuestaCrearDocumento respuesta = null;
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idExpediente.toString(), tipoExp, claseExp);	
-		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
-		String nameFile = uploadForm.getFileItem().getFile().toString();
-		String newFileName = uploadForm.getFileItem().getFileName();
-		String newFile = nameFile.substring(0, nameFile.lastIndexOf(File.separator)) + File.separator + newFileName;
-		File file = new File(newFile);
-		uploadForm.getFileItem().getFile().renameTo(file);
-		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(file, newFileName, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
 		try {
+			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idExpediente.toString(), tipoExp, claseExp);	
+			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
+			String nameFile = uploadForm.getFileItem().getFile().toString();
+			String newFileName = uploadForm.getFileItem().getFileName();
+			String newFile = nameFile.substring(0, nameFile.lastIndexOf(File.separator)) + File.separator + newFileName;
+			File file = new File(newFile);
+			if (file.exists()) {
+				FileUtils.copyFile(uploadForm.getFileItem().getFile(), file);
+			} else {
+				uploadForm.getFileItem().getFile().renameTo(file);
+			}
+			uploadForm.getFileItem().setFile(file);
+			CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(file, newFileName, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
+
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
 			if(respuesta != null) {
 				uploadDoc(tipoEntidad, uploadForm, new Long(respuesta.getIdDocumento()));				
 			}
 		} catch (GestorDocumentalException e) {
+			logger.error("upload error: " + e);
+		} catch (Exception e) {
 			logger.error("upload error: " + e);
 		}
 		return respuesta;

@@ -419,6 +419,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setNroRegistro(docDto.getNumRegistro());
 		documento.setPlaza(docDto.getPlaza());
 		documento.setIdufir(docDto.getIdufir());
+		documento.setObservacionesEdp(docDto.getObservacionesEDP());
 		if(!Checks.esNulo(docDto.getProvinciaNotario())){
 			DDProvincia provincia = genericDao.get(
 					DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getProvinciaNotario()));
@@ -570,6 +571,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		documento.setProtocolo(docDto.getProtocolo());
 		documento.setTomo(docDto.getTomo());
 		documento.setPlaza(docDto.getPlaza());
+		documento.setObservacionesEdp(docDto.getObservacionesEDP());
 		try {
 			if(!Checks.esNulo(docDto.getFechaEscritura()))
 				documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));

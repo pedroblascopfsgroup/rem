@@ -445,6 +445,7 @@ public class BurofaxController {
 		
 		//Y si los envios son del mismo tipo pero han sido editados por separado con un contenido distinto
 		String textoBurofax=burofaxManager.obtenerContenidoBurofax(Long.valueOf(arrayIdEnvios[0]));
+		textoBurofax=textoBurofax.replaceAll("\n", "");
 		
 		/**
 		 * Cuando este preparada la capa de acceso a datos recuperaremos el texto del burofax segun el tipo de burofax seleccionado

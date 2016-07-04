@@ -61,7 +61,7 @@ public class ZonaDaoImpl extends AbstractEntityDao<DDZona, Long> implements Zona
             hql += " ) ";
         }
         if(!Checks.esNulo(codDesc)) {
-        	hql += " and ( z.codigo like '%";
+        	hql += " and ( z.oficina.codigo like '%";
         	hql += codDesc;
         	hql += "%' or upper(z.descripcion) like '%";
         	hql += codDesc.toUpperCase();

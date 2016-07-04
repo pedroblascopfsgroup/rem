@@ -101,6 +101,7 @@
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();
 	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();
+	 	parametros.observacionesEDP = observacionesEDP.getValue();
 	 	
 	 	return parametros;
 	 }	
@@ -183,7 +184,14 @@
  		label="**Localidad Notario" value="${dtoDoc.provinciaNotario}" dd="${listaProvincias}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
 	comboProvinciaNotario.labelStyle=labelStyle;	
-
+	
+	var observacionesEDP = new Ext.form.TextArea({
+			name : 'observacionesEDP'
+            ,fieldLabel: '<s:message code="precontencioso.grid.documento.editarDocumento.observaciones" text="**Observaciones" />'
+            ,height : 60
+            ,width : 170
+            ,value : '<s:message text="${dtoDoc.observacionesEDP}" javaScriptEscape="true" />'
+    });
 
 	var panelEdicion = new Ext.form.FieldSet({
 		title:'<s:message code="precontencioso.grid.documento.editarDocumento.infoDocumentos" text="**Información Documentos" />'
@@ -193,7 +201,7 @@
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza]}
+		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_OBSERVACIONES_EDP">	,observacionesEDP</sec:authorize>]}
 				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	
@@ -212,5 +220,42 @@
 	
 
 	page.add(panel);
+	
+	function estadoInicial() {
+		<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+			if(data.esGestoria) {
+				notario.setDisabled(true);
+				asiento.setDisabled(true);
+				finca.setDisabled(true);
+				numFinca.setDisabled(true);
+				numRegistro.setDisabled(true);
+				plaza.setDisabled(true);
+				comboProvinciaNotario.setDisabled(true);
+				protocolo.setDisabled(true);
+				fechaEscritura.setDisabled(true);
+				tomo.setDisabled(true);
+				libro.setDisabled(true);
+				folio.setDisabled(true);
+				idufir.setDisabled(true);
+				observacionesEDP.setDisabled(true);
+			}else{
+			 	notario.setDisabled(false);
+				asiento.setDisabled(false);
+				finca.setDisabled(false);
+				numFinca.setDisabled(false);
+				numRegistro.setDisabled(false);
+				plaza.setDisabled(false);
+				comboProvinciaNotario.setDisabled(false);
+				protocolo.setDisabled(false);
+				fechaEscritura.setDisabled(false);
+				tomo.setDisabled(false);
+				libro.setDisabled(false);
+				folio.setDisabled(false);
+				idufir.setDisabled(false);
+				observacionesEDP.setDisabled(false);
+			}
+		</c:if>
+	}
+	estadoInicial();
 	
 </fwk:page>

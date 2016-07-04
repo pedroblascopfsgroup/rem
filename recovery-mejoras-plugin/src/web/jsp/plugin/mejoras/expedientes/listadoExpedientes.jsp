@@ -141,16 +141,18 @@
 	
 	var codZonaSel='';
 	var desZonaSel='';
+	var codOficina='';
 	
 	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'cod_oficina'}
 	]);
 	
 	//Template para el combo de zonas
     var zonasTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
     
@@ -186,6 +188,7 @@
         	btnIncluir.setDisabled(false);
         	codZonaSel=record.data.codigo;
         	desZonaSel=record.data.descripcion;
+        	codOficina=record.data.cod_oficina;
          }
     });	
     
@@ -206,7 +209,7 @@
     
     
     var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Código oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:200}
 	]);
 	
@@ -224,7 +227,8 @@
 	    var zonaAInsertar = zonasGrid.getStore().recordType;
    		var p = new zonaAInsertar({
    			codigoZona: codZonaSel,
-   			descripcionZona: desZonaSel
+   			descripcionZona: desZonaSel,
+   			codigoOficina: codOficina
    		});
 		zonasStore.insert(0, p);
 		listadoCodigoZonas.push(codZonaSel);
@@ -239,6 +243,7 @@
 			incluirZona();
 			codZonaSel='';
    			desZonaSel='';
+   			codOficina='';
    			btnIncluir.setDisabled(true);
 			comboZonas.focus();
 		}

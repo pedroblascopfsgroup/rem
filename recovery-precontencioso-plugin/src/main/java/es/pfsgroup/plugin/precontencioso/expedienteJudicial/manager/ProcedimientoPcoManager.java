@@ -379,8 +379,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Override
 	public List<ProcedimientoPcoGridDTO> busquedaSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		List<HashMap<String, Object>> documentos = procedimientoPcoDao.busquedaDocumentosPorFiltro(filtro);
-		List<ProcedimientoPcoGridDTO> documentosGridDto = ProcedimientoPcoGridDTOAssembler.fromDocumentosListHashMap(documentos);
 
+		List<ProcedimientoPcoGridDTO> documentosGridDto = ProcedimientoPcoGridDTOAssembler.fromDocumentosListHashMap(documentos);
+		//En caso de que los documentos esten asociados a un Contrato, se rellenan mas campos
+		completarValoresDocumentosByContrato(documentosGridDto, documentos);
+		
 		return documentosGridDto;
 	}
 
@@ -1116,6 +1119,12 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaEnvio()));			// Fecha envío
 				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaRecepcion()));		// Fecha recepción
 				filaExportar.add(row.getDocumento().getAdjunto() != null && row.getDocumento().getAdjunto()?"Sí":"No");						// Adjunto
+				//RECOVERY-21 nuevos campos agregados para mostrar
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getTipoDocumento()));		// Tipo de documento (TFA)
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getPropietario()));		// Propietario
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getTipoProductoEntidad()));// Tipo de producto (DD_TPE_TIPO_PROD_ENTIDAD)
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getNumContrato()));		// Número contrato - 17 dítgitos 
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getNumSpec()));			// num_spec - Identificador de condiciones especiales de contratación
 			}
 			else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(tipoBusqueda)) {
 				filaExportar.add(ObjectUtils.toString(row.getLiquidacion().getEstado()));			// Estado
@@ -1178,6 +1187,12 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			cabeceras.add(formatearString("Fecha envío"));		
 			cabeceras.add(formatearString("Fecha recepción"));
 			cabeceras.add(formatearString("Adjunto"));
+			//RECOVERY-21 Nuevos campos
+			cabeceras.add(formatearString("Tipo de documento"));
+			cabeceras.add(formatearString("Propietario"));
+			cabeceras.add(formatearString("Producto"));
+			cabeceras.add(formatearString("Nº contrato"));
+			cabeceras.add(formatearString("Cod. disposición"));
 		}
 		else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(tipoBusqueda)) {
 			cabeceras.add(formatearString("Estado"));
@@ -1484,6 +1499,34 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			return prcPco;
 		}
 		return null;
+	}
+	
+
+	/**
+	 * RECOVERY-21
+	 * Al buscar elementos judiciales via DOCUMENTOS, se han añadido nuevos valores, donde algunos se completan con este método.
+	 * Por imposibilidad de aplicar Criteria para estos campos, se ha requerido de un método alternativo para rellenarlos. Ver item para mas info.
+	 * @param documentosGridDto
+	 * @param documentos
+	 */
+	private void completarValoresDocumentosByContrato(List<ProcedimientoPcoGridDTO> documentosGridDto, List<HashMap<String, Object>> documentos) {
+		
+		for (int i= 0; i < documentosGridDto.size(); i++) {
+			
+			 Long idUnidadGestion = Long.parseLong(ObjectUtils.toString(documentos.get(i).get("ugId")));
+			 DDUnidadGestionPCO unidadGestion = (DDUnidadGestionPCO) diccionarioApi.dameValorDiccionario(DDUnidadGestionPCO.class, idUnidadGestion);
+			//Si no hay coincidencia, es que el valor de unidadGestionId no hace referencia a contrato, y no se debe rellenar los valores
+			 if(!Checks.esNulo(unidadGestion.getCodigo()) && unidadGestion.getCodigo().equals("CO")) {
+				 Long idContrato =  Long.parseLong(ObjectUtils.toString(documentos.get(i).get("unidadGestionId")));
+				 Contrato contrato = genericDao.get(Contrato.class, genericDao.createFilter(FilterType.EQUALS, "id", idContrato));
+				
+				 documentosGridDto.get(i).getDocumento().setTipoProductoEntidad(contrato.getTipoProductoEntidad().getDescripcion());
+				 documentosGridDto.get(i).getDocumento().setPropietario(contrato.getCodEntidadPropietaria());
+				 documentosGridDto.get(i).getDocumento().setNumContrato(contrato.getNroContrato().substring(10, 27));
+				 documentosGridDto.get(i).getDocumento().setNumSpec(contrato.getNroContrato().substring(27));
+				 
+			 }
+		}
 	}
 	
 }

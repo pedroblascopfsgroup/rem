@@ -58,6 +58,8 @@ if ((view != null) && (id != null)){
     <script type="text/javascript" src="../js/plugin/mejoras/ux/gridfilters/ListFilter.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/plugin/mejoras/ux/gridfilters/NumericFilter.js?devon_version=${appProperties.jsVersion}"></script>
     <script type="text/javascript" src="../js/plugin/mejoras/ux/gridfilters/BooleanFilter.js?devon_version=${appProperties.jsVersion}"></script>
+
+    <script type="text/javascript" src="../js/plugin/mejoras/ux/HtmlLintEditor.js?devon_version=${appProperties.jsVersion}"></script>
     
     <%-- framework --%>
     <script type="text/javascript" src="../js/fwk/fwk.js.jsp?devon_version=${appProperties.jsVersion}"></script>

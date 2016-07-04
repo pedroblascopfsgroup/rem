@@ -228,9 +228,6 @@ public class AdjuntoHayaManager {
 			adjAsu.setTipoFichero(mapeo.get(0).getTipoFichero());			
 		}
 		adjAsu.setServicerId(new Long(idenDoc.getIdentificacionDocumento().getIdentificadorNodo()));
-		Adjunto adj = new Adjunto();
-		adj.setId(1L);
-		adjAsu.setAdjunto(adj);
 		Auditoria.save(adjAsu);
 		return adjAsu;
 	}
@@ -829,6 +826,7 @@ public class AdjuntoHayaManager {
 		String newFileName = uploadForm.getFileItem().getFileName();
 		String newFile = nameFile.substring(0, nameFile.lastIndexOf(File.separator)) + File.separator + newFileName;
 		File file = new File(newFile);
+		uploadForm.getFileItem().getFile().renameTo(file);
 		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(file, newFileName, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
 		try {
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
@@ -1091,6 +1089,8 @@ public class AdjuntoHayaManager {
 					public Long getIdAdjuntoBlob() {
 						if(aa.getAdjunto() != null) {
 							return aa.getAdjunto().getId();
+						}else if(aa.getServicerId() != null){
+							return 1L;
 						}
 						return null;
 					}

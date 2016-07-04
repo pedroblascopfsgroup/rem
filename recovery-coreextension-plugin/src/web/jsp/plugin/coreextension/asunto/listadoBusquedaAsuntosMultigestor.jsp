@@ -47,7 +47,7 @@
         text:'<s:message code="app.botones.limpiar" text="**limpiar" />'
         ,iconCls:'icon_limpiar'
         ,handler: function() {
-            for (var tab=0;tab<asuntoTabPanel.items.length;tab++) {
+            for (var tab=0;tab < asuntoTabPanel.items.length;tab++) {
                 asuntoTabPanel.items.get(tab).fireEvent('limpiar');
             }
         }

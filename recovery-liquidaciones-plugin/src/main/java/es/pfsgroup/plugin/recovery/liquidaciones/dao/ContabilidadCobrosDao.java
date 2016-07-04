@@ -11,7 +11,7 @@ public interface ContabilidadCobrosDao extends AbstractDao<ContabilidadCobros, L
 
 	public static final String BO_GET_LISTADO_CONTABILIDAD_COBROS = "es.pfsgroup.plugin.recovery.liquidaciones.api.getListadoContabilidadCobrosByASUID";
 	public static final String BO_GET_CONTABILIDAD_COBRO_BY_ID = "es.pfsgroup.plugin.recovery.liquidaciones.api.getContabilidadCobroByID";
-	public static final String BO_ACTUALIZAR_CONTABILIDAD_COBROS_TAR_ID_BY_ASU_ID = "es.pfsgroup.plugin.recovery.liquidaciones.api.actualizarTARIDByASUID";
+	public static final String BO_ACTUALIZAR_CONTABILIDAD_COBROS_TAR_ID_BY_ASU_ID = "es.pfsgroup.plugin.recovery.liquidaciones.api.actualizarTARIDByASUIDandCobroID";
 
 	/**
 	 * Obtiene un listado de Contabilidad Cobros por el ID de asunto.
@@ -33,20 +33,13 @@ public interface ContabilidadCobrosDao extends AbstractDao<ContabilidadCobros, L
 	ContabilidadCobros getContabilidadCobroByID(DtoContabilidadCobros dto);
 
 	/**
-	 * Actualiza el campo de la tarea generada a un cobro dado su ID de asunto.
+	 * Actualiza el campo de la tarea generada a un cobro dado su ID de asunto e ID del cobro.
 	 * 
 	 * @param asuID : ID del asunto al que hace referencia el cobro que se ha de actualizar.
 	 * @param tareaID : ID de la tarea para asignar al cobro.
+	 * @param id : ID del cobro.
 	 */
 	@BusinessOperationDefinition(BO_ACTUALIZAR_CONTABILIDAD_COBROS_TAR_ID_BY_ASU_ID)
-	void actualizarTARIDByASUID(Long asuID, Long tareaID);
-	
-	/**
-	 * Obtiene un listado de Contabilidad Cobros por asunto ID donde el campo
-	 * de la tarea asociada no esta vacio y no han sido contabilizados.
-	 * 
-	 * @param dto
-	 * @return
-	 */
-	List<ContabilidadCobros> getListadoContabilidadCobrosParaTareas(DtoContabilidadCobros dto);
+	void actualizarTARIDByASUIDandCobroID(Long asuID, Long tareaID, Long id);
+
 }

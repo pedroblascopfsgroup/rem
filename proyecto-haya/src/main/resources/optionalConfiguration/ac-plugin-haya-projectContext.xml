@@ -274,8 +274,7 @@
 						<value>823</value>
 						<value>824</value>
 						<value>825</value>
-						<value>PCO_DPREDOC</value>						
-						<value>PCO_DPREDOC</value>
+						<value>PCO_DPREDOC</value>	
 						
 						<!-- HRE-BCC -->
 						<value>DGCONGE</value>
@@ -284,6 +283,7 @@
 						<value>CJ-819</value>
 						<value>DGAEST</value>
 						<value>CJ-DGAREO</value>
+						<value>CJ-814D</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_TAREA_PROCEDIMIENTO">
@@ -318,7 +318,7 @@
 						<value>1011</value>
 						<value>1021</value>
 						<value>1031</value>
-						<value>1041</value>
+						<value>1041</value>		
 						
 						<!-- HRE-BCC -->
 						<value>TDRECU</value>
@@ -331,7 +331,7 @@
 						<value>TGCONPR</value>
 						<value>TGCTRGE</value>
 						<value>TGGESDOC</value>
-						<value>CJ-104</value>
+						<value>CJ-104</value>				
 						<value>CJ-814</value>
 						<value>GEXT</value>
 						<value>CJ-812</value>
@@ -346,7 +346,8 @@
 						<value>TSGESDOC</value>
 						<value>TSPGL</value>
 						<value>CJ-TGESEXT</value>
-						<value>CJ-TSUEXT</value>					
+						<value>CJ-TSUEXT</value>
+						<value>TCP</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_EXP">
@@ -433,9 +434,21 @@
 				<value>GGSAN</value>
 			</set>
 		</property>
+		<property name="tiposGestorGestoriaAdjudicacion">
+			<map>
+				<entry key="HAYA">
+					<value>GGADJ</value>
+				</entry>
+			</map>
+		</property>
 		<property name="tiposGestorProcurador">
 			<set>
 				<value>PROC</value>
+			</set>
+		</property>
+		<property name="tiposGestorCentroProcura">
+			<set>
+				<value>CENTROPROCURA</value>
 			</set>
 		</property>
 		<property name="tipoGestorLetrado">

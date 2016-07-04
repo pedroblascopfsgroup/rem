@@ -19,7 +19,7 @@
 		<pfs:defineTextColumn name="gestorPerfil"/>
 		<pfs:defineTextColumn name="supervisor"/>
 		<pfs:defineTextColumn name="plazo"/>
-		
+		<pfs:defineTextColumn name="permiteCancelar"/>
 	</pfs:defineRecordType>
 	
 	var estados = Ext.data.Record.create([
@@ -28,6 +28,7 @@
 		,'gestorPerfil'
 		,'supervisor'
 		,'plazo'
+		,'permiteCancelar'
 	]);
 	
 	var estadosDS = page.getStore({
@@ -40,7 +41,7 @@
 
 	estadosDS.webflow();
 	
-	<%-- 	--%>
+	
 	var btnGuardar = new Ext.Button({
 	text : '<s:message code="plugin.itinerarios.editarEstados.guardar" text="**Guardar" />'
 	,iconCls:'icon_ok'
@@ -114,13 +115,63 @@
 		}).itemAt(0).data.descripcion;
 	}
 	
+	var permiteCancelarDiccionario = <json:object>
+		<json:array name="diccionario" items="${ddSiNo}" var="d">	
+			 <json:object>
+				  <json:property name="codigo" value="${d.codigo}" />
+			 	  <json:property name="descripcion" value="${d.descripcion}" />
+			</json:object>
+		</json:array>
+	</json:object>;
+	
+	var permiteCancelar = app.creaCombo({
+		data: permiteCancelarDiccionario
+    	,name : permiteCancelar
+    	,allowBlank: false
+    	,fieldLabel : ''
+		,width : 175
+		,resizable: true
+    });
+	
+	
+	 var ddSiNo = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion'],
+		data : permiteCancelarDiccionario,
+		root : 'diccionario'
+	});
+	
+	var ddSiNo_nombre = function(val, metaData, record, rowIndex, colIndex, store){
+		return ddSiNo.queryBy(function(rec){
+			return rec.data.codigo == val;
+		}).itemAt(0).data.descripcion;
+	}
 	
 	
 	var plazo_edit = new Ext.form.TextField();
 	
+	<%-- Sobreescribimos la función para solucionar el error de 31 páginas de estilos limitadas por IE --%>
+	Ext.util.CSS.createStyleSheet = function (cssText, id) {
+	    var CSS = this, doc = document;
+		var ss, head = doc.getElementsByTagName("head")[0], styleEl = doc.createElement("style");
 	
-	Ext.util.CSS.createStyleSheet(".icon_estados { background-image: url('../img/plugin/itinerarios/arrow-transition.png');}");
+	    styleEl.setAttribute("type", "text/css");
+	    if (id) {
+	        styleEl.setAttribute("id", id);
+	    }
 	
+        try {
+            styleEl.appendChild(doc.createTextNode(cssText));
+        } catch (e) {
+            styleEl.cssText = cssText;
+        }
+        head.appendChild(styleEl);
+        ss = styleEl.styleSheet ? styleEl.styleSheet : (styleEl.sheet || doc.styleSheets[doc.styleSheets.length - 1]);
+        
+	    CSS.cacheStyleSheet(ss);
+	    return ss;
+	}
+	
+	Ext.util.CSS.createStyleSheet(".icon_estados { background-image: url('../img/plugin/itinerarios/arrow-transition.png');}"); 
 	
 	var grid = new Ext.grid.EditorGridPanel({
 		title: '<s:message code="plugin.itinerarios.editarEstados.titulo" text="**Estados del itinerario" arguments="${itinerario.nombre}"/>',
@@ -135,7 +186,8 @@
 			{header: '<s:message code="plugin.itinerarios.estados.tipoEstado" text="**Tipo de Estado" />', dataIndex: 'estadoItinerario'},
 			{header: '<s:message code="plugin.itinerarios.estados.gestor" text="**Perfil del gestor" />', dataIndex: 'gestorPerfil',renderer: gestor_nombre, editor:gestor_edit},
 			{header: '<s:message code="plugin.itinerarios.estados.supervisor" text="**Perfil del supervisor" />', dataIndex: 'supervisor',renderer: gestor_nombre, editor:gestor_edit},	
-			{header: '<s:message code="plugin.itinerarios.estados.plazo" text="**Plazo" />', dataIndex: 'plazo',  editor:plazo_edit}
+			{header: '<s:message code="plugin.itinerarios.estados.plazo" text="**Plazo" />', dataIndex: 'plazo',  editor:plazo_edit},
+			{header: '<s:message code="plugin.itinerarios.estados.permite.cancelar" text="**Cancelar expediente" />', dataIndex: 'permiteCancelar', renderer:ddSiNo_nombre ,editor:permiteCancelar}
 		],
 		bbar:[btnGuardar,btnCancelar]		
 	});

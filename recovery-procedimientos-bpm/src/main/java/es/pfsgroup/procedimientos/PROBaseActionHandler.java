@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.utils.BPMUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
@@ -135,7 +136,12 @@ public class PROBaseActionHandler implements ActionHandler {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (FrameworkException e) {
+            logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea [" + idTipoTarea + "].", e);
+            throw new UserException("No es posible cancelar la tarea dado que faltan fechas requeridas en las tareas anteriores. Puede derivar en una nueva actuación si lo cree conveniente.");
+
+        }
+        catch (Exception e) {
             logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea [" + idTipoTarea + "].", e);
             throw new UserException("bpm.error.script");
 

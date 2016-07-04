@@ -1068,13 +1068,13 @@ function(entidad,page){
 		}
 
 		
-		if ( permisosSupervisor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0)  ){
+		if (d.permiteCancelar && permisosSupervisor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO, EXP_BLOQUEADO].indexOf(estadoExpediente)>=0)  ){
 			if (solicitud!=null && solicitud!=""){	
 				showHide(true, 'expediente-accion5-verCancelacion');
 			}else{
 				showHide(true, 'expediente-accion6-cancelacionExpediente');
 			}
-		}else if ( permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
+		}else if (d.permiteCancelar && permisosGestor && ([EXP_ACTIVO	, EXP_PROPUESTO, EXP_CONGELADO].indexOf(estadoExpediente)>=0)  ){
 			if (solicitud==null || solicitud==""){	
 				showHide(true, 'expediente-accion4-solicitarCancelacion');
 			}else{

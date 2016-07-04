@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.adjunto.haya;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +22,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
@@ -226,6 +228,9 @@ public class AdjuntoHayaManager {
 			adjAsu.setTipoFichero(mapeo.get(0).getTipoFichero());			
 		}
 		adjAsu.setServicerId(new Long(idenDoc.getIdentificacionDocumento().getIdentificadorNodo()));
+		Adjunto adj = new Adjunto();
+		adj.setId(1L);
+		adjAsu.setAdjunto(adj);
 		Auditoria.save(adjAsu);
 		return adjAsu;
 	}
@@ -299,6 +304,15 @@ public class AdjuntoHayaManager {
 					}
 					return "";
 				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
+				}
+				
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -494,6 +508,14 @@ public class AdjuntoHayaManager {
 						return aa.getTipoAdjuntoEntidad().getDescripcion();
 					}
 					return "";
+				}
+
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
+					return null;
 				}
 			};
 			adjuntosConBorrado.add(dto);
@@ -803,7 +825,11 @@ public class AdjuntoHayaManager {
 		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idExpediente.toString(), tipoExp, claseExp);	
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
-		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
+		String nameFile = uploadForm.getFileItem().getFile().toString();
+		String newFileName = uploadForm.getFileItem().getFileName();
+		String newFile = nameFile.substring(0, nameFile.lastIndexOf(File.separator)) + File.separator + newFileName;
+		File file = new File(newFile);
+		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(file, newFileName, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
 		try {
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
 			if(respuesta != null) {
@@ -1060,6 +1086,15 @@ public class AdjuntoHayaManager {
 					public String getNombreTipoDoc() {
 						return null;
 					}
+
+					@Override
+					public Long getIdAdjuntoBlob() {
+						if(aa.getAdjunto() != null) {
+							return aa.getAdjunto().getId();
+						}
+						return null;
+					}
+					
 				};
 				result.add(dto);
 			}

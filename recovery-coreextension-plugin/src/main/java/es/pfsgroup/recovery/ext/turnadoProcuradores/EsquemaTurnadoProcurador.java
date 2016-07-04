@@ -1,6 +1,8 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -25,6 +26,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
 
 @Entity
@@ -134,4 +136,73 @@ public class EsquemaTurnadoProcurador implements Serializable, Auditable {
 		this.configuracion = configuracion;
 	}
 	
+	/**
+	 * Recupera la lista de configuraciones ordenada y agrupada por plaza
+	 * 
+	 */
+	public List<EsquemaPlazasTpo> configuracionOrdenada(){
+		Collections.sort(this.configuracion,
+                new Comparator<EsquemaPlazasTpo>()
+                {
+                    public int compare(EsquemaPlazasTpo f1, EsquemaPlazasTpo f2)
+                    {	
+                    	if(Checks.esNulo(f1.getTipoPlaza())) return -1;
+                    	if(Checks.esNulo(f2.getTipoPlaza())) return -1;
+                        return f1.getTipoPlaza().getDescripcion().compareTo(f2.getTipoPlaza().getDescripcion());
+                    }        
+                });
+		return this.configuracion;
+	}
+	
+	/*
+	/**
+	 * Recupera una configuración por el Id. Null en caso de no encontrarla.
+	 * 
+	 * @param id id de configuración
+	 * @return Configuración con el id, null en caso de no encontrarla
+	 *
+	public EsquemaTurnadoConfig getConfigById(Long id) {
+		if (configuracion==null) return null;
+		for (EsquemaTurnadoConfig config : configuracion) {
+			if (config.getId().equals(id)) return config;
+ 		}
+		return null;
+	}
+	
+	
+	/**
+	 * Recupera una configuración por el Id. Null en caso de no encontrarla.
+	 * 
+	 * @param id id de configuración
+	 * @return Configuración con el id, null en caso de no encontrarla
+	 *
+	public EsquemaTurnadoConfig getConfigByCodigo(String codigo) {
+		if (configuracion==null) return null;
+		for (EsquemaTurnadoConfig config : configuracion) {
+			if (config.getCodigo().equals(codigo)) return config;
+ 		}
+		return null;
+	}
+	/**
+	 * Comprueba si este esquema contiene la configuración que se le pasa.
+	 * 
+	 * @param esquemaTurnadoConfig
+	 * @return
+	 *
+	public boolean contains(EsquemaTurnadoConfig esquemaTurnadoConfig) {
+		if (this.configuracion==null || esquemaTurnadoConfig==null) return false;
+		for (EsquemaTurnadoConfig config : configuracion) {
+			if (config.getTipo()!=null 
+					&& esquemaTurnadoConfig.getTipo()!=null
+					&& config.getCodigo() != null
+					&& esquemaTurnadoConfig.getCodigo() != null
+					&& config.getTipo().equals(esquemaTurnadoConfig.getTipo()) 
+					&& config.getCodigo().equals(esquemaTurnadoConfig.getCodigo())
+				) {
+				return true;
+			}
+		}
+		return false;
+	}
+	*/
 }

@@ -19,6 +19,16 @@
 			<json:property name="gestor_nombre" value="${est.gestorPerfil.descripcion}" />
 			<json:property name="supervisor_nombre" value="${est.supervisor.descripcion}" />
 			<json:property name="plazo" value="${est.plazo / 86400000}" />
+			<c:choose>
+			    <c:when test="${est.permiteCancelar}">
+			       <json:property name="permiteCancelar" value="01" />
+			       <json:property name="permiteCancelarText" value="Sí" />
+			    </c:when>
+			    <c:otherwise>
+			        <json:property name="permiteCancelar" value="02" />
+			        <json:property name="permiteCancelarText" value="No" />
+			    </c:otherwise>
+			</c:choose>
 			<%-- 
 			<json:property name="automatico">
 				<c:if test="${est.automatico}">

@@ -11,8 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
+import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.asunto.model.Procedimiento;
@@ -123,7 +125,8 @@ public class TareaExternaManager {
             }
         } else {
             //Lanzamos el signal al token maestro
-            executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
+        		executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
+        	
         }
     }
 

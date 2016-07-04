@@ -26,6 +26,7 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que representa a un fichero.
@@ -82,6 +83,9 @@ public class AdjuntoContrato implements Serializable, Auditable {
 	
 	@Transient
 	private String nombreTipoDoc;
+	
+	@Transient
+	private Long idAdjuntoBlob;
     
     /**
      * Constructor vacio.
@@ -119,7 +123,10 @@ public class AdjuntoContrato implements Serializable, Auditable {
      * @return the adjunto
      */
     public Adjunto getAdjunto() {
-        FileItem fileItem = adjunto.getFileItem();
+    	if(Checks.esNulo(adjunto)) {
+    		return null;
+    	}
+    	FileItem fileItem = adjunto.getFileItem();
         fileItem.setContentType(contentType);
         fileItem.setFileName(nombre);
         fileItem.setLength(length);
@@ -275,5 +282,12 @@ public class AdjuntoContrato implements Serializable, Auditable {
 	
 	public void setServicerId(Long servicerId) {
 		this.servicerId = servicerId;
+	}
+	
+	public Long getIdAdjuntoBlob() {
+		return idAdjuntoBlob;
+	}
+	public void setIdAdjuntoBlob(Long idAdjuntoBlob) {
+		this.idAdjuntoBlob = idAdjuntoBlob;
 	}
 }

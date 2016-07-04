@@ -82,8 +82,12 @@ public class Estado implements Serializable, Auditable {
     @JoinColumn(name = "EST_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ReglasVigenciaPolitica> reglasVigenciaPolitica;
+    
+    @Column(name = "EST_PUEDE_CANCEL")
+    private Boolean permiteCancelar;
 
-    @Embedded
+
+	@Embedded
     private Auditoria auditoria;
 
     @Version
@@ -279,4 +283,11 @@ public class Estado implements Serializable, Auditable {
         return reglasVigenciaPolitica;
     }
 
+    public Boolean getPermiteCancelar() {
+		return permiteCancelar;
+	}
+
+	public void setPermiteCancelar(Boolean permiteCancelar) {
+		this.permiteCancelar = permiteCancelar;
+	}
 }

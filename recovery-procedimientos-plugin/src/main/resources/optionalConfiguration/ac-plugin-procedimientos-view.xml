@@ -29,7 +29,6 @@
 		  p:priority="0"  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		  p:permission="TAB_ASUNTO_CONVENIOS"  />
 
-
 	<bean parent="clasesDiccionarioAnotadas">
 	    <property name="sourceList">
     		<list merge="true">

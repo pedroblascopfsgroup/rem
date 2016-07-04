@@ -542,6 +542,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getNombreTipoDoc() {
 					return adj.getTipoAdjuntoEntidad().getDescripcion();
 				}
+
+				@Override
+				public Long getIdAdjuntoBlob() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -688,6 +693,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getNombreTipoDoc() {
 					return aa.getTipoAdjuntoEntidad().getDescripcion();
 				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -757,6 +767,11 @@ public class AdjuntoManager implements AdjuntoApi{
 				public String getNombreTipoDoc() {
 					return aa.getTipoAdjuntoEntidad().getDescripcion();
 				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					return null;
+				}
 			};
 			adjuntosConBorrado.add(dto);
 		}
@@ -815,58 +830,67 @@ public class AdjuntoManager implements AdjuntoApi{
 
 		HashSet<EXTAdjuntoDto> result = new HashSet<EXTAdjuntoDto>();
 
+				
 		for (final AdjuntoAsunto aa : adjuntos) {
-			EXTAdjuntoDto dto = new EXTAdjuntoDto() {
-				@Override
-				public Boolean getPuedeBorrar() {
-					if (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
-						return true;
-					} else {
-						return false;
+			if ((!Checks.esNulo(aa.getBpmInputId()) && !Checks.esNulo(aa.getIdResolucion())) || Checks.esNulo(aa.getIdResolucion())){
+
+				EXTAdjuntoDto dto = new EXTAdjuntoDto() {
+					@Override
+					public Boolean getPuedeBorrar() {
+						if (borrarOtrosUsu || aa.getAuditoria().getUsuarioCrear().equals(usuario.getUsername())) {
+							return true;
+						} else {
+							return false;
+						}
 					}
-				}
-
-				@Override
-				public AdjuntoAsunto getAdjunto() {
-					return (AdjuntoAsunto) aa;
-				}
-
-				@Override
-				public String getTipoDocumento() {
-					if (aa instanceof EXTAdjuntoAsunto) {
-						if (((EXTAdjuntoAsunto) aa).getTipoFichero() != null)
-							return ((EXTAdjuntoAsunto) aa).getTipoFichero().getDescripcion();
-						else
+	
+					@Override
+					public AdjuntoAsunto getAdjunto() {
+						return (AdjuntoAsunto) aa;
+					}
+	
+					@Override
+					public String getTipoDocumento() {
+						if (aa instanceof EXTAdjuntoAsunto) {
+							if (((EXTAdjuntoAsunto) aa).getTipoFichero() != null)
+								return ((EXTAdjuntoAsunto) aa).getTipoFichero().getDescripcion();
+							else
+								return "";
+						} else
 							return "";
-					} else
-						return "";
-
-				}
-
-				@Override
-				public Long prcId() {
-					if (aa instanceof EXTAdjuntoAsunto) {
-						if(((EXTAdjuntoAsunto) aa).getProcedimiento() != null)
-							return ((EXTAdjuntoAsunto) aa).getProcedimiento().getId();
+	
+					}
+	
+					@Override
+					public Long prcId() {
+						if (aa instanceof EXTAdjuntoAsunto) {
+							if(((EXTAdjuntoAsunto) aa).getProcedimiento() != null)
+								return ((EXTAdjuntoAsunto) aa).getProcedimiento().getId();
+							else 
+								return null;
+						}
 						else 
 							return null;
 					}
-					else 
+	
+					@Override
+					public String getRefCentera() {
 						return null;
-				}
+					}
+	
+					@Override
+					public String getNombreTipoDoc() {
+						return null;
+					}
+				
+					@Override
+					public Long getIdAdjuntoBlob() {
+						return null;
+					}
+				};
+				result.add(dto);
+			}
 
-				@Override
-				public String getRefCentera() {
-					return null;
-				}
-
-				@Override
-				public String getNombreTipoDoc() {
-					// TODO Auto-generated method stub
-					return null;
-				}
-			};
-			result.add(dto);
 		}
 		return result;
 	}

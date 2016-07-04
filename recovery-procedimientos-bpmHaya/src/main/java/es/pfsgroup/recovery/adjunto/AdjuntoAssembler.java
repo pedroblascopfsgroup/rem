@@ -109,6 +109,11 @@ public class AdjuntoAssembler {
 					public String getNombreTipoDoc() {
 						return adjDto.getNombreTipoDoc();
 					}
+
+					@Override
+					public Long getIdAdjuntoBlob() {
+						return adjDto.getIdAdjuntoBlob();
+					}
 				};
 				adjuntosMapeados.add(dto);
 			}
@@ -357,6 +362,12 @@ public class AdjuntoAssembler {
 					public String getNombreTipoDoc() {
 						return adjDto.getNombreTipoDoc();
 					}
+
+					@Override
+					public Long getIdAdjuntoBlob() {
+						return adjDto.getIdAdjuntoBlob();
+					}
+					
 				};
 
 				adjuntosMapeados.add(dto);		

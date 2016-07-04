@@ -25,6 +25,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que representa a un fichero.
@@ -81,8 +82,16 @@ public class AdjuntoAsunto implements Serializable, Auditable {
     
 	@Transient
 	private String nombreTipoDoc;
+	
+	@Transient
+	private Long idAdjuntoBlob;
 
-
+	@Column(name = "RES_ID")
+	private Long idResolucion;
+    
+    @Column(name = "BPM_IPT_ID")
+	private Long bpmInputId;
+	
     /**
      * Constructor vacio.
      */
@@ -105,6 +114,9 @@ public class AdjuntoAsunto implements Serializable, Auditable {
      * @return the adjunto
      */
     public Adjunto getAdjunto() {
+    	if(Checks.esNulo(adjunto)) {
+    		return null;
+    	}
         FileItem fileItem = adjunto.getFileItem();
         fileItem.setContentType(contentType);
         fileItem.setFileName(nombre);
@@ -261,5 +273,28 @@ public class AdjuntoAsunto implements Serializable, Auditable {
 	
 	public void setNombreTipoDoc(String nombreTipoDoc) {
 		this.nombreTipoDoc = nombreTipoDoc;
+	}
+
+	public Long getIdResolucion() {
+		return idResolucion;
+	}
+
+	public void setIdResolucion(Long idResolucion) {
+		this.idResolucion = idResolucion;
+	}
+
+	public Long getBpmInputId() {
+		return bpmInputId;
+	}
+
+	public void setBpmInputId(Long bpmInputId) {
+		this.bpmInputId = bpmInputId;
+	}
+	
+	public Long getIdAdjuntoBlob() {
+		return idAdjuntoBlob;
+	}
+	public void setIdAdjuntoBlob(Long idAdjuntoBlob) {
+		this.idAdjuntoBlob = idAdjuntoBlob;
 	}
 }

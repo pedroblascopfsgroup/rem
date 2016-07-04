@@ -1,6 +1,5 @@
 package es.capgemini.pfs.persona;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,7 +10,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.stereotype.Service;
@@ -32,7 +30,6 @@ import es.capgemini.pfs.cliente.model.Cliente;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
-import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.ingreso.model.Ingreso;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;

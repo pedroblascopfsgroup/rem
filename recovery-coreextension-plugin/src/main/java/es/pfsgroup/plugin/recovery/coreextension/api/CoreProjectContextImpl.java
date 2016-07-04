@@ -13,6 +13,7 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private List<String> tiposPrcAdjudicados;
 	private Set<String> tiposGestorGestoria;
 	private Set<String> tiposGestorProcurador;
+	private Set<String> tiposGestorCentroProcura;
 	private Set<String> entidadesDesparalizacion;
 	private List<String> codigosDocumentosConFechaCaducidad;
 	private Set<String> tipoGestorLetrado;
@@ -24,11 +25,13 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private HashMap<String, HashMap<String, Set<String>>> supervisorAsunto;
 	private HashMap<String, HashMap<String, Set<String>>> despachoSupervisorAsunto;
 	private HashMap<String, HashMap<String, Set<String>>> tipoGestorSupervisorAsunto;
+	private Map<String, List<String>> despachosProcuradores;
 	private Map<String, String> mapaContratoVigor;
 	private Map<String, String> mapaClasificacionDespachoPerfil;
 	private Map<String, String> mapaRelacionBankia;
 	private Map<String, String> mapaDescripcionIVA;
 	private Map<String, String> mapaCodEstAse;
+	private Map<String, String> tiposGestorGestoriaAdjudicacion;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -199,7 +202,15 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setMapaContratoVigor(Map<String, String> mapaContratoVigor) {
 		this.mapaContratoVigor = mapaContratoVigor;
 	}
-	
+
+	@Override
+	public Map<String, List<String>> getDespachosProcuradores() {
+		return despachosProcuradores;
+	}
+
+	public void setDespachosProcuradores(Map<String, List<String>> despachosProcuradores) {
+		this.despachosProcuradores = despachosProcuradores;
+	}
 	
 	public Map<String, String> getMapaClasificacionDespachoPerfil() {
 		return mapaClasificacionDespachoPerfil;
@@ -234,5 +245,22 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	
 	public void setMapaCodEstAse(Map<String, String> mapaCodEstAse) {
 		this.mapaCodEstAse = mapaCodEstAse;
+	}
+
+	public Set<String> getTiposGestorCentroProcura() {
+		return tiposGestorCentroProcura;
+	}
+
+	public void setTiposGestorCentroProcura(Set<String> tiposGestorCentroProcura) {
+		this.tiposGestorCentroProcura = tiposGestorCentroProcura;
+	}
+
+	public Map<String, String> getTiposGestorGestoriaAdjudicacion() {
+		return tiposGestorGestoriaAdjudicacion;
+	}
+
+	public void setTiposGestorGestoriaAdjudicacion(
+			Map<String, String> tiposGestorGestoriaAdjudicacion) {
+		this.tiposGestorGestoriaAdjudicacion = tiposGestorGestoriaAdjudicacion;
 	}
 }

@@ -53,8 +53,11 @@ public class DocumentoAssembler {
 		
 		if (tieneSolicitud){
 			solicitudDto.setId(solicitud.getId());
-			if (solicitud.getActor()!=null)
-				solicitudDto.setActor(solicitud.getActor().getUsuario().getApellidoNombre());
+			if (solicitud.getActor()!=null){
+				solicitudDto.setActor(solicitud.getActor().getUsuario().getApellidoNombre());				
+			}else{
+				solicitudDto.setActor(solicitud.getActorDescripcion());
+			}
 			if (solicitud.getTipoActor()!=null)
 				solicitudDto.setTipoActor(solicitud.getTipoActor().getDescripcion());
 			if (solicitud.getFechaSolicitud()!=null)

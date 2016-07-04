@@ -12,7 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.pagination.Page;
-
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.plugin.recovery.busquedaTareas.BTABusquedaTareaManager;
 import es.pfsgroup.plugin.recovery.busquedaTareas.dto.BTADtoBusquedaTareas;
@@ -73,7 +73,7 @@ public class BTABusquedaTareasController {
 		   	Integer count = (Integer) executor.execute("plugin.busquedaTareas.BTABusquedaTareaManager.BuscarTareasCount", dto);
 		   	
 		   	model.put("count", count);
-	    	model.put("limit", appProperties.getProperty("exportar.excel.limite.busqueda.tareas"));
+	    	model.put("limit", btaBusquedaTareaManager.getLimiteTareasExportar("exportar.excel.limite.busqueda.tareas"));
 	    	
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -101,5 +101,5 @@ public class BTABusquedaTareasController {
         return "plugin/busquedaTareas/BTAListaTareasExcel";
 
     }
-    
+	
 }

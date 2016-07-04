@@ -18,6 +18,9 @@
 			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.consulta.buttons.right')" result="flowScope.buttonsRight"/>
 			<evaluate expression="executor.execute('riesgoOperacionalManager.obtenerRiesgoOperacionalContrato', id)" result="flowScope.riesgo"/>
 			<evaluate expression="executor.execute('riesgoOperacionalManager.obtenerVencidosByCntId', id)" result="flowScope.vencido"/>
+			<!-- comprobamos si se muestra el boton de Riesgo Operacional -->
+			<evaluate expression="executor.execute('riesgoOperacionalManager.compruebaTipoExpediente', id)" result="flowScope.isTipoExpedienteCorrecto"/>
+			<evaluate expression="executor.execute('riesgoOperacionalManager.compruebaAsunto', id)" result="flowScope.isTipoAsuntoCorrecto"/>
 			<evaluate expression="executor.execute('personaManager.getAllAccionesFSR')" result="flowScope.allAccionesFSR" />
 			<evaluate expression="executor.execute('contratoManager.getAccionesFSRDelContrato', id)" result="flowScope.accionesFSRContrato" />
     	</on-entry>

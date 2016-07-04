@@ -296,15 +296,18 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Procedimiento prc = proxyFactory.proxy(ProcedimientoApi.class).getProcedimiento(prcId);
 		Set<AdjuntoAsunto> adjuntos = prc.getAdjuntos();
 		for (AdjuntoAsunto adjunto : adjuntos) {
-			if (!Checks.esNulo(adjunto.getProcedimiento()) && adjunto.getProcedimiento().getId() == prcId) {
-				if (adjunto instanceof EXTAdjuntoAsunto) {
-					EXTAdjuntoAsunto extAdjunto = (EXTAdjuntoAsunto) adjunto;
-					DDTipoFicheroAdjunto tipoAdjunto = extAdjunto.getTipoFichero();
-					if (tipoAdjunto == null) {
-						continue;
-					}
-					if (tipo.equals(((EXTAdjuntoAsunto) adjunto).getTipoFichero().getCodigo())) {
-						return true;
+			if ((!Checks.esNulo(adjunto.getBpmInputId()) && !Checks.esNulo(adjunto.getIdResolucion())) || Checks.esNulo(adjunto.getIdResolucion())){
+
+				if (!Checks.esNulo(adjunto.getProcedimiento()) && adjunto.getProcedimiento().getId() == prcId) {
+					if (adjunto instanceof EXTAdjuntoAsunto) {
+						EXTAdjuntoAsunto extAdjunto = (EXTAdjuntoAsunto) adjunto;
+						DDTipoFicheroAdjunto tipoAdjunto = extAdjunto.getTipoFichero();
+						if (tipoAdjunto == null) {
+							continue;
+						}
+						if (tipo.equals(((EXTAdjuntoAsunto) adjunto).getTipoFichero().getCodigo())) {
+							return true;
+						}
 					}
 				}
 			}
@@ -584,15 +587,18 @@ public class AdjudicacionProcedimientoManager implements AdjudicacionProcedimien
 		Set<AdjuntoAsunto> adjuntos = asu.getAdjuntos();
 
 		for (AdjuntoAsunto adjunto : adjuntos) {
-			if (!Checks.esNulo(adjunto.getId()) && adjunto.getAsunto().getId() == asuId) {
-				if (adjunto instanceof EXTAdjuntoAsunto) {
-					EXTAdjuntoAsunto extAdjunto = (EXTAdjuntoAsunto) adjunto;
-					DDTipoFicheroAdjunto tipoAdjunto = extAdjunto.getTipoFichero();
-					if (tipoAdjunto == null) {
-						continue;
-					}
-					if (tipo.equals(((EXTAdjuntoAsunto) adjunto).getTipoFichero().getCodigo())) {
-						return true;
+			if ((!Checks.esNulo(adjunto.getBpmInputId()) && !Checks.esNulo(adjunto.getIdResolucion())) || Checks.esNulo(adjunto.getIdResolucion())){
+
+				if (!Checks.esNulo(adjunto.getId()) && adjunto.getAsunto().getId() == asuId) {
+					if (adjunto instanceof EXTAdjuntoAsunto) {
+						EXTAdjuntoAsunto extAdjunto = (EXTAdjuntoAsunto) adjunto;
+						DDTipoFicheroAdjunto tipoAdjunto = extAdjunto.getTipoFichero();
+						if (tipoAdjunto == null) {
+							continue;
+						}
+						if (tipo.equals(((EXTAdjuntoAsunto) adjunto).getTipoFichero().getCodigo())) {
+							return true;
+						}
 					}
 				}
 			}

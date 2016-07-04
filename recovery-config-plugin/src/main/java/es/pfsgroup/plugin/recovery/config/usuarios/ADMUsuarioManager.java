@@ -20,6 +20,7 @@ import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.seguridadPw.PasswordApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.core.api.web.DynamicElementApi;
+import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
@@ -89,6 +90,9 @@ public class ADMUsuarioManager {
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private GestorDespachoDao usuarioDespachoDao; 
 
 	public ADMUsuarioManager() {
 
@@ -657,7 +661,7 @@ public class ADMUsuarioManager {
 	@BusinessOperation("ADMUsuarioManager.quitarGestorDespacho")
 	@Transactional(readOnly = false)
 	public void quitarGestorDespacho(Long idUsuario, Long idDespachoExterno) {
-		List<GestorDespacho> gd = gestorDespachoDao.getList();
+		List<GestorDespacho> gd = usuarioDespachoDao.getGestorDespachoByUsuId(idUsuario);
 		for (GestorDespacho g : gd) {
 			checkEntidadUsuarioLogado(g.getUsuario().getEntidad().getId());
 			if ((g.getUsuario().getId().equals(idUsuario))

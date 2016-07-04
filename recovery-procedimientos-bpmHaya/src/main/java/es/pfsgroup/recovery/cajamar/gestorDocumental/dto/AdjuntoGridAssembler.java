@@ -54,6 +54,7 @@ public class AdjuntoGridAssembler {
 			}else{
 				dto.setRefCentera(olDto.getRefCentera());
 			}
+			dto.setIdAdjuntoBlob(null);
 			dto.setDescripcionEntidad(olDto.getClaveRelacion());
 			dto.setExtFichero(olDto.getExtFichero());
 			list.add(dto);

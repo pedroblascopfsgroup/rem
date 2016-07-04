@@ -5,12 +5,14 @@
 new Ext.Button({
         text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**exportar a xls" />'
         ,iconCls:'icon_exportar_csv'
+        ,id:'btnXLSExport'
         ,handler: function() {
-
+        
         			if (validarForm()){
 						if (validaMinMax()){
                     		busquedaClientesMask.show();
 		                    var params=getParametros();
+							Ext.getCmp('btnXLSExport').setDisabled(true);
 							limiteClientesStore.webflow(params);
 						}else{
 							Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');

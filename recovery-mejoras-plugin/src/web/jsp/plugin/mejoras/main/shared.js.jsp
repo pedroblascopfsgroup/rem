@@ -661,7 +661,7 @@ app.creaPanelHz = function(config, items){
 		,defaults : {bodyStyle : 'margin-right:5px'}
 		,items : items
 	};
-	fwk.js.copyProperties(cfg, config, ['width', 'style']);
+	fwk.js.copyProperties(cfg, config, ['width', 'style','itemId']);
 
 	var p = new Ext.Panel(cfg);
 
@@ -957,7 +957,6 @@ app.downloadFile = function(config){
     //Si en el config tenemos una función success la ejecutamos a los x milisegundos después del submit
     Ext.defer(function(){
         //fp.close();
-        debugger;
         if (config.succesFunction) {
      		config.succesFunction();
      	}
@@ -970,12 +969,17 @@ abre una nueva ventana del navegador con el flow y parï¿½metros que se le pasan
 app.openBrowserWindow = function(flow, params){
 	var url=flow+'.htm';
 	var urlData="";
-
-	params = params || {};
 	
+	params = params || {};
 	for(var x in params){
-		if (params.hasOwnProperty(x)) {
-			urlData +='&'+x+'='+params[x];
+		// Que no este indefinido, que tenga propiedad y que no sea una funcion.
+		if (params[x] != undefined && params.hasOwnProperty(x) && (typeof params[x] != "function")) {
+			// Si es tipo string que no sea una funcion en modo texto. Siempre contienen la palabra function.
+			if(typeof params[x] == "string" && params[x].indexOf("function") == -1){
+				urlData +='&'+x+'='+params[x];
+			} else if(typeof params[x] != "string"){ // Cualquier otro tipo pasa.
+				urlData +='&'+x+'='+params[x];
+			}
 		}
 	}
 	
@@ -986,6 +990,16 @@ app.openBrowserWindow = function(flow, params){
 	}
 
 	window.open(url);
+	
+
+	var tiempo = params.tiempoSuccess || 100;
+    
+    // Si en el params tenemos una función success la ejecutamos a los x milisegundos después del submit
+    Ext.defer(function(){
+        if (params.succesFunction) {
+     		params.succesFunction();
+     	}
+    }, tiempo);
 }
 
 
@@ -1385,7 +1399,7 @@ app.crearGrid=	function(myStore,columnModel, config){
 				,cm:columnModel
 			    ,clicksToEdit:1
 			    ,resizable:true
-			    ,sm: new Ext.grid.RowSelectionModel({singleSelect:true})
+			    ,sm: config.sm || new Ext.grid.RowSelectionModel({singleSelect:true})
 			    //,width: config.width || (columnModel.getTotalWidth()+25)
 				,autoWidth:true
 			    //,width:200

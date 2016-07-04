@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -20,6 +21,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
+import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -165,6 +167,34 @@ public class coreextensionManager implements coreextensionApi {
 		return sRet;
 	}
 
+
+	@Override
+	public Long getListTipoGestorGestoriaAdjudicacion(){
+		Long codGestor = null;
+		String tipoGestorGestoria = null;
+		
+		// Obtener el tipo de gestor por el projectContext.
+		Map<String, String> gestoresMap = coreProjectContext.getTiposGestorGestoriaAdjudicacion();
+		if(!Checks.estaVacio(gestoresMap)){
+			if(gestoresMap.containsKey(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion())){
+				tipoGestorGestoria = gestoresMap.get(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion());
+			}
+		}
+		
+		// Tipo de usuario Gestor
+		if(!Checks.esNulo(tipoGestorGestoria)){
+			List<EXTDDTipoGestor> listadoGestores = getListTipoGestorAdicional();
+			for (EXTDDTipoGestor tipoGestor : listadoGestores) {
+				if (tipoGestorGestoria.compareTo(tipoGestor.getCodigo()) == 0) {
+					codGestor = tipoGestor.getId();
+					break;
+				}
+			}
+		}
+		
+		return codGestor;
+	}
+
 	
 	@BusinessOperation(GET_LIST_TIPO_GESTOR_PROPONENTE_ACUERDO)
 	public List<EXTDDTipoGestor> getListTipoGestorProponente() {
@@ -173,11 +203,8 @@ public class coreextensionManager implements coreextensionApi {
 		Order order = new Order(OrderType.ASC, "descripcion");
 		listado = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "DD_TGE_CODIGO", EXTDDTipoGestor.CODIGO_TIPO_GESTOR_PROPONENTE_ACUERDO));	
 		return listado;
-		}
+	}
 		
-		
-		
-	
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi#getListTipoGestorAdicional()
 	 */
@@ -878,7 +905,15 @@ public class coreextensionManager implements coreextensionApi {
 	@BusinessOperation(GET_LIST_BUSQUEDA_TERMINOS)
 	public Page listBusquedaAcuerdosData(DTOTerminosFiltro terminosFiltroDto, Usuario usuario,List<Long> idGrpsUsuario) {
 		
-		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario);
+		String tipoTerminoDesc = "";
+		if (!Checks.esNulo(terminosFiltroDto.getTipoTermino())) {
+			final DDTipoAcuerdo tipoAcuerdo = genericDao.get(DDTipoAcuerdo.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", terminosFiltroDto.getTipoTermino()));
+			if (!Checks.esNulo(tipoAcuerdo)) {
+				tipoTerminoDesc = tipoAcuerdo.getDescripcion();
+			}
+		}
+		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario, tipoTerminoDesc);
 		List<TerminoAcuerdo> listaTerminos=(List<TerminoAcuerdo>) page.getResults();
 		return page;
 	}

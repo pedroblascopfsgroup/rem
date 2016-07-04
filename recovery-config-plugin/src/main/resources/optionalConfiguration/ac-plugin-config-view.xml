@@ -23,7 +23,7 @@
 		p:fileName="/WEB-INF/jsp/plugin/config/menu/listadoEsquemasTurnado-menu.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_ESQUEMA_TURNADO_EDITAR"/>
 		
-	<bean p:entity="menu" p:name="configuracion/usuarios" p:order="530"
+		<bean p:entity="menu" p:name="configuracion/usuarios" p:order="530"
 		p:fileName="/WEB-INF/jsp/plugin/config/menu/listadoBusquedaUsuarios-menu.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_ADMIN"/>
 

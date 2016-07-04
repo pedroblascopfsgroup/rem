@@ -103,9 +103,21 @@
 				<value>GEST</value>
 			</set>
 		</property>
+		<property name="tiposGestorGestoriaAdjudicacion">
+			<map>
+				<entry key="BANKIA">
+					<value>GEST</value>
+				</entry>
+			</map>
+		</property>
 		<property name="tiposGestorProcurador">
 			<set>
 				<value>PROC</value>
+			</set>
+		</property>
+		<property name="tiposGestorCentroProcura">
+			<set>
+				<value>CENTROPROCURA</value>
 			</set>
 		</property>
 		<property name="tipoGestorLetrado">
@@ -154,6 +166,17 @@
 			<map>
 				<entry key="0" value="Alta"/>
 				<entry key="1" value="Baja"/>
+			</map>
+		</property>
+		<property name="despachosProcuradores">
+			<map>
+				<entry key="HCJ">
+					<list>
+						<value>Medina Cuadros Procuradores</value>
+						<value>ABA Procuradores</value>
+						<value>Leticia Codias</value>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>  

@@ -12,5 +12,6 @@ public interface AdjuntoDto {
 	
 	public String getNombreTipoDoc();
 	
+	public Long getIdAdjuntoBlob();
 
 }

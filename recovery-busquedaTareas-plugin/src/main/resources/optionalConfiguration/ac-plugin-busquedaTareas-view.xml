@@ -10,7 +10,7 @@
                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
 	default-autowire="byName">
 
-	<bean p:entity="menu" p:name="busquedas/busquedaTareas" p:order="160"
+	<bean p:entity="menu" p:name="busquedas/busquedaTareas" p:order="230"
 		p:permission="BUSCAR-TAREAS"
 		p:fileName="/WEB-INF/jsp/plugin/busquedaTareas/menu/menu-busquedaTareas.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />

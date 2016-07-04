@@ -15,7 +15,7 @@
 
 	<!-- VISTAS  -->	
     <bean p:entity="menu" 
-    	p:name="busquedas/preProyectado" p:order="150" 
+    	p:name="busquedas/preProyectado" p:order="140" 
     	p:fileName="/WEB-INF/jsp/plugin/cajamar/listadoPreProyectado/busqueda/preProyectado.jsp" 
     	class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
     	p:permission="MENU-LIST-PROPRE"/>	

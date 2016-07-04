@@ -29,7 +29,7 @@
 		  p:priority="1" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
 	
 	<bean p:entity="menu" p:name="busquedas/busquedaBienes"
-		  p:order="180"
+		  p:order="130"
 		  p:permission="BUSCAR-BIENES"
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/bienes/menu/NMBmenu-busquedaBienes.jsp"
 		  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>
@@ -37,7 +37,7 @@
 	<!-- Búsqueda de Subastas -->	
 	  
 	<bean p:entity="menu" p:name="busquedas/busquedaSubastas"
-		  p:order="700"
+		  p:order="220"
 		  p:permission="BUSCAR-SUBASTAS"
 		  p:fileName="/WEB-INF/jsp/plugin/nuevoModeloBienes/subastas/menu/NMBmenu-busquedaSubastas.jsp"
 		  class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"/>

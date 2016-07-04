@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.ext.impl.asunto.model;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -30,12 +29,6 @@ public class EXTAdjuntoAsunto extends AdjuntoAsunto {
 	@JoinColumn(name = "DD_TFA_ID", nullable = true)
 	private DDTipoFicheroAdjunto tipoFichero;
 
-    @Column(name = "RES_ID")
-	private Long idResolucion;
-    
-    @Column(name = "BPM_IPT_ID")
-	private Long bpmInputId;
-    
 	public DDTipoFicheroAdjunto getTipoFichero() {
 		return tipoFichero;
 	}
@@ -45,19 +38,11 @@ public class EXTAdjuntoAsunto extends AdjuntoAsunto {
 	}
 	
     public Long getIdResolucion() {
-		return idResolucion;
+		return super.getIdResolucion();
 	}
 
 	public void setIdResolucion(Long idResolucion) {
-		this.idResolucion = idResolucion;
-	}
-
-	public Long getBpmInputId() {
-		return bpmInputId;
-	}
-
-	public void setBpmInputId(Long bpmInputId) {
-		this.bpmInputId = bpmInputId;
+		super.setIdResolucion(idResolucion);
 	}
     
  }

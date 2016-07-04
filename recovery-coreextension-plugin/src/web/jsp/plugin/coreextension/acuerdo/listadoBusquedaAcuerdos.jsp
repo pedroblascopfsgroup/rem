@@ -348,7 +348,7 @@
 	 	data:jerarquia, 
 	 	value:jerarquia.diccionario[0].codigo, 
 	 	name : 'jerarquia', 
-	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquía" />'});
+	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquï¿½a" />'});
 	 	
 	 var listadoCodigoZonas = [];
 	 	
@@ -363,16 +363,18 @@
 	
 	var codZonaSel='';
 	var desZonaSel='';
+	var codOficina='';
 	
 	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'cod_oficina'}
 	]);
 	
 	//Template para el combo de zonas
     var zonasTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
     
@@ -407,6 +409,7 @@
         	btnIncluir.setDisabled(false);
         	codZonaSel=record.data.codigo;
         	desZonaSel=record.data.descripcion;
+        	codOficina=record.data.cod_oficina;
          }
     });	
     
@@ -425,7 +428,7 @@
 	});
 	
 	 var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Cï¿½digo" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Cï¿½digo oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
 		]);
 		
@@ -443,7 +446,8 @@
 	    var zonaAInsertar = zonasGrid.getStore().recordType;
    		var p = new zonaAInsertar({
    			codigoZona: codZonaSel,
-   			descripcionZona: desZonaSel
+   			descripcionZona: desZonaSel,
+   			codigoOficina: codOficina
    		});
 		zonasStore.insert(0, p);
 		listadoCodigoZonas.push(codZonaSel);
@@ -580,13 +584,30 @@
         return p;
     };
     
+	var validarForm = function(){
+	debugger;
+		if(comboEntidadAcuerdo.getValue() == 'AMBAS'){
+			if ((comboJerarquia.getValue() != '' ) || (listadoCodigoZonas.length > 0 )) {
+				return false;
+			} else {
+				return true;
+			}
+		}else{
+			return true;
+		}
+	};
+	
 	
 	var buscarFunc = function()
 	{
-		panelFiltros.collapse(true);
-		var params= getParametros();
-		acuerdosStore.webflow(params);
-		pagingBar.show();	
+		if(validarForm()){
+			panelFiltros.collapse(true);
+			var params= getParametros();
+			acuerdosStore.webflow(params);
+			pagingBar.show();
+		}else{
+			Ext.Msg.alert('<s:message code="errores.criteriosIncompatibles" text="**Los criterios de jerarquÃ­a no se pueden usar con el origen Todos" />');
+		}
 	};
 	
 	var btnReset = app.crearBotonResetCampos([

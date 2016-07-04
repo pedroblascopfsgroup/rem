@@ -13,6 +13,7 @@ public class SolicitudPCODto {
 	private String resultado;
 	private Long idTipoGestor;
 	private Long idDespachoExterno;
+	private String usuarioTipoDespacho;
 	
 	public Long getId() {
 		return id;
@@ -74,6 +75,14 @@ public class SolicitudPCODto {
 	}
 	public void setIdDespachoExterno(Long idDespachoExterno) {
 		this.idDespachoExterno = idDespachoExterno;
+	}
+	
+	public String getUsuarioTipoDespacho() {
+		return usuarioTipoDespacho;
+	}
+	
+	public void setUsuarioTipoDespacho(String usuarioTipoDespacho) {
+		this.usuarioTipoDespacho = usuarioTipoDespacho;
 	}
 	
 }

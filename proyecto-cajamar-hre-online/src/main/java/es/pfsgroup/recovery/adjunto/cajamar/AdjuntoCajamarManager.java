@@ -24,13 +24,19 @@ import es.capgemini.pfs.asunto.EXTAsuntoManager;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
+import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
+import es.capgemini.pfs.contrato.model.AdjuntoContrato;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
+import es.capgemini.pfs.expediente.dao.AdjuntoExpedienteDao;
+import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.persona.dao.AdjuntoPersonaDao;
+import es.capgemini.pfs.persona.model.AdjuntoPersona;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Funcion;
@@ -43,6 +49,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.MEJProcedimiento;
 import es.pfsgroup.recovery.adjunto.AdjuntoAssembler;
+import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.procedimiento.EXTProcedimientoManager;
 import es.pfsgroup.recovery.gestordocumental.dto.AdjuntoGridDto;
@@ -73,6 +81,18 @@ public class AdjuntoCajamarManager {
 	@Autowired
 	private EXTAsuntoManager extAsuntoManager;
 	
+	@Autowired
+	private AdjuntoPersonaDao adjuntoPersonaDao;
+	
+	@Autowired
+	private AdjuntoExpedienteDao adjuntoExpedienteDao;
+	
+	@Autowired
+	private AdjuntoContratoDao adjuntoContratoDao;
+	
+	@Autowired
+	private EXTAdjuntoAsuntoDao adjuntoAsuntoDao;
+	
     @Resource
     Properties appProperties;
     
@@ -82,7 +102,17 @@ public class AdjuntoCajamarManager {
 		
 		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
-		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(gestorDocumentalApi.listadoDocumentos(id, asunto.getGuid() , DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null), borrarOtrosUsu);
+		List<AdjuntoGridDto> listadoDocumentos = gestorDocumentalApi.listadoDocumentos(id, asunto.getGuid() , DDTipoEntidad.CODIGO_ENTIDAD_ASUNTO, null);
+		for(AdjuntoGridDto dto: listadoDocumentos) {
+			String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
+			List<EXTAdjuntoAsunto> listAdjAsu = adjuntoAsuntoDao.getAdjuntoAsuntoByIdNombreTipoDocumento(asunto.getId(), nombreAux, dto.getTipo());
+			if(!Checks.estaVacio(listAdjAsu)){
+				dto.setIdAdjuntoBlob(listAdjAsu.get(0).getAdjunto().getId());
+			}else{
+				dto.setIdAdjuntoBlob(1L);
+			}		
+		}
+		return adjuntoAssembler.listAdjuntoGridDtoToEXTAdjuntoDto(listadoDocumentos, borrarOtrosUsu);
 	}
 
 	public List<ExtAdjuntoGenericoDto> getAdjuntosContratosAsu(Long id) {
@@ -94,6 +124,17 @@ public class AdjuntoCajamarManager {
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 			}else{
+				for(AdjuntoGridDto dto: listDto) {
+					String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
+					logger.info("CNT El nombreAux es " + nombreAux);
+					List<AdjuntoContrato> listAdjCnt = adjuntoContratoDao.getAdjuntoContratoByIdNombreTipoDocumento(contrato.getId(), nombreAux, dto.getTipo());
+					if(!Checks.estaVacio(listAdjCnt)){
+						dto.setIdAdjuntoBlob(listAdjCnt.get(0).getAdjunto().getId());
+						logger.info("CNT El idAdjuntoBlob es " + nombreAux);
+					}else{
+						dto.setIdAdjuntoBlob(1L);
+					}
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
 			}
 		}			
@@ -109,6 +150,17 @@ public class AdjuntoCajamarManager {
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 			}else{
+				for(AdjuntoGridDto dto: listDto) {
+					String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
+					logger.info("PER El nombreAux es " + nombreAux);
+					List<AdjuntoPersona> listAdjPer = adjuntoPersonaDao.getAdjuntoPersonaByIdNombreTipoDocumento(persona.getId(), nombreAux, dto.getTipo());
+					if(!Checks.estaVacio(listAdjPer)){
+						dto.setIdAdjuntoBlob(listAdjPer.get(0).getAdjunto().getId());
+						logger.info("PER El idAdjuntoBlob es " + nombreAux);
+					}else{
+						dto.setIdAdjuntoBlob(1L);
+					}
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
 			}
 		}				
@@ -128,6 +180,17 @@ public class AdjuntoCajamarManager {
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.expedienteToExtAdjuntoGenericoDto(expediente));
 			}else{
+				for(AdjuntoGridDto dto: listDto) {
+					String nombreAux = dto.getNombre().substring(0, dto.getNombre().indexOf("."));
+					logger.info("EXP El nombreAux es " + nombreAux);
+					List<AdjuntoExpediente> listAdjExp = adjuntoExpedienteDao.getAdjuntoExpedienteByIdNombreTipoDocumento(expediente.getId(), nombreAux, dto.getTipo());
+					if(!Checks.estaVacio(listAdjExp)){
+						dto.setIdAdjuntoBlob(listAdjExp.get(0).getAdjunto().getId());
+						logger.info("EXP El idAdjuntoBlob es " + nombreAux);
+					}else{
+						dto.setIdAdjuntoBlob(1L);
+					}					
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, expediente.getId(), expediente.getDescripcion()));
 			}
 		}
@@ -178,6 +241,9 @@ public class AdjuntoCajamarManager {
 		final List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(prcId, procedimiento.getGuid(), DDTipoEntidad.CODIGO_ENTIDAD_PROCEDIMIENTO, null);
 		final Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		final Boolean borrarOtrosUsu = tieneFuncion(usuario, "BORRAR_ADJ_OTROS_USU");
+		for(AdjuntoGridDto dto : listDto) {
+			dto.setIdAdjuntoBlob(1L);
+		}
 		return adjuntoAssembler.listAdjuntoGridDtoTOListAdjuntoDto(listDto,borrarOtrosUsu);	
 	}
 
@@ -194,10 +260,13 @@ public class AdjuntoCajamarManager {
 		List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 		
 		for(Persona persona : expedienteManagerApi.findPersonasByExpedienteId(id)){
-			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);	
+			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, persona.getCodClienteEntidad().toString(), DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, null);	
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.personaToExtAdjuntoGenericoDto(persona));
 			}else{
+				for(AdjuntoGridDto dto : listDto) {
+					dto.setIdAdjuntoBlob(1L);
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, persona.getId(), persona.getApellidoNombre()));
 			}
 		}
@@ -209,10 +278,13 @@ public class AdjuntoCajamarManager {
 		List<ExtAdjuntoGenericoDto> adjuntos = new ArrayList<ExtAdjuntoGenericoDto>();
 		
 		for(Contrato contrato : expedienteManagerApi.findContratosRiesgoExpediente(id)){
-			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, null);
+			List<AdjuntoGridDto> listDto = gestorDocumentalApi.listadoDocumentos(null, contrato.getNroContrato(), DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, null);
 			if(Checks.esNulo(listDto) || Checks.estaVacio(listDto)){
 				adjuntos.add(adjuntoAssembler.contratoToExtAdjuntoGenericoDto(contrato));
 			}else{
+				for(AdjuntoGridDto dto : listDto) {
+					dto.setIdAdjuntoBlob(1L);
+				}
 				adjuntos.addAll(adjuntoAssembler.listAdjuntoGridDtoTOListExtAdjuntoGenericoDto(listDto, contrato.getId(), contrato.getNroContrato()));
 			}
 		}		

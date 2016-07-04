@@ -361,8 +361,8 @@ var recargarComboGestores = function(){
    		           ]);
    		           comboGestor.setDisabled(true);
           		   comboDespachos.setDisabled(true);
-          		   comboTipoProcedimiento.setDisable(true);
-          		   comboTipoTarea.setDisable(true)
+          		   comboTipoProcedimiento.setDisabled(true);
+          		   comboTipoTarea.setDisabled(true)
           		   optionsGestoresStore.webflow({'idTipoDespacho': 0});
    				}
 		}

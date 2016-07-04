@@ -61,7 +61,9 @@
         	btnIncluir.setDisabled(false);
         	codDespachoSel=record.data.id;
         	desDespachoSel=record.data.despacho 
-        	//usernameSel=record.data.username;    	
+        	//usernameSel=record.data.username;
+        	
+        	this.setValue(desDespachoSel);    	
          }
     });	
     
@@ -106,7 +108,13 @@
    		//	,username: usernameSel
    		});
    		
-   		if(!listadocodigoDespachos.includes(codDespachoSel)) {
+   		var noEstaIncluido = true;	
+   		for(var i=0; i< listadocodigoDespachos.length; i++) {
+   			if(listadocodigoDespachos[i] == codDespachoSel) {
+   				noEstaIncluido=false;
+   			}
+   		}		
+   		if(noEstaIncluido) {
 			despachosStore.insert(0, p);
 			listadocodigoDespachos.push(codDespachoSel);
 		}

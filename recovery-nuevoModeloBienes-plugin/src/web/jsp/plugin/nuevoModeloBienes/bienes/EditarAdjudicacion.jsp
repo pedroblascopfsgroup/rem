@@ -422,17 +422,17 @@
 	});
 	
 	optionsGestoresStore.webflow();
-      
+
     var gestoriaAdjudicataria = new Ext.form.ComboBox( {
 			store : optionsGestoresStore
 			,name : 'gestoriaAdjudicataria'
 			,valueField: 'id'
 			,displayField: 'username'
 			,fieldLabel : '<s:message code="bienesAdjudicacion.gestoriaAdjudicataria" text="**gestoriaAdjudicataria"/>'
-			,value : '${NMBbien.adjudicacion.gestoriaAdjudicataria.id}'
+			,value : '${NMBbien.adjudicacion.gestoriaAdjudicataria.username}'
 			,labelStyle:labelStyle
 			,width: 150
-			
+			,triggerAction : 'all'
 		});
 	
 	

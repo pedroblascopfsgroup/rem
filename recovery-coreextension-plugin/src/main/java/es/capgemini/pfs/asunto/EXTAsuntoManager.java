@@ -315,7 +315,9 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 				if (dto.getIdTarea() != null) {
 					map.put("idTarea", dto.getIdTarea());
 					EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTarea()));
-					map.put("destinatarioTarea", tarea.getDestinatarioTarea().getApellidoNombre());
+					if(tarea.getDestinatarioTarea() != null){
+						map.put("destinatarioTarea", tarea.getDestinatarioTarea().getApellidoNombre());
+					}
 				}
 				if (dto.getIdTraza() != null) {
 					map.put("idTraza", dto.getIdTraza());
@@ -630,6 +632,14 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 				@Override
 				public String getNombreTipoDoc() {
+					return null;
+				}
+				
+				@Override
+				public Long getIdAdjuntoBlob() {
+					if(aa.getAdjunto() != null) {
+						return aa.getAdjunto().getId();
+					}
 					return null;
 				}
 			};
@@ -2048,9 +2058,8 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			
 			dtoDecisionProcedimiento.setStrEstadoDecision("02");
 
-			
 			DecisionProcedimiento decisionProcedimiento = decisionProcedimientoManager.getInstance(proc.getId());
-
+			
 			dtoDecisionProcedimiento
 					.setDecisionProcedimiento(decisionProcedimiento);
 			try {
@@ -2108,6 +2117,12 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			}
 
 			asunto.setEstadoAsunto(estado);
+			
+			DDCausaDecisionFinalizar causaDecisionFinalizar = new DDCausaDecisionFinalizar();
+			causaDecisionFinalizar=genericDao.get(DDCausaDecisionFinalizar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", getCodigoCausaDecisionByDescripcion(dto.getMotivoFinalizacion())));
+			causaDecisionFinalizar.setId(causaDecisionFinalizar.getId());
+			asunto.setCausaDecisionFinalizar(causaDecisionFinalizar);
+			
 			try {
 				asuntoDao.save(asunto);
 

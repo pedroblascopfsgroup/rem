@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.expediente.model.AdjuntoExpediente;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.recovery.ext.impl.adjunto.dao.EXTAdjuntoAsuntoDao;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAdjuntoAsunto;
@@ -72,5 +73,20 @@ public class EXTAdjuntoAsuntoDaoImpl extends AbstractEntityDao<EXTAdjuntoAsunto,
 
 		return getSession().createQuery(hql.toString()).list();
 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EXTAdjuntoAsunto> getAdjuntoAsuntoByIdNombreTipoDocumento(Long idAsunto, String nombre, String tipoDocumento) {
+		StringBuffer hql = new StringBuffer();
+		hql.append(" select aa from EXTAdjuntoAsunto aa where aa.auditoria.borrado = false and aa.asunto.id = ");
+		hql.append(idAsunto);
+		hql.append(" and aa.nombre like '");
+		hql.append(nombre);
+		hql.append("%'");
+		hql.append(" and aa.tipoFichero.codigo = '");
+		hql.append(tipoDocumento);
+		hql.append("'");
+		return getSession().createQuery(hql.toString()).list();
 	}
 }

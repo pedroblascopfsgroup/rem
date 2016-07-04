@@ -440,8 +440,10 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		
 		solicitud.setDocumento(documento);
 		
-		GestorDespacho gestDespActor = obtenerGestorDespacho(solDto);
-		if (gestDespActor != null) {
+		if(Checks.esNulo(solDto.getActor())) {
+			solicitud.setActorDescripcion(solDto.getUsuarioTipoDespacho());			
+		}else{
+			GestorDespacho gestDespActor = obtenerGestorDespacho(solDto);
 			solicitud.setActor(gestDespActor);
 		}
 		
@@ -453,7 +455,7 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		//Se registra el usd_id del solicitante
 		if(!Checks.esNulo(usuarioManager)){
 			List<GestorDespacho> listaGestorDespacho = gestorDespachoDao.getGestorDespachoByUsuId(usuarioManager.getUsuarioLogado().getId());
-			if(!Checks.esNulo(listaGestorDespacho.get(0))){
+			if(!Checks.estaVacio(listaGestorDespacho)){
 				solicitud.setSolicitante(listaGestorDespacho.get(0));
 			}
 		}

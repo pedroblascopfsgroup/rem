@@ -29,6 +29,7 @@ import es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.contrato.dto.BusquedaContratosDto;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.tareaNotificacion.model.DDEntidadAcuerdo;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.termino.model.TerminoAcuerdo;
@@ -44,6 +45,9 @@ import es.pfsgroup.commons.utils.Checks;
 @Repository("AcuerdoDao")
 public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements AcuerdoDao {
 
+	private static final String TIPO_ACUERDO_EXP = "EXP";
+	private static final String TIPO_ACUERDO_AMBAS = "AMBAS";
+	private static final String TIPO_ACUERDO_ASU = "ASU";
 	@Resource
 	private PaginationManager paginationManager;
 	
@@ -165,14 +169,14 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	   		return lista;
 	    }
 
-	public Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario, List<Long> idGrpsUsuario) {
+	public Page buscarAcuerdos(DTOTerminosFiltro terminosFiltroDto, Usuario usuario, List<Long> idGrpsUsuario, String tipoAcuerdoDesc) {
 		Page page = paginationManager.getHibernatePage(getHibernateTemplate(), 
-				generarHQLBuscarAcuerdos(terminosFiltroDto,usuario,idGrpsUsuario), terminosFiltroDto);
+				generarHQLBuscarAcuerdos(terminosFiltroDto,usuario,idGrpsUsuario, tipoAcuerdoDesc), terminosFiltroDto);
 		return page;
 	}
 	
 	
-	private String generarHQLBuscarAcuerdos(DTOTerminosFiltro dto, Usuario usuarioLogueado, List<Long> idGrpsUsuario) {
+	private String generarHQLBuscarAcuerdos(DTOTerminosFiltro dto, Usuario usuarioLogueado, List<Long> idGrpsUsuario, String tipoAcuerdoDesc) {
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -188,6 +192,11 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		hql.append(" select distinct acu, ter from");
 		hql.append(" Acuerdo acu left join acu.terminos ter");
 		
+		if(cruzaTipoTermino){
+			hql.append(" left join acu.tipoAcuerdo tpa ");
+			hql.append(" left join ter.tipoAcuerdo tpt ");
+		}
+
 		if(cruzaContratos){
 			hql.append(", TerminoContrato terCnt");
 		}
@@ -200,13 +209,13 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		}
 		
 		//para jerarquía y zonas de acuerdos de asuntos
-		if (requiereContrato(dto) && (dto.getTipoAcuerdo().equals("ASU") || dto.getTipoAcuerdo().equals("AMBAS"))) {
+		if (requiereContrato(dto) && (dto.getTipoAcuerdo().equals(TIPO_ACUERDO_ASU) || dto.getTipoAcuerdo().equals(TIPO_ACUERDO_AMBAS))) {
 			hql.append(", ProcedimientoContratoExpediente pce, ExpedienteContrato cex, Contrato cnt, Procedimiento prc ");
 		}
 		
 		hql.append(" where 1=1 ");
 		
-		if(cruzaJerarquia && (dto.getTipoAcuerdo().equals("ASU") || dto.getTipoAcuerdo().equals("AMBAS"))){
+		if(cruzaJerarquia && (dto.getTipoAcuerdo().equals(TIPO_ACUERDO_ASU) || dto.getTipoAcuerdo().equals(TIPO_ACUERDO_AMBAS))){
 			hql.append(" and prc.asunto.id = acu.asunto.id ");
 			hql.append(" and prc.auditoria." + Auditoria.UNDELETED_RESTICTION);
 			hql.append(" and prc.id = pce.procedimiento and cex.id = pce.expedienteContrato and cex.contrato.id = cnt.id ");
@@ -229,23 +238,23 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		}
 		
 		//TIPO ACUERDO ASUNTO
-		if(dto.getTipoAcuerdo().equals("ASU")){
+		if(dto.getTipoAcuerdo().equals(TIPO_ACUERDO_ASU)){
 			
 			hql.append(" and acu.asunto.id is not null ");	
 			//Si es usuario externo, se muestran los acuerdos de asuntos con restricciones
 			//PERMISOS DEL USUARIO
 			if (usuarioLogueado.getUsuarioExterno()) {
-				hql=filtroUsuarioExterno(usuarioLogueado, idGrpsUsuario, hql);
+				hql.append(filtroUsuarioExterno(usuarioLogueado, idGrpsUsuario));
 			}
 			
 			// FILTRO JERARQUÍA Y ZONAS
 			if (cruzaJerarquia) {				
-				hql=filtroJerarquiaZonaAcuerdosAsuntos(dto, hql);
+				hql.append(filtroJerarquiaZonaAcuerdosAsuntos(dto));
 			}
 				
 		}else{	
 			//TIPO ACUERDO EXPEDIENTE
-			if(dto.getTipoAcuerdo().equals("EXP")){
+			if(dto.getTipoAcuerdo().equals(TIPO_ACUERDO_EXP)){
 				//Si es usuario externo, no se muestran acuerdos de expedientes
 				if (usuarioLogueado.getUsuarioExterno()) {
 					hql.append(" and 1=2 ");
@@ -255,7 +264,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 					
 					//FILTRO JERARQUIA Y ZONAS
 			        if (cruzaJerarquia) {
-			            filtroJerarquiaZonaAcuerdosExpedientes(dto, hql);
+			            hql.append(filtroJerarquiaZonaAcuerdosExpedientes(dto));
 			        }
 				}	
 			}else{
@@ -265,11 +274,11 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 					
 					//PERMISOS PARA ASUNTOS
 					hql.append(" and acu.asunto.id is not null ");
-					hql=filtroUsuarioExterno(usuarioLogueado, idGrpsUsuario, hql);
+					hql.append(filtroUsuarioExterno(usuarioLogueado, idGrpsUsuario));
 					
 					// FILTRO JERARQUÍA Y ZONAS
 					if (cruzaJerarquia) {				
-						hql=filtroJerarquiaZonaAcuerdosAsuntos(dto, hql);
+						hql.append(filtroJerarquiaZonaAcuerdosAsuntos(dto));
 					}
 					
 				}else{
@@ -277,7 +286,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 					// FILTRO JERARQUÍA Y ZONAS
 					if (cruzaJerarquia){
 						hql.append(" and (acu.asunto.id is not null or acu.expediente.id is not null) ");
-						hql=filtroJerarquiaZonasAcuerdosTodos(dto, hql, cruzaJerarquia);
+						hql.append(filtroJerarquiaZonasAcuerdosTodos(dto, cruzaJerarquia));
 					}else{
 						hql.append(" and (acu.asunto.id is not null or acu.expediente.id is not null) ");
 					}
@@ -287,8 +296,8 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 			
 		//TIPO TERMINO
 		if(cruzaTipoTermino){
-			hql.append(" and (ter.acuerdo.tipoAcuerdo.codigo = '"+ dto.getTipoTermino() + "' ");
-			hql.append(" or acu.tipoAcuerdo.codigo = '"+ dto.getTipoTermino() + "') ");
+			hql.append(" and (tpa.descripcion = '"+ tipoAcuerdoDesc + "' ");
+			hql.append(" or tpt.descripcion = '"+ tipoAcuerdoDesc + "') ");
 		}		
 		//ESTADO
 		if(cruzaEstado){
@@ -334,8 +343,10 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		return hql.toString();
 	}
 	
-	private StringBuffer filtroJerarquiaZonasAcuerdosTodos(DTOTerminosFiltro dto, StringBuffer hql, boolean cruzaJerarquia) {
+	private StringBuffer filtroJerarquiaZonasAcuerdosTodos(DTOTerminosFiltro dto, boolean cruzaJerarquia) {
 
+		StringBuffer hql = new StringBuffer();
+		
 		// FILTRO JERARQUÍA Y ZONAS acuerdos asuntos	
 		hql.append(" and ((cnt.zona.nivel.codigo >= "+ dto.getJerarquia());
 
@@ -368,7 +379,10 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		return hql;		
 	}
 
-	private void filtroJerarquiaZonaAcuerdosExpedientes(DTOTerminosFiltro dto, StringBuffer hql) {
+	private StringBuffer filtroJerarquiaZonaAcuerdosExpedientes(DTOTerminosFiltro dto) {
+		
+		StringBuffer hql = new StringBuffer();
+
 		hql.append(" and acu.expediente.oficina.zona.nivel.id >= "+ dto.getJerarquia());
 		        
 		int cantZonas = dto.getCodigoZonas().size();
@@ -381,10 +395,13 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 		    hql.deleteCharAt(hql.length() - 1);
 		    hql.append(" ) ");
 		}
+		return hql;
 	}
 
-	private StringBuffer filtroJerarquiaZonaAcuerdosAsuntos(DTOTerminosFiltro dto, StringBuffer hql) {
+	private StringBuffer filtroJerarquiaZonaAcuerdosAsuntos(DTOTerminosFiltro dto) {
 	
+		StringBuffer hql = new StringBuffer();
+		
 		hql.append(" and (cnt.zona.nivel.codigo >= "+ dto.getJerarquia());
 
 		if (dto.getCodigoZonas().size() > 0) {
@@ -401,7 +418,10 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 	}
 
 	private StringBuffer filtroUsuarioExterno(Usuario usuarioLogueado,
-			List<Long> idGrpsUsuario, StringBuffer hql) {
+			List<Long> idGrpsUsuario) {
+		
+		StringBuffer hql = new StringBuffer();
+		
 		hql.append(" and ("
 				+ filtroGestorSupervisorAsuntoMonoGestor(usuarioLogueado)
 				+ " or "
@@ -409,6 +429,7 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
 				+ " or "
 				+ filtroGestorSupervisorAsuntoMultiGestorVariasEntidades(usuarioLogueado)
 				+ filtroGestorGrupo(idGrpsUsuario) + ")");
+		
 		return hql;
 	}
 	
@@ -533,5 +554,13 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
         List<AcuerdoConfigAsuntoUsers> lista = getHibernateTemplate().find(hql);
 		return lista;
     }
-
+	
+	 public List<DespachoExterno> getDespachosProponentesValidos(Usuario usuLogado){
+         String hql = " select gd.despachoExterno from GestorDespacho gd , AcuerdoConfigAsuntoUsers config "
+        		 		+" where gd.despachoExterno.tipoDespacho.id = config.proponente.id and gd.usuario.id = "+ usuLogado.getId()
+         				+" and gd.auditoria.borrado = false and config.auditoria.borrado = false ";
+         
+         List<DespachoExterno> despachos = getHibernateTemplate().find(hql);
+         return despachos;
+	 }
 }

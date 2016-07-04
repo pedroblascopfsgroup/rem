@@ -866,11 +866,36 @@
 	};
 		
 	var gridLotes = app.crearGrid(lotesStore,lotesCM,cfg);
+
+	var clicktratado = false;
 	
 	// Se habilita el botón Proponer Instrucciones sólamente cuando se ha seleccionado un lote.
-	gridLotes.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
-		btnInstrucLotes.setDisabled(false);
+	//gridLotes.getSelectionModel().on('rowselect', function(sm, rowIndex, e) {
+	gridLotes.on('rowclick', function(grid, rowIndex, e) {
+		if(clicktratado == true){
+			clicktratado = false;
+		}else{
+			marcarLote(rowIndex);
+		}
 	});
+	
+	function marcarLote(loteIndice){
+		<%-- Quitamos el color de fondo marcado --%>
+		for(r=0; r < gridLotes.getView().getRows().length; r++){
+			for(c=0; c < gridLotes.getColumnModel().config.length; c++){
+				var cellselected = gridLotes.getView().getCell(r,c);
+				cellselected.style.backgroundColor = '#473729';
+			}
+		}
+
+		<%-- Marcamos la fila seleccionada --%>
+		for(i=0; i < gridLotes.getColumnModel().config.length; i++){
+			var cellselected = gridLotes.getView().getCell(loteIndice,i);
+			cellselected.style.backgroundColor = '#777777';
+		}
+		
+		btnInstrucLotes.setDisabled(false);
+	}
 	
 	function updateStatusBtnSolicitarNumerosActivos(){
 		btnSolicitarNumsActivos.setDisabled(true);
@@ -903,7 +928,7 @@
 	}
 	
     function expandedRowLote(obj, record, body, rowIndex){ 
-    	
+   
 	    var absId = record.get('id');
 	
 	 	var row = "myrow-bien-" + record.get("idLote");
@@ -1008,7 +1033,8 @@
 		        autoHeight: true,
 		        cm: bienesCM
 		        <sec:authorize ifAllGranted="ENVIO_CIERRE_DEUDA">, sm: smCheckBien </sec:authorize>
-		    });        
+		    });   
+		         
 		    gridXLote.render(row);
 		    
 		    gridXLote.on('rowdblclick', function(grid, rowIndex, e) {
@@ -1019,6 +1045,15 @@
 		    	app.abreBien(idBien, idBien + ' ' + tipoBien);
 		    	
 		    });	
+		    
+		    gridXLote.on('rowclick', function(grid, rowIndex, e) {
+		    	var rec = gridXLote.getStore().getAt(rowIndex);
+		    	var idLote = rec.get('idLoteBien');
+		    	var indice = gridLotes.store.find('idLote', idLote);
+		    	clicktratado = true;
+		    	marcarLote(indice);
+		    });
+		    
 		       
 		  }
 		  

@@ -142,7 +142,26 @@
     									<app:test id="idComboGestion" addComa="true"/>	
     								});
 
+	var origen = <app:dict value="${origen}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
+	var comboOrigen = app.creaCombo({data:origen, 
+    									triggerAction: 'all', 
+    									value:origen.diccionario[0].id, 
+    									name : 'origen', 
+    									fieldLabel : '<s:message code="expedientes.listado.origen" text="**Origen" />'
+    									<app:test id="idComboOrigen" addComa="true"/>	
+    								});
+    								
+	comboOrigen.on('select',function(){
+		if(comboOrigen.getValue() != ''){
+			comboJerarquia.setDisabled(false);
+			comboZonas.setDisabled(false);
+		} else {
+			comboJerarquia.setDisabled(true);
+			comboZonas.setDisabled(true);
+		}
+	});
+	
 	var jerarquia = <app:dict value="${niveles}" blankElement="true" blankElementValue="" blankElementText="---" />;
 
 	 var comboJerarquia = app.creaCombo({data:jerarquia, 
@@ -152,6 +171,8 @@
     									fieldLabel : '<s:message code="expedientes.listado.jerarquia" text="**Jerarquia" />'
     									<app:test id="idComboJerarquia" addComa="true"/>	
     								});
+    comboJerarquia.setDisabled(true);								
+	
 	var listadoCodigoZonas = [];
 	
 	comboJerarquia.on('select',function(){
@@ -173,16 +194,18 @@
 	
 	var codZonaSel='';
 	var desZonaSel='';
+	var codOficina='';
 	
 	var zonasRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
+		,{name:'cod_oficina'}
 	]);
 	
 	//Template para el combo de zonas
     var zonasTemplate = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
-            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p>{codigo}</p>',
+            '<p>{descripcion}&nbsp;&nbsp;&nbsp;</p><p><b>Oficina: </b>{cod_oficina}</p>',
         '</div></tpl>'
     );
     
@@ -230,6 +253,7 @@
         	btnIncluir.setDisabled(false);
         	codZonaSel=record.data.codigo;
         	desZonaSel=record.data.descripcion;
+        	codOficina=record.data.cod_oficina;
          }
     });	
     
@@ -250,7 +274,7 @@
     
     
     var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.codigo" text="**Código" />', dataIndex : 'codigoZona' ,sortable:false, hidden:false, width:80}
+		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Código oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:200}
 	]);
 	
@@ -268,7 +292,8 @@
 	    var zonaAInsertar = zonasGrid.getStore().recordType;
    		var p = new zonaAInsertar({
    			codigoZona: codZonaSel,
-   			descripcionZona: desZonaSel
+   			descripcionZona: desZonaSel,
+   			codigoOficina: codOficina
    		});
 		zonasStore.insert(0, p);
 		listadoCodigoZonas.push(codZonaSel);
@@ -284,6 +309,9 @@
 			codZonaSel='';
    			desZonaSel='';
    			btnIncluir.setDisabled(true);
+   			<sec:authorize ifAllGranted="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES">
+				Ext.getCmp('chkbxMiCartera').reset();
+			</sec:authorize>
 			comboZonas.focus();
 		}
 	});
@@ -816,6 +844,8 @@
             <sec:authorize ifAllGranted="ROLE_PROVEEDOR_SOLVENCIA">
 				var flow='clientes/plugin.mejoras.clientes.exportClientesSolvencias';
 			</sec:authorize>
+			params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+            params.succesFunction=function(){Ext.getCmp('btnXLSExport').setDisabled(false)}
             app.openBrowserWindow(flow,params);
 		}
 		busquedaClientesMask.hide();
@@ -833,7 +863,7 @@
 		                params.start=0;
 		                params.limit=limit;
 		                clientesStore.webflow(params);
-						//Cerramos el panel de filtros y esto harï¿½ que se abra el listado de clientes
+						//Cerramos el panel de filtros y esto haria que se abra el listado de clientes
 					}else{
 						Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="validaciones.dblText.minMax"/>');
 					}
@@ -911,7 +941,11 @@
     	if (tabJerarquia){
     		p.jerarquia=comboJerarquia.getValue();
 			p.codigoZona=listadoCodigoZonas.toString();
+			p.origen=comboOrigen.getValue();
     	}
+    	<sec:authorize ifAllGranted="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES">
+			p.miCartera=Ext.getCmp('chkbxMiCartera').getValue();
+		</sec:authorize>
     	return p;
     }
 	
@@ -1014,7 +1048,7 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [comboJerarquia, comboZonas]
+					,items: [comboOrigen, comboJerarquia, comboZonas]
 				},{
 					layout:'form'
 					,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
@@ -1212,6 +1246,9 @@
 	buttonsL[posBtnLimpiar].on('click', function(){
 		zonasStore.removeAll();
 		listadoCodigoZonas = [];
+		<sec:authorize ifAllGranted="MOSTRAR_CHKBOX_MI_CARTERA_BUSQUEDA_CLIENTES">
+				Ext.getCmp('chkbxMiCartera').reset();
+		</sec:authorize>
 	});
 	
 	

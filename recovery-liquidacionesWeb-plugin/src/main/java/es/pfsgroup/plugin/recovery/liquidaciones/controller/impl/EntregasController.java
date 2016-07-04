@@ -8,11 +8,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
-import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.pfsgroup.plugin.liquidaciones.avanzado.manager.LiquidacionAvanzadoApi;
-import es.pfsgroup.plugin.liquidaciones.avanzado.manager.impl.LiquidacionAvanzadoManagerImpl;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.CalculoLiquidacion;
 import es.pfsgroup.plugin.liquidaciones.avanzado.model.EntregaCalculoLiq;
 import es.pfsgroup.plugin.recovery.liquidaciones.LIQCobroPagoEntregasManager;
@@ -48,36 +46,25 @@ public class EntregasController{
     @Autowired
     private DictionaryManager dictionaryManager;
 		
-	/**
-	 * {@inheritDoc} 
-	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String saveEntrega(ModelMap model,LIQDtoCobroPagoEntregas dto) {
 		
 		liqAvanzadasApi.createOrUpdateEntCalLiquidacion(dto);
 		//liqCobroPagoEntregasManager.createOrUpdate(dto);
 		return DEFAULT;
-		
-		// TODO Auto-generated method stub
-		
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String eliminarEntrega(Long idEntrega) {
 		
 		liqAvanzadasApi.eliminarEntregaCalLiquidacion(idEntrega);
 		
 		return DEFAULT;
-		// TODO Auto-generated method stub
-		
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListbyCalculoId(Long id, ModelMap model) {
-		// TODO Auto-generated method stub
 		List<EntregaCalculoLiq> lista =  liqAvanzadasApi.getEntregasCalculo(id);
 		model.put("listado", lista);
         
@@ -87,8 +74,12 @@ public class EntregasController{
 	@SuppressWarnings("unchecked")
     @RequestMapping
     public String getListbyAsuntoId(Long id, ModelMap model) {
-            // TODO Auto-generated method stub
             List<LIQCobroPago> lista = cobroPagoDao.getByIdAsuntoContrato(id); 
+            
+            // Se asigna el valor del campo nominal.
+            for(LIQCobroPago lcp : lista){
+            	lcp.setNominal(lcp.getCapital() + lcp.getCapitalNoVencido());
+            }
             model.put("listado", lista);
     
             return LISTADO_COBRO_PAGO_ENTREGAS_JSON; 
@@ -97,8 +88,6 @@ public class EntregasController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String nuevaEntrega(Long idCalculo, ModelMap model) {
-		// TODO Auto-generated method stub
-
 //		List<Procedimiento>procedimientos= procedimientoDao.getProcedimientosAsunto(idAsunto);
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
@@ -120,10 +109,6 @@ public class EntregasController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String editarEntrega(Long idCalculo, ModelMap model, Long idEntrega) {
-		// TODO Auto-generated method stub
-		
-		
-		
 		List<Dictionary> tipoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableTipoEntrega");
 		List<Dictionary> conceptoEntrega= (List<Dictionary>)dictionaryManager.getList("DDAdjContableConceptoEntrega");
 		List<EntregaCalculoLiq> listaEntregas=  liqAvanzadasApi.getEntregasCalculo(idCalculo);
@@ -160,11 +145,7 @@ public class EntregasController{
 			model.put("fechaCierre", calculo.getFechaCierre());
 			model.put("fechaLiquidacion", calculo.getFechaLiquidacion());
 		}
-		
-		
-		
-				
-		
+
 		return NUEVA_ENTREGA; 
 	}
 	

@@ -39,6 +39,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comite.model.Comite;
 import es.capgemini.pfs.comite.model.DecisionComite;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
@@ -159,6 +160,20 @@ public class Asunto implements Serializable, Auditable {
 
     @Version
     private Integer version;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_DFI_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)
+	private DDCausaDecisionFinalizar causaDecisionFinalizar;
+    
+	public DDCausaDecisionFinalizar getCausaDecisionFinalizar() {
+		return causaDecisionFinalizar;
+	}
+
+	public void setCausaDecisionFinalizar(
+			DDCausaDecisionFinalizar causaDecisionFinalizar) {
+		this.causaDecisionFinalizar = causaDecisionFinalizar;
+	}
 
     /**
      * Indica si el asunto esta en estado propuesto.

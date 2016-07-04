@@ -264,11 +264,18 @@
        		if (countTerminos > 0){
        		
        		Ext.Ajax.request({
-				url: page.resolveUrl('mejacuerdo/tieneConfiguracionProponerAcuerdo')
+				url: page.resolveUrl('mejacuerdo/getDespachosProponentesValidos')
 				,method: 'POST'
 				,success: function (result, request){
 					var respuesta = Ext.util.JSON.decode(result.responseText);
-					if(Boolean(respuesta.okko)){
+					
+					if(respuesta.listadoDespachos.length == 0){
+						
+						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
+	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
+	                    	       
+					}else if(respuesta.listadoDespachos.length == 1){ 
+						
 						deshabilitarBotones();
 			      	    page.webflow({
 			      			flow:"plugin/mejoras/acuerdos/plugin.mejoras.acuerdos.proponerAcuerdo"
@@ -286,10 +293,25 @@
 							}	
 				      	});
 						habilitarBotones();
-					}else{
-						Ext.Msg.alert('<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.grid.warning" text="**Aviso" />', 
-	                    	       '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.termjinos.grid.warning.ProponerAcuerdoSinDespachoConfiguracion" text="**No es posible proponer el acuerdo, el usuario no pertenece a un despacho que permita proponer" />');
-					}
+						
+					}else if(respuesta.listadoDespachos.length > 1){
+					      
+		      	       var w = app.openWindow({
+				          flow : 'mejacuerdo/abreSelectDespachoProponente'
+				          ,closable:false
+				          ,width : 350
+				          ,title : '<s:message code="mejoras.plugin.acuerdos.proponer.despacho.title" text="**Role con el que propone el acuerdo" />'
+				          ,params : {idAcuerdo:acuerdoSeleccionado}
+				       });
+				       w.on(app.event.DONE, function(){
+				          acuerdosStore.on('load',despuesDeNuevoAcuerdo);
+				          acuerdosStore.webflow({id:panel.getAsuntoId()});
+				          w.close();
+				       });
+			      	   w.on(app.event.CANCEL, function(){ w.close(); });
+	     	
+					   }
+
 				}
 				,error: function(){
 	
@@ -612,11 +634,9 @@
 					noPuedeModificar = false;
 					
 					if(esDecisor){
-						btnVigenteAcuerdo.setVisible(true);
-						btnProponerAcuerdo.setVisible(false);
+						btnProponerAcuerdo.setText('<s:message code="acuerdos.aprobar" text="**Aprobar" />');
 					}else if(esValidador){
-						btnAceptarAcuerdo.setVisible(true);
-						btnProponerAcuerdo.setVisible(false);
+						btnProponerAcuerdo.setText('<s:message code="app.aceptar" text="**Aceptar" />');
 					} 
 					
 				}

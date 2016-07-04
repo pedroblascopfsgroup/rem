@@ -171,12 +171,14 @@
 		if (comboProvincias.getValue() != '' ){
 			return true;
 		}
+		<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
 		if (perfil.getValue() != '' ){
 			return true;
 		}
 		if (concursos.getValue() != '' ){
 			return true;
 		}
+		</c:if>
 		if (codEstAse.getValue() != '' ){
 			return true;
 		}
@@ -262,8 +264,10 @@
 	var getParametros = function() {
 		return {
 			listaProvincias: comboProvincias.getValue()
+			<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
 			,clasificacionPerfil: perfil.getValue()
 			,clasificacionConcursos: concursos.getValue()
+			</c:if>
 			,codEstAse: codEstAse.getValue()
 			,contratoVigor: contratoVigor.getValue()
 			,servicioIntegral: servicioIntegral.getValue()
@@ -304,7 +308,7 @@
 		,bodyStyle:'padding:5px;cellspacing:20px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
 		,items:[ 
-				{items: [ contratoVigor, relacionBankia, codEstAse, tieneAsesoria, impuesto, clasifDespachoFieldSet]}
+				{items: [ contratoVigor, relacionBankia, codEstAse, tieneAsesoria, impuesto<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">, clasifDespachoFieldSet</c:if>]}
 				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, fechaAltaSIFieldSet ]}
 				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, comboProvincias]}
 				
@@ -344,8 +348,10 @@
     		           ,centroRecuperacion
     		           ,tieneAsesoria
     		           ,relacionBankia
-    		           ,perfil
-    		           ,concursos
+    		           <c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
+    		           		,perfil
+    		           		,concursos
+    		           	</c:if>
     		           ,impuesto
     		           ,fechaAltaSIDesde
     		           ,fechaAltaSIHasta

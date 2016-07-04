@@ -1,7 +1,6 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -12,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -39,9 +37,9 @@ public class TurnadoProcuradorConfig implements Serializable, Auditable {
 	@SequenceGenerator(name = "TurnadoProcuradorConfigGenerator", sequenceName = "S_TUP_TPC_TURNADO_PROCU_CONFIG")
 	private Long id;
 
-	@OneToMany(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EPT_ID")
-	private List<EsquemaPlazasTpo> esquemaPlazasTpo;
+	private EsquemaPlazasTpo esquemaPlazasTpo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USU_ID")
@@ -67,11 +65,11 @@ public class TurnadoProcuradorConfig implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public List<EsquemaPlazasTpo> getEsquemaPlazasTpo() {
+	public EsquemaPlazasTpo getEsquemaPlazasTpo() {
 		return esquemaPlazasTpo;
 	}
 
-	public void setEsquemaPlazasTpo(List<EsquemaPlazasTpo> esquemaPlazasTpo) {
+	public void setEsquemaPlazasTpo(EsquemaPlazasTpo esquemaPlazasTpo) {
 		this.esquemaPlazasTpo = esquemaPlazasTpo;
 	}
 

@@ -713,8 +713,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		if(!Checks.esNulo(doc)){
 			notario = doc.getNotario();
 			protocolo = doc.getProtocolo();
-			if(!Checks.esNulo(doc.getProvinciaNotario())){
-				localidadNotario = doc.getProvinciaNotario().getDescripcion();
+			if(!Checks.esNulo(doc.getLocalidadNotario())){
+				localidadNotario = doc.getLocalidadNotario().getDescripcion();
 			}
 			if(!Checks.esNulo(doc.getFechaEscritura())){
 				SimpleDateFormat df = new SimpleDateFormat("dd",MessageUtils.DEFAULT_LOCALE);

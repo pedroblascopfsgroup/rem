@@ -92,8 +92,21 @@ public class NMBContratoManager {
 	public List<NMBContratoBien> getBienes(Long idContrato) {
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "contrato.id", idContrato);
 		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "estado.codigo", NMBDDEstadoBienContrato.COD_ESTADO_BIEN_ACTIVO); // solo los que tienen la relaci�n con el bien activa
-		return genericDao.getList(NMBContratoBien.class, f1,f2,f3);
+		List<NMBContratoBien> listNMBContratoBienTemp = new ArrayList<NMBContratoBien>();
+		List<NMBContratoBien> listNMBContratoBien = new ArrayList<NMBContratoBien>();
+		
+		listNMBContratoBienTemp= genericDao.getList(NMBContratoBien.class, f1,f2);
+		
+		for(NMBContratoBien cb: listNMBContratoBienTemp){
+			if(Checks.esNulo(cb.getEstado()) || cb.getEstado().getCodigo().equals(NMBDDEstadoBienContrato.COD_ESTADO_BIEN_ACTIVO)){
+				listNMBContratoBien.add(cb);
+				
+			}
+		}
+		
+		//Filter f3 = genericDao.createFilter(FilterType.EQUALS, "estado.codigo", NMBDDEstadoBienContrato.COD_ESTADO_BIEN_ACTIVO); // solo los que tienen la relaci�n con el bien activa
+		//return genericDao.getList(NMBContratoBien.class, f1,f2,f3);
+		return listNMBContratoBien;
     }
 	
 	@SuppressWarnings("unchecked")

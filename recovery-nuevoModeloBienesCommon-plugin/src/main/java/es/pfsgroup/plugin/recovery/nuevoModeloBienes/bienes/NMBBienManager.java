@@ -178,11 +178,20 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	 */
 	@BusinessOperation("plugin.nuevoModeloBienes.bienes.NMBbienManager.getContratos")
 	public List<NMBContratoBien> getContratos(Long idBien) {
+		List<NMBContratoBien> listNMBContratoBienTemp = new ArrayList<NMBContratoBien>();
 		List<NMBContratoBien> listNMBContratoBien = new ArrayList<NMBContratoBien>();
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "bien.id", idBien);
 		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "contrato.auditoria.borrado", false);
-		listNMBContratoBien.addAll(genericDao.getList(NMBContratoBien.class, f1, f2, f3));
+		listNMBContratoBienTemp.addAll(genericDao.getList(NMBContratoBien.class, f1, f2, f3));
+				
+		for(NMBContratoBien cb: listNMBContratoBienTemp){
+			if(Checks.esNulo(cb.getEstado()) || cb.getEstado().getCodigo().equals(NMBDDEstadoBienContrato.COD_ESTADO_BIEN_ACTIVO)){
+				listNMBContratoBien.add(cb);
+				
+			}
+		}
+		
 		return listNMBContratoBien;
 	}
 

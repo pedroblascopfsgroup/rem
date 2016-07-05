@@ -25,6 +25,7 @@ public class GestorDocumentalConstants {
 	public static final String ERROR_NO_EXISTE_CONTENEDOR = "No se puede almacenar este TIPO de archivo. Contacte con su administrador - [ERROR: No existe contenedor adecuado].";
 	public static final String ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO = "TIPO de archivo incorrecto para ser almacenado. Contacte con su administrador - [ERROR: No existe mapeo para este tipo de archivo].";
 	public static final String ERROR_NO_EXISTE_CONTENEDOR_MAESTRO = "No es posible adjuntar documentos al no encontrarse creado el contenedor en el gestor documental remoto";
+	public static final String EXISTE_FICHERO_EN_ESE_CONTENEDOR = "No se puede adjuntar el documento porque ya existe un documento con ese nombre en el contenedor";
 	
 	
 	public static final String[] generalDocumento = {"Número Registro:", "Fecha Documento:", "Fecha Baja Lógica:", "Fecha Caducidad:", "Fecha Expurgo:", "Proceso Carga:", "LOPD:", "Serie Documental:", "TDN1:", "TDN2:"};

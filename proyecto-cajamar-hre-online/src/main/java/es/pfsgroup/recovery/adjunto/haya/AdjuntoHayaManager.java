@@ -739,6 +739,9 @@ public class AdjuntoHayaManager {
 					contenedorEncontrado = true;
 					break;
 				}
+				if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+					return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
+				}
 			}
 		}
 		
@@ -768,6 +771,9 @@ public class AdjuntoHayaManager {
 					contenedorEncontrado = true;
 					break;
 				}
+				if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+					return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
+				}
 			}
 		}
 		
@@ -793,6 +799,9 @@ public class AdjuntoHayaManager {
 			if(respuesta == null) {
 				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
 			}
+			if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+				return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
+			}
 		}
 
 		return null;
@@ -811,6 +820,8 @@ public class AdjuntoHayaManager {
 			RespuestaCrearDocumento respuesta = uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));
 			if(respuesta == null) {
 				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
+			}else if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+				return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
 			}
 		}
 		return null;
@@ -842,6 +853,8 @@ public class AdjuntoHayaManager {
 			}
 		} catch (GestorDocumentalException e) {
 			logger.error("upload error: " + e);
+			respuesta = new RespuestaCrearDocumento();
+			respuesta.setMensajeError(GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR);
 		} catch (Exception e) {
 			logger.error("upload error: " + e);
 		}

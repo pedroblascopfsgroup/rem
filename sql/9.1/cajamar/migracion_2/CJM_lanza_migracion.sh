@@ -47,6 +47,17 @@ if [ $? != 0 ] ; then
 fi
 echo "[OK] ""$sh_dir""CJM_backup_ficheros_migracion.sh ejecutado correctamente"               
 
+
+echo "[INFO] Comienza ejecución de: ""$sh_dir""DML_MIG2_DATGMN-MIG_PARAM_HITOS_VALORES.sh"                      
+./"$sh_dir"DML_MIG2_DATGMN-MIG_PARAM_HITOS_VALORES.sh "$1" 
+if [ $? != 0 ] ; then
+    echo -e "\n\n======>>> [ERROR] en "$sh_dir"DML_MIG2_DATGMN-MIG_PARAM_HITOS_VALORES.sh"
+    echo -e "\n\n======>>> [ERROR] en CJM_lanza_migracion.sh"
+    exit 1           
+fi
+echo "[OK] ""$sh_dir""CJM_migracion_a_tabla_intermedia.sh ejecutado correctamente"            
+
+
 echo "[INFO] Comienza ejecución de: ""$sh_dir""CJM_migracion_a_tabla_intermedia.sh"                      
 ./"$sh_dir"CJM_migracion_a_tabla_intermedia.sh "$1" 
 if [ $? != 0 ] ; then

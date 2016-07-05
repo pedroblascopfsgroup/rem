@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="haya_tramiteMejoraEmbargo" width="870" height="563">
+<root-container name="haya_tramiteMejoraEmbargo" width="1214" height="644">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="-45" y="-14"/>
@@ -39,7 +39,7 @@
       <bendpoint w1="408" h1="-12" w2="16" h2="224"/>
     </edge>
   </node>
-  <node name="H046_confirmarDecretoEmbargoDecision" x="25" y="213" width="289" height="36">
+  <node name="H046_confirmarDecretoEmbargoDecision" x="32" y="225" width="289" height="36">
     <edge>
       <label x="4" y="-19"/>
     </edge>
@@ -70,11 +70,16 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="H046_espera" x="613" y="407" width="132" height="36">
+  <node name="H046_espera" x="605" y="411" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
-      <bendpoint w1="7" h1="-61" w2="172" h2="36"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="Fin" x="736" y="211" width="132" height="36"/>
+  <node name="Fin" x="730" y="209" width="132" height="36"/>
 </root-container>

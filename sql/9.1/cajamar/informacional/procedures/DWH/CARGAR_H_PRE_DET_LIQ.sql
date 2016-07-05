@@ -659,7 +659,7 @@ close c_semana;
         execute immediate V_SQL USING OUT O_ERROR_STATUS;
   commit;
     
-  -- Bucle que recorre los años
+  -- Bucle que recorre los anyos
   open c_anio;
   loop --C_ANIO_LOOP
     fetch c_anio into anio;        
@@ -667,10 +667,10 @@ close c_semana;
   
     select max(DIA_H) into max_dia_anio from TMP_FECHA where ANIO_H = anio;
     
-    --Año anterior
+    --Anyo anterior
     select max(ANIO_ID) into anio_ant from H_PRE_DET_LIQ_ANIO where ANIO_ID < anio;
         
-    -- Borrado de loa años a insertar
+    -- Borrado de loa anyos a insertar
     delete from H_PRE_DET_LIQ_ANIO where ANIO_ID = anio;
     commit;
   

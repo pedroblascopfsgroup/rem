@@ -66,12 +66,12 @@ BEGIN
                               ESTADO_DOCUMENTO_ID NUMBER(16,0),
                               ESTADO_DOCUMENTO_PER_ANT_ID NUMBER(16,0) NULL,
                               NUM_DOCUMENTOS INTEGER )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_CM_DWH" 
+        SEGMENT CREATION IMMEDIATE 
+           
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC');
 
                 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_DET_DOC_IX'', ''  H_PRE_DET_DOC (DIA_ID, PROCEDIMIENTO_ID, DOCUMENTO_ID)'', ''S'', '''', :error); END;';
@@ -91,12 +91,12 @@ BEGIN
                               ESTADO_DOCUMENTO_ID NUMBER(16,0),
                               ESTADO_DOCUMENTO_PER_ANT_ID NUMBER(16,0) NULL,
                               NUM_DOCUMENTOS INTEGER)
-			                                SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_CM_DWH"   
-                           	PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+                                      SEGMENT CREATION IMMEDIATE NOLOGGING
+                               
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
+   execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_SEMANA');
 
@@ -119,10 +119,10 @@ BEGIN
                               NUM_DOCUMENTOS INTEGER
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_CM_DWH"   
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                               
+                            PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H__PRE_DET_DOC_MES');
@@ -144,10 +144,10 @@ BEGIN
                               NUM_DOCUMENTOS INTEGER
                           )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_CM_DWH"   
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (201501) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_TRIMESTRE');
 
@@ -168,10 +168,10 @@ BEGIN
                               NUM_DOCUMENTOS INTEGER
                            )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_CM_DWH"   
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (2015) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_ANIO');
@@ -228,12 +228,12 @@ BEGIN
                               P_DOC_SOLICITUD_ENVIO INTEGER,
                               P_DOC_SOLICITUD_RESULTADO INTEGER,
                               P_DOC_SOLICITUD_RECEPCION INTEGER )
-			  SEGMENT CREATION IMMEDIATE 
-					TABLESPACE "RECOVERY_CM_DWH" 
+        SEGMENT CREATION IMMEDIATE 
+           
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
                     (PARTITION "p1" VALUES LESS THAN (TO_DATE('''' 2014-11-01 00:00:00'''', ''''SYYYY-MM-DD HH24:MI:SS'''', ''''NLS_CALENDAR=GREGORIAN''''))'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_SOL');
 
                 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_PRE_DET_DOC_SOL_IX'', ''  H_PRE_DET_DOC_SOL (DIA_ID, PROCEDIMIENTO_ID, DOCUMENTO_ID)'', ''S'', '''', :error); END;';
@@ -261,12 +261,12 @@ BEGIN
                               P_DOC_SOLICITUD_ENVIO INTEGER,
                               P_DOC_SOLICITUD_RESULTADO INTEGER,
                               P_DOC_SOLICITUD_RECEPCION INTEGER)
-			                                SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_CM_DWH"   
-                           	PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
-	 execute immediate V_SQL USING OUT error;
+                                      SEGMENT CREATION IMMEDIATE NOLOGGING
+                               
+                            PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
+   execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_SOL_SEMANA');
 
 
@@ -297,10 +297,10 @@ BEGIN
                               P_DOC_SOLICITUD_RECEPCION INTEGER
                            )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                           	TABLESPACE "RECOVERY_CM_DWH"   
-                           	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
-                           	(PARTITION "P1" VALUES LESS THAN (201501) 
-                           	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                               
+                            PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
+                            (PARTITION "P1" VALUES LESS THAN (201501) 
+                            '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_SOL_MES');
@@ -331,10 +331,10 @@ BEGIN
                               P_DOC_SOLICITUD_RECEPCION INTEGER
                           )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_CM_DWH"   
-                            	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (201501) 
-                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (201501) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla H_PRE_DET_DOC_SOL_TRIMESTRE');
 
@@ -363,10 +363,10 @@ BEGIN
                               P_DOC_SOLICITUD_RECEPCION INTEGER
                            )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
-                            	TABLESPACE "RECOVERY_CM_DWH"   
-                            	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
-                            	(PARTITION "P1" VALUES LESS THAN (2015) 
-                            	TABLESPACE "RECOVERY_CM_DWH"'', :error); END;';
+                                 
+                              PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
+                              (PARTITION "P1" VALUES LESS THAN (2015) 
+                              '', :error); END;';
       execute immediate V_SQL USING OUT error;
 
 

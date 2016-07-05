@@ -634,11 +634,9 @@
 					noPuedeModificar = false;
 					
 					if(esDecisor){
-						btnVigenteAcuerdo.setVisible(true);
-						btnProponerAcuerdo.setVisible(false);
+						btnProponerAcuerdo.setText('<s:message code="acuerdos.aprobar" text="**Aprobar" />');
 					}else if(esValidador){
-						btnAceptarAcuerdo.setVisible(true);
-						btnProponerAcuerdo.setVisible(false);
+						btnProponerAcuerdo.setText('<s:message code="app.aceptar" text="**Aceptar" />');
 					} 
 					
 				}

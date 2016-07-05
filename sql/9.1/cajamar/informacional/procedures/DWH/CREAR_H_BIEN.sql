@@ -2,9 +2,9 @@ create or replace PROCEDURE CREAR_H_BIEN (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Rafael Aracil, PFS Group
 -- Fecha creacion: Agosto 2015
--- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 04/01/2016
--- Motivos del cambio:  FECHA_INTERP_DEM_HIP
+-- Responsable ultima modificacion:María Villanueva, PFS Group
+-- Fecha ultima modificacion: 13/05/2016
+-- Motivos del cambio: CMREC-3318 FECHA_SENYAL_LANZAMIENTO
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas del hecho BIEN.
@@ -59,7 +59,11 @@ BEGIN
                                 OFICINA_BIEN_ID NUMBER(16,0),
                                 ENTIDAD_BIEN_ID NUMBER(16,0),
                                 FECHA_LANZAMIENTO_BIEN DATE,
-								FECHA_INTERP_DEM_HIP DATE
+                                BIE_ESTADO_FASE_ACTUAL_ID NUMBER(16),
+                                BIE_FASE_ACTUAL NUMBER(16),
+								                FECHA_INTERP_DEM_HIP DATE,
+                                VIVIENDA_HABITUAL_ID NUMBER(16),
+                                FECHA_SENYAL_LANZAMIENTO DATE
          '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
  DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_BIE');
@@ -99,7 +103,9 @@ BEGIN
 				OFICINA_BIEN_ID NUMBER(16,0),
 				ENTIDAD_BIEN_ID NUMBER(16,0),
 				FECHA_LANZAMIENTO_BIEN DATE),
-				FECHA_INTERP_DEM_HIP DATE
+				FECHA_INTERP_DEM_HIP DATE,
+                                VIVIENDA_HABITUAL_ID NUMBER(16),
+                                FECHA_SENYAL_LANZAMIENTO DATE
 				SEGMENT CREATION IMMEDIATE 
                     PARTITION BY RANGE ("DIA_ID")
                     INTERVAL(NUMTOYMINTERVAL(1, ''''MONTH''''))
@@ -144,7 +150,9 @@ BEGIN
 				OFICINA_BIEN_ID NUMBER(16,0),
 				ENTIDAD_BIEN_ID NUMBER(16,0),
 				FECHA_LANZAMIENTO_BIEN DATE),
-				FECHA_INTERP_DEM_HIP DATE
+				FECHA_INTERP_DEM_HIP DATE,
+         VIVIENDA_HABITUAL_ID NUMBER(16),
+         FECHA_SENYAL_LANZAMIENTO DATE
 			    SEGMENT CREATION IMMEDIATE NOLOGGING
                             PARTITION BY RANGE ("SEMANA_ID") INTERVAL (1) 
                            (PARTITION "P1" VALUES LESS THAN (201501) 
@@ -190,7 +198,9 @@ BEGIN
                                 OFICINA_BIEN_ID NUMBER(16,0),
                                 ENTIDAD_BIEN_ID NUMBER(16,0),
                                 FECHA_LANZAMIENTO_BIEN DATE),
-								FECHA_INTERP_DEM_HIP DATE
+								FECHA_INTERP_DEM_HIP DATE,
+                                VIVIENDA_HABITUAL_ID NUMBER(16),
+                                FECHA_SENYAL_LANZAMIENTO DATE
                 		SEGMENT CREATION IMMEDIATE NOLOGGING
                            	PARTITION BY RANGE ("MES_ID") INTERVAL (1) 
                            	(PARTITION "P1" VALUES LESS THAN (201501) 
@@ -236,7 +246,9 @@ BEGIN
                           OFICINA_BIEN_ID NUMBER(16,0),
                           ENTIDAD_BIEN_ID NUMBER(16,0),
                           FECHA_LANZAMIENTO_BIEN DATE),
-						  FECHA_INTERP_DEM_HIP DATE
+						  FECHA_INTERP_DEM_HIP DATE,
+                                VIVIENDA_HABITUAL_ID NUMBER(16),
+                                FECHA_SENYAL_LANZAMIENTO DATE
                             	SEGMENT CREATION IMMEDIATE NOLOGGING
                             	PARTITION BY RANGE ("TRIMESTRE_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (201501) 
@@ -282,7 +294,9 @@ BEGIN
                           OFICINA_BIEN_ID NUMBER(16,0),
                           ENTIDAD_BIEN_ID NUMBER(16,0),
                           FECHA_LANZAMIENTO_BIEN DATE),
-						  FECHA_INTERP_DEM_HIP DATE
+						  FECHA_INTERP_DEM_HIP DATE,
+                                VIVIENDA_HABITUAL_ID NUMBER(16),
+                                FECHA_SENYAL_LANZAMIENTO DATE
                             	SEGMENT CREATION IMMEDIATE NOLOGGING
                             	PARTITION BY RANGE ("ANIO_ID") INTERVAL (1) 
                             	(PARTITION "P1" VALUES LESS THAN (2015) 

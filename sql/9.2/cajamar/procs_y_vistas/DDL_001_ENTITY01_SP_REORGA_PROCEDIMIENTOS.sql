@@ -1,8 +1,13 @@
 --/*
 --##########################################
---## Author: Carlos Gil
---## Finalidad: DML
---##            
+--## AUTOR=Carlos Gil
+--## FECHA_CREACION=20160520
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=RECOVERY-54
+--## PRODUCTO=NO
+--## Finalidad: DDL
+--##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial

@@ -161,82 +161,107 @@
 		}
 	});    
 	
-	<%-- PRODUCTO-1274 Combos con valores que se mapean por ac-plugin-coreextension-projectContext.xml--%>
-	var contratoStore =
-		<json:array name="ddContrato" items="${mapasDespExtras[0]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	
+	var contratoDict = <app:dict value="${contratoDict}"/>;
 
+	var contratoStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: contratoDict
+	});
+		
 	var contratoVigor=new Ext.form.ComboBox({
 		store: contratoStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'
 		,width:150
 		,value:'${despachoExtras.contratoVigor}'
 	})
 	
-	var perfilStore = 
-		<json:array name="ddPerfil" items="${mapasDespExtras[1]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	
+	var perfilDict = <app:dict value="${perfilDict}"/>;
+
+	var perfilStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: perfilDict
+	});
 	
 	var perfil=new Ext.form.ComboBox({
 		store: perfilStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
 		,width:125
 		,value:'${despachoExtras.clasifDespachoPerfil}'
 	});
 	
-	var codEstAseStore = 
-		<json:array name="ddCodEstAse" items="${mapasDespExtras[2]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	var codEstAseDict = <app:dict value="${codEstAseDict}"/>;
+
+	var codEstAseStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: codEstAseDict
+	});
 	
 	var codEstAse=new Ext.form.ComboBox({
 		store: codEstAseStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.codEstAse" text="**codEstAse" />'
 		,width:150
 		,value:'${despachoExtras.codEstAse}'
 	});
 	
-	
-	var impuestoStore = 
-		<json:array name="ddimpuesto" items="${mapasDespExtras[3]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	var impuestoDict = <app:dict value="${impuestoDict}"/>;
+
+	var impuestoStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: impuestoDict
+	});
 		
 	<%-- Este campo no se muestra, pero lo dejo, si lo piden en un futuro, solo hay que anyadir impuesto a los items de las pestanyas  --%>
 	var impuesto=new Ext.form.ComboBox({
 		store: impuestoStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.impuesto" text="**impuesto" />'
 		,width:150
 		,value:'${despachoExtras.ivaDescripcion}'
 	});
 	
-	var relacionBankiaStore = 
-		<json:array name="ddrelacionBankia" items="${mapasDespExtras[4]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	var relacionEntidadDict = <app:dict value="${relacionEntidadDict}"/>;
+
+	var relacionEntidadStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: relacionEntidadDict
+	});
 	
-	var relacionBankia=new Ext.form.ComboBox({
-		store: relacionBankiaStore
+	var relacionEntidad=new Ext.form.ComboBox({
+		store: relacionEntidadStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
-		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
+		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.relacionEntidad" text="**relacionEntidad" />'
 		,width:150
-		,value:'${despachoExtras.relacionBankia}'
+		,value:'${despachoExtras.relacionEntidad}'
 	});
 
 
@@ -335,7 +360,7 @@
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
 			,items:[ {items: [<c:if test="${usuarioEntidad == 'BANKIA'}">clasifDespachoFieldSet,</c:if> comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
-					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
+					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad	]}
 				   ]
 		});
 	
@@ -416,7 +441,7 @@
 		contratoVigor.setValue('');
 		servicioIntegral.setValue('');
 		fechaServicioIntegral.setValue('');
-		relacionBankia.setValue('');
+		relacionEntidad.setValue('');
 		oficinaContacto.setValue('');
 		entidadContacto.setValue('');
 		entidadLiquidacion.setValue('');
@@ -465,7 +490,7 @@
 		parametros.contratoVigor=contratoVigor.getValue();
 		parametros.servicioIntegral=servicioIntegral.getValue();
 		parametros.fechaServicioIntegral=fechaServicioIntegral.getValue();
-		parametros.relacionBankia=relacionBankia.getValue();
+		parametros.relacionEntidad=relacionEntidad.getValue();
 		parametros.oficinaContacto=oficinaContacto.getValue();
 		parametros.entidadContacto=entidadContacto.getValue();
 		parametros.entidadLiquidacion=entidadLiquidacion.getValue();

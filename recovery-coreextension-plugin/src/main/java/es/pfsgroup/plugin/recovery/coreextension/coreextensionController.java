@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -65,6 +66,7 @@ public class coreextensionController {
 	private static final String JSON_LISTADO_DESPACHOS = "plugin/coreextension/acuerdo/listadoDespachosJSON";
 	private static final String JSON_LISTADO_TIPOS_ACUERDO = "plugin/coreextension/acuerdo/listadoTiposAcuerdoJSON";
 	private static final String JSON_CODIGO_NIVEL = "plugin/coreextension/listadoCodigoNivelJSON";
+	private static final String JSON_LISTA_DICCIONARIO_GENERICO_LIST = "plugin/coreextension/diccionarioGenericoListJSON";
 
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -92,6 +94,9 @@ public class coreextensionController {
     
     @Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
+    
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -572,5 +577,29 @@ public class coreextensionController {
 		model.put("codigo", codigo);
 		return JSON_CODIGO_NIVEL;
 	}
+	
+
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping
+    public String getDictionary(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionarioApi.dameValoresDiccionario(Class.forName(dictionary));
+		
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @RequestMapping
+    public String getDictionaryDenormalized(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(Class.forName(dictionary));
+		
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
+    }
 	
 }

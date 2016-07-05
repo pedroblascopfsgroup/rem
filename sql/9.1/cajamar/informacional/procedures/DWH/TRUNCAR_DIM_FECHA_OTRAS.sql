@@ -2,9 +2,9 @@ create or replace PROCEDURE TRUNCAR_DIM_FECHA_OTRAS (error OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
--- Responsable ultima modificacion: Pedro S., PFS Group
--- Fecha ultima modificacion: 15/01/2016
--- Motivos del cambio: CMREC-1610 Añadimos detalle soluciones previstas a acuerdos
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 16/05/2016
+-- Motivos del cambio: CMREC-3318 FECHA_SENYAL_LANZAMIENTO
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que trunca las tablas de la dimension Fecha_otras
@@ -1422,6 +1422,47 @@ BEGIN
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SOLU_PREVIS_PRC_MES_ANIO'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SOLU_PREVIS_PRC_TRIMESTRE'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;   
+
+
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_INTER_DEM_HIP_ANIO'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_INTER_DEM_HIP_DIA_SEMANA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_INTER_DEM_HIP_DIA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_INTER_DEM_HIP_MES'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_INTER_DEM_HIP_MES_ANIO'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_INTER_DEM_HIP_TRIMESTRE'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;   
+
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_LANZAM_BIEN_ANIO'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_LANZAM_BIEN_DIA_SEMANA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_LANZAM_BIEN_DIA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_LANZAM_BIEN_MES'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_LANZAM_BIEN_MES_ANIO'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_LANZAM_BIEN_TRIMESTRE'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;   
+
+
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SENYAL_LANZA_ANIO'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SENYAL_LANZA_DIA_SEMANA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SENYAL_LANZA_DIA'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SENYAL_LANZA_MES'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SENYAL_LANZA_MES_ANIO'', '''', :O_ERROR_STATUS); END;';
+ execute immediate V_SQL USING OUT error;
+  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''D_F_SENYAL_LANZA_TRIMESTRE'', '''', :O_ERROR_STATUS); END;';
  execute immediate V_SQL USING OUT error;   
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

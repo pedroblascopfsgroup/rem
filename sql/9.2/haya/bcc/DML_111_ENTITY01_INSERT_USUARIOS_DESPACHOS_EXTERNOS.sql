@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MANUEL MEJIAS
---## FECHA_CREACION=20160624
+--## FECHA_CREACION=20160629
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=PRODUCTO-1635

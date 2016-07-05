@@ -1,9 +1,10 @@
 package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 
+import java.io.File;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 
 public class RecoveryToGestorDocAssembler {
@@ -32,14 +33,14 @@ public class RecoveryToGestorDocAssembler {
 		return doc;
 	}	
 
-	public static CrearDocumentoDto getCrearDocumentoDto(WebFileItem webFileItem, UsuarioPasswordDto usuario, String matricula) {
+	public static CrearDocumentoDto getCrearDocumentoDto(File file, String fileName, UsuarioPasswordDto usuario, String matricula) {
 		CrearDocumentoDto doc = new CrearDocumentoDto();
 		String[] arrayMatricula = matricula.split("-");
 		doc.setUsuario(usuario.getUsuario());
 		doc.setPassword(usuario.getPassword());
 		doc.setUsuarioOperacional(usuario.getUsuarioOperacional());
-		doc.setDocumento(webFileItem.getFileItem().getFile());
-		doc.setDescripcionDocumento(webFileItem.getFileItem().getFileName());
+		doc.setDocumento(file);
+		doc.setDescripcionDocumento(fileName);
 		doc.setGeneralDocumento(rellenarGeneralDocumento(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3]));
 		doc.setArchivoFisico("{}");
 		

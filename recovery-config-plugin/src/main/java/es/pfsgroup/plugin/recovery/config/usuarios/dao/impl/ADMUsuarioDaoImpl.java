@@ -34,10 +34,11 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 			dtoBusquedaUsuario.setSort("u.".concat(dtoBusquedaUsuario.getSort()));
 		}
 		
-		HQLBuilder hb = new HQLBuilder("select distinct u from Usuario u left join u.zonaPerfil z");
+		HQLBuilder hb = new HQLBuilder("select distinct u from Usuario u left join u.zonaPerfil z left join u.usuEntidad ue");
 		hb.appendWhere("u.auditoria.borrado = 0");
 		
-		HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", dtoBusquedaUsuario.getIdEntidad());
+		//HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", dtoBusquedaUsuario.getIdEntidad());
+		hb.appendWhere("(u.entidad.id=" +  dtoBusquedaUsuario.getIdEntidad() + " or ue.entidad.id=" + dtoBusquedaUsuario.getIdEntidad() + ")");
 		
 
 		HQLBuilder.addFiltroLikeSiNotNull(hb, "u.username", dtoBusquedaUsuario.getUsername(),true);

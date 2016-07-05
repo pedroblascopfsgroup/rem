@@ -35,7 +35,8 @@ public class NMBDtoBuscarSubastas extends WebDto {
 	private String comboFiltroEstadoDeGestion;	
 	private String comboFiltroTareasSubastaBankia;
 	private String comboFiltroTareasSubastaSareb;	
-	private String idComboEntidad;	
+	private String idComboEntidad;
+	private String tramitacion;
 	
 	//Pesta�a Contrato
 	private String nroContrato;	
@@ -204,6 +205,14 @@ public class NMBDtoBuscarSubastas extends WebDto {
 
 	public void setIdComboEntidad(String idComboEntidad) {
 		this.idComboEntidad = idComboEntidad;
+	}
+
+	public String getTramitacion() {
+		return tramitacion;
+	}
+
+	public void setTramitacion(String tramitacion) {
+		this.tramitacion = tramitacion;
 	}
 
 	public Long getId() {

@@ -722,8 +722,8 @@ public class AdjuntoHayaManager {
 				String contenedores = "";
 				int i = 1;
 				for(ContenedorGestorDocumental cgd : contenedor) {
-					contenedores = cgd.getCodigoClase();
-					if(i < contenedor.size()) {
+					contenedores = contenedores + cgd.getCodigoClase();
+					if(i <= contenedor.size()) {
 						contenedores = contenedores + ", ";
 					}
 					i++;
@@ -765,7 +765,7 @@ public class AdjuntoHayaManager {
 			String contenedores = "";
 			int i = 1;
 			for(ContenedorGestorDocumental cgd : contenedor) {
-				contenedores = cgd.getCodigoClase();
+				contenedores = contenedores + cgd.getCodigoClase();
 				if(i < contenedor.size()) {
 					contenedores = contenedores + ", ";
 				}

@@ -2,10 +2,10 @@
 --##########################################
 --## AUTOR=CLV
 --## FECHA_CREACION=20160706
---## ARTEFACTO=[online|batch]
---## VERSION_ARTEFACTO=X.X.X_rcXX
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=RECOVERY-1554
---## PRODUCTO=[SI|NO]
+--## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  

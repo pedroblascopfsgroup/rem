@@ -22,14 +22,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -735,6 +733,10 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 			} else if (dto.getIdComboEmbargo().equalsIgnoreCase("0")) {
 				hqlWhere.append(" and s.embargo=0 ");
 			}
+		}
+		
+		if (!StringUtils.emtpyString(dto.getTramitacion())){
+				hqlWhere.append(" and s.tramitacion = ".concat(dto.getTramitacion()));	
 		}
 
 		// Filtros de pesta?a de Cliente

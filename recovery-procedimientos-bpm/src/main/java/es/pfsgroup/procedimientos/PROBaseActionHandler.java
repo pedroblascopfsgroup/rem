@@ -138,12 +138,12 @@ public class PROBaseActionHandler implements ActionHandler {
 
         } catch (FrameworkException e) {
             logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea [" + idTipoTarea + "].", e);
-            throw new UserException("No es posible cancelar la tarea dado que faltan fechas requeridas en las tareas anteriores. Puede derivar en una nueva actuación si lo cree conveniente.");
+            throw new UserException("bpm.error.script.plazoTarea");
 
         }
         catch (Exception e) {
             logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea [" + idTipoTarea + "].", e);
-            throw new UserException("bpm.error.script");
+            throw new UserException("bpm.error.script.plazoTareaJava");
 
         }
         return plazo;

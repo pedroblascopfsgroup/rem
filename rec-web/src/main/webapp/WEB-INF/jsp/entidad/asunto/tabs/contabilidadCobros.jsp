@@ -12,17 +12,31 @@
 (function(page,entidad){
 
 	<%-- Funciones --%>
-	<%-- RECOVERY-2280   Funcion para poner los '.' para los miles EJ: 11122233 -> 11.122.233 --%>
+	<%-- RECOVERY-2280   Funcion para poner los '.' para los miles EJ: 11122233 -> 11.122.233 
+		Ademas, se ha añadido para poner dos decimales, y separados por ','--%>
 	 var thousandSeparator = function add_thousands_separator(input) {
-		var s = input.toString(), l = s.length, o = '';
-		while (l > 3) {
-			var c = s.substr(l - 3, 3);
-			o = '.' + c + o;
-			s = s.replace(c, '');
-			l -= 3;
+	 	if(input.toString() > 0) {
+			var s = input.toString(), l = s.length, o = '';
+			var posicionDec = s.indexOf(".");
+			var decimales = ',00';
+			if( posicionDec > -1 ) {
+			debugger;
+				decimales = ',' + s.substring(posicionDec+1);
+				if(decimales.length <3) {
+					decimales = decimales + '0';
+				}
+				s = s.substring(0,posicionDec);
+				l = s.length;
+			}
+			while (l > 3) {
+				var c = s.substr(l - 3, 3);
+				o = '.' + c + o;
+				s = s.replace(c, '');
+				l -= 3;
+			}
+			o = s + o + decimales;
+			return o;
 		}
-		o = s + o;
-		return o;
 	}
 
 

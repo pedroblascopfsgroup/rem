@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.InclusionLiquidacionProcedimientoDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.dto.LiquidacionDTO;
 import es.pfsgroup.plugin.precontencioso.liquidacion.model.LiquidacionPCO;
+import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 
 public interface LiquidacionApi {
 

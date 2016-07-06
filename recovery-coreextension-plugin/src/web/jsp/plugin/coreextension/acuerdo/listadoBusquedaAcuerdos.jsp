@@ -348,7 +348,7 @@
 	 	data:jerarquia, 
 	 	value:jerarquia.diccionario[0].codigo, 
 	 	name : 'jerarquia', 
-	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquía" />'});
+	 	fieldLabel : '<s:message code="acuerdo.busqueda.filtros.jerarquia" text="**Jerarquï¿½a" />'});
 	 	
 	 var listadoCodigoZonas = [];
 	 	
@@ -428,7 +428,7 @@
 	});
 	
 	 var zonasCM = new Ext.grid.ColumnModel([
-		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Código oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
+		{header : '<s:message code="expedientes.listado.centros.cod_ofi" text="**Cï¿½digo oficina" />', dataIndex : 'codigoOficina',sortable:false, hidden:false, width:100}
 		,{header : '<s:message code="expedientes.listado.centros.nombre" text="**Nombre" />', dataIndex : 'descripcionZona',sortable:false, hidden:false, width:300}
 		]);
 		
@@ -584,13 +584,30 @@
         return p;
     };
     
+	var validarForm = function(){
+	debugger;
+		if(comboEntidadAcuerdo.getValue() == 'AMBAS'){
+			if ((comboJerarquia.getValue() != '' ) || (listadoCodigoZonas.length > 0 )) {
+				return false;
+			} else {
+				return true;
+			}
+		}else{
+			return true;
+		}
+	};
+	
 	
 	var buscarFunc = function()
 	{
-		panelFiltros.collapse(true);
-		var params= getParametros();
-		acuerdosStore.webflow(params);
-		pagingBar.show();	
+		if(validarForm()){
+			panelFiltros.collapse(true);
+			var params= getParametros();
+			acuerdosStore.webflow(params);
+			pagingBar.show();
+		}else{
+			Ext.Msg.alert('<s:message code="errores.criteriosIncompatibles" text="**Los criterios de jerarquÃ­a no se pueden usar con el origen Todos" />');
+		}
 	};
 	
 	var btnReset = app.crearBotonResetCampos([

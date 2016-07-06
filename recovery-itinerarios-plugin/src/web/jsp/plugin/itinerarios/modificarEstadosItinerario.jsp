@@ -149,9 +149,29 @@
 	
 	var plazo_edit = new Ext.form.TextField();
 	
+	<%-- Sobreescribimos la función para solucionar el error de 31 páginas de estilos limitadas por IE --%>
+	Ext.util.CSS.createStyleSheet = function (cssText, id) {
+	    var CSS = this, doc = document;
+		var ss, head = doc.getElementsByTagName("head")[0], styleEl = doc.createElement("style");
 	
-	Ext.util.CSS.createStyleSheet(".icon_estados { background-image: url('../img/plugin/itinerarios/arrow-transition.png');}");
+	    styleEl.setAttribute("type", "text/css");
+	    if (id) {
+	        styleEl.setAttribute("id", id);
+	    }
 	
+        try {
+            styleEl.appendChild(doc.createTextNode(cssText));
+        } catch (e) {
+            styleEl.cssText = cssText;
+        }
+        head.appendChild(styleEl);
+        ss = styleEl.styleSheet ? styleEl.styleSheet : (styleEl.sheet || doc.styleSheets[doc.styleSheets.length - 1]);
+        
+	    CSS.cacheStyleSheet(ss);
+	    return ss;
+	}
+	
+	Ext.util.CSS.createStyleSheet(".icon_estados { background-image: url('../img/plugin/itinerarios/arrow-transition.png');}"); 
 	
 	var grid = new Ext.grid.EditorGridPanel({
 		title: '<s:message code="plugin.itinerarios.editarEstados.titulo" text="**Estados del itinerario" arguments="${itinerario.nombre}"/>',

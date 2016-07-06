@@ -147,7 +147,7 @@
 				<entry key="2" value="C"/>
 			</map>
 		</property>
-		<property name="mapaRelacionBankia">
+		<property name="mapaRelacionEntidad">
 			<map>
 				<entry key="0" value="En desvinculación"/>
 				<entry key="1" value="Sin turno"/>

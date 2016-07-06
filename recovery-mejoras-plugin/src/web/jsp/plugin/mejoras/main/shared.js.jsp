@@ -969,11 +969,17 @@ abre una nueva ventana del navegador con el flow y par�metros que se le pasan
 app.openBrowserWindow = function(flow, params){
 	var url=flow+'.htm';
 	var urlData="";
-
+	
 	params = params || {};
 	for(var x in params){
+		// Que no este indefinido, que tenga propiedad y que no sea una funcion.
 		if (params[x] != undefined && params.hasOwnProperty(x) && (typeof params[x] != "function")) {
-			urlData +='&'+x+'='+params[x];
+			// Si es tipo string que no sea una funcion en modo texto. Siempre contienen la palabra function.
+			if(typeof params[x] == "string" && params[x].indexOf("function") == -1){
+				urlData +='&'+x+'='+params[x];
+			} else if(typeof params[x] != "string"){ // Cualquier otro tipo pasa.
+				urlData +='&'+x+'='+params[x];
+			}
 		}
 	}
 	

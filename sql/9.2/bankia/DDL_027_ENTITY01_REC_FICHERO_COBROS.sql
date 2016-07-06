@@ -90,11 +90,11 @@ BEGIN
 		 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Clave primaria PK_REC_FICHERO_COBROS... creada');
 	
-		DBMS_OUTPUT.PUT_LINE('[INFO] EJECUCION TERMINADA CON ÉXITO');
+		DBMS_OUTPUT.PUT_LINE('[INFO] EJECUCION TERMINADA CON Ã‰XITO');
 
 EXCEPTION
      WHEN OTHERS THEN
-       DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecución: '|| TO_CHAR(SQLCODE) || ' ' || SQLERRM );
+       DBMS_OUTPUT.PUT_LINE('[ERROR] Se ha producido un error en la ejecuciÃ³n: '|| TO_CHAR(SQLCODE) || ' ' || SQLERRM );
     RAISE;
 END;
 /

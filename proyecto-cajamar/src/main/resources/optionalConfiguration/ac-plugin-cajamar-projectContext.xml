@@ -100,6 +100,10 @@
 						<value>DGESHRE</value>
 						<value>DGESHREIN</value>
 						<value>DGESCHRE</value>
+						<value>DGEANREC</value>
+						<value>DSUANREC</value>
+						<value>DSUCHRE</value>
+						<value>DSUINC</value>
 					</set>
 				</entry>
 				<entry key="ABRIR_TAREA_PROCEDIMIENTO">

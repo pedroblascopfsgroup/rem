@@ -42,7 +42,7 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
     private String contratoVigor;    
     private String servicioIntegral;   
     private String fechaServicioIntegral;   
-    private String relacionBankia;  
+    private String relacionEntidad;  
 	private String oficinaContacto;
 	private String entidadContacto;	
 	private String entidadLiquidacion;
@@ -215,8 +215,10 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	}
 
 	public void setFechaAltaDesde(String fechaAltaDesde) {
-		fechaAltaDesde = fechaAltaDesde.replace("-", "/").substring(0, 10);
-		this.fechaAltaDesde = fechaAltaDesde;
+		if (fechaAltaDesde.length()>=10) {		
+			fechaAltaDesde = fechaAltaDesde.replace("-", "/").substring(0, 10);
+			this.fechaAltaDesde = fechaAltaDesde;
+		}
 	}
 
 	public String getFechaAltaHasta() {
@@ -224,8 +226,10 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	}
 
 	public void setFechaAltaHasta(String fechaAltaHasta) {
-		fechaAltaHasta = fechaAltaHasta.replace("-", "/").substring(0, 10);
-		this.fechaAltaHasta = fechaAltaHasta;
+		if (fechaAltaHasta.length()>=10) {
+			fechaAltaHasta = fechaAltaHasta.replace("-", "/").substring(0, 10);
+			this.fechaAltaHasta = fechaAltaHasta;
+		}
 	}
 
 	public String[] getListaProvincias() {
@@ -295,12 +299,12 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 		this.fechaServicioIntegral = fechaServicioIntegral;
 	}
 
-	public String getRelacionBankia() {
-		return relacionBankia;
+	public String getRelacionEntidad() {
+		return relacionEntidad;
 	}
 
-	public void setRelacionBankia(String relacionBankia) {
-		this.relacionBankia = relacionBankia;
+	public void setRelacionEntidad(String relacionEntidad) {
+		this.relacionEntidad = relacionEntidad;
 	}
 
 	public String getOficinaContacto() {
@@ -449,8 +453,10 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	}
 
 	public void setFechaAltaSIDesde(String fechaAltaSIDesde) {
-		fechaAltaSIDesde = fechaAltaSIDesde.replace("-", "/").substring(0, 10);
-		this.fechaAltaSIDesde = fechaAltaSIDesde;
+		if (fechaAltaSIDesde.length()>=10) {
+			fechaAltaSIDesde = fechaAltaSIDesde.replace("-", "/").substring(0, 10);
+			this.fechaAltaSIDesde = fechaAltaSIDesde;
+		}
 	}
 
 	public String getFechaAltaSIHasta() {
@@ -458,8 +464,10 @@ public class EXTDtoBusquedaAsunto extends DtoBusquedaAsunto{
 	}
 
 	public void setFechaAltaSIHasta(String fechaAltaSIHasta) {
-		fechaAltaSIHasta = fechaAltaSIHasta.replace("-", "/").substring(0, 10);
-		this.fechaAltaSIHasta = fechaAltaSIHasta;
+		if (fechaAltaSIHasta.length()>=10) {
+			fechaAltaSIHasta = fechaAltaSIHasta.replace("-", "/").substring(0, 10);
+			this.fechaAltaSIHasta = fechaAltaSIHasta;
+		}
 	}
 
 }

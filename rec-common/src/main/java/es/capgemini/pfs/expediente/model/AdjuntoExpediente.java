@@ -26,6 +26,7 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.tipoFicheroAdjuntoEntidad.DDTipoAdjuntoEntidad;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que representa a un fichero.
@@ -119,7 +120,10 @@ public class AdjuntoExpediente implements Serializable, Auditable {
      * @return the adjunto
      */
     public Adjunto getAdjunto() {
-        FileItem fileItem = adjunto.getFileItem();
+    	if(Checks.esNulo(adjunto)) {
+    		return null;
+    	}
+    	FileItem fileItem = adjunto.getFileItem();
         fileItem.setContentType(contentType);
         fileItem.setFileName(nombre);
         fileItem.setLength(length);

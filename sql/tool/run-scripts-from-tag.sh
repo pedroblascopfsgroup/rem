@@ -75,7 +75,9 @@ function ending_script {
     echo '}'
     echo ''
     echo 'run_scripts "$@" | tee output.log'
-    echo 'zip --quiet DB_logs_'$1'_$(date +"%y%m%d-%H%M%S").zip *.log'
+    #if [[ $2 != 'CAJAMAR' ]]; then
+    #    echo 'zip --quiet DB_logs_'$1'_$(date +"%y%m%d-%H%M%S").zip *.log'
+    #fi
 }
 
 clear
@@ -406,7 +408,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
         cp $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
 
-        ending_script $1 | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
+        ending_script $1 $2 | tee -a $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh > /dev/null
 
         if [[ $UNIFIED_PACKAGE == 'false' ]]; then
             cd $BASEDIR/tmp/package
@@ -415,7 +417,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
         fi
     fi
     if [ -f $BASEDIR/tmp/DML-scripts.sh ] ; then
-        ending_script $1 | tee -a $BASEDIR/tmp/DML-scripts.sh $BASEDIR/tmp/DML-scripts-one-user.sh > /dev/null
+        ending_script $1 $2 | tee -a $BASEDIR/tmp/DML-scripts.sh $BASEDIR/tmp/DML-scripts-one-user.sh > /dev/null
         cat $BASEDIR/tmp/DML-scripts.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh > /dev/null
         cat $BASEDIR/tmp/DML-scripts-one-user.sh | tee -a $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
         if [[ $GENERATE_BAT == 'true' ]]; then
@@ -433,7 +435,7 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
             cd -
         fi
     else
-        ending_script $1 | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+        ending_script $1 $2 | tee -a $BASEDIR/tmp/package/DB/DB-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh > /dev/null
     fi     
     if [[ $UNIFIED_PACKAGE != 'false' ]]; then
         cd $BASEDIR/tmp/package

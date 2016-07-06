@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.recovery.coreextension.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -9,6 +11,7 @@ import org.springframework.util.StringUtils;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -216,4 +219,72 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		int totalCount = Integer.parseInt(query.uniqueResult().toString());
 		return totalCount;
 	}
+	
+	private Comparator gestoresComparatorEspecial = new Comparator() {
+
+		private final String CONECTOR_Y = " Y ";
+		
+		@Override
+		public int compare(Object gd1, Object gd2) {
+			Usuario u1=((GestorDespacho)gd1).getUsuario();
+			Usuario u2=((GestorDespacho)gd2).getUsuario();
+			String nombre1 = u1.getApellidoNombre().toUpperCase();
+			String nombre2 = u2.getApellidoNombre().toUpperCase();
+			boolean esNulo1 = ( u1.getApellido2() == null);
+			boolean esNulo2 = ( u2.getApellido2() == null);
+			boolean empiezaConY1 = (esNulo1 ? false : u1.getApellido2().startsWith(CONECTOR_Y));
+			boolean empiezaConY2 = (esNulo2 ? false : u2.getApellido2().startsWith(CONECTOR_Y));
+			if ( (esNulo1 && esNulo2) ||
+					(empiezaConY1 && empiezaConY2) ||
+					(!empiezaConY1 && !empiezaConY2)) {
+				return nombre1.compareTo(nombre2);
+			} else if (esNulo1 && empiezaConY2) {
+				return -1;
+			} else if (empiezaConY1 && esNulo2) {
+				return 1;
+			} else if (empiezaConY1 && !empiezaConY2) {
+				return 1;
+			} else if (!empiezaConY1 && empiezaConY2) {
+				return -1;
+			} 
+			return 0;
+		}
+		
+	};
+	
+	@Override
+	public Page getListUsuariosPaginatedDataOrdenacionEspecial(UsuarioDto usuarioDto) {
+
+		PageSql page = new PageSql();
+		int totalCount = this.getCountGestoresByDespacho(usuarioDto);
+		
+		StringBuilder sqlUsuarios = new StringBuilder();
+		sqlUsuarios.append("select gd from GestorDespacho gd ");
+		sqlUsuarios.append("where gd.despachoExterno.id = :idTipoDespacho ");
+		sqlUsuarios.append(" and gd.auditoria.borrado = false ");
+		if (StringUtils.hasText(usuarioDto.getQuery())){
+			String[] palabras = usuarioDto.getQuery().split(" ");
+			for (String palabra : palabras) {
+				sqlUsuarios.append(" and (upper(gd.usuario.apellido1) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.apellido2) like '%" + palabra.toUpperCase() + "%' ");
+				sqlUsuarios.append(" or upper(gd.usuario.nombre) like '%" + palabra.toUpperCase() + "%' ) ");
+			}
+		}
+		sqlUsuarios.append("order by ");
+		sqlUsuarios.append("gd.usuario.apellido2 desc, gd.usuario.apellido1 desc");
+		
+		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(sqlUsuarios.toString());
+		query.setParameter("idTipoDespacho", usuarioDto.getIdTipoDespacho());
+		query.setFirstResult(usuarioDto.getStart());
+		query.setMaxResults(usuarioDto.getLimit());
+		List<Usuario> lista = query.list();
+		
+		Collections.sort(lista, gestoresComparatorEspecial);
+		
+		page.setTotalCount(totalCount);
+		page.setResults(lista);
+		return page;
+
+	}
+	
 }

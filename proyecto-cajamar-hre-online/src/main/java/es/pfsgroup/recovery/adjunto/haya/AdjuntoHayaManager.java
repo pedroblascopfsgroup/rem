@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.adjunto.haya;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
@@ -736,6 +739,9 @@ public class AdjuntoHayaManager {
 					contenedorEncontrado = true;
 					break;
 				}
+				if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+					return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
+				}
 			}
 		}
 		
@@ -765,6 +771,9 @@ public class AdjuntoHayaManager {
 					contenedorEncontrado = true;
 					break;
 				}
+				if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+					return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
+				}
 			}
 		}
 		
@@ -790,6 +799,9 @@ public class AdjuntoHayaManager {
 			if(respuesta == null) {
 				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
 			}
+			if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+				return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
+			}
 		}
 
 		return null;
@@ -808,6 +820,8 @@ public class AdjuntoHayaManager {
 			RespuestaCrearDocumento respuesta = uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));
 			if(respuesta == null) {
 				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
+			}else if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+				return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
 			}
 		}
 		return null;
@@ -817,16 +831,31 @@ public class AdjuntoHayaManager {
 	private RespuestaCrearDocumento uploadGestorDoc(Long idExpediente,String tipoExp, String claseExp, WebFileItem uploadForm, String tipoEntidad, String tipoFichero) {
 		logger.info("[AdjuntoHayaManager.uploadGestorDoc]: " + idExpediente + ", claseExp: " + claseExp + ", tipoEntidad: " + tipoEntidad + " , tipoFichero: " + tipoFichero);
 		RespuestaCrearDocumento respuesta = null;
-		CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idExpediente.toString(), tipoExp, claseExp);	
-		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
-		CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(uploadForm, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
 		try {
+			CabeceraPeticionRestClientDto cabecera = RecoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idExpediente.toString(), tipoExp, claseExp);	
+			Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			UsuarioPasswordDto usuPass = RecoveryToGestorDocAssembler.getUsuarioPasswordDto(getUsuarioGestorDocumental(), getPasswordGestorDocumental(), usuario.getUsername());
+			String nameFile = uploadForm.getFileItem().getFile().toString();
+			String newFileName = uploadForm.getFileItem().getFileName();
+			String newFile = nameFile.substring(0, nameFile.lastIndexOf(File.separator)) + File.separator + newFileName;
+			File file = new File(newFile);
+			if (file.exists()) {
+				FileUtils.copyFile(uploadForm.getFileItem().getFile(), file);
+			} else {
+				uploadForm.getFileItem().getFile().renameTo(file);
+			}
+			uploadForm.getFileItem().setFile(file);
+			CrearDocumentoDto crearDoc = RecoveryToGestorDocAssembler.getCrearDocumentoDto(file, newFileName, usuPass, obtenerMatricula(tipoExp, claseExp, tipoFichero));
+
 			respuesta = gestorDocumentalServicioDocumentosApi.crearDocumento(cabecera, crearDoc);
 			if(respuesta != null) {
 				uploadDoc(tipoEntidad, uploadForm, new Long(respuesta.getIdDocumento()));				
 			}
 		} catch (GestorDocumentalException e) {
+			logger.error("upload error: " + e);
+			respuesta = new RespuestaCrearDocumento();
+			respuesta.setMensajeError(GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR);
+		} catch (Exception e) {
 			logger.error("upload error: " + e);
 		}
 		return respuesta;
@@ -1082,6 +1111,8 @@ public class AdjuntoHayaManager {
 					public Long getIdAdjuntoBlob() {
 						if(aa.getAdjunto() != null) {
 							return aa.getAdjunto().getId();
+						}else if(aa.getServicerId() != null){
+							return 1L;
 						}
 						return null;
 					}

@@ -20,6 +20,7 @@
 
 	<pfs:hidden name="idDiccionarioEditable" value="${valorDiccionario.idDiccionarioEditable}"/>
 	<pfs:hidden name="idLineaEnDiccionario" value="${valorDiccionario.idLineaEnDiccionario}"/>
+	<pfs:hidden name="codigoDiccionarioEditable" value="${valorDiccionario.codigoDiccionarioEditable}"/>
 	
 	<pfs:defineParameters name="parametros" paramId="${valorDiccionario.idDiccionarioEditable}" 
 		idLineaEnDiccionario="idLineaEnDiccionario"
@@ -27,6 +28,7 @@
 		descripcionLarga="descripcionLarga"
 		codigo="codigo"
 		descripcion="descripcion"
+		codigoDiccionarioEditable="codigoDiccionarioEditable"
 		/>
 
 	<pfs:editForm saveOrUpdateFlow="plugin/diccionarios/diccionariosDatos/DICguardarModificacionValor"

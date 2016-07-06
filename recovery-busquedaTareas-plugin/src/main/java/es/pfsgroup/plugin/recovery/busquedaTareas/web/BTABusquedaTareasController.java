@@ -35,12 +35,13 @@ public class BTABusquedaTareasController {
     
     @SuppressWarnings("unchecked")
     @RequestMapping
-    public String busquedaTareas(WebRequest request, ModelMap model) {
+    //public String busquedaTareas(WebRequest request, ModelMap model) {
+    public String busquedaTareas(BTADtoBusquedaTareas dto, ModelMap model) {    	
     	
-    	BTADtoBusquedaTareas dto;
+    	//BTADtoBusquedaTareas dto;
 	
-		try {
-			dto = dtoFactory.creaYRellenaDTO("busquedaTareas", request, BTADtoBusquedaTareas.class);
+		//try {
+			//dto = dtoFactory.creaYRellenaDTO("busquedaTareas", request, BTADtoBusquedaTareas.class);
 			
 			// Llamada al manager
 		   	Page page = (Page) btaBusquedaTareaManager.buscarTareas(dto);
@@ -48,10 +49,10 @@ public class BTABusquedaTareasController {
 		   	
 		   	model.put("tareas", page);
 		   	
-		} catch (ClassNotFoundException e) {
+		/*} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 	    	
 		
     	

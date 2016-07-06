@@ -585,7 +585,6 @@
     };
     
 	var validarForm = function(){
-	debugger;
 		if(comboEntidadAcuerdo.getValue() == 'AMBAS'){
 			if ((comboJerarquia.getValue() != '' ) || (listadoCodigoZonas.length > 0 )) {
 				return false;

@@ -322,7 +322,7 @@
 			,layoutConfig:{columns:2}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:500'}
 			,items:[ {items: [despacho, <c:if test="${despacho.codigoDespacho != null}">codigoDespacho,</c:if> tipoDespacho,tipoGestor,tipoDocumento, documentoCif, fechaAlta ]}
-					,{items: [tipoVia,domicilio,domicilioPlaza,codigoPostal,personaContacto,telefono1,telefono2, fax, correoElectronico	]}
+					,{items: [tipoVia,domicilio,domicilioPlaza,codigoPostal,personaContacto,telefono1,telefono2, fax, correoElectronico,codEstAse	]}
 				   ]
 		});
 
@@ -333,7 +333,7 @@
 			,layout:'table'
 			,layoutConfig:{columns:3}
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
-			,items:[ {items: [<c:if test="${usuarioEntidad == 'BANKIA'}">clasifDespachoFieldSet,</c:if> comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
+			,items:[ {items: [<c:if test="${usuarioEntidad == 'BANKIA'}">clasifDespachoFieldSet,</c:if> comboProvincias, contratoVigor, impuesto, servicionIntegralFieldSet]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
 					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
 				   ]

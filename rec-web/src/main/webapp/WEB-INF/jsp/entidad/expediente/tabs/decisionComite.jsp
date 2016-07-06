@@ -843,8 +843,10 @@
 		entidad.cacheOrLoad(entidad.getData(), asuntosStore, {id : entidad.getData("id"), idSesion : entidad.getData("decision.ultimaSesion") });
 
     var congelado = entidad.getData("decision.estaCongelado");
+    var esGestorSupervisorDeFase = entidad.get("data").esGestorSupervisorActual;
+    var estaDecidido = (entidad.getData("toolbar.estadoExpediente") == '<fwk:const value="es.capgemini.pfs.expediente.model.DDEstadoExpediente.ESTADO_EXPEDIENTE_DECIDIDO" />') ? true : false;
 
-    var esGestorSupervisorDeFase = entidad.getData("esGestorSupervisorActual");
+
     var isBankia = false;
     <sec:authentication var="user" property="principal" />
 	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
@@ -854,17 +856,17 @@
     if(isBankia && data.toolbar.tipoExpediente == "RECU"){
     
         var visible = [
-	      [btnActuacion, esGestorSupervisorDeFase]
-			,[btnNuevo, esGestorSupervisorDeFase]
-	        ,[btnEditar, esGestorSupervisorDeFase]
-	        ,[btnBorrar, esGestorSupervisorDeFase]
-	        ,[btnAltaProcedimiento, esGestorSupervisorDeFase]
-	        ,[btnEditProcedimiento, esGestorSupervisorDeFase]
-	        ,[btnBorraProcedimiento, esGestorSupervisorDeFase]
+	      [btnActuacion, !estaDecidido && esGestorSupervisorDeFase]
+			,[btnNuevo, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnEditar, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnBorrar, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnAltaProcedimiento, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnEditProcedimiento, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnBorraProcedimiento, !estaDecidido && esGestorSupervisorDeFase]
 	        <sec:authorize ifAllGranted="CERRAR_DECISION">
 	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
 	        </sec:authorize>
-	        ,[btnEditarObs, esGestorSupervisorDeFase]
+	        ,[btnEditarObs, !estaDecidido && esGestorSupervisorDeFase]
 	    ]
     	
     }else{

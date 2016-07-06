@@ -40,13 +40,15 @@ import es.capgemini.pfs.comite.dao.ComiteDao;
 import es.capgemini.pfs.comite.model.Comite;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -54,7 +56,11 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDGestionAsunto;
+import es.pfsgroup.recovery.ext.impl.asunto.model.DDPropiedadAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTDDTipoInfoContrato;
+import es.pfsgroup.recovery.ext.impl.contrato.model.EXTInfoAdicionalContrato;
 
 @Repository
 public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
@@ -63,6 +69,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	@Resource
 	private PaginationManager paginationManager;
 
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
 	@Autowired
 	private ComiteDao comiteDao;
 
@@ -545,10 +554,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		extAsunto.setGestor(gestorDespacho);
 		extAsunto.setProcurador(procurador);
 		extAsunto.setTipoAsunto(tipoAsunto);
-		// extAsunto.setGestoresAsunto(gestoresAsunto);
-
-		// Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo",
-		// DDEstadoAsunto.ESTADO_ASUNTO_EN_CONFORMACION);
+		
 		Filter f1 = null;
 		if (Checks.esNulo(codigoEstadoAsunto)) {
 			f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoAsunto.ESTADO_ASUNTO_ACEPTADO);
@@ -561,7 +567,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		extAsunto.setExpediente(expediente);
 		extAsunto.setFechaEstado(new Date(System.currentTimeMillis()));
 
-		// extAsunto.setEstadoItinerario(ddEstadoItinerarioDao.findByCodigo(DDEstadoItinerario.ESTADO_ASUNTO).get(0));
 		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "codigo",
 				DDEstadoItinerario.ESTADO_ASUNTO);
 		extAsunto.setEstadoItinerario(genericDao.get(DDEstadoItinerario.class,
@@ -570,19 +575,78 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		FichaAceptacion ficha = new FichaAceptacion();
 		Long idAsunto = save(extAsunto);
 		ficha.setAsunto(extAsunto);
-
-		// fichaAceptacionDao.save(ficha);
+		
+		// Propiedades del asunto para BANKIA.
+		if(usuarioManager.getUsuarioLogado().getEntidad().getDescripcion().equals(Entidad.CODIGO_BANKIA)){
+			// Asignar propiedad asunto a Bankia.
+			Filter propiedadFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", Entidad.CODIGO_BANKIA);
+			DDPropiedadAsunto propiedad = genericDao.get(DDPropiedadAsunto.class, propiedadFilter);
+			if(!Checks.esNulo(propiedad)){
+				extAsunto.setPropiedadAsunto(propiedad);
+			}
+			
+			// Asignar gestion asunto segun contratos.
+			Filter gestionFilter = null;
+			Filter cntPorExpFilter = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente);
+			List<ExpedienteContrato> expContratos = genericDao.getList(ExpedienteContrato.class, cntPorExpFilter);
+			if(!Checks.estaVacio(expContratos)){
+				// Comprobar contratos, si alguno es de haya asignar Haya, si no asignar Bankia.
+				if(comprobarEntidadListaContratos(expContratos ,Entidad.CODIGO_HAYA_SAREB)){
+					gestionFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", Entidad.CODIGO_HAYA_SAREB);
+				} else {
+					gestionFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", Entidad.CODIGO_BANKIA);
+				}
+				DDGestionAsunto gestion = genericDao.get(DDGestionAsunto.class, gestionFilter);
+				if(!Checks.esNulo(gestion)){
+					extAsunto.setGestionAsunto(gestion);
+				}
+			}
+		}
+		
 		genericDao.save(FichaAceptacion.class, ficha);
 
-		// Gestores adicionales Asunto
-		// for (EXTGestorAdicionalAsunto extGestorAdicionalAsunto :
-		// gestoresAsunto) {
-		// extGestorAdicionalAsunto.setAsunto(extAsunto);
-		// genericDao.save(EXTGestorAdicionalAsunto.class,
-		// extGestorAdicionalAsunto);
-		// }
-
 		return idAsunto;
+	}
+
+	/**
+	 * La manera de trabajar de este metodo es: si encuentra un contrato que pertenece a la entidad a buscar
+	 * devolvera true, dado que ya existe al menos un contrato para el expediente que es esa entidad.
+	 * 
+	 * @param expContratos : una lista que asocia contratos por expediente. Viene filtrada por el expediente.
+	 * @param entidadABuscar : entidad por la cual hacer el filtro de busqueda.
+	 * @return Devuelve true si encuentra una coincidencia en algun contrato para la entidad a buscar.
+	 */
+	private boolean comprobarEntidadListaContratos(List<ExpedienteContrato> expContratos, String entidadABuscar) {
+		// Obtener el ID del campo para filtrar por entidad propietaria en Bankia.
+		Filter ifcFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", "char_extra1");
+		EXTDDTipoInfoContrato ifc = genericDao.get(EXTDDTipoInfoContrato.class, ifcFilter);
+		if(Checks.esNulo(ifc)){
+			return false;
+		}
+		
+		// Obtener el codigo de la entidad a filtrar deseada.
+		String propietario = null;
+		if(entidadABuscar.equals(Entidad.CODIGO_BANKIA)) {
+			propietario = "2038"; // Codigo de la columna iac_value, referencia a bankia.
+		} else if(entidadABuscar.equals(Entidad.CODIGO_HAYA_SAREB)) {
+			propietario = "5074";// Codigo de la columna iac_value, referencia a sareb.
+		} else {
+			return false; // Si no es ningun codigo de los presentes arriba.
+		}
+		
+		// Buscar coincidencia por cada contrato encontrado.
+		for(ExpedienteContrato expc : expContratos){
+			Filter filter1 = genericDao.createFilter(FilterType.EQUALS, "tipoInfoContrato", ifc);
+			Filter filter2 = genericDao.createFilter(FilterType.EQUALS, "contrato", expc.getContrato());
+			EXTInfoAdicionalContrato eiac = genericDao.get(EXTInfoAdicionalContrato.class, filter1, filter2);
+			if(!Checks.esNulo(eiac)){
+				if(eiac.getValue().equals(propietario)){
+					// Al encontrar una sola coincidencia devolver true.
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

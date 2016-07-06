@@ -238,13 +238,23 @@ public class RecobroAccionesExtrajudicialesDaoImpl extends AbstractEntityDao<Rec
 			RecobroAccionesExtrajudicialesDto dto) {
 		StringBuffer query = new StringBuffer();
 		
-		query.append(" SELECT DISTINCT ace from RecobroAccionesExtrajudiciales ace ");		
-		query.append(" WHERE ace.persona.id IN (");
-				query.append(" SELECT crp_join.persona.id FROM CicloRecobroPersona crp_join where crp_join.id = " + dto.getIdCicloRecobroPer());
-				query.append(" AND crp_join.fechaAlta <= ace.fechaGestion AND (crp_join.fechaBaja IS NULL OR crp_join.fechaBaja >= ace.fechaGestion)) ");
-		query.append(" OR ace.contrato.id IN (" );
-				query.append(" SELECT cpe.contrato.id FROM ContratoPersona cpe WHERE cpe.persona.id IN (SELECT crp_join.persona.id FROM CicloRecobroPersona crp_join where crp_join.id = " + dto.getIdCicloRecobroPer());
-				query.append(" AND crp_join.fechaAlta <= ace.fechaGestion AND (crp_join.fechaBaja IS NULL OR crp_join.fechaBaja >= ace.fechaGestion))");
+		//Antigua
+//		query.append(" SELECT DISTINCT ace from RecobroAccionesExtrajudiciales ace ");		
+//		query.append(" WHERE ace.persona.id IN (");
+//				query.append(" SELECT crp_join.persona.id FROM CicloRecobroPersona crp_join where crp_join.id = " + dto.getIdCicloRecobroPer());
+//				query.append(" AND crp_join.fechaAlta <= ace.fechaGestion AND (crp_join.fechaBaja IS NULL OR crp_join.fechaBaja >= ace.fechaGestion)) ");
+//		query.append(" OR ace.contrato.id IN (" );
+//				query.append(" SELECT cpe.contrato.id FROM ContratoPersona cpe WHERE cpe.persona.id IN (SELECT crp_join.persona.id FROM CicloRecobroPersona crp_join where crp_join.id = " + dto.getIdCicloRecobroPer());
+//				query.append(" AND crp_join.fechaAlta <= ace.fechaGestion AND (crp_join.fechaBaja IS NULL OR crp_join.fechaBaja >= ace.fechaGestion))");
+				
+				
+		//Nueva
+		query.append(" SELECT DISTINCT ace from RecobroAccionesExtrajudiciales ace, CicloRecobroPersona crp, ContratoPersona cpe ");
+		query.append(" WHERE crp.persona.id = ace.persona.id ");
+		query.append(" AND cpe.contrato.id = ace.contrato.id ");
+		query.append(" AND crp.id = " + dto.getIdCicloRecobroPer());
+		query.append(" AND ace.fechaGestion >= crp.fechaAlta AND (ace.fechaGestion <= crp.fechaBaja OR crp.fechaBaja IS NULL ) ");
+		query.append(" AND cpe.persona.id = crp.persona.id ");
 				
 		return query.toString();
 	}
@@ -306,13 +316,24 @@ public class RecobroAccionesExtrajudicialesDaoImpl extends AbstractEntityDao<Rec
 	
 	private String generaHQLAccionesDelContrato(RecobroAccionesExtrajudicialesDto dto) {
 		StringBuffer query = new StringBuffer();
-		query.append(" SELECT DISTINCT ace from RecobroAccionesExtrajudiciales ace ");		
-		query.append(" WHERE ace.contrato.id IN (");
-				query.append(" SELECT crc_join.contrato.id FROM CicloRecobroContrato crc_join where crc_join.id = " + dto.getIdCicloRecobroCnt());
-				query.append(" AND crc_join.fechaAlta <= ace.fechaGestion AND (crc_join.fechaBaja IS NULL OR crc_join.fechaBaja >= ace.fechaGestion)) ");
-		query.append(" OR ace.persona.id IN (" );
-				query.append(" SELECT cpe.persona.id FROM ContratoPersona cpe WHERE cpe.contrato.id IN (SELECT crc_join.contrato.id FROM CicloRecobroContrato crc_join where crc_join.id = " + dto.getIdCicloRecobroCnt());
-				query.append(" AND crc_join.fechaAlta <= ace.fechaGestion AND (crc_join.fechaBaja IS NULL OR crc_join.fechaBaja >= ace.fechaGestion))");
+		
+		//Antigua
+//		query.append(" SELECT DISTINCT ace from RecobroAccionesExtrajudiciales ace ");		
+//		query.append(" WHERE ace.contrato.id IN (");
+//				query.append(" SELECT crc_join.contrato.id FROM CicloRecobroContrato crc_join where crc_join.id = " + dto.getIdCicloRecobroCnt());
+//				query.append(" AND crc_join.fechaAlta <= ace.fechaGestion AND (crc_join.fechaBaja IS NULL OR crc_join.fechaBaja >= ace.fechaGestion)) ");
+//		query.append(" OR ace.persona.id IN (" );
+//				query.append(" SELECT cpe.persona.id FROM ContratoPersona cpe WHERE cpe.contrato.id IN (SELECT crc_join.contrato.id FROM CicloRecobroContrato crc_join where crc_join.id = " + dto.getIdCicloRecobroCnt());
+//				query.append(" AND crc_join.fechaAlta <= ace.fechaGestion AND (crc_join.fechaBaja IS NULL OR crc_join.fechaBaja >= ace.fechaGestion))");
+				
+				
+		//Nueva
+		query.append(" SELECT DISTINCT ace from RecobroAccionesExtrajudiciales ace, CicloRecobroPersona crp, ContratoPersona cpe ");
+		query.append(" WHERE crp.persona.id = ace.persona.id ");
+		query.append(" AND cpe.contrato.id = ace.contrato.id ");
+		query.append(" AND crp.id = " + dto.getIdCicloRecobroPer());
+		query.append(" AND ace.fechaGestion >= crp.fechaAlta AND (ace.fechaGestion <= crp.fechaBaja OR crp.fechaBaja IS NULL ) ");
+		query.append(" AND cpe.persona.id = crp.persona.id ");
 		
 		return query.toString();
 		

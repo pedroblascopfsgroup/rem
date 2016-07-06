@@ -611,7 +611,7 @@ public class coreextensionController {
 					}
 					if(!Checks.esNulo(acu.getExpediente().getContratoPase()) && 
 							!Checks.estaVacio(acu.getExpediente().getContratoPase().getContratoPersona()) && 
-							!Checks.esNulo(acu.getAsunto().getExpediente().getContratoPase().getContratoPersona().get(0).getPersona())) {
+							!Checks.esNulo(acu.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona())) {
 						acuerdoExcel.setCliente(acu.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50());								
 					}
 				}

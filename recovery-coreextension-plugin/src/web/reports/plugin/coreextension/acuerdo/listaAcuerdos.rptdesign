@@ -319,7 +319,7 @@ return true;]]></method>
                     <property name="name">idContrato</property>
                     <property name="displayName">Contrato Principal</property>
                     <expression name="expression">dataSetRow["idContrato"]</expression>
-                    <property name="dataType">float</property>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">cliente</property>

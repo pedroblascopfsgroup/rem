@@ -914,7 +914,6 @@ public class coreextensionManager implements coreextensionApi {
 			}
 		}
 		Page page = acuerdoDao.buscarAcuerdos(terminosFiltroDto, usuario, idGrpsUsuario, tipoTerminoDesc);
-		List<TerminoAcuerdo> listaTerminos=(List<TerminoAcuerdo>) page.getResults();
 		return page;
 	}
 	

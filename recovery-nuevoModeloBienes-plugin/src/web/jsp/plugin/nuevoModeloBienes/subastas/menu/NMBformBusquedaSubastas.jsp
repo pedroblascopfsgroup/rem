@@ -9,11 +9,19 @@
 
 var formBusquedaSubastas=function(){
 
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+
 	var limit=25;	
 		
 	var txtIdSubasta = app.creaInteger('id', '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.filtros.codSubasta" text="**Cï¿½digo de la subasta" />', '${id}');
 	 
 	var txtNumAutos = app.creaText('numAutos', '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.filtros.numAutos" text="**Nï¿½ Autos" />', '${numAutos}');
+	
+	var esBankia = true;
+	// RECOVERY-2222 Comprobacion para ocultar la columna subasta revisada en el grid y en los filtros
+    if(usuarioEntidad == 'BANKIA'){
+		esBankia = false;
+	}
 	
 
 	<pfs:datefield name="txtFechaSolicitudDesde" labelKey="plugin.nuevoModeloBienes.busquedaSubastas.filtros.fechaSolicitud" label="**Fecha solicitud" width="70"/>;
@@ -180,6 +188,28 @@ var formBusquedaSubastas=function(){
 	
 	// FIN Estado de Gestiï¿½n	*******************************************************
 	
+	
+	//Combo tramitación
+ 	var optionsTramitacionStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+ 	       ,data : [{"codigo":"", "descripcion":"---"}
+ 	       			,{"codigo":"0", "descripcion":"Subasta"}
+ 	       			,{"codigo":"1", "descripcion":"S. electr\u00f3nica"}
+ 	       	
+ 	       ]
+ 	}); 
+	
+	var comboTramitacion = new Ext.form.ComboBox({
+ 		store: optionsTramitacionStore 
+		,displayField:'descripcion' 
+		,valueField:'codigo' 
+		,mode:'local'
+		,style:'margin:0px'
+		,triggerAction:'all'
+		,editable: false
+		,fieldLabel:'<s:message code="plugin.nuevoModeloBienes.subastas.tramitacion" text="**Tramitaci&oacute;n"/>'
+	});
+	
 	// INICIO Entidad		*******************************************************
 	<%-- <pfs:ddCombo name="comboEntidad" 
 		labelKey="plugin.nuevoModeloBienes.busquedaSubastas.filtros.entidad" 
@@ -280,7 +310,7 @@ var formBusquedaSubastas=function(){
 					,comboInfLetradoCompleto,comboInstruccionesCompletadas]
 				},{
 					layout:'form'
-					,items: [comboSubastaRevisada,txtTotalCargasAnteriores.panel,txtTotalImporteAdjudicado.panel,filtroEstadoDeGestion
+					,items: [<c:if test="${usuarioEntidad == 'BANKIA'}">comboSubastaRevisada,</c:if>txtTotalCargasAnteriores.panel,txtTotalImporteAdjudicado.panel,filtroEstadoDeGestion,comboTramitacion
 					<%--,comboEntidad,filtroTareasSubastaBankia,filtroTareasSubastaSareb --%>
 					]
 				}]
@@ -550,9 +580,9 @@ var formBusquedaSubastas=function(){
 			if(txtNumAutos.getValue() != '' || txtFechaSolicitudDesde.getValue() != '' || txtFechaSolicitudHasta.getValue() != '' || 
 				txtFechaAnuncioDesde.getValue() != '' || txtFechaAnuncioHasta.getValue() != '' || txtFechaSenyalamientoDesde.getValue() != '' || 
 				txtFechaSenyalamientoHasta.getValue() != '' || comboTasacionCompletada.getValue() != '' || comboInfLetradoCompleto.getValue() != '' || 
-				comboInstruccionesCompletadas.getValue() != '' || comboSubastaRevisada.getValue() != '' || idmintotalCargasAnteriores.value != '' || 
+				comboInstruccionesCompletadas.getValue() != '' <c:if test="${usuarioEntidad == 'BANKIA'}"> || comboSubastaRevisada.getValue() != '' </c:if> || idmintotalCargasAnteriores.value != '' || 
 				idmaxtotalCargasAnteriores.value != '' || idmintotalImporteAdjudicado.value != '' || idmaxtotalImporteAdjudicado.value != '' || 
-				filtroEstadoDeGestion.getValue() != '' )
+				filtroEstadoDeGestion.getValue() != '' || comboTramitacion.getValue() != '' )
 			{
 				hayParametros = true;
 			}
@@ -707,7 +737,7 @@ var formBusquedaSubastas=function(){
 			
 			b.idComboInstruccionesCompletadas=getValorComboSiNo(comboInstruccionesCompletadas.getValue());
 			
-			b.idComboSubastaRevisada=getValorComboSiNo(comboSubastaRevisada.getValue());		
+			<c:if test="${usuarioEntidad == 'BANKIA'}">b.idComboSubastaRevisada=getValorComboSiNo(comboSubastaRevisada.getValue());	</c:if>	
 		
 			if (comboFiltroEstadoDeGestion!=""){
 				b.comboFiltroEstadoDeGestion = comboFiltroEstadoDeGestion.childNodes[1].value;
@@ -715,6 +745,8 @@ var formBusquedaSubastas=function(){
 			else{
 				b.comboFiltroEstadoDeGestion = "";
 			}
+			
+			b.tramitacion = comboTramitacion.getValue();
 			
 			/*if (comboEntidad.selectedIndex>0){
 				var entidadSeleccionada = '';
@@ -813,7 +845,9 @@ var formBusquedaSubastas=function(){
 		
 		comboInstruccionesCompletadas.reset();
 		
-		comboSubastaRevisada.reset();						
+		comboTramitacion.reset();
+
+		<c:if test="${usuarioEntidad == 'BANKIA'}">comboSubastaRevisada.reset();</c:if>						
 
 		limpiarYRecargarEstadoDeGestion();
 		//comboFiltroEstadoDeGestion.reset();
@@ -891,6 +925,8 @@ var formBusquedaSubastas=function(){
 		 ,{name:'juzgado'}
 		 ,{name:'despacho'}
 		 ,{name:'procurador'}
+		 ,{name:'tramitacion'}
+		 ,{name:'fechaPublicacionBoe'}
 	]);				
 
 	var subastasStore = page.getStore({
@@ -916,15 +952,17 @@ var formBusquedaSubastas=function(){
 	    {header: '<s:message code="Asunto" text="Asunto"/>', dataIndex: 'nombreAsunto', sortable: false}
 	    ,{header: '<s:message code="idAsunto" text="idAsunto"/>', dataIndex: 'idAsunto', hidden: true}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.numAutos" text="Nº Autos"/>', dataIndex: 'numAutos'}	    
+   		,{header: '<s:message code="plugin.nuevoModeloBienes.subastas.tramitacion" text="**Tramitaci&oacute;n" />', dataIndex : 'tramitacion'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.fechaSolicitud" text="F.Solicitud"/>', dataIndex: 'fechaSolicitud', sortable: true}
-		,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.fechaAnuncio" text="F.Anuncio"/>', dataIndex: 'fechaAnuncio', sortable: true}	    	    
-	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.fechaSenyalamiento" text="F.Señalamiento"/>', dataIndex: 'fechaSenyalamiento', sortable: true}	    
+		,{header: '<s:message code="plugin.nuevoModeloBienes.subastas.fAnuncioFDecreto" text="**F.Anuncio/F.decreto" />', dataIndex : 'fechaAnuncio'}
+		,{header: '<s:message code="plugin.nuevoModeloBienes.subastas.fSenyalamientoFFinPujas" text="**F.Se&ntilde;alamiento/F.fin de pujas" />', dataIndex : 'fechaSenyalamiento'}
+   		,{header: '<s:message code="plugin.nuevoModeloBienes.subastas.fPublicacionBoe" text="**F.publicaci&oacute;n BOE" />', dataIndex : 'fechaPublicacionBoe'}	    
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.estado" text="Estado"/>', dataIndex: 'estadoSubasta', sortable: true}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.tasacion" text="Tasaciï¿½n"/>', dataIndex: 'tasacion', sortable: true, renderer : OK_KO_Render, align:'center'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.embargo" text="Embargo"/>', dataIndex: 'embargo', sortable: true, renderer : OK_KO_Render, align:'center'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.infLetrado" text="Inf.Letrado"/>', dataIndex: 'infLetrado', sortable: true,renderer : OK_KO_Render, align:'center'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.instrucciones" text="Instrucciones"/>', dataIndex: 'instrucciones', sortable: true,renderer : OK_KO_Render, align:'center'}
-	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.subastaRevisada" text="Subasta Revisada"/>', dataIndex: 'subastaRevisada', sortable: true,renderer : OK_KO_Render, align:'center'}
+	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.subastaRevisada" text="Subasta Revisada"/>', dataIndex: 'subastaRevisada', sortable: true,renderer : OK_KO_Render, align:'center', hidden: esBankia}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.totalCargasAnteriores" text="Total cargas anteriores"/>', dataIndex: 'cargasAnteriores', sortable: true, renderer: app.format.moneyRenderer, align:'right'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.totalImporteAdjudicado" text="Total importe adjudicado"/>', dataIndex: 'totalImporteAdjudicado', sortable: true, renderer: app.format.moneyRenderer, align:'right'}
 	    ,{header: '<s:message code="plugin.nuevoModeloBienes.busquedaSubastas.grid.propiedadAsunto" text="Propiedad"/>', dataIndex: 'propiedadAsunto', sortable: false}

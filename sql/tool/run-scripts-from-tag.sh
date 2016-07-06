@@ -75,9 +75,9 @@ function ending_script {
     echo '}'
     echo ''
     echo 'run_scripts "$@" | tee output.log'
-    if [[ $2 != 'CAJAMAR' ]]; then
-        echo 'zip --quiet DB_logs_'$1'_$(date +"%y%m%d-%H%M%S").zip *.log'
-    fi
+    #if [[ $2 != 'CAJAMAR' ]]; then
+    #    echo 'zip --quiet DB_logs_'$1'_$(date +"%y%m%d-%H%M%S").zip *.log'
+    #fi
 }
 
 clear

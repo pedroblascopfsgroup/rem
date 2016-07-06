@@ -23,7 +23,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
@@ -145,9 +144,7 @@ public class AdjuntoHayaManager {
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
     	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
     	for(Procedimiento prc : asun.getProcedimientos()) {
-    		if(crearPropuesta(prc)) {
-    			return null;
-    		}
+    		crearPropuesta(prc);
 		}
     	List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
@@ -716,8 +713,24 @@ public class AdjuntoHayaManager {
 					retorno = uploadAsunto(uploadForm, idAsunto);
 				}
 			}		
-		}
-		else {
+		} else {
+			if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){			
+				Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
+				List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, 
+						genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+				
+				String contenedores = "";
+				int i = 1;
+				for(ContenedorGestorDocumental cgd : contenedor) {
+					contenedores = cgd.getCodigoClase();
+					if(i < contenedor.size()) {
+						contenedores = contenedores + ", ";
+					}
+					i++;
+				}
+				return GestorDocumentalConstants.ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO + " :: " + uploadForm.getParameter("comboTipoFichero") + " :: " + contenedores;
+			}
+			
 			return GestorDocumentalConstants.ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO;
 		}
 		
@@ -746,7 +759,19 @@ public class AdjuntoHayaManager {
 		}
 		
 		if(!contenedorEncontrado) {
-			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+			List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, 
+					genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+			
+			String contenedores = "";
+			int i = 1;
+			for(ContenedorGestorDocumental cgd : contenedor) {
+				contenedores = cgd.getCodigoClase();
+				if(i < contenedor.size()) {
+					contenedores = contenedores + ", ";
+				}
+				i++;
+			}
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR + " :: " + uploadForm.getParameter("comboTipoFichero") + " :: " + contenedores;
 		}
 		return null;
 	}
@@ -778,7 +803,7 @@ public class AdjuntoHayaManager {
 		}
 		
 		if(!contenedorEncontrado) {
-			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR + " :: " + uploadForm.getParameter("comboTipoFichero");
 		}
 		return null;
 	}

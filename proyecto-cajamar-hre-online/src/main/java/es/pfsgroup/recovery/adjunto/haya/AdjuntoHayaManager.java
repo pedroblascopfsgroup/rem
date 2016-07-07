@@ -716,8 +716,7 @@ public class AdjuntoHayaManager {
 		} else {
 			if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){			
 				Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
-				List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, 
-						genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+				List<ContenedorGestorDocumental> contenedor = obtenerContenedoresAsunto(idAsunto);
 				
 				String contenedores = "";
 				int i = 1;
@@ -759,8 +758,7 @@ public class AdjuntoHayaManager {
 		}
 		
 		if(!contenedorEncontrado) {
-			List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, 
-					genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+			List<ContenedorGestorDocumental> contenedor = obtenerContenedoresAsunto(idAsunto);
 			
 			String contenedores = "";
 			int i = 1;
@@ -774,6 +772,41 @@ public class AdjuntoHayaManager {
 			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR + " :: " + uploadForm.getParameter("comboTipoFichero") + " :: " + contenedores;
 		}
 		return null;
+	}
+
+	private List<ContenedorGestorDocumental> obtenerContenedoresAsunto(Long idAsunto) {
+		List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, 
+				genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+		return contenedor;
+	}
+	
+	private List<String> obtenerTiposClasesContenedoresAsunto(Long idAsunto) {
+		List<ContenedorGestorDocumental> contenedor = obtenerContenedoresAsunto(idAsunto);
+		List<String> resultado = new ArrayList<String>();
+		if (!Checks.estaVacio(contenedor)) {
+			for(ContenedorGestorDocumental cgd : contenedor) {
+				resultado.add(cgd.getCodigoTipo() + "-" + cgd.getCodigoClase());
+			}
+		}
+		return resultado;
+	}
+	
+	public List<Long> obtenerIdsTiposDocMapeados(Long idAsunto) {
+		List<String> tiposClasesContenedor = obtenerTiposClasesContenedoresAsunto(idAsunto);
+		return mapeoTipoContenedorDao.obtenerIdsTiposDocMapeados(tiposClasesContenedor);
+	}
+	
+	private String obtenerTiposClasesContenedoresProcedimiento(Long idProcedimiento) {
+
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
+		String claseExp = getClaseExpedienteByProcedimientoPadre(prc);
+		return "PR-" + claseExp;
+	}
+
+	public List<Long> obtenerIdsTiposDocMapeadosProc(Long idProcedimiento) {
+		List<String> tiposClasesContenedor = new ArrayList<String>();
+		tiposClasesContenedor.add(obtenerTiposClasesContenedoresProcedimiento(idProcedimiento));
+		return mapeoTipoContenedorDao.obtenerIdsTiposDocMapeados(tiposClasesContenedor);
 	}
 	
 	private String uploadProcedimiento(WebFileItem uploadForm, Long idAsunto) {

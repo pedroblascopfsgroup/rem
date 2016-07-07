@@ -72,4 +72,7 @@ public interface AdjuntoApi {
 	@Transactional(readOnly = false)
 	public FileItem bajarAdjuntoPersona(String adjuntoId, String nombre, String extension);
 
+	/*PARA UNA NECESIDAD DE HAYA*/
+	public List<Long> obtenerIdsTiposDocMapeados(Long idAsunto);
+	public List<Long> obtenerIdsTiposDocMapeadosProc(Long idProcedimiento);
 }

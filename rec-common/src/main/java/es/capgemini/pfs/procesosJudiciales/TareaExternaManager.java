@@ -21,6 +21,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
+import es.capgemini.pfs.exceptions.PlazosTareasNoEncontradoException;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
@@ -84,50 +85,72 @@ public class TareaExternaManager {
         String nombreNodo = tareaExterna.getTareaProcedimiento().getCodigo();
         String nombreVariable = BPMContants.BPM_LISTADO_TAREAS_VUELTA_ATRAS + "_" + nombreNodo;
         String listadoTareas = (String) executor.execute(ComunBusinessOperation.BO_JBPM_MGR_GET_PROCESS_VARIABLES, idTokenMaster, nombreVariable);
-
-        if (listadoTareas != null && listadoTareas.trim().length() > 0) {
-            //Listado con las tareas que se van a volver atrás
-            ArrayList<String> vCodigosTareas = new ArrayList<String>(CollectionUtils.arrayToList(StringUtils
-                    .tokenizeToStringArray(listadoTareas, ",")));
-
-            if (vCodigosTareas.size() > 0) {
-                List<Long> vIdTokens = new ArrayList<Long>();
-
-                //Tareas activas del procedimiento
-                List<TareaExterna> vTareas = getActivasByIdProcedimiento(tareaExterna.getTareaPadre().getProcedimiento().getId());
-                Iterator<TareaExterna> itTareas = vTareas.iterator();
-
-                //Recorremos todas las tareas activas del procedimiento
-                while (itTareas.hasNext()) {
-                    TareaExterna tarea = itTareas.next();
-
-                    //Si la tarea se encuentra entre las tareas de vuelta atrás la guardamos y la borramos del vector 'vueltaAtras'
-                    String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
-                    if (vCodigosTareas.contains(codigoTarea)) {
-                        vCodigosTareas.remove(codigoTarea);
-                        vIdTokens.add(tarea.getTokenIdBpm());
-                    }
-                }
-
-                //Si el vector 'vueltaAtras' no tiene más tareas (si todas las tareas marcadas como vueltaAtrás se encuentran activas)
-                if (vCodigosTareas.size() == 0) {
-
-                    //Lanzamos el signal al token maestro
-                    executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
-
-                    //Lanzamos todos los signal al resto de tokens
-                    for (Long idToken : vIdTokens) {
-                        executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idToken, BPMContants.TRANSICION_VUELTA_ATRAS);
-                    }
-                } else {
-                    throw new UserException("bpm.error.vueltaAtras");
-                }
-            }
-        } else {
-            //Lanzamos el signal al token maestro
-        		executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
-        	
-        }
+        
+	        if (listadoTareas != null && listadoTareas.trim().length() > 0) {
+	            //Listado con las tareas que se van a volver atrás
+	            ArrayList<String> vCodigosTareas = new ArrayList<String>(CollectionUtils.arrayToList(StringUtils
+	                    .tokenizeToStringArray(listadoTareas, ",")));
+	
+	            if (vCodigosTareas.size() > 0) {
+	                List<Long> vIdTokens = new ArrayList<Long>();
+	
+	                //Tareas activas del procedimiento
+	                List<TareaExterna> vTareas = getActivasByIdProcedimiento(tareaExterna.getTareaPadre().getProcedimiento().getId());
+	                Iterator<TareaExterna> itTareas = vTareas.iterator();
+	
+	                //Recorremos todas las tareas activas del procedimiento
+	                while (itTareas.hasNext()) {
+	                    TareaExterna tarea = itTareas.next();
+	
+	                    //Si la tarea se encuentra entre las tareas de vuelta atrás la guardamos y la borramos del vector 'vueltaAtras'
+	                    String codigoTarea = tarea.getTareaProcedimiento().getCodigo();
+	                    if (vCodigosTareas.contains(codigoTarea)) {
+	                        vCodigosTareas.remove(codigoTarea);
+	                        vIdTokens.add(tarea.getTokenIdBpm());
+	                    }
+	                }
+	
+	                //Si el vector 'vueltaAtras' no tiene más tareas (si todas las tareas marcadas como vueltaAtrás se encuentran activas)
+	                if (vCodigosTareas.size() == 0) {
+	
+	                    //Lanzamos el signal al token maestro
+	                	try{
+	                		executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
+	                	}
+	                	catch(FrameworkException e){
+	                    	if(e.getCause().getMessage().equals("ERROR_FECHA_PLAZOS")){
+	                    		throw new UserException("bpm.error.plazoTareasCancelar");
+	                    	}
+	                    }
+	
+	                    //Lanzamos todos los signal al resto de tokens
+	                    for (Long idToken : vIdTokens) {
+	                    	try{
+	                    		executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idToken, BPMContants.TRANSICION_VUELTA_ATRAS);
+	                    	}
+	                    	catch(FrameworkException e){
+	                        	if(e.getCause().getMessage().equals("ERROR_FECHA_PLAZOS")){
+	                        		throw new UserException("bpm.error.plazoTareasCancelar");
+	                        	}
+	                        }
+	                    }
+	                } else {
+	                    throw new UserException("bpm.error.vueltaAtras");
+	                }
+	            }
+	        } else {
+	            //Lanzamos el signal al token maestro
+	        	try{
+	        		executor.execute(ComunBusinessOperation.BO_JBPM_MGR_SIGNAL_TOKEN, idTokenMaster, BPMContants.TRANSICION_VUELTA_ATRAS);
+	        	}
+	        	catch(FrameworkException e){
+	            	if(e.getCause().getMessage().equals("ERROR_FECHA_PLAZOS")){
+	            		throw new UserException("bpm.error.plazoTareasCancelar");
+	            	}
+	            }
+	        }
+        
+    
     }
 
     /**

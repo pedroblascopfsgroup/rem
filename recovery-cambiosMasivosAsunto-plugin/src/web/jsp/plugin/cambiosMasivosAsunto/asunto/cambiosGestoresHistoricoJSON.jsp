@@ -6,7 +6,11 @@
 <fwk:json>
 	<json:array name="cambiosGestoresHistorico" items="${cambiosGestoresHistorico}" var="cambioGestorHistorico">
 		<json:object>
-			<json:property name="tipoGestor" value="${cambioGestorHistorico.tipo.descripcion}" />
+			<c:forEach items="${cambioGestorHistorico.infoRegistro}" var="registro">			
+				<c:if test="${registro.clave=='tipoGestor'}">
+					<json:property name="tipoGestor" value="${registro.valor}" />					
+				</c:if>
+			</c:forEach>
 			<c:forEach items="${cambioGestorHistorico.infoRegistro}" var="registro">			
 				<c:if test="${registro.clave=='userOld'}">
 					<json:property name="antiguoUsuario" value="${registro.valor}" />					

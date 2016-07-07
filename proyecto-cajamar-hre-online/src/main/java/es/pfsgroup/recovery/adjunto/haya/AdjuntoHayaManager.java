@@ -1155,8 +1155,8 @@ public class AdjuntoHayaManager {
 				ActivoInputDto input = new ActivoInputDto();
 				input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
 				input.setIdActivoOrigen(contrato.getNroContrato().substring(17, 27));
-				input.setIdOrigen(ActivoInputDto.ID_ORIGEN_SAREB);
-				input.setIdCliente(ActivoInputDto.ID_CLIENTE_NOS);
+				input.setIdOrigen(ActivoInputDto.ID_CLIENTE_NOS);
+				input.setIdCliente(ActivoInputDto.ID_ORIGEN_SAREB);
 				input.setIdTipoActivo(ActivoInputDto.ID_TIPO_ACTIVO_RED);
 				ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
 				

@@ -442,6 +442,22 @@ app.creaNumber = function(name, label, value, config){
 	cfg.maxValue = 9999999999999999;
 	//margen para IE
 	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';
+	
+	cfg.setValue = function(v){
+    	v = Ext.isNumber(v) ? v : String(v).replace(this.decimalSeparator, ".");
+        v = this.fixPrecision(v);
+        v = isNaN(v) ? '' : String(v).replace(".", this.decimalSeparator);
+        return Ext.form.NumberField.superclass.setValue.call(this, v);
+	};
+		
+	cfg.fixPrecision = function(value) {
+        var nan = isNaN(value);
+        if (!this.allowDecimals || this.decimalPrecision == -1 || nan || !value) {
+            return nan ? '' : value;
+        }
+        return parseFloat(value).toFixed(this.decimalPrecision);
+   	};
+    	
 	if (cfg.autoCreate == null)
 	{
 		cfg.autoCreate = {tag: "input", type: "text",maxLength:"16", autocomplete: "off"};

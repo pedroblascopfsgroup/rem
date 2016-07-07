@@ -20,7 +20,6 @@
 			var posicionDec = s.indexOf(".");
 			var decimales = ',00';
 			if( posicionDec > -1 ) {
-			debugger;
 				decimales = ',' + s.substring(posicionDec+1);
 				if(decimales.length <3) {
 					decimales = decimales + '0';

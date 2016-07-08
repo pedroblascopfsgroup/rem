@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Picazo
---## FECHA_CREACION=20160707
+--## FECHA_CREACION=20160708
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.7
 --## INCIDENCIA_LINK=RECOVERY-2299
@@ -25,7 +25,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_DESCRIPCION_GESTOR VARCHAR2(50 CHAR);
-    V_INSERCCIONES NUMBER(1,0) := 0;
+    V_INSERCCIONES NUMBER(16) := 0;
     
     V_SQL_TRAZA VARCHAR2(4000 CHAR) := 'INSERT INTO '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO (IRG_ID, REG_ID, IRG_CLAVE, IRG_VALOR, VERSION, USUARIOCREAR,FECHACREAR, BORRADO) ' ||
 		' VALUES ('||V_ESQUEMA||'.S_MEJ_IRG_INFO_REGISTRO.NEXTVAL, :1, ''tipoGestor'', :2, 0, ''RECOVERY-2299'', sysdate, 0)';

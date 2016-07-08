@@ -442,6 +442,27 @@ app.creaNumber = function(name, label, value, config){
 	cfg.maxValue = 9999999999999999;
 	//margen para IE
 	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';
+    	
+	if (cfg.autoCreate == null)
+	{
+		cfg.autoCreate = {tag: "input", type: "text",maxLength:"16", autocomplete: "off"};
+	}
+
+	/*
+		Ya se ha hecho una copia en la primera l�nea del m�todo, �para que copiar m�s?
+		fwk.js.copyProperties(cfg, config, ['width','style','labelStyle']);
+	*/
+	return new Ext.form.NumberField(cfg);
+};
+
+app.creaNumberDecimales = function(name, label, value, config){
+	var cfg = config || {};
+	cfg.name = name;
+	cfg.value = value;
+	cfg.fieldLabel = label;
+	cfg.maxValue = 9999999999999999;
+	//margen para IE
+	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';
 	
 	cfg.setValue = function(v){
     	v = Ext.isNumber(v) ? v : String(v).replace(this.decimalSeparator, ".");

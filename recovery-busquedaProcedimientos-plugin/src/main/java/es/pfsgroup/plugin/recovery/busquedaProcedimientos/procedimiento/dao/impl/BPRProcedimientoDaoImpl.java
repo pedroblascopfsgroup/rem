@@ -2,13 +2,13 @@ package es.pfsgroup.plugin.recovery.busquedaProcedimientos.procedimiento.dao.imp
 
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -30,32 +30,32 @@ import es.pfsgroup.plugin.recovery.busquedaProcedimientos.procedimiento.dto.BPRD
 public class BPRProcedimientoDaoImpl extends
 		AbstractEntityDao implements BPRProcedimientoDao {
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Page findProcedimientos(Usuario usuarioLogado, BPRDtoBusquedaProcedimientos dto) {		
-		//final String QUERY1 = "select p from Procedimiento p ";
-		final String QUERY1 = "select p from Procedimiento p join p.asunto asunto ";
-		final String QUERY2 = QUERY1 + " left join p.asunto.expediente.personas per ";
+		final String QUERY1 = "select distinct p from Procedimiento p, Asunto asunto, EXTGestorAdicionalAsunto gaa";
+		final String QUERY2 = QUERY1 + ", Expediente exp, ExpedientePersona pex, Persona pers ";
 		
 		HQLBuilder hb;
 		
 		if (!Checks.esNulo(dto.getCodigoCliente()) || !Checks.esNulo(dto.getNifCliente()) || !Checks.esNulo(dto.getDemandado()))
 		{
-			hb= new HQLBuilder( QUERY2 );			
+			hb= new HQLBuilder( QUERY2 );
+			hb.appendWhere("asunto.expediente.id = exp.id and exp.id = pex.expediente.id and pex.persona.id = pers.id");
 		}
 		else
 		{
-			hb= new HQLBuilder( QUERY1 );	
+			hb= new HQLBuilder( QUERY1 );
 		}
-			//"select distinct p from Procedimiento p left join p.asunto.expediente.personas per join p.asunto asu ");
-		     // "select distinct p from Asunto asu join asu.procedimientos p left join p.asunto.expediente.personas per");
+
+		// Condiciones obligadas.
+		hb.appendWhere("asunto.id = p.asunto.id and gaa.asunto.id = asunto.id");
 		hb.appendWhere("p.auditoria.borrado = false");
 
 		if (!Checks.esNulo(dto.getAsunto())) {
-			
 			hb.appendWhere("upper(asunto.nombre) LIKE '%'|| :asuNom ||'%'");
 			hb.getParameters().put("asuNom", dto.getAsunto().toUpperCase());
-			
-//			hb.appendWhere(String.format("upper(asunto.nombre) LIKE '%%%s%%'", dto.getAsunto().toUpperCase()));
+
 		}
 		
 		/*
@@ -81,7 +81,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("fechaConformacionAsuntoDesde", DateFormat.toDate(dto.getFechaConformacionAsuntoDesde()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -91,7 +90,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("fechaConformacionAsuntoHasta", DateFormat.toDate(dto.getFehcaConformacionAsuntoHasta()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -116,7 +114,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("fechaAceptacionInicialDesde", DateFormat.toDate(dto.getFechaAceptacionInicialDesde()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -126,7 +123,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("fechaAceptacionInicialHasta", DateFormat.toDate(dto.getFechaAceptacionInicialHasta()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -155,29 +151,18 @@ public class BPRProcedimientoDaoImpl extends
 				"p.codigoProcedimientoEnJuzgado", "undefined".compareTo(dto.getCodigoProcedimientoEnJuzgado()) == 0 ? null : dto.getCodigoProcedimientoEnJuzgado());
 		
 		if (!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado()) && !Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())){
-			
 			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%-%'|| :anyoProJuz ||'%' or p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%/%'|| :anyoProJuz ||'%'");
 			hb.getParameters().put("numProJuz", dto.getNumeroProcedimientoEnJuzgado());
 			hb.getParameters().put("anyoProJuz", dto.getAnyoProcedimientoEnJuzgado());
-			
-			
-//			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'" +
-//							" or p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
+
 		}else if(!Checks.esNulo(dto.getNumeroProcedimientoEnJuzgado())){
-			
 			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%-%' or p.codigoProcedimientoEnJuzgado like '%'|| :numProJuz ||'%/%'");
 			hb.getParameters().put("numProJuz", dto.getNumeroProcedimientoEnJuzgado());
 			
-//			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%-%'" +
-//							" or p.codigoProcedimientoEnJuzgado like '%"+dto.getNumeroProcedimientoEnJuzgado()+"%/%'");
 		}else if(!Checks.esNulo(dto.getAnyoProcedimientoEnJuzgado())){
-			
 			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%'|| :anyoProJuz ||'%-%' or p.codigoProcedimientoEnJuzgado like '%'|| :anyoProJuz ||'%/%'");
 			hb.getParameters().put("anyoProJuz", dto.getAnyoProcedimientoEnJuzgado());
-
 			
-//			hb.appendWhere("p.codigoProcedimientoEnJuzgado like '%-%"+dto.getAnyoProcedimientoEnJuzgado()+"%'" +
-//							" or p.codigoProcedimientoEnJuzgado like '%/%"+dto.getAnyoProcedimientoEnJuzgado()+"%'");
 		}
 		
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "p.tipoProcedimiento.tipoActuacion.id", dto
@@ -234,7 +219,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("fechaCrearDesde", DateFormat.toDate(dto.getFechaCrearDesde()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -244,7 +228,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("fechaCrearHasta", DateFormat.toDate(dto.getFechaCrearHasta()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -266,16 +249,15 @@ public class BPRProcedimientoDaoImpl extends
 				dto.getCodigoInterno());
 		
 		if (!Checks.esNulo(dto.getCodigoContrato())){	
-			//hb.appendWhere("p in (select pce.procedimiento from ProcedimientoContratoExpediente pce where pce.expedienteContrato.contrato.nroContrato =" + dto.getCodigoContrato() + ")");
 			hb.appendWhere("p.id in" +
 					"					(select procedimiento from ProcedimientoContratoExpediente where expedienteContrato in" +
 					"							(select id from ExpedienteContrato where contrato.nroContrato = :codCon)) ");
 			hb.getParameters().put("codCon", dto.getCodigoContrato());
 		}
 		
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "per.persona.codClienteEntidad",
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pers.codClienteEntidad",
 				dto.getCodigoCliente(), true);
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "per.persona.docId", dto
+		HQLBuilder.addFiltroLikeSiNotNull(hb, "pers.docId", dto
 				.getNifCliente());
 //		try {
 //			HQLBuilder.addFiltroBetweenSiNotNull(hb, "t.fechaFin", DateFormat.toDate(dto.getFechaFinPrimeraTarea()), DateFormat.toDate(dto.getFechaFinUltimaTarea()));
@@ -308,7 +290,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("finiPrimTarDesde", DateFormat.toDate(dto.getFechaFinPrimeraTareaDesde()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -318,7 +299,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("finiPrimTarHasta",DateFormat.toDate(dto.getFechaFinPrimeraTareaHasta()) );
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -328,7 +308,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("finiUltimTarDesde", DateFormat.toDate(dto.getFechaFinUltimaTareaDesde()));
 			} catch (ParseException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -338,7 +317,6 @@ public class BPRProcedimientoDaoImpl extends
 			try {
 				hb.getParameters().put("finiUltimTarHasta",DateFormat.toDate(dto.getFechaFinUltimaTareaHasta()) );
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -380,15 +358,62 @@ public class BPRProcedimientoDaoImpl extends
 		//DEMANDADO
 		if(!Checks.esNulo(dto.getDemandado())){
 			
-			hb.appendWhere("per.persona.id = '|| :proDem ||'");
+			hb.appendWhere("pers.id = '|| :proDem ||'");
 			hb.getParameters().put("proDem",dto.getDemandado());
-			
-//			hb.appendWhere("per.persona.id = '"+dto.getDemandado()+"'");
 		}
+		
+		// Filtro procedimientos por el usuario logueado y sus grupos.
+		hb.appendWhere("gaa.gestor.id in (" + getIDsUsdPorGrupoIdsPorUsuarioLogueado(usuarioLogado) + ")");
 		
 		Page pagina = HibernateQueryUtils.page(this, hb, dto);
 
 		return pagina;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private String getIDsUsdPorGrupoIdsPorUsuarioLogueado(Usuario usuarioLogado){
+		// Obtener los IDs de los grupos del usuario.
+		StringBuilder hqlGrupos = new StringBuilder("select gru.grupo.id from EXTGrupoUsuarios gru where gru.usuario.id = " + usuarioLogado.getId());
+		
+		// Obtener los IDs de usuarios depachos por cada grupo.
+		//StringBuilder hqlGestor = new StringBuilder("select usd.id from GestorDespacho usd where usd.usuario.id in (" + hqlGrupos.toString() + ")");
+		HQLBuilder hb1 = new HQLBuilder("select usd.id from GestorDespacho usd");
+		hb1.appendWhere("usd.usuario.id in (" + hqlGrupos.toString() + ")");
+		List<Long> usdListID = HibernateQueryUtils.list(this, hb1);
+		
+		// Preparar por si viene vacio para que la lista no quede nula.
+		if(Checks.estaVacio(usdListID)){
+			usdListID = new ArrayList<Long>();
+		}
+		
+		// Añadir el ID de usuarios despachos para el usuario logueado.
+		//StringBuilder hqlGestorUsuario = new StringBuilder(hqlGestor.toString() + " or select us.id from GestorDespacho us where us.usuario.id = " + usuarioLogado.getId());
+		HQLBuilder hb2 = new HQLBuilder("select usd.id from GestorDespacho usd");
+		hb2.appendWhere("usd.usuario.id = " + usuarioLogado.getId());
+		Long usdID = (Long) HibernateQueryUtils.uniqueResult(this, hb2);
+		
+		// Juntar los IDs de GestorDespacho de grupos y el propio del usuario logueado, si no existe ya en la lista.
+		if(!Checks.esNulo(usdID)){
+			if(!usdListID.contains(usdID)){
+				usdListID.add(usdID);
+			}
+		}
+		
+		StringBuilder montajeIDs = new StringBuilder();
+		String idsEncontrados = new String();
+		
+		// Convertir a una cadena de string para adjuntar a la query principal.
+		for(Long l : usdListID){
+			montajeIDs.append(String.valueOf(l));
+			montajeIDs.append(", ");
+		}
+		
+		// Eliminar los ultimos caratecteres de adjuntar a la lista, si contiene objetos.
+		if(!Checks.estaVacio(usdListID)){
+			idsEncontrados = montajeIDs.substring(0, montajeIDs.length()-2);
+		}
+
+		return idsEncontrados;
 	}
 	
 	private String filtroGestorSupervisorProcedimientoMonoGestor(

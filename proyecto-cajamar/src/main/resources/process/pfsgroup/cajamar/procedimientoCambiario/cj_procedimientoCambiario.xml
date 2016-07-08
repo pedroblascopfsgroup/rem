@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="" name="hcj_procedimientoCambiario">
+
+  <start-state name="Inicio">
+    <transition to="CJ016_interposicionDemandaMasBienes" name="iniciarProceso"></transition>
+  </start-state>
+
+  <state name="CJ016_interposicionDemandaMasBienes">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_interposicionDemandaMasBienes" name="activarAlerta"></transition>
+    <transition to="CJ016_interposicionDemandaMasBienesDecision" name="avanzaBPM"></transition>
+    <transition to="Fin1" name="Fin"></transition>
+  </state>
+
+  <state name="CJ016_confAdmiDecretoEmbargo">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_confAdmiDecretoEmbargo" name="activarAlerta"></transition>
+    <transition to="CJ016_confAdmiDecretoEmbargoDecision" name="avanzaBPM"></transition>
+    <transition to="Fin1" name="Fin"></transition>
+  </state>
+
+  <decision name="CJ016_confAdmiDecretoEmbargoDecision" expression="#{CJ016_confAdmiDecretoEmbargoDecision}">
+    <transition to="fork1" name="AdmitidoYBienesRegistrables"></transition>
+    <transition to="CJ016_CambiarioDecision" name="NoAdmitido"></transition>
+    <transition to="CJ016_confNotifRequerimientoPago" name="Admitido"></transition>
+  </decision>
+
+  <state name="CJ016_BPMVigilanciaCaducidadEmbargos">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="Fin" name="hcj_tramiteVigilanciaCaducidadEmbargos"></transition>
+  </state>
+
+  <fork name="fork1">
+    <transition to="CJ016_BPMVigilanciaCaducidadEmbargos" name="Registrar"></transition>
+    <transition to="CJ016_confNotifRequerimientoPago" name="Confirmar"></transition>
+  </fork>
+
+  <state name="CJ016_confNotifRequerimientoPago">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_confNotifRequerimientoPago" name="activarAlerta"></transition>
+    <transition to="CJ016_confNotifRequerimientoPagoDecision" name="avanzaBPM"></transition>
+    <transition to="Fin1" name="Fin"></transition>
+  </state>
+
+  <decision name="CJ016_confNotifRequerimientoPagoDecision" expression="#{CJ016_confNotifRequerimientoPagoDecision}">
+    <transition to="CJ016_BPMTramiteNotificacion" name="NO"></transition>
+    <transition to="CJ016_registrarDemandaOposicion" name="SI"></transition>
+  </decision>
+
+  <state name="CJ016_BPMTramiteNotificacion">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler</targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler</targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_registrarDemandaOposicion" name="tramiteNotificacionV4"></transition>
+  </state>
+
+  <state name="CJ016_registrarDemandaOposicion">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_registrarDemandaOposicion" name="activarAlerta"></transition>
+    <transition to="CJ016_registrarDemandaOposicionDecision" name="avanzaBPM"></transition>
+    <transition to="Fin" name="Fin"></transition>
+    <transition to="CJ016_confNotifRequerimientoPago" name="vueltaAtras"></transition>
+  </state>
+
+  <decision name="CJ016_registrarDemandaOposicionDecision" expression="#{CJ016_registrarDemandaOposicionDecision}">
+    <transition to="CJ016_registrarAutoEjecucion" name="NO"></transition>
+    <transition to="CJ016_registrarJuicioComparecencia" name="SI"></transition>
+  </decision>
+
+  <state name="CJ016_registrarJuicioComparecencia">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_registrarJuicioComparecencia" name="activarAlerta"></transition>
+    <transition to="CJ016_registrarResolucion" name="avanzaBPM"></transition>
+    <transition to="Fin1" name="Fin"></transition>
+    <transition to="CJ016_registrarDemandaOposicion" name="vueltaAtras"></transition>
+  </state>
+
+  <state name="CJ016_registrarAutoEjecucion">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_registrarAutoEjecucion" name="activarAlerta"></transition>
+    <transition to="CJ016_CambiarioDecision" name="avanzaBPM"></transition>
+    <transition to="Fin" name="Fin"></transition>
+    <transition to="CJ016_registrarDemandaOposicion" name="vueltaAtras"></transition>
+  </state>
+
+  <state name="CJ016_registrarResolucion">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_registrarResolucion" name="activarAlerta"></transition>
+    <transition to="CJ016_resolucionFirme" name="avanzaBPM"></transition>
+    <transition to="Fin1" name="Fin"></transition>
+    <transition to="CJ016_registrarJuicioComparecencia" name="vueltaAtras"></transition>
+  </state>
+
+  <state name="CJ016_resolucionFirme">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="CJ016_resolucionFirme" name="activarAlerta"></transition>
+    <transition to="CJ016_CambiarioDecision" name="avanzaBPM"></transition>
+    <transition to="Fin" name="Fin"></transition>
+    <transition to="CJ016_registrarResolucion" name="vueltaAtras"></transition>
+  </state>
+
+  <node name="CJ016_CambiarioDecision">
+    <action name="miTarea" config-type="bean"
+      class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+      <targetBean>genericUserDecisionActionHandler
+      </targetBean>
+    </action>
+    <transition to="Fin" name="Fin"></transition>
+  </node>
+
+  <fork name="fork2">
+    <transition to="CJ016_confAdmiDecretoEmbargo" name="decreto"></transition>
+    <transition to="CJ016_BPMProvisionFondos" name="provision"></transition>
+  </fork>
+
+  <fork name="forkAnti">
+    <transition to="CJ016_confAdmiDecretoEmbargo" name="decreto"></transition>
+    <transition to="CJ016_BPMAnticipoFondos" name="anticipo"></transition>
+  </fork>
+
+  <state name="CJ016_BPMProvisionFondos">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="Fin" name="hcj_provisionFondos"></transition>
+    <transition to="Fin" name="Fin"></transition>
+    <transition to="CJ016_BPMProvisionFondos" name="activarAlerta"></transition>
+  </state>
+
+  <state name="CJ016_BPMAnticipoFondos">
+    <event type="node-enter">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericEnterActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <event type="node-leave">
+      <action name="miTarea"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+        config-type="bean">
+        <targetBean>genericLeaveActionHandler
+        </targetBean>
+      </action>
+    </event>
+    <transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+    <transition to="Fin" name="Fin"></transition>
+  </state>
+
+  <decision name="CJ016_interposicionDemandaMasBienesDecision" expression="#{CJ016_interposicionDemandaMasBienesDecision}">
+    <transition to="fork2" name="conprovision"></transition>
+    <transition to="forkAnti" name="conanti"></transition>
+    <transition to="CJ016_confAdmiDecretoEmbargo" name="sinprovision"></transition>
+  </decision>
+    
+  <end-state name="Fin">
+    <event type="node-enter">
+      <action name="myAction" config-type="bean"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        <targetBean>endProcessActionHandler
+        </targetBean>
+      </action>
+    </event>
+  </end-state>
+
+  <end-state name="Fin1">
+    <event type="node-enter">
+      <action name="myAction" config-type="bean"
+        class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+        <targetBean>endProcessActionHandler
+        </targetBean>
+      </action>
+    </event>
+  </end-state>
+
+</process-definition>

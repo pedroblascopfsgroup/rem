@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="hcj_ejecucionTituloNoJudicial">
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="cj_ejecucionTituloNoJudicial">
 
 	<start-state name="Inicio">
 		<transition to="CJ020_InterposicionDemandaMasBienes" name="iniciarProceso"></transition>
@@ -321,7 +321,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="Fin" name="cj_provisionFondos"></transition>
 		<transition to="CJ020_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
@@ -343,7 +343,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+		<transition to="Fin" name="cj_anticipoFondosProcu"></transition>
 	</state>
 
 	<end-state name="Fin">

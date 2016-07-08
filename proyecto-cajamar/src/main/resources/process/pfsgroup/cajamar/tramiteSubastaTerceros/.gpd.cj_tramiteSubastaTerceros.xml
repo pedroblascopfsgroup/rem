@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_tramiteSubastaTerceros" width="1203" height="897">
+<root-container name="hcj_tramiteSubastaTerceros" width="1059" height="454">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_SenyalamientoSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_SenyalamientoSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -17,7 +17,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_PrepararInformeSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_PrepararInformeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -28,7 +28,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_ValidarInformeDeSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_ValidarInformeDeSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -50,7 +50,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_RegistrarResSuspSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_RegistrarResSuspSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -64,7 +64,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_ValidarInformeDeSubastaDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_ValidarInformeDeSubastaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -78,7 +78,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_ObtenerValidacionComite" x="0" y="0" width="132" height="36">
+  <node name="CJ070_ObtenerValidacionComite" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -92,7 +92,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_DictarInstruccionesSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_DictarInstruccionesSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -106,7 +106,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_CelebracionSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_CelebracionSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -117,28 +117,17 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_CelebracionDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_CelebracionDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_BPMTramiteCesionRemate" x="0" y="0" width="132" height="36">
+  <node name="CJ070_BPMTramiteCesionRemate" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_BPMTramiteAdjudicacion" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ004_SolicitarMandamientoPago" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="CJ070_BPMTramiteAdjudicacion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -146,10 +135,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_ConfirmarRecepcionMandamientoDePago" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="CJ070_SolicitarMandamientoPago" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -160,7 +146,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_RecepcionMandamientoPago" x="0" y="0" width="132" height="36">
+  <node name="CJ070_ConfirmarRecepcionMandamientoDePago" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -174,7 +160,10 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_RecepcionMandamientoPagoDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_RecepcionMandamientoPago" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -185,7 +174,18 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_ObtenerValidacionComiteDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_RecepcionMandamientoPagoDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ070_ObtenerValidacionComiteDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -250,12 +250,12 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_SuspenderDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_SuspenderDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_BPMTramiteSolSolvenciaPatrimonial" x="0" y="0" width="132" height="36">
+  <node name="CJ070_BPMTramiteSolSolvenciaPatrimonial" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -266,7 +266,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_ConfirmarContabilidad" x="0" y="0" width="132" height="36">
+  <node name="CJ070_ConfirmarContabilidad" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -285,7 +285,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_RevisarDocumentacion" x="0" y="0" width="132" height="36">
+  <node name="CJ070_RevisarDocumentacion" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -296,7 +296,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_DictarInstruccionesSubastaDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_DictarInstruccionesSubastaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -304,7 +304,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_LecturaConfirmacionInstrucciones" x="0" y="0" width="132" height="36">
+  <node name="CJ070_LecturaConfirmacionInstrucciones" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -350,7 +350,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_AdjuntarNotasSimples" x="0" y="0" width="132" height="36">
+  <node name="CJ070_AdjuntarNotasSimples" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -375,7 +375,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_AdjuntarTasaciones" x="0" y="0" width="132" height="36">
+  <node name="CJ070_AdjuntarTasaciones" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -386,21 +386,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_SolicitarInformeFiscal" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ004_AdjuntarInformeFiscal" x="0" y="0" width="132" height="36">
+  <node name="CJ070_SolicitarInformeFiscal" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -414,7 +400,13 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_AdjuntarTasacionesDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ070_AdjuntarInformeFiscal" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -422,7 +414,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ004_SolicitarSuspenderSubasta" x="0" y="0" width="132" height="36">
+  <node name="CJ070_AdjuntarTasacionesDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ070_SolicitarSuspenderSubasta" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

@@ -17,8 +17,6 @@
 				result="flowScope.tiposGestor" />
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.dameDespachoExtras',id)" result="flowScope.despachoExtras"/>
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.dameAmbitoDespachoExtrasCodigos',id)" result="flowScope.ambitoDespachoExtras"/>
-			<evaluate expression="executor.execute('ADMDespachoExternoManager.getMapasDespachoExtras')"
-				result="flowScope.mapasDespExtras" />
 			<evaluate expression="executor.execute('ADMDiccionariosManager.getSiNo')" 
 				result="flowScope.ddSiNo" />	
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDProvincias')" 
@@ -28,7 +26,12 @@
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getIdTipoProcurador')" 
 				result="flowScope.idTipoProcurador" />	
 			<evaluate expression="executor.execute('ADMDespachoExternoManager.getDDTipoDocumento')" 
-				result="flowScope.tiposDocumentos" />					
+				result="flowScope.tiposDocumentos" />	
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DespachoContratoVigor')" result="flowScope.contratoDict"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DespachoCodEstado')" result="flowScope.codEstAseDict"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DespachoRelEntidad')" result="flowScope.relacionEntidadDict"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DespachoIvaDes')" result="flowScope.impuestoDict"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DespachoClasiPerfil')" result="flowScope.perfilDict"/>
 		</on-entry>
 	</end-state>
 	

@@ -60,7 +60,7 @@ public interface CoreProjectContext {
 	 */
 	public Map<String, String> getMapaContratoVigor();
 	public Map<String, String> getMapaClasificacionDespachoPerfil();
-	public Map<String, String> getMapaRelacionBankia();
+	public Map<String, String> getMapaRelacionEntidad();
 	public Map<String, String> getMapaDescripcionIVA();
 	public Map<String, String> getMapaCodEstAse();
 	

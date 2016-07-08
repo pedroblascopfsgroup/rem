@@ -60,7 +60,7 @@
     	,config);
    
 	
-	var contratosData = <app:dict value="${contratosDict}" />;
+	var contratosData = <app:dict value="${contratoDict}" />;
         	
 	var contratoVigor = app.creaDblSelect(contratosData
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'

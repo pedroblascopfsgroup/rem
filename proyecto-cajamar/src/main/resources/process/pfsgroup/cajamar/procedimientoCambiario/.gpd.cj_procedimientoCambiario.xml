@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="hcj_procedimientoCambiario" width="1208" height="883">
+<root-container name="cj_procedimientoCambiario" width="1059" height="454">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

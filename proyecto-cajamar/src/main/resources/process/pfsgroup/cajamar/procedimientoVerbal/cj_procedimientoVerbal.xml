@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="hcj_procedimientoVerbal">
+<process-definition xmlns="" name="cj_procedimientoVerbal">
 
 	<start-state name="Inicio">
 		<transition to="CJ026_InterposicionDemanda" name="iniciarProceso"></transition>
@@ -201,7 +201,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="Fin" name="cj_provisionFondos"></transition>
 		<transition to="CJ026_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
@@ -223,7 +223,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+		<transition to="Fin" name="cj_anticipoFondosProcu"></transition>
 	</state>
 
 	<end-state name="Fin">

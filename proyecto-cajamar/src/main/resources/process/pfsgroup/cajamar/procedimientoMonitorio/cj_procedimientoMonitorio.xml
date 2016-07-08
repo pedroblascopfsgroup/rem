@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2"
-	name="hcj_procedimientoMonitorio">
+	name="cj_procedimientoMonitorio">
 
 
 
@@ -137,7 +137,7 @@
 			</action>
 		</event>
 		<transition to="CJ022_BPMProcedimientoETJ" name="activarAlerta"></transition>
-		<transition to="Fin" name="hcj_ejecucionTituloJudicial"></transition>
+		<transition to="Fin" name="cj_ejecucionTituloJudicial"></transition>
 	</state>
 
 	<node name="CJ022_MonitorioDecision">
@@ -199,7 +199,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="Fin" name="cj_provisionFondos"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="CJ022_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
@@ -221,7 +221,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+		<transition to="Fin" name="cj_anticipoFondosProcu"></transition>
 		<transition to="Fin" name="Fin"></transition>
 	</state>
 
@@ -242,7 +242,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_procedimientoOrdinario"></transition>
+		<transition to="Fin" name="cj_procedimientoOrdinario"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="CJ022_BPMOrdinario" name="activarAlerta"></transition>
 	</state>
@@ -264,7 +264,7 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="Fin" name="hcj_procedimientoVerbalDesdeMonitorio"></transition>
+		<transition to="Fin" name="cj_procedimientoVerbalDesdeMonitorio"></transition>
 		<transition to="Fin" name="Fin"></transition>
 		<transition to="CJ022_BPMVerbalDesdeMonitorio" name="activarAlerta"></transition>
 	</state>

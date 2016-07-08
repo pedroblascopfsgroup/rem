@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="cj_procedimientoMonitorio" width="1059" height="454">
+<root-container name="cj_procedimientoOrdinario" width="1059" height="454">
   <node name="Inicio" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_ConfirmarAdmisionDemanda" x="0" y="0" width="132" height="36">
+  <node name="CJ024_InterposicionDemanda" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -17,18 +17,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_ConfirmarAdmisionDemandaDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ022_ConfirmarNotificacionReqPago" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="CJ024_ConfirmarAdmision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -39,20 +28,12 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_JBPMTramiteNotificacion" x="0" y="0" width="132" height="36">
+  <node name="CJ024_OrdinarioDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_ConfirmarNotificacionReqPagoDecision" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ022_ConfirmarOposicionCuantia" x="0" y="0" width="132" height="36">
+  <node name="CJ024_ConfirmarNotDemanda" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -66,7 +47,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_ConfirmarOposicionCuantiaDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ024_BPMTramiteNotificacion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_ConfirmarOposicion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -77,7 +66,13 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_BPMProcedimientoETJ" x="0" y="0" width="132" height="36">
+  <node name="CJ024_RegistrarAudienciaPrevia" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -85,12 +80,70 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_MonitorioDecision" x="0" y="0" width="132" height="36">
+  <node name="CJ024_RegistrarJuicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_InterposicionDemanda" x="0" y="0" width="132" height="36">
+  <node name="CJ024_RegistrarResolucion" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_ResolucionFirme" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_ConfirmarNotAdmisionDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_ConfirmarNotDemandaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_RegistrarAudienciaPreviaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_InterposicionDemandaDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -109,7 +162,15 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_InterposicionDemandaDecision" x="0" y="0" width="132" height="36">
+  <node name="ForkInterposicionDemandaAnti" x="0" y="0" width="252" height="24">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="CJ024_BPMProvisionFondos" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -120,40 +181,7 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="CJ022_BPMProvisionFondos" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ022_BPMAnticipoFondos" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ022_BPMOrdinario" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="CJ022_BPMVerbalDesdeMonitorio" x="0" y="0" width="132" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
+  <node name="CJ024_BPMAnticipoFondos" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>

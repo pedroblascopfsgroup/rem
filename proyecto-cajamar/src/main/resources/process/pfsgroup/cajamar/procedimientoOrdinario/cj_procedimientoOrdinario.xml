@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-definition name="hcj_procedimientoOrdinario" xmlns="urn:jbpm.org:jpdl-3.2">
+<process-definition name="cj_procedimientoOrdinario" xmlns="urn:jbpm.org:jpdl-3.2">
 
 	<start-state name="Inicio">
 		<transition to="CJ024_InterposicionDemanda" name="avanzaBPM"></transition>
@@ -264,7 +264,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_provisionFondos"></transition>
+		<transition to="Fin" name="cj_provisionFondos"></transition>
 		<transition to="CJ024_BPMProvisionFondos" name="activarAlerta"></transition>
 	</state>
 
@@ -286,7 +286,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="Fin"></transition>
-		<transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+		<transition to="Fin" name="cj_anticipoFondosProcu"></transition>
 	</state>
 
 

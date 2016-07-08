@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-definition name="hcj_procedimientoVerbalDesdeMonitorio" xmlns="urn:jbpm.org:jpdl-3.2">
+<process-definition name="cj_procedimientoVerbalDesdeMonitorio" xmlns="urn:jbpm.org:jpdl-3.2">
 
 	<start-state name="Inicio">
 		

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition xmlns="" name="hcj_procedimientoCambiario">
+<process-definition xmlns="" name="cj_procedimientoCambiario">
 
   <start-state name="Inicio">
     <transition to="CJ016_interposicionDemandaMasBienes" name="iniciarProceso"></transition>
@@ -73,7 +73,7 @@
         </targetBean>
       </action>
     </event>
-    <transition to="Fin" name="hcj_tramiteVigilanciaCaducidadEmbargos"></transition>
+    <transition to="Fin" name="cj_tramiteVigilanciaCaducidadEmbargos"></transition>
   </state>
 
   <fork name="fork1">
@@ -282,7 +282,7 @@
         </targetBean>
       </action>
     </event>
-    <transition to="Fin" name="hcj_provisionFondos"></transition>
+    <transition to="Fin" name="cj_provisionFondos"></transition>
     <transition to="Fin" name="Fin"></transition>
     <transition to="CJ016_BPMProvisionFondos" name="activarAlerta"></transition>
   </state>
@@ -304,7 +304,7 @@
         </targetBean>
       </action>
     </event>
-    <transition to="Fin" name="hcj_anticipoFondosProcu"></transition>
+    <transition to="Fin" name="cj_anticipoFondosProcu"></transition>
     <transition to="Fin" name="Fin"></transition>
   </state>
 

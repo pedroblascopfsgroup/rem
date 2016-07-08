@@ -1681,6 +1681,13 @@ DBMS_OUTPUT.ENABLE(1000000);
 
                         IF  (v_TAR_FINALIZADA = 1 AND v_CONTROL <> 3 AND l.FLAG_ES_FECHA = 0) THEN
 
+                             SELECT MAX(TAR_ID)
+                             INTO v_TAR_ID
+                             FROM MIG_MAESTRA_HITOS
+                             WHERE CD_PROCEDIMIENTO = j.CD_PROCEDIMIENTO
+                             AND TAP_CODIGO = k.TAP_CODIGO
+                             AND CD_BIEN = v_CD_BIEN;
+
 
                              SELECT S_TEV_TAREA_EXTERNA_VALOR.NEXTVAL
                              INTO v_TEV_ID

@@ -270,8 +270,32 @@ var filtroEstadoPreparacion = app.creaDblSelect(
 
 <%-- Actores asignados: Permitirá buscar por los distintos actores que estén asignados a los expedientes. (Rol, Despacho y usuario) --%>
 
-<pfsforms:ddCombo name="comboTiposGestor" propertyCodigo="id" propertyDescripcion="descripcion"
-labelKey="ext.asuntos.busqueda.filtro.tipoGestor" label="**Tipo de gestor" value="" dd="${ddListadoGestores}" />
+<%--<pfsforms:ddCombo name="comboTiposGestor" propertyCodigo="id" propertyDescripcion="descripcion"
+labelKey="ext.asuntos.busqueda.filtro.tipoGestor" label="**Tipo de gestor" value="" dd="${ddListadoGestores}" />--%>
+
+var tipoGestor = Ext.data.Record.create([
+		 {name:'id'}
+		,{name:'descripcion'}
+	]);
+	
+var optionsGestorStore = page.getStore({
+       flow: 'coreextension/getListTipoGestorAdicionalData'
+       ,reader: new Ext.data.JsonReader({
+    	 root : 'listadoGestores'
+    }, tipoGestor)	       
+});
+
+var comboTiposGestor = new Ext.form.ComboBox({
+	store:optionsGestorStore
+	,displayField:'descripcion'
+	,valueField:'id'
+	//,disabled:true
+	,mode: 'remote'
+	,forceSelection: true
+	,emptyText:''
+	,triggerAction: 'all'
+	,fieldLabel: '<s:message code="ext.asuntos.busqueda.filtro.tipoGestor" text="**Tipo gestor" />'
+});
 
 comboTiposGestor.on('select', function(){
 	comboDespachos.reset();

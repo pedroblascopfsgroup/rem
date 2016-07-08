@@ -118,7 +118,7 @@
 		,width:150
 	});	
 		
-		var relacionBankiaDict = <json:object>
+		var relacionEntidadDict = <json:object>
 		<json:array name="diccionario" items="${mapasDespExtras[4]}" var="d">	
 		 <json:object>
 		   <json:property name="codigo" value="${d}" />
@@ -127,8 +127,8 @@
 		</json:array>
 	</json:object>;
 	
-	var relacionBankia = app.creaDblSelect(relacionBankiaDict
-		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
+	var relacionEntidad = app.creaDblSelect(relacionEntidadDict
+		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionEntidad" text="**relacionEntidad" />'
 		 ,{width:100,height:110});
 
 	<pfsforms:ddCombo name="tieneAsesoria"
@@ -185,7 +185,7 @@
 		if (servicioIntegral.getValue() != '' ){
 			return true;
 		}
-		if (relacionBankia.getValue() != '' ){
+		if (relacionEntidad.getValue() != '' ){
 			return true;
 		}
 		if (oficinaContacto.getValue() != '' ){
@@ -271,7 +271,7 @@
 			,codEstAse: codEstAse.getValue()
 			,contratoVigor: contratoVigor.getValue()
 			,servicioIntegral: servicioIntegral.getValue()
-			,relacionBankia: relacionBankia.getValue()
+			,relacionEntidad: relacionEntidad.getValue()
 			,oficinaContacto: oficinaContacto.getValue()
 			,entidadContacto: entidadContacto.getValue()
 			,entidadLiquidacion: entidadLiquidacion.getValue()
@@ -308,7 +308,11 @@
 		,bodyStyle:'padding:5px;cellspacing:20px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
 		,items:[ 
+<<<<<<< HEAD
 				{items: [ contratoVigor, relacionBankia, codEstAse, tieneAsesoria, impuesto<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">, clasifDespachoFieldSet</c:if>]}
+=======
+				{items: [ contratoVigor, relacionEntidad, codEstAse, tieneAsesoria, impuesto, clasifDespachoFieldSet]}
+>>>>>>> ebaa823... RECOVERY-962 Fase 1 completada
 				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, fechaAltaSIFieldSet ]}
 				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, comboProvincias]}
 				
@@ -347,11 +351,17 @@
     		           ,cuentaEntregas
     		           ,centroRecuperacion
     		           ,tieneAsesoria
+<<<<<<< HEAD
     		           ,relacionBankia
     		           <c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
     		           		,perfil
     		           		,concursos
     		           	</c:if>
+=======
+    		           ,relacionEntidad
+    		           ,perfil
+    		           ,concursos
+>>>>>>> ebaa823... RECOVERY-962 Fase 1 completada
     		           ,impuesto
     		           ,fechaAltaSIDesde
     		           ,fechaAltaSIHasta

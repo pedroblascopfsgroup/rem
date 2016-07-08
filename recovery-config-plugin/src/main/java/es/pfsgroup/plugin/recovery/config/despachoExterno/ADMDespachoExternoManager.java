@@ -55,8 +55,13 @@ import es.pfsgroup.plugin.recovery.coreextension.dao.EXTGestoresDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExternoExtrasDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExtrasAmbitoDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dto.DespachoExternoExtrasDto;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoClasiPerfil;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoCodEstado;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoContratoVigor;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExtrasAmbito;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoIvaDes;
+import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoRelEntidad;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
@@ -802,7 +807,7 @@ public class ADMDespachoExternoManager {
 		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaClasificacionDespachoPerfil()));
 		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaCodEstAse()));
 		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaDescripcionIVA()));
-		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaRelacionBankia()));
+		listaMapas.add(listaMapeadaDespachoExtras(context.getMapaRelacionEntidad()));
 		
 		return listaMapas;
 	}
@@ -956,8 +961,8 @@ public class ADMDespachoExternoManager {
 			desExtras.setTipoDocumento(null);
 		}
 		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
-			desExtras.setClasifPerfil(Integer.parseInt(
-					this.getKeyByValue(context.getMapaClasificacionDespachoPerfil(), dto.getClasificacionPerfil())));
+			DespachoClasiPerfil clasif = genericDao.get(DespachoClasiPerfil.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getClasificacionPerfil()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			desExtras.setClasifPerfil(clasif);
 		}
 		else {
 			desExtras.setClasifPerfil(null);
@@ -975,7 +980,8 @@ public class ADMDespachoExternoManager {
 			desExtras.setClasifConcursos(null);
 		}
 		if(!Checks.esNulo(dto.getCodEstAse())) {
-			desExtras.setCodEstAse(this.getKeyByValue(context.getMapaCodEstAse(), dto.getCodEstAse()));
+			DespachoCodEstado codEstado = genericDao.get(DespachoCodEstado.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstAse()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			desExtras.setCodEstAse(codEstado);
 		}
 		else {
 			desExtras.setCodEstAse(null);
@@ -995,12 +1001,12 @@ public class ADMDespachoExternoManager {
 		desExtras.setOficinaLiquidacion(dto.getOficinaLiquidacion());
 		desExtras.setOficinaProvisiones(dto.getOficinaProvisiones());
 		desExtras.setCentroRecuperacion(dto.getCentroRecuperacion());
-		if(!Checks.esNulo(dto.getRelacionBankia())) {
-			desExtras.setRelacionBankia(Integer.parseInt(
-					this.getKeyByValue(context.getMapaRelacionBankia(), dto.getRelacionBankia())));			
+		if(!Checks.esNulo(dto.getRelacionEntidad())) {
+			DespachoRelEntidad relEntidad = genericDao.get(DespachoRelEntidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getRelacionEntidad()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			desExtras.setRelacionEntidad(relEntidad);	
 		}
 		else {
-			desExtras.setRelacionBankia(null);
+			desExtras.setRelacionEntidad(null);
 		}
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			desExtras.setServicioIntegral(Boolean.parseBoolean(dto.getServicioIntegral()));
@@ -1022,15 +1028,15 @@ public class ADMDespachoExternoManager {
 		}
 		
 		if(!Checks.esNulo(dto.getContratoVigor())) {
-			desExtras.setContratoVigor(Integer.parseInt(
-					this.getKeyByValue(context.getMapaContratoVigor(), dto.getContratoVigor())));			
+			DespachoContratoVigor contratoVigor = genericDao.get(DespachoContratoVigor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getContratoVigor()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			desExtras.setContratoVigor(contratoVigor);		
 		}
 		else {
 			desExtras.setContratoVigor(null);
 		}
 		if(!Checks.esNulo(dto.getImpuesto())) {
-			desExtras.setDescripcionIVA(Integer.parseInt(
-					this.getKeyByValue(context.getMapaDescripcionIVA(), dto.getImpuesto())));
+			DespachoIvaDes ivaDes = genericDao.get(DespachoIvaDes.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getImpuesto()), genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			desExtras.setDescripcionIVA(ivaDes);
 		}
 		
 		return desExtras;

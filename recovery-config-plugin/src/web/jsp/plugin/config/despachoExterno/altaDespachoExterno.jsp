@@ -224,19 +224,19 @@
 		,value:'${despachoExtras.ivaDescripcion}'
 	});
 	
-	var relacionBankiaStore = 
-		<json:array name="ddrelacionBankia" items="${mapasDespExtras[4]}" var="d">	
+	var relacionEntidadStore = 
+		<json:array name="ddrelacionEntidad" items="${mapasDespExtras[4]}" var="d">	
 			 	  <json:property name="descripcion" value="${d}" />
 		</json:array>;
 	
-	var relacionBankia=new Ext.form.ComboBox({
-		store: relacionBankiaStore
+	var relacionEntidad=new Ext.form.ComboBox({
+		store: relacionEntidadStore
 		,triggerAction : 'all'
 		,mode:'local'
 		//,labelSeparator:""
-		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
+		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.relacionEntidad" text="**relacionEntidad" />'
 		,width:150
-		,value:'${despachoExtras.relacionBankia}'
+		,value:'${despachoExtras.relacionEntidad}'
 	});
 
 
@@ -335,7 +335,7 @@
 			,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px;width:300'}
 			,items:[ {items: [<c:if test="${usuarioEntidad == 'BANKIA'}">clasifDespachoFieldSet,</c:if> comboProvincias, contratoVigor, codEstAse, impuesto, servicionIntegralFieldSet]}
 					,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones ]}
-					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia	]}
+					,{items: [ entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad	]}
 				   ]
 		});
 	
@@ -416,7 +416,7 @@
 		contratoVigor.setValue('');
 		servicioIntegral.setValue('');
 		fechaServicioIntegral.setValue('');
-		relacionBankia.setValue('');
+		relacionEntidad.setValue('');
 		oficinaContacto.setValue('');
 		entidadContacto.setValue('');
 		entidadLiquidacion.setValue('');
@@ -465,7 +465,7 @@
 		parametros.contratoVigor=contratoVigor.getValue();
 		parametros.servicioIntegral=servicioIntegral.getValue();
 		parametros.fechaServicioIntegral=fechaServicioIntegral.getValue();
-		parametros.relacionBankia=relacionBankia.getValue();
+		parametros.relacionEntidad=relacionEntidad.getValue();
 		parametros.oficinaContacto=oficinaContacto.getValue();
 		parametros.entidadContacto=entidadContacto.getValue();
 		parametros.entidadLiquidacion=entidadLiquidacion.getValue();

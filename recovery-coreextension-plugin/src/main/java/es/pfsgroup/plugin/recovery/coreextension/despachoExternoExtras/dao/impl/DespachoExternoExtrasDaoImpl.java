@@ -80,11 +80,11 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setOficinaEntregas(despachoExtras.getOficinaEntregas());
 		despachoExtrasDto.setOficinaLiquidacion(despachoExtras.getOficinaLiquidacion());
 		despachoExtrasDto.setOficinaProvisiones(despachoExtras.getOficinaProvisiones());
-		if(!Checks.esNulo(despachoExtras.getRelacionBankia())) {
-			despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));
+		if(!Checks.esNulo(despachoExtras.getRelacionEntidad())) {
+			despachoExtrasDto.setRelacionEntidad(context.getMapaRelacionEntidad().get(despachoExtras.getRelacionEntidad().toString()));
 		}
 		else {
-			despachoExtrasDto.setRelacionBankia("");
+			despachoExtrasDto.setRelacionEntidad("");
 		}
 		despachoExtrasDto.setServicioIntegral(Checks.esNulo(despachoExtras.isServicioIntegral()) ? "" : despachoExtras.isServicioIntegral() ? "Si" : "No");
 		despachoExtrasDto.setTipoDoc(!Checks.esNulo(despachoExtras.getTipoDocumento()) ? despachoExtras.getTipoDocumento().getDescripcion() : "");

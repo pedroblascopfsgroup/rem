@@ -46,7 +46,6 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -1384,7 +1383,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return !Checks.esNulo(dto.getTipoDocumento()) || !Checks.esNulo(dto.getDocumentoCif()) || !Checks.esNulo(dto.getFechaAltaDesde()) || 
 				!Checks.esNulo(dto.getFechaAltaHasta()) || (!Checks.esNulo(dto.getListaProvincias()) && dto.getListaProvincias().length > 0) || !Checks.esNulo(dto.getClasificacionPerfil()) || 
 					!Checks.esNulo(dto.getClasificacionPerfil()) || !Checks.esNulo(dto.getCodEstAse()) || !Checks.esNulo(dto.getContratoVigor()) || !Checks.esNulo(dto.getServicioIntegral()) || 
-						!Checks.esNulo(dto.getRelacionBankia()) || !Checks.esNulo(dto.getOficinaContacto()) || !Checks.esNulo(dto.getEntidadContacto()) || 
+						!Checks.esNulo(dto.getRelacionEntidad()) || !Checks.esNulo(dto.getOficinaContacto()) || !Checks.esNulo(dto.getEntidadContacto()) || 
 							!Checks.esNulo(dto.getEntidadLiquidacion()) || !Checks.esNulo(dto.getOficinaLiquidacion()) || !Checks.esNulo(dto.getDigconLiquidacion()) || !Checks.esNulo(dto.getCuentaLiquidacion()) || 
 								!Checks.esNulo(dto.getEntidadProvisiones()) || !Checks.esNulo(dto.getOficinaProvisiones()) || !Checks.esNulo(dto.getDigconProvisiones()) || !Checks.esNulo(dto.getCuentaProvisiones()) || 
 									!Checks.esNulo(dto.getEntidadEntregas()) || !Checks.esNulo(dto.getOficinaEntregas()) || !Checks.esNulo(dto.getDigconEntregas()) || !Checks.esNulo(dto.getCuentaEntregas()) || 
@@ -1438,8 +1437,8 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			subSelect += "dee.servicioIntegral = "+ Integer.parseInt(dto.getServicioIntegral()) +" and ";
 		}
-		if(!Checks.esNulo(dto.getRelacionBankia())) {
-			subSelect += "dee.relacionBankia IN ("+ this.getListaMapeoValores(context.getMapaRelacionBankia(),dto.getRelacionBankia()) +") and ";
+		if(!Checks.esNulo(dto.getRelacionEntidad())) {
+			subSelect += "dee.relacionEntidad IN ("+ this.getListaMapeoValores(context.getMapaRelacionEntidad(),dto.getRelacionEntidad()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getOficinaContacto())) {
 			subSelect += "UPPER(dee.oficinaContacto) like UPPER('%"+ dto.getOficinaContacto() +"%') and ";

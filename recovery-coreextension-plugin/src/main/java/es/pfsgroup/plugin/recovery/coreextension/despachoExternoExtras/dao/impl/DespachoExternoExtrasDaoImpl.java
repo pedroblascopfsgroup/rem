@@ -32,7 +32,7 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 	
 	public DespachoExternoExtrasDto getDtoDespachoExtras(Long idDespacho) {
 		DespachoExternoExtrasDto despachoExtrasDto = new DespachoExternoExtrasDto();
-		DespachoExternoExtras despachoExtras = genericDao.get(DespachoExternoExtras.class, genericDao.createFilter(FilterType.EQUALS, "id", idDespacho));
+		DespachoExternoExtras despachoExtras = genericDao.get(DespachoExternoExtras.class, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idDespacho));
 		
 		if(Checks.esNulo(despachoExtras)) {
 			return despachoExtrasDto;

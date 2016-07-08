@@ -69,6 +69,12 @@
 				
 				<!-- T. Tributacion de Bienes - HCJ -->
 				<entry key="H054" value-ref="mapaTributacionBienes_haya" />
+				
+				<!-- T. Adjudiación terceros - HCJ -->
+				<entry key="P457" value-ref="mapaAdjudicacionTerceros_haya" />
+				
+				<!-- T. Subasta electrónica - HCJ -->
+				<entry key="P458" value-ref="mapaSubastaElectronica_haya" />
 			</map>
 		</property>
 	</bean>
@@ -2619,6 +2625,184 @@
 						</bean>
 					</list>
 				</entry>	
+			</map>
+		</property>
+	</bean>
+	
+	<!-- P457 mapaAdjudicacionTerceros_haya -->
+		<bean id="mapaAdjudicacionTerceros_haya"
+		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
+		<property name="mapaTiposResoluciones">
+			<map>				
+				<entry key="R_REG_DAT_ADJ">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_REG_DAT_ADJ</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_CNF_CNS">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_CNF_CNS</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_SOL_MAN_PA">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_SOL_MAN_PA</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_CON_REC_ENV">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_CON_REC_ENV</value>
+							</property>
+						</bean>
+					</list>
+				</entry>	
+			</map>
+		</property>
+	</bean>
+	
+	<!-- P458 mapaSubastaElectronica_haya -->
+	<bean id="mapaSubastaElectronica_haya"
+		class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigTiposResoluciones">
+		<property name="mapaTiposResoluciones">
+			<map>				
+				<entry key="R_SOL_SUB_ELE">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_SOL_SUB_ELE</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_DEC_CON_SUB">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_DEC_CON_SUB</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_ENT_REC_EDI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_ENT_REC_EDI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_PED_COR_EDI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_PED_COR_EDI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_CON_COR_EDI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_CON_COR_EDI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_REG_PTA_PUB">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_REG_PTA_PUB</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_REG_PUB_SUB">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_REG_PUB_SUB</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_COR_EDI_PUB">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_COR_EDI_PUB</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_COR_PUB_EDI">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_COR_PUB_EDI</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_REG_RES_SUB">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_REG_RES_SUB</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_SOL_ADJ_INS">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_SOL_ADJ_INS</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
+				<entry key="R_RES_ESC_ADJ">
+					<list>
+						<bean
+							class="es.pfsgroup.plugin.recovery.masivo.resolInputConfig.model.MSVConfigResolInput">
+							<property name="codigoInput">
+								<value>I_RES_ESC_ADJ</value>
+							</property>
+						</bean>
+					</list>
+				</entry>
 			</map>
 		</property>
 	</bean>

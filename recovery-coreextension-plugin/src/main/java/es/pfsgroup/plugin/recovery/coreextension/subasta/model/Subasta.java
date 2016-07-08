@@ -92,10 +92,18 @@ public class Subasta implements Serializable, Auditable {
 	@JoinColumn(name = "DD_REC_ID")
 	private DDResultadoComite resultadoComite;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_RCS_ID")
+	private DDResultadoComiteSubasta resultadoComiteSub;
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_MSS_ID")
 	private DDMotivoSuspSubasta motivoSuspension;
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_MSE_ID")
+	private DDMotivoSuspSubastaElec motivoSuspensionElec;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_MCS_ID")
 	private DDEstadoAsunto estadoAsunto;
@@ -142,6 +150,16 @@ public class Subasta implements Serializable, Auditable {
 
 	@Column(name="SYS_GUID")
 	private String guid;
+	
+	@Column(name="SUB_FECHA_PUBLICACION_BOE")
+	private Date fechaPublicacionBOE;
+	
+	@Column(name="SUB_TRAMITACION")
+	private Boolean tramitacion;
+	
+	@Column(name="SUB_TASACION_ELECTRONICA")
+	private Boolean tasacionElectronica;
+	
 	
 	public String getGuid() {
 		return guid;
@@ -416,12 +434,28 @@ public class Subasta implements Serializable, Auditable {
 		this.resultadoComite = resultadoComite;
 	}
 
+	public DDResultadoComiteSubasta getResultadoComiteSub() {
+		return resultadoComiteSub;
+	}
+
+	public void setResultadoComiteSub(DDResultadoComiteSubasta resultadoComiteSub) {
+		this.resultadoComiteSub = resultadoComiteSub;
+	}
+
 	public DDMotivoSuspSubasta getMotivoSuspension() {
 		return motivoSuspension;
 	}
 
 	public void setMotivoSuspension(DDMotivoSuspSubasta motivoSuspension) {
 		this.motivoSuspension = motivoSuspension;
+	}
+
+	public DDMotivoSuspSubastaElec getMotivoSuspensionElec() {
+		return motivoSuspensionElec;
+	}
+
+	public void setMotivoSuspensionElec(DDMotivoSuspSubastaElec motivoSuspensionElec) {
+		this.motivoSuspensionElec = motivoSuspensionElec;
 	}
 
 	public DDEstadoAsunto getEstadoAsunto() {
@@ -623,6 +657,30 @@ public class Subasta implements Serializable, Auditable {
 			}
 		}
 		return maximaOperacion;
+	}
+
+	public Date getFechaPublicacionBOE() {
+		return fechaPublicacionBOE;
+	}
+
+	public void setFechaPublicacionBOE(Date fechaPublicacionBOE) {
+		this.fechaPublicacionBOE = fechaPublicacionBOE;
+	}
+
+	public Boolean getTramitacion() {
+		return tramitacion;
+	}
+
+	public void setTramitacion(Boolean tramitacion) {
+		this.tramitacion = tramitacion;
+	}
+
+	public Boolean getTasacionElectronica() {
+		return tasacionElectronica;
+	}
+
+	public void setTasacionElectronica(Boolean tasacionElectronica) {
+		this.tasacionElectronica = tasacionElectronica;
 	}
 	
 }

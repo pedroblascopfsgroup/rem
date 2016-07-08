@@ -100,7 +100,7 @@
 	});
 
 	<%-- Entrada de Texto Numero Nominal --%>
-	var nominal  = app.creaNumber('contabilidadCobro.nominal',
+	var nominal  = app.creaNumberDecimales('contabilidadCobro.nominal',
 		'<s:message code="contabilidad.nominal" text="**Nominal" />',
 		'${contabilidadCobro.nominal}',
 		{
@@ -123,7 +123,7 @@
 	
 	
 	<%-- Entrada de Texto Numero Intereses --%>
-	var intereses  = app.creaNumber('contabilidadCobro.intereses',
+	var intereses  = app.creaNumberDecimales('contabilidadCobro.intereses',
 		'<s:message code="contabilidad.intereses" text="**Intereses" />',
 		'${contabilidadCobro.intereses}',
 		{
@@ -145,7 +145,7 @@
 	
 	
 	<%-- Entrada de Texto Numero Demoras --%>
-	var demoras  = app.creaNumber('contabilidadCobro.demoras',
+	var demoras  = app.creaNumberDecimales('contabilidadCobro.demoras',
 		'<s:message code="contabilidad.demoras" text="**Demoras" />',
 		'${contabilidadCobro.demoras}',
 		{
@@ -165,7 +165,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Impuestos --%>
-	var impuestos  = app.creaNumber('contabilidadCobro.impuestos',
+	var impuestos  = app.creaNumberDecimales('contabilidadCobro.impuestos',
 		'<s:message code="contabilidad.impuestos" text="**Impuestos" />',
 		'${contabilidadCobro.impuestos}',
 		{
@@ -185,7 +185,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Gastos Procurador --%>
-	var gastosProcurador  = app.creaNumber('contabilidadCobro.gastosProcurador',
+	var gastosProcurador  = app.creaNumberDecimales('contabilidadCobro.gastosProcurador',
 		'<s:message code="contabilidad.gastosProcurador" text="**Gastos Procurador" />',
 		'${contabilidadCobro.gastosProcurador}',
 		{
@@ -205,7 +205,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Gastos Letrado --%>
-	var gastosLetrado  = app.creaNumber('contabilidadCobro.gastosLetrado',
+	var gastosLetrado  = app.creaNumberDecimales('contabilidadCobro.gastosLetrado',
 		'<s:message code="contabilidad.gastosLetrado" text="**Gastos Letrado" />',
 		'${contabilidadCobro.gastosLetrado}',
 		{
@@ -225,7 +225,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Otros Gastos --%>
-	var otrosGastos  = app.creaNumber('contabilidadCobro.otrosGastos',
+	var otrosGastos  = app.creaNumberDecimales('contabilidadCobro.otrosGastos',
 		'<s:message code="contabilidad.otrosGastos" text="**Otros Gastos" />',
 		'${contabilidadCobro.otrosGastos}',
 		{
@@ -245,7 +245,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Operaciones En Tramite --%>
-	var operacionesEnTramite  = app.creaNumber('contabilidadCobro.operacionesEnTramite',
+	var operacionesEnTramite  = app.creaNumberDecimales('contabilidadCobro.operacionesEnTramite',
 		'<s:message code="contabilidad.operacionesEnTramite" text="**Operaciones En Tr�mite" />',
 		'${contabilidadCobro.operacionesEnTramite}',
 		{
@@ -265,7 +265,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Nominal --%>
-	var quitaNominal  = app.creaNumber('contabilidadCobro.quitaNominal',
+	var quitaNominal  = app.creaNumberDecimales('contabilidadCobro.quitaNominal',
 		'<s:message code="contabilidad.quitaNominal" text="**Quita Nominal" />',
 		'${contabilidadCobro.quitaNominal}',
 		{
@@ -286,7 +286,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Intereses --%>
-	var quitaIntereses  = app.creaNumber('contabilidadCobro.quitaIntereses',
+	var quitaIntereses  = app.creaNumberDecimales('contabilidadCobro.quitaIntereses',
 		'<s:message code="contabilidad.quitaIntereses" text="**Quita Intereses" />',
 		'${contabilidadCobro.quitaIntereses}',
 		{
@@ -307,7 +307,7 @@
 	);
 		
 	<%-- Entrada de Texto Numero Quita Demoras --%>
-	var quitaDemoras  = app.creaNumber('contabilidadCobro.quitaDemoras',
+	var quitaDemoras  = app.creaNumberDecimales('contabilidadCobro.quitaDemoras',
 		'<s:message code="contabilidad.quitaDemoras" text="**Quita Demoras" />',
 		'${contabilidadCobro.quitaDemoras}',
 		{
@@ -328,7 +328,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Impuestos --%>
-	var quitaImpuestos  = app.creaNumber('contabilidadCobro.quitaImpuestos',
+	var quitaImpuestos  = app.creaNumberDecimales('contabilidadCobro.quitaImpuestos',
 		'<s:message code="contabilidad.quitaImpuestos" text="**Quita Impuestos" />',
 		'${contabilidadCobro.quitaImpuestos}',
 		{
@@ -349,7 +349,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Gastos Procurador --%>
-	var quitaGastosProcurador  = app.creaNumber('contabilidadCobro.quitaGastosProcurador',
+	var quitaGastosProcurador  = app.creaNumberDecimales('contabilidadCobro.quitaGastosProcurador',
 		'<s:message code="contabilidad.quitaGastosProcurador" text="**Quita Gastos Procurador" />',
 		'${contabilidadCobro.quitaGastosProcurador}',
 		{
@@ -370,7 +370,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Gastos Letrado --%>
-	var quitaGastosLetrado  = app.creaNumber('contabilidadCobro.quitaGastosLetrado',
+	var quitaGastosLetrado  = app.creaNumberDecimales('contabilidadCobro.quitaGastosLetrado',
 		'<s:message code="contabilidad.quitaGastosLetrado" text="**Quita Gastos Letrado" />',
 		'${contabilidadCobro.quitaGastosLetrado}',
 		{
@@ -391,7 +391,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Otros Gastos --%>
-	var quitaOtrosGastos  = app.creaNumber('contabilidadCobro.quitaOtrosGastos',
+	var quitaOtrosGastos  = app.creaNumberDecimales('contabilidadCobro.quitaOtrosGastos',
 		'<s:message code="contabilidad.quitaOtrosGastos" text="**Quita Otros Gastos" />',
 		'${contabilidadCobro.quitaOtrosGastos}',
 		{
@@ -412,7 +412,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Quita Operaciones En Tramite --%>
-	var quitaOperacionesEnTramite  = app.creaNumber('contabilidadCobro.quitaOperacionesEnTramite',
+	var quitaOperacionesEnTramite  = app.creaNumberDecimales('contabilidadCobro.quitaOperacionesEnTramite',
 		'<s:message code="contabilidad.quitaOperacionesEnTramite" text="**Quita Operaciones en Tr�mite" />',
 		'${contabilidadCobro.quitaOperacionesEnTramite}',
 		{
@@ -433,7 +433,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Total Entrega --%>
-	var totalEntrega  = app.creaNumber('contabilidadCobro.totalEntrega',
+	var totalEntrega  = app.creaNumberDecimales('contabilidadCobro.totalEntrega',
 		'<s:message code="contabilidad.totalEntrega" text="**Total Entrega" />',
 		'${contabilidadCobro.totalEntrega}',
 		{
@@ -451,7 +451,7 @@
 	);
 	
 	<%-- Entrada de Texto Numero Total Quita --%>
-	var totalQuita  = app.creaNumber('contabilidadCobro.totalQuita',
+	var totalQuita  = app.creaNumberDecimales('contabilidadCobro.totalQuita',
 		'<s:message code="contabilidad.totalQuita" text="**Total Quita" />',
 		'${contabilidadCobro.totalQuita}',
 		{

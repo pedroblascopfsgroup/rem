@@ -10,11 +10,18 @@
 
 (function(page,entidad){
 
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
 	var colorFondo = 'background-color: #473729;';
 	var winWidth = 920;
 	var winWidthAgregarBien= 950;
 	var idSubasta;
 	var validacionCDD;
+	var esBankia = true;
+	
+	// RECOVERY-2219 Comprobacion para ocultar las columnas tipo y subasta revisada en el grid
+    if(usuarioEntidad == 'BANKIA'){
+		esBankia = false;
+	}
 	
 	// Variable que irá manteniendo los bienes seleccionados de todos los lotes.
 	var bienesSeleccionados=[];
@@ -71,12 +78,14 @@
 	var Subasta = Ext.data.Record.create([
 		{name : 'id'}
 		,{name : 'numAutos'}
+		,{name : 'tramitacion'}
 		,{name : 'idProcedimiento'}
 		,{name : 'prcDescripcion'}
 		,{name : 'tipo'}
 		,{name : 'fechaSolicitud'}
 		,{name : 'fechaAnuncio'}
 		,{name : 'fechaSenyalamiento'}
+		,{name : 'fechaPublicacionBoe'}
 		,{name : 'codEstadoSubasta'}
 		,{name : 'estadoSubasta'}
 		,{name : 'resultadoComite'}
@@ -105,24 +114,26 @@
 	};
 
 	entidad.cacheStore(storeSubastas);
-
-
+	
+	
 	var cmSubasta = new Ext.grid.ColumnModel([
 		{header: 'id',dataIndex:'id',hidden:'true'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.numAuto" text="**N&ordm; Auto" />', dataIndex : 'numAutos'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.tramitacion" text="**Tramitaci&oacute;n" />', dataIndex : 'tramitacion'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.idProcedimiento" text="**Procedimiento" />', dataIndex : 'idProcedimiento'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.prcDescripcion" text="**Descripcion" />', dataIndex : 'prcDescripcion', hidden: true}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.tipo" text="**Tipo" />', dataIndex : 'tipo'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.tipo" text="**Tipo" />', dataIndex : 'tipo', hidden: esBankia}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.fSolicitud" text="**F.Solicitud" />', dataIndex : 'fechaSolicitud'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.fAnuncio" text="**F.Anuncio" />', dataIndex : 'fechaAnuncio'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.fSenyalamiento" text="**F.Se&ntilde;alamiento" />', dataIndex : 'fechaSenyalamiento'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.fAnuncioFDecreto" text="**F.Anuncio/F.decreto" />', dataIndex : 'fechaAnuncio'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.fSenyalamientoFFinPujas" text="**F.Se&ntilde;alamiento/F.fin de pujas" />', dataIndex : 'fechaSenyalamiento'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.fPublicacionBoe" text="**F.publicaci&oacute;n BOE" />', dataIndex : 'fechaPublicacionBoe'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.estado" text="**Estado" />', dataIndex : 'estadoSubasta'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.resultadoComite" text="**Resultado comite" />', dataIndex : 'resultadoComite'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.motivoSuspension" text="**Motivo suspensión" />', dataIndex : 'motivoSuspension'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.tasacion" text="**Tasación" />', dataIndex : 'tasacion',renderer : OK_KO_Render, align:'center'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.infoLetrado" text="**Inf. letrado" />', dataIndex : 'infoLetrado',renderer : OK_KO_Render, align:'center'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.instrucciones" text="**Instrucciones" />', dataIndex : 'instrucciones',renderer : OK_KO_Render, align:'center'}
-		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.subastaRevisada" text="**Subasta revisada" />', dataIndex : 'subastaRevisada',renderer : OK_KO_Render, align:'center'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.subastas.subastaRevisada" text="**Subasta revisada" />', dataIndex : 'subastaRevisada',renderer : OK_KO_Render, align:'center', hidden: esBankia}
 	]);
 
 	var btnInfSubasta = new Ext.Button({

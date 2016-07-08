@@ -267,6 +267,7 @@
 		//param["causaDecision"]=comboCausas.getValue();
 		param["causaDecisionFinalizar"]=comboCausasFinalizar.getValue();
 		param["causaDecisionParalizar"]=comboCausasParalizar.getValue();
+		param["numOperacion"]=numOperacion.getValue();
 		
 		
 		param["finalizar"]=chkFinalizarOrigen.getValue();
@@ -893,6 +894,12 @@
 		
 	});
 	
+	var numOperacion = new Ext.form.TextField({
+        fieldLabel: '<s:message code="decisionProcedimiento.nOperacion" text="**Nº Operacion"/>'
+		,labelStyle:labelStyle
+		,hidden: true
+    });
+	
 	var btnAceptarPropuesta = new Ext.Button({
 		text : '<s:message code="decisionProcedimiento.aceptarpropuesta" text="**Aceptar Propuesta" />'
 		,iconCls : 'icon_ok'
@@ -970,13 +977,16 @@
 		} else if(chkParalizarOrigen.getValue()){
 			if(comboCausasParalizar.getValue()){
 				if(fechaHasta.getValue()){
-					<%-- RECOVERY-1840 Unicamente para las entidades Haya-cajamar y Cajamar. Comprobación para hacer obligatorio el combo comentarios --%>
+					<%-- RECOVERY-1840 Unicamente para las entidades Haya-cajamar y Cajamar. Comprobación para hacer obligatorio el campo numOperacion --%>
 					if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
-						if(comboCausasParalizar.getValue()  === 'RD' && comentarios.getValue().trim() === ""){
-							Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.cometarioYoperacion" text="**Debe rellenar el campo comentario y operación relacionada." />');
+						if(comboCausasParalizar.getValue()  === 'RD' && numOperacion.getValue().trim() === ""){
+							Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.nOperacion" text="**Debe rellenar el campo N&ordm; Operaci\u00F3n." />');
 						}else{
 							return true;
 						}
+					}
+					else {
+						return true;
 					}
 				}else{
 					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralizaciï¿½n." />');
@@ -1010,11 +1020,14 @@
 				}
 			});
 			 if (codigo == 'RD'){
-		         	comentarios.label.update('<s:message code="decisionProcedimiento.comentariosYoperaciones" text="**Comentario y operación" />'); 
-				 	comentarios.allowBlank=false;
+		         numOperacion.setVisible(true);
+		         numOperacion.focus(true);
+		         numOperacion.allowBlank=false;
 			 } else{
-			 	comentarios.label.update('<s:message code="decisionProcedimiento.comentarios" text="**Comentarios" />'); 
-				comentarios.allowBlank=true;		 
+			 	numOperacion.setVisible(false);
+		        numOperacion.focus(false);
+		        numOperacion.allowBlank=true;
+			 		
 				}
 		});
 	}
@@ -1184,7 +1197,7 @@
 		, border : false
 				,layout : 'column'
 				,height: 155
-				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:100}
+				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:125}
 				,items:[{
 					title:'<s:message code="decisionProcedimiento.paneldecision" text="**Finalizar/Parar Origen" />'
 					,layout:'table'
@@ -1205,7 +1218,7 @@
 						, width: 200
 						}
 						,{
-							items:[comboCausasFinalizar,comboCausasParalizar,estadoDecision, fechaHasta]
+							items:[comboCausasFinalizar,comboCausasParalizar,estadoDecision, fechaHasta, numOperacion]
 							,width:280
 						}
 						,{

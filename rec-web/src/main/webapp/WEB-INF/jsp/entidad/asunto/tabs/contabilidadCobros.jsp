@@ -11,6 +11,34 @@
 
 (function(page,entidad){
 
+	<%-- Funciones --%>
+	<%-- RECOVERY-2280   Funcion para poner los '.' para los miles EJ: 11122233 -> 11.122.233 
+		Ademas, se ha añadido para poner dos decimales, y separados por ','--%>
+	 var thousandSeparator = function add_thousands_separator(input) {
+	 	if(input.toString() > 0) {
+			var s = input.toString(), l = s.length, o = '';
+			var posicionDec = s.indexOf(".");
+			var decimales = ',00';
+			if( posicionDec > -1 ) {
+				decimales = ',' + s.substring(posicionDec+1);
+				if(decimales.length <3) {
+					decimales = decimales + '0';
+				}
+				s = s.substring(0,posicionDec);
+				l = s.length;
+			}
+			while (l > 3) {
+				var c = s.substr(l - 3, 3);
+				o = '.' + c + o;
+				s = s.replace(c, '');
+				l -= 3;
+			}
+			o = s + o + decimales;
+			return o;
+		}
+	}
+
+
 	<%-- Panel (TAB) --%>
 	var panel = new Ext.Panel({
 		autoHeight : true
@@ -101,24 +129,24 @@
 		,{header : '<s:message code="contabilidad.fechaValor" text="**Fecha Valor"/>', dataIndex : 'fechaValor'}
 		,{header : '<s:message code="contabilidad.tipoEntrega" text="**Tipo Entrega"/>', dataIndex : 'tipoEntrega'}
 		,{header : '<s:message code="contabilidad.conceptoEntrega" text="**Concepto Entrega"/>', dataIndex : 'conceptoEntrega'}
-		,{header : '<s:message code="contabilidad.nominal" text="**Nominal"/>', dataIndex : 'nominal'}
-		,{header : '<s:message code="contabilidad.intereses" text="**Intereses"/>', dataIndex : 'intereses'}
-		,{header : '<s:message code="contabilidad.demoras" text="**Demoras"/>', dataIndex : 'demoras'}
-		,{header : '<s:message code="contabilidad.impuestos" text="**Impuestos"/>', dataIndex : 'impuestos'}
-		,{header : '<s:message code="contabilidad.gastosProcurador" text="**Gastos Procurador"/>', dataIndex : 'gastosProcurador'}
-		,{header : '<s:message code="contabilidad.gastosLetrado" text="**Gastos Letrado"/>', dataIndex : 'gastosLetrado'}
-		,{header : '<s:message code="contabilidad.operacionesEnTramite" text="**Operaciones En Tramite"/>', dataIndex : 'operacionesEnTramite'}
-		,{header : '<s:message code="contabilidad.otrosGastos" text="**Otros Gastos"/>', dataIndex : 'otrosGastos'}
-		,{header : '<s:message code="contabilidad.quitaNominal" text="**Quita Nominal"/>', dataIndex : 'quitaNominal', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaIntereses" text="**Quita Intereses"/>', dataIndex : 'quitaIntereses', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaDemoras" text="**Quita Demoras"/>', dataIndex : 'quitaDemoras', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaImpuestos" text="**Quita Impuestos"/>', dataIndex : 'quitaImpuestos', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaGastosProcurador" text="**Quita Gastos Procurador"/>', dataIndex : 'quitaGastosProcurador', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaGastosLetrado" text="**Quita Gastos Letrado"/>', dataIndex : 'quitaGastosLetrado', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaOperacionesEnTramite" text="**Quita Operaciones En Tramite"/>', dataIndex : 'quitaOperacionesEnTramite', hidden:true}
-		,{header : '<s:message code="contabilidad.quitaOtrosGastos" text="**Quita Otros Gastos"/>', dataIndex : 'quitaOtrosGastos', hidden:true}
-		,{header : '<s:message code="contabilidad.totalQuita" text="**Total Quita"/>', dataIndex : 'totalQuita', hidden:true}
-		,{header : '<s:message code="contabilidad.totalEntrega" text="**Total Entrega"/>', dataIndex : 'totalEntrega'}
+		,{header : '<s:message code="contabilidad.nominal" text="**Nominal"/>', dataIndex : 'nominal',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.intereses" text="**Intereses"/>', dataIndex : 'intereses',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.demoras" text="**Demoras"/>', dataIndex : 'demoras',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.impuestos" text="**Impuestos"/>', dataIndex : 'impuestos',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.gastosProcurador" text="**Gastos Procurador"/>', dataIndex : 'gastosProcurador',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.gastosLetrado" text="**Gastos Letrado"/>', dataIndex : 'gastosLetrado',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.operacionesEnTramite" text="**Operaciones En Tramite"/>', dataIndex : 'operacionesEnTramite',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.otrosGastos" text="**Otros Gastos"/>', dataIndex : 'otrosGastos',renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaNominal" text="**Quita Nominal"/>', dataIndex : 'quitaNominal', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaIntereses" text="**Quita Intereses"/>', dataIndex : 'quitaIntereses', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaDemoras" text="**Quita Demoras"/>', dataIndex : 'quitaDemoras', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaImpuestos" text="**Quita Impuestos"/>', dataIndex : 'quitaImpuestos', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaGastosProcurador" text="**Quita Gastos Procurador"/>', dataIndex : 'quitaGastosProcurador', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaGastosLetrado" text="**Quita Gastos Letrado"/>', dataIndex : 'quitaGastosLetrado', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaOperacionesEnTramite" text="**Quita Operaciones En Tramite"/>', dataIndex : 'quitaOperacionesEnTramite', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.quitaOtrosGastos" text="**Quita Otros Gastos"/>', dataIndex : 'quitaOtrosGastos', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.totalQuita" text="**Total Quita"/>', dataIndex : 'totalQuita', hidden:true,renderer:thousandSeparator,align:'right'}
+		,{header : '<s:message code="contabilidad.totalEntrega" text="**Total Entrega"/>', dataIndex : 'totalEntrega',renderer:thousandSeparator,align:'right'}
 		,{header : '<s:message code="contabilidad.numEnlace" text="**NºEnlace"/>', dataIndex : 'numEnlace'}
 		,{header : '<s:message code="contabilidad.numMandamiento" text="**NºMandamiento"/>', dataIndex : 'numMandamiento'}
 		,{header : '<s:message code="contabilidad.numCheque" text="**NºCheque"/>', dataIndex : 'numCheque'}

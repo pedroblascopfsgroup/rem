@@ -22,7 +22,6 @@ SET DEFINE OFF;
 
 CREATE OR REPLACE PROCEDURE REORGA_PROCEDIMIENTOS(OUTPUT_PL OUT VARCHAR2) AS
 
-DECLARE
 
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
@@ -653,7 +652,7 @@ EXCEPTION
           DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
           DBMS_OUTPUT.put_line(err_msg);
-		  OUTPUT_PL := 'Error:'||TO_CHAR(err_num)||'['||err_msgjjj||']';
+		  OUTPUT_PL := 'Error:'||TO_CHAR(err_num)||'['||err_msg||']';
           ROLLBACK;
           RAISE;          
 

@@ -45,6 +45,10 @@
 	    	,totalProperty : 'total'
 	    }, tarea)
 	});
+	
+	tareasStore.on('load', function(){ 
+		unmaskAll();
+	});
 
 	var tareasNewCm=new Ext.grid.ColumnModel([
 		{	/*Columna 0*/ header: '<s:message code="tareas.listado.tarea" text="**Tarea"/>', sortable: true, dataIndex: 'descripcionTarea'}
@@ -119,6 +123,6 @@
     })
 	
 	page.add(mainPanel);
-	
+	maskAll();
 	
 </fwk:page>

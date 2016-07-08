@@ -352,7 +352,7 @@ BEGIN
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
         , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
-        , ( select op.CD_PROCEDIMIENTO, op.numero_contrato
+        , ( select DISTINCT op.CD_PROCEDIMIENTO, op.numero_contrato
               from '||V_ESQUEMA||'.mig_procedimientos_operaciones op
                  , '||V_ESQUEMA||'.cnt_contratos cnt
                  , '||V_ESQUEMA||'.dd_ges_gestion_especial b

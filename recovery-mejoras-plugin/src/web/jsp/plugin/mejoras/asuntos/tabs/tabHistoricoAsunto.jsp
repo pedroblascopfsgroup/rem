@@ -52,13 +52,16 @@
 		,{name : 'subtipoTarea', type:'string', sortType:Ext.data.SortTypes.asText}
 		,{name : 'tipoRegistro', type:'string', sortType:Ext.data.SortTypes.asText}
 		,{name : 'descripcionTarea', type:'string', sortType:Ext.data.SortTypes.asText}
+		,{name : 'descripcionTipo', type:'string', sortType:Ext.data.SortTypes.asText}
 ]);
 	
 	<pfs:defineColumnModel name="historicoAsuntoCM">
 		<pfs:defineHeader dataIndex="fechaInicio" captionKey="plugin.mejoras.asunto.tabHistorico.fechainicio" 
 			caption="**fecha inicio" firstHeader="true"  sortable="false"/>
 		<pfs:defineHeader dataIndex="group" captionKey="plugin.mejoras.asunto.tabHistorico.tipo" 
-			caption="**Tipo" sortable="true"  />
+			caption="**Tipo" sortable="true"  hidden="true" />
+		<pfs:defineHeader dataIndex="descripcionTipo" captionKey="plugin.mejoras.asunto.tabHistorico.tipo" 
+			caption="**Tipo" sortable="true" />
 		<pfs:defineHeader dataIndex="nombreUsuario" captionKey="plugin.mejoras.asunto.tabHistorico.usuario" 
 			caption="**usuario" sortable="true" hidden="true"/>
 		<pfs:defineHeader dataIndex="destinatarioTarea" captionKey="plugin.mejoras.asunto.tabHistorico.destinatarioTarea" 

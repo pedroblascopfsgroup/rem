@@ -36,7 +36,7 @@ public class CambiosMasivosDaoImpl extends
 						"select cma from PeticionCambioMasivoGestoresAsunto cma "
 								+ "where cma.asunto.id = :idAsunto AND "
 								+ "		cma.auditoria.borrado = 0 AND "
-								+ " 	    (cma.fechaInicio > current_date() OR cma.fechaFin < current_date()) ");
+								+ " 	    (cma.fechaInicio > current_date()) ");
 		q.setParameter("idAsunto", idAsunto);
 		List<PeticionCambioMasivoGestoresAsunto> resultado = q.list();
 

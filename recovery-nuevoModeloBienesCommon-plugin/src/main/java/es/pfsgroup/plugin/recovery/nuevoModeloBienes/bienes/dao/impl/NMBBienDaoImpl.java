@@ -101,9 +101,7 @@ public class NMBBienDaoImpl extends AbstractEntityDao<NMBBien, Long> implements 
         
         hql.append(" WHERE ".concat(NAME_OF_ENTITY_NMB).concat(".auditoria.borrado = 0 "));
         
-        if(!Checks.esNulo(dto.getPoblacion()) || !Checks.esNulo(dto.getCodPostal()) || !Checks.esNulo(dto.getDireccion()) || !Checks.esNulo(dto.getProvincia()) || !Checks.esNulo(dto.getLocalidad()) || !Checks.esNulo(dto.getCodigoPostal())) {
-        	//hql.append(" LEFT JOIN ".concat(NAME_OF_ENTITY_NMB).concat(".localizaciones loc "));
-        	//hql.append(" AND ".concat(NAME_OF_ENTITY_NMB).concat(".poblacion ='".concat(dto.getPoblacion())+"'"));
+        if(!Checks.esNulo(dto.getPoblacion())) {
         	
         	hql.append(" AND UPPER(nmb.poblacion) = '|| :poblacion ||'");
         	params.put("poblacion", dto.getPoblacion().toUpperCase());

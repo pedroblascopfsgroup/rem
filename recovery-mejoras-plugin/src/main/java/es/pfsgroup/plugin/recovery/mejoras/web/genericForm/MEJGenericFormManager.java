@@ -159,8 +159,20 @@ public class MEJGenericFormManager extends
 			// Le insertamos los valores del formulario al BPM en una variable
 			// de
 			// Thread para que pueda recuperarlos
+			try{
 			jbpmManager.signalToken(tarea.getTokenIdBpm(),
 					BPMContants.TRANSICION_AVANZA_BPM);
+			}
+			catch(Exception e){
+				if(e.getCause().getClass().getSimpleName().equals("PlazosTareasNoEncontradoException")){
+					if(e.getCause().getMessage().equals("ERROR_FECHA_PLAZOS")){
+		        		throw new UserException("bpm.error.script.plazoTareaAvanzar");
+		        	}	
+				}
+				else if(e.getCause().getClass().getSimpleName().equals("UserException")){
+					throw new UserException(e.getMessage());
+				}
+			}
 			
 	}
 

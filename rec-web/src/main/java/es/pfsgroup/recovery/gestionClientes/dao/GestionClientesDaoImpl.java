@@ -69,7 +69,7 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 				if (count > 1) {
 					sql.append(" or ");
 				}
-				sql.append("V.ZON_COD= "+z);
+				sql.append("V.ZON_COD like '"+z+"%'");
 			}
 			sql.append(")");
 		}
@@ -97,8 +97,13 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 			List<ZonaUsuarioPerfil> listaZonPefUsu= zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(pef, zona);
 			for(ZonaUsuarioPerfil zon: listaZonPefUsu){
 				if(!Checks.esNulo(zon.getZona())){
-					zonasTotal.add(zon.getZona().getCodigo());
-					perfilesTotal.add(zon.getPerfil().getId());
+					
+					for(String z: usuarioLogado.getCodigoZonas()){
+						if(zon.getZona().getCodigo().equals(z)){
+							zonasTotal.add(zona);
+							perfilesTotal.add(zon.getPerfil().getId());
+						}
+					}
 				}
 			}
 			
@@ -358,8 +363,13 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 			List<ZonaUsuarioPerfil> listaZonPefUsu= zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(pef, zona);
 			for(ZonaUsuarioPerfil zon: listaZonPefUsu){
 				if(!Checks.esNulo(zon.getZona())){
-					zonasTotal.add(zon.getZona().getCodigo());
-					perfilesTotal.add(zon.getPerfil().getId());
+					
+					for(String z: usuarioLogado.getCodigoZonas()){
+						if(zon.getZona().getCodigo().equals(z)){
+							zonasTotal.add(zona);
+							perfilesTotal.add(zon.getPerfil().getId());
+						}
+					}
 				}
 			}
 			

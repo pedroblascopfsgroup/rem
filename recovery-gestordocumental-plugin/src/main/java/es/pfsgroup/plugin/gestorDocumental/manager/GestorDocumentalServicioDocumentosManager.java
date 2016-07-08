@@ -126,7 +126,11 @@ public class GestorDocumentalServicioDocumentosManager implements GestorDocument
 				throw new GestorDocumentalException(respuesta.getMensajeError());
 			}
 		}catch(GestorDocumentalException gde) {
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			if (!Checks.esNulo(respuesta.getMensajeError())) {
+				throw new GestorDocumentalException(respuesta.getMensajeError());
+			} else {
+				throw gde;
+			}
 		}catch(Exception e) {
 			logger.error("error crearDocumento ", e);
 			return null;

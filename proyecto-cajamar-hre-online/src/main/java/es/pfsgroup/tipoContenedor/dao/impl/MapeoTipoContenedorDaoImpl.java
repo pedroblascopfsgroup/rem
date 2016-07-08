@@ -1,8 +1,12 @@
 package es.pfsgroup.tipoContenedor.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.tipoContenedor.dao.MapeoTipoContenedorDao;
 import es.pfsgroup.tipoContenedor.model.MapeoTipoContenedor;
 
@@ -42,5 +46,26 @@ public class MapeoTipoContenedorDaoImpl extends AbstractEntityDao<MapeoTipoConte
 		}
 		
 		return false;
+	}
+
+	@Override
+	public List<Long> obtenerIdsTiposDocMapeados(List<String> tiposClasesContenedor) {
+		
+		StringBuffer hql = new StringBuffer("Select mtc from MapeoTipoContenedor mtc");
+		hql.append(" where mtc.auditoria.borrado = 0  and (");
+		if (!Checks.estaVacio(tiposClasesContenedor)) {
+			for (String tipoClase : tiposClasesContenedor) {
+				hql.append(" mtc.codigoTDN2 like '" + tipoClase + "%' OR");			
+			}
+			hql.append(" 0=1 )");
+		} else {
+			hql.append(" 1=1 ");
+		}
+		List<MapeoTipoContenedor> resultadoConsulta = getHibernateTemplate().find(hql.toString());
+		List<Long> resultado = new ArrayList<Long>();
+		for (int i = 0; i < resultadoConsulta.size(); i++) {
+			resultado.add(resultadoConsulta.get(i).getTipoFichero().getId());
+		}
+		return resultado;
 	}
 }

@@ -23,7 +23,6 @@ import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDto;
 import es.capgemini.pfs.asunto.dto.ExtAdjuntoGenericoDtoImpl;
 import es.capgemini.pfs.asunto.model.AdjuntoAsunto;
@@ -145,9 +144,7 @@ public class AdjuntoHayaManager {
 	public List<? extends EXTAdjuntoDto> getAdjuntosConBorrado(Long id) {
     	Asunto asun = genericDao.get(Asunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
     	for(Procedimiento prc : asun.getProcedimientos()) {
-    		if(crearPropuesta(prc)) {
-    			return null;
-    		}
+    		crearPropuesta(prc);
 		}
     	List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		for(String claseExpediente : getDistinctTipoProcedimientoFromAsunto(asun)) {
@@ -716,8 +713,23 @@ public class AdjuntoHayaManager {
 					retorno = uploadAsunto(uploadForm, idAsunto);
 				}
 			}		
-		}
-		else {
+		} else {
+			if(!Checks.esNulo(uploadForm) && !Checks.esNulo(uploadForm.getParameter("id"))){			
+				Long idAsunto = Long.parseLong(uploadForm.getParameter("id"));
+				List<ContenedorGestorDocumental> contenedor = obtenerContenedoresAsunto(idAsunto);
+				
+				String contenedores = "";
+				int i = 1;
+				for(ContenedorGestorDocumental cgd : contenedor) {
+					contenedores = contenedores + cgd.getCodigoClase();
+					if(i <= contenedor.size()) {
+						contenedores = contenedores + ", ";
+					}
+					i++;
+				}
+				return GestorDocumentalConstants.ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO + " :: " + uploadForm.getParameter("comboTipoFichero") + " :: " + contenedores;
+			}
+			
 			return GestorDocumentalConstants.ERROR_NO_EXISTE_MAPEO_TIPO_ARCHIVO;
 		}
 		
@@ -746,9 +758,55 @@ public class AdjuntoHayaManager {
 		}
 		
 		if(!contenedorEncontrado) {
-			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+			List<ContenedorGestorDocumental> contenedor = obtenerContenedoresAsunto(idAsunto);
+			
+			String contenedores = "";
+			int i = 1;
+			for(ContenedorGestorDocumental cgd : contenedor) {
+				contenedores = contenedores + cgd.getCodigoClase();
+				if(i < contenedor.size()) {
+					contenedores = contenedores + ", ";
+				}
+				i++;
+			}
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR + " :: " + uploadForm.getParameter("comboTipoFichero") + " :: " + contenedores;
 		}
 		return null;
+	}
+
+	private List<ContenedorGestorDocumental> obtenerContenedoresAsunto(Long idAsunto) {
+		List<ContenedorGestorDocumental> contenedor = genericDao.getList(ContenedorGestorDocumental.class, 
+				genericDao.createFilter(FilterType.EQUALS, "asunto.id", idAsunto));
+		return contenedor;
+	}
+	
+	private List<String> obtenerTiposClasesContenedoresAsunto(Long idAsunto) {
+		List<ContenedorGestorDocumental> contenedor = obtenerContenedoresAsunto(idAsunto);
+		List<String> resultado = new ArrayList<String>();
+		if (!Checks.estaVacio(contenedor)) {
+			for(ContenedorGestorDocumental cgd : contenedor) {
+				resultado.add(cgd.getCodigoTipo() + "-" + cgd.getCodigoClase());
+			}
+		}
+		return resultado;
+	}
+	
+	public List<Long> obtenerIdsTiposDocMapeados(Long idAsunto) {
+		List<String> tiposClasesContenedor = obtenerTiposClasesContenedoresAsunto(idAsunto);
+		return mapeoTipoContenedorDao.obtenerIdsTiposDocMapeados(tiposClasesContenedor);
+	}
+	
+	private String obtenerTiposClasesContenedoresProcedimiento(Long idProcedimiento) {
+
+		Procedimiento prc = genericDao.get(Procedimiento.class, genericDao.createFilter(FilterType.EQUALS, "id", idProcedimiento));
+		String claseExp = getClaseExpedienteByProcedimientoPadre(prc);
+		return "PR-" + claseExp;
+	}
+
+	public List<Long> obtenerIdsTiposDocMapeadosProc(Long idProcedimiento) {
+		List<String> tiposClasesContenedor = new ArrayList<String>();
+		tiposClasesContenedor.add(obtenerTiposClasesContenedoresProcedimiento(idProcedimiento));
+		return mapeoTipoContenedorDao.obtenerIdsTiposDocMapeados(tiposClasesContenedor);
 	}
 	
 	private String uploadProcedimiento(WebFileItem uploadForm, Long idAsunto) {
@@ -778,7 +836,7 @@ public class AdjuntoHayaManager {
 		}
 		
 		if(!contenedorEncontrado) {
-			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR;
+			return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR + " :: " + uploadForm.getParameter("comboTipoFichero");
 		}
 		return null;
 	}
@@ -798,8 +856,9 @@ public class AdjuntoHayaManager {
 			RespuestaCrearDocumento respuesta = uploadGestorDoc(getIdClienteHaya(persona), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, claseExpe, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_PERSONA, uploadForm.getParameter("comboTipoDoc"));			
 			if(respuesta == null) {
 				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
-			}
-			if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+			} else if(respuesta != null && GestorDocumentalConstants.ERROR_FORM_PARAMETER.equals(respuesta.getMensajeError())) {
+				respuesta.setMensajeError(GestorDocumentalConstants.ERROR_FORM_PARAMETER_MESSAGE);	
+			} else if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
 				return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
 			}
 		}
@@ -820,7 +879,9 @@ public class AdjuntoHayaManager {
 			RespuestaCrearDocumento respuesta = uploadGestorDoc(getIdActivoHaya(contrato),  GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS,GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_ACTIVOS_FINANCIERO, uploadForm, DDTipoEntidad.CODIGO_ENTIDAD_CONTRATO, uploadForm.getParameter("comboTipoDoc"));
 			if(respuesta == null) {
 				return GestorDocumentalConstants.ERROR_NO_EXISTE_CONTENEDOR_MAESTRO;
-			}else if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
+			} else if(respuesta != null && GestorDocumentalConstants.ERROR_FORM_PARAMETER.equals(respuesta.getMensajeError())) {
+				respuesta.setMensajeError(GestorDocumentalConstants.ERROR_FORM_PARAMETER_MESSAGE);	
+			} else if(respuesta != null && GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR.equals(respuesta.getMensajeError())) {
 				return GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR;
 			}
 		}
@@ -854,7 +915,11 @@ public class AdjuntoHayaManager {
 		} catch (GestorDocumentalException e) {
 			logger.error("upload error: " + e);
 			respuesta = new RespuestaCrearDocumento();
-			respuesta.setMensajeError(GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR);
+			if(GestorDocumentalConstants.ERROR_FORM_PARAMETER.equals(e.getMessage())) {
+				respuesta.setMensajeError(GestorDocumentalConstants.ERROR_FORM_PARAMETER);	
+			}else{
+				respuesta.setMensajeError(GestorDocumentalConstants.EXISTE_FICHERO_EN_ESE_CONTENEDOR);
+			}
 		} catch (Exception e) {
 			logger.error("upload error: " + e);
 		}
@@ -1130,8 +1195,8 @@ public class AdjuntoHayaManager {
 				ActivoInputDto input = new ActivoInputDto();
 				input.setEvent(ActivoInputDto.EVENTO_IDENTIFICADOR_ACTIVO_ORIGEN);
 				input.setIdActivoOrigen(contrato.getNroContrato().substring(17, 27));
-				input.setIdOrigen(ActivoInputDto.ID_ORIGEN_SAREB);
-				input.setIdCliente(ActivoInputDto.ID_CLIENTE_NOS);
+				input.setIdOrigen(ActivoInputDto.ID_CLIENTE_NOS);
+				input.setIdCliente(ActivoInputDto.ID_ORIGEN_SAREB);
 				input.setIdTipoActivo(ActivoInputDto.ID_TIPO_ACTIVO_RED);
 				ActivoOutputDto output = gestorDocumentalMaestroApi.ejecutarActivo(input);
 				

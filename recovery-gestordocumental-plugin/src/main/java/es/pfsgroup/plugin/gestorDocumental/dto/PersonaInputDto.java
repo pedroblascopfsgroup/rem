@@ -4,6 +4,7 @@ public class PersonaInputDto {
 
 	public static final String ID_PERSONA_ORIGEN = "ID_PERSONA_ORIGEN";
 	public static final String ID_ORIGEN = "ID_ORIGEN";
+	public static final String ID_CLIENTE = "ID_CLIENTE";
 	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
 	public static final String FORMATO_STRING = "STRING";
 	public static final String EVENTO_IDENTIFICADOR_PERSONA_ORIGEN = "ConsultaIdPersonaPorOrigen";

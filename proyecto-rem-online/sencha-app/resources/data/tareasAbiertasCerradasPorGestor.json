@@ -1,0 +1,17 @@
+{
+    "tareas": [
+         /*Agosto*/  
+		{"dia": "Gestor 01"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "3"	, "cerradas": "1"}, 
+		{"dia": "Gestor 02"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "8"	, "cerradas": "3"}, 
+		{"dia": "Gestor 03"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "3"	, "cerradas": "2"}, 
+		{"dia": "Gestor 04"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "4"	, "cerradas": "3"}, 
+		{"dia": "Gestor 05"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "5"	, "cerradas": "3"}, 
+		{"dia": "Gestor 06"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "4"	, "cerradas": "2"},
+		{"dia": "Gestor 07"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "3"	, "cerradas": "4"},
+		{"dia": "Gestor 08"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "7"	, "cerradas": "1"},
+		{"dia": "Gestor 09"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "2"	, "cerradas": "6"},
+		{"dia": "Gestor 10"	, "mes": "08"      , "gestor":  "Supervisor"	, "abiertas": "8"	, "cerradas": "3"}
+
+    ],
+    "success": true
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="idAsunto" type="java.lang.Long" />
+    
+    <end-state id="altaAsunto" view="acuerdos/editaConclusionesAcuerdo">
+    	<on-entry>
+    		<evaluate expression="requestParameters.readOnly" result="flowScope.readOnly"/>
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asunto"/>
+    		<evaluate expression="executor.execute('asuntosManager.esGestor',idAsunto)" result="flowScope.esGestor"/>
+    		<evaluate expression="executor.execute('asuntosManager.esSupervisor',idAsunto)" result="flowScope.esSupervisor"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoAcuerdo')" result="flowScope.tiposAcuerdo"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDSolicitante')" result="flowScope.solicitantes"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDEstadoAcuerdo')" result="flowScope.estados"/>	
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoPagoAcuerdo')" result="flowScope.tiposPago"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDPeriodicidadAcuerdo')" result="flowScope.periodicidad"/>
+    	</on-entry>
+    </end-state>
+
+</flow>

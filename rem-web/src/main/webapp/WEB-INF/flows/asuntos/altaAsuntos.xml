@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoAsunto" class="es.capgemini.pfs.asunto.dto.DtoAsunto"/>
+	
+	<input name="idExpediente" type="java.lang.Long"/>
+	 	 
+	<view-state id="formulario" view="${view}">
+    	<on-entry>
+     		<evaluate expression="requestParameters.idExpediente" result="flowScope.idExpediente"></evaluate>
+            <evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"></evaluate>
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('zonaManager.getAllNiveles')" result="flowScope.niveles" />
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+    		<set name="flowScope.view" value="'asuntos/altaAsuntos'" />
+    	</on-entry>
+    	<transition on="saveAsunto" to="saveAsunto"/>
+	</view-state> 	
+	
+	<end-state id="saveAsunto" view="asuntos/returnJSON">
+	  <on-entry>	
+		<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoAsunto)" />
+		<evaluate expression="executor.execute('asuntosManager.crearAsuntoDTO',dtoAsunto)" result="flowScope.id"/>
+	  </on-entry>
+	</end-state>
+	
+</flow>

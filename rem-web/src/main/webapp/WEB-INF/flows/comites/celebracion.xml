@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+  <var name="dtoSesionComite" class="es.capgemini.pfs.comite.dto.DtoSesionComite" />
+  <input name="idComite" type="java.lang.Long" />
+
+  <!-- renderiza el formulario -->
+  <view-state id="loadComite" view="comites/celebracion">
+    <on-render>
+      <evaluate expression="executor.execute('comiteManager.getDto', idComite)" result="flowScope.dtoSesionComite" />
+    </on-render>
+    <transition on="listadoAsistentes" to="listadoAsistentes" />
+  </view-state>
+
+  <view-state id="listadoAsistentes" view="comites/asistentesJSON">
+    <transition on="update" to="iniciarSesion" />
+  </view-state>
+  <!-- 
+    <action-state id="iniciarSesion">
+    <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoSesionComite)" />
+    <evaluate expression="executor.execute('comiteManager.crearSesion', dtoSesionComite)" result="flowScope.dummy" />
+    
+    <transition to="close"></transition>
+    </action-state> 
+    
+    <end-state id="close" view="default" />
+  -->
+  <end-state id="iniciarSesion" view="default">
+    <on-entry>
+      <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoSesionComite)" />
+      <evaluate expression="executor.execute('comiteManager.crearSesion', dtoSesionComite)" result="flowScope.dummy" />
+    </on-entry>
+  </end-state>
+
+
+</flow>

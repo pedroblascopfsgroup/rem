@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idSolicitud" type="java.lang.Long"/>
+	<input name="idExpediente" type="java.lang.Long"/>	
+	<input name="decision" type="java.lang.Boolean" required="false"/>
+		
+    <end-state id="update" view="default">
+    	<on-entry>
+    		<evaluate expression="executor.execute('expedienteManager.tomarDecisionCancelacion', idExpediente,idSolicitud, decision)"/>
+		</on-entry>
+			
+	</end-state>
+	
+        
+</flow>

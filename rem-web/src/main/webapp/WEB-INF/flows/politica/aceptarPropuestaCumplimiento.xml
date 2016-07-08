@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dto" class="es.capgemini.pfs.politica.dto.DtoObjetivo" />  
+    <input name="idObjetivo" type="java.lang.Long" />
+
+    <view-state id="aceptarBorrado" view="politica/propuestaCumplimiento">
+        <on-entry>
+            <evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+            <set name="flowScope.aceptarTarea" value="true" />
+        </on-entry>
+        <transition on="aceptar" to="aceptar" />
+        <transition on="rechazar" to="rechazar" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <end-state id="aceptar" view="default">
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+            <evaluate expression="executor.execute('objetivoManager.aceptarCumplimiento', dto)" />
+        </on-entry>
+    </end-state>
+    
+    <end-state id="rechazar" view="default">
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
+            <evaluate expression="executor.execute('objetivoManager.rechazarCumplimiento', dto)" />
+        </on-entry>
+    </end-state>
+
+    <end-state id="close" view="default" />
+
+</flow>

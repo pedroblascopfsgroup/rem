@@ -1,0 +1,26 @@
+{
+    "total": 3,
+    "licencias": [
+        {
+            "idActivo": 100285127,
+            "idOferta": 1050,
+            "tipo": "Certificado habitabilidad",
+            "cuenta": "Ofertante"
+                     
+        },
+        {
+        	"idActivo": 100285127,
+            "idOferta": 1050,
+            "tipo": "Certificado habitabilidad",
+            "cuenta": "Ofertante"              
+        },
+        {
+        	"idActivo": 100285127,
+        	"idOferta": 1051,
+            "tipo": "Certificado habitabilidad",
+            "cuenta": "Ofertante"
+        }
+        
+    ],
+    "success": true
+}

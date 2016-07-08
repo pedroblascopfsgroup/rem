@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="idAcuerdo" type="java.lang.Long" />
+    
+    <end-state id="analisis" view="acuerdos/editaAnalisisAcuerdo">
+    	<on-entry>
+    		<evaluate expression="requestParameters.readOnly" result="flowScope.readOnly"/>
+    		<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById',idAcuerdo)" result="flowScope.acuerdo" />
+    		<evaluate expression="executor.execute('dictionaryManager.getList', 'DDCambioSolvenciaAcuerdo')" result="flowScope.cambio"/>
+    		<evaluate expression="executor.execute('dictionaryManager.getList', 'DDAnalisisCapacidadPago')" result="flowScope.capacidad"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDConclusionTituloAcuerdo')" result="flowScope.conclusion"/>
+    	</on-entry>
+    </end-state>
+
+</flow>

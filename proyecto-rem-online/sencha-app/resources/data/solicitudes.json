@@ -1,0 +1,94 @@
+{
+    "total": 5,
+    "solicitudes": [
+        {
+            "id": 1,
+            "nombre": "María",
+            "apellidos" : "Moreno Garcia",
+            "numDocumento":  "8574653B",
+            "tipoDocumento": "1",
+            "tel1": '961234567',
+            "tel2": '666325125', 
+            "estadoSolicitud": "INICIADA",
+            "fechaSolicitud": "01/02/2015",
+            "pais" : "0", 
+            "email": "email@rmail.es",
+            "solicitarVisita": false,
+            "presentarOferta":false,
+            "oferta":"",
+            "idActivo": 100285127
+        },
+        {
+            "id": 2,            
+            "nombre": "Juan", 
+            "apellidos" : "Pérez López",           
+            "numDocumento":  "96857412E",
+            "tipoDocumento": "1",            
+            "tel1": '964563454',
+            "tel2": '666978987', 
+            "estadoSolicitud": "INICIADA",
+            "fechaSolicitud": "01/03/2015",
+            "pais" : "0", 
+            "email": "email@rmail.es",
+            "solicitarVisita": false,
+            "presentarOferta":false,
+            "oferta":"",
+            "idActivo": 100001705
+        },
+        {
+            "id": 3,
+            "nombre": "Pedro",
+            "apellidos": "Fernandez Rodriguez",
+            "numDocumento":  "3685412S",
+            "tipoDocumento": "1",            
+            "tel1": '961877552',
+            "tel2": '664525545', 
+            "estadoSolicitud": "INICIADA",
+			"fechaSolicitud": "21/02/2015",
+            "pais" : "0", 
+            "email": "email@rmail.es",
+            "solicitarVisita": false,
+            "presentarOferta":false,
+            "oferta":""	,
+            "idActivo": 10000170
+        },
+        {
+            "id": 4,
+            "nombre": "Juan",
+            "apellidos": "Pérez López",
+            "numDocumento":  "25651478A",
+            "tipoDocumento": "1",            
+            "tel1": '964587445',
+            "tel2": '666345354', 
+            "estadoSolicitud": "INICIADA",
+            "fechaSolicitud": "15/04/2015",
+            "pais" : "0", 
+            "email": "email@rmail.es",
+            "solicitarVisita": false,
+            "presentarOferta":false,
+            "oferta":"",
+            "idActivo": 100101823    
+        },
+        {
+            "id": 5,
+            "nombre": "María",
+            "apellidos": "Moreno Garcia",
+            "numDocumento":  "96853214H",
+            "tipoDocumento": "1",            
+            "tel1": '961567577',
+            "tel2": '656565656', 
+            "estadoSolicitud": "INICIADA",
+            "fechaSolicitud": "30/05/2015",
+            "pais" : "0", 
+            "email": "email@rmail.es",
+            "solicitarVisita": false,
+            "presentarOferta":true,
+            "oferta":"12343",
+            "idActivo": 1424355434          
+
+        }
+        
+        
+    ],
+    "success": true
+}

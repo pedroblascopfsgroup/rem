@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+    default-autowire="byName">
+    
+    <bean id="activoGenericEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterActionHandler"></bean>
+    <bean id="activoGenericLeaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericLeaveActionHandler"></bean>
+    <bean id="activoAdmisionEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAdmisionEnterActionHandler"></bean>
+    <bean id="activoComprobarGestorActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarGestorActionHandler"></bean>
+    <bean id="ActivoGenericSaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericSaveActionHandler"></bean>
+    <bean id="activoGenericEnterEmailActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterEmailActionHandler"></bean>
+    
+    <bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"></bean>
+    
+    <bean id="activoEndProcessActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoEndProcessActionHandler"></bean>
+    
+    <bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"></bean>
+    
+    
+<!--     <bean id="activarProrroga" class="es.pfsgroup.procedimientos.PROProrrogarTareasActionHandler"></bean> -->
+    
+ <!--    <bean id="retrasarTareas" class="es.pfsgroup.procedimientos.PRORetrasarTareaActionHandler">
+	</bean>    
+
+    <bean id="activarTareas" class="es.pfsgroup.procedimientos.PROActivarTareaActionHandler">
+	</bean>
+	<bean id="genericEnterActionHandler" class="es.pfsgroup.procedimientos.PROGenericEnterActionHandler">
+	</bean>
+	<bean id="aplazarTareas" class="es.pfsgroup.procedimientos.PROAplazarTareasActionHandler">
+	</bean>
+	<bean id="genericLeaveActionHandler" class="es.pfsgroup.procedimientos.PROGenericLeaveActionHandler">
+	</bean>
+	<bean id="solicitarTareaActionHandler" class="es.pfsgroup.procedimientos.PROSolicitarTareaActionHandler">
+	</bean>
+	<bean id="activarAlerta" class="es.pfsgroup.procedimientos.PROActivarAlertaActionHandler">
+	</bean>
+	<bean id="tareaCompletadaActionHandler" class="es.pfsgroup.procedimientos.PROTareaCompletadaActionHandler">
+	</bean>
+	<bean id="conTelecobroActionHandler" class="es.pfsgroup.procedimientos.PROConTelecobroActionHandler">
+	</bean>
+	<bean id="sinTelecobroActionHandler" class="es.pfsgroup.procedimientos.PROSinTelecobroActionHandler">
+	</bean>
+	<bean id="expedienteDecididoActionHandler" class="es.pfsgroup.procedimientos.PROExpedienteDecididoActionHandler">
+	</bean>
+	<bean id="genericUserDecisionActionHandler" class="es.pfsgroup.procedimientos.PROGenericUserDecisionActionHandler">
+	</bean>	
+	<bean id="avanzaBPM" class="es.pfsgroup.procedimientos.PROAvanzaBPMActionHandler">
+	</bean>
+	<bean id="endProcessActionHandler" class="es.pfsgroup.procedimientos.PROEndProcessActionHandler">
+	</bean>
+	<bean id="paralizarTareas" class="es.pfsgroup.procedimientos.PROParalizarTareasActionHandler">
+	</bean>
+	<bean id="activarProrroga" class="es.pfsgroup.procedimientos.PROProrrogarTareasActionHandler">
+	</bean>
+	<bean id="vueltaAtras" class="es.pfsgroup.procedimientos.PROVueltaAtrasActionHandler">
+	</bean>
+	<bean id="creaClienteActionHandler" class="es.pfsgroup.procedimientos.PROCreaClienteActionHandler">
+	</bean>
+	<bean id="enviarGestionVencidosActionHandler" class="es.pfsgroup.procedimientos.PROEnviarGestionVencidosActionHandler">
+	</bean>
+	<bean id="expedimentaClienteActionHandler" class="es.pfsgroup.procedimientos.PROExpedimentaClienteActionHandler">
+	</bean> 
+	<bean id="gestionVencidosActionHandler" class="es.pfsgroup.procedimientos.PROGestionVencidosActionHandler">
+	</bean> 
+	<bean id="solicitarExcluirTelecobroActionHandler" class="es.pfsgroup.procedimientos.PROSolicitarExcluirTelecobroActionHandler">
+	</bean> 
+	<bean id="verificarTelecobroActionHandler" class="es.pfsgroup.procedimientos.PROVerificarTelecobroActionHandler">
+	</bean> 
+	<bean id="completarExpedienteActionHandler" class="es.pfsgroup.procedimientos.PROCompletarExpedienteActionHandler">
+	</bean> 
+	<bean id="crearExpedienteActionHandler" class="es.pfsgroup.procedimientos.PROCrearExpedienteActionHandler">
+	</bean>
+	
+	<bean id="decisionComiteAutomaticaActionHandler" class="es.pfsgroup.procedimientos.PRODecisionComiteAutomaticaActionHandler" scope="prototype">
+	</bean>
+	
+	<bean id="desicionComiteActionHandler" class="es.pfsgroup.procedimientos.PRODesicionComiteActionHandler">
+	</bean>
+	<bean id="devolverCompletarActionHandler" class="es.pfsgroup.procedimientos.PRODevolverCompletarActionHandler">
+	</bean>
+	<bean id="devolverRevisionActionHandler" class="es.pfsgroup.procedimientos.PRODevolverRevisionActionHandler">
+	</bean>
+	<bean id="eliminaTareasExpedienteActionHandler" class="es.pfsgroup.procedimientos.PROEliminaTareasExpedienteActionHandler">
+	</bean>
+	<bean id="enviarAComiteActionHandler" class="es.pfsgroup.procedimientos.PROEnviarAComiteActionHandler">
+	</bean>
+	<bean id="enviarARevisionActionHandler" class="es.pfsgroup.procedimientos.PROEnviarARevisionActionHandler">
+	</bean>
+	<bean id="generarNotificacionExpedienteActionHandler" class="es.pfsgroup.procedimientos.PROGenerarNotificacionExpedienteActionHandler">
+	</bean>
+	<bean id="revisionExpedienteActionHandler" class="es.pfsgroup.procedimientos.PRORevisionExpedienteActionHandler">
+	</bean>
+	<bean id="solicitarProrrogaExtraActionHandler" class="es.pfsgroup.procedimientos.PROSolicitarProrrogaExtraActionHandler">
+	</bean>
+    <bean id="nodoEsperaActionHandler" class="es.pfsgroup.procedimientos.PRONodoEsperaActionHandler">
+    </bean>
+    	
+	<bean id="seleccionProcedimiento.P90_BPMHipotecario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMMonitorio" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMETNJ" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMVerbal" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMETJ" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMOrdinario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMCambiario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMAbreviado" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMFaseComunOrdinario" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMFaseComunAbreviado" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>
+	<bean id="seleccionProcedimiento.P90_BPMSolicitudConcurso" class="es.pfsgroup.procedimientos.PROCambiarEconomicosHijoActionHandler">
+	</bean>	
+	
+	<bean id="subastaV4EnterActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4EnterActionHandler">
+    </bean>
+ 	<bean id="subastaV4LeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.SubastaV4LeaveActionHandler">
+    </bean>	
+    <bean id="adjudicacionLeaveActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.AdjudicacionLeaveActionHandler">
+    </bean>
+	<bean id="ocupantesEndActionHandler" class="es.pfsgroup.procedimientos.adjudicacion.OcupantesEndActionHandler">
+	</bean>
+	<bean id="hipotecarioLeaveActionHandler" class="es.pfsgroup.procedimientos.subasta.HipotecarioLeaveActionHandler">
+	</bean>
+	<bean id="cesionRemateV4EnterActionHandler" class="es.pfsgroup.procedimientos.subasta.CesionRemateV4EnterActionHandler">
+    </bean>
+	
+	<bean id="iteradorActionHandlerA" class="es.pfsgroup.procedimientos.contratos.IteradorAActionHandler"></bean>
+	<bean id="iteradorActionHandlerB" class="es.pfsgroup.procedimientos.contratos.IteradorBActionHandler"></bean>
+	<bean id="iteradorActionHandlerC1" class="es.pfsgroup.procedimientos.contratos.IteradorC1ActionHandler"></bean>
+	<bean id="iteradorActionHandlerC2" class="es.pfsgroup.procedimientos.contratos.IteradorC2ActionHandler"></bean>
+	<bean id="analisisOperacionesLeaveActionHandler" class="es.pfsgroup.procedimientos.contratos.AnalisisOperacionesLeaveActionHandler"></bean>
+	<bean id="solicitarNumActivoHandler" class="es.pfsgroup.procedimientos.subasta.SolicitarNumActivoHandler"></bean>
+	<bean id="solicitarTasacionHandler" class="es.pfsgroup.procedimientos.subasta.SolicitarTasacionHandler"></bean>
+	<bean id="generarPropuestaNUSEHandler" class="es.pfsgroup.procedimientos.subasta.GenerarPropuestaNUSEHandler"></bean>
+	<bean id="generarPropuestaNUSEHandlerAdj" class="es.pfsgroup.procedimientos.adjudicacion.GenerarPropuestaNUSEHandler"></bean>
+
+ -->
+ 
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCEE.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="-1"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCedula.xml" p:version="-1"/>	
+
+	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[
+            def damePlazo= {
+  				new java.text.SimpleDateFormat('yyyy-MM-dd').parse(it).getTime()-System.currentTimeMillis()
+  			}
+            def hoyDate = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.hoyDateServer(); 
+  			}
+            def diffDate(String date1, String date2) {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.diffDate(date1, date2);
+  			}
+            def esFechaMayor(String date1, String date2) {
+            	if(date2 != null){
+	            	if ("MAYOR".equals(diffDate(date1, date2))){
+	            		return true;
+	            	}else{
+	            		return false;
+	            	}
+	            }else{
+	            	return false;
+	            }
+  			}
+            def esFechaMenor(String date1, String date2) {
+            	if(date2 != null){
+	            	if ("MENOR".equals(diffDate(date1, date2))){
+	            		return true;
+	            	}else{
+	            		return false;
+	            	}
+	            }else{
+	            	return false;
+	            }
+  			}
+            def esFechaMayorIgual(String date1, String date2) {
+            	if(date2 != null){
+	            	if ("MAYOR".equals(diffDate(date1, date2)) || "IGUAL".equals(diffDate(date1, date2))){
+	            		return true;
+	            	}else{
+	            		return false;
+	            	}
+	            }else{
+	            	return false;
+	            }
+  			}
+            def esFechaMenorIgual(String date1, String date2) {
+            	if(date2 != null){
+	            	if ("MENOR".equals(diffDate(date1, date2)) || "IGUAL".equals(diffDate(date1, date2))){
+	            		return true;
+	            	}else{
+	            		return false;
+	            	}
+	            }else{
+	            	return false;
+	            }
+  			}
+            def esFechaEntre(String date1, String date2, String date3) {
+            	if(date1 != null && date3 != null){
+	            	if (esFechaMayor(date1, date2)){
+	            		return false;
+	            	}else{
+						if (esFechaMayor(date2, date3)){
+							return false;
+						}else{
+	            			return true;
+	            		}
+	            	}
+	            }else{
+	            	return false;
+	            }
+  			}  			
+            def fechaSolicitudTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaSolicitudTrabajo(tareaExterna);
+            }
+            def fechaAprobacionTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaAprobacionTrabajo(tareaExterna);
+            }
+            def fechaRechazoTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaRechazoTrabajo(tareaExterna);
+            }
+            def fechaEleccionProveedorTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaEleccionProveedorTrabajo(tareaExterna);
+            }
+            def fechaEjecutadoTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaEjecutadoTrabajo(tareaExterna);
+            }
+            def fechaValidacionTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaValidacionTrabajo(tareaExterna);
+            }
+            def fechaAnulacionTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaAnulacionTrabajo(tareaExterna);
+            }
+            def fechaCierreEcoTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaCierreEcoTrabajo(tareaExterna);
+            }
+            def fechaPagoTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.getFechaPagoTrabajo(tareaExterna);
+            }
+			def comprobacionGestorActivo = {
+            	def gestorActivo = ctx.getBean("gestorActivoManager");
+                return gestorActivo.isGestorActivo(tareaExterna);
+            }
+            def comprobarPestanaCheckingInformacion = {
+            	def activoManager = ctx.getBean("activoManager");
+				return activoManager.comprobarPestanaCheckingInformacion(idActivo);
+            }
+            def comprobarExisteAdjuntoActivo(String codigoDocumento) {
+            	def activoManager = ctx.getBean("activoManager");
+				return activoManager.comprobarExisteAdjuntoActivo(idActivo, codigoDocumento);
+            }
+            def comprobarExisteAdjuntoActivoTarea = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.comprobarExisteAdjuntoActivoTarea(tareaExterna);
+            }
+			def comprobarExisteFechaPosesionActivo = {
+            	def gestorActivo = ctx.getBean("gestorActivoManager");
+                return activoManager.comprobarExisteFechaPosesionActivo(idActivo);
+            }
+            def comprobarExistePresupuestoTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.existePresupuestoTrabajo(tareaExterna);
+            }
+            def comprobarExisteProveedorTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.existeProveedorTrabajo(tareaExterna);
+            }
+            def comprobarExisteTarifaTrabajo = {
+            	def trabajoManager = ctx.getBean("trabajoManager");
+                return trabajoManager.existeTarifaTrabajo(tareaExterna);
+            }
+			def comprobarObligatoriosCheckingInfoActivo = {
+            	def activoManager = ctx.getBean("activoManager");
+            	return activoManager.comprobarObligatoriosCheckingInfoActivo(idActivo);
+			}
+			
+            def existeAdjuntoUG(String codigo, String unidadGestion) {
+            	def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.existeAdjuntoUG(tareaExterna, codigo, unidadGestion);
+            }
+            def existeAdjuntoUG(String cadenaDAUG) {
+            	def activoTramiteManager = ctx.getBean("activoTramiteManager");
+				return activoTramiteManager.existeAdjuntoUGCadena(tareaExterna, cadenaDAUG);
+            }
+            def existeAdjuntoUGValidacion(String codigo, String unidadGestion) {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+            	return activoTramiteManager.existeAdjuntoUGValidacion(tareaExterna, codigo, unidadGestion);
+            }
+            def existeAdjuntoUGValidacion(String cadenaDAUG) {
+				def activoTramiteManager = ctx.getBean("activoTramiteManager");
+            	return activoTramiteManager.existeAdjuntoUGValidacionCadena(tareaExterna, cadenaDAUG);
+            }
+
+  			 ]]></value>
+  		</list>
+  	</property>
+  </bean> 
+  
+  <bean parent="clasesDiccionarioAnotadas">
+    <property name="sourceList">
+           <list merge="true">
+              <value>es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite</value>
+              <value>es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspension</value>
+              <value>es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubasta</value>
+              <value>es.pfsgroup.plugin.recovery.coreextension.model.DDGestoria</value>
+              <value>es.pfsgroup.plugin.recovery.coreextension.model.DDResultadoInforme</value>
+		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDTipoFondo</value>  
+		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDResultadoComiteConcursal</value>   
+		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDTipoConcurso</value>   
+		      <value>es.pfsgroup.plugin.recovery.coreextension.model.DDMotivoConclusion</value>   
+        </list>
+    </property>
+   </bean>
+</beans>

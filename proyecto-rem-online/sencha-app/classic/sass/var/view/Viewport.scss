@@ -1,0 +1,58 @@
+//$base-color:#35baf6;
+$base-color: #004465;
+$circle-border-radius:50%;
+$base-border-color: #ddd;
+$lightest-color:#fff;
+$font-weight: normal;
+$font-size: 11px;
+
+$font-family-open-sans: "Open Sans";
+
+$accordion-header-background-color: $lightest-color;
+$accordion-header-color: #333;
+
+$social-facebook-btn-background: #167abc;
+$social-twitter-btn-background: #03b4d5;
+$social-google-plus-btn-background: #e44959;
+$social-envelope-btn-background: #7754aa; 
+
+$button-toolbar-background-color: transparent;
+$button-toolbar-border-color: transparent;
+$button-toolbar-hover-background-color: #efefef;
+
+
+//Form and Toolbar Button UI colors
+
+
+
+//Dashboard
+$exec-dark-background: dynamic(#3e4752);
+$exec-light-background: dynamic(#ececec);
+$exec-tile-background: dynamic(#ffffff);
+
+$exec-font-size-small-content: dynamic(10px);
+$exec-font-size-content: dynamic(12px);
+$exec-font-size-small-title: dynamic(14px);
+$exec-font-size-medium-title: dynamic(18px);
+$exec-font-size-large-title: dynamic(20px);
+$exec-font-size-xlarge-title: dynamic(28px);
+
+$exec-font-regular: dynamic(400);
+$exec-font-semibold: dynamic(500);
+$exec-font-bold: dynamic(800);
+
+$exec-font-light-color: dynamic(#a0a7b8);
+$exec-font-color: dynamic(#878ea2);
+$exec-font-dark-color: dynamic($exec-dark-background);
+ 
+$activas-color: #2fa32f;
+$cerca_vencer-color: #efc116;
+$vencidas-color: #e23650;
+
+$panel-navigation-background-color: $color-blue;
+$panel-navigation-background-color-item-selected: $color-blue-medium;
+$panel-navigation-background-color-item: $color-blue-soft;
+$panel-navigation-background-color-over: $color-blue-soft;
+$panel-navigation-item-line-height: 50px;
+$panel-navigation-item-text-color: #ffffff;
+

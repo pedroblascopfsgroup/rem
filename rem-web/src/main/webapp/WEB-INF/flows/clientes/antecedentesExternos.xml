@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="antecedente" class="es.capgemini.pfs.antecedente.model.Antecedente" />
+    <var name="antecedenteExterno" class="es.capgemini.pfs.antecedenteexterno.model.AntecedenteExterno" />
+    <var name="dtoAntecedenteExterno" class="es.capgemini.pfs.antecedenteexterno.dto.DtoAntecedenteExterno" />
+
+    <input name="idPersona" type="java.lang.Long" />
+    
+    <decision-state id="newOrEdit">
+        <on-entry>
+            <evaluate expression="executor.execute('personaManager.crearAntecedenteBase', idPersona)" result="flowScope.dummy" />
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', idPersona)" result="flowScope.antecedente" />
+        </on-entry>
+        <if test="antecedente.antecedenteExterno!=null" then="formularioEditar" else="formularioNuevo" />
+    </decision-state>
+
+    <view-state id="formularioEditar" view="${view}" model="dtoAntecedenteExterno">
+        <binder>
+            <binding property="antecedenteExterno.numIncidenciasJudiciales" />
+            <binding property="antecedenteExterno.fechaIncidenciaJudicial" />
+            <binding property="antecedenteExterno.numImpagos" />
+            <binding property="antecedenteExterno.fechaImpagos" />
+        </binder>
+        <on-entry>
+            <set name="antecedenteExterno" value="antecedente.antecedenteExterno" />
+            <set name="dtoAntecedenteExterno.antecedenteExterno" value="antecedenteExterno" />
+            <set name="flowScope.view" value="'clientes/antecedentesExternos.js'" />
+        </on-entry>
+        <on-render>
+            <!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+            cambiaremos el nombre de la vista a 'default' -->
+            <set name="flowScope.view" value="'default'" />
+        </on-render>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+
+    <view-state id="formularioNuevo" view="${view}" model="dtoAntecedenteExterno">
+        <binder>
+            <binding property="antecedenteExterno.numIncidenciasJudiciales" />
+            <binding property="antecedenteExterno.fechaIncidenciaJudicial" />
+            <binding property="antecedenteExterno.numImpagos" />
+            <binding property="antecedenteExterno.fechaImpagos" />
+        </binder>
+        <on-entry>
+            <set name="dtoAntecedenteExterno.antecedenteExterno" value="antecedenteExterno" />
+            <set name="flowScope.view" value="'clientes/antecedentesExternos.js'" />
+        </on-entry>
+        <on-render>
+            <!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+            cambiaremos el nombre de la vista a 'default' -->
+            <set name="flowScope.view" value="'default'" />
+        </on-render>
+        <transition on="update" to="new" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+
+    <action-state id="update">
+        <evaluate expression="executor.execute('antecedenteExternoManager.update', dtoAntecedenteExterno)" />
+        <transition to="close" />
+    </action-state>
+
+    <action-state id="new">
+        <evaluate expression="executor.execute('antecedenteExternoManager.save', dtoAntecedenteExterno, antecedente)" />
+        <transition to="close" />
+    </action-state>
+
+    <end-state id="close" view="default" />
+
+</flow>

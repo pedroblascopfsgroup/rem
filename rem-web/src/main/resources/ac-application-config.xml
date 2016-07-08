@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+               
+    default-autowire="byName">
+
+    
+    
+    
+    
+    <!-- From devon -->
+    <import resource="classpath:devon/resources/core/ac-devon-core.xml" />
+    <import resource="classpath:devon/resources/core/ac-devon-integration.xml" />
+    <import resource="classpath:devon/resources/web/ac-devon-webmvc.xml" />
+    <import resource="classpath:devon/resources/core/ac-devon-monitoring.xml" />
+    <import resource="classpath:devon/resources/bam/ac-devon-bam.xml" />
+    
+    <!--
+    	SE COMENTA ESTE IMPORT PARA SOBREESCRIBIR LA CONFIGURACION DE LOS RESOLVERS DE DEVON!!
+    <import resource="classpath:ac-devon-webflow.xml" />
+    -->
+    <import resource="classpath:devon/resources/webflow/ac-devon-webflow.xml" />
+    <!-- Archivo con la misma configuración que ac-devon-webflow, pero agrega el resolver para -->
+    <!-- el PDF/XLS dinámico de simulación de Scoring & Alertas -->
+    <import resource="classpath:ac-common-webflow.xml" />
+	<import resource="classpath:ac-devon-web-security.xml" /> 
+    <import resource="classpath:ac-common-web-security.xml" />
+    <import resource="classpath:devon/resources/birt/ac-devon-birt.xml" />
+    
+    <!-- From rec-common -->
+    <import resource="classpath:ac-rec-common-utils.xml" />
+    <import resource="classpath:ac-rec-common-data-access.xml" />
+    <import resource="classpath:ac-rec-common-job.xml"/>
+
+   <bean id="messageSource" parent="fwk.messageSource">
+        <property name="basenames"  >
+            <list merge="true">
+                <value>/WEB-INF/config/appMessages</value>
+                <value>/WEB-INF/appMessages</value>
+                <!-- Agregado temporal para importar mensages de PFS-GROUP -->
+                <value>/WEB-INF/config/appMessagesPFS</value>
+            </list>
+        </property> 
+        <property name="cacheSeconds" value="1800"/>
+    </bean>
+
+  
+   <import resource="classpath:optionalConfiguration/ac-*.xml" />
+    
+    <!--
+        Acceso a datos: Datasource principal Datasource factory de las entidades Session factory de Hibernate para el
+        datasource principal Session factory de Hibernate para los datasource de las entidades Transaction manager principal
+        Transaction manager de las entidades
+    -->
+    
+
+    
+<!-- 
+	<bean id="clasesAnotadasWeb" parent="clasesAnotadasEntity">
+		<property name="sourceList">
+			<list merge="true">
+		        <value>es.capgemini.pfs.web.genericForm.GenericFormItem</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="entitySessionFactory" parent="abstract.entitySessionFactory">
+	    <property name="annotatedClasses" ref="clasesAnotadasWeb" /> 
+	</bean>
+    
+    -->
+    <alias name="masterSessionFactory" alias="monitoredSessionFactory1"/>
+    <alias name="entitySessionFactory" alias="monitoredSessionFactory2"/>
+    
+    
+    
+     <import resource="classpath:ac-application-view.xml" />
+    
+</beans>

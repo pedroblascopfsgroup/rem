@@ -1,0 +1,171 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+  default-autowire="byName">
+
+  <jee:jndi-lookup id="master.internalDataSource" jndi-name="${master.dsname}" />
+  <bean id="master.internalDataSourceInfo" class="java.lang.String">
+    <constructor-arg value="Master DataSource in [${master.dsname}]" />
+  </bean>
+  
+  <!-- Master Datasource -->
+  <bean id="masterDataSource" class="es.capgemini.devon.dao.datasource.InitializingDataSourceFactoryBean" autowire-candidate="false"
+    lazy-init="false">
+    <property name="info" ref="master.internalDataSourceInfo" />
+    <property name="dataSource" ref="master.internalDataSource" />
+    <property name="flagTable" value="${master.flagtable}" />
+    <property name="initScripts" value="${master.initScripts}" />
+    <property name="destroyScripts" value="${master.destroyScripts}" />
+    <property name="allwaysInitialize" value="${master.allwaysInitialize}" />
+  </bean>
+
+  <!-- Entity Datasource -->
+  <bean name="entityDataSourceManager" class="es.capgemini.pfs.dsm.DataSourceManager">
+    <property name="flagTable" value="${entity.flagtable}" />
+    <property name="initScripts" value="${entity.initScripts}" />
+    <property name="destroyScripts" value="${entity.destroyScripts}" />
+    <property name="allwaysInitialize" value="${entity.allwaysInitialize}" />
+  </bean>
+  <bean id="entityDataSource" class="es.capgemini.pfs.dsm.EntityDataSource"/>
+  
+  
+  <util:list id="list.annotatedPackageClasses">
+        <value>${daoPackages}</value>
+        <value>${others-daoPackages}</value>
+  </util:list>
+  
+  
+  <!-- Hibernate Master Session factory -->
+  <bean id="masterSessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+    <property name="dataSource" ref="masterDataSource" />
+    <property name="hibernateProperties" ref="hibernatePropertiesMaster"/>
+    <!-- <property name="annotatedClasses" ref="clasesAnotadasMaster"/> -->
+    <property name="packagesToScan"   ref="list.annotatedPackageClasses"/>
+    <property name="entityInterceptor">
+      <bean class="es.capgemini.pfs.utils.hibernate.HibernateMasterSqlInterceptor" p:properties-ref="appProperties" />
+    </property>
+  </bean>
+  
+  <bean id="entityTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <property name="sessionFactory" ref="entitySessionFactory" />
+  </bean>
+  
+  <bean id="masterTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <property name="sessionFactory" ref="masterSessionFactory" />
+  </bean>
+
+	<!-- según Spring, sólo aplica el primer tx:annotation-driven -->
+  <tx:annotation-driven transaction-manager="entityTransactionManager" proxy-target-class="true" />
+	<!-- 
+    <tx:annotation-driven transaction-manager="masterTransactionManager" proxy-target-class="true" />
+	XXX QUITAR EL masterTransactionManager!!
+	 -->
+
+  <!-- Alias necesitado por el Batch -->
+  <!-- 
+  <alias name="masterTransactionManager" alias="transactionManager" />
+   -->
+
+  <bean id="hibernatePropertiesMaster" class="java.util.Hashtable">
+    <constructor-arg>
+      <map>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.${master.dialect}"/>
+        <entry key="hibernate.hbm2ddl.auto" value="no"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.cache.provider_class" value="${master.cache.provider_class}"/>
+        <entry key="hibernate.cache.use_query_cache" value="${master.use_query_cache}"/>
+        <entry key="hibernate.cache.use_second_level_cache" value="${master.use_second_level_cache}"/>
+        <entry key="hibernate.cache.region_prefix" value="masterRegionCache"/>
+        <entry key="hibernate.connection.release_mode" value="on_close"/>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <bean id="hibernatePropertiesEntity" class="java.util.Hashtable">
+    <constructor-arg>
+      <map>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.${entity.dialect}"/>
+        <entry key="hibernate.hbm2ddl.auto" value="no"/>
+        <entry key="hibernate.show_sql" value="false"/>
+        <entry key="hibernate.cache.provider_class" value="${entity.cache.provider_class}"/>
+        <entry key="hibernate.cache.use_query_cache" value="${entity.use_query_cache}"/>
+        <entry key="hibernate.cache.use_second_level_cache" value="${entity.use_second_level_cache}"/>
+        <entry key="hibernate.cache.region_prefix" value="entityRegionCache"/>
+        <entry key="hibernate.connection.release_mode" value="on_close"/>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <!-- Hibernate Entity Session factory -->
+  <bean id="entitySessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean" 
+    depends-on="entityDataSourceManager" >
+    <property name="dataSource" ref="entityDataSource" />
+    <property name="lobHandler" ref="fwk.defaultLobHandler"/>
+    <property name="hibernateProperties" ref="hibernatePropertiesEntity"/>
+    <!-- <property name="annotatedClasses" ref="clasesAnotadasEntity"/> -->
+    <property name="packagesToScan"   ref="list.annotatedPackageClasses"/>
+    <property name="mappingLocations" ref="master.additionalMappings" />
+    <property name="entityInterceptor">
+      <bean class="es.capgemini.pfs.utils.hibernate.HibernateEntitySqlInterceptor" p:properties-ref="appProperties" />
+    </property>
+  </bean>
+<!-- 
+  <bean id="entityTransactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+    <property name="sessionFactory" ref="abstract.entitySessionFactory" />
+  </bean>
+ -->
+  
+
+  <!-- Definicion del bean para la obtencion del schema a partir del ID de bd -->
+  <bean id="dbIdContextHolder" class="es.capgemini.devon.utils.DbIdContextHolder">
+  	<constructor-arg>
+  		<bean class="es.capgemini.pfs.utils.SchemaManagerImp"/>
+  	</constructor-arg>
+  </bean>
+
+  <!-- Expose the Hibernate Statistics -->
+  <bean name="devon:type=MasterHibernateStatistics" class="org.hibernate.jmx.StatisticsService" autowire="byName">
+    <property name="sessionFactory" ref="masterSessionFactory"/>
+  </bean>
+  <bean name="devon:type=EntityHibernateStatistics" class="org.hibernate.jmx.StatisticsService" autowire="byName">
+    <property name="sessionFactory" ref="entitySessionFactory"/>
+  </bean>
+  
+  
+   <bean id="clasesDiccionarioAnotadas" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+    <list>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDCompletitud</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDCorrecto</value>
+            <value>es.capgemini.pfs.procesosJudiciales.model.DDCorrectoCobro</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDFavorable</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDImpugnacion1</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDImpugnacion2</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDPostores1</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDPostores2</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDResultadoResolucion</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDSiNo</value>
+            <value>es.capgemini.pfs.procesosJudiciales.model.DDInstrucciones</value>
+            <value>es.capgemini.pfs.procesosJudiciales.model.DDAccionAuto</value>
+            <value>es.capgemini.pfs.procesosJudiciales.model.DDPositivoNegativo</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDSuspension</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.DDTerceros</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.TipoPlaza</value>
+           <value>es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento</value>
+           <value>es.capgemini.pfs.ruleengine.rule.dd.DDRule</value>
+    </list>
+    </property>
+    </bean>
+  
+  <bean name="jmx.authenticator" class="es.capgemini.devon.jmx.SimpleJMXAuthenticator">
+  	 <property name="user" value="${jmx.user}"/>
+  	 <property name="password" value="${jmx.password}"/>
+  </bean>
+  
+</beans>

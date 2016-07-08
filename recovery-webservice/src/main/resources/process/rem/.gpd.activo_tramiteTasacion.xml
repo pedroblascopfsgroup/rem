@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteTasacion" width="1493" height="919">
+  <node name="inicio" x="56" y="15" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T005_ComprobacionGestor" x="30" y="100" width="191" height="36">
+    <edge>
+      <label x="-50" y="-18"/>
+    </edge>
+    <edge>
+      <label x="6" y="-99"/>
+      <bendpoint w1="0" h1="126" w2="-109" h2="-231"/>
+    </edge>
+  </node>
+  <node name="T005_AnalisisPeticion" x="449" y="99" width="194" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T005_AnalisisPeticionDecision" x="433" y="198" width="225" height="36">
+    <edge>
+      <label x="-180" y="-19"/>
+      <bendpoint w1="311" h1="-1" w2="1" h2="-54"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="17" y="-22"/>
+      <bendpoint w1="-246" h1="0" w2="65" h2="-259"/>
+    </edge>
+  </node>
+  <node name="T005_SolicitudExtraordinaria" x="439" y="294" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T005_AutorizacionPropietario" x="440" y="374" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T005_AutorizacionPropietarioDecision" x="423" y="455" width="251" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="201" h1="0" w2="-246" h2="212"/>
+    </edge>
+    <edge>
+      <label x="-5" y="-19"/>
+    </edge>
+  </node>
+  <node name="T005_EmisionTasacion" x="148" y="457" width="173" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T005_CierreEconomico" x="139" y="614" width="185" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="621" h1="-3" w2="8" h2="359"/>
+    </edge>
+  </node>
+  <node name="Fin" x="789" y="251" width="132" height="36"/>
+</root-container>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteDocumentalCEE">
+
+	<start-state name="inicio">
+		<transition to="T003_ComprobarTipoGestor"></transition>
+	</start-state>
+	
+	<state name="T003_AnalisisPeticion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_AnalisisPeticionDecision"	name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T003_AnalisisPeticionDecision" expression="#{T003_AnalisisPeticionDecision}">
+		<transition to="Fin" name="KO"></transition>
+		<transition to="T003_SolicitudExtraordinaria" name="OKSinSaldo"></transition>
+		<transition to="T003_EmisionCertificado" name="OKConSaldo"></transition>
+	</decision>
+
+	<state name="T003_SolicitudExtraordinaria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_AutorizacionPropietario" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T003_AutorizacionPropietario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_AutorizacionPropietarioDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T003_AutorizacionPropietarioDecision" expression="#{T003_AutorizacionPropietarioDecision}">
+		<transition to="Fin" name="KO"></transition>
+		<transition to="T003_EmisionCertificado" name="OK"></transition>
+	</decision>
+	
+	<state name="T003_EmisionCertificado">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_EmisionCertificadoDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T003_EmisionCertificadoDecision" expression="#{T003_EmisionCertificadoDecision}">
+		<transition to="T003_CierreEconomico" name="SinEtiqueta"></transition>
+		<transition to="T003_SolicitudEtiqueta" name="ConEtiqueta"></transition>
+	</decision>
+
+
+	<state name="T003_SolicitudEtiqueta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_ObtencionEtiqueta" name="avanzaBPM"></transition>
+	</state>
+
+
+	<state name="T003_ObtencionEtiqueta">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T003_CierreEconomico" name="avanzaBPM"></transition>
+	</state>
+
+
+	<state name="T003_CierreEconomico">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	<node name="T003_ComprobarTipoGestor">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>
+				activoComprobarGestorActionHandler
+			</targetBean>
+		</action>
+		<transition to="T003_AnalisisPeticion" name="OtrosGestores"></transition>
+		<transition to="T003_EmisionCertificado" name="GestorActivo"></transition>
+	</node>
+		
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

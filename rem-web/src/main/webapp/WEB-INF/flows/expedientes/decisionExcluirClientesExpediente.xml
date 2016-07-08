@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<!-- id del expediente -->
+	<input name="id" type="java.lang.Long"/>
+
+    <view-state id="formulario" view="${view}" >
+    	<on-entry>
+			<set name="flowScope.view" value="'expedientes/excluirClientesExpediente'" />
+    	</on-entry>
+    	<on-render>
+			<set name="flowScope.view" value="'default'" />
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente" />
+			<evaluate expression="executor.execute('expedienteManager.findExclusionExpedienteClienteByExpedienteId', id)" result="flashScope.exclusion" />
+			<evaluate expression="executor.execute('expedienteManager.findPersonasByExpedienteId', id)" result="flowScope.personas"/>
+		</on-render>
+		<transition to="close" />
+    </view-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

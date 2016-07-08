@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	<input name="id" type="java.lang.Long"/>
+	<input name="nombreTab" type="java.lang.String"/>
+   
+	<!-- renderiza el formulario -->
+    <end-state id="consultaProcedimiento" view="procedimientos/consultaProcedimiento" >
+	    <on-entry>
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento',id)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.esGestor',id)" result="flowScope.esGestor" />
+	    	<evaluate expression="executor.execute('procedimientoManager.esSupervisor',id)" result="flowScope.esSupervisor" />
+            <evaluate expression="executor.execute('procedimientoManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
+	    	<evaluate expression="executor.execute('recursoManager.puedeCrearRecurso',id)" result="flowScope.puedeCrearRecurso" />
+	    	<evaluate expression="executor.execute('consultaProcedimientoManager.getTabs',id)" result="flowScope.tabsProcedimiento" />
+	    </on-entry>
+    </end-state> 	
+    
+</flow>

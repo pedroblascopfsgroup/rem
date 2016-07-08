@@ -1,0 +1,10 @@
+{
+"data":
+	{
+	    
+	    "userName": "HAYAMASTER",
+		"authorities": ["VER_ACTIVO", "ABRIR_ACTIVO", "VER_AGENDA", "VER_RATING"],
+		"roles": ["HAYAADMIN"]
+	               
+	}
+}

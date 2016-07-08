@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dtoTarea" class="es.capgemini.pfs.tareaNotificacion.dto.DtoGenerarTarea" />
+	<input name="idEntidad" type="java.lang.Long"/>
+	<input name="codigoTipoEntidad" type="java.lang.String"/>
+	<input name="descripcion" type="java.lang.String"/>
+	<input name="fecha" type="java.lang.String"/>
+	<input name="situacion" type="java.lang.String"/> 
+	<input name="idTareaAsociada" type="java.lang.String"/>
+
+	<input name="tienePerfilGestor" type="java.lang.Boolean"/>
+	<input name="tienePerfilSupervisor" type="java.lang.Boolean"/>
+   <input name="isConsulta" type="java.lang.Boolean"/>
+	
+	
+	
+    <view-state id="formulario" view="${view}" model="dtoTarea">
+    	<binder>
+    		<binding property="descripcion" />
+    		<binding property="idEntidad"/>
+    		<binding property="codigoTipoEntidad"/>
+    		<binding property="subtipoTarea"/>
+    		<binding property="idTareaAsociada"/>
+		</binder>
+    	<on-entry>
+    		<set name="codigoTipoEntidad" value="codigoTipoEntidad" />
+    		<set name="idEntidad" value="idEntidad" />
+    	    <set name="flowScope.view" value="'tareas/generarNotificacion'" />
+    	    <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoTarea)" />
+    	    <evaluate expression="executor.execute('tareaNotificacionManager.puedeResponder',dtoTarea)" result="flowScope.puedeResponder"/>
+    	</on-entry>
+		
+    	<on-render>
+			<!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+			cambiaremos el nombre de la vista a 'default'--> 
+			<set name="flowScope.view" value="'default'"/>
+			<!--
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+			-->
+		</on-render>
+		
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state> 	
+    
+    <action-state id="update">
+    	<evaluate expression="executor.execute('tareaNotificacionManager.crearTareaComunicacion',dtoTarea)" /> 
+		<!-- <transition on-exception="java.lang.Exception" to="formulario" /> -->
+		<transition to="close"></transition>
+	</action-state>
+	
+	<end-state id="close" view="default" />
+        
+</flow>

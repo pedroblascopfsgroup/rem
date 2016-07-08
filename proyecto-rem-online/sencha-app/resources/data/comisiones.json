@@ -1,0 +1,46 @@
+{
+    "total": 3,
+    "comisiones": [
+        {
+        	"idComision": 105001,
+            "idOferta": 1050,
+            "idActivo": 100285127,
+            "idTipoPersona": 1,
+            "tipoPersona": "Colaborador",
+            "nombre": "María Ángeles",
+            "apellidos": "Peris Peris",
+            "numDocumento":  "8574653B",
+			"porcentajedefecto": 1,
+			"porcentajenuevo": 1,
+			"importe": "1.000,00"                
+        },
+        {
+        	"idComision": 105002,
+            "idOferta": 1050,
+            "idActivo": 100285127,
+            "idTipoPersona": 2,
+            "tipoPersona": "Prescriptor",
+            "nombre": "Pablo",
+            "apellidos": "Gonzalez Sanchez",
+            "numDocumento":  "48595626F",
+			"porcentajedefecto": 1,
+			"porcentajenuevo": 1,
+			"importe": "1.000,00"                
+        },
+        {
+        	"idComision": 105101,
+        	"idOferta": 1051,
+            "idActivo": 100285127,
+            "idTipoPersona": 2,
+            "tipoPersona": "Prescriptor",
+            "nombre": "Juan",
+            "apellidos": "Pérez López",
+            "numDocumento":  "96857412E",
+			"porcentajedefecto": 1,
+			"porcentajenuevo": 1,
+			"importe": "1.000,00" 
+        }
+        
+    ],
+    "success": true
+}

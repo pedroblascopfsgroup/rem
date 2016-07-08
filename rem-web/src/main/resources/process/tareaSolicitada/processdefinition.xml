@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition  xmlns=""  name="tareaSolicitada">
+
+
+	<start-state name="start-state1">
+		<transition to="SolicitarTaera" name="SolicitarTarea"></transition>
+	</start-state>
+
+
+	<node name="SolicitarTaera">
+		<action name="myAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>solicitarTareaActionHandler</targetBean>
+		</action>
+		<transition to="EsperarRespuestaTarea" name="TareaSolicitada"></transition>
+	</node>
+
+	<state name="EsperarRespuestaTarea">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>esperarRespuestaTareaActionHandler</targetBean>
+			</action>
+		</event>
+		<transition to="TareaCompletada" name="TareaRespondida"></transition>
+		<transition to="ActivarAlerta" name="ActivarAlerta"></transition>
+	</state>
+
+	<node name="ActivarAlerta">
+		<action name="myAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>activarAlertaActionHandler</targetBean>
+		</action>
+		<transition to="EsperarRespuestaTarea" name="AlertaActivada"></transition>
+	</node>
+
+	<node name="TareaCompletada">
+		<action name="myAction" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>tareaCompletadaActionHandler</targetBean>
+		</action>
+		<transition to="end-state1" name="Fin"></transition>
+	</node>
+
+
+	<end-state name="end-state1"></end-state>
+
+
+</process-definition>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteDocumental">
+
+	<start-state name="inicio">
+		<transition to="T002_ComprobarTipoGestor"></transition>
+	</start-state>
+	
+	<state name="T002_AnalisisPeticion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_AnalisisPeticionDecision"	name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T002_AnalisisPeticionDecision" expression="#{T002_AnalisisPeticionDecision}">
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="T002_SolicitudLPOGestorInterno" name="OKSinPago"></transition>
+		<transition to="T002_SolicitudDocumentoGestoria" name="OKConPagoYSaldo"></transition>
+		<transition to="T002_SolicitudExtraordinaria" name="OKConPagoYSinSaldo"></transition>
+	</decision>
+
+
+	<state name="T002_SolicitudLPOGestorInterno">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_ObtencionLPOGestorInterno" name="avanzaBPM"></transition>
+	</state>
+
+
+	<state name="T002_SolicitudDocumentoGestoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_ObtencionDocumentoGestoria" name="avanzaBPM"></transition>
+	</state>
+
+
+	<state name="T002_SolicitudExtraordinaria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_AutorizacionPropietario" name="avanzaBPM"></transition>
+	</state>
+
+
+	<state name="T002_ObtencionLPOGestorInterno">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+	
+	
+	<state name="T002_AutorizacionPropietario">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_AutorizacionPropietarioDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T002_AutorizacionPropietarioDecision" expression="#{T002_AutorizacionPropietarioDecision}">
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="T002_SolicitudDocumentoGestoria" name="OK"></transition>
+	</decision>
+	
+	<state name="T002_ObtencionDocumentoGestoria">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_ValidacionActuacion" name="avanzaBPM"></transition>
+	</state>
+	
+	<state name="T002_ValidacionActuacion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T002_ValidacionActuacionDecision" name="avanzaBPM"></transition>
+	</state>
+	
+	<decision name="T002_ValidacionActuacionDecision" expression="#{T002_ValidacionActuacionDecision}">
+		<transition to="T002_SolicitudDocumentoGestoria" name="Incorrecto"></transition>
+		<transition to="T002_CierreEconomico" name="CorrectoConCoste"></transition>
+		<transition to="Fin" name="CorrectoSinCoste"></transition>
+	</decision>
+	
+	<state name="T002_CierreEconomico">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+
+	<node name="T002_ComprobarTipoGestor">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>
+				activoComprobarGestorActionHandler
+			</targetBean>
+		</action>
+		<transition to="T002_AnalisisPeticion" name="OtrosGestores"></transition>
+		<transition to="T002_SolicitudDocumentoGestoria" name="GestorActivo"></transition>
+	</node>
+	
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

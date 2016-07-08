@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dto" class="es.capgemini.pfs.exclusionexpedientecliente.dto.DtoExclusionExpedienteCliente" />
+	<!-- id del expediente -->
+	<input name="id" type="java.lang.Long"/>
+
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="formulario"/>
+	</decision-state>
+
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('expedienteManager.findPersonasByExpedienteId', id)" result="flowScope.personas"/>
+			<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dto" >
+    	<on-entry>
+			<set name="flowScope.view" value="'expedientes/excluirClientesExpediente'" />
+    	</on-entry>
+    	<on-render>
+			<set name="flowScope.view" value="'default'" />
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente" />
+			<evaluate expression="executor.execute('expedienteManager.findExclusionExpedienteClienteByExpedienteId', id)" result="flashScope.exclusion" />
+		</on-render>
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false" />
+    </view-state> 	
+
+    <action-state id="update">
+    	<evaluate expression="executor.execute('expedienteManager.saveExclusionExpedienteCliente', dto, id)" />
+		<transition to="close" />
+	</action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

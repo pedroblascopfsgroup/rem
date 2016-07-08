@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="persona" class="es.capgemini.pfs.persona.model.Persona" />
+	<var name="dtoSolvenciaPersona" class="es.capgemini.pfs.persona.dto.DtoSolvenciaPersona" />
+
+	<input name="idPersona" type="java.lang.Long"/>
+	
+	
+	<action-state id="buscar">
+			<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
+			<transition to="formulario" />
+	</action-state>
+
+
+    <view-state id="formulario" view="${view}" model="dtoSolvenciaPersona">
+    	<binder>
+    		<binding property="persona.observacionesSolvencia" />
+    		<binding property="persona.fechaVerifSolvencia" />
+    	</binder>
+    	
+    	<on-entry>
+    		<set name="dtoSolvenciaPersona.persona" value="persona" />
+    		<!-- Pasamos las fecha de verificación actualmente cargada en la BBDD para validar en -->
+    		<!-- el DTO que la fecha nueva ingresada no sea menor -->
+    		<set name="dtoSolvenciaPersona.fechaVerificacionAnterior" value="persona.fechaVerifSolvencia" />
+    		<set name="flowScope.view" value="'clientes/solvencia.js'" />
+    	</on-entry>
+
+		<transition on="update" to="update"/>
+		<transition on="cancel" to="close" bind="false"/>
+    </view-state> 	
+
+    <action-state id="update">
+    	<evaluate expression="executor.execute('personaManager.updateSolvencia', dtoSolvenciaPersona)" />
+		<!-- <transition on-exception="java.lang.Exception" to="formulario" /> -->
+		<transition to="close"></transition>
+	</action-state>
+	
+	<end-state id="close" view="default" />
+
+</flow>

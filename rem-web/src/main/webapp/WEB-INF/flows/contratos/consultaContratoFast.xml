@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="id" type="java.lang.Long"/>
+    <input name="nombreTab" type="java.lang.String"/>
+	
+	<!-- renderiza el formulario -->
+    <end-state id="buscaContrato" view="entidad/contrato/contratoJSON">
+    	<on-entry>
+    		<evaluate expression="executor.execute('contratoManager.get', id)" result="flowScope.contrato"/>
+    		<evaluate expression="executor.execute('contratoManager.contadorReincidencias', id)" result="flowScope.contadorReincidencia"/>
+    		 <!-- comprobar si el contrato está exceptuado -->
+             <evaluate expression="executor.execute('es.pfsgroup.recovery.expediente.api.existeExceptuacionByPerIdTipo',id, '2')" result="flowScope.contratoExceptuado" />
+    		<evaluate expression="executor.execute('consultaContratoManager.getTabs', id)" result="flowScope.tabsContrato"/>
+			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.consulta.buttons.left')" result="flowScope.buttonsLeft"/>
+			<evaluate expression="executor.execute('plugin.mejoras.web.contratos.consulta.buttons.right')" result="flowScope.buttonsRight"/>
+    	</on-entry>
+    </end-state>
+</flow>

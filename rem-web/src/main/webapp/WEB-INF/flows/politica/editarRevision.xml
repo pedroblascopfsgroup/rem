@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+   <var name="dto" class="es.capgemini.pfs.politica.dto.DtoAnalisisPolitica"/>
+    
+   <input name="idAppSeleccionado" type="java.lang.Long" />
+   <input name="esGestor" type="java.lang.Boolean" />   
+   <input name="esSupervisor" type="java.lang.Boolean" />
+
+    <view-state id="listado" view="politica/editaRevision">
+        <on-entry>
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaById', idAppSeleccionado)" result="flowScope.analisisPP" />
+            <evaluate expression="requestParameters.esGestor" result="flowScope.esGestor"/>
+            <evaluate expression="requestParameters.esSupervisor" result="flowScope.esSupervisor"/>
+            <evaluate expression="requestParameters.idAppSeleccionado" result="flowScope.idAppSeleccionado"/>
+        </on-entry>
+        <transition on="update" to="saveOrUpdate"/>
+    </view-state>
+
+	<end-state id="saveOrUpdate" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)"/>
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarComentarioAnalisis', dto)"/>
+		</on-entry>
+	</end-state>
+</flow>

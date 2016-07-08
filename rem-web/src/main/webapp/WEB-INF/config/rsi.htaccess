@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.1//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.1.dtd">
+
+<urlrewrite use-query-string="true">
+    
+	<!-- nuevo para galicia -->
+<rule>
+        <from>^/external/(.+)/login\?u=(.+)&amp;t=([0-9]+)&amp;v=(.+)&amp;i=([0-9]+)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$2&amp;workingcode=$1&amp;timestamp=$3&amp;view=$4&amp;id=$5</to>
+    </rule>	
+    <!-- redirect the RSI SSO model -->
+    <rule>
+        <from>^/rsi/([0-9]+)/login\?user=(.*)&amp;centro=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$2&amp;workingcode=$1&amp;centro=$3</to>
+    </rule>
+
+    <rule>
+				<condition type="port">8441</condition>
+        <from>/\?user=(.*)&amp;centro=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$1&amp;workingcode=3062&amp;centro=$2</to>
+    </rule>
+    <rule>
+				<condition type="port">8441</condition>
+        <from>/\?user=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$1&amp;workingcode=3062</to>
+    </rule>
+    <rule>
+				<condition type="port">8442</condition>
+        <from>/\?user=(.*)&amp;centro=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$1&amp;workingcode=3094&amp;centro=$2</to>
+    </rule>
+    <rule>
+				<condition type="port">8442</condition>
+        <from>/\?user=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$1&amp;workingcode=3094</to>
+    </rule>
+    <rule>
+				<condition type="port">8443</condition>
+        <from>/\?user=(.*)&amp;centro=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$1&amp;workingcode=3177&amp;centro=$2</to>
+    </rule>
+    <rule>
+				<condition type="port">8443</condition>
+        <from>/\?user=(.*)$</from>
+        <to type="redirect">/pfs/j_spring_security_check?j_username=$1&amp;workingcode=3177</to>
+    </rule>
+	
+
+</urlrewrite>

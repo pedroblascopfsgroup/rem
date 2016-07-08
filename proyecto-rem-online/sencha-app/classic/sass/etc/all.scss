@@ -1,0 +1,1057 @@
+/*
+ * This is is imported by virtue of "sass.etc" in "app.json".
+ */ 
+ @import '../var/_global.scss';
+ 
+@mixin btn-border($background-color){
+  background-color: $background-color;
+  border-color: $background-color !important;
+  .x-btn-inner-default-toolbar-small{
+    color: $lightest-color;
+  }
+  &:hover{
+    .x-btn-inner-default-toolbar-small,.x-btn-inner-default-small{
+      color: $background-color;
+    }
+    .x-btn-icon-el-default-small,.x-btn-icon-el-default-toolbar-small{
+      color: $background-color;
+    }
+    background-color: transparent;
+  }
+}
+
+@mixin border-radius($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+}
+
+@mixin box-shadow($h-shadow,$v-shadow,$blur,$spread,$shadow-color) {
+  -webkit-box-shadow: $h-shadow $v-shadow $blur $spread $shadow-color;
+  -moz-box-shadow: $h-shadow $v-shadow $blur $spread $shadow-color;
+  -ms-box-shadow: $h-shadow $v-shadow $blur $spread $shadow-color;
+  box-shadow: $h-shadow $v-shadow $blur $spread $shadow-color;
+}
+
+
+*:focus {
+  outline:0 !important;
+}
+
+.x-grid-cell-inner {
+white-space: normal !important;	
+}
+
+.x-btn-round-large,
+.x-btn-round-medium,
+.x-btn-round-small {
+
+	border-style: solid;
+	border-bottom-color: white;
+	border-bottom-width: 20px;
+	
+	&:hover {
+	  background-color: blue;
+	  -webkit-transition: background-color;
+	  -moz-transition: background-color;
+	  -o-transition: background-color;
+	  transition: background-color;
+	}
+}
+
+.x-grid-row-editor-buttons {
+	z-index: 9999 !important;
+}
+
+.x-grid-empty {
+    color: #000 !important;
+	font-style: italic !important;
+}
+
+.tabpanel-base .x-tab.x-button-tab {
+	background-color: $color-blue !important;
+}
+
+.cancel-button-color {
+	  background: url(images/ficha_activo_eliminartodo_des.svg) center center no-repeat;
+}
+
+.green-color{
+	color: #3C997A !important;
+}
+
+.save-button-color {
+	 background: url(images/ficha_activo_aceptarcambios_des.svg) center center no-repeat;
+}
+
+.edit-button-color {
+	  background: url(images/ficha_activo_editar.svg) center center no-repeat;
+}
+
+.shadow-panel, .x-menu-header {
+  z-index: 0 !important;
+}
+
+.shadow-panel{
+  @include box-shadow(0px, 1px, 2px, 1px, rgba(0,0,0,0.2));
+
+}
+
+.x-css-shadow{
+  box-shadow:none !important;
+}
+
+.x-fa {
+  display: inline-block;
+  font: normal normal normal 14px/1 $font-family;
+}
+
+.alignRight {
+  float: right;
+}
+
+.boldFont {
+  font-weight: bold;
+}
+
+//Add border around html editor field
+.x-html-editor-input{
+    border:1px solid #ccc;
+}
+
+.no-pointer {
+  cursor: default !important;
+}
+
+/* Propiedad para poner los iconos de los tabs no seleccionados en blanco	*/
+.x-tab-icon-el-default {
+	color:  $color-blue-medium;
+}
+
+
+//++ ICONOS ++ -----------------------------------+
+
+.ico-user {  
+  background-image: url(images/ico_usuario.svg);
+}
+
+.ico-favorito {
+  background: url(images/ico_favoritos.svg) center center no-repeat;  
+}
+
+.ico-envelope {  
+  background-image: url(images/ico_notificaciones.svg);
+}
+
+.ico-calendario-superior {  
+  background-image: url(images/ico_agenda.svg);
+}
+
+.ico-bell {  
+  background-image: url(images/ico_alertas.svg);
+}
+
+.ico-poweroff {  
+  background-image: url(images/ico_cerrarsesion.svg);
+}
+
+.ico-search {
+    background: url(images/ico_lupa_buscador.svg) center center no-repeat;  
+}
+
+.ico-search-white {
+	background: url(images/ico_lupa_buscador.png) center center no-repeat;
+	background-size: 15px;
+}
+
+.ico-chevron-down {
+    background: url(images/ico_flecha_buscador.svg) center center no-repeat;
+}
+
+.ico-envelope {  
+  background-image: url(images/ico_notificaciones.svg);
+}
+
+.ico-avisos {  
+  background-image: url(images/ico_avisos.svg);
+}
+
+.ico-alertas-top {
+  background-image: url(images/icono_alertas.svg);
+}
+
+.ico-poweroff {  
+  background-image: url(images/ico_cerrarsesion.svg);
+}
+
+.ico-diary {  
+  background: url(images/ico_tareas_des.svg) center center no-repeat;
+}
+
+.ico-dashboard {  
+  background: url(images/ico_dashboard_des.svg) center center no-repeat;
+}
+
+.ico-home {  
+  background: url(images/ico_activos_des.svg) center center no-repeat;
+}
+
+.ico-agrupaciones {  
+  background: url(images/ico_agrupaciones_des.svg) center center no-repeat;
+}
+
+.ico-trabajos {
+	  background: url(images/ico_trabajos_des.svg) center center no-repeat;
+}
+
+.ico-oferta {  
+  background: url(images/ico_ofertas_des.svg) center center no-repeat;
+}
+
+.ico-star {  
+  background: url(images/ico_favoritos_des.svg) center center no-repeat;
+}
+
+.ico-alertas {
+  background: url(images/ico_agenda_alertas_des.svg) center center no-repeat;
+}
+
+.ico-tareas-pendientes {
+  background: url(images/ico_agenda_tar_pend_des.svg) center center no-repeat;
+}
+
+.ico-tareas-espera {
+  background: url(images/ico_agenda_tar_espe_des.svg) center center no-repeat;
+}
+
+.ico-notificaciones {
+  background: url(images/ico_agenda_noti_des.svg) center center no-repeat;
+}
+
+.ico-search {
+    background: url(images/ico_lupa_buscador.svg) center center no-repeat;  
+}
+
+.ico-chevron-down {
+    background: url(images/ico_flecha_buscador.svg) center center no-repeat;
+}
+
+.ico-calendario-superior {  
+	background-image: url(images/ico_agenda.svg);
+ }
+ 
+.ico-camara {
+  background: url(images/con_imagen.svg) center center no-repeat;
+}
+
+.ico-ubicacion {
+  background: url(images/con_ubicacion.svg) center center no-repeat;
+}
+
+.ico-camara-no {
+  background: url(images/sin_imagen.svg) center center no-repeat;
+}
+
+.ico-ubicacion-no {
+  background: url(images/sin_ubicacion.svg) center center no-repeat;
+}
+
+.ico-principal {
+  background: url(images/sin_ubicacion.svg) center center no-repeat;
+}
+
+.ico-principal-no {
+  background: url(images/sin_ubicacion.svg) center center no-repeat;
+}
+
+.ico-pestana-activos {
+  background: url(images/ico_activo_active.svg) center center no-repeat;
+}
+
+.ico-pestana-agrupaciones {
+  background: url(images/ico_agrupaciones_hover.svg) center center no-repeat;
+}
+
+.ico-pestana-trabajos {
+  background: url(images/ico_trabajos_hover.svg) center center no-repeat;
+}
+
+.ico-download {
+    background: url(images/ico_download.png) center center no-repeat;  
+    background-size: 15px;
+}
+
+.ico-ver-activo {
+  background: url(images/ver_activo.svg) center center no-repeat;
+}
+
+.ico-ver-tarea{
+  background: url(images/ver_tarea.svg) center center no-repeat;
+}
+
+.ico-crear-trabajo {
+  background: url(images/icono_solicitud_trabajo.svg) center center no-repeat;
+}
+
+.ico-refrescar {
+	  background: url(images/icono_refrescar.svg) center center no-repeat;
+}
+
+.ico-avisos {
+	 background: url(images/icono_avisos.svg) center center no-repeat;
+}
+ 
+.ico-ver-activov2 {
+  background: url(images/ico_activo_column.svg) center center no-repeat;
+}
+
+.ico-ver-agrupacion {
+  background: url(images/ico_agrupaciones_column.svg) center center no-repeat;
+}
+
+
+.icono-ko{
+  background: url(images/icono_KO.svg) center center no-repeat;
+}
+
+.icono-ok{
+  background: url(images/icono_OK.svg) center center no-repeat;
+}
+
+//------------------ PANEL BASE----------------------------
+
+.panel-base {  
+  margin: $padding-panel-base;
+}
+
+.panel-base .x-toolbar {
+    background-color: #fff;
+    border: blue 1px;  
+}
+
+.panel-base .panel-busqueda-directa .x-panel-header-title-default,
+.panel-base .panel-busqueda-avanzada .x-panel-header-title-default{
+    color: $color-blue;
+    font-size: 12px;
+}
+
+.panel-base .panel-busqueda-directa,
+.panel-base .panel-busqueda-avanzada{
+    padding: 10px 20px 10px 20px;
+}
+
+.panel-base .x-panel-header-title-default {
+  line-height: 20px;
+  color: $color-blue-medium;
+  font-weight: bold;
+}
+.panel-base .x-tool-collapse-top, .panel-base .x-tool-expand-bottom {
+font: 16px/1 FontAwesome;
+background: none;
+}
+.panel-base .x-tool-collapse-top:before {
+content: "\f0d8"
+}
+
+.panel-base .x-tool-expand-bottom:before {
+content: "\f0d7";
+}
+
+.panel-base .x-accordion-hd .x-tool-collapse-top:before, .panel-base .x-accordion-hd .x-tool-collapse-bottom:before {
+content: "\f068";
+}
+
+.panel-base .x-accordion-hd .x-tool-expand-top:before, .panel-base .x-accordion-hd .x-tool-expand-bottom:before {
+content: "\f067";
+}
+
+.panel-base .x-grid-item-over {
+       background-color: $color-blue-soft;
+}
+
+.panel-base .x-grid-item, .panel-base .x-grid-item .x-grid-cell-inner:before{
+       color: #000 !important;
+}
+
+.panel-base .x-grid-item-focused, .panel-base .x-grid-item-focused .x-grid-cell-inner:before{
+       border: none;	
+}
+
+.panel-base .x-grid-item-selected .x-grid-item-focused{
+       color: #fff !important;
+}
+
+.panel-base .x-grid-item-selected {
+       background-color: $color-blue !important;
+       color: #fff !important;
+}
+
+// ------------ GRID BASE -----------------------------------------------------------
+
+.grid-base-editable .x-grid-group-hd {
+	background-color: #E4E4E4;
+}
+
+.grid-base-editable .x-grid-group-title, .grid-base .x-grid-group-title {
+	color: #000;
+	font-weight: bold;
+}
+
+
+// ----------- TABPANEL BASE --------------------------------------------------------
+
+.tabpanel-base .x-tab-bar-default {  
+  background-color: #fff !important;
+}
+
+.tabpanel-base .x-tab, .tabpanel-base .x-tab-focus.x-tab-default {  
+  border-color: #000;
+  background-color: #b7ddf0;
+  border:0;
+  top: 5px !important;
+  height: 25px !important;
+}
+
+x-panel x-tabpanel-child x-panel-default {  
+  color: #C3447E;
+}
+
+.tabpanel-base > .x-panel-body-default {
+	border-color: $color-blue-medium;
+	border-width: 2px !important;
+}
+
+
+//INICIO - Nuevo diseño de pestañas
+.x-tab-bar
+{
+    position: absolute;
+}
+
+.x-tab-bar-body > .x-box-inner{
+  background-color: #fff;
+  border-top: 3px solid #fff;
+  margin-top: -3px;
+  margin-right: -20px;
+}
+
+.x-tab.x-tab-active.x-tab-default{
+  background-color: $color-blue-medium!important;
+  color: #054664 !important;
+  border-top: 3px solid $color-blue-medium !important;
+  top: 0px !important;
+  padding-bottom:6px;
+  height: 30px !important;
+}
+
+.x-tab {
+	 margin-right: -2px !important;
+	 border-radius: 6px 6px 0px 0px !important;
+	 -moz-border-radius: 6px 6px 0px 0px !important;
+	 -webkit-border-radius: 6px 6px 0px 0px !important;
+}
+
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-button > .ico-pestana-activos{ 
+  background: url(images/ico_activo.svg) center center no-repeat;
+}
+
+.tabpanel-base .x-tab.x-tab-default:hover .x-tab-button > .ico-pestana-activos{ 
+  background: url(images/ico_activo.svg) center center no-repeat;
+}
+
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-button > .ico-pestana-agrupaciones{ 
+  background: url(images/ico_agrupaciones_actdes.svg) center center no-repeat;
+}
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-button > .ico-pestana-trabajos{ 
+  background: url(images/ico_trabajos_actdes.svg) center center no-repeat;
+}
+
+
+
+// ++ ------ Pestañas de primer nivel ++-----------------------
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-icon-el{
+  color: #fff;
+}
+
+.tabpanel-base .x-tab:hover { 
+  background-color: $color-blue;
+}
+
+.tabpanel-base > .x-tab-bar .x-tab .x-tab-inner-default,
+.tabpanel-base > .x-tab-bar .x-tab .x-tab-icon-el-default {
+	color: $color-blue-medium;
+}
+
+.tabpanel-base .x-tab:hover .x-tab-icon-el-default {
+	color: #fff;
+}
+
+.tabpanel-base .x-tab.x-tab-active.x-tab-default .x-tab-inner-default,
+.tabpanel-base .x-tab.x-tab-default:hover .x-tab-inner-default  {  
+  color: #fff !important;
+}
+
+//---++ Pestañas de segundo nivel ++---------------------------------
+
+.x-tabpanel-child .x-tab:hover { 
+  background-color: $color-blue-medium !important;
+}
+
+.x-tabpanel-child .x-tab-default-top, .x-tabpanel-child .x-tab-focus.x-tab-default { 
+	 background-color: #e5f6fe;
+}
+
+.x-tabpanel-child .x-tab.x-tab-active {
+	background-color: #054664 !important;
+	  border-top: 3px solid #054664 !important;
+}
+
+.x-tabpanel-child .x-tab.x-tab-active.x-tab-default {
+
+  color: #054664 !important;
+  border-top: 3px solid #054664;
+  top: 0px !important;
+  padding-bottom:6px;
+  height: 30px !important;
+
+}
+
+.tabPanel-segundo-nivel  > .x-panel-body-default {
+	border-color: #054664;
+	border-width: 2px !important;
+}
+
+.tabPanel-segundo-nivel-con-cabecera .x-tab-bar-default + .x-panel-body-default  {
+	border-color: #054664;
+	border-width: 2px !important;
+}
+
+
+.tabpanel-base .x-tabpanel-child .shadow-panel {
+	-webkit-box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2)  !important;
+	-moz-box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2)  !important;
+	-ms-box-shadow: 0 0px 0px 0 rgba(0, 0, 0, 0.2) !important;
+	box-shadow: 0px 0px 0px 0px #054664 !important;
+}
+
+//--++ Pestañas de tercer nivel ++ ----------------------------
+
+.tabPanel-tercer-nivel-con-cabecera .x-tab-bar-default + .x-panel-body-default  {
+	border-color: #606060 !important;
+	border-width: 2px !important;
+}
+
+
+.tabPanel-tercer-nivel  > .x-panel-body-default {
+	border-color: #606060;
+	border-width: 2px !important;
+}
+
+.tabPanel-tercer-nivel .x-tab-inner-default {
+ 	font-size: 0.9em
+}
+
+.x-tabpanel-child .x-tabpanel-child .x-tab-default-top, .x-tabpanel-child .x-tabpanel-child .x-tab-focus.x-tab-default {
+	 background-color: #e4e4e4;
+}
+
+.x-tabpanel-child .x-tabpanel-child .x-tab.x-tab-active {
+	background-color: #606060 !important;
+}
+
+.x-tabpanel-child .x-tabpanel-child .x-tab.x-tab-active.x-tab-default {
+
+  color: #054664 !important;
+  border-top: 3px solid #606060 !important!;
+  top: 0px !important;
+  padding-bottom:6px;
+  height: 30px !important;
+
+}
+
+.tabpanel-base .x-tabpanel-child .x-tabpanel-child .shadow-panel .shadow-panel {
+	-webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+	-moz-box-shadow: 0 0 0 0 0  rgba(0, 0, 0, 0.2);
+	-ms-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+	box-shadow: 0 0 0 0 #606060 !important;
+}
+
+//--------- FIELDSET BASE--------------------------------------------------------------------------------
+
+.fieldsetBase.x-fieldset {
+  background-color: #fff;
+  padding: 0;
+  min-height: 100px;  
+  margin: 0;
+}
+
+// ++ ------------------------------------------------------------------------- ++
+
+// Negrita para los nombre de los campos del formulario
+
+.x-form-item-label-inner, .x-form-cb-label {
+    font-weight: bold;
+}
+
+// Negrita para las cabeceras de los fieldset
+.x-fieldset-header-text {
+	font-weight: bold !important;
+}
+
+.fieldsetBase .x-fieldset-header {
+  padding: 0px 0px 0px 10px;  
+}
+
+.fieldsetBase .x-fieldset-header-text{
+  font: normal 13px/17px $font-family;
+  color: #404040;  
+  padding: 0;
+}
+
+.fieldsetCabecera.x-fieldset {
+  background-color: #fff; 
+  margin: 10px;
+}
+
+
+
+// Cambio en el background para que los formularios se vean "gris" en los monitores externos
+.x-fieldset {
+	background-color: #f5f5f5;
+}
+
+.x-fieldset-collapsed {
+	background-color: #fff;
+}
+
+// Cambio en el background para que las filas impares de los grid se vean en "gris" en monitores externos
+.x-grid-item-alt {
+	background-color: #E7E5E8;
+}
+
+.x-grid-item-selected {
+    color: #404040;
+    background-color: #ffefbb !important;
+}
+
+.info-tarea {
+  padding: 10px;
+  text-align: justify;
+}
+.info-tarea:before {
+  padding: 10px;
+}
+.warning-tarea {
+  color: $color-red;
+}
+
+.favorito{
+  color: #ffe802;
+}
+
+.delete-focus-bg .x-menu-item-focus {
+    &:focus, &:hover{
+        background: #fff;
+    }
+}
+
+/* Modificación para que los iconos de cerrar se vean sobre fondo blanco
+.x-tool-close {
+	background-color: $color-blue-medium !important; 
+}*/
+
+/* Modificaciones para reducir espacios entre tabs */
+.x-tab-bar-default-top > .x-tab-bar-body-default {
+	padding-bottom: 0px !important!;
+	min-height: 0px !important; 
+}
+
+.x-panel-header-default-horizontal.x-header-noborder {
+	padding: 0px 0px 10px 5px !important;
+}
+
+/* Aplica a todos los textfield de los formularios */
+.x-form-text-field-body-default {
+	padding: 0px 15px 0px 0px !important;
+}
+
+/* Aplica a todos los textfield de los formularios */
+.form-campo-editable-hover > .x-form-text-field-body-default :hover { 
+	border-color: $color-blue-medium;
+    border-style: solid;
+	border-width: 1px;
+	/*margin: -2px 0 0 0;*/
+}
+
+.x-field-focus > .x-form-text-field-body-default { 
+	border-color: $color-blue-medium;
+    border-style: none !important;
+	border-width: 0px !important;
+}
+
+.x-field-focus > .x-form-text-field-body-default :focus { 
+	border-color: $color-blue-medium;
+    border-style: none !important;
+	border-width: 0px !important;
+	margin: -2px 0 0 0;
+}
+
+.label-read-only {
+	height: 100%;
+	margin: 2px 0 0 0px;
+	background-color: #e5f6fe !important;
+}
+
+.label-read-only-formulario-completo {
+    min-height: 24px;
+    font: normal 11px/17px FontAwesome, "Open Sans", sans-serif;
+    color: #000;
+    margin-top: 4px;
+}
+
+.label-read-only-textarea {
+	height: 100%;
+	margin: 2px 0 0 0px;
+}
+
+
+
+.x-form-trigger-wrap-focus {
+	border-style: none;
+}
+
+.display-none {display: none !important;}
+
+.x-form-item-label-default {
+	color: black !important;
+}
+
+.x-grid-cell-inner {
+	 white-space: normal !important;	
+}
+
+.x-toast,
+.x-toast-info, 
+.x-toast-error, 
+.x-toast-warn, {
+	opacity: 1 !important;
+	border-radius: 15px !important;
+	text-align: center !important;
+	padding-top: 25px !important;
+},
+
+.x-toast .x-window-body,
+.x-toast-info .x-window-body, 
+.x-toast-warn .x-window-body, 
+.x-toast-error .x-window-body{
+	color: #fff !important;
+	font-size: 14px;
+	font-weight: bolder;
+	font-style: italic;
+}
+
+.x-toast, .x-toast .x-window-body {
+	background-color: $color-blue-medium !important;
+}
+
+.x-toast-info, .x-toast-info .x-window-body {
+	background-color: $color-blue-medium !important;
+}
+
+.x-toast-error, .x-toast-error .x-window-body {
+	background-color: #FA5858 !important;
+}
+
+.x-toast-warn, .x-toast-warn .x-window-body {
+	background-color: #DFAF00 !important;
+}
+
+body.x-masked > .x-mask {
+	background: none !important;
+}
+
+.display-field-avisos .x-form-display-field-default {
+	color: #fff !important;
+}
+
+.display-field-avisos {
+	//background-color: #ec145b;
+	font-weight: bold;
+	color: #fff !important;
+	width: 100% !important;
+}
+
+.div-aviso {
+    background-color: #D60A3A;
+    border: #D60A3A;
+    border-style: solid;
+    width: 100% !important;
+    height: 100% !important;
+    margin-bottom: 2px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bolder; 
+    font-size: 1.1em;   
+}
+
+
+.tbar-grid-button.x-btn-default-toolbar-small {
+	background-image: none;
+	background-color: #26607c;
+	border-color: #004465;
+	border-radius: 3px;
+	padding: 3px 3px 3px 3px;
+	border-width: 1px;
+	border-style: solid;
+	min-width: 75px;
+}
+
+.tbar-grid-button .x-btn-inner-default-toolbar-small {
+	color: #fff;
+}
+
+.x-btn-over.tbar-grid-button.x-btn-default-toolbar-small {
+	background-color: #235872;
+	color: #fff;	
+}
+
+.x-btn.x-btn-focus.tbar-grid-button.x-btn-default-toolbar-small {
+	background-color: #26607c !important;
+}
+
+.x-btn.x-btn-pressed.tbar-grid-button.x-btn-default-toolbar-small {
+	background-color: #1d485d !important;
+	border-color: #00334c !important;
+}
+
+
+.images-view .x-panel-body{
+    background: white;
+    font: 11px Arial, Helvetica, sans-serif;
+}
+.images-view .thumb{
+    background: #dddddd;
+    padding: 3px;
+    padding-bottom: 0;
+}
+
+.x-quirks .images-view .thumb {
+    padding-bottom: 3px;
+}
+
+.images-view .thumb img{
+    height: 165px;
+    width: 220px;
+}
+.images-view .thumb-wrap{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+}
+.images-view .thumb-wrap span {
+    
+    display: block;
+    overflow: hidden;
+    text-align: center;
+    width: 100%;
+}
+
+.images-view .x-item-over{
+    border:1px solid #dddddd;
+    background: #efefef url(images/over.gif) repeat-x left top;
+    padding: 4px;
+}
+
+.images-view .x-item-selected{
+    background: #eff5fb url(images/selected.gif) no-repeat right bottom;
+    border:1px solid #99bbe8;
+    padding: 4px;
+}
+.images-view .x-item-selected .thumb{
+    background:transparent;
+}
+
+.images-view .loading-indicator {
+    font-size:11px;
+    background-image:url('../../resources/themes/images/default/grid/loading.gif');
+    background-repeat: no-repeat;
+    background-position: left;
+    padding-left:20px;
+    margin:10px;
+}
+
+.x-view-selector {
+    position:absolute;
+    left:0;
+    top:0;
+    width:0;
+    border:1px dotted;
+    opacity: .5;
+    -moz-opacity: .5;
+    filter:alpha(opacity=50);
+    zoom:1;
+    background-color:#c3daf9;
+    border-color:#3399bb;
+}
+.ext-strict .ext-ie .x-tree .x-panel-bwrap{
+    position:relative;
+    overflow:hidden;
+}
+.x-editable {
+    color: #000;
+}
+
+.input.x-form-invalid-field {
+  border-color: #cf4c35 !important;
+}
+
+.x-tool-img.x-tool-fieldsetmenu{
+   content: "\f0c9";
+}
+
+.fieldsetBase.cabecera .x-fieldset-header-tool-default > .x-tool-toggle:before {
+  content: "\f139";
+  color: $base-color;
+}
+
+.fieldsetBase.cabecera.x-fieldset-collapsed .x-tool-toggle:before {
+   content: "\f13a";
+}
+
+.fieldsetBase.cabecera .x-fieldset-header-text{
+  font: 400 15px/19px $font-family;
+  color: #919191;
+  padding: 1px 0;
+  top: 6px;
+  margin-right: 50px;
+}
+
+.boton-cabecera .x-fa {
+	color: #fff !important;
+}
+.boton-cabecera, .ux-favorito {
+	background-color: $color-blue !important;
+}
+
+.texto-info .x-panel-body-default {
+	background: transparent !important;
+}
+
+.boton-link {
+    background: transparent !important;
+    border: none !important;
+}
+
+.x-tip-body-form-invalid{
+	background-image: none !important;
+	padding: 5px 3px 5px 5px !important;
+	border-radius: 6px 6px 0px 0px !important;
+	-moz-border-radius: 6px 6px 0px 0px !important;
+	-webkit-border-radius: 6px 6px 0px 0px !important;
+	//@include box-shadow(2px,2px,0px,0px, rgba(0,0,0,0.2));
+}
+
+.container-mask-background {
+	background-color: $color-blue-soft; 
+}
+
+.txt-importe-total .label-read-only-formulario-completo {
+	font-size: 1.5em;
+	background-color:  $color-blue-soft;
+}
+
+.txt-importe-total {
+	text-align: right;
+}
+
+.numero-negativo {
+  color: $color-red;
+}
+
+.cabecera .cabecera-apartado {
+	//border: 1.5px solid #bebebe;
+}
+
+.cabecera .cabecera-apartado .cabecera-info-field {
+	padding: 0!important;
+	margin: 0!important;
+}
+
+.cabecera .cabecera-mapa {
+	-webkit-box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.4);
+	-ms-box-shadow: 0 1px 4px 1px rgba(0, 0, 0, 0.4);
+	box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.4) !important;
+}
+
+.cabecera .cabecera-sello {
+	opacity: 0.5
+}
+
+.cabecera-info-sareb{
+	background-image: url(images/logo_sareb.svg);
+}
+
+.cabecera-info-cajamar{
+	background-image: url(images/logo_cajamar.svg);
+}
+
+.btn-tbfieldset .x-btn-inner-default-toolbar-small {
+	font: 400 15px/19px FontAwesome, "Open Sans", sans-serif;
+    color: #919191;
+    padding: 3px 0;
+    width: 100px;
+    font-weight: bold;
+}
+
+.btn-label {
+	padding: 20px 10px 20px 0px;
+	width: 200px;
+	background-color: #E4E4E4;
+	text-align: right;
+	cursor: pointer;
+}
+
+.btn-label.btn-label-selected, .btn-label.btn-label-selected.btn-label-over {
+	background-color: #606060;
+	color: #fff;
+}
+
+.btn-label.btn-label-over {
+	background-color: $color-blue-medium;
+	color: #fff;
+}
+
+.x-splitter-base {
+	height: 2px !important;
+	background-color: $color-blue-medium;
+	@include box-shadow(0px, 1px, 2px, 1px, rgba(0,0,0,0.2));
+}	
+
+.x-splitter-base.x-splitter-focus:after {
+	border: none !important;
+}
+
+.x-splitter-base .x-layout-split-bottom, .x-splitter-base .x-layout-split-top {
+    background-color:  $color-blue-medium;
+    top: -3px;
+}
+
+.x-window-text .txt-guardar-propuesta {
+	margin: 20px;
+}
+
+.grid-warning-row .x-grid-cell {
+	background-color: #E5F6FE;
+    color: #900; 
+}
+
+.x-action-col-icon {
+    color: #0A94D6 !important;
+}

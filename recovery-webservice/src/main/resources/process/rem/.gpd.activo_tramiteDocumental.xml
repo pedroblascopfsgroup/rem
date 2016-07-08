@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteDocumental" width="1359" height="875">
+  <node name="inicio" x="74" y="18" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_AnalisisPeticion" x="453" y="115" width="197" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_AnalisisPeticionDecision" x="442" y="244" width="217" height="36">
+    <edge>
+      <label x="-29" y="-23"/>
+      <bendpoint w1="562" h1="96" w2="-135" h2="-142"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-75" y="-18"/>
+    </edge>
+  </node>
+  <node name="T002_SolicitudLPOGestorInterno" x="690" y="113" width="269" height="36">
+    <edge>
+      <label x="-45" y="-16"/>
+    </edge>
+  </node>
+  <node name="T002_SolicitudDocumentoGestoria" x="429" y="487" width="244" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_SolicitudExtraordinaria" x="820" y="242" width="220" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_ObtencionLPOGestorInterno" x="1118" y="112" width="240" height="36">
+    <edge>
+      <label x="-78" y="-28"/>
+    </edge>
+  </node>
+  <node name="T002_AutorizacionPropietario" x="796" y="431" width="268" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_AutorizacionPropietarioDecision" x="798" y="487" width="272" height="36">
+    <edge>
+      <label x="-5" y="-19"/>
+    </edge>
+    <edge>
+      <label x="1" y="-18"/>
+    </edge>
+  </node>
+  <node name="T002_ObtencionDocumentoGestoria" x="410" y="560" width="275" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_ValidacionActuacion" x="420" y="676" width="259" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T002_ValidacionActuacionDecision" x="422" y="736" width="264" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-243" h1="-2" w2="-240" h2="247"/>
+      <bendpoint w1="-245" h1="-113" w2="-250" h2="137"/>
+      <bendpoint w1="-245" h1="-249" w2="-250" h2="1"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-120" y="-20"/>
+      <bendpoint w1="568" h1="-1" w2="-133" h2="254"/>
+    </edge>
+  </node>
+  <node name="T002_CierreEconomico" x="431" y="838" width="253" height="36">
+    <edge>
+      <label x="-81" y="-19"/>
+      <bendpoint w1="698" h1="0" w2="0" h2="357"/>
+    </edge>
+  </node>
+  <node name="T002_ComprobarTipoGestor" x="8" y="114" width="265" height="36">
+    <edge>
+      <label x="-80" y="-21"/>
+    </edge>
+    <edge>
+      <label x="9" y="-156"/>
+      <bendpoint w1="0" h1="190" w2="-411" h2="-179"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1181" y="482" width="132" height="36"/>
+</root-container>

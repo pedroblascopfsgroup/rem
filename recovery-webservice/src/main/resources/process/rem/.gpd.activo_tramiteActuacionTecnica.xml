@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteActuacionTecnica" width="1225" height="795">
+  <node name="inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_AnalisisPeticion" x="448" y="9" width="174" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_AnalisisPeticionDecision" x="424" y="68" width="220" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-46" y="-16"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_SolicitudPresupuestos" x="3" y="60" width="201" height="36">
+    <edge>
+      <label x="-72" y="-18"/>
+    </edge>
+  </node>
+  <node name="T004_EleccionPresupuesto" x="0" y="154" width="204" height="36">
+    <edge>
+      <label x="-73" y="-9"/>
+    </edge>
+  </node>
+  <node name="T004_EleccionPresupuestoDecision" x="3" y="277" width="241" height="36">
+    <edge>
+      <label x="-67" y="-8"/>
+    </edge>
+    <edge>
+      <label x="-78" y="13"/>
+      <bendpoint w1="189" h1="-130" w2="155" h2="77"/>
+    </edge>
+  </node>
+  <node name="T004_DisponibilidadSaldo" x="401" y="219" width="258" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_DisponibilidadSaldoDecision" x="415" y="288" width="226" height="36">
+    <edge>
+      <label x="-51" y="2"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_SolicitudExtraordinaria" x="761" y="183" width="204" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_AutorizacionPropietario" x="757" y="242" width="215" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_AutorizacionPropietarioDecision" x="740" y="309" width="254" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="187" h1="-1" w2="-81" h2="251"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_FijacionPlazo" x="423" y="355" width="207" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_FijacionPlazoDecision" x="431" y="417" width="198" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ResultadoTarificada" x="353" y="516" width="180" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ResultadoNoTarificada" x="578" y="486" width="207" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ResultadoNoTarificadaDecision" x="560" y="543" width="250" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_SolicitudPresupuestoComplementario" x="829" y="452" width="300" height="36">
+    <edge>
+      <label x="-87" y="-16"/>
+      <bendpoint w1="90" h1="-328" w2="543" h2="-41"/>
+      <bendpoint w1="-244" h1="-316" w2="203" h2="-79"/>
+    </edge>
+  </node>
+  <node name="T004_ValidacionTrabajo" x="447" y="632" width="200" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ValidacionTrabajoDecision" x="425" y="694" width="243" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="276" h1="0" w2="14" h2="480"/>
+      <bendpoint w1="276" h1="-337" w2="296" h2="2"/>
+    </edge>
+  </node>
+  <node name="T004_CierreEconomico" x="450" y="757" width="196" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="594" h1="-1" w2="7" h2="699"/>
+    </edge>
+  </node>
+  <node name="T004_EleccionProveedorYTarifa" x="417" y="155" width="226" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1069" y="57" width="132" height="36"/>
+</root-container>

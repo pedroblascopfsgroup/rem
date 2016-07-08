@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteAdmision" width="1039" height="570">
+  <node name="inicio" x="473" y="10" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="fork1" x="415" y="89" width="252" height="24">
+    <edge>
+      <label x="-74" y="-20"/>
+    </edge>
+    <edge>
+      <label x="4" y="-22"/>
+    </edge>
+    <edge>
+      <label x="-13" y="-22"/>
+    </edge>
+  </node>
+  <node name="T001_CheckingInformacion" x="80" y="206" width="206" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T001_VerificarEstadoPosesorio" x="75" y="446" width="214" height="36">
+    <edge>
+      <label x="-57" y="-20"/>
+    </edge>
+  </node>
+  <node name="T001_CheckingDocumentacionAdmision" x="411" y="209" width="271" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T001_CheckingDocumentacionGestion" x="754" y="208" width="284" height="36">
+    <edge>
+      <label x="-81" y="-19"/>
+      <bendpoint w1="0" h1="94" w2="349" h2="1"/>
+    </edge>
+  </node>
+  <node name="T001_BPMComplecionDocumental" x="419" y="301" width="257" height="36">
+    <edge>
+      <label x="-13" y="7"/>
+    </edge>
+  </node>
+  <node name="Fin" x="483" y="445" width="132" height="36"/>
+</root-container>

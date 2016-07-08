@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <input name="id" type="java.lang.Long"/>
+    
+    <!--a partir de este momento sólo enviamos ajax -->
+    <view-state id="formulario" view="${view}" >
+		<on-entry>
+            <set name="flowScope.view" value="'procedimientos/cancelarTarea'" />
+		</on-entry>
+         <on-render>
+            <!-- a partir de la segunda vez, la respuesta ya debe ser json  por tanto
+            cambiaremos el nombre de la vista a 'default' -->
+            <set name="flowScope.view" value="'default'"/>
+			<evaluate expression="executor.execute('tareaExternaManager.get',id)" result="flowScope.tarea" />
+         </on-render>
+      <transition on="ok" to="ok"/>
+      <transition on="cancel" to="close" bind="false"/>
+	</view-state>
+
+    <action-state id="ok">
+      <evaluate expression="executor.execute('tareaExternaManager.vueltaAtras',id)" /> 
+      <transition to="close"></transition>
+   </action-state>
+   
+   <end-state id="close" view="default" />
+   
+    
+</flow>

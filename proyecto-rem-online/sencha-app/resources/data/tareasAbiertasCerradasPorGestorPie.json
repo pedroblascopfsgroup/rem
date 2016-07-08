@@ -1,0 +1,9 @@
+{
+    "tareas": [
+         /*Agosto*/  
+		{"dia": "Activas"	, "mes": "Agosto", "datosGestor": "5" , "gestor":  "Supervisor"	, "abiertas": "3"	, "cerradas": "10", "usuario": "Gestor 1"}, 
+		{"dia": "Próximas"	, "mes": "Septiembre", "datosGestor": "3" , "gestor":  "Supervisor"	, "abiertas": "8"	, "cerradas": "2", "usuario": "Gestor 2"},
+		{"dia": "Vencidas"	, "mes": "Octubre", "datosGestor": "6" , "gestor":  "Supervisor"	, "abiertas": "8"	, "cerradas": "12", "usuario": "Gestor 3"}
+    ],
+    "success": true
+}

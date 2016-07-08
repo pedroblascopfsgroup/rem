@@ -1,0 +1,17 @@
+.agenda-tree-list {
+	padding: 20px 5px;
+	background-color: #fff;
+}
+
+.item-agenda .x-treelist-item-text {
+	
+	font-size: 14px;
+	font-weight: bold;
+	color: $color-blue;
+}
+
+.item-agenda .x-treelist-item-leaf .x-treelist-item-text {
+	font-weight: normal;
+	font-size: 14px;
+	color: #000
+}

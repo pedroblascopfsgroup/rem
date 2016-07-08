@@ -11,7 +11,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -49,9 +48,6 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
-import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoCodEstado;
-import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoIvaDes;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.api.asunto.EXTBusquedaAsuntoFiltroDinamico;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
@@ -69,9 +65,6 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 
 	@Autowired
 	GenericABMDao genericDao;
-	
-	@Autowired
-	private CoreProjectContext context;
 
 	@Autowired(required = false)
 	private List<EXTBusquedaAsuntoFiltroDinamico> filtrosBusquedaDinamica;
@@ -1392,6 +1385,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 										!Checks.esNulo(dto.getCentroRecuperacion()) || !Checks.esNulo(dto.getAsesoria());
 	}
 	
+	@SuppressWarnings("unused")
 	private String getIdsAsuntosByDespachoExtras(EXTDtoBusquedaAsunto dto) {
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
@@ -1399,8 +1393,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		String  subSelect = "select asu.id from VTARAsuntoVsUsuario gaa , Asunto asu "
 				+ "where asu.auditoria.borrado=0 and gaa.asunto = asu.id and "
-				+ "gaa.tipoGestor = (select tge.id from EXTDDTipoGestor tge where tge.codigo='GEXT' and tge.auditoria.borrado=0) and "
-				+ "gaa.despachoExterno in ( select dee.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
+				+ "gaa.despachoExterno in ( select dee.despachoExterno.id from DespachoExternoExtras dee where dee.auditoria.borrado=0 and ";
 		
 		if(!Checks.esNulo(dto.getTipoDocumento())) {
 			subSelect += "UPPER(dee.tipoDocumento.descripcion) like UPPER('%"+ dto.getTipoDocumento() +"%') and ";
@@ -1425,22 +1418,22 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 		}
 		if(!Checks.esNulo(dto.getClasificacionPerfil())) {
-			subSelect += "dee.clasifPerfil IN ("+ this.getListaMapeoValores(context.getMapaClasificacionDespachoPerfil(),dto.getClasificacionPerfil()) +") and ";
+			subSelect += "dee.clasifPerfil.codigo IN ("+ prepararParaIN(dto.getClasificacionPerfil()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getClasificacionConcursos())) {
 			subSelect += "dee.clasifConcursos = "+ Integer.parseInt(dto.getClasificacionConcursos()) +" and ";
 		}
 		if(!Checks.esNulo(dto.getCodEstAse())) {
-			subSelect += "dee.codEstAse.codigo = '"+ genericDao.get(DespachoCodEstado.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodEstAse())) + "' and ";
+			subSelect += "dee.codEstAse.codigo = '"+ dto.getCodEstAse() + "' and ";
 		}
 		if(!Checks.esNulo(dto.getContratoVigor())) {
-			subSelect += "dee.contratoVigor IN ("+ this.getListaMapeoValores(context.getMapaContratoVigor(),dto.getContratoVigor()) +") and ";
+			subSelect += "dee.contratoVigor.codigo IN ("+ prepararParaIN(dto.getContratoVigor()).toString() +") and ";
 		}
 		if(!Checks.esNulo(dto.getServicioIntegral())) {
 			subSelect += "dee.servicioIntegral = "+ Integer.parseInt(dto.getServicioIntegral()) +" and ";
 		}
 		if(!Checks.esNulo(dto.getRelacionEntidad())) {
-			subSelect += "dee.relacionEntidad IN ("+ this.getListaMapeoValores(context.getMapaRelacionEntidad(),dto.getRelacionEntidad()) +") and ";
+			subSelect += "dee.relacionEntidad.codigo IN ("+ prepararParaIN(dto.getRelacionEntidad()) +") and ";
 		}
 		if(!Checks.esNulo(dto.getOficinaContacto())) {
 			subSelect += "UPPER(dee.oficinaContacto) like UPPER('%"+ dto.getOficinaContacto() +"%') and ";
@@ -1494,7 +1487,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			subSelect += "dee.despachoExterno.id in ( "+getProvinciasFromDespachoExtras(dto.getListaProvincias())+" ) and ";
 		}
 		if(!Checks.esNulo(dto.getImpuesto())) {
-			subSelect += "dee.descripcionIVA.codigo = '"+ genericDao.get(DespachoIvaDes.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getImpuesto())) +"' and ";
+			subSelect += "dee.descripcionIVA.codigo = '"+ dto.getImpuesto() +"' and ";
 		}
 		if(!Checks.esNulo(dto.getFechaAltaSIDesde())) {
 			try {
@@ -1520,6 +1513,18 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		return subSelect;
 	}
 	
+	private StringBuffer prepararParaIN(String contratoVigor) {
+		String[] listado = contratoVigor.split(",");
+		StringBuffer cadena = new StringBuffer();
+		for(String o: listado){
+			if(cadena.length()!=0){
+				cadena.append(",");
+			}
+			cadena.append("'"+o+"'");
+		}
+		return cadena;
+	}
+
 	/**
 	 * Consulta que devuelve despachos que actuen en las provincias filtradas.
 	 * @param provincias
@@ -1535,34 +1540,5 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		
 		return subSelect;
 	}
-	
-	/**
-	 * De un mapa de Strings, devuelve la KEY a partir del VALUE.
-	 * @param mapa
-	 * @param valor
-	 * @return
-	 */
-	private String getKeyByValue(Map<String,String> mapa, String valor) {
-		
-		for(Map.Entry<String,String> map : mapa.entrySet()){
-			if( valor.equals(map.getValue()))
-				return map.getKey();
-		}
-		
-		return null;
-	}
-	
-	private String getListaMapeoValores(Map<String,String> mapa, String valores) {
-		String[] array = valores.split(",");
-		String listaMapeada = "";
-		for(int i=0; i< array.length;i++) {
-			listaMapeada += Integer.parseInt(getKeyByValue(mapa,array[i]));
-			if(i < array.length - 1) {
-				listaMapeada += ",";
-			}
-		}
-		
-		return listaMapeada;
-	}
-        
+	        
 }

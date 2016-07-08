@@ -28,14 +28,7 @@
 	var cuentaEntregas = app.creaText('cuentaEntregas', '<s:message code="plugin.config.despachoExternoExtras.field.cuentaEntregas" text="**cuentaEntregas" />');
 	var centroRecuperacion = app.creaText('centroRecuperacion', '<s:message code="plugin.config.despachoExternoExtras.field.centroRecuperacion" text="**centroRecuperacion" />');
 
-	var perfilDict = <json:object>
-		<json:array name="diccionario" items="${mapasDespExtras[1]}" var="d">	
-		 <json:object>
-		   <json:property name="codigo" value="${d}" />
-			<json:property name="descripcion" value="${d}" />
-		 </json:object>
-		</json:array>
-	</json:object>;
+	var perfilDict = <app:dict value="${perfil}" blankElement="true" blankElementValue=""/>;
 	
 	var perfil = app.creaDblSelect(perfilDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
@@ -65,17 +58,11 @@
    	var comboProvincias = app.creaDblSelect(provinciasData 
     	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
     	,config);
-
-	var contratosDict = <json:object>
-		<json:array name="diccionario" items="${mapasDespExtras[0]}" var="d">	
-		 <json:object>
-		   <json:property name="codigo" value="${d}" />
-			<json:property name="descripcion" value="${d}" />
-		 </json:object>
-		</json:array>
-	</json:object>;
+   
 	
-	var contratoVigor = app.creaDblSelect(contratosDict
+	var contratosData = <app:dict value="${contratosDict}" />;
+        	
+	var contratoVigor = app.creaDblSelect(contratosData
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'
 		 ,{width:100,height:80});
 	 
@@ -102,30 +89,28 @@
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});	
-		
-		
-	var codEstAseStore = 
-		<json:array name="ddCodEstAse" items="${mapasDespExtras[2]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
-	
+	 
+    var codEstAseDict = <app:dict value="${codEstAse}"/>;
+
+	var codEstAseStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: codEstAseDict
+	});
+        	
 	var codEstAse=new Ext.form.ComboBox({
 		store: codEstAseStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.codEstAse" text="**codEstAse" />'
 		,width:150
 	});	
 		
-		var relacionEntidadDict = <json:object>
-		<json:array name="diccionario" items="${mapasDespExtras[4]}" var="d">	
-		 <json:object>
-		   <json:property name="codigo" value="${d}" />
-			<json:property name="descripcion" value="${d}" />
-		 </json:object>
-		</json:array>
-	</json:object>;
+	var relacionEntidadDict = <app:dict value="${relacionEntidad}" />;
+	
 	
 	var relacionEntidad = app.creaDblSelect(relacionEntidadDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionEntidad" text="**relacionEntidad" />'
@@ -135,15 +120,20 @@
 		labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria"
 		label="**tieneAsesoria" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
 		
-	var impuestoStore = 
-		<json:array name="ddImpuesto" items="${mapasDespExtras[3]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	var impuestoDict = <app:dict value="${impuesto}"/>;
+
+	var impuestoStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: impuestoDict
+	});
 	
 	var impuesto=new Ext.form.ComboBox({
 		store: impuestoStore
 		,triggerAction : 'all'
-		,mode:'local'
+		,mode:'local'		
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.impuesto.text" text="**Impuesto" />'
 		,width:150

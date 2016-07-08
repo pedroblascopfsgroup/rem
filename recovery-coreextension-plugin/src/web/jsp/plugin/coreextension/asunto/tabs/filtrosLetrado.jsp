@@ -28,7 +28,7 @@
 	var cuentaEntregas = app.creaText('cuentaEntregas', '<s:message code="plugin.config.despachoExternoExtras.field.cuentaEntregas" text="**cuentaEntregas" />');
 	var centroRecuperacion = app.creaText('centroRecuperacion', '<s:message code="plugin.config.despachoExternoExtras.field.centroRecuperacion" text="**centroRecuperacion" />');
 
-	var perfilDict = <app:dict value="${perfil}" blankElement="true" blankElementValue=""/>;
+	var perfilDict = <app:dict value="${perfilDict}" blankElement="true" blankElementValue=""/>;
 	
 	var perfil = app.creaDblSelect(perfilDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
@@ -90,7 +90,7 @@
 		}
 	});	
 	 
-    var codEstAseDict = <app:dict value="${codEstAse}"/>;
+    var codEstAseDict = <app:dict value="${codEstAseDict}"/>;
 
 	var codEstAseStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']
@@ -109,7 +109,7 @@
 		,width:150
 	});	
 		
-	var relacionEntidadDict = <app:dict value="${relacionEntidad}" />;
+	var relacionEntidadDict = <app:dict value="${relacionEntidadDict}" />;
 	
 	
 	var relacionEntidad = app.creaDblSelect(relacionEntidadDict
@@ -120,7 +120,7 @@
 		labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria"
 		label="**tieneAsesoria" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
 		
-	var impuestoDict = <app:dict value="${impuesto}"/>;
+	var impuestoDict = <app:dict value="${impuestoDict}"/>;
 
 	var impuestoStore = new Ext.data.JsonStore({
 		fields: ['codigo', 'descripcion']

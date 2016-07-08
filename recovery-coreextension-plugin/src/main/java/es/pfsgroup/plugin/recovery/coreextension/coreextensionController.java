@@ -110,7 +110,7 @@ public class coreextensionController {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListTipoGestorData(@RequestParam(value="ugCodigo",required = true)String ugCodigo, ModelMap model){

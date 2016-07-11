@@ -1,0 +1,131 @@
+--/*
+--##########################################
+--## AUTOR=MANUEL MEJIAS
+--## FECHA_CREACION=20160322
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=0
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script que añade en ACT_PVE_PROVEEDOR los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_ID_ETP NUMBER(16);
+    V_ID_ACT NUMBER(16);
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('B65737322','TECNOTRAMIT GESTION SL.','CASPE','BARCELONA','01'),
+		T_TIPO_DATA('B82802075','OFICINA DE GESTION DE FIRMAS SL','NU#EZ DE BALBOA','MADRID','01'),
+		T_TIPO_DATA('A14718183','TASASUR, SOCIEDAD DE TASACIONES S.A','REINO UNIDO','SEVILLA','02'),
+		T_TIPO_DATA('A28806222','JLL VALORACIONES S.A.','CASTELLANA','MADRID','02'),
+		T_TIPO_DATA('A28808145','SOCIEDAD DE TASACION S.A.','CONDE DE ARANDA','MADRID','02'),
+		T_TIPO_DATA('A28903920','VALTECNIC, S.A.','CASTELLANA','MADRID','02'),
+		T_TIPO_DATA('A78029774','TINSA,TASACIONES INMOBILIARIAS,S.A.','JOSE ECHEGARAY','ROZAS DE MADRID LAS','02'),
+		T_TIPO_DATA('A78116324','TECNICOS EN TASACION TECNITASA S.A.','EUROPA','POZUELO DE ALARCON','02'),
+		T_TIPO_DATA('A80381148','IBERTASA, S.A.','RODRIGUEZ MARIN','MADRID','02'),
+		T_TIPO_DATA('A80884372','GESTION DE VALORACIONES Y TASACIONES SA','ALCALA','MADRID','02'),
+		T_TIPO_DATA('B86689494','TINSA CERTIFY S.L.','JOSE ECHEGARAY','MADRID','06'),
+		T_TIPO_DATA('A28535888','SANTA LUCIA S.A. CIA.SEGUROS','ESPAÑA','MADRID','03'),
+		T_TIPO_DATA('A30014831','PLUS ULTRA, SEGUROS GENERALES Y VIDA','CORTES','MADRID','03'),
+		T_TIPO_DATA('B65633448','D.A.S. LEX ASSISTANCE','EUROPA','L''''HOSPITALET LLOBREGAT','03')
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	 
+    -- LOOP para insertar los valores en ACT_PVE_PROVEEDOR -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN ACT_PVE_PROVEEDOR] ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+	        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+	        
+		        --Comprobamos el dato a insertar
+		        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+		        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+		        
+		        --Si existe lo modificamos
+		       IF V_NUM_TABLAS > 0 THEN			       
+		         DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR...no se modifica nada.');
+		       ELSE
+       		      DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+			      V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_ACT_PVE_PROVEEDOR.NEXTVAL FROM DUAL';
+			      EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+			      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_PVE_PROVEEDOR (' ||
+			                  'PVE_ID, DD_TPR_ID, PVE_NOMBRE, PVE_NOMBRE_COMERCIAL, DD_TDI_ID, PVE_DOCIDENTIF, DD_PRV_ID, DD_LOC_ID, PVE_DIRECCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+			                  'SELECT '|| V_ID || ', (SELECT DD_TPR_ID FROM ' ||V_ESQUEMA|| '.DD_TPR_TIPO_PROVEEDOR WHERE DD_TPR_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(5)) ||'''), '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''', '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''',(SELECT DD_TDI_ID FROM '|| V_ESQUEMA ||'.DD_TDI_TIPO_DOCUMENTO_ID WHERE DD_TDI_DESCRIPCION = ''NIF''), '''||TRIM(V_TMP_TIPO_DATA(1))||''',(select dd_prv_id from '||V_ESQUEMA_M||'.dd_loc_localidad where upper(dd_loc_descripcion) = upper('''||TRIM(V_TMP_TIPO_DATA(4))||''')),(select dd_loc_id from '||V_ESQUEMA_M||'.dd_loc_localidad where upper(dd_loc_descripcion) = upper('''||TRIM(V_TMP_TIPO_DATA(4))||''')), '''|| TRIM(V_TMP_TIPO_DATA(3)) ||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+			      EXECUTE IMMEDIATE V_MSQL;
+			      DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+	          
+			      
+			      DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' EN ACT_ETP_ENTIDAD_PROVEEDOR ');   
+			      V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_ACT_ETP_ENTIDAD_PROVEEDOR.NEXTVAL FROM DUAL';
+			      EXECUTE IMMEDIATE V_MSQL INTO V_ID_ETP;	
+			      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_ETP_ENTIDAD_PROVEEDOR (ETP_ID, DD_CRA_ID, PVE_ID) ' ||
+			                  'SELECT '|| V_ID_ETP || ', (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE UPPER(DD_CRA_DESCRIPCION) = UPPER(''SAREB'')), '|| V_ID || ' FROM DUAL';
+			      EXECUTE IMMEDIATE V_MSQL;
+			      DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' EN ACT_ETP_ENTIDAD_PROVEEDOR');
+			      
+			      DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' EN ACT_PVC_PROVEEDOR_CONTACTO ');   
+			      V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_ACT_PVC_PROVEEDOR_CONTACTO.NEXTVAL FROM DUAL';
+			      EXECUTE IMMEDIATE V_MSQL INTO V_ID_ACT;	
+			      V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_PVC_PROVEEDOR_CONTACTO (' ||
+			      			  'PVC_ID, PVE_ID, DD_PRV_ID, USU_ID, DD_TDI_ID, PVC_DOCIDENTIF, PVC_NOMBRE, PVC_DIRECCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+			                  'SELECT '|| V_ID_ACT ||','|| V_ID ||', (SELECT DD_PRV_ID FROM '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD WHERE UPPER(DD_LOC_DESCRIPCION) = UPPER('''||TRIM(V_TMP_TIPO_DATA(4))||''')), (select usu_id from '||V_ESQUEMA_M||'.usu_usuarios where USU_USERNAME  = ''USUPROV''), (SELECT DD_TDI_ID FROM '|| V_ESQUEMA ||'.DD_TDI_TIPO_DOCUMENTO_ID WHERE DD_TDI_DESCRIPCION = ''NIF''), '''||TRIM(V_TMP_TIPO_DATA(1))||''', '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''', '''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+			      EXECUTE IMMEDIATE V_MSQL;
+			      DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' EN ACT_PVC_PROVEEDOR_CONTACTO');
+			      
+			END IF;
+      	END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: ACT_PVE_PROVEEDOR ACTUALIZADO CORRECTAMENTE ');
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT
+
+
+
+   

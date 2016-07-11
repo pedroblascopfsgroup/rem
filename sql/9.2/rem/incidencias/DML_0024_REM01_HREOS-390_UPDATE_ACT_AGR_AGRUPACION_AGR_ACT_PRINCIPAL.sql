@@ -1,0 +1,110 @@
+--/*
+--#########################################
+--## AUTOR=Pablo Meseguer 
+--## FECHA_CREACION=20160516
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-390
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizar el campo AGR_ACT_PRINCIPAL en ACT_AGR_AGRUPACION.
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+----*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_NUM_UPDATES_1 NUMBER(16); -- Vble. para almacenar los updates realizados.  
+  V_NUM_UPDATES_2 NUMBER(16); -- Vble. para almacenar los updates realizados.   
+  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+BEGIN	
+
+   DBMS_OUTPUT.PUT_LINE('[INFO] INICIO DEL PROCESO, DE ACTUALIZACION DE ACT_AGR_AGRUPACION');
+        
+   --ACTUALIZAMOS EL CAMPO AGR_ACT_PRINCIPAL CAMBIANDO LOS REGISTROS A NULL POR SU ACT_ID CORRESPONDIENTE
+   --ESTABAN A NULL DEBIDO A QUE EN LA MIGRACION SE FILTABA POR ACT_NUM_ACTIVO EN LUGAR DE POR ACT_NUM_ACTIVO_UVEM
+          
+   V_SQL := '
+		  MERGE INTO '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR
+		  USING 
+			  (
+				  SELECT ACT.ACT_ID, MIG.AGR_UVEM  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+				  INNER JOIN '||V_ESQUEMA||'.MIG_AAG_AGRUPACIONES MIG
+				  ON ACT.ACT_NUM_ACTIVO_UVEM = MIG.AGR_ACT_PRINCIPAL
+				  WHERE ACT.ACT_NUM_ACTIVO_UVEM = MIG.AGR_ACT_PRINCIPAL
+				  AND MIG.AGR_ACT_PRINCIPAL != 0
+		 	   ) TMP
+		  ON (AGR.AGR_NUM_AGRUP_UVEM = TMP.AGR_UVEM)
+		  WHEN MATCHED THEN UPDATE 
+		  SET 
+		  AGR.AGR_ACT_PRINCIPAL = TMP.ACT_ID,
+	      AGR.USUARIOMODIFICAR = ''HREOS-390'',
+		  AGR.FECHAMODIFICAR = SYSDATE
+		 '
+         ;
+                            
+    EXECUTE IMMEDIATE V_SQL;      
+    
+    V_NUM_UPDATES_1 := sql%rowcount;
+    
+    --A CONTINUACION ACTUALIZAMOS NUEVAMENTE EL CAMPO AGR_ACT_PRINCIPAL CAMBIANDO LOS REGISTROS CON ACT_ID 100 POR NULL
+    --ESTABAN A 100 DEBIDO A QUE EN LA MIGRACION INDICABAN QUE ESOS REGISTRO PERTENECIAN AL ACTIVO '0' EN LUGAR DE A NULL,
+    
+    V_SQL := '
+		UPDATE ACT_AGR_AGRUPACION AGR
+		SET AGR.AGR_ACT_PRINCIPAL = null,
+			AGR.USUARIOMODIFICAR = ''HREOS-390'',
+			AGR.FECHAMODIFICAR = SYSDATE
+		WHERE AGR.AGR_ACT_PRINCIPAL = 100
+		'
+		;
+    
+    EXECUTE IMMEDIATE V_SQL;
+    
+    V_NUM_UPDATES_2 := sql%rowcount;
+    
+    COMMIT;
+  
+    EXECUTE IMMEDIATE('ANALYZE TABLE '||V_ESQUEMA||'.ACT_AGR_AGRUPACION COMPUTE STATISTICS');
+  
+    DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.ACT_AGR_AGRUPACION ANALIZADA.');
+    
+    DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO '||V_NUM_UPDATES_1||' REGISTROS CORRESPONDIENTES A AGRUPACIONES CON AGR_ACT_PRINCIPAL A NULL.');
+                        
+    DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN ACTUALIZADO '||V_NUM_UPDATES_2||' REGISTROS CORRESPONDIENTES A AGRUPACIONES CON AGR_ACT_PRINCIPAL A 100.');
+      
+    DBMS_OUTPUT.PUT_LINE('[FIN] LA TABLA ACT_AGR_AGRUPACION SE HA ACTUALIZADO CORRECTAMENTE');
+ 
+ 
+EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+        RAISE;          
+
+END;
+
+/
+
+EXIT

@@ -1,0 +1,29 @@
+
+-- ************************
+-- Carga de gestores
+-- ************************
+
+
+-- Certificador
+create table tmp_gestores_activo as (select s_gee_gestor_entidad.nextval gee_id,s_geh_gestor_entidad_hist.nextval geh_id, act_id from act_activo);
+
+Insert into GEE_GESTOR_ENTIDAD
+   (GEE_ID, USU_ID, DD_TGE_ID, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, BORRADO)
+   select gee_id, (select usu_id from REMMASTER.usu_usuarios where usu_username = 'TINSA'), (select dd_tge_id from REMMASTER.dd_tge_tipo_gestor where dd_tge_codigo = 'CERT'), 0, 'REM_F1', sysdate, null, null, 0 from tmp_gestores_activo;
+
+
+Insert into GAC_GESTOR_ADD_ACTIVO
+(gee_id,act_id)
+select gee_id,act_id from tmp_gestores_activo;
+
+Insert into GEH_GESTOR_ENTIDAD_HIST
+   (GEH_ID, USU_ID, DD_TGE_ID, GEH_FECHA_DESDE, GEH_FECHA_HASTA, VERSION, USUARIOCREAR, FECHACREAR, USUARIOMODIFICAR, FECHAMODIFICAR, BORRADO)
+   select geh_id, USU_ID, DD_TGE_ID, sysdate, null, 1, 'REM_F1', sysdate, null, null, 0
+   from GEE_GESTOR_ENTIDAD gee join tmp_gestores_activo tmp on tmp.GEE_ID = gee.GEE_ID;
+
+insert into gah_gestor_activo_historico gah 
+(geh_id, act_id)
+select geh_id,act_id from tmp_gestores_activo tmp;
+drop table tmp_gestores_activo;
+
+commit;

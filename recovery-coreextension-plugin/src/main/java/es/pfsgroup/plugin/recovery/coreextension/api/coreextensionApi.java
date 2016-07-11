@@ -262,5 +262,10 @@ public interface coreextensionApi {
 	
 	@BusinessOperationDefinition(GET_LIST_TIPO_GESTOR_PROPONENTE_ACUERDO)
 	List<EXTDDTipoGestor> getListTipoGestorProponente();
+	
+	public enum TipoResultado {TIPOGESTORES, DESPACHOS, USUARIOS};
+	
+	@SuppressWarnings("rawtypes")
+	List getListadoGestoresDefecto(String codigoTipoAsunto, Long idExpediente, TipoResultado tipoResultado);
 
 }

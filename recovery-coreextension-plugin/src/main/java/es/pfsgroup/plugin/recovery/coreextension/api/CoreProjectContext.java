@@ -69,4 +69,11 @@ public interface CoreProjectContext {
 	public Map<String, String> getTiposGestorGestoriaAdjudicacion();
 	
 	public void setTiposGestorGestoriaAdjudicacion(Map<String, String> tiposGestorGestoriaAdjudicacion);
+	
+	public Map<String, List<String>> getQuitarTiposGestoresDefectoAsuntos();
+	public void setQuitarTiposGestoresDefectoAsuntos(Map<String, List<String>> quitarTiposGestoresDefectoAsuntos);
+
+	public Map<String, Map<String, String>> getCambioUsuarioTipoGestorDefecto();
+	public void setCambioUsuarioTipoGestorDefecto(Map<String, Map<String, String>> cambioUsuarioTipoGestorDefecto);
+	
 }

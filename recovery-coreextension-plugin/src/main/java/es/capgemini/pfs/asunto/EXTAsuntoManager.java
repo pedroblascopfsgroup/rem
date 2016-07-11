@@ -51,6 +51,8 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.contrato.ContratoManager;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -62,13 +64,17 @@ import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
 import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.iplus.IPLUSUtils;
+import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -95,6 +101,7 @@ import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -102,6 +109,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi.TipoResultado;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -130,6 +139,7 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.pfsgroup.recovery.integration.Guid;
+import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
@@ -210,6 +220,19 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@Autowired
 	private GestorDespachoDao gestorDespachoDao;
+	
+	@Autowired
+	private ExpedienteManagerApi expedienteManager;
+	
+	@Autowired
+	private coreextensionApi coreExtensionManager;
+	
+	@Autowired
+	private ContratoManager contratoManager;
+	
+	@Autowired
+	private	EXTDDTipoGestorManager tipoGestorManager;
+
 	
 	@Override
 	public String managerName() {
@@ -904,6 +927,102 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		cambiarSupervisorGenerico(dto, temporal, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
 	}
 
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_CREAR_ASUNTO_LITIGIO)
+	@Transactional(readOnly = false)
+	public Long crearAsuntoLitigio(Long idExpediente, String idContratos, Boolean litigar) {
+		Expediente exp = expedienteManager.getExpediente(idExpediente);
+		
+		if (!Checks.esNulo(exp)) {
+			EXTDtoAsunto dtoAsunto = new EXTDtoAsunto();
+	
+			dtoAsunto.setIdExpediente(idExpediente);
+			dtoAsunto.setTipoDeAsunto(((DDTiposAsunto)diccionarioApi.dameValorDiccionarioByCod(DDTiposAsunto.class, DDTiposAsunto.LITIGIO)).getId());
+			dtoAsunto.setCodigoEstadoAsunto(DDEstadoAsunto.ESTADO_ASUNTO_EN_CONFORMACION);
+			
+			int numero = 0;
+			if (exp.getAsuntos()!=null) {
+				numero = exp.getAsuntos().size()+1;
+			}
+			
+			dtoAsunto.setNombreAsunto(exp.getDescripcionExpediente() + " - Litigio " + ((numero>0)?"("+numero+")":"") + " - " + DateFormat.toString(new Date()));
+			
+			if (litigar) {
+				List<EXTDDTipoGestor> listadoTipoGestores= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.TIPOGESTORES);
+				List<DespachoExterno> listaDespacho= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.DESPACHOS);
+				List<Usuario> listaUsuarios= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.USUARIOS);
+				
+				//Ajustes de gestores
+				ajustesGestores(listadoTipoGestores, listaDespacho, listaUsuarios);
+				
+				
+				String strGestores = "";
+				if (!Checks.esNulo(listadoTipoGestores) && !Checks.esNulo(listaDespacho) && !Checks.esNulo(listaUsuarios)) {
+					if (listadoTipoGestores.size() == listaDespacho.size() && listaDespacho.size() == listaUsuarios.size()) {
+						for (int i = 0; i < listadoTipoGestores.size(); i++) {
+							strGestores += "{tipoGestor:"+listadoTipoGestores.get(i).getId()+",tipoDespacho:"+listaDespacho.get(i).getId()+",usuarioId:"+listaUsuarios.get(i).getId()+"};";
+						}
+					}
+				}
+				dtoAsunto.setListaGestoresId(strGestores);
+			}
+			dtoAsunto.setIdContratos(idContratos);
+			
+			return crearAsunto(dtoAsunto);
+		} else {
+			throw new BusinessOperationException("Expediente id {0} no valido",idExpediente);
+		}
+	}
+
+	/**
+	 * Realiza ajustes en los gestores por defecto, según configuraciónn en el projectContext.xml
+	 * 
+	 * @param listadoTipoGestores
+	 * @param listaDespacho
+	 * @param listaUsuarios
+	 */
+	private void ajustesGestores(List<EXTDDTipoGestor> listadoTipoGestores, List<DespachoExterno> listaDespacho, List<Usuario> listaUsuarios) {
+		String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		Map<String, List<String>> gestoresAQuitar = coreProjectContext.getQuitarTiposGestoresDefectoAsuntos();
+		
+		if (!Checks.esNulo(gestoresAQuitar)) {
+			//Quitamos algunos tipos de gestor
+			List<String> gestoresQuitarEntidad = gestoresAQuitar.get(codigoEntidad);
+			for (String quitar : gestoresQuitarEntidad) {
+				EXTDDTipoGestor tipoQuitar = tipoGestorManager.getByCod(quitar);
+				if (!Checks.esNulo(tipoQuitar)){
+					int index = listadoTipoGestores.indexOf(tipoQuitar);
+					if (index > -1) {
+						listadoTipoGestores.remove(index);
+						listaDespacho.remove(index);
+						listaUsuarios.remove(index);
+					}
+				}
+			}
+		}
+		
+		//Cambiamos de usuario un tipo de gestor determinado
+		Map<String, Map<String, String>> gestoresCambiar = coreProjectContext.getCambioUsuarioTipoGestorDefecto();
+		if (!Checks.esNulo(gestoresCambiar)) {
+			Map<String, String> gestoresCambiarEntidad = gestoresCambiar.get(codigoEntidad);
+			Set<String> tiposGestor = gestoresCambiarEntidad.keySet();
+			for (String tipoGestor : tiposGestor) {
+				EXTDDTipoGestor tipoCambiar = tipoGestorManager.getByCod(tipoGestor);
+				if (!Checks.esNulo(tipoCambiar)) {
+					int index = listadoTipoGestores.indexOf(tipoCambiar);
+					//Ahora buscamos el usuario por el que hay que cambiar
+					String nuevoUsuarioUserName = gestoresCambiarEntidad.get(tipoGestor);
+					Usuario nuevoUsuario = usuarioManager.getByUsername(nuevoUsuarioUserName);
+					if (!Checks.esNulo(nuevoUsuario)) {
+						listaUsuarios.set(index, nuevoUsuario);
+					}
+				}
+			}
+		}
+			
+	}
+	
+	
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_ASU_MGR_CREAR_ASUNTO_DTO)
 	@Override
 	@Transactional(readOnly = false)
@@ -993,7 +1112,24 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
 			
-			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
+
+ 			if (!Checks.esNulo(dtoAsunto.getIdContratos()) && !dtoAsunto.getIdContratos().trim().equals("")) {
+				//Hay que crear un list de contratos con los ids pasados
+ 				List<Contrato> contratosSel = new ArrayList<Contrato>();
+ 				
+				String[] cntIds = dtoAsunto.getIdContratos().split("-");
+				for (String cntId : cntIds) {
+					Contrato cnt = contratoManager.get(Long.parseLong(cntId));
+					if (!Checks.esNulo(cnt)) {
+						if (!contratosSel.contains(cnt)) {
+							contratosSel.add(cnt);
+						}
+					}
+				}
+				id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto, contratosSel);
+			} else {
+				id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
+			}
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
@@ -1053,8 +1189,14 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			Boolean existe= false;
 			Boolean existeConFechaHasta= false;
 			Boolean existeConFechaHastaVacio= false;
-			List<String> gestoresBorrados= Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
-			List<String> tipogestoresBorrados= Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+			List<String> gestoresBorrados= new ArrayList<String>();
+			if (!Checks.esNulo(dtoAsunto.getIdGestorBorrado())) {
+				gestoresBorrados = Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
+			}
+			List<String> tipogestoresBorrados= new ArrayList<String>();
+			if (!Checks.esNulo(dtoAsunto.getIdTipoGestorBorrado())) {
+					tipogestoresBorrados = Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+			}
 			for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
 				
 				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){

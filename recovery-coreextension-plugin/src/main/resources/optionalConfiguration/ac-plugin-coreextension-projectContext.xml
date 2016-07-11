@@ -55,6 +55,27 @@
 			</map>
 		</property>
 		
+		<property name="quitarTiposGestoresDefectoAsuntos">
+			<map>
+				<entry key="BANKIA">
+					<list>
+						<value>GESTORIA_PREDOC</value>
+						<value>GEST</value>
+					</list>
+				</entry>
+			</map>
+		</property>
+		
+		<property name="cambioUsuarioTipoGestorDefecto">
+			<map>
+				<entry key="BANKIA">
+					<map>
+						<entry key="GESTLLA2" value="HAYAGESP"/>
+					</map>
+				</entry>
+			</map>
+		</property>
+		
 		<property name="categoriasSubTareas">
 			<map>
 				<entry key="TOMA_DE_DECISION">

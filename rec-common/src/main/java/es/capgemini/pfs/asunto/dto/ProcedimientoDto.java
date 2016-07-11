@@ -32,7 +32,7 @@ public class ProcedimientoDto extends WebDto {
     private static final String PORCENTAJE_RECUPERACION_NULO = "dc.proc.porcentajeRecuperacionNulo";
     private static final String PLAZO_NULO = "dc.proc.plazoNulo";
     private static final String PERSONAS_SELECCIONADAS_NULO = "dc.proc.personasSeleccionadasNulo";
-     private static final String PROPUESTA_NULO = "dc.proc.propuestasNulo";
+    private static final String PROPUESTA_NULO = "dc.proc.propuestasNulo";
     private static final String TURNADO_NULO = "dc.proc.turnadoNulo";
     private static final String PRIORIDAD_NULA = "dc.proc.prioridadNula";
     private static final String PREPARACION_NULA = "dc.proc.preparacionNula";

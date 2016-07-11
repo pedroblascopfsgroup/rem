@@ -37,6 +37,7 @@ import es.capgemini.pfs.asunto.model.FichaAceptacion;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.comite.dao.ComiteDao;
 import es.capgemini.pfs.comite.model.Comite;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.dsm.model.Entidad;
@@ -542,6 +543,19 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones,
 			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto) {
+		
+		List<Contrato> contratos = new ArrayList<Contrato>();
+		for (ExpedienteContrato contratoExp : expediente.getContratos()) {
+			contratos.add(contratoExp.getContrato());
+		}
+		return crearAsuntoConEstado(gestorDespacho, supervisor, procurador, nombreAsunto, expediente, observaciones, codigoEstadoAsunto, tipoAsunto, contratos);
+	}
+	
+	@Override
+	public Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
+			GestorDespacho supervisor, GestorDespacho procurador,
+			String nombreAsunto, Expediente expediente, String observaciones,
+			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto, List<Contrato> contratos) {
 		EXTAsunto extAsunto = new EXTAsunto();
 
 		extAsunto.setObservacion(observaciones);
@@ -581,12 +595,10 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			}
 			
 			// Asignar gestion asunto segun contratos.
-			Filter gestionFilter = null;
-			Filter cntPorExpFilter = genericDao.createFilter(FilterType.EQUALS, "expediente", expediente);
-			List<ExpedienteContrato> expContratos = genericDao.getList(ExpedienteContrato.class, cntPorExpFilter);
-			if(!Checks.estaVacio(expContratos)){
+			if(!Checks.estaVacio(contratos)){
 				// Comprobar contratos, si alguno es de haya asignar Haya, si no asignar Bankia.
-				if(comprobarEntidadListaContratos(expContratos ,Entidad.CODIGO_HAYA_SAREB)){
+				Filter gestionFilter;
+				if(comprobarEntidadListaContratos(contratos ,Entidad.CODIGO_HAYA_SAREB)){
 					gestionFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", Entidad.CODIGO_HAYA_SAREB);
 				} else {
 					gestionFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", Entidad.CODIGO_BANKIA);
@@ -611,7 +623,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 	 * @param entidadABuscar : entidad por la cual hacer el filtro de busqueda.
 	 * @return Devuelve true si encuentra una coincidencia en algun contrato para la entidad a buscar.
 	 */
-	private boolean comprobarEntidadListaContratos(List<ExpedienteContrato> expContratos, String entidadABuscar) {
+	private boolean comprobarEntidadListaContratos(List<Contrato> contratos, String entidadABuscar) {
 		// Obtener el ID del campo para filtrar por entidad propietaria en Bankia.
 		Filter ifcFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", "char_extra1");
 		EXTDDTipoInfoContrato ifc = genericDao.get(EXTDDTipoInfoContrato.class, ifcFilter);
@@ -630,9 +642,9 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 		}
 		
 		// Buscar coincidencia por cada contrato encontrado.
-		for(ExpedienteContrato expc : expContratos){
+		for(Contrato cnt : contratos){
 			Filter filter1 = genericDao.createFilter(FilterType.EQUALS, "tipoInfoContrato", ifc);
-			Filter filter2 = genericDao.createFilter(FilterType.EQUALS, "contrato", expc.getContrato());
+			Filter filter2 = genericDao.createFilter(FilterType.EQUALS, "contrato", cnt);
 			EXTInfoAdicionalContrato eiac = genericDao.get(EXTInfoAdicionalContrato.class, filter1, filter2);
 			if(!Checks.esNulo(eiac)){
 				if(eiac.getValue().equals(propietario)){

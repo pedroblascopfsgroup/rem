@@ -203,6 +203,46 @@
 	       
 
 	contratosStore.on('load', refrescaCheckBox);
+	
+	var btnLitigar = new Ext.Button({
+		text: '<s:message code="decisionComite.boton.litigar" text="**Litigar" />'
+		,iconCls : 'icon_mas'
+		,cls : 'x-btn-text-icon'
+		,handler : function() {
+			funcLitigios(true);
+		}
+	});
+	
+	var btnNoLitigar = new Ext.Button({
+		text: '<s:message code="decisionComite.boton.nolitigar" text="**No Litigar" />'
+		,iconCls : 'icon_menos'
+		,cls : 'x-btn-text-icon'
+		,handler : function() {
+			funcLitigios(false);
+		}
+	});	
+	
+	var funcLitigios = function(litigar) {
+		if (contratosSinActString!=null && contratosSinActString.length>0){
+			var w = app.openWindow({
+	      		flow: 'expedientes/litigarProcedimiento'
+	      		,params : {idExpediente:entidad.getData("id"),idAsunto:idAsuntoSeleccionado, idProcedimiento:0,idContratos:contratosSinActString,litigar: litigar}
+	      		,closable : false
+	      		,width: 900
+	      		,title : '<s:message code="procedimientos.edicion.titulo" text="**Nuevo registro" />'
+	    	});
+			w.on(app.event.CANCEL,function(){w.close();});
+			w.on(app.event.DONE,
+					function(){
+						w.close();
+						asuntosStore.webflow({id:entidad.getData("id"), idSesion:entidad.getData("decision.ultimaSesion")});
+						cantidadAsuntos = asuntosStore.getCount();
+					}
+			);			    	
+	          }else{
+	             	Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="dc.proc.contratoNulo"/>')
+	          }	
+	};
 
 	var btnActuacion = new Ext.Button({
 			text: '<s:message code="decisionComite.boton.sinActuacion" text="**Sin Actuación" />'                                                                                              
@@ -232,7 +272,7 @@
 				}
 	       }
 	});
-	     
+	
 
 	
 	var contratosGrid = new Ext.grid.GridPanel({
@@ -247,7 +287,11 @@
 		,width: 760
 		,height : 150 
 		,plugins: checkColumn
-		,bbar : [ btnActuacion ]
+		,bbar : [ btnActuacion
+			<c:if test="${user.entidad.codigo eq 'BANKIA'}">
+				<sec:authorize ifAllGranted="FUN_CIRCUITO_DECISION">, btnLitigar, btnNoLitigar</sec:authorize>
+			</c:if>
+			 ]
 	});
 
 	contratosGrid.on('rowclick', function(grid, rowIndex, e){
@@ -593,10 +637,9 @@
 		cm: asuntosCm,
 		width: asuntosCm.getTotalWidth(),
 		height: 125,
-		bbar: [
-				btnNuevo,btnEditar,btnBorrar
+		bbar: [ btnNuevo, btnEditar, btnBorrar, btnAltaProcedimiento
 				<%--  <sec:authorize ifAllGranted="EDITAR_PROCEDIMIENTO"> --%>
-					,btnAltaProcedimiento,btnEditProcedimiento,btnBorraProcedimiento//,btnActuacion
+				,btnEditProcedimiento,btnBorraProcedimiento//,btnActuacion
 				<%-- </sec:authorize> --%>
 		]
 	});
@@ -852,21 +895,30 @@
 	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
    		isBankia = true;
 	</c:if>
+	
+
      
     if(isBankia && data.toolbar.tipoExpediente == "RECU"){
     
+		var circuitoDecision = false;
+		<sec:authorize ifAllGranted="FUN_CIRCUITO_DECISION">
+			circuitoDecision = true;
+		</sec:authorize>    
+    
         var visible = [
-	      [btnActuacion, !estaDecidido && esGestorSupervisorDeFase]
-			,[btnNuevo, !estaDecidido && esGestorSupervisorDeFase]
+	      [btnActuacion, !estaDecidido && esGestorSupervisorDeFase && !circuitoDecision]
+			,[btnNuevo, !estaDecidido && esGestorSupervisorDeFase && !circuitoDecision]
 	        ,[btnEditar, !estaDecidido && esGestorSupervisorDeFase]
 	        ,[btnBorrar, !estaDecidido && esGestorSupervisorDeFase]
-	        ,[btnAltaProcedimiento, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnAltaProcedimiento, !estaDecidido && esGestorSupervisorDeFase && !circuitoDecision]
 	        ,[btnEditProcedimiento, !estaDecidido && esGestorSupervisorDeFase]
 	        ,[btnBorraProcedimiento, !estaDecidido && esGestorSupervisorDeFase]
 	        <sec:authorize ifAllGranted="CERRAR_DECISION">
 	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
 	        </sec:authorize>
 	        ,[btnEditarObs, !estaDecidido && esGestorSupervisorDeFase]
+	        ,[btnLitigar, circuitoDecision]
+	        ,[btnNoLitigar, circuitoDecision]
 	    ]
     	
     }else{
@@ -883,6 +935,8 @@
 	        ,[btnCerrarDecision, congelado && esGestorSupervisorDeFase]
 	        </sec:authorize>
 	        ,[btnEditarObs, congelado && esGestorSupervisorDeFase]
+	        ,[btnLitigar, false]
+	        ,[btnNoLitigar, false]	        
 	    ]
     }
 

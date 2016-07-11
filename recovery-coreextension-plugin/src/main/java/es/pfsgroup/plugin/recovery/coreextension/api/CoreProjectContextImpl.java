@@ -32,6 +32,8 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Map<String, String> mapaDescripcionIVA;
 	private Map<String, String> mapaCodEstAse;
 	private Map<String, String> tiposGestorGestoriaAdjudicacion;
+	private Map<String, List<String>> quitarTiposGestoresDefectoAsuntos;
+	private Map<String, Map<String, String>> cambioUsuarioTipoGestorDefecto;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -262,5 +264,23 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setTiposGestorGestoriaAdjudicacion(
 			Map<String, String> tiposGestorGestoriaAdjudicacion) {
 		this.tiposGestorGestoriaAdjudicacion = tiposGestorGestoriaAdjudicacion;
+	}
+
+	public Map<String, List<String>> getQuitarTiposGestoresDefectoAsuntos() {
+		return quitarTiposGestoresDefectoAsuntos;
+	}
+
+	public void setQuitarTiposGestoresDefectoAsuntos(
+			Map<String, List<String>> quitarTiposGestoresDefectoAsuntos) {
+		this.quitarTiposGestoresDefectoAsuntos = quitarTiposGestoresDefectoAsuntos;
+	}
+
+	public Map<String, Map<String, String>> getCambioUsuarioTipoGestorDefecto() {
+		return cambioUsuarioTipoGestorDefecto;
+	}
+
+	public void setCambioUsuarioTipoGestorDefecto(
+			Map<String, Map<String, String>> cambioUsuarioTipoGestorDefecto) {
+		this.cambioUsuarioTipoGestorDefecto = cambioUsuarioTipoGestorDefecto;
 	}
 }

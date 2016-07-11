@@ -13,6 +13,7 @@
                     <json:property name="deudaIrregular" value="${pp.persona.riesgoTotal}" />
                     <json:property name="totalSaldo" value="${pp.persona.totalSaldo}" />
                     <json:property name="asiste" value="${pp.asiste}" />
+                    <json:property name="cntId" value="${pp.cntId}" />
      			</json:object>
         </json:array>
 </fwk:json>

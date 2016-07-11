@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.recovery.coreextension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -49,8 +48,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi.TipoResultado;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.mejoras.acuerdos.MEJAcuerdoManager;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
@@ -89,13 +90,16 @@ public class coreextensionController {
 	private CoreProjectContext coreProjectContext;
 	
 	@Autowired
+	private	MEJAcuerdoManager mejAcuerdoManager;	
+	
+	@Autowired
     private Executor executor;
 
     @Autowired
 	private EXTDDTipoGestorApi tipoGestorApi;
 
 	@Autowired
-	private coreextensionApi coreextensionApi;
+	private coreextensionApi coreextensionManager;
     
     @Autowired
     private GestorAdicionalAsuntoApi gestorAdicionalApi;
@@ -256,100 +260,15 @@ public class coreextensionController {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	@RequestMapping
-	public String getListUsuariosDefectoByTipoAsunto(ModelMap model,String idTipoAsunto, String idExpediente,
+	public String getListUsuariosDefectoByTipoAsunto(ModelMap model,String idTipoAsunto, Long idExpediente,
 			@RequestParam(value="porUsuario", required=false) Boolean porUsuario,
 			@RequestParam(value="adicional", required=false) Boolean adicional,
 			@RequestParam(value="procuradorAdicional", required=false) Boolean procuradorAdicional){
 		
-		List<EXTDDTipoGestor> listadoTipoGestores = null;
-		List<DespachoExterno> listaDespachos = null;
-		List<DespachoExterno> listaDespachos2 = new ArrayList<DespachoExterno>();;
-		List<Usuario> listaUsuarios= null;
-		List<EXTDDTipoGestor> listadoTipoGestoresFinal= new ArrayList<EXTDDTipoGestor>();
-		List<DespachoExterno> listaDespachoFinal= new ArrayList<DespachoExterno>();
-		List<Usuario> listaUsuariosFinal= new ArrayList<Usuario>();
-		listadoTipoGestores= proxyFactory.proxy(coreextensionApi.class).getListTipoGestorAdicionalPorAsunto(idTipoAsunto);
-		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
 		
-		for(EXTDDTipoGestor tipoGestor: listadoTipoGestores){
-			if(tipoGestor!=null){
-				listaDespachos = proxyFactory.proxy(coreextensionApi.class).getListAllDespachos(tipoGestor.getId(), false);
-				if(listaDespachos!=null && listaDespachos.size()>0){
-					listaDespachos2.clear();
-					listaDespachos2.add(listaDespachos.get(0));
-				}
-				for(DespachoExterno despacho: listaDespachos2){
-					listaUsuarios=null;
-					listaUsuarios = proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosPorDefectoData(despacho.getId(), false);
-					if(listaUsuarios== null || listaUsuarios.size()==0){
-						List<Usuario> listaUsuariosNoDefecto= proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(despacho.getId(), false);
-						if(listaUsuariosNoDefecto!= null && listaUsuariosNoDefecto.size()!=0){
-							listaUsuarios.add(proxyFactory.proxy(coreextensionApi.class).getListAllUsuariosData(despacho.getId(), false).get(0));
-						}
-					}
-					HashMap<String,Set<String>> perfilesMap= proxyFactory.proxy(coreextensionApi.class).getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
-					if(perfilesMap!=null && !perfilesMap.isEmpty() && Integer.parseInt(idTipoAsunto)==21){
-						Set<String> perfiles= perfilesMap.get(tipoGestor.getCodigo());
-						if(perfiles!=null && !perfiles.isEmpty()){
-							for(String perfil: perfiles){
-								Usuario usuarioFinal= new Usuario();
-								long idexp= Long.valueOf(idExpediente);
-								List<Usuario> usuarioFinales= proxyFactory.proxy(coreextensionApi.class).getUsuarioGestorOficinaExpedienteGestorDeuda(idexp, perfil);
-								if(!usuarioFinales.isEmpty()){
-									usuarioFinal= usuarioFinales.get(0); 
-									listadoTipoGestoresFinal.add(tipoGestor);
-									listaDespachoFinal.add(despacho);
-									listaUsuariosFinal.add(usuarioFinal);
-								}
-							}
-						}
-						else{
-							for(Usuario usuario: listaUsuarios){
-								
-								Usuario usuarioFinal= new Usuario();
-									usuarioFinal= usuario;
-									listadoTipoGestoresFinal.add(tipoGestor);
-									listaDespachoFinal.add(despacho);
-									listaUsuariosFinal.add(usuarioFinal);
-							}
-						}
-					}
-					else{
-						if(listaUsuarios!= null && listaUsuarios.size()!=0){
-							for(Usuario usuario: listaUsuarios){
-								
-								Usuario usuarioFinal= new Usuario();
-									usuarioFinal= usuario;
-									listadoTipoGestoresFinal.add(tipoGestor);
-									listaDespachoFinal.add(despacho);
-									listaUsuariosFinal.add(usuarioFinal);
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		//Supervisores
-		if(codigoEntidadUsuario.equals("HAYA")){
-			Usuario supervisor= proxyFactory.proxy(coreextensionApi.class).getSupervisorPorAsuntoEntidad(codigoEntidadUsuario, idTipoAsunto);
-			EXTDDTipoGestor tipoGestorSupervisor= proxyFactory.proxy(coreextensionApi.class).getTipoGestorSupervisorPorAsuntoEntidad(codigoEntidadUsuario, idTipoAsunto);
-			DespachoExterno despachoGestorSupervisor= proxyFactory.proxy(coreextensionApi.class).getDespachoSupervisorPorAsuntoEntidad(codigoEntidadUsuario, idTipoAsunto);
-			
-			if(supervisor!= null && tipoGestorSupervisor!= null && despachoGestorSupervisor!= null){
-				listadoTipoGestoresFinal.add(tipoGestorSupervisor);
-				listaDespachoFinal.add(despachoGestorSupervisor);
-				listaUsuariosFinal.add(supervisor);
-			}
-			
-			
-			
-		}
-		
-		
-		model.put("listadoGestores", listadoTipoGestoresFinal);
-		model.put("listadoDespachos", listaDespachoFinal);
-		model.put("listadoUsuarios", listaUsuariosFinal);
+		model.put("listadoGestores", coreextensionManager.getListadoGestoresDefecto(idTipoAsunto, idExpediente, TipoResultado.TIPOGESTORES));
+		model.put("listadoDespachos", coreextensionManager.getListadoGestoresDefecto(idTipoAsunto, idExpediente, TipoResultado.DESPACHOS));
+		model.put("listadoUsuarios", coreextensionManager.getListadoGestoresDefecto(idTipoAsunto, idExpediente, TipoResultado.USUARIOS));
 		
 		return GESTORES_DESPACHOS_USUARIO_AUTO_JSON;
 	}
@@ -691,7 +610,7 @@ public class coreextensionController {
 	@RequestMapping
 	public String getListAllUsersPaginated(ModelMap model, UsuarioDto usuarioDto){
 		
-		Page page = coreextensionApi.getListAllUsersPaginated(usuarioDto);
+		Page page = coreextensionManager.getListAllUsersPaginated(usuarioDto);
 		model.put("pagina", page);
 		
 		return TIPO_USUARIO_PAGINATED_JSON;

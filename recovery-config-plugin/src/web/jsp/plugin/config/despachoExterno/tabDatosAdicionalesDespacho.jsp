@@ -1,6 +1,6 @@
 <pfslayout:tabpage titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.title" title="**Datos adicionales" items="datos">
 	
-	<%-- PRODUCTO-1272 Campos visibles solo para BANKIA por ahora --%>
+	<%-- PRODUCTO-1272 Campos visibles solo para Entidad por ahora --%>
 	
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.contratoVigor" label="**Contrato en vigor" name="contratoVigor" value="${despachoExtras.contratoVigor}" readOnly="true" width="200" labelWidth="120"	/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.servicioIntegral" label="**Servicio integral" name="servicioIntegral" value="${despachoExtras.servicioIntegral}" readOnly="true" width="200" labelWidth="120"/>
@@ -24,7 +24,7 @@
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria" label="**Asesoria" name="tieneAsesoria" value="${despachoExtras.asesoria}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.irpfAplicado" label="**irpfAplicado" name="irpfAplicado" value="${despachoExtras.irpfAplicado}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.fechaServicioIntegral" label="**Fecha SI" name="fechaServicioIntegral" value="${despachoExtras.fechaServicioIntegral}" readOnly="true" width="200" labelWidth="120"/>
-	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.relacionBankia" label="**Relacion Bankia" name="relacionBankia" value="${despachoExtras.relacionBankia}" readOnly="true" width="230" labelWidth="180"/>
+	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.relacionEntidad" label="**Relacion Entidad" name="relacionEntidad" value="${despachoExtras.relacionEntidad}" readOnly="true" width="230" labelWidth="180"/>
 	<pfsforms:textfield labelKey="plugin.config.despachoExternoExtras.field.impuesto" label="**impuesto" name="impuesto" value="${despachoExtras.ivaDescripcion}" readOnly="true" width="200" labelWidth="120"/>
 	
 	
@@ -66,9 +66,9 @@
 	PRODUCTO-1274 ; BKREC-2291
 
 	Cuando se quieran multiples provincias por despacho, descomentar esta parte, y eleminar el field anterior a este comentario.
-	La lógica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
+	La lï¿½gica JAVA, solo hay que cambiar una linea, he dejado la linea comentada para simplemente sustiturla en...
 	Manager: ADMDespachoExternoManager 
-	Métodos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
+	Mï¿½todos: guardarAmbitoDespachoExtras ; dameAmbitoDespachoExtrasCodigos ; actualizarAmbitoDespachoExtras
 	
 	Vistas modificadas: altaDespachoExterno.jsp ; tabDatosAdicionalesDespacho.jsp
 	
@@ -144,16 +144,17 @@
 			<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
 				<pfs:items items="clasificacionFieldSet, provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
 				<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
-				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad" />
 			</pfs:panel>
 		</c:when>
 		<c:otherwise>
 		 	<pfs:panel titleKey="plugin.config.despachoExterno.consultadespacho.adicionales.grid.title" name="datos" columns="3" collapsible="" title="**Datos Despacho"  >
 				<pfs:items items="provinciasGrid, contratoVigor, impuesto, servicioIntegralFieldSet"/>
 				<pfs:items items="oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, digconProvisiones, cuentaProvisiones" />
-				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionBankia" />
+				<pfs:items items="entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, tieneAsesoria, relacionEntidad" />
 			</pfs:panel>
 		</c:otherwise>
 	</c:choose>	
+
 		
 </pfslayout:tabpage>

@@ -28,14 +28,7 @@
 	var cuentaEntregas = app.creaText('cuentaEntregas', '<s:message code="plugin.config.despachoExternoExtras.field.cuentaEntregas" text="**cuentaEntregas" />');
 	var centroRecuperacion = app.creaText('centroRecuperacion', '<s:message code="plugin.config.despachoExternoExtras.field.centroRecuperacion" text="**centroRecuperacion" />');
 
-	var perfilDict = <json:object>
-		<json:array name="diccionario" items="${mapasDespExtras[1]}" var="d">	
-		 <json:object>
-		   <json:property name="codigo" value="${d}" />
-			<json:property name="descripcion" value="${d}" />
-		 </json:object>
-		</json:array>
-	</json:object>;
+	var perfilDict = <app:dict value="${perfilDict}" blankElement="true" blankElementValue=""/>;
 	
 	var perfil = app.creaDblSelect(perfilDict
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.perfil" text="**Perfil" />'
@@ -65,17 +58,11 @@
    	var comboProvincias = app.creaDblSelect(provinciasData 
     	,'<s:message code="plugin.config.despachoExterno.turnado.ventana.provincias" text="**Provincias" />'
     	,config);
-
-	var contratosDict = <json:object>
-		<json:array name="diccionario" items="${mapasDespExtras[0]}" var="d">	
-		 <json:object>
-		   <json:property name="codigo" value="${d}" />
-			<json:property name="descripcion" value="${d}" />
-		 </json:object>
-		</json:array>
-	</json:object>;
+   
 	
-	var contratoVigor = app.creaDblSelect(contratosDict
+	var contratosData = <app:dict value="${contratoDict}" />;
+        	
+	var contratoVigor = app.creaDblSelect(contratosData
 		 ,'<s:message code="plugin.config.despachoExternoExtras.field.contratoVigor" text="**Contrato en vigor" />'
 		 ,{width:100,height:80});
 	 
@@ -102,48 +89,51 @@
 				Ext.Panel.prototype.doLayout.call(this);
 		}
 	});	
-		
-		
-	var codEstAseStore = 
-		<json:array name="ddCodEstAse" items="${mapasDespExtras[2]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
-	
+	 
+    var codEstAseDict = <app:dict value="${codEstAseDict}"/>;
+
+	var codEstAseStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: codEstAseDict
+	});
+        	
 	var codEstAse=new Ext.form.ComboBox({
 		store: codEstAseStore
 		,triggerAction : 'all'
 		,mode:'local'
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.codEstAse" text="**codEstAse" />'
 		,width:150
 	});	
 		
-		var relacionBankiaDict = <json:object>
-		<json:array name="diccionario" items="${mapasDespExtras[4]}" var="d">	
-		 <json:object>
-		   <json:property name="codigo" value="${d}" />
-			<json:property name="descripcion" value="${d}" />
-		 </json:object>
-		</json:array>
-	</json:object>;
+	var relacionEntidadDict = <app:dict value="${relacionEntidadDict}" />;
 	
-	var relacionBankia = app.creaDblSelect(relacionBankiaDict
-		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionBankia" text="**relacionBankia" />'
+	
+	var relacionEntidad = app.creaDblSelect(relacionEntidadDict
+		 ,'<s:message code="plugin.config.despachoExternoExtras.field.relacionEntidad" text="**relacionEntidad" />'
 		 ,{width:100,height:110});
 
 	<pfsforms:ddCombo name="tieneAsesoria"
 		labelKey="plugin.config.despachoExternoExtras.field.tieneAsesoria"
 		label="**tieneAsesoria" value="" dd="${ddSiNo}" width="150" propertyCodigo="codigo"/>
 		
-	var impuestoStore = 
-		<json:array name="ddImpuesto" items="${mapasDespExtras[3]}" var="d">	
-			 	  <json:property name="descripcion" value="${d}" />
-		</json:array>;
+	var impuestoDict = <app:dict value="${impuestoDict}"/>;
+
+	var impuestoStore = new Ext.data.JsonStore({
+		fields: ['codigo', 'descripcion']
+		,root: 'diccionario'
+		,data: impuestoDict
+	});
 	
 	var impuesto=new Ext.form.ComboBox({
 		store: impuestoStore
 		,triggerAction : 'all'
-		,mode:'local'
+		,mode:'local'		
+		,displayField:'descripcion'
+		,valueField:'codigo'
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="asuntos.busqueda.filtros.tabs.filtrosLetrados.impuesto.text" text="**Impuesto" />'
 		,width:150
@@ -185,7 +175,7 @@
 		if (servicioIntegral.getValue() != '' ){
 			return true;
 		}
-		if (relacionBankia.getValue() != '' ){
+		if (relacionEntidad.getValue() != '' ){
 			return true;
 		}
 		if (oficinaContacto.getValue() != '' ){
@@ -271,7 +261,7 @@
 			,codEstAse: codEstAse.getValue()
 			,contratoVigor: contratoVigor.getValue()
 			,servicioIntegral: servicioIntegral.getValue()
-			,relacionBankia: relacionBankia.getValue()
+			,relacionEntidad: relacionEntidad.getValue()
 			,oficinaContacto: oficinaContacto.getValue()
 			,entidadContacto: entidadContacto.getValue()
 			,entidadLiquidacion: entidadLiquidacion.getValue()
@@ -308,7 +298,7 @@
 		,bodyStyle:'padding:5px;cellspacing:20px'
 		,defaults : {xtype:'panel', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding-left:20px;padding-right:20px;padding-top:1px;padding-bottom:1px;cellspacing:20px'}
 		,items:[ 
-				{items: [ contratoVigor, relacionBankia, codEstAse, tieneAsesoria, impuesto<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">, clasifDespachoFieldSet</c:if>]}
+				{items: [ contratoVigor, relacionEntidad, codEstAse, tieneAsesoria, impuesto<c:if test="${usuario.entidad.descripcion == 'BANKIA'}">, clasifDespachoFieldSet</c:if>]}
 				,{items: [ oficinaContacto, entidadContacto, entidadLiquidacion, oficinaLiquidacion, digconLiquidacion, cuentaLiquidacion, entidadProvisiones, oficinaProvisiones, fechaAltaSIFieldSet ]}
 				,{items: [ digconProvisiones, cuentaProvisiones, entidadEntregas, oficinaEntregas, digconEntregas, cuentaEntregas, centroRecuperacion, comboProvincias]}
 				
@@ -347,7 +337,7 @@
     		           ,cuentaEntregas
     		           ,centroRecuperacion
     		           ,tieneAsesoria
-    		           ,relacionBankia
+    		           ,relacionEntidad
     		           <c:if test="${usuario.entidad.descripcion == 'BANKIA'}">
     		           		,perfil
     		           		,concursos

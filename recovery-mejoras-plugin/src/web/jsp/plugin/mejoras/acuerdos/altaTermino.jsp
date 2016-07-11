@@ -437,6 +437,18 @@
 					return false;
        			}
        			
+       			if (Ext.getCmp('importePrevistoRegularizar')!=undefined) {
+       				if (Ext.getCmp('importePrevistoRegularizar').value <= 0) {
+       					Ext.Msg.show({
+       						title:'Aviso',
+       						msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.importePrevistoRegularizar" text="**El campo Importe Previsto Regularizar debe ser mayor que 0" />',
+       						buttons: Ext.Msg.OK
+       					});
+       					return false;
+       					
+       				}
+       			}
+       			
        			<%--
        			if (Ext.getCmp('cargasPosterioresAnteriores')!=undefined) {
        				if (Ext.getCmp('cargasPosterioresAnteriores').value==1) {

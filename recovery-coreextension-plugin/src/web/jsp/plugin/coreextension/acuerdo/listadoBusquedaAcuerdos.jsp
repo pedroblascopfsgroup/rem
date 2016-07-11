@@ -647,10 +647,20 @@
         text:'<s:message code="acuerdo.busqueda.exportar.xls" text="**Exportar a Excel" />'
         ,iconCls:'icon_exportar_csv'
         ,handler: function() {
-                    //insertar aqu� funci�n
-                }
-        }
-    );
+			if (validarEmptyForm()){
+				btnExportarXLS.setDisabled(true);
+				var flow='/pfs/coreextension/exportarExcel';
+                var params=getParametros();
+				params.tipoSalida='<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.SALIDA_XLS" />';
+				params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+				params.succesFunction=function(){btnExportarXLS.setDisabled(false)};
+               	app.openBrowserWindow(flow,params);
+               	page.fireEvent(app.event.DONE);
+			}else{
+				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
+			}
+		}
+	});
     
     var btnBuscar=app.crearBotonBuscar({
 		handler : buscarFunc
@@ -746,7 +756,7 @@
 			,title : '<s:message code="acuerdo.busqueda.filtros" text="**B�squeda de Acuerdos" />'
 			,titleCollapse:true
 			,collapsible:true
-			,tbar : [btnBuscar,btnReset,'->', app.crearBotonAyuda()] 
+			,tbar : [btnBuscar,btnReset,btnExportarXLS,'->', app.crearBotonAyuda()] 
 			<%--,tbar : [buttonsL,'->', buttonsR]--%>
 			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 			,style:'padding-bottom:10px; padding-right:10px;'

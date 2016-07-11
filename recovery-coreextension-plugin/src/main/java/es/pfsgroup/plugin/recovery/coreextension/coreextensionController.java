@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.acuerdo.dto.DTOTerminosExcel;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
 import es.capgemini.pfs.asunto.model.Asunto;
@@ -31,11 +35,14 @@ import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsunto;
 import es.capgemini.pfs.multigestor.model.EXTGestorAdicionalAsuntoHistorico;
+import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
+import es.capgemini.pfs.termino.model.TerminoAcuerdo;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -43,9 +50,11 @@ import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.UsuarioDto;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
+import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
 
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
@@ -65,6 +74,7 @@ public class coreextensionController {
 	private static final String JSON_LISTADO_DESPACHOS = "plugin/coreextension/acuerdo/listadoDespachosJSON";
 	private static final String JSON_LISTADO_TIPOS_ACUERDO = "plugin/coreextension/acuerdo/listadoTiposAcuerdoJSON";
 	private static final String JSON_CODIGO_NIVEL = "plugin/coreextension/listadoCodigoNivelJSON";
+	private static final String JSON_LISTA_DICCIONARIO_GENERICO_LIST = "plugin/coreextension/diccionarioGenericoListJSON";
 
 	@Autowired
 	public ApiProxyFactory proxyFactory;
@@ -92,7 +102,15 @@ public class coreextensionController {
     
     @Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
-	
+    
+
+    @Resource
+    private MessageService messageService;
+
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping
 	public String getListTipoGestorData(@RequestParam(value="ugCodigo",required = true)String ugCodigo, ModelMap model){
@@ -522,10 +540,125 @@ public class coreextensionController {
 		}
 		
 		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario,idGrpsUsuario);	
-		
 		model.put("pagina",page);
 		
 		return LISTADO_BUSQUEDA_TERMINOS_JSON;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String exportarExcel(ModelMap model, DTOTerminosFiltro terminosFiltroDto) throws Exception {
+
+		Parametrizacion param = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+                Parametrizacion.LIMITE_EXPORT_EXCEL_BUSCADOR_ACUERDOS);		
+		
+		Integer limite = Integer.parseInt(param.getValor());
+//		
+		terminosFiltroDto.setStart(0);
+		terminosFiltroDto.setLimit(limite);
+
+		//Si en la pestaña de jerarquía hemos seleccionado algún centro, lo añade a codigoZonas, en caso contrario,
+		//las extrae a través del usuario logado.
+		Usuario usuario = (Usuario) executor.execute(ConfiguracionBusinessOperation.BO_USUARIO_MGR_GET_USUARIO_LOGADO);
+    	EventFactory.onMethodStart(this.getClass());
+    	Set<String> zonas;
+        if (terminosFiltroDto.getCentros() != null && terminosFiltroDto.getCentros().trim().length() > 0) {
+        	List<String> list = Arrays.asList((terminosFiltroDto.getCentros()).split(","));
+			zonas = new HashSet<String>(list);
+			terminosFiltroDto.setCodigoZonas(zonas);
+		} else {
+			zonas = new HashSet<String>();
+			terminosFiltroDto.setCodigoZonas(zonas);
+		}
+        
+        EventFactory.onMethodStop(this.getClass());
+        
+        List<Long> idGrpsUsuario = null;
+        if (usuario.getUsuarioExterno()) {
+			idGrpsUsuario = extGrupoUsuariosDao.buscaGruposUsuario(usuario);
+		}
+		
+		Page page = proxyFactory.proxy(coreextensionApi.class).listBusquedaAcuerdosData(terminosFiltroDto, usuario,idGrpsUsuario);
+		List<Object[]> listaTerminos = (List<Object[]>) page.getResults();
+		
+		model.put("acuerdos", convertListToExportExcel(listaTerminos));
+
+		return "reportXLS/plugin/coreextension/acuerdo/listaAcuerdos";
+	}
+	
+	private List<DTOTerminosExcel> convertListToExportExcel(List<Object[]> acuerdos) {
+
+		final List<DTOTerminosExcel> acuExcel = new ArrayList<DTOTerminosExcel>();
+
+		for (Object[] object : acuerdos) {
+			EXTAcuerdo acu = (EXTAcuerdo) object[0];
+			TerminoAcuerdo terAcu = (TerminoAcuerdo) object[1];
+			
+			final DTOTerminosExcel acuerdoExcel = new DTOTerminosExcel();
+			
+			if(!Checks.esNulo(acu)) {
+				acuerdoExcel.setIdAcuerdo(acu.getId().toString());
+				if(!Checks.esNulo(acu.getAsunto())) {
+					acuerdoExcel.setIdAsunto(acu.getAsunto().getId().toString()); 
+					acuerdoExcel.setNombreAsunto(acu.getAsunto().getNombre()); 
+					if(!Checks.esNulo(acu.getAsunto().getExpediente()) && 
+							!Checks.esNulo(acu.getAsunto().getExpediente().getContratoPase()) && 
+							!Checks.estaVacio(acu.getAsunto().getExpediente().getContratoPase().getContratoPersona()) &&
+							!Checks.esNulo(acu.getAsunto().getExpediente().getContratoPase().getContratoPersona().get(0).getPersona())) {
+						
+						acuerdoExcel.setCliente(acu.getAsunto().getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50()); 						
+					}
+				}
+				
+				if(!Checks.esNulo(acu.getExpediente())) {
+					acuerdoExcel.setIdExpediente(acu.getExpediente().getId().toString()); 					
+					acuerdoExcel.setDescripcionExpediente(acu.getExpediente().getDescripcion()); 
+					if(!Checks.esNulo(acu.getExpediente().getTipoExpediente())) {
+						acuerdoExcel.setTipoExpediente(acu.getExpediente().getTipoExpediente().getCodigo()); 						
+					}
+					if(!Checks.esNulo(acu.getExpediente().getContratoPase()) && 
+							!Checks.estaVacio(acu.getExpediente().getContratoPase().getContratoPersona()) && 
+							!Checks.esNulo(acu.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona())) {
+						acuerdoExcel.setCliente(acu.getExpediente().getContratoPase().getContratoPersona().get(0).getPersona().getNom50());								
+					}
+				}
+				
+				if(!Checks.esNulo(acu.getTipoAcuerdo())) {
+					acuerdoExcel.setTipoAcuerdo(acu.getTipoAcuerdo().getDescripcion());					
+				}
+				
+				if(!Checks.esNulo(acu.getGestorDespacho()) && 
+						!Checks.esNulo(acu.getGestorDespacho().getDespachoExterno())) {
+					acuerdoExcel.setSolicitante(acu.getGestorDespacho().getDespachoExterno().getDescripcion()); 
+					if(!Checks.esNulo(acu.getGestorDespacho().getDespachoExterno().getTipoDespacho())) {
+						acuerdoExcel.setTipoSolicitante(acu.getGestorDespacho().getDespachoExterno().getTipoDespacho().getDescripcion()); 						
+					}
+				}
+				
+				if(!Checks.esNulo(acu.getEstadoAcuerdo())) {
+					acuerdoExcel.setEstado(acu.getEstadoAcuerdo().getDescripcion()); 					
+				}
+				
+				acuerdoExcel.setFechaAlta(DateFormat.toString(acu.getFechaPropuesta())); 
+				acuerdoExcel.setFechaEstado(DateFormat.toString(acu.getFechaEstado())); 
+				acuerdoExcel.setFechaVigencia(DateFormat.toString(acu.getFechaLimite())); 				
+			}
+			if(!Checks.esNulo(terAcu)) {
+				acuerdoExcel.setIdTermino(terAcu.getId().toString()); 	
+				if(!Checks.estaVacio(terAcu.getContratosTermino()) && 
+						!Checks.esNulo(terAcu.getContratosTermino().get(0).getContrato())) {
+					acuerdoExcel.setIdContrato(terAcu.getContratosTermino().get(0).getContrato().getCodigoContrato());					
+				}
+				if(!Checks.esNulo(terAcu.getTipoAcuerdo())) {
+					acuerdoExcel.setTipoAcuerdo(terAcu.getTipoAcuerdo().getDescripcion()); 									
+				}
+			}
+
+			acuExcel.add(acuerdoExcel);
+
+		}
+		return acuExcel;
+
 	}
 
 	
@@ -572,5 +705,29 @@ public class coreextensionController {
 		model.put("codigo", codigo);
 		return JSON_CODIGO_NIVEL;
 	}
+	
+
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping
+    public String getDictionary(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionarioApi.dameValoresDiccionario(Class.forName(dictionary));
+		
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @RequestMapping
+    public String getDictionaryDenormalized(String dictionary, ModelMap model) throws ClassNotFoundException {
+
+    	List dictionaryData = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(Class.forName(dictionary));
+		
+        model.put("pagina", dictionaryData);
+
+        return JSON_LISTA_DICCIONARIO_GENERICO_LIST;
+    }
 	
 }

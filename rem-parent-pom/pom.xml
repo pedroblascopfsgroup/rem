@@ -50,10 +50,12 @@
 	</distributionManagement>
 
 	<repositories>
+<!--
 		<repository>
 			<id>pfsrepo</id>
 			<url>http://interecovery.pfsgroup.es:8086</url>
-		</repository>
+		</repository>º
+-->
 		<repository>
 			<id>thirdparty</id>
 			<url>http://192.168.31.16:8081/nexus/content/repositories/thirdparty</url>
@@ -65,7 +67,7 @@
 		</repository>
 		<repository>
 			<id>Framework</id>
-			<url>http://192.168.31.23:8458/nexus/content/repositories/Framework</url>
+			<url>http://192.168.31.16:8081/nexus/content/repositories/Framework</url>
 		</repository>
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>

@@ -37,7 +37,7 @@ public class DDEstadoPublicacion implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_TPU_ID")
+	@Column(name = "DD_EPU_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoPublicacionGenerator")
 	@SequenceGenerator(name = "DDEstadoPublicacionGenerator", sequenceName = "S_DD_EPU_ESTADO_PUBLICACION")
 	private Long id;

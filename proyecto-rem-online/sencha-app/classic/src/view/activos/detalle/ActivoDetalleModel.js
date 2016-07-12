@@ -243,15 +243,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
-    		comboSubtipoActivo: {
+    		comboMunicipioAdmisionIC: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'generic/getComboSubtipoActivo',
-					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{activoInforme.provinciaCodigo}'}
 				}
     		},
 
+    		comboMunicipioMediadorIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboMunicipio',
+					extraParams: {codigoProvincia: '{informeComercial.provinciaCodigo}'}
+				}
+    		},    		
+    		
     		comboUsuarios: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -519,6 +528,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    	autoLoad: false
 	    	},
 	    	
+    		comboSubtipoActivo: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivo',
+					extraParams: {codigoTipoActivo: '{activo.tipoActivoCodigo}'}
+				}
+    		},
 	    	    		
     		comboSubtipoActivoAdmision: {
 				model: 'HreRem.model.ComboBase',
@@ -528,8 +545,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {codigoTipoActivo: '{activoAdmision.tipoActivoCodigo}'}
 				}
     		},
-    		
-    		
+
+    		comboSubtipoActivoAdmisionIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivo',
+					extraParams: {codigoTipoActivo: '{activoInforme.tipoActivoCodigo}'}
+				}
+    		},
+
+    		comboSubtipoActivoMediadorIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboSubtipoActivo',
+					extraParams: {codigoTipoActivo: '{informeComercial.tipoActivoCodigo}'}
+				}
+    		},    		
+    		    		
     		comboMunicipioAdmision: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

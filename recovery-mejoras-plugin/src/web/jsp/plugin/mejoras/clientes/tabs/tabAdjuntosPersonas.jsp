@@ -56,9 +56,7 @@
 			,success : function(){
 				recargarAdjuntos();
 			}
-		});
-		<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
-		
+		});		
 	
 		var comprobarAdjuntosRecord = Ext.data.Record.create([
 			 {name:'mensaje'}
@@ -307,7 +305,7 @@
 	editarDescripcionAdjuntoPersona.disable();
 		var grid = app.crearGrid(store, cm, {
 			title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-			,bbar : [subir, borrar,editarDescripcionAdjuntoPersona]
+			,bbar : [subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar,editarDescripcionAdjuntoPersona</sec:authorize>]
 			,height: 400
 			,collapsible:true
 			,width : 600

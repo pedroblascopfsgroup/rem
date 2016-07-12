@@ -848,10 +848,10 @@
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
 		<sec:authorize ifAllGranted="ROLE_PUEDE_SUBIR_ADJUNTOS">
-			,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
+			,bbar : [subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar, editarDescripcionAdjuntoAsunto</sec:authorize>]
 		</sec:authorize>
 		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS">
-			,bbar : [subir, borrar, editarDescripcionAdjuntoAsunto]
+			,bbar : [subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar, editarDescripcionAdjuntoAsunto</sec:authorize>]
 		</sec:authorize>,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -903,7 +903,7 @@
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
 		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS_PER">
-		,bbar : [subirAdjuntoPersona,editarDescripcionAdjuntoPersona]
+		,bbar : [subirAdjuntoPersona<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>,editarDescripcionAdjuntoPersona</sec:authorize>]
 		</sec:authorize>
 		,height: gridHeight
 		,autoWidth: true
@@ -955,7 +955,7 @@
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
 		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS_EXPE">
-		,bbar : [subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente]
+		,bbar : [subirAdjuntoExpediente<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>,editarDescripcionAdjuntoExpediente</sec:authorize>]
 		</sec:authorize>
 		,height: gridHeight
 		,autoWidth: true
@@ -1007,7 +1007,7 @@
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
 		<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_PROCEDIMIENTO_ADJUNTOS_CNT">
-		,bbar : [subirAdjuntoContrato,editarDescripcionAdjuntoContrato]
+		,bbar : [subirAdjuntoContrato<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>,editarDescripcionAdjuntoContrato</sec:authorize>]
 		</sec:authorize>
 		,height: gridHeight
 		,autoWidth: true
@@ -1169,14 +1169,6 @@
 	gridExpedientes.getSelectionModel().on('selectionchange', gestionarGrid);
 	gridPersonas.getSelectionModel().on('selectionchange', gestionarGrid);
 	
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
-		borrar.setVisible(false);
-		editarDescripcionAdjuntoAsunto.setVisible(false);
-		editarDescripcionAdjuntoPersona.setVisible(false);
-		editarDescripcionAdjuntoExpediente.setVisible(false);
-		editarDescripcionAdjuntoContrato.setVisible(false);
-	</sec:authorize>
-
 	function addPanel2Panel(grid){
 		panel.add (new Ext.Panel({
 			border : false

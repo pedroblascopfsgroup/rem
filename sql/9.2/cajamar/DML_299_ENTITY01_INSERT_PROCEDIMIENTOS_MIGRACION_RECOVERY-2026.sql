@@ -38,21 +38,22 @@ DECLARE
     TYPE T_ARRAY_TPO IS TABLE OF T_TIPO_TPO;
     V_TIPO_TPO T_ARRAY_TPO := T_ARRAY_TPO(
     	--Litigios
-    	T_TIPO_TPO('CJ016','P. Cambiario - CJ','Procedimiento Cambiario',null,'cj_procedimientoCambiario','0','RECOVERY-2026','0','EJ',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ018','P. Ej. de Título Judicial - CJ','Procedimiento Ejecución de Título Judicial',null,'cj_ejecucionTituloJudicial','0','RECOVERY-2026','0','EJ',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ020','P. Ej. de título no judicial - CJ','Procedimiento ejecución de título no judicial',null,'cj_ejecucionTituloNoJudicial','0','RECOVERY-2026','0','EJ',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ022','P. Monitorio - CJ','Procedimiento Monitorio',null,'cj_procedimientoMonitorio','0','RECOVERY-2026','0','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ024','P. ordinario - CJ','Procedimiento ordinario',null,'cj_procedimientoOrdinario','0','RECOVERY-2026','0','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ026','P. verbal - CJ','Procedimiento verbal',null,'cj_procedimientoVerbal','0','RECOVERY-2026','0','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ028','P. Verbal desde Monitorio - CJ','Procedimiento Verbal desde Monitorio',null,'cj_procedimientoVerbalDesdeMonitorio','0','RECOVERY-2026','0','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ030','T. certificación de cargas y revisión - CJ','Trámite de certificación de cargas y revisión',null,'cj_tramiteCertificacionCargasRevision','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ032','T. Costas contra Entidad - CJ','Trámite de Costas contra Entidad',null,'cj_tramiteCostasVsEntidad','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ106','T. de cesión de remate - CJ','T. de cesión de remate',null,'cj_tramiteCesionRemate','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ064','T. de consignación - CJ','Trámite de consignación',null,'cj_tramiteConsignacion','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ007','T. de costas - CJ','Trámite de costas',null,'cj_tramiteCostas','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ070','T. de subasta TERCEROS - CJ','Trámite de subasta terceros',null,'cj_tramiteSubastaTerceros','0','RECOVERY-2026','0','AP',null,null,'8','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ034','T. de depósito - CJ','Trámite de depósito',null,'cj_tramiteDeposito','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ038','T. de Embargo de Salarios - CJ','Trámite de Embargo de Salarios',null,'cj_tramiteEmbargoSalarios','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ016','P. Cambiario - CJ','Procedimiento Cambiario',null,'cj_procedimientoCambiario','0','RECOVERY-2026','1','EJ',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ018','P. Ej. de Título Judicial - CJ','Procedimiento Ejecución de Título Judicial',null,'cj_ejecucionTituloJudicial','0','RECOVERY-2026','1','EJ',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ020','P. Ej. de título no judicial - CJ','Procedimiento ejecución de título no judicial',null,'cj_ejecucionTituloNoJudicial','0','RECOVERY-2026','1','EJ',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ022','P. Monitorio - CJ','Procedimiento Monitorio',null,'cj_procedimientoMonitorio','0','RECOVERY-2026','1','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ024','P. ordinario - CJ','Procedimiento ordinario',null,'cj_procedimientoOrdinario','0','RECOVERY-2026','1','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ026','P. verbal - CJ','Procedimiento verbal',null,'cj_procedimientoVerbal','0','RECOVERY-2026','1','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ028','P. Verbal desde Monitorio - CJ','Procedimiento Verbal desde Monitorio',null,'cj_procedimientoVerbalDesdeMonitorio','0','RECOVERY-2026','1','DE',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ030','T. certificación de cargas y revisión - CJ','Trámite de certificación de cargas y revisión',null,'cj_tramiteCertificacionCargasRevision','0','RECOVERY-2026','1','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ032','T. Costas contra Entidad - CJ','Trámite de Costas contra Entidad',null,'cj_tramiteCostasVsEntidad','0','RECOVERY-2026','1','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ106','T. de cesión de remate - CJ','T. de cesión de remate',null,'cj_tramiteCesionRemate','0','RECOVERY-2026','1','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ064','T. de consignación - CJ','Trámite de consignación',null,'cj_tramiteConsignacion','0','RECOVERY-2026','1','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ007','T. de costas - CJ','Trámite de costas',null,'cj_tramiteCostas','0','RECOVERY-2026','1','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ070','T. de subasta TERCEROS - CJ','Trámite de subasta terceros',null,'cj_tramiteSubastaTerceros','0','RECOVERY-2026','1','AP',null,null,'8','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ034','T. de depósito - CJ','Trámite de depósito',null,'cj_tramiteDeposito','0','RECOVERY-2026','1','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ038','T. de Embargo de Salarios - CJ','Trámite de Embargo de Salarios',null,'cj_tramiteEmbargoSalarios','0','RECOVERY-2026','1','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ040','T. de gestión de llaves - CJ','T. de gestión de llaves',null,'cj_tramiteDeGestionDeLlaves','0','RECOVERY-2026','1','AP',null,null,'1','MEJTipoProcedimiento','1','1'),
     	); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 

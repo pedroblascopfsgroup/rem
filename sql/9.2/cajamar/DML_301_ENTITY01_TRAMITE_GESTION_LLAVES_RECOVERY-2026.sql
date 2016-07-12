@@ -1,13 +1,13 @@
 /*
 --##########################################
---## AUTOR=SERGIO NIETO
---## FECHA_CREACION=20160706
+--## AUTOR=Vicente Lozano
+--## FECHA_CREACION=20160712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.7
 --## INCIDENCIA_LINK=RECOVERY-2026
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Procedimiento verbal desde monitorio
+--## Finalidad: BPM - Trámite Gestión de llaves
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -35,42 +35,45 @@ DECLARE
 
 
     --Insertando valores en TAP_TAREA_PROCEDIMIENTO
-    
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-		T_TIPO_TAP('CJ028','CJ028_ResolucionFirme' ,null ,null ,null ,null ,null ,'0','Resolución firme' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'1' ,'EXTTareaProcedimiento','3',null ,'814',null ,null,null),
-		T_TIPO_TAP('CJ028','CJ028_RegistrarResolucion' ,null ,'comprobarExisteDocumentoREVM() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;">Debe adjuntar el documento "Resoluci&oacute;n del Juzgado".</div>''' ,null ,null ,null ,'0','Registrar resolución' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'1' ,'EXTTareaProcedimiento','3',null ,'814',null ,null,null),
-		T_TIPO_TAP('CJ028','CJ028_RegistrarJuicioVerbal' ,null ,null ,null ,null ,null ,'0','Confirmar celebración del juicio verbal' ,'0','RECOVERY-2026','0' ,null ,null ,1,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null)
-    );
-	V_TMP_TIPO_TAP T_TIPO_TAP;
+    	T_TIPO_TAP('CJ040','CJ040_Decision1',null,null,null,null,null,'1','Decision del supervisor','0','RECOVERY-2026','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','0',null,'814',null,null,null),
+		T_TIPO_TAP('CJ040','CJ040_RegistrarCambioCerradura',null,'comprobarBienAsociadoPrc() ? null : ''<div align="justify" style="font-size:8pt; font-family:Arial; margin-bottom:10px;">Debe seleccionar un BIEN para poder realizar el tramite de gestion de llaves.</div>''',null,null,null,'0','Registrar cambio de cerradura','0','RECOVERY-2026','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','0',null,'814',null,null,null),
+		T_TIPO_TAP('CJ040','CJ040_RegistrarEnvioLlaves',null,null,null,null,null,'0','Registrar envio de llaves','0','RECOVERY-2026','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','0',null,'814',null,null,null),
+		T_TIPO_TAP('CJ040','CJ040_RegistrarRecepcionLlaves',null,null,null,null,null,'0','Registrar recepcion de llaves','0','RECOVERY-2026','0',null,'tareaExterna.cancelarTarea',null,'0','EXTTareaProcedimiento','0',null,'814',null,null,null),
+		T_TIPO_TAP('CJ040','CJ040_RecepcionLlavesDecision',null,null,null,null,null,'0','Tarea toma de decisión','0','RECOVERY-2026','0',null,null,null,'0','EXTTareaProcedimiento','0',null,'814',null,null,null)
+	); 
+	
+    V_TMP_TIPO_TAP T_TIPO_TAP;
 
     --Insertando valores en DD_PTP_PLAZOS_TAREAS_PLAZAS
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-		T_TIPO_PLAZAS(null ,null ,'CJ028_RegistrarJuicioVerbal','valoresBPMPadre[''CJ022_ConfirmarOposicionCuantia''][''fechaJuicio''] != null ? damePlazo(valoresBPMPadre[''CJ022_ConfirmarOposicionCuantia''][''fechaJuicio'']) : 1*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ028_RegistrarResolucion','damePlazo(valores[''CJ028_RegistrarJuicioVerbal''][''fecha'']) + 20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ028_ResolucionFirme','damePlazo(valores[''CJ028_RegistrarResolucion''][''fecha'']) + 20*24*60*60*1000L' ,'0','0','RECOVERY-2026')
-    ); 
+		T_TIPO_PLAZAS(null,null,'CJ040_RegistrarCambioCerradura','5*24*60*60*1000L','0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ040_RegistrarEnvioLlaves','damePlazo(valores[''CJ040_RegistrarCambioCerradura''][''fecha'']) + 2*24*60*60*1000L','0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ040_RegistrarRecepcionLlaves','damePlazo(valores[''CJ040_RegistrarEnvioLlaves''][''fecha'']) + 3*24*60*60*1000L','0','0','RECOVERY-2026')
+
+	); 
 	V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     
     --Insertando valores en TFI_TAREAS_FORM_ITEMS
     TYPE T_TIPO_TFI IS TABLE OF VARCHAR2(5000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TIPO_TFI;
     V_TIPO_TFI T_ARRAY_TFI := T_ARRAY_TFI(
-		T_TIPO_TFI('CJ028_ResolucionFirme','0','label' ,'titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">Se deberá informar la fecha en la que la Resolución adquiere firmeza. En el momento se obtenga el testimonio de firmeza deberá adjuntarlo como documento acreditativo, aunque no tiene caracter obligatorio para la finalización de la tarea.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene esta pantalla se le abrirá una tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</p></div>' ,null ,null ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_ResolucionFirme','1','date' ,'fecha','Fecha firmeza' ,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio' ,'valor != null && valor != '' ? true : false' ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_ResolucionFirme','2','textarea' ,'observaciones','Observaciones' ,null ,null ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarResolucion','0','label' ,'titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px"><p style="margin-bottom: 10px">En esta pantalla se deberá de informar la fecha de notificación de la resolución que hubiere recaído como consecuencia de la vista celebrada y adjuntar la resolución como documento obligatorio para dar por finalizada la tarea.</p><p style="margin-bottom: 10px">Se indicará si el resultado de dicha resolución ha sido favorable para los intereses de la entidad o no.</p><p style="margin-bottom: 10px">Para el supuesto de que la resolución no fuere favorable para la entidad, deberá notificar dicha circunstancia al responsable interno de la misma a través del botón "Anotación". Una vez reciba la aceptación del supervisor deberá gestionar el recurso por medio de la pestaña "Recursos".</p><p style="margin-bottom: 10px">Para el supuesto de anuncio del recurso por la parte contraria se deberá gestionar directamente a través de la pestaña "Recursos".</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellené esta pantalla la siguiente tarea será "Resolución firme"</p></div>' ,null ,null ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarResolucion','1','date' ,'fecha','Fecha' ,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio' ,'valor != null && valor != '' ? true : false' ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarResolucion','2','combo' ,'comboResultado','Resultado' ,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio' ,'valor != null && valor != '' ? true : false' ,null ,'DDFavorable','0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarResolucion','3','textarea' ,'observaciones','Observaciones' ,null ,null ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarJuicioVerbal','0','label' ,'titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Dada la oposici&oacute;n en el procedimiento monitorio interpuesto, en esta pantalla debemos de determinar el n&uacute;mero de procedimiento de juicio verbal asignado por el juzgado así como informar la fecha de celebraci&oacute;n de la vista.</p><p style="margin-bottom: 10px">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</p><p style="margin-bottom: 10px">Una vez rellene &eacute;sta pantalla la siguiente tarea ser&aacute; &quot;Registrar resoluci&oacute;n&quot;.</p></div>' ,null ,null ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarJuicioVerbal','1','date' ,'fecha','Fecha celebración' ,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio' ,'valor != null && valor != '' ? true : false' ,null ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarJuicioVerbal','2','textproc' ,'numProcedimiento','Nº Procedimiento' ,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio' ,'valor != null && valor != '' ? true : false' ,'dameNumAuto()' ,null,'0','RECOVERY-2026'),
-		T_TIPO_TFI('CJ028_RegistrarJuicioVerbal','3','textarea' ,'observaciones','Observaciones' ,null ,null ,null ,null,'0','RECOVERY-2026')
-    );
+			T_TIPO_TFI('CJ040_Decision1','0','label','titulo','<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 30px;"><p style="margin-bottom: 10px">Debe acceder a la pestaña "Decisiones" para derivar en la actuaci&oacute;n que corresponda&quot;</p></div>',null,null,null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarCambioCerradura','0','label','titulo','<div align="justify" style="margin-bottom: 30px;"><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Antes de dar por completada esta tarea deberá de haber un bien vinculado al procedimiento, esto podrá comprobarlo a través de la pestaña Bienes del procedimiento, en caso de no haberlo, a través de esa misma pestaña dispone de la opción de Agregar por la cual se le permite vincular un bien al procedimiento.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Para dar por completada esta tarea deberá de informar la fecha de cambio de cerradura.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Una vez rellene esta pantalla se lanzará la tarea "Registrar envío de llaves".</span></font></p></div>',null,null,null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarCambioCerradura','1','date','fecha','Fecha cambio cerradura','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '' ? true : false',null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarCambioCerradura','2','textarea','observaciones','Observaciones',null,null,null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarEnvioLlaves','0','label','titulo','<div align="justify" style="margin-bottom: 30px;"><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Para dar por completada esta tarea deberá de informar los campos ¿Nombre del depositario¿ y ¿Fecha envío de llaves letrado¿.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Una vez rellene esta pantalla la siguiente tarea será "Registrar recepción depositario".&nbsp;</span></font></p></div>',null,null,null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarEnvioLlaves','1','text','nombre','Nombre del 1er depositario','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '' ? true : false',null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarEnvioLlaves','2','date','fecha','Fecha envio de llaves letrado','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '' ? true : false',null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarEnvioLlaves','3','textarea','observaciones','Observaciones',null,null,null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarRecepcionLlaves','0','label','titulo','<div align="justify" style="margin-bottom: 30px;"><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Para dar por completada esta tarea deberá de informar el campo ¿Fecha recepción depositario¿.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">En el campo observaciones informar cualquier aspecto relevante que le interesa quede reflejado en ese punto del procedimiento.</span></font></p><p style="margin-bottom: 10px;"><font face="Arial"><span style="font-size: 10.6666669845581px;">Una vez rellene esta pantalla, se le abrirá una tarea en la que propondrá, según su criterio, la siguiente actuación al responsable de la entidad.</span></font></p></div>',null,null,null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarRecepcionLlaves','1','date','fecha','Fecha recepcion 1er depositario','tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio','valor != null && valor != '' ? true : false',null,null,'0','RECOVERY-2026'),
+			T_TIPO_TFI('CJ040_RegistrarRecepcionLlaves','2','textarea','observaciones','Observaciones',null,null,null,null,'0','RECOVERY-2026')
+	);
     V_TMP_TIPO_TFI T_TIPO_TFI;
     
 BEGIN	

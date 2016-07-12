@@ -39,13 +39,12 @@ DECLARE
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(
-		T_TIPO_TAP('CJ034','CJ034_SolicitarRemocion' ,null ,null ,null ,null ,null ,'0','Solicitar remoción de depósito' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null),
-		T_TIPO_TAP('CJ034','CJ034_SolicitarNombramiento' ,null ,null ,null ,null ,null ,'0','Solicitar nombramiento de depositario' ,'0','RECOVERY-2026','0' ,null ,null ,1,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null),
-		T_TIPO_TAP('CJ034','CJ034_NombramientoDepositario' ,null ,null ,null ,null ,null ,'0','Nombramiento de depositario' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null),
-		T_TIPO_TAP('CJ034','CJ034_AcuerdoEntrega' ,null ,'comprobarExisteDocumentoAAEEE() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><div id="permiteGuardar"><p>Es necesario adjuntar el documento Documento que acredite el acuerdo de la entrega y la entrega efectiva</p></div></div>''' ,null ,null ,null ,'0','Acuerdo de entrega a depositario' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null),
-		T_TIPO_TAP('CJ034','DEL_CJ034_ContactarDeudor' ,null ,null ,null ,null ,null ,'0','Contactar con el deudor' ,'0','RECOVERY-2026','1' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null),
-		T_TIPO_TAP('CJ034','CJ034_AceptacionCargoDepositario' ,null ,null ,null ,null ,null ,'0','Aceptación cargo de depositário' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,null,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null),
-		T_TIPO_TAP('CJ034','CJ034_AcuerdoDecision' ,null ,null ,null ,null ,null ,'0','Tarea toma de decisión' ,'0','RECOVERY-2026','0' ,null ,null ,null,'0' ,'EXTTareaProcedimiento','0',null ,null,null ,null,null)
+		T_TIPO_TAP('CJ034','CJ034_SolicitarRemocion' ,null ,null ,null ,null ,null ,'0','Solicitar remoción de depósito' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null),
+		T_TIPO_TAP('CJ034','CJ034_SolicitarNombramiento' ,null ,null ,null ,null ,null ,'0','Solicitar nombramiento de depositario' ,'0','RECOVERY-2026','0' ,null ,null ,1,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null),
+		T_TIPO_TAP('CJ034','CJ034_NombramientoDepositario' ,null ,null ,null ,null ,null ,'0','Nombramiento de depositario' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null),
+		T_TIPO_TAP('CJ034','CJ034_AcuerdoEntrega' ,null ,'comprobarExisteDocumentoAAEEE() ? null : ''<div align="justify" style="font-size: 8pt; font-family: Arial; margin-bottom: 10px;"><div id="permiteGuardar"><p>Es necesario adjuntar el documento Documento que acredite el acuerdo de la entrega y la entrega efectiva</p></div></div>''' ,null ,null ,null ,'0','Acuerdo de entrega a depositario' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,1,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null),
+		T_TIPO_TAP('CJ034','CJ034_AceptacionCargoDepositario' ,null ,null ,null ,null ,null ,'0','Aceptación cargo de depositário' ,'0','RECOVERY-2026','0' ,null ,'tareaExterna.cancelarTarea' ,null,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null),
+		T_TIPO_TAP('CJ034','CJ034_AcuerdoDecision' ,null ,null ,null ,null ,null ,'0','Tarea toma de decisión' ,'0','RECOVERY-2026','0' ,null ,null ,null,'0' ,'EXTTareaProcedimiento','0',null ,'814',null ,null,null)
     );
 	V_TMP_TIPO_TAP T_TIPO_TAP;
 

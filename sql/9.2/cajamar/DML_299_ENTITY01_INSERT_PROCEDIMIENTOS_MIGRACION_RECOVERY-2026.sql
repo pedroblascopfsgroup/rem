@@ -51,6 +51,8 @@ DECLARE
     	T_TIPO_TPO('CJ064','T. de consignación - CJ','Trámite de consignación',null,'cj_tramiteConsignacion','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
     	T_TIPO_TPO('CJ007','T. de costas - CJ','Trámite de costas',null,'cj_tramiteCostas','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
     	T_TIPO_TPO('CJ070','T. de subasta TERCEROS - CJ','Trámite de subasta terceros',null,'cj_tramiteSubastaTerceros','0','RECOVERY-2026','0','AP',null,null,'8','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ034','T. de depósito - CJ','Trámite de depósito',null,'cj_tramiteDeposito','0','RECOVERY-2026','0','TR',null,null,1,'MEJTipoProcedimiento',1,0), 
+    	
     	); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 

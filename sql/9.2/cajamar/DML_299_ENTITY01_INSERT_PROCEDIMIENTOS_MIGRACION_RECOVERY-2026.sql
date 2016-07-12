@@ -53,7 +53,7 @@ DECLARE
     	T_TIPO_TPO('CJ070','T. de subasta TERCEROS - CJ','Trámite de subasta terceros',null,'cj_tramiteSubastaTerceros','0','RECOVERY-2026','1','AP',null,null,'8','MEJTipoProcedimiento','1','0'), 
     	T_TIPO_TPO('CJ034','T. de depósito - CJ','Trámite de depósito',null,'cj_tramiteDeposito','0','RECOVERY-2026','1','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
     	T_TIPO_TPO('CJ038','T. de Embargo de Salarios - CJ','Trámite de Embargo de Salarios',null,'cj_tramiteEmbargoSalarios','0','RECOVERY-2026','1','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ040','T. de gestión de llaves - CJ','T. de gestión de llaves',null,'cj_tramiteDeGestionDeLlaves','0','RECOVERY-2026','1','AP',null,null,'1','MEJTipoProcedimiento','1','1'),
+    	T_TIPO_TPO('CJ040','T. de gestión de llaves - CJ','T. de gestión de llaves',null,'cj_tramiteDeGestionDeLlaves','0','RECOVERY-2026','1','AP',null,null,'1','MEJTipoProcedimiento','1','1')
     	); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 

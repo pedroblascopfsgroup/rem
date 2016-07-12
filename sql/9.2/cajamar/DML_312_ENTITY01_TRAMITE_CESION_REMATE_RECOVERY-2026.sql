@@ -59,17 +59,17 @@ DECLARE
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-		T_TIPO_PLAZAS(null ,null ,'CJ106_AperturaPlazo','valoresBPMPadre[''CJ002_SenyalamientoSubasta''] == null ? 5*24*60*60*1000L : damePlazo(valoresBPMPadre[''CJ002_SenyalamientoSubasta''][''fechaSenyalamiento''])+5*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_ResenyarFechaComparecencia','damePlazo(valores[''CJ106_AperturaPlazo''][''fecha''])+5*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_RealizacionCesionRemate','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_BPMTramiteAdjudicacion','300*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_ConfirmarDocCompleta','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_SolicitudAutYPago','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-15*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_ConfirmarTransferencia','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-12*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_RegistrarRecepcionPago','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-10*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_BPMTramiteSaneamientoCargas','300*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_RevisarInfoContable','2*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ106_ConfirmarContabilidad','1*24*60*60*1000L' ,'0','0','RECOVERY-2026')
+		T_TIPO_PLAZAS(null,null,'CJ106_AperturaPlazo','valoresBPMPadre[''CJ002_SenyalamientoSubasta''] == null ? 5*24*60*60*1000L : damePlazo(valoresBPMPadre[''CJ002_SenyalamientoSubasta''][''fechaSenyalamiento''])+5*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_ResenyarFechaComparecencia','damePlazo(valores[''CJ106_AperturaPlazo''][''fecha''])+5*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_RealizacionCesionRemate','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_BPMTramiteAdjudicacion','300*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_ConfirmarDocCompleta','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_SolicitudAutYPago','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-15*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_ConfirmarTransferencia','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-12*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_RegistrarRecepcionPago','damePlazo(valores[''CJ106_ResenyarFechaComparecencia''][''fecha''])-10*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_BPMTramiteSaneamientoCargas','300*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_RevisarInfoContable','2*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ106_ConfirmarContabilidad','1*24*60*60*1000L' ,'0','0','RECOVERY-2026')
     ); 
 	V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     

@@ -55,14 +55,14 @@ DECLARE
     TYPE T_TIPO_PLAZAS IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_PLAZAS IS TABLE OF T_TIPO_PLAZAS;
     V_TIPO_PLAZAS T_ARRAY_PLAZAS := T_ARRAY_PLAZAS(
-		T_TIPO_PLAZAS(null ,null ,'CJ032_AutorizarPago','3*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ032_RegistrarSolCostasContrario','5*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ032_RegistrarDecTasacionCostas','20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ032_ConfirmarPresImpugnacion','damePlazo(valores[''CJ032_RegistrarDecTasacionCostas''][''fecha'']) + 20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ032_RegistrarCelebracionVista','damePlazo(valores[''CJ032_ConfirmarPresImpugnacion''][''fechaVista''])' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ032_RegistrarResolucion','((valores[''CJ032_RegistrarCelebracionVista''] != null) && valores[''CJ032_RegistrarCelebracionVista''][''fecha''] != '''' ? damePlazo(valores[''CJ032_RegistrarCelebracionVista''][''fecha'']) + 20*24*60*60*1000L : damePlazo(valores[''CJ032_ConfirmarPresImpugnacion''][''fecha'']) + 60*24*60*60*1000L)' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null ,null ,'CJ032_ResolucionFirme','damePlazo(valores[''CJ032_RegistrarResolucion''][''fecha'']) + 20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
-		T_TIPO_PLAZAS(null,null ,'CJ032_RegistrarPago','3*24*60*60*1000L' ,'0','0','RECOVERY-2026')
+		T_TIPO_PLAZAS(null,null,'CJ032_AutorizarPago','3*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_RegistrarSolCostasContrario','5*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_RegistrarDecTasacionCostas','20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_ConfirmarPresImpugnacion','damePlazo(valores[''CJ032_RegistrarDecTasacionCostas''][''fecha'']) + 20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_RegistrarCelebracionVista','damePlazo(valores[''CJ032_ConfirmarPresImpugnacion''][''fechaVista''])' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_RegistrarResolucion','((valores[''CJ032_RegistrarCelebracionVista''] != null) && valores[''CJ032_RegistrarCelebracionVista''][''fecha''] != '''' ? damePlazo(valores[''CJ032_RegistrarCelebracionVista''][''fecha'']) + 20*24*60*60*1000L : damePlazo(valores[''CJ032_ConfirmarPresImpugnacion''][''fecha'']) + 60*24*60*60*1000L)' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_ResolucionFirme','damePlazo(valores[''CJ032_RegistrarResolucion''][''fecha'']) + 20*24*60*60*1000L' ,'0','0','RECOVERY-2026'),
+		T_TIPO_PLAZAS(null,null,'CJ032_RegistrarPago','3*24*60*60*1000L' ,'0','0','RECOVERY-2026')
     );
 	V_TMP_TIPO_PLAZAS T_TIPO_PLAZAS;
     

@@ -52,10 +52,7 @@ DECLARE
 			T_TIPO_TAP('CJ016','CJ016_BPMProvisionFondos',null,null,null,null,'CJ103','0','Provisión de fondos','0','RECOVERY-2026','0',null,null,null,'0','EXTTareaProcedimiento','0',null,null,null,null,null),
 			T_TIPO_TAP('CJ016','CJ016_BPMAnticipoFondos',null,null,null,null,'CJ460','0','Se inicia el trámite de anticipo de fondos y pago de suplidos','0','RECOVERY-2026','0',null,null,null,'1','EXTTareaProcedimiento','3',null,null,null,null,null)
 	); 
-	
 
-	
-	
     V_TMP_TIPO_TAP T_TIPO_TAP;
 
     --Insertando valores en DD_PTP_PLAZOS_TAREAS_PLAZAS

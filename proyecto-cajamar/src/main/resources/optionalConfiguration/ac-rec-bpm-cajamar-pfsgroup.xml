@@ -28,9 +28,7 @@
 	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.handlers.CostasProcuradorHandler"></bean>
 	
 	<!--  Handlers migracion -->
-	<bean id="subastaTercerosCajamarLeaveActionHandler" class="es.pfsgroup.procedimientos.handlers.subastaTercerosCajamarLeaveActionHandler" />
-	
-	
+	<bean id="subastaTercerosCajamarLeaveActionHandler" class="es.pfsgroup.procedimientos.handlers.SubastaTercerosCajamarLeaveActionHandler" />
  	    
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
@@ -78,6 +76,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoVerbal/cj_procedimientoVerbal.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoVerbalDesdeMonitorio/cj_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificacionCargasRevision/cj_tramiteCertificacionCargasRevision.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostasVsEntidad/cj_tramiteCostasVsEntidad.xml" p:version="-1"/>
 	
 				
 	<!-- Cambios para subasta electronica -->

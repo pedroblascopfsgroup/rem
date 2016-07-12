@@ -1,13 +1,13 @@
 /*
 --##########################################
 --## AUTOR=SERGIO NIETO
---## FECHA_CREACION=20160706
+--## FECHA_CREACION=20160712
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.7
 --## INCIDENCIA_LINK=RECOVERY-2026
 --## PRODUCTO=NO
 --##
---## Finalidad: BPM - Procedimiento Cambiario
+--## Finalidad: BPM - Costas vs Entidad
 --## INSTRUCCIONES:  Ejecutar y definir las variables
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -36,7 +36,6 @@ DECLARE
 
     --Insertando valores en TAP_TAREA_PROCEDIMIENTO
     
-    --FALTA CAMBIAR LA RUTA DE LAS JSP
     TYPE T_TIPO_TAP IS TABLE OF VARCHAR2(1000);
     TYPE T_ARRAY_TAP IS TABLE OF T_TIPO_TAP;
     V_TIPO_TAP T_ARRAY_TAP := T_ARRAY_TAP(

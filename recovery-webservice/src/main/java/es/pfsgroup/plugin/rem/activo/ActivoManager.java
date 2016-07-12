@@ -253,19 +253,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} else {
 			
 			// Si no existia una valoracion del tipo indicado, crea una nueva valoracion de este tipo (para un activo)
-			ActivoValoraciones activoValoracionNuevo = new ActivoValoraciones();
+			activoValoracion = new ActivoValoraciones();
 			DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class, dto.getCodigoTipoPrecio());
 			
-			activoValoracionNuevo.setActivo(activo);
-			activoValoracionNuevo.setTipoPrecio(tipoPrecio);
-			activoValoracionNuevo.setImporte(dto.getImporte());
-			activoValoracionNuevo.setFechaInicio(dto.getFechaInicio());
-			activoValoracionNuevo.setFechaFin(dto.getFechaFin());
-			activoValoracionNuevo.setFechaAprobacion(null);
-			activoValoracionNuevo.setFechaCarga(new Date());
+			activoValoracion.setActivo(activo);
+			activoValoracion.setTipoPrecio(tipoPrecio);
+			activoValoracion.setImporte(dto.getImporte());
+			activoValoracion.setFechaInicio(dto.getFechaInicio());
+			activoValoracion.setFechaFin(dto.getFechaFin());
+			activoValoracion.setFechaAprobacion(null);
+			activoValoracion.setFechaCarga(new Date());
 			activoValoracion.setGestor(adapter.getUsuarioLogado());
 			
-			genericDao.save(ActivoValoraciones.class, activoValoracionNuevo);
+			genericDao.save(ActivoValoraciones.class, activoValoracion);
 		}
 		
 		return true;

@@ -602,7 +602,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				extraParams: {id: '{activo.id}'}
     			}
     		},
-    		historicoValoresPrecios : {    			
+    		storeHistoricoValoresPrecios : {    			
     			pageSize: $AC.getDefaultPageSize(),
 		    	proxy: {
 			        type: 'uxproxy',

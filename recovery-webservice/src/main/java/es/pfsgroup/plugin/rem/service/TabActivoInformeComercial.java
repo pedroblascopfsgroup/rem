@@ -137,7 +137,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				
 				DtoPrecioVigente dto = new DtoPrecioVigente();
 				dto.setImporte(activoInformeDto.getValorEstimadoVenta());
-				dto.setCodigoTipoPrecio(activoValoracionEstimadoVenta.getTipoPrecio().getCodigo());
+				dto.setCodigoTipoPrecio(DDTipoPrecio.CODIGO_TPC_ESTIMADO_VENTA);
 				dto.setFechaInicio(new Date());
 				
 				activoManager.saveActivoValoracion(activo, activoValoracionEstimadoVenta,dto);
@@ -151,7 +151,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				
 				DtoPrecioVigente dto = new DtoPrecioVigente();
 				dto.setImporte(activoInformeDto.getValorEstimadoRenta());
-				dto.setCodigoTipoPrecio(activoValoracionEstimadoRenta.getTipoPrecio().getCodigo());
+				dto.setCodigoTipoPrecio(DDTipoPrecio.CODIGO_TPC_ESTIMADO_RENTA);
 				dto.setFechaInicio(new Date());
 				
 				activoManager.saveActivoValoracion(activo, activoValoracionEstimadoRenta, dto);

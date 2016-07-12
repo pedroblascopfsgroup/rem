@@ -99,11 +99,13 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivo', {
 			    			xtype: 'valorespreciosactivo'		    			
 			    		},
 			    		{
-			    			xtype: 'tasacionesactivo'
+			    			xtype: 'tasacionesactivo',
+			    			ocultarBotonesEdicion: true
 			    		},
 			    		{
 			    			xtype: 'propuestaspreciosactivo',
-			    			title: HreRem.i18n('title.propuestas.precios')
+			    			title: HreRem.i18n('title.propuestas.precios'),
+			    			ocultarBotonesEdicion: true
 			    		}	    		
 			     ],
 			     evaluarBotonesEdicion: function(tab) {    	

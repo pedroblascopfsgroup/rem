@@ -365,7 +365,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								loadAfterBind: false,
 								flex		: 1,
 								bind		: {
-												store: '{historicoValoresPrecios}'
+												store: '{storeHistoricoValoresPrecios}'
 								},
 								columns		: {
 								items:[
@@ -426,7 +426,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						            inputItemWidth: 100,
 						            displayInfo: true,
 						            bind: {
-						                store: '{historicoValoresPrecios}'
+						                store: '{storeHistoricoValoresPrecios}'
 						            }
 						        }
 							]						 
@@ -443,7 +443,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
    	afterLoad: function() {
 		var me = this;
 		me.lookupController().getViewModel().get("storePreciosVigentes").load();
-		me.lookupController().getViewModel().get("storeHistoricoPresupuestos").load();
+		me.lookupController().getViewModel().get("storeHistoricoValoresPrecios").load();
 	},
    
    funcionRecargar: function() {

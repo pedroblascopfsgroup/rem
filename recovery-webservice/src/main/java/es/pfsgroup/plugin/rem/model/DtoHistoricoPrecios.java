@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.pfsgroup.commons.utils.Checks;
+
 public class DtoHistoricoPrecios {	
 	
 	private String tipo;
@@ -33,7 +35,9 @@ public class DtoHistoricoPrecios {
 		this.fechaCarga=historico.getFechaCarga();
 		this.fechaFin=historico.getFechaFin();
 		this.fechaInicio=historico.getFechaInicio();
-		this.gestor=historico.getGestor().getApellidoNombre();
+		if(!Checks.esNulo(historico.getGestor())) {
+			this.gestor=historico.getGestor().getApellidoNombre();
+		}
 		this.observaciones=historico.getObservaciones();		
 	}
 

@@ -10,6 +10,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<jsDebug>true</jsDebug>	
 	</properties>
 
 	<groupId>es.pfsgroup.plugin</groupId>
@@ -51,4 +52,14 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+		<id>rem-delivery</id>
+		<properties>
+			<jsDebug>false</jsDebug>				
+		</properties>
+	</profile>	
+	</profiles>
+	
+	
 </project>

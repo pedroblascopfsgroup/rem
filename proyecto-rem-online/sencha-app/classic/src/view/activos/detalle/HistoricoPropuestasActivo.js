@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.activos.detalle.PropuestasPreciosActivo', {
+Ext.define('HreRem.view.activo.detalle.HistoricoPropuestasActivo', {
     extend		: 'Ext.panel.Panel',
-    xtype		: 'propuestaspreciosactivo',
+    xtype		: 'historicopropuestasactivo',
     requires	: ['HreRem.view.precios.historico.HistoricoPropuestasSearch', 'HreRem.view.precios.historico.HistoricoPropuestasList'],
     layout: {
         type: 'vbox',
@@ -32,3 +32,4 @@ Ext.define('HreRem.view.activos.detalle.PropuestasPreciosActivo', {
 
 
 });
+

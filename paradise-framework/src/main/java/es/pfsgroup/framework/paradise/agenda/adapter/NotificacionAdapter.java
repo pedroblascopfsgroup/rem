@@ -16,6 +16,7 @@ import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -50,7 +51,8 @@ public class NotificacionAdapter {
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		Date fecha = null;
 		
-		fecha = formato.parse(notificacion.getStrFecha());
+		if(!Checks.esNulo(notificacion.getStrFecha()))
+			fecha = formato.parse(notificacion.getStrFecha());
 		
 		DtoCrearAnotacion serviceDto = new DtoCrearAnotacion();
 		List<String> listaDireccionesCc = new ArrayList<String>();

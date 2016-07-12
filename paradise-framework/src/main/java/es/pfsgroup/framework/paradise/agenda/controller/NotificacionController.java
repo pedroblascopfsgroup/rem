@@ -84,7 +84,8 @@ public class NotificacionController {
 			String[] value = entry.getValue();
 
 			if (key.equals("idActivo")) notificacion.setIdActivo(new Long(value[0]));
-			if (key.equals("destinatarioNotificacion")) notificacion.setDestinatario(new Long(value[0]));
+			//if (key.equals("destinatarioNotificacion")) notificacion.setDestinatario(new Long(value[0]));
+			if (key.equals("usuarioGestor")) notificacion.setDestinatario(new Long(value[0]));
 			if (key.equals("tituloNotificacion")) notificacion.setTitulo(value[0]);
 			if (key.equals("descripcionNotificacion")) notificacion.setDescripcion(value[0]);
 			if (key.equals("fechaNotificacion")) notificacion.setStrFecha(value[0]);

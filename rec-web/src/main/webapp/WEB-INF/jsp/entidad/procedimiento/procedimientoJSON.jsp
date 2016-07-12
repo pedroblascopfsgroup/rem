@@ -73,6 +73,13 @@
 		 </json:object>
 	      </json:array>
 	    </json:object>
+	    <c:if test="${procedimiento.motivoNoLitigar=='null'}">
+	    	<json:property name="motivoNoLitigar" value="" />
+	    </c:if>
+	    <c:if test="${procedimiento.motivoNoLitigar!='null'}">
+	  		<json:property name="motivoNoLitigar" value="${procedimiento.motivoNoLitigar.descripcion}" />
+	  	</c:if>
+	  	<json:property name="observacionesNoLitigar" value="${procedimiento.observacionesNoLitigar}" />
   </json:object>
   <json:object name="tareas">
     <json:property name="estadoItinerario" value="${procedimiento.asunto.estadoItinerario.descripcion}" />

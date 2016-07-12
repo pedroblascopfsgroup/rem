@@ -1584,4 +1584,10 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadoPublicacionByActivo(Long id, ModelMap model) {
+		model.put("data", activoApi.getEstadoPublicacionByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
 }

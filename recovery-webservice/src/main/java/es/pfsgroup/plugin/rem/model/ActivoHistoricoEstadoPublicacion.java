@@ -59,13 +59,16 @@ public class ActivoHistoricoEstadoPublicacion implements Serializable, Auditable
 	@Column(name = "HEP_FECHA_HASTA")
 	private Date fechaHasta;
 	
-	@Column(name = "DD_POR_ID")
+	@ManyToOne
+	@JoinColumn(name = "DD_POR_ID")
 	private DDPortal portal;
 	
-	@Column(name = "DD_TPU_ID")
+	@ManyToOne
+	@JoinColumn(name = "DD_TPU_ID")
 	private DDTipoPublicacion tipoPublicacion;
 	
-	@Column(name = "DD_EPU_ID")
+	@ManyToOne
+	@JoinColumn(name = "DD_EPU_ID")
 	private DDEstadoPublicacion estadoPublicacion;
 	
 	@Column(name = "HEP_MOTIVO")

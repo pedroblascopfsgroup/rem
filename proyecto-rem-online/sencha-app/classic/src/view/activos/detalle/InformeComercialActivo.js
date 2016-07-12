@@ -173,7 +173,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 										        	reference: 'subtipoActivoComboAdmisionInforme',
 										        	bind: {
-									            		store: '{comboSubtipoActivo}',
+									            		store: '{comboSubtipoActivoAdmisionIC}',
 									            		value: '{activoInforme.subtipoActivoCodigo}',
 									            		disabled: '{!activoInforme.tipoActivoCodigo}'
 									            	}
@@ -234,10 +234,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 								                {
 													xtype: 'comboboxfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-													reference: 'municipioComboAdmisionInforme',
-													selectFirst: true,
+													reference: 'municipioComboAdmisionInforme',													
 									            	bind: {
-									            		store: '{comboMunicipio}',
+									            		store: '{comboMunicipioAdmisionIC}',
 									            		value: '{activoInforme.municipioCodigo}',
 									            		disabled: '{!activoInforme.provinciaCodigo}'
 									            	}
@@ -322,7 +321,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 										        	reference: 'subtipoActivoComboMediadorInforme',
 										        	bind: {
-									            		store: '{comboSubtipoActivo}',
+									            		store: '{comboSubtipoActivoMediadorIC}',
 									            		value: '{informeComercial.subtipoActivoCodigo}',
 									            		disabled: '{!informeComercial.tipoActivoCodigo}'
 									            	}
@@ -382,15 +381,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 													xtype: 'comboboxfieldbase',
 													fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 													reference: 'municipioComboMediadorInforme',
-													selectFirst: true,
 									            	bind: {
-									            		store: '{comboMunicipio}',
+									            		store: '{comboMunicipioMediadorIC}',
 									            		value: '{informeComercial.municipioCodigo}',
 									            		disabled: '{!informeComercial.provinciaCodigo}'
-									            	},
-						    						listeners: {
-														select: 'onChangeChainedCombo'
-						    						}
+									            	}
 						    						//,allowBlank: false
 												},
 												{

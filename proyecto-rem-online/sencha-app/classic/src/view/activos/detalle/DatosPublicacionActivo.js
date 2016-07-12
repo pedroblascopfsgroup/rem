@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     disableValidation: true,
     records: ['activoCondicionantesDisponibilidad'], 
     recordsClass: ['HreRem.model.ActivoCondicionantesDisponibilidad'],    
-    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.CondicionEspecifica', 'HreRem.view.activos.detalle.HistoricoCondicionesList'],
+    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.CondicionEspecifica', 'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion'],
     
     listeners: {
     	boxready:'cargarTabData'

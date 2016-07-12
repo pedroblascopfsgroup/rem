@@ -636,6 +636,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				extraParams: {id: '{activo.id}'}
     			}
     		},
+    		
+    		historicoEstados:{
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.EstadoPublicacion',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getEstadoPublicacionByActivo',
+    				extraParams: {id: '{activo.id}'}
+    			}
+    		},
+    		
     		historicoValoresPrecios : {    			
     			pageSize: $AC.getDefaultPageSize(),
 		    	proxy: {

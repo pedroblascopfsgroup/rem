@@ -49,9 +49,9 @@ DECLARE
     	T_TIPO_TPO('CJ032','T. Costas contra Entidad - CJ','Trámite de Costas contra Entidad',null,'cj_tramiteCostasVsEntidad','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
     	T_TIPO_TPO('CJ106','T. de cesión de remate - CJ','T. de cesión de remate',null,'cj_tramiteCesionRemate','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
     	T_TIPO_TPO('CJ064','T. de consignación - CJ','Trámite de consignación',null,'cj_tramiteConsignacion','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','0'), 
-    	T_TIPO_TPO('CJ007','T. de costas - CJ','Trámite de costas',null,'cj_tramiteCostas','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1',0), 
-    	T_TIPO_TPO('CJ070','T. de subasta TERCEROS - CJ','Trámite de subasta terceros',null,'cj_tramiteSubastaTerceros','0','RECOVERY-2026','0','AP',null,null,8,'MEJTipoProcedimiento',1,0), 
-    	T_TIPO_TPO('CJ067','Trámite de Adjudicación - CJ','Trámite de Adjudicación',null,'cj_tramiteAdjudicacion','0','RECOVERY-2026','0','AP',null,null,1,'MEJTipoProcedimiento',1,1), 
+    	T_TIPO_TPO('CJ007','T. de costas - CJ','Trámite de costas',null,'cj_tramiteCostas','0','RECOVERY-2026','0','TR',null,null,'1','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ070','T. de subasta TERCEROS - CJ','Trámite de subasta terceros',null,'cj_tramiteSubastaTerceros','0','RECOVERY-2026','0','AP',null,null,'8','MEJTipoProcedimiento','1','0'), 
+    	T_TIPO_TPO('CJ067','Trámite de Adjudicación - CJ','Trámite de Adjudicación',null,'cj_tramiteAdjudicacion','0','RECOVERY-2026','0','AP',null,null,'1','MEJTipoProcedimiento','1','1'), 
     	); 
     V_TMP_TIPO_TPO T_TIPO_TPO;
 

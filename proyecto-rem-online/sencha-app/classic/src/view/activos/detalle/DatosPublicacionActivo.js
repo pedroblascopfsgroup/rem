@@ -206,7 +206,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultar')
 								        },
 								        {
-								        	xtype:'comboboxfieldbase',
+								        	xtype:'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
 								        }
 								        ]
@@ -221,7 +221,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultarprecio')
 								        },
 								        {
-								        	xtype:'comboboxfieldbase',
+								        	xtype:'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
 								        },
 								        {
@@ -240,7 +240,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.despublicar')
 								        },
 								        {
-								        	xtype:'comboboxfieldbase',
+								        	xtype:'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
 								        }
 								        ]
@@ -255,7 +255,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultar')
 								        },
 								        {
-								        	xtype:'comboboxfieldbase',
+								        	xtype:'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
 								        }
 								        ]

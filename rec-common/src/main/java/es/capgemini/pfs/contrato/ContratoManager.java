@@ -598,4 +598,16 @@ public class ContratoManager {
 		// Esta funcion esta sobreescrita en el plugin recovery-procedimiento-bmpHaya		
 		return null;
 	}
+	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_COMPRUEBA_TIPO_EXP)
+	public Boolean compruebaTipoExpediente(Long idContrato){
+		// Esta funcion esta sobreescrita en el plugin recovery-procedimiento-bmpHaya
+		return null;
+	}
+	
+	@BusinessOperation(PrimariaBusinessOperation.BO_CNT_MGR_COMPRUEBA_TIPO_ASUNTO)
+	public Boolean compruebaAsunto(Long idContrato){
+		// Esta funcion esta sobreescrita en el plugin recovery-procedimiento-bmpHaya
+		return null;
+	}
 }

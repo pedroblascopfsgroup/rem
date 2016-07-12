@@ -47,7 +47,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasManual', {
 						fieldLabel: HreRem.i18n('fieldlabel.tipo.propuesta'),
 						name: 'tipoPropuestaCodigo',
 		            	bind: {
-		            		store: '{comboTiposPopuesta}'
+		            		store: '{comboTiposPropuesta}'
 		            	}
 					}
 

@@ -1,5 +1,5 @@
 Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
-    extend: 'Ext.app.ViewModel',
+    extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.agrupaciones',
     
     requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Agrupaciones'],
@@ -32,15 +32,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 				extraParams: {diccionario: 'tipoAgrupacion'}
 	    	},
 	    	autoLoad: true
-    	},
-    	
-    	comboSiNoRem: {
-			data : [
-		        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
-		        {"codigo":"0", "descripcion":"No"}
-		    ]
-		}
-        
+    	}    	        
         
     }
     

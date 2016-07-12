@@ -34,13 +34,6 @@ Ext.define('HreRem.view.precios.PreciosModel', {
 		        }
 		        
     		},
-    		
-    		comboSiNoRem: {
-				data : [
-			        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
-			        {"codigo":"0", "descripcion":"No"}
-			    ]
-			},
 			
 			comboTipoTitulo: {
 				model: 'HreRem.model.ComboBase',
@@ -58,39 +51,6 @@ Ext.define('HreRem.view.precios.PreciosModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'subtiposTitulo'}
 				}
-    		},
-    		
-    		comboTiposComercializacion: {
-				data : [
-			        {"codigo":"01", "descripcion": "Alquiler"},
-			        {"codigo":"02", "descripcion": "Venta"},
-			        {"codigo":"03", "descripcion": "Ambos"}
-			    ]
-    		},
-    		
-    		comboEstadoInformeComercial: {
-				data : [
-			        {"codigo":"01", "descripcion": "Emitido"},
-			        {"codigo":"02", "descripcion": "Aprobado"}
-			    ]
-    		},
-    		
-    		comboTiposPopuesta: {
-    			data : [
-			        {"codigo":"01", "descripcion": "Preciar"},
-			        {"codigo":"02", "descripcion": "Repreciar"},
-			        {"codigo":"03", "descripcion": "De descuento"}
-			    ]
-    		},
-    		
-    		comboTiposFecha: {
-    			data : [
-			        {"codigo":"01", "descripcion": "Fecha de generacion"},
-			        {"codigo":"02", "descripcion": "Fecha de envio al propietario"},
-			        {"codigo":"03", "descripcion": "Fecha de sancion"},
-			        {"codigo":"04", "descripcion": "Fecha de carga"}
-			    ]
-    			
     		}
     }
 });

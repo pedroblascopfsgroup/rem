@@ -44,6 +44,7 @@ import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
+import es.capgemini.pfs.exceptions.PlazosTareasNoEncontradoException;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.PlazoTareaExternaPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -138,12 +139,12 @@ public class PROBaseActionHandler implements ActionHandler {
 
         } catch (FrameworkException e) {
             logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea [" + idTipoTarea + "].", e);
-            throw new UserException("bpm.error.script.plazoTarea");
+            throw new PlazosTareasNoEncontradoException();
 
         }
         catch (Exception e) {
             logger.error("Error en el script de consulta de plazo [" + script + "]. Procedimiento [" + idProcedimiento + "], tipoTarea [" + idTipoTarea + "].", e);
-            throw new UserException("bpm.error.script.plazoTareaJava");
+            throw new PlazosTareasNoEncontradoException();
 
         }
         return plazo;

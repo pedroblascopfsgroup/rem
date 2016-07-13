@@ -41,11 +41,11 @@ echo "Creando directorio para WSDL de SAREB y copiando ficheros ..."
 mkdir -p $BASE_DIR/sareb/wsdl
 cp -r wsdl/sareb/* $BASE_DIR/sareb/wsdl/
 if [[ $1 == 'pro' ]]; then
-    sed -e 's/HRE_SAREB_WS_DOC_IP/10.10.14.25/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_PERSONAS.wsdl
-    sed -e 's/HRE_SAREB_WS_DOC_IP/10.10.14.25/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_ACTIVOS.wsdl
+    sed -e 's/HRE_SAREB_WS_DOC_IP/10.126.128.132/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_PERSONAS.wsdl
+    sed -e 's/HRE_SAREB_WS_DOC_IP/10.126.128.132/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_ACTIVOS.wsdl
 else
-    sed -e 's/HRE_SAREB_WS_DOC_IP/10.10.25.196/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_PERSONAS.wsdl
-    sed -e 's/HRE_SAREB_WS_DOC_IP/10.10.25.196/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_ACTIVOS.wsdl
+    sed -e 's/HRE_SAREB_WS_DOC_IP/10.126.128.4/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_PERSONAS.wsdl
+    sed -e 's/HRE_SAREB_WS_DOC_IP/10.126.128.4/g' -i $BASE_DIR/sareb/wsdl/MAESTRO_ACTIVOS.wsdl
 fi
 
 echo "Creando directorio de plantillas y copiando ficheros ..."

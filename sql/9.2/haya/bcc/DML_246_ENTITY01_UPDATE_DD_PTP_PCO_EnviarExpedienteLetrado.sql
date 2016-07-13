@@ -39,8 +39,8 @@ BEGIN
     
 		V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS
 				SET DD_PTP_PLAZO_SCRIPT = ''
-				valores[''''PCO_EnviarExpedienteLetrado''''] != null && [''''PCO_EnviarExpedienteLetrado''''][''''fecha_envio''''] != null && [''''PCO_EnviarExpedienteLetrado''''][''''fecha_envio''''] != '''''''' ? damePlazo(valores[''''PCO_EnviarExpedienteLetrado''''][''''fecha_envio''''])+10*24*60*60*1000L : 10*24*60*60*1000L''
-				WHERE TAP_ID = 10000000004176';
+				valores[''''PCO_EnviarExpedienteLetrado''''] != null && valores[''''PCO_EnviarExpedienteLetrado''''][''''fecha_envio''''] != null && valores[''''PCO_EnviarExpedienteLetrado''''][''''fecha_envio''''] != '''''''' ? damePlazo(valores[''''PCO_EnviarExpedienteLetrado''''][''''fecha_envio''''])+10*24*60*60*1000L : 10*24*60*60*1000L''
+				WHERE TAP_ID = '|| VN_TAP_ID;
 		EXECUTE IMMEDIATE V_MSQL;
     
 		DBMS_OUTPUT.PUT_LINE('[INFO] Actulizado DD_PTP_PLAZOS_TAREAS_PLAZAS');

@@ -35,8 +35,9 @@ public class MSVDDEstadoProceso implements Serializable, Auditable {
 	public static final String CODIGO_INCOMPLETO 				= "INC";
 	
 	public static final String CODIGO_RECHAZADO				= "RCH";
-	
+
 	public static final String CODIGO_PAUSADO				= "PAU";
+	public static final String CODIGO_AVANZADO				= "AVA";
 	
 
 	/**

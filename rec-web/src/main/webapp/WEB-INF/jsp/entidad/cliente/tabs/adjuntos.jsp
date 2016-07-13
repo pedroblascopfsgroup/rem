@@ -306,7 +306,7 @@
 	
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_PERSONAS">subir, borrar, editarDescripcionAdjuntoPersona</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_PERSONAS">subir <sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar, editarDescripcionAdjuntoPersona</sec:authorize></sec:authorize>]
 		,height: 400
 		,collapsible:true
 		,width : 600
@@ -327,11 +327,6 @@
 			editarDescripcionAdjuntoPersona.enable();
 		}
 	});
-	
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
-		borrar.setVisible(false);
-		editarDescripcionAdjuntoPersona.setVisible(false);
-	</sec:authorize>
 	
 	panel.add(grid);
 	entidad.cacheStore(grid.getStore());

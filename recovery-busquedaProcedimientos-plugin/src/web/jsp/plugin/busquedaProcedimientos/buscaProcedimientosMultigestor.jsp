@@ -128,28 +128,26 @@
 	</c:if> recargarCombos = function(){
 		if (comboDespachos.getValue()!=''){
 			optionsGestoresStore.webflow({id:comboDespachos.getValue()});
-			comboGestor.enable();
-			comboTiposGestor.enable();
+			comboGestor.setDisabled(false);
+			//comboTiposGestor.setDisabled(false);
 		}else{
-			//comboSupervisor.setValue('');
 			optionsGestoresStore.removeAll();
 		}
 	}
 	
 	var bloquearCombos = function(){
-		comboGestor.disable();
-		//comboTiposGestor.disable();
+		comboGestor.setDisabled(true);
+		//comboTiposGestor.setDisabled(true);
 	}
 	
 	comboDespachos.on('focus',bloquearCombos);
 	
-	comboDespachos.on('change',recargarCombos);
+	comboDespachos.on('select',recargarCombos);
 	
 	bloquearCombos();
 	
 	var limpiarYRecargarGestores = function(){
 		app.resetCampos([comboGestor,comboTiposGestor]);
-		recargarComboZonas();
 	}
 	
 	comboDespachos.on('select',limpiarYRecargarGestores);
@@ -1056,11 +1054,11 @@
 		,activeItem:1
 	});
 		
-	<pfs:searchPage searchPanelTitle="**Búsqueda de Procedimientos"  
+	<pfs:searchPage searchPanelTitle="**Búsqueda de actuaciones"  
 			searchPanelTitleKey="plugin.busquedaProcedimientos.panel.title" 
 			columnModel="procedimientosCM" columns="1"
 			gridPanelTitleKey="plugin.busquedaProcedimientos.configuracion.menu" 
-			gridPanelTitle="**Procedimientos" 
+			gridPanelTitle="**Actuaciones" 
 			createTitleKey="plugin.busqudaProcedimientos.busqueda.grid.nuevo" 
 			createTitle="**Nada" 
 			createFlow="noSePuedeDesdeAqui" 

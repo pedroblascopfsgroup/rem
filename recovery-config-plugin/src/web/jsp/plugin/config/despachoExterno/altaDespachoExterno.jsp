@@ -220,8 +220,13 @@
 		//,labelSeparator:""
 		,fieldLabel:'<s:message code="plugin.config.despachoExternoExtras.field.codEstAse" text="**codEstAse" />'
 		,width:150
-		,value:'${despachoExtras.codEstAse}'
 	});
+	
+	var indexCodEstAseStore = codEstAseStore.findExact("descripcion",'${despachoExtras.codEstAse}');
+    var recordCodEstAseStore = codEstAseStore.getAt(indexCodEstAseStore);
+    if(!Ext.isEmpty(recordCodEstAseStore)) {
+          codEstAse.setValue(recordCodEstAseStore.get("codigo"));
+    }	
 	
 	var impuestoDict = <app:dict value="${impuestoDict}"/>;
 

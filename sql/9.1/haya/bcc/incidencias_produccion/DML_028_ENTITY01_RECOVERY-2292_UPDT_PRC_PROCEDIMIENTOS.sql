@@ -2,17 +2,18 @@
 --##########################################
 --## AUTOR=CLV
 --## FECHA_CREACION=20160706
---## ARTEFACTO=[online|batch]
---## VERSION_ARTEFACTO=X.X.X_rcXX
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=RECOVERY-2292
---## PRODUCTO=[SI|NO]
+--## PRODUCTO=NO
 --## 
---## Finalidad: 
---## INSTRUCCIONES:  
+--## Finalidad: RECOVERY-2292
+--## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 DECLARE

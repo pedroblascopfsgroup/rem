@@ -3,6 +3,7 @@ package es.capgemini.pfs.contrato.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.contrato.dao.AdjuntoContratoDao;
@@ -42,15 +43,15 @@ public class AdjuntoContratoDaoImpl extends AbstractEntityDao<AdjuntoContrato, L
 	@Override
 	public List<AdjuntoContrato> getAdjuntoContratoByIdNombreTipoDocumento(Long idContrato, String nombre, String tipoDocumento) {
 		StringBuffer hql = new StringBuffer();
-		hql.append(" select aa from AdjuntoContrato aa where aa.auditoria.borrado = false and aa.contrato.id = ");
-		hql.append(idContrato);
-		hql.append(" and aa.nombre like '");
-		hql.append(nombre);
-		hql.append("%'");
-		hql.append(" and aa.tipoAdjuntoEntidad.codigo = '");
-		hql.append(tipoDocumento);
-		hql.append("'");
-		return getSession().createQuery(hql.toString()).list();
+		hql.append(" select aa from AdjuntoContrato aa where aa.auditoria.borrado = false and aa.contrato.id = :idContrato");
+		hql.append(" and aa.nombre like :nombreDoc");
+		hql.append(" and aa.tipoAdjuntoEntidad.codigo = :tipoDoc");
+		
+		Query hqlQuery = getSession().createQuery(hql.toString());
+		hqlQuery.setLong("idContrato", idContrato);
+		hqlQuery.setString("nombreDoc", nombre + "%");
+		hqlQuery.setString("tipoDoc", tipoDocumento);
+		return hqlQuery.list();
 	}
 
 }

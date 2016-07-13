@@ -1958,7 +1958,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		EXTAsunto extAsunto = genericDao.get(EXTAsunto.class, filter);
 		return extAsunto;
 	}
-
+	@BusinessOperation(EXT_BO_GET_ASUNTO_BY_ID)
 	public EXTAsunto getAsuntoById(Long id) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		EXTAsunto extAsunto = genericDao.get(EXTAsunto.class, filter);

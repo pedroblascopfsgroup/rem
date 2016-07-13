@@ -1596,8 +1596,10 @@ FROM (
                    SELECT DISTINCT A.PRC_ID, B.BIE_ID
                    FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
                       , '||V_ESQUEMA||'.BIE_BIEN B
+                      , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
                    WHERE A.CD_BIEN IS NOT NULL 
                      AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
+                     AND A.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
                  UNION
                    SELECT DISTINCT D.PRC_ID, B.BIE_ID 
                    FROM '||V_ESQUEMA||'.BIE_BIEN B

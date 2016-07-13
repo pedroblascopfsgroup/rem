@@ -1138,6 +1138,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			params.put("maxSaldoTotalCnt", dto.getMaxSaldoTotalContratos());
 
 		}
+
 		if (requiereProcedimiento(dto) && requiereFiltrarPorPadreNulo(dto)) {
 			if (dto.getMaxImporteEstimado() == null) {
 				dto.setMaxImporteEstimado((double) Integer.MAX_VALUE);
@@ -1145,24 +1146,13 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			if (dto.getMinImporteEstimado() == null) {
 				dto.setMinImporteEstimado(0d);
 			}
+			// Filtrar por min y max del importe estimado del ultimo procedimiento del asunto.
+			hql.append(" and a.importeEstimado between :minImporteEst and :maxImporteEst ");
 
-			hql.append(" and a.id in ");
-			hql.append("(");
-			hql.append(" select distinct asu.id from Asunto asu, Procedimiento prc ");
-			hql.append(" where asu.auditoria.borrado = 0 and prc.auditoria.borrado = 0 ");
-			hql.append(" and asu.id = prc.asunto.id ");
-			hql.append(" and prc.procedimientoPadre is null ");
-			hql.append(" group by asu.id having ( ");
-			hql.append(" sum( abs(prc.saldoRecuperacion)) between :minImporteEst and :maxImporteEst )");
-
-			hql.append(")");
-
-			params.put("minImporteEst",
-					new BigDecimal(dto.getMinImporteEstimado()));
-			params.put("maxImporteEst",
-					new BigDecimal(dto.getMaxImporteEstimado()));
-
+			params.put("minImporteEst", new Double(dto.getMinImporteEstimado()));
+			params.put("maxImporteEst", new Double(dto.getMaxImporteEstimado()));
 		}
+
 		//Si se ha introducido algun dato de pestanya Letrados (DespachoExternoExtras)
 		if(requiereDespachoExtras(dto)) {
 			hql.append(" and a.id in ");
@@ -1170,7 +1160,7 @@ public class EXTAsuntoDaoImpl extends AbstractEntityDao<Asunto, Long> implements
 			hql.append(getIdsAsuntosByDespachoExtras(dto));
 			hql.append(")");
 		}
-		
+
 		params.put("hql", hql);
 
 		return params;

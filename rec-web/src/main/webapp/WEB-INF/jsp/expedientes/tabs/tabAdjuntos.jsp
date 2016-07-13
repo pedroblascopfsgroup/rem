@@ -121,7 +121,6 @@
 			recargarAdjuntos();
 		}
 	});
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
 
 	subir.on('click', function(){
 		var upload = new Ext.FormPanel({
@@ -340,7 +339,7 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [subir, borrar]
+		,bbar : [subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar</sec:authorize>]
 		,height: 180
 		,autoWidth: true
 		,collapsible:true

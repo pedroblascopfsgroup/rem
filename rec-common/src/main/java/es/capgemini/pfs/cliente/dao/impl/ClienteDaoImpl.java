@@ -166,8 +166,10 @@ public class ClienteDaoImpl extends AbstractEntityDao<Cliente, Long> implements 
      */
     @SuppressWarnings("unchecked")
     public Cliente findClienteByContratoPaseId(Long idContrato) {
-        String hql = "select ccl.cliente from ClienteContrato ccl " + " where ccl.pase=1 and ccl.contrato.id = " + idContrato + " and ccl.auditoria."
-                + Auditoria.UNDELETED_RESTICTION;
+    	//RECOVERY-15
+    	String hql = "select ccl.cliente from ClienteContrato ccl, Cliente cli " + " where ccl.pase=1 and ccl.contrato.id = "
+    			+ idContrato + " and ccl.cliente.id = cli.id and ccl.auditoria." + Auditoria.UNDELETED_RESTICTION + " and cli.auditoria." 
+    			+ Auditoria.UNDELETED_RESTICTION;
         List<Cliente> cliente = getHibernateTemplate().find(hql);
         if (cliente.size() == 0) {
             return null;

@@ -30,6 +30,7 @@ public class DocumentoPCODto {
 	private String plaza;
 	private String ejecutivo;
 	private String provinciaNotario;
+	private String localidadNotario;
 	
 	public Long getId() {
 		return id;
@@ -181,6 +182,12 @@ public class DocumentoPCODto {
 	}
 	public void setProvinciaNotario(String provinciaNotario) {
 		this.provinciaNotario = provinciaNotario;
+	}
+	public String getLocalidadNotario() {
+		return localidadNotario;
+	}
+	public void setLocalidadNotario(String localidadNotario) {
+		this.localidadNotario = localidadNotario;
 	}
 	
 }

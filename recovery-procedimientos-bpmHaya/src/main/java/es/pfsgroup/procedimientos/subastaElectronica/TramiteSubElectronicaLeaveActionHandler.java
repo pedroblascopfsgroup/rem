@@ -1,5 +1,6 @@
 package es.pfsgroup.procedimientos.subastaElectronica;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.persona.model.Persona;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -42,6 +44,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.api.AdjudicacionHandlerDelegateApi;
 import es.pfsgroup.plugin.recovery.coreextension.adjudicacion.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspensionElec;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEstadoSubasta;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubastaElec;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResolucionPagoTasa;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComite;
+import es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoComiteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.LoteSubasta;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -59,6 +67,8 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	
 	private final String SALIDA_ETIQUETA = "DecisionRama_%d";
 	private final String SALIDA_SI = "si";
 	private final String SALIDA_NO = "no";
@@ -87,7 +97,11 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 	@Autowired
 	TramitesElectronicosApi tramitesElectronicosApi;
-
+	
+	@Autowired
+	SubastaProcedimientoApi subastaProcedimientoApi;
+	
+	
 	@Override
 	protected void process(Object delegateTransitionClass, Object delegateSpecificClass,
 			ExecutionContext executionContext) {
@@ -99,14 +113,54 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 
 	private void personalizamosTramiteSubastaElectronica(ExecutionContext executionContext) {
 
+		Procedimiento prc = getProcedimiento(executionContext);
+		Subasta sub = subastaProcedimientoApi.obtenerSubastaByPrcId(prc.getId());
+		
 		if (executionContext.getNode().getName().contains("RevisarDocumentacion")) {
 			estableceContexto(executionContext);
 		} else if (executionContext.getNode().getName().contains("DictarInstruccionesSubastaYPagoTasa")) {
 			estableceNotificacion(executionContext);
+			cambiaEstadoSubasta(sub, DDEstadoSubasta.PAC);
 		} else if (executionContext.getNode().getName().contains("RegistrarResultadoSubasta")) {
 			personalizamosRegResSubasta(executionContext);
+			cambiaEstadoSubasta(sub, obtenerEstadoSiguiente(executionContext, "RegistrarResultadoSubasta", "comboDecision"));
 		} else if (executionContext.getNode().getName().contains("RegResulPresentacionEscrJuzgado")) {
 			personalizamosRegResEscJuzgado(executionContext);
+		} else if (executionContext.getNode().getName().contains("SolicitudSubasta")) {
+			duplicaInfoSubasta(executionContext, sub);
+		} else if (executionContext.getNode().getName().contains("DecretoConvocatoriaSubasta")) {
+			duplicaInfoSubasta(executionContext, sub);
+		} else if (executionContext.getNode().getName().contains("PrepararInformeSubasta")) {
+			cambiaEstadoSubasta(sub, DDEstadoSubasta.PPR);
+		} else if (executionContext.getNode().getName().contains("ValidarInformeSubasta")) {
+			cambiaEstadoSubasta(sub, DDEstadoSubasta.PCO);
+		} else if (executionContext.getNode().getName().contains("ConfirmarLecturaInstruccionesSubastaPagoTasa")) {
+			cambiaEstadoSubasta(sub, DDEstadoSubasta.PCE);
+		} else if (executionContext.getNode().getName().contains("PendienteConfirmacionPagoTasa")) {
+			if (!Checks.esNulo(sub)) {
+				TareaExterna tex = getTareaExterna(executionContext);
+				List<TareaExternaValor> listadoValores = tex.getValores();
+				for(TareaExternaValor val : listadoValores){
+					if("comboResolucionDefinitiva".equals(val.getNombre())){
+						if(DDResolucionPagoTasa.NO_PAGAR_TASA.equals(val.getValor())){
+							cambiaEstadoSubasta(sub, DDEstadoSubasta.CAN);
+						}
+					}
+				}
+			}
+		} else if (executionContext.getNode().getName().contains("RegistrarPublicacionSubastaBOE")){
+			duplicaInfoSubasta(executionContext, sub);
+			cambiaEstadoSubasta(sub, DDEstadoSubasta.EPU);
+		}  else if (executionContext.getNode().getName().contains("ObtenerValidacionComite")) {
+			if (!Checks.esNulo(sub)) {
+				TareaExterna tex = getTareaExterna(executionContext);
+				List<TareaExternaValor> listadoValores = tex.getValores();
+				for(TareaExternaValor val : listadoValores){
+					if("comboResultadoComite".equals(val.getNombre())){
+						actualizarRevisionSubasta(sub, val.getValor());
+					}
+				}
+			}
 		}
 
 	}
@@ -190,6 +244,7 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		Boolean comboSubastaBienes = false;
 		Boolean suspension = true;
 		String comboDetalle = "";
+		String comboSuspension = "";
 		
 		if (!Checks.esNulo(listado)) {
 			for (TareaExternaValor tev : listado) {
@@ -212,13 +267,21 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 					}else{
 						comboDetalle = "";
 					}
+				} else if ("comboMotivo".equals(tev.getNombre())) {
+					if(!Checks.esNulo(tev.getValor())){
+						comboSuspension = tev.getValor();
+					}else{
+						comboSuspension = "";
+					}
 				}
 			}
 		}
 
 		if(suspension){
-			//Si suspendemos no hacemos nada
-		}else{
+			
+			DDMotivoSuspSubastaElec resCom = genericDao.get(DDMotivoSuspSubastaElec.class, genericDao.createFilter(FilterType.EQUALS,"codigo", comboSuspension), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			sub.setMotivoSuspensionElec(resCom);
+		} else{
 			//Si no, continuamos
 			modificarYCrearDesdeSubasta(sub, comboSubastaBienes, comboPostores, comboDetalle);
 		}
@@ -265,7 +328,12 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 				}
 				else if ("comboResultado".equals(tev.getNombre())) {
 					comboResultado = new String(tev.getValor());
-				}
+				} 
+				else if ("comboRecurso".equals(tev.getNombre())) {
+					if (DDSiNo.NO.equals(tev.getValor())){
+						cambiaEstadoSubasta(sub, DDEstadoSubasta.CAN);
+					}
+				} 
 			}
 		}
 		if("FAVC".equals(comboResultado) || "FAV".equals(comboResultado)){
@@ -495,5 +563,82 @@ public class TramiteSubElectronicaLeaveActionHandler extends PROGenericLeaveActi
 		genericDao.save(TareaExterna.class, tex);
 
 	}
+	
+	private void duplicaInfoSubasta(ExecutionContext executionContext, Subasta sub) {
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
+		if (!Checks.esNulo(listado)) {
+			for (TareaExternaValor tev : listado) {
+				try {
+					if ("fechaNotificacionDecreto".equals(tev.getNombre())) {
+						sub.setFechaAnuncio(formatter.parse(tev.getValor()));
+					}
+					if ("fechaPublicacionBOE".equals(tev.getNombre())) {
+						sub.setFechaPublicacionBOE(formatter.parse(tev.getValor()));
+						sub.setTasacionElectronica(compruebaTasacionElectronica(formatter.parse(tev.getValor()),sub));
+					}
+					if ("fechaFinPeriodoPujas".equals(tev.getNombre())) {
+						sub.setFechaSenyalamiento(formatter.parse(tev.getValor()));
+					}
+					if ("fechaSolicitud".equals(tev.getNombre())) {
+						sub.setFechaSolicitud(formatter.parse(tev.getValor()));
+					}
+				} catch (Exception e) {
+					logger.error("duplicaInfoSubasta: "+e);
+				}
+			}
 
+		}
+	}
+	
+	private Boolean compruebaTasacionElectronica(Date fechaPubliBoe, Subasta sub) {
+		return subastaProcedimientoApi.compruebaTasacionElectronica(fechaPubliBoe,sub);
+	}
+
+	private void actualizarRevisionSubasta(Subasta sub, String resultado){
+		if(!Checks.esNulo(resultado)){
+			DDResultadoComiteSubasta resCom = genericDao.get(DDResultadoComiteSubasta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", resultado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+				sub.setResultadoComiteSub(resCom);
+		}
+	}
+
+	private void cambiaEstadoSubasta(Subasta sub, String estado) {
+		if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) != 0 ) {
+			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			sub.setEstadoSubasta(esu);
+		} else if(!Checks.esNulo(estado)){
+			DDEstadoSubasta esu = genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", estado), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			if (!Checks.esNulo(sub.getEstadoSubasta().getCodigo()) && DDEstadoSubasta.CEL.compareTo(sub.getEstadoSubasta().getCodigo()) == 0 && DDEstadoSubasta.CAN.equals(esu.getCodigo())){
+				sub.setEstadoSubasta(esu);
+			}
+		}
+	}
+
+	
+	private String obtenerEstadoSiguiente(ExecutionContext executionContext, String tarea, String campo) {
+
+		TareaExterna tex = getTareaExterna(executionContext);
+		List<EXTTareaExternaValor> listado = ((SubastaProcedimientoApi) proxyFactory.proxy(SubastaProcedimientoApi.class)).obtenerValoresTareaByTexId(tex.getId());
+		if (!Checks.esNulo(listado)) {
+			if (tarea.contains("RegistrarResultadoSubasta")) {
+				for (TareaExternaValor tev : listado) {
+					if (DDDecisionSuspensionElec.NO.equals(tev.getValor())) {
+						return DDEstadoSubasta.CEL;
+					} else if (DDDecisionSuspensionElec.ENTIDAD.equals(tev.getValor()) || DDDecisionSuspensionElec.TERCEROS.equals(tev.getValor())) {
+						return DDEstadoSubasta.SUS;
+					}
+				}
+			}
+			if (tarea.contains("ValidarInformeSubasta")) {
+				for (TareaExternaValor tev : listado) {
+					if (DDResultadoComite.ACEPTADA.equals(tev.getValor())) {
+						return DDEstadoSubasta.PAC;
+					} else if (DDResultadoComite.SUSPENDER.equals(tev.getValor())) {
+						return DDEstadoSubasta.SUS;
+					}
+				}
+			}
+		}
+		return null;
+	}
 }

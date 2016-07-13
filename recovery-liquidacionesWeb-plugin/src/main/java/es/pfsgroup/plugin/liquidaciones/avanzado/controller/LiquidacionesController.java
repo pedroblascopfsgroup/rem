@@ -1,8 +1,10 @@
 package es.pfsgroup.plugin.liquidaciones.avanzado.controller;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.servlet.ServletContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.pfs.asunto.dao.AsuntoDao;
+import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.liquidaciones.avanzado.dto.DtoCalculoLiquidacion;
@@ -43,6 +48,9 @@ public class LiquidacionesController {
 	
 	@Autowired
 	private ServletContext context;	
+	
+	@Autowired
+	private AsuntoDao asuntoDao;	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -128,6 +136,23 @@ public class LiquidacionesController {
 	 */
 	@RequestMapping
 	public String guardaCalculoLiquidacion(DtoCalculoLiquidacion dtoCalcLiq){
+		//Buscamos el primer procedimiento donde exista el contrato y lo seteamos en dtoCalcLiq
+		List<Procedimiento> procedimientos= asuntoDao.getProcedimientosOrderNroJuzgado(dtoCalcLiq.getAsunto());
+		List<ExpedienteContrato> contratosAsunto = new ArrayList<ExpedienteContrato>();
+		Long cnt;
+		for(int i=0;i<procedimientos.size();i++){
+			contratosAsunto=procedimientos.get(i).getExpedienteContratos();
+			for(int j=0;j<contratosAsunto.size();j++){
+				cnt=contratosAsunto.get(j).getContrato().getId();
+				if(dtoCalcLiq.getContrato().equals(cnt)){
+					dtoCalcLiq.setActuacion(procedimientos.get(i).getId());
+					break;
+				}
+			}	
+			if(!dtoCalcLiq.getActuacion().equals(null)){
+				break;
+			}
+		}
 		
 		CalculoLiquidacion calaLiq = liquidacionApi.convertDtoCalculoLiquidacionTOCalculoLiquidacion(dtoCalcLiq);
 		if(!Checks.esNulo(dtoCalcLiq.getTiposIntereses()) && dtoCalcLiq.getTiposIntereses().size()>0){

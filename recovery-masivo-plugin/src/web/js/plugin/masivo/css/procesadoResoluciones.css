@@ -10,11 +10,14 @@
 	background-image: url('../../../../img/plugin/masivo/estadosPrc/paralizado.png');
 	background-repeat:no-repeat;background-position:right;
 }
-    .lista_procesos_error {
+.lista_procesos_error {
     background-image: url('../../../../img/plugin/masivo/cancel.gif');
     background-repeat:no-repeat;background-position:right;
 }
-
+.lista_procesos_avanzado {
+    background-image: url('../../../../img/plugin/masivo/avanzado.png');
+    background-repeat:no-repeat;background-position:right;
+}
 .tipo_accion_INFO {
     background-image: url('../../../../img/plugin/masivo/Save_16x16.png');
     background-repeat:no-repeat;background-position:left;

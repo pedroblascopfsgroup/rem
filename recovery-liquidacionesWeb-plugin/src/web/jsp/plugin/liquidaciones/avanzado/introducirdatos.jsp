@@ -32,10 +32,11 @@
 		 dict="actuacionesAsunto" 
 		 labelKey="plugin.liquidaciones.introducirdatos.control.actuaciones"
 		 displayField="nombre" root="actuaciones" label="**Actuaciones" 
-		 value="" valueField="id" width="500" obligatory="true"/>
+		 value="" valueField="id" width="500" obligatory="false"/>
 	
+	actuaciones.setVisible(false);
 	<pfs:defineParameters name="pcontratos" paramId=""
-		idProcedimiento="actuaciones"
+		idAsunto="idAsunto"
 	/>
 	
 	<pfsforms:remotecombo 
@@ -51,36 +52,28 @@
 		width="500"
 		obligatory="true"
 		/>
-		
-
+		contratos.editable=false;
+	
 	<pfsforms:textfield name="nombrePersona" labelKey="plugin.liquidaciones.introducirdatos.control.nombre" label="**Nombre" value="" obligatory="true" width="500"/>
 	<pfsforms:textfield name="dni" labelKey="plugin.liquidaciones.introducirdatos.control.dni" label="**D.N.I." value="" obligatory="true"/>
 	
 	contratos_Store.on('load',function (){
 		if(isEdit.getValue()){
 			contratos.setValue("${dtoCalculoLiquidacion.contrato}");
-		}
-	});
-		 
-	actuaciones.on('select',function (){
-		contratos.reload(true);
-		<%--
-		Ext.Ajax.request({
-			url: page.resolveUrl('plugin.liquidaciones.getprocedimiento')
-			,params: {id: actuaciones.getValue()}
-			,method: 'POST'
-			,success: function (result, request){
-				var r = Ext.util.JSON.decode(result.responseText);
-				//principal.setValue(r.procedimiento.principal);
-				capital.setValue(r.procedimiento.capitalVencido+r.procedimiento.capitalNoVencido);
-		}});
-		 --%>
+		}	
 	});
 	
+	contratos.reload(true);	 
+	
+	<%--	 
+	actuaciones.on('select',function (){
+		contratos.reload(true);	 
+	});
+	 --%>
 	contratos.on('select',function (){
 		Ext.Ajax.request({
 			url: page.resolveUrl('plugin.liquidaciones.avanzado.getliquidacion')
-			,params: {id: contratos.getValue(), idProc: actuaciones.getValue()}
+			,params: {id: contratos.getValue(), idAsunto: idAsunto.getValue()}
 			,method: 'POST'
 			,success: function (result, request){
 				var r = Ext.util.JSON.decode(result.responseText);
@@ -504,6 +497,8 @@
 	if(isEdit.getValue()){
 		rellenarCampos();
 	}
+	
+	
 
 
 </fwk:page>

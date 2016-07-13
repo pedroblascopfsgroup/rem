@@ -884,7 +884,11 @@ onViewClick : function(doFocus){
 					break;
 				case 'Rechazado':
 					meta.css = 'lista_procesos_error';
-					break;
+					break;					
+				case 'Avanzado':
+					meta.css = 'lista_procesos_avanzado';
+					break;					
+					
 				default:
 					meta.css = null;
 					break;

@@ -173,7 +173,19 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		me.getView().fireEvent('abrirtareahistorico',record);
 	},
 	
-	
+	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
+		
+		var me = this;
+		var grid = tableView.up('grid');
+		var record = grid.store.getAt(indiceFila);
+		
+		grid.setSelection(record);
+		
+		//grid.fireEvent("abriractivo", record);
+		me.getView().fireEvent('abrirDetalleActivoPrincipal', record.get('numActivoRem'));
+		
+	}, 
+
 	solicitarAutoprorroga: function(button){
 		var me = this;
 		

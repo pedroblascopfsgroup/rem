@@ -86,7 +86,7 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 														layout: {
 															type : 'table',
 															width: '100%',
-															columns: 2,
+															columns: 3,
 															tdAttrs : {
 																style : {
 																	padding : '0 10 0 10'
@@ -108,6 +108,15 @@ Ext.define('HreRem.view.activos.tramites.CabeceraTramite', {
 											                		src: '{getSrcCartera}'
 											                	}
 											                },
+															{ 
+																xtype: 'imagefield',
+																fieldLabel: '',
+																cls: 'cabecera-info-field',
+																width: 40,
+																	bind: {
+																		src: '{getSrcMultiActivo}'
+																    }
+															},
 											                { 
 																fieldLabel: HreRem.i18n('fieldlabel.estado'),
 																bind:		'{tramite.estado}'

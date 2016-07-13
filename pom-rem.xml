@@ -558,13 +558,13 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
-				<module>../pfs-commons-java</module>
-				<module>../rec-encrypt</module>
-				<module>../proyecto-rem-online</module>
-				<module>../recovery-webservice</module>
-				<module>../paradise-framework</module>
-				<module>../recovery-gestordocumentalREM-plugin</module>	
-				<module>../rem-web</module>
+				<module>pfs-commons-java</module>
+				<module>rec-encrypt</module>
+				<module>proyecto-rem-online</module>
+				<module>recovery-webservice</module>
+				<module>paradise-framework</module>
+				<module>recovery-gestordocumentalREM-plugin</module>	
+				<module>rem-web</module>
 				<!--<module>rec-batch</module>-->
 			</modules>
 		</profile>

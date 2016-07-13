@@ -429,12 +429,18 @@
 			,valueField: 'id'
 			,displayField: 'username'
 			,fieldLabel : '<s:message code="bienesAdjudicacion.gestoriaAdjudicataria" text="**gestoriaAdjudicataria"/>'
-			,value : '${NMBbien.adjudicacion.gestoriaAdjudicataria.username}'
 			,labelStyle:labelStyle
 			,width: 150
 			,triggerAction : 'all'
 		});
 	
+	<c:if test="${NMBbien.adjudicacion.gestoriaAdjudicataria.id != null}" >
+		gestoriaAdjudicataria.getStore().on("load", function(store, items){
+	       gestoriaAdjudicataria.reset();
+			var code = ${NMBbien.adjudicacion.gestoriaAdjudicataria.id};
+	       gestoriaAdjudicataria.setValue(code);
+       	});
+	</c:if>
 	
 	// textos
 	var  nombreArrendatario = app.creaText('nombreArrendatario','<s:message code="bienesAdjudicacion.nombreArrendatario" text="**nombreArrendatario"/>','${NMBbien.adjudicacion.nombreArrendatario}', {labelStyle:labelStyle});

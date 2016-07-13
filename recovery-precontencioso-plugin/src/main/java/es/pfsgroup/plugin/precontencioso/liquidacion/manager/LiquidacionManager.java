@@ -14,6 +14,7 @@ import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.exception.FrameworkException;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.dao.ProcedimientoDao;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.contrato.dao.ContratoDao;
@@ -73,6 +74,9 @@ public class LiquidacionManager implements LiquidacionApi {
 	@Autowired
 	private ParametrizacionDao parametrizacionDao;
 	
+	@Autowired
+	private AsuntoDao asuntoDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
@@ -84,9 +88,17 @@ public class LiquidacionManager implements LiquidacionApi {
 	
 	@Override
 	@BusinessOperation("plugin.liquidaciones.liquidacionManager.getLiquidacionByCnt")
-	public LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idProc) {
-		ProcedimientoPCO prcPCO = genericDao.get(ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", idProc));
-		return liquidacionDao.getLiquidacionDelContrato(cntId, prcPCO.getId());
+	public LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idAsunto) {		
+		List<Procedimiento> procedimientos = asuntoDao.getProcedimientosOrderNroJuzgado(idAsunto);
+		LiquidacionPCO liquidacion=new LiquidacionPCO();
+		for(int i=0;i<procedimientos.size();i++){
+			List<ProcedimientoPCO> prcPCO = genericDao.getList(ProcedimientoPCO.class, genericDao.createFilter(FilterType.EQUALS, "procedimiento.id", procedimientos.get(i).getId()));
+			if(prcPCO.size()>0){
+				liquidacion= liquidacionDao.getLiquidacionDelContrato(cntId, prcPCO.get(0).getId());
+				break;
+			}
+		}		
+		return liquidacion;		
 	}
 
 	@Override

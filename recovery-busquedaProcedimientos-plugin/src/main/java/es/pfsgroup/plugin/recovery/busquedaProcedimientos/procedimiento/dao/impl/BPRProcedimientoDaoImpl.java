@@ -479,8 +479,8 @@ public class BPRProcedimientoDaoImpl extends
         hql.append("from Persona p ");
         hql.append("where p.auditoria.borrado = 0 ");
         
-        hql.append("and p.nom50 like '%|| :proDem ||%'");
-        params.put("proDem",query.toUpperCase());
+        hql.append("and upper(p.nom50) like '%'|| :nombreDeman ||'%'");
+        params.put("nombreDeman",query.toUpperCase());
         
 //        hql.append("and p.nom50 like '%" + query.toUpperCase() + "%' ");
         
@@ -491,6 +491,7 @@ public class BPRProcedimientoDaoImpl extends
         
         
         Query q = getSession().createQuery(hql.toString());
+        setParameters(q, params);
         q.setMaxResults(20);
 
         return q.list();
@@ -516,6 +517,16 @@ public class BPRProcedimientoDaoImpl extends
 		}
 
 		return false;
+	}
+	
+	private void setParameters(Query query, HashMap<String, Object> params) {
+		if (params == null) {
+			return;
+		}
+		for (String key : params.keySet()) {
+			Object param = params.get(key);
+			query.setParameter(key, param);
+		}
 	}
 	
 	

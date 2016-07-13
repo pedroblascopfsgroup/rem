@@ -299,7 +299,7 @@
 	editarDescripcionAdjuntoContrato.disable();
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_CONTRATOS">subir, borrar, editarDescripcionAdjuntoContrato</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_CONTRATOS">subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar, editarDescripcionAdjuntoContrato</sec:authorize></sec:authorize>]
 		,height: 448
 		,width : 600
 		,collapsible:true
@@ -319,11 +319,6 @@
 			editarDescripcionAdjuntoContrato.enable();
 		}
 	});	
-	
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
-		borrar.setVisible(false);
-		editarDescripcionAdjuntoContrato.setVisible(false);
-	</sec:authorize>
 	
 	panel.add(grid);
 	panel.getValue = function(){

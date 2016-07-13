@@ -516,7 +516,7 @@ public class coreextensionController {
 			final DTOTerminosExcel acuerdoExcel = new DTOTerminosExcel();
 			
 			if(!Checks.esNulo(acu)) {
-				acuerdoExcel.setIdAcuerdo(acu.getId().toString());
+				acuerdoExcel.setIdAcuerdo("'" + acu.getId().toString());
 				if(!Checks.esNulo(acu.getAsunto())) {
 					acuerdoExcel.setIdAsunto(acu.getAsunto().getId().toString()); 
 					acuerdoExcel.setNombreAsunto(acu.getAsunto().getNombre()); 

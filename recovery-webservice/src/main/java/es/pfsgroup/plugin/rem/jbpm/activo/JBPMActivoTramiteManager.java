@@ -101,11 +101,12 @@ public class JBPMActivoTramiteManager implements JBPMActivoTramiteManagerApi {
         return activoTramiteManagerApi.get(idTramite);
 	}
 
-	public ActivoTramite createActivoTramiteTrabajo(TipoProcedimiento tipoProcedimiento, Activo activo, Trabajo trabajo) {
+	public ActivoTramite createActivoTramiteTrabajo(TipoProcedimiento tipoProcedimiento, /*Activo activo, */Trabajo trabajo) {
 		
 		ActivoTramite activoTramite = new ActivoTramite();
 		
-		activoTramite.setActivo(activo);
+		//Cuando es un trámite que se crea a partir de un trabajo, no se rellenaría el activo, sino que se cogería del trabajo
+		/*activoTramite.setActivo(activo);*/
 		activoTramite.setTramitePadre(null);
 		activoTramite.setTipoActuacion(tipoProcedimiento.getTipoActuacion());
 		activoTramite.setTipoTramite(tipoProcedimiento);

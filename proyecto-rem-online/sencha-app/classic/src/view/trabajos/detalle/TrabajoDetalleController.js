@@ -207,9 +207,12 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		form = window.down("form"),
 		idAgrupacion = window.idAgrupacion,
 		idActivo = window.idActivo;
+		
+		idProceso = window.idProceso;
 
 		form.getBindRecord().set("idActivo", idActivo);
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);
+		form.getBindRecord().set("idProceso", idProceso);
 		var success = function(record, operation) {
 			me.getView().unmask();
 	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -632,6 +635,32 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 
 		//En este caso, actualizar
 		me.onSaveFormularioCompleto(form, success);
-    }
-	
+    },
+    
+     onClickUploadListaActivos: function(btn) {
+       	var me = this,
+       	form = me.getView().lookupReference("formSubirListaActivos");
+       	
+       	var params = form.getValues(false,false,false,true);
+       	params.idTipoOperacion = "141";
+       	
+       	if(form.isValid()){
+        	form.submit({
+        		waitMsg: HreRem.i18n('msg.mask.loading'),
+        		params: params,
+    	   		success: function(fp, o){
+    	   			idProceso = Ext.JSON.decode(o.response.responseText).idProceso;
+    	   			
+    	   			//btn.up('creartrabajowindow').getViewModel().getData().trabajo.getData().idProceso = idProceso;
+    	   			//btn.up('creartrabajowindow').lookupReference('')form.getBindRecord().set("idActivo", idActivo);
+    	   			var window = btn.up('creartrabajowindow');
+    	   			window.idProceso = idProceso;
+    	   			window.lookupReference('listaActivosSubidaRef').getStore().getProxy().setExtraParams({'idProceso':idProceso});
+    	   			window.lookupReference('listaActivosSubidaRef').getStore().load();    	   	    	
+    		    		}
+    	
+    				
+    		    })
+    	    }
+    	
 });

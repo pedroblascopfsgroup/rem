@@ -293,5 +293,20 @@ public class MSVProcesoManager implements MSVProcesoApi {
 	@BusinessOperation(MSV_BO_GETBYTOKEN)
 	public MSVProcesoMasivo getByToken(Long tokenProceso) {
 		return procesoDao.getByToken(tokenProceso);		
+	}
+		
+	/**
+	* Devuelve el Documento Masivo a partir de un id de proceso
+	* @param idProcess
+	* @return MSVDocumentoMasivo
+	*/
+	public MSVDocumentoMasivo getMSVDocumento(Long idProcess){
+		return ficheroDao.findByIdProceso(idProcess);
+	}
+	
+	public MSVProcesoMasivo get(Long idProcess){
+		return procesoDao.get(idProcess);
 	}	
+	
+	
 }	

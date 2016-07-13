@@ -92,5 +92,11 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		me.fireEvent("downloadFile", config);		
     	
     	
-    }
+		},
+		    
+		onClickCrearTrabajo: function (btn) {
+		  	var me = this;
+		   	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: null});
+		 	    	
+		}
 });

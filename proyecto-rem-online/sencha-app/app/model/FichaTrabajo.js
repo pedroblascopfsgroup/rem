@@ -187,6 +187,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'nombreMediador'
+    		},
+    		{
+    			name: 'idProceso'
     		}
     ],
     

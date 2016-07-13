@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.ActivosSearch', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'activossearch',
-    isSearchForm : true,
+    isSearchFormActivos : true,
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,

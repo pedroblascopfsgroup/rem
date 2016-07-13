@@ -32,7 +32,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	// CODIGO POR TIPOS DE PROCESIMIENTOS MASIVO
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED="AGAR";
 	public static final String CODE_FILE_BULKUPLOAD_NEW_BUILDING="AGAN";
-	
+	public static final String CODE_FILE_BULKUPLOAD_LISTAACTIVOS="LACT";
 	
 	private static final long serialVersionUID = 5938440720826995243L;
 

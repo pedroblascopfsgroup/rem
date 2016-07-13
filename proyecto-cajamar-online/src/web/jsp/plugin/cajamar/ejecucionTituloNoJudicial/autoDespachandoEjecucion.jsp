@@ -5,14 +5,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
 <fwk:page>
-
 array = [];
 array['uno']=1;
 array['dos']=2;
 array['tres']=3;
 var tipo_wf='${tipoWf}'
-
-var puedeGuardar=0;
 
 <%@ include file="/WEB-INF/jsp/plugin/cajamar/elementos.jsp" %>
 
@@ -29,13 +26,18 @@ var muestraBotonGuardar = 0;
 	}
 </c:if>
 
-
-var codPlaza = '';
+var codPlazaEnBD = '';
+var juzgadoAsignado = '';
 <c:forEach items="${form.items}" var="item">
 	values = <app:dict value="${item.values}" />;
-	<c:if test="${((item.nombre=='plazaJuzgado')||(item.nombre=='comboPlaza')||(item.nombre=='nPlaza'))}">
+	<c:if test="${item.nombre=='numJuzgado'}">
 		<c:if test="${item.value!=null}">
-			codPlaza='${item.value}';
+			juzgadoAsignado = '${item.value}';
+		</c:if>
+	</c:if>
+	<c:if test="${item.nombre=='comboPlaza'}">
+		<c:if test="${item.value!=null}">
+			codPlazaEnBD='${item.value}';
 		</c:if>	
 	</c:if>
 	items.push(creaElemento('${item.nombre}','${item.order}','${item.type}', '<s:message text="${item.label}" javaScriptEscape="true" />', '<s:message text="${item.value}" javaScriptEscape="true" />', values));
@@ -43,13 +45,12 @@ var codPlaza = '';
 
 var bottomBar = [];
 
-//mostramos el botón guardar cuando la tarea no está terminada y cuando no hay errores de validacion
+//mostramos el botï¿½n guardar cuando la tarea no estï¿½ terminada y cuando no hay errores de validacion
 <c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
-			if(puedeGuardar==1){
 			page.submit({
 				eventName : 'ok'
 				,formPanel : panelEdicion
@@ -58,19 +59,10 @@ var bottomBar = [];
 							anyadirFechaFaltante(response);
 						}
 			});
-			}
-			else{
-				Ext.MessageBox.show({
-			           title: 'Error',
-			           msg: '<s:message code="plugin.mejoras.asunto.ErrorPlaza" text="**Error plaza" />',
-			           width:300,
-			           buttons: Ext.MessageBox.OK
-			       });
-			}
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)
 	{
 		bottomBar.push(btnGuardar);
@@ -78,39 +70,29 @@ var bottomBar = [];
 	muestraBotonGuardar = 0;
 </c:if>
 
-
 if (muestraBotonGuardar==1){
 	var btnGuardar = new Ext.Button({
 		text : '<s:message code="app.guardar" text="**Guardar" />'
 		,iconCls : 'icon_ok'
 		,handler : function(){
 			//page.fireEvent(app.event.DONE);
-			if(puedeGuardar==1){
-				page.submit({
-					eventName : 'ok'
-					,formPanel : panelEdicion
-					,success : function(){ page.fireEvent(app.event.DONE); }
-					,error : function(response,config){ 
-								anyadirFechaFaltante(response);
-							}
-				});
-			}
-			else{
-				Ext.MessageBox.show({
-			           title: 'Error',
-			           msg: '<s:message code="plugin.mejoras.asunto.ErrorPlaza" text="**Error plaza" />',
-			           width:300,
-			           buttons: Ext.MessageBox.OK
-			       });
-			}
+			page.submit({
+				eventName : 'ok'
+				,formPanel : panelEdicion
+				,success : function(){ page.fireEvent(app.event.DONE); }
+				,error : function(response,config){ 
+							anyadirFechaFaltante(response);
+						}
+			});
 		}
 	});
 	
-	//Si tiene más items que el propio label de descripción se crea el botón guardar
+	//Si tiene mï¿½s items que el propio label de descripciï¿½n se crea el botï¿½n guardar
 	if (items.length > 1)	{
 		bottomBar.push(btnGuardar);
 	}
 }
+
 
 var btnCancelar= new Ext.Button({
 	text : '<s:message code="app.cancelar" text="**Cancelar" />'
@@ -198,94 +180,130 @@ var anyadirFechaFaltante = function(response){
 							
 }
 
-
 // *************************************************************** //
-// ***  AÑADIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
+// ***  Aï¿½Aï¿½DIMOS LAS FUNCIONALIDADES EXTRA DE ESTE FORMULARIO  *** //
 // *************************************************************** //
-
-var decenaInicio = 0;
-
-var dsplazas = new Ext.data.Store({
-	autoLoad: false,
-	baseParams: {limit:10, start:0},
-	proxy: new Ext.data.HttpProxy({
-		url: page.resolveUrl('plugin/procedimientos/plazasDeJuzgados')
-	}),
-	reader: new Ext.data.JsonReader({
-		root: 'plazas'
-		,totalProperty: 'total'
-	}, [
-		{name: 'codigo', mapping: 'codigo'},
-		{name: 'descripcion', mapping: 'descripcion'}
-	])
-});
-
-var comboPlaza = new Ext.form.ComboBox ({
-	store:  dsplazas,
-	displayField: items[2 + offset].displayField, 	// descripcion
-	valueField: items[2 + offset].valueField, 		// codigo
-	fieldLabel: items[2 + offset].fieldLabel,		// Pla de juzgado
-	hiddenName: 'values[2]',
-	typeAhead: false,
-	loadingText: 'Searching...',
-	width: 300,
-	resizable: true,
-	pageSize: 10,
-	triggerAction: 'all',
-	mode: 'local',
-	disabled: isDisable
-});	
-
-Ext.onReady(function() {
-	decenaInicio = 0;
-	if (codPlaza!=''){
-		Ext.Ajax.request({
-				url: page.resolveUrl('plugin/procedimientos/paginaDePlaza')
-				,params: {codigo: codPlaza}
-				,method: 'POST'
-				,success: function (result, request){
-					var r = Ext.util.JSON.decode(result.responseText)
-					decenaInicio = (r.paginaParaPlaza);
-					dsplazas.baseParams.start = decenaInicio;	
-					comboPlaza.store.reload();
-					dsplazas.on('load', function(){  
-						comboPlaza.setValue(codPlaza);
-						dsplazas.events['load'].clearListeners();
-					});
-				}				
-		});
-	}
-});
-
-<c:if test="${form.tareaExterna.tareaPadre.fechaFin==null && form.errorValidacion==null && !readOnly}">
-btnGuardar.on('click', function(){
-	// Añadir el patron para validar el codigo de la plaza
-	if(/^([0-9])*$/.test(comboPlaza.getValue()) || comboPlaza.getValue().indexOf("-")==2 || comboPlaza.getValue()=="HAMBURGO" || comboPlaza.getValue()=="MONZA (ITALIA)"){
-		puedeGuardar=1;
-	}
-});
-</c:if>
-
-if (muestraBotonGuardar==1){
-	btnGuardar.on('click', function(){
-		// Añadir el patron para validar el codigo de la plaza
-		if(/^([0-9])*$/.test(comboPlaza.getValue()) || comboPlaza.getValue().indexOf("-")==2 || comboPlaza.getValue()=="HAMBURGO" || comboPlaza.getValue()=="MONZA (ITALIA)"){
-			puedeGuardar=1;
+	
+	// combo plaza de juzgado ------------------------------------------
+	
+	var codPlaza = "${valores['H020_InterposicionDemandaMasBienes']['nPlaza']}";
+	var decenaInicio = 0;
+	var dsplazas = new Ext.data.Store({
+		autoLoad: false,
+		baseParams: {limit:10, start:0},
+		proxy: new Ext.data.HttpProxy({
+			url: page.resolveUrl('plugin/procedimientos/plazasDeJuzgados')
+		}),
+		reader: new Ext.data.JsonReader({
+			root: 'plazas'
+			,totalProperty: 'total'
+		}, [
+			{name: 'codigo', mapping: 'codigo'},
+			{name: 'descripcion', mapping: 'descripcion'}
+		])
+	});
+	var comboPlaza = new Ext.form.ComboBox ({
+		store:  dsplazas,
+		displayField: items[2 + offset].displayField, 	// descripcion
+		valueField: items[2 + offset].valueField, 		// codigo
+		fieldLabel: items[2 + offset].fieldLabel,		// Pla de juzgado
+		hiddenName: 'values[2]',
+		typeAhead: false,
+		loadingText: 'Searching...',
+		width: 300,
+		resizable: true,
+		pageSize: 10,
+		triggerAction: 'all',
+		mode: 'local'
+	});	
+	Ext.onReady(function() {
+		decenaInicio = 0;
+		if (codPlaza!=''){
+			Ext.Ajax.request({
+					url: page.resolveUrl('plugin/procedimientos/paginaDePlaza')
+					,params: {codigo: codPlaza}
+					,method: 'POST'
+					,success: function (result, request){
+						var r = Ext.util.JSON.decode(result.responseText)
+						decenaInicio = (r.paginaParaPlaza);
+						dsplazas.baseParams.start = decenaInicio;	
+						comboPlaza.store.reload();
+						dsplazas.on('load', function(){  
+							comboPlaza.setValue(codPlaza);
+							dsplazas.events['load'].clearListeners();
+						});
+					}				
+			});
 		}
 	});
-}
+	comboPlaza.on('afterrender', function(combo) {
+		combo.mode='remote';
+	});
+	if(codPlaza!=''){
+		comboPlaza.setDisabled(true);
+	}
+	
+	comboPlaza.on('select', function(){
+		comboJuzgado.setDisabled(false);	
+		recargarComboJuzgados();
+	});
+	
+	items[2 + offset] = comboPlaza;
 
+	// combo juzgado ------------------------------------------
+	
+	var Juzgado = Ext.data.Record.create([
+		 {name:'codigo'}
+		,{name:'descripcion'}
+	]);
+	
+	var juzgadosStore = page.getStore({
+		flow: 'bpm/buscarJuzgados'
+		,reader: new Ext.data.JsonReader({root : 'juzgados'} , Juzgado)
+	});
+	
+	var comboJuzgado = new Ext.form.ComboBox({
+		store: juzgadosStore
+		,hiddenName: items[3 + offset].hiddenName
+		,displayField: items[3 + offset].displayField
+		,valueField: items[3 + offset].valueField
+		,mode: items[3 + offset].mode
+		,editable: items[3 + offset].editable
+		,emptyText:''
+		,triggerAction: 'all'
+		,resizable: true
+		,width: 300
+		,fieldLabel : items[3 + offset].fieldLabel
+	});
+	
+	var recargarComboJuzgados = function(){
+		comboJuzgado.store.removeAll();
+		comboJuzgado.clearValue();
+		if (comboPlaza.getValue()!=null && comboPlaza.getValue()!=''){
+			comboJuzgado.store.webflow({id:comboPlaza.getValue()});
+		}
+	}
+	
+	Ext.onReady(function() {
+		comboJuzgado.store.baseParams.id = codPlaza;
+		comboJuzgado.store.reload();
+		if (juzgadoAsignado!='' && juzgadoAsignado!='0'){
+			comboJuzgado.store.on('load', function(){  
+				comboJuzgado.setValue(juzgadoAsignado);
+				comboJuzgado.store.events['load'].clearListeners();
+			});
+		}
 
-
-comboPlaza.on('afterrender', function(combo) {
-	combo.mode='remote';
-});
-items[2 + offset] = comboPlaza;
+	});
+	
+	items[3 + offset] = comboJuzgado;
+	
+	// fin combo juzgado ---------------------------------------
 
 var panelEdicion=new Ext.form.FormPanel({
 	autoHeight:true
-	,width:700
 	,bodyStyle:'padding:10px;cellspacing:20px'
+	//,xtype:'fieldset'
 	,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 	,items:[
 		{ xtype : 'errorList', id:'errorList' }
@@ -294,18 +312,19 @@ var panelEdicion=new Ext.form.FormPanel({
 			,layout:'table'
 			,layoutConfig:{columns:1}
 			,border:false
+			//,bodyStyle:'padding:5px;cellspacing:20px;'
 			,defaults : {xtype:'panel' ,cellCls : 'vtop',border:false}
 			,items:[{
 					layout:'form'
 					,bodyStyle:'padding:5px;cellspacing:10px'
 					,autoHeight:true
 					,items:items
+					//,columnWidth:.5
 				}
 			]
 		}
 	]
 	,bbar:bottomBar
 });
-
 page.add(panelEdicion);
 </fwk:page>

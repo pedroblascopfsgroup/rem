@@ -49,38 +49,6 @@
 	    </snapshotRepository>
 	</distributionManagement>
 
-	<repositories>
-<!--
-		<repository>
-			<id>pfsrepo</id>
-			<url>http://interecovery.pfsgroup.es:8086</url>
-		</repository>º
--->
-		<repository>
-			<id>thirdparty</id>
-			<url>http://192.168.31.16:8081/nexus/content/repositories/thirdparty</url>
-			<!--<mirrorOf>*</mirrorOf>-->
-		</repository>
-		<repository>
-			<id>pfsNexusFramework</id>
-			<url> http://nexus.pfsgroup.es/nexus/content/repositories/framework</url>
-		</repository>
-		<repository>
-			<id>Framework</id>
-			<url>http://192.168.31.16:8081/nexus/content/repositories/Framework</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.release</id>
-			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-		</repository>
-	</repositories>
-
 	<dependencyManagement>
 		<dependencies>
 			<!-- DEVON -->

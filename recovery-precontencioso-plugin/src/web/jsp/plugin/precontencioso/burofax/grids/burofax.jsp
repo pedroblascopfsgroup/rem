@@ -1205,6 +1205,7 @@ var pdfRender = function(value, meta, record) {
 		
 		if (diferentesDirecciones()) {
 			btnEditarVerDireccion.setDisabled(true);
+			btnNuevaDir.setDisabled(true);
 		}
 	}
 	
@@ -1501,11 +1502,14 @@ var pdfRender = function(value, meta, record) {
 	
 	var validarBotonNuevaDirHabilitado = function() {
 		var arrayIdClientes=new Array();
-			 
+		
 		rowsSelected=gridBurofax.getSelectionModel().getSelections(); 
 			
 		for (var i=0; i < rowsSelected.length; i++){
-		  arrayIdClientes.push(rowsSelected[i].get('idBurofax'));
+			if(rowsSelected[i].get('cliente')==""){
+			return false;
+			}
+			arrayIdClientes.push(rowsSelected[i].get('idBurofax'));  
 		}
 		
 		uniqueArray = arrayIdClientes.filter(function(item, pos) {

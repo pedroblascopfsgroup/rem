@@ -93,9 +93,10 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 	@Override
 	public List<Usuario> getUsuariosNoExternos(Long idEntidad) {
 		Assertions.assertNotNull(idEntidad, "idEntidad: no puede ser NULL");
-		HQLBuilder hb = new HQLBuilder("select u from Usuario u");
+		HQLBuilder hb = new HQLBuilder("select u from Usuario u left join u.usuEntidad ue");
 		hb.appendWhere("u.auditoria.borrado=false");
-		HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		//HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		hb.appendWhere("(u.entidad.id=" +  idEntidad + " or ue.entidad.id=" + idEntidad + ")");
 		HQLBuilder.addFiltroIgualQue(hb, "u.usuarioExterno", Boolean.FALSE);
 		List <Usuario> l = getHibernateTemplate().findByNamedParam(
 				hb.toString(), hb.getParamNames(), hb.getParamValues());
@@ -106,9 +107,10 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 	@Override
 	public List<Usuario> getUsuariosExternos(Long idEntidad) {
 		Assertions.assertNotNull(idEntidad, "idEntidad: no puede ser NULL");
-		HQLBuilder hb = new HQLBuilder("select u from Usuario u");
+		HQLBuilder hb = new HQLBuilder("select u from Usuario u left join u.usuEntidad ue");
 		hb.appendWhere("u.auditoria.borrado=false");
-		HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		//HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		hb.appendWhere("(u.entidad.id=" +  idEntidad + " or ue.entidad.id=" + idEntidad + ")");
 		HQLBuilder.addFiltroIgualQue(hb, "u.usuarioExterno", Boolean.TRUE);
 		List <Usuario> l = getHibernateTemplate().findByNamedParam(
 				hb.toString(), hb.getParamNames(), hb.getParamValues());
@@ -123,9 +125,10 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 	@Override
 	public List<Usuario> getListByEntidad(Long idEntidad) {
 		Assertions.assertNotNull(idEntidad, "idEntidad: no puede ser NULL");
-		HQLBuilder hb = new HQLBuilder("select u from Usuario u");
+		HQLBuilder hb = new HQLBuilder("select u from Usuario u left join u.usuEntidad ue");
 		hb.appendWhere("u.auditoria.borrado=false");
-		HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		//HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		hb.appendWhere("(u.entidad.id=" +  idEntidad + " or ue.entidad.id=" + idEntidad + ")");
 		return HibernateQueryUtils.list(this, hb);
 	}
 
@@ -133,10 +136,11 @@ public class ADMUsuarioDaoImpl extends AbstractEntityDao<Usuario, Long>
 	public Usuario getByEntidad(Long idUsuario, Long idEntidad) {
 		Assertions.assertNotNull(idUsuario, "idUsuario: no puede ser NULL");
 		Assertions.assertNotNull(idEntidad, "idEntidad: no puede ser NULL");
-		HQLBuilder hb = new HQLBuilder("from Usuario u");
-		hb.appendWhere(Auditoria.UNDELETED_RESTICTION);
+		HQLBuilder hb = new HQLBuilder("select u from Usuario u left join u.usuEntidad ue");
+		hb.appendWhere("u.auditoria.borrado=false and ue.auditoria.borrado=false");
 		HQLBuilder.addFiltroIgualQue(hb, "u.id", idUsuario);
-		HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		//HQLBuilder.addFiltroIgualQue(hb, "u.entidad.id", idEntidad);
+		hb.appendWhere("(u.entidad.id=" +  idEntidad + " or ue.entidad.id=" + idEntidad + ")");
 		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
 

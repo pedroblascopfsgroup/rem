@@ -235,8 +235,9 @@
 			w.on(app.event.DONE,
 					function(){
 						w.close();
-						asuntosStore.webflow({id:entidad.getData("id"), idSesion:entidad.getData("decision.ultimaSesion")});
-						cantidadAsuntos = asuntosStore.getCount();
+						contratosStore.webflow({id:entidad.getData('id')});
+						asuntosStore.webflow({id:entidad.getData('id'), idSesion:entidad.getData('decision.ultimaSesion')});
+						contratosActuacionesStore.webflow({idExpediente:entidad.getData("id")});						
 					}
 			);			    	
 	          }else{

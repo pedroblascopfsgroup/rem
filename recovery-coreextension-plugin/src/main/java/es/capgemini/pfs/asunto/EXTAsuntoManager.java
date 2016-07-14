@@ -1163,75 +1163,82 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoAsunto.getIdAsunto());
 		
+		if (!Checks.esNulo(asu)) {
 		//Ahora insertamos los enviados
-		for (Map<String,Long> gestorAdicional : dtoAsunto.getListaMapGestoresId()) {
-			EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
-			gaa.setAsunto(asu);
-			
-			EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
-			gaa.setTipoGestor(tipoGestor);
-			
-			GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
-																		, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
-			gaa.setGestor(gestor);
-			
-			List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
-			
-
-			
-			EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
-			gaah.setGestor(gaa.getGestor());
-			gaah.setAuditoria(Auditoria.getNewInstance());
-			gaah.setAsunto(gaa.getAsunto());
-			gaah.setTipoGestor(gaa.getTipoGestor());
-			gaah.setFechaDesde(new Date());
-			
-			Boolean existe= false;
-			Boolean existeConFechaHasta= false;
-			Boolean existeConFechaHastaVacio= false;
-			List<String> gestoresBorrados= new ArrayList<String>();
-			if (!Checks.esNulo(dtoAsunto.getIdGestorBorrado())) {
-				gestoresBorrados = Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
-			}
-			List<String> tipogestoresBorrados= new ArrayList<String>();
-			if (!Checks.esNulo(dtoAsunto.getIdTipoGestorBorrado())) {
-					tipogestoresBorrados = Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
-			}
-			for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+			for (Map<String,Long> gestorAdicional : dtoAsunto.getListaMapGestoresId()) {
+				EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
+				gaa.setAsunto(asu);
 				
-				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
-					existe= true;
-					if(ges.getFechaHasta()!=null){
-						existeConFechaHasta= true;
-					}
-					if(ges.getFechaHasta()==null){
-						existeConFechaHastaVacio= true;
-					}
-				}
-				
-				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
-					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
+				if (!Checks.esNulo(tipoGestor)) {
+					gaa.setTipoGestor(tipoGestor);
 					
+					GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
+																				, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
+					
+					if (!Checks.esNulo(gestor)) {
+						gaa.setGestor(gestor);
+						
+						List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
+						
+			
+						
+						EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
+						gaah.setGestor(gaa.getGestor());
+						gaah.setAuditoria(Auditoria.getNewInstance());
+						gaah.setAsunto(gaa.getAsunto());
+						gaah.setTipoGestor(gaa.getTipoGestor());
+						gaah.setFechaDesde(new Date());
+						
+						Boolean existe= false;
+						Boolean existeConFechaHasta= false;
+						Boolean existeConFechaHastaVacio= false;
+						List<String> gestoresBorrados= new ArrayList<String>();
+						if (!Checks.esNulo(dtoAsunto.getIdGestorBorrado())) {
+							gestoresBorrados = Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
+						}
+						List<String> tipogestoresBorrados= new ArrayList<String>();
+						if (!Checks.esNulo(dtoAsunto.getIdTipoGestorBorrado())) {
+								tipogestoresBorrados = Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+						}
+						for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+							
+							if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
+								existe= true;
+								if(ges.getFechaHasta()!=null){
+									existeConFechaHasta= true;
+								}
+								if(ges.getFechaHasta()==null){
+									existeConFechaHastaVacio= true;
+								}
+							}
+							
+							if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
+								gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+								
+							}
+							
+							if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
+								gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
+							}
+							
+							
+						}
+						
+						
+						if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
+							gestorAdicionalAsuntoHistoricoDao.save(gaah);
+						}
+						
+			//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+			//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+			//			}
+						
+						
+						gestorAdicionalAsuntoDao.save(gaa);
+					}
 				}
-				
-				if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
-					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
-				}
-				
-				
 			}
-			
-			
-			if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
-				gestorAdicionalAsuntoHistoricoDao.save(gaah);
-			}
-			
-//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
-//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
-//			}
-			
-			
-			gestorAdicionalAsuntoDao.save(gaa);
 		}
 		
 		

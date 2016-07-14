@@ -26,6 +26,9 @@
 	</bean>	
 	<bean id="tramiteAceptacionUserDecisionActionHandler" class="es.pfsgroup.procedimientos.handlers.TramiteAceptacionUserDecisionActionHandler"></bean>
 	<bean id="costasProcuradorHandler" class="es.pfsgroup.procedimientos.handlers.CostasProcuradorHandler"></bean>
+	
+	<!--  Handlers migracion -->
+	<bean id="subastaTercerosCajamarLeaveActionHandler" class="es.pfsgroup.procedimientos.handlers.SubastaTercerosCajamarLeaveActionHandler" />
  	    
 	<!-- BPM activos -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeclaracionIVAIGIC/hcj_declaracionIVAIGIC.xml" p:version="-1"/>
@@ -51,18 +54,35 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubastaConcursal/cj_tramiteSubastaConcursal.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCreditosContingentes/cj_creditosContingentes.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSeguimientoCumplimientoConvenio/cj_seguimientoCumplimientoConvenio.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostas/cj_tramiteCostas.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificadoLibertadArrendamiento/cj_certificadoLibertadArrendamiento.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteOcupantes/cj_tramiteOcupantes.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoProvisionFondos/cj_provisionFondos.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteMoratoriaLanzamiento/cj_tramiteMoratoriaLanzamiento.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeGestionDeLlaves/cj_tramiteDeGestionDeLlaves.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDePosesion/cj_tramiteDePosesion.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubsanacionEmbargo/cj_tramiteSubsanacionEmbargo.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/cj_tramiteAdjudicacion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/cj_tramiteCesionRemate.xml" p:version="-1"/>		
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSaneamientoCargas/cj_tramiteSaneamientoCargas.xml" p:version="-1"/>
-				
+	
+	<!-- XML Migracion -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteSubastaTerceros/cj_tramiteSubastaTerceros.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoCambiario/cj_procedimientoCambiario.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoEjTituloJudicial/cj_ejecucionTituloJudicial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoEjTituloNoJudicial/cj_ejecucionTituloNoJudicial.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoMonitorio/cj_procedimientoMonitorio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoOrdinario/cj_procedimientoOrdinario.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoVerbal/cj_procedimientoVerbal.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/procedimientoVerbalDesdeMonitorio/cj_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCertificacionCargasRevision/cj_tramiteCertificacionCargasRevision.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostasVsEntidad/cj_tramiteCostasVsEntidad.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteConsignacion/cj_tramiteConsignacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeposito/cj_tramiteDeposito.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteEmbargoSalarios/cj_tramiteEmbargoSalarios.xml" p:version="-1"/>
+	
+	<!-- XML Migracion - Ya existentes -->
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCesionRemate/cj_tramiteCesionRemate.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteCostas/cj_tramiteCostas.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteAdjudicacion/cj_tramiteAdjudicacion.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteDeGestionDeLlaves/cj_tramiteDeGestionDeLlaves.xml" p:version="-1"/>
+	
 	<!-- Cambios para subasta electronica -->
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/cajamar/tramiteObtenerValidacionComite/tramiteObtenerValidacionComite.xml" p:version="-1"/>
 		

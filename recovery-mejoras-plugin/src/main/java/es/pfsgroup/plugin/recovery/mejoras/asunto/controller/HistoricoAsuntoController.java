@@ -180,12 +180,13 @@ public class HistoricoAsuntoController {
 					tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
 					mhaw.setDestinatarioTarea(tarea.getDestinatarioTarea().getUsername());
 				}
-				//RECOVERY-2264 Para informar quien ha realizado la tarea (para tipo Cobros) en el histórico
+				//RECOVERY-2264 Para informar quien ha realizado la tarea (para tipo Cobros) en el histï¿½rico
 				if("F".equals(mhaw.getGroup()) && mhaw.getIdTarea()!=null) {
 					tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
 					mhaw.setDescripcionTipo(tarea.getTarea());
 					if(!Checks.esNulo(tarea.getTareaFinalizada()) && tarea.getTareaFinalizada()) {
-						mhaw.setDestinatarioTarea(tarea.getAuditoria().getUsuarioCrear());
+						//RECOVERY-2278 - Cogemos el usuario modificar que es el que ha realizado la tarea
+						mhaw.setDestinatarioTarea(tarea.getAuditoria().getUsuarioModificar());
 					}
 				}
 				if (tienePermiso){

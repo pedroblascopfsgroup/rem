@@ -39,7 +39,8 @@ Ext.define('HreRem.controller.AgendaController', {
 		'tramitesdetalle' : {
 			abrirtarea : 'abrirtarea',
 			abrirtareahistorico : 'abrirtareahistorico',
-			solicitarautoprorroga: 'solicitarautoprorroga'
+			solicitarautoprorroga: 'solicitarautoprorroga',
+			saltocierreconomico: 'saltocierreconomico'
 		},
 		
 		'trabajosdetalle' : {			
@@ -83,6 +84,15 @@ Ext.define('HreRem.controller.AgendaController', {
 	    window.show();
     },
     
+        
+    saltocierreconomico: function(target, idTareaExterna){
+      	var me = this;
+       	var window;
+        	
+       	window = Ext.create('HreRem.view.activos.tramites.SolicitarProrroga',{idTareaExterna : idTareaExterna});
+       	target.add(window);
+    	window.show();
+    },
     
     abrirtareaagenda: function (record, grid, target) {
     	var me = this;

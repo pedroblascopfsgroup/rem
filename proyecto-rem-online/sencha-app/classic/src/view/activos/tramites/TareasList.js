@@ -23,7 +23,16 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
    		            	//disabled: true
 //   		            	,
 //   		            	hidden: true
-   		              }
+   		              },{
+   			           	 name: 'btnSaltoCE',
+   			           	 itemId: 'btnSvanzarCE',
+   			           	 text: 'Avanzar a Cierre Económico',
+   			          	 handler: 'saltoCierreEconomico'
+   			//   		            		 ,
+   			//   		            	 bind: {
+   			//   		            		 disabled: '{!listadoTareasTramite.selection}'
+   			//   		            	 }
+   		             }
    		];
    		me.buttonAlign = 'left';
    		me.setTitle(HreRem.i18n("title.tareas.activas"));

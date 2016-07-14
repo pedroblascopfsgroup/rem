@@ -33,6 +33,7 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.dsm.DataSourceManager;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionSaltoListener;
 
 /**
  * RefactorizaciÃ³n de las clases de la api de ejecuciÃ³n de BPMs.
@@ -61,6 +62,9 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
     @Autowired
     private ProcessManager processManager;
 
+    @Autowired
+    private GenerarTransicionSaltoListener activoGenerarSalto;
+    
     /* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.rem.test.jbpm.JBPMProcessManagerApi#crearNewProcess(java.lang.String, java.util.Map)
 	 */
@@ -870,4 +874,28 @@ public class JBPMProcessManager implements BPMContants, JBPMProcessManagerApi {
             }
         });
     }
+    
+    /**
+     * Genera transiciones automáticamente de salto en los nodos, sólo si no existen.
+     * Para crear una transición implementar la interfaz {@link GenerarTransicionSaltoListener}
+     * 
+     * @param executionContext ExecutionContext
+     */
+    @Override
+    public void generaTransicionesSalto(final Long idToken, final String tipoSalto) {		
+          processManager.execute(new JbpmCallback() {
+               @Override
+               public Object doInJbpm(JbpmContext context) {
+                   Token token = context.getGraphSession().getToken(idToken);
+                   ExecutionContext executionContext = new ExecutionContext(token);
+                    
+                   Map<String, Object> map = new HashMap<String, Object>();
+                   map.put(GenerarTransicionSaltoListener.CLAVE_EXECUTION_CONTEXT, executionContext);
+                   activoGenerarSalto.fireEventGeneric(map, tipoSalto);
+                   
+                   return null;
+               }
+           });
+       }
+    
 }

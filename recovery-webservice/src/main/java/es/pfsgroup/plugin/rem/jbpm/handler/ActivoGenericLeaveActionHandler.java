@@ -111,7 +111,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		 * que está volviendo hacia atrás
 		 */
 		String transicion = executionContext.getTransition().getName();
-		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion)) {
+		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !ActivoBaseActionHandler.SALTO_CIERRE_ECONOMICO.equals(transicion)) {
 			try {
 				Object result = jbpmMActivoScriptExecutorApi.evaluaScript(getActivoTramite(executionContext).getId(), tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
 						null, scriptValidacion);

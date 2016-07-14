@@ -7,7 +7,7 @@ import java.util.Map;
 import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.stereotype.Component;
 
-import es.pfsgroup.plugin.rem.api.GenerarTransicionListener;
+import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionListener;
 import es.pfsgroup.plugin.rem.jbpm.handler.ActivoBaseActionHandler;
 /**
  * 

@@ -47,29 +47,35 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 	@Override
 	public void notificator(ActivoTramite tramite) {
 		
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		//Comprobamos que el proveedor no sea null para el caso de que salte a la tarea de Cierre
+		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())){
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			
+			List<String> mailsPara = new ArrayList<String>();
+			List<String> mailsCC = new ArrayList<String>();
+			String correos = null;
+			
+			correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+					
+			Collections.addAll(mailsPara, correos.split(";"));
+				
+			mailsCC.add(this.getCorreoFrom());
+			
+			String contenido = "";
+			String titulo = "";		
+			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + "-") : "";
+			
+			contenido = "<p>Desde HAYA RE le informamos de que el gestor del activo "+dtoSendNotificator.getNumActivo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
+						 + "(Número REM "+tramite.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situado en "+dtoSendNotificator.getDireccion()+" "
+						 + ", por lo que se ha procedido a su cierre económico."
+				  		 + "<p>Un saludo.</p>";
+			
+			titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			 
+			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreoOld(contenido));
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
 		
-		List<String> mailsPara = new ArrayList<String>();
-		List<String> mailsCC = new ArrayList<String>();
-	      
-	    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-	    Collections.addAll(mailsPara, correos.split(";"));
-		
-		mailsCC.add(this.getCorreoFrom());
-		
-		String contenido = "";
-		String titulo = "";		
-		String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + "-") : "";
-		
-		contenido = "<p>Desde HAYA RE le informamos de que el gestor del activo "+dtoSendNotificator.getNumActivo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-					 + "(Número REM "+tramite.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situado en "+dtoSendNotificator.getDireccion()+" "
-					 + ", por lo que se ha procedido a su cierre económico."
-	  		  		 + "<p>Un saludo.</p>";
-		
-		titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			  
-		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreoOld(contenido));
-		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 
 	}
 

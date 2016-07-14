@@ -30,7 +30,8 @@ public abstract class AbstractNotificatorService{
 		if(!Checks.esNulo(trabajo.getFechaHoraConcreta()))
 			fecha = formatoFechaHora.format(trabajo.getFechaHoraConcreta());
 		else
-			fecha = formatoFecha.format(trabajo.getFechaTope());
+			if(!Checks.esNulo(trabajo.getFechaTope()))
+				fecha = formatoFecha.format(trabajo.getFechaTope());
 		return fecha;
 	}
 	

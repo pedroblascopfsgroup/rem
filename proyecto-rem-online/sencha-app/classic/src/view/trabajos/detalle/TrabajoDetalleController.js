@@ -662,5 +662,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
     				
     		    })
     	    }
+     }
     	
 });

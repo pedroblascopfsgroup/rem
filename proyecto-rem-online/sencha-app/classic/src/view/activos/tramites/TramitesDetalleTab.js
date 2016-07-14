@@ -13,7 +13,8 @@ Ext.define('HreRem.view.activos.tramites.TramitesDetalleTab', {
 		    				
 		    		{xtype: 'datosgeneralestramite'},
 		    		{xtype: 'tareaslist'},
-		    		{xtype: 'historicotareaslist'}
+		    		{xtype: 'historicotareaslist'},
+		    		{xtype: 'activostramite'}
     ]
         
 });

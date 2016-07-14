@@ -405,8 +405,8 @@
 	var tarea = Ext.data.Record.create([
 		{name : 'marcar', type:'bool'}
 		,{name:'subtipo'}
-		,{name:'fechaInicio',type:'date', dateFormat:'d/m/Y'}
-		,{name:'fechaFin',type:'date', dateFormat:'d/m/Y'}
+		,{name:'fechaInicio'}
+		,{name:'fechaFin'}
 		,{name:'id'}
 		,{name:'descripcion'}
 		,{name:'codentidad'}
@@ -422,8 +422,8 @@
 		,{name:'codigoEntidadInformacion'}
 		,{name:'codigoSituacion'}
 		,{name:'fcreacionEntidad'}
-		,{name:'fechaVenc',type:'date', dateFormat:'d/m/Y'}
-		,{name:'fechaRealizacion',type:'date', dateFormat:'d/m/Y'}
+		,{name:'fechaVenc'}
+		,{name:'fechaRealizacion'}
 		,{name:'idTareaAsociada'}
 		,{name:'descripcionTareaAsociada'}
 		,{name:'tipoSolicitud'}
@@ -505,9 +505,9 @@
 		,{	/*Columna 1*/ header: '<s:message code="plugin.busquedaTareas.cabeceraUnidadGestionId" text="**Unidad Gestión Id"/>', sortable: true, dataIndex: 'entidadInformacion_id', hidden:true}
 		,{	/*Columna 1*/ header: '<s:message code="plugin.busquedaTareas.cabeceraTarea" text="**Tarea"/>', sortable: true, dataIndex: 'descripcionTarea', width:150}
 		,{	/*Columna 2*/ header: '<s:message code="plugin.busquedaTareas.cabeceraDescripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion', width:150}
-		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaInicio" text="**Fecha inicio"/>', sortable: true, dataIndex: 'fechaInicio', renderer:app.format.dateRenderer, width:70}
-		,{	/*Columna 4*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaVencimiento" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', renderer:app.format.dateRenderer, width:70}
-		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaFin" text="**Fecha fin"/>', sortable: true, dataIndex: 'fechaFin', renderer:app.format.dateRenderer, width:70}
+		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaInicio" text="**Fecha inicio"/>', sortable: true, dataIndex: 'fechaInicio', width:70}
+		,{	/*Columna 4*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaVencimiento" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:70}
+		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaFin" text="**Fecha fin"/>', sortable: true, dataIndex: 'fechaFin', width:70}
 		,{  /*Columna 5*/ header: '<s:message code="plugin.busquedaTareas.cabeceraDiasVencida" text="**Dias Vencida"/>', sortable: false, dataIndex: 'diasVencido', width:70}
 		,{  /*Columna 6*/ header: '<s:message code="plugin.busquedaTareas.cabeceraGestor" text="**Gestor"/>', sortable: false, dataIndex: 'gestor', width:70}
 		,{  /*Columna 7*/ header: '<s:message code="plugin.busquedaTareas.cabeceraSupervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', width:70}

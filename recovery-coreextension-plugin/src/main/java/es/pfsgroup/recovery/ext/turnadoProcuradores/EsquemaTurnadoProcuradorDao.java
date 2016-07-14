@@ -28,6 +28,15 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	Page buscarEsquemasTurnado(EsquemaTurnadoBusquedaDto dto, Usuario usuLogado);
 	
 	/**
+	 * Buscar en el historico de turnados.
+	 * 
+	 * @param dto con los filtros de búsqueda
+	 * 
+	 * @return
+	 */
+	Page buscarDetalleHistorico(TurnadoHistoricoDto dto, Usuario usuLogado);
+	
+	/**
 	 * Asigna un despacho al asunto pasado como parámetro teniendo en cuenta la configuración del esquema de turnado vigente
 	 * 
 	 * @param prcId

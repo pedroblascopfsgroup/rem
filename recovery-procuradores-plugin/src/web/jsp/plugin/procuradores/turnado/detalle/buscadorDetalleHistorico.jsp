@@ -10,12 +10,12 @@
 <%@ page import="es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto" %>
 
 <fwk:page>
-debugger;
-	//VARS ********************************************************************
+
+	//Variables
 	var limit=25;	
 	var currentRowId;
 	
-	//PANEL FILTROS ********************************************************************
+	//Panel filtros
 	
 	var plazasData = <app:dict value="${tipoPlaza}"/>;
 	var plazasDataStore = new Ext.data.JsonStore({
@@ -50,13 +50,15 @@ debugger;
 		text:'<s:message code="app.buscar" text="**Buscar" />'
 		,iconCls:'icon_busquedas'
 		,handler:function(){
-			b=getParametrosDto();
-			esquemasStore.webflow(b);
+			datos=getParametrosDto();
+			historicoStore.webflow(datos);
 			page.fireEvent(app.event.DONE);
-			esquemasGrid.expand(true);
+			historicoGrid.expand(true);
             panelFiltros.collapse(true);
+            panelFiltros.getTopToolbar().setDisabled(true);
 			
 		}
+		,
 	});
 	//Boton Limpiar
 	var btnClean=new Ext.Button({
@@ -76,14 +78,6 @@ debugger;
 	<pfs:datefield name="dateFechaDesde" labelKey="plugin.procuradores.turnado.detalle.fCreacionDesde" label="**F.Creacion desde" width="120"/>
 	
 	<pfs:datefield name="dateFechaHasta" labelKey="plugin.procuradores.turnado.detalle.fCreacionHasta" label="**F.Creacion hasta" width="120"/>
-	
-	var checkAsignacion= new Ext.form.Checkbox({
-		name:'checkAsig'
-		,fieldLabel:'<s:message code="plugin.procuradores.turnado.detalle.sinAsig" text="**Sin asignacion" />'
-		,handler:function(){
-			
-		}
-	});
 
 	var importe = app.creaMinMaxMoneda('<s:message code="plugin.procuradores.turnado.detalle.importe" text="**Importe" />', 'importe',{width : 80});
 	
@@ -108,7 +102,7 @@ debugger;
 				},{
 				layout:'form'
 				,style: 'margin-left:20px; width:270px;'
-				,items: [dateFechaHasta,importe.panel,checkAsignacion]
+				,items: [dateFechaHasta,importe.panel]
 				}]
 		,listeners:{	
 			beforeExpand:function(){
@@ -123,8 +117,6 @@ debugger;
 		,tbar : [btnBuscar,btnClean]
 	});
 	
-	
-	
 	//------------------------------------------------------------------------------------------
 	resetFiltros = function(){
 			cmbPlazas.reset();
@@ -132,24 +124,27 @@ debugger;
 			txtAsunto.reset();
 			txtLetrado.reset();
 			txtProcuAsig.reset();
-			dateFechaCreacion.reset();
+			dateFechaDesde.reset();
+			dateFechaHasta.reset();
 			importe.max.reset();
 			importe.min.reset();
-			checkAsignacion.reset();
 	}
-	/*
+	
 	var getParametrosDto=function(){
-		    var b={};
-			//b.tipoEstado = cmbEstado.getValue();
-			b.nombreEsquemaTurnado=txtNombreEsquema.getValue();
-			b.autor=txtAutor.getValue();
-			b.fechaAlta=dateFechaCreacionEsquema.getValue();
-			b.fechaVigente=dateFechaVigenteEsquema.getValue();
-			b.fechaFinalizado=dateFechaFinalizadoEsquema.getValue();
-			return b;
+		    var datos={};
+			datos.asunto = txtAsunto.getValue();
+			datos.letrado = txtLetrado.getValue();
+			datos.procurador = txtProcuAsig.getValue();
+			datos.fechaDesde = dateFechaDesde.getValue();
+			datos.fechaHasta = dateFechaHasta.getValue();
+			datos.importeMax = importe.max.getValue();
+			datos.importeMin = importe.min.getValue();
+			datos.plaza = cmbPlazas.getValue();
+			datos.tpo = cmbTpo.getValue();
+			return datos;
 	}
-	*/
-	//PANEL GRID RESULTADOS ********************************************************************
+	
+	//Panel grid resultados
 	
 	var historico = Ext.data.Record.create([
 		 {name:'id'}
@@ -158,21 +153,25 @@ debugger;
 		 ,{name:'actuacion'}
 		 ,{name:'principalTurnado'}
 		 ,{name:'reglaAplicada'}
-		 ,{name:'procuAsignado'}
-		 ,{name:'observaciones'}
+		 ,{name:'procuAsign'}
 		 ,{name:'principalVigente'}
 		 ,{name:'letrado'}
 		 ,{name:'fecha'}
+		 ,{name:'procuGaa'}
 	]);				
 	
 	var historicoStore = page.getStore({
-		 flow: '' 
+		 flow: 'turnadoprocuradores/buscarDetalleHistorico' 
 		,limit: limit
 		,reader: new Ext.data.JsonReader({
-	    	 root : 'historicos'
+	    	 root : 'detalleHistorico'
 	    	,totalProperty : 'total'
 	     }, historico)
 	});	
+	
+	historicoStore.on('load',function(){
+           panelFiltros.getTopToolbar().setDisabled(false);
+    });
 	
 	var pagingBar=fwk.ux.getPaging(historicoStore);
 	
@@ -183,11 +182,12 @@ debugger;
 		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.actuacion" text="**Actuacion"/>', dataIndex: 'actuacion', sortable: true}
 		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.principalTurnado" text="**Principal turnado"/>', dataIndex: 'principalTurnado', sortable: true}
 		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.reglaAplicada" text="**Regla aplicada"/>', dataIndex: 'reglaAplicada', sortable: true}
-		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.procuradorAsignado" text="**Procurador asignado"/>', dataIndex: 'procuAsignado', sortable: true}
-		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.observaciones" text="**Observaciones"/>', dataIndex: 'observaciones', sortable: true}
+		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.procuradorAsignado" text="**Procurador asignado"/>', dataIndex: 'procuAsign', sortable: true}
 		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.principalVigente" text="**Principal vigente"/>', dataIndex: 'principalVigente', sortable: true}
+		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.procuradorGaa" text="**Procu Gaa"/>', dataIndex: 'procuGaa', sortable: true}
 		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.letrado" text="**Letrado"/>', dataIndex: 'letrado', sortable: true}
 		,{header: '<s:message code="plugin.procuradores.turnado.detalle.grid.fecha" text="**Fecha"/>', dataIndex: 'fecha', sortable: true}
+		
 	]);
 	
 	var sm = new Ext.grid.RowSelectionModel({

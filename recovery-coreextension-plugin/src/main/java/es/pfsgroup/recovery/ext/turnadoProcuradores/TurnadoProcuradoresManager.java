@@ -860,4 +860,11 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		return listaTposDisponibles;
 	}	
 	
+	@Override
+	public Page listaDetalleHistorico(TurnadoHistoricoDto dto) {
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		Page page = esquemaTurnadoProcuradorDao.buscarDetalleHistorico(dto, usuarioLogado);
+		return page;
+	}
+	
 }

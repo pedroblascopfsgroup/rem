@@ -22,6 +22,16 @@ public interface TurnadoProcuradoresApi {
 	 * @return
 	 */
 	Page listaEsquemasTurnado(EsquemaTurnadoBusquedaDto dto);
+	
+	/**
+	 * Recupera un listado con el historico de turnados. En el Dto se le pasan los
+	 * posibles valores de filtro para el listado.
+	 * 
+	 * @param dto
+	 *            Valores con los filtros
+	 * @return
+	 */
+	Page listaDetalleHistorico(TurnadoHistoricoDto dto);
 
 	/**
 	 * Recupera un esquema de turnado por su ID

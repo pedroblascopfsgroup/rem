@@ -156,6 +156,39 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 
 			return montado;
 	}
+	
+	private String montaWhereMayorQue(Date fechaEnDate, String cadena){
+		Calendar c = Calendar.getInstance();
+		c.setTime(fechaEnDate);
+		c.add(Calendar.DATE, 1);
+		Date diaSiguiente = c.getTime();
+		SimpleDateFormat dateFormatInit = new SimpleDateFormat(FORMATO_FECHA_BD);
+		String formatInit = dateFormatInit.format(fechaEnDate); //2014/08/06 15:59:48
+		String formatFin = dateFormatInit.format(diaSiguiente); //2014/08/06 15:59:48
+		
+		String montado = String.format("and %s >= to_date('%s', 'DD/MM/YYYY HH24:MI:SS')"
+				, cadena
+				, formatInit
+				, cadena
+				, formatFin);
+
+		return montado;
+	}
+	
+	private String montaWhereMenorQue(Date fechaEnDate, String cadena){
+		Calendar c = Calendar.getInstance();
+		c.setTime(fechaEnDate);
+		c.add(Calendar.DATE, 1);
+		Date diaSiguiente = c.getTime();
+		SimpleDateFormat dateFormatInit = new SimpleDateFormat(FORMATO_FECHA_BD);
+		String formatFin = dateFormatInit.format(diaSiguiente);
+		
+		String montado = String.format("and %s < to_date('%s', 'DD/MM/YYYY HH24:MI:SS')"
+				, cadena
+				, formatFin);
+
+		return montado;
+	}
 
 	@Override
 	public void turnarProcurador(Long prcId, String username, String plaza, String tpo) {
@@ -484,5 +517,71 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 	        Query q = this.getSessionFactory().getCurrentSession().createQuery(hql.toString());
 	        q.executeUpdate();
 		}
+	}
+	
+	public Page buscarDetalleHistorico(TurnadoHistoricoDto dto, Usuario usuLogado) {
+		// Establece el orden de la búsqueda
+		return paginationManager.getHibernatePage(getHibernateTemplate(),
+				generarHQLBuscarDetalleHistorico(dto, usuLogado), dto);
+	}
+	
+	private String generarHQLBuscarDetalleHistorico(TurnadoHistoricoDto dto, Usuario usuLogado) {
+	
+		StringBuffer hqlFrom = new StringBuffer();
+		StringBuffer hqlWhere = new StringBuffer();
+
+		// Consulta inicial básica
+
+		hqlFrom.append("from TurnadoHistorico his");
+
+		hqlWhere.append(" where his.auditoria.borrado = false ");
+		
+		
+		if(!Checks.esNulo(dto.getAsunto())){
+			hqlWhere.append(" and UPPER(his.asunto.nombre) like '%").append(dto.getAsunto().toUpperCase()).append("%'");
+		}
+		if(!Checks.esNulo(dto.getProcurador())){
+			hqlWhere.append(" and UPPER(his.procuAsign.nombre) like '%").append(dto.getProcurador().toUpperCase()).append("%'");
+		}
+		if(!Checks.esNulo(dto.getTpo())){
+			hqlWhere.append(" and his.tipoProcedimiento.codigo = '").append(dto.getTpo()).append("'");
+		}
+		if(!Checks.esNulo(dto.getPlaza())){
+			hqlWhere.append(" and his.tipoPlaza.codigo = '").append(dto.getPlaza()).append("'");
+		}
+
+		if(!Checks.esNulo(dto.getImporteMin())){
+			hqlWhere.append(" and his.importe >= '").append(dto.getImporteMin()).append("'");
+		}
+		
+		if(!Checks.esNulo(dto.getImporteMax())){
+			hqlWhere.append(" and his.importe <= '").append(dto.getImporteMax()).append("'");
+		}
+		
+		if(!Checks.esNulo(dto.getLetrado())){
+			hqlWhere.append(" and UPPER(his.auditoria.usuarioCrear) like '%").append(dto.getLetrado().toUpperCase()).append("%'");
+		}
+		
+		if(!Checks.esNulo(dto.getFechaDesde())){
+			try {
+					Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaDesde());
+					String consultaMontad = montaWhereMayorQue(fechaEnDate, "his.auditoria.fechaCrear");
+					hqlWhere.append(consultaMontad);
+			} catch (ParseException e) {
+					logger.warn("Error al convertir fecha para where en histórico de turnado Dao", e);
+			}
+		}
+
+		if(!Checks.esNulo(dto.getFechaHasta())){
+			try {
+					Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaHasta());
+					String consultaMontad = montaWhereMenorQue(fechaEnDate, "his.auditoria.fechaCrear");
+					hqlWhere.append(consultaMontad);
+			} catch (ParseException e) {
+					logger.warn("Error al convertir fecha para where en histórico de turnado Dao", e);
+			}
+		}
+		
+		return hqlFrom.append(hqlWhere).toString();
 	}
 }

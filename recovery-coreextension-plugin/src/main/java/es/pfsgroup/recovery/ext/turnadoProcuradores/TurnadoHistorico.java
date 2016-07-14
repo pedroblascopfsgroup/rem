@@ -15,16 +15,18 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-/*
+import es.capgemini.pfs.users.domain.Usuario;
+
 @Entity
 @Table(name = "TUP_HIS_HISTORICO", schema = "${entity.schema}")
-@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)*/
+@Cache(usage=CacheConcurrencyStrategy.READ_ONLY)
 public class TurnadoHistorico {
-	/*
+	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -35,12 +37,12 @@ public class TurnadoHistorico {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EPT_ID")
-	private EsquemaTurnadoProcurador esquemaTurnadoProcurador;
+	private EsquemaPlazasTpo esquemaPlazasTpo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_PLA_ID")
 	private TipoPlaza tipoPlaza;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_TPO_ID")
 	private TipoProcedimiento tipoProcedimiento;
@@ -48,6 +50,24 @@ public class TurnadoHistorico {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "PRC_ID")
 	private Procedimiento procedimiento;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="USU_ID_ASIGNADO")
+	private Usuario procuAsign;
+	
+	@Column(name = "IMPORTE")
+	private Double importe;
+	
+	@Column(name = "MENSAJE")
+	private String mensaje;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="USU_ID_REAL")
+	private Usuario procuGaa;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="ASU_ID")
+	private Asunto asunto;
 	
 	@Embedded
     private Auditoria auditoria;
@@ -60,12 +80,12 @@ public class TurnadoHistorico {
 		this.id = id;
 	}
 	
-	public EsquemaTurnadoProcurador getEsquemaTurnadoProcurador() {
-		return esquemaTurnadoProcurador;
+	public EsquemaPlazasTpo getEsquemaPlazasTpo() {
+		return esquemaPlazasTpo;
 	}
 
-	public void setEsquemaTurnadoProcurador(EsquemaTurnadoProcurador esquemaTurnadoProcurador) {
-		this.esquemaTurnadoProcurador = esquemaTurnadoProcurador;
+	public void setEsquemaPlazasTpo(EsquemaPlazasTpo esquemaPlazasTpo) {
+		this.esquemaPlazasTpo = esquemaPlazasTpo;
 	}
 
 	public TipoPlaza getTipoPlaza() {
@@ -90,6 +110,53 @@ public class TurnadoHistorico {
 
 	public void setProcedimiento(Procedimiento procedimiento) {
 		this.procedimiento = procedimiento;
-	}*/
+	}
+	
+	public Double getImporte(){
+		return importe;
+	}
+	
+	public void setImporte(Double importe){
+		this.importe = importe;
+	}
+	
+	public String getMensaje(){
+		return mensaje;
+	}
+	
+	public void setMensaje(String mensaje){
+		this.mensaje = mensaje;
+	}
 
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+	
+	public Usuario getProcuAsign() {
+		return procuAsign;
+	}
+
+	public void setProcuAsign(Usuario procuAsign) {
+		this.procuAsign = procuAsign;
+	}
+	
+	public Usuario getProcuGaa() {
+		return procuGaa;
+	}
+
+	public void setProcuGaa(Usuario procuGaa) {
+		this.procuGaa = procuGaa;
+	}
+	
+	public Asunto getAsunto() {
+		return asunto;
+	}
+
+	public void setAsunto(Asunto asunto) {
+		this.asunto = asunto;
+	}
 }

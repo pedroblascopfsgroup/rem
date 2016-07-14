@@ -179,7 +179,7 @@ FOR v_procurador IN (SELECT USU_ID, USU_USERNAME
                , zpu.fechacrear
                )
                  VALUES('||V_ESQUEMA||'.s_zon_pef_usu.nextval
-                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'')
+                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'' or zon_cod = ''1'')
                 , (select pef_id from cm01.pef_perfiles where pef_codigo = ''GEST_EXTERNO'')
                 , (select usu_id from cmmaster.usu_usuarios where usu_username = '''||v_procurador.USU_USERNAME||''')
                 , '''||V_USUARIO||'''
@@ -187,7 +187,7 @@ FOR v_procurador IN (SELECT USU_ID, USU_USERNAME
             
    SELECT COUNT(*) INTO V_EXISTE
   FROM CM01.ZON_PEF_USU
-  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01')
+  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01' or zon_cod = '1')
     AND PEF_ID = (select pef_id from cm01.pef_perfiles where pef_codigo = 'GEST_EXTERNO')
     AND USU_ID = (select usu_id from cmmaster.usu_usuarios where usu_username = v_procurador.USU_USERNAME);
   
@@ -526,7 +526,7 @@ FOR v_letrado IN (SELECT USU_ID, USU_USERNAME
                , zpu.fechacrear
                )
                  VALUES('||V_ESQUEMA||'.s_zon_pef_usu.nextval
-                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'')
+                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'' or zon_cod = ''1'')
                 , (select pef_id from cm01.pef_perfiles where pef_codigo = ''GEST_EXTERNO'')
                 , (select usu_id from cmmaster.usu_usuarios where usu_username = '''||v_letrado.USU_USERNAME||''')
                 , '''||V_USUARIO||'''
@@ -534,7 +534,7 @@ FOR v_letrado IN (SELECT USU_ID, USU_USERNAME
             
    SELECT COUNT(*) INTO V_EXISTE
   FROM CM01.ZON_PEF_USU
-  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01')
+  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01' or zon_cod = '1')
     AND PEF_ID = (select pef_id from cm01.pef_perfiles where pef_codigo = 'GEST_EXTERNO')
     AND USU_ID = (select usu_id from cmmaster.usu_usuarios where usu_username = v_letrado.USU_USERNAME);
   

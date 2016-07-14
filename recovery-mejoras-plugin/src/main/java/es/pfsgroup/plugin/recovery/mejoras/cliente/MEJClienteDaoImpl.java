@@ -390,15 +390,21 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		 */ 
 		if(busquedaJerarquizada || !Checks.esNulo(clientes.getJerarquia())){
 			hql.append("and (");
-				
-			// AÃƒÂ±ade la persona si es gestionada por el usuario
 			hql.append("(p.per_id in ( ");
-			hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
-			parameters)); // hql.append(" ))");
-			
-			if ((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))) {
-				hql.append(" union all ");
-				hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); hql.append(" ))"); } else { hql.append(" ))"); 
+			if(busquedaJerarquizada){
+				// AÃƒÂ±ade la persona si es gestionada por el usuario
+				hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
+				parameters)); // hql.append(" ))");
+				if((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))){
+					hql.append(" union all ");
+					hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); 
+					hql.append(" ))");
+				} else {
+					hql.append(" ))"); 
+				}
+			} else {
+				hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); 
+				hql.append(" ))"); 
 			}
 			
 			hql.append(") ");

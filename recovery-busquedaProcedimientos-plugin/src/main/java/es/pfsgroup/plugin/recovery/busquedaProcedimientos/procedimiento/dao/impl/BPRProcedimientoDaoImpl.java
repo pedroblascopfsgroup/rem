@@ -376,7 +376,6 @@ public class BPRProcedimientoDaoImpl extends
 		StringBuilder hqlGrupos = new StringBuilder("select gru.grupo.id from EXTGrupoUsuarios gru where gru.usuario.id = " + usuarioLogado.getId());
 		
 		// Obtener los IDs de usuarios depachos por cada grupo.
-		//StringBuilder hqlGestor = new StringBuilder("select usd.id from GestorDespacho usd where usd.usuario.id in (" + hqlGrupos.toString() + ")");
 		HQLBuilder hb1 = new HQLBuilder("select usd.id from GestorDespacho usd");
 		hb1.appendWhere("usd.usuario.id in (" + hqlGrupos.toString() + ")");
 		List<Long> usdListID = HibernateQueryUtils.list(this, hb1);
@@ -386,16 +385,17 @@ public class BPRProcedimientoDaoImpl extends
 			usdListID = new ArrayList<Long>();
 		}
 		
-		// Añadir el ID de usuarios despachos para el usuario logueado.
-		//StringBuilder hqlGestorUsuario = new StringBuilder(hqlGestor.toString() + " or select us.id from GestorDespacho us where us.usuario.id = " + usuarioLogado.getId());
+		// Añadir los IDs de usuarios despachos para el usuario logueado.
 		HQLBuilder hb2 = new HQLBuilder("select usd.id from GestorDespacho usd");
 		hb2.appendWhere("usd.usuario.id = " + usuarioLogado.getId());
-		Long usdID = (Long) HibernateQueryUtils.uniqueResult(this, hb2);
+		List<Long> usdIDs = HibernateQueryUtils.list(this, hb2);
 		
 		// Juntar los IDs de GestorDespacho de grupos y el propio del usuario logueado, si no existe ya en la lista.
-		if(!Checks.esNulo(usdID)){
-			if(!usdListID.contains(usdID)){
-				usdListID.add(usdID);
+		if(!Checks.estaVacio(usdIDs)){
+			for(Long l : usdIDs){
+				if(!usdListID.contains(l)){
+					usdListID.add(l);
+				}
 			}
 		}
 		

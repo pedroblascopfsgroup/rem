@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
-<%@ page import="es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoBusquedaDto" %>
+<%@ page import="es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoHistoricoDto" %>
 
 <fwk:page>
 
@@ -69,6 +69,81 @@
 		}
 	});
 	
+	var btnExportar = new Ext.Button({
+	        text:'<s:message code="menu.clientes.listado.filtro.exportar.xls" text="**Exportar a XLS" />'
+	        ,iconCls:'icon_exportar_csv'
+	        ,handler :function(){ exportarFuncXLS();}
+	    });
+	
+	var validarForm = function(){
+	
+        if (dateFechaDesde.getValue() != ''){
+            return true;
+        }
+        if (dateFechaHasta.getValue() != ''){
+            return true;
+        }
+		if (txtAsunto.getValue() != '' ){
+			return true;
+		}
+        if (txtLetrado.getValue() != '' ){
+            return true;
+        }
+		if (txtProcuAsig.getValue() != '' ){
+			return true;
+		}
+		if (importe.min.getValue() != '' ){
+			return true;
+		}
+        if (importe.max.getValue() != '' ){
+            return true;
+        }
+        if (cmbPlazas.getValue() != '' ){
+            return true;
+        }
+        if (cmbTpo.getValue() != '' ){
+            return true;
+        }
+
+        Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="menu.clientes.listado.criterios"/>')
+		return false;
+	}
+	    
+	var exportarFuncXLS = function() {
+			exportarFunc('generaXLS');
+		};
+		
+	var exportarFunc = function(tipo) {
+        if (validarForm()){
+            var fechaDesde = '';
+            var fechaHasta = '';
+            if(dateFechaDesde.getValue()!= '') {
+                fechaDesde = dateFechaDesde.getValue().format('Y-m-d');
+            }
+            if(dateFechaHasta.getValue()!= '') {
+                fechaHasta = dateFechaHasta.getValue().format('Y-m-d');
+            }
+            var params = {
+                     asunto: txtAsunto.getValue()
+                    ,procurador:txtProcuAsig.getValue()
+                    ,letrado:txtLetrado.getValue()
+                    ,fechaDesde: fechaDesde
+                    ,fechaHasta: fechaHasta
+                    ,importeMax:importe.max.getValue()
+                    ,importeMin:importe.min.getValue()
+                    ,tpo:cmbTpo.getValue()
+                    ,plaza:cmbPlazas.getValue()
+					,tipo:'generarCsv'
+                  };
+            btnExportar.setDisabled(true);
+			var flow = '/pfs/turnadoprocuradores/exportarExcelElementos';
+			params.tipoSalida = '<fwk:const value="es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroBusquedaProcedimientoPcoDTO.SALIDA_XLS" />';
+			params.tiempoSuccess=<fwk:const value="es.capgemini.pfs.asunto.dto.DtoBusquedaAsunto.XLS_WAIT_TIME" />;
+			params.succesFunction=function(){btnExportar.setDisabled(false)}
+		    app.openBrowserWindow(flow, params);
+        }
+	};
+	
 	<pfsforms:textfield labelKey="plugin.procuradores.turnado.detalle.asunto" label="**Asunto" name="txtAsunto" value="" readOnly="false" width="120"/>
 		
 	<pfsforms:textfield labelKey="plugin.procuradores.turnado.detalle.procuAsig" label="**Procurador asignado" name="txtProcuAsig" value="" readOnly="false" width="120"/>
@@ -114,7 +189,7 @@
 				historicoGrid.expand(true);			
 			}
 		}
-		,tbar : [btnBuscar,btnClean]
+		,tbar : [btnBuscar,btnClean,btnExportar]
 	});
 	
 	//------------------------------------------------------------------------------------------

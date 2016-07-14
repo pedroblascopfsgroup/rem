@@ -3,6 +3,7 @@ package es.pfsgroup.recovery.ext.turnadoProcuradores;
 import java.util.HashMap;
 import java.util.List;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -271,5 +272,11 @@ public interface TurnadoProcuradoresApi {
 	void delete(Long id);
 
 	void copy(Long id);
+
+	/**
+	 * Dados un filtro con especificaciones busca en el historico de turnados
+	 * @return
+	 */
+	FileItem generarExcelExportacionElementos(TurnadoHistoricoDto filter);
 	
 }

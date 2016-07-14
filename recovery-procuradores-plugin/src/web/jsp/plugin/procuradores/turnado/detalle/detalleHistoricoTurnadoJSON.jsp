@@ -25,7 +25,9 @@
 	       		<json:property name="principalVigente" value="${d.procedimiento.saldoRecuperacion}"/>
 	        </c:if>
             <json:property name="letrado" value="${d.auditoria.usuarioCrear}"/>
-            <json:property name="fecha" value="${d.auditoria.fechaCrear}"/>
+            <json:property name="fecha" >
+				<fwk:date value="${d.auditoria.fechaCrear}"/>
+			</json:property>
             <c:if test="${d.procuGaa != null}">
 	       		<json:property name="procuGaa" value="${d.procuGaa.nombre}"/>
 	        </c:if>

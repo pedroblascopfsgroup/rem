@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -395,6 +396,17 @@ public class TurnadoProcuradoresController {
 		Page page = (Page)turnadoPocuradoresMang.listaDetalleHistorico(dto);
 		model.addAttribute("listaDetalle", page);
 		return JSON_DETALLE_HISTORICO_TURNADO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String exportarExcelElementos(TurnadoHistoricoDto dto, ModelMap model) {
+		
+		dto.setStart(0);
+		dto.setLimit(Integer.MAX_VALUE);
+		FileItem fExcel = turnadoPocuradoresMang.generarExcelExportacionElementos(dto);
+		model.put("fileItem", fExcel);
+		return "plugin/precontencioso/download";
 	}
 	
 }

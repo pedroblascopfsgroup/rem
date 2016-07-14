@@ -44,7 +44,7 @@
             <uniqueVersion>false</uniqueVersion>
             <id>recovery-evolution-snap</id>
             <name>Snapshot repo for Recovery Evolution</name>
-            <url>http://pupus01.pfsgroup.es:8081/nexus/content/repositories/recovery-evolution-snap</url>
+            <url>http://pupus01:8081/nexus/content/repositories/recovery-evolution-snap</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -728,7 +728,6 @@
 				<module>paradise-framework</module>
 				<module>recovery-gestordocumentalREM-plugin</module>	
 				<module>rem-web</module>
-				<!--<module>rec-batch</module>-->
 			</modules>
 		</profile>
 

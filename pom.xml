@@ -714,6 +714,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
+				<module>proyecto-rem-online</module>
 				<module>recovery-webservice</module>
 				<module>paradise-framework</module>
 				<module>recovery-gestordocumentalREM-plugin</module>	

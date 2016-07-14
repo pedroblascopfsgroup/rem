@@ -198,16 +198,16 @@ if [[ ${NOMBRE_SCRIPT} =~ ^DDL_[0-9]+_[^_]+_(SP|MV|VI)_[^\.]+\.sql$ ]] ; then
         exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql >> $BASEDIR/$nombreLog
         echo "   -- : $BASEDIR/$nombreLog"
     else
-        echo $'\t'"  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}.sh
-        echo $'\t'"  exit | sqlplus -s -l \$1 @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}-one-user.sh
+        echo $'\t'"exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}.sh
+        echo $'\t'"exit | sqlplus -s -l \$1 @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}-one-user.sh
         
         echo $'\t'"exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.sh
         echo $'\t'"exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}-one-user.sh
         echo "echo 'exit' | sqlplus $ESQUEMA_EJECUCION/$executionPassWin @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}.log" >> ${executionFile}.bat
         echo $'\t'"echo \" -- : $NOMBRE_SCRIPT\"" | tee -a ${executionFile}.sh ${executionFile}-one-user.sh ${executionFile}.bat > /dev/null
         
-        echo $'\t'"  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_POST_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}.sh
-        echo $'\t'"  exit | sqlplus -s -l \$1 @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_POST_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}-one-user.sh
+        echo $'\t'"exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_POST_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}.sh
+        echo $'\t'"exit | sqlplus -s -l \$1 @./scripts/DDL_000_${ESQUEMA_EJECUCION}_metadata_objects.sql > DB_SNAPSHOT_POST_objects_${ESQUEMA_EJECUCION}_${nombreSinExt}.log" >> ${executionFile}-one-user.sh
     fi
 
     exit 0

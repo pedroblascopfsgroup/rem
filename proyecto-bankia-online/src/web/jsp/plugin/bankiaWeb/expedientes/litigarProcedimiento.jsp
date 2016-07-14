@@ -1288,11 +1288,14 @@
 					}
 				}
 			}
+			<%--
+			//Esta validación se debe realizar en servidor
 			if ('${litigar}'=='false') {
 				if (!confirmarContratosSelTienenPersonasSel()) {
 					errores+="<br>Algunos contratos seleccionados no tienen personas relacionadas seleccionadas";
 				}
 			}
+			--%>
 			
 			if(errores!=""){
 				Ext.Msg.alert("Errores",errores);

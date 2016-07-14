@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
 import es.capgemini.pfs.expediente.dao.ExpedienteContratoDao;
@@ -62,6 +63,11 @@ public class BankiaProcedimientoManager implements BankiaProcedimientoApi {
 						personasSel += p.getId().toString();
 					}
 				}
+				//Si no tenemos personas lanzamos una BussinessExeception
+				if (personasSel.equals("")) {
+					throw new BusinessOperationException("No se han seleccionado personas para el contrato: ", expCnt.getContrato().getCodigoContrato());
+				}
+				
 				//Y ahora cambiamos el dto de la persona y grabamos para este contrato y estas personas
 				dto.setSeleccionPersonas(personasSel);
 			}

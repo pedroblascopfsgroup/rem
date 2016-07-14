@@ -487,6 +487,9 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			// si se está realizando una busqueda por documentos deberán salir aquellos documentos los cuales aun no tienen ninguna solicitud
 			if (esBusquedaPorDocumento) {
 				query.createAlias("documentos.solicitudes", "solicitud", CriteriaSpecification.LEFT_JOIN);
+				if(StringUtils.isBlank(filtro.getDocTiposDocumento())) {
+					query.createAlias("documento.tipoDocumento", "tipoDocumento");					
+				}
 			} else {
 				query.createAlias("documentos.solicitudes", "solicitud");
 			}

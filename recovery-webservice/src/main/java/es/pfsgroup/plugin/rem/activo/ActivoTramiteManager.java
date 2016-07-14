@@ -133,14 +133,15 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 			
 			
 			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
-				BeanUtils.copyProperty(dtoActivoTramite, "getDireccion", activo.getLocalizacion().getLocalizacionBien().getDireccion());
+				BeanUtils.copyProperty(dtoActivoTramite, "direccion", activo.getLocalizacion().getLocalizacionBien().getDireccion());
 				BeanUtils.copyProperty(dtoActivoTramite, "municipioCodigo", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getCodigo());
 				BeanUtils.copyProperty(dtoActivoTramite, "municipioDescripcion", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
 				BeanUtils.copyProperty(dtoActivoTramite, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
 				BeanUtils.copyProperty(dtoActivoTramite, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
 			}
 			if (activo.getRating() != null ) {
-				BeanUtils.copyProperty(dtoActivoTramite, "rating", activo.getRating().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "ratingCodigo", activo.getRating().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "ratingDescripcion", activo.getRating().getDescripcion());
 			}
 			
 			BeanUtils.copyProperty(dtoActivoTramite, "propietario", activo.getFullNamePropietario());	

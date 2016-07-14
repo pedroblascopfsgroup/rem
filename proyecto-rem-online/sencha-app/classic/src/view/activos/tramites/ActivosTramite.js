@@ -38,11 +38,31 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 				            iconCls: 'app-list-ico ico-ver-activo'
 				        }],
 				        hideable: false
-			    	} ,  	
+			    	},  
 				    {   text: HreRem.i18n('header.numero.activo'),
 			        	dataIndex: 'numActivo',
 			        	flex: 1
+			        },			        
+				    {   text: HreRem.i18n('fieldlabel.id.activo.rem'),
+			        	dataIndex: 'numActivoRem',
+			        	flex: 1,
+			        	hidden: true
 			        },
+				    {   text: HreRem.i18n('fieldlabel.id.activo.sareb'),
+			        	dataIndex: 'idSareb',
+			        	flex: 1,
+			        	hidden: true
+			        },
+				    {   text: HreRem.i18n('fieldlabel.id.activo.uvem'),
+			        	dataIndex: 'numActivoUvem',
+			        	flex: 1,
+			        	hidden: true
+			        },
+				    {   text: HreRem.i18n('fieldlabel.id.activo.recovery'),
+			        	dataIndex: 'idRecovery',
+			        	flex: 1,
+			        	hidden: true
+			        },			        
 					{
 					    dataIndex: 'entidadPropietariaDescripcion',
 					    text: HreRem.i18n('header.propietario'),
@@ -82,11 +102,23 @@ Ext.define('HreRem.view.tramites.ActivosTramite', {
 			        	hidden: true
 					},
 					{   
-						dataIndex: 'tipoTitulo',
+						dataIndex: 'tipoTituloDescripcion',
 						text: HreRem.i18n('fieldlabel.tipo.titulo'),
 						flex:1
-					}
-			       	        
+					},
+					{   
+						dataIndex: 'subtipoTituloDescripcion',
+						text: HreRem.i18n('fieldlabel.subtipo.titulo'),
+						flex:1,
+			        	hidden: true
+					},
+					{   
+						dataIndex: 'ratingDescripcion',
+						text: HreRem.i18n('header.rating'),
+						flex:1,
+			        	hidden: true
+					}					
+
 			    ],
 			    
 			    dockedItems : [

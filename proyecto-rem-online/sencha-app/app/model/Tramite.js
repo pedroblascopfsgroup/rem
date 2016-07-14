@@ -59,7 +59,8 @@ Ext.define('HreRem.model.Tramite', {
     	'cartera',
     	'tipoActivo',
     	'subtipoActivo',
-    	'numActivo'
+        'numActivo',
+        'esMultiActivo'
     ],
     
 	proxy: {

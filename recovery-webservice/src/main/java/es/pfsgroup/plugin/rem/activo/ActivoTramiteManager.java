@@ -1,9 +1,11 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -25,10 +27,13 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
@@ -51,7 +56,10 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
+	@Autowired	
+	private ActivoAdapter activoAdapter;
+
 	@Autowired
 	private ActivoTramiteDao activoTramiteDao;
 
@@ -86,6 +94,108 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	
 	public Page getTramitesActivoTrabajo(Long idTrabajo,  WebDto webDto ){		
 		return activoTramiteDao.getTramitesActivoTrabajo(idTrabajo, webDto);		
+	}
+
+	
+	@Override
+	@BusinessOperation(overrides = "activoTramiteManager.getActivosTramite")
+	public List<Activo> getActivosTramite(Long idTramite){
+		Filter filtroTramite = genericDao.createFilter(FilterType.EQUALS, "id", idTramite);
+		ActivoTramite activoTramite = genericDao.get(ActivoTramite.class, filtroTramite);
+		
+		return activoTramite.getActivos();
+	}
+	
+	@Override
+	@BusinessOperation(overrides = "activoTramiteManager.getDtoActivosTramite")
+	public List<DtoActivoTramite> getDtoActivosTramite(List<Activo> listaActivos){
+		
+		List<DtoActivoTramite> listDtoActivosTramite = new ArrayList<DtoActivoTramite>();
+		
+		for (Activo activo : listaActivos){
+			listDtoActivosTramite.add((DtoActivoTramite) getDtoActivoTramite(activo));
+		}
+		
+		return listDtoActivosTramite;
+	}
+	
+	private DtoActivoTramite getDtoActivoTramite(Activo activo){
+
+		DtoActivoTramite dtoActivoTramite = new DtoActivoTramite();
+		
+		try {
+			
+			BeanUtils.copyProperty(dtoActivoTramite, "numActivo", activo.getNumActivo());
+			BeanUtils.copyProperty(dtoActivoTramite, "numActivoRem", activo.getNumActivoRem());
+			BeanUtils.copyProperty(dtoActivoTramite, "idSareb", activo.getIdSareb());
+			BeanUtils.copyProperty(dtoActivoTramite, "numActivoUvem", activo.getNumActivoUvem());
+			BeanUtils.copyProperty(dtoActivoTramite, "idRecovery", activo.getIdRecovery());
+			
+			
+			if (activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "getDireccion", activo.getLocalizacion().getLocalizacionBien().getDireccion());
+				BeanUtils.copyProperty(dtoActivoTramite, "municipioCodigo", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "municipioDescripcion", activo.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
+				BeanUtils.copyProperty(dtoActivoTramite, "provinciaCodigo", activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "provinciaDescripcion", activo.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+			}
+			if (activo.getRating() != null ) {
+				BeanUtils.copyProperty(dtoActivoTramite, "rating", activo.getRating().getCodigo());
+			}
+			
+			BeanUtils.copyProperty(dtoActivoTramite, "propietario", activo.getFullNamePropietario());	
+			
+			if(activo.getTipoActivo() != null ) {					
+				BeanUtils.copyProperty(dtoActivoTramite, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
+			}
+			 
+			if (activo.getSubtipoActivo() != null ) {
+				BeanUtils.copyProperty(dtoActivoTramite, "subtipoActivoCodigo", activo.getSubtipoActivo().getCodigo());	
+				BeanUtils.copyProperty(dtoActivoTramite, "subtipoActivoDescripcion", activo.getSubtipoActivo().getDescripcion());	
+			}
+			
+			if (activo.getTipoTitulo() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "tipoTituloCodigo", activo.getTipoTitulo().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
+			}
+			
+			if (activo.getSubtipoTitulo() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "subtipoTituloCodigo", activo.getSubtipoTitulo().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "subtipoTituloDescripcion", activo.getSubtipoTitulo().getDescripcion());
+			}
+			
+			if (activo.getTipoTitulo() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "tipoTituloCodigo", activo.getTipoTitulo().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "tipoTituloDescripcion", activo.getTipoTitulo().getDescripcion());
+			}
+			
+			if (activo.getSubtipoTitulo() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "subtipoTituloCodigo", activo.getSubtipoTitulo().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "subtipoTituloDescripcion", activo.getSubtipoTitulo().getDescripcion());
+			}
+			
+			if (activo.getCartera() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "entidadPropietariaDescripcion", activo.getCartera().getDescripcion());
+			}
+			
+//			if (activo.getBien().getLocalizaciones() != null && activo.getBien().getLocalizaciones().get(0).getLocalidad() != null) {
+//				BeanUtils.copyProperty(dtoActivoTramite, "municipioDescripcion", activo.getBien().getLocalizaciones().get(0).getLocalidad().getDescripcion());
+//			}
+			
+			if (activo.getEstadoActivo() != null) {
+				BeanUtils.copyProperty(dtoActivoTramite, "estadoActivoCodigo", activo.getEstadoActivo().getCodigo());
+				BeanUtils.copyProperty(dtoActivoTramite, "estadoActivoDescripcion", activo.getEstadoActivo().getDescripcion());
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+			
+		return dtoActivoTramite;
+		
 	}
 
 	@Transactional(readOnly = false)

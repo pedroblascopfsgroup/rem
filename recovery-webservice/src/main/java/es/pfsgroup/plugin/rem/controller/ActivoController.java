@@ -44,6 +44,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -63,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
@@ -1126,6 +1128,24 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 
+	
+	/**
+	 * Método que recupera los activos de un trámite.
+	 * 
+	 * @param id
+	 *            Id del trámite
+	 * @return Listado de activos del tramite, tomando de cada activo un grupo de datos reducido
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model) {
+		
+		List<Activo> listActivos = activoTramiteApi.getActivosTramite(idTramite);
+		List<DtoActivoTramite> listDtoActivosTramite = activoTramiteApi.getDtoActivosTramite(listActivos);
+		model.put("data", listDtoActivosTramite);
+		model.put("totalCount", listDtoActivosTramite.size());
+
+		return createModelAndViewJson(model);
+	}
 	/**
 	 * Método que crea un nuevo trámite a partir de un activo
 	 * 

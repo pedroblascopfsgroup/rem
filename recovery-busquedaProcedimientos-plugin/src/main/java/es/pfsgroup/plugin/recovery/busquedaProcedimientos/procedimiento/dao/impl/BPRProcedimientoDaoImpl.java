@@ -363,7 +363,10 @@ public class BPRProcedimientoDaoImpl extends
 		}
 		
 		// Filtro procedimientos por el usuario logueado y sus grupos.
-		hb.appendWhere("gaa.gestor.id in (" + getIDsUsdPorGrupoIdsPorUsuarioLogueado(usuarioLogado) + ")");
+		String filtroPorUsuarioLogueadoYSusGrupos = getIDsUsdPorGrupoIdsPorUsuarioLogueado(usuarioLogado);
+		if(!Checks.esNulo(filtroPorUsuarioLogueadoYSusGrupos)){
+			hb.appendWhere(filtroPorUsuarioLogueadoYSusGrupos);
+		}
 		
 		Page pagina = HibernateQueryUtils.page(this, hb, dto);
 
@@ -400,7 +403,7 @@ public class BPRProcedimientoDaoImpl extends
 		}
 		
 		StringBuilder montajeIDs = new StringBuilder();
-		String idsEncontrados = new String();
+		String queryIDsEncontrados = new String(" gaa.gestor.id in (");
 		
 		// Convertir a una cadena de string para adjuntar a la query principal.
 		for(Long l : usdListID){
@@ -410,10 +413,18 @@ public class BPRProcedimientoDaoImpl extends
 		
 		// Eliminar los ultimos caratecteres de adjuntar a la lista, si contiene objetos.
 		if(!Checks.estaVacio(usdListID)){
-			idsEncontrados = montajeIDs.substring(0, montajeIDs.length()-2);
+			queryIDsEncontrados = queryIDsEncontrados.concat(montajeIDs.substring(0, montajeIDs.length()-2));
 		}
+		
+		// Cerrar query.
+		queryIDsEncontrados = queryIDsEncontrados.concat(")");
 
-		return idsEncontrados;
+		// Solo adjuntar la query si el filtro contiene elementos.
+		if(!Checks.estaVacio(usdListID)){
+			return queryIDsEncontrados;
+		} else {
+			return null;
+		}
 	}
 	
 	private String filtroGestorSupervisorProcedimientoMonoGestor(

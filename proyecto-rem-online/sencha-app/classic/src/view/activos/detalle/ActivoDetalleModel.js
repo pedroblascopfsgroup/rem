@@ -651,11 +651,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     			pageSize: $AC.getDefaultPageSize(),
 		    	proxy: {
 			        type: 'uxproxy',
-			        remoteUrl: 'activo/getHistoricoValoresPrecios',
-			        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+			        remoteUrl: 'activo/getHistoricoValoresPrecios'
 		    	},
 		    	remoteSort: true,
 		    	remoteFilter: true
+    		},
+    		
+    		storePropuestasActivo: {
+			    pageSize: $AC.getDefaultPageSize(),
+		    	proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'activo/getPropuestas',
+					extraParams: {id: '{activo.id}'}
+		    	},
+		    	remoteSort: true,
+		    	remoteFilter: true,
+		    	listeners : {
+		            beforeload : 'beforeLoadPropuestas'
+		        }
+		        
     		}
 
 	

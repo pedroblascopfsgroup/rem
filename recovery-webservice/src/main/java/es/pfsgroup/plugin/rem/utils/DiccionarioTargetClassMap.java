@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -129,6 +130,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposPlaza", TipoPlaza.class);
 		mapa.put("entidadEjecutante", DDEntidadEjecutante.class);
 		mapa.put("estadosPropuesta", DDEstadoPropuestaPrecio.class);
+		mapa.put("estadosPropuestaActivo", DDEstadoPropuestaActivo.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

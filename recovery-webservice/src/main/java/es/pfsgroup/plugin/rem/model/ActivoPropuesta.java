@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,6 +14,8 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 
 
 
@@ -34,6 +37,10 @@ public class ActivoPropuesta implements Serializable {
 
     @Column(name = "PRP_ID", nullable = false, updatable = false, insertable = false)
     private Long propuestaPrecio;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EPA_ID")
+    private DDEstadoPropuestaActivo estado;
     
     @Column(name="ACT_PRP_PRECIO_PROPUESTO")
     private Double precioPropuesto;

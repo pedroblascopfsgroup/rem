@@ -1,6 +1,9 @@
 /**
- * This global controller manages the login view and ensures that view is created when
- * the application is launched. Once login is complete we then create the main view.
+ * @class HreRem.controller.RootController
+ * @author Jose Villel
+ * 
+ * Controlador de aplicación que gestiona el inicio de la aplicación, login y aspectos globales de configuración.
+ * 
  */
 Ext.define('HreRem.controller.RootController', {
     extend: 'HreRem.ux.controller.ControllerBase',

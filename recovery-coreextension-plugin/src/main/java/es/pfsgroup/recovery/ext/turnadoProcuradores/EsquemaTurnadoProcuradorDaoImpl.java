@@ -523,102 +523,18 @@ public class EsquemaTurnadoProcuradorDaoImpl extends AbstractEntityDao<EsquemaTu
 		// Establece el orden de la búsqueda
 		return paginationManager.getHibernatePage(getHibernateTemplate(),
 				generarHQLBuscarDetalleHistorico(dto, usuLogado), dto);
-		//CRITERIA
-		/*PageSql page = new PageSql();
-		page.setResults(buscarTareas(dto));
-		return page;*/
+
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	public List<TurnadoHistorico> buscarDetalleHistoricoConFiltro(TurnadoHistoricoDto dto) {
 		
 		List<TurnadoHistorico> lista = getHibernateTemplate().find(generarHQLBuscarDetalleHistorico(dto, null));
 		
 		return lista;
 	}
-	/*
-	public List<Criterion> buscarTareasFiltrosBasicos(TurnadoHistoricoDto dto) {
-    	
-		List<Criterion> query = new ArrayList<Criterion>();
-		
-		if(!Checks.esNulo(dto.getAsunto())){
-			query.add(Restrictions.like("asunto.nombre",dto.getAsunto(),MatchMode.ANYWHERE));
-		}
-		if(!Checks.esNulo(dto.getProcurador())){
-			query.add(Restrictions.like("procuAsign.nombre",dto.getProcurador(),MatchMode.ANYWHERE));
-		}
-		if(!Checks.esNulo(dto.getTpo())){
-			query.add(Restrictions.eq("tipoProcedimiento.codigo",dto.getTpo()));
-		}
-		if(!Checks.esNulo(dto.getPlaza())){
-			query.add(Restrictions.eq("tipoPlaza.codigo",dto.getPlaza()));
-		}
 
-		if(!Checks.esNulo(dto.getImporteMin())){
-			query.add(Restrictions.le("importe", dto.getImporteMin()));
-		}
-		
-		if(!Checks.esNulo(dto.getImporteMax())){
-			query.add(Restrictions.ge("importe", dto.getImporteMin()));
-		}
-		
-		if(!Checks.esNulo(dto.getLetrado())){
-			query.add(Restrictions.like("auditoria.usuarioCrear",dto.getLetrado(),MatchMode.ANYWHERE));
-		}
-		/*
-		if(!Checks.esNulo(dto.getFechaDesde())){
-			try {
-					Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaDesde());
-					String consultaMontad = montaWhereMayorQue(fechaEnDate, "his.auditoria.fechaCrear");
-					hqlWhere.append(consultaMontad);
-			} catch (ParseException e) {
-					logger.warn("Error al convertir fecha para where en histórico de turnado Dao", e);
-			}
-		}
-
-		if(!Checks.esNulo(dto.getFechaHasta())){
-			try {
-					Date fechaEnDate = dto.convertirFechaToDate(dto.getFechaHasta());
-					String consultaMontad = montaWhereMenorQue(fechaEnDate, "his.auditoria.fechaCrear");
-					hqlWhere.append(consultaMontad);
-			} catch (ParseException e) {
-					logger.warn("Error al convertir fecha para where en histórico de turnado Dao", e);
-			}
-		}
-        
-        return query;
-    	
-    }
-
-	public List<TurnadoHistorico> buscarTareas(TurnadoHistoricoDto dto) {
-		//Select
-		Criteria query = getHibernateTemplate().getSessionFactory().getCurrentSession().createCriteria(TurnadoHistorico.class, "turnadoHistorico");
-		query.setProjection(selectListadoHistorico());
-		//Paginacion
-		query.setMaxResults(dto.getLimit());
-		query.setFirstResult(dto.getStart());
-		//Where
-		List<Criterion> where = new ArrayList<Criterion>();
-		where.add(Restrictions.eq("auditoria.borrado", false));
-		where.addAll(buscarTareasFiltrosBasicos(dto));
-		//query.setResultTransformer(Transformers.aliasToBean(BTATareaEncontrada.class));
-		List<TurnadoHistorico> listaTareas = query.list();
-		return listaTareas;
-    }
-	
-	private ProjectionList selectListadoHistorico() {
-
-		ProjectionList select = Projections.projectionList();
-		select.add(Projections.property("turnadoHistorico.id").as("id"));
-		select.add(Projections.property("turnadoHistorico.tipoPlaza").as("tipoPlaza"));
-		select.add(Projections.property("turnadoHistorico.tipoProcedimiento").as("tipoProcedimiento"));
-		select.add(Projections.property("turnadoHistorico.procuAsign").as("procuAsign"));
-		select.add(Projections.property("turnadoHistorico.importe").as("importe"));
-		select.add(Projections.property("turnadoHistorico.auditoria").as("auditoria"));		
-		return select;
-	}
-*/
-	
 	private String generarHQLBuscarDetalleHistorico(TurnadoHistoricoDto dto, Usuario usuLogado) {
 	
 		StringBuffer hqlFrom = new StringBuffer();

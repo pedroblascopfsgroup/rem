@@ -1,6 +1,5 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
-import java.util.HashMap;
 import java.util.List;
 
 import es.capgemini.devon.pagination.Page;
@@ -109,6 +108,12 @@ public interface EsquemaTurnadoProcuradorDao extends AbstractDao<EsquemaTurnadoP
 	 */
 	void borrarRangosFisico(List<Long> listIdsRC);
 
+	/**
+	 * Busca con filtro para la exportacion
+	 * 
+	 * @param filter
+	 * @return
+	 */
 	List<TurnadoHistorico> buscarDetalleHistoricoConFiltro(TurnadoHistoricoDto filter);
 	
 }

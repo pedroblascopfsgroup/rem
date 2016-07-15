@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.asunto.dao.AsuntoDao;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TipoTarea;
 import es.capgemini.pfs.users.UsuarioManager;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -221,7 +223,8 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 	public void contabilizarCobrosYFinalizarTareas(DtoContabilidadCobros dto) throws STAContabilidadException{
 		// Obtener lista de cobros por ID de asunto.
 		ContabilidadCobros cco = this.contabilidadCobrosDao.getContabilidadCobroByID(dto);
-		
+		Usuario usuarioLogado=usuarioManager.getUsuarioLogado();
+		Auditoria auditoria=new Auditoria();
 		if(!Checks.esNulo(cco)){
 			// Obtener el TAR_ID.
 			Long tarId = cco.getTarID();
@@ -231,6 +234,10 @@ public class ContabilidadCobrosManager implements ContabilidadCobrosApi {
 				EXTTareaNotificacion tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id" , tarId));
 				tarea.setTareaFinalizada(true);
 				tarea.setFechaFin(new Date(System.currentTimeMillis()));
+				//RECOVERY-2278 - Guardamos el usuario que ha realizado la tarea (Usuaio logado) para después mostrar este en el histórico de operaciones
+				auditoria=tarea.getAuditoria();
+				auditoria.setUsuarioModificar(usuarioLogado.getUsername());
+				tarea.setAuditoria(auditoria);
 			}else{
 				// Las tareas no se han enviado a contabilizar todavia.
 				throw new STAContabilidadException(STAContabilidadException.COBROS_NO_ENVIADOS);

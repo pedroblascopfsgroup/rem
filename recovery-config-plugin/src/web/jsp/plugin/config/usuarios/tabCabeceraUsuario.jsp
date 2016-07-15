@@ -77,11 +77,37 @@
 				)
 	};
 	
-	<pfs:buttonedit name="btModificar"
-		flow="plugin/config/usuarios/ADMmodificarUsuario"
-		windowTitleKey="plugin.config.usuarios.modificar.windowTitle"
-		parameters="modUsuParams" windowTitle="**Modificar usuario"
-		on_success="recargar" />
+	var btModificar = new Ext.Button({
+		text : '<s:message code="pfs.tags.buttonedit.modificar" text="**Modificar" />'
+		<app:test id="btnEdit_btModificar" addComa="true" />
+		,iconCls : 'icon_edit'
+		,handler : function() {
+				if ('${usuarioEnOtraCartera}' == 'true') {
+					Ext.Msg.show({title: fwk.constant.alert,
+									msg: '<s:message code="plugin.config.usuario.otraCartera"
+									text="**No es posible modificar el usuario mientras éste se encuentre configurado en otra cartera." />',
+									buttons: Ext.Msg.OK
+								});
+				} else {
+						var allowClose= false;
+						var btModificar_width=700;
+						var w= app.openWindow({
+								flow: 'plugin/config/usuarios/ADMmodificarUsuario'
+								,closable: allowClose
+								,width : btModificar_width
+								,title : '<s:message code="plugin.config.usuarios.modificar.windowTitle" text="**Modificar usuario" />'
+								,params: modUsuParams()
+							});
+							w.on(app.event.DONE, function(){
+								w.close();
+								recargar();
+							});
+							w.on(app.event.CANCEL, function(){
+								 w.close(); 
+							});
+				   }
+				}
+	});
 	
 	<%-- Se quitan los campos tipoDespacho y despacho. Si se vuelve a requerir, añadir tipoDespacho y despacho en items2 --%>
 	

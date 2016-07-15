@@ -58,7 +58,6 @@
             panelFiltros.getTopToolbar().setDisabled(true);
 			
 		}
-		,
 	});
 	//Boton Limpiar
 	var btnClean=new Ext.Button({

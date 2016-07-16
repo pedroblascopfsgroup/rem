@@ -8,6 +8,7 @@
 
 	<properties>
 		<devon.version>1.1.0</devon.version>
+		<evolution.version>9.1-SNAPSHOT</evolution.version>
 
 		<!--
 				PROYECTOS RECOVERY QUE FALTAN POR INCLUIR:
@@ -464,6 +465,11 @@
 		        <artifactId>recovery-webservice</artifactId>
 		        <version>${project.version}</version>
 		    </dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>paradise-framework</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- REM: GESTOR DOCUMENTAL LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -474,62 +480,57 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-coreextension-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-mejoras-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-agendaMultifuncion-plugin-evol</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>paradise-framework</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-bpmframework-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-geninformes-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-nuevoModeloBienesCommon-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-procedimientos-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-calendario-plugin-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-procedimientos-bpm-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>rec-common-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-domain-evol</artifactId>
-				<version>${project.version}</version>
+				<version>${evolution.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

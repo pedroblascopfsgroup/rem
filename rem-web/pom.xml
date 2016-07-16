@@ -1196,6 +1196,22 @@
                 </configuration>
             </plugin>
             <!-- JETTY PLUGIN (end) -->
+            <plugin>
+				<groupId>es.pfsgroup.maven</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.1-SNAPSHOT</version>
+				<configuration>
+					<DB>${b}</DB>
+					<cliente>${docker.cliente}</cliente>
+					<war>pfs-${project.version}</war>
+					<dumpsDir>${dumpsDir}</dumpsDir>
+					<directory>${directory}</directory>
+					<tag>${tag}</tag>
+					<container>${container}</container>
+					<port>${port}</port>
+					<dumpName>${dumpName}</dumpName>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -1224,6 +1240,10 @@
 		</profile>
 		<profile>
 			<id>rem</id>
+			<properties>
+				<docker.cliente>rem</docker.cliente>
+				<docker.db.port>1521</docker.db.port>
+			</properties>
 			<dependencies>
 				<!-- Versión de AspectJ -->
 				<dependency>

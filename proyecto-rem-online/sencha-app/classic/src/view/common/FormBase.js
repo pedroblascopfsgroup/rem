@@ -1,4 +1,51 @@
-Ext.define('HreRem.view.common.FormBase', {
+/**
+ * @class HreRem.view.common.FormBase
+ * @author Jose Villel
+ * 
+ * Formulario base con funciones para cargar o guardar un modelo o varios, especificados en 
+ * los correspondientes atributos, funciones para validaciones de primer y segundo nivel y gestión de errores.
+ * 
+ * Ejemplo de uso:
+ * 
+ 	Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {	    
+	    extend: 'HreRem.view.common.FormBase',
+	    xtype: 'fichatrabajo',	    
+	    recordName: "trabajo",		
+		recordClass: "HreRem.model.FichaTrabajo",	    
+	    requires: ['HreRem.model.FichaTrabajo'],	        
+	    items :[
+        			{                    
+						xtype:'fieldsettable',
+						defaultType: 'textfieldbase',						
+						title: HreRem.i18n('title.objeto'),
+						items :
+							[
+				                { 
+				                	xtype: 'displayfieldbase',
+				                	fieldLabel:  HreRem.i18n('fieldlabel.numero.trabajo'),
+				                	bind:		'{trabajo.numTrabajo}'
+				                },				                
+				                { 
+				                	xtype: 'displayfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.propietario.activo'),
+									bind:		'{trabajo.propietario}'
+				                },
+				                {
+						        	xtype: 'displayfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
+									bind:		'{trabajo.cartera}'
+								},			                
+				                { 
+						        	xtype: 'displayfieldbase',
+						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
+						        	bind: '{trabajo.tipoTrabajoDescripcion}'
+						        }
+							]
+		           }
+        ];
+	});
+ */
+ Ext.define('HreRem.view.common.FormBase', {
     extend		: 'Ext.form.Panel',
     xtype		: 'formBase',
     saveMultiple: false,    
@@ -23,7 +70,7 @@ Ext.define('HreRem.view.common.FormBase', {
     isSearchForm: false, 
     
     /**
-     * Para el caso de necesitar refrescar alguna pestaña después de guardar.
+     * Para el caso de necesitar refrescar el formulario después de guardar.
      * @type Boolean
      */
     refreshAfterSave: false,

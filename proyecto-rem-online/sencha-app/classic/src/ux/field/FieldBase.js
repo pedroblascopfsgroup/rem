@@ -1,4 +1,6 @@
 /**
+ * @class HreRem.ux.field.FieldBase
+ * @author Jose Villel
  * Esta clase provee a los campos de formulario de configuraciones comunes.
  * Se utiliza añadiendo al componente:
  *   

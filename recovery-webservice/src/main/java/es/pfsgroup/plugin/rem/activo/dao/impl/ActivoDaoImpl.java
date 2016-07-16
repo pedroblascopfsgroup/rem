@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
 @Repository("ActivoDao")
@@ -377,6 +378,22 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 return !Checks.estaVacio(listaCondiciones)?listaCondiciones.get(0):null;			
 	 
     }
+
+	@Override
+	public Page getPropuestas(DtoPropuestaFilter dto) {
+		
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaPropuestasActivo propact");
+		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.numPropuesta", dto.getNumPropuesta());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "propact.nombrePropuesta", dto.getNombrePropuesta());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoCodigo", dto.getEstadoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoActivoCodigo", dto.getEstadoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.idActivo", dto.getIdActivo());
+   		
+		return HibernateQueryUtils.page(this, hb, dto);
+
+	}
     
     
     

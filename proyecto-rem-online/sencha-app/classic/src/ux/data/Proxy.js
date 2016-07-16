@@ -1,4 +1,11 @@
-Ext.define('HreRem.ux.data.Proxy', {
+/**
+ * @class HreRem.ux.data.Proxy
+ * @author Jose Villel
+ * 
+ * Proxy base que extiende de Ext.data.proxy.Ajax para configuración común de la aplicación * 
+ */
+ 
+ Ext.define('HreRem.ux.data.Proxy', {
 	alias : 'proxy.uxproxy',
 	extend: 'Ext.data.proxy.Ajax',
 	

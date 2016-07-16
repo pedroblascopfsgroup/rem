@@ -1006,7 +1006,48 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	parent.actualizarCoordenadas(latitud, longitud);
     	
     	
-    }
+    },
+    
+    onSearchPropuestasActivoClick: function(btn) {
+    	
+    	var me = this;
+		this.lookupReference('propuestasActivoList').getStore().loadPage(1);
+    	
+    },
+    
+    beforeLoadPropuestas: function(store, operation, opts) {
+		
+		var me = this,		
+		searchForm = this.lookupReference('propuestasActivoSearch');
+		
+		if (searchForm.isValid()) {	
+			
+			store.getProxy().extraParams = me.getFormCriteria(searchForm);
+			store.getProxy().extraParams.idActivo = me.getViewModel().get("activo.id");
+			
+			return true;		
+		}
+	},
+	
+	getFormCriteria: function(form) {
+    	
+    	var me = this, initialData = {};
+    	
+		var criteria = Ext.apply(initialData, form ? form.getValues() : {});
+		
+		Ext.Object.each(criteria, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete criteria[key];
+			}
+		});
+
+		return criteria;
+    },
+    
+    	// Funcion que se ejecuta al hacer click en el botón limpiar
+	onCleanFiltersClick: function(btn) {			
+		btn.up('form').getForm().reset();				
+	}
 	
 	
 });

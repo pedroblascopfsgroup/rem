@@ -1,8 +1,9 @@
 /**
  * @class HreRem.ux.controller.ControllerBase
+ * @author Jose Villel
  * 
- * This is our main controller. All our application controllers must extend from
- * this. New common methods, will be defined here.
+ * Controlador de aplicación base, en el que se gestionan aspectos comunes a todos los controladores de aplicación.
+ * 
  */
 Ext.define('HreRem.ux.controller.ControllerBase', {
 	extend : 'Ext.app.Controller',

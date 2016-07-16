@@ -1,7 +1,8 @@
 /**
- * The main application class. An instance of this class is created by app.js when it
- * calls Ext.application(). This is the ideal place to handle application launch and
- * initialization details.
+ * @class HreRem.Application
+ * @author Jose Villel
+ * 
+ * La clase aplicación que extiende de Ext.app.Application y que será instanciada al inicio de la aplicación desde el app.js
  */
 Ext.define('HreRem.Application', {
     extend: 'Ext.app.Application',
@@ -16,7 +17,7 @@ Ext.define('HreRem.Application', {
         'WindowsController', 'RefreshController'
     ],
     
-    stores: ['dd.EntidadPropietaria', 'dd.EstadosPropuesta', 'dd.Provincias'],
+    stores: ['dd.EntidadPropietaria', 'dd.EstadosPropuesta', 'dd.Provincias', 'dd.EstadosPropuestaActivo'],
             
     bundle: {
         bundle: 'messages',

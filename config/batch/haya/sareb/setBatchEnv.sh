@@ -11,9 +11,10 @@ export BATCH_USER=ops-haya
 export DEVON_HOME=$DIR_RAIZ/batch-server 
 export LANG=es_ES.UTF-8
 export NLS_LANG=SPANISH_SPAIN.AL32UTF8
-export ORACLE_HOME=/opt/sw/oracle/client_1
+export ORACLE_HOME=ORACLE_HOME_VALUE
 #/opt/sw/oracle/product/11.2.0/client_1	[INTE, VAL01 y VAL02]
-#/opt/sw/oracle/client_1	[PRE Y PRO]
+#/opt/app/oracle/product/11.2.0/dbhome_11204        [PRE]
+#/opt/sw/oracle/client_1	[PRO]
 export PATH=$PATH:$ORACLE_HOME/bin
 
 # Código de la entidad

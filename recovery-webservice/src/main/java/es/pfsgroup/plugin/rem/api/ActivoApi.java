@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 
 
@@ -192,6 +193,14 @@ public interface ActivoApi {
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
 		public List<DtoEstadoPublicacion> getEstadoPublicacionByActivo(Long idActivo);
+
+		/**
+		 * Recupera una página de propuestas según el filtro recibido
+		 * @param dtoPropuestaFiltro
+		 * @return
+		 */
+		public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
+		
 		
     }
 

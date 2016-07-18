@@ -10,15 +10,22 @@ public class DtoPropuestaFilter extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 
+	private String idActivo;
 	private String numPropuesta;
 	private String nombrePropuesta;
 	private String entidadPropietariaCodigo;
 	private String tipoDeFecha;
 	private String fechaDesde;
 	private String fechaHasta;
-	private String estadoPropuesta;
+	private String estadoCodigo;
+	private String estadoActivoCodigo;
 	
-	
+	public String getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(String idActivo) {
+		this.idActivo = idActivo;
+	}	
 	public String getNumPropuesta() {
 		return numPropuesta;
 	}
@@ -55,15 +62,17 @@ public class DtoPropuestaFilter extends WebDto {
 	public void setFechaHasta(String fechaHasta) {
 		this.fechaHasta = fechaHasta;
 	}
-	public String getEstadoPropuesta() {
-		return estadoPropuesta;
+	public String getEstadoCodigo() {
+		return estadoCodigo;
 	}
-	public void setEstadoPropuesta(String estadoPropuesta) {
-		this.estadoPropuesta = estadoPropuesta;
+	public void setEstadoCodigo(String estadoCodigo) {
+		this.estadoCodigo = estadoCodigo;
 	}
-	
-	
+	public String getEstadoActivoCodigo() {
+		return estadoActivoCodigo;
+	}
+	public void setEstadoActivoCodigo(String estadoActivoCodigo) {
+		this.estadoActivoCodigo = estadoActivoCodigo;
+	}
 
-
-	
 }

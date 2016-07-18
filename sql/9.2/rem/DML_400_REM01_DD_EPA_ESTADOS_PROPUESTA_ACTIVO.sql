@@ -1,7 +1,7 @@
 	--/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160620
+--## FECHA_CREACION=20160714
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -30,7 +30,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EPA_ESTADO_PROP_PRECIO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EPA_ESTADO_PROP_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
 	

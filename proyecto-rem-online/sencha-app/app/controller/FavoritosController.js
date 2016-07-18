@@ -1,4 +1,7 @@
 /**
+ * @class HreRem.controller.FavoritosController
+ * @author Jose Villel
+ * 
  * Controlador global de aplicación que gestiona la funcionalidad del menú de favoritos
  */
 Ext.define('HreRem.controller.FavoritosController', {

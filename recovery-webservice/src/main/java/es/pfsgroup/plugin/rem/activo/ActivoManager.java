@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -748,6 +749,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			listaDtoEstadosPublicacion.add(dtoEstadoPublicacion);
 		}
 		return listaDtoEstadosPublicacion;		
+	}
+
+	@Override
+	public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro) {
+		
+		return activoDao.getPropuestas(dtoPropuestaFiltro);		
+
 	}
 
 	

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Picazo
---## FECHA_CREACION=20160607
+--## FECHA_CREACION=20160718
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2.6
 --## INCIDENCIA_LINK=PRODUCTO-1444
@@ -29,15 +29,15 @@ DECLARE
     
     CURSOR C_CAMBIOMOTIVO IS
 		select distinct asu.asu_id, dp.dd_dfi_id
-		from asu_asuntos asu
-		inner join prc_procedimientos p on asu.asu_id=p.asu_id
-		inner join dpr_decisiones_procedimientos dp on dp.prc_id=p.prc_id
+		from #ESQUEMA#.asu_asuntos asu
+		inner join #ESQUEMA#.prc_procedimientos p on asu.asu_id=p.asu_id
+		inner join #ESQUEMA#.dpr_decisiones_procedimientos dp on dp.prc_id=p.prc_id
 		where dp.dd_dfi_id is not null
 		and asu.asu_id in (
                           select asu.asu_id from (
-                                                 select asu.asu_id, dp.dd_dfi_id from asu_asuntos asu
-                                                 inner join prc_procedimientos p on asu.asu_id=p.asu_id
-                                                 inner join dpr_decisiones_procedimientos dp on dp.prc_id=p.prc_id
+                                                 select asu.asu_id, dp.dd_dfi_id from #ESQUEMA#.asu_asuntos asu
+                                                 inner join #ESQUEMA#.prc_procedimientos p on asu.asu_id=p.asu_id
+                                                 inner join #ESQUEMA#.dpr_decisiones_procedimientos dp on dp.prc_id=p.prc_id
                                                  where dp.dd_dfi_id is not null
                                                  group by asu.asu_id, dp.dd_dfi_id
                                                  ) asu

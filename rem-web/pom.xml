@@ -1210,6 +1210,13 @@
 					<container>${container}</container>
 					<port>${port}</port>
 					<dumpName>${dumpName}</dumpName>
+					<loginPage>js/plugin/rem/index.jsp</loginPage>
+					<watchList>
+						<param>
+							<localFile>proyecto-rem-online/sencha-app/build/testing/HreRem</localFile>
+							<dockerFile>/recovery/app-server/tomcat/webapps/pfs/js/plugin/rem</dockerFile>
+						</param>
+					</watchList>
 				</configuration>
 			</plugin>
 		</plugins>

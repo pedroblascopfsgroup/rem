@@ -637,7 +637,7 @@
 		}, Contrato)
 	});
 
-	contratosStore.webflow({idExpediente:${idExpediente}, idProcedimiento:'${procedimiento.id}'});
+	<%--contratosStore.webflow({idExpediente:${idExpediente}, idProcedimiento:'${procedimiento.id}'}); --%>
 
 <%--
 	var checkColumnContratos = new Ext.grid.CheckColumn2({
@@ -701,10 +701,15 @@
 		,iconCls : 'icon_contratos'
 		,autoWidth: true
     });
+    
+    contratosGrid.on('render', function() {
+    	contratosStore.webflow({idExpediente:${idExpediente}, idProcedimiento:'${procedimiento.id}'});
+    });
 
 	var inicializarContratosPersonas = function() {
 		for (var i=0; i < contratosStore.getTotalCount(); i++){
 			if(contratosStore.getAt(i).data.seleccionado==true){
+				contratosGrid.getSelectionModel().selectRow(i,true);
 				contratosSeleccionados[contratosSeleccionados.length] = contratosStore.getAt(i).data.id;
 				cexSeleccionados[cexSeleccionados.length] = contratosStore.getAt(i).data.idCex;
 				if (contratosSeleccionadosString != ""){

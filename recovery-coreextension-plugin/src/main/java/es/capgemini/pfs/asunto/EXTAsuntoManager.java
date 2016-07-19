@@ -66,11 +66,13 @@ import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
-import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
 import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
+import es.capgemini.pfs.expediente.dao.DDAmbitoExpedienteDao;
+import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedientePersona;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.iplus.IPLUSUtils;
@@ -101,12 +103,12 @@ import es.capgemini.pfs.util.HistoricoProcedimientoComparatorV4;
 import es.capgemini.pfs.utils.JBPMProcessManager;
 import es.capgemini.pfs.zona.model.DDZona;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
@@ -139,7 +141,6 @@ import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 import es.pfsgroup.recovery.ext.impl.zona.dao.EXTZonaDao;
 import es.pfsgroup.recovery.integration.Guid;
-import es.pfsgroup.recovery.integration.bpm.DiccionarioDeCodigos;
 import es.pfsgroup.recovery.integration.bpm.IntegracionBpmService;
 
 @Component
@@ -232,8 +233,10 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	
 	@Autowired
 	private	EXTDDTipoGestorManager tipoGestorManager;
-
 	
+	@Autowired
+	private DDAmbitoExpedienteDao ddAmbitoExpedienteDao;
+
 	@Override
 	public String managerName() {
 		return "asuntosManager";
@@ -929,7 +932,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 
 	@SuppressWarnings("unchecked")
 	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_CREAR_ASUNTO_LITIGIO)
-	@Transactional(readOnly = false)
+	@Transactional
 	public Long crearAsuntoLitigio(Long idExpediente, String idContratos, Boolean litigar) {
 		Expediente exp = expedienteManager.getExpediente(idExpediente);
 		
@@ -941,11 +944,31 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			dtoAsunto.setCodigoEstadoAsunto(DDEstadoAsunto.ESTADO_ASUNTO_EN_CONFORMACION);
 			
 			int numero = 0;
-			if (exp.getAsuntos()!=null) {
+			if (!Checks.esNulo(exp.getAsuntos())) {
 				numero = exp.getAsuntos().size()+1;
 			}
-			
-			dtoAsunto.setNombreAsunto(exp.getDescripcionExpediente() + " - Litigio " + ((numero>0)?"("+numero+")":"") + " - " + DateFormat.toString(new Date()));
+			//Para obtener el nombre necesitamos la persona de paso del expediente
+			String nombreAsunto = "";
+			DDAmbitoExpediente ambito = ddAmbitoExpedienteDao.getByCodigo(DDAmbitoExpediente.PERSONA_PASE);
+			List<ExpedientePersona> personas = exp.getPersonas(ambito);
+			if (!Checks.esNulo(personas)) {
+				Persona personaPase = personas.get(0).getPersona();
+				if (!Checks.esNulo(personaPase)) {
+					nombreAsunto += (!Checks.esNulo(idExpediente)?idExpediente.toString():"");
+					nombreAsunto += (numero>0?" - " + numero:"");
+					nombreAsunto += " | ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getDocId())?personaPase.getDocId():"");
+					nombreAsunto += " ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getNombre())?personaPase.getNombre():"");
+					nombreAsunto += " ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getApellido1())?personaPase.getApellido1():"");
+					nombreAsunto += " ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getApellido2())?personaPase.getApellido2():"");
+					nombreAsunto = nombreAsunto.trim();
+				}
+			}
+				
+			dtoAsunto.setNombreAsunto(nombreAsunto);
 			
 			if (litigar) {
 				List<EXTDDTipoGestor> listadoTipoGestores= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.TIPOGESTORES);
@@ -973,6 +996,7 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 			throw new BusinessOperationException("Expediente id {0} no valido",idExpediente);
 		}
 	}
+	
 
 	/**
 	 * Realiza ajustes en los gestores por defecto, según configuraciónn en el projectContext.xml

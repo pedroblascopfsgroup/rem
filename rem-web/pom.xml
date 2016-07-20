@@ -1204,6 +1204,7 @@
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
 					<war>pfs-${project.version}</war>
+					<warDirectory>rem-web/target</warDirectory>
 					<dumpsDir>${dumpsDir}</dumpsDir>
 					<directory>${directory}</directory>
 					<tag>${tag}</tag>

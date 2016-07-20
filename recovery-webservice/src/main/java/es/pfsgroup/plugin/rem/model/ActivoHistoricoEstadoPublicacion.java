@@ -21,7 +21,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;

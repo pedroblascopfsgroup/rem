@@ -37,11 +37,13 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -319,9 +321,16 @@ public class Activo implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USU_ID")
 	private Usuario gestorBloqueoPrecio;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPU_ID")
+    private DDTipoPublicacion tipoPublicacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EPU_ID")
+    private DDEstadoPublicacion estadoPublicacion;
     
-    @Version   
+	@Version   
 	private Long version;
 
 	@Embedded
@@ -1302,5 +1311,20 @@ public class Activo implements Serializable, Auditable {
 		this.gestorBloqueoPrecio = gestorBloqueoPrecio;
 	}
     
+    public DDTipoPublicacion getTipoPublicacion() {
+		return tipoPublicacion;
+	}
+
+	public void setTipoPublicacion(DDTipoPublicacion tipoPublicacion) {
+		this.tipoPublicacion = tipoPublicacion;
+	}
 	
+	public DDEstadoPublicacion getEstadoPublicacion() {
+		return estadoPublicacion;
+	}
+
+	public void setEstadoPublicacion(DDEstadoPublicacion estadoPublicacion) {
+		this.estadoPublicacion = estadoPublicacion;
+	}
+
 }

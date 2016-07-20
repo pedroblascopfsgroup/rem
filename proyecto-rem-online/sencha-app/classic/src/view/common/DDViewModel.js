@@ -19,6 +19,11 @@ Ext.define('HreRem.view.common.DDViewModel', {
     	   		loadSource: true    			
     		},
     		
+    		comboEstadosPropuestaActivo: {
+    			source: 'estadosPropuestaActivo',
+    	   		loadSource: true    			
+    		},
+    		
     		comboSiNoRem: {
 				data : [
 			        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},

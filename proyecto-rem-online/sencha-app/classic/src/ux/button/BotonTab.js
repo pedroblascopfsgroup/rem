@@ -1,3 +1,10 @@
+/**
+ * @class HreRem.ux.button.BotonTab
+ * @author Jose Villel
+ * 
+ * Componente para los botones pestaña que activan los campos de ediciḉon y guardan datos de una pestaña 
+ * en un tabpanel
+ */
 Ext.define('HreRem.ux.button.BotonTab', {
 	extend	: 'Ext.button.Button',
 	xtype	: 'buttontab',

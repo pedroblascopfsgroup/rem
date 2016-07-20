@@ -1,7 +1,8 @@
 Ext.define('HreRem.view.activos.detalle.PropuestasPreciosActivo', {
     extend		: 'Ext.panel.Panel',
     xtype		: 'propuestaspreciosactivo',
-    requires	: ['HreRem.view.precios.historico.HistoricoPropuestasSearch', 'HreRem.view.precios.historico.HistoricoPropuestasList'],
+    requires	: ['HreRem.view.activos.detalle.PropuestasActivoSearch', 'HreRem.view.activos.detalle.PropuestasActivoList'],
+    scrollable	: 'y',
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -9,17 +10,20 @@ Ext.define('HreRem.view.activos.detalle.PropuestasPreciosActivo', {
     initComponent: function () {        
         var me = this;
         
-        me.setTitle(HreRem.i18n("title.historico.propuestas.precios"));
+        me.setTitle(HreRem.i18n("title.propuestas.precios"));
         
         var items = [
         			
         			{	
-        				xtype: 'historicopropuestassearch',
+        				xtype: 'propuestasactivosearch',
+        				reference: 'propuestasActivoSearch',
+        				title: HreRem.i18n("title.filtro.propuestas"),
         				collapsible: true,
-        				reference: 'historicoPropuestasActivoSearch'
+        				collapsed: true
         			},
         			{	
-        				xtype: 'historicopropuestaslist'        			
+        				xtype: 'propuestasactivolist',
+        				reference: 'propuestasActivoList'        				
         			}
         
         ];
@@ -28,7 +32,15 @@ Ext.define('HreRem.view.activos.detalle.PropuestasPreciosActivo', {
         
         me.callParent(); 
         
-    }
+    },
+    
+    funcionRecargar: function() {
+		var me = this; 
+		me.recargar = false;
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().loadPage(1);
+  		});
+    } 
 
 
 });

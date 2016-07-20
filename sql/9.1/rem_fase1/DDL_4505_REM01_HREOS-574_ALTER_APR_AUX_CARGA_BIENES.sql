@@ -1,0 +1,214 @@
+--/*
+--##########################################
+--## AUTOR=DAVID GONZALEZ
+--## FECHA_CREACION=20160615
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=HREOS-574
+--## PRODUCTO=NO
+--## Finalidad: Modificar columnas APR_AUX_CARGA_BIENES para adaptar a la especificación del fichero.
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Version inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
+    V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'APR_AUX_CARGA_BIENES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+
+BEGIN
+	
+	
+	-- Comprobamos si existe columna FILLER
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''FILLER'' and DATA_TYPE = ''VARCHAR2'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FILLER... Existe, lo borramos.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP COLUMN FILLER';	
+	ELSE
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FILLER... No existe.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna FECHA_EXTRACCION
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''FECHA_EXTRACCION'' and DATA_TYPE = ''DATE'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_EXTRACCION... Existe, lo borramos.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' DROP COLUMN FECHA_EXTRACCION';	
+	ELSE
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_EXTRACCION... No existe.');
+	END IF;
+	
+	
+	-- Añadimos todas las columnas que nos faltan
+	-- Comprobamos si existe columna NUMERO_ORDEN
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''NUMERO_ORDEN'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.NUMERO_ORDEN... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.NUMERO_ORDEN... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (NUMERO_ORDEN NUMBER(3))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.NUMERO_ORDEN... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna ID_CARGA_RECOVERY
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''ID_CARGA_RECOVERY'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ID_CARGA_RECOVERY... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ID_CARGA_RECOVERY... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (ID_CARGA_RECOVERY NUMBER(16))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ID_CARGA_RECOVERY... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna FILLER
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''FILLER'' and DATA_TYPE = ''VARCHAR2'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FILLER... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FILLER... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (FILLER VARCHAR2(43 CHAR))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FILLER... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna FECHA_EXTRACCION
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''FECHA_EXTRACCION'' and DATA_TYPE = ''DATE'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_EXTRACCION... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_EXTRACCION... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (FECHA_EXTRACCION DATE)';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FECHA_EXTRACCION... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna BIE_CAR_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''BIE_CAR_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_ID... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_ID... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (BIE_CAR_ID NUMBER(16))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_ID... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna CRG_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''CRG_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CRG_ID... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CRG_ID... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CRG_ID NUMBER(16))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CRG_ID... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna ACTUALIZA
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''ACTUALIZA'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACTUALIZA... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACTUALIZA... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (ACTUALIZA NUMBER(1))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACTUALIZA... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna BORRADO
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''BORRADO'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (BORRADO NUMBER(1))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BORRADO... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna BIE_CAR_ECONOMICA
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''BIE_CAR_ECONOMICA'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_ECONOMICA... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_ECONOMICA... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (BIE_CAR_ECONOMICA NUMBER(1))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_ECONOMICA... Creado.');
+	END IF;
+	
+	
+	-- Comprobamos si existe columna BIE_CAR_REGISTRAL
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''BIE_CAR_REGISTRAL'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_REGISTRAL... Ya existe.');	
+	ELSE
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_REGISTRAL... No existe.');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (BIE_CAR_REGISTRAL NUMBER(1))';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.BIE_CAR_REGISTRAL... Creado.');
+	END IF;
+	
+	
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.PUT_LINE('KO no modificada');
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT

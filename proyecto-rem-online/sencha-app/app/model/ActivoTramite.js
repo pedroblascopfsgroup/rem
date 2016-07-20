@@ -90,6 +90,6 @@ Ext.define('HreRem.model.ActivoTramite', {
     			
     		}
     		
-    ],
+    ]
 
 });

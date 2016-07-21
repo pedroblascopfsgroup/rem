@@ -43,6 +43,8 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.ActivoBaseActionHandler;
+import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
@@ -150,6 +152,47 @@ public class TareaActivoManager implements TareaActivoApi {
 		
 		EventFactory.onMethodStop(this.getClass());
 	}
+	
+	//	@Override
+	//	@Transactional(readOnly=false)
+	//	public void saltoCierreEconomico(Long idTareaExterna) throws BusinessOperationException{
+	//		TareaActivo tareaAsociada = null;
+	//		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTareaExterna);
+	//		if (!Checks.esNulo(tareaExterna)) {
+	//			tareaAsociada = (TareaActivo) tareaExterna.getTareaPadre();
+	//		}
+	//		if (!Checks.esNulo(tareaAsociada.getTareaExterna())){
+	//			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+	//			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), ActivoGenerarSaltoImpl.SALTO_CIERRE_ECONOMICO);
+	//		}
+	//	}
+	
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoCierreEconomico(Long idTareaExterna){
+			saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_SALTO_CIERRE);
+	}
+		
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoFin(Long idTareaExterna){
+		saltoTarea(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_FIN);
+	}
+			
+	@Override
+	@Transactional(readOnly=false)
+	public void saltoTarea(Long idTareaExterna, String tareaDestino){
+		TareaActivo tareaAsociada = null;
+		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTareaExterna);
+		if (!Checks.esNulo(tareaExterna)) {
+			tareaAsociada = (TareaActivo) tareaExterna.getTareaPadre();
+		}
+		if(!Checks.esNulo(tareaAsociada.getTareaExterna())){
+			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
+		}
+	}
+		
 	
 	private MEJTrazaDto generaTrazaAutoProrroga(DtoSolicitarProrroga dto, Date fechaVencimientoOriginal, Long idTareaActivo) {
 

@@ -1,5 +1,6 @@
 /**
- * @author Jose Villel - Pfs Group
+ * @class HreRem.controller.AuthenticationController
+ * @author Jose Villel
  * 
  * Controlador de aplicación para gestionar el renderizado o no, habilitado o no, etc de componentes
  * en función de los permisos/funciones/roles que tenga el usuario.
@@ -9,6 +10,12 @@
  * 			- secFunPermToShow
  * 			- secFunPermToRender
  * 			- secFunPermToEnable
+ * 			- secRolesPermToEdit
+ * 			- secRolesPermToEnable
+ * 
+ * o llamar a las funciones
+ * 			- confirmFunToFunctionExecution()
+ * 			- confirmRolesToFunctionExecution
  *
  * con el valor de la función/permiso/rol que tendrá que evaluar el controlador.
  * 

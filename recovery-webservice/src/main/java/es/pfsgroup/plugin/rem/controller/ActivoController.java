@@ -44,9 +44,11 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -63,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
@@ -77,8 +80,8 @@ import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -108,7 +111,10 @@ public class ActivoController {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
-	/**
+	@Autowired
+	private PreciosApi preciosApi;
+	
+	/**getHistoricoValoresPrecios
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 
 	 * @param request
@@ -1126,6 +1132,24 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 
+	
+	/**
+	 * Método que recupera los activos de un trámite.
+	 * 
+	 * @param id
+	 *            Id del trámite
+	 * @return Listado de activos del tramite, tomando de cada activo un grupo de datos reducido
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model) {
+		
+		List<Activo> listActivos = activoTramiteApi.getActivosTramite(idTramite);
+		List<DtoActivoTramite> listDtoActivosTramite = activoTramiteApi.getDtoActivosTramite(listActivos);
+		model.put("data", listDtoActivosTramite);
+		model.put("totalCount", listDtoActivosTramite.size());
+
+		return createModelAndViewJson(model);
+	}
 	/**
 	 * Método que crea un nuevo trámite a partir de un activo
 	 * 
@@ -1542,7 +1566,7 @@ public class ActivoController {
 	}
 
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {
 
 		try {
@@ -1560,6 +1584,25 @@ public class ActivoController {
 
 		return createModelAndViewJson(model);
 
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
+		
+		try {
+
+			Page page = activoApi.getPropuestas(dtoPropuestaFiltro);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 	
 

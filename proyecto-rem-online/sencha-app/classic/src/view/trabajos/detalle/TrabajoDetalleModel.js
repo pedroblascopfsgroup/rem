@@ -2,7 +2,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.trabajodetalle',
 
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 'HreRem.model.ActivoTrabajoSubida',
     'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves'],
     
     data: {
@@ -252,6 +252,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'estadosPresupuesto'}
 				}
+    		},
+    		
+    		listaActivosSubida: {
+    			pageSize: 10,
+    			model:'HreRem.model.ActivoTrabajoSubida',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'trabajo/getListActivosByProceso',
+    				extraParams: {idProceso: 'idProceso'}
+    			}
     		}
 
     }

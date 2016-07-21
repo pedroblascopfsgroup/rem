@@ -973,7 +973,17 @@ public class TrabajoController {
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 
-	}	
+	}
+		
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListActivosByProceso(Long idProceso, ModelMap model){
+		
+		model.put("data", trabajoAdapter.getListActivosByProceso(idProceso));
+			
+		return createModelAndViewJson(model);
+			
+	}
 	
 
 }

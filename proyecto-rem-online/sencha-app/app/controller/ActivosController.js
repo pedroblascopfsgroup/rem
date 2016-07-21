@@ -108,6 +108,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	},
     	
     	'tramitesdetalle' : {
+            abrirDetalleActivo: 'abrirDetalleActivo',
+            abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
     		refrescarTramite: 'refrescarDetalleTramite'
     	},
 	

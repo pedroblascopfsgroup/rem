@@ -21,6 +21,17 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 		 	}
 		 	
 		 	
+		},
+		
+		getSrcMultiActivo: function(get) {
+		 	var esMultiActivo = get('tramite.esMultiActivo');
+		 	
+		 	if(esMultiActivo == true) {
+		 		return 'resources/images/ico_agrupaciones_column.svg';
+		 	} else {
+		 		return 'resources/images/ico_agrupaciones_active.svg';
+		 	}
+		 	
 		}
 		
     },
@@ -56,9 +67,17 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 		    	remoteSort: true,
 		    	remoteFilter: true
 
-		}
-    		
-    		
+		},
+		
+		activosTramite: {
+    			pageSize: $AC.getDefaultPageSize(),
+				 model: 'HreRem.model.ActivoTramite',
+				 proxy: {
+				    type: 'uxproxy',
+					remoteUrl: 'activo/getActivosTramite',
+					extraParams: {idTramite: '{tramite.idTramite}'}
+				 }
+    	}  		
 	
      }    
 });

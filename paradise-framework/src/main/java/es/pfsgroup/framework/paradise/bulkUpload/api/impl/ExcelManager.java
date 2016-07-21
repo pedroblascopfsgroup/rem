@@ -144,7 +144,7 @@ public class ExcelManager implements ExcelManagerApi {
 	@Override
 	public MSVProcesoMasivo validateFormat(MSVDocumentoMasivo document) throws Exception {
 
-		MSVExcelValidator excelValidator = excelValidatorFactory.getForTipoValidador(document.getProcesoMasivo().getTipoOperacion().getId());
+		MSVExcelValidator excelValidator = excelValidatorFactory.getForTipoValidador(document.getProcesoMasivo().getTipoOperacion().getCodigo());
 
 		MSVDtoAltaProceso dtoModifProceso = new MSVDtoAltaProceso();
 		dtoModifProceso.setIdProceso(document.getProcesoMasivo().getId());
@@ -240,7 +240,7 @@ public class ExcelManager implements ExcelManagerApi {
 			resultadoValidacion = false;
 		}
 
-		MSVExcelValidator validador = excelValidatorFactory.getForTipoValidador(proceso.getTipoOperacion().getId());
+		MSVExcelValidator validador = excelValidatorFactory.getForTipoValidador(proceso.getTipoOperacion().getCodigo());
 		MSVDtoValidacion dtoResultado = validador.validarContenidoFichero(dtoFile);
 
 		if (!Checks.esNulo(dtoResultado)) {

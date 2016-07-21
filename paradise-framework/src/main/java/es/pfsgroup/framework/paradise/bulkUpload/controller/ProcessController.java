@@ -26,6 +26,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewer;
 
@@ -34,6 +35,10 @@ public class ProcessController {
 	
 	@Autowired
 	ProcessAdapter processAdapter;
+	
+	@Autowired
+	private MSVExcelParser excelParser;
+		
 	
 	@Autowired 
 	UploadAdapter uploadAdapter;
@@ -227,6 +232,76 @@ public class ProcessController {
 		Long idProcess = Long.parseLong(request.getParameter("idProcess"));
 		processAdapter.setStateError(idProcess);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+		public ModelAndView subeListaActivos (HttpServletRequest request, HttpServletResponse response) throws Exception {
+				
+				ModelMap model = new ModelMap();
+				String result = null;
+				Long idProceso = null;
+				
+				try {			
+					WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+					
+					MSVDtoAltaProceso dto = new MSVDtoAltaProceso();
+					dto.setIdTipoOperacion(Long.parseLong(fileItem.getParameter("idTipoOperacion")));
+					dto.setDescripcion(fileItem.getParameter("fileUpload"));	
+					
+					idProceso = processAdapter.initProcess(dto);	
+					
+					Map<String, String> parameters = fileItem.getParameters();			
+					parameters.put("idProceso", String.valueOf(idProceso));
+					parameters.put("idTipoOperacion", fileItem.getParameter("idTipoOperacion"));
+					fileItem.setParameters(parameters);
+					
+					result = processAdapter.subirFicheroParaProcesar(fileItem);
+					
+					
+	//				MSVHojaExcel exc = excelParser.getExcel(fileItem.getFileItem().getFile());
+	//				exc.dameCelda(0, 0);
+					
+					
+					/*
+					
+					ExcelFileBean efb = new ExcelFileBean();
+					efb.setFileItem(fileItem.getFileItem());
+					MSVExcelFileItemDto dtoMSV = new MSVExcelFileItemDto();
+					//dto.setProcessId(Long.parseLong(uploadForm.getParameter("idProceso")));
+				//dto.setIdTipoOperacion(Long.parseLong(uploadForm.getParameter("idTipoOperacion")));
+					dtoMSV.setExcelFile(efb);
+					
+					
+					MSVProcesoMasivo proceso = processAdapter.get(idProceso);
+					MSVDocumentoMasivo document = processAdapter.getMSVDocumento(idProceso);
+					//idProceso
+					
+					MSVExcelFileItemDto dtoFile = new MSVExcelFileItemDto();
+					dtoFile.setProcessId(proceso.getId());
+					dtoFile.setIdTipoOperacion(proceso.getTipoOperacion().getId());
+	
+					if (!Checks.esNulo(document)) {
+						ExcelFileBean excelFile = new ExcelFileBean();
+						excelFile.setFileItem(document.getContenidoFichero());
+						dtoFile.setExcelFile(excelFile);
+						dtoFile.setRuta(document.getDirectorio() + "/" + document.getNombre());
+					}
+					
+					*/
+					
+	
+					
+					model.put("idProceso", idProceso);
+					model.put("success", true);
+				
+				} catch (Exception e) {
+					e.printStackTrace();
+					model.put("success", false);
+					model.put("errorMessage", e.getCause());
+				}
+				
+				return JsonViewer.createModelAndViewJson(model);
+				
+		}
 	
 	
 	

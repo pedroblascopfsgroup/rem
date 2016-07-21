@@ -66,6 +66,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     private static final long serialVersionUID = 1L;
 
+    public static final String SALTO_CIERRE_ECONOMICO = "saltoCierreEconomico";
+    
     protected final Log logger = LogFactory.getLog(getClass());
 
     private ExecutionContext executionContext;
@@ -507,6 +509,16 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
         node.addLeavingTransition(transition);
     }
 
+    protected void nuevaTransicionConDestino(String name, ExecutionContext executionContext, Node nodeDestino){
+      	Node nodeOrigen = executionContext.getNode();
+       	Transition transition = new Transition();
+       	transition.setFrom(nodeOrigen);
+       	transition.setTo(nodeDestino);
+       	transition.setName(name);
+       	transition.setProcessDefinition(executionContext.getProcessDefinition());
+       	nodeOrigen.addLeavingTransition(transition);
+    }
+    
     /**
      * PONER JAVADOC FO.
      * @param key key

@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.ActivosSearch', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'activossearch',
-    isSearchForm : true,
+    isSearchFormActivos : true,
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,
@@ -29,11 +29,15 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			    defaults: {
 			        layout: 'form',
 			        xtype: 'container',
-			        defaultType: 'textfield',
+			        defaultType: 'textfieldbase',
 			        style: 'width: 25%'
 			    },
 			    items: [   
-			    	{items:[
+			    	{
+			    	defaults: {
+			    		addUxReadOnlyEditFieldPlugin: false
+			    	},
+			    	items:[
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.haya'),
 				        	name: 'numActivo'
@@ -48,51 +52,57 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			            	}
 				        }
 				    ]},
-			    	{items:[
+			    	{
+			    	defaults: {
+			    		addUxReadOnlyEditFieldPlugin: false
+			    	},
+			    	items:[
 					        { 
 					        	fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
 					        	name: 'localidadDescripcion'
 
 					        },
 					        { 
-					        	xtype: 'combo',
+					        	xtype: 'comboboxfieldbase',
+						    	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 					        	name: 'provinciaCodigo',
 					        	bind: {
 				            		store: '{comboFiltroProvincias}'
-				            	},
-				            	displayField: 'descripcion',
-	    						valueField: 'codigo'
+				            	}
 					        }
 					    ]},
-				    {items:[
+				    {
+				   	defaults: {
+			    		addUxReadOnlyEditFieldPlugin: false
+			    	},
+				    items:[
 				        {
-				        	xtype: 'combo',
+				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.origen'),
 				        	name: 'tipoTituloActivoCodigo',
 							//store: { type: 'diccionario', tipo: 'tiposTitulo'},
 				        	bind: {
 				            	store: '{comboTipoTitulo}'
 				            },
-			            	displayField: 'descripcion',
-    						valueField: 'codigo',
     						matchFieldWidth: false
 				        },
 				        { 
-				        	xtype: 'combo',
+				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
 				        	name: 'subtipoActivoCodigo',
 				        	bind: {
 			            		store: '{comboFiltroSubtipoActivo}'
 			            	},
-			            	displayField: 'descripcion',
-    						valueField: 'codigo',
 				        	matchFieldWidth: false
 
 				        }
 				        
 				    ]},
 				    {	
+				    defaults: {
+			    		addUxReadOnlyEditFieldPlugin: false
+			    	},
 				    items:[
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.finca.registral'),
@@ -122,11 +132,11 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							cls	 :  'fieldsetCabecera',
 							title: HreRem.i18n('title.identificacion'),
 							collapsible: true,
-							defaultType: 'textfield',
-							/*defaults: {
-								anchor: '100%', style: 'width: 25%'},
-							layout: 'column',
-							*/items :
+							defaultType: 'textfieldbase',
+		    				defaults: {
+					    		addUxReadOnlyEditFieldPlugin: false
+					    	},							
+							items :
 								 [
 									 { 
 							        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo'),
@@ -148,15 +158,13 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						                name:		'idRecovery'
 									},
 									{
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
 							        	labelWidth:	150,
 							        	name: 'estadoActivoCodigo',
 							        	bind: {
 						            		store: '{comboEstadoActivo}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo'				
+						            	}			
 							        }	
 
 								]
@@ -175,18 +183,19 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							title: HreRem.i18n('title.direccion'),
 							collapsible: true,
 							collapsed: true,
-							defaultType: 'textfield',
+							defaultType: 'textfieldbase',
+							defaults: {
+			    				addUxReadOnlyEditFieldPlugin: false
+			    			},
 							items :
 								[
 									{ 
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.tipo.via'),
 						            	name:	'tipoViaCodigo',
 							        	bind: {
 						            		store: '{comboTipoVia}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo'
+						            	}
 							        },
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.via'),
@@ -198,28 +207,24 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						                name:		'codPostal'
 									},
 									{ 
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 							        	name: 'provinciaAvanzada',
 							        	bind: {
 						            		store: '{comboFiltroProvincias}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo'
+						            	}
 							        },
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 						            	name:		'municipio'
 									}, 
 									{ 
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',						    			
 										fieldLabel: HreRem.i18n('fieldlabel.pais'),
 							        	name: 'paisCodigo',
 							        	bind: {
 						            		store: '{comboPais}'
-						            	},
-						            	displayField: 'descripcion',
-			    						valueField: 'codigo'
+						            	}
 							        }
 
 								]
@@ -238,7 +243,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							title: HreRem.i18n('title.informacion.registral'),
 							collapsible: true,
 							collapsed: true,
-							defaultType: 'textfield',
+							defaultType: 'textfieldbase',
+							defaults: {
+			    				addUxReadOnlyEditFieldPlugin: false
+			    			},
 							items :
 								[
 								{
@@ -272,33 +280,27 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							collapsible: true,
 							collapsed: true,
 							defaultType: 'textfield',
+							defaults: {
+			    				addUxReadOnlyEditFieldPlugin: false
+			    			},
 							items :
 								[
 									{ 
-							        	xtype: 'combo',
-							        	editable: false,
+							        	xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
-							        	labelWidth:	150,
-							        	width: 		230,
 						            	name:	'ocupado',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
-						            	},
-						            	displayField: 'descripcion',
-										valueField: 'codigo'
+						            	}
 							        },
 							        { 
-							        	xtype: 'combo',
+							        	xtype: 'comboboxfieldbase',
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
-							        	labelWidth:	150,
-							        	width: 		230,
 						            	name:		'conTitulo',
 							        	bind: {
 						            		store: '{comboSiNoRem}'
-						            	},
-						            	displayField: 'descripcion',
-										valueField: 'codigo'
+						            	}
 							        }
 								
 								]

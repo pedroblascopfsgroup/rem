@@ -21,7 +21,7 @@ public interface JBPMActivoTramiteManagerApi {
 	
 	public ActivoTramite creaActivoTramite(TipoProcedimiento tipoProcedimiento, Activo activo);
 	
-	public ActivoTramite createActivoTramiteTrabajo(TipoProcedimiento tipoProcedimiento, Activo activo, Trabajo trabajo);
+	public ActivoTramite createActivoTramiteTrabajo(TipoProcedimiento tipoProcedimiento,/* Activo activo,*/ Trabajo trabajo);
 
 	
 	/**

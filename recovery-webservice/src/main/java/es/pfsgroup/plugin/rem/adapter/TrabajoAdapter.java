@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,15 +21,23 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
+import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 
@@ -51,6 +60,15 @@ public class TrabajoAdapter {
     
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaApi;  
+    
+    @Autowired
+    private ProcessAdapter processAdapter;
+        
+    @Autowired
+    private MSVExcelParser excelParser;
+    	
+    @Autowired
+    private ActivoApi activoApi;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -227,6 +245,53 @@ public class TrabajoAdapter {
 			}
 		}
 		return mensaje;
+	}
+	
+	
+	
+	public List<DtoTrabajoListActivos> getListActivosByProceso(Long idProceso){
+		List<DtoTrabajoListActivos> listaActivos = new ArrayList<DtoTrabajoListActivos>();
+		MSVProcesoMasivo proceso = processAdapter.get(idProceso);
+		MSVDocumentoMasivo document = processAdapter.getMSVDocumento(idProceso);
+		
+		//MSVHojaExcel exc = excelParser.getExcel(fileItem.getFileItem().getFile());
+		MSVHojaExcel exc = excelParser.getExcel(document.getContenidoFichero().getFile());
+		//exc.getNumeroColumnas();
+		
+		try {
+			for(int i = 1; i < exc.getNumeroFilas(); i++){ //Nos saltamos la línea del título
+				DtoTrabajoListActivos dto = new DtoTrabajoListActivos();
+				
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(exc.dameCelda(i, 0)));
+				Activo activo =  genericDao.get(Activo.class, filtro);
+				
+				beanUtilNotNull.copyProperty(dto, "idActivo", activo.getId());
+				beanUtilNotNull.copyProperty(dto, "numActivoRem", activo.getNumActivoRem());
+				beanUtilNotNull.copyProperty(dto, "numActivoHaya", activo.getNumActivo());
+				beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "subtipoActivo", activo.getSubtipoActivo().getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "cartera", activo.getCartera().getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "situacionComercial", activo.getSituacionComercial().getDescripcion());
+				//beanUtilNotNull.copyProperty(dto, "situacionPosesoria", activo.getSituacionPosesoria().);
+				
+				listaActivos.add(dto);
+			}
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		return listaActivos;
 	}
 
 }

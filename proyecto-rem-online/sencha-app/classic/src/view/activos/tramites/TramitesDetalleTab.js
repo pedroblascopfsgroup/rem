@@ -7,13 +7,14 @@ Ext.define('HreRem.view.activos.tramites.TramitesDetalleTab', {
 	flex: 1,
 	layout		: 'fit',
     requires : ['HreRem.view.activos.tramites.TramitesActivo','HreRem.view.activos.tramites.DatosGeneralesTramite','HreRem.view.activos.tramites.TareasModel',
-			'HreRem.view.activos.tramites.TareasList','HreRem.view.activos.tramites.HistoricoTareasList'],
+				'HreRem.view.activos.tramites.TareasList','HreRem.view.activos.tramites.HistoricoTareasList','HreRem.model.ActivoTramite'],
 
     items: [				
 		    				
 		    		{xtype: 'datosgeneralestramite'},
 		    		{xtype: 'tareaslist'},
-		    		{xtype: 'historicotareaslist'}
+		    		{xtype: 'historicotareaslist'},
+		    		{xtype: 'activostramite'}
     ]
         
 });

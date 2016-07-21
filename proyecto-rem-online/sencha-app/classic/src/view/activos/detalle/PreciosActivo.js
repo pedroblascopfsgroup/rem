@@ -104,7 +104,6 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivo', {
 			    		},
 			    		{
 			    			xtype: 'propuestaspreciosactivo',
-			    			title: HreRem.i18n('title.propuestas.precios'),
 			    			ocultarBotonesEdicion: true
 			    		}	    		
 			     ],

@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -44,5 +45,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	void deleteValoracionById(Long id);
 
 	ActivoCondicionEspecifica getUltimaCondicion(Long idActivo);
+
+	Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
 	
 }

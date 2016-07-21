@@ -540,7 +540,7 @@
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
 	       		Ext.apply(params, {idTermino : idTermino });     		
-	       		
+	       		btnGuardar.setDisabled(true);
 	       		Ext.Ajax.request({
 					url: page.resolveUrl('mejacuerdo/crearTerminoAcuerdo')
 					,method: 'POST'
@@ -555,6 +555,7 @@
 						page.fireEvent(app.event.DONE);
 					}
 					,error: function(){
+						btnGuardar.setDisabled(false);
 						Ext.MessageBox.show({
 				           title: 'Guardado',
 				           msg: '<s:message code="plugin.mejoras.asunto.ErrorGuardado" text="**Error guardado" />',

@@ -54,6 +54,18 @@ DECLARE
 
   END IF;
  
+  V_SQL := 'select count(1) from all_tab_columns ' ||
+  	'where COLUMN_NAME=''FECHA_SIT_CONTABLE'' and table_name=''RIESGO_OPE_DATOS_GENER_CONVIV'' and owner=''' || V_ESQUEMA || '''';
+
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+
+  IF V_NUM_TABLAS = 0 THEN
+
+  	V_SQL := 'ALTER TABLE ' || V_ESQUEMA || '.RIESGO_OPE_DATOS_GENER_CONVIV ADD FECHA_SIT_CONTABLE DATE'; 
+	  EXECUTE IMMEDIATE V_SQL;	
+	  DBMS_OUTPUT.PUT_LINE('[INFO] AÑADIDO EL CAMPO RIESGO_OPE_DATOS_GENER_CONVIV.FECHA_SIT_CONTABLE');
+
+  END IF;
 
 
   /*******************************************/

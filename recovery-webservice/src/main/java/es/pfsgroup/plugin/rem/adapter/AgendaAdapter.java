@@ -471,4 +471,13 @@ public class AgendaAdapter {
 		}
 		return true;
 	}
+		
+	public Boolean saltoCierreEconomico(Long idTareaExterna){
+		try{
+			tareaActivoApi.saltoCierreEconomico(idTareaExterna);
+		}catch(Exception ex){
+			return false;
+		}
+		return true;
+	}
 }

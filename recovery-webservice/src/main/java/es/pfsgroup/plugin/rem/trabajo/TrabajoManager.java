@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.trabajo;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,6 +30,10 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.bulkUpload.api.impl.MSVProcesoManager;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -134,6 +139,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private MSVProcesoManager procesoManager;
+		
+	@Autowired
+	private MSVExcelParser excelParser;
 	
 	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -321,22 +332,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Long create(DtoFichaTrabajo dtoTrabajo) {
 		Trabajo trabajo = new Trabajo();
 		
-		if(dtoTrabajo.getIdActivo()!=null) {
-			Activo activo = activoDao.get(dtoTrabajo.getIdActivo());
-			dtoTrabajo.setParticipacion("100");
-			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
-			createTramiteTrabajo(trabajo);
-			
-		} else if(!dtoTrabajo.getEsSolicitudConjunta()) {
-			List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo);
-			
-			for(Trabajo trabajoActivoAgrupacion: trabajos) {
-				createTramiteTrabajo(trabajoActivoAgrupacion);
+		if(!Checks.esNulo(dtoTrabajo.getIdProceso())){
+				//TODO: Llegados a este punto tenemos que crear un trabajo del listado de activos
+				crearTrabajoPorSubidaActivos(dtoTrabajo);
+			}else{
+				if(dtoTrabajo.getIdActivo()!=null) {
+					Activo activo = activoDao.get(dtoTrabajo.getIdActivo());
+					dtoTrabajo.setParticipacion("100");
+					trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
+					createTramiteTrabajo(trabajo);
+					
+				} else if(!dtoTrabajo.getEsSolicitudConjunta()) {
+					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo);
+					
+					for(Trabajo trabajoActivoAgrupacion: trabajos) {
+						createTramiteTrabajo(trabajoActivoAgrupacion);
+					}
+					
+				} else {
+					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo);
+					//TODO Tramite del trabajo de una Agrupación
+						createTramiteTrabajo(trabajo);
 			}
 			
-		} else {
-			trabajo = crearTrabajoPorAgrupacion(dtoTrabajo);
-			//TODO Tramite del trabajo de una Agrupación
 		}
 
 		return trabajo.getId();
@@ -379,12 +397,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Boolean isFirstLoop = true;
 			for(VActivosAgrupacionTrabajo activoAgrupacion: activos) {			
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId())); 
-				dtoTrabajo.setParticipacion(Double.toString(activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100));
+				//En la tabla de activo-agrupación no aparece ningún valor para los importes netos contables
+				Double participacion = (Double) (!(Double.isNaN((activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100))) ? (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100) : 0.0D);
+				dtoTrabajo.setParticipacion(Double.toString(participacion));
+				//dtoTrabajo.setParticipacion(Double.toString(activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100));
 				
 				//FIXME: Datos del trabajo que se definen por un activo, en agrupación de activos están tomándose del primer activo del grupo.
 				// Es necesario revisar la forma de definir estos datos del trabajo con "Agrupación activos Conjunta" --> "Trabajo"
 				if(isFirstLoop){
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
+					trabajo.setActivo(activo); //En caso de ser un trabajo por agrupación, metemos el primer activo para sacar los datos comunes en el listado
 					//El estado del trabajo se define solo por el primer activo del grupo
 
 					// El gestor de activo se salta tareas de estos trámites y por tanto es necesario settear algunos datos
@@ -423,6 +445,86 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 	}
 
+	private List<Activo> getListaActivosProceso(Long idProceso){
+			
+			List<Activo> listaActivos = new ArrayList<Activo>();
+			MSVDocumentoMasivo documento = procesoManager.getMSVDocumento(idProceso);
+			MSVHojaExcel exc = excelParser.getExcel(documento.getContenidoFichero().getFile());
+			
+			
+			try {
+				for(int i = 1; i < exc.getNumeroFilas(); i++){
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(exc.dameCelda(i,0)));
+					Activo activo = genericDao.get(Activo.class, filtro);
+					listaActivos.add(activo);
+				}
+			} catch (NumberFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return listaActivos;
+		}
+		
+	private Trabajo crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo){
+			
+		List<Activo> listaActivos = getListaActivosProceso(dtoTrabajo.getIdProceso());
+			
+			Trabajo trabajo = new Trabajo();
+			try {
+				dtoToTrabajo(dtoTrabajo,trabajo);
+				trabajo.setFechaSolicitud(new Date());
+				trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
+				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+				
+				Boolean isFirstLoop = true;
+				for(Activo activo: listaActivos){
+					dtoTrabajo.setParticipacion("100");//TODO: Pendiente de definir como sacar el % de participación.
+					if(isFirstLoop){
+						trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo,activo));
+						
+						// El gestor de activo se salta tareas de estos trámites y por tanto es necesario settear algunos datos
+						// al crear el trabajo.
+						if(gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado())){
+							if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+									|| DDTipoTrabajo.CODIGO_TASACION.equals(trabajo.getTipoTrabajo().getCodigo())
+									|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())){
+								trabajo.setFechaAprobacion(new Date());
+							}
+						}
+						
+						//El trámite de cédula queda aprobado al crearlo, sea o no sea gestor activo quien lo crea
+						if(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())){
+							trabajo.setFechaAprobacion(new Date());
+						}
+					}
+					
+					ActivoTrabajo activoTrabajo = createActivoTrabajo(activo,trabajo,dtoTrabajo.getParticipacion());
+					trabajo.getActivosTrabajo().add(activoTrabajo);
+					isFirstLoop = false;
+				}
+				
+				if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
+					trabajo.setEsTarificado(true);
+				
+				trabajoDao.saveOrUpdate(trabajo);
+				
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return trabajo;
+	}
+		
 	private Trabajo crearTrabajoPorActivo(Activo activo, DtoFichaTrabajo dtoTrabajo) {
 		
 		Trabajo trabajo = new Trabajo();		
@@ -468,6 +570,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return trabajo;
 		
 	}
+	
+	
 	
 	private DDEstadoTrabajo getEstadoNuevoTrabajo(DtoFichaTrabajo dtoTrabajo, Activo activo){
 		/* Estados del trabajo - Al crear un trabajo:
@@ -591,7 +695,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				tipoTramite = tipoProcedimientoManager.getByCodigo("T004");
 		}
 		
-		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo.getActivo(),trabajo);
+		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, /*trabajo.getActivo(),*/trabajo);
 		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;

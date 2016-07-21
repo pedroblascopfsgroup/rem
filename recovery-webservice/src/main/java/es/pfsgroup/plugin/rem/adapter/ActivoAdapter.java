@@ -2461,7 +2461,8 @@ public class ActivoAdapter {
 				}
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getFechaInicio());
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", tramite.getFechaFin());
-				
+				beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
+
 //				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getAuditoria().getFechaCrear());
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
@@ -2622,12 +2623,13 @@ public class ActivoAdapter {
 			if(!Checks.esNulo(tramite.getActivo().getCartera()))
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
 			beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", tramite.getFechaInicio());
-			beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", tramite.getFechaFin());
+			if(!Checks.esNulo(tramite.getFechaFin()))
+				beanUtilNotNull.copyProperty(dtoTramite, "fechaFinalizacion", tramite.getFechaFin());
 			beanUtilNotNull.copyProperty(dtoTramite, "numActivo", tramite.getActivo().getNumActivo());
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+			beanUtilNotNull.copyProperty(dtoTramite, "esMultiActivo", tramite.getActivos().size() > 1? true : false);
+			beanUtilNotNull.copyProperty(dtoTramite, "countActivos", tramite.getActivos().size());
+			
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

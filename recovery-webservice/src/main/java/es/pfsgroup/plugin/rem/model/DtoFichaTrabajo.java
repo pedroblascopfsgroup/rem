@@ -111,6 +111,8 @@ public class DtoFichaTrabajo {
     
     private String nombreMediador;
     
+    private Long idProceso;
+    
 	
     
 	public String getNumTrabajo() {
@@ -522,5 +524,13 @@ public class DtoFichaTrabajo {
 
 	public void setNombreMediador(String nombreMediador) {
 		this.nombreMediador = nombreMediador;
+	}
+	
+	public Long getIdProceso() {
+		return idProceso;
+	}
+	
+	public void setIdProceso(Long idProceso) {
+		this.idProceso = idProceso;
 	}
 }

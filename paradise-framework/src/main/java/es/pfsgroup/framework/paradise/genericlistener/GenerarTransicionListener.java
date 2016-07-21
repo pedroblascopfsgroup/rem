@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.api;
+package es.pfsgroup.framework.paradise.genericlistener;
 
 import es.capgemini.pfs.generico.GenericListener;
 

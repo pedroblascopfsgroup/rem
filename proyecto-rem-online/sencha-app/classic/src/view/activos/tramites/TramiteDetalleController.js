@@ -173,7 +173,19 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		me.getView().fireEvent('abrirtareahistorico',record);
 	},
 	
-	
+	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {
+		
+		var me = this;
+		var grid = tableView.up('grid');
+		var record = grid.store.getAt(indiceFila);
+		
+		grid.setSelection(record);
+		
+		//grid.fireEvent("abriractivo", record);
+		me.getView().fireEvent('abrirDetalleActivoPrincipal', record.get('numActivoRem'));
+		
+	}, 
+
 	solicitarAutoprorroga: function(button){
 		var me = this;
 		
@@ -226,6 +238,80 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
     	
 	},
 	
+	saltoCierreEconomico: function(button){
+		var me = this;
+		
+		var idTareaExterna = me.getView().down('[reference=listadoTareasTramite]').getSelectionModel().getSelection()[0].get("idTareaExterna");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		var url = $AC.getRemoteUrl('agenda/saltoCierreEconomico');
+		
+		var data;
+		Ext.Ajax.request({
+			url:url,
+			params: {idTareaExterna : idTareaExterna},
+			success: function(response, opts){
+				data = Ext.decode(response.responseText);
+				if(data.success == 'true')
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				else
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+			},
+			failure: function(options, success, response){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+			},
+			callback: function(options, success, response){
+				me.getView().unmask();
+			}
+		})
+		
+		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
+	},
+	
+	//	generaSaltoCierreEconomico: function(button) {
+	//		var me = this;
+	//		
+	//		var formulario = me.getView().down('[reference=formSolicitarProrroga]');
+	//		
+	//		if(formulario.getForm().isValid()) {
+	//			
+	//			button.up('window').mask("Guardando....");
+	//			
+	//    		var task = new Ext.util.DelayedTask(function(){    			
+	// 
+	//    			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	//    			var parametros = formulario.getValues();
+	//    			
+	//    			
+	//    			var url = $AC.getRemoteUrl('agenda/generarAutoprorroga');
+	//    	    	var data;
+	//    	    	Ext.Ajax.request({
+	//    	    			url:url,
+	//    	    			params: parametros,
+	//    	    			success: function(response,opts){
+	//    	    				data = Ext.decode(response.responseText);
+	//    	    				if(data.success == 'true')
+	//    	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	//    	    				else
+	//    	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga")); 
+	//    	    			},
+	//    	    			failure: function(options, success, response){
+	//    	    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga")); 
+	//    	    			},
+	//    	    			callback: function(options, success, response){
+	//    	    				me.getView().unmask();
+	//    	    				button.up('window').unmask();
+	//    	    				button.up('window').destroy();
+	//    	    			}
+	//    	    	});
+	//			});
+				
+	//			task.delay(500);
+	//		}
+	//			
+	//    	
+	//	},
+		
+		
 	cancelarProrroga: function(button) {
     	
 		button.up('window').destroy();

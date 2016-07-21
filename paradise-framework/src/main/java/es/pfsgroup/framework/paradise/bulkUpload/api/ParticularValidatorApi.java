@@ -10,4 +10,5 @@ public interface  ParticularValidatorApi {
 
 	public String existeActivoEnAgrupacion(Long idActivo, Long idAgrupacion);
 	
+	public Boolean existeActivo(String numActivo);
 }

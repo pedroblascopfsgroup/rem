@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -27,6 +29,7 @@ import es.capgemini.pfs.asunto.model.DDTipoActuacion;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que representa la entidad trámite de activo.
@@ -125,8 +128,23 @@ public class ActivoTramite implements Serializable, Auditable{
 	}
 
 	public Activo getActivo() {
-		return activo;
+		//return activo;
+		if(!Checks.estaVacio(getActivos()))
+			return getActivos().get(0);
+		else
+			return null;
 	}
+	
+	public List<Activo> getActivos(){
+		List<Activo> listaActivos = new ArrayList<Activo>();
+		if(!Checks.esNulo(activo))
+			listaActivos.add(activo);
+		else
+			for(ActivoTrabajo activotrabajo : trabajo.getActivosTrabajo())
+				listaActivos.add(activotrabajo.getPrimaryKey().getActivo());
+			
+		return listaActivos;
+	}	
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;

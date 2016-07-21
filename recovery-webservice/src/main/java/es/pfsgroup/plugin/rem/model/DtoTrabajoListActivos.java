@@ -1,0 +1,68 @@
+package es.pfsgroup.plugin.rem.model;
+
+/**
+ * 
+ * Dto para el listado de activos al crear una agrupación
+ * @author Daniel Gutiérrez
+ */
+
+public class DtoTrabajoListActivos {
+	
+	private String idActivo;
+	private String numActivoRem;
+	private String numActivoHaya;
+	private String tipoActivo;
+	private String subtipoActivo;
+	private String cartera;
+	private String situacionComercial;
+	private String situacionPosesoria;
+	
+	public String getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(String idActivo) {
+		this.idActivo = idActivo;
+	}
+	public String getNumActivoRem() {
+		return numActivoRem;
+	}
+	public void setNumActivoRem(String numActivoRem) {
+		this.numActivoRem = numActivoRem;
+	}
+	public String getNumActivoHaya() {
+		return numActivoHaya;
+	}
+	public void setNumActivoHaya(String numActivoHaya) {
+		this.numActivoHaya = numActivoHaya;
+	}
+	public String getTipoActivo() {
+		return tipoActivo;
+	}
+	public void setTipoActivo(String tipoActivo) {
+		this.tipoActivo = tipoActivo;
+	}
+	public String getSubtipoActivo() {
+		return subtipoActivo;
+	}
+	public void setSubtipoActivo(String subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
+	}
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
+	public String getSituacionComercial() {
+		return situacionComercial;
+	}
+	public void setSituacionComercial(String situacionComercial) {
+		this.situacionComercial = situacionComercial;
+	}
+	public String getSituacionPosesoria() {
+		return situacionPosesoria;
+	}
+	public void setSituacionPosesoria(String situacionPosesoria) {
+		this.situacionPosesoria = situacionPosesoria;
+	}
+}

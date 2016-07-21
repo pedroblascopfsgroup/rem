@@ -1204,6 +1204,7 @@
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
 					<war>pfs-${project.version}</war>
+					<warDirectory>rem-web/target</warDirectory>
 					<dumpsDir>${dumpsDir}</dumpsDir>
 					<directory>${directory}</directory>
 					<tag>${tag}</tag>
@@ -1213,7 +1214,7 @@
 					<loginPage>js/plugin/rem/index.jsp</loginPage>
 					<watchList>
 						<param>
-							<localFile>proyecto-rem-online/sencha-app/</localFile>
+							<localFile>proyecto-rem-online/sencha-app</localFile>
 							<dockerFile>/recovery/app-server/tomcat/webapps/pfs/js/plugin/rem</dockerFile>
 						</param>
 					</watchList>

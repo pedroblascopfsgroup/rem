@@ -37,7 +37,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.api.ActivoRequisitoTareaApi;
 import es.pfsgroup.plugin.rem.model.ActivoRequisitoTarea;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.GenerarTransicionListener;
+import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionListener;
 import es.pfsgroup.plugin.rem.model.CampoTareaNoEncontradaException;
 
 public class ActivoGenericEnterActionHandler extends ActivoGenericActionHandler {

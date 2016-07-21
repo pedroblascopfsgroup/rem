@@ -16,6 +16,8 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     
     idAgrupacion: null,
     
+    idProceso: null,
+    
 	listeners: {
 
 		boxready: function(window) {
@@ -121,6 +123,151 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 											]
 						           },
 						           {
+						              	xtype: 'fieldset',
+						        	    title: HreRem.i18n('title.subirfichero'),
+						        	    reference: 'fieldSetSubirFichero',
+						        	    cls	: 'panel-base shadow-panel',
+						        	    items : [
+						        	             {
+						        	              	xtype: 'formBase',
+						        	              	cls:'',
+						        	   				url: $AC.getRemoteUrl('process/subeListaActivos'),		
+						        	   				buttons: [{	
+						        	   				 	       itemId: 'btnSubirFichero', 
+						        	   						   text: 'Subir fichero',
+						        	   						   handler: 'onClickUploadListaActivos'
+						        	   						 }],
+						        	   				reference: 'formSubirListaActivos',
+						        	   				items:[{
+						        	   						xtype: 'filefield',
+						        	   						reference: 'filefieldActivosRef',
+						        	   						fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
+						        	   						name: 'fileUpload',
+						        	   						allowBlank: true,					        
+						        	   						anchor: '100%',
+						        	   						width: '100%',
+						        	   						msgTarget: 'side',
+						        	   						buttonConfig: {
+						        	   						     	iconCls: 'ico-search-white',
+						        	   						      	text: ''
+						        	   						},
+						        	   						align: 'right',
+						        	   						listeners: {
+						        	   						        change: function(fld, value) {
+						        	   						       	var lastIndex = null,
+						        	   								fileName = null;
+						        	   								if(!Ext.isEmpty(value)) {
+						        	   									lastIndex = value.lastIndexOf('\\');
+						        	   								if (lastIndex == -1) return;
+						        	   									fileName = value.substring(lastIndex + 1);
+						        	   								fld.setRawValue(fileName);
+						        	   								}		                            	
+						        	   						        }
+						        	   						},
+						        	   						width: '50%',
+						        	   						regex: /(.)+((\.xls)(\w)?)$/i,
+						        	   						regexText: HreRem.i18n("msg.validacion.archivos.xls")
+						        	   					}]
+						        	   			}]
+						        	   			}, 
+						        	   			{
+						        	   				xtype:'fieldset',					
+						        	   				title: HreRem.i18n('title.activos'),
+						        	   				reference: 'fieldsetListaActivosSubida',
+						        	   				layout: {
+						        	   							type: 'vbox',
+						        	   							align: 'stretch'
+						        	   				},
+						        	   				items : [
+						        	   						{										           
+						        	   							html: HreRem.i18n("txt.aviso.genera.trabajo.independiente"),
+						        	   							cls: 'texto-info',
+						        	   							margin: '10 0 0 0'
+						        	   						},
+						        	   						{									    
+						        	   							xtype: 'gridBase',
+						        	   							cls: "",
+						        	   							margin: '20 0 20 0',
+						        	   							reference: 'listaActivosSubidaRef',
+						        	   							loadAfterBind: false,
+						        	   							bind: {
+						        	   									store: '{listaActivosSubida}'														
+						        	   							},
+						        	   							columns: [
+						        	   									{
+						        	   										dataIndex: 'numActivoHaya',
+						        	   										text: HreRem.i18n('header.numero.activo.haya'),
+						        	   										flex: 1										
+						        	   									},
+						        	   									{
+						        	   									     dataIndex: 'tipoActivo',
+						        	   									     text: HreRem.i18n('header.tipo'),
+						        	   									     flex: 1
+						        	   									},
+						        	   									{
+						        	   									     dataIndex: 'subtipoActivo',
+						        	   									     text: HreRem.i18n('header.subtipo'),
+						        	   										 flex: 1													            
+						        	   									},
+						        	   									{
+						        	   										dataIndex: 'cartera',
+						        	   										text: HreRem.i18n('header.cartera'),
+						        	   										flex: 1	 	
+						        	   									},
+						        	   									{
+						        	   									    dataIndex: 'situacionComercial',
+						        	   									    text: HreRem.i18n('header.situacion.comercial'),
+						        	   									    flex: 1
+						        	   									},
+						        	   									{
+						        	   									    dataIndex: 'situacionPosesoria',
+						        	   									    text: HreRem.i18n('header.situacion.posesoria'),
+						        	   									    flex: 1													            
+						        	   									}
+						        	   										         	        
+						        	   									],
+						        	   							dockedItems : [
+						        	   									       {
+						        	   											xtype: 'pagingtoolbar',
+						        	   										    dock: 'bottom',
+						        	   											displayInfo: true,
+						        	   											bind: {
+						        	   											       store: '{activosAgrupacion}'
+						        	   											      }
+						        	   											}
+						        	   									      ]						           
+						        	   						},
+						        	   						{
+		        	   											xtype: 'checkboxfieldbase',
+						        	   							margin: '20 0 10 0',
+						        	   							boxLabel: HreRem.i18n('title.ejecutar.trabajo.por.agrupacion'),
+						        	   							bind: '{trabajo.esSolicitudConjunta}'
+						        	   						},
+						        	   						{
+						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.title"),
+						        	   							cls: 'texto-info'
+						        	   						},
+						        	   						{
+						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.uno"),
+						        	   							cls: 'texto-info'
+						        	   						},
+						        	   						{
+						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.dos"),
+						        	   							cls: 'texto-info'
+						        	   						},
+						        	   						{
+						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.tres"),
+						        	   							cls: 'texto-info'
+						        	   						},
+						        	   						{
+						        	   							html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
+						        	   							cls: 'texto-info',
+						        	   							margin: '0 0 20 0'
+						        	   						}
+						        	   						    
+						        	   						]
+						        	},
+						           {
 						           		xtype:'fieldset',					
 										title: HreRem.i18n('title.activos'),
 										reference: 'fieldsetListaActivos',
@@ -198,7 +345,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													            }
 													        }
 													    ]						           
-										           }/*,
+										           },
 										           {
 										           		xtype: 'checkboxfieldbase',
 										           		margin: '20 0 10 0',
@@ -225,7 +372,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										           		html: HreRem.i18n("txt.condiciones.trabajo.agrupacion.cuatro"),
 										           		cls: 'texto-info',
 										           		margin: '0 0 20 0'
-										           }*/
+										           }
 										           
 							           ]
 						           },
@@ -527,9 +674,18 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	if(!Ext.isEmpty(me.idAgrupacion)) {
     		me.getViewModel().get("activosAgrupacion").load();
     		me.down('[reference=fieldsetListaActivos]').setVisible(true);
-    	} else {
-    		me.down('[reference=fieldsetListaActivos]').setVisible(false );
-    	}
+     	} else {
+     		me.down('[reference=fieldsetListaActivos]').setVisible(false);
+     		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
+     	}
+     	
+    	if(Ext.isEmpty(me.idAgrupacion) && Ext.isEmpty(me.idActivo)){
+     		me.down('[reference=fieldSetSubirFichero]').setVisible(true);
+     		me.down('[reference=fieldsetListaActivosSubida]').setVisible(true);
+     	} else {
+     		me.down('[reference=fieldSetSubirFichero]').setVisible(false);
+     		me.down('[reference=fieldsetListaActivosSubida]').setVisible(false);
+     	}
     	
     	if(!Ext.isEmpty(me.down("[reference=textAdvertenciaCrearTrabajo]"))) {
     		me.down("[reference=textAdvertenciaCrearTrabajo]").setText("");	

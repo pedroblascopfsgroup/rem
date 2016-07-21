@@ -117,6 +117,13 @@
     		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcelAvisos'}];
     	}
     	
+    	if (me.isSearchFormActivos) {
+    		me.collapsible = true;
+    		me.collapsed = false;
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: 'Buscar', handler: 'onSearchClick' },{ text: 'Limpiar', handler: 'onCleanFiltersClick'}, { text: 'Exportar', handler: 'onClickDescargarExcel'}, { text: 'Crear trabajo', handler: 'onClickCrearTrabajo'}]
+    	}
+    	   		
     	if (me.isSearchForm) {
     		
     		me.collapsible= true;

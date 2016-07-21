@@ -109,7 +109,8 @@ public class MSVHojaExcel {
 			this.columnasReales = 0;
 			Sheet hoja = libroExcel.getSheet(0);
 			Cell[] cabeceras = hoja.getRow(0);
-			for (int i=cabeceras.length - 1; i>0; i--) {
+			//for (int i=cabeceras.length - 1; i>0; i--) {
+			for (int i=cabeceras.length -1; i>=0; i--){
 				Cell celda = cabeceras[i];
 				if (celda != null && StringUtils.hasText(celda.getContents())){
 					this.columnasReales = i + 1;

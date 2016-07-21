@@ -81,21 +81,33 @@ Ext.define('HreRem.view.activos.tramites.DatosGeneralesTramite', {
 			    },
 	            {
 			    	xtype: 'fieldset',
-			    	title: 'Activo / Agrupaci&oacute;n',
+			    	title: 'Activo / Multi-Activo / Agrupaci&oacute;n',
 			    	defaults:{
 			    		layout:'column',
 			    		width: '50%'
 			    	},
 			        items: [
 							{
+								fieldLabel: HreRem.i18n('header.num.activos.tramite'),
+								bind:		'{tramite.countActivos}'
+							},{
 								fieldLabel: HreRem.i18n('fieldlabel.numero.activo.agrupacion.haya'),
-								bind:		'{tramite.numActivo}'
+					        	bind: {
+				            		value:	'{tramite.numActivo}',
+				            		hidden: '{!tramite.esMultiActivo}'
+				            	}
 							},{
 								fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
-								bind:		'{tramite.tipoActivo}'
+					        	bind: {
+				            		value:	'{tramite.tipoActivo}',
+				            		hidden: '{!activoInforme.tipoActivoCodigo}'
+				            	}
 							},{
 								fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
-								bind:		'{tramite.subtipoActivo}'
+					        	bind: {
+				            		value:	'{tramite.subtipoActivo}',
+				            		hidden: '{!tramite.esMultiActivo}'
+				            	}
 							},{
 								fieldLabel:	HreRem.i18n('fieldlabel.cartera'),
 								bind:		'{tramite.cartera}'

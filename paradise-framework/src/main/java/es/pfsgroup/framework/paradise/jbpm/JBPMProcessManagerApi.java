@@ -156,5 +156,7 @@ public interface JBPMProcessManagerApi {
 	public abstract Service getJBPMServiceFactory(String serviceName);
 	
 	public void setContextScripts(List<String> contextScript);
+	
+	void generaTransicionesSalto(Long idToken, String tipoSalto);
 
 }

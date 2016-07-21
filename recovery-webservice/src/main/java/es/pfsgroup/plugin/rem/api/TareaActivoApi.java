@@ -17,6 +17,8 @@ public interface TareaActivoApi {
 
 		public void generarAutoprorroga(DtoSolicitarProrroga dto)  throws BusinessOperationException;
 
+		public void saltoTarea(Long idTareaExterna, String tareaDestino);
+		
 		public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite);
 		
 		public Long getTareasPendientes(Usuario usuario);
@@ -24,4 +26,8 @@ public interface TareaActivoApi {
 		public Long getAlertasPendientes(Usuario usuario);
 		
 		public Long getAvisosPendientes(Usuario usuario);
+		
+		public void saltoCierreEconomico(Long idTareaExterna);
+		
+		public void saltoFin(Long idTareaExterna);
     }

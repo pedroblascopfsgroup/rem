@@ -9,6 +9,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 
 /**
@@ -46,7 +49,24 @@ public interface ActivoTramiteApi {
 	 * @param webDto
 	 * @return
 	 */
-	public Page getTramitesActivoTrabajo(Long idTrabajo,  WebDto webDto);		
+	public Page getTramitesActivoTrabajo(Long idTrabajo,  WebDto webDto);
+
+	/**
+	 * Devuelve los activos relacionados con un tramite
+	 * @param idTramite
+	 * @return
+	 */
+	@BusinessOperationDefinition("activoTramiteManager.getActivosTramite")
+	public List<Activo> getActivosTramite(Long idTramite);
+	
+	/**
+	 * De una lista de activos, extrae los datos para el grid de Activos del Tramite
+	 * @param listaActivos
+	 * @return
+	 */
+	@BusinessOperationDefinition("activoTramiteManager.getDtoActivosTramite")
+	public List<DtoActivoTramite> getDtoActivosTramite(List<Activo> listaActivos);
+ 
 	
 	/**
 	 * Crea o actualiza un trámite en la base de datos.

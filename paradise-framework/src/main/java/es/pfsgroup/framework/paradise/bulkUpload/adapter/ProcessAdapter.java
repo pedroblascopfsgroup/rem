@@ -121,4 +121,13 @@ public class ProcessAdapter {
 		procesoDao.mergeAndUpdate(document);
 	}
 	
+	public MSVDocumentoMasivo getMSVDocumento(Long idProcess){
+		return procesoManager.getMSVDocumento(idProcess);
+	}
+	
+	public MSVProcesoMasivo get(Long idProcess){
+		return procesoManager.get(idProcess);
+	}
+		
+	
 }

@@ -258,5 +258,13 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saltoCierreEconomico(Long idTareaExterna, ModelMap model){
+		model.put("success", adapter.saltoCierreEconomico(idTareaExterna));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	
 	
 }

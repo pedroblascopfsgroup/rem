@@ -46,6 +46,11 @@ public class DtoTramite extends WebDto {
 	private String subtipoActivo;
 	
 	private Long numActivo;
+	
+	private Boolean esMultiActivo;
+	
+	private Long countActivos;
+	
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -183,4 +188,20 @@ public class DtoTramite extends WebDto {
 		this.numActivo = numActivo;
 	}
 
+	public Boolean getEsMultiActivo() {
+		return esMultiActivo;
+	}
+	
+	public void setEsMultiActivo(Boolean esMultiActivo) {
+		this.esMultiActivo = esMultiActivo;
+	}
+
+	public Long getCountActivos() {
+		return countActivos;
+	}
+
+	public void setCountActivos(Long countActivos) {
+		this.countActivos = countActivos;
+	}
+	
 }

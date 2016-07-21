@@ -516,13 +516,16 @@
        			else {
        		
 	       		//var params = detalleFieldSet.getForm().getValues();
-	       		
 	       		var params = {};
 	       		for (var objectName in objetosDinamicos) {
 	       			if (objetosDinamicos.hasOwnProperty(objectName)) {
 		       			var object = objetosDinamicos[objectName];
 		       			var parameter = {};
-		       			parameter[objectName] = object.value;
+		       			if(object instanceof Ext.ux.form.XDateField){
+		       				parameter[objectName] = object.value;
+		       			}else{
+		       				parameter[objectName] = object.getValue();
+		       			}
 		       			Ext.apply(params, parameter);
 	       			}
 	       		}
@@ -617,7 +620,10 @@
 		bienesStore.on('load', function() {
 	       	if("${termino.bienes}"!=null && "${termino.bienes}"!=''){
 	        	<c:forEach var="bien" items="${termino.bienes}">
-			    	comboBienes.setValue("${bien.bien.id}"); 
+	        		var BieIdStr = parseInt("${bien.bien.id}");
+	        		var arrayBien = new Array();
+	        		arrayBien.push(BieIdStr);
+			    	comboBienes.setValue(arrayBien); 
 				</c:forEach>
 		    }
 		});

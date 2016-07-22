@@ -426,7 +426,8 @@
 				var y = 0;
 			
 				for(var i in parametrosTab){
-					paramAux = paramAux+'_param_'+parametrosTab[i];	
+					if (typeof parametrosTab[i] == 'string')
+						paramAux = paramAux+'_param_'+parametrosTab[i];	
 				}
 				parametros['params'] = paramAux;
 				if (excel==1) {

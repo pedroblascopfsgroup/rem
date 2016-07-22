@@ -23,6 +23,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosExcel;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosResultado;
+import es.capgemini.pfs.acuerdo.model.Acuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -56,6 +57,7 @@ import es.pfsgroup.recovery.ext.api.multigestor.EXTDDTipoGestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTMultigestorApi;
 import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 import es.pfsgroup.recovery.ext.impl.acuerdo.model.EXTAcuerdo;
+import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 
 //FIXME Hay que eliminar esta clase o renombrarla
 //No a�adir nueva funcionalidad
@@ -510,13 +512,13 @@ public class coreextensionController {
 		final List<DTOTerminosExcel> acuExcel = new ArrayList<DTOTerminosExcel>();
 
 		for (Object[] object : acuerdos) {
-			EXTAcuerdo acu = (EXTAcuerdo) object[0];
+			Acuerdo acu = (Acuerdo) object[0]; 
 			TerminoAcuerdo terAcu = (TerminoAcuerdo) object[1];
 			
 			final DTOTerminosExcel acuerdoExcel = new DTOTerminosExcel();
 			
 			if(!Checks.esNulo(acu)) {
-				acuerdoExcel.setIdAcuerdo("'" + acu.getId().toString());
+				acuerdoExcel.setIdAcuerdo("=\"" + acu.getId().toString() + "\"");
 				if(!Checks.esNulo(acu.getAsunto())) {
 					acuerdoExcel.setIdAsunto(acu.getAsunto().getId().toString()); 
 					acuerdoExcel.setNombreAsunto(acu.getAsunto().getNombre()); 

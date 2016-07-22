@@ -59,19 +59,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     }
     
 	public void cambioEstadosPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {
-		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
-		
-//		private Boolean publicacionOrdinaria;
-//		private Boolean publicacionForzada;
-//		private Boolean ocultacionForzada;
-//		private Boolean oculacionPrecio;
-//		private Boolean despublicacionForzada;
-//	    public static final String CODIGO_PUBLICADO = "01";
-//	    public static final String CODIGO_PUBLICADO_FORZADO = "02";
-//	    public static final String CODIGO_PUBLICADO_OCULTO = "03";
-//	    public static final String CODIGO_PUBLICADO_PRECIOOCULTO = "04";
-//	    public static final String CODIGO_DESPUBLICADO = "05";
-		
+		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());		
 		
 		//Estudiar cada cambio de estados y meterlo en el histórico y en la tabla del activo
 		if(dtoCambioEstadoPublicacion.getPublicacionForzada() || dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){ //Publicada
@@ -149,8 +137,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 
 	@Override
-	public void publicacionChangeState(
-			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {
+	public void publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {
 		// TODO Auto-generated method stub
 		
 	}

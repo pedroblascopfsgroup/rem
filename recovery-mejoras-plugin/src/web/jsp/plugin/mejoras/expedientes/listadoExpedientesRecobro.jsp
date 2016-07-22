@@ -137,12 +137,14 @@
 
 	var comboTipoPersona = app.creaCombo({data:tiposPersona, name : 'tipopersona', fieldLabel : '<s:message code="menu.clientes.listado.filtro.tipopersona" text="**Tipo Persona" />' <app:test id="comboTipoPersona" addComa="true" />,width : 160});
 
+	<%-- 
 	var comboFechaCreacion = new Ext.ux.form.XDateField({
 		fieldLabel:'<s:message code="menu.clientes.listado.filtro.fechaCreacion" text="**Fecha Creación" />'
 		,name:'fechaCreacion'
 		,width: 90
 		,allowBlank: true
 	});
+	--%>
 	
 	var comboComite = app.creaCombo({data:comites, name : 'comites', fieldLabel : '<s:message code="expedientes.listado.comite" text="**Comite" />' <app:test id="comboComite" addComa="true" />,width : 160});
 
@@ -244,9 +246,11 @@
 			if (comboTipoPersona.getValue() != '' ){
 				return true;
 			}
+			<%-- 
 			if (comboFechaCreacion.getRawValue() != '' ){
 				return true;
 			}
+			--%>
 			if (comboComite.getValue() != '' ){
 				return true;
 			}
@@ -314,9 +318,11 @@
 			if(comboTipoPersona.getValue()=='undefined' || !comboTipoPersona.getValue()){
 				comboTipoPersona.setValue('');
 			}
+			<%-- 
 			if(comboFechaCreacion.getRawValue()=='undefined' || !comboFechaCreacion.getRawValue()){
 				comboFechaCreacion.setValue('');
 			}
+			--%>
 			if(comboEstado.getValue()=='undefined' || !comboEstado.getValue()){
 				comboEstado.setValue('');
 			}
@@ -340,7 +346,7 @@
 			param.codigoSituacion=comboSituacion.getValue();
 			param.codigoGestion=comboGestion.getValue();
 			param.tipoPersona=comboTipoPersona.getValue();
-			param.fechaCreacion=comboFechaCreacion.getRawValue();
+			<%-- param.fechaCreacion=comboFechaCreacion.getRawValue();--%>
 			param.comiteBusqueda=comboComite.getValue();
 		}
 		param.busqueda=true;
@@ -465,7 +471,7 @@
 		,defaults : {xtype:'fieldset', border : false ,cellCls : 'vtop', layout : 'form', bodyStyle:'padding:5px;cellspacing:10px'}
 		,items:[{
 					layout:'form'
-					,items: [txtCodExpediente,txtDescripcion,comboEstado,comboTipoPersona,comboFechaCreacion]
+					,items: [txtCodExpediente,txtDescripcion,comboEstado,comboTipoPersona <%-- ,comboFechaCreacion --%> ]
 				},{
 					layout:'form'
 					,items: [comboComite,
@@ -484,7 +490,7 @@
     		           ,txtDescripcion
     		           ,comboEstado
     		           ,comboTipoPersona
-    		           ,comboFechaCreacion
+    		           <%-- ,comboFechaCreacion--%>
     		           ,comboComite
     		           ,comboGestion
     		           ,comboSituacion

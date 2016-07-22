@@ -371,8 +371,8 @@ elif [[ "$#" -ge 4 ]] && [[ "$4" == "package!" ]]; then
     fi
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DB/DB-scripts.sh
     cp $BASEDIR/tmp/package/DDL/DDL-scripts.sh $BASEDIR/tmp/package/DML/DML-scripts.sh
-    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
-    cp $BASEDIR/scripts/DxL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
+    cp $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DML/DML-scripts-one-user.sh
+    cp $BASEDIR/tmp/package/DDL/DDL-scripts-one-user.sh $BASEDIR/tmp/package/DB/DB-scripts-one-user.sh
 
     chmod +x $BASEDIR/tmp/package/**/*.sh
 

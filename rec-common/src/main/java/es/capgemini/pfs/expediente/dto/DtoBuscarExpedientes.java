@@ -58,6 +58,8 @@ public class DtoBuscarExpedientes extends PaginationParamsImpl {
     private String codigoGestion;
     
     private String params;
+    
+    private String fechaCreacion;
 
     /**
      * valida que al menos se selecciono un criterio.
@@ -367,4 +369,11 @@ public class DtoBuscarExpedientes extends PaginationParamsImpl {
 		this.params = params;
 	}
 
+	public String getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(String fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
 }

@@ -128,7 +128,15 @@ public class DocumentoPCOController {
 					
 					// se añade el registro, si no es una gestoria o si es una gestoria y es una solicitud asignada a ella
 					if (comprobarPermisosGestoria(isGestoria, sol)) {
-						solicitudesDoc.add(documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud));
+						if (solicitudesDoc.size()==0) {
+							esDocumento = true;
+						} else {
+							if (!solicitudesDoc.get(solicitudesDoc.size()-1).getIdDoc().equals(doc.getId())) {
+								esDocumento = true;
+							}
+						}
+						SolicitudDocumentoPCODto solicitudDoc = documentoPCOApi.crearSolicitudDocumentoDto(doc, sol, esDocumento, tieneSolicitud);
+						solicitudesDoc.add(solicitudDoc);
 					}
 
 					if (esDocumento) esDocumento = false;
@@ -140,6 +148,8 @@ public class DocumentoPCOController {
 		}
 
 		model.put("solicitudesDocumento", solicitudesDoc);
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 
 		return SOLICITUDES_DOC_PCO_JSON;
 	}
@@ -276,7 +286,8 @@ public class DocumentoPCOController {
 		if(!Checks.esNulo(arrayIdSolicitudes)) {
 			model.put("arrayIdSolicitudes", arrayIdSolicitudes);			
 		}
-		
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return INFORMAR_DOC;
 	}
 	
@@ -305,9 +316,9 @@ public class DocumentoPCOController {
 		
 		model.put("unidadesGestion", listaUG);
 		model.put("listaProvincias", listaProvincias);
-		
 		model.put("dtoDoc", dto);
-		
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return INCLUIR_DOC;
 	}
 	
@@ -330,8 +341,8 @@ public class DocumentoPCOController {
 		model.put("listaProvincias", listaProvincias);
 		
 		model.put("dtoDoc", docDto);
-		
-		
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return EDITAR_DOC;
 	}
 		
@@ -352,7 +363,9 @@ public class DocumentoPCOController {
 		//model.put("dtoDoc", docDto);
 		model.put("arrayIdDocumentos", arrayIdDocumentos);
 		model.put("DDResultado", proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionario(DDResultadoSolicitudPCO.class));
-		
+
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		model.put("usuarioLogado", usuarioLogado);
 		return CREAR_SOLICITUDES;
 	}
 		
@@ -481,6 +494,7 @@ public class DocumentoPCOController {
 		docDto.setPlaza(webRequest.getParameter("plaza"));
 		docDto.setIdufir(webRequest.getParameter("idufir"));
 		docDto.setProvinciaNotario(webRequest.getParameter("provinciaNotario"));
+		docDto.setObservacionesEDP(webRequest.getParameter("observacionesEDP"));
 		
 		documentoPCOApi.editarDocumento(docDto);
 		
@@ -548,6 +562,7 @@ public class DocumentoPCOController {
 			docDto.setEstado(DDEstadoDocumentoPCO.PENDIENTE_SOLICITAR);
 			docDto.setContrato(contrato);
 			docDto.setId(idDocUG);
+			docDto.setObservacionesEDP(request.getParameter("observacionesEDP"));
 			
 			documentoPCOApi.saveCrearDocumento(docDto);			
 		}

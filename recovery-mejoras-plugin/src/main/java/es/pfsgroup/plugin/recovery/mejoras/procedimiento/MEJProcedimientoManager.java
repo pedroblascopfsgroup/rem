@@ -258,7 +258,11 @@ public class MEJProcedimientoManager extends BusinessOperationOverrider<MEJProce
 			String[] idsExpedienteContratos = dto.getSeleccionContratos().split(",");
 			List<ExpedienteContrato> listado = new ArrayList<ExpedienteContrato>(idsExpedienteContratos.length);
 			for (int i = 0; i < idsExpedienteContratos.length; i++) {
-				listado.add((ExpedienteContrato) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDINTE_CONTRATO, Long.decode(idsExpedienteContratos[i])));
+				 
+				ExpedienteContrato expcnt = (ExpedienteContrato)executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDINTE_CONTRATO, Long.decode(idsExpedienteContratos[i]));
+				if (!listado.contains(expcnt)) {
+					listado.add(expcnt);
+				}
 			}
 			p.setExpedienteContratos(listado);
 		} else {

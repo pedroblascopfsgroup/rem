@@ -51,6 +51,8 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
+import es.capgemini.pfs.contrato.ContratoManager;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.core.api.asunto.AdjuntoDto;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.EXTAdjuntoDto;
@@ -62,13 +64,19 @@ import es.capgemini.pfs.decisionProcedimiento.DecisionProcedimientoManager;
 import es.capgemini.pfs.decisionProcedimiento.model.DDCausaDecisionFinalizar;
 import es.capgemini.pfs.decisionProcedimiento.model.DecisionProcedimiento;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.eventfactory.EventFactory;
 import es.capgemini.pfs.exceptions.GenericRollbackException;
+import es.capgemini.pfs.expediente.api.ExpedienteManagerApi;
+import es.capgemini.pfs.expediente.dao.DDAmbitoExpedienteDao;
+import es.capgemini.pfs.expediente.model.DDAmbitoExpediente;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedientePersona;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.interna.InternaBusinessOperation;
 import es.capgemini.pfs.iplus.IPLUSUtils;
+import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoDao;
 import es.capgemini.pfs.multigestor.dao.EXTGestorAdicionalAsuntoHistoricoDao;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
@@ -100,8 +108,11 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi.TipoResultado;
 import es.pfsgroup.plugin.recovery.coreextension.model.Provisiones;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.model.Subasta;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -211,6 +222,21 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 	@Autowired
 	private GestorDespachoDao gestorDespachoDao;
 	
+	@Autowired
+	private ExpedienteManagerApi expedienteManager;
+	
+	@Autowired
+	private coreextensionApi coreExtensionManager;
+	
+	@Autowired
+	private ContratoManager contratoManager;
+	
+	@Autowired
+	private	EXTDDTipoGestorManager tipoGestorManager;
+	
+	@Autowired
+	private DDAmbitoExpedienteDao ddAmbitoExpedienteDao;
+
 	@Override
 	public String managerName() {
 		return "asuntosManager";
@@ -904,6 +930,123 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		cambiarSupervisorGenerico(dto, temporal, EXTDDTipoGestor.CODIGO_TIPO_GESTOR_SUPERVISOR_CONF_EXP);
 	}
 
+	@SuppressWarnings("unchecked")
+	@BusinessOperation(ExternaBusinessOperation.BO_ASU_MGR_CREAR_ASUNTO_LITIGIO)
+	@Transactional
+	public Long crearAsuntoLitigio(Long idExpediente, String idContratos, Boolean litigar) {
+		Expediente exp = expedienteManager.getExpediente(idExpediente);
+		
+		if (!Checks.esNulo(exp)) {
+			EXTDtoAsunto dtoAsunto = new EXTDtoAsunto();
+	
+			dtoAsunto.setIdExpediente(idExpediente);
+			dtoAsunto.setTipoDeAsunto(((DDTiposAsunto)diccionarioApi.dameValorDiccionarioByCod(DDTiposAsunto.class, DDTiposAsunto.LITIGIO)).getId());
+			dtoAsunto.setCodigoEstadoAsunto(DDEstadoAsunto.ESTADO_ASUNTO_EN_CONFORMACION);
+			
+			int numero = 0;
+			if (!Checks.esNulo(exp.getAsuntos())) {
+				numero = exp.getAsuntos().size()+1;
+			}
+			//Para obtener el nombre necesitamos la persona de paso del expediente
+			String nombreAsunto = "";
+			DDAmbitoExpediente ambito = ddAmbitoExpedienteDao.getByCodigo(DDAmbitoExpediente.PERSONA_PASE);
+			List<ExpedientePersona> personas = exp.getPersonas(ambito);
+			if (!Checks.esNulo(personas)) {
+				Persona personaPase = personas.get(0).getPersona();
+				if (!Checks.esNulo(personaPase)) {
+					nombreAsunto += (!Checks.esNulo(idExpediente)?idExpediente.toString():"");
+					nombreAsunto += (numero>0?" - " + numero:"");
+					nombreAsunto += " | ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getDocId())?personaPase.getDocId():"");
+					nombreAsunto += " ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getNombre())?personaPase.getNombre():"");
+					nombreAsunto += " ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getApellido1())?personaPase.getApellido1():"");
+					nombreAsunto += " ";
+					nombreAsunto += (!Checks.esNulo(personaPase.getApellido2())?personaPase.getApellido2():"");
+					nombreAsunto = nombreAsunto.trim();
+				}
+			}
+				
+			dtoAsunto.setNombreAsunto(nombreAsunto);
+			
+			if (litigar) {
+				List<EXTDDTipoGestor> listadoTipoGestores= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.TIPOGESTORES);
+				List<DespachoExterno> listaDespacho= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.DESPACHOS);
+				List<Usuario> listaUsuarios= coreExtensionManager.getListadoGestoresDefecto(DDTiposAsunto.LITIGIO, idExpediente, TipoResultado.USUARIOS);
+				
+				//Ajustes de gestores
+				ajustesGestores(listadoTipoGestores, listaDespacho, listaUsuarios);
+				
+				
+				String strGestores = "";
+				if (!Checks.esNulo(listadoTipoGestores) && !Checks.esNulo(listaDespacho) && !Checks.esNulo(listaUsuarios)) {
+					if (listadoTipoGestores.size() == listaDespacho.size() && listaDespacho.size() == listaUsuarios.size()) {
+						for (int i = 0; i < listadoTipoGestores.size(); i++) {
+							strGestores += "{tipoGestor:"+listadoTipoGestores.get(i).getId()+",tipoDespacho:"+listaDespacho.get(i).getId()+",usuarioId:"+listaUsuarios.get(i).getId()+"};";
+						}
+					}
+				}
+				dtoAsunto.setListaGestoresId(strGestores);
+			}
+			dtoAsunto.setIdContratos(idContratos);
+			
+			return crearAsunto(dtoAsunto);
+		} else {
+			throw new BusinessOperationException("Expediente id {0} no valido",idExpediente);
+		}
+	}
+	
+
+	/**
+	 * Realiza ajustes en los gestores por defecto, según configuraciónn en el projectContext.xml
+	 * 
+	 * @param listadoTipoGestores
+	 * @param listaDespacho
+	 * @param listaUsuarios
+	 */
+	private void ajustesGestores(List<EXTDDTipoGestor> listadoTipoGestores, List<DespachoExterno> listaDespacho, List<Usuario> listaUsuarios) {
+		String codigoEntidad = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		Map<String, List<String>> gestoresAQuitar = coreProjectContext.getQuitarTiposGestoresDefectoAsuntos();
+		
+		if (!Checks.esNulo(gestoresAQuitar)) {
+			//Quitamos algunos tipos de gestor
+			List<String> gestoresQuitarEntidad = gestoresAQuitar.get(codigoEntidad);
+			for (String quitar : gestoresQuitarEntidad) {
+				EXTDDTipoGestor tipoQuitar = tipoGestorManager.getByCod(quitar);
+				if (!Checks.esNulo(tipoQuitar)){
+					int index = listadoTipoGestores.indexOf(tipoQuitar);
+					if (index > -1) {
+						listadoTipoGestores.remove(index);
+						listaDespacho.remove(index);
+						listaUsuarios.remove(index);
+					}
+				}
+			}
+		}
+		
+		//Cambiamos de usuario un tipo de gestor determinado
+		Map<String, Map<String, String>> gestoresCambiar = coreProjectContext.getCambioUsuarioTipoGestorDefecto();
+		if (!Checks.esNulo(gestoresCambiar)) {
+			Map<String, String> gestoresCambiarEntidad = gestoresCambiar.get(codigoEntidad);
+			Set<String> tiposGestor = gestoresCambiarEntidad.keySet();
+			for (String tipoGestor : tiposGestor) {
+				EXTDDTipoGestor tipoCambiar = tipoGestorManager.getByCod(tipoGestor);
+				if (!Checks.esNulo(tipoCambiar)) {
+					int index = listadoTipoGestores.indexOf(tipoCambiar);
+					//Ahora buscamos el usuario por el que hay que cambiar
+					String nuevoUsuarioUserName = gestoresCambiarEntidad.get(tipoGestor);
+					Usuario nuevoUsuario = usuarioManager.getByUsername(nuevoUsuarioUserName);
+					if (!Checks.esNulo(nuevoUsuario)) {
+						listaUsuarios.set(index, nuevoUsuario);
+					}
+				}
+			}
+		}
+			
+	}
+	
+	
 	@BusinessOperation(overrides = ExternaBusinessOperation.BO_ASU_MGR_CREAR_ASUNTO_DTO)
 	@Override
 	@Transactional(readOnly = false)
@@ -993,7 +1136,24 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		{
 			exp = (Expediente) executor.execute(InternaBusinessOperation.BO_EXP_MGR_GET_EXPEDIENTE, dtoAsunto.getIdExpediente());
 			
-			id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
+
+ 			if (!Checks.esNulo(dtoAsunto.getIdContratos()) && !dtoAsunto.getIdContratos().trim().equals("")) {
+				//Hay que crear un list de contratos con los ids pasados
+ 				List<Contrato> contratosSel = new ArrayList<Contrato>();
+ 				
+				String[] cntIds = dtoAsunto.getIdContratos().split("-");
+				for (String cntId : cntIds) {
+					Contrato cnt = contratoManager.get(Long.parseLong(cntId));
+					if (!Checks.esNulo(cnt)) {
+						if (!contratosSel.contains(cnt)) {
+							contratosSel.add(cnt);
+						}
+					}
+				}
+				id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto, contratosSel);
+			} else {
+				id = asuntoDao.crearAsuntoConEstado(gd, sup, procurador, dtoAsunto.getNombreAsunto(), exp, dtoAsunto.getObservaciones(),dtoAsunto.getCodigoEstadoAsunto(),tipoDeAsunto);
+			}
 			dtoAsunto.setIdAsunto(id);
 		} else // MODIFICAR EXTASUNTO
 		{
@@ -1027,69 +1187,82 @@ public class EXTAsuntoManager extends BusinessOperationOverrider<AsuntoApi> impl
 		
 		Asunto asu = proxyFactory.proxy(AsuntoApi.class).get(dtoAsunto.getIdAsunto());
 		
+		if (!Checks.esNulo(asu)) {
 		//Ahora insertamos los enviados
-		for (Map<String,Long> gestorAdicional : dtoAsunto.getListaMapGestoresId()) {
-			EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
-			gaa.setAsunto(asu);
-			
-			EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
-			gaa.setTipoGestor(tipoGestor);
-			
-			GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
-																		, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
-			gaa.setGestor(gestor);
-			
-			List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
-			
-
-			
-			EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
-			gaah.setGestor(gaa.getGestor());
-			gaah.setAuditoria(Auditoria.getNewInstance());
-			gaah.setAsunto(gaa.getAsunto());
-			gaah.setTipoGestor(gaa.getTipoGestor());
-			gaah.setFechaDesde(new Date());
-			
-			Boolean existe= false;
-			Boolean existeConFechaHasta= false;
-			Boolean existeConFechaHastaVacio= false;
-			List<String> gestoresBorrados= Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
-			List<String> tipogestoresBorrados= Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
-			for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+			for (Map<String,Long> gestorAdicional : dtoAsunto.getListaMapGestoresId()) {
+				EXTGestorAdicionalAsunto gaa = new EXTGestorAdicionalAsunto();
+				gaa.setAsunto(asu);
 				
-				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
-					existe= true;
-					if(ges.getFechaHasta()!=null){
-						existeConFechaHasta= true;
-					}
-					if(ges.getFechaHasta()==null){
-						existeConFechaHastaVacio= true;
-					}
-				}
-				
-				if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
-					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", gestorAdicional.get("tipoGestor")));
+				if (!Checks.esNulo(tipoGestor)) {
+					gaa.setTipoGestor(tipoGestor);
 					
+					GestorDespacho gestor = genericDao.get(GestorDespacho.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", gestorAdicional.get("usuarioId"))
+																				, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", gestorAdicional.get("tipoDespacho")));
+					
+					if (!Checks.esNulo(gestor)) {
+						gaa.setGestor(gestor);
+						
+						List<EXTGestorAdicionalAsuntoHistorico> listaGestoresHistorico= gestorAdicionalAsuntoHistoricoDao.getListOrderedByAsunto(dtoAsunto.getIdAsunto());
+						
+			
+						
+						EXTGestorAdicionalAsuntoHistorico gaah = new EXTGestorAdicionalAsuntoHistorico();
+						gaah.setGestor(gaa.getGestor());
+						gaah.setAuditoria(Auditoria.getNewInstance());
+						gaah.setAsunto(gaa.getAsunto());
+						gaah.setTipoGestor(gaa.getTipoGestor());
+						gaah.setFechaDesde(new Date());
+						
+						Boolean existe= false;
+						Boolean existeConFechaHasta= false;
+						Boolean existeConFechaHastaVacio= false;
+						List<String> gestoresBorrados= new ArrayList<String>();
+						if (!Checks.esNulo(dtoAsunto.getIdGestorBorrado())) {
+							gestoresBorrados = Arrays.asList(dtoAsunto.getIdGestorBorrado().split(","));
+						}
+						List<String> tipogestoresBorrados= new ArrayList<String>();
+						if (!Checks.esNulo(dtoAsunto.getIdTipoGestorBorrado())) {
+								tipogestoresBorrados = Arrays.asList(dtoAsunto.getIdTipoGestorBorrado().split(","));
+						}
+						for(EXTGestorAdicionalAsuntoHistorico ges: listaGestoresHistorico){
+							
+							if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getGestor().getId().equals(gaah.getGestor().getId()) && ges.getTipoGestor().getCodigo().equals(gaah.getTipoGestor().getCodigo())){
+								existe= true;
+								if(ges.getFechaHasta()!=null){
+									existeConFechaHasta= true;
+								}
+								if(ges.getFechaHasta()==null){
+									existeConFechaHastaVacio= true;
+								}
+							}
+							
+							if(ges.getAsunto().getId().equals(gaah.getAsunto().getId()) && ges.getTipoGestor().getId().equals(gaah.getTipoGestor().getId()) && !ges.getGestor().getId().equals(gaah.getGestor().getId())){
+								gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(gaah.getAsunto().getId(), gaah.getTipoGestor().getId(),ges.getGestor().getId());
+								
+							}
+							
+							if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
+								gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
+							}
+							
+							
+						}
+						
+						
+						if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
+							gestorAdicionalAsuntoHistoricoDao.save(gaah);
+						}
+						
+			//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
+			//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
+			//			}
+						
+						
+						gestorAdicionalAsuntoDao.save(gaa);
+					}
 				}
-				
-				if(gestoresBorrados.contains(ges.getGestor().getId().toString())){
-					gestorAdicionalAsuntoHistoricoDao.actualizaFechaHastaIdGestor(ges.getAsunto().getId(), ges.getTipoGestor().getId(),ges.getGestor().getId());
-				}
-				
-				
 			}
-			
-			
-			if(!existe || (existeConFechaHasta && !existeConFechaHastaVacio)){
-				gestorAdicionalAsuntoHistoricoDao.save(gaah);
-			}
-			
-//			if(!listaGestoresHistorico.contains(gaah) && !gaaActuales.contains(gaa)){
-//				gestorAdicionalAsuntoHistoricoDao.save(gaah);
-//			}
-			
-			
-			gestorAdicionalAsuntoDao.save(gaa);
 		}
 		
 		

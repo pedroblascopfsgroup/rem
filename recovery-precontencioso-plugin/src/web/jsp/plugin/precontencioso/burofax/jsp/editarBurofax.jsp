@@ -14,7 +14,8 @@
     var contenidoBurofax='${textoBurofax}';
     var arrayIdEnvios="${arrayIdEnvios}";
    
-	var burofaxEditor = new Ext.form.HtmlEditor({
+<%--	var burofaxEditor = new Ext.form.HtmlEditor({ --%>
+	var burofaxEditor = new Ext.ux.form.HtmlLintEditor({
 			id:'htmlDescripcion'
 			,readOnly:false
 			,hideLabel:true

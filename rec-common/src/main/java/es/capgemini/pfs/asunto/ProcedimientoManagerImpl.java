@@ -285,6 +285,15 @@ public class ProcedimientoManagerImpl implements ProcedimientoManager {
 			} else {
 				procedimientoPersona.setAsiste(false);
 			}
+			//Rellenamos el id del contrato del que proviene
+			int c = 0;
+			while (procedimientoPersona.getCntId()==null && procedimientoPersona.getPersona().getContratos().size()>c) {
+				if (idsContratosList.contains(procedimientoPersona.getPersona().getContratos().get(c).getId().toString())) {
+					procedimientoPersona.setCntId(procedimientoPersona.getPersona().getContratos().get(c).getId());
+				}
+				c++;
+			}
+			
 			procedimientoPersonas.add(procedimientoPersona);
 		}
 		return procedimientoPersonas;

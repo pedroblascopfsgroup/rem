@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.buscador.FiltroB
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.DDEstadoPreparacionPCO;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 
+
 @Repository
 public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO, Long> implements ProcedimientoPCODao {
 
@@ -137,6 +138,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<HashMap<String, Object>> busquedaDocumentosPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
+		
 		ProjectionList select = Projections.projectionList();
 
 		addDefaultProcedimientoProjection(select);
@@ -145,9 +147,14 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("resultadoSolicitud.descripcion").as("ultimaRespuesta"));
 		select.add(Projections.property("solicitud.actor").as("ultimoActor"));
 		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
-		select.add(Projections.property("solicitud.fechaResultado").as("fechaResultado"));
+		select.add(Projections.property("solicitud.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("solicitud.fechaEnvio").as("fechaEnvio"));
 		select.add(Projections.property("solicitud.fechaRecepcion").as("fechaRecepcion"));
+		select.add(Projections.property("tipoDocumento.descripcion").as("tipoDocumento"));
+		select.add(Projections.property("documento.unidadGestionId").as("unidadGestionId"));
+		select.add(Projections.property("documento.ugDescripcion").as("ugDescripcion"));
+		select.add(Projections.property("unidadGestion.id").as("ugId"));
+		
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
 		query.setProjection(select);
@@ -171,6 +178,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		select.add(Projections.property("liquidacion.fechaConfirmacion").as("fechaConfirmacion"));
 		select.add(Projections.property("liquidacion.fechaCierre").as("fechaCierre"));
 		select.add(Projections.property("liquidacion.fechaRecepcion").as("fechaRecepcion"));
+		select.add(Projections.property("liquidacion.fechaSolicitud").as("fechaSolicitud"));
 		select.add(Projections.property("liquidacion.total").as("total"));
 
 		Criteria query = queryBusquedaPorFiltro(filtro);
@@ -461,9 +469,10 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 		if (!filtro.filtroDocumentoInformado() && !filtro.filtroSolicitudInformado() && !esBusquedaPorDocumento) {
 			return where;
 		}
-
+		
 		query.createAlias("procedimientoPco.documentos", "documento");
 		query.createAlias("documentos.estadoDocumento", "estadoDocumento", CriteriaSpecification.LEFT_JOIN);
+		query.createAlias("documento.unidadGestion", "unidadGestion");
 
 		if (!StringUtils.isBlank(filtro.getDocTiposDocumento())) {
 			query.createAlias("documentos.tipoDocumento", "tipoDocumento");
@@ -487,6 +496,7 @@ public class ProcedimientoPCODaoImpl extends AbstractEntityDao<ProcedimientoPCO,
 			// si se está realizando una busqueda por documentos deberán salir aquellos documentos los cuales aun no tienen ninguna solicitud
 			if (esBusquedaPorDocumento) {
 				query.createAlias("documentos.solicitudes", "solicitud", CriteriaSpecification.LEFT_JOIN);
+				query.createAlias("documento.tipoDocumento", "tipoDocumento");
 			} else {
 				query.createAlias("documentos.solicitudes", "solicitud");
 			}

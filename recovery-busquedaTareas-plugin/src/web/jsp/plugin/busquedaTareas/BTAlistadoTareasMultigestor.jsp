@@ -92,7 +92,7 @@
 	var seleccionado = false;
 	
 	var j=0;
-	var parametrosTab = new Array();
+	var parametrosTab = [];
 	
 	var btnMarcarTodas = new Ext.Button({
 	    text:'<s:message code="plugin.busquedaTareas.marcar" text="**Marcar todos los registros"/>'
@@ -118,7 +118,7 @@
 		}
 	});
 
-	var parametros = new Array();
+	var parametros = {};
 	var hayParametros = false;		
 
 	var deshabilitarTabGrupos = function(cte) {
@@ -131,7 +131,7 @@
 	}
 
 	var buscarFunc = function() {
-            parametros = new Array();
+            parametros = {};
             parametros['busquedaUsuario'] = '';
 			parametros['despacho'] = '';
 			parametros['gestores'] = '';
@@ -151,13 +151,15 @@
             var anadirParametros = function(newParametros) {
   
                 for (var i in newParametros) {
-                    hayParametros = true;
-                    parametros[i] = newParametros[i];
-                    if(i == 'params'){
-                    	
-                    	parametrosTab[j] = newParametros[i];
-                    	j++;
-                    }
+                	if (newParametros.hasOwnProperty(i)) {
+	                    hayParametros = true;
+	                    parametros[i] = newParametros[i];
+	                    if(i == 'params'){
+	                    	
+	                    	parametrosTab[j] = newParametros[i];
+	                    	j++;
+	                    }
+					}
                 }     
             };
             
@@ -178,7 +180,7 @@
 				
 				tareasStore.webflow(parametros); 
 				
-				parametrosTab = new Array();            
+				parametrosTab = [];            
                 flitrosPlegables.getTopToolbar().setDisabled(true);
             } else {
                 Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>','<s:message code="expedientes.listado.criterios"/>');
@@ -261,7 +263,7 @@
 							var limit = data.limit;
 							if(count < limit){
 								app.openBrowserWindow('/pfs/btabusquedatareas/exportacionTareasPage', parametros);  
-								parametrosTab = new Array();    
+								parametrosTab = [];    
 							}else{
 								Ext.MessageBox.hide();
 								Ext.Msg.alert('<s:message code="plugin.busquedaTareas.error" text="**Error" />', '<s:message code="plugin.busquedaTareas.exportarExcel.limiteSuperado1" text="**Se ha establecido un l\EDmite m\E1ximo de " />'+ limit + ' '+
@@ -403,8 +405,8 @@
 	var tarea = Ext.data.Record.create([
 		{name : 'marcar', type:'bool'}
 		,{name:'subtipo'}
-		,{name:'fechaInicio',type:'date', dateFormat:'d/m/Y'}
-		,{name:'fechaFin',type:'date', dateFormat:'d/m/Y'}
+		,{name:'fechaInicio'}
+		,{name:'fechaFin'}
 		,{name:'id'}
 		,{name:'descripcion'}
 		,{name:'codentidad'}
@@ -420,8 +422,8 @@
 		,{name:'codigoEntidadInformacion'}
 		,{name:'codigoSituacion'}
 		,{name:'fcreacionEntidad'}
-		,{name:'fechaVenc',type:'date', dateFormat:'d/m/Y'}
-		,{name:'fechaRealizacion',type:'date', dateFormat:'d/m/Y'}
+		,{name:'fechaVenc'}
+		,{name:'fechaRealizacion'}
 		,{name:'idTareaAsociada'}
 		,{name:'descripcionTareaAsociada'}
 		,{name:'tipoSolicitud'}
@@ -503,9 +505,9 @@
 		,{	/*Columna 1*/ header: '<s:message code="plugin.busquedaTareas.cabeceraUnidadGestionId" text="**Unidad Gestión Id"/>', sortable: true, dataIndex: 'entidadInformacion_id', hidden:true}
 		,{	/*Columna 1*/ header: '<s:message code="plugin.busquedaTareas.cabeceraTarea" text="**Tarea"/>', sortable: true, dataIndex: 'descripcionTarea', width:150}
 		,{	/*Columna 2*/ header: '<s:message code="plugin.busquedaTareas.cabeceraDescripcion" text="**Descripcion"/>', sortable: false, dataIndex: 'descripcion', width:150}
-		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaInicio" text="**Fecha inicio"/>', sortable: true, dataIndex: 'fechaInicio', renderer:app.format.dateRenderer, width:70}
-		,{	/*Columna 4*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaVencimiento" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', renderer:app.format.dateRenderer, width:70}
-		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaFin" text="**Fecha fin"/>', sortable: true, dataIndex: 'fechaFin', renderer:app.format.dateRenderer, width:70}
+		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaInicio" text="**Fecha inicio"/>', sortable: true, dataIndex: 'fechaInicio', width:70}
+		,{	/*Columna 4*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaVencimiento" text="**Fecha Vto."/>', sortable: true, dataIndex: 'fechaVenc', width:70}
+		,{	/*Columna 3*/ header: '<s:message code="plugin.busquedaTareas.cabeceraFechaFin" text="**Fecha fin"/>', sortable: true, dataIndex: 'fechaFin', width:70}
 		,{  /*Columna 5*/ header: '<s:message code="plugin.busquedaTareas.cabeceraDiasVencida" text="**Dias Vencida"/>', sortable: false, dataIndex: 'diasVencido', width:70}
 		,{  /*Columna 6*/ header: '<s:message code="plugin.busquedaTareas.cabeceraGestor" text="**Gestor"/>', sortable: false, dataIndex: 'gestor', width:70}
 		,{  /*Columna 7*/ header: '<s:message code="plugin.busquedaTareas.cabeceraSupervisor" text="**Supervisor"/>', sortable: false, dataIndex: 'supervisor', width:70}

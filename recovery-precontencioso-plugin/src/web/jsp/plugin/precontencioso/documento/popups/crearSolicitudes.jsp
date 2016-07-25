@@ -102,7 +102,6 @@
 		forceSelection: true,
 		emptyText: 'Seleccionar',
 		triggerAction: 'all',
-		disabled: false,
 		fieldLabel: '<s:message code="plugin.ugas.asuntos.cmbTipoGestor" text="**Tipo gestor" />'
 	});
 	
@@ -244,5 +243,22 @@
 	
 
 	page.add(panel);
+	
+	function estadoInicial() {
+		<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+			if(data.esGestoria) {
+				comboTipoGestor.setDisabled(true);
+				comboTipoDespacho.setDisabled(true);
+				comboUsuario.setDisabled(true);
+				fechaSolicitud.setDisabled(true);
+			}else{
+			 	comboTipoGestor.setDisabled(false);
+				comboTipoDespacho.setDisabled(false);
+				comboUsuario.setDisabled(false);
+				fechaSolicitud.setDisabled(false);
+			}
+		</c:if>
+	}
+	estadoInicial();
 	
 </fwk:page>

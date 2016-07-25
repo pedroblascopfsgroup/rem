@@ -390,15 +390,21 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 		 */ 
 		if(busquedaJerarquizada || !Checks.esNulo(clientes.getJerarquia())){
 			hql.append("and (");
-				
-			// AÃƒÂ±ade la persona si es gestionada por el usuario
 			hql.append("(p.per_id in ( ");
-			hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
-			parameters)); // hql.append(" ))");
-			
-			if ((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))) {
-				hql.append(" union all ");
-				hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); hql.append(" ))"); } else { hql.append(" ))"); 
+			if(busquedaJerarquizada){
+				// AÃƒÂ±ade la persona si es gestionada por el usuario
+				hql.append(generaFiltroZonificacionGestor(clientes, usuarioLogueado,
+				parameters)); // hql.append(" ))");
+				if((!Checks.esNulo(clientes.getJerarquia())) || (!Checks.esNulo(clientes.getCodigoZonas()))){
+					hql.append(" union all ");
+					hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); 
+					hql.append(" ))");
+				} else {
+					hql.append(" ))"); 
+				}
+			} else {
+				hql.append(generaFiltroPersonaPorJerarquia(clientes, usuarioLogueado, parameters)); 
+				hql.append(" ))"); 
 			}
 			
 			hql.append(") ");
@@ -1501,9 +1507,9 @@ public class MEJClienteDaoImpl extends AbstractEntityDao<Cliente, Long>
 
 			zonas += " ) ";
 		}
-		hql.append(" select p.per_id from per_personas p , ZON_ZONIFICACION zon ");
-
-		hql.append(" where p.ZON_ID = zon.ZON_ID and p.BORRADO = 0");
+		//RECOVERY-1333-- Se modifica la busqueda de zonas para pasar por oficina.
+		hql.append(" select p.per_id from per_personas p , ZON_ZONIFICACION zon, ofi_oficinas ofi ");
+		hql.append(" where p.ofi_id = ofi.ofi_id and ofi.ofi_id = zon.ofi_id and p.BORRADO = 0 and ofi.borrado=0");
 		hql.append(zonas);
 
 		return hql.toString();

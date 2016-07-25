@@ -40,7 +40,6 @@ import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.ReglasElevacion;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -48,7 +47,6 @@ import es.capgemini.pfs.utils.StringUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Clase que agrupa m�todo para la creaci�n y acceso de datos de los
@@ -1314,7 +1312,10 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         
         hql.append(" where exp.auditoria.borrado = 0 ");
 
-		
+		//Y que solo séan de recobro
+        hql.append(" and exp.tipoExpediente.codigo = '" + DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO +"' ");        
+        
+        
         if (requiereRiesgoSaldo) {
             hql.append(" and expc.expediente.id = exp.id and expc.auditoria.borrado = 0");
             hql.append(" and expc.contrato.id = c.id ");

@@ -1,4 +1,4 @@
---/*
+ï»¿--/*
 --##########################################
 --## AUTOR=Pedro S.
 --## FECHA_CREACION=20160627
@@ -10,7 +10,7 @@
 --## Finalidad:  Gestores, supervisores; y nuevos detalles expediente-contratos, expediente-personas.
 --## INSTRUCCIONES:  Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Version inicial
 --##########################################
 --*/
 
@@ -21,7 +21,7 @@ create or replace PROCEDURE TRUNCAR_DIM_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Agustin Mompo, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: Pedro S., PFS group
--- Fecha última modificación: 27/06/2016
+-- Fecha ultima modificacion: 27/06/2016
 -- Motivos del cambio: Gestores, supervisores; y nuevos detalles expediente-contratos, expediente-personas.
 -- Cliente: Recovery BI CAJAMAR
 --

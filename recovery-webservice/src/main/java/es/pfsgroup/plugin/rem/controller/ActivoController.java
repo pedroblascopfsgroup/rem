@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
@@ -1630,6 +1631,25 @@ public class ActivoController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getEstadoPublicacionByActivo(Long id, ModelMap model) {
 		model.put("data", activoApi.getEstadoPublicacionByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion, ModelMap model){
+
+		try {
+
+			Page page = activoApi.getActivosPublicacion(dtoActivosPublicacion);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
 		return createModelAndViewJson(model);
 	}
 	

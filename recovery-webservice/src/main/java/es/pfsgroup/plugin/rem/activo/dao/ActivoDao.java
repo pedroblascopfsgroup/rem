@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -47,5 +48,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	ActivoCondicionEspecifica getUltimaCondicion(Long idActivo);
 
 	Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
+
+	Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
 	
 }

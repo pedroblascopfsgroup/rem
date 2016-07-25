@@ -51,50 +51,49 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.mediador'),
 				defaultType: 'textfieldbase',
-				items :
-					[
+				items :	[
 					// Fila 1
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.nombre'),
-							bind: '{informeComercial.nombreMediador}'
-							//, readOnly: true
+							bind: '{informeComercial.nombreMediador}',
+							readOnly: true
 						},
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.telefono'),
-							bind: '{informeComercial.telefonoMediador}'
-							//, readOnly: true
+							bind: '{informeComercial.telefonoMediador}',
+							readOnly: true
 						},
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.email'),
-							bind: '{informeComercial.emailMediador}'
-							//, readOnly: true
+							bind: '{informeComercial.emailMediador}',
+							readOnly: true
 						},
 					// Fila 2
 						{
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
-							bind: '{informeComercial.fechaRecepcionLlaves}'
-							//, readOnly: true
+							bind: '{informeComercial.fechaRecepcionLlaves}',
+							readOnly: true
 						},
 						{
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fultima.visita'),
 							bind: '{informeComercial.fechaUltimaVisita}',
-							colspan: 2
-							//, readOnly: true
+							colspan: 2,
+							readOnly: true
 						},
 					// Fila 3
 						{
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.autorizado.web'),
-							bind: '{informeComercial.autorizacionWeb}'
-							//, readOnly: true
+							bind: '{informeComercial.autorizacionWeb}',
+							readOnly: true
 						},
 						{
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fautorizacion.hasta'),
-							bind: '{informeComercial.fechaAutorizacionHasta}'
-							//, readOnly: true
+							bind: '{informeComercial.fechaAutorizacionHasta}',
+							readOnly: true
 						}
 
 				]
@@ -133,53 +132,42 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.datos.basicos'),
 				defaultType: 'textfieldbase',
-				items :
-					[
-					
-						{    
-			  
+				items :	[
+			            {    
+			                
 							xtype:'fieldsettable',
-							title:HreRem.i18n('title.validacion.conflictos'),
 							defaultType: 'textfieldbase',
-							items :
-								[
-
-						            {    
-						                
-										xtype:'fieldsettable',
-										defaultType: 'textfieldbase',
-										title:HreRem.i18n('title.datos.admision'),
-										colspan: 3,
-										items :
-											[
-												// fila 0
-												{ 
-										        	xtype: 'comboboxfieldbase',
-										        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
-													reference: 'tipoActivoAdmisionInforme',
-										        	chainedStore: 'comboSubtipoActivo',
-													chainedReference: 'subtipoActivoComboAdmisionInforme',
-										        	bind: {
-									            		store: '{comboTipoActivo}',
-									            		value: '{activoInforme.tipoActivoCodigo}'
-									            	},
-						    						listeners: {
-									                	select: 'onChangeChainedCombo'
-									            	}
-									            	//,allowBlank: false
-										        },
-												{ 
-													xtype: 'comboboxfieldbase',
-										        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-										        	reference: 'subtipoActivoComboAdmisionInforme',
-										        	bind: {
-									            		store: '{comboSubtipoActivoAdmisionIC}',
-									            		value: '{activoInforme.subtipoActivoCodigo}',
-									            		disabled: '{!activoInforme.tipoActivoCodigo}'
-									            	}
-									            	, colspan: 2
-						    						//,allowBlank: false
-										        },			       
+							title:HreRem.i18n('title.datos.admision'),
+							colspan: 3,
+							items :	[
+									// fila 0
+									{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
+										reference: 'tipoActivoAdmisionInforme',
+							        	chainedStore: 'comboSubtipoActivo',
+										chainedReference: 'subtipoActivoComboAdmisionInforme',
+							        	bind: {
+						            		store: '{comboTipoActivo}',
+						            		value: '{activoInforme.tipoActivoCodigo}'
+						            	},
+			    						listeners: {
+						                	select: 'onChangeChainedCombo'
+						            	}
+						            	//,allowBlank: false
+							        },
+									{ 
+										xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
+							        	reference: 'subtipoActivoComboAdmisionInforme',
+							        	bind: {
+						            		store: '{comboSubtipoActivoAdmisionIC}',
+						            		value: '{activoInforme.subtipoActivoCodigo}',
+						            		disabled: '{!activoInforme.tipoActivoCodigo}'
+						            	}
+						            	, colspan: 2
+			    						//,allowBlank: false
+							        },			       
 // TODO: Confirmar que hay que quitarlo (estado Activo)
 //												{ 
 //										        	xtype: 'comboboxfieldbase',
@@ -190,261 +178,349 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 //									            		value: '{activoInforme.estadoActivoCodigo}'
 //									            	}			
 //										        },
-												// fila 1
-												{							
-													xtype: 'comboboxfieldbase',
-													fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
-										        	bind: {
-									            		store: '{comboTipoVia}',
-									            		value: '{activoInforme.tipoViaCodigo}'			            		
-									            	}
-						    						//,allowBlank: false
-												},
-												{ 
-													fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
-								                	bind:		'{activoInforme.nombreVia}'
-								                	//,allowBlank: false
-								                },
-								                { 
-								                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
-								                	bind:		'{activoInforme.numeroDomicilio}'
-								                },
-								                // fila 2
-								                {
-													fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
-									                bind:		'{activoInforme.escalera}'
-												},
-						 						{ 
-								                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
-								                	bind:		'{activoInforme.piso}'
-								                },
-												{ 
-								                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
-								                	bind:		'{activoInforme.puerta}'
-								                },
-								                // fila 4
-								                {
-													fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
-													bind:		'{activoInforme.codPostal}',
-													vtype: 'codigoPostal',
-													maskRe: /^\d*$/, 
-								                	maxLength: 5
-													//,allowBlank: false		                	
-												},
-								                {
-													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-													reference: 'municipioComboAdmisionInforme',													
-									            	bind: {
-									            		store: '{comboMunicipioAdmisionIC}',
-									            		value: '{activoInforme.municipioCodigo}',
-									            		disabled: '{!activoInforme.provinciaCodigo}'
-									            	}
-						    						//,allowBlank: false
-												},
-												{
-													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-													reference: 'provinciaComboAdmisionInforme',
-													chainedStore: 'comboMunicipio',
-													chainedReference: 'municipioComboAdmisionInforme',
-									            	bind: {
-									            		store: '{comboProvincia}',
-									            	    value: '{activoInforme.provinciaCodigo}'
-									            	},
-						    						listeners: {
-														select: 'onChangeChainedCombo'
-						    						}
-						    						//,allowBlank: false
-												},
-												{ 
-													fieldLabel: HreRem.i18n('fieldlabel.latitud'),
-													readOnly	: true,
-													bind:		'{activoInforme.latitud}'
-								                },
-												{ 
-													fieldLabel: HreRem.i18n('fieldlabel.longitud'),
-													readOnly	: true,
-													bind:		'{activoInforme.longitud}'
-								                },
-												{
-								                	xtype: 'button',
-								                	reference: 'botonVerificarCoordenadasInforme',
-								                	disabled: true,
-								                	bind:{
-								                		disabled: '{!editing}'
-								                	},
-								                	text: HreRem.i18n('btn.verificar.coordenadas'),
-								                	handler: 'onClickVerificarDireccion'
-								                },
-												{
-								                	xtype: 'button',
-								                	reference: 'botonCopiarDatosMediador',
-								                	disabled: true,
-								                	bind:{
-								                		disabled: '{!editing}'
-								                	},
-								                	text: HreRem.i18n('btn.copiar.datos.mediador'),
-								                	colspan: 3,
-								                	style: "float: right; important!",
-								                	handler: 'onClickCopiarDireccionMediador'
-								                }
-
-										]               
-						          	},
-									{    
-						  
-										xtype:'fieldsettable',
-										title:HreRem.i18n('title.datos.mediador'),
-										defaultType: 'textfieldbase',
-										colspan: 3,
-										items :
-											[
-												// fila 0
-												{ 
-										        	xtype: 'comboboxfieldbase',
-										        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
-													reference: 'tipoActivoMediadorInforme',
-										        	chainedStore: 'comboSubtipoActivo',
-													chainedReference: 'subtipoActivoComboMediadorInforme',
-										        	bind: {
-									            		store: '{comboTipoActivo}',
-									            		value: '{informeComercial.tipoActivoCodigo}'
-									            	},
-						    						listeners: {
-									                	select: 'onChangeChainedCombo'
-									            	}
-									            	//,allowBlank: false
-										        },
-												{ 
-													xtype: 'comboboxfieldbase',
-										        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
-										        	reference: 'subtipoActivoComboMediadorInforme',
-										        	bind: {
-									            		store: '{comboSubtipoActivoMediadorIC}',
-									            		value: '{informeComercial.subtipoActivoCodigo}',
-									            		disabled: '{!informeComercial.tipoActivoCodigo}'
-									            	}
-						    						//,allowBlank: false
-										        },			       
-												{ 
-										        	xtype: 'comboboxfieldbase',
-										        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
-										        	name: 'estadoActivoCodigo',
-										        	bind: {
-									            		store: '{comboEstadoActivo}',
-									            		value: '{informeComercial.estadoActivoCodigo}'
-									            	}			
-										        },
-												// fila 1
-												{							
-													xtype: 'comboboxfieldbase',
-													fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
-										        	bind: {
-									            		store: '{comboTipoVia}',
-									            		value: '{informeComercial.tipoViaCodigo}'			            		
-									            	}
-						    						//,allowBlank: false
-												},
-												{ 
-													fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
-								                	bind:		'{informeComercial.nombreVia}'
-								                	//,allowBlank: false
-								                },
-								                { 
-								                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
-								                	bind:		'{informeComercial.numeroDomicilio}'
-								                },
-								                // fila 2
-								                {
-													fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
-									                bind:		'{informeComercial.escalera}'
-												},
-						 						{ 
-								                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
-								                	bind:		'{informeComercial.piso}'
-								                },
-												{ 
-								                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
-								                	bind:		'{informeComercial.puerta}'
-								                },
-								                // fila 3
-								                {
-													fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
-													bind:		'{informeComercial.codPostal}',
-													vtype: 'codigoPostal',
-													maskRe: /^\d*$/, 
-								                	maxLength: 5
-													//,allowBlank: false		                	
-												},
-								                {
-													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-													reference: 'municipioComboMediadorInforme',
-									            	bind: {
-									            		store: '{comboMunicipioMediadorIC}',
-									            		value: '{informeComercial.municipioCodigo}',
-									            		disabled: '{!informeComercial.provinciaCodigo}'
-									            	}
-						    						//,allowBlank: false
-												},
-												{
-													xtype: 'comboboxfieldbase',
-													fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-													reference: 'provinciaComboMediadorInforme',
-													chainedStore: 'comboMunicipio',
-													chainedReference: 'municipioComboMediadorInforme',
-									            	bind: {
-									            		store: '{comboProvincia}',
-									            	    value: '{informeComercial.provinciaCodigo}'
-									            	},
-						    						listeners: {
-														select: 'onChangeChainedCombo'
-						    						}
-						    						//,allowBlank: false
-												},
-												// fila 4
-												{ 
-													fieldLabel: HreRem.i18n('fieldlabel.latitud'),
-													readOnly	: true,
-													bind:		'{informeComercial.latitud}'
-								                },
-												{ 
-													fieldLabel: HreRem.i18n('fieldlabel.longitud'),
-													readOnly	: true,
-													bind:		'{informeComercial.longitud}'
-								                }
-										]
+									// fila 1
+									{							
+										xtype: 'comboboxfieldbase',
+										fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
+							        	bind: {
+						            		store: '{comboTipoVia}',
+						            		value: '{activoInforme.tipoViaCodigo}'			            		
+						            	}
+			    						//,allowBlank: false
 									},
 									{ 
-										fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
-										//readOnly: true,
-										bind:		'{informeComercial.ubicacion}'
+										fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
+					                	bind:		'{activoInforme.nombreVia}'
+					                	//,allowBlank: false
+					                },
+					                { 
+					                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
+					                	bind:		'{activoInforme.numeroDomicilio}'
+					                },
+					                // fila 2
+					                {
+										fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
+						                bind:		'{activoInforme.escalera}'
+									},
+			 						{ 
+					                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
+					                	bind:		'{activoInforme.piso}'
 					                },
 									{ 
-										fieldLabel: HreRem.i18n('fieldlabel.distrito'),
-										//readOnly: true,
-										bind:		'{informeComercial.distrito}'
+					                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
+					                	bind:		'{activoInforme.puerta}'
+					                },
+					                // fila 4
+					                {
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+										bind:		'{activoInforme.codPostal}',
+										vtype: 'codigoPostal',
+										maskRe: /^\d*$/, 
+					                	maxLength: 5
+										//,allowBlank: false		                	
+									},
+					                {
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+										reference: 'municipioComboAdmisionInforme',													
+						            	bind: {
+						            		store: '{comboMunicipioAdmisionIC}',
+						            		value: '{activoInforme.municipioCodigo}',
+						            		disabled: '{!activoInforme.provinciaCodigo}'
+						            	}
+			    						//,allowBlank: false
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+										reference: 'provinciaComboAdmisionInforme',
+										chainedStore: 'comboMunicipio',
+										chainedReference: 'municipioComboAdmisionInforme',
+						            	bind: {
+						            		store: '{comboProvincia}',
+						            	    value: '{activoInforme.provinciaCodigo}'
+						            	},
+			    						listeners: {
+											select: 'onChangeChainedCombo'
+			    						}
+			    						//,allowBlank: false
+									},
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
+										readOnly	: true,
+										bind:		'{activoInforme.latitud}'
 					                },
 									{ 
-										fieldLabel: HreRem.i18n('fieldlabel.zona'),
-										//readOnly: true,
-										bind:		'{informeComercial.zona}'
+										fieldLabel: HreRem.i18n('fieldlabel.longitud'),
+										readOnly	: true,
+										bind:		'{activoInforme.longitud}'
+					                },
+									{
+					                	xtype: 'button',
+					                	reference: 'botonVerificarCoordenadasInforme',
+					                	disabled: true,
+					                	bind:{
+					                		disabled: '{!editing}'
+					                	},
+					                	text: HreRem.i18n('btn.verificar.coordenadas'),
+					                	handler: 'onClickVerificarDireccion'
+					                },
+									{
+					                	xtype: 'button',
+					                	reference: 'botonCopiarDatosMediador',
+					                	disabled: true,
+					                	bind:{
+					                		disabled: '{!editing}'
+					                	},
+					                	text: HreRem.i18n('btn.copiar.datos.mediador'),
+					                	colspan: 3,
+					                	style: "float: right; important!",
+					                	handler: 'onClickCopiarDireccionMediador'
 					                }
 
+							]               
+			          	},
+						{    
+			  
+							xtype:'fieldsettable',
+							title:HreRem.i18n('title.datos.mediador'),
+							defaultType: 'textfieldbase',
+							colspan: 3,
+							items :
+								[
+									// fila 0
+									{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
+										reference: 'tipoActivoMediadorInforme',
+							        	chainedStore: 'comboSubtipoActivo',
+										chainedReference: 'subtipoActivoComboMediadorInforme',
+							        	bind: {
+						            		store: '{comboTipoActivo}',
+						            		value: '{informeComercial.tipoActivoCodigo}'
+						            	},
+			    						listeners: {
+						                	select: 'onChangeChainedCombo'
+						            	}
+						            	//,allowBlank: false
+							        },
+									{ 
+										xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
+							        	reference: 'subtipoActivoComboMediadorInforme',
+							        	bind: {
+						            		store: '{comboSubtipoActivoMediadorIC}',
+						            		value: '{informeComercial.subtipoActivoCodigo}',
+						            		disabled: '{!informeComercial.tipoActivoCodigo}'
+						            	}
+			    						//,allowBlank: false
+							        },			       
+									{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
+							        	name: 'estadoActivoCodigo',
+							        	bind: {
+						            		store: '{comboEstadoActivo}',
+						            		value: '{informeComercial.estadoActivoCodigo}'
+						            	}			
+							        },
+									// fila 1
+									{							
+										xtype: 'comboboxfieldbase',
+										fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
+							        	bind: {
+						            		store: '{comboTipoVia}',
+						            		value: '{informeComercial.tipoViaCodigo}'			            		
+						            	}
+			    						//,allowBlank: false
+									},
+									{ 
+										fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
+					                	bind:		'{informeComercial.nombreVia}'
+					                	//,allowBlank: false
+					                },
+					                { 
+					                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
+					                	bind:		'{informeComercial.numeroDomicilio}'
+					                },
+					                // fila 2
+					                {
+										fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
+						                bind:		'{informeComercial.escalera}'
+									},
+			 						{ 
+					                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
+					                	bind:		'{informeComercial.piso}'
+					                },
+									{ 
+					                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
+					                	bind:		'{informeComercial.puerta}'
+					                },
+					                // fila 3
+					                {
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+										bind:		'{informeComercial.codPostal}',
+										vtype: 'codigoPostal',
+										maskRe: /^\d*$/, 
+					                	maxLength: 5
+										//,allowBlank: false		                	
+									},
+					                {
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+										reference: 'municipioComboMediadorInforme',
+						            	bind: {
+						            		store: '{comboMunicipioMediadorIC}',
+						            		value: '{informeComercial.municipioCodigo}',
+						            		disabled: '{!informeComercial.provinciaCodigo}'
+						            	}
+			    						//,allowBlank: false
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
+										reference: 'provinciaComboMediadorInforme',
+										chainedStore: 'comboMunicipio',
+										chainedReference: 'municipioComboMediadorInforme',
+						            	bind: {
+						            		store: '{comboProvincia}',
+						            	    value: '{informeComercial.provinciaCodigo}'
+						            	},
+			    						listeners: {
+											select: 'onChangeChainedCombo'
+			    						}
+			    						//,allowBlank: false
+									},
+									// fila 4
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
+										readOnly	: true,
+										bind:		'{informeComercial.latitud}'
+					                },
+									{ 
+										fieldLabel: HreRem.i18n('fieldlabel.longitud'),
+										readOnly	: true,
+										bind:		'{informeComercial.longitud}'
+					                }
 							]
-						}
+						},
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
+							//readOnly: true,
+							bind:		'{informeComercial.ubicacion}'
+		                },
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.distrito'),
+							//readOnly: true,
+							bind:		'{informeComercial.distrito}'
+		                },
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.zona'),
+							//readOnly: true,
+							bind:		'{informeComercial.zona}'
+		                }
+
 				]
 			},
+						
+						
 
 // Información General ---
+//			
+//			{    
+//  
+//				xtype:'fieldsettable',
+//				title:HreRem.i18n('title.informacion.general'),
+//				defaultType: 'textfieldbase',
+//				items :
+//					[
+//						{ 
+//				        	xtype: 'comboboxfieldbase',
+//				        	fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
+//				        	bind: {
+//			            		store: '{comboTipoUbicacion}',
+//			            		value: '{informeComercial.ubicacionActivoCodigo}'
+//			            	},
+//			            	//readOnly: true,
+//			            	displayField: 'descripcion',
+//    						valueField: 'codigo'							
+//				        },
+//						{
+//				        	xtype: 		'textareafieldbase',
+//							fieldLabel: HreRem.i18n('fieldlabel.descripcion.comercial'),
+//					 		height: 	200,
+//					 		maxWidth:   550,
+//					 		rowspan:	5,
+//			            	bind:		'{informeComercial.descripcionComercial}',
+//							//readOnly: true,
+//					 		labelAlign: 'top'
+//						},
+//						{ 
+//							xtype: 		'textareafieldbase',
+//					 		fieldLabel: HreRem.i18n('fieldlabel.propuesta.activos.vinculados'),
+//					 		height: 	200,
+//					 		width: '100%',
+//					 		rowspan:	5,
+//			            	bind:		'{informeComercial.activosVinculados}',
+//							//readOnly: true,
+//					 		labelAlign: 'top'
+//						},
+//						{ 
+//				        	xtype: 'comboboxfieldbase',
+//				        	editable: false,
+//				        	fieldLabel: HreRem.i18n('fieldlabel.estado.construccion'),
+//				        	bind: {
+//			            		store: '{comboEstadoConstruccion}',
+//			            		value: '{informeComercial.estadoConstruccionCodigo}',
+//			    				hidden: '{informeComercial.isSuelo}'
+//			            	},
+//			            	//readOnly: true,
+//			            	displayField: 'descripcion',
+//    						valueField: 'codigo'
+//				        },
+//		                { 
+//				        	xtype: 'comboboxfieldbase',
+//				        	editable: false,
+//				        	fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion'),
+//				        	bind: {
+//			            		store: '{comboEstadoConservacion}',
+//			            		value: '{informeComercial.estadoConservacionCodigo}'
+//			            	},
+//			            	//readOnly: true,
+//			            	displayField: 'descripcion',
+//    						valueField: 'codigo'
+//				        },
+//						{ 
+//							fieldLabel: HreRem.i18n('fieldlabel.anyo.construccion'),
+//		                	bind: {
+//		                		value: '{informeComercial.anyoConstruccion}',
+//			    				hidden: '{informeComercial.isSuelo}'
+//		                	},
+//		                	//readOnly: true,
+//		                	vtype: 'anyo',
+//							maskRe: /^\d*$/
+//							
+//		                },
+//		                { 
+//					 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion'),
+//					 		bind: {
+//		                		value: '{informeComercial.anyoRehabilitacion}',
+//			    				hidden: '{informeComercial.isSuelo}'
+//		                	},
+//		                	//readOnly: true,
+//		                	vtype: 'anyo',
+//							maskRe: /^\d*$/							
+//						}
+//		                
+//					]
+//            },
+//
 			{    
-  
+            	  
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
-				items :
-					[
+				items :	[
 						{ 
 				        	xtype: 'comboboxfieldbase',
 				        	fieldLabel: HreRem.i18n('fieldlabel.ubicacion'),
@@ -452,9 +528,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			            		store: '{comboTipoUbicacion}',
 			            		value: '{informeComercial.ubicacionActivoCodigo}'
 			            	},
-			            	//readOnly: true,
 			            	displayField: 'descripcion',
-    						valueField: 'codigo'							
+    						valueField: 'codigo'
+							//readOnly: true
 				        },
 						{
 				        	xtype: 		'textareafieldbase',
@@ -485,9 +561,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			            		value: '{informeComercial.estadoConstruccionCodigo}',
 			    				hidden: '{informeComercial.isSuelo}'
 			            	},
-			            	//readOnly: true,
 			            	displayField: 'descripcion',
     						valueField: 'codigo'
+							//readOnly: true
 				        },
 		                { 
 				        	xtype: 'comboboxfieldbase',
@@ -497,9 +573,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			            		store: '{comboEstadoConservacion}',
 			            		value: '{informeComercial.estadoConservacionCodigo}'
 			            	},
-			            	//readOnly: true,
 			            	displayField: 'descripcion',
     						valueField: 'codigo'
+							//readOnly: true
 				        },
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.anyo.construccion'),
@@ -507,10 +583,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		                		value: '{informeComercial.anyoConstruccion}',
 			    				hidden: '{informeComercial.isSuelo}'
 		                	},
-		                	//readOnly: true,
-		                	vtype: 'anyo',
-							maskRe: /^\d*$/
-							
+							maskRe: /^\d*$/,
+							vtype: 'anyo'
+							//readOnly: true
 		                },
 		                { 
 					 		fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion'),
@@ -518,14 +593,160 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		                		value: '{informeComercial.anyoRehabilitacion}',
 			    				hidden: '{informeComercial.isSuelo}'
 		                	},
-		                	//readOnly: true,
-		                	vtype: 'anyo',
-							maskRe: /^\d*$/							
-						}
+							maskRe: /^\d*$/,
+							vtype: 'anyo'
+							//readOnly: true
+						}/*,
+						{ 
+				        	xtype: 'comboboxfieldbase',
+				        	editable: false,
+				        	fieldLabel:  HreRem.i18n('fieldlabel.apto.valla.publicitaria'),
+				        	width: 		220,
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+			            		value: '{informeComercial.aptoPublicidad}'			            		
+			            	},
+			            	displayField: 'descripcion',
+    						valueField: 'codigo'
+				        }*/
 		                
-					]
+				]
             },
-            
+			         
+            {
+   
+				xtype:'fieldset',
+				collapsible: true,
+				width: '100%',
+				layout: {
+			        type: 'hbox',
+			       	align: 'stretch'
+			    },
+				title:HreRem.i18n('title.edificio.ubica.activo'),
+				items :	[
+				       	{
+							xtype: 'container',
+							layout: {type: 'vbox'},
+							defaultType: 'textfieldbase',
+							width: '33%',
+							items: [
+								{ 
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.estado.conservacion'),
+						        	bind: {
+					            		store: '{comboEstadoConservacion}',
+					            		value: '{informeComercial.estadoConservacionEdificioCodigo}'			            		
+					            	},
+					            	displayField: 'descripcion',
+		    						valueField: 'codigo'
+									//readOnly: true
+						        },						        
+								{ 
+									fieldLabel: HreRem.i18n('fieldlabel.anyo.rehabilitacion'),
+									vtype: 		'anyo',
+				                	bind:		'{informeComercial.anyoRehabilitacionEdificio}'
+									//readOnly: true
+				                },
+				                { 
+							 		fieldLabel: HreRem.i18n('fieldlabel.numero.plantas'),
+							 		maxLength:	3,
+					            	bind:		'{informeComercial.numPlantas}'
+									//readOnly: true
+								},
+								{ 
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel:  HreRem.i18n('fieldlabel.ascensor'),
+						        	bind: {
+					            		store: '{comboSiNoRem}',
+					            		value: '{informeComercial.ascensor}'			            		
+					            	},
+					            	displayField: 'descripcion',
+		    						valueField: 'codigo'
+									//readOnly: true
+						        },
+				                { 
+							 		fieldLabel: HreRem.i18n('fieldlabel.numero.ascensores'),
+					            	maxLength:	2,
+					            	bind:		'{informeComercial.numAscensores}'
+									//readOnly: true
+								},
+								{ 
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.material.fachada'),
+						        	bind: {
+					            		store: '{comboTipoFachada}',
+					            		value: '{informeComercial.tipoFachadaCodigo}'			            		
+					            	},
+					            	displayField: 'descripcion',
+		    						valueField: 'codigo'
+									//readOnly: true
+						        }
+	        
+							]
+				       	}
+				       	
+				]
+            },
+					                
+            { 
+        	    xtype:'fieldset',
+        	    margin: '0 15 10 5',	
+        	    width: '33%',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.reformas.necesarias'),
+				items :	[
+		 			 {
+		 				 xtype: 'checkboxfieldbase',
+		 				 fieldLabel: 'Fachada',
+		 				 bind: '{informeComercial.reformaFachada}'
+						 //readOnly: true
+		 			 },
+		 			{
+		 				 xtype: 'checkboxfieldbase',
+		 				 fieldLabel: 'Escalera',
+		 				 bind: '{informeComercial.reformaEscalera}'
+						 //readOnly: true
+		 			 },
+		 			 {
+		 				 xtype: 'checkboxfieldbase',
+		 				 fieldLabel: 'Portal',
+		 				 bind: '{informeComercial.reformaPortal}'
+						 //readOnly: true
+		 			 },
+		 			 {
+		 				 xtype: 'checkboxfieldbase',
+		 				 fieldLabel: 'Ascensor',
+		 				 bind: '{informeComercial.reformaAscensor}'
+						 //readOnly: true
+		 			 },
+		 			 {
+		 				 xtype: 'checkboxfieldbase',
+		 				 fieldLabel: 'Cubierta',
+		 				 bind: '{informeComercial.reformaCubierta}'
+						 //readOnly: true
+		 			 },
+		 			 {
+		 				 fieldLabel: 'Otras zonas comunes',
+		 				 bind: '{informeComercial.reformaOtroDescEdificio}'
+						 //readOnly: true
+		 			 },
+		 			{ 
+		 				xtype: 		'textareafieldbase',
+		 				margin: '0 5 10 0',
+		 				flex: 1,
+		 				maxWidth: 550,
+		 				fieldLabel: HreRem.i18n('fieldlabel.descripcion.edificio'),
+		             	bind:		'{informeComercial.ediDescripcion}',
+		 				//readOnly: true,
+		 		 		labelAlign: 'top'
+		             }
+		 		]
+			},
+
+// Valores Económicos
 			{    
   
 				xtype:'fieldsettable',
@@ -535,8 +756,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				    type: 'table',
 					columns: 2
 				},
-				items :
-					[
+				items :	[
 						{
 							xtype: 'currencyfieldbase', 
 							fieldLabel: HreRem.i18n('fieldlabel.valor.estimado.venta'),
@@ -571,14 +791,15 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		                }
 				]
 			},
+
 			
+// Datos de la Comunidad
 			{    
   
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.datos.comunidad'),
 				defaultType: 'textfieldbase',
-				items :
-					[
+				items :	[
 						{
 							xtype : 'comboboxfieldbase',
 						    //allowBlank: false,
@@ -587,7 +808,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						      store : '{comboSiNoRem}',
 						      value : '{informeComercial.inscritaComunidad}'
 						    }
-// TODO: Revisar si el cambio de este combo afecta a otros datos de comunidad
+// TODO: Revisar si el cambio de este combo afecta a otros datos de comunidad y rehabilitarlo si es el caso
 //						    ,
 //							listeners: {
 //						    	change: 'onComunidadNoConstituida'

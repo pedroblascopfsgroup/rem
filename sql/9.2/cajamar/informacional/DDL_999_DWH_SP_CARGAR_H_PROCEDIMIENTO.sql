@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Maria V.
---## FECHA_CREACION=20160624
+--## FECHA_CREACION=20160627
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=RECOVERY-2130
@@ -20,8 +20,8 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO (DATE_START IN date, DATE_END
 -- ===============================================================================================
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
--- Responsable ultima modificación: María Villanueva, PFS Group
--- Fecha ultima modificación: 23/06/2016
+-- Responsable ultima modificación: Pedro S., PFS Group
+-- Fecha ultima modificación: 27/06/2016
 -- Motivos del cambio: Corrección de carga paralizaciones
 
 -- Cliente: Recovery BI CAJAMAR

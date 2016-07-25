@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PROCEDIMIENTO_ESPEC (DATE_START IN DATE, DA
 -- Autor: Gonzalo Martín, PFS Group
 -- Fecha creación: Febrero 2014
 -- Responsable ultima modificación: María Villanueva, PFS Group
--- Fecha ultima modificación: 22/12/2015
--- Motivos del cambio: Cambio  FECHA_INTERP_DEM_HIP
+-- Fecha ultima modificación: 20/04/2016
+-- Motivos del cambio: Cambio  FECHA_PUBLICACION_BOE
 
 -- Cliente: Recovery BI CAJAMAR
 --
@@ -475,7 +475,7 @@ BEGIN
     from TMP_CONCU_JERARQUIA tpj
     join '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES tar on tpj.FASE_ACTUAL = tar.PRC_ID and tar.TAR_FECHA_FIN is not null and TRUNC(tar.TAR_FECHA_FIN) <= :fecha
     join '||V_DATASTAGE||'.TEX_TAREA_EXTERNA tex on tar.TAR_ID = tex.TAR_ID and tex.tap_id in (10000000003080)
-    join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fechaAuto''
+    join '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR tev on tex.TEX_ID = tev.TEX_ID and tev.TEV_NOMBRE = ''fecha''
     where  DIA_ID = :fecha' using fecha, fecha; --20150421
     --and tex.tap_id in (411, 419)';
     commit;
@@ -1013,7 +1013,7 @@ BEGIN
     -- PLAZO_AUTO_FASE_COMUN_A_REG_RESOL_APERTURA_LIQUIDACION_CONVENIO -> Procedimiento que pasa por T. fase convenio (2384)
     execute immediate 'update H_CONCU set P_AUTO_FC_REG_RESOL_APER_LIQ_C = null 
     where DIA_ID = :fecha and PROCEDIMIENTO_ID not in (select  tpj.ITER from TMP_CONCU_JERARQUIA tpj 
-                                   join recovery_CM_datastage.PRC_PROCEDIMIENTOS prc on tpj.FASE_ACTUAL = prc.PRC_ID
+                                   join '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc on tpj.FASE_ACTUAL = prc.PRC_ID
                                    where  DIA_ID = :fecha and  TRUNC(prc.FECHACREAR) <= :fecha  and prc.DD_TPO_ID = 2384 and prc.BORRADO=0)' using fecha, fecha, fecha;
     
     commit;

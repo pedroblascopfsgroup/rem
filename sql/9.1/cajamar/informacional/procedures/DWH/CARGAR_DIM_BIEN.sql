@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca, PFS Group
 -- Fecha creacion: Septiembre 2015
--- Responsable ultima modificacion: Jaime Sánchez-Cuenca, PFS Group
--- Fecha ultima modificacion: 03/12/2015
--- Motivos del cambio: CMREC - 1220 : Desarrollo - Informes específicos CM - Bienes y Subastas
+-- Responsable ultima modificacion: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 14/04/2016
+-- Motivos del cambio: D_BIE_VIVIENDA_HABITUAL
 -- Cliente: Recovery BI CAJAMAR
 --
 -- Descripcion: Procedimiento almancenado que carga las tablas de la dimension Subasta
@@ -29,6 +29,9 @@ create or replace PROCEDURE CARGAR_DIM_BIEN(O_ERROR_STATUS OUT VARCHAR2) AS
     -- D_BIE_ZONA
     -- D_BIE_OFICINA
     -- D_BIE_ENTIDAD
+	  -- D_BIE_GARANTIA_NUM_OPE_BIE_AGR
+	  -- D_BIE_GARANTIA_NUM_OPE_BIE
+    -- D_BIE_VIVIENDA_HABITUAL
 
 V_NOMBRE VARCHAR2(50) := 'CARGAR_DIM_BIEN';
 V_ROWCOUNT NUMBER;
@@ -300,17 +303,22 @@ BEGIN
   EXECUTE IMMEDIATE
       'INSERT INTO D_BIE_PRIMER_TITULAR (PRIMER_TITULAR_BIE_ID, PRIMER_TITULAR_BIE_DOCUMENT_ID, PRIMER_TITULAR_BIE_NOMBRE, PRIMER_TITULAR_BIE_APELLIDO_1, PRIMER_TITULAR_BIE_APELLIDO_2)
       SELECT MAX(AUX_TITULARES.PER_ID) PER_ID, AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2 FROM(
-        SELECT DISTINCT PER.PER_ID, PER.PER_DOC_ID, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, AUX.CNT_ID, CPE.CPE_ORDEN, rank() over (partition by CPE.CNT_ID order by cpe.cpe_orden) as ranking2 FROM(
-          SELECT DISTINCT CNT.CNT_ID, rank() over (partition by CNT.CNT_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-          FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV
-          WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION) AUX,
-         '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
-        WHERE CPE.CNT_ID = AUX.CNT_ID
-        AND CPE.CNT_ID = BIE_CNT.CNT_ID
-        AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
-        AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
-        AND AUX.RANKING = 1) AUX_TITULARES
-     WHERE AUX_TITULARES.RANKING2 = 1
+        SELECT DISTINCT PER.PER_ID, PER.PER_DOC_ID, PER.PER_NOMBRE, PER.PER_APELLIDO1, PER.PER_APELLIDO2, CPE.CPE_ORDEN, rank() over (partition by AUX.ASU_ID order by cpe.cpe_orden) as ranking2 FROM(
+                                SELECT DISTINCT ASU.ASU_ID, CNT.CNT_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by ASU.ASU_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP,
+                                     '||V_DATASTAGE||'.ASU_ASUNTOS ASU
+                                WHERE CNT.CNT_ID = MOV.CNT_ID
+                                AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                                AND CNT.CNT_ID = CEX.CNT_ID
+                                AND CEX.EXP_ID = EXP.EXP_ID
+                                AND EXP.EXP_ID = ASU.EXP_ID
+                    ) AUX,
+                    '||V_DATASTAGE||'.CPE_CONTRATOS_PERSONAS CPE, '||V_DATASTAGE||'.DD_TIN_TIPO_INTERVENCION TIN, '||V_DATASTAGE||'.PER_PERSONAS PER
+                        WHERE AUX.CNT_ID = CPE.CNT_ID
+                        AND CPE.DD_TIN_ID = TIN.DD_TIN_ID AND TIN.DD_TIN_TITULAR = 1
+                        AND CPE.PER_ID = PER.PER_ID AND PER.BORRADO = 0
+                        AND AUX.RANKING = 1) AUX_TITULARES
+                     WHERE AUX_TITULARES.RANKING2 = 1
      GROUP BY AUX_TITULARES.PER_DOC_ID, AUX_TITULARES.PER_NOMBRE, AUX_TITULARES.PER_APELLIDO1, AUX_TITULARES.PER_APELLIDO2
      ORDER BY 1';
      
@@ -326,18 +334,23 @@ BEGIN
 -- ----------------------------------------------------------------------------------------------
   SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_NUM_OPERACION WHERE NUM_OPERACION_BIEN_ID = -1;
   IF (V_NUM_ROW = 0) THEN
-    INSERT INTO D_BIE_NUM_OPERACION (NUM_OPERACION_BIEN_ID, NUM_OPERACION_BIEN_DESC, NUM_OPERACION_BIEN_DESC_2)
-    VALUES (-1 ,'Desconocido', '');
+    INSERT INTO D_BIE_NUM_OPERACION (NUM_OPERACION_BIEN_ID, NUM_OPERACION_BIEN_DESC, NUM_OPERACION_BIEN_DESC_2, GARANTIA_NUM_OPE_BIE_ID)
+    VALUES (-1 ,'Desconocido', '', -1);
   END IF;
 
   EXECUTE IMMEDIATE
-      'INSERT INTO D_BIE_NUM_OPERACION (NUM_OPERACION_BIEN_ID, NUM_OPERACION_BIEN_DESC, NUM_OPERACION_BIEN_DESC_2)
-       SELECT DISTINCT AUX.CNT_ID, AUX.CNT_CCC_DOMICILIACION, NULL FROM(
-            SELECT DISTINCT CNT.CNT_ID, CNT.CNT_CCC_DOMICILIACION, rank() over (partition by CNT.CNT_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC) as ranking
-            FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV
-            WHERE CNT.CNT_ID = MOV.CNT_ID AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION) AUX, '||V_DATASTAGE||'.BIE_CNT BIE_CNT
-          WHERE AUX.CNT_ID = BIE_CNT.CNT_ID
-            AND AUX.RANKING = 1
+      'INSERT INTO D_BIE_NUM_OPERACION (NUM_OPERACION_BIEN_ID, NUM_OPERACION_BIEN_DESC, NUM_OPERACION_BIEN_DESC_2, GARANTIA_NUM_OPE_BIE_ID)
+       SELECT DISTINCT AUX.CNT_ID, LPAD(AUX.CNT_CONTRATO,16,''0''), AUX.CNT_CCC_DOMICILIACION, NVL(DD_GC1_ID, -1) FROM(
+                                SELECT DISTINCT ASU.ASU_ID, CNT.CNT_ID, CNT.CNT_CONTRATO, CNT.CNT_CCC_DOMICILIACION, DD_GC1_ID, MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA, rank() over (partition by ASU.ASU_ID order by (MOV.MOV_POS_VIVA_VENCIDA + MOV_POS_VIVA_NO_VENCIDA) DESC, MOV_ID) as ranking
+                                FROM '||V_DATASTAGE||'.CNT_CONTRATOS CNT, '||V_DATASTAGE||'.MOV_MOVIMIENTOS MOV, '||V_DATASTAGE||'.CEX_CONTRATOS_EXPEDIENTE CEX, '||V_DATASTAGE||'.EXP_EXPEDIENTES EXP,
+                                     '||V_DATASTAGE||'.ASU_ASUNTOS ASU
+                                WHERE CNT.CNT_ID = MOV.CNT_ID
+                                AND CNT.CNT_FECHA_EXTRACCION = MOV.MOV_FECHA_EXTRACCION
+                                AND CNT.CNT_ID = CEX.CNT_ID
+                                AND CEX.EXP_ID = EXP.EXP_ID
+                                AND EXP.EXP_ID = ASU.EXP_ID
+                    ) AUX
+                WHERE AUX.RANKING = 1
         ORDER BY 1';
         
   V_ROWCOUNT := sql%rowcount;     
@@ -409,6 +422,97 @@ BEGIN
    --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_ENTIDAD. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
 
+
+
+-- ----------------------------------------------------------------------------------------------
+--                                      D_BIE_VIVIENDA_HABITUAL
+-- ----------------------------------------------------------------------------------------------
+
+ SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_VIVIENDA_HABITUAL WHERE VIVIENDA_HABITUAL_ID = -1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_VIVIENDA_HABITUAL(VIVIENDA_HABITUAL_ID, VIVIENDA_HABITUAL_DESC) VALUES (-1 ,'Desconocido');
+  END IF;
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_VIVIENDA_HABITUAL WHERE VIVIENDA_HABITUAL_ID = 0;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_VIVIENDA_HABITUAL (VIVIENDA_HABITUAL_ID, VIVIENDA_HABITUAL_DESC) VALUES (0 ,'No');
+  END IF;
+  
+  SELECT COUNT(*) INTO V_NUM_ROW FROM D_BIE_VIVIENDA_HABITUAL WHERE VIVIENDA_HABITUAL_ID = 1;
+  IF (V_NUM_ROW = 0) THEN
+    INSERT INTO D_BIE_VIVIENDA_HABITUAL (VIVIENDA_HABITUAL_ID, VIVIENDA_HABITUAL_DESC) VALUES (1 ,'Si');
+  END IF;
+
+  V_ROWCOUNT := sql%rowcount;     
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_VIVIENDA_HABITUAL. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+  commit;    
+
+  
+-- ----------------------------------------------------------------------------------------------
+--                                      D_BIE_GARANTIA_NUM_OPE_BIE_AGR
+-- ----------------------------------------------------------------------------------------------
+  select count(*) into V_NUM_ROW from D_BIE_GARANTIA_NUM_OPE_BIE_AGR where GARANTIA_NUM_OPE_BIE_AGR_ID = -1;
+  if (V_NUM_ROW = 0) then
+    insert into D_BIE_GARANTIA_NUM_OPE_BIE_AGR (GARANTIA_NUM_OPE_BIE_AGR_ID, GARANTIA_NUM_OPE_BIE_AGR_DESC) values (-1 ,'Desconocido');
+  end if;
+  select count(*) into V_NUM_ROW from D_BIE_GARANTIA_NUM_OPE_BIE_AGR where GARANTIA_NUM_OPE_BIE_AGR_ID = 0;
+  if (V_NUM_ROW = 0) then
+    insert into D_BIE_GARANTIA_NUM_OPE_BIE_AGR (GARANTIA_NUM_OPE_BIE_AGR_ID, GARANTIA_NUM_OPE_BIE_AGR_DESC) values (0 ,'Real Hipotecaria');
+  end if;
+  select count(*) into V_NUM_ROW from D_BIE_GARANTIA_NUM_OPE_BIE_AGR where GARANTIA_NUM_OPE_BIE_AGR_ID = 1;
+  if (V_NUM_ROW = 0) then
+    insert into D_BIE_GARANTIA_NUM_OPE_BIE_AGR (GARANTIA_NUM_OPE_BIE_AGR_ID, GARANTIA_NUM_OPE_BIE_AGR_DESC) values (1 ,'Resto');
+  end if;
+  select count(*) into V_NUM_ROW from D_BIE_GARANTIA_NUM_OPE_BIE_AGR where GARANTIA_NUM_OPE_BIE_AGR_ID = 2;
+  if (V_NUM_ROW = 0) then
+    insert into D_BIE_GARANTIA_NUM_OPE_BIE_AGR (GARANTIA_NUM_OPE_BIE_AGR_ID, GARANTIA_NUM_OPE_BIE_AGR_DESC) values (2 ,'Real Pignoraticias');
+  end if;
+  select count(*) into V_NUM_ROW from D_BIE_GARANTIA_NUM_OPE_BIE_AGR where GARANTIA_NUM_OPE_BIE_AGR_ID = 3;
+  if (V_NUM_ROW = 0) then
+    insert into D_BIE_GARANTIA_NUM_OPE_BIE_AGR (GARANTIA_NUM_OPE_BIE_AGR_ID, GARANTIA_NUM_OPE_BIE_AGR_DESC) values (3 ,'Personal');
+  end if;
+
+  commit;
+
+  --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_GARANTIA_NUM_OPE_BIE_AGR. Realizados INSERTS', 3;
+  
+-- ----------------------------------------------------------------------------------------------
+--                                    D_BIE_GARANTIA_NUM_OPE_BIE
+-- ----------------------------------------------------------------------------------------------
+  select count(*) into V_NUM_ROW from D_BIE_GARANTIA_NUM_OPE_BIE where GARANTIA_NUM_OPE_BIE_ID = -1;
+  if (V_NUM_ROW = 0) then
+    insert into D_BIE_GARANTIA_NUM_OPE_BIE (GARANTIA_NUM_OPE_BIE_ID, GARANTIA_NUM_OPE_BIE_DESC, GARANTIA_NUM_OPE_BIE_DESC_2,GARANTIA_NUM_OPE_BIE_AGR_ID)
+    values (-1 ,'Desconocido', 'Desconocido', -1);
+  end if;
+
+  execute immediate
+  'insert into D_BIE_GARANTIA_NUM_OPE_BIE(GARANTIA_NUM_OPE_BIE_ID, GARANTIA_NUM_OPE_BIE_DESC, GARANTIA_NUM_OPE_BIE_DESC_2)
+   select DD_GCN_ID, DD_GCN_DESCRIPCION, DD_GCN_DESCRIPCION_LARGA from '||V_DATASTAGE||'.DD_GCN_GARANTIA_CONTRATO';
+
+  V_ROWCOUNT := sql%rowcount;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_GARANTIA_NUM_OPE_BIE. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 3;
+
+  -- Incluimos GARANTIA_NUM_OPE_BIE_AGR_ID
+  -- 0 - Real Hipotecaria
+  update D_BIE_GARANTIA_NUM_OPE_BIE SET GARANTIA_NUM_OPE_BIE_AGR_ID = 0 where GARANTIA_NUM_OPE_BIE_ID IN (2,3,4,5,1,6,7,8,9,11,10,35);
+  -- 1 - Resto
+  update D_BIE_GARANTIA_NUM_OPE_BIE SET GARANTIA_NUM_OPE_BIE_AGR_ID = 1 where GARANTIA_NUM_OPE_BIE_ID IN (33,32,31,30,29,27,26,25,28);
+  -- 2 - Real Pignoraticias
+  update D_BIE_GARANTIA_NUM_OPE_BIE SET GARANTIA_NUM_OPE_BIE_AGR_ID = 2 where GARANTIA_NUM_OPE_BIE_ID IN (13,12,17,21,20,19,18,16,15,23,22,14,24);
+  -- 3 - Personal
+  update D_BIE_GARANTIA_NUM_OPE_BIE SET GARANTIA_NUM_OPE_BIE_AGR_ID = 3 where GARANTIA_NUM_OPE_BIE_ID IN (34);
+  -- 1 - Resto (sin identificar)
+  update D_BIE_GARANTIA_NUM_OPE_BIE SET GARANTIA_NUM_OPE_BIE_AGR_ID = 1 where GARANTIA_NUM_OPE_BIE_AGR_ID is null;
+
+  commit;
+
+   --Log_Proceso
+  execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'D_BIE_GARANTIA_NUM_OPE_BIE. Finalizado UPDATES', 3;  
+  
 -------------------------
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'Termina ' || V_NOMBRE, 2;

@@ -3,8 +3,8 @@ create or replace PROCEDURE CREAR_H_EXPEDIENTE (error OUT VARCHAR2) AS
 -- Autor: Gonzalo Martin, PFS Group
 -- Fecha creacion: Mayo 2014
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha Última modificación: 01/12/2015
--- Motivos del cambio: usuario propietario
+-- Fecha Última modificación: 24/05/2016
+-- Motivos del cambio:Se modifica campo dir_terriotorial_id de tmp_h_exp a not null
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripcion: Procedimiento almancenado que crea las tablas del Hecho Expediente
@@ -127,7 +127,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2))
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL)
 			  SEGMENT CREATION IMMEDIATE 
 					TABLESPACE "RECOVERY_CM_DWH" 
                     PARTITION BY RANGE ("DIA_ID")
@@ -228,7 +229,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                             '', :error); END;';
 		 execute immediate V_SQL USING OUT error;
       DBMS_OUTPUT.PUT_LINE('---- Creacion tabla TMP_H_EXP');
@@ -326,7 +328,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                               )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
                             TABLESPACE "RECOVERY_CM_DWH"   
@@ -429,7 +432,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                              )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
                            	TABLESPACE "RECOVERY_CM_DWH"   
@@ -532,7 +536,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                               )
                               SEGMENT CREATION IMMEDIATE NOLOGGING
                             	TABLESPACE "RECOVERY_CM_DWH"   
@@ -635,7 +640,8 @@ BEGIN
                               INTERESES_MORATORIOS NUMBER(14,2) DEFAULT NULL,          -- INTEGERereses moratorios de los contratos asociados al expediente
                               COMISIONES NUMBER(14,2)  ,                               -- Comsiones de los contratos asociados al expediente
                               GASTOS NUMBER(14,2),                                     -- Gastos de los contratos asociados al expediente
-                              IMPORTE_COMPROMETIDO NUMBER(14,2)                        -- Importe comprometido mediante acciones extrajudiciales
+                              IMPORTE_COMPROMETIDO NUMBER(14,2),
+                              DIR_TERRITORIAL_ID NUMBER(16,0) NOT NULL                        -- Importe comprometido mediante acciones extrajudiciales
                             )
                              SEGMENT CREATION IMMEDIATE NOLOGGING
                             	TABLESPACE "RECOVERY_CM_DWH"   

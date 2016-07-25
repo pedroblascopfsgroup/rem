@@ -3,8 +3,8 @@ create or replace PROCEDURE CARGAR_H_PER_DET_ALERTA(DATE_START IN date, DATE_END
 -- Autor: Maria Villanueva, PFS Group
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
--- Fecha ultima modificacion: 02/12/2015
--- Motivos del cambio: usuario propietario
+-- Fecha ultima modificacion: 12/04/16
+-- Motivos del cambio: Se cambia la carga de alertas
 -- Cliente: Recovery BI Cajamar
 --
 -- Descripci�n: Procedimiento almancenado que carga las tablas hechos H_PER_DET_ALERTA.
@@ -12,7 +12,7 @@ create or replace PROCEDURE CARGAR_H_PER_DET_ALERTA(DATE_START IN date, DATE_END
 BEGIN
  DECLARE
 -- ===============================================================================================
---                  									Declaracación de variables
+--                                                                      Declaracación de variables
 -- ===============================================================================================
   v_num_row NUMBER(10);
   v_datastage  VARCHAR2(100);
@@ -82,7 +82,7 @@ BEGIN
 
   --Log_Proceso
   execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); end;' USING IN V_NOMBRE, 'Empieza ' || V_NOMBRE, 2;
-  	select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA_DATASTAGE'; 
+      select valor into V_DATASTAGE from PARAMETROS_ENTORNO where parametro = 'ESQUEMA_DATASTAGE'; 
         select valor into V_CM01 from PARAMETROS_ENTORNO where parametro = 'ORIGEN_01';
   -- ----------------------------------------------------------------------------------------------
 --                                      H_PER_DET_ALERTA
@@ -131,7 +131,8 @@ BEGIN
                    -1,
                    1
             from '||V_DATASTAGE||'.ALE_ALERTAS 
-            where TRUNC(ALE_FECHA_EXTRACCION)= '''||fecha||''' and ALE_ACTIVO = 1 and BORRADO = 0';
+            where TRUNC(ALE_FECHA_EXTRACCION)=(select max(TRUNC(ALE_FECHA_EXTRACCION)) from '||V_DATASTAGE||'.ALE_ALERTAS where  TRUNC(ALE_FECHA_EXTRACCION)<= '''||fecha||''')
+                   and ALE_ACTIVO = 1 and BORRADO = 0';
 
     --Log_Proceso
       execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_PER_DET_ALERTA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;   
@@ -145,9 +146,9 @@ BEGIN
 
 
       commit;    
-	
-	-- Borrando indices H_PER_DET_ALERTA
-    	    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PER_DET_ALERTA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+      
+      -- Borrando indices H_PER_DET_ALERTA
+          V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_PER_DET_ALERTA_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
          execute immediate V_SQL USING OUT O_ERROR_STATUS;
 
 
@@ -156,7 +157,7 @@ BEGIN
     -- Borrado del día a insertar
     delete from H_PER_DET_ALERTA where DIA_ID = fecha;
     commit;
-	
+      
     insert into H_PER_DET_ALERTA
       (
         DIA_ID,
@@ -179,10 +180,10 @@ BEGIN
       GESTION_ALERTA_ID,
       NUM_ALERTAS
     from TMP_H_PER_DET_ALERTA where DIA_ID = fecha; 
-	
+      
     V_ROWCOUNT := sql%rowcount;     
     commit;
-	
+      
      --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PER_DET_ALERTA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
     
@@ -191,7 +192,7 @@ BEGIN
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PER_DET_ALERTA. Termina Fecha: '||TO_CHAR(fecha, 'dd/mm/yyyy'), 3;
     
     end loop;
-  close c_fecha;  	
+  close c_fecha;        
   
   -- Crear indices H_PER_DET_ALERTA
 
@@ -242,8 +243,8 @@ BEGIN
     -- Borrado de las semanas a insertar
     delete from H_PER_DET_ALERTA_SEMANA where SEMANA_ID = semana;
     commit;  
-	
-	insert into H_PER_DET_ALERTA_SEMANA
+      
+      insert into H_PER_DET_ALERTA_SEMANA
       (
         SEMANA_ID,
         FECHA_CARGA_DATOS,
@@ -264,11 +265,11 @@ BEGIN
         CALIFICACION_ALERTA_ID,
         GESTION_ALERTA_ID,
         NUM_ALERTAS
-    from H_PER_DET_ALERTA where DIA_ID = max_dia_semana;	
-	
-	V_ROWCOUNT := sql%rowcount;     
+    from H_PER_DET_ALERTA where DIA_ID = max_dia_semana;    
+      
+      V_ROWCOUNT := sql%rowcount;     
     commit;
-	
+      
  --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PER_DET_ALERTA_SEMANA. Registros Insertados: ' || TO_CHAR(V_ROWCOUNT), 4;
  
@@ -282,12 +283,12 @@ BEGIN
 
     commit;   
    
-	end loop C_SEMANAS_LOOP;
-	close c_semana;
+      end loop C_SEMANAS_LOOP;
+      close c_semana;
 
     --Log_Proceso
     execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'H_PER_DET_ALERTA_SEMANA. Termina bucle', 3;
-   	
+      
 -- ----------------------------------------------------------------------------------------------
 --                                     H_PER_DET_ALERTA_MES
 -- ---------------------------------------------------------------------------------------------- 
@@ -332,8 +333,8 @@ BEGIN
     -- Borrado de los meses a insertar
     delete from H_PER_DET_ALERTA_MES where MES_ID = mes;
     commit;  
-	
-	
+      
+      
     insert into H_PER_DET_ALERTA_MES
         (
           MES_ID,
@@ -356,7 +357,7 @@ BEGIN
         GESTION_ALERTA_ID,
         NUM_ALERTAS
       from H_PER_DET_ALERTA  where DIA_ID = max_dia_mes;
-	
+      
     V_ROWCOUNT := sql%rowcount;     
     commit;
   
@@ -419,8 +420,8 @@ BEGIN
     -- Borrado de los trimestres a insertar
     delete from H_PER_DET_ALERTA_TRIMESTRE where TRIMESTRE_ID = trimestre;
     commit;
-	
-	insert into H_PER_DET_ALERTA_TRIMESTRE
+      
+      insert into H_PER_DET_ALERTA_TRIMESTRE
         (
           TRIMESTRE_ID,
           FECHA_CARGA_DATOS,
@@ -477,7 +478,7 @@ BEGIN
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
        execute immediate V_SQL USING OUT O_ERROR_STATUS;
-	   
+         
 
 
 

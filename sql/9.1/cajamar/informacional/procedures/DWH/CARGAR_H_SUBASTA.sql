@@ -2,9 +2,9 @@ create or replace PROCEDURE CARGAR_H_SUBASTA (DATE_START IN DATE, DATE_END IN DA
 -- ===============================================================================================
 -- Autor: Jaime Sánchez-Cuenca Bellido, PFS Group
 -- Fecha creación: Septiembre 2015
--- Responsable última modificación: Jaime Sánchez-Cuenca Bellido, PFS Group
--- Fecha ultima modificacion: 05/11/2015
--- Motivos del cambio: Desarrollo - Informes específicos CM - Bienes y Subastas
+-- Responsable última modificación: María Villanueva, PFS Group
+-- Fecha ultima modificacion: 13/06/2016
+-- Motivos del cambio: Se modifica la carga de h_tmp_sub para evitar duplicados de SUB_NUM_AUTOS
 
 -- Cliente: Recovery BI CAJAMAR
 --
@@ -15,7 +15,7 @@ DECLARE
 -- ===============================================================================================
 
 -- ===============================================================================================
---                  									Declaracación de variables
+--                                    Declaracación de variables
 -- ===============================================================================================
   V_NUM_ROW NUMBER(10);
   V_DATASTAGE VARCHAR2(100);
@@ -76,7 +76,7 @@ BEGIN
 
 
     V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_H_SUB'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
 
      execute immediate
         'insert into TMP_H_SUB(
@@ -135,9 +135,12 @@ BEGIN
                      (NVL(TRUNC(SUB_FECHA_SENYALAMIENTO), TRUNC(SYSDATE)) - TRUNC(SUB_FECHA_SOLICITUD)) AS P_SENYALAMIENTO_SOLICITUD,
                      1 AS NUM_PROCEDIMIENTO
             FROM '||V_DATASTAGE||'.SUB_SUBASTA SUB, '||V_DATASTAGE||'.LOS_LOTE_SUBASTA LOS, '||V_DATASTAGE||'.LOB_LOTE_BIEN LOB,
-            (select ASU_ID, max(NVL(SUB_NUM_AUTOS,0)) SUB_NUM_AUTOS from '||V_DATASTAGE||'.SUB_SUBASTA where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR) group by ASU_ID) SUB2
-            WHERE LOS.SUB_ID(+) = SUB.SUB_ID
-            AND SUB.ASU_ID = SUB2.ASU_ID(+)
+            (select distinct ASU_ID, NVL(PRC_COD_PROC_EN_JUZGADO,0) SUB_NUM_AUTOS,trunc(prc.FECHACREAR) FECHACREAR  from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc where BORRADO = 0 and ''' || fecha || ''' >= trunc(FECHACREAR)) SUB2,
+            (select max(trunc(prc2.FECHACREAR)) FECHACREAR ,ASU_ID from '||V_DATASTAGE||'.PRC_PROCEDIMIENTOS prc2 where  BORRADO = 0 AND ''' || fecha || ''' >= trunc(FECHACREAR) GROUP BY ASU_ID) SUB3
+            WHERE LOS.SUB_ID = SUB.SUB_ID
+            AND SUB2.FECHACREAR=SUB3.FECHACREAR
+      AND SUB2.ASU_ID=SUB3.ASU_ID
+            AND SUB.ASU_ID = SUB2.ASU_ID
             AND (SUB.BORRADO = 0 AND LOS.BORRADO(+) = 0 and ''' || fecha || ''' >= trunc(SUB.FECHACREAR) and ''' || fecha || ''' >= trunc(LOS.FECHACREAR(+)))
             AND LOB.LOS_ID(+) = LOS.LOS_ID';
 
@@ -197,8 +200,8 @@ BEGIN
         commit;
         
          -- Borrado índices H_SUB
-		V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_SUB_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
-		execute immediate V_SQL USING OUT O_ERROR_STATUS;
+    V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''DROP'', ''H_SUB_IX'', '''', ''S'', '''', :O_ERROR_STATUS); END;';
+    execute immediate V_SQL USING OUT O_ERROR_STATUS;
          commit;
         
           INSERT INTO H_SUB(
@@ -284,9 +287,9 @@ BEGIN
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
 
   insert into TMP_FECHA_AUX (SEMANA_AUX) select distinct SEMANA_ID from D_F_DIA where DIA_ID between DATE_START and DATE_END;
   -- Insert max d�a anterior al periodo de carga - Periodo anterior de date_start 
@@ -402,7 +405,7 @@ BEGIN
 
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
@@ -515,7 +518,7 @@ BEGIN
  
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   
@@ -613,7 +616,7 @@ BEGIN
       commit;     
  
       -- Crear indices H_PRC_TRIMESTRE 
-	 V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_TRIMESTRE_IX'', ''H_SUB_TRIMESTRE (TRIMESTRE_ID, ASUNTO_ID, SUBASTA_ID, LOTE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
+   V_SQL :=  'BEGIN OPERACION_DDL.DDL_INDEX(''CREATE'', ''H_SUB_TRIMESTRE_IX'', ''H_SUB_TRIMESTRE (TRIMESTRE_ID, ASUNTO_ID, SUBASTA_ID, LOTE_ID)'', ''S'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
       commit;  
 
@@ -628,7 +631,7 @@ BEGIN
   
   -- Calculamos las Fechas h (tabla hechos) y ANT (Periodo anterior)
   V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA'', '''', :O_ERROR_STATUS); END;';
-    execute immediate V_SQL USING OUT O_ERROR_STATUS;	
+    execute immediate V_SQL USING OUT O_ERROR_STATUS; 
  V_SQL :=  'BEGIN OPERACION_DDL.DDL_TABLE(''TRUNCATE'', ''TMP_FECHA_AUX'', '''', :O_ERROR_STATUS); END;';
     execute immediate V_SQL USING OUT O_ERROR_STATUS;
   

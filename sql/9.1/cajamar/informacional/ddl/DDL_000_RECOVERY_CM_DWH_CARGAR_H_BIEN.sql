@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Pedro S.
---## FECHA_CREACION=20160211
+--## FECHA_CREACION=20160226
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
---## INCIDENCIA_LINK=GC-1103
+--## INCIDENCIA_LINK=GC-1177
 --## PRODUCTO=NO
 --## 
 --## Finalidad: duplicidades lanzamientos
@@ -23,8 +23,8 @@ PROCEDURE CARGAR_H_BIEN (DATE_START IN DATE, DATE_END IN DATE, O_ERROR_STATUS OU
 -- Fecha creación: Septiembre 2015
 -- Responsable ultima modificacion: María Villanueva, PFS Group
 
--- Fecha ultima modificacion: 02/01/2016
--- Motivos del cambio: Desarrollo - FECHA_INTERP_DEM_HIP
+-- Fecha ultima modificacion: 23/02/2016
+-- Motivos del cambio: Desarrollo - Se modifica Fecha de Lanzamiento
 
 -- Cliente: Recovery BI Cajamar
 --
@@ -470,8 +470,8 @@ BEGIN
             AND TEA.DD_TPA_ID = 1 --Dacion en Pago
             AND TRUNC(BIE_TEA.FECHACREAR) <= ''' || fecha || ''') BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 1,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA_LANZAMIENTO_BIEN';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 1';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA_LANZAMIENTO_BIEN';
                                      
         COMMIT;
                                        
@@ -490,8 +490,8 @@ BEGIN
             AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || '''
             GROUP BY PRC.BIE_ID) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 2,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 2';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
 
         COMMIT;
          
@@ -517,8 +517,8 @@ BEGIN
               GROUP BY PRC.BIE_ID           
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 3,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 3';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
         COMMIT;
                                      
@@ -544,8 +544,8 @@ BEGIN
                GROUP BY PRC.BIE_ID          
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 4,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 4';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
         COMMIT;
 
@@ -571,8 +571,8 @@ BEGIN
               GROUP BY PRC.BIE_ID           
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 5,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 5';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
         COMMIT;
 
@@ -588,8 +588,8 @@ BEGIN
             AND NVL(DPR_FECHA_PARA, DPR.FECHACREAR) <= ''' || fecha || '''
             ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 6,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 6';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
         COMMIT;
         
@@ -615,8 +615,8 @@ BEGIN
               GROUP BY PRC.BIE_ID           
                          ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 7,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 7';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
 
 
         COMMIT;
@@ -651,8 +651,8 @@ BEGIN
              GROUP BY PRC.BIE_ID          
                        ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
                                      
         -- O esta otra:
         EXECUTE IMMEDIATE'
@@ -683,8 +683,8 @@ BEGIN
             GROUP BY PRC.BIE_ID           
                        ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 8';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
                                      
         COMMIT;
         
@@ -723,8 +723,8 @@ BEGIN
             GROUP BY PRC.BIE_ID           
                        ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 9,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 9';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
                                      
         COMMIT;
         
@@ -739,8 +739,8 @@ BEGIN
             AND NVL(DPR_FECHA_PARA, DPR.FECHACREAR) <= ''' || fecha || '''
             ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 10,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 10';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
         COMMIT;
         
@@ -755,8 +755,8 @@ BEGIN
             AND NVL(DPR_FECHA_PARA, DPR.FECHACREAR) <= ''' || fecha || '''
             ) BIENES
         ON (TMP.BIE_ID = BIENES.BIE_ID)
-        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 11,
-                                     TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
+        WHEN MATCHED THEN UPDATE SET TMP.DESC_LANZAMIENTO_ID = 11';
+                                     -- TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA';
 
         COMMIT;
 		
@@ -773,6 +773,25 @@ BEGIN
     on (d.PROCEDIMIENTO_ID = a.PROCEDIMIENTO_ID)
     when matched then update set a.FECHA_INTERP_DEM_HIP = d.FECHA_FORMULARIO
 		';
+
+
+    -- Fecha_Lanzamiento
+
+        EXECUTE IMMEDIATE'
+        MERGE INTO TMP_H_BIE TMP USING (
+            SELECT PRC.BIE_ID, MAX(TO_DATE(TEV.TEV_VALOR,''RRRR-MM-DD'')) AS FECHA
+            FROM '||V_DATASTAGE||'.TEV_TAREA_EXTERNA_VALOR TEV, '||V_DATASTAGE||'.TEX_TAREA_EXTERNA TEX, '||V_DATASTAGE||'.TAR_TAREAS_NOTIFICACIONES TAR, '||V_DATASTAGE||'.PRB_PRC_BIE PRC
+            WHERE TEV.TEX_ID = TEX.TEX_ID
+            AND TEX.TAP_ID = 10000000002967 -- Registrar lanzamiento efectuado
+            AND TEV.TEV_NOMBRE = ''fecha''
+            AND TEX.TAR_ID = TAR.TAR_ID
+            AND TAR.PRC_ID = PRC.PRC_ID
+            AND TRUNC(TAR.TAR_FECHA_FIN) <= ''' || fecha || '''
+            GROUP BY PRC.BIE_ID) BIENES
+        ON (TMP.BIE_ID = BIENES.BIE_ID)
+        WHEN MATCHED THEN UPDATE SET TMP.FECHA_LANZAMIENTO_BIEN = BIENES.FECHA'; 
+
+        COMMIT;
 
         --Log_Proceso
         execute immediate 'BEGIN INSERTAR_Log_Proceso(:NOMBRE_PROCESO, :DESCRIPCION, :TAB); END;' USING IN V_NOMBRE, 'TMP_H_BIE. Merges LANZAMIENTOS realizados (7).', 4;
@@ -1361,4 +1380,5 @@ end;
 END CARGAR_H_BIEN;
 /
 EXIT
+
 

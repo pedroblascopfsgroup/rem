@@ -226,7 +226,7 @@
 		if (contratosSinActString!=null && contratosSinActString.length>0){
 			var w = app.openWindow({
 	      		flow: 'expedientes/litigarProcedimiento'
-	      		,params : {idExpediente:entidad.getData("id"),idAsunto:idAsuntoSeleccionado, idProcedimiento:0,idContratos:contratosSinActString,litigar: litigar}
+	      		,params : {idExpediente:entidad.getData("id"),idAsunto: '', idProcedimiento:0,idContratos:contratosSinActString,litigar: litigar}
 	      		,closable : false
 	      		,width: 900
 	      		,title : '<s:message code="procedimientos.edicion.titulo" text="**Nuevo registro" />'
@@ -235,9 +235,11 @@
 			w.on(app.event.DONE,
 					function(){
 						w.close();
+						contratosSinActuacion=new Array();
+						contratosSinActString = armarString(contratosSinActuacion);						
 						contratosStore.webflow({id:entidad.getData('id')});
 						asuntosStore.webflow({id:entidad.getData('id'), idSesion:entidad.getData('decision.ultimaSesion')});
-						contratosActuacionesStore.webflow({idExpediente:entidad.getData("id")});						
+						contratosActuacionesStore.webflow({idExpediente:entidad.getData("id")});
 					}
 			);			    	
 	          }else{
@@ -896,6 +898,11 @@
 	<c:if test="${user.entidad.codigo eq 'BANKIA'}">
    		isBankia = true;
 	</c:if>
+	
+	<%-- Si el expediente esta decidido no se puede litigar ni no litigar --%>
+	btnLitigar.setDisabled(estaDecidido);
+	btnNoLitigar.setDisabled(estaDecidido);
+
 	
 
      

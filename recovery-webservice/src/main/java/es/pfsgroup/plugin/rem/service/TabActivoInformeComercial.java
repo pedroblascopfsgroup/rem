@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -58,6 +60,14 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 				// Copia al "informe comercial" todos los atributos de "informacion comercial"
 				beanUtilNotNull.copyProperties(informeComercial,  activo.getInfoComercial());
+				
+				if (activo.getInfoComercial().getProvincia() != null) {
+					informeComercial.setProvinciaCodigo(activo.getInfoComercial().getProvincia().getCodigo());
+				}
+				
+				if (activo.getInfoComercial().getLocalidad() != null) {
+					informeComercial.setMunicipioCodigo(activo.getInfoComercial().getLocalidad().getCodigo());
+				}
 
 			}
 			
@@ -122,6 +132,22 @@ public class TabActivoInformeComercial implements TabActivoService {
 			// Se guardan todas las propieades del "Informe Comercial" que son comunes a "Informacion Comercial"
 			if (!Checks.esNulo(activo.getInfoComercial())){
 				beanUtilNotNull.copyProperties(activo.getInfoComercial(), activoInformeDto);
+				
+				if (activoInformeDto.getProvinciaCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getProvinciaCodigo());
+					Filter borrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, filtro, borrado);
+					
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "provincia", provincia);
+				}
+				
+				if (activoInformeDto.getMunicipioCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getMunicipioCodigo());
+					Localidad localidad = (Localidad) genericDao.get(Localidad.class, filtro);
+					
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "localidad", localidad);
+				}
+
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			}
 			

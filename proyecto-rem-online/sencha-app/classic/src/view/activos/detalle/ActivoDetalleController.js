@@ -266,11 +266,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				me.fireEvent("errorToast", Ext.decode(response.responseText).errorCreacion); 
     			else
     				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//    			Ext.Msg.show({
-//        			   title: 'Nuevo trámite',
-//        			   msg: 'Trámite creado correctamente',
-//        			   buttons: Ext.MessageBox.OK
-//    			});
     		},
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
@@ -484,8 +479,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		me.lookupReference('usuarioGestor').getStore().getProxy().setExtraParams({'idTipoGestor':idTipoGestor});    
 		me.lookupReference('usuarioGestor').getStore().load();
-    	
-		//me.getView().fireEvent('onChangeTipoGestor',{idTipoGestor: idTipoGestor});
 	},
       
 	onChangeTipoTitulo: function(btn,value) {
@@ -577,8 +570,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-				/*activeTab.getForm().clearInvalid();
-				activeTab.getBindRecord().reject();*/
 				me.onClickBotonRefrescar();
 				
 			}
@@ -587,7 +578,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var records = activeTab.getBindRecords();
 			
 			for (i=0; i<records.length; i++) {
-				//records[i].reject();
 				me.onClickBotonRefrescar();
 			}
 
@@ -708,7 +698,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	updateOrdenFotosInterno: function(data, record, store) {
 
-		//store.beginUpdate();
 		var me = this;
 		me.storeGuardado = store;
 		me.ordenGuardado = 0;
@@ -720,11 +709,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			if (store.getData().items[i].data.orden != orden) {
 				store.getAt(i).data.orden = orden;
-				//store.getAt(i).dirty = true;
-				/*modificados[contadorModificados] = Ext.util.JSON.encode(store.getAt(i).data);
-				modificados[contadorModificados] = Ext.util.JSON.decode(modificados[contadorModificados]);
-				contadorModificados++;
-				*/
+				
 				//FIXME: ¿Poner máscara?
 				//me.getView().mask(HreRem.i18n("msg.mask.loading"));
 				var url =  $AC.getRemoteUrl('activo/updateFotosById');
@@ -738,8 +723,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    			
 	    		    ,success: function (a, operation, context) {
 
-	                	//me.getStore().load();
-	                    //context.store.load();
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
@@ -758,7 +741,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                },
 	                
 	                failure: function (a, operation, context) {
-	                	//context.store.load();
 	                	  Ext.toast({
 						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
 						     width: 360,
@@ -782,8 +764,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
-    	
-    	//Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'activo', idEntidad: idActivo, parent: grid}).show();
+
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarFoto", {idEntidad: idActivo, parent: grid}).show();
 		
 	},
@@ -807,8 +788,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							idSeleccionados[i] = storeTemp.getAt(nodos[i].getAttribute('data-recordindex')).getId();
 							
 						}
-						
-						//idActivo = me.getViewModel().get("activo.id");
 			    		
 			        	var url =  $AC.getRemoteUrl('activo/deleteFotosActivoById');
 			    		Ext.Ajax.request({
@@ -826,7 +805,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									     height: 100,
 									     align: 't'
 									 });
-									 //me.unmask();
                                 },
                                 
                                 failure: function (a, operation, context) {
@@ -837,7 +815,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									     height: 100,
 									     align: 't'									     
 									 });
-									 //me.unmask();
                                 }
 			    		     
 			    		 });
@@ -859,13 +836,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			config.url=$AC.getWebPath()+"activo/getFotoActivoById."+$AC.getUrlPattern();
 			config.params = {};
-	
-			/*for (var i=0; i<nodos.length; i++) {
-	
-				config.params.idFoto=storeTemp.getAt(nodos[i].getAttribute('data-recordindex')).getId();
-				me.fireEvent("downloadFile", config);
-				
-			}*/
 			
 			config.params.idFoto=storeTemp.getAt(nodos[0].getAttribute('data-recordindex')).getId();
 			
@@ -883,7 +853,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	    if(nodos) {
 	        
-	        node = nodos[0];//.getElementsByTagName('img');
+	        node = nodos[0];
 			cmp  = me.findComponentByElement(node);
 	        
 	        html = cmp.container.dom.innerHTML;
@@ -973,8 +943,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		tooltip.setHtml(browser + ': ' +
             record.get(item.field) + '%' + ' ( ' + Ext.util.Format.currency(cantidad) + ' )');
-        /*tooltip.setHtml(browser + ' on ' + record.get('presupuesto') + ': ' +
-            record.get(item.field) + '%');*/
     },
 
     onColumnRender: function (v) {
@@ -987,17 +955,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickVerificarDireccion: function(btn) {
-    	
     	var me = this,
     	geoCodeAddr = null,
     	latLng = {};
-    	
-    	latLng.latitud = me.getViewModel().get("activo.latitud");
-    	latLng.longitud= me.getViewModel().get("activo.longitud");
+
+    	latLng.latitud = me.getViewModel().get("informeComercial.latitud");
+    	latLng.longitud= me.getViewModel().get("informeComercial.longitud");
     	geoCodeAddr = me.getViewModel().get("geoCodeAddr");
     	
-    	
     	Ext.create("HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion", {geoCodeAddr: geoCodeAddr, latLng: latLng,  parent: btn.up("form")}).show();  	
+    },
+    
+    checkDistrito: function(distrito) {
+    	// Comprobar primero si viene null.
+    	if(distrito == null){
+    		return false;
+    	}
+    	
+    	// Si no es null comprobar distrito.
+    	if(distrito === 'Valencia'){
+    		return true;
+    	} else if(distrito === 'Barcelona') {
+    		return true;
+    	} else if(distrito === 'Madrid') {
+    		return true;
+    	} else if(distrito === 'Alicante/Alacant') {
+    		return true;
+    	} else {
+    		return false;
+    	}
     },
     
     actualizarCoordenadas: function(parent, latitud, longitud) {
@@ -1044,7 +1030,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		return criteria;
     },
     
-    	// Funcion que se ejecuta al hacer click en el botón limpiar
+    // Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {			
 		btn.up('form').getForm().reset();				
 	}

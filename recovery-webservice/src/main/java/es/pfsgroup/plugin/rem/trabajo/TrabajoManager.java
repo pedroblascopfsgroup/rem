@@ -334,7 +334,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdProceso())){
 				//TODO: Llegados a este punto tenemos que crear un trabajo del listado de activos
-				crearTrabajoPorSubidaActivos(dtoTrabajo);
+				trabajo = crearTrabajoPorSubidaActivos(dtoTrabajo);
+				createTramiteTrabajo(trabajo);
 			}else{
 				if(dtoTrabajo.getIdActivo()!=null) {
 					Activo activo = activoDao.get(dtoTrabajo.getIdActivo());

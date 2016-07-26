@@ -44,7 +44,6 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -53,6 +52,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -1546,7 +1547,6 @@ public class ActivoController {
 		@SuppressWarnings("unchecked")
 		List<VBusquedaActivos> listaActivos = (List<VBusquedaActivos>) adapter.getActivos(dtoActivoFilter).getResults();
 		
-		//activoExcelReport.setListaActivos(listaActivos);
 		List<DDRatingActivo> listaRating = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(DDRatingActivo.class);
 		Map<String,String> mapRating = new HashMap<String,String>();
 		for (DDRatingActivo rating : listaRating) mapRating.put(rating.getCodigo(), rating.getDescripcion());
@@ -1555,7 +1555,6 @@ public class ActivoController {
 		ExcelReport report = new ActivoExcelReport(listaActivos, mapRating);
 		
 		excelReportGeneratorApi.generateAndSend(report, response);
-
 	}
 	
 
@@ -1636,9 +1635,7 @@ public class ActivoController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion, ModelMap model){
-
 		try {
-
 			Page page = activoApi.getActivosPublicacion(dtoActivosPublicacion);
 
 			model.put("data", page.getResults());
@@ -1653,4 +1650,17 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelPublicaciones(DtoActivosPublicacion dtoActivosPublicacion, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		dtoActivosPublicacion.setStart(excelReportGeneratorApi.getStart());
+		dtoActivosPublicacion.setLimit(excelReportGeneratorApi.getLimit());
+		
+		@SuppressWarnings("unchecked")
+		List<VBusquedaPublicacionActivo> listaPublicacionesActivos = (List<VBusquedaPublicacionActivo>) activoApi.getActivosPublicacion(dtoActivosPublicacion).getResults();
+
+		ExcelReport report = new PublicacionExcelReport(listaPublicacionesActivos);
+		
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
 }

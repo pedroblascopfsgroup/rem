@@ -63,7 +63,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		});
 		
 		config.params = params;
-		config.url= $AC.getRemoteUrl("publicacion/generateExcel");
+		config.url= $AC.getRemoteUrl("activo/generateExcelPublicaciones");
 		
 		me.fireEvent("downloadFile", config);		
     } 

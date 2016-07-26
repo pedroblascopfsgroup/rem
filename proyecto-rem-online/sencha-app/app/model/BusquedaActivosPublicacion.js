@@ -15,22 +15,22 @@ Ext.define('HreRem.model.BusquedaActivosPublicacion', {
     			name: 'subtipoActivoDescripcion'
     		},
     		{
-    			name:'direccion',
+    			name:'direccion'
     		},
     		{
-    			name:'despubliForzado',
+    			name:'despubliForzado'
     		},
     		{
-    			name:'publiForzado',
+    			name:'publiForzado'
     		},
     		{
-    			name: 'admision',
+    			name: 'admision'
     		},
     		{
-				name:'gestion',
+				name:'gestion'
     		},
     		{
-    			name:'publicacion',
+    			name:'publicacion'
     		},
     		{
     			name: 'precio'

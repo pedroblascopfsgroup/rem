@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 
 
@@ -112,10 +113,15 @@ public class PreciosController {
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
-		// FIXME Se genera una excel básica, pendiente de definir
-		ExcelReport report = preciosApi.createPropuestaPrecios(dtoActivoFilter, nombrePropuesta);
+		@SuppressWarnings("unchecked")
+		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
-		excelReportGeneratorApi.generateAndSend(report, response);		
+		// FIXME Se genera una excel básica, pendiente de definir
+		ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
+		
+		excelReportGeneratorApi.generateAndSend(report, response);
+		
+		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta);
 		
 	}
 	

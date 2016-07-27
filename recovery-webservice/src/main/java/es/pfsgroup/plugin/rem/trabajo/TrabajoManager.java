@@ -1,11 +1,14 @@
 package es.pfsgroup.plugin.rem.trabajo;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -399,8 +402,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			for(VActivosAgrupacionTrabajo activoAgrupacion: activos) {			
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getActivoId())); 
 				//En la tabla de activo-agrupación no aparece ningún valor para los importes netos contables
-				Double participacion = (Double) (!(Double.isNaN((activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100))) ? (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100) : 0.0D);
-				dtoTrabajo.setParticipacion(Double.toString(participacion));
+				//Double participacion = (Double) (!(Double.isNaN((activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100))) ? (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100) : 0.0D);
+				dtoTrabajo.setParticipacion(getParticipacion(activoAgrupacion));
 				//dtoTrabajo.setParticipacion(Double.toString(activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100));
 				
 				//FIXME: Datos del trabajo que se definen por un activo, en agrupación de activos están tomándose del primer activo del grupo.
@@ -471,6 +474,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 			return listaActivos;
 		}
+	
+	@Transactional(readOnly = false)
+	private void ficheroMasivoToTrabajo(Long idProceso, Trabajo trabajo){
+		MSVDocumentoMasivo documento = procesoManager.getMSVDocumento(idProceso);
+		FileItem fileItem = documento.getContenidoFichero();
+		WebFileItem webFileItem = new WebFileItem();
+		webFileItem.setFileItem(fileItem);
+		Map<String,String> mapaParametros = new HashMap<String,String>();
+		mapaParametros.put("idEntidad", trabajo.getId().toString());
+		mapaParametros.put("tipo", "01"); //TODO: He puesto informe comercial pero hay que crear un tipo nuevo
+		mapaParametros.put("descripcion", "Listado de activos");
+		webFileItem.setParameters(mapaParametros);
+
+		List<AdjuntoTrabajo> adjuntosTrabajo = new ArrayList<AdjuntoTrabajo>();
+		trabajo.setAdjuntos(adjuntosTrabajo);
+		trabajoDao.saveOrUpdate(trabajo);
+		try {
+			upload(webFileItem);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		
+//		
+//		List<AdjuntoTrabajo> adjuntosTrabajo = new ArrayList<AdjuntoTrabajo>();
+//		AdjuntoTrabajo adjuntoMasivo = new AdjuntoTrabajo(fileItem);
+//		adjuntosTrabajo.add(adjuntoMasivo);
+//		trabajo.setAdjuntos(adjuntosTrabajo);
+//		trabajoDao.saveOrUpdate(trabajo);
+	}
 		
 	private Trabajo crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo){
 			
@@ -523,6 +556,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				e.printStackTrace();
 			}
 			
+			ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);
+
 			return trabajo;
 	}
 		
@@ -1870,5 +1905,13 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 	   else
 		   return groovyft.format(tareaActivoManager.getByIdTareaExterna(tareaExterna.getId()).getTramite().getTrabajo().getFechaPago());
    }
+   
+   
+   
+   private String getParticipacion(VActivosAgrupacionTrabajo activoAgrupacion){
+		Double participacion = (Double) (!(Double.isNaN((activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100))) ? (activoAgrupacion.getImporteNetoContable()/activoAgrupacion.getSumaAgrupacionNetoContable() * 100) : 0.0D);
+		return Double.toString(participacion);
+   }
+ 
 
 }

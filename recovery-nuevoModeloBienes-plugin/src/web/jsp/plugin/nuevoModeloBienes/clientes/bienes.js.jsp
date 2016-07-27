@@ -99,18 +99,18 @@
 	var fechaMinima = new Date(1900,0,1);
 	
 	<c:if test="${NMBbien.datosRegistralesActivo!=null}">
-		referenciaCatastralBien_valor = '${NMBbien.datosRegistralesActivo.referenciaCatastralBien}';
+		referenciaCatastralBien_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.referenciaCatastralBien}" />';
 		tomo_valor = '${NMBbien.datosRegistralesActivo.tomo}';
 		libro_valor = '${NMBbien.datosRegistralesActivo.libro}';
 		folio_valor = '${NMBbien.datosRegistralesActivo.folio}';
-		inscripcion_valor = '${NMBbien.datosRegistralesActivo.inscripcion}';
-		numFinca_valor = '${NMBbien.datosRegistralesActivo.numFinca}';
-		cru_valor = '${NMBbien.datosRegistralesActivo.cru}';
-		numRegistro_valor = '${NMBbien.datosRegistralesActivo.numRegistro}';
+		inscripcion_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.inscripcion}" />';
+		numFinca_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.numFinca}" />';
+		cru_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.cru}" />';
+		numRegistro_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.numRegistro}" />';
 		municipoLibro_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.municipoLibro}" />';
 		municipioRegistro_valor = '${NMBbien.datosRegistralesActivo.localidad.codigo}';
 		provinciaRegistro_valor = '${NMBbien.datosRegistralesActivo.provincia.codigo}';
-		codigoRegistro_valor = '${NMBbien.datosRegistralesActivo.codigoRegistro}';
+		codigoRegistro_valor = '<s:message javaScriptEscape="true" text="${NMBbien.datosRegistralesActivo.codigoRegistro}" />';
 		superficieConstruida_valor = '${NMBbien.datosRegistralesActivo.superficieConstruida}';
 		superficie_valor = '${NMBbien.datosRegistralesActivo.superficie}';   
 	</c:if>	
@@ -124,34 +124,34 @@
 		
 		valorTasacionExterna = '${NMBbien.valoracionActiva.valorTasacionExterna}';
     	fechaTasacionExterna = '${NMBbien.valoracionActiva.fechaTasacionExterna}';
-    	tasadora             = '${NMBbien.valoracionActiva.tasadora.descripcion}';
+    	tasadora             = '<s:message javaScriptEscape="true" text="${NMBbien.valoracionActiva.tasadora.descripcion}" />';
     	fechaSolicitudTasacion = '${NMBbien.valoracionActiva.fechaSolicitudTasacion}';
-		respuestaConsulta  = '${NMBbien.valoracionActiva.respuestaConsulta}';
+		respuestaConsulta  = '<s:message javaScriptEscape="true" text="${NMBbien.valoracionActiva.respuestaConsulta}" />';
 	</c:if>	
 	<c:if test="${NMBbien.localizacionActual!=null}">
 		poblacion_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.poblacion}" />';
-		codPostal_valor = '${NMBbien.localizacionActual.codPostal}';
+		codPostal_valor = '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.codPostal}" />';
 		provincia_valor = '${NMBbien.localizacionActual.provincia.codigo}';
 		tipoVia_valor 			= '${NMBbien.localizacionActual.tipoVia.codigo}';
 		nombreVia_valor 		= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.nombreVia}" />';
-		numeroDomicilio_valor 	= '${NMBbien.localizacionActual.numeroDomicilio}';
-		portal_valor 			= '${NMBbien.localizacionActual.portal}';
-		bloque_valor 			= '${NMBbien.localizacionActual.bloque}';
-		escalera_valor 			= '${NMBbien.localizacionActual.escalera}';
-		piso_valor 				= '${NMBbien.localizacionActual.piso}';
-		puerta_valor 			= '${NMBbien.localizacionActual.puerta}';
-		barrio_valor 			= '${NMBbien.localizacionActual.barrio}';
+		numeroDomicilio_valor 	= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.numeroDomicilio}" />';
+		portal_valor 			= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.portal}" />';
+		bloque_valor 			= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.bloque}" />';
+		escalera_valor 			= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.escalera}" />';
+		piso_valor 				= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.piso}" />';
+		puerta_valor 			= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.puerta}" />';
+		barrio_valor 			= '<s:message javaScriptEscape="true" text="${NMBbien.localizacionActual.barrio}" />';
 		pais_valor 				= '${NMBbien.localizacionActual.pais.codigo}';
 		localidad_valor			= '${NMBbien.localizacionActual.localidad.codigo}';
 		unidadPoblacional_valor	= '${NMBbien.localizacionActual.unidadPoblacional.codigo}';
 	</c:if>
 	<c:if test="${NMBbien.adicional!=null}">
 		
-		nomEmpresa_valor = '${NMBbien.adicional.nomEmpresa}';
-		cifEmpresa_valor = '${NMBbien.adicional.cifEmpresa}';
+		nomEmpresa_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.nomEmpresa}" />';
+		cifEmpresa_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.cifEmpresa}" />';
 		
-		epigrafeIAE_valor = '${NMBbien.adicional.codIAE}';
-		descripcionIAE_valor = '${NMBbien.adicional.desIAE}';
+		epigrafeIAE_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.codIAE}" />';
+		descripcionIAE_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.desIAE}" />';
 		
 		entidad_valor = '<s:message text="${NMBbien.adicional.entidad}" javaScriptEscape="true" />';
 		nCuenta_valor = '${NMBbien.adicional.numCuenta}';
@@ -162,10 +162,10 @@
 			nCuenta_cuenta_valor = nCuenta_valor.substring(10);
 		}		
 		
-		marca_valor = '${NMBbien.adicional.marca}';
-		modelo_valor = '${NMBbien.adicional.modelo}';
-		matricula_valor = '${NMBbien.adicional.matricula}';
-		nBastidor_valor = '${NMBbien.adicional.bastidor}';
+		marca_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.marca}" />';
+		modelo_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.modelo}" />';
+		matricula_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.matricula}" />';
+		nBastidor_valor = '<s:message javaScriptEscape="true" text="${NMBbien.adicional.bastidor}" />';
 			
 		importeValorProdBancario_valor = '${NMBbien.adicional.valoracion}';
 	</c:if>

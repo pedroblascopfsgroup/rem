@@ -7,6 +7,7 @@
 	<json:array name="listaLocalidades" items="${listaData}" var="d"> 
         <json:object> 
 	        <json:property name="id" value="${d.id}"/>
+	        <json:property name="codigo" value="${d.codigo}"/>
 	        <json:property name="descripcion" value="${d.descripcion}"/>
  		</json:object>
     </json:array>    

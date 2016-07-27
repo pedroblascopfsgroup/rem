@@ -27,7 +27,23 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class DDCausaDecisionParalizar implements Auditable, Dictionary {
 
-    /**
+	/* Códigos motivo paralizar*/
+	public static final String CODIGO_CONCURSO_ACREEDORES 						= "CONCUR";
+	public static final String CODIGO_ACUERDO_EXTRAJUDICIAL 					= "ACUER";
+	public static final String CODIGO_OPOSICION_LEY_HIPO 						= "OPOSI";
+	public static final String CODIGO_INSTRUCCIONES_ENTIDAD 					= "INSTR";
+	public static final String CODIGO_OTRAS_CAUSAS		 						= "OTRA";
+	public static final String CODIGO_PDTE_RESOLUCION	 						= "RD";
+	public static final String CODIGO_ATIPICO_GASTOS							= "ADG";
+	public static final String CODIGO_CSR_ALTA_PARA_COMPROBAR		 			= "CSR";
+	public static final String CODIGO_CARTERA_FALLIDA_ULISES_ALKALI				= "CFUA";
+	public static final String CODIGO_CARTERA_FALLIDA_ALCALA_GESCOBRO			= "CFAG";
+	public static final String CODIGO_APLAZAMIENTO_AUTORIZADO					= "APLAU";
+	public static final String CODIGO_PLAN_PAGOS_AUTORIZADO		 				= "PPA";
+	public static final String CODIGO_INSOLVENTE_PENDIENTE_ESTUDIO				= "IPE";
+	public static final String CODIGO_INSOLVENTE_PENDIENTE_ASIGNACION			= "IPAEE";
+		
+	/**
      * serialVersionUID.
      */
     private static final long serialVersionUID = -2162464343548933900L;

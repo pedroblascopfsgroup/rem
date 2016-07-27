@@ -67,7 +67,7 @@ public class SubastaProcedimientoDelegateManager implements SubastaProcedimiento
 	public Boolean isTipoSubasta(Long bienId){
 		
 		NMBBien bien = (NMBBien) genericDao.get(NMBBien.class, genericDao.createFilter(FilterType.EQUALS, "id", bienId));
-		if(bien.getTipoSubasta() != null && bien.getTipoSubasta() > 0){
+		if(bien.getTipoSubasta() != null && bien.getTipoSubasta().floatValue() > 0){
 			return true;
 		}
 		return false;

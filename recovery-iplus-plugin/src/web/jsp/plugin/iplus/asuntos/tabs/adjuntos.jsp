@@ -218,6 +218,25 @@
 			recargarAdjuntos();
 		}
 	});
+	
+	<%--RECOVERY-1005   Acota los resultados del store segun el texto introducido --%>
+	var acotarResultadosCombo = function(cadena, combo, storeCompleto, storeAux) {
+		 if (!Ext.isEmpty(cadena)){			            			            
+	        storeAux.removeAll();
+	        
+			storeCompleto.each(function(rec) {
+			    if (rec.data.descripcion.toUpperCase().indexOf(cadena.toUpperCase()) > -1) {
+			        storeAux.add(rec);
+			    }
+			});							
+            combo.bindStore(storeAux);    				            
+		}
+        else {
+        	combo.bindStore(storeCompleto); 
+        }
+       
+		combo.onLoad();
+	};
 
 	subir.on('click', function(){
 		var comboTipoFichero = new Ext.form.ComboBox(
@@ -226,15 +245,24 @@
 				,name:'comboTipoFichero'
 				<app:test id="tipoProcedimientoCombo" addComa="true" />
 				,hiddenName:'comboTipoFichero'
-				,store:tipoFicheroStore
+				,store: tipoFicheroStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+				,id: 'idcomboTipoFicheroAsunto'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroAsunto'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoFicheroStore,tipoFichStoreAuxiliar);
+				}
 			}
 		);
 	
@@ -354,6 +382,13 @@
 	    	 root : 'diccionario'
 	    }, tipoFicheroRecord)
 	       
+	});
+	
+	var tipoFichStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoFicheroRecord)
 	});
 
 	subirAdjuntoPersona.on('click', function(){

@@ -111,6 +111,9 @@ public class DocumentoAssembler {
 		if(!Checks.esNulo(documento.getProvinciaNotario())){
 			doc.setProvinciaNotario(documento.getProvinciaNotario().getCodigo());
 		}
+		if(!Checks.esNulo(documento.getLocalidadNotario())){
+			doc.setLocalidadNotario(documento.getLocalidadNotario().getCodigo());
+		}
 		
 		return doc;
 	}

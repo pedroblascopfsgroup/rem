@@ -184,15 +184,24 @@
 				,name:'comboTipoFichero'
 				<app:test id="tipoProcedimientoCombo" addComa="true" />
 				,hiddenName:'comboTipoFichero'
-				,store:tipoFicheroStore
+				,store: tipoFicheroStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
-				,mode: 'remote'
-				,emptyText:'----'
+				,mode: 'local'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
-				,fieldLabel : '<s:message code="asuntos.adjuntos.tipoDocumento" text="**Tipo fichero" />'
+				,fieldLabel : 'Tipo fichero'
+				,id: 'idcomboTipoFicheroAsunto'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroAsunto'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoFicheroStore,tipoFichStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -315,6 +324,13 @@
 	       
 	});
 	
+	var tipoFichStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoFicheroRecord)
+	});
+	
 	var tipoDocRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
@@ -327,6 +343,32 @@
 	    	 root : 'diccionario'
 	    }, tipoDocRecord)
 	});
+	
+	var tipoDocStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoDocRecord)
+	});
+	
+	<%--RECOVERY-1005   Acota los resultados del store segun el texto introducido --%>
+	var acotarResultadosCombo = function(cadena, combo, storeCompleto, storeAux) {
+		 if (!Ext.isEmpty(cadena)){			            			            
+	        storeAux.removeAll();
+	        
+			storeCompleto.each(function(rec) {
+			    if (rec.data.descripcion.toUpperCase().indexOf(cadena.toUpperCase()) > -1) {
+			        storeAux.add(rec);
+			    }
+			});							
+            combo.bindStore(storeAux);    				            
+		}
+        else {
+        	combo.bindStore(storeCompleto); 
+        }
+       
+		combo.onLoad();
+	};
 
 	subirAdjuntoPersona.on('click', function(){
 		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
@@ -337,15 +379,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoDocCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroAsuntoPersona'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroAsuntoPersona'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -462,15 +513,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoDocCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroAsuntoExpediente'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroAsuntoExpediente'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -587,15 +647,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoDocCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroAsuntoContrato'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroAsuntoContrato'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -778,7 +847,7 @@
 	var gridHeight = 150;
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="asuntos.adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO">subir, borrar,editarDescripcionAdjuntoAsunto</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO">subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar,editarDescripcionAdjuntoAsunto</sec:authorize></sec:authorize>]
 		,height: 180
 		,collapsible:true
 		,autoWidth: true
@@ -828,7 +897,7 @@
 	
 	var gridPersonas = app.crearGrid(storePersonas, cmPersonas, {
 		title : '<s:message code="asuntos.adjuntos.grid.personas" text="**Ficheros adjuntos Personas" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_PERSONAS">subirAdjuntoPersona,editarDescripcionAdjuntoPersona</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_PERSONAS">subirAdjuntoPersona<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>,editarDescripcionAdjuntoPersona</sec:authorize></sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -878,7 +947,7 @@
 	
 	var gridExpedientes = app.crearGrid(storeExpedientes, cmExpedientes, {
 		title : '<s:message code="asuntos.adjuntos.grid.expediente" text="**Ficheros adjuntos del Expediente" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_EXPEDIENTES">subirAdjuntoExpediente,editarDescripcionAdjuntoExpediente</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_EXPEDIENTES">subirAdjuntoExpediente<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>,editarDescripcionAdjuntoExpediente</sec:authorize></sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -928,7 +997,7 @@
 	
 	var gridContratos = app.crearGrid(storeContratos, cmContratos, {
 		title : '<s:message code="asuntos.adjuntos.grid.contratos" text="**Ficheros adjuntos Contratos" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_CONTRATOS">subirAdjuntoContrato,editarDescripcionAdjuntoContrato</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ASUNTO_ADJUNTO_CONTRATOS">subirAdjuntoContrato<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>,editarDescripcionAdjuntoContrato</sec:authorize></sec:authorize>]
 		,height: gridHeight
 		,autoWidth: true
 		,collapsible:true
@@ -1089,14 +1158,6 @@
 	gridContratos.getSelectionModel().on('selectionchange', gestionarGrid);
 	gridExpedientes.getSelectionModel().on('selectionchange', gestionarGrid);
 	gridPersonas.getSelectionModel().on('selectionchange', gestionarGrid);
-		
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
-		borrar.setVisible(false);
-		editarDescripcionAdjuntoAsunto.setVisible(false);
-		editarDescripcionAdjuntoPersona.setVisible(false);
-		editarDescripcionAdjuntoExpediente.setVisible(false);
-		editarDescripcionAdjuntoContrato.setVisible(false);
-	</sec:authorize>
 
 	function addPanel2Panel(grid){
 		panel.add (new Ext.Panel({

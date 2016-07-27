@@ -27,6 +27,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.model.ProcedimientoPCO;
 import es.pfsgroup.recovery.ext.impl.tipoFicheroAdjunto.DDTipoFicheroAdjunto;
 
@@ -128,6 +129,11 @@ public class DocumentoPCO implements Serializable, Auditable {
 	@JoinColumn(name = "DD_PRV_ID")
 	@Where(clause = Auditoria.UNDELETED_RESTICTION)	
 	private DDProvincia provinciaNotario;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_LOC_ID")
+	@Where(clause = Auditoria.UNDELETED_RESTICTION)	
+	private Localidad localidadNotario;
 	
 	@Version
 	private Integer version;
@@ -368,4 +374,13 @@ public class DocumentoPCO implements Serializable, Auditable {
 	public void setObservacionesEdp(String observacionesEdp) {
 		this.observacionesEdp = observacionesEdp;
 	}
+
+	public Localidad getLocalidadNotario() {
+		return localidadNotario;
+	}
+
+	public void setLocalidadNotario(Localidad localidadNotario) {
+		this.localidadNotario = localidadNotario;
+	}
+
 }

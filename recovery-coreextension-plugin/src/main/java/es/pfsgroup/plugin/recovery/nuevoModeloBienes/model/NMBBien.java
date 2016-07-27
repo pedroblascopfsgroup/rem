@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.nuevoModeloBienes.model;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -154,7 +155,7 @@ public class NMBBien extends Bien implements NMBBienInfo{
 	private Boolean obraEnCurso;
 	
 	@Column(name= "BIE_TIPO_SUBASTA")
-	private Float tipoSubasta;
+	private BigDecimal tipoSubasta;
 	
 	@Column(name = "BIE_DUE_DILLIGENCE")
 	private Boolean dueDilligence;
@@ -243,11 +244,11 @@ public class NMBBien extends Bien implements NMBBienInfo{
 //    private String	tareaActivaLlaves;
 	
 	
-	public Float getTipoSubasta() {
+	public BigDecimal getTipoSubasta() {
 		return tipoSubasta;
 	}
 
-	public void setTipoSubasta(Float tipoSubasta) {
+	public void setTipoSubasta(BigDecimal tipoSubasta) {
 		this.tipoSubasta = tipoSubasta;
 	}
 

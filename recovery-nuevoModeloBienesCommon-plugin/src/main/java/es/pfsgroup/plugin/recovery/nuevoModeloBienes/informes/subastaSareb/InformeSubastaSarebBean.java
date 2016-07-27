@@ -7,14 +7,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Component;
 
-import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.asunto.model.ProcedimientoContratoExpediente;
@@ -522,7 +518,7 @@ public class InformeSubastaSarebBean extends InformeSubastaCommon {
 								// Mayor
 								
 								lb.setDeudaJudicial(l.getDeudaJudicial());
-								Float tipoSubasta = nmbBienLote.getTipoSubasta();
+								Float tipoSubasta = nmbBienLote.getTipoSubasta().floatValue();
 								if(Checks.esNulo(tipoSubasta)){
 									tipoSubasta = l.getInsValorSubasta();
 								}

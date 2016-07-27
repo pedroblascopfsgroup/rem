@@ -134,6 +134,11 @@
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
 		p:permission="VER_TAB_BUSCADOR_TURNADO_PROCU"/>
 		
+		<bean p:entity="menu" p:name="historicoDetalleTurnado" p:order="570"
+		p:fileName="/WEB-INF/jsp/plugin/procuradores/turnado/detalle/detalleHistoricoTurnado-menu.jsp"
+		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion"
+		p:permission="VER_TAB_BUSCADOR_TURNADO_PROCU"/>
+		
 <!--		<bean p:entity="tabs.procedimiento.fast" p:name="historicoProcedimiento" -->
 <!--			p:order="900" -->
 <!--			p:fileName="/WEB-INF/jsp/plugin/masivo/procedimientos/tabs/tabHistoricoPrcResoluciones.jsp" -->

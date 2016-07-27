@@ -107,13 +107,11 @@ public class coreextensionController {
     @Autowired
 	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
     
-
     @Resource
     private MessageService messageService;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
-
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping

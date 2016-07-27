@@ -11,6 +11,7 @@ public class DtoNMBBienAdjudicacion {
 	Boolean tareaActiva;
 	String descripcionTarea;
 	ProcedimientoBien procedimientoBien;
+	String numFinca;
 
 	public NMBBien getBien() {
 		return bien;
@@ -50,6 +51,14 @@ public class DtoNMBBienAdjudicacion {
 
 	public void setProcedimientoBien(ProcedimientoBien procedimientoBien) {
 		this.procedimientoBien = procedimientoBien;
+	}
+	
+	public String getNumFinca() {
+		return numFinca;
+	}
+
+	public void setNumFinca(String numFinca) {
+		this.numFinca = numFinca;
 	}
 
 }

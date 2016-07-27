@@ -65,6 +65,11 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     storeDDSituacionTitulo:{},
     storeDDTipoBienCajamar:{},
     storeDDPosesionInterinaResolucion:{},
+    storeDDDecisionSuspensionElec:{},
+    storeDDMotivoSuspSubastaElec:{},
+    storeDDResultadoConPostores:{},
+    storeDDFavorableCondicional:{},
+    storeDDEntidadCesionRemate:{},
     
     constructor : function(options){    //Step 2  
     	Date.now = Date.now || function() { return +new Date; };
@@ -698,7 +703,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         		} , decisionSuspensionRecord)
         	});
 
-
+    	
 	/////Entidad Adjudicataria
     	var decisionEntidadAdjudicatoriaRecord = Ext.data.Record.create([
       	    	                                        	{name:'codigo'}
@@ -791,6 +796,107 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 		} , DDPositivoNegativo)
 	});
     
+    ///store DDDecisionSuspensionElec
+    var DDDecisionSuspensionElec = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDDecisionSuspensionElec = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
+        ,baseParams: {
+            dictionary: 'es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDDecisionSuspensionElec'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDDecisionSuspensionElec)
+    });
+    
+    ///store DDMotivoSuspSubastaElec
+    var DDMotivoSuspSubastaElec = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDMotivoSuspSubastaElec = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
+        ,baseParams: {
+            dictionary: 'es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDMotivoSuspSubastaElec'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDMotivoSuspSubastaElec)
+    });
+    
+  ///store DDResultadoConPostores
+    var DDResultadoConPostores = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDResultadoConPostores = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
+        ,baseParams: {
+            dictionary: 'es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDResultadoConPostores'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDResultadoConPostores)
+    });
+    
+  ///store DDCuantia
+    var DDCuantia = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDCuantia = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
+        ,baseParams: {
+            dictionary: 'es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDCuantia'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDCuantia)
+    });
+    
+  ///store DDFavorableCondicional
+    var DDFavorableCondicional = Ext.data.Record.create([
+        {id:'id'}
+        ,{name:'codigo'}
+        ,{name:'descripcion'}
+    ]);
+
+    this.storeDDFavorableCondicional = new Ext.data.Store({
+        url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
+        ,baseParams: {
+            dictionary: 'es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDFavorableCondicional'
+        }
+        ,reader: new Ext.data.JsonReader({
+            root: 'diccionario'
+        } , DDFavorableCondicional)
+    });
+    
+    ////storeDDEntidadCesionRemate
+    var DDEntidadCesionRemate = Ext.data.Record.create([
+         {id:'id'}
+         ,{name:'codigo'}
+         ,{name:'descripcion'}
+     ]);
+
+     this.storeDDEntidadCesionRemate = new Ext.data.Store({
+         url:'/pfs/pcdprocesadoresoluciones/getDictionaryDenormalized.htm'
+         ,baseParams: {
+             dictionary: 'es.pfsgroup.plugin.recovery.coreextension.subasta.model.DDEntidadCesionRemate'
+         }
+         ,reader: new Ext.data.JsonReader({
+             root: 'diccionario'
+         } , DDEntidadCesionRemate)
+     });
     
 	///store storeDDCorrectoCobro
     var DDCorrectoCobro = Ext.data.Record.create([
@@ -1418,7 +1524,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	
 	// id: 225 : ADJUDICACIÓN : Solicicitud de testimonio de decreto adjudicacion
 	this.arrayCampos.push([
-		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+		{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	]);
 
 	// id: 226 : ADJUDICACIÓN : Confirmar testimonio decreto adjudicacion.
@@ -2545,7 +2651,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
 	//id: 308 : P. CAMBIARIO: Confirmar notificación requerimiento de pago
 	this.arrayCampos.push([
 	                       	{"xtype":'combo',"store":this.storeDDPositivoNegativo,"name":"d_comboResultado","fieldLabel":"Resultado notificación",allowBlank:false,"autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
-	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
 	                      ]);
 	
 	//id: 309 : P. CAMBIARIO: Registrar demanda oposición
@@ -3422,15 +3528,15 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
     // id: 388 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_notificacionDecretoAdjudicacionAEntidad
     this.arrayCampos.push([
         {"xtype": 'datefield', "name": "d_fecha", "fieldLabel": "Fecha notificación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
-        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboSubsanacion", "fieldLabel": "Requiere subsanación", "autoload": true,  mode: 'local',"editable":false ,triggerAction: 'all', allowBlank: false, filtradoProcurador: true, resizable: true, id: 'd_comboSubsanacion' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
-        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboAdicional", "fieldLabel": "Comunicación adicional requerida", "autoload": true,  mode: 'local',"editable":false , triggerAction: 'all', allowBlank: false, filtrar: true, resizable: true, id: 'd_comboAdicional' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboSubsanacion", "fieldLabel": "Requiere subsanación", "autoload": true,  mode: 'local',"editable":false ,triggerAction: 'all', filtradoProcurador: true, resizable: true, id: 'd_comboSubsanacion' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        ,{"xtype": 'combo', "store": storeSINO, "name": "d_comboAdicional", "fieldLabel": "Comunicación adicional requerida", "autoload": true,  mode: 'local',"editable":false , triggerAction: 'all', filtrar: true, resizable: true, id: 'd_comboAdicional' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
         ,{"xtype": 'datefield', "name": "d_fechaResol", "fieldLabel": "Fecha resolución", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
-        ,{"xtype": 'datefield', "name": "d_fechaLimite", "fieldLabel": "Fecha límite comunicación", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar: true}
+        ,{"xtype": 'datefield', "name": "d_fechaLimite", "fieldLabel": "Fecha límite comunicación",maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar: true}
     ]);
 
     // id: 389 : TRAMITE DE ADJUDICACION (CAJAMAR): H005_RegistrarInscripcionDelTitulo
     this.arrayCampos.push([
-        {"xtype": 'combo', "store": this.storeDDSituacionTitulo, "name": "d_comboSituacionTitulo", "fieldLabel": "Título Inscrito en el Registro", "autoload": true,  mode: 'local',"editable":false , triggerAction: 'all', allowBlank: false, resizable: true, id: 'd_comboSituacionTitulo' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
+        {"xtype": 'combo', "store": this.storeDDSituacionTitulo, "name": "d_comboSituacionTitulo", "fieldLabel": "Situación del título", "autoload": true,  mode: 'local',"editable":false , triggerAction: 'all', allowBlank: false, resizable: true, id: 'd_comboSituacionTitulo' + this.idFactoria, displayField: 'descripcion', valueField: 'codigo'}
         ,{"xtype": 'datefield', "name": "d_fechaInscripcion", "fieldLabel": "Fecha Inscripción", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
         ,{"xtype": 'datefield', "name": "d_fechaEnvioDecretoAdicion", "fieldLabel": "Fecha Envío Decreto Adición", allowBlank: false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
     ]);
@@ -3883,7 +3989,7 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
         ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboSubsanacion", "fieldLabel":"Requiere Subsanación", id:'d_comboSubsanacion' + this.idFactoria, "autoload":true, mode:'local',"editable":false ,triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}
         ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboAdicional", "fieldLabel":"Comunicación adicional requerida", id:'d_comboAdicional' + this.idFactoria, "autoload":true, mode:'local',"editable":false ,triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo', filtrar:true}
         ,{"xtype":'datefield', "name":"d_fechaLimite", "fieldLabel":"Fecha límite comunicación", allowBlank:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima, filtrar:true}
-        ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboOcupantes", "fieldLabel":"Constancia de ocupantes", id:'d_comboOcupantes' + this.idFactoria, "autoload":true, mode:'local',"editable":false ,triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}            
+        ,{"xtype":'combo', "store":storeSINO, "value":"",  "name":"d_comboOcupantes", "fieldLabel":"Constancia de ocupantes", allowBlank:false, id:'d_comboOcupantes' + this.idFactoria, "autoload":true, mode:'local',"editable":false ,triggerAction:'all', resizable:true, displayField:'descripcion', valueField:'codigo'}            
     ]);
 
     //id: 442 : Trámite de Adjudicación - HCJ : Registrar presentación en el registro H005_RegistrarPresentacionEnRegistro
@@ -4058,6 +4164,234 @@ es.pfs.plugins.procuradores.FactoriaFormularios = Ext.extend(Object,{  //Step 1
      {"xtype":'datefield',"name":"d_fechaPresentacion","fieldLabel":"Fecha presentación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
      ,{"xtype":'combo',"store":storeSINO,"name":"d_comboLiquidacion","fieldLabel":"Liquidación del testimonio","autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboLiquidacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}         
      ]);
+    
+    //id: 462 : TRAMITE de Adjudicación terceros: P457_RegistrarDatosAdjudicacion
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaLimitePeriodoConsignacion","fieldLabel":"Fecha límite período de consignación",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'textfield',"name":"d_nombrePostor","fieldLabel":"Nombre postor",allowBlank:false}
+	                       ,{"xtype":'combo',"store":this.storeEntidadAdjudicataria,"name":"d_comboPostorConsignacion","fieldLabel":"Postor de consignación","autoload":true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_postorConsignacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_cantidadPuja","fieldLabel":"Cantidad de puja",allowBlank:false}
+	]);
+	
+	//id: 463 : TRAMITE de Adjudicación terceros: P457_ConfirmarConsignacion
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaLimitePeriodoConsignacion","fieldLabel":"Fecha inicio período de consignación", maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima
+	                    	   ,listeners:{afterRender:function(fechaLimitePeriodoConsignacion){
+	                   		    var idProcedimiento=this.findParentByType(Ext.form.FormPanel).getForm().findField('idProcedimiento').getValue();
+	                     			Ext.Ajax.request({
+	                					url: '/pfs/pcdprocesadoresoluciones/obtenerDatoTarea.htm'
+	                					,params: {idProcedimiento: idProcedimiento, nombreCampoInput: 'fechaLimitePeriodoConsignacion'}
+	                					,method: 'POST'
+	                					,success: function (result, request){
+	                						if(result != null && result.responseText != null){
+	                							var r = Ext.util.JSON.decode(result.responseText);
+	                							if(r.resultado != null){fechaLimitePeriodoConsignacion.setValue(r.resultado);}
+	                						}
+	                					 }
+	                					});
+	                     			}
+	                     		}
+	                       }
+	                       ,{"xtype":'textfield',"name":"d_nombrePostor","fieldLabel":"Nombre postor",autolad:true
+	                    	   ,listeners:{afterRender:function(nombrePostor){
+		                   		    var idProcedimiento=this.findParentByType(Ext.form.FormPanel).getForm().findField('idProcedimiento').getValue();
+		                     			Ext.Ajax.request({
+		                					url: '/pfs/pcdprocesadoresoluciones/obtenerDatoTarea.htm'
+		                					,params: {idProcedimiento: idProcedimiento, nombreCampoInput: 'nombrePostor'}
+		                					,method: 'POST'
+		                					,success: function (result, request){
+		                						if(result != null && result.responseText != null){
+		                							var r = Ext.util.JSON.decode(result.responseText);
+		                							if(r.resultado != null){nombrePostor.setValue(r.resultado);}
+		                						}
+		                					 }
+		                					});
+		                     			}
+		                     		}
+	                       }
+	                       ,{"xtype":'numberfield',"name":"d_cantidadPuja","fieldLabel":"Cantidad de puja",allowBlank:false
+	                    	   ,listeners:{afterRender:function(cantidadPuja){
+		                   		    var idProcedimiento=this.findParentByType(Ext.form.FormPanel).getForm().findField('idProcedimiento').getValue();
+		                     			Ext.Ajax.request({
+		                					url: '/pfs/pcdprocesadoresoluciones/obtenerDatoTarea.htm'
+		                					,params: {idProcedimiento: idProcedimiento, nombreCampoInput: 'cantidadPuja'}
+		                					,method: 'POST'
+		                					,success: function (result, request){
+		                						if(result != null && result.responseText != null){
+		                							var r = Ext.util.JSON.decode(result.responseText);
+		                							if(r.resultado != null){cantidadPuja.setValue(r.resultado);}
+		                						}
+		                					 }
+		                					});
+		                     			}
+		                     		}
+	                       }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboPagoRealizado","fieldLabel":"Pago realizado","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_postorConsignacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo',allowBlank:false}
+	]);
+	
+	//id: 464 : TRAMITE de Adjudicación terceros: P457_SolicitarMandamientoPago
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fecha","fieldLabel":"Fecha",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }    
+	]);
+	
+	//id: 465 : TRAMITE de Adjudicación terceros: P457_ConfirmarRecivoEnvioMandamientoPago
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaRecepcion","fieldLabel":"Fecha recepción", maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima,filtrar:true}
+	                       ,{"xtype":'datefield',"name":"d_fechaEnvio","fieldLabel":"Fecha envío", maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima,filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_importe","fieldLabel":"Importe",allowBlank:false}
+	]);
+	
+	//id: 466 : TRAMITE de Subasta electrónica: P458_SolicitudSubasta
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaSolicitud","fieldLabel":"Fecha solicitud",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+	                       ,{"xtype":'numberfield',"name":"d_costasLetrado","fieldLabel":"Costas de letrado", filtrar:true}
+	                       ,{"xtype":'numberfield',"name":"d_costasProcurador","fieldLabel":"Costas de procurador",allowBlank:false}
+	                       ,{"xtype":'textfield',"name":"d_nombreGestorRep","fieldLabel":"Nombre gestor/Representante",allowBlank:false}
+	                       ,{"xtype":'textfield',"name":"d_nifRep","fieldLabel":"NIF Representante",allowBlank:false}
+	                       ,{"xtype":'textfield',"name":"d_correoElectronicoRep","fieldLabel":"Correo electrónico representante",allowBlank:false}
+	                       ,{"xtype":'numberfield',"name":"d_telefonoRep","fieldLabel":"Teléfono Representante",allowBlank:false}
+	]);
+	
+	//id: 467 : TRAMITE de Subasta electrónica: P458_DecretoConvocatoriaSubasta
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaNotificacionDecreto","fieldLabel":"Fecha notificación del decreto",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }    
+	]);
+	
+	//id: 468 : TRAMITE de Subasta electrónica: P458_EntregaRecepcionEdictoImpresoTasa
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaEntregaEdicto","fieldLabel":"Fecha entrega edicto", disabled:true, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboEdicto","fieldLabel":"Edicto","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboEdicto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                    	   ,listeners: {
+		                  			 select: function(combo) { 
+		                  				 var correcto = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboCorrecto');
+		                  				var fecha = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_fechaEntregaEdicto');
+		                  				 if(combo.getValue()=='01'){
+		                  					correcto.setDisabled(false);
+		                  					fecha.setDisabled(false);
+		                  					correcto.allowBlank = false;
+		                  					fecha.allowBlank = false;
+		                  				 }
+		                  				 else if(combo.getValue()=='02'){
+		                  					 correcto.reset();
+		                  					 fecha.reset();
+		                  					 correcto.setDisabled(true);
+		                  					 fecha.setDisabled(true);
+		                  				 }   
+		                  			 }
+		                     	 }
+	                       }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboCorrecto","fieldLabel":"Correcto","autoload":true, mode:'local', disabled:true,"editable":false ,triggerAction:'all',resizable:true, id:'d_comboCorrecto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaEntregaImpresoLiquidacionTasa","fieldLabel":"Fecha entrega impreso liquidación tasa",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	]);
+	
+	//id: 469 : TRAMITE de Subasta electrónica: P458_PedirCorreccionEdicto
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaSolicitudCorreccion","fieldLabel":"Fecha de solicitud de corrección",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }    
+	]);
+	
+	//id: 470 : TRAMITE de Subasta electrónica: P458_ConfirmarCorreccionEdicto
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaCorreccionEdicto","fieldLabel":"Fecha corrección del Edicto",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }    
+	]);
+	
+	//id: 471 : TRAMITE de Subasta electrónica: P458_RegistrarPagoTasaPublicacionBOE
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaPagoTasa","fieldLabel":"Fecha pago tasa",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }    
+	]);
+	
+	//id: 472 : TRAMITE de Subasta electrónica: P458_RegistrarPublicacionSubastaBOE
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaPublicacionBOE","fieldLabel":"Fecha publicación BOE",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboEdictoCorrecto","fieldLabel":"Edicto correcto","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboEdictoCorrecto'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'datefield',"name":"d_fechaFinPeriodoPujas","fieldLabel":"Fecha fin de periodo de pujas",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	]);
+	
+	//id: 473 : TRAMITE de Subasta electrónica: P458_PedirCorreccionEdictoPublicacionBOE
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaCorreccionEdicto","fieldLabel":"Fecha de solicitud de corrección",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }    
+	]);
+	
+	//id: 474 : TRAMITE de Subasta electrónica: P458_ConfirmarCorrecccionEdictoPublicacionBOE
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaCorreccionEdicto","fieldLabel":"Fecha corrección del Edicto",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboPagoTasa","fieldLabel":"Pago nueva tasa","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboPagoTasa'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	]);
+	
+	//id: 475 : TRAMITE de Subasta electrónica: P458_RegistrarResultadoSubasta
+	this.arrayCampos.push([
+	                       {"xtype":'combo',"store":this.storeDDDecisionSuspensionElec,"name":"d_comboDecision","fieldLabel":"Decisión suspensión","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboDecision'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                    	   ,listeners: {
+		                  			 select: function(combo) { 
+		                  				var coincidencia = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboSubastaBienes');
+		                  				var detalle = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboDetalle');
+		                  				var postores = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboPostores');
+		                  				 if(combo.getValue()=='NO'){
+		                  					coincidencia.setDisabled(false);
+		                  					coincidencia.allowBlank = false;
+		                  				 }
+		                  				 else{
+		                  					coincidencia.reset();
+		                  					coincidencia.setDisabled(true);
+		                  					postores.reset();
+		                  					postores.setDisabled(true);
+		                  					detalle.reset();
+		                  					detalle.setDisabled(true);
+		                  				 }   
+		                  			 }
+		                     	 }
+	                       }
+	                       ,{"xtype":'combo',"store":this.storeDDMotivoSuspSubastaElec,"name":"d_comboMotivo","fieldLabel":"Motivo suspensión","autoload":true, allowBlank:true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboMotivo'+this.idFactoria,displayField:'descripcion',valueField:'codigo',filtrar:true}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboSubastaBienes","fieldLabel":"Coincidencia del resultado de la subasta en los bienes","autoload":true, disabled:true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboSubastaBienes'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                    	   ,listeners: {
+		                  			 select: function(combo) { 
+		                  				var postores = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboPostores');
+		                  				var detalle = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboDetalle');
+		                  				 if(combo.getValue()=='01'){
+		                  					postores.setDisabled(false);
+		                  					postores.allowBlank = false;
+		                  				 }
+		                  				 else{
+		                  					postores.reset();
+		                  					postores.setDisabled(true);
+		                  					detalle.reset();
+		                  					detalle.setDisabled(true);
+		                  				 }   
+		                  			 }
+		                     	 }
+	                       }
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboPostores","fieldLabel":"Con postores","autoload":true, allowBlank:true, disabled:true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboPostores'+this.idFactoria,displayField:'descripcion',valueField:'codigo'
+	                    	   ,listeners: {
+		                  			 select: function(combo) { 
+		                  				var detalle = this.findParentByType(Ext.form.FormPanel).getForm().findField('d_comboDetalle');
+		                  				 if(combo.getValue()=='01' || combo.getValue()=='02' ){
+		                  					detalle.setDisabled(false);
+		                  					detalle.allowBlank = false;
+		                  				 }
+		                  				 else{
+		                  					detalle.reset();
+		                  					detalle.setDisabled(true);
+		                  				 }   
+		                  			 }
+		                     	 }
+	                       }
+	                       ,{"xtype":'combo',"store":this.storeDDResultadoConPostores,"name":"d_comboDetalle","fieldLabel":"Combo detalle","autoload":true, disabled:true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboDetalle'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	]);
+	
+	//id: 476 : TRAMITE de Subasta electrónica: P458_SolicitarAdjudicacionInstruccionesEntidad
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaPresentacionEscrito","fieldLabel":"Fecha presentación escrito",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima }
+	                       ,{"xtype":'combo',"store":this.storeDDCuantia,"name":"d_comboCuantia","fieldLabel":"Cuantía","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboCuantia'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	]);
+	
+	//id: 477 : TRAMITE de Subasta electrónica: P458_RegResulPresentacionEscrJuzgado
+	this.arrayCampos.push([
+	                       {"xtype":'datefield',"name":"d_fechaResolucion","fieldLabel":"Fecha resolución",allowBlank:false, maxValue: (new Date().add(Date.MONTH, 2) ).format('d/m/Y'), minValue: fechaMinima}
+	                       ,{"xtype":'combo',"store":this.storeDDFavorableCondicional,"name":"d_comboResultado","fieldLabel":"Resultado","autoload":true, allowBlank:true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboResultado'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboCoincidencia","fieldLabel":"Coincidencia del Resultado de la presentación escrito al Juzgados en todos los bienes","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboCoincidencia'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboAdjudicacion","fieldLabel":"Adjudicación con cesión de remate","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboAdjudicacion'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":this.storeDDEntidadCesionRemate,"name":"d_comboEntidad","fieldLabel":"Entidad con cesión de remate","autoload":true, allowBlank:false, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboEntidad'+this.idFactoria,displayField:'descripcion',valueField:'codigo'}
+	                       ,{"xtype":'combo',"store":storeSINO,"name":"d_comboRecurso","fieldLabel":"Recurso","autoload":true, allowBlank:true, mode:'local',"editable":false ,triggerAction:'all',resizable:true, id:'d_comboRecurso'+this.idFactoria,displayField:'descripcion',valueField:'codigo', filtrar:true}
+	]);
     
 		var lengthArrayCampos = this.arrayCampos.length;
 		for(var i=lengthArrayCampos; i<1000; i++){

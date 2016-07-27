@@ -26,7 +26,9 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
 import es.capgemini.pfs.despachoExterno.dao.GestorDespachoDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.direccion.api.DireccionApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.dao.PersonaDao;
@@ -94,6 +96,9 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
     
     @Autowired
 	private GestorDespachoDao gestorDespachoDao;
+    
+    @Autowired
+    private DireccionApi direccionApi;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -407,7 +412,6 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		try {
 			documento.setFechaEscritura(webDateFormat.parse(docDto.getFechaEscritura()));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		documento.setAsiento(docDto.getAsiento());
@@ -424,6 +428,11 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 			DDProvincia provincia = genericDao.get(
 					DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getProvinciaNotario()));
 			documento.setProvinciaNotario(provincia);
+		}
+		if(!Checks.esNulo(docDto.getLocalidadNotario())){
+			Localidad localidad = genericDao.get(
+					Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", docDto.getLocalidadNotario()));
+			documento.setLocalidadNotario(localidad);
 		}
 
 		documentoPCODao.saveOrUpdate(documento);
@@ -510,7 +519,13 @@ public class DocumentoPCOManager implements DocumentoPCOApi {
 		List<DDProvincia> listaProvincias = proxyFactory.proxy(UtilDiccionarioApi.class).dameValoresDiccionarioSinBorrado(DDProvincia.class);
 		
 		return listaProvincias;
-	}	
+	}
+	
+	public List<Localidad> getLocalidades(Long idProvincia){
+		List<Localidad> listaProvincias = direccionApi.getListLocalidades(idProvincia);
+		
+		return listaProvincias;
+	}
 	
 	/**
 	 * Obtiene una Unidad de gestión

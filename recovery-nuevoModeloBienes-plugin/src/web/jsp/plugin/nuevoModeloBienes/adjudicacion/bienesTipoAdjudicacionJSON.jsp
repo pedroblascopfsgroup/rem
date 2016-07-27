@@ -61,6 +61,7 @@
 				<json:property name="resolucionMoratoria"
 					value="${bie.bien.adjudicacion.resolucionMoratoria.descripcion}" />
 			</c:if>
+			<json:property name="numFinca" value="${bie.numFinca}" />
 		</json:object>
 	</json:array>
 </fwk:json>

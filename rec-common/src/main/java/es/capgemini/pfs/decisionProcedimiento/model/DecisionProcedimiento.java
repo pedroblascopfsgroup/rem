@@ -124,6 +124,9 @@ public class DecisionProcedimiento implements Serializable, Auditable {
     @Column(name = "DPR_PROCESS_BPM")
     private Long processBPM;
 
+    @Column(name = "DPR_NUM_OPERACION")
+    private String numOperacion;
+
     @Version
     private Long version;
 
@@ -346,6 +349,14 @@ public class DecisionProcedimiento implements Serializable, Auditable {
 			}
 		}
 		return null;
+	}
+
+	public String getNumOperacion() {
+		return numOperacion;
+	}
+
+	public void setNumOperacion(String numOperacion) {
+		this.numOperacion = numOperacion;
 	}
 	
 }

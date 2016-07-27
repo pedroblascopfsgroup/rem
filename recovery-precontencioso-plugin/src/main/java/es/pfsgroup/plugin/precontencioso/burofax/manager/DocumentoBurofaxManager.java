@@ -101,6 +101,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 	private static final String SINNOMBRE = "SINNOMBRE";
 	private static final String INICIO_CUERPO = "<br />";
 	private static final String FIN_CUERPO = "";
+	private static final String SALTO_LINEA = "<br />";
 
 	private static final String FECHA_ACTUAL = "FECHA_ACTUAL";
 	private static final String TOTAL_LIQUIDACION_LETRA = "TOTAL_LIQUIDACION_LETRA";
@@ -187,7 +188,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		
 		String domicilio = "";
 		try {
-			domicilio=envioBurofax.getDireccion().toString();
+			domicilio=construyeDireccionHy(envioBurofax.getDireccion());
 		} catch (NullPointerException npe) {}
 		mapaVariables.put(DOMICILIO, domicilio);
 		
@@ -359,6 +360,14 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		return mapaVariables;
 	}
 
+	private String construyeDireccionHy(Direccion direccion) {
+		String resultado = construyeDireccion1(direccion, ", ") +
+				SALTO_LINEA +
+				construyeDireccion2(direccion, " ") + " " +
+				construyeDireccion3(direccion);
+		return resultado;
+	}
+
 	@Override
 	public String parseoFinalBurofax(String contenidoParseadoIntermedio,
 			HashMap<String, Object> mapeoVariables) {
@@ -391,7 +400,7 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 
 	}
 
-	private String construyeDireccion1(Direccion dir) {
+	private String construyeDireccion1(Direccion dir, String separador) {
 		
 		String resultado = "";
 		if (!Checks.esNulo(dir)) {
@@ -402,29 +411,29 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 				resultado += " " + dir.getDomicilio().trim();
 			}
 			if (!Checks.esNulo(dir.getDomicilio_n())) {
-				resultado += " " + dir.getDomicilio_n().trim();
+				resultado += separador + dir.getDomicilio_n().trim();
 			}
 			if (!Checks.esNulo(dir.getPortal())) {
-				resultado += " " + dir.getPortal().trim();
+				resultado += separador + dir.getPortal().trim();
 			}
 			if (!Checks.esNulo(dir.getEscalera())) {
-				resultado += " " + dir.getEscalera().trim();
+				resultado += separador + dir.getEscalera().trim();
 			}
 			if (!Checks.esNulo(dir.getPiso())) {
-				resultado += " " + dir.getPiso().trim();
+				resultado += separador + dir.getPiso().trim();
 			}
 			if (!Checks.esNulo(dir.getPuerta())) {
-				resultado += " " + dir.getPuerta().trim();
+				resultado += separador + dir.getPuerta().trim();
 			}
 		}
 		return resultado.trim().toUpperCase();
 	}
 	
-	private String construyeDireccion2(Direccion dir) {
+	private String construyeDireccion2(Direccion dir, String separador) {
 		String resultado = "";
 		if (!Checks.esNulo(dir)) {
 			if (!Checks.esNulo(dir.getCodigoPostal())) {
-				resultado += codigoPostalFormat.format(dir.getCodigoPostal()) + " ";
+				resultado += codigoPostalFormat.format(dir.getCodigoPostal()) + separador;
 			}
 			if (!Checks.esNulo(dir.getLocalidad()) && !Checks.esNulo(dir.getLocalidad().getDescripcion())) {
 				resultado += dir.getLocalidad().getDescripcion();
@@ -463,8 +472,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 			cabecera.put(CABECERA_CONTACTO1, construyeContacto1(burofax.isEsPersonaManual(), burofax.getDemandado(), burofax.getContrato().getPrimerTitular()));
 			cabecera.put(CABECERA_CONTACTO2, construyeContacto2(burofax.isEsPersonaManual(), burofax.getDemandado(), burofax.getContrato().getPrimerTitular()));
 			cabecera.put(CABECERA_NOMBRE_PERSONA, construyeNombre(burofax.isEsPersonaManual(), burofax.getDemandado(), burofax.getDemandadoManual()));
-			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion()));
-			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion()));
+			cabecera.put(CABECERA_DIRECCION1, construyeDireccion1(envioBurofax.getDireccion(), " "));
+			cabecera.put(CABECERA_DIRECCION2, construyeDireccion2(envioBurofax.getDireccion(), " "));
 			cabecera.put(CABECERA_DIRECCION3, construyeDireccion3(envioBurofax.getDireccion()));
 		}
 		return cabecera;
@@ -704,8 +713,8 @@ public class DocumentoBurofaxManager implements DocumentoBurofaxApi {
 		if(!Checks.esNulo(doc)){
 			notario = doc.getNotario();
 			protocolo = doc.getProtocolo();
-			if(!Checks.esNulo(doc.getProvinciaNotario())){
-				localidadNotario = doc.getProvinciaNotario().getDescripcion();
+			if(!Checks.esNulo(doc.getLocalidadNotario())){
+				localidadNotario = doc.getLocalidadNotario().getDescripcion();
 			}
 			if(!Checks.esNulo(doc.getFechaEscritura())){
 				SimpleDateFormat df = new SimpleDateFormat("dd",MessageUtils.DEFAULT_LOCALE);

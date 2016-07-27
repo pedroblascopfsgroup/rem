@@ -28,6 +28,7 @@ public class DocumentoPCODto {
 	private String ejecutivo;
 	private String provinciaNotario;
 	private String observacionesEDP;
+	private String localidadNotario;
 	
 	public Long getId() {
 		return id;
@@ -186,4 +187,11 @@ public class DocumentoPCODto {
 	public void setObservacionesEDP(String observacionesEDP) {
 		this.observacionesEDP = observacionesEDP;
 	}
+	public String getLocalidadNotario() {
+		return localidadNotario;
+	}
+	public void setLocalidadNotario(String localidadNotario) {
+		this.localidadNotario = localidadNotario;
+	}
+	
 }

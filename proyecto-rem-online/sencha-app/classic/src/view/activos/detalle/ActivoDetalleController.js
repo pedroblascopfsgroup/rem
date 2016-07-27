@@ -1044,10 +1044,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		return criteria;
     },
     
-    	// Funcion que se ejecuta al hacer click en el botón limpiar
+    // Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {			
 		btn.up('form').getForm().reset();				
-	}
+	},
 	
+    onChangeEstadoDisponibilidadComercial: function(field){
+    	var me = this;
+    	var store = me.getViewModel().getStore('storeEstadoDisponibilidadComercial');
+    	if(!store.isLoaded()) {
+    		store.load();
+    	}
+    	if(field.getValue()) {
+    		store.on("load", function(){ // Condicionado.
+    			field.setValue(store.findRecord('codigo','01').getData().descripcion);
+        	});
+    	} else {
+    		store.on("load", function(){// No condicionado.
+    			field.setValue(store.findRecord('codigo','02').getData().descripcion);
+    		});
+    	}
+    }
 	
 });

@@ -113,8 +113,6 @@ public class ActivoController {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
-	@Autowired
-	private PreciosApi preciosApi;
 	
 	/**getHistoricoValoresPrecios
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.

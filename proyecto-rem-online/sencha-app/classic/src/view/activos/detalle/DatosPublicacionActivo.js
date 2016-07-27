@@ -18,7 +18,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     initComponent: function () {
 
         var me = this;
-       
+
         var items = [
 			        {
 						xtype:'fieldsettable',
@@ -27,18 +27,27 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 							[
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  'Tipo de comercialización',
-				                	value: 'Venta y alquiler'
+				                	fieldLabel:  HreRem.i18n('title.publicaciones.tipoComercializacion'),
+				                	bind: '{activo.tipoComercializacionDescripcion}',
+				                	readOnly: true
 			                    },
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  'Estado de publicación',
-				                	value: 'No publicado'
+				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoPublicacion'),
+				                	bind: '{activo.estadoPublicacionDescripcion}',
+				                	readOnly: true
 			                    },
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  'Estado de disponibilidad comercial',
-				                	value: 'Condicionado'
+				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
+				                	id: 'fieldEstadoDisponibilidadComercial',
+				                	bind: '{activoCondicionantesDisponibilidad.estadoDisponibilidadComercial}',
+				                	listeners: {
+				                		'change': function(){
+				                			this.up().up().lookupController().onChangeEstadoDisponibilidadComercial(this.up().lookupComponent('fieldEstadoDisponibilidadComercial'));
+				                		}
+				                	},
+				                	readOnly: true
 			                    }
 							]
 						

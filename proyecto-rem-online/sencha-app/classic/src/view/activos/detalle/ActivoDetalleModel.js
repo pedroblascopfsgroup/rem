@@ -670,8 +670,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		            beforeload : 'beforeLoadPropuestas'
 		        }
 		        
-    		}
-
-	
+    		},
+    		
+    		storeEstadoDisponibilidadComercial: {    		
+				model: 'HreRem.model.DDBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoDisponibilidadComercial'}
+				},
+				autoload: true
+			}
      }    
 });

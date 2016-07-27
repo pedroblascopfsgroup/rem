@@ -25,13 +25,15 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  *
  */
 @Entity
-@Table(name = "DD_TCO_TIPO_COMERCIAL", schema = "${entity.schema}")
+@Table(name = "DD_TCO_TIPO_COMERCIALIZACION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoComercial implements Auditable, Dictionary {
+public class DDTipoComercializacion implements Auditable, Dictionary {
 	
-    public static final String CODIGO_HAYA = "01";
-    public static final String CODIGO_INVERSORES = "02";
+    public static final String CODIGO_VENTA = "01";
+    public static final String CODIGO_ALQUILER_VENTA = "02";
+    public static final String CODIGO_SOLO_ALQUILER = "03";
+    public static final String CODIGO_ALQUILER_OPCION_COMPRA = "04";
 
 	private static final long serialVersionUID = 1L;
 

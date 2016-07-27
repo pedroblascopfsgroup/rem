@@ -38,6 +38,17 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     		},
     		{
     			name:'divHorizontalNoInscrita'
+    		},
+    		// Referente a la cabecera de datos publicacion. Campo calculado con datos de este modelo.
+    		{
+    			name: 'estadoDisponibilidadComercial',
+				calculate: function(data){
+					if(data.ruina || data.pendienteInscripcion || data.obraNuevaSinDeclarar || data.sinTomaPosesionInicial
+							|| data.proindiviso || data.obraNuevaEnConstruccion || data.ocupadoConTitulo || data.tapiado
+							|| data.ocupadoSinTitulo || data.divHorizontalNoInscrita){
+						return true;
+					}
+				}
     		}
 
     ],

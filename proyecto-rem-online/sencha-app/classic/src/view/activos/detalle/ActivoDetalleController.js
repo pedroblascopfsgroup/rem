@@ -1060,10 +1060,45 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     			field.setValue(store.findRecord('codigo','01').getData().descripcion);
         	});
     	} else {
-    		store.on("load", function(){// No condicionado.
+    		store.on("load", function(){ // No condicionado.
     			field.setValue(store.findRecord('codigo','02').getData().descripcion);
     		});
     	}
+    },
+    
+    onChangeEstadoPublicacion: function(field){
+    	var me = field;
+    	var view = me.up('datospublicacionactivo');
+    	var codigo = this.getViewModel().getData().getEstadoPublicacionCodigo;
+    	
+    	switch (codigo){
+    	case "01": // Publicado.
+    		
+    		break;
+    	case "02": // Publicación forzada.
+    		view.lookupComponent('seccionOcultacionForzada').hide();
+    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		break;
+    	case "03": // Publicado oculto.
+    		view.lookupComponent('seccionOcultacionForzada').hide();
+    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		break;
+    	case "04": // Publicado con precio oculto.
+    		view.lookupComponent('seccionOcultacionForzada').hide();
+    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		break;
+    	case "05": // Despublicado.
+    		view.lookupComponent('seccionOcultacionForzada').hide();
+    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		break;
+    	default:
+    		break;
+    	}
+    	
+    	//view.lookupComponent('seccionPublicacionForzada').hide();
+    	//view.lookupComponent('seccionOcultacionPrecio').hide();
+    	//view.lookupComponent('seccionDespublicacionForzada').hide();
+    	//view.lookupComponent('seccionOcultacionForzada').hide();
     }
 	
 });

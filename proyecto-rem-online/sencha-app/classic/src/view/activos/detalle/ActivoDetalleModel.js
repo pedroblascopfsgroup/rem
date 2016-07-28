@@ -201,7 +201,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     	
 	     	
-	     }
+	     },
+	     
+	     getEstadoPublicacionCodigo: function(get) {
+				var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
+				return codigo;
+		     }
 	 },
 
     stores: {

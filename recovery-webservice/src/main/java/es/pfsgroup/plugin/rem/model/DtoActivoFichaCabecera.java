@@ -99,6 +99,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Boolean gestion;
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
+	private String estadoPublicacionCodigo;
 	private String tipoComercializacionDescripcion;
 
 	private int page;
@@ -766,6 +767,14 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setTipoComercializacionDescripcion(String tipoComercializacionDescripcion) {
 		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
+	}
+
+	public String getEstadoPublicacionCodigo() {
+		return estadoPublicacionCodigo;
+	}
+
+	public void setEstadoPublicacionCodigo(String estadoPublicacionCodigo) {
+		this.estadoPublicacionCodigo = estadoPublicacionCodigo;
 	}
 
 }

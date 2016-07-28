@@ -149,6 +149,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if(activo.getEstadoPublicacion() != null){
 			BeanUtils.copyProperty(activoDto, "estadoPublicacionDescripcion", activo.getEstadoPublicacion().getDescripcion());
+			BeanUtils.copyProperty(activoDto, "estadoPublicacionCodigo", activo.getEstadoPublicacion().getCodigo());
 		}
 		
 		if(activo.getTipoComercializacion() != null){

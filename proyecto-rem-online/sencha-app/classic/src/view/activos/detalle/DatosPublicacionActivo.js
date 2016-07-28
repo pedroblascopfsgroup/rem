@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     disableValidation: true,
     records: ['activoCondicionantesDisponibilidad'], 
     recordsClass: ['HreRem.model.ActivoCondicionantesDisponibilidad'],    
-    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.CondicionEspecifica', 'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion'],
+    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.CondicionEspecifica', 'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosList'],
     
     listeners: {
     	boxready:'cargarTabData'
@@ -35,6 +35,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 				                	xtype: 'textfieldbase',
 				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoPublicacion'),
 				                	bind: '{activo.estadoPublicacionDescripcion}',
+				                	listeners: {
+				                		change: 'onChangeEstadoPublicacion'
+				                	},
 				                	readOnly: true
 			                    },
 			                    {
@@ -43,9 +46,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 				                	id: 'fieldEstadoDisponibilidadComercial',
 				                	bind: '{activoCondicionantesDisponibilidad.estadoDisponibilidadComercial}',
 				                	listeners: {
-				                		'change': function(){
-				                			this.up().up().lookupController().onChangeEstadoDisponibilidadComercial(this.up().lookupComponent('fieldEstadoDisponibilidadComercial'));
-				                		}
+				                		change: 'onChangeEstadoDisponibilidadComercial'
 				                	},
 				                	readOnly: true
 			                    }
@@ -209,6 +210,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.publicacionforzada'),
+								 id: 'seccionPublicacionForzada',
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -224,6 +226,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionprecio'),
+								 id: 'seccionOcultacionPrecio',
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -243,6 +246,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.despublicacionforzada'),
+								 id: 'seccionDespublicacionForzada',
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -258,6 +262,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionforzada'),
+								 id: 'seccionOcultacionForzada',
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',

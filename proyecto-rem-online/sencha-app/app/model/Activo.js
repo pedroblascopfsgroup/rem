@@ -306,6 +306,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'estadoPublicacionDescripcion'
+    		},
+    		{
+    			name: 'estadoPublicacionCodigo'
     		}
     ],
     

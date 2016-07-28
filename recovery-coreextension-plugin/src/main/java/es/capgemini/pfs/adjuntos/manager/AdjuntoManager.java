@@ -134,15 +134,19 @@ public class AdjuntoManager implements AdjuntoApi{
 				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
+		}else{
+			Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+			adjuntosAsunto.addAll(adjuntosRecovery);
 		}
-		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+		//RECOVERY-2606
+		/*Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
 		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
 		if (iplus != null && iplus.instalado()) {
 			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
 		} else {
 			adjuntosRecovery2 = adjuntosRecovery;
 		}
-		adjuntosAsunto.addAll(adjuntosRecovery2);
+		adjuntosAsunto.addAll(adjuntosRecovery);*/
 		
 		return ordenaListado(adjuntosAsunto);
 	}

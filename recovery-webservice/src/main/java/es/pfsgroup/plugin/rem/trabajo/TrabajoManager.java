@@ -1117,6 +1117,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdTrabajo());
 		AdjuntoTrabajo adjuntoTrabajo = trabajo.getAdjunto(dtoAdjunto.getId());
 		
+		FileItem fileItem = adjuntoTrabajo.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoTrabajo.getContentType());
+		fileItem.setFileName(adjuntoTrabajo.getNombre());
+		
 		return adjuntoTrabajo.getAdjunto().getFileItem();
 	}
 	

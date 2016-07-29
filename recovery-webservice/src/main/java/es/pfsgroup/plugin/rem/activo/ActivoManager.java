@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
@@ -756,6 +757,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return activoDao.getPropuestas(dtoPropuestaFiltro);		
 
+	}
+
+	@Override
+	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion) {
+
+		return activoDao.getActivosPublicacion(dtoActivosPublicacion);	
 	}
 
 	

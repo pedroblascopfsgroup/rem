@@ -113,15 +113,16 @@ public class PreciosController {
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
+		//Obtiene la lista de activos buscada por filtros de pantalla
 		@SuppressWarnings("unchecked")
 		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
+		//Genera la propuesta en BBDD y asocia los activos
+		PropuestaPrecio propuestaPrecio = preciosApi.createPropuestaPrecios(listaActivos, nombrePropuesta);
+		
 		// FIXME Se genera una excel básica, pendiente de definir
 		ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
-		
 		excelReportGeneratorApi.generateAndSend(report, response);
-		
-		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta);
 		
 	}
 	

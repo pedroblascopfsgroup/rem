@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.propuestaprecios.dao.impl;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -24,5 +26,11 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
 		return HibernateQueryUtils.page(this, hb, dto);
 
 	}
+    
+    @Override
+    public Long getNextNumPropuestaPrecio(){
+		String sql = "SELECT S_PRP_NUM_PROPUESTA.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+    }
 	
 }

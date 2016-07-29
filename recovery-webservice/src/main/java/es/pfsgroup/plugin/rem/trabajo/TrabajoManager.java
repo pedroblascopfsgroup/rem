@@ -479,6 +479,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private void ficheroMasivoToTrabajo(Long idProceso, Trabajo trabajo){
 		MSVDocumentoMasivo documento = procesoManager.getMSVDocumento(idProceso);
 		FileItem fileItem = documento.getContenidoFichero();
+		fileItem.setFileName(documento.getNombre());
+		//fileItem.setLength(); //TODO: Hay que meter el tamaño del fichero
+		//fileItem.setContentType(); //TODO: Hay que meter el tipo del fichero
 		WebFileItem webFileItem = new WebFileItem();
 		webFileItem.setFileItem(fileItem);
 		Map<String,String> mapaParametros = new HashMap<String,String>();

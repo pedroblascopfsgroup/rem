@@ -76,6 +76,14 @@ public class ActivoPropuesta implements Serializable {
 		this.precioSancionado = precioSancionado;
 	}
 
+	public DDEstadoPropuestaActivo getEstado() {
+		return estado;
+	}
+
+	public void setEstado(DDEstadoPropuestaActivo estado) {
+		this.estado = estado;
+	}
+
 
 	@Version
     private Integer version;

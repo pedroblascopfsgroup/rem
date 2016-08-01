@@ -120,21 +120,30 @@ public class AdjuntoManager implements AdjuntoApi{
 		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		
 		if (iplus != null && iplus.instalado()) {
+			logger.debug("iplus instalado");
 			Set<AdjuntoAsunto> setAdjuntos = obtieneAdjuntosIplus(asunto.getId());
+			logger.debug("Adjuntos iplus obtenidos " + setAdjuntos.size());
 			for (AdjuntoAsunto adjuntoAsunto : setAdjuntos) {
 				adjuntoAsunto.setAsunto(asunto);
+				logger.debug("Procesando adjunto " + adjuntoAsunto.getDescripcion());
 				IPLUSAdjuntoAuxDto dtoAux = iplus.completarInformacionAdjunto(asunto.getId(), adjuntoAsunto.getDescripcion());
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " procesado");
 				Procedimiento procedimiento = dtoAux.getProc();
 				adjuntoAsunto.setProcedimiento(procedimiento);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido procedimiento " + procedimiento.getId());
 				String contentType = dtoAux.getContentType();
 				adjuntoAsunto.setContentType(contentType);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido contentType " + contentType);
 				Long longitud = dtoAux.getLongitud();
 				adjuntoAsunto.setLength(longitud);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadida longitud " + longitud);
 				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
 				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
+			logger.debug("Añadidos adjuntos");
 		}else{
+			logger.debug("iplus NO instalado");
 			Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
 			adjuntosAsunto.addAll(adjuntosRecovery);
 		}

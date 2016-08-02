@@ -275,6 +275,7 @@
 		,{name : 'tareaActivaSaneamiento'}
 		,{name : 'tareaActivaPosesion'}
 		,{name : 'tareaActivaLlaves'}
+		,{name : 'numFinca'}
 	]);
 
 	var marcadoBienesStore = page.getStore({
@@ -292,6 +293,7 @@
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.numeroActivo" text="**Numero Activo"/>', dataIndex : 'numeroActivo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.origen" text="**Origen"/>', dataIndex : 'origen'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.descripcion" text="**Descripci&oacute;n"/>', dataIndex : 'descripcion'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.numeroFinca" text="**N&uacute;mero finca"/>', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.habitual" text="**Vivienda habitual"/>', dataIndex : 'habitual', renderer: SI_NO_Render}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.tareaActivaAdjudicacion" text="**tareaActivaAdjudicacion"/>', dataIndex : 'tareaActivaAdjudicacion'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.marcadoBienesGrid.tareaActivaSaneamiento" text="**tareaActivaSaneamiento"/>', dataIndex : 'tareaActivaSaneamiento'}
@@ -342,6 +344,7 @@
 		,{name : 'nombreArrendatario'}
 		,{name : 'entidadAdjudicataria'}
 		,{name : 'situacionTitulo'}
+		,{name : 'numFinca'}
 	]);
 	
 	var bienAdjudicacionesStore = page.getStore({
@@ -383,6 +386,7 @@
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.idBien" text="**Id"/>', dataIndex : 'idBien', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.codigo" text="**Codigo"/>', dataIndex : 'codigo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroActivo" text="**Numero Activo"/>', dataIndex : 'numeroActivo'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroFinca" text="**N&uacute;mero finca"/>', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaId" text="**Id. tarea"/>', dataIndex : 'tareaId', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaCodigo" text="**Código tarea"/>', dataIndex : 'tareaCodigo', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaDescripcion" text="**Tarea"/>', dataIndex : 'tareaDescripcion'}		
@@ -398,6 +402,7 @@
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.idBien" text="**Id"/>', dataIndex : 'idBien', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.codigo" text="**Codigo"/>', dataIndex : 'codigo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroActivo" text="**Numero Activo"/>', dataIndex : 'numeroActivo'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroFinca" text="**N&uacute;mero finca"/>', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaId" text="**Id. tarea"/>', dataIndex : 'tareaId', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.toolbaradjudicados.adjudicacionGrid.tareaCodigo" text="**Código tarea"/>', dataIndex : 'tareaCodigo', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaDescripcion" text="**Tarea"/>', dataIndex : 'tareaDescripcion'}		
@@ -411,6 +416,7 @@
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.idBien" text="**Id"/>', dataIndex : 'idBien', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.codigo" text="**Codigo"/>', dataIndex : 'codigo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroActivo" text="**Numero Activo"/>', dataIndex : 'numeroActivo'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroFinca" text="**N&uacute;mero finca"/>', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaId" text="**Id. tarea"/>', dataIndex : 'tareaId', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaCodigo" text="**Código tarea"/>', dataIndex : 'tareaCodigo', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaDescripcion" text="**Tarea"/>', dataIndex : 'tareaDescripcion'}		
@@ -427,6 +433,7 @@
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.idBien" text="**Id"/>', dataIndex : 'idBien', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.codigo" text="**Codigo"/>', dataIndex : 'codigo'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroActivo" text="**Numero Activo"/>', dataIndex : 'numeroActivo'}
+		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.numeroFinca" text="**N&uacute;mero finca"/>', dataIndex : 'numFinca'}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaId" text="**Id. tarea"/>', dataIndex : 'tareaId', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.toolbaradjudicados.adjudicacionGrid.tareaCodigo" text="**Código tarea"/>', dataIndex : 'tareaCodigo', hidden:true}
 		,{header : '<s:message code="plugin.nuevoModeloBienes.adjudicados.adjudicacionGrid.tareaDescripcion" text="**Tarea"/>', dataIndex : 'tareaDescripcion'}		

@@ -423,11 +423,11 @@
 			fechaActual = Date.parse(fechaActual);
        		if(formulario.isValid() && detalleFieldSet.getForm().isValid()){
        			var dateSolucionPrevista = null;
-       			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
-       				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
+       			if (objetosDinamicos['fechaSolucionPrevista']!=undefined) {
+       				dateSolucionPrevista = Date.parse(objetosDinamicos['fechaSolucionPrevista'].getValue());
        			}
        			
-       			if(dateSolucionPrevista != null && !isNaN(parseFloat(dateSolucionPrevista)) && Ext.getCmp('fechaSolucionPrevista').getValue() < fechaActual){
+       			if(dateSolucionPrevista != null && !isNaN(parseFloat(dateSolucionPrevista)) && objetosDinamicos['fechaSolucionPrevista'].getValue() < fechaActual){
        				Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fechaActual" text="**Fecha solicitud prevista no puede ser menor a la actual." />',
@@ -435,6 +435,18 @@
 					});
 					
 					return false;
+       			}
+       			
+       			if (Ext.getCmp('importePrevistoRegularizar')!=undefined) {
+       				if (Ext.getCmp('importePrevistoRegularizar').value <= 0) {
+       					Ext.Msg.show({
+       						title:'Aviso',
+       						msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.importePrevistoRegularizar" text="**El campo Importe Previsto Regularizar debe ser mayor que 0" />',
+       						buttons: Ext.Msg.OK
+       					});
+       					return false;
+       					
+       				}
        			}
        			
        			<%--

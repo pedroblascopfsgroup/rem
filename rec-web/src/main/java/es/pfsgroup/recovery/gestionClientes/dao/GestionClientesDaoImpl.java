@@ -1,5 +1,6 @@
 package es.pfsgroup.recovery.gestionClientes.dao;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -16,6 +18,8 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.capgemini.pfs.zona.ZonaManager;
+import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.recovery.gestionClientes.GestionClientesBusquedaDTO;
@@ -26,7 +30,143 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 
 	@Resource
 	private Properties appProperties;
+	
+	@Autowired
+	private ZonaManager zonaManager;
 
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public List<List<Object>> obtenerZonasExistente(Usuario usuarioLogado){
+		Set<String> codigoZonas = usuarioLogado.getCodigoZonas();
+		Set<Long> perfiles = obtenIdPerfiles(usuarioLogado.getPerfiles());
+		String whereClause = " WHERE ";
+		StringBuilder sql = new StringBuilder("SELECT v.ZON_COD, v.PEF_ID_GESTOR from V_CVE_CLIENTES_VENCIDOS_USU v ");
+		
+		// Inicio filtro por perfiles
+		if (perfiles != null) {
+			int count = 0;
+			sql.append(whereClause);
+			sql.append("V.PEF_ID_GESTOR IN (");
+			for (Long p : perfiles) {
+				count++;
+				if (count > 1) {
+					sql.append(", ");
+				}
+					sql.append(p.toString());
+				}
+				sql.append(")");
+				whereClause = " AND ";
+		}
+		// Fin Filtro por perfiles
+		// Inicio filtro por zonas
+		if (codigoZonas != null) {
+			sql.append(whereClause);
+			sql.append("(");
+			int count = 0;
+			for (String z : codigoZonas) {
+				count++;
+				if (count > 1) {
+					sql.append(" or ");
+				}
+				sql.append("V.ZON_COD like '"+z+"%'");
+			}
+			sql.append(")");
+		}
+		
+		return getSession().createSQLQuery(replaceSchema(sql.toString()))
+				.setResultTransformer(Transformers.TO_LIST).list();
+		
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes", "unused" })
+	@Override
+	public List<Map> obtenerCantidadDeVencidosUsuarioVistaVencidos(Usuario usuarioLogado,List<List<Object>> listaZonas) {
+		
+		List<Map> mapa= new ArrayList<Map>();
+//		Set<String> codigoZonas = usuarioLogado.getCodigoZonas();
+//		Set<Long> perfiles = obtenIdPerfiles(usuarioLogado.getPerfiles());
+		Set<String> zonasTotal= new HashSet<String>();
+		Set<Long> perfilesTotal= new HashSet<Long>();
+		
+		for(List<Object> lis: listaZonas){
+			String pefI= lis.get(1).toString();
+			Long pef= Long.parseLong(pefI);
+			String zona= lis.get(0).toString();
+			
+			List<ZonaUsuarioPerfil> listaZonPefUsu= zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(pef, zona);
+			for(ZonaUsuarioPerfil zon: listaZonPefUsu){
+				if(!Checks.esNulo(zon.getZona())){
+					
+					for(String z: usuarioLogado.getCodigoZonas()){
+						if(zon.getZona().getCodigo().equals(z)){
+							zonasTotal.add(zona);
+							perfilesTotal.add(zon.getPerfil().getId());
+						}
+					}
+				}
+			}
+			
+		}
+		
+		if((perfilesTotal != null && perfilesTotal.size()!=0) || (zonasTotal != null && zonasTotal.size()!=0)){
+
+			StringBuilder sql = new StringBuilder("WITH CODIGOS AS (");
+			sql.append("SELECT 'REC' AS COD, '1' AS COD_STA FROM DUAL");
+			sql.append(" UNION ALL SELECT 'SIS', '98' FROM DUAL");
+			sql.append(" UNION ALL SELECT 'SIN', '99' FROM DUAL");
+			sql.append(")");
+			sql.append("SELECT C.COD AS ").append(COLUM_CODIGO);
+			sql.append(", C.COD_STA AS ").append(COLUMN_STA_CODIGO);
+			sql.append(", STA.DD_STA_DESCRIPCION AS ").append(COLUMN_STA_DESCRIPCION);
+			sql.append(", COUNT(DISTINCT V.PER_ID) AS ").append(COLUMN_TOTAL_COUNT);
+			sql.append(" FROM CODIGOS C");
+			sql.append(" JOIN  V_CVE_CLIENTES_VENCIDOS_USU v ON C.COD = V.DD_TIT_CODIGO");
+			sql.append(" JOIN ${master.schema}.DD_STA_SUBTIPO_TAREA_BASE STA ON C.COD_STA = STA.DD_STA_CODIGO");
+	
+			String whereClause = " WHERE ";
+			// Inicio filtro por perfiles
+			if (perfilesTotal != null || perfilesTotal.size()!=0) {
+				int count = 0;
+				sql.append(whereClause);
+				sql.append("V.PEF_ID_GESTOR IN (");
+				for (Long p : perfilesTotal) {
+					count++;
+					if (count > 1) {
+						sql.append(", ");
+					}
+					sql.append(p.toString());
+				}
+				sql.append(")");
+				whereClause = " AND ";
+			}
+			// Fin Filtro por perfiles
+	
+			// Inicio filtro por zonas
+			if (zonasTotal != null || zonasTotal.size()!=0) {
+				sql.append(whereClause);
+				sql.append("(");
+				int count = 0;
+				for (String z : zonasTotal) {
+					count++;
+					if (count > 1) {
+						sql.append(" or ");
+					}
+					sql.append("V.ZON_COD = '").append(z).append("'");
+				}
+				sql.append(")");
+			}
+			sql.append(" GROUP BY C.COD, C.COD_STA, STA.DD_STA_DESCRIPCION");
+			// Fin filtro por zonas
+	
+			return getSession().createSQLQuery(replaceSchema(sql.toString()))
+					.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
+		}
+		else{
+			return mapa;
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List<Map> obtenerCantidadDeVencidosUsuario(Usuario usuarioLogado) {
@@ -106,7 +246,7 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 	}
 
 	@Override
-	public Page obtenerListaGestionClientes(String codigoGestion, Usuario usuarioLogado, GestionClientesBusquedaDTO busquedaDTO) {
+	public Page obtenerListaGestionClientes(String codigoGestion, Usuario usuarioLogado, GestionClientesBusquedaDTO busquedaDTO, List<List<Object>> listaZonas) {
 		
 		StringBuilder sql = new StringBuilder("SELECT DISTINCT p.per_id                         										   AS \"id\", ");
 		  sql.append("tpe.dd_tpe_descripcion                                                                   AS \"descripcion\", ");
@@ -203,24 +343,49 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 		  sql.append("LEFT JOIN ${master.schema}.DD_TIT_TIPO_ITINERARIOS tit ");
 		  sql.append("ON iti.DD_TIT_ID      = tit.DD_TIT_ID ");
 		
-		getFiltroClientes(sql, codigoGestion, usuarioLogado, busquedaDTO);
+		getFiltroClientes(sql, codigoGestion, usuarioLogado, busquedaDTO, listaZonas);
 
 		return HibernateQueryUtils.pageSql(this, sql.toString(), GestionVencidosDTO.class, busquedaDTO);
 	}
 	
-	private String getFiltroClientes(StringBuilder sql, String codigoGestion, Usuario usuarioLogado, GestionClientesBusquedaDTO busquedaDTO) {
+	private String getFiltroClientes(StringBuilder sql, String codigoGestion, Usuario usuarioLogado, GestionClientesBusquedaDTO busquedaDTO, List<List<Object>> listaZonas) {
 		
-		Set<String> codigoZonas = usuarioLogado.getCodigoZonas();
-		Set<Long> perfiles = obtenIdPerfiles(usuarioLogado.getPerfiles());
+//		Set<String> codigoZonas = usuarioLogado.getCodigoZonas();
+//		Set<Long> perfiles = obtenIdPerfiles(usuarioLogado.getPerfiles());
+		Set<String> zonasTotal= new HashSet<String>();
+		Set<Long> perfilesTotal= new HashSet<Long>();
+		
+		for(List<Object> lis: listaZonas){
+			String pefI= lis.get(1).toString();
+			Long pef= Long.parseLong(pefI);
+			String zona= lis.get(0).toString();
+			
+			List<ZonaUsuarioPerfil> listaZonPefUsu= zonaManager.getZonasPerfilesUsuariosPrimerNivelExistente(pef, zona);
+			for(ZonaUsuarioPerfil zon: listaZonPefUsu){
+				if(!Checks.esNulo(zon.getZona())){
+					
+					for(String z: usuarioLogado.getCodigoZonas()){
+						if(zon.getZona().getCodigo().equals(z)){
+							zonasTotal.add(zona);
+							perfilesTotal.add(zon.getPerfil().getId());
+						}
+					}
+				}
+			}
+			
+		}
+		
 		
 		sql.append(" WHERE v.dd_tit_codigo = '");
 		sql.append(codigoGestion.replaceAll("[^\\w]", "")).append("'");
+		sql.append(" and tit.DD_TIT_CODIGO = '");
+		sql.append(codigoGestion.replaceAll("[^\\w]", "")).append("'");
 		
 		//Inicio filtro por perfiles
-		if (perfiles != null){
+		if (perfilesTotal != null){
 			int count = 0;
 			sql.append(" and V.PEF_ID_GESTOR in (");
-			for (Long p : perfiles){
+			for (Long p : perfilesTotal){
 				count ++;
 				if (count > 1){
 					sql.append(", ");
@@ -232,15 +397,15 @@ public class GestionClientesDaoImpl extends AbstractEntityDao<Persona, Long> imp
 		// Fin Filtro por perfiles
 		
 		// Inicio filtro por zonas
-		if (codigoZonas != null){
+		if (zonasTotal != null){
 			sql.append(" and (");
 			int count = 0;
-			for (String z : codigoZonas){
+			for (String z : zonasTotal){
 				count ++;
 				if (count > 1){
 					sql.append(" or ");
 				}
-				sql.append("V.ZON_COD like '").append(z).append("%'");
+				sql.append("V.ZON_COD = '").append(z).append("'");
 			}
 			sql.append(")");
 		}

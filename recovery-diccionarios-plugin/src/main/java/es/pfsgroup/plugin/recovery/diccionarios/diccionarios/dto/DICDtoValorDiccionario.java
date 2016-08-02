@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 
 public class DICDtoValorDiccionario extends WebDto{
 
@@ -24,6 +25,10 @@ public class DICDtoValorDiccionario extends WebDto{
 	
 	@NotEmpty(message="plugin.diccionarios.messages.descripLargaNoVacio")
 	private String descripcionLarga;
+	
+	private String codigoDiccionarioEditable;
+	
+	private Auditoria auditoria;
 	
 	public String getCodigo() {
 		return codigo;
@@ -54,6 +59,22 @@ public class DICDtoValorDiccionario extends WebDto{
 	}
 	public Long getIdLineaEnDiccionario() {
 		return idLineaEnDiccionario;
+	}
+	
+	public String getCodigoDiccionarioEditable() {
+		return codigoDiccionarioEditable;
+	}
+	
+	public void setCodigoDiccionarioEditable(String codigoDiccionarioEditable) {
+		this.codigoDiccionarioEditable = codigoDiccionarioEditable;
+	}
+	
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+	
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
 	}
 
 }

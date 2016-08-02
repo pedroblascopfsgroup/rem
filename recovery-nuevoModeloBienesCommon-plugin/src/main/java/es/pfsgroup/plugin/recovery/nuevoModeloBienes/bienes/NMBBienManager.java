@@ -41,7 +41,6 @@ import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.capgemini.pfs.persona.dao.EXTPersonaDao;
 import es.capgemini.pfs.persona.model.EXTPersona;
 import es.capgemini.pfs.persona.model.Persona;
@@ -179,11 +178,20 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 	 */
 	@BusinessOperation("plugin.nuevoModeloBienes.bienes.NMBbienManager.getContratos")
 	public List<NMBContratoBien> getContratos(Long idBien) {
+		List<NMBContratoBien> listNMBContratoBienTemp = new ArrayList<NMBContratoBien>();
 		List<NMBContratoBien> listNMBContratoBien = new ArrayList<NMBContratoBien>();
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "bien.id", idBien);
 		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "contrato.auditoria.borrado", false);
-		listNMBContratoBien.addAll(genericDao.getList(NMBContratoBien.class, f1, f2, f3));
+		listNMBContratoBienTemp.addAll(genericDao.getList(NMBContratoBien.class, f1, f2, f3));
+				
+		for(NMBContratoBien cb: listNMBContratoBienTemp){
+			if(Checks.esNulo(cb.getEstado()) || cb.getEstado().getCodigo().equals(NMBDDEstadoBienContrato.COD_ESTADO_BIEN_ACTIVO)){
+				listNMBContratoBien.add(cb);
+				
+			}
+		}
+		
 		return listNMBContratoBien;
 	}
 
@@ -1113,9 +1121,21 @@ public class NMBBienManager extends BusinessOperationOverrider<BienApi> implemen
 			
 			for (ProcedimientoBien procedimientoBien : prcBienes) {
 				DtoNMBBienAdjudicacion dto = new DtoNMBBienAdjudicacion();
-				dto.setBien(proxyFactory.proxy(BienApi.class).getInstanceOf(procedimientoBien.getBien()));
+				NMBBien nmbBien = proxyFactory.proxy(BienApi.class).getInstanceOf(procedimientoBien.getBien());
+				dto.setBien(nmbBien);
 				dto.setTareaActiva(false);
 				dto.setProcedimientoBien(procedimientoBien);
+				
+				NMBInformacionRegistralBien informacionRegistral = null;
+				for(NMBInformacionRegistralBien infReg : nmbBien.getInformacionRegistral()){
+					if(!infReg.getAuditoria().isBorrado()){
+						informacionRegistral = infReg;
+						break;
+					}
+				}
+				if(!Checks.esNulo(informacionRegistral)){
+					dto.setNumFinca(informacionRegistral.getNumFinca());	
+				}
 				
 				for (TareaExterna tareaExterna : tarea) {
 					if (procedimientoBien.getProcedimiento().equals(tareaExterna.getTareaPadre().getProcedimiento())) {

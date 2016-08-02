@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.dao.impl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +22,12 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoAsunto;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
@@ -735,6 +734,10 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				hqlWhere.append(" and s.embargo=0 ");
 			}
 		}
+		
+		if (!StringUtils.emtpyString(dto.getTramitacion())){
+				hqlWhere.append(" and s.tramitacion = ".concat(dto.getTramitacion()));	
+		}
 
 		// Filtros de pesta?a de Cliente
 		if (!StringUtils.emtpyString(dto.getCodigoCliente())
@@ -869,8 +872,19 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				hqlWhere.append(" and zonaoficinacontable.oficina = oficinacontable ");
 			}
 
-			hqlWhere.append(" and zonaoficinacontable.codigo in ("
-					+ anyadirApostrofesParaSql(dto.getCodigoZona()) + ") ");
+			List<String> listaCodigosZonas = Arrays.asList(dto.getCodigoZona().split("\\s*,\\s*"));
+			
+			hqlWhere.append(" and (");
+			for(String codigoZona: listaCodigosZonas){
+				hqlWhere.append(" zonaoficinacontable.codigo like ("+anyadirApostrofesParaSql(codigoZona+"%")+ ") ");
+				hqlWhere.append(" or");
+			}
+			hqlWhere.delete(hqlWhere.length()-2, hqlWhere.length());
+			hqlWhere.append(" )");
+			
+			
+//			hqlWhere.append(" and zonaoficinacontable.codigo like ("
+//					+ anyadirApostrofesParaSql(dto.getCodigoZona()+"%") + ") ");
 		}
 
 		if (!StringUtils.emtpyString(dto.getCodigoZonaAdm())) {
@@ -884,9 +898,20 @@ public class SubastaDaoImpl extends AbstractEntityDao<Subasta, Long> implements
 				hqlFrom.append(", DDZona zonaoficinaadministrativa ");
 				hqlWhere.append(" and zonaoficinaadministrativa.oficina = oficinaadministrativa ");
 			}
+			
+			List<String> listaCodigosZonas = Arrays.asList(dto.getCodigoZonaAdm().split("\\s*,\\s*"));
+			
+			hqlWhere.append(" and (");
+			for(String codigoZona: listaCodigosZonas){
+				hqlWhere.append(" zonaoficinaadministrativa.codigo like ("+anyadirApostrofesParaSql(codigoZona+"%")+ ") ");
+				hqlWhere.append(" or");
+			}
+			hqlWhere.delete(hqlWhere.length()-2, hqlWhere.length());
+			hqlWhere.append(" )");
+			
 
-			hqlWhere.append(" and zonaoficinaadministrativa.codigo in ("
-					+ anyadirApostrofesParaSql(dto.getCodigoZona()) + ") ");
+//			hqlWhere.append(" and zonaoficinaadministrativa.codigo in ("
+//					+ anyadirApostrofesParaSql(dto.getCodigoZona()) + ") ");
 		}
 
 

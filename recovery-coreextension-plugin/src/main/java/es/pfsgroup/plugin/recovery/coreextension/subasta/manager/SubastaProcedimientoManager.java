@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.recovery.coreextension.subasta.manager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBContratoBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.recovery.ext.impl.asunto.model.DDGestionAsunto;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
@@ -833,5 +835,36 @@ public class SubastaProcedimientoManager implements SubastaProcedimientoApi {
 	private boolean isNegative(BigDecimal b) {
         return b.signum() == -1;
     }
+
+	public Boolean compruebaTasacionElectronica(Date fechaPubliBoe, Subasta sub) {
+		List<LoteSubasta> loteSubasta = sub.getLotesSubasta();
+		List<Bien> bienes = new ArrayList<Bien>();
+		for (LoteSubasta lote : loteSubasta){
+			bienes.addAll(lote.getBienes());
+		}
+		List<NMBValoracionesBien> valoracionesBien = new ArrayList<NMBValoracionesBien>();
+		NMBValoracionesBien valoracionBien = null;
+		
+		for (Bien bien : bienes){
+			valoracionBien = genericDao.get(NMBValoracionesBien.class, genericDao.createFilter(FilterType.EQUALS, "bien.id", bien.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+			valoracionesBien.add(valoracionBien);
+		}	
+		Calendar fecha = Calendar.getInstance();
+		Calendar fechaBoe = Calendar.getInstance();
+	
+		for (NMBValoracionesBien valoracion : valoracionesBien){
+			if(!Checks.esNulo(valoracion.getFechaValorTasacion())){
+				fecha.setTime(valoracion.getFechaValorTasacion());
+				fechaBoe.setTime(fechaPubliBoe);
+				fechaBoe.add(fechaBoe.MONTH,-5);
+				if(fecha.before(fechaBoe)){
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		return true;
+	}
 
 }

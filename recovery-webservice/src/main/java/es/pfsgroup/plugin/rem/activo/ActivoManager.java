@@ -468,9 +468,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter idActivoFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", codigoDocumento);
 
-		ActivoAdjuntoActivo adjuntoActivo = (ActivoAdjuntoActivo) genericDao.get(ActivoAdjuntoActivo.class, idActivoFilter, codigoDocumentoFilter);
+		//ActivoAdjuntoActivo adjuntoActivo = (ActivoAdjuntoActivo) genericDao.get(ActivoAdjuntoActivo.class, idActivoFilter, codigoDocumentoFilter);
+		List<ActivoAdjuntoActivo> adjuntosActivo = genericDao.getList(ActivoAdjuntoActivo.class, idActivoFilter, codigoDocumentoFilter);
 
-		if (!Checks.esNulo(adjuntoActivo) && !Checks.esNulo(adjuntoActivo.getId())){
+		if (!Checks.estaVacio(adjuntosActivo)){
 			return true;
 		} else {
 			return false;

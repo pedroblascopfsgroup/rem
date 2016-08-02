@@ -42,6 +42,7 @@ import es.capgemini.pfs.bien.model.Bien;
 import es.capgemini.pfs.comun.ComunBusinessOperation;
 import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.contrato.model.ContratoPersona;
+import es.capgemini.pfs.core.api.tareaNotificacion.TareaNotificacionApi;
 import es.capgemini.pfs.multigestor.api.GestorAdicionalAsuntoApi;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.parametrizacion.dao.ParametrizacionDao;
@@ -52,6 +53,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.prorroga.model.Prorroga;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -74,9 +76,11 @@ import es.pfsgroup.plugin.precontencioso.documento.model.DDEstadoDocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DDUnidadGestionPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.DocumentoPCO;
 import es.pfsgroup.plugin.precontencioso.documento.model.SolicitudDocumentoPCO;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.GestorTareasApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.api.ProcedimientoPcoApi;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPCOAssembler;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.assembler.ProcedimientoPcoGridDTOAssembler;
+import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.GestorTareasDao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dao.ProcedimientoPCODao;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.ActualizarProcedimientoPcoDtoInfo;
 import es.pfsgroup.plugin.precontencioso.expedienteJudicial.dto.HistoricoEstadoProcedimientoDTO;
@@ -192,6 +196,9 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Autowired
 	private TipoProcedimientoDao tipoProcedimientoDao;
 	
+	@Autowired
+	private GestorTareasDao gestorTareasDao;
+	
 	@BusinessOperation(BO_PCO_COMPROBAR_FINALIZAR_PREPARACION_EXPEDIENTE)
 	@Override
 	public boolean comprobarFinalizarPreparacionExpedienteJudicialPorProcedimientoId(Long idProcedimiento) {
@@ -288,48 +295,63 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 		cambiarEstadoExpediente(idProcedimiento, DDEstadoPreparacionPCO.PREPARACION);
 
 		//Cancelar tarea actual
-//		cancelarTareaActual(procedimientoPco);
+		cancelarTareaActual(procedimientoPco);
 		
-//		Long idProc = procedimientoPco.getProcedimiento().getId();
+		Long idProc = procedimientoPco.getProcedimiento().getId();
 		
 		//Crear tarea Preparar Expediente
-//		proxyFactory.proxy(GestorTareasApi.class).crearTareaEspecial(idProc, PrecontenciosoBPMConstants.PCO_PrepararExpediente);		
+		proxyFactory.proxy(GestorTareasApi.class).crearTareaEspecial(idProc, PrecontenciosoBPMConstants.PCO_PrepararExpediente);	
+		
+		///Movemos el token
+		moverTokenAlNode(idProcedimiento, PrecontenciosoBPMConstants.PCO_PrepararExpediente);
+	}
+	
+	private void moverTokenAlNode(Long idPrc, String codigoTap){
+		
+		Procedimiento procedimiento = procedimientoDao.get(idPrc);
+		Long idProcesBPM = procedimiento.getProcessBPM();
+		Long idProcesDefinition =  gestorTareasDao.getProcesDefinition(idProcesBPM);
+		
+		Long idNode = gestorTareasDao.getNodeByCodTapAndIdProcesDefinition(idProcesDefinition, codigoTap);
+		
+		Long idToken = gestorTareasDao.getTokenId(idProcesBPM);
+		gestorTareasDao.updateNodeToken(idToken, idNode);
 	}
 
-//	private void cancelarTareaActual(ProcedimientoPCO procedimientoPco) {
-//
-//		// Cancelamos tarea/s actual/es
-//		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(procedimientoPco.getProcedimiento().getId());
-//		
-//		for (TareaExterna tareaExterna : listaTareas) {
-//			cancelaTarea(tareaExterna);
-//		}
-//
-//	}
-//
-//	private void cancelaTarea(TareaExterna tareaExterna) {
-//
-//		if (tareaExterna != null) {
-//            tareaExterna.setCancelada(false);
-//            tareaExterna.setDetenida(false);
-//            tareaExternaManager.borrar(tareaExterna);
-//            
-//            TareaNotificacion tarNotif = proxyFactory.proxy(TareaNotificacionApi.class).get(tareaExterna.getTareaPadre().getId());
-//            tarNotif.setTareaFinalizada(true);
-//            proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarNotif);
-//            
-//            //Buscamos si tiene prorroga activa
-//            Prorroga prorroga = tareaExterna.getTareaPadre().getProrrogaAsociada();
-//            //Borramos (finalizamos) la prorroga si es que tiene
-//            if (prorroga != null) {
-//            	proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
-//            }
-//            if (logger.isDebugEnabled()) {
-//                logger.debug("Cancelamos tarea: " + tareaExterna.getId());
-//            }
-//        }
-//
-//	}
+	private void cancelarTareaActual(ProcedimientoPCO procedimientoPco) {
+
+		// Cancelamos tarea/s actual/es
+		List<TareaExterna> listaTareas = tareaExternaManager.getActivasByIdProcedimiento(procedimientoPco.getProcedimiento().getId());
+		
+		for (TareaExterna tareaExterna : listaTareas) {
+			cancelaTarea(tareaExterna);
+		}
+
+	}
+
+	private void cancelaTarea(TareaExterna tareaExterna) {
+
+		if (tareaExterna != null) {
+            tareaExterna.setCancelada(false);
+            tareaExterna.setDetenida(false);
+            tareaExternaManager.borrar(tareaExterna);
+            
+            TareaNotificacion tarNotif = proxyFactory.proxy(TareaNotificacionApi.class).get(tareaExterna.getTareaPadre().getId());
+            tarNotif.setTareaFinalizada(true);
+            proxyFactory.proxy(TareaNotificacionApi.class).saveOrUpdate(tarNotif);
+            
+            //Buscamos si tiene prorroga activa
+            Prorroga prorroga = tareaExterna.getTareaPadre().getProrrogaAsociada();
+            //Borramos (finalizamos) la prorroga si es que tiene
+            if (prorroga != null) {
+            	proxyFactory.proxy(TareaNotificacionApi.class).borrarNotificacionTarea(prorroga.getTarea().getId());
+            }
+            if (logger.isDebugEnabled()) {
+                logger.debug("Cancelamos tarea: " + tareaExterna.getId());
+            }
+        }
+
+	}
 
 	@Override
 	public List<HistoricoEstadoProcedimientoDTO> getEstadosPorIdProcedimiento(Long idProcedimiento) {
@@ -379,8 +401,11 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 	@Override
 	public List<ProcedimientoPcoGridDTO> busquedaSolicitudesDocumentoPorFiltro(FiltroBusquedaProcedimientoPcoDTO filtro) {
 		List<HashMap<String, Object>> documentos = procedimientoPcoDao.busquedaDocumentosPorFiltro(filtro);
-		List<ProcedimientoPcoGridDTO> documentosGridDto = ProcedimientoPcoGridDTOAssembler.fromDocumentosListHashMap(documentos);
 
+		List<ProcedimientoPcoGridDTO> documentosGridDto = ProcedimientoPcoGridDTOAssembler.fromDocumentosListHashMap(documentos);
+		//En caso de que los documentos esten asociados a un Contrato, se rellenan mas campos
+		completarValoresDocumentosByContrato(documentosGridDto, documentos);
+		
 		return documentosGridDto;
 	}
 
@@ -1116,6 +1141,12 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaEnvio()));			// Fecha envío
 				filaExportar.add(DateFormat.toString(row.getDocumento().getFechaRecepcion()));		// Fecha recepción
 				filaExportar.add(row.getDocumento().getAdjunto() != null && row.getDocumento().getAdjunto()?"Sí":"No");						// Adjunto
+				//RECOVERY-21 nuevos campos agregados para mostrar
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getTipoDocumento()));		// Tipo de documento (TFA)
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getPropietario()));		// Propietario
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getTipoProductoEntidad()));// Tipo de producto (DD_TPE_TIPO_PROD_ENTIDAD)
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getNumContrato()));		// Número contrato - 17 dítgitos 
+				filaExportar.add(ObjectUtils.toString(row.getDocumento().getNumSpec()));			// num_spec - Identificador de condiciones especiales de contratación
 			}
 			else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(tipoBusqueda)) {
 				filaExportar.add(ObjectUtils.toString(row.getLiquidacion().getEstado()));			// Estado
@@ -1178,6 +1209,12 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			cabeceras.add(formatearString("Fecha envío"));		
 			cabeceras.add(formatearString("Fecha recepción"));
 			cabeceras.add(formatearString("Adjunto"));
+			//RECOVERY-21 Nuevos campos
+			cabeceras.add(formatearString("Tipo de documento"));
+			cabeceras.add(formatearString("Propietario"));
+			cabeceras.add(formatearString("Producto"));
+			cabeceras.add(formatearString("Nº contrato"));
+			cabeceras.add(formatearString("Cod. disposición"));
 		}
 		else if(FiltroBusquedaProcedimientoPcoDTO.BUSQUEDA_LIQUIDACION.equals(tipoBusqueda)) {
 			cabeceras.add(formatearString("Estado"));
@@ -1484,6 +1521,34 @@ public class ProcedimientoPcoManager implements ProcedimientoPcoApi {
 			return prcPco;
 		}
 		return null;
+	}
+	
+
+	/**
+	 * RECOVERY-21
+	 * Al buscar elementos judiciales via DOCUMENTOS, se han añadido nuevos valores, donde algunos se completan con este método.
+	 * Por imposibilidad de aplicar Criteria para estos campos, se ha requerido de un método alternativo para rellenarlos. Ver item para mas info.
+	 * @param documentosGridDto
+	 * @param documentos
+	 */
+	private void completarValoresDocumentosByContrato(List<ProcedimientoPcoGridDTO> documentosGridDto, List<HashMap<String, Object>> documentos) {
+		
+		for (int i= 0; i < documentosGridDto.size(); i++) {
+			
+			 Long idUnidadGestion = Long.parseLong(ObjectUtils.toString(documentos.get(i).get("ugId")));
+			 DDUnidadGestionPCO unidadGestion = (DDUnidadGestionPCO) diccionarioApi.dameValorDiccionario(DDUnidadGestionPCO.class, idUnidadGestion);
+			//Si no hay coincidencia, es que el valor de unidadGestionId no hace referencia a contrato, y no se debe rellenar los valores
+			 if(!Checks.esNulo(unidadGestion.getCodigo()) && unidadGestion.getCodigo().equals("CO")) {
+				 Long idContrato =  Long.parseLong(ObjectUtils.toString(documentos.get(i).get("unidadGestionId")));
+				 Contrato contrato = genericDao.get(Contrato.class, genericDao.createFilter(FilterType.EQUALS, "id", idContrato));
+				
+				 documentosGridDto.get(i).getDocumento().setTipoProductoEntidad(contrato.getTipoProductoEntidad().getDescripcion());
+				 documentosGridDto.get(i).getDocumento().setPropietario(contrato.getCodEntidadPropietaria());
+				 documentosGridDto.get(i).getDocumento().setNumContrato(contrato.getNroContrato().substring(10, 27));
+				 documentosGridDto.get(i).getDocumento().setNumSpec(contrato.getNroContrato().substring(27));
+				 
+			 }
+		}
 	}
 	
 }

@@ -1,5 +1,7 @@
 package es.pfsgroup.recovery.ext.turnadoProcuradores;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,7 +9,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
@@ -25,11 +32,13 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
 import es.pfsgroup.plugin.recovery.coreextension.subasta.api.SubastaProcedimientoApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
 import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.DDTipoPrcIniciador;
 import es.pfsgroup.recovery.ext.impl.asunto.model.EXTAsunto;
 import es.pfsgroup.recovery.ext.impl.tareas.EXTTareaExternaValor;
@@ -42,6 +51,9 @@ import es.pfsgroup.recovery.ext.turnadodespachos.EsquemaTurnadoDto;
 public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	@Resource
+	private Properties appProperties;
 
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
@@ -859,5 +871,98 @@ public class TurnadoProcuradoresManager implements TurnadoProcuradoresApi {
 		
 		return listaTposDisponibles;
 	}	
+	
+	@Override
+	public Page listaDetalleHistorico(TurnadoHistoricoDto dto) {
+		Usuario usuarioLogado = usuarioManager.getUsuarioLogado();
+		Page page = esquemaTurnadoProcuradorDao.buscarDetalleHistorico(dto, usuarioLogado);
+		return page;
+	}
+	
+	@Override
+	public FileItem generarExcelExportacionElementos(TurnadoHistoricoDto filter) {
+		
+		List<TurnadoHistorico> listaElementos = new ArrayList<TurnadoHistorico>();
+		
+		listaElementos = esquemaTurnadoProcuradorDao.buscarDetalleHistoricoConFiltro(filter);
+		return generarExcelElementos(listaElementos, filter.toString());
+	}
+	
+	private FileItem generarExcelElementos(List<TurnadoHistorico> listaElementos, String tipoBusqueda){
+		List<List<String>> valores = new ArrayList<List<String>>();
+
+		for (TurnadoHistorico row : listaElementos) {
+			List<String> filaExportar = new ArrayList<String>();
+
+			filaExportar.add(ObjectUtils.toString(row.getAsunto().getNombre()));
+			filaExportar.add(ObjectUtils.toString(row.getTipoPlaza().getDescripcion()));
+			filaExportar.add(ObjectUtils.toString(row.getTipoProcedimiento().getDescripcion()));
+			filaExportar.add(ObjectUtils.toString(row.getImporte()));
+			filaExportar.add(ObjectUtils.toString(row.getMensaje()));
+			filaExportar.add(ObjectUtils.toString(row.getProcuAsign().getNombre()));
+			filaExportar.add(ObjectUtils.toString(row.getProcedimiento().getSaldoRecuperacion()));
+			filaExportar.add(ObjectUtils.toString(row.getProcuGaa().getNombre()));
+			filaExportar.add(ObjectUtils.toString(row.getAuditoria().getUsuarioCrear()));
+			filaExportar.add(DateFormat.toString(row.getAuditoria().getFechaCrear()));
+	
+			valores.add(filaExportar);
+		}
+
+		String nombreFichero = (new SimpleDateFormat("yyyyMMddHHmmss").format(new Date())) + "-detalleHistorico.xls";
+		String rutaCompletaFichero = !Checks.esNulo(appProperties.getProperty("files.temporaryPath")) ? appProperties.getProperty("files.temporaryPath") : "";
+
+		rutaCompletaFichero += File.separator.equals(rutaCompletaFichero.substring(rutaCompletaFichero.length()-1)) || rutaCompletaFichero.length() == 0 ? nombreFichero : File.separator+nombreFichero; 
+
+		//Creo el fichero excel
+		HojaExcel hojaExcel = new HojaExcel();
+		hojaExcel.crearNuevoExcel(rutaCompletaFichero, getListaCabecera(), valores);
+
+		FileItem excelFileItem = new FileItem(hojaExcel.getFile());
+		excelFileItem.setFileName(rutaCompletaFichero);
+		excelFileItem.setContentType(HojaExcel.TIPO_EXCEL);
+		excelFileItem.setLength(hojaExcel.getFile().length());
+
+		return excelFileItem;
+	}
+	
+	private ArrayList<String> getListaCabecera(){
+		
+		ArrayList<String> cabeceras = new ArrayList<String>();
+		
+		//Cabecera de las columnas
+		cabeceras.add(formatearString("Asunto"));
+		cabeceras.add(formatearString("Plaza"));
+		cabeceras.add(formatearString("Actuación"));
+		cabeceras.add(formatearString("Principal turnado"));
+		cabeceras.add(formatearString("Regla aplicada"));		
+		cabeceras.add(formatearString("Procurador asignado"));		
+		cabeceras.add(formatearString("Principal vigente"));
+		cabeceras.add(formatearString("Procurador vigente"));
+		cabeceras.add(formatearString("Letrado"));
+		cabeceras.add(formatearString("Fecha"));
+		
+		return cabeceras;
+	}
+	
+	//Formatea las String introducidas que desean verse correctamente en la hoja excel
+	private String formatearString(String texto){
+			
+			texto = texto.replace("ñ", "\u00f1");
+			texto = texto.replace("Ñ", "\u00d1");
+			
+			texto = texto.replace("á", "\u00e1");
+			texto = texto.replace("é", "\u00e9");
+			texto = texto.replace("í", "\u00ed");
+			texto = texto.replace("ó", "\u00f3");
+			texto = texto.replace("ú", "\u00fa");
+
+			texto = texto.replace("Á", "\u00c1");
+			texto = texto.replace("É", "\u00c9");
+			texto = texto.replace("Í", "\u00cd");
+			texto = texto.replace("Ó", "\u00d3");
+			texto = texto.replace("Ú", "\u00da");
+			
+			return texto;
+		}
 	
 }

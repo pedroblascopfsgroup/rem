@@ -47,6 +47,7 @@ import es.capgemini.pfs.itinerario.model.DDEstadoItinerario;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 
 /**
  * Clase que representa la entidad Asunto.
@@ -376,6 +377,10 @@ public class Asunto implements Serializable, Auditable {
      * @param nombre the nombre to set
      */
     public void setNombre(String nombre) {
+    	if (!Checks.esNulo(nombre))
+    		if (nombre.length()>50)
+    			nombre=nombre.substring(0,50);
+    	
         this.nombre = nombre;
     }
 

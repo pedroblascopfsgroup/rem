@@ -943,5 +943,17 @@ public class AdjuntoManager implements AdjuntoApi{
 		return exp;
 	}
 
+
+	/* PARA UNA NECESIDAD PARTICULAR DE HAYA*/
+	@Override
+	public List<Long> obtenerIdsTiposDocMapeados(Long idAsunto) {
+		return null;
+	}
+
+
+	/* PARA UNA NECESIDAD PARTICULAR DE HAYA*/
+	public List<Long> obtenerIdsTiposDocMapeadosProc(Long idProcedimiento) {
+		return null;
+	}
 	
 }

@@ -442,6 +442,43 @@ app.creaNumber = function(name, label, value, config){
 	cfg.maxValue = 9999999999999999;
 	//margen para IE
 	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';
+    	
+	if (cfg.autoCreate == null)
+	{
+		cfg.autoCreate = {tag: "input", type: "text",maxLength:"16", autocomplete: "off"};
+	}
+
+	/*
+		Ya se ha hecho una copia en la primera l�nea del m�todo, �para que copiar m�s?
+		fwk.js.copyProperties(cfg, config, ['width','style','labelStyle']);
+	*/
+	return new Ext.form.NumberField(cfg);
+};
+
+app.creaNumberDecimales = function(name, label, value, config){
+	var cfg = config || {};
+	cfg.name = name;
+	cfg.value = value;
+	cfg.fieldLabel = label;
+	cfg.maxValue = 9999999999999999;
+	//margen para IE
+	cfg.style=cfg.style?cfg.style+';margin:0px':'margin:0px';
+	
+	cfg.setValue = function(v){
+    	v = Ext.isNumber(v) ? v : String(v).replace(this.decimalSeparator, ".");
+        v = this.fixPrecision(v);
+        v = isNaN(v) ? '' : String(v).replace(".", this.decimalSeparator);
+        return Ext.form.NumberField.superclass.setValue.call(this, v);
+	};
+		
+	cfg.fixPrecision = function(value) {
+        var nan = isNaN(value);
+        if (!this.allowDecimals || this.decimalPrecision == -1 || nan || !value) {
+            return nan ? '' : value;
+        }
+        return parseFloat(value).toFixed(this.decimalPrecision);
+   	};
+    	
 	if (cfg.autoCreate == null)
 	{
 		cfg.autoCreate = {tag: "input", type: "text",maxLength:"16", autocomplete: "off"};
@@ -599,10 +636,10 @@ app.creaDblSelect = function(data,label, config){
 	                data : this.toData
 	            });
 	        }
-            if(this.toStore.find('codigo',id)>=0) {
+            if(this.toStore.findExact('codigo',id)>=0) {
                 continue;
             }
-            rec = this.fromStore.find('codigo',id);
+            rec = this.fromStore.findExact('codigo',id);
             if(rec>=0) {
             	rec = this.fromStore.getAt(rec);
                 this.toStore.add(rec);

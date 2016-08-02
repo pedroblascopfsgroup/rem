@@ -269,4 +269,20 @@ public class AdjuntoHayaCajamarManager extends AdjuntoManager  implements Adjunt
 		Usuario usuario = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		return (ENTIDAD_HAYA.equals(usuario.getEntidad().getDescripcion()) && Boolean.parseBoolean(appProperties.getProperty(GESTOR_DOCUMENTAL_HAYA_WS_ACTIVADO)));
 	}
+
+	@Override
+	public List<Long> obtenerIdsTiposDocMapeados(Long idAsunto) {
+		if(esEntidadHaya()){
+			return adjuntoHayaManager.obtenerIdsTiposDocMapeados(idAsunto);
+		} 
+		return null;
+	}
+
+	@Override
+	public List<Long> obtenerIdsTiposDocMapeadosProc(Long idProcedimiento) {
+		if(esEntidadHaya()){
+			return adjuntoHayaManager.obtenerIdsTiposDocMapeadosProc(idProcedimiento);
+		} 
+		return null;
+	}
 }

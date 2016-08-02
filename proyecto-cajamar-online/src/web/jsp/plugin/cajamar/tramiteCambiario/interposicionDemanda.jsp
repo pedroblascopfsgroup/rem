@@ -14,7 +14,7 @@ var tipo_wf='${tipoWf}'
 
 var puedeGuardar=0;
 
-<%@ include file="/WEB-INF/jsp/plugin/procedimientos-bpmHaya-plugin/elementos.jsp" %>
+<%@ include file="/WEB-INF/jsp/plugin/cajamar/elementos.jsp" %>
 
 var items=[];
 var offset=0;

@@ -12,10 +12,9 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.plugin.recovery.coreextension.api.CoreProjectContext;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dao.DespachoExternoExtrasDao;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.dto.DespachoExternoExtrasDto;
 import es.pfsgroup.plugin.recovery.coreextension.despachoExternoExtras.model.DespachoExternoExtras;
@@ -27,12 +26,9 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	@Autowired
-	private CoreProjectContext context;
-	
 	public DespachoExternoExtrasDto getDtoDespachoExtras(Long idDespacho) {
 		DespachoExternoExtrasDto despachoExtrasDto = new DespachoExternoExtrasDto();
-		DespachoExternoExtras despachoExtras = genericDao.get(DespachoExternoExtras.class, genericDao.createFilter(FilterType.EQUALS, "id", idDespacho));
+		DespachoExternoExtras despachoExtras = genericDao.get(DespachoExternoExtras.class, genericDao.createFilter(FilterType.EQUALS, "despachoExterno.id", idDespacho));
 		
 		if(Checks.esNulo(despachoExtras)) {
 			return despachoExtrasDto;
@@ -42,14 +38,21 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setCentroRecuperacion(despachoExtras.getCentroRecuperacion());
 		despachoExtrasDto.setClasifDespachoConcursos(Checks.esNulo(despachoExtras.isClasifConcursos()) ? "" : despachoExtras.isClasifConcursos() ? "Si" : "No");
 		if(!Checks.esNulo(despachoExtras.getClasifPerfil())) {
-			despachoExtrasDto.setClasifDespachoPerfil(context.getMapaClasificacionDespachoPerfil().get(despachoExtras.getClasifPerfil().toString()));
+			despachoExtrasDto.setClasifDespachoPerfil(despachoExtras.getClasifPerfil().getDescripcion());
 		}
 		else {
 			despachoExtrasDto.setClasifDespachoPerfil("");
 		}
-		despachoExtrasDto.setCodEstAse(context.getMapaCodEstAse().get(despachoExtras.getCodEstAse()));
+		
+		if(!Checks.esNulo(despachoExtras.getCodEstAse())) {
+			despachoExtrasDto.setCodEstAse(despachoExtras.getCodEstAse().getDescripcion());
+		}
+		else {
+			despachoExtrasDto.setCodEstAse("");
+		}
+
 		if(!Checks.esNulo(despachoExtras.getContratoVigor())) {
-			despachoExtrasDto.setContratoVigor(context.getMapaContratoVigor().get(despachoExtras.getContratoVigor().toString()));
+			despachoExtrasDto.setContratoVigor(despachoExtras.getContratoVigor().getDescripcion());
 		}
 		else {
 			despachoExtrasDto.setContratoVigor("");
@@ -71,7 +74,7 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setFechaServicioIntegral(!Checks.esNulo(despachoExtras.getFechaServicioIntegral()) ? formateoFecha(despachoExtras.getFechaServicioIntegral()) : null);
 		despachoExtrasDto.setIrpfAplicado(!Checks.esNulo(despachoExtras.getIrpf()) ? despachoExtras.getIrpf().toString() : null);
 		if(!Checks.esNulo(despachoExtras.getDescripcionIVA())) {
-			despachoExtrasDto.setIvaDescripcion(context.getMapaDescripcionIVA().get(despachoExtras.getDescripcionIVA().toString()));
+			despachoExtrasDto.setIvaDescripcion(despachoExtras.getDescripcionIVA().getDescripcion());
 		}
 		else {
 			despachoExtrasDto.setIvaDescripcion("");
@@ -80,11 +83,11 @@ public class DespachoExternoExtrasDaoImpl extends AbstractEntityDao<DespachoExte
 		despachoExtrasDto.setOficinaEntregas(despachoExtras.getOficinaEntregas());
 		despachoExtrasDto.setOficinaLiquidacion(despachoExtras.getOficinaLiquidacion());
 		despachoExtrasDto.setOficinaProvisiones(despachoExtras.getOficinaProvisiones());
-		if(!Checks.esNulo(despachoExtras.getRelacionBankia())) {
-			despachoExtrasDto.setRelacionBankia(context.getMapaRelacionBankia().get(despachoExtras.getRelacionBankia().toString()));
+		if(!Checks.esNulo(despachoExtras.getRelacionEntidad())) {
+			despachoExtrasDto.setRelacionEntidad(despachoExtras.getRelacionEntidad().getDescripcion());
 		}
 		else {
-			despachoExtrasDto.setRelacionBankia("");
+			despachoExtrasDto.setRelacionEntidad("");
 		}
 		despachoExtrasDto.setServicioIntegral(Checks.esNulo(despachoExtras.isServicioIntegral()) ? "" : despachoExtras.isServicioIntegral() ? "Si" : "No");
 		despachoExtrasDto.setTipoDoc(!Checks.esNulo(despachoExtras.getTipoDocumento()) ? despachoExtras.getTipoDocumento().getDescripcion() : "");

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="tramiteDeGestionDeLlaves" width="1176" height="774">
+<root-container name="tramiteDeGestionDeLlaves" width="1010" height="835">
   <node name="Inicio" x="273" y="4" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -34,23 +34,6 @@
     </edge>
     <edge>
       <label x="3" y="-43"/>
-    </edge>
-  </node>
-  <node name="P417_RegistrarRecepcionLlavesDepFinal" x="220" y="387" width="301" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="-332" h1="6" w2="-332" h2="6"/>
-      <bendpoint w1="-308" h1="-21" w2="-308" h2="-21"/>
-    </edge>
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="27" y="-7"/>
-      <bendpoint w1="-304" h1="-107" w2="-273" h2="102"/>
     </edge>
   </node>
   <node name="P417_Decision1" x="820" y="473" width="132" height="36">

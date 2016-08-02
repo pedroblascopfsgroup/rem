@@ -10,7 +10,7 @@
                     <json:property name="id" value="${cex.expedienteContrato.contrato.id}" />
                     <json:property name="vencido" value="${cex.expedienteContrato.contrato.vencido}" />
                     <json:property name="cc" value="${cex.expedienteContrato.contrato.codigoContrato}" />
-                    <json:property name="tipo" value="${cex.expedienteContrato.contrato.tipoProducto.descripcion}" />
+                    <json:property name="tipo" value="${cex.expedienteContrato.contrato.tipoProductoEntidad.descripcion}" />
                     <json:property name="saldoIrregular" value="${cex.expedienteContrato.contrato.lastMovimiento.posVivaVencidaAbsoluta}" />
 					<json:property name="saldoNoVencido" value="${cex.expedienteContrato.contrato.lastMovimiento.posVivaNoVencidaAbsoluta}" />
                     <json:property name="saldoTotal" value="${cex.expedienteContrato.contrato.lastMovimiento.saldoTotalAbsoluto}" />

@@ -37,6 +37,17 @@ public class DDEstadoItinerarioManager {
     public List<DDEstadoItinerario> getEstadosExpedientes(){
     	return ddEstadoItinerarioDao.findByEntidad(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE);
     }
+    
+    /**
+     * devuelve los estados correspondientes a un tipo de entidad y un tipo de itinerario.
+     * @param tipoEntidad el tipo de entidad y codigo del tipo de itinerario
+     * @return la lista de estados
+     */
+    @BusinessOperation(ConfiguracionBusinessOperation.BO_EST_ITI_MGR_GET_ESTADOS_EXPEDIENTES_POR_TIPO_ITINERARIO)
+    public List<DDEstadoItinerario> getEstadosItiExpedientesByTipoItinerario(String codigoTipoItinerario){
+    	return ddEstadoItinerarioDao.findByEntidadAndTipoItinerario(DDTipoEntidad.CODIGO_ENTIDAD_EXPEDIENTE, codigoTipoItinerario);
+    }
+    
 
     /**
      * Devuelve la lista de estados para un cliente.

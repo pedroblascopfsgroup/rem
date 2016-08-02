@@ -20,6 +20,7 @@
 		</json:property>
 		<json:property name="comentarios" value="${rec.comentarios}"/>
 		<json:property name="detenida" value="${rec.tareaAsociada.tareaExterna.detenida}"/>
+		<json:property name="numOperacion" value="${rec.numOperacion}"/>
 	</json:object>
 	</json:array>
 	

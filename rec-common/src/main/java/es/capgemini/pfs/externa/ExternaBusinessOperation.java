@@ -22,6 +22,7 @@ public final class ExternaBusinessOperation {
     public static final String BO_ASU_MGR_BORRAR_ASUNTO = "asuntosManager.borrarAsunto";
     public static final String BO_ASU_MGR_CREAR_ASUNTO = "asuntosManager.crearAsunto";
     public static final String BO_ASU_MGR_CREAR_ASUNTO_DTO = "asuntosManager.crearAsuntoDTO";
+    public static final String BO_ASU_MGR_CREAR_ASUNTO_LITIGIO = "extAsuntosManager.crearAsuntoLitigio";
     public static final String BO_ASU_MGR_GET_ASUNTOS_MISMO_NOMBRE = "asuntosManager.getAsuntosMismoNombre";
     public static final String BO_ASU_MGR_CREAR_PRE_ASUNTO = "asuntosManager.crearPreAsunto";
     public static final String BO_ASU_MGR_GET = "asuntosManager.get";

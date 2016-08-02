@@ -48,6 +48,8 @@
 					<fwk:date value="${tp.fechaVencReal}" />
 			</json:property>
 			<json:property name="destinatarioTarea" value="${tp.destinatarioTarea}" />
+			<json:property name="descripcionTipo" value="${tp.descripcionTipo}" />
+			
 		</json:object>
 
 	</json:array>

@@ -5,20 +5,20 @@
          <![CDATA[
          SELECT FRC_FECHA_EXTRACCION AS ERROR_FIELD,
          'GCL' AS ENTITY_CODE
-         from FRC_FICHEROS_CARGADOS
+         from FRC_FICHEROS_CARGADOS 
          where FRC_FECHA_EXTRACCION > to_date(?,'YYYYMMDD')
          and DD_TFI_ID = (select DD_TFI_ID from ${master.schema}.DD_TFI_TIPO_FICHERO where DD_TFI_CODIGO='GCL')
           ]]>
     </entry>
     <entry key="gcl-01.entityValidatorGrupos">
          <![CDATA[
-          SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_COD_ENTIDAD AS ENTITY_CODE
+   		  SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_COD_ENTIDAD AS ENTITY_CODE      
           FROM TMP_GCL_GRUPOS_CLIENTES WHERE TMP_GCL_COD_ENTIDAD <> ?
           ]]>
     </entry>
     <entry key="gcl-05.entityValidatorRelaciones">
          <![CDATA[
-          SELECT  TMP_PER_GCL_COD_CLI AS ERROR_FIELD, TMP_PER_GCL_COD_ENTIDAD AS ENTITY_CODE
+   		  SELECT  TMP_PER_GCL_COD_CLI AS ERROR_FIELD, TMP_PER_GCL_COD_ENTIDAD AS ENTITY_CODE      
           FROM TMP_PER_GCL WHERE TMP_PER_GCL_COD_ENTIDAD <> ?
           ]]>
     </entry>
@@ -56,7 +56,6 @@
         ) TGLX
         ]]>
     </entry>
-
     <entry key="gcl-03.tipoGrupoValidator">
         SELECT TMP_GCL_TIPO_GRUPO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE
         from TMP_GCL_GRUPOS_CLIENTES
@@ -66,8 +65,8 @@
     <entry key="gcl-04.gruposVaciosValidator">
         SELECT TMP_GCL_CODIGO AS ERROR_FIELD, TMP_GCL_CODIGO AS ENTITY_CODE
         from TMP_GCL_GRUPOS_CLIENTES glc
-        where not exists (select *
-                          from TMP_PER_GCL rel
+    	where not exists (select * 
+    					  from TMP_PER_GCL rel 
                           where glc.TMP_GCL_CODIGO = rel.TMP_PER_GCL_CODIGO_GRUPO
                           and glc.TMP_GCL_TIPO_GRUPO = rel.TMP_PER_GCL_TIPO_GRUPO)
     </entry>
@@ -81,8 +80,8 @@
     <entry key="gcl-08.personasGruposValidator">
         SELECT pgl.TMP_PER_GCL_CODIGO_GRUPO AS ERROR_FIELD, pgl.TMP_PER_GCL_COD_CLI AS ENTITY_CODE
         from TMP_PER_GCL pgl
-        where not exists (select *
-                          from TMP_GCL_GRUPOS_CLIENTES g
+    	where not exists (select * 
+    					  from TMP_GCL_GRUPOS_CLIENTES g 
                           where pgl.TMP_PER_GCL_CODIGO_GRUPO = g.TMP_GCL_CODIGO)
     </entry>
 
@@ -108,8 +107,8 @@
             from TMP_GCL_GRUPOS_CLIENTES glc1, TMP_GCL_GRUPOS_CLIENTES glc2
             where glc1.TMP_GCL_CODIGO = glc2.TMP_GCL_CODIGO
             and glc1.TMP_GCL_TIPO_GRUPO = glc2.TMP_GCL_TIPO_GRUPO
-            and glc1.TMP_GCL_ID <> glc2.TMP_GCL_ID
-         ]]>
+			and glc1.TMP_GCL_ID <> glc2.TMP_GCL_ID 
+		 ]]> 
     </entry>
 
     <entry key="gcl-13.deleteDuplicatedRelations">
@@ -131,7 +130,7 @@
             from TMP_PER_GCL pgl,TMP_PER_GCL pgl1
             where pgl.TMP_PER_GCL_ID <> pgl1.TMP_PER_GCL_ID
             and pgl.TMP_PER_GCL_COD_CLI = pgl1.TMP_PER_GCL_COD_CLI
-         ]]>
+		 ]]> 
     </entry>
 
  <entry key="gcl-15.tipoRelacionGrupoValidator">
@@ -160,19 +159,19 @@
            GCL_FECHA_EXTRACCION,
            GCL_FICHERO_CARGA,
            GCL_RIESGO_DIR,
-                   GCL_RIESGO_INDIR,
+           GCL_RIESGO_INDIR,
            VERSION,
            USUARIOCREAR,
            FECHACREAR,
            BORRADO,
            GCL_CHAR_EXTRA1,
-               GCL_CHAR_EXTRA2,
+           GCL_CHAR_EXTRA2,
            GCL_FLAG_EXTRA1,
-                   GCL_FLAG_EXTRA2,
-                   GCL_DATE_EXTRA1,
-                   GCL_DATE_EXTRA2,
-                   GCL_NUM_EXTRA1,
-                   GCL_NUM_EXTRA2
+           GCL_FLAG_EXTRA2,
+           GCL_DATE_EXTRA1,
+           GCL_DATE_EXTRA2,
+           GCL_NUM_EXTRA1,
+           GCL_NUM_EXTRA2
         )SELECT
             S_GCL_GRUPOS_CLIENTES.nextVal,
             (select dd.DD_TGL_ID from DD_TGL_TIPO_GRUPO_CLIENTE dd where dd.DD_TGL_CODIGO = TMP_GCL_TIPO_GRUPO),
@@ -186,21 +185,22 @@
             '${gcl.userPasaje}',
             SYSDATE,
             0,
-                    TMP_GCL_CHAR_EXTRA1,
-                        TMP_GCL_CHAR_EXTRA2,
-                        TMP_GCL_FLAG_EXTRA1,
-                        TMP_GCL_FLAG_EXTRA2,
-                        TMP_GCL_DATE_EXTRA1,
-                        TMP_GCL_DATE_EXTRA2,
-                        TMP_GCL_NUM_EXTRA1,
-                        TMP_GCL_NUM_EXTRA2
-        from TMP_GCL_GRUPOS_CLIENTES;
+            TMP_GCL_CHAR_EXTRA1,
+            TMP_GCL_CHAR_EXTRA2,
+            TMP_GCL_FLAG_EXTRA1,
+            TMP_GCL_FLAG_EXTRA2,
+            TMP_GCL_DATE_EXTRA1,
+            TMP_GCL_DATE_EXTRA2,
+            TMP_GCL_NUM_EXTRA1,
+            TMP_GCL_NUM_EXTRA2
+        FROM TMP_GCL_GRUPOS_CLIENTES;
+        COMMIT;
       END;
     </entry>
 
     <entry key="gcl.pasajeRelacionesProduccion">
       BEGIN
-        OPERACION_DDL.DLL_TABLE('STATS','TMP_PER_GCL');
+        OPERACION_DDL.DDL_TABLE('STATS','TMP_PER_GCL');
         INSERT INTO PER_GCL (
             PER_GCL_ID,
             GCL_ID,
@@ -242,7 +242,8 @@
         FROM TMP_PER_GCL
           INNER JOIN PER_PERSONAS PER ON TMP_PER_GCL_COD_CLI = PER.PER_COD_CLIENTE_ENTIDAD
           LEFT JOIN DD_TGE_TIPO_RELACION_GRUPO DD ON DD.DD_TGE_CODIGO = TMP_PER_GCL_TIPO_RELACION
-          INNER JOIN GCL_GRUPOS_CLIENTES GCL ON GCL.GCL_CODIGO = TMP_PER_GCL_CODIGO_GRUPO;
+          LEFT JOIN GCL_GRUPOS_CLIENTES GCL ON GCL.GCL_CODIGO = TMP_PER_GCL_CODIGO_GRUPO;
+        COMMIT;
        END;
     </entry>
 </properties>

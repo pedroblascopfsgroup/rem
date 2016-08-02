@@ -1,9 +1,6 @@
 package es.pfsgroup.plugin.precontencioso.documento.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-
-import es.capgemini.pfs.direccion.model.DDProvincia;
 
 public class IncluirDocumentoDto implements Serializable {
 
@@ -23,6 +20,7 @@ public class IncluirDocumentoDto implements Serializable {
 	private String numFinca;
 	private String numRegistro;
 	private String provinciaNotario;
+	private String observacionesEDP;
 	
 	public String getProtocolo() {
 		return protocolo;
@@ -90,7 +88,11 @@ public class IncluirDocumentoDto implements Serializable {
 	public void setProvinciaNotario(String provinciaNotario) {
 		this.provinciaNotario = provinciaNotario;
 	}
-	
-
+	public String getObservacionesEDP() {
+		return observacionesEDP;
+	}
+	public void setObservacionesEDP(String observacionesEDP) {
+		this.observacionesEDP = observacionesEDP;
+	}
 
 }

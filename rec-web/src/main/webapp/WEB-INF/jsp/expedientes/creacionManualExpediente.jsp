@@ -70,10 +70,12 @@
 	var contratoGeneradorPase;
 	contratosGrid.on('rowclick',function(grid, rowIndex, e){
 		btnNext.setDisabled(false);
+		labelSeleccionarContrato.setVisible(false); 
 		var rec = grid.getStore().getAt(rowIndex);
 		contratoGeneradorPase = rec.get('id');
 	});
 	contratosGrid.on('rowdblclick',function(grid, rowIndex, e){
+		labelSeleccionarContrato.setVisible(false);
 		var rec = grid.getStore().getAt(rowIndex);
 		contratoGeneradorPase = rec.get('id');
 		step(1);
@@ -86,17 +88,22 @@
 		,border:false
 		,hidden:true
 	};
+	
+	var labelSeleccionarContrato = new Ext.form.Label({
+		text:'<s:message code="expedientes.creacion.lbl.seleccion.contrato" text="**Elija el contrato de pase (principal) del nuevo expediente"/>'
+		,style:'font-size:12px;color:red;'
+	});
 
 	<c:if test="${nContratos == null || nContratos == 0}">
 		labelDescripcion.hidden = false; 
-	</c:if>	
-
+		labelSeleccionarContrato.setVisible(false); 
+	</c:if>
 
 
 	var panel1=new Ext.Panel({
 		autoHeight:true
 		,border:false
-		,items:[labelDescripcion, contratosGrid]
+		,items:[labelDescripcion, labelSeleccionarContrato, contratosGrid]
 		,id:'panelContratos'
 	});
 

@@ -101,6 +101,8 @@
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();
 	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();
+	 	parametros.observacionesEDP = observacionesEDP.getValue();
+	 	parametros.localidadNotario = comboLocalidadNotario.getValue();
 	 	
 	 	return parametros;
 	 }	
@@ -182,8 +184,72 @@
 		labelKey="precontencioso.grid.documento.incluirDocumento.provinciaNotario" 
  		label="**Provincia Notario" value="${dtoDoc.provinciaNotario}" dd="${listaProvincias}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
-	comboProvinciaNotario.labelStyle=labelStyle;	
 
+	comboProvinciaNotario.labelStyle=labelStyle;	
+	
+	comboProvinciaNotario.on('select',function(){
+		var codigo = comboProvinciaNotario.getValue();
+		optionsLocalidadNotarioStore.webflow({idProvincia:codigo});
+		comboLocalidadNotario.reset();
+		comboLocalidadNotario.setDisabled(false);
+	});
+	
+	
+	var observacionesEDP = new Ext.form.TextArea({
+			name : 'observacionesEDP'
+            ,fieldLabel: '<s:message code="precontencioso.grid.documento.editarDocumento.observaciones" text="**Observaciones" />'
+            ,height : 60
+            ,width : 170
+            ,value : '<s:message text="${dtoDoc.observacionesEDP}" javaScriptEscape="true" />'
+    });
+
+	var tipoProcedimientoRecord = Ext.data.Record.create([
+		{name:'codigo'}
+		,{name:'descripcion'}
+		,{name:'id'}
+	]);
+	
+	var optionsLocalidadNotarioStore =	page.getStore({
+	       flow: 'documentopco/getLocalidades'
+	       ,reader: new Ext.data.JsonReader({
+	    	 root : 'listaLocalidades'
+	    	}, tipoProcedimientoRecord)
+	});
+
+	var comboLocalidadNotario = new Ext.form.ComboBox({
+		name:'localidadNotario'
+		<app:test id="comboLocalidadNotario" addComa="true" />
+		,hiddenName:'localidadNotario'
+		,store:optionsLocalidadNotarioStore
+		,displayField:'descripcion'
+		,valueField:'codigo'
+		,emptyText:'----'
+		,width:175
+		,resizable:true
+		,triggerAction: 'all'
+		,labelStyle:labelStyle
+		,disabled: true
+		,forceSelection: true
+		,editable: false
+		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.localidadNotario" text="**Localidad Notario" />'
+	});
+	
+	<c:if test="${dtoDoc.localidadNotario!=null}" >
+		var codigo = comboProvinciaNotario.getValue();
+		comboLocalidadNotario.setDisabled(false);
+		optionsLocalidadNotarioStore.webflow({idProvincia:codigo});
+		comboLocalidadNotario.getStore().on("load", function(store, items){
+	        comboLocalidadNotario.reset();
+			var code = ${dtoDoc.localidadNotario};
+	        comboLocalidadNotario.setValue(code);
+        });
+	</c:if>
+
+	<c:if test="${dtoDoc.provinciaNotario!=null}" >
+		var codigo = comboProvinciaNotario.getValue();
+		comboLocalidadNotario.setDisabled(false);
+		optionsLocalidadNotarioStore.webflow({idProvincia:codigo});
+	</c:if>
 
 	var panelEdicion = new Ext.form.FieldSet({
 		title:'<s:message code="precontencioso.grid.documento.editarDocumento.infoDocumentos" text="**Información Documentos" />'
@@ -193,8 +259,8 @@
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza]}
-				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
+		,items:[{items: [ notario, asiento, finca, numFinca, numRegistro, plaza, protocolo	<sec:authorize ifAllGranted="ROLE_PUEDE_VER_OBSERVACIONES_EDP">	,observacionesEDP</sec:authorize>]}
+				,{items: [ comboProvinciaNotario, comboLocalidadNotario, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	
 	
@@ -212,5 +278,42 @@
 	
 
 	page.add(panel);
+	
+	function estadoInicial() {
+		<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+			if(data.esGestoria) {
+				notario.setDisabled(true);
+				asiento.setDisabled(true);
+				finca.setDisabled(true);
+				numFinca.setDisabled(true);
+				numRegistro.setDisabled(true);
+				plaza.setDisabled(true);
+				comboProvinciaNotario.setDisabled(true);
+				protocolo.setDisabled(true);
+				fechaEscritura.setDisabled(true);
+				tomo.setDisabled(true);
+				libro.setDisabled(true);
+				folio.setDisabled(true);
+				idufir.setDisabled(true);
+				observacionesEDP.setDisabled(true);
+			}else{
+			 	notario.setDisabled(false);
+				asiento.setDisabled(false);
+				finca.setDisabled(false);
+				numFinca.setDisabled(false);
+				numRegistro.setDisabled(false);
+				plaza.setDisabled(false);
+				comboProvinciaNotario.setDisabled(false);
+				protocolo.setDisabled(false);
+				fechaEscritura.setDisabled(false);
+				tomo.setDisabled(false);
+				libro.setDisabled(false);
+				folio.setDisabled(false);
+				idufir.setDisabled(false);
+				observacionesEDP.setDisabled(false);
+			}
+		</c:if>
+	}
+	estadoInicial();
 	
 </fwk:page>

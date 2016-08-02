@@ -130,13 +130,19 @@ public class AdjuntoManager implements AdjuntoApi{
 				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " procesado");
 				Procedimiento procedimiento = dtoAux.getProc();
 				adjuntoAsunto.setProcedimiento(procedimiento);
-				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido procedimiento " + procedimiento.getId());
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido procedimiento " + (Checks.esNulo(procedimiento)? "" :procedimiento.getId()));
 				String contentType = dtoAux.getContentType();
+				if(Checks.esNulo(contentType)){
+					contentType = "application/octet-stream";
+				}
 				adjuntoAsunto.setContentType(contentType);
-				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido contentType " + contentType);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido contentType " + (Checks.esNulo(contentType)? "" :contentType));
 				Long longitud = dtoAux.getLongitud();
+				if(Checks.esNulo(longitud)){
+					longitud = 0L; 
+				}
 				adjuntoAsunto.setLength(longitud);
-				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadida longitud " + longitud);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadida longitud " + (Checks.esNulo(longitud)? "" :longitud));
 				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
 				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
 			}
@@ -935,7 +941,7 @@ public class AdjuntoManager implements AdjuntoApi{
 			
 		};
 		Collections.sort(adjuntosAsunto, comparador);
-
+		logger.debug("Listado Adjuntos ordenado");
 		return adjuntosAsunto;
 	}
 	

@@ -172,13 +172,14 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 			logger.debug("Adjuntos recovery obtenidos " + aaList.size());
 			if (!Checks.esNulo(aaList)) {
 				for (AdjuntoAsunto aa : aaList) {
-					logger.debug("Comprobamos adjunto recovery  " + aa.getNombre());
+					logger.debug("Comprobamos adjunto recovery  " + aa.getId());
 					if (!Checks.esNulo(aa.getNombre())) {
 						logger.debug("Nombre adjunto recovery no nulo");
+						logger.debug("Nombre adjunto recovery " + aa.getNombre());
 						String nombreAA = aa.getNombre().toUpperCase();
-						logger.debug("Nombre adjunto recovery upper " + aa.getNombre().toUpperCase());
+						logger.debug("Nombre adjunto recovery upper " + nombreAA);
 						nombre = nombre.toUpperCase();
-						logger.debug("Nombre adjunto iplus upper " + nombre.toUpperCase());
+						logger.debug("Nombre adjunto iplus upper " + nombre);
 						if (nombre.endsWith(nombreAA)) {
 							logger.debug("Nombre endsWith nombreAA");
 							proc = aa.getProcedimiento();
@@ -202,7 +203,7 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 		auxDto.setContentType(contentType);
 		auxDto.setLongitud(longitud);
 		auxDto.setTipoDocumento(tipoDocumento);
-		
+		logger.debug("Devuelve auxDto " + (Checks.esNulo(auxDto)? "NULO": "RELLENO"));
 		return auxDto;
 	}
 

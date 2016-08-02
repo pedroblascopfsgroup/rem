@@ -46,8 +46,8 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -70,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
@@ -112,6 +113,9 @@ public class ActivoController {
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	
 	/**getHistoricoValoresPrecios
@@ -182,6 +186,7 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}*/
 	
+	
 	/**
 	 * Método que recupera un conjunto de datos del Activo según su id 
 	 * @param id Id del activo
@@ -189,6 +194,7 @@ public class ActivoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabActivo(Long id, String tab, ModelMap model) {
 
@@ -203,6 +209,7 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivos(DtoActivoFilter dtoActivoFiltro,
 			ModelMap model) {
@@ -261,6 +268,7 @@ public class ActivoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
 
@@ -277,6 +285,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoDatosRegistrales(DtoActivoDatosRegistrales activoDto, @RequestParam Long id,
 			ModelMap model) {
@@ -295,6 +304,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoCarga(DtoActivoCargas cargaDto,
 			@RequestParam Long id, ModelMap model) {
@@ -313,6 +323,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoInformacionAdministrativa(
 			DtoActivoInformacionAdministrativa activoDto,
@@ -331,6 +342,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoInformacionComercial(
 			DtoActivoInformacionComercial activoDto, @RequestParam Long id,
@@ -349,6 +361,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveValoresPreciosActivo(
 			DtoActivoValoraciones valoracionesDto, @RequestParam Long id,
@@ -367,6 +380,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoSituacionPosesoria(
 			DtoActivoSituacionPosesoria activoDto, @RequestParam Long id,
@@ -384,6 +398,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivoInformeComercial(
 			DtoActivoInformeComercial activoDto, @RequestParam Long id,	ModelMap model) {
@@ -401,6 +416,7 @@ public class ActivoController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListCargasById(Long id, ModelMap model) {
 
@@ -410,6 +426,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListDistribucionesById(Long id, ModelMap model) {
 
@@ -419,6 +436,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
 
@@ -428,6 +446,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model) {
 
@@ -437,6 +456,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListOcupantesLegalesById(Long id, ModelMap model) {
 
@@ -446,6 +466,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListLlavesById(Long id, ModelMap model) {
 
@@ -455,6 +476,7 @@ public class ActivoController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListCatastroById(Long id, ModelMap model) {
 
@@ -464,6 +486,7 @@ public class ActivoController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getValoresPreciosActivoById(@RequestParam Long id, ModelMap model) {
 
@@ -473,6 +496,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCatastro(DtoActivoCatastro catastroDto,
 			@RequestParam Long idCatastro, ModelMap model) {
@@ -492,6 +516,7 @@ public class ActivoController {
 
 	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 	
@@ -508,6 +533,7 @@ public class ActivoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 
@@ -524,6 +550,7 @@ public class ActivoController {
 
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDistribucion(DtoDistribucion distribucionDto,
 			@RequestParam Long idDistribucion, ModelMap model) {
@@ -542,6 +569,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createDistribucion(DtoDistribucion distribucionDto,
 			@RequestParam Long idEntidad, ModelMap model) {
@@ -560,6 +588,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCatastro(DtoActivoCatastro catastroDto,
 			@RequestParam Long idEntidad, ModelMap model) {
@@ -577,6 +606,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createOcupanteLegal(
 			DtoActivoOcupanteLegal dtoOcupanteLegal,
@@ -596,6 +626,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveOcupanteLegal(
 			DtoActivoOcupanteLegal dtoOcupanteLegal,
@@ -615,6 +646,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteDistribucion(DtoDistribucion distribucionDto,
 			@RequestParam Long idDistribucion, ModelMap model) {
@@ -633,6 +665,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteCatastro(DtoActivoCatastro catastroDto,
 			@RequestParam Long idCatastro, ModelMap model) {
@@ -650,6 +683,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteOcupanteLegal(
 			DtoActivoOcupanteLegal dtoOcupanteLegal,
@@ -706,6 +740,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteObservacionesActivo(@RequestParam Long id,
 			ModelMap model) {
@@ -742,6 +777,7 @@ public class ActivoController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListDocumentacionAdministrativaById(Long id,
 			ModelMap model) {
@@ -752,6 +788,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCargaById(Long id, ModelMap model) {
 
@@ -761,6 +798,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTasacionById(Long id, ModelMap model) {
 
@@ -775,6 +813,7 @@ public class ActivoController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboUsuarios(Long idTipoGestor, WebDto webDto,
 			ModelMap model) {
@@ -785,6 +824,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getGestores(Long idActivo, WebDto webDto, ModelMap model) {
 
@@ -829,6 +869,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getFotosById(Long id, String tipoFoto, WebDto webDto,
 			ModelMap model, HttpServletRequest request,
@@ -910,6 +951,7 @@ public class ActivoController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateFotosById(DtoFoto dtoFoto, ModelMap model) {
 
@@ -1003,6 +1045,7 @@ public class ActivoController {
 		// return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	// public ModelAndView insertarGestorAdicional(GestorEntidadDto
 	// gestorEntidadDto, WebDto webDto, ModelMap model){
@@ -1025,6 +1068,7 @@ public class ActivoController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTramites(Long idActivo, WebDto webDto, ModelMap model) {
 
@@ -1033,6 +1077,7 @@ public class ActivoController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPreciosVigentesById(Long id, WebDto webDto, ModelMap model) {
 
@@ -1041,6 +1086,7 @@ public class ActivoController {
 		return new ModelAndView("jsonView", model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListPropietarioById(Long id, ModelMap model) {
 
@@ -1050,6 +1096,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListValoracionesById(Long id, WebDto webDto, ModelMap model) {
 
@@ -1059,6 +1106,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListTasacionById(Long id, ModelMap model) {
 
@@ -1068,6 +1116,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdmisionCheckDocumentos(Long id, WebDto webDto, ModelMap model) {
 
@@ -1084,6 +1133,7 @@ public class ActivoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTramite(Long id, ModelMap model) {
 
@@ -1092,6 +1142,7 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboInferiorMunicipio(String codigoMunicipio, WebDto webDto, ModelMap model){
 		
@@ -1109,6 +1160,7 @@ public class ActivoController {
 	 * @return Listado de tareas asociadas al trámite y activas
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTareasTramite( Long idTramite, WebDto webDto,  ModelMap model) {
 		
@@ -1124,6 +1176,7 @@ public class ActivoController {
 	 *            Id del trámite
 	 * @return Listado de tareas asociadas al trámite y activas
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTareasTramiteHistorico(Long idTramite, WebDto webDto, ModelMap model) {
 
@@ -1140,6 +1193,7 @@ public class ActivoController {
 	 *            Id del trámite
 	 * @return Listado de activos del tramite, tomando de cada activo un grupo de datos reducido
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model) {
 		
@@ -1157,6 +1211,7 @@ public class ActivoController {
 	 *            Id del activo
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView crearTramite(Long idActivo, ModelMap model) {
 
@@ -1184,8 +1239,7 @@ public class ActivoController {
 	/**
 	 * Método que crea un nuevo trábajo a partir de un activo
 	 * 
-	 * @param id
-	 *            Id del activo
+	 * @param id : ID del activo
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
@@ -1203,6 +1257,7 @@ public class ActivoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveAdmisionDocumento(
 			DtoAdmisionDocumento dtoAdmisionDocumento, ModelMap model) {
@@ -1320,6 +1375,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosActivoById(Long id, ModelMap model) {
 
@@ -1363,6 +1419,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteFotosActivoById(@RequestParam Long[] id,
 			ModelMap model) {
@@ -1380,6 +1437,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView findAllHistoricoPresupuestos(
 			DtoHistoricoPresupuestosFilter dto, ModelMap model) {
@@ -1411,6 +1469,7 @@ public class ActivoController {
 	 * @param model
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView findAllIncrementosPresupuestoById(Long idPresupuesto,
 			Long idActivo, ModelMap model) {
@@ -1434,6 +1493,7 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView findLastPresupuesto(DtoActivosTrabajoFilter dto,
 			ModelMap model) {
@@ -1536,19 +1596,18 @@ public class ActivoController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoActivoFilter dtoActivoFilter, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
-		@SuppressWarnings("unchecked")
 		List<VBusquedaActivos> listaActivos = (List<VBusquedaActivos>) adapter.getActivos(dtoActivoFilter).getResults();
 		
 		List<DDRatingActivo> listaRating = utilDiccionarioApi.dameValoresDiccionarioSinBorrado(DDRatingActivo.class);
 		Map<String,String> mapRating = new HashMap<String,String>();
 		for (DDRatingActivo rating : listaRating) mapRating.put(rating.getCodigo(), rating.getDescripcion());
-		
 		
 		ExcelReport report = new ActivoExcelReport(listaActivos, mapRating);
 		
@@ -1556,6 +1615,7 @@ public class ActivoController {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCondicionantesDisponibilidad(Long id, ModelMap model){
 		model.put("data", activoApi.getCondicionantesDisponibilidad(id));
@@ -1564,6 +1624,7 @@ public class ActivoController {
 	}
 
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {
 
@@ -1584,6 +1645,7 @@ public class ActivoController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
 		
@@ -1604,6 +1666,7 @@ public class ActivoController {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCondicionEspecificaByActivo(Long id, ModelMap model) {
 
@@ -1611,6 +1674,7 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCondicionEspecifica(Long idEntidad, DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 
@@ -1618,6 +1682,7 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
 
@@ -1625,12 +1690,14 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getEstadoPublicacionByActivo(Long id, ModelMap model) {
 		model.put("data", activoApi.getEstadoPublicacionByActivo(id));
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion, ModelMap model){
 		try {
@@ -1660,5 +1727,14 @@ public class ActivoController {
 		ExcelReport report = new PublicacionExcelReport(listaPublicacionesActivos);
 		
 		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView setHistoricoEstadoPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, ModelMap model){
+		
+		model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
+		
+		return createModelAndViewJson(model);
 	}
 }

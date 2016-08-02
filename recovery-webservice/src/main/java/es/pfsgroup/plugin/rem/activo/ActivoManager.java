@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -24,7 +23,6 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -40,7 +38,6 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -60,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
@@ -89,18 +87,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Resource
     MessageService messageServices;
-	
-	@Autowired
-	private Executor executor;
 
 	@Autowired
 	private GenericABMDao genericDao;
 
 	@Autowired
 	private ActivoDao activoDao;
-
-	@Autowired
-	private ActivoAdapter activoAdapter;
 	
     @Autowired
     private GenericAdapter adapter;
@@ -121,9 +113,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public String managerName() {
 		return "activoManager";
 	}
-
-	@Autowired
-	private FuncionManager funcionManager;
 
 	@Autowired
 	private TrabajoApi trabajoApi;
@@ -206,10 +195,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.savePrecioVigente")
 	@Transactional(readOnly = false)
     public boolean savePrecioVigente(DtoPrecioVigente dto) {
-
-			
 		ActivoValoraciones activoValoracion = null;
-		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		boolean resultado = true;
 		
 		Activo activo = get(dto.getIdActivo());
@@ -553,6 +539,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	 * @param  idActivo  identificador del Activo
 	 * @return	String
 	 */
+	@SuppressWarnings("unused")
 	@Override
 	@BusinessOperationDefinition("activoManager.comprobarObligatoriosCheckingInfoActivo")
 	public String comprobarObligatoriosCheckingInfoActivo(Long idActivo) throws Exception{
@@ -632,10 +619,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioAlta", !Checks.esNulo(condicion.getUsuarioAlta())?condicion.getUsuarioAlta().getUsername():"");
 				beanUtilNotNull.copyProperty(dtoCondicionEspecifica, "usuarioBaja", !Checks.esNulo(condicion.getUsuarioBaja())?condicion.getUsuarioBaja().getUsername():"");
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -665,10 +650,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -687,10 +670,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try{
 			beanUtilNotNull.copyProperty(condicionEspecifica, "texto", dtoCondicionEspecifica.getTexto());
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -705,6 +686,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		Page page =  activoDao.getHistoricoValoresPrecios(dto);
 		
+		@SuppressWarnings("unchecked")
 		List<ActivoHistoricoValoraciones> lista = (List<ActivoHistoricoValoraciones>) page.getResults();
 		List<DtoHistoricoPrecios> historicos = new ArrayList<DtoHistoricoPrecios>();
 		
@@ -739,11 +721,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "estadoPublicacion", estado.getEstadoPublicacion().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "motivo", estado.getMotivo());
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "diasPeriodo", 0);
-				} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
+			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -756,7 +736,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro) {
 		
 		return activoDao.getPropuestas(dtoPropuestaFiltro);		
-
 	}
 
 	@Override
@@ -765,5 +744,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return activoDao.getActivosPublicacion(dtoActivosPublicacion);	
 	}
 
-	
+	@Override
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
+		
+		return activoDao.getUltimoHistoricoEstadoPublicacion(activoID);
+	}
 }

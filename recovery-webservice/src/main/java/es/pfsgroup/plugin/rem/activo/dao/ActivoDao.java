@@ -9,6 +9,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -20,35 +21,35 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	/* Nombre que le damos al Activo buscado en la HQL */
 	public static final String NAME_OF_ENTITY_ACT = "act";
 	
-	Page getListActivos(DtoActivoFilter dtoActivoFiltro, Usuario usuLogado);
+	public Page getListActivos(DtoActivoFilter dtoActivoFiltro, Usuario usuLogado);
 	
-	List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado);
+	public List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado);
 	
-	Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado);
+	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado);
 	
-	List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio);
+	public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio);
 	
-	Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado);
+	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado);
 
-	Integer getMaxOrdenFotoById(Long id);
+	public Integer getMaxOrdenFotoById(Long id);
 
-	Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuLogado);
+	public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuLogado);
 
-	Long getUltimoPresupuesto(Long id);
+	public Long getUltimoPresupuesto(Long id);
 
-	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
+	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
 	
-	Page getListActivosPrecios(DtoActivoFilter dto);
+	public Page getListActivosPrecios(DtoActivoFilter dto);
 
-	Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto);
+	public Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto);
 
+	public void deleteValoracionById(Long id);
 
-	void deleteValoracionById(Long id);
+	public ActivoCondicionEspecifica getUltimaCondicion(Long idActivo);
 
-	ActivoCondicionEspecifica getUltimaCondicion(Long idActivo);
+	public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
 
-	Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
+	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
 
-	Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
-	
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
 }

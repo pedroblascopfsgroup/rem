@@ -1,6 +1,3 @@
-/**
- * This view is used to present the details of a single AgendaItem.
- */
 Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     extend: 'HreRem.model.Base',
     idProperty: 'idActivo',
@@ -58,14 +55,7 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 		remoteUrl: 'activo/getCondicionantesDisponibilidad',
 		api: {
             read: 'activo/getCondicionantesDisponibilidad',
-            create: 'activo/getCondicionantesDisponibilidad',
-            update: 'activo/getCondicionantesDisponibilidad',
             destroy: 'activo/getCondicionantesDisponibilidad'
         }
-//		,
-//		extraParams: {pestana: '2'}
     }
-    
-    
-
 });

@@ -9,8 +9,6 @@ import java.util.Date;
  */
 public class DtoEstadoPublicacion {
 
-	private static final long serialVersionUID = 0L;
-
 	//private String id;
 	private Long idActivo;
 	private Date fechaDesde;

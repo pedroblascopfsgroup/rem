@@ -38,19 +38,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
 			model.setId(id);
-			model.load({
-			    success: function(record) {
-			    	
-			    	form.setBindRecord(record);			    	
-			    	form.unmask();
-			    	if(Ext.isFunction(form.afterLoad)) {
-			    		form.afterLoad();
-			    	}
-			    	
-			    }
-			});
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record) {
+				    	form.setBindRecord(record);			    	
+				    	form.unmask();
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
 		} else {
-			
 			models = form.getModelsInstance();
 			me.cargarTabDataMultiple(form, 0, models, form.records);
 		}
@@ -62,21 +69,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		id = me.getViewModel().get("activo.id");
 		
 		models[index].setId(id);
-		models[index].load({
-		    success: function(record) {		    	
-		    	me.getViewModel().set(nameModels[index], record);
-		    	index++;
-						
-				if (index < models.length) {							
-					me.cargarTabDataMultiple(form, index, models, nameModels);
-				} else {	
-					form.unmask();				
+		
+		if(Ext.isDefined(models[index].getProxy().getApi().read)) {
+			// Si la API tiene metodo de lectura (read).
+			models[index].load({
+			    success: function(record) {		    	
+			    	me.getViewModel().set(nameModels[index], record);
+			    	index++;
+							
+					if (index < models.length) {							
+						me.cargarTabDataMultiple(form, index, models, nameModels);
+					} else {	
+						form.unmask();				
+					}
+			    },			            
+				failure: function (a, operation) {
+					 form.unmask();
 				}
-		    },			            
-			failure: function (a, operation) {
-				 form.unmask();
+			});
+		} else {
+			// Si la API no contiene metodo de lectura (read).
+			me.getViewModel().set(nameModels[index], models[index]);
+	    	index++;
+					
+			if (index < models.length) {							
+				me.cargarTabDataMultiple(form, index, models, nameModels);
+			} else {	
+				form.unmask();				
 			}
-		});
+		}
 	
 	},
 	
@@ -167,33 +188,29 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().set("editing", false);
 		
 			if (!form.saveMultiple) {
-		
-				me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
-				
-				form.getBindRecord().save({
+				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+					// Si la API tiene metodo de escritura (create or update).
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
-					success: function (a, operation, c) 
-						{
- 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					form.getBindRecord().save({
+						success: function (a, operation, c) {
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
 							me.refrescarActivo(form.refreshAfterSave);
 							me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 			            },
-			            
+				            
 			            failure: function (a, operation) {
 			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 							 me.getView().unmask();
 			            }
-				});
-				
+					});
+				}
 			//Guardamos múltiples records	
 			} else {
-				
 				var records = form.getBindRecords();
-				
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
-				
 			}
 		} else {
 		
@@ -203,34 +220,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	saveMultipleRecords: function(contador, records) {
-		
 		var me = this;
 		
-		records[contador].save({
-				
-				success: function (a, operation, c) 
-					{
+		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
+			// Si la API tiene metodo de escritura (create or update).
+			
+			records[contador].save({
+				success: function (a, operation, c) {
 						contador++;
 						
 						if (contador < records.length) {
-							
 							me.saveMultipleRecords(contador, records);
-							
 						} else {
 							 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));						
 							 me.getView().unmask();
 							 me.refrescarActivo(false);
 							 me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-							 
 						}
-		            },
-		            
-		            failure: function (a, operation) {
- 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						me.getView().unmask();
-		            }
+	            },
+	            failure: function (a, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.getView().unmask();
+	            }
 			});		
-		
+		}
 	},
 	
 	
@@ -1066,39 +1079,151 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
+    getTotalCountDiasPeriodo: function(field) {
+		 var me = this;
+		 var dias = 0;
+		 var store = me.getViewModel().getStore('historicoEstados');
+	   	
+		 store.on("load", function(){
+			 var allRecords = store.getData();
+			
+			 allRecords.each(function(record) {
+				 console.log(record);
+				 dias += parseInt(record.getData().diasPeriodo);
+			 });
+			 field.setValue(dias);
+	   	});
+	 },
+    
+    // Esta función es llamada cuando cambia el estado de publicación del activo.
     onChangeEstadoPublicacion: function(field){
-    	var me = field;
-    	var view = me.up('datospublicacionactivo');
+    	var me = this;
+    	var view = me.getView();
     	var codigo = this.getViewModel().getData().getEstadoPublicacionCodigo;
     	
     	switch (codigo){
     	case "01": // Publicado.
-    		
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').show();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').show();
     		break;
     	case "02": // Publicación forzada.
-    		view.lookupComponent('seccionOcultacionForzada').hide();
-    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		view.lookupReference('seccionPublicacionForzada').show();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').hide();
     		break;
     	case "03": // Publicado oculto.
-    		view.lookupComponent('seccionOcultacionForzada').hide();
-    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').show();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').show();
     		break;
     	case "04": // Publicado con precio oculto.
-    		view.lookupComponent('seccionOcultacionForzada').hide();
-    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').show();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').show();
     		break;
     	case "05": // Despublicado.
-    		view.lookupComponent('seccionOcultacionForzada').hide();
-    		view.lookupComponent('seccionDespublicacionForzada').hide();
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').hide();
+    		view.lookupReference('seccionDespublicacionForzada').show();
+    		break;
+    	case "06": // No publicado.
+    		view.lookupReference('seccionPublicacionForzada').show();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').hide();
+    		view.lookupReference('seccionDespublicacionForzada').hide();
+    		break;
+    	default: // Por defecto todos se muestran.
+    		view.lookupReference('seccionPublicacionForzada').show();
+    		view.lookupReference('seccionOcultacionForzada').show();
+			view.lookupReference('seccionOcultacionPrecio').show();
+			view.lookupReference('seccionDespublicacionForzada').show();
+    		break;
+    	}
+    },
+    
+    // Esta funcion es llamado cuando algún checkbox del apartado de 'Estados de publicación' es activado
+    // y se encarga de permitir tener sólo un checkbox de estado activado. Además, reinicia el estado de
+    // los componentes de cada sección que no esté seleccionada.
+    onchkbxEstadoPublicacionChange: function(chkbx) {
+    	var me = this;
+    	if(!chkbx.getValue()){
+    		// si el checkbox esta siendo desactivado no hacer nada.
+    		return;
+    	}
+    	var id = chkbx.getId();
+    	var view = me.getView();
+    	
+    	switch (id){
+    	case "chkbxpublicacionordinaria":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// combobox.
+    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
+    		view.lookupReference('comboboxpublicaciondespublicar').reset();
+    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
+    	case "chkbxpublicacionforzada":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// combobox.
+    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
+    		view.lookupReference('comboboxpublicaciondespublicar').reset();
+    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
+    	case "chkbxpublicacionocultarprecio":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// combobox.
+    		view.lookupReference('comboboxpublicacionpublicar').reset();
+    		view.lookupReference('comboboxpublicaciondespublicar').reset();
+    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		break;
+    	case "chkbxpublicaciondespublicar":
+    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// combobox.
+    		view.lookupReference('comboboxpublicacionpublicar').reset();
+    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
+    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
+    	case "chkbxpublicacionocultacionforzada":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionordinaria').setValue(false);
+    		// combobox.
+    		view.lookupReference('comboboxpublicacionpublicar').reset();
+    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
+    		view.lookupReference('comboboxpublicaciondespublicar').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
     	default:
     		break;
     	}
-    	
-    	//view.lookupComponent('seccionPublicacionForzada').hide();
-    	//view.lookupComponent('seccionOcultacionPrecio').hide();
-    	//view.lookupComponent('seccionDespublicacionForzada').hide();
-    	//view.lookupComponent('seccionOcultacionForzada').hide();
     }
-	
 });

@@ -6,8 +6,11 @@ public class DtoCambioEstadoPublicacion {
 	private Boolean publicacionOrdinaria;
 	private Boolean publicacionForzada;
 	private Boolean ocultacionForzada;
-	private Boolean oculacionPrecio;
+	private Boolean ocultacionPrecio;
 	private Boolean despublicacionForzada;
+	private String motivo;
+	private String observaciones;
+	
 	
 	public Long getIdActivo(){
 		return idActivo;
@@ -33,16 +36,31 @@ public class DtoCambioEstadoPublicacion {
 	public void setOcultacionForzada(Boolean ocultacionForzada) {
 		this.ocultacionForzada = ocultacionForzada;
 	}
-	public Boolean getOculacionPrecio() {
-		return oculacionPrecio;
+	public Boolean getOcultacionPrecio() {
+		return ocultacionPrecio;
 	}
-	public void setOculacionPrecio(Boolean oculacionPrecio) {
-		this.oculacionPrecio = oculacionPrecio;
+	public void setOcultacionPrecio(Boolean ocultacionPrecio) {
+		this.ocultacionPrecio = ocultacionPrecio;
 	}
 	public Boolean getDespublicacionForzada() {
 		return despublicacionForzada;
 	}
 	public void setDespublicacionForzada(Boolean despublicacionForzada) {
 		this.despublicacionForzada = despublicacionForzada;
+	}
+	public String getMotivo() {
+		return motivo;
+	}
+	public void setMotivo(String motivo) {
+		this.motivo = motivo;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	}
 }

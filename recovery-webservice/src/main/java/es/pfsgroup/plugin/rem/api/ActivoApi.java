@@ -13,10 +13,12 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -205,11 +207,16 @@ public interface ActivoApi {
 		/**
 		 * Este metodo obtiene una página de resultados de la búsqueda de Activos Publicación.
 		 * @param dtoActivosPublicacion
-		 * @return
+		 * @return Devuelve los resultados paginados del grid de la búsqueda de activos publicación.
 		 */
 		public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
 		
-		
+		/**
+		 * Este método obtiene el último HistoricoEstadoPublicacion por el ID de activo.
+		 * @param activoID : ID del activo para buscar el HistoricoEstadoPublicacion.
+		 * @return Devuelve el último histórico por ID para el ID del activo.
+		 */
+		public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
     }
 
 

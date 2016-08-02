@@ -4,22 +4,26 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 
-
+@Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
 
 	/**
@@ -50,53 +54,52 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Autowired
 	GenericABMDao genericDao;
 	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
     
-	
-    public void publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoEstadoPublicacion dtoEstadoPublicacion){
-    	cambioEstadosPublicacion(dtoCambioEstadoPublicacion);
-    	nuevoEstadoPublicacion(dtoCambioEstadoPublicacion, dtoEstadoPublicacion);
+    @Override
+    @Transactional(readOnly = false)
+    public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion){
+    	return nuevoEstadoPublicacion(dtoCambioEstadoPublicacion);
     }
-    
-	public void cambioEstadosPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {
-		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());		
-		
-		//Estudiar cada cambio de estados y meterlo en el histórico y en la tabla del activo
-		if(dtoCambioEstadoPublicacion.getPublicacionForzada() || dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){ //Publicada
-			if(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){ //Publicación ordinaria (sólo en caso de no estar oculto o precio oculto)
-				if(dtoCambioEstadoPublicacion.getOcultacionForzada()){ //Publicación oculto
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
-					DDEstadoPublicacion estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
-					activo.setEstadoPublicacion(estadoPublicacion);
-				}else{
-					if(dtoCambioEstadoPublicacion.getOculacionPrecio()){ //Precio oculto
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO);
-						DDEstadoPublicacion estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
-						activo.setEstadoPublicacion(estadoPublicacion);
-					}else{ //Publicacion ordinaria
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
-						DDEstadoPublicacion estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
-						activo.setEstadoPublicacion(estadoPublicacion);
-					}
-				}
-				}else{ //Publicacion forzada
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO);
-					DDEstadoPublicacion estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
-					activo.setEstadoPublicacion(estadoPublicacion);
-					}		
-			}else{ //No publicada
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);
-				DDEstadoPublicacion estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
-				activo.setEstadoPublicacion(estadoPublicacion);
-			}
-	}
 	
-	public void nuevoEstadoPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion, DtoEstadoPublicacion dtoEstadoPublicacion){
+	private boolean nuevoEstadoPublicacion(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion){
 		ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = new ActivoHistoricoEstadoPublicacion();
 		Activo activo = activoApi.get(dtoCambioEstadoPublicacion.getIdActivo());
+		Filter filtro = null;
+		DDEstadoPublicacion estadoPublicacion= null;
+		
+		if(dtoCambioEstadoPublicacion.getOcultacionForzada()) { // Publicación oculto.
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
+		} else if(dtoCambioEstadoPublicacion.getOcultacionPrecio()){ // Publicación precio oculto.
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO);
+		} else if (dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) { // Publicación ordinaria.
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
+		} else if(dtoCambioEstadoPublicacion.getPublicacionForzada()) { // Publicación forzada.
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO);
+		}else if(dtoCambioEstadoPublicacion.getDespublicacionForzada()) { // Despublicación forzada.
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);
+		}
+
+		if(!Checks.esNulo(filtro)){
+			estadoPublicacion = genericDao.get(DDEstadoPublicacion.class, filtro);
+			activo.setEstadoPublicacion(estadoPublicacion);
+		} else {
+			return false;
+		}
 		
 		activoHistoricoEstadoPublicacion.setActivo(activo);
-		//activoHistoricoEstadoPublicacion.getFechaHasta() Tendríamos que ponerle fecha hasta al estado anterior.
+
+		// Establecer la fecha de hoy en el campo 'Fecha Hasta' del anterior/último histórico y el usuario que lo ha modificado.
+		ActivoHistoricoEstadoPublicacion ultimoHistorico = activoApi.getUltimoHistoricoEstadoPublicacion(dtoCambioEstadoPublicacion.getIdActivo());
+		if(!Checks.esNulo(ultimoHistorico)){
+			Date ahora = new Date(System.currentTimeMillis());
+			ultimoHistorico.setFechaHasta(ahora);
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			ultimoHistorico.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
+		}
 		
 		try {
 			if(dtoCambioEstadoPublicacion.getPublicacionForzada()){
@@ -119,26 +122,21 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
 			}
 			
-			beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", dtoEstadoPublicacion.getMotivo());
+			beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", dtoCambioEstadoPublicacion.getMotivo());
 			beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
+			//beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
 			
 			genericDao.save(ActivoHistoricoEstadoPublicacion.class, activoHistoricoEstadoPublicacion);
 			
+			return true;
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
-		
-		
-		//ActivoHistoricoEstadoPublicacion activoHistoricoEstadoPublicacion = genericDao
+
 	}
 
-	@Override
-	public void publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion) {
-		// TODO Auto-generated method stub
-		
-	}
 }

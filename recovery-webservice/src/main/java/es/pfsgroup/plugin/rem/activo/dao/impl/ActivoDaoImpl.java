@@ -6,7 +6,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -16,29 +15,22 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.recovery.ext.api.multigestor.dao.EXTGrupoUsuariosDao;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
 
 	@Resource
 	private PaginationManager paginationManager;
-	
-	@Autowired
-	private GenericABMDao genericDao;
-	
-	@Autowired
-	private EXTGrupoUsuariosDao extGrupoUsuariosDao;
 
     @Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -249,7 +241,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio) {
     	
 		 String hql = "from DDUnidadPoblacional where localidad.codigo= ? and codigo NOT LIKE '%0000'";
@@ -369,7 +362,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 	}
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public ActivoCondicionEspecifica getUltimaCondicion(Long idActivo) {
     	
 		 String hql = "from ActivoCondicionEspecifica where activo.id = ? and fechaHasta IS NULL";
@@ -415,10 +409,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
-    
-    
-    
 
-    
-    
+	@SuppressWarnings("unchecked")
+	@Override
+	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
+		
+		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
+		
+		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+		 
+		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+	}
+
 }

@@ -204,9 +204,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 	     
 	     getEstadoPublicacionCodigo: function(get) {
-				var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
-				return codigo;
-		     }
+			var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
+			return codigo;
+		 }
 	 },
 
     stores: {
@@ -649,7 +649,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getEstadoPublicacionByActivo',
     				extraParams: {id: '{activo.id}'}
-    			}
+    			},
+				autoload: true
     		},
     		
     		storeHistoricoValoresPrecios : {    			

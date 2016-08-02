@@ -130,6 +130,7 @@ public final class ConfiguracionBusinessOperation {
     public static final String BO_EST_ITI_MGR_GET_ESTADOS_EXPEDIENTES = "estadoItinearioManager.getEstadosExpedientes";
     public static final String BO_EST_ITI_MGR_GET_ESTADOS_CLIENTES = "estadoItinearioManager.getEstadosClientes";
     public static final String BO_EST_ITI_MGR_GET_ESTADOS_ASUNTOS = "estadoItinearioManager.getEstadosAsuntos";
+    public static final String BO_EST_ITI_MGR_GET_ESTADOS_EXPEDIENTES_POR_TIPO_ITINERARIO= "estadoItinearioManager.getEstadosItiExpedientesByTipoItinerario";
 
     /*****************************************************************************
      ** EstadoManager.

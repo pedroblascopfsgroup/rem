@@ -421,12 +421,32 @@
                       FROM ARR_ARQ_RECUPERACION_PERSONA
                     ) WHERE ORD <=2
         )
-        , ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1)
-        , ARR_2 AS (SELECT * FROM ARR_TMP WHERE ORD=2)
+        , ARR_1 AS (SELECT * FROM ARR_TMP WHERE ORD=1) -- Arquetipo calculado
+        , ARR_2 AS (-- Arquetipo inmediatamente anterior
+                    SELECT tmp.PER_ID, tmp.ARQ_ID, 2 as PRIO
+                      FROM ARR_TMP tmp
+                     WHERE tmp.ORD=2
+                    UNION ALL
+                    -- Arquetipo del expediente que origina la politica vigente
+                    SELECT pex.per_id, exp.arq_id, 1 as PRIO
+                      FROM PEX_PERSONAS_EXPEDIENTE pex
+                      JOIN EXP_EXPEDIENTES exp ON pex.exp_id = exp.exp_id
+                      JOIN CMP_CICLO_MARCADO_POLITICA cmp ON pex.per_id = cmp.per_id
+                       JOIN POL_POLITICA pol ON pol.cmp_id = cmp.cmp_id
+                        JOIN ${master.schema}.DD_ESP_ESTADO_POLITICA esp ON pol.DD_ESP_ID = esp.DD_ESP_ID
+                     WHERE pex.borrado = 0
+                       AND exp.dd_tpx_id = (select tpx.dd_tpx_id from dd_tpx_tipo_expediente TPX where dd_tpx_codigo = 'SEG')
+                       AND exp.borrado = 0
+                       AND cmp.borrado = 0
+                       AND esp.dd_esp_codigo = ${ddEstadoPolitica.vigente.codigo}
+                       AND esp.borrado = 0 )
         , VARR AS (
-            SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID --, p.per_ultima_operacion
-                FROM ARR_1 A1 LEFT JOIN ARR_2 A2 ON A1.PER_ID = A2.PER_ID
-                inner join per_personas p on a1.per_id = p.per_id
+            SELECT A1.PER_ID, A1.ARQ_ID ARQ_ID_CALCULADO, A2.ARQ_ID
+                FROM ARR_1 A1
+                LEFT JOIN (SELECT PER_ID, ARQ_ID,
+                           ROW_NUMBER() OVER (PARTITION BY PER_ID ORDER BY PRIO) as ORDEN -- Si tiene politica vigente, comparamos contra el arquetipo del expediente
+                           FROM ARR_2) A2
+                       ON A1.PER_ID = A2.PER_ID AND ORDEN = 1
         )
         SELECT PER_ID, ARR_ID, S_CLI_CLIENTES.NEXTVAL AS CLI_ID, DD_TIT_CODIGO
           FROM (

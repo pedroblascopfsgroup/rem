@@ -1559,7 +1559,7 @@ BEGIN
                               'VERSION, USUARIOCREAR, FECHACREAR, BORRADO, ZON_ID, DD_TDE_ID) ' ||
                               ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_LET(1)||''','''||SUBSTR(V_TMP_LET(2),1,100)||''',
                                 0,'''||V_USUARIO_CREAR||''',SYSDATE,0,' ||
-                               ' (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01''),' ||
+                               ' (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' or  ZON_COD = ''1''),' ||
                                ' (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''DLETR''))';
     EXECUTE IMMEDIATE V_MSQL;
 	-- Si existe --> UPDATE
@@ -1569,7 +1569,7 @@ BEGIN
            V_MSQL := 'UPDATE '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO
                       SET  DES_CODIGO = '''||V_TMP_LET(1)||'''
                          , DES_DESPACHO =  ''' ||SUBSTR(V_TMP_LET(2),1,100)|| '''
-                         , ZON_ID =  (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'')' || 
+                         , ZON_ID =  (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' or  ZON_COD = ''1'')' || 
                         ', DD_TDE_ID =  (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''DLETR'')' || 
                         ' WHERE DES_CODIGO = ''' || V_TMP_LET(1) || '''' ;
                       
@@ -1606,7 +1606,7 @@ END LOOP;
                               'VERSION, USUARIOCREAR, FECHACREAR, BORRADO, ZON_ID, DD_TDE_ID) ' ||
                               ' VALUES ('||  V_ENTIDAD_ID || ','''||V_TMP_PROC(1)||''','''||SUBSTR(V_TMP_PROC(2),1,100)||''',
                                 0,'''||V_USUARIO_CREAR||''',SYSDATE,0,' ||
-                               ' (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01''),' ||
+                               ' (SELECT max(zon_id) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' or  ZON_COD = ''1''),' ||
                                ' (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''DLETR''))';
     EXECUTE IMMEDIATE V_MSQL;
 	-- Si existe --> UPDATE
@@ -1616,7 +1616,7 @@ END LOOP;
            V_MSQL := 'UPDATE '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO
                       SET  DES_CODIGO = '''||V_TMP_PROC(1)||'''
                          , DES_DESPACHO =  ''' ||SUBSTR(V_TMP_PROC(2),1,100)|| '''
-                         , ZON_ID =  (SELECT max(ZON_ID) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'')' || 
+                         , ZON_ID =  (SELECT max(ZON_ID) FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_COD = ''01'' or  ZON_COD = ''1'')' || 
                         ', DD_TDE_ID =  (SELECT DD_TDE_ID FROM '||V_ESQUEMA_MASTER||'.DD_TDE_TIPO_DESPACHO WHERE DD_TDE_CODIGO = ''2'')' || 
                         ' WHERE DES_CODIGO = ''' || V_TMP_PROC(1) || '''' ;
                       

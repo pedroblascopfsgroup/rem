@@ -352,7 +352,7 @@ BEGIN
     	) PRC
     	, (SELECT DISTINCT CD_PROCEDIMIENTO FROM MIG_MAESTRA_HITOS) MAE
         , (SELECT ARQ_ID FROM '||V_ESQUEMA||'.ARQ_ARQUETIPOS WHERE ARQ_NOMBRE = ''Migracion''  AND BORRADO = 1) ARQ
-        , ( select op.CD_PROCEDIMIENTO, op.numero_contrato
+        , ( select DISTINCT op.CD_PROCEDIMIENTO, op.numero_contrato
               from '||V_ESQUEMA||'.mig_procedimientos_operaciones op
                  , '||V_ESQUEMA||'.cnt_contratos cnt
                  , '||V_ESQUEMA||'.dd_ges_gestion_especial b
@@ -526,6 +526,7 @@ BEGIN
                            AND EXP.CD_PROCEDIMIENTO   = PRC.CD_PROCEDIMIENTO 
                            AND PRC.CD_PROCEDIMIENTO   = TCI.CD_PROCEDIMIENTO
                            AND PRC.CD_PROCEDIMIENTO   = PRO.CD_PROCEDIMIENTO
+                           AND EXP.USUARIOCREAR = '''||USUARIO||'''
                            AND PRO.NUMERO_CONTRATO    = TCI.CONTRATO 
                          )'
                     );
@@ -629,6 +630,7 @@ BEGIN
           '||V_ESQUEMA||'.DD_PAS_PROPIEDAD_ASUNTO PAS
     WHERE EXP.CD_PROCEDIMIENTO = HIT.CD_PROCEDIMIENTO
     AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
+    AND EXP.USUARIOCREAR = '''||USUARIO||'''
     AND decode(CAB.GESTION_PLATAFORMA,''N'',''HAYA'',''S'',''HAYA'') = GES.DD_GES_CODIGO                       
     AND decode(CAB.ENTIDAD_PROPIETARIA,''0240'',''CAJAMAR'',''05074'',''SAREB'') = PAS.DD_PAS_CODIGO');  
     
@@ -768,6 +770,7 @@ BEGIN
       WHERE  ASU.EXP_ID = EXP.EXP_ID
       AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
       AND CAB.CD_PROCEDIMIENTO = MAE.CD_PROCEDIMIENTO   
+      AND EXP.USUARIOCREAR = '''||USUARIO||'''
       AND TPO.DD_TPO_CODIGO = MAE.DD_TPO_CODIGO 
       AND CAB.JUZGADO = JUZ.DD_JUZ_CODIGO (+)
 --GMN      AND MJ.PRC_ID = MAE.PRC_ID
@@ -856,7 +859,7 @@ BEGIN
                , NULL AS TAR_TAR_ID
                , 6 AS DD_EST_ID --ASUNTO en DD_EST_ESTADOS ITINERARIOS
                , 5 AS DD_EIN_ID ---PROCEDIMIENTO en DD_EIN_ENTIDAD_INFORMACION
-               , TAP.DD_STA_ID ---GESTOR POR DEFECTO (). LUEGO UN PROCESO UPDATEARA A GESTOR/SUPERVISOR 
+               , NVL(tap.dd_sta_id,39) AS DD_STA_ID ---GESTOR POR DEFECTO (). LUEGO UN PROCESO UPDATEARA A GESTOR/SUPERVISOR ++
                , 1 AS TAR_CODIGO
                , MAE.TAR_TAREA
                , MAE.TAR_TAREA as TAR_DESCRIPCION

@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.recovery.procuradores.procesado.api.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +21,6 @@ import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.Procedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
-import es.capgemini.pfs.persona.dao.impl.PageSql;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -88,6 +86,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		return proxyFactory.proxy(MSVResolucionApi.class).mostrarResoluciones();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	@BusinessOperation(PCD_MSV_BO_MOSTRAR_RESOLUCIONES_PAGINATED)
 	public Page mostrarResoluciones(MSVDtoFiltroProcesos dto) {
@@ -482,7 +481,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 	}
 
 	/**
-	 * Comprobar si se a validado la tarea mediante el metodo clásico
+	 * Comprobar si se a validado la tarea mediante el metodo clï¿½sico
 	 * @param id
 	 * @return
 	 */
@@ -490,7 +489,7 @@ public class PCDResolucionProcuradorManager implements PCDResolucionProcuradorAp
 		Boolean finalizado = msvResolucionDao.comprobarValidacionMetodoClasico(id);
 		MSVDDEstadoProceso estado;
 		if(finalizado){
-			estado = (MSVDDEstadoProceso) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDEstadoProceso.class, MSVDDEstadoProceso.CODIGO_PROCESADO);
+			estado = (MSVDDEstadoProceso) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDEstadoProceso.class, MSVDDEstadoProceso.CODIGO_AVANZADO);
 		}
 		else {
 			estado = (MSVDDEstadoProceso) utilDiccionarioApi.dameValorDiccionarioByCod(MSVDDEstadoProceso.class, MSVDDEstadoProceso.CODIGO_PTE_VALIDAR);

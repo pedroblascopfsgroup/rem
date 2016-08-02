@@ -45,6 +45,8 @@ public class DtoAsunto extends WebDto {
     private String codigoEstadoAsunto;
     
     private Long tipoDeAsunto;
+    
+    private String idContratos;
 
 	/**
      * @return the idGestor
@@ -203,5 +205,13 @@ public class DtoAsunto extends WebDto {
 
 	public void setTipoDeAsunto(Long tipoDeAsunto) {
 		this.tipoDeAsunto = tipoDeAsunto;
+	}
+
+	public String getIdContratos() {
+		return idContratos;
+	}
+
+	public void setIdContratos(String idContratos) {
+		this.idContratos = idContratos;
 	}
 }

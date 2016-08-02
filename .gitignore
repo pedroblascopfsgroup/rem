@@ -9,4 +9,5 @@ bin
 *.log
 package.sh
 .recommenders
+*~
 tmp

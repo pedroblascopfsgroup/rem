@@ -5,10 +5,10 @@
 
 <fwk:json>
 	<json:array name="contratos"
-		items="${procedimiento.expedienteContratos}" var="ec">
+		items="${asunto.contratos}" var="ec">
 		<json:object>
-			<json:property name="id" value="${ec.contrato.id}" />
-			<json:property name="codigo" value="${ec.contrato.codigoContrato}" />
+			<json:property name="id" value="${ec.id}" />
+			<json:property name="codigo" value="${ec.codigoContrato}" />
 		</json:object>
 	</json:array>
 </fwk:json>

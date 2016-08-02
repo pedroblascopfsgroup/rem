@@ -76,6 +76,10 @@
 			<groupId>es.pfsgroup.plugin</groupId>
 			<artifactId>recovery-precontencioso-plugin</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin</groupId>
+			<artifactId>recovery-mejoras-plugin</artifactId>
+		</dependency>		
 
 		<!-- DEPENDENCIAS DE BANKIA -->
 		<!-- MOVIDAS DESDE recovery-coreextension-plugin por PBO -->

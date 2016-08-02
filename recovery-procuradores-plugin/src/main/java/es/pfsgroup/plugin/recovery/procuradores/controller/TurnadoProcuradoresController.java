@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.capgemini.devon.bo.BusinessOperationException;
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
+import es.pfsgroup.plugin.recovery.mejoras.procedimiento.model.DDTipoPrcIniciador;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaPlazasTpo;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.EsquemaTurnadoProcurador;
+import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoHistoricoDto;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradorConfig;
 import es.pfsgroup.recovery.ext.turnadoProcuradores.TurnadoProcuradoresApi;
 import es.pfsgroup.recovery.ext.turnadodespachos.DDEstadoEsquemaTurnado;
@@ -40,6 +44,8 @@ public class TurnadoProcuradoresController {
 	private static final String JSON_ESQUEMA_TURNADO_COMBOS_BUSQUEDA = "plugin/procuradores/turnado/diccionariosDataJSON";
 	private static final String JSON_ESQUEMA_TURNADO_CONFIG = "plugin/procuradores/turnado/esquemaTurnadoConfigJSON";
 	private static final String VIEW_ESQUEMA_TURNADO_SEARCH = "plugin/procuradores/turnado/busquedaEsquemasJSON";
+	private static final String JSON_DETALLE_HISTORICO_TURNADO = "plugin/procuradores/turnado/detalle/detalleHistoricoTurnadoJSON";
+	private static final String VIEW_DETALLE_HISTORICO_TURNADO = "plugin/procuradores/turnado/detalle/buscadorDetalleHistorico";
 	
 	@Autowired
 	TurnadoProcuradoresApi turnadoPocuradoresMang;
@@ -375,6 +381,32 @@ public class TurnadoProcuradoresController {
 		Page page = (Page)turnadoPocuradoresMang.listaEsquemasTurnado(dto);
 		model.addAttribute("data", page);
 		return VIEW_ESQUEMA_TURNADO_SEARCH;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String detalleHistoricoTurnado(ModelMap map) {
+		map.put("tipoPlaza", utilDiccionarioManager.dameValoresDiccionario(TipoPlaza.class));
+		map.put("tipoProcedimiento", utilDiccionarioManager.dameValoresDiccionario(DDTipoPrcIniciador.class));
+		return VIEW_DETALLE_HISTORICO_TURNADO;
+	}
+	
+	@RequestMapping
+	public String buscarDetalleHistorico(TurnadoHistoricoDto dto, Model model) {
+		Page page = (Page)turnadoPocuradoresMang.listaDetalleHistorico(dto);
+		model.addAttribute("listaDetalle", page);
+		return JSON_DETALLE_HISTORICO_TURNADO;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping
+	public String exportarExcelElementos(TurnadoHistoricoDto dto, ModelMap model) {
+		
+		dto.setStart(0);
+		dto.setLimit(Integer.MAX_VALUE);
+		FileItem fExcel = turnadoPocuradoresMang.generarExcelExportacionElementos(dto);
+		model.put("fileItem", fExcel);
+		return "plugin/precontencioso/download";
 	}
 	
 }

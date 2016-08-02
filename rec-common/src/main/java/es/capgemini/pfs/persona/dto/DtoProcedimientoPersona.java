@@ -4,13 +4,14 @@ import es.capgemini.pfs.persona.model.Persona;
 
 /**
  * DTO para mapear una lista de personas con el check 'asiste' que indica si fue incluído
- * en el procedimiento.
+ * en el procedimiento y el contrato por el cual ha sido agregado
  * @author marruiz
  */
 public class DtoProcedimientoPersona {
 
 	private Persona persona;
 	private Boolean asiste;
+	private Long cntId;
 
 
 	/**
@@ -36,5 +37,19 @@ public class DtoProcedimientoPersona {
 	 */
 	public void setAsiste(Boolean asiste) {
 		this.asiste = asiste;
+	}
+	
+	/**
+	 * @return the cntId
+	 */
+	public Long getCntId() {
+		return cntId;
+	}
+	
+	/**
+	 * @param cntId the cntId to set
+	 */
+	public void setCntId(Long cntId) {
+		this.cntId = cntId;
 	}
 }

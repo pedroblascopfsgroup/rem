@@ -44,6 +44,7 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
     private String entidad;
     private String guid;
     private Long id;
+    private String numOperacion;
 
     /**
      * constructor.
@@ -289,5 +290,13 @@ public class MEJDtoDecisionProcedimiento extends WebDto {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getNumOperacion() {
+		return numOperacion;
+	}
+
+	public void setNumOperacion(String numOperacion) {
+		this.numOperacion = numOperacion;
 	}
 }

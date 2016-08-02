@@ -122,14 +122,27 @@
 	var reclamacion = label('reclamacion', '<s:message code="procedimiento.tabcabecera.reclamacion" text="**Reclamacion"/>');
 	var estado = label('estado', '<s:message code="procedimiento.tabcabecera.estado" text="**Estado"/>');
 	
+	<c:if test="${codigoTipoActuacion == es.capgemini.pfs.asunto.model.DDTipoActuacion.TIPO_ACTUACION_CNT_BLOQUEADOS}">
+		var motivo = label('motivo','<s:message code="procedimiento.tabcabecera.motivo" text="**Motivo" />');
+		var descMotivo = label('descMotivo','<s:message code="procedimiento.tabcabecera.descmotivo" text="**Descripción Motivo" />');
+	</c:if>
+	
 	<%--NUEVOS PARA ACUERDO --%>
 	var procedimientoAcuerdo = label('procedimientoAcuerdo', '<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>');
 	var procedimientoInternoAcuerdo = label('procedimientoInternoAcuerdo', '<s:message code="procedimiento.tabcabecera.procinterno" text="**Nro. Proc. Interno"/>');
 	var estadoAcuerdo = label('estadoAcuerdo', '<s:message code="procedimiento.tabcabecera.estado" text="**Estado"/>');
   
   var panelProcedimiento = fieldset('<s:message code="procedimiento.tabcabecera.procedimiento" text="**Procedimiento"/>',
-		 [{items:[procedimiento,procedimientoInterno,procedimientoJuzgado]},
-                  {items:[juzgado,plazaJuzgado, estado]} ]
+		 [{items:[procedimiento,procedimientoInterno,procedimientoJuzgado
+			<c:if test="${codigoTipoActuacion == es.capgemini.pfs.asunto.model.DDTipoActuacion.TIPO_ACTUACION_CNT_BLOQUEADOS}">
+				,motivo
+			</c:if>		 
+		 ]},
+         {items:[juzgado,plazaJuzgado, estado
+			<c:if test="${codigoTipoActuacion == es.capgemini.pfs.asunto.model.DDTipoActuacion.TIPO_ACTUACION_CNT_BLOQUEADOS}">
+				,descMotivo
+			</c:if>                  
+          ]} ]
   );
   
   <%--NUEVO PARA ACUERDO--%>
@@ -337,6 +350,10 @@
 		entidad.setLabel('plazaJuzgado',d.plazaJuzgado);
 		entidad.setLabel('reclamacion',d.reclamacion);
 		entidad.setLabel('estado',d.estado);
+		<c:if test="${codigoTipoActuacion == es.capgemini.pfs.asunto.model.DDTipoActuacion.TIPO_ACTUACION_CNT_BLOQUEADOS}">
+			entidad.setLabel('motivo',d.motivoNoLitigar);
+			entidad.setLabel('descMotivo',d.observacionesNoLitigar);
+		</c:if>
 		entidad.setLabel('saldoVencido',app.format.moneyRenderer(''+d.saldoVencido));
 		entidad.setLabel('saldoNoVencido',app.format.moneyRenderer(''+d.saldoNoVencido));
 		entidad.setLabel('saldoOriginalVencido',app.format.moneyRenderer(''+d.saldoOriginalVencido));

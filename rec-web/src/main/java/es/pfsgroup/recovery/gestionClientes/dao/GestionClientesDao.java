@@ -18,5 +18,8 @@ public interface GestionClientesDao extends AbstractDao<Persona, Long> {
 	
 	@SuppressWarnings("rawtypes")
 	public List<Map> obtenerCantidadDeVencidosUsuario(Usuario usuarioLogado);
-	public Page obtenerListaGestionClientes(String codigoGestion, Usuario usuarioLogado, GestionClientesBusquedaDTO dto);
+	public Page obtenerListaGestionClientes(String codigoGestion, Usuario usuarioLogado, GestionClientesBusquedaDTO dto, List<List<Object>> listaZonas);
+	public List<List<Object>> obtenerZonasExistente(Usuario usuarioLogado);
+	@SuppressWarnings("rawtypes")
+	public List<Map> obtenerCantidadDeVencidosUsuarioVistaVencidos(Usuario usuarioLogado,List<List<Object>> listaZonas);
 }

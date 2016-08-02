@@ -28,6 +28,7 @@ public class GDPersonaInputAssembler {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
 		parameters.getParameter().add(getPersonaOrigen(inputDto.getIdPersonaOrigen()));
 		parameters.getParameter().add(getOrigen(inputDto.getIdOrigen()));
+		parameters.getParameter().add(getCliente(inputDto.getIdCliente()));
 		parameters.getParameter().add(getIdPersonaHaya(inputDto.getIdPersonaHaya()));
 		return parameters;
 	}
@@ -45,6 +46,14 @@ public class GDPersonaInputAssembler {
 		origen.setCode(PersonaInputDto.ID_ORIGEN);
 		origen.setFormat(PersonaInputDto.FORMATO_STRING);
 		origen.setValue(idOrigen);
+		return origen;
+	}
+	
+	private static KeyValuePair getCliente(String idCliente) {
+		KeyValuePair origen = new KeyValuePair();
+		origen.setCode(PersonaInputDto.ID_CLIENTE);
+		origen.setFormat(PersonaInputDto.FORMATO_STRING);
+		origen.setValue(idCliente);
 		return origen;
 	}
 	

@@ -75,9 +75,7 @@
 			recargarAdjuntos();
 		}
 	});
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>borrar.setVisible(false);</sec:authorize>
-
-
+	
 	var tipoDocRecord = Ext.data.Record.create([
 		 {name:'codigo'}
 		,{name:'descripcion'}
@@ -258,7 +256,7 @@
 	editarDescripcionAdjuntoContrato.disable();
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [subir, borrar,editarDescripcionAdjuntoContrato]
+		,bbar : [subir<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar,editarDescripcionAdjuntoContrato</sec:authorize>]
 		,height: 448
 		,width : 600
 		,collapsible:true

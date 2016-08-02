@@ -9,6 +9,7 @@
 		<on-entry>
 			<evaluate expression="binder.bindAndValidate(flowRequestContext, dto)" />
 			<evaluate expression="executor.execute('plugin.nuevoModeloBienes.subastas.manager.SubastaManager.buscarSubastas', dto)" result="flowScope.pagina" />
+			 <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuarioEntidad"/> 
 	    </on-entry>
     </end-state> 
 </flow>

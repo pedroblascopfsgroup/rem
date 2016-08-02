@@ -18,6 +18,14 @@
 		,border : false
 		,nombreTab : 'decision'
 	});
+	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
+	var esHaya = true;
+	
+	// RECOVERY-1840 Comprobacion para ocultar la columna Nº operación en el grid
+    if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+		esHaya = false;
+	}
 
 	var idTareaDecision = '';
 	var fechaVencimiento = '';
@@ -53,6 +61,7 @@
 		,{name:"fechaParalizacion"}
 		,{name:"comentarios"}
 		,{name:"detenida"}
+		,{name:"numOperacion"}
 	]);
   
 	var decisionProcedimientoStore = page.getStore({
@@ -75,6 +84,7 @@
 		,{header : '<s:message code="procedimiento.listadoDecisiones.fechaParalizacion" text="**fechaParalizacion"/>', dataIndex : 'fechaParalizacion'}
 		,{header : '<s:message code="procedimiento.listadoDecisiones.comentarios" text="**comentarios"/>', dataIndex : 'comentarios'}
 		,{header : '<s:message code="plugin.mejoras.procedimiento.listadoDecisiones.detenida" text="**detenida"/>', dataIndex : 'detenida'}
+		,{header : '<s:message code="procedimiento.listadoDecisiones.numOperacion" text="**numOperacion"/>', dataIndex : 'numOperacion',hidden: esHaya}
 	]);
   
 	var btnNuevo = new Ext.Button({

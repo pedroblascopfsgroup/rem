@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.recovery.coreextension.subasta.api;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -89,4 +90,6 @@ public interface SubastaProcedimientoApi {
 	public boolean isNotViviendaHabitualAdjTerceros(Long prcId);
 	
 	public void determinarTipoSubasta(Subasta sub);
+
+	public Boolean compruebaTasacionElectronica(Date fechaPubliBoe, Subasta sub);
 }

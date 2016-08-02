@@ -21,7 +21,7 @@ public class DtoNMBBien extends WebDto {
     private Float participacionNMB;
     private String situacionPosesoria;
 	private String viviendaHabitual;
-	private Float tipoSubasta;
+	private BigDecimal tipoSubasta;
 	private String numeroActivo ;
 	private String licenciaPrimeraOcupacion;
 	private String primeraTransmision ;
@@ -180,11 +180,11 @@ public class DtoNMBBien extends WebDto {
 		return referenciaCatastralBien;
 	}
 
-	public Float getTipoSubasta() {
+	public BigDecimal getTipoSubasta() {
 		return tipoSubasta;
 	}
 
-	public void setTipoSubasta(Float tipoSubasta) {
+	public void setTipoSubasta(BigDecimal tipoSubasta) {
 		this.tipoSubasta = tipoSubasta;
 	}
 

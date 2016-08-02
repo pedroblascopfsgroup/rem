@@ -1804,9 +1804,10 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 		Filter idTrabajoFilter = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo);
 		Filter codigoDocumentoFilter = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", codigoDocumento);
 
-		AdjuntoTrabajo adjuntoTrabajo = (AdjuntoTrabajo) genericDao.get(AdjuntoTrabajo.class, idTrabajoFilter, codigoDocumentoFilter);
+		//AdjuntoTrabajo adjuntoTrabajo = (AdjuntoTrabajo) genericDao.get(AdjuntoTrabajo.class, idTrabajoFilter, codigoDocumentoFilter);
+		List<AdjuntoTrabajo> adjuntosTrabajo = genericDao.getList(AdjuntoTrabajo.class, idTrabajoFilter, codigoDocumentoFilter);
 
-		if (!Checks.esNulo(adjuntoTrabajo) && !Checks.esNulo(adjuntoTrabajo.getId())){
+		if (!Checks.estaVacio(adjuntosTrabajo)){
 			return true;
 		} else {
 			return false;

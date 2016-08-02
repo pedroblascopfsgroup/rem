@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.ValoracionesActivo', {
     xtype: 'valoracionesactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'valoracionesactivoref',
     scrollable	: 'y',
     listeners: {

@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     xtype: 'datosbasicosactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'datosbasicosactivo',
     scrollable	: 'y',
 

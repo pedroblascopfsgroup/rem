@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -393,6 +394,26 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 
+	}
+
+	@Override
+	public Page getActivosPublicacion(DtoActivosPublicacion dto) {
+
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.numActivo", dto.getNumActivo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.despublicadoForzado", dto.getDespubliForzado());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicadoForzado", dto.getPubliForzado());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.gestion", dto.getGestion());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precioConsultar", dto.getPrecioConsultar());
+   		
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
     
     

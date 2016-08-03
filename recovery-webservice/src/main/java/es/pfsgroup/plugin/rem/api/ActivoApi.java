@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
@@ -200,6 +201,13 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
+
+		/**
+		 * Este metodo obtiene una página de resultados de la búsqueda de Activos Publicación.
+		 * @param dtoActivosPublicacion
+		 * @return
+		 */
+		public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
 		
 		
     }

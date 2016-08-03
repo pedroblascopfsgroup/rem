@@ -17,7 +17,10 @@ public class VBusquedaActivosTrabajo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id	
+	@Id
+	@Column(name="VAT_ID")
+	private String idVista;
+
 	@Column(name= "TBJ_ID")
 	private String idTrabajo;
 
@@ -84,6 +87,13 @@ public class VBusquedaActivosTrabajo implements Serializable {
 	@Column(name="PTO_ID")
 	private String idPresupuesto;
 	
+	public String getIdVista() {
+		return idVista;
+	}
+
+	public void setIdVista(String idVista) {
+		this.idVista = idVista;
+	}
 
 	public String getIdActivo() {
 		return idActivo;

@@ -31,8 +31,6 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 	
 	private Map<String,String> mapRating;
 	
-	@Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
 
 	public ActivoExcelReport(List<VBusquedaActivos> listaActivos, Map<String,String> mapRating) {
 		this.listaActivos = listaActivos;

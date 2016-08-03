@@ -33,6 +33,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
@@ -472,7 +473,10 @@ public class Trabajo implements Serializable, Auditable {
 	}
 
 	public Activo getActivo() {
-		return activo;
+		if(!Checks.estaVacio(getActivosTrabajo()))
+			return getActivosTrabajo().get(0).getPrimaryKey().getActivo();
+		else
+			return null;
 	}
 
 	public void setActivo(Activo activo) {

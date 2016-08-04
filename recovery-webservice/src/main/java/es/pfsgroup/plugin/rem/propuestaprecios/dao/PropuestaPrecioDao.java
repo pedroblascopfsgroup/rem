@@ -12,4 +12,5 @@ public interface PropuestaPrecioDao extends AbstractDao<PropuestaPrecio, Long>{
 	
 	public Page getListPropuestasPrecio(DtoPropuestaFilter dto);
 
+	public Long getNextNumPropuestaPrecio();
 }

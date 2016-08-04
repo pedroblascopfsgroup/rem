@@ -22,6 +22,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
@@ -53,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
  */
 @Entity
 @Table(name = "PRP_PROPUESTAS_PRECIOS", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class PropuestaPrecio implements Serializable, Auditable {
 

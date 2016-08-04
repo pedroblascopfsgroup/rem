@@ -13,7 +13,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	onSearchHistoricoClick: function(btn) {
 		
 		var me = this;
-		this.lookupReference('historicoPropuestaActivosList').getStore().loadPage(1);
+		this.lookupReference('historicoPropuestasList').getStore().loadPage(1);
         
 	},
 	

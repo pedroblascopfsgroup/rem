@@ -18,13 +18,28 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
 		            flex: 1		        	
 		        },
 		        {	        	
-		            dataIndex: 'nombrePropuesta',
-		            text: HreRem.i18n('header.nombre.propuesta'),
+		            dataIndex: 'numTramite',
+		            text: HreRem.i18n('header.tramite'),
+		            flex: 1		        	
+		        },
+		        {	        	
+		            dataIndex: 'numTrabajo',
+		            text: HreRem.i18n('header.num.trabajo'),
 		            flex: 1		        	
 		        },
 		        {	        	
 		            dataIndex: 'entidadPropietariaDescripcion',
 		            text: HreRem.i18n('header.cartera'),
+		            flex: 1		        	
+		        },
+		        {	        	
+		            dataIndex: 'nombrePropuesta',
+		            text: HreRem.i18n('header.nombre.propuesta'),
+		            flex: 1		        	
+		        },
+		        {	        	
+		            dataIndex: 'tipoPropuesta',
+		            text: HreRem.i18n('header.tipo.propuesta'),
 		            flex: 1		        	
 		        },
 		        {	        	

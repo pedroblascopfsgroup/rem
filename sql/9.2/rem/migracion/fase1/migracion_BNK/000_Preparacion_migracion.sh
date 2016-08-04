@@ -8,7 +8,7 @@ echo "Se va a proceder a la generación de los paquetes necesarios para ejecutar
 dir=$(pwd)
 echo "Directorio raiz de migración: "$dir
 
-cd ../../../../
+cd ../../../../../../
 pwd=$(pwd)
 echo "Directorio raiz de recovery: "$pwd
 

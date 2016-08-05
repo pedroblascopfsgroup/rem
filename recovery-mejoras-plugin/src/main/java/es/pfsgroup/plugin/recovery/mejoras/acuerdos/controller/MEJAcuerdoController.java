@@ -295,8 +295,8 @@ public class MEJAcuerdoController {
 			map.put("contratosIncluidos", contratosIncluidos);
 		} else {
 			String contratosDelTermino = "";
-			for (TerminoContrato contrato : termino.getContratosTermino()) {
-				contratosDelTermino += contrato.getId() + ",";
+			for (TerminoContrato terminoContrato : termino.getContratosTermino()) {
+				contratosDelTermino += terminoContrato.getContrato().getId() + ",";
 			}
 			if (contratosDelTermino.length()>0) {
 				contratosDelTermino = contratosDelTermino.substring(0,contratosDelTermino.length()-1);
@@ -509,12 +509,11 @@ public class MEJAcuerdoController {
 		ta.setInformeLetrado(taDTO.getInformeLetrado());
 		
 		//Borramos los contratos incluidos en el termino
-		/*
 		if (ta.getContratosTermino()!=null) {
-			for (TerminoContrato contrato : ta.getContratosTermino()) {
-				mejAcuerdoApi.deleteTerminoContrato(contrato);
+			for (TerminoContrato terminoContrato : ta.getContratosTermino()) {
+				mejAcuerdoApi.deleteTerminoContrato(terminoContrato);
 			}
-		}*/
+		}
 		
 		//Borramos los bienes seleccionados previamente
 		if (ta.getBienes()!=null) {

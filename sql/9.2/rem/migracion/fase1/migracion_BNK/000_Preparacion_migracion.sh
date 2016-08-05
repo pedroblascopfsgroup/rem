@@ -16,7 +16,7 @@ echo "Directorio raiz de recovery: "$pwd
 
 #nohup ./sql/tool/package-scripts-from-tag-and-folder.sh rem_mig_v0.1 REM migracion
 
-#pkg=$pwd"/sql/tool/tmp/package"
+pkg=$pwd"/sql/pitertul/tmp/package"
 
 #echo "Directorio raiz de empaquetado: "$pkg
 

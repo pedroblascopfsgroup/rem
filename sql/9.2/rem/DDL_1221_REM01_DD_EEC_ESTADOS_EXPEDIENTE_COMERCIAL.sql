@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIÉRREZ
---## FECHA_CREACION=20160623
+--## AUTOR=JOSE VILLEL
+--## FECHA_CREACION=20160804
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar el diccionario de disponibilidad comercial
+--## Finalidad: Tabla para gestionar el diccionario de estados de un expediente comercial
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -34,8 +34,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_ECO_ESTADO_DIS_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de estados disponibilidad comercial.'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_EEC_EST_EXP_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de estados de un expediente comercial.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -67,10 +67,10 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		DD_ECO_ID           		NUMBER(16)                  NOT NULL,
-		DD_ECO_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
-		DD_ECO_DESCRIPCION			VARCHAR2(100 CHAR),
-		DD_ECO_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
+		DD_EEC_ID           		NUMBER(16)                  NOT NULL,
+		DD_EEC_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
+		DD_EEC_DESCRIPCION			VARCHAR2(100 CHAR),
+		DD_EEC_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -91,13 +91,13 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_ECO_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_EEC_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_ECO_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_EEC_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	

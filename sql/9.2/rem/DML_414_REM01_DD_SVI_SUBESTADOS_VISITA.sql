@@ -32,6 +32,7 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
+    V_EVI_ID NUMBER(16);
 
     
     
@@ -70,7 +71,7 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         -- Buscamos el id del estado
-        V_MSQL := 'SELECT DD_EVI_ID FROM '|| V_ESQUEMA ||'.S_DD_EVI_ESTADOS_VISITA WHERE DD_EVI_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' ';
+        V_MSQL := 'SELECT DD_EVI_ID FROM '|| V_ESQUEMA ||'.DD_EVI_ESTADOS_VISITA WHERE DD_EVI_CODIGO = '''||V_TMP_TIPO_DATA(2)||''' ';
         EXECUTE IMMEDIATE V_MSQL INTO V_EVI_ID;
         
         --Si existe lo modificamos
@@ -78,7 +79,7 @@ BEGIN
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_SVI_SUBESTADOS_VISITA '||
-                    'SET DD_EVI_ID = '''||TRIM(V_TMP_TIPO_DATA(2))||''', DD_SVI_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
+                    'SET DD_SVI_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
 					', DD_SVI_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_SVI_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
@@ -93,7 +94,7 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_SVI_SUBESTADOS_VISITA (' ||
                       'DD_SVI_ID,DD_EVI_ID, DD_SVI_CODIGO, DD_SVI_DESCRIPCION, DD_SVI_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
-                      'SELECT '|| V_ID || ','|| V_EVI_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
+                      'SELECT '|| V_ID || ','|| V_EVI_ID ||','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

@@ -1,0 +1,142 @@
+--#########################################
+--## AUTOR=David González
+--## FECHA_CREACION=20160330
+--## 
+--## Finalidad: Informativa sobre el proceso de migración de Haya Real Estate al modelo REM.
+--##			
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+
+
+ COMPROBACIONES Y REQUISITOS
+---------------------------
+
+	- COMPROBAR QUE EL ACTIVO O ENTIDAD QUE TRATAMOS EXISTE EN LA TABLA MAESTRA, POR EJEMPLO, EN LA INTERFAZ ACTIVO_PLANDINVENTAS, DEBEMOS COMPROBAR 
+	  CON EL NUMERO DE ACTIVO QUE ESE ACTIVO EXISTE EN ACT_ACTIVO. (SE INFORMA EN TABLAS XXX_NOT_EXISTS).
+	- COMPROBAR QUE EL ACTIVO O ENTIDAD QUE TRATAMOS NO EXISTE EN LA TABLA DE DESTINO, EVITAR DUPLICADOS. SE PUEDE HACER CON UN FILTRADO EN EL INSERT.
+	- INFORMAR DE CODIGOS DE DICCIONARIO NO EXISTENTES (TABLAS MIG).(SE INFORMA EN TABLA DD_COD_NOT_EXISTS).
+
+
+
+ OTROS ASPECTOS A TENER EN CUENTA
+---------------------------------
+
+	- EJECUTAR SCRIPTS DEL MODELO REM CON LA HERRAMIENTA PITERTUL PARA TENER LA BBDD ACTUALIZADA
+	- REINICIALIZAR SECUENCIAS AFECTADAS AL COMENZAR EL PROCESO (Automatizado)
+	- LIMPIEZA PREVIA DEL ENTORNO DE TABLAS AFECTADAS (En git, LIMPIEZA_TABLAS_MIGRACION.sql)
+
+
+
+ PASOS DEL PROCESO
+-----------------
+
+	1. EJECUCIÓN DEL SCRIPT '000_Preparacion_migracion.sh' QUE EJECUTA EL PAQUETE CON DDLs Y DMLs PREVIOS; TABLAS AUXILIARES, INSERTS EN DICCIONARIOS...
+	2. EJECUCIÓN DEL SCRIPT '001_Creacion_de_tablas.sh' QUE EJECUTA EL PAQUETE QUE CONTIENE LOS DDLs DE LAS TABLAS DE MIGRACIÓN.
+	3. EJECUCIÓN DEL SCRIPT '002_Carga_de_tablas_de_migracion.sh' QUE EJECUTA INVOCA AL SQLLOADER PARA CARGAR LOS FICHEROS EN LAS TABLAS DE MIGRACIÓN.
+	4. HACER COMPROBACIONES Y VALIDACIONES PREVIAS AL PROCESO DE MIGRACIÓN HACIENDO USO DE LOS SCRIPTS 'Validaciones...sql'.
+	5. EJECUCION DEL SCRIPT '003_Comprobacion_de_diccionarios.sh' QUE EJECUTA EL PAQUETE QUE CONTIENE LOS DMLs DE CHECKEO DE DICCIONARIOS.
+	6. EJECUCIÓN DEL SCRIPT '004_Migrar.sh' QUE EJECUTA EL PAQUETE QUE CONTIENE LOS DMLs DE MIGRACIÓN. VOLCADO DE DATOS AL MODELO REM.
+	7. HACER COMPROBACIONES Y VALIDACIÓNES FINALES.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ###################################
+####  PROCESO DE MIGRACIÓN v0.1 #####
+ ###################################
+
+
+- FICHEROS-PASOS:
+
+	0. DDL_00XX (Según tablas auxiliares a crear) 
+	1. DML_00XX (Según la inserción de datos de diccionarios)
+	2. DDL_12XX (Una tabla por interfaz)
+	3. CTL XXX.ctl (Uno por interfaz)
+	4. DAT XXX.dat (Uno por interfaz)
+	5. LOADER loader_migracion_rem.sh 
+	6. DDL Mig_estadisticas.sql
+	7. SQL VALIDACIONES
+	8. DML_13XX (Uno por interfaz, siempre y cuando contengan valores de diccionario)
+	9. DML_14XX (Uno por interfaz)
+
+
+- FICHEROS CREADOS PARA LA EJECUCIÓN DEL PROCESO DE MIGRACIÓN:
+
+	10. 000_Preparacion_migracion.sh
+	11. 001_Creacion_de_tablas.sh
+	12. 002_Carga_de_tablas_de_migracion.sh
+	13. 003_Comprobacion_de_diccionarios.sh
+	14. 004_Migrar.sh	
+
+	Estos scripts se han creado con la finalidad de facilitar la ejecución del proceso de forma semi-automatizada, pudiendo ejecutar por partes todo el proceso.
+	El script 000 se encarga de crear todos los paquetes necesarios a través de la herramienta Pitertul. Éste los distribuye en 4 directorios; 01_PREV donde se 
+	alojarán los ficheros correspondientes a los puntos 0 y 1, 02_TABLAS_MIG donde dejará el paquete preparado para ejecutar los DDLs de creacion de tablas MIG,
+	03_CHECK_DD, ahí nos desplegará el paquete correspondiente a los DMLs de comprobación de diccionarios, y por último, 04_MIGRACION, que contendrá el paquete
+	con los DMLs que ejecutarán el volcado de las tablas de migración al modelo de REM.
+
+	Bastará con ejecutarlos uno a uno de forma ordenada, llamando al script y pasándole como parámetro la conexión de la base de datos*, de manera que si
+	queremos ejecutar el script 001 lo haremos, por ejemplo, de la siguiente forma: './001_Creacion_de_tablas.sh admin@localhost:1522/orcl11g'
+
+	*Todos los scripts se ejecutan así exepto el 000, que no necesita parámetros.
+
+
+- DIRECTORIOS (En git, /sql/9.1/rem)
+
+	/Migracion (0,1,5,10,11,12,13,14)
+		/aux (6,7)
+		/CTLs_DATs (3)
+			/DATs (4)
+			/logs (3(logs))
+			/bad (4(bads))
+			/rejects (4(rejects))
+		/DDLs_MIG (2)
+		/DMLs_CHECK_DD (8)
+		/DMLs_REM_MIGRATION (9)
+
+
+- PROCESO
+
+	Para realizar el proceso de migración a partir de los ficheros recibidos. Primero tenemos que preparar el entorno.
+	Asumimos que tenemos las tablas afectadas limpias, sin datos, de no ser así, en el directorio /aux disponemos de un script sql con sentencias que nos 
+	ayudaran a limpiar las tablas.
+	Tanto como tener limpias las tablas, es de vital importancia ejecutar sobre la BBDD los scripts que se encuentran en git, en la rama 'desarrollo-rem-merge',
+	esto nos mantendrá el modelo REM actualizado con los últimos cambios.
+
+	Una vez que tenemos el entorno limpio y actualizado, el primer paso de la migración a ejecutar será el script '000_Preparacion_migracion.sh',
+	Éste hará uso de la herramienta Pitertul para generarnos en diversos directorios unos paquetes que contendrán DDLs o DMLs y estarán preparados para 
+	ejecutarse sobre una BBDD.
+
+	Una vez que tenemos todos nuestros paquetes preparados con la última versión de los scripts que se encuentran en el directorio /migracion,
+	podemos ejecutar el script '001_Creacion_de_tablas.sh', éste nos creará las tablas necesarias para hacer el volcado de los ficheros.
+
+	A continuación llamaremos al script '002_Carga_de_tablas_de_migracion.sh', el cual invocará al sqlloader por cada CTL que le indicamos en el archivo
+	'loader_migracion_rem.sh' ubicado en /migracion. Nos irá dejando logs en el directorio habilitado para ello, y al final llamará al script 'Mig_estadisticas.sql'
+	que pasará estadisticas a las tablas ya rellenas.
+
+	El siguiente paso que deberemos realizar será realizar algunas validaciones, a modo de consulta a través del SqlDeveloper, para comprobar que los datos son 
+	correctos y no hay errores que puedan generar un mal funcionamiento en el proceso, para ello haremos uso de los scripts alojados en /aux.
+
+	Una vez echas las validaciones podemos seguir validando, esta vez de forma automática, llamando al script '003_Comprobacion_de_diccionarios.sh', éste
+	hará un barrido por todas las tablas que contengan códigos de diccionario, verificando que todos ellos existen en nuestra BBDD de diccionarios,
+	si encuentra algún código inexistente, lo registrará en la tabla DD_COD_NOT_EXISTS, junto a otros datos con los que identificar su procedencia, además, 
+	actualizará ese campo a UNDEFINED para ser facilmente identificable.
+
+	El último paquete que debemos ejecutar será '004_Migrar.sh', que como su propio nombre indica es el encargado de migrar los datos desde las tablas de migración
+	a las tablas del modelo REM. 
+
+	Se ha creado una tabla llamada MIG_INFO_TABLE a modo de auditoría, que nos permitirá ver de una ojeada el resultado de la migración.
+
+	Otras de las tablas que deberemos repasar una vez migrados los datos serán las tablas XXX_NOT_EXISTS, que según la tabla maestra de la que se trate, alojará 
+	registros que nos se han podido insertar en el modelo debido a que, por ejemplo, el activo (act_numero_activo) no existía en la tabla de activos, o la 
+	agrupación (cod_agr_uvem) no existía en la tabla de agrupaciones. Estos casos se pueden dar porque vienen datos relacionados con otras tablas desde diferentes
+	interfaces, lo que puede dar lugar a que en ACTIVO_CABECERA no haya dado de alta un activo que despues me viene informado en ACTIVO_PRECIO.

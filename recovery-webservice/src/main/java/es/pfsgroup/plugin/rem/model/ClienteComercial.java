@@ -94,11 +94,12 @@ public class ClienteComercial implements Serializable, Auditable {
     private String email;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PVE_ID")
+    @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
 	private ActivoProveedor prescriptor;
     
-    @Column(name = "CLC_API_RESPONSABLE")
-    private String apiResponsable;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_RESPONSABLE")
+	private ActivoProveedor apiResponsable;
     
     @Column(name = "CLC_DIRECCION")
     private String direccion;
@@ -236,11 +237,11 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.email = email;
 	}
 
-	public String getApiResponsable() {
+	public ActivoProveedor getApiResponsable() {
 		return apiResponsable;
 	}
 
-	public void setApiResponsable(String apiResponsable) {
+	public void setApiResponsable(ActivoProveedor apiResponsable) {
 		this.apiResponsable = apiResponsable;
 	}
 

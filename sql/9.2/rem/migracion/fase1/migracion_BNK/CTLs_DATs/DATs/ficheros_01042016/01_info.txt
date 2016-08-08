@@ -1,0 +1,8 @@
+------------
+--- INFO ---
+------------
+
+En este directorio alojaremos los ficheros .dat que recibimos del cliente, que sean válidos, con el nombre cambiado conforme a la información 
+de la excel 'Interfaces-Tablas_Mig', columna 'CTLs y DATs'.
+
+Nuestros ficheros .dat de pruebas los alojaremos en un directorio que colgará de este; 'rem/migracion/DATs/ficheros_prueba'.

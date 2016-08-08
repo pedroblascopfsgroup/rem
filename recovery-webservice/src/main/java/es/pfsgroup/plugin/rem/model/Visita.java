@@ -75,8 +75,7 @@ public class Visita implements Serializable, Auditable {
     @JoinColumn(name = "DD_SVI_ID")
 	private DDSubEstadosVisita subEstadoVisita;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "VIS_FECHA_ACCION")
+    @Column(name = "VIS_FECHA_ACCION")
     private Date fechaAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)

@@ -18,14 +18,21 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
 		            flex: 1		        	
 		        },
 		        {	        	
+		            dataIndex: 'nombrePropuesta',
+		            text: HreRem.i18n('header.nombre.propuesta'),
+		            flex: 1		        	
+		        },
+		        {	        	
 		            dataIndex: 'numTramite',
 		            text: HreRem.i18n('header.tramite'),
-		            flex: 1		        	
+		            flex: 1,
+		            hidden: true
 		        },
 		        {	        	
 		            dataIndex: 'numTrabajo',
 		            text: HreRem.i18n('header.num.trabajo'),
-		            flex: 1		        	
+		            flex: 1,
+		            hidden: true		        	
 		        },
 		        {	        	
 		            dataIndex: 'entidadPropietariaDescripcion',
@@ -33,39 +40,48 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
 		            flex: 1		        	
 		        },
 		        {	        	
-		            dataIndex: 'nombrePropuesta',
-		            text: HreRem.i18n('header.nombre.propuesta'),
-		            flex: 1		        	
-		        },
-		        {	        	
 		            dataIndex: 'tipoPropuesta',
 		            text: HreRem.i18n('header.tipo.propuesta'),
-		            flex: 1		        	
+		            flex: 1,
+		            renderer: function(value) {
+		            	var record = me.lookupController().getViewModel().get("comboTiposPropuesta").findRecord("codigo", value);
+		            	if(Ext.isEmpty(record)) {
+		            		return "-";
+		            	} else {
+		            		return record.get("descripcion");
+		            	}
+		            	
+		            }
+		            
 		        },
 		        {	        	
-		            dataIndex: 'estado',
+		            dataIndex: 'estadoDescripcion',
 		            text: HreRem.i18n('header.estado'),
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'fechaEmision',
+		        	dataIndex: 'fechaEmision',
 		            text: HreRem.i18n('header.fecha.emision'),
-		            flex: 1		        	
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
 		        },
 		        {	        	
 		            dataIndex: 'fechaEnvio',
 		            text: HreRem.i18n('header.fecha.envio'),
-		            flex: 1		        	
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
 		        },
 		        {	        	
 		            dataIndex: 'fechaSancion',
 		            text: HreRem.i18n('header.fecha.sancion'),
-		            flex: 1		        	
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
 		        },
 		        {	        	
 		            dataIndex: 'fechaCarga',
 		            text: HreRem.i18n('header.fecha.carga'),
-		            flex: 1		        	
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
 		        },
 		        {	        	
 		            dataIndex: 'gestor',

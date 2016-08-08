@@ -6,6 +6,7 @@ import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 
@@ -43,5 +44,12 @@ public interface PreciosApi {
 	 */
 	public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
 	
+	/**
+	 * HREOS-641
+	 * Devuelve una Page de propuestas de precios aplicando el filtro que recibe
+	 * @param dtoPropuestaFiltro
+	 * @return
+	 */
+	public Page getPropuestasPrecios(DtoPropuestaPrecioFilter dtoPropuestaFiltro);
 
 }

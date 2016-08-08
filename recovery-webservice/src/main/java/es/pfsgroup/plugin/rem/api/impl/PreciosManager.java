@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropuesta;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta.ActivoPropuestaPk;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -75,6 +76,12 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro) {
 
 		return propuestaPrecioDao.getListPropuestasPrecio(dtoPropuestaFiltro);
+	}
+	
+	@Override
+	public Page getPropuestasPrecios(DtoPropuestaPrecioFilter dtoPropuestaFiltro) {
+		
+		return propuestaPrecioDao.getListPropuestasPreciosBySearch(dtoPropuestaFiltro);
 	}
 	
 	@Override

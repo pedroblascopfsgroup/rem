@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 
@@ -72,11 +73,11 @@ public class PreciosController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
+	public ModelAndView getPropuestas(DtoPropuestaPrecioFilter dtoPropuestaFiltro, ModelMap model) {
 		
 		try {
 
-			Page page = preciosApi.getPropuestas(dtoPropuestaFiltro);
+			Page page = preciosApi.getPropuestasPrecios(dtoPropuestaFiltro);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());

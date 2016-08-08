@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.propuestaprecios.dao;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 
 public interface PropuestaPrecioDao extends AbstractDao<PropuestaPrecio, Long>{
@@ -13,4 +14,6 @@ public interface PropuestaPrecioDao extends AbstractDao<PropuestaPrecio, Long>{
 	public Page getListPropuestasPrecio(DtoPropuestaFilter dto);
 
 	public Long getNextNumPropuestaPrecio();
+	
+	public Page getListPropuestasPreciosBySearch(DtoPropuestaPrecioFilter dtoPropuestaFiltro);
 }

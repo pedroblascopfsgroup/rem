@@ -57,10 +57,10 @@ ENV PROJECT REM
 ENV RECOVERY_CFG_TAG intereos.ibd01
 
 # Versión de Recovery que desplegaremos
-ENV RECOVERY_VERSION 1.0.8-rem
+ENV RECOVERY_VERSION 1.0.8-16080502-rem
 
 # URL de descarga para el WAR de Recovery
-#ENV WEB_ZIP_URL http://192.168.31.16:8081/nexus/content/repositories/releases/REM/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
+ENV WEB_ZIP_URL http://192.168.31.16:8081/nexus/service/local/repositories/releases/content/REM/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
 
 # 
 # Configuración de la conexión a BBDD
@@ -74,13 +74,13 @@ ENV WEB_ENTITY_DSNAME 'jdbc/rem01_Oracle9iDialect'
 
 # Datos de conexión (Oracle-Docker local) ip de tu maquina
 
-#ENV WEB_DBHOST 192.168.31.31
-#ENV WEB_DBPORT 1521
-#ENV WEB_DBSID ibd011
-
-ENV WEB_DBHOST 192.168.34.72
+ENV WEB_DBHOST 192.168.31.31
 ENV WEB_DBPORT 1521
-ENV WEB_DBSID orcl11g
+ENV WEB_DBSID ibd011
+
+#ENV WEB_DBHOST 192.168.34.72
+#ENV WEB_DBPORT 1521
+#ENV WEB_DBSID orcl11g
 
 # Datos de acceso para Recovery (Oracle-Docker local)
 #ENV WEB_MASTER_SCHEMA CMMASTER
@@ -127,7 +127,7 @@ ENV TOMCAT_MEM_PARAMS "-Xms512m -Xmx1024m -XX:MaxPermSize=150m"
 # Modificaciones propias para REM
 
 # Sobreescribimos el WAR por el que tenemos en local
-ENV USE_LOCAL_WAR_FILE /tmp/pfs-9.1-SNAPSHOT.war
+#ENV USE_LOCAL_WAR_FILE /tmp/pfs-9.1-SNAPSHOT.war
 ADD tmp /tmp
 
 #######################################################################

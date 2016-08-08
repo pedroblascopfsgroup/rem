@@ -335,6 +335,11 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "DD_TCO_ID")
     private DDTipoComercializacion tipoComercializacion;
     
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<Visita> visitas;    
+    
 	@Version   
 	private Long version;
 

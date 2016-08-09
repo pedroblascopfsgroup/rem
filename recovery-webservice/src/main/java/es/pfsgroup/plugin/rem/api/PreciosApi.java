@@ -21,19 +21,21 @@ public interface PreciosApi {
 
 	/**
 	 * Crea una nueva propuesta de precios de tipo manual
-	 * @param activosPrecios
-	 * @param nombrePropuesta
+	 * @param activosPrecios Lista de activos seleccionada en la pantalla de propuestas de precios manuales
+	 * @param nombrePropuesta Nombre que se da a la propuesta
+	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
 	 * @return PropuestaPrecio
 	 */
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta);
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo);
 
 	/**
-	 * Crea una nueva propuesta de precios para una lista de activos
+	 * Crea una nueva propuesta de precios del tipo indicado, para una lista de activos
 	 * @param activos
-	 * @param nombrePropuesta
+	 * @param nombrePropuesta Nombre que se da a la propuesta
+	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
 	 * @return PropuestaPrecio
 	 */
-	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta);
+	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo);
 	
 	public ExcelReport createExcelPropuestaPrecios(List<VBusquedaActivosPrecios> activosPrecios, String entidadPropietariaCodigo, String nombrePropuesta);
 	

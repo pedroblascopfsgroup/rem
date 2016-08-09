@@ -34,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
 
@@ -79,7 +80,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta){
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
 
 		// Se instancia una lista de Activos, usando los id's de activos de la lista del buscador
 		List<Activo> activos = new ArrayList<Activo>();
@@ -90,7 +91,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 		
 		// Nueva propuesta de precios con activos asociados
-		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta);
+		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta, tipoPropuestaCodigo);
 		
 		return propuestaPrecio;
 		
@@ -98,7 +99,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta){
+	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo){
 
 		PropuestaPrecio propuestaPrecio = new PropuestaPrecio();
 		
@@ -117,6 +118,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		DDEstadoPropuestaPrecio estadoPropuestaPrecios = (DDEstadoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_GENERADA);
 		propuestaPrecio.setEstado(estadoPropuestaPrecios);
+		DDTipoPropuestaPrecio tipoPropuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, tipoPropuestaCodigo);
+		propuestaPrecio.setTipoPropuesta(tipoPropuestaPrecio);
 		
 		propuestaPrecio.setActivosPropuesta(listaActivosToActivosPropuesta(activos, propuestaPrecio));
 		

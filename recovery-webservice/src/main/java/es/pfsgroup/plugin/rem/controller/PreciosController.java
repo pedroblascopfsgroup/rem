@@ -118,7 +118,7 @@ public class PreciosController {
 		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
 		//Genera la propuesta en BBDD y asocia los activos
-		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta);
+		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo());
 		
 		// FIXME Se genera una excel básica, pendiente de definir
 		ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);

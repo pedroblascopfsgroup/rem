@@ -3,10 +3,10 @@
 --## AUTOR=JOSEVI JIMENEZ
 --## FECHA_CREACION=20160808
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Añadir columnas con marcas para Preciar/Repreciar y Descuento
+--## Finalidad: Añadir columnas con indicadores de activos para Preciar/Repreciar y Descuento
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -39,26 +39,25 @@ DECLARE
     
 BEGIN
 	
-	-- Comprobamos si existe columna ACT_FECHA_IND_PRECIADO (si es así, no hacemos nada)
-	-- Es un indicador de activo PRECIADO (por primera vez). El indicador es una fecha del momento en que pasa a ser activo PRECIADO
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''ACT_FECHA_IND_PRECIADO'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	-- Comprobamos si existe columna ACT_FECHA_IND_PRECIAR (si es así, no hacemos nada)
+	-- Es un indicador de activo PRECIADO (por primera vez). Es un indicador de activo listo para PRECIAR (por 1a vez). El indicador es una fecha del momento en que es marcado porque reune las condiciones para ser preciado x 1a vez
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''ACT_FECHA_IND_PRECIAR'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	
 	V_TEXT1 := 'Indicador de activo preciado por primera vez';
 	IF V_NUM_TABLAS > 0 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_FECHA_IND_PRECIADO... Ya existe. No se hace nada.');
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_FECHA_IND_PRECIAR... Ya existe. No se hace nada.');
 	ELSE
 		-- Se crea la columna y se le agrega un comentario 
-		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (ACT_FECHA_IND_PRECIADO DATE)';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_FECHA_IND_PRECIADO IS '''||V_TEXT1||'''  ';
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_FECHA_IND_PRECIADO... Creado');
-		DBMS_OUTPUT.PUT_LINE('[INFO] ACT_FECHA_IND_PRECIADO: Es un indicador de activo listo para PRECIAR (por primera vez). El indicador es una fecha del momento en que es marcado porque reune las condiciones para ser preciado x 1a vez');
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (ACT_FECHA_IND_PRECIAR DATE)';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_FECHA_IND_PRECIAR IS '''||V_TEXT1||'''  ';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_FECHA_IND_PRECIAR... Creado');
+		DBMS_OUTPUT.PUT_LINE('[INFO] ACT_FECHA_IND_PRECIAR: Es un indicador de activo listo para PRECIAR (por 1a vez). El indicador es una fecha del momento en que es marcado porque reune las condiciones para ser preciado x 1a vez');
 	END IF;
 	
 
 	-- Comprobamos si existe columna ACT_FECHA_IND_REPRECIAR (si es así, no hacemos nada)
-	-- Indicador de activo repreciado.  El indicador se sobreescribe cada vez que el activo se REPRECIA. 
-	-- El indicador es una fecha del momento en que pasa a ser activo REPRECIADO
+	-- Indicador de activo repreciado. El indicador es una fecha del momento en que es marcado porque reune las condiciones para ser repreciado otra vez
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''ACT_FECHA_IND_REPRECIAR'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	
@@ -75,8 +74,7 @@ BEGIN
 
 
 	-- Comprobamos si existe columna ACT_FECHA_IND_DESCUENTO (si es así, no hacemos nada)
-	-- Indicador de activo con descuento vigente.  El indicador se sobreescribe cuando el descuento pasa a no vigente o aparece un nuevo descuento.
-	-- El indicador es una fecha del momento en que aparece un nuevo precio DESCUENTO VIGENTE
+	-- Indicador de activo con descuento vigente. El indicador es una fecha del momento en que es marcado porque tiene uno o mas precios de descuento en periodo vigente
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''ACT_FECHA_IND_DESCUENTO'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
 	

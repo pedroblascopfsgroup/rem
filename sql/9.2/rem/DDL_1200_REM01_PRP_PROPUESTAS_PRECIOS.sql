@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160808
+--## FECHA_CREACION=20160809
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -88,7 +88,8 @@ BEGIN
 			USU_ID									NUMBER(16,0)                NOT NULL,			
 			DD_CRA_ID								NUMBER(16,0)                NOT NULL,
 			TBJ_ID									NUMBER(16,0),   
-			DD_TPP_ID								NUMBER(16,0)                NOT NULL,             
+			DD_TPP_ID								NUMBER(16,0)                NOT NULL,
+			PRP_ES_PROP_MANUAL						NUMBER(1,0)					DEFAULT 0 NOT NULL ENABLE,
 			PRP_FECHA_EMISION						DATE						DEFAULT SYSDATE,
 			PRP_FECHA_ENVIO							DATE,
 			PRP_FECHA_SANCION						DATE,

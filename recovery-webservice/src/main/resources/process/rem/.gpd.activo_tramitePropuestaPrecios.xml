@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteTasacion" width="1207" height="657">
+  <node name="inicio" x="72" y="16" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T009_ComprobacionPropuestaPrecios" x="5" y="145" width="263" height="36">
+    <edge>
+      <label x="-43" y="-19"/>
+    </edge>
+    <edge>
+      <label x="10" y="-240"/>
+      <bendpoint w1="1" h1="286" w2="-669" h2="0"/>
+    </edge>
+  </node>
+  <node name="T009_ComprobacionGestor" x="376" y="144" width="191" height="36">
+    <edge>
+      <label x="6" y="8"/>
+      <bendpoint w1="0" h1="-72" w2="-320" h2="-1"/>
+    </edge>
+    <edge>
+      <label x="2" y="-146"/>
+      <bendpoint w1="3" h1="170" w2="-329" h2="-1"/>
+    </edge>
+  </node>
+  <node name="T009_AnalisisPeticion" x="694" y="73" width="209" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T009_AnalisisPeticionDecision" x="687" y="190" width="225" height="36">
+    <edge>
+      <label x="-180" y="-19"/>
+      <bendpoint w1="339" h1="0" w2="-2" h2="-121"/>
+    </edge>
+    <edge>
+      <label x="11" y="-30"/>
+    </edge>
+  </node>
+  <node name="T009_GenerarPropuestaPrecios" x="681" y="315" width="245" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T009_EnvioPropuestaPropietario" x="687" y="431" width="238" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T009_SancionCargaPropuesta" x="689" y="550" width="241" height="36">
+    <edge>
+      <label x="-96" y="-21"/>
+      <bendpoint w1="334" h1="-1" w2="3" h2="238"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1074" y="311" width="132" height="36"/>
+</root-container>

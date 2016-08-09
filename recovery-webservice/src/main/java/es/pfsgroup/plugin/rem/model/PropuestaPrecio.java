@@ -96,6 +96,9 @@ public class PropuestaPrecio implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPP_ID")
     private DDTipoPropuestaPrecio tipoPropuesta;  
+
+	@Column(name = "PRP_ES_PROP_MANUAL")
+	private Boolean esPropuestaManual;
     
 	@Column(name = "PRP_FECHA_EMISION")
 	private Date fechaEmision;
@@ -170,6 +173,14 @@ public class PropuestaPrecio implements Serializable, Auditable {
 
 	public void setTipoPropuesta(DDTipoPropuestaPrecio tipoPropuesta) {
 		this.tipoPropuesta = tipoPropuesta;
+	}
+
+	public Boolean getEsPropuestaManual() {
+		return esPropuestaManual;
+	}
+
+	public void setEsPropuestaManual(Boolean esPropuestaManual) {
+		this.esPropuestaManual = esPropuestaManual;
 	}
 
 	public Date getFechaEmision() {

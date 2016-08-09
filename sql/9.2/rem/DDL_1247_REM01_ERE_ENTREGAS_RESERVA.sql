@@ -74,7 +74,7 @@ BEGIN
 	(
 			ERE_ID           						NUMBER(16,0)                NOT NULL,
 			RES_ID									NUMBER(16,0)                NOT NULL,
-			ERE_IMPORTE								NUMBER(16,2)				NOT NULL
+			ERE_IMPORTE								NUMBER(16,2)				NOT NULL,
 			ERE_TITULAR								VARCHAR2(256 CHAR),
 			ERE_FECHA_ENTREGA						DATE,
 			ERE_OBSERVACIONES						VARCHAR2(512 CHAR),

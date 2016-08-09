@@ -120,6 +120,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		propuestaPrecio.setEstado(estadoPropuestaPrecios);
 		DDTipoPropuestaPrecio tipoPropuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, tipoPropuestaCodigo);
 		propuestaPrecio.setTipoPropuesta(tipoPropuestaPrecio);
+		propuestaPrecio.setEsPropuestaManual(true);
 		
 		propuestaPrecio.setActivosPropuesta(listaActivosToActivosPropuesta(activos, propuestaPrecio));
 		

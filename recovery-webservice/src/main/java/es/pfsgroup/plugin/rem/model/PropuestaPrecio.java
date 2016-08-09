@@ -45,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -90,7 +91,11 @@ public class PropuestaPrecio implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CRA_ID")
-    private DDCartera cartera;  
+    private DDCartera cartera;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPP_ID")
+    private DDTipoPropuestaPrecio tipoPropuesta;  
     
 	@Column(name = "PRP_FECHA_EMISION")
 	private Date fechaEmision;
@@ -157,6 +162,14 @@ public class PropuestaPrecio implements Serializable, Auditable {
 
 	public void setCartera(DDCartera cartera) {
 		this.cartera = cartera;
+	}
+
+	public DDTipoPropuestaPrecio getTipoPropuesta() {
+		return tipoPropuesta;
+	}
+
+	public void setTipoPropuesta(DDTipoPropuestaPrecio tipoPropuesta) {
+		this.tipoPropuesta = tipoPropuesta;
 	}
 
 	public Date getFechaEmision() {

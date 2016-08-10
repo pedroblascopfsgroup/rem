@@ -33,9 +33,10 @@ public interface PreciosApi {
 	 * @param activos
 	 * @param nombrePropuesta Nombre que se da a la propuesta
 	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
+	 * @param esPropManual Indicador del origen de la propuesta: Peticion o Manual
 	 * @return PropuestaPrecio
 	 */
-	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo);
+	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManua);
 	
 	public ExcelReport createExcelPropuestaPrecios(List<VBusquedaActivosPrecios> activosPrecios, String entidadPropietariaCodigo, String nombrePropuesta);
 	

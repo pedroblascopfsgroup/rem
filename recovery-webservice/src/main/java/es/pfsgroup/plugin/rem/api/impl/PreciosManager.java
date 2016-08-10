@@ -96,7 +96,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		}
 		
 		// Nueva propuesta de precios con activos asociados
-		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta, tipoPropuestaCodigo);
+		Boolean esPropManual = true;
+		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
 		
 		// Nuevo trabajo+tramite de propuesta de precios
 		DDSubtipoTrabajo subtipoTrabajoPropuestaPrecios = (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS);
@@ -108,7 +109,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo){
+	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
 
 		PropuestaPrecio propuestaPrecio = new PropuestaPrecio();
 		
@@ -127,9 +128,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		DDEstadoPropuestaPrecio estadoPropuestaPrecios = (DDEstadoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_GENERADA);
 		propuestaPrecio.setEstado(estadoPropuestaPrecios);
-		DDTipoPropuestaPrecio tipoPropuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, tipoPropuestaCodigo);
+		DDTipoPropuestaPrecio tipoPropuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPropuestaPrecio.class, tipoPropuestaCodigo);
 		propuestaPrecio.setTipoPropuesta(tipoPropuestaPrecio);
-		propuestaPrecio.setEsPropuestaManual(true);
+		propuestaPrecio.setEsPropuestaManual(esPropManual);
 		
 		propuestaPrecio.setActivosPropuesta(listaActivosToActivosPropuesta(activos, propuestaPrecio));
 		

@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -93,9 +94,10 @@ public interface TrabajoApi {
 	     * - Nuevos trabajos del módulo de precios y marketing 
 	     * @param subtipoTrabajo
 	     * @param listaActivos
+	     * @param propuetaPrecio (Opcional) Si es un trabajo derivado de la propuesta, se le pasa la propuesta
 	     * @return
 	     */
-	    public Long create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos);
+	    public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio);
 	    
 		/**
 		 * Crear trabajo desde la pantalla de crear trabajos:

@@ -19,6 +19,7 @@ public class UpdaterServicePropuestaPreciosCargaProp implements UpdaterService {
     @Autowired
     private GenericABMDao genericDao;
     
+    private static final String FECHA_SANCION = "fechaSancion";
 	private static final String FECHA_CARGA = "fechaCarga";
 	private static final String CODIGO_T009_CARGA_PROPUESTA = "T009_SancionCargaPropuesta";
 
@@ -28,10 +29,22 @@ public class UpdaterServicePropuestaPreciosCargaProp implements UpdaterService {
 
 		for(TareaExternaValor valor :  valores){
 
-			//Fecha generación
+			//Fecha sancion
+			if(FECHA_SANCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
+			{
+				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga y Fecha Sancion
+				try {
+					tramite.getTrabajo().getPropuestaPrecio().setFechaSancion(ft.parse(valor.getValor()));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+
+			}
+			
+			//Fecha carga
 			if(FECHA_CARGA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor()))
 			{
-				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga
+				//Guardado adicional Fecha generación propuesta => trabajo.propuesta precios ->  Fecha carga y Fecha Sancion
 				try {
 					tramite.getTrabajo().getPropuestaPrecio().setFechaCarga(ft.parse(valor.getValor()));
 				} catch (ParseException e) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20160808
+--## FECHA_CREACION=20160810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -70,7 +70,7 @@ BEGIN
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_STR_SUBTIPO_TRABAJO '||
                     'SET DD_STR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''''|| 
 					', DD_STR_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
-					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
+					', USUARIOMODIFICAR = ''REM_F2'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_STR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
@@ -88,7 +88,7 @@ BEGIN
                       '''||TRIM(V_TMP_TIPO_DATA(2))||''',
                       '''||TRIM(V_TMP_TIPO_DATA(3))||''',
                       '''||TRIM(V_TMP_TIPO_DATA(4))||''',
-                       0, ''DML'',SYSDATE,0 )';
+                       0, ''REM_F2'',SYSDATE,0 )';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
         

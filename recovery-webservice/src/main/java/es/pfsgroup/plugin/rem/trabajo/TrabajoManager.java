@@ -72,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
@@ -333,8 +334,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
-	@Transactional
-	public Long create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos) {
+	@Transactional(readOnly = false)
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) {
 		Trabajo trabajo = new Trabajo();
 
 		try {
@@ -369,9 +370,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion);
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 			}
+
+			// Antes de crear el tramite, se relacionan la propuesta y el trabajo, porque el tramite puede requerir la propuesta
+			trabajo.setPropuestaPrecio(propuestaPrecio);
 			
 			trabajoDao.saveOrUpdate(trabajo);
-			
 			
 			// Crea el trámite relacionado con el nuevo trabajo generado --------------------
 			createTramiteTrabajo(trabajo);
@@ -382,7 +385,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(e.getMessage()));
 		}
 		
-		return trabajo.getId();
+		return trabajo;
 	}
 	
 	@Override
@@ -797,7 +800,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
 		}
 		
-		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, /*trabajo.getActivo(),*/trabajo);
+		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
 		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;

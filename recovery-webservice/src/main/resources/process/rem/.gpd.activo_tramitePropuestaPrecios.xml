@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteTasacion" width="1207" height="657">
+<root-container name="activo_tramitePropuestaPrecios" width="1207" height="657">
   <node name="inicio" x="72" y="16" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

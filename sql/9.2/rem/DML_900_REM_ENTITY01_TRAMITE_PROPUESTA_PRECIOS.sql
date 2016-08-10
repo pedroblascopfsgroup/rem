@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20160808
+--## FECHA_CREACION=20160810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -126,14 +126,15 @@ DECLARE
         T_TFI('T009_AnalisisPeticion'           ,'2'        ,'textfield','motivoDenegacion'     ,'Motivo de denegación'                                                                                                                                                                                                                                                                                                                         ,''                                                             ,''                                             ,''                 ),
     	T_TFI('T009_AnalisisPeticion'			,'3'		,'textarea'	,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					),
     	T_TFI('T009_GenerarPropuestaPrecios'			,'0'		,'label'	,'titulo'				,'<p style="margin-bottom: 10px">Para dar por terminada esta tarea deber&aacute; generar una propuesta de precios</p>'											,''																,''												,''					),
-		T_TFI('T009_GenerarPropuestaPrecios'			,'1'		,'datemaxtod'		,'fechaGeneracion'			,'Fecha generaci&oacute;n propuesta'																																																																														,'Debe indicar la fecha de emisi&oacute;n de tasaci&oacute;n'	,'false'										,''					),
+		T_TFI('T009_GenerarPropuestaPrecios'			,'1'		,'datemaxtod'		,'fechaGeneracion'			,'Fecha generaci&oacute;n propuesta'																																																																														,'Debe indicar la fecha de generaci&oacute;n de la propuesta'	,'false'										,''					),
 		T_TFI('T009_GenerarPropuestaPrecios'			,'2'		,'textarea'	,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					),
 		T_TFI('T009_EnvioPropuestaPropietario'			,'0'		,'label'	,'titulo'				,'<p style="margin-bottom: 10px">Para dar por cumplimentada esta tarea deber&aacute; enviar la propuesta al propietario</p>'																														,''																,''												,''					),
-        T_TFI('T009_EnvioPropuestaPropietario'            ,'1'        ,'datemaxtod'     ,'fechaEnvio'          ,'Fecha env&iacute;o al propietario'                                                                                                                                                                                                                                                                                                                       ,'Debe indicar la fecha de cierre econ&oacute;mico'             ,'false'                                        ,''                 ),
+        T_TFI('T009_EnvioPropuestaPropietario'            ,'1'        ,'datemaxtod'     ,'fechaEnvio'          ,'Fecha env&iacute;o al propietario'                                                                                                                                                                                                                                                                                                                       ,'Debe indicar la fecha de env&iacute;o de la propuesta'             ,'false'                                        ,''                 ),
 		T_TFI('T009_EnvioPropuestaPropietario'			,'2'		,'textarea'	,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					),
 		T_TFI('T009_SancionCargaPropuesta'	,'0'		,'label'	,'titulo'				,'<p style="margin-bottom: 10px">Para dar por terminada esta tarea debe cargar la propuesta que ha sido modificada y remitida por el propietario, con la lista validada de precios.</p>'															,''																,''												,''					),
-		T_TFI('T009_SancionCargaPropuesta'	,'1'		,'date'		,'fechaCarga'				,'Fecha carga propuesta'																																																																																		,'Debe indicar la fecha de solicitud extraordinaria'			,'false'										,''					),
-		T_TFI('T009_SancionCargaPropuesta'	,'2'		,'textarea'	,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					)
+        T_TFI('T009_SancionCargaPropuesta'  ,'1'        ,'datemaxtod'     ,'fechaSancion'               ,'Fecha sanci&oacute;n propuesta'                                                                                                                                                                                                                                                                                                                                        ,'Debe indicar la fecha de sanci&oacute;n de la propuesta'            ,'false'                                        ,''                 ),
+        T_TFI('T009_SancionCargaPropuesta'	,'2'		,'datemaxtod'		,'fechaCarga'				,'Fecha carga propuesta'																																																																																		,'Debe indicar la fecha de carga de la propuesta'			,'false'										,''					),
+		T_TFI('T009_SancionCargaPropuesta'	,'3'		,'textarea'	,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					)
 		);
     V_TMP_T_TFI T_TFI;
     
@@ -160,7 +161,7 @@ BEGIN
 --	    	EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
 --		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION (' ||
 --					'DD_TAC_ID, DD_TAC_CODIGO, DD_TAC_DESCRIPCION, DD_TAC_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) '||
---					'VALUES ('||V_ENTIDAD_ID||','''||V_TIPO_ACT_COD||''','''||V_TIPO_ACT_DES||''','''||V_TIPO_ACT_DES||''',	1, ''REM_F1'', SYSDATE, 0)';
+--					'VALUES ('||V_ENTIDAD_ID||','''||V_TIPO_ACT_COD||''','''||V_TIPO_ACT_DES||''','''||V_TIPO_ACT_DES||''',	1, ''REM_F2'', SYSDATE, 0)';
 --			EXECUTE IMMEDIATE V_MSQL;
 			
 		-- Insertamos en la tabla dd_tpo_tipo_procedimiento
@@ -168,7 +169,7 @@ BEGIN
 			EXECUTE IMMEDIATE V_MSQL INTO V_ENTIDAD_ID;
 		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO (' ||
 					'DD_TPO_ID, DD_TPO_CODIGO, DD_TPO_DESCRIPCION, DD_TPO_DESCRIPCION_LARGA, DD_TPO_XML_JBPM, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_TAC_ID, FLAG_PRORROGA, DTYPE, FLAG_DERIVABLE, FLAG_UNICO_BIEN) '||
-					'VALUES ('||V_ENTIDAD_ID||','''||V_TPO_COD||''','''||V_TPO_DES||''','''||V_TPO_DES||''','''||V_TPO_XML||''', 1, ''REM_F1'', SYSDATE, 0,'||
+					'VALUES ('||V_ENTIDAD_ID||','''||V_TPO_COD||''','''||V_TPO_DES||''','''||V_TPO_DES||''','''||V_TPO_XML||''', 1, ''REM_F2'', SYSDATE, 0,'||
 					'(SELECT DD_TAC_ID FROM '||V_ESQUEMA||'.DD_TAC_TIPO_ACTUACION WHERE DD_TAC_CODIGO = '''||V_TIPO_ACT_COD||'''), 1, ''MEJTipoProcedimiento'', 1, 0)';
 			EXECUTE IMMEDIATE V_MSQL;
 		
@@ -182,7 +183,7 @@ BEGIN
 	                      'TAP_ID, DD_TPO_ID, TAP_CODIGO, TAP_VIEW, TAP_SUPERVISOR, TAP_DESCRIPCION, '||
 	                      'VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_FAP_ID, TAP_AUTOPRORROGA, DTYPE, TAP_MAX_AUTOP, DD_STA_ID, DD_TGE_ID, DD_TPO_ID_BPM, TAP_SCRIPT_VALIDACION, TAP_SCRIPT_VALIDACION_JBPM, TAP_SCRIPT_DECISION) '||
 	                      'VALUES ('||V_ENTIDAD_ID||',(SELECT DD_TPO_ID FROM '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO WHERE DD_TPO_CODIGO = '''||V_TPO_COD||'''),'||
-	                      ''''||V_TMP_T_TAP(1)||''', NULL, 0,'''||V_TMP_T_TAP(2)||''', 0, ''REM_F1'', SYSDATE, 0, NULL, 0, ''EXTTareaProcedimiento'', '||
+	                      ''''||V_TMP_T_TAP(1)||''', NULL, 0,'''||V_TMP_T_TAP(2)||''', 0, ''REM_F2'', SYSDATE, 0, NULL, 0, ''EXTTareaProcedimiento'', '||
 	                      ''''||V_TMP_T_TAP(4)||''', (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = '''||V_TMP_T_TAP(3)||'''),'||
 	                      '(SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = '''||V_TMP_T_TAP(5)||'''),'||V_TMP_T_TAP(7)||','''||V_TMP_T_TAP(8)||''','''||V_TMP_T_TAP(9)||''','''||V_TMP_T_TAP(10)||''')';
 	          DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_T_TAP(1)||''' de '''||V_TPO_XML||''''); 
@@ -195,7 +196,7 @@ BEGIN
 	          V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.DD_PTP_PLAZOS_TAREAS_PLAZAS (' ||
 	          				'DD_PTP_ID, TAP_ID, DD_PTP_PLAZO_SCRIPT, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, DD_PTP_ABSOLUTO) '||
 	          				'VALUES ('||V_ENTIDAD_ID||',(SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TAP(1)||'''),'||
-	          				''''||V_TMP_T_TAP(6)||''',0, ''REM_F1'', SYSDATE, 0, 0)';
+	          				''''||V_TMP_T_TAP(6)||''',0, ''REM_F2'', SYSDATE, 0, 0)';
 	          DBMS_OUTPUT.PUT_LINE('INSERTANDO: Plazo de '''||V_TMP_T_TAP(1)||'''.'); 
 	          DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	          EXECUTE IMMEDIATE V_MSQL;
@@ -213,7 +214,7 @@ BEGIN
 	          			  'TFI_ID, TAP_ID, TFI_ORDEN, TFI_TIPO, TFI_NOMBRE, TFI_LABEL, TFI_ERROR_VALIDACION, TFI_VALIDACION, TFI_BUSINESS_OPERATION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) '||
 	          			  'VALUES ('||V_ENTIDAD_ID||', (SELECT TAP_ID FROM '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO WHERE TAP_CODIGO = '''||V_TMP_T_TFI(1)||'''),'||
 	          			  ''''||V_TMP_T_TFI(2)||''','''||V_TMP_T_TFI(3)||''','''||V_TMP_T_TFI(4)||''','''||V_TMP_T_TFI(5)||''', '''||V_TMP_T_TFI(6)||''', '''||V_TMP_T_TFI(7)||''', '||
-	          			  ''''||V_TMP_T_TFI(8)||''',1, ''REM_F1'', SYSDATE, 0)';
+	          			  ''''||V_TMP_T_TFI(8)||''',1, ''REM_F2'', SYSDATE, 0)';
 	          DBMS_OUTPUT.PUT_LINE('INSERTANDO: Campo '''||V_TMP_T_TFI(4)||''' de '''||V_TMP_T_TFI(1)||''''); 
 	          DBMS_OUTPUT.PUT_LINE(V_MSQL);
 	          EXECUTE IMMEDIATE V_MSQL;

@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropuesta.ActivoPropuestaPk;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
@@ -99,9 +100,14 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		Boolean esPropManual = true;
 		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
 		
-		// Nuevo trabajo+tramite de propuesta de precios
+		// Nuevo trabajo+tramite de propuesta de precios: La propuesta es necesaria para crear la relacion con el nuevo trabajo.
 		DDSubtipoTrabajo subtipoTrabajoPropuestaPrecios = (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS);
-		trabajoApi.create(subtipoTrabajoPropuestaPrecios, activos);
+		Trabajo trabajo = trabajoApi.create(subtipoTrabajoPropuestaPrecios, activos, propuestaPrecio);
+		
+		// Relacion nuevo trabajo con nueva propuesta
+		propuestaPrecio.setTrabajo(trabajo);
+		
+		propuestaPrecioDao.saveOrUpdate(propuestaPrecio);
 		
 		return propuestaPrecio;
 		

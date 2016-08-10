@@ -81,7 +81,7 @@ public class PropuestaPrecio implements Serializable, Auditable {
     @JoinColumn(name = "DD_EPP_ID")
     private DDEstadoPropuestaPrecio estado;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TBJ_ID")
     private Trabajo trabajo;
     

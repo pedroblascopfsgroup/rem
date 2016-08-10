@@ -18,7 +18,7 @@ public class VBusquedaActivosPropuesta implements Serializable {
 
 	@Id
 	@Column(name = "ACT_ID")
-	private String id;	
+	private String idActivo;	
 	
 	@Column(name = "ACT_NUM_ACTIVO")
 	private String numActivo;
@@ -78,12 +78,12 @@ public class VBusquedaActivosPropuesta implements Serializable {
     private String descripcionEstadoActivo;
     
 
-	public String getId() {
-		return id;
+	public String getIdActivo() {
+		return idActivo;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setIdActivo(String id) {
+		this.idActivo = id;
 	}
 
 	public String getNumActivo() {

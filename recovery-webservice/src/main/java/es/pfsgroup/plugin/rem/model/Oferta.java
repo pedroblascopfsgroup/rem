@@ -72,10 +72,7 @@ public class Oferta implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TOF_ID")
-	private DDTipoOferta tipoOferta;  
-    
-    
-    
+	private DDTipoOferta tipoOferta;      
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CLC_ID")
@@ -85,8 +82,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "VIS_ID")
     private Visita visita;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "VIS_FECHA_ACCION")
+    @Column(name = "VIS_FECHA_ACCION")
     private Date fechaAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -101,11 +97,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TitularesAdicionalesOferta> titularesAdicionales;   
-        
-    
-    
-    
-   
+
 	@Version   
 	private Long version;
 
@@ -159,6 +151,63 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setTipoOferta(DDTipoOferta tipoOferta) {
 		this.tipoOferta = tipoOferta;
+	}
+
+	public ClienteComercial getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(ClienteComercial cliente) {
+		this.cliente = cliente;
+	}
+
+	public Visita getVisita() {
+		return visita;
+	}
+
+	public void setVisita(Visita visita) {
+		this.visita = visita;
+	}
+
+	public Date getFechaAccion() {
+		return fechaAccion;
+	}
+
+	public void setFechaAccion(Date fechaAccion) {
+		this.fechaAccion = fechaAccion;
+	}
+
+	public Usuario getUsuarioAccion() {
+		return usuarioAccion;
+	}
+
+	public void setUsuarioAccion(Usuario usuarioAccion) {
+		this.usuarioAccion = usuarioAccion;
+	}
+
+	public ActivoProveedor getPrescriptor() {
+		return prescriptor;
+	}
+
+	public void setPrescriptor(ActivoProveedor prescriptor) {
+		this.prescriptor = prescriptor;
+	}
+
+	public List<TitularesAdicionalesOferta> getTitularesAdicionales() {
+		return titularesAdicionales;
+	}
+
+	public void setTitularesAdicionales(
+			List<TitularesAdicionalesOferta> titularesAdicionales) {
+		this.titularesAdicionales = titularesAdicionales;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 
 	public Auditoria getAuditoria() {

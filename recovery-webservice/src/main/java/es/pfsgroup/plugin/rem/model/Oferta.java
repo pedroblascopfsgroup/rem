@@ -33,7 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 
 /**
- * Modelo que gestiona la informacion de una visita
+ * Modelo que gestiona la informacion de una oferta
  *  
  * @author Jose Villel
  *
@@ -96,7 +96,12 @@ public class Oferta implements Serializable, Auditable {
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private List<TitularesAdicionalesOferta> titularesAdicionales;   
+    private List<TitularesAdicionalesOferta> titularesAdicionales;
+    
+    @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "OFR_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<TextosOferta> textos;  
 
 	@Version   
 	private Long version;
@@ -200,6 +205,14 @@ public class Oferta implements Serializable, Auditable {
 	public void setTitularesAdicionales(
 			List<TitularesAdicionalesOferta> titularesAdicionales) {
 		this.titularesAdicionales = titularesAdicionales;
+	}
+
+	public List<TextosOferta> getTextos() {
+		return textos;
+	}
+
+	public void setTextos(List<TextosOferta> textos) {
+		this.textos = textos;
 	}
 
 	public Long getVersion() {

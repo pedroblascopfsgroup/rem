@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -13,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -61,9 +63,16 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "OFR_ID")
     private Oferta oferta;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RES_ID")
-    private Reserva reserva;   
+    
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Reserva reserva;
+    
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Formalizacion formalizacion;   
 
      
 	@Version   
@@ -105,6 +114,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setOferta(Oferta oferta) {
 		this.oferta = oferta;
+	}
+
+	public Reserva getReserva() {
+		return reserva;
+	}
+
+	public void setReserva(Reserva reserva) {
+		this.reserva = reserva;
+	}
+
+	public Formalizacion getFormalizacion() {
+		return formalizacion;
+	}
+
+	public void setFormalizacion(Formalizacion formalizacion) {
+		this.formalizacion = formalizacion;
 	}
 
 	public Long getVersion() {

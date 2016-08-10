@@ -16,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -48,9 +49,13 @@ public class Reserva implements Serializable, Auditable {
 		
 	@Id
     @Column(name = "RES_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ExpedienteComercialGenerator")
-    @SequenceGenerator(name = "ExpedienteComercialGenerator", sequenceName = "S_ECO_EXPEDIENTE_COMERCIAL")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ReservaGenerator")
+    @SequenceGenerator(name = "ReservaGenerator", sequenceName = "S_RES_RESERVA")
     private Long id;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    private ExpedienteComercial expediente;
 	
     @Column(name = "RES_NUM_RESERVA")
     private Long numReserva;  

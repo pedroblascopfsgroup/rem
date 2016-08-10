@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
-import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PropuestaPreciosExcelReport;
 import es.pfsgroup.plugin.rem.factory.PropuestaPreciosExcelFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -28,14 +27,15 @@ import es.pfsgroup.plugin.rem.model.ActivoPropuesta;
 import es.pfsgroup.plugin.rem.model.ActivoPropuesta.ActivoPropuestaPk;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
+import es.pfsgroup.plugin.rem.propuestaprecios.dao.VActivosPropuestaDao;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
 
 @Service("preciosManager")
@@ -52,6 +52,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Autowired
 	private PropuestaPrecioDao propuestaPrecioDao;
+	
+	@Autowired
+	private VActivosPropuestaDao activosPropuestaDao;
 	
 	@Autowired
 	private PropuestaPreciosExcelFactoryApi propuestaPreciosExcelFactory;
@@ -79,9 +82,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	}
 	
 	@Override
-	public Page getPropuestasPrecios(DtoPropuestaPrecioFilter dtoPropuestaFiltro) {
+	public Page getHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dtoPropuestaFiltro) {
 		
-		return propuestaPrecioDao.getListPropuestasPreciosBySearch(dtoPropuestaFiltro);
+		return propuestaPrecioDao.getListHistoricoPropuestasPrecios(dtoPropuestaFiltro);
 	}
 	
 	@Override
@@ -168,6 +171,12 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		return new PropuestaPreciosExcelReport(lista, nombrePropuesta);			
 		
-	}	
+	}
+	
+	@Override
+	public List<VBusquedaActivosPropuesta> getActivosByIdPropuesta(Long idPropuesta) {
+		
+		return activosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta);
+	}
 
 }

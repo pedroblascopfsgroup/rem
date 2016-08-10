@@ -14,7 +14,7 @@ import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 
@@ -40,7 +40,7 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
     }
     
     @Override
-    public Page getListPropuestasPreciosBySearch(DtoPropuestaPrecioFilter dto) {
+    public Page getListHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dto) {
     	
     	HQLBuilder hb = new HQLBuilder(" from VBusquedaPropuestasPrecio prp");
     	
@@ -48,25 +48,25 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "prp.nombrePropuesta", dto.getNombrePropuesta(), true);
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "prp.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.tipoPropuesta", dto.getTipoPropuesta());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.idTramite", dto.getNumTramite());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.numTramite", dto.getNumTramite());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.numTrabajo", dto.getNumTrabajo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.estadoCodigo", dto.getEstadoPropuesta());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"prp.gestor", dto.getGestorPrecios());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb,"prp.gestor", dto.getGestorPrecios(),true);
    		
    		if(!Checks.esNulo(dto.getTipoDeFecha())) {
    			//No admite String en el switch
    			switch(Integer.parseInt(dto.getTipoDeFecha())) {
 	   			case 1:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta().toString(),"prp.fechaEmision");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"prp.fechaEmision");	
 	   				break;
 	   			case 2:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta().toString(),"prp.fechaEnvio");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"prp.fechaEnvio");	
 	   				break;
 	   			case 3:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta().toString(),"prp.fechaSancion");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"prp.fechaSancion");	
 	   				break;
 	   			case 4:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta().toString(),"prp.fechaCarga");	
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"prp.fechaCarga");	
 	   				break;
    				default:
    					break;

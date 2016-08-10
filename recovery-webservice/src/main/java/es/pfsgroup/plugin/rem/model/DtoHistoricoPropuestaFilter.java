@@ -1,16 +1,14 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.util.Date;
-
 import es.capgemini.devon.dto.WebDto;
 
 /**
  * HR-641
- * Dto para el filtro de Propuestas de Precios
+ * Dto para el filtro de Historico Propuestas de Precios
  * @author jros
  *
  */
-public class DtoPropuestaPrecioFilter extends WebDto {
+public class DtoHistoricoPropuestaFilter extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 
@@ -21,8 +19,8 @@ public class DtoPropuestaPrecioFilter extends WebDto {
 	private String numTramite;
 	private String numTrabajo;
 	private String tipoDeFecha;
-	private Date fechaDesde;
-	private Date fechaHasta;
+	private String fechaDesde;
+	private String fechaHasta;
 	private String estadoPropuesta;
 	private String gestorPrecios;
 	
@@ -68,16 +66,16 @@ public class DtoPropuestaPrecioFilter extends WebDto {
 	public void setTipoDeFecha(String tipoDeFecha) {
 		this.tipoDeFecha = tipoDeFecha;
 	}
-	public Date getFechaDesde() {
+	public String getFechaDesde() {
 		return fechaDesde;
 	}
-	public void setFechaDesde(Date fechaDesde) {
+	public void setFechaDesde(String fechaDesde) {
 		this.fechaDesde = fechaDesde;
 	}
-	public Date getFechaHasta() {
+	public String getFechaHasta() {
 		return fechaHasta;
 	}
-	public void setFechaHasta(Date fechaHasta) {
+	public void setFechaHasta(String fechaHasta) {
 		this.fechaHasta = fechaHasta;
 	}
 	public String getEstadoPropuesta() {

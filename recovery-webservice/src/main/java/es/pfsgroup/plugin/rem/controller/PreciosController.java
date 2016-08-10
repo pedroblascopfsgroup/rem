@@ -32,10 +32,10 @@ import es.pfsgroup.plugin.rem.excel.ActivosPreciosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaPrecioFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
 
 
 @Controller
@@ -51,6 +51,7 @@ public class PreciosController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;		
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivos(DtoActivoFilter dtoActivoFiltro,
 			ModelMap model) {
@@ -72,12 +73,13 @@ public class PreciosController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getPropuestas(DtoPropuestaPrecioFilter dtoPropuestaFiltro, ModelMap model) {
+	public ModelAndView getPropuestas(DtoHistoricoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
 		
 		try {
 
-			Page page = preciosApi.getPropuestasPrecios(dtoPropuestaFiltro);
+			Page page = preciosApi.getHistoricoPropuestasPrecios(dtoPropuestaFiltro);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
@@ -181,7 +183,27 @@ public class PreciosController {
         
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivosByPropuesta(Long idPropuesta,
+			ModelMap model) {
 
+		try {
+
+			List<VBusquedaActivosPropuesta> listaActivos = preciosApi.getActivosByIdPropuesta(idPropuesta);
+
+			model.put("data", listaActivos);
+			model.put("totalCount", listaActivos.size());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
 
 
 

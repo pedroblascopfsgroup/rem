@@ -22,7 +22,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
     },  
 
     initComponent: function () {
-        
+    	
         var me = this;
         
         me.setTitle(HreRem.i18n("title.historico.filtro.propuestas"));
@@ -118,6 +118,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 										name: 'fechaDesde',
 										fieldLabel:  HreRem.i18n('fieldlabel.desde'),
 										publish: 'value',
+										formatter: 'date("d/m/Y")',
 										bind: {
 											disabled: '{!comboTipoFecha.selection}'
 										}
@@ -126,6 +127,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 										xtype: 'datefieldbase',
 										name: 'fechaHasta',
 										fieldLabel: HreRem.i18n('fieldlabel.hasta'),
+										formatter: 'date("d/m/Y")',
 										bind: {
 											disabled: '{!comboTipoFecha.selection}',
 											minValue: '{datefielddesde.value}'

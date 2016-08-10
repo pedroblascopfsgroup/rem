@@ -5,6 +5,10 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasList', {
     bind: {
         store: '{propuestas}'
     },
+    listeners : [
+    	{rowclick: 'onPropuestaPrecioListClick'}
+    ],
+    
     loadAfterBind: false,
     initComponent: function () {
         

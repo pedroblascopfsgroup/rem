@@ -113,6 +113,10 @@ Ext.define('HreRem.controller.ActivosController', {
     		refrescarTramite: 'refrescarDetalleTramite'
     	},
 	
+    	'publicacionmain' : {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPublicacion'
+    	},
+    	
     	'menufavoritos': {
     		
     		abrirfavoritoactivo: function(menuFavoritos, favorito) {
@@ -217,7 +221,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	/* Selector de subpestanyas del activo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
-		    	 * para evitar el uso de Notify() si no hay activacion de pestañas (refLinks != null)
+		    	 * para evitar el uso de Notify() si no hay activacion de pestaï¿½as (refLinks != null)
 		    	 */
 		    	if (refLinks != null){
 		    		tab.getViewModel().notify();
@@ -233,10 +237,10 @@ Ext.define('HreRem.controller.ActivosController', {
     seleccionarTabByXtype: function (tab, refLinks) {
 
 		/* - seleccionarTabByXtype es una funcion que se llama a si misma recursivamente, 
-		 *   tantas veces como xtype de pestañas contenga refLinks, separados por puntos
-		 * - Cada llamada activa una pestaña por xtype y pasa a la siguiente llamada el resto
+		 *   tantas veces como xtype de pestaï¿½as contenga refLinks, separados por puntos
+		 * - Cada llamada activa una pestaï¿½a por xtype y pasa a la siguiente llamada el resto
     	 * - La 1a llamada debe ir precedida por un Notify(), que es necesario para evitar un error
-    	 *   por falta de algún dato. El error bloquea la aplicacion 
+    	 *   por falta de algï¿½n dato. El error bloquea la aplicacion 
     	 * - Notify() se hace fuera de la funcion selectora porque no se puede usar en llamadas recursivas
 		 */
 		if (refLinks != null){
@@ -285,6 +289,14 @@ Ext.define('HreRem.controller.ActivosController', {
 		    }
 		});
     	
+    },
+    
+    abrirDetalleActivoPublicacion: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("id");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PUBLICACION'])
     },
     
     abrirDetalleAgrupacion: function(record) {
@@ -454,7 +466,7 @@ Ext.define('HreRem.controller.ActivosController', {
 				
 				/* Selector de subPestanyas del Trabajo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
-		    	 * para evitar el uso de Notify() si no hay activacion de pestañas (refLinks != null)
+		    	 * para evitar el uso de Notify() si no hay activacion de pestaï¿½as (refLinks != null)
 		    	 */
 		    	if (refLinks != null){
 		    		tab.getViewModel().notify();

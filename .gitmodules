@@ -1,0 +1,4 @@
+[submodule "sql/pitertul"]
+	path = sql/pitertul
+	url = ssh://pupus01.pfsgroup.es:29418/pfs-pitertul
+    ignore = all

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 
 public interface ActivoEstadoPublicacionApi {
 
@@ -9,5 +10,5 @@ public interface ActivoEstadoPublicacionApi {
 	 * datos de la publicación
 	 * @param dtoCambioEstadoPublicacion
 	 */
-	public void publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion);
+	public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion);
 }

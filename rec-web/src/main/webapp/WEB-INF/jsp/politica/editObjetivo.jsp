@@ -417,6 +417,16 @@
 				errores += '- ' + '<s:message code="editar.objetivo.error.contratoNulo" 
 	                             text="**Debe seleccionar un contrato." />' + '<br />';
 			}
+			if(!resumenObjetivo.isValid()){
+				errores += '- ' + '<s:message code="editar.objetivo.error.resumenObjetivo" 
+	                             text="**El campo Resumen Objetivo debe tener como m&aacute;ximo 250 caracteres." />' + '<br />';
+			}
+			if(!observaciones.isValid()){
+				errores += '- ' + '<s:message code="editar.objetivo.error.observaciones" 
+	                             text="**El campo Observaciones debe tener como m&aacute;ximo 250 caracteres." />' + '<br />';
+			}
+			
+			
 			if(errores != '') {
 				Ext.Msg.alert('<s:message code="fwk.ui.errorList.fieldLabel"/>', errores);
 				return false;

@@ -22,6 +22,7 @@ import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.movimiento.model.Movimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -130,6 +131,13 @@ public class SubastaCalculoManager {
 
 			subastaDuplicada.setEstadoSubasta(genericDao.get(DDEstadoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSubasta.PIN)));
+			
+			if (TipoProcedimiento.TIPO_SUB_ELECTRONICA_HAYA.equals(procedimiento.getTipoProcedimiento().getCodigo())){
+				subastaDuplicada.setTramitacion(true);
+				subastaDuplicada.setTasacionElectronica(false);
+			} else{
+				subastaDuplicada.setTramitacion(false);
+			}
 
 			//subastaDuplicada.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "codigo", determinarTipoSubasta(procedimiento))));
 			subastaProcedimientoApi.determinarTipoSubasta(subastaDuplicada);
@@ -214,7 +222,14 @@ public class SubastaCalculoManager {
 
 			subastaDuplicada.setTipoSubasta(genericDao.get(DDTipoSubasta.class, genericDao.createFilter(FilterType.EQUALS, "borrado", false),
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoSubasta.DEL)));
-
+			
+			if (TipoProcedimiento.TIPO_SUB_ELECTRONICA_HAYA.equals(procedimiento.getTipoProcedimiento().getCodigo())){
+				subastaDuplicada.setTramitacion(true);
+				subastaDuplicada.setTasacionElectronica(false);
+			} else{
+				subastaDuplicada.setTramitacion(false);
+			}
+			
 			genericDao.save(Subasta.class, subastaDuplicada);
 			
 			//actualizarTipoSubasta(procedimiento);
@@ -358,7 +373,7 @@ public class SubastaCalculoManager {
 			if (nmbBien.getTipoSubasta()==null) {
 				continue;
 			}
-			float tipoSubasta = nmbBien.getTipoSubasta();
+			float tipoSubasta = nmbBien.getTipoSubasta().floatValue();
 			tipoSubasta = (float) (tipoSubasta * 0.6);
 			float diferenciaDeuda = (deudaTotal - tipoSubasta);
 			if ("1".equals(nmbBien.getViviendaHabitual()) && diferenciaDeuda<procedimientosProjectContext.getLimiteDeudaBien()) {

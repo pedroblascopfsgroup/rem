@@ -3194,14 +3194,3 @@ public class ActivoAdapter {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-

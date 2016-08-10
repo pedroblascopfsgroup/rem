@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.omg.PortableServer.IdUniquenessPolicyValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,7 +125,11 @@ public class ADMUsuarioManager {
 		EventFactory.onMethodStart(this.getClass());
 		Usuario u = getUsuarioLogado();
 		EventFactory.onMethodStop(this.getClass());
-		return usuarioDao.getByEntidad(id, u.getEntidad().getId());
+		Usuario resultado = usuarioDao.getByEntidad(id, u.getEntidad().getId());
+		if (Checks.esNulo(resultado)) {
+			resultado = usuarioDao.get(id);
+		}
+		return resultado;
 	}
 
 	/**
@@ -720,4 +725,18 @@ public class ADMUsuarioManager {
 			return l;
 	}
 
+	@BusinessOperation("ADMUsuarioManager.usuarioEnOtraCartera")
+	public boolean usuarioEnOtraCartera(Usuario u) {
+		if (!Checks.esNulo(u) && !Checks.esNulo(u.getEntidad())) {
+			Long idEntidad = u.getEntidad().getId();
+			Usuario ul = getUsuarioLogado();
+			if (idEntidad.equals(ul.getEntidad().getId())) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return true;
+		}
+	}
 }

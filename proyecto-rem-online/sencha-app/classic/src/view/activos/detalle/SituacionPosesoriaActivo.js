@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     xtype: 'situacionposesoriaactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'situacionposesoriaactivoref',
     scrollable	: 'y',
     listeners: {

@@ -847,3 +847,10 @@ button.icon_checkbox_on, .icon_checkbox_on {
 * html .icon_historico_delegaciones{
   background: transparent url('historico-delegaciones.png') no-repeat;
 }
+
+.icon_juzgados{
+  background: transparent url('../img/plugin/plazasJuzgados/bank.png') no-repeat;
+}
+* html .icon_juzgados{
+  background: transparent url('../img/plugin/plazasJuzgados/bank.png') no-repeat;
+}

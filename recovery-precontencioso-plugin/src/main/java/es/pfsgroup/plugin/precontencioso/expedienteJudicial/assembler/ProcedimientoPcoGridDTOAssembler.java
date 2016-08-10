@@ -86,6 +86,9 @@ public class ProcedimientoPcoGridDTOAssembler {
 			docGridDto.setFechaResultado((Date) documento.get("fechaResultado"));
 			docGridDto.setFechaEnvio((Date) documento.get("fechaEnvio"));
 			docGridDto.setFechaRecepcion((Date) documento.get("fechaRecepcion"));
+			docGridDto.setFechaSolicitud((Date) documento.get("fechaSolicitud"));
+			//RECOVERY-21 Nuevos campos a mostrar en los resultados del buscador (Otros 4 se rellenan en ProcedimientoPcoManager)
+			docGridDto.setTipoDocumento(ObjectUtils.toString(documento.get("tipoDocumento")));
 
 			prcPcoGridDto.setDocumento(docGridDto);
 
@@ -111,6 +114,7 @@ public class ProcedimientoPcoGridDTOAssembler {
 			liqGridDto.setFechaConfirmacion((Date) liquidacion.get("fechaConfirmacion"));
 			liqGridDto.setFechaCierre((Date) liquidacion.get("fechaCierre"));
 			liqGridDto.setFechaRecepcion((Date) liquidacion.get("fechaRecepcion"));
+			liqGridDto.setFechaSolicitud((Date) liquidacion.get("fechaSolicitud"));
 
 			if (liquidacion.get("total") != null) {
 				liqGridDto.setTotal(((BigDecimal) liquidacion.get("total")).floatValue());
@@ -178,4 +182,6 @@ public class ProcedimientoPcoGridDTOAssembler {
 
 		return prcPcoGridDto;
 	}
+	
+	
 }

@@ -9,7 +9,7 @@
 			<json:object>
 				<json:property name="idContrato" value="${ec.contrato.id}"/>
 				<json:property name="contrato" value="${ec.contrato.codigoContrato}"/>
-				<json:property name="tipo" value="${ec.contrato.tipoProducto.descripcion}"/>
+				<json:property name="tipo" value="${ec.contrato.tipoProductoEntidad.descripcion}"/>
 				<json:property name="vencido" value="${ec.contrato.lastMovimiento.posVivaVencidaAbsoluta}"/>
 				<json:property name="total" value="${ec.contrato.lastMovimiento.saldoTotalAbsoluto}" />
 				<json:property name="incluido" value="${ec.sinActuacion}" />

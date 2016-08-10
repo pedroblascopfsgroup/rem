@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.hibernate.Hibernate;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.type.Type;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
@@ -62,5 +64,28 @@ public class GestorTareasDaoImpl extends AbstractEntityDao<Serializable, Long>
 		
 		return resultado;
 
+	}
+	
+	@Override
+	public Long getNodeByCodTapAndIdProcesDefinition(Long idProcesDefinition, String codTap){
+		String sql ="SELECT ID_ FROM ${master.schema}.JBPM_NODE WHERE PROCESSDEFINITION_ = "+idProcesDefinition+" AND NAME_ ='"+codTap+"'";
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		Object idNode = sqlQuery.uniqueResult();
+		return Long.valueOf(idNode.toString());
+	}
+	
+	@Override
+	public void updateNodeToken(Long idToken, Long idNode){
+        String sql = "UPDATE ${master.schema}.JBPM_TOKEN SET NODE_ = " + idNode + " WHERE ID_ = " + idToken;
+        Session sesion = getSession();
+        sesion.createSQLQuery(sql).executeUpdate();
+	}
+	
+	@Override
+	public Long getProcesDefinition(Long processinstance){
+		String sql ="SELECT PROCESSDEFINITION_ FROM ${master.schema}.JBPM_PROCESSINSTANCE WHERE ID_ = "+processinstance;
+		SQLQuery sqlQuery = getSessionFactory().getCurrentSession().createSQLQuery(sql);
+		Object idNode = sqlQuery.uniqueResult();
+		return Long.valueOf(idNode.toString());
 	}
 }

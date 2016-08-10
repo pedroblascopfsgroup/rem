@@ -69,6 +69,7 @@ public class Parametrizacion implements Serializable, Auditable {
     public static final String TIEMPO_CARGA_FECHA_CACHEO = "tiempoCargaFechaCacheo";
     public static final String GESTOR_DOCUMENTAL_REST_CLIENT_USUARIO = "usuarioHayaGestorDoc";
     public static final String GESTOR_DOCUMENTAL_REST_CLIENT_PASSWORD = "passwordHayaGestorDoc";
+    public static final String LIMITE_EXPORT_EXCEL_BUSCADOR_ACUERDOS = "limiteExportExcelBuscadorAcuerdos";
 
     @Id
     @Column(name = "PEN_ID")

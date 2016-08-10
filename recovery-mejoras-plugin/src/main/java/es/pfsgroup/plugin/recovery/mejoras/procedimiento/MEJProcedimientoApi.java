@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.web.DynamicElement;
+import es.capgemini.pfs.asunto.dto.ProcedimientoDto;
 import es.capgemini.pfs.externa.ExternaBusinessOperation;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
@@ -87,5 +89,6 @@ public interface MEJProcedimientoApi {
 	@BusinessOperationDefinition(MEJ_BO_PRC_ES_TRAMITE_SUBASTA_BY_PRC_ID)
     public boolean esTramiteSubastaByPrcId(Long prcId);
     
-    
+	@BusinessOperationDefinition(ExternaBusinessOperation.BO_PRC_MGR_SALVAR_PROCEDIMIMENTO)
+	public Long salvarProcedimiento(ProcedimientoDto dto);
 }

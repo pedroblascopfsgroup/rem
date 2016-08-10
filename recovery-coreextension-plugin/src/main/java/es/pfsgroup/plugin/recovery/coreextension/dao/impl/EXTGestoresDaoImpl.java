@@ -222,6 +222,7 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 	
 	private Comparator gestoresComparatorEspecial = new Comparator() {
 
+
 		private final String CONECTOR_Y = " Y ";
 		
 		@Override
@@ -251,6 +252,10 @@ public class EXTGestoresDaoImpl extends AbstractEntityDao<Usuario, Long> impleme
 		}
 		
 	};
+	
+	private String obtenerNombreCompuesto(Usuario usuario) {
+		return (usuario.getNombre() == null ? "" : usuario.getNombre()) + " " + (usuario.getApellido1() == null ? "" : usuario.getApellido1()) + " " + (usuario.getApellido2() == null ? "" : usuario.getApellido2()).trim();
+	}
 	
 	@Override
 	public Page getListUsuariosPaginatedDataOrdenacionEspecial(UsuarioDto usuarioDto) {

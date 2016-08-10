@@ -9,4 +9,6 @@ bin
 *.log
 package.sh
 .recommenders
-sql/pitertul/
+*~
+tmp
+

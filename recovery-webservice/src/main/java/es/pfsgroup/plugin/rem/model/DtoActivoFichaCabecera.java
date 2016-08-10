@@ -98,6 +98,9 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private Boolean admision;
 	private Boolean gestion;
 	private String tipoInfoComercialCodigo;
+	private String estadoPublicacionDescripcion;
+	private String estadoPublicacionCodigo;
+	private String tipoComercializacionDescripcion;
 
 	private int page;
 	private int start;
@@ -748,6 +751,30 @@ public class DtoActivoFichaCabecera extends WebDto {
 
 	public void setInferiorMunicipioDescripcion(String inferiorMunicipioDescripcion) {
 		this.inferiorMunicipioDescripcion = inferiorMunicipioDescripcion;
+	}
+
+	public String getEstadoPublicacionDescripcion() {
+		return estadoPublicacionDescripcion;
+	}
+
+	public void setEstadoPublicacionDescripcion(String estadoPublicacionDescripcion) {
+		this.estadoPublicacionDescripcion = estadoPublicacionDescripcion;
+	}
+
+	public String getTipoComercializacionDescripcion() {
+		return tipoComercializacionDescripcion;
+	}
+
+	public void setTipoComercializacionDescripcion(String tipoComercializacionDescripcion) {
+		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
+	}
+
+	public String getEstadoPublicacionCodigo() {
+		return estadoPublicacionCodigo;
+	}
+
+	public void setEstadoPublicacionCodigo(String estadoPublicacionCodigo) {
+		this.estadoPublicacionCodigo = estadoPublicacionCodigo;
 	}
 
 }

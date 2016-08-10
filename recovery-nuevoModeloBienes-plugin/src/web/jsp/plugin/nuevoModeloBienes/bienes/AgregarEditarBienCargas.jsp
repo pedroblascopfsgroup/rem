@@ -137,6 +137,12 @@
                  ,'<s:message code="plugin.nuevoModeloBienes.cargas.validar.msgSituacionCarga" text="**Seleccionar una Situacion de Carga Registral" />');
                  return false;
         }
+        
+        if(situacionCargaEconomica.getValue() == '' && economica.checked == true){
+                 Ext.MessageBox.alert('<s:message code="plugin.nuevoModeloBienes.cargas.validar.warning" text="**Aviso" />'
+                 ,'<s:message code="plugin.nuevoModeloBienes.cargas.validar.msgSituacionCargaEconomica" text="**Seleccionar una Situacion de Carga Económica" />');
+                 return false;
+        }
                
 		return true;
 	}	

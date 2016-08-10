@@ -16,7 +16,7 @@
 	},
 	
 	requires : [ 
-        'HreRem.ux.data.SinglePost' 
+        'HreRem.ux.data.SinglePost'
     ],
 	
 	constructor : function (config) {
@@ -30,11 +30,18 @@
 		
 		if (!Ext.isEmpty(config.api)) {
 			
-			config.api.read = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.read);
-			config.api.create = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.create);
-			config.api.update = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.update);
-			config.api.destroy = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.destroy);
-			
+			if(!Ext.isEmpty(config.api.read)){
+				config.api.read = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.read);
+			}
+			if(!Ext.isEmpty(config.api.create)){
+				config.api.create = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.create);
+			}
+			if(!Ext.isEmpty(config.api.update)){
+				config.api.update = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.update);
+			}
+			if(!Ext.isEmpty(config.api.destroy)){
+				config.api.destroy = $AC.isLocalDataMode() ? $AC.getLocalUrl(config.localUrl) : $AC.getRemoteUrl(config.api.destroy);
+			}
 		}
 		
 		Ext.apply(config,{

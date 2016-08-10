@@ -300,7 +300,16 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: 'tipoInfoComercialCodigo'
     			
-    		}    		
+    		},
+    		{
+    			name: 'tipoComercializacionDescripcion'
+    		},
+    		{
+    			name: 'estadoPublicacionDescripcion'
+    		},
+    		{
+    			name: 'estadoPublicacionCodigo'
+    		}
     ],
     
 	proxy: {

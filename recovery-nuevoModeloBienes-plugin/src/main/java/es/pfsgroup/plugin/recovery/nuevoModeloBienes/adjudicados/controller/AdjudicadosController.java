@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.adjudicados.dto.BienesAdjud
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContext;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.NMBProjectContextImpl;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.recoveryapi.BienApi;
 
 @Controller
@@ -88,6 +89,17 @@ public class AdjudicadosController {
 					dto.setNumeroActivo(nmbBien.getNumeroActivo());
 					dto.setDescripcion(nmbBien.getDescripcion());
 					dto.setHabitual(nmbBien.getViviendaHabitual());
+					NMBInformacionRegistralBien informacionRegistral = null;
+					for(NMBInformacionRegistralBien infReg : nmbBien.getInformacionRegistral()){
+						if(!infReg.getAuditoria().isBorrado()){
+							informacionRegistral = infReg;
+							break;
+						}
+					}
+					if(!Checks.esNulo(informacionRegistral)){
+						dto.setNumFinca(informacionRegistral.getNumFinca());	
+					}
+					
 				}
 				
 				if (dtoBien.getProcedimientoBien().getProcedimiento().getTipoProcedimiento().getCodigo()

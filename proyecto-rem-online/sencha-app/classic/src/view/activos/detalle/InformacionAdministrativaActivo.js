@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
     xtype: 'informacionadministrativaactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'informacionadministrativaactivo',
     scrollable	: 'y',
     listeners: {

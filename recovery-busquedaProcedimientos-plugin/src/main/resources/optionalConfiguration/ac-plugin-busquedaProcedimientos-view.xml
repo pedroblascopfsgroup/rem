@@ -15,7 +15,7 @@
         p:fileName="../js/plugin/busquedaProcedimientos/css/busquedaProcedimientos.css"
         p:priority="0" class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" />
 
-	<bean p:entity="menu" p:name="busquedas/busquedaProc" p:order="210"
+	<bean p:entity="menu" p:name="busquedas/busquedaProc" p:order="80"
 		p:fileName="/WEB-INF/jsp/plugin/busquedaProcedimientos/menu/menuBusquedaProc.jsp"
 		class="es.capgemini.pfs.web.menu.ElementoDinamicoPorFuncion" p:permission="ROLE_BUSCAPROC"/>
 	

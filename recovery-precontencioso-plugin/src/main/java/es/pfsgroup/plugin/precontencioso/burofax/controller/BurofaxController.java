@@ -411,7 +411,7 @@ public class BurofaxController {
 			if(!Checks.esNulo(idDocumento)){
 	    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
 	    		if(!Checks.esNulo(doc)){
-		    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+		    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getLocalidadNotario())){
 		    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
 		    			return JSON_RESPUESTA;
 		    		}
@@ -445,6 +445,7 @@ public class BurofaxController {
 		
 		//Y si los envios son del mismo tipo pero han sido editados por separado con un contenido distinto
 		String textoBurofax=burofaxManager.obtenerContenidoBurofax(Long.valueOf(arrayIdEnvios[0]));
+		textoBurofax=textoBurofax.replaceAll("\n", "");
 		
 		/**
 		 * Cuando este preparada la capa de acceso a datos recuperaremos el texto del burofax segun el tipo de burofax seleccionado
@@ -925,7 +926,7 @@ public class BurofaxController {
 	    	if(!Checks.esNulo(idDocumento)){
 	    		doc = documentoPCOApi.getDocumentoPCOById(idDocumento);
 	    		if(!Checks.esNulo(doc)){
-		    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getProvinciaNotario())){
+		    		if(Checks.esNulo(doc.getNotario()) || Checks.esNulo(doc.getFechaEscritura()) || Checks.esNulo(doc.getProtocolo()) || Checks.esNulo(doc.getLocalidadNotario())){
 		    			model.put("msgError", messageService.getMessage(CODIGO_MENSAJE_VALIDACION_TIPO_DOCUMENTO,null));
 		    			return JSON_RESPUESTA;
 		    		}

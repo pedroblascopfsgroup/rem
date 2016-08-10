@@ -1,4 +1,4 @@
---/*
+-- --/*
 --##########################################
 --## AUTOR=GUSTAVO MORA NAVARRO
 --## FECHA_CREACION=20151103
@@ -515,7 +515,8 @@ BEGIN
                          WHERE TCI.CNT_ID IS NOT NULL
                            AND EXP.CD_EXPEDIENTE_NUSE IS NOT NULL
                            AND EXP.CD_EXPEDIENTE_NUSE = PRC.CD_EXPEDIENTE_NUSE
-                           AND EXP.CD_PROCEDIMIENTO   = PRC.CD_PROCEDIMIENTO 
+                           AND EXP.CD_PROCEDIMIENTO   = PRC.CD_PROCEDIMIENTO
+                           AND EXP.USUARIOCREAR = '''||USUARIO||'''
                            AND PRC.CD_PROCEDIMIENTO   = TCI.CD_PROCEDIMIENTO
                            AND PRC.CD_PROCEDIMIENTO   = PRO.CD_PROCEDIMIENTO
                            AND PRO.NUMERO_CONTRATO    = TCI.CONTRATO 
@@ -623,6 +624,7 @@ BEGIN
           '||V_ESQUEMA||'.DD_PAS_PROPIEDAD_ASUNTO PAS
     WHERE EXP.CD_PROCEDIMIENTO = HIT.CD_PROCEDIMIENTO
     AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
+    AND EXP.USUARIOCREAR = '''||USUARIO||'''
     AND CASE WHEN CAB.DD_TAS_ID = 1 THEN 
                  decode(CAB.GESTION_PLATAFORMA,''N'',''HAYA'',''S'',''HAYA'') 
              ELSE
@@ -801,6 +803,7 @@ FROM (
             '||V_ESQUEMA||'.DD_JUZ_JUZGADOS_PLAZA JUZ
       WHERE  ASU.EXP_ID = EXP.EXP_ID
       AND EXP.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
+      AND EXP.USUARIOCREAR = '''||USUARIO||'''
       AND CAB.CD_PROCEDIMIENTO = MAE.CD_PROCEDIMIENTO   
       AND TPO.DD_TPO_CODIGO = MAE.DD_TPO_CODIGO 
       AND CAB.JUZGADO = JUZ.DD_JUZ_CODIGO (+)
@@ -891,7 +894,7 @@ FROM (
                , NULL AS TAR_TAR_ID
                , 6 AS DD_EST_ID --ASUNTO en DD_EST_ESTADOS ITINERARIOS
                , 5 AS DD_EIN_ID ---PROCEDIMIENTO en DD_EIN_ENTIDAD_INFORMACION
-               , TAP.DD_STA_ID ---GESTOR POR DEFECTO (). LUEGO UN PROCESO UPDATEARA A GESTOR/SUPERVISOR 
+               , NVL(tap.dd_sta_id,39) AS DD_STA_ID ---GESTOR POR DEFECTO (). LUEGO UN PROCESO UPDATEARA A GESTOR/SUPERVISOR ++
                , 1 AS TAR_CODIGO
                , MAE.TAR_TAREA
                , MAE.TAR_TAREA as TAR_DESCRIPCION
@@ -1596,8 +1599,10 @@ FROM (
                    SELECT DISTINCT A.PRC_ID, B.BIE_ID
                    FROM '||V_ESQUEMA||'.MIG_MAESTRA_HITOS A
                       , '||V_ESQUEMA||'.BIE_BIEN B
+                      , '||V_ESQUEMA||'.MIG_PROCEDIMIENTOS_CABECERA CAB
                    WHERE A.CD_BIEN IS NOT NULL 
                      AND A.CD_BIEN = B.BIE_CODIGO_INTERNO
+                     AND A.CD_PROCEDIMIENTO = CAB.CD_PROCEDIMIENTO
                  UNION
                    SELECT DISTINCT D.PRC_ID, B.BIE_ID 
                    FROM '||V_ESQUEMA||'.BIE_BIEN B

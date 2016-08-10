@@ -26,6 +26,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_TRE_TIPO_RECLAMACION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class DDTipoReclamacion implements Dictionary, Auditable {
+	
+	public static final String TIPO_RECLAMACION_TOTAL_DEUDA = "01";
 
     /**
      * serialVersionUID.

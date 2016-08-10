@@ -464,10 +464,10 @@ app.creaDblSelect = function(data,label, config){
         var rec, i, id;
         for(i = 0; i < val.length; i++) {
             id = val[i];
-            if(this.toStore.find('codigo',id)>=0) {
+            if(this.toStore.findExact('codigo',id)>=0) {
                 continue;
             }
-            rec = this.fromStore.find('codigo',id);
+            rec = this.fromStore.findExact('codigo',id);
             if(rec>=0) {
             	rec = this.fromStore.getAt(rec);
                 this.toStore.add(rec);
@@ -776,16 +776,25 @@ app.openPDF=function(flow,tipo,params){
 };
 
 /**
-abre una nueva ventana del navegador con el flow y parámetros que se le pasan
+abre una nueva ventana del navegador con el flow y parametros que se le pasan
 */
 app.openBrowserWindow = function(flow, params){
 	var url=flow+'.htm';
 	var urlData="";
-
+	
 	params = params || {};
 	for(var x in params){
-		urlData +='&'+x+'='+params[x];
+		// Que no este indefinido, que tenga propiedad y que no sea una funcion.
+		if (params[x] != undefined && params.hasOwnProperty(x) && (typeof params[x] != "function")) {
+			// Si es tipo string que no sea una funcion en modo texto. Siempre contienen la palabra function.
+			if(typeof params[x] == "string" && params[x].indexOf("function") == -1){
+				urlData +='&'+x+'='+params[x];
+			} else if(typeof params[x] != "string"){ // Cualquier otro tipo pasa.
+				urlData +='&'+x+'='+params[x];
+			}
+		}
 	}
+	
 
 	urlData = urlData.slice(1);
 	if (urlData.length){
@@ -793,6 +802,16 @@ app.openBrowserWindow = function(flow, params){
 	}
 
 	window.open(url);
+	
+
+	var tiempo = params.tiempoSuccess || 100;
+    
+    // Si en el params tenemos una función success la ejecutamos a los x milisegundos después del submit
+    Ext.defer(function(){
+        if (params.succesFunction) {
+     		params.succesFunction();
+     	}
+    }, tiempo);
 }
 
 

@@ -214,7 +214,6 @@
 		,maxLength:2		
 	});
 	
-	
 	/** PROCEDIMIENTOS **/
 	var procedimiento = Ext.data.Record.create([
 			{name:"id"}
@@ -268,6 +267,7 @@
 		//param["causaDecision"]=comboCausas.getValue();
 		param["causaDecisionFinalizar"]=comboCausasFinalizar.getValue();
 		param["causaDecisionParalizar"]=comboCausasParalizar.getValue();
+		param["numOperacion"]=numOperacion.getValue();
 		
 		
 		param["finalizar"]=chkFinalizarOrigen.getValue();
@@ -853,8 +853,8 @@
 	var optionsCausasStoreFinalizar = new Ext.data.JsonStore({fields: ['codigo', 'descripcion'],root: 'diccionario',data : dictCausasFinalizar});
 	var optionsCausasStoreParalizar = new Ext.data.JsonStore({fields: ['codigo', 'descripcion'],root: 'diccionario',data : dictCausasParalizar});
 	
-	var comboCausasFinalizar = new Ext.form.ComboBox({store:optionsCausasStoreFinalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: (true && !chkFinalizarOrigen.checked) || modoConsulta,mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionFinalizar.codigo}',fieldLabel : '<s:message code="decisionProcedimiento.causasFinalizar" text="Causa" />'});
-	var comboCausasParalizar = new Ext.form.ComboBox({store:optionsCausasStoreParalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: (true && !chkParalizarOrigen.checked) || modoConsulta,mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionParalizar.codigo}',fieldLabel : '<s:message code="decisionProcedimiento.causasParalizar" text="Causa" />'});
+	var comboCausasFinalizar = new Ext.form.ComboBox({store:optionsCausasStoreFinalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: (true && !chkFinalizarOrigen.checked) || modoConsulta,mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionFinalizar.codigo}',listWidth: 'auto',fieldLabel : '<s:message code="decisionProcedimiento.causasFinalizar" text="Causa" />'});
+	var comboCausasParalizar = new Ext.form.ComboBox({store:optionsCausasStoreParalizar,displayField:'descripcion',valueField:'codigo',name:'causa',disabled: (true && !chkParalizarOrigen.checked) || modoConsulta,mode: 'local',editable:false,triggerAction: 'all',labelStyle:labelStyle,value:'${decisionProcedimiento.causaDecisionParalizar.codigo}',listWidth: 'auto',fieldLabel : '<s:message code="decisionProcedimiento.causasParalizar" text="Causa" />'});
 	
 	if ( (!chkFinalizarOrigen.checked) && (!chkParalizarOrigen.checked) ){
 		comboCausasParalizar.setVisible(false);
@@ -880,10 +880,12 @@
 		,minValue : hoy
 		,value:	'<fwk:date value="${decisionProcedimiento.fechaParalizacion}" />'			
 	});
+	
 	var comentarios=new Ext.form.TextArea({
 		fieldLabel : '<s:message code="decisionProcedimiento.comentarios" text="**Comentarios" />'
 		,width:200
 		,height:60
+		,allowBlank:true
 		,maxLength:4000
 		,labelStyle:labelStyle
 		,readOnly:modoConsulta
@@ -891,6 +893,12 @@
 		,value:'<s:message text="${decisionProcedimiento.comentarios}" javaScriptEscape="true" />'
 		
 	});
+	
+	var numOperacion = new Ext.form.TextField({
+        fieldLabel: '<s:message code="decisionProcedimiento.nOperacion" text="**Nº Operacion"/>'
+		,labelStyle:labelStyle
+		,hidden: true
+    });
 	
 	var btnAceptarPropuesta = new Ext.Button({
 		text : '<s:message code="decisionProcedimiento.aceptarpropuesta" text="**Aceptar Propuesta" />'
@@ -957,9 +965,8 @@
 			btnProponer.enable();
 		}
 	}
-	
+	var usuarioEntidad = app.usuarioLogado.codigoEntidad;
 	var validarDatosFormulario = function(){
-	
 		var saldoRec=saldoARecuperar.getValue();
 		if (chkFinalizarOrigen.getValue()){
 			if(comboCausasFinalizar.getValue()){
@@ -970,7 +977,17 @@
 		} else if(chkParalizarOrigen.getValue()){
 			if(comboCausasParalizar.getValue()){
 				if(fechaHasta.getValue()){
-					return true;
+					<%-- RECOVERY-1840 Unicamente para las entidades Haya-cajamar y Cajamar. Comprobación para hacer obligatorio el campo numOperacion --%>
+					if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+						if(comboCausasParalizar.getValue()  === 'RD' && numOperacion.getValue().trim() === ""){
+							Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.nOperacion" text="**Debe rellenar el campo N&ordm; Operaci\u00F3n." />');
+						}else{
+							return true;
+						}
+					}
+					else {
+						return true;
+					}
 				}else{
 					Ext.Msg.alert('<s:message code="app.error" text="**Error" />', '<s:message code="decisionProcedimiento.errores.fechaNula" text="**Debe seleccionar una fecha de fin de paralizaciï¿½n." />');
 				}
@@ -983,9 +1000,37 @@
 			btnAceptarPropuesta.enable();
 			return false;
 		}
+		
 		return false;
 	}
 
+	<%-- RECOVERY-1840 Unicamente para las entidades Haya-cajamar y Cajamar. Dependiendo del código de la causa de paralización hace una llamada al controller para asignarle una fecha u otra --%>
+	if(usuarioEntidad == 'HCJ' || usuarioEntidad == 'CAJAMAR'){
+		comboCausasParalizar.on('select',function(){
+			var codigo = comboCausasParalizar.getValue();
+			Ext.Ajax.request({
+				url: page.resolveUrl('decisionprocedimiento/listaFechasProcedimientos')
+				,params: {codigo:codigo}
+				,method: 'POST'
+				,success: function (result, request)
+				{
+					var r = Ext.util.JSON.decode(result.responseText);
+					var fecha = r.fechaHasta;
+					fechaHasta.setValue(fecha);
+				}
+			});
+			 if (codigo == 'RD'){
+		         numOperacion.setVisible(true);
+		         numOperacion.focus(true);
+		         numOperacion.allowBlank=false;
+			 } else{
+			 	numOperacion.setVisible(false);
+		        numOperacion.focus(false);
+		        numOperacion.allowBlank=true;
+			 		
+				}
+		});
+	}
 	
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
@@ -1152,7 +1197,7 @@
 		, border : false
 				,layout : 'column'
 				,height: 155
-				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:100}
+				,defaults:{xtype:'fieldset',cellCls : 'vtop',width:860, height:125}
 				,items:[{
 					title:'<s:message code="decisionProcedimiento.paneldecision" text="**Finalizar/Parar Origen" />'
 					,layout:'table'
@@ -1173,7 +1218,7 @@
 						, width: 200
 						}
 						,{
-							items:[comboCausasFinalizar,comboCausasParalizar,estadoDecision, fechaHasta]
+							items:[comboCausasFinalizar,comboCausasParalizar,estadoDecision, fechaHasta, numOperacion]
 							,width:280
 						}
 						,{

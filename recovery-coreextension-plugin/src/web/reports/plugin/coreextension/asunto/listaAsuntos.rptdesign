@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.16" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 2.3.2.r232_v20090521 Build &lt;2.3.2.v20090601-0700></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.0.v20080606 Build &lt;2.3.0.v20080618-0630></property>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <parameters>
@@ -22,190 +22,197 @@
         <script-data-source name="Data Source" id="17"/>
     </data-sources>
     <data-sets>
-        <script-data-set name="Asuntos" id="991361">
+        <script-data-set name="acuerdos" id="991431">
             <list-property name="resultSetHints">
                 <structure>
+                    <property name="position">0</property>
+                    <property name="name">idAcuerdo</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
                     <property name="position">1</property>
-                    <property name="name">codigo</property>
+                    <property name="name">idTermino</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
-                    <property name="name">nombre</property>
+                    <property name="name">idContrato</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">3</property>
-                    <property name="name">fechaCrear</property>
-                    <property name="dataType">date-time</property>
+                    <property name="name">cliente</property>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">4</property>
-                    <property name="name">estado</property>
+                    <property name="name">tipoAcuerdo</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">5</property>
-                    <property name="name">gestor</property>
+                    <property name="name">solicitante</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">6</property>
-                    <property name="name">despacho</property>
+                    <property name="name">tipoSolicitante</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">7</property>
-                    <property name="name">supervisor</property>
+                    <property name="name">estado</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">8</property>
-                    <property name="name">saldoTotal</property>
-                    <property name="dataType">float</property>
+                    <property name="name">fechaAlta</property>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">9</property>
-                    <property name="name">contratos</property>
+                    <property name="name">fechaEstado</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">10</property>
-                    <property name="name">importeEstimado</property>
-                    <property name="dataType">float</property>
+                    <property name="name">fechaVigencia</property>
+                    <property name="dataType">string</property>
                 </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
-                    <property name="columnName">codigo</property>
-                    <property name="displayName">Codigo</property>
+                    <property name="columnName">idAcuerdo</property>
+                    <property name="alias">idAcuerdo</property>
+                    <property name="displayName">Id Acuerdo</property>
                 </structure>
                 <structure>
-                    <property name="columnName">nombre</property>
-                    <property name="displayName">Nombre</property>
+                    <property name="columnName">idTermino</property>
+                    <property name="alias">idTermino</property>
+                    <property name="displayName">Id Termino</property>
                 </structure>
                 <structure>
-                    <property name="columnName">fechaCrear</property>
-                    <property name="displayName">Fecha creación</property>
+                    <property name="columnName">idContrato</property>
+                    <property name="alias">idContrato</property>
+                    <property name="displayName">Contrato Principal</property>
+                </structure>
+                <structure>
+                    <property name="columnName">cliente</property>
+                    <property name="alias">cliente</property>
+                    <property name="displayName">Cliente</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tipoAcuerdo</property>
+                    <property name="alias">tipoAcuerdo</property>
+                    <property name="displayName">Tipo Acuerdo</property>
+                </structure>
+                <structure>
+                    <property name="columnName">solicitante</property>
+                    <property name="alias">solicitante</property>
+                    <property name="displayName">Solicitante</property>
+                </structure>
+                <structure>
+                    <property name="columnName">tipoSolicitante</property>
+                    <property name="alias">tipoSolicitante</property>
+                    <property name="displayName">Tipo Solicitante</property>
                 </structure>
                 <structure>
                     <property name="columnName">estado</property>
+                    <property name="alias">estado</property>
                     <property name="displayName">Estado</property>
                 </structure>
                 <structure>
-                    <property name="columnName">gestor</property>
-                    <property name="displayName">Gestor</property>
+                    <property name="columnName">fechaAlta</property>
+                    <property name="alias">fechaAlta</property>
+                    <property name="displayName">Fecha Alta</property>
                 </structure>
                 <structure>
-                    <property name="columnName">supervisor</property>
-                    <property name="displayName">Supervisor</property>
+                    <property name="columnName">fechaEstado</property>
+                    <property name="alias">fechaEstado</property>
+                    <property name="displayName">Fecha Estado</property>
                 </structure>
                 <structure>
-                    <property name="columnName">saldoTotal</property>
-                    <property name="displayName">Saldo Total</property>
-                </structure>
-                <structure>
-                    <property name="columnName">contratos</property>
-                    <property name="displayName">Contratos</property>
-                </structure>
-                <structure>
-                    <property name="columnName">despacho</property>
-                    <property name="displayName">Despacho</property>
-                </structure>
-                <structure>
-                    <property name="columnName">importeEstimado</property>
-                    <property name="displayName">Importe estimado</property>
+                    <property name="columnName">fechaVigencia</property>
+                    <property name="alias">fechaVigencia</property>
+                    <property name="displayName">Fecha Vigencia</property>
                 </structure>
             </list-property>
             <structure name="cachedMetaData">
                 <list-property name="resultSet">
                     <structure>
                         <property name="position">1</property>
-                        <property name="name">codigo</property>
+                        <property name="name">idAcuerdo</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
-                        <property name="name">nombre</property>
+                        <property name="name">idTermino</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">3</property>
-                        <property name="name">fechaCrear</property>
-                        <property name="dataType">date-time</property>
+                        <property name="name">idContrato</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">4</property>
-                        <property name="name">estado</property>
+                        <property name="name">cliente</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">5</property>
-                        <property name="name">gestor</property>
+                        <property name="name">tipoAcuerdo</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">6</property>
-                        <property name="name">despacho</property>
+                        <property name="name">solicitante</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">7</property>
-                        <property name="name">supervisor</property>
+                        <property name="name">tipoSolicitante</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">8</property>
-                        <property name="name">saldoTotal</property>
-                        <property name="dataType">float</property>
+                        <property name="name">estado</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">9</property>
-                        <property name="name">contratos</property>
+                        <property name="name">fechaAlta</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">10</property>
-                        <property name="name">importeEstimado</property>
-                        <property name="dataType">float</property>
+                        <property name="name">fechaEstado</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">fechaVigencia</property>
+                        <property name="dataType">string</property>
                     </structure>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
-            <method name="open"><![CDATA[asuIt = lista.iterator();]]></method>
-            <method name="fetch"><![CDATA[if (!asuIt.hasNext()) return false;
+            <method name="open"><![CDATA[acuDto = acuerdos.iterator();]]></method>
+            <method name="fetch"><![CDATA[if (!acuDto.hasNext()) return false;
              
-var asu = asuIt.next();
-var cnt = "";
+var acu = acuDto.next();
 
-
-row["codigo"] = asu.getId().longValue()+"&amp;nbsp;";
-row["nombre"] = asu.getNombre();
-row["fechaCrear"] = asu.getAuditoria().getFechaCrear();
-row["estado"] = asu.getCodigoDecodificado();
-row["gestor"] = asu.getGestorNombreApellidosSQL();
-row["despacho"] = asu.getDespachoSQL();
-row["supervisor"] = asu.getSupervisorNombreApellidosSQL() != null ? asu.getSupervisorNombreApellidosSQL() : "";
-row["saldoTotal"] = asu.getSaldoTotalPorContratosSQL();
-row["importeEstimado"] = asu.getImporteEstimado();
-
-if (asu.getContratos() != null) {
-	contratosIt = asu.getContratos().iterator();
-	if (contratosIt.hasNext()) {
-		row["contratos"]=contratosIt.next().getCodigoContrato();
-		while (contratosIt.hasNext()){
-			contrato = contratosIt.next();
-			if (asu.getExpediente().getContratoPase() != null) {
-				if (contrato.getId()==asu.getExpediente().getContratoPase().getId()) 
-					cnt = contrato.getCodigoContrato();
-				}
-		}
-		if (cnt != ""){
-			row["contratos"]=cnt;
-		}	
-	}
-}
-
+row["idAcuerdo"] = acu.getIdAcuerdo();
+row["idTermino"] = acu.getIdTermino();
+row["idContrato"] = acu.getIdContrato();
+row["cliente"] = acu.getCliente();
+row["tipoAcuerdo"] = acu.getTipoAcuerdo();
+row["solicitante"] = acu.getSolicitante();
+row["tipoSolicitante"] = acu.getTipoSolicitante();
+row["estado"] = acu.getEstado();
+row["fechaAlta"] = acu.getFechaAlta();
+row["fechaEstado"] = acu.getFechaEstado();
+row["fechaVigencia"] = acu.getFechaVigencia();
 
 return true;]]></method>
         </script-data-set>
@@ -300,25 +307,43 @@ return true;]]></method>
     <body>
         <table id="991362">
             <property name="width">100%</property>
-            <property name="dataSet">Asuntos</property>
+            <property name="dataSet">acuerdos</property>
             <list-property name="boundDataColumns">
                 <structure>
-                    <property name="name">codigo</property>
-                    <property name="displayName">Codigo</property>
-                    <expression name="expression">dataSetRow["codigo"]</expression>
+                    <property name="name">idTermino</property>
+                    <property name="displayName">Id Termino</property>
+                    <expression name="expression">dataSetRow["idTermino"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">nombre</property>
-                    <property name="displayName">Nombre</property>
-                    <expression name="expression">dataSetRow["nombre"]</expression>
+                    <property name="name">idContrato</property>
+                    <property name="displayName">Contrato Principal</property>
+                    <expression name="expression">dataSetRow["idContrato"]</expression>
+                    <property name="dataType">float</property>
+                </structure>
+                <structure>
+                    <property name="name">cliente</property>
+                    <property name="displayName">Cliente</property>
+                    <expression name="expression">dataSetRow["cliente"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">fechaCrear</property>
-                    <property name="displayName">Fecha creación</property>
-                    <expression name="expression">dataSetRow["fechaCrear"]</expression>
-                    <property name="dataType">date-time</property>
+                    <property name="name">tipoAcuerdo</property>
+                    <property name="displayName">Tipo Acuerdo</property>
+                    <expression name="expression">dataSetRow["tipoAcuerdo"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">solicitante</property>
+                    <property name="displayName">Solicitante</property>
+                    <expression name="expression">dataSetRow["solicitante"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">tipoSolicitante</property>
+                    <property name="displayName">Tipo Solicitante</property>
+                    <expression name="expression">dataSetRow["tipoSolicitante"]</expression>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="name">estado</property>
@@ -327,59 +352,55 @@ return true;]]></method>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">gestor</property>
-                    <property name="displayName">Gestor</property>
-                    <expression name="expression">dataSetRow["gestor"]</expression>
+                    <property name="name">fechaAlta</property>
+                    <property name="displayName">Fecha Alta</property>
+                    <expression name="expression">dataSetRow["fechaAlta"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">supervisor</property>
-                    <property name="displayName">Supervisor</property>
-                    <expression name="expression">dataSetRow["supervisor"]</expression>
+                    <property name="name">fechaEstado</property>
+                    <property name="displayName">Fecha Estado</property>
+                    <expression name="expression">dataSetRow["fechaEstado"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">saldoTotal</property>
-                    <property name="displayName">Saldo Total</property>
-                    <expression name="expression">dataSetRow["saldoTotal"]</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">contratos</property>
-                    <property name="displayName">Contratos</property>
-                    <expression name="expression">dataSetRow["contratos"]</expression>
+                    <property name="name">fechaVigencia</property>
+                    <property name="displayName">Fecha Vigencia</property>
+                    <expression name="expression">dataSetRow["fechaVigencia"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">despacho</property>
-                    <property name="displayName">Despacho</property>
-                    <expression name="expression">dataSetRow["despacho"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">Column Binding</property>
-                    <property name="displayName">Importe Estimado</property>
-                    <expression name="expression">dataSetRow["importeEstimado"]</expression>
-                    <property name="dataType">float</property>
-                </structure>
-                <structure>
-                    <property name="name">prueba</property>
-                    <expression name="expression">row["codigo"]</expression>
+                    <property name="name">idAcuerdo</property>
+                    <property name="displayName">Id Acuerdo</property>
+                    <expression name="expression">dataSetRow["idAcuerdo"]</expression>
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
             <column id="991406">
-                <property name="width">2.0416666666666665in</property>
+                <property name="width">1.0104166666666667in</property>
             </column>
-            <column id="991407"/>
-            <column id="991408"/>
-            <column id="991409"/>
-            <column id="991410"/>
-            <column id="991417"/>
+            <column id="991407">
+                <property name="width">1.03125in</property>
+            </column>
+            <column id="991408">
+                <property name="width">1.5625in</property>
+            </column>
+            <column id="991409">
+                <property name="width">0.6979166666666666in</property>
+            </column>
+            <column id="991410">
+                <property name="width">1.15625in</property>
+            </column>
+            <column id="991417">
+                <property name="width">1.0416666666666667in</property>
+            </column>
             <column id="991411"/>
-            <column id="991412"/>
+            <column id="991412">
+                <property name="width">0.7083333333333334in</property>
+            </column>
             <column id="991413"/>
-            <column id="991423"/>
+            <column id="991435"/>
+            <column id="991440"/>
             <header>
                 <row id="991363">
                     <property name="backgroundColor">#C0C0C0</property>
@@ -400,7 +421,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991365">
-                            <text-property name="text">Codigo</text-property>
+                            <text-property name="text">Id Acuerdo</text-property>
                         </label>
                     </cell>
                     <cell id="991366">
@@ -417,7 +438,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991367">
-                            <text-property name="text">Nombre</text-property>
+                            <text-property name="text">Id Término</text-property>
                         </label>
                     </cell>
                     <cell id="991368">
@@ -434,7 +455,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991369">
-                            <text-property name="text">Fecha creación</text-property>
+                            <text-property name="text">Contrato Principal</text-property>
                         </label>
                     </cell>
                     <cell id="991370">
@@ -451,7 +472,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991371">
-                            <text-property name="text">Estado</text-property>
+                            <text-property name="text">Cliente</text-property>
                         </label>
                     </cell>
                     <cell id="991372">
@@ -468,7 +489,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991373">
-                            <text-property name="text">Gestor</text-property>
+                            <text-property name="text">Tipo Acuerdo</text-property>
                         </label>
                     </cell>
                     <cell id="991414">
@@ -485,7 +506,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991418">
-                            <text-property name="text">Despacho</text-property>
+                            <text-property name="text">Solicitante</text-property>
                         </label>
                     </cell>
                     <cell id="991374">
@@ -502,7 +523,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991375">
-                            <text-property name="text">Supervisor</text-property>
+                            <text-property name="text">Tipo Solicitante</text-property>
                         </label>
                     </cell>
                     <cell id="991376">
@@ -519,7 +540,7 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991377">
-                            <text-property name="text">Saldo Total</text-property>
+                            <text-property name="text">Estado</text-property>
                         </label>
                     </cell>
                     <cell id="991378">
@@ -536,10 +557,10 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                         <label id="991379">
-                            <text-property name="text">Contrato principal</text-property>
+                            <text-property name="text">Fecha Alta</text-property>
                         </label>
                     </cell>
-                    <cell id="991420">
+                    <cell id="991432">
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">1px</property>
@@ -552,10 +573,26 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <text id="991424">
-                            <property name="contentType">auto</property>
-                            <text-property name="content"><![CDATA[Importe estimado]]></text-property>
-                        </text>
+                        <label id="991436">
+                            <text-property name="text">Fecha Estado</text-property>
+                        </label>
+                    </cell>
+                    <cell id="991437">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <label id="991441">
+                            <text-property name="text">Fecha Vigencia</text-property>
+                        </label>
                     </cell>
                 </row>
             </header>
@@ -574,10 +611,9 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <text-data id="991430">
-                            <expression name="valueExpr">row["codigo"]</expression>
-                            <property name="contentType">html</property>
-                        </text-data>
+                        <data id="991455">
+                            <property name="resultSetColumn">idAcuerdo</property>
+                        </data>
                     </cell>
                     <cell id="991383">
                         <property name="borderBottomColor">#000000</property>
@@ -592,8 +628,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991384">
-                            <property name="resultSetColumn">nombre</property>
+                        <data id="991445">
+                            <property name="resultSetColumn">idTermino</property>
                         </data>
                     </cell>
                     <cell id="991385">
@@ -609,8 +645,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991386">
-                            <property name="resultSetColumn">fechaCrear</property>
+                        <data id="991446">
+                            <property name="resultSetColumn">idContrato</property>
                         </data>
                     </cell>
                     <cell id="991387">
@@ -626,8 +662,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991388">
-                            <property name="resultSetColumn">estado</property>
+                        <data id="991447">
+                            <property name="resultSetColumn">cliente</property>
                         </data>
                     </cell>
                     <cell id="991389">
@@ -643,8 +679,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991390">
-                            <property name="resultSetColumn">gestor</property>
+                        <data id="991448">
+                            <property name="resultSetColumn">tipoAcuerdo</property>
                         </data>
                     </cell>
                     <cell id="991415">
@@ -660,8 +696,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991419">
-                            <property name="resultSetColumn">despacho</property>
+                        <data id="991449">
+                            <property name="resultSetColumn">solicitante</property>
                         </data>
                     </cell>
                     <cell id="991391">
@@ -677,8 +713,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991392">
-                            <property name="resultSetColumn">supervisor</property>
+                        <data id="991450">
+                            <property name="resultSetColumn">tipoSolicitante</property>
                         </data>
                     </cell>
                     <cell id="991393">
@@ -694,12 +730,8 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991394">
-                            <structure name="numberFormat">
-                                <property name="category">Fixed</property>
-                                <property name="pattern">#,##0.00</property>
-                            </structure>
-                            <property name="resultSetColumn">saldoTotal</property>
+                        <data id="991451">
+                            <property name="resultSetColumn">estado</property>
                         </data>
                     </cell>
                     <cell id="991395">
@@ -715,11 +747,11 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991396">
-                            <property name="resultSetColumn">contratos</property>
+                        <data id="991452">
+                            <property name="resultSetColumn">fechaAlta</property>
                         </data>
                     </cell>
-                    <cell id="991421">
+                    <cell id="991433">
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">1px</property>
@@ -732,8 +764,25 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
-                        <data id="991425">
-                            <property name="resultSetColumn">Column Binding</property>
+                        <data id="991453">
+                            <property name="resultSetColumn">fechaEstado</property>
+                        </data>
+                    </cell>
+                    <cell id="991438">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                        <data id="991454">
+                            <property name="resultSetColumn">fechaVigencia</property>
                         </data>
                     </cell>
                 </row>
@@ -866,7 +915,21 @@ return true;]]></method>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">1px</property>
                     </cell>
-                    <cell id="991422">
+                    <cell id="991434">
+                        <property name="borderBottomColor">#000000</property>
+                        <property name="borderBottomStyle">solid</property>
+                        <property name="borderBottomWidth">1px</property>
+                        <property name="borderLeftColor">#000000</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">1px</property>
+                        <property name="borderRightColor">#000000</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">1px</property>
+                        <property name="borderTopColor">#000000</property>
+                        <property name="borderTopStyle">solid</property>
+                        <property name="borderTopWidth">1px</property>
+                    </cell>
+                    <cell id="991439">
                         <property name="borderBottomColor">#000000</property>
                         <property name="borderBottomStyle">solid</property>
                         <property name="borderBottomWidth">1px</property>

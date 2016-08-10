@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 import es.capgemini.devon.bo.Executor;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.asunto.HistoricoAsuntoInfo;
 import es.capgemini.pfs.core.api.expediente.EventoApi;
@@ -63,6 +66,9 @@ public class HistoricoAsuntoController {
 	
 	@Autowired
 	private EXTGrupoUsuariosDao gruposUsuarioDao;
+	
+	@Resource
+    private MessageService messageService;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping
@@ -163,6 +169,7 @@ public class HistoricoAsuntoController {
 			for(MEJHistoricoAsuntoViewDto mhaw : historico){
 				
 				mhaw.setAgenda(false);
+				mhaw.setDescripcionTipo(messageService.getMessage(mhaw.getGroup()));
 				if(mhaw.getGroup().equals("D")){
 					SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 					
@@ -172,6 +179,15 @@ public class HistoricoAsuntoController {
 				if("C".equals(mhaw.getGroup()) && mhaw.getIdTarea()!=null ){
 					tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
 					mhaw.setDestinatarioTarea(tarea.getDestinatarioTarea().getUsername());
+				}
+				//RECOVERY-2264 Para informar quien ha realizado la tarea (para tipo Cobros) en el hist�rico
+				if("F".equals(mhaw.getGroup()) && mhaw.getIdTarea()!=null) {
+					tarea = (EXTTareaNotificacion) proxyFactory.proxy(TareaNotificacionApi.class).get(mhaw.getIdTarea());
+					mhaw.setDescripcionTipo(tarea.getTarea());
+					if(!Checks.esNulo(tarea.getTareaFinalizada()) && tarea.getTareaFinalizada()) {
+						//RECOVERY-2278 - Cogemos el usuario modificar que es el que ha realizado la tarea
+						mhaw.setDestinatarioTarea(tarea.getAuditoria().getUsuarioModificar());
+					}
 				}
 				if (tienePermiso){
 					if("C".equals(mhaw.getGroup()) || "D".equals(mhaw.getGroup())){

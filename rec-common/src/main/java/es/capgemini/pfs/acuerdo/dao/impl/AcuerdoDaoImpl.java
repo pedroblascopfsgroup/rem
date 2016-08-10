@@ -564,3 +564,4 @@ public class AcuerdoDaoImpl extends AbstractEntityDao<Acuerdo, Long> implements 
          return despachos;
 	 }
 }
+

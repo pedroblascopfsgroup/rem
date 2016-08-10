@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
@@ -329,6 +330,15 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EPU_ID")
     private DDEstadoPublicacion estadoPublicacion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TCO_ID")
+    private DDTipoComercializacion tipoComercializacion;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<Visita> visitas;    
     
 	@Version   
 	private Long version;
@@ -1325,6 +1335,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setEstadoPublicacion(DDEstadoPublicacion estadoPublicacion) {
 		this.estadoPublicacion = estadoPublicacion;
+	}
+
+	public DDTipoComercializacion getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+
+	public void setTipoComercializacion(DDTipoComercializacion tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
 	}
 
 }

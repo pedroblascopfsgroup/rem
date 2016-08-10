@@ -27,7 +27,7 @@ public class MEJEventoDaoImpl extends AbstractEntityDao<TareaNotificacion, Long>
                 SubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_DE_SUPERVISOR, SubtipoTarea.CODIGO_NOTIFICACION_COMUNICACION_RESPONDIDA_DE_GESTOR,
                 SubtipoTarea.CODIGO_TAREA_COMUNICACION_DE_SUPERVISOR, EXTSubtipoTarea.CODIGO_ACUERDO_CERRADO_POR_GESTOR, 
                 EXTSubtipoTarea.CODIGO_ACUERDO_CERRADO_POR_SUPERVISOR, SubtipoTarea.CODIGO_GESTIONES_CERRAR_ACUERDO, 
-                SubtipoTarea.CODIGO_ACUERDO_PROPUESTO, SubtipoTarea.CODIGO_ACUERDO_RECHAZADO,
+                SubtipoTarea.CODIGO_ACUERDO_PROPUESTO, SubtipoTarea.CODIGO_ACUERDO_RECHAZADO
                };
 
         crit.createCriteria("subtipoTarea").add(Restrictions.in("codigoSubtarea", subtipos));

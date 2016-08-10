@@ -23,6 +23,7 @@ import es.capgemini.pfs.acuerdo.dao.AcuerdoDao;
 import es.capgemini.pfs.acuerdo.dto.DTOTerminosFiltro;
 import es.capgemini.pfs.acuerdo.model.DDTipoAcuerdo;
 import es.capgemini.pfs.asunto.model.Asunto;
+import es.capgemini.pfs.asunto.model.DDTiposAsunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
 import es.capgemini.pfs.core.api.procedimiento.ProcedimientoApi;
@@ -31,6 +32,7 @@ import es.capgemini.pfs.despachoExterno.dao.DespachoExternoDao;
 import es.capgemini.pfs.despachoExterno.model.DDTipoDespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
+import es.capgemini.pfs.diccionarios.DictionaryManager;
 import es.capgemini.pfs.dsm.EntidadManager;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.multigestor.EXTDDTipoGestorManager;
@@ -122,6 +124,9 @@ public class coreextensionManager implements coreextensionApi {
 	
 	@Autowired
 	private MEJAcuerdoManager mejAcuerdoManager;
+	
+	@Autowired
+	private DictionaryManager diccionarioManager;
 	 
 	@Override
 	@BusinessOperation(GET_LIST_TIPO_GESTOR)
@@ -239,7 +244,7 @@ public class coreextensionManager implements coreextensionApi {
 	}
 	
 	@BusinessOperation(GET_LIST_TIPO_GESTOR_ADICIONAL_POR_ASUNTO)
-	public List<EXTDDTipoGestor> getListTipoGestorAdicionalPorAsunto(String idTipoAsunto) {
+	public List<EXTDDTipoGestor> getListTipoGestorAdicionalPorAsunto(String codigoTipoAsunto) {
 		
 		List<EXTDDTipoGestor> listadoPrueba= new ArrayList<EXTDDTipoGestor>();
 		String codigoEntidadUsuario= usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
@@ -249,7 +254,7 @@ public class coreextensionManager implements coreextensionApi {
 			codigoEntidadusuario= tiposAsuntosTiposGestores.get(codigoEntidadUsuario);
 		}
 		if(codigoEntidadusuario!=null){
-			Set<String> set1= codigoEntidadusuario.get(idTipoAsunto);
+			Set<String> set1= codigoEntidadusuario.get(codigoTipoAsunto);
 			
 	
 			for(String codigoTipoGestor:set1 ){
@@ -955,6 +960,144 @@ public class coreextensionManager implements coreextensionApi {
 			
 		}
 		return listaDespachosTmp;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List getListadoGestoresDefecto(String codigoTipoAsunto, Long idExpediente, TipoResultado tipoResultado ) {
+		List resultado = null;
+		
+		List<EXTDDTipoGestor> listadoTipoGestoresFinal= new ArrayList<EXTDDTipoGestor>();
+		List<DespachoExterno> listaDespachoFinal= new ArrayList<DespachoExterno>();
+		List<Usuario> listaUsuariosFinal= new ArrayList<Usuario>();
+		
+		String codigoEntidadUsuario = usuarioManager.getUsuarioLogado().getEntidad().getCodigo();
+		
+		List<EXTDDTipoGestor> listadoTipoGestores = getListTipoGestorAdicionalPorAsunto(codigoTipoAsunto);
+		for(EXTDDTipoGestor tipoGestor : listadoTipoGestores) {
+			if (tipoGestor!=null) {
+				List<DespachoExterno> listaDespachos = getListAllDespachos(tipoGestor.getId(), false);
+				DespachoExterno despacho = null;
+				if (listaDespachos!=null && listaDespachos.size()>0) {
+					despacho = listaDespachos.get(0);
+				}
+				
+				if (!Checks.esNulo(despacho)) {
+					List<Usuario> listaUsuarios = getListAllUsuariosPorDefectoData(despacho.getId(), false);
+					if (listaUsuarios == null || listaUsuarios.size()==0) {
+						List<Usuario> listaUsuariosNoDefecto = getListAllUsuariosData(despacho.getId(), false);
+						if (listaUsuariosNoDefecto != null && listaUsuariosNoDefecto.size()>0) {
+							listaUsuarios.add(listaUsuariosNoDefecto.get(0));
+						}
+					}
+					
+					String codigoTipoAsuntoConcursal = diccionarioManager.getByCode(DDTiposAsunto.class, DDTiposAsunto.CONCURSAL).getCodigo();
+					
+					HashMap<String, Set<String>> perfilesMap = getListPerfilesGestoresEspeciales(codigoEntidadUsuario);
+					if (perfilesMap != null && !perfilesMap.isEmpty() &&  codigoTipoAsunto.equals(codigoTipoAsuntoConcursal)) {
+						Set<String> perfiles = perfilesMap.get(tipoGestor.getCodigo());
+						if (perfiles!=null && !perfiles.isEmpty()) {
+							for(String perfil : perfiles) {
+								List<Usuario> usuarioFinales = getUsuarioGestorOficinaExpedienteGestorDeuda(idExpediente, perfil);
+								if (usuarioFinales!=null && !usuarioFinales.isEmpty()) {
+									Usuario usuarioFinal = usuarioFinales.get(0);
+									switch (tipoResultado) {
+										case TIPOGESTORES:
+											listadoTipoGestoresFinal.add(tipoGestor);
+											break;
+										case DESPACHOS:
+											listaDespachoFinal.add(despacho);
+											break;
+										case USUARIOS:
+											listaUsuariosFinal.add(usuarioFinal);
+											break;
+											
+										default:
+											break;
+									}
+								}
+							}
+						} else {
+							for (Usuario usuario : listaUsuarios) {
+								switch (tipoResultado) {
+									case TIPOGESTORES:
+										listadoTipoGestoresFinal.add(tipoGestor);
+										break;
+									case DESPACHOS:
+										listaDespachoFinal.add(despacho);
+										break;
+									case USUARIOS:
+										listaUsuariosFinal.add(usuario);
+										break;
+										
+									default:
+										break;
+								}								
+							}
+						}
+					} else {
+						if (listaUsuarios!=null && listaUsuarios.size()>0) {
+							for (Usuario usuario : listaUsuarios) {
+								switch (tipoResultado) {
+									case TIPOGESTORES:
+										listadoTipoGestoresFinal.add(tipoGestor);
+										break;
+									case DESPACHOS:
+										listaDespachoFinal.add(despacho);
+										break;
+									case USUARIOS:
+										listaUsuariosFinal.add(usuario);
+										break;
+										
+									default:
+										break;
+								}								
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		//Supervisores
+		if (codigoEntidadUsuario.equals("HAYA")) {
+			Usuario supervisor = getSupervisorPorAsuntoEntidad(codigoEntidadUsuario, codigoTipoAsunto);
+			EXTDDTipoGestor tipoGestorSupervisor = getTipoGestorSupervisorPorAsuntoEntidad(codigoEntidadUsuario, codigoTipoAsunto);
+			DespachoExterno despachoGestorSupervisor = getDespachoSupervisorPorAsuntoEntidad(codigoEntidadUsuario, codigoTipoAsunto);
+			
+			if (supervisor!=null && tipoGestorSupervisor!=null && despachoGestorSupervisor!=null) {
+				switch (tipoResultado) {
+					case TIPOGESTORES:
+						listadoTipoGestoresFinal.add(tipoGestorSupervisor);
+						break;
+					case DESPACHOS:
+						listaDespachoFinal.add(despachoGestorSupervisor);
+						break;
+					case USUARIOS:
+						listaUsuariosFinal.add(supervisor);
+						break;
+						
+					default:
+						break;
+				}	
+			}
+		}
+		
+		switch (tipoResultado) {
+			case TIPOGESTORES:
+				resultado = listadoTipoGestoresFinal;
+				break;
+			case DESPACHOS:
+				resultado = listaDespachoFinal;
+				break;
+			case USUARIOS:
+				resultado = listaUsuariosFinal;
+				break;
+				
+			default:
+				break;
+		}			
+		
+		return resultado;
 	}
 
 }

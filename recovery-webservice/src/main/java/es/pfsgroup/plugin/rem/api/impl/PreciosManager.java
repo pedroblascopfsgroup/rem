@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.PropuestaPreciosExcelReport;
 import es.pfsgroup.plugin.rem.factory.PropuestaPreciosExcelFactoryApi;
@@ -29,11 +30,14 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VActivosPropuestaDao;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
@@ -58,6 +62,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Autowired
 	private PropuestaPreciosExcelFactoryApi propuestaPreciosExcelFactory;
+
+	@Autowired
+	private TrabajoApi trabajoApi;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -89,10 +96,28 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta){
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
 
-		// Nueva propuesta de precios
-		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activosPrecios, nombrePropuesta);
+		// Se instancia una lista de Activos, usando los id's de activos de la lista del buscador
+		List<Activo> activos = new ArrayList<Activo>();
+		for(VBusquedaActivosPrecios activoPrecio : activosPrecios){
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(activoPrecio.getId()));
+			Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+			activos.add(activo);
+		}
+		
+		// Nueva propuesta de precios con activos asociados
+		Boolean esPropManual = true;
+		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
+		
+		// Nuevo trabajo+tramite de propuesta de precios: La propuesta es necesaria para crear la relacion con el nuevo trabajo.
+		DDSubtipoTrabajo subtipoTrabajoPropuestaPrecios = (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS);
+		Trabajo trabajo = trabajoApi.create(subtipoTrabajoPropuestaPrecios, activos, propuestaPrecio);
+		
+		// Relacion nuevo trabajo con nueva propuesta
+		propuestaPrecio.setTrabajo(trabajo);
+		
+		propuestaPrecioDao.saveOrUpdate(propuestaPrecio);
 		
 		return propuestaPrecio;
 		
@@ -100,16 +125,16 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPrecios(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta){
+	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
 
 		PropuestaPrecio propuestaPrecio = new PropuestaPrecio();
 		
 		propuestaPrecio.setNombrePropuesta(nombrePropuesta);
 
-		if(!Checks.esNulo(activosPrecios) && !Checks.esNulo(activosPrecios.get(0))){
-//			Filter filtroCarteraCodigo = genericDao.createFilter(FilterType.EQUALS, "codigo", activosPrecios.get(0).getEntidadPropietariaCodigo());
-//			DDCartera cartera = (DDCartera) genericDao.get(DDCartera.class, filtroCarteraCodigo);
-			DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, activosPrecios.get(0).getEntidadPropietariaCodigo());
+		// Las propuestas se generan con activos de una misma cartera
+		// Para extraer la cartera de una propuesta, se toma de la cartera del 1er activo
+		if(!Checks.esNulo(activos) && !Checks.esNulo(activos.get(0))){
+			DDCartera cartera = (DDCartera) utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, activos.get(0).getCartera().getCodigo());
 			propuestaPrecio.setCartera(cartera);
 		}
 		
@@ -117,39 +142,31 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		propuestaPrecio.setFechaEmision(new Date());
 		propuestaPrecio.setNumPropuesta(propuestaPrecioDao.getNextNumPropuestaPrecio());
 		
-//		Filter filtroPropuestaPrecios = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPropuestaPrecio.ESTADO_GENERADA);
-//		DDEstadoPropuestaPrecio estadoPropuestaPrecios = (DDEstadoPropuestaPrecio) genericDao.get(DDEstadoPropuestaPrecio.class, filtroPropuestaPrecios);
 		DDEstadoPropuestaPrecio estadoPropuestaPrecios = (DDEstadoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPropuestaPrecio.class, DDEstadoPropuestaPrecio.ESTADO_GENERADA);
 		propuestaPrecio.setEstado(estadoPropuestaPrecios);
+		DDTipoPropuestaPrecio tipoPropuestaPrecio = (DDTipoPropuestaPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPropuestaPrecio.class, tipoPropuestaCodigo);
+		propuestaPrecio.setTipoPropuesta(tipoPropuestaPrecio);
+		propuestaPrecio.setEsPropuestaManual(esPropManual);
 		
-		propuestaPrecio.setActivosPropuesta(listaActivosPreciosToActivosPropuesta(activosPrecios, propuestaPrecio));
+		propuestaPrecio.setActivosPropuesta(listaActivosToActivosPropuesta(activos, propuestaPrecio));
 		
-//		genericDao.update(PropuestaPrecio.class, propuestaPrecio);
-
 		propuestaPrecioDao.saveOrUpdate(propuestaPrecio);
 		
 		return propuestaPrecio;
 		
 	}
 
-	@Transactional(readOnly = false)
-	private List<ActivoPropuesta> listaActivosPreciosToActivosPropuesta(List<VBusquedaActivosPrecios> activosPrecios, PropuestaPrecio propuestaPrecio){
+	private List<ActivoPropuesta> listaActivosToActivosPropuesta(List<Activo> activos, PropuestaPrecio propuestaPrecio){
 		List<ActivoPropuesta> listaActivosPropuesta = new ArrayList<ActivoPropuesta>();
 		
-		for(VBusquedaActivosPrecios activoPrecio : activosPrecios){
-			
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(activoPrecio.getNumActivo()));
-			Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
+		for(Activo activo : activos){
 			ActivoPropuesta activoPropuesta = createActivoPropuesta(activo, propuestaPrecio);
-			
 			listaActivosPropuesta.add(activoPropuesta);
-			
 		}
 		
 		return listaActivosPropuesta;
 	}
 	
-	@Transactional(readOnly = false)
 	private ActivoPropuesta createActivoPropuesta(Activo activo, PropuestaPrecio propuestaPrecio){
 		ActivoPropuesta activoPropuesta = new ActivoPropuesta();
 		ActivoPropuestaPk activoPropuestaPK = new ActivoPropuestaPk();

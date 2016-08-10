@@ -293,6 +293,15 @@ public class AgrupacionController {
 	}	
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListVisitasAgrupacionById(Long id, ModelMap model){
+
+		model.put("data", adapter.getListVisitasAgrupacionById(id));
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosAgrupacionById(Long id, ModelMap model){
 			
 

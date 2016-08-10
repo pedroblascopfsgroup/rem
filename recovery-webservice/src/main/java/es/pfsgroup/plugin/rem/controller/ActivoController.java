@@ -455,6 +455,16 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListVisitasActivoById(Long id, ModelMap model) {
+
+		model.put("data", adapter.getListVisitasActivoById(id));
+
+		return createModelAndViewJson(model);
+
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

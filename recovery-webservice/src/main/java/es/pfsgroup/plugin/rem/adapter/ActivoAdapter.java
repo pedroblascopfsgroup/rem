@@ -107,6 +107,7 @@ import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
+import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
@@ -2095,7 +2096,49 @@ public class ActivoAdapter {
 		
 		return listaDtoAgrupaciones;	
 				
-	}	
+	}
+	
+	public List<DtoVisitasActivo> getListVisitasActivoById(Long id) {
+		
+		Activo activo = activoApi.get(id);
+
+		List<DtoVisitasActivo> listaDtoVisitas = new ArrayList<DtoVisitasActivo>();
+
+		
+		if (activo.getVisitas() != null) {
+			
+			for (int i = 0; i < activo.getVisitas().size(); i++) 
+			{
+				DtoVisitasActivo dtoActivoVisitas = new DtoVisitasActivo();
+				try {
+					
+					BeanUtils.copyProperties(dtoActivoVisitas, activo.getVisitas().get(i));
+					//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
+					
+					BeanUtils.copyProperty(dtoActivoVisitas, "idVisita", activo.getVisitas().get(i).getId());
+					BeanUtils.copyProperty(dtoActivoVisitas, "fechaSolicitud", activo.getVisitas().get(i).getFechaSolicitud());
+					if(activo.getVisitas().get(i).getCliente()!=null){
+						BeanUtils.copyProperty(dtoActivoVisitas, "nombre", activo.getVisitas().get(i).getCliente().getNombre()+activo.getVisitas().get(i).getCliente().getApellidos());
+						BeanUtils.copyProperty(dtoActivoVisitas, "numDocumento", activo.getVisitas().get(i).getCliente().getDocumento());
+					}
+					BeanUtils.copyProperty(dtoActivoVisitas, "fechaVisita", activo.getVisitas().get(i).getFechaVisita());
+					
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				listaDtoVisitas.add(dtoActivoVisitas);
+		
+			}
+		}
+		
+		return listaDtoVisitas;	
+				
+	}
+	
+	
+	
 	
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
 		

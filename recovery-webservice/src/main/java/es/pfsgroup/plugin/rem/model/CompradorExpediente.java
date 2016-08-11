@@ -52,38 +52,38 @@ public class CompradorExpediente implements Serializable {
     @Column(name = "ECO_ID", nullable = false, updatable = false, insertable = false)
     private Long expediente;
 	    
-    @Column(name = "CEX_NOMBRE_REPRESENTANTE")
+    @Column(name = "CEX_NOMBRE_RTE")
     private String nombreRepresentante;
     
-    @Column(name = "CEX_APELLIDOS_REPRESENTANTE")
+    @Column(name = "CEX_APELLIDOS_RTE")
     private String apellidosRepresentante;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TDI_ID_REPRESENTANTE	")
+    @JoinColumn(name = "DD_TDI_ID_RTE	")
 	private DDTipoDocumento tipoDocumentoRepresentante;
     
-    @Column(name = "CEX_DOCUMENTO_REPRESENTANTE")
+    @Column(name = "CEX_DOCUMENTO_RTE")
     private String documentoRepresentante;
     
-    @Column(name = "CEX_TELEFONO1_REPRESENTANTE")
+    @Column(name = "CEX_TELEFONO1_RTE")
     private String telefono1Representante;
     
-    @Column(name = "CEX_TELEFONO2_REPRESENTANTE")
+    @Column(name = "CEX_TELEFONO2_RTE")
     private String telefono2Representante;
     
-    @Column(name = "CEX_EMAIL_REPRESENTANTE")
+    @Column(name = "CEX_EMAIL_RTE")
     private String emailRepresentante;
     
-    @Column(name = "CEX_DIRECCION_REPRESENTANTE")
+    @Column(name = "CEX_DIRECCION_RTE")
     private String direccionRepresentante;
     
-    @Column(name = "CEX_MUNICIPIO_REPRESENTANTE")
+    @Column(name = "CEX_MUNICIPIO_RTE")
     private String municipioRepresentante;
     
-    @Column(name = "CEX_CODIGO_POSTAL_REPRESENTANTE")
+    @Column(name = "CEX_CODIGO_POSTAL_RTE")
     private String codigoPostalRepresentante;
     
-    @Column(name = "CEX_PROVINCIA_REPRESENTANTE")
+    @Column(name = "CEX_PROVINCIA_RTE")
     private String provinciaRepresentante;
     
     @Column(name="CEX_PORCION_COMPRA")
@@ -117,10 +117,10 @@ public class CompradorExpediente implements Serializable {
     @JoinColumn(name = "DD_UAC_ID")
     private DDUsosActivo usoActivo;
     
-    @Column(name="CEX_IMPORTE_PROPORCIONAL_OFERTA")
+    @Column(name="CEX_IMPTE_PROPORCIONAL_OFERTA")
     private Double importeProporcionalOferta;
     
-    @Column(name="CEX_IMPORTE_FINANCIADO")
+    @Column(name="CEX_IMPTE_FINANCIADO")
     private Double importeFinanciado;
     
     @Column(name="CEX_RESPONSABLE_TRAMITACION")

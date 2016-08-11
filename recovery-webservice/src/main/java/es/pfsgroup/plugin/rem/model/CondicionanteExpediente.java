@@ -25,7 +25,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuestoTransmision;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 
 
@@ -49,8 +49,8 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		
 	@Id
     @Column(name = "COE_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "PosicionamientoGenerator")
-    @SequenceGenerator(name = "PosicionamientoGenerator", sequenceName = "S_POS_POSICIONAMIENTO")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "CondicionantesExpedienteGenerator")
+    @SequenceGenerator(name = "CondicionantesExpedienteGenerator", sequenceName = "S_COE_CONDICIONANTES_EXP")
     private Long id;
 	
 	@OneToOne(fetch = FetchType.LAZY)
@@ -72,7 +72,7 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TIT_ID")
-	private DDTiposImpuestoTransmision tipoImpuesto;
+	private DDTiposImpuesto tipoImpuesto;
     
     @Column(name="COE_TIPO_APLICABLE")
     private Double tipoAplicable;
@@ -128,10 +128,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @Column(name="COE_SUJETO_TANTEO_RETRACTO")
     private Integer sujetoTanteoRetracto;
     
-    @Column(name="COE_RENUNCIA_SANEAMIENTO_EVICCION")
+    @Column(name="COE_RENUNCIA_SNMTO_EVICCION")
     private Integer renunciaSaneamientoEviccion;
     
-    @Column(name="COE_RENUNCIA_SANEAMIENTO_VICIOS")
+    @Column(name="COE_RENUNCIA_SNMTO_VICIOS")
     private Integer renunciaSaneamientoVicios;
     
     @Column(name="COE_VPO")
@@ -208,11 +208,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.plazoFirmaReserva = plazoFirmaReserva;
 	}
 
-	public DDTiposImpuestoTransmision getTipoImpuesto() {
+	public DDTiposImpuesto getTipoImpuesto() {
 		return tipoImpuesto;
 	}
 
-	public void setTipoImpuesto(DDTiposImpuestoTransmision tipoImpuesto) {
+	public void setTipoImpuesto(DDTiposImpuesto tipoImpuesto) {
 		this.tipoImpuesto = tipoImpuesto;
 	}
 

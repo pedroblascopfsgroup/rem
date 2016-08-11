@@ -36,7 +36,7 @@ public class DDRegimenesMatrimoniales implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_REM_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDRegimenesMatrimonialesGenerator")
-	@SequenceGenerator(name = "DDRegimenesMatrimonialesGenerator", sequenceName = "S_DD_REM_REGIMENES_MATRIMONIALES")
+	@SequenceGenerator(name = "DDRegimenesMatrimonialesGenerator", sequenceName = "S_DD_REM_REG_MATRIMONIALES")
 	private Long id;
 	    
 	@Column(name = "DD_REM_CODIGO")   

@@ -25,10 +25,10 @@ import es.capgemini.pfs.diccionarios.Dictionary;
  *
  */
 @Entity
-@Table(name = "DD_TIT_TIPOS_IMPUESTO_TRANSMISION", schema = "${entity.schema}")
+@Table(name = "DD_TIT_TIPOS_IMPUESTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTiposImpuestoTransmision implements Auditable, Dictionary {
+public class DDTiposImpuesto implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
@@ -36,7 +36,7 @@ public class DDTiposImpuestoTransmision implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_TIT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTiposImpuestoGenerator")
-	@SequenceGenerator(name = "DDTiposImpuestoGenerator", sequenceName = "DD_TIT_TIPOS_IMPUESTO_TRANSMISION")
+	@SequenceGenerator(name = "DDTiposImpuestoGenerator", sequenceName = "DD_TIT_TIPOS_IMPUESTO")
 	private Long id;
 	    
 	@Column(name = "DD_TIT_CODIGO")   

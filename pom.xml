@@ -716,6 +716,7 @@
 				<module>proyecto-rem-online</module>
 				<module>recovery-webservice</module>
 				<module>paradise-framework</module>
+				<module>recovery-message-broker</module>
 				<module>recovery-gestordocumentalREM-plugin</module>	
 				<module>rem-web</module>
 			</modules>

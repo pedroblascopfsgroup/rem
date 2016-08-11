@@ -65,6 +65,6 @@ Ext.define('HreRem.view.precios.PreciosModel', {
 		    	listeners : {
 		            beforeload : 'beforeLoadActivosByPropuesta'
 		        }
-       		},
+       		}
     }
 });

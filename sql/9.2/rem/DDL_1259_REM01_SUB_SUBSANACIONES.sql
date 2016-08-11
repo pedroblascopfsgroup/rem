@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar los expedientes comerciales
+--## Finalidad: Tabla para gestionar las subsanaciones de un expediente comercial
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -34,8 +34,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar los expedientes comerciales.'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'SUB_SUBSANACIONES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar las subsanaciones de un expediente comercial'; -- Vble. para los comentarios de las tablas
 
     
     
@@ -57,34 +57,28 @@ BEGIN
 	END IF;
 
 	-- Comprobamos si existe la secuencia
-	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_ECO_EXPEDIENTE_COMERCIAL'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_SUB_SUBSANACIONES'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_ECO_EXPEDIENTE_COMERCIAL... Ya existe. Se borrará.');  
-		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_ECO_EXPEDIENTE_COMERCIAL';
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_SUB_SUBSANACIONES... Ya existe. Se borrará.');  
+		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_SUB_SUBSANACIONES';
 		
 	END IF;
-	
-	-- Comprobamos si existe la secuencia
-	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_ECO_NUM_EXPEDIENTE'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_ECO_NUM_EXPEDIENTE... Ya existe. Se borrará.');  
-		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE';
-		
-	END IF;
-	
-	
+
 	
 	
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-			ECO_ID           						NUMBER(16,0)                NOT NULL,
-			ECO_NUM_EXPEDIENTE						NUMBER(16,0)                NOT NULL,
-			OFR_ID									NUMBER(16,0)				NOT NULL,
-			DD_EEC_ID								NUMBER(16,2),			
+			SUB_ID           						NUMBER(16,0)                NOT NULL,
+			ECO_ID									NUMBER(16,0)                NOT NULL,
+			DD_ESU_ID								NUMBER(16),
+			SUB_PETICIONARIO						VARCHAR2(256 CHAR),
+			SUB_MOTIVO								VARCHAR2(256 CHAR),
+			SUB_FECHA_PETICION						DATE,
+			SUB_GASTOS_SUBSANACION					VARCHAR2(50 CHAR),
+			SUB_GASTOS_INSCRIPCION					VARCHAR2(50 CHAR),
 			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 							VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 			FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -104,36 +98,30 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(ECO_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(SUB_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ECO_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (SUB_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
 	
-		-- Creamos foreign key OFR_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ECO_OFR_ID FOREIGN KEY (OFR_ID) REFERENCES '||V_ESQUEMA||'.OFR_OFERTAS (OFR_ID) ON DELETE SET NULL)';
+		-- Creamos foreign key ECO_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_SUB_ECO_ID FOREIGN KEY (ECO_ID) REFERENCES '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL (ECO_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ECO_OFR_ID... Foreign key creada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_SUB_ECO_ID... Foreign key creada.');
 	
-		-- Creamos foreign key DD_EEC_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_ESTADOS_EXPEDIENTE FOREIGN KEY (DD_EEC_ID) REFERENCES '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL (DD_EEC_ID) ON DELETE SET NULL)';
+		-- Creamos foreign key DD_ESU_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_SUB_ESU_ID FOREIGN KEY (DD_ESU_ID) REFERENCES '||V_ESQUEMA||'.DD_ESU_ESTADOS_SUBSANACION (DD_ESU_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_ESTADOS_EXPEDIENTE... Foreign key creada.');
-
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_SUB_ESU_ID... Foreign key creada.');
 	
 	-- Creamos sequence
 	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
 	EXECUTE IMMEDIATE V_MSQL;		
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
-	
-	-- Creamos sequence para el número de expediente
-	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE';		
-	EXECUTE IMMEDIATE V_MSQL;		
-	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_ECO_NUM_EXPEDIENTE... Secuencia creada');
-	
+		
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;

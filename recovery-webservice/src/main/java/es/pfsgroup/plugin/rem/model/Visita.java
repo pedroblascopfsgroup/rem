@@ -36,7 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
  *
  */
 @Entity
-@Table(name = "VIS_VISITA", schema = "${entity.schema}")
+@Table(name = "VIS_VISITAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)

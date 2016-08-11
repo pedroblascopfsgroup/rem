@@ -4,7 +4,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     alias: 'viewmodel.agrupaciondetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
-    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones'],
+    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion'],
     
     data: {
     	agrupacionficha: null
@@ -103,6 +103,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'agrupacion/getListObservacionesAgrupacionById',
+		        extraParams: {id: '{agrupacionficha.id}'}
+	    	 }
+    	},
+    	
+    	storeVisitasAgrupacion: {  
+	   	     pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.VisitasAgrupacion',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'agrupacion/getListVisitasAgrupacionById',
 		        extraParams: {id: '{agrupacionficha.id}'}
 	    	 }
     	},

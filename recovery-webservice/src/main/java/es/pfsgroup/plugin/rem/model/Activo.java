@@ -1344,5 +1344,13 @@ public class Activo implements Serializable, Auditable {
 	public void setTipoComercializacion(DDTipoComercializacion tipoComercializacion) {
 		this.tipoComercializacion = tipoComercializacion;
 	}
+	
+	public List<Visita> getVisitas() {
+		return visitas;
+	}
+
+	public void setVisitas(List<Visita> visitas) {
+		this.visitas = visitas;
+	}
 
 }

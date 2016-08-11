@@ -40,7 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 @Table(name = "ADE_ADJUNTO_EXPEDIENTE", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class AdjuntoExpediente implements Serializable, Auditable {
+public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 
 	/**
 	 * 
@@ -90,13 +90,13 @@ public class AdjuntoExpediente implements Serializable, Auditable {
     /**
      * Constructor.
      */
-    public AdjuntoExpediente() {}
+    public AdjuntoExpedienteComercial() {}
     
     /**
      * Constructor.
      * @param fileItem FileItem
      */
-    public AdjuntoExpediente(FileItem fileItem) {
+    public AdjuntoExpedienteComercial(FileItem fileItem) {
         Adjunto adjunto = new Adjunto(fileItem);
         this.setAdjunto(adjunto);
         this.setContentType(fileItem.getContentType());

@@ -53,7 +53,7 @@ public class RestSecurityFilter implements Filter {
 			RestRequestWrapper restRequest = new RestRequestWrapper((HttpServletRequest) request);
 
 			// obtenemos los datos de la peticion
-			RequestDto datajson = restRequest.getRequestData();
+			RequestDto datajson = (RequestDto)restRequest.getRequestData(RequestDto.class);
 
 			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor
 			// por

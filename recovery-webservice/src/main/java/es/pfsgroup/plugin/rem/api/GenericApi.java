@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 
 public interface GenericApi {
@@ -69,6 +70,13 @@ public interface GenericApi {
 	@BusinessOperationDefinition("genericManager.getComboTipoGestor")
 	public List<EXTDDTipoGestor> getComboTipoGestor();
 
+	/**
+	 * Devuelve los tipos de trabajo, filtrando los del tipo que no deben crearse
+	 * @return
+	 */
+	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered();
+	
 	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe
 	 * @param tipoTrabajoCodigo

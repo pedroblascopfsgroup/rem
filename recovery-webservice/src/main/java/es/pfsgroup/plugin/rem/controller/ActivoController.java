@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +33,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -86,6 +90,9 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 
@@ -1247,7 +1254,7 @@ public class ActivoController {
 
 		boolean success = trabajoApi.saveFichaTrabajo(dtoTrabajo, idActivo);
 
-		return createModelAndViewJson(new ModelMap("success", true));
+		return createModelAndViewJson(new ModelMap("success", success));
 
 	}
 
@@ -1736,5 +1743,55 @@ public class ActivoController {
 		model.put("success", activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion));
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET, value = "get")
+	public ModelAndView getActivo(ModelMap model, @RequestParam(value = "data") String data,
+			RestRequestWrapper request) {
+		try {
+
+			RequestDto jsonData = request.getRequestData();
+
+			ArrayList<ActivoDto> activos = new ArrayList<ActivoDto>();
+
+			for (int i = 0; i < jsonData.getData().getIdActivoBien().size(); i++) {
+				Activo actv = adapter.getActivoById(jsonData.getData().getIdActivoBien().get(i));
+
+				if (actv != null) {
+					ActivoDto actvDto = new ActivoDto();
+					BeanUtils.copyProperties(actvDto, actv);
+					activos.add(actvDto);
+				}
+			}
+			model.put("id", jsonData.getId());
+			model.put("data", activos);
+		} catch (Exception e) {
+			model.put("data", e);
+		}
+		
+		return new ModelAndView("jsonView", model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "update")
+	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		RequestDto jsonData = request.getRequestData();
+		System.out.println(jsonData.getId());
+		model.put("data", "hola update");
+		return new ModelAndView("jsonView", model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.DELETE, value = "delete")
+	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		RequestDto jsonData = request.getRequestData();
+		System.out.println(jsonData.getId());
+		model.put("data", "hola delete");
+		return new ModelAndView("jsonView", model);
 	}
 }

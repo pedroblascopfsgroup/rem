@@ -22,6 +22,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
@@ -43,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -53,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
  */
 @Entity
 @Table(name = "PRP_PROPUESTAS_PRECIOS", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class PropuestaPrecio implements Serializable, Auditable {
 
@@ -77,7 +81,7 @@ public class PropuestaPrecio implements Serializable, Auditable {
     @JoinColumn(name = "DD_EPP_ID")
     private DDEstadoPropuestaPrecio estado;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TBJ_ID")
     private Trabajo trabajo;
     
@@ -87,7 +91,14 @@ public class PropuestaPrecio implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CRA_ID")
-    private DDCartera cartera;  
+    private DDCartera cartera;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPP_ID")
+    private DDTipoPropuestaPrecio tipoPropuesta;  
+
+	@Column(name = "PRP_ES_PROP_MANUAL")
+	private Boolean esPropuestaManual;
     
 	@Column(name = "PRP_FECHA_EMISION")
 	private Date fechaEmision;
@@ -154,6 +165,22 @@ public class PropuestaPrecio implements Serializable, Auditable {
 
 	public void setCartera(DDCartera cartera) {
 		this.cartera = cartera;
+	}
+
+	public DDTipoPropuestaPrecio getTipoPropuesta() {
+		return tipoPropuesta;
+	}
+
+	public void setTipoPropuesta(DDTipoPropuestaPrecio tipoPropuesta) {
+		this.tipoPropuesta = tipoPropuesta;
+	}
+
+	public Boolean getEsPropuestaManual() {
+		return esPropuestaManual;
+	}
+
+	public void setEsPropuestaManual(Boolean esPropuestaManual) {
+		this.esPropuestaManual = esPropuestaManual;
 	}
 
 	public Date getFechaEmision() {

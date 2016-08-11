@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160810
+--## AUTOR=JORGE ROS
+--## FECHA_CREACION=20160808
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-630
 --## PRODUCTO=NO
---## Finalidad: Tabla que contiene la relación entre activos y propuestas de precios
+--## Finalidad: Tabla para gestionar las propuestas de precios
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -33,16 +33,19 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
- 
-    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar 
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PRP'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-	V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla que contiene la relación entre activos y propuestas de precios.'; -- Vble. para los comentarios de las tablas
-	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TPP_TIPO_PROP_PRECIO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Diccionario de tipos de una propuesta de precios.'; -- Vble. para los comentarios de las tablas
+
+    
+    
+    
 BEGIN
 	
+
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
-
+	
 	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
@@ -53,17 +56,31 @@ BEGIN
 		
 	END IF;
 	
+	-- Comprobamos si existe la secuencia
+	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_'||V_TEXT_TABLA||''' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_'||V_TEXT_TABLA||'... Ya existe. Se borrará.');  
+		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';
+		
+	END IF; 	
+	
 	-- Creamos la tabla
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		ACT_ID								NUMBER(16,0)				NOT NULL,
-		PRP_ID 								NUMBER(16,0)				NOT NULL,
-		ACT_PRP_PRECIO_PROPUESTO			NUMBER(16,2),
-		ACT_PRP_PRECIO_SANCIONADO			NUMBER(16,2),
-		DD_EPA_ID							NUMBER(16,2),
-		ACT_PRP_MOTIVO_DESCARTE				VARCHAR2(256 CHAR),				
-		VERSION 							NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE
+			DD_TPP_ID								NUMBER(16,0)                NOT NULL,
+			DD_TPP_CODIGO        					VARCHAR2(20 CHAR)          	NOT NULL,
+			DD_TPP_DESCRIPCION       				VARCHAR2(100 CHAR),
+			DD_TPP_DESCRIPCION_LARGA  				VARCHAR2(250 CHAR),
+			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
+			USUARIOCREAR 							VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
+			FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 
+			USUARIOMODIFICAR 						VARCHAR2(50 CHAR), 
+			FECHAMODIFICAR 							TIMESTAMP (6), 
+			USUARIOBORRAR 							VARCHAR2(50 CHAR), 
+			FECHABORRAR 							TIMESTAMP (6), 
+			BORRADO 								NUMBER(1,0) 				DEFAULT 0 NOT NULL ENABLE			
 	)
 	LOGGING 
 	NOCOMPRESS 
@@ -72,38 +89,33 @@ BEGIN
 	NOMONITORING
 	';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');	
+
+	-- Creamos indice	
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_TPP_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (ACT_ID, PRP_ID))';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TPP_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
-		
-	-- Creamos foreign key ACT_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ACT_ID_PRP FOREIGN KEY (ACT_ID) REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID) ON DELETE SET NULL)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ACT_ID_PRP... Foreign key creada.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');	
 	
-		-- Creamos foreign key PRP_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PRP_ID FOREIGN KEY  (PRP_ID) REFERENCES '||V_ESQUEMA||'.PRP_PROPUESTAS_PRECIOS (PRP_ID) ON DELETE SET NULL)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_PRP_ID... Foreign key creada.');
-	
-		-- Creamos foreign key DD_EPA_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ESTADO_EN_PROPUESTA FOREIGN KEY (DD_EPA_ID) REFERENCES '||V_ESQUEMA||'.DD_EPA_ESTADO_PROP_ACTIVO (DD_EPA_ID) ON DELETE SET NULL)';
-	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ESTADO_EN_PROPUESTA... Foreign key creada.');
+	-- Creamos sequence
+	V_MSQL := 'CREATE SEQUENCE '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'';		
+	EXECUTE IMMEDIATE V_MSQL;		
+	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'... Secuencia creada');
 	
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');	
 	
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 	
-	COMMIT;
 
+	COMMIT;
 
 
 EXCEPTION

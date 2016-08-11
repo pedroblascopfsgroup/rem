@@ -13,7 +13,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	onSearchHistoricoClick: function(btn) {
 		
 		var me = this;
-		this.lookupReference('historicoPropuestaActivosList').getStore().loadPage(1);
+		this.lookupReference('historicoPropuestasList').getStore().loadPage(1);
         
 	},
 	
@@ -146,6 +146,26 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		});
 
 		return criteria;
-    }
+    },
+    
+    //HREOS-641 Funcion que abre listado activos al seleccionar una propuesta del huistorico
+    onPropuestaPrecioListClick: function() {
+    	
+    	var me = this;
+		me.lookupReference('historicoPropuestaActivosList').expand();	
+		this.lookupReference('historicoPropuestaActivosList').getStore().loadPage(1);
+    },
+    
+    beforeLoadActivosByPropuesta: function(store, operation, opts) {
+		
+		var me = this;		
+		var idPropuesta = me.getViewModel().get('historicoPropuestasList').selection.id;
+		
+		if(idPropuesta != null) {
+			store.getProxy().extraParams = {idPropuesta: idPropuesta};	
+			
+			return true;
+		}
+	}
 
 });

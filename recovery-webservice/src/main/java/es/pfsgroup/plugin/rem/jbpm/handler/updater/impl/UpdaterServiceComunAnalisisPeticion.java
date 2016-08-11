@@ -28,6 +28,7 @@ public class UpdaterServiceComunAnalisisPeticion implements UpdaterService {
 	//private static final String CODIGO_T004_ANALISIS_PETICION = "T004_AnalisisPeticion";
 	private static final String CODIGO_T005_ANALISIS_PETICION = "T005_AnalisisPeticion";
 	private static final String CODIGO_T006_ANALISIS_PETICION = "T006_AnalisisPeticion";
+	private static final String CODIGO_T009_ANALISIS_PETICION = "T009_AnalisisPeticion";
 	
 	private static final String COMBO_TRAMITAR = "comboTramitar";
 	private static final String MOTIVO_DENEGACION = "motivoDenegacion";
@@ -67,7 +68,7 @@ public class UpdaterServiceComunAnalisisPeticion implements UpdaterService {
 		// TODO Constantes con los nombres de los nodos que ejecutan este guardado adicional
 		return new String[]{CODIGO_T002_ANALISIS_PETICION, CODIGO_T003_ANALISIS_PETICION, 
 							/*CODIGO_T004_ANALISIS_PETICION, */CODIGO_T005_ANALISIS_PETICION, 
-							CODIGO_T006_ANALISIS_PETICION};
+							CODIGO_T006_ANALISIS_PETICION, CODIGO_T009_ANALISIS_PETICION};
 	}
 
 	public String[] getKeys() {

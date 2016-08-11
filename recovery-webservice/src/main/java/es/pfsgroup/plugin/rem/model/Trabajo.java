@@ -20,6 +20,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -221,7 +222,11 @@ public class Trabajo implements Serializable, Auditable {
     
     @Column(name="TBJ_FECHA_PAGO")
     private Date fechaPago;
-    
+
+    @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TBJ_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private PropuestaPrecio propuestaPrecio;
        	
 	@Version   
 	private Long version;
@@ -766,6 +771,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setMediador(ActivoProveedor mediador) {
 		this.mediador = mediador;
+	}
+
+	public PropuestaPrecio getPropuestaPrecio() {
+		return propuestaPrecio;
+	}
+
+	public void setPropuestaPrecio(PropuestaPrecio propuestaPrecio) {
+		this.propuestaPrecio = propuestaPrecio;
 	}
 
 

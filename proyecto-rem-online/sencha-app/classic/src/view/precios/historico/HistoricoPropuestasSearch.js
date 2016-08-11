@@ -1,12 +1,13 @@
 Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'historicopropuestassearch',
+    reference	: 'historicoPropuestasSearch',  
   	layout: {
         type: 'table',
         // The total column count must be specified here
-        columns: 3,
+        columns: 4,
         trAttrs: {height: '30px', width: '100%'},
-        tdAttrs: {width: '33%'},
+        tdAttrs: {width: '25%'},
         tableAttrs: {
             style: {
                 width: '100%'
@@ -21,7 +22,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
     },  
 
     initComponent: function () {
-        
+    	
         var me = this;
         
         me.setTitle(HreRem.i18n("title.historico.filtro.propuestas"));
@@ -39,7 +40,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 			    defaults: {
 			        layout: 'form',
 			        xtype: 'container',
-			        style: 'width: 33%',
+			        style: 'width: 25%',
 			        addUxReadOnlyEditFieldPlugin: false
 			    },
 	    		
@@ -75,6 +76,31 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 			            	    defaults: {	
 							    	xtype: 'textfieldbase',
 							    	addUxReadOnlyEditFieldPlugin: false
+							    }, 
+				            	items: [   
+		
+									{ 
+									    xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.tipo.propuesta'),
+										name: 'tipoPropuesta',
+										bind: {
+											store: '{comboTiposPropuesta}'
+										}
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.numero.tramite'),
+									    name: 'numTramite'        	
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.num.trabajo'),
+									    name: 'numTrabajo'        	
+									}
+								]
+				            },
+				            {
+			            	    defaults: {	
+							    	xtype: 'textfieldbase',
+							    	addUxReadOnlyEditFieldPlugin: false
 							    }, 				            	
 				            	items: [
 				            		{ 
@@ -92,6 +118,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 										name: 'fechaDesde',
 										fieldLabel:  HreRem.i18n('fieldlabel.desde'),
 										publish: 'value',
+										formatter: 'date("d/m/Y")',
 										bind: {
 											disabled: '{!comboTipoFecha.selection}'
 										}
@@ -100,6 +127,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 										xtype: 'datefieldbase',
 										name: 'fechaHasta',
 										fieldLabel: HreRem.i18n('fieldlabel.hasta'),
+										formatter: 'date("d/m/Y")',
 										bind: {
 											disabled: '{!comboTipoFecha.selection}',
 											minValue: '{datefielddesde.value}'
@@ -121,7 +149,12 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasSearch', {
 										bind: {
 											store: '{comboEstadosPropuesta}'
 										}				
-									}/*
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.gestor.precios'),
+									    name: 'gestorPrecios'  			
+									}
+									/*
 									,{ // TODO Gestores de precios
 										xtype: 'comboboxfieldbase',
 										fieldLabel: 'Gestor'										

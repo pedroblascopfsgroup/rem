@@ -1,5 +1,3 @@
-
-
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
@@ -21,59 +19,66 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de tipos de trabajo.
+ * Modelo que gestiona el diccionario de los tipos de las propuestas de precios
  * 
- * @author Anahuac de Vicente
+ * @author Jorge Ros
  *
  */
 @Entity
-@Table(name = "DD_TTR_TIPO_TRABAJO", schema = "${entity.schema}")
+@Table(name = "DD_TPP_TIPO_PROP_PRECIO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoTrabajo implements Auditable, Dictionary {
+public class DDTipoPropuestaPrecio implements Auditable, Dictionary {
 	
-
-    public static final String CODIGO_TASACION = "01";
-    public static final String CODIGO_OBTENCION_DOCUMENTAL = "02";
-    public static final String CODIGO_ACTUACION_TECNICA = "03";
-    public static final String CODIGO_PRECIOS = "04";
-    
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 5987166917745554407L;
+	
+	public static final String TIPO_PRECIAR = "01";
+	public static final String TIPO_REPRECIAR = "02";
+	public static final String TIPO_DESCUENTO = "03";
+	
 	@Id
-	@Column(name = "DD_TTR_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoTrabajoGenerator")
-	@SequenceGenerator(name = "DDTipoTrabajoGenerator", sequenceName = "S_DD_TTR_TIPO_TRABAJO")
+	@Column(name = "DD_TPP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoPropuestaPrecioGenerator")
+	@SequenceGenerator(name = "DDTipoPropuestaPrecioGenerator", sequenceName = "S_DD_TPP_ESTADO_PROP_PRECIO")
 	private Long id;
-	    
-	@Column(name = "DD_TTR_CODIGO")   
+	 
+	@Column(name = "DD_TPP_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TTR_DESCRIPCION")   
+	@Column(name = "DD_TPP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TTR_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TPP_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	    
 	
-	    
+	
+	
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
+	
+	
+	
 
-	
-	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {
@@ -92,14 +97,7 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
+	
 	public Long getVersion() {
 		return version;
 	}
@@ -117,6 +115,3 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
 	}
 
 }
-
-
-

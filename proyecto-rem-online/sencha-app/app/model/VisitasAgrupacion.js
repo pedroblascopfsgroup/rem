@@ -32,7 +32,7 @@ Ext.define('HreRem.model.VisitasAgrupacion', {
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById',
+		remoteUrl: 'activo/getActivoById'
     }
 
 });

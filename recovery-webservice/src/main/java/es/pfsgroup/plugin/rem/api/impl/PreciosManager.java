@@ -2,8 +2,10 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,14 +107,19 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 			Activo activo = (Activo) genericDao.get(Activo.class, filtroActivo);
 			activos.add(activo);
 		}
+
+		// Se toman precauciones para crear una lista con activos unicos ya que proveniendo de una vista,
+		// pueden haberse creado filas multiples del mismo activo
+		Set<Activo> uniqueSetActivos =  new HashSet<Activo>(activos);
+		List<Activo> uniqueListActivos = new ArrayList<Activo>(uniqueSetActivos);
 		
 		// Nueva propuesta de precios con activos asociados
 		Boolean esPropManual = true;
-		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(activos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
+		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(uniqueListActivos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
 		
 		// Nuevo trabajo+tramite de propuesta de precios: La propuesta es necesaria para crear la relacion con el nuevo trabajo.
 		DDSubtipoTrabajo subtipoTrabajoPropuestaPrecios = (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS);
-		Trabajo trabajo = trabajoApi.create(subtipoTrabajoPropuestaPrecios, activos, propuestaPrecio);
+		Trabajo trabajo = trabajoApi.create(subtipoTrabajoPropuestaPrecios, uniqueListActivos, propuestaPrecio);
 		
 		// Relacion nuevo trabajo con nueva propuesta
 		propuestaPrecio.setTrabajo(trabajo);

@@ -40,6 +40,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
@@ -71,6 +72,7 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
@@ -149,6 +151,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private MSVExcelParser excelParser;
 	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -327,6 +331,61 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		return trabajo;
 
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) {
+		Trabajo trabajo = new Trabajo();
+
+		try {
+			trabajo.setFechaSolicitud(new Date());
+			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
+			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+			
+			trabajo.setTipoTrabajo(subtipoTrabajo.getTipoTrabajo());
+			trabajo.setSubtipoTrabajo(subtipoTrabajo);		
+			
+			//Estado trabajo: En tramite y con fecha solicitud
+			trabajo.setEstado((DDEstadoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTrabajo.class, DDEstadoTrabajo.ESTADO_EN_TRAMITE));
+			trabajo.setFechaSolicitud(new Date());
+			
+			//TODO: Evaluar correctamente quienes son gestores de activo en trabajos multiactivo
+			//
+			// Si el trabajo es creado por el tipo de gestor que debe gestionarlo,
+			// tendra fecha APROBACION. Se evalua el gestor solo del 1er activo
+			//
+			//Para modulo precios:
+			if(DDTipoTrabajo.CODIGO_PRECIOS.equals(trabajo.getTipoTrabajo().getCodigo())){
+				if(gestorActivoManager.isGestorPreciosOMarketing(listaActivos.get(0), genericAdapter.getUsuarioLogado())){
+					trabajo.setFechaAprobacion(new Date());
+				}
+			}
+
+			//TODO: Pendiente de definir como sacar el % de participación.
+			String participacion = String.valueOf(100/listaActivos.size());
+			
+			// Se crea la relacion de activos - trabajos, utilizando la lista de activos de entrada
+			for(Activo activo: listaActivos){
+				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion);
+				trabajo.getActivosTrabajo().add(activoTrabajo);
+			}
+
+			// Antes de crear el tramite, se relacionan la propuesta y el trabajo, porque el tramite puede requerir la propuesta
+			trabajo.setPropuestaPrecio(propuestaPrecio);
+			
+			trabajoDao.saveOrUpdate(trabajo);
+			
+			// Crea el trámite relacionado con el nuevo trabajo generado --------------------
+			createTramiteTrabajo(trabajo);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(e.getMessage()));
+		}
+		
+		return trabajo;
 	}
 	
 	@Override
@@ -734,7 +793,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				tipoTramite = tipoProcedimientoManager.getByCodigo("T004");
 		}
 		
-		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, /*trabajo.getActivo(),*/trabajo);
+		// Tramites [FASE 2] -----------------------
+		//
+		// Modulo de Precios
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS)){ // Propuesta de precios
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
+		}
+		
+		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
 		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;

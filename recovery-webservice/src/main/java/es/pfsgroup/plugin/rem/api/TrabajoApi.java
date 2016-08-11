@@ -13,6 +13,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -25,8 +26,10 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
@@ -86,9 +89,21 @@ public interface TrabajoApi {
 	    @BusinessOperationDefinition("trabajoManager.actualizarImporteTotalTrabajo")
 	    public Trabajo actualizarImporteTotalTrabajo(Long idTrabajo);
 	    
+	    /**
+	     * Crear trabajo a partir de una lista de activos y un subtipo dados:
+	     * - Nuevos trabajos del módulo de precios y marketing 
+	     * @param subtipoTrabajo
+	     * @param listaActivos
+	     * @param propuetaPrecio (Opcional) Si es un trabajo derivado de la propuesta, se le pasa la propuesta
+	     * @return
+	     */
+	    public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio);
+	    
 		/**
-		 * 
-		 * @param trabajo
+		 * Crear trabajo desde la pantalla de crear trabajos:
+		 * Crea un trabajo desde el activo o desde la agrupación de activos (Nuevos trabajos Fase1)
+		 * o crea un trabajo introduciendo un listado de activos en excel (trabajos con tramite multiactivo Fase 2)
+		 * @param dtoTrabajo
 		 * @param id
 		 * @return
 		 */

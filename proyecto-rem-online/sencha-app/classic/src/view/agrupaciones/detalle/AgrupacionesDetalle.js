@@ -9,7 +9,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
         'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain',
         'HreRem.view.agrupaciones.detalle.FotosAgrupacion',
         'HreRem.view.agrupaciones.detalle.ActivosAgrupacion',
-        'HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion','Ext.ux.TabReorderer'],
+        'HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion','Ext.ux.TabReorderer',
+        'HreRem.view.agrupacion.detalle.ComercialAgrupacion'],
         
     	listeners: {
 			    	
@@ -95,7 +96,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
     		{	xtype: 'activosagrupacion', ocultarBotonesEdicion: true},
     		{	xtype: 'fotosagrupacion', ocultarBotonesEdicion: true},
     		{	xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true},
-    		{	xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNueva}'}}
+    		{	xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNueva}'}},
+    		{	xtype: 'comercialagrupacion', ocultarBotonesEdicion: true}
+    		
 
     ],
     

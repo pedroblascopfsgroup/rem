@@ -13,6 +13,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_PROVEEDOR = "UPROV";
 	public static final String CODIGO_SUPERVISOR_ADMISION = "SUPADM";
 	public static final String CODIGO_SUPERVISOR_ACTIVOS = "SUPACT";
+	public static final String CODIGO_GESTOR_PRECIOS = "GPREC";
+	public static final String CODIGO_GESTOR_MARKETING = "GMARK";
 	
 	void insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
@@ -27,5 +29,11 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	Boolean isGestorActivoOAdmision(Activo activo, Usuario usuario);
 	
 	Boolean isGestorActivoYTipo(Usuario usuario, Activo activo, String codigoGestor);
+	
+	Boolean isGestorPrecios(Activo activo, Usuario usuario);
+	
+	Boolean isGestorMarketing(Activo activo, Usuario usuario);
+	
+	Boolean isGestorPreciosOMarketing(Activo activo, Usuario usuario);
 
 }

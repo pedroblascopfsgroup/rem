@@ -77,6 +77,8 @@ public class VBusquedaActivosPropuesta implements Serializable {
     @Column(name="ESTADO_DESCRIPCION")
     private String descripcionEstadoActivo;
     
+    @Column(name="MOTIVO_DESCARTE")
+    private String motivoDescarte;
 
 	public String getIdActivo() {
 		return idActivo;
@@ -237,5 +239,14 @@ public class VBusquedaActivosPropuesta implements Serializable {
 	public void setDescripcionEstadoActivo(String descripcionEstadoActivo) {
 		this.descripcionEstadoActivo = descripcionEstadoActivo;
 	}
+
+	public String getMotivoDescarte() {
+		return motivoDescarte;
+	}
+
+	public void setMotivoDescarte(String motivoDescarte) {
+		this.motivoDescarte = motivoDescarte;
+	}
     
+	
 }

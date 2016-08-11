@@ -17,8 +17,13 @@
 
 	default-autowire="byName">
 	
-	<integration:channel id="async.input" />
-	<integration:channel id="async.output" />
+	<integration:channel id="async.input">
+		<integration:queue capacity="25"/>
+	</integration:channel>
+	
+	<integration:channel id="async.output">
+		<!-- <integration:queue capacity="25"/> -->
+	</integration:channel>
 	
 	<integration:gateway id="messageBrokerGateway"
 		default-request-channel="async.input" service-interface="es.pfsgroup.plugin.messagebroker.integration.MessageBrokerGateway" />
@@ -30,9 +35,22 @@
 	
 	
 	<!-- Procesado asíncrono de mensajes -->
-	<integration:service-activator id="asyncServiceActivator"
-		input-channel="async.input" output-channel="nullChannel" method="processMessage">
+	<integration:poller id="asyncPoller" receive-timeout="30000">
+			<integration:interval-trigger interval="10" 
+				time-unit="MILLISECONDS" />
+	</integration:poller>
+	
+	<integration:service-activator id="asyncServiceActivatorForRequest"
+		input-channel="async.input" output-channel="async.output" method="messageRequest">
 		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator" />
+		<integration:poller ref="asyncPoller" />
+	</integration:service-activator>
+	
+	
+	<integration:service-activator id="asyncServiceActivatorForResponse"
+		input-channel="async.output" output-channel="nullChannel" method="messageResponse">
+		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator" />
+		<!-- <integration:poller ref="asyncPoller" /> -->	
 	</integration:service-activator>
 
 </beans>

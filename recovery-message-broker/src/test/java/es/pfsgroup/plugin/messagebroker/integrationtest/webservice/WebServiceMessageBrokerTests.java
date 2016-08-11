@@ -10,6 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.messagebroker.integration.MessageBrokerGateway;
+import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.AsyncCallMonitor;
 import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.HandlerFakeMessageHandler;
 import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.WebServiceCallAndResponseHandler;
 import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.WebServiceOnlyCallHandler;
@@ -19,6 +20,8 @@ import junit.framework.Assert;
 public class WebServiceMessageBrokerTests {
 
 	private MessageBroker messageBroker;
+	private AsyncCallMonitor asnyncMonitor;
+
 	private ApplicationContext ctx;
 
 	@Before
@@ -35,6 +38,10 @@ public class WebServiceMessageBrokerTests {
 		 * el test.
 		 */
 		messageBroker = (MessageBroker) ctx.getBean("messageBroker");
+
+		// Ese monitor nos ayudará a saber si la llamada se ejecuta de forma
+		// asíncrona.
+		asnyncMonitor = (AsyncCallMonitor) ctx.getBean("asyncCallMonitor");
 	}
 
 	/**
@@ -47,12 +54,25 @@ public class WebServiceMessageBrokerTests {
 
 		WebServiceCallAndResponseHandler handler = (WebServiceCallAndResponseHandler) ctx
 				.getBean("webServiceCallAndResponseHandler");
+
 		// Validamos que el stub no esté inicializado
 		Assert.assertNull("El handler no puede estar inicializado al empezar el test", handler.getResponse());
 
-		// Llamada al servicio
-		String typeOfMessage = "webServiceCallAndResponse";
-		callMessageBroker(request, typeOfMessage);
+		synchronized (asnyncMonitor) {
+
+			// Llamada al servicio
+			String typeOfMessage = "webServiceCallAndResponse";
+			callMessageBroker(request, typeOfMessage);
+			// Marcamos el monitor como que el message broker ha finalizado
+			asnyncMonitor.setMessageBrokerFinished(true);
+
+			try {
+				// Como las operaciones son asíncronas, usamos el monitor para saber cuando ha terminado todo
+				asnyncMonitor.wait(5000);
+			} catch (InterruptedException e) {
+			}
+
+		}
 
 		ResponseDto response = handler.getResponse();
 
@@ -63,7 +83,10 @@ public class WebServiceMessageBrokerTests {
 				response);
 		Assert.assertSame("La respuesta debría contener el request con el que hemos invocado al servicio", request,
 				response.getRequest());
-
+		// La confirmación de que la llamda es asíncrona se hace durante el
+		// request-sel mensaje (lo hace el stub)
+		Assert.assertTrue("Se debería haber confirmado que la llamda se ha realizado de forma asíncrona",
+				asnyncMonitor.isAsyncCallConfirmed());
 	}
 
 	/**
@@ -78,9 +101,19 @@ public class WebServiceMessageBrokerTests {
 		WebServiceOnlyCallHandler handler = (WebServiceOnlyCallHandler) ctx.getBean("webServiceOnlyCallHandler");
 		Assert.assertNull("El handler no puede estar inicializado al empezar el test", handler.getRequest());
 
+		synchronized (asnyncMonitor) {
 		// Llamada al servicio
 		String typeOfMessage = "webServiceOnlyCall";
 		callMessageBroker(request, typeOfMessage);
+		
+		
+		try {
+			// Como las operaciones son asíncronas, usamos el monitor para saber cuando ha terminado todo
+			asnyncMonitor.wait(5000);
+		} catch (InterruptedException e) {
+		}
+		
+		}
 
 		Assert.assertNotNull("El handler debería haber almacenado la petición al hacer la llamada",
 				handler.getRequest());
@@ -104,12 +137,12 @@ public class WebServiceMessageBrokerTests {
 	}
 
 	/**
-	 * Realizamos la llamada al message broker indicando el tipo de mensaje
-	 * que enviamos. El sistema de mensajería debe encontrar el tipo de
-	 * handler adecuado (el stub) e invocar los métodos adecuados
+	 * Realizamos la llamada al message broker indicando el tipo de mensaje que
+	 * enviamos. El sistema de mensajería debe encontrar el tipo de handler
+	 * adecuado (el stub) e invocar los métodos adecuados
 	 */
 	private void callMessageBroker(Object request, String typeOfMessage) {
-		
+
 		messageBroker.sendAsync(typeOfMessage, request);
 	}
 

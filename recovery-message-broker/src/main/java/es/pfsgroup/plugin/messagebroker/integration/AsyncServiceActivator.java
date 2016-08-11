@@ -7,6 +7,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.integration.core.Message;
+import org.springframework.integration.message.MessageBuilder;
 
 import es.pfsgroup.plugin.messagebroker.StandardHeaders;
 import es.pfsgroup.plugin.messagebroker.exceptions.WrongMessage;
@@ -15,35 +16,68 @@ public class AsyncServiceActivator implements ApplicationContextAware {
 
 	private ApplicationContext springContext;
 
-	public Message<Object> processMessage(Message<Object> msg) {
+	public Message<Object> messageRequest(Message<Object> msg) {
+		String typeOfMessage = extractTypeOfMessage(msg);
+		
+		Object service = getService(msg, typeOfMessage);
+
+		String requestMethodName = typeOfMessage + "Request";
+
+		Object response = invoqueMethodAndManageExceptions(msg, service, requestMethodName);
+		
+		
+		MessageBuilder<? extends Object> msgBuilder = null;
+		if (response != null) {
+			msgBuilder = MessageBuilder.withPayload(response);
+		}else{
+			msgBuilder = MessageBuilder.withPayload(EmptyPayload.getInstance());
+		}
+		msgBuilder.copyHeaders(msg.getHeaders());
+
+		return (Message<Object>) msgBuilder.build();
+	}
+
+	
+	public void messageResponse(Message<Object> msg){
+		
+		if (EmptyPayload.checkEquals(msg.getPayload())){
+			return;
+		}
+		String typeOfMessage = extractTypeOfMessage(msg);
+		
+		Object service = getService(msg, typeOfMessage);
+		
+		String responseMethodName = typeOfMessage + "Response";
+		
+		invoqueMethodAndManageExceptions(msg, service, responseMethodName);
+		
+	}
+
+	
+	private Object getService(Message<Object> msg, String typeOfMessage) {
+		String serviceBeanName = typeOfMessage + "Handler";
+		Object service = springContext.getBean(serviceBeanName);
+		if (service == null) {
+			throw new WrongMessage(msg, "service not found for handling message: " + serviceBeanName);
+		}
+		return service;
+	}
+
+
+	private String extractTypeOfMessage(Message<Object> msg) {
 		String typeOfMessage = (String) msg.getHeaders().get(StandardHeaders.TYPE_OF_MESSAGE);
 
 		if (typeOfMessage == null) {
 			throw new WrongMessage(msg, "Cannot found stardard header: " + StandardHeaders.TYPE_OF_MESSAGE);
 		}
-
-		String serviceBeanName = typeOfMessage + "Handler";
-		String requestMethodName = typeOfMessage + "Request";
-		String responseMethodName = typeOfMessage + "Response";
-
-		Object service = springContext.getBean(serviceBeanName);
-
-		if (service == null) {
-			throw new WrongMessage(msg, "service not found for handling message: " + serviceBeanName);
-		}
-
-		Object payload = msg.getPayload();
-
-		Object response = invoqueMethodAndManageExceptions(msg, service, requestMethodName, payload);
-		if (response != null) {
-			invoqueMethodAndManageExceptions(msg, service, responseMethodName, response);
-		}
-
-		return msg;
+		return typeOfMessage;
 	}
-
-	private Object invoqueMethodAndManageExceptions(Message<Object> msg, Object service, String methodName,
-			Object parameter) {
+	
+	
+	
+	private Object invoqueMethodAndManageExceptions(Message<Object> msg, Object service, String methodName) {
+		Object parameter = msg.getPayload();
+		
 		try {
 			Method requestMethod = service.getClass().getDeclaredMethod(methodName, parameter.getClass());
 			Object response = requestMethod.invoke(service, parameter);

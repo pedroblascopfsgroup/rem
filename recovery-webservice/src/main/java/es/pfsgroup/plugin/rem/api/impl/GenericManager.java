@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
 
 @Service("genericManager")
@@ -204,6 +206,24 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		
 		return (List<EXTDDTipoGestor>) genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered() {
+		
+		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
+		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
+		tiposTrabajo.addAll((List<DDTipoTrabajo>)(List)adapter.getDiccionario("tiposTrabajo"));
+		
+		for(DDTipoTrabajo tipoTrabajo : tiposTrabajo){
+			if(!DDTipoTrabajo.CODIGO_PRECIOS.equals(tipoTrabajo.getCodigo())){
+				tiposTrabajoFiltered.add(tipoTrabajo);
+			}
+		}
+		
+		return tiposTrabajoFiltered;
+
 	}
 	
 	@Override

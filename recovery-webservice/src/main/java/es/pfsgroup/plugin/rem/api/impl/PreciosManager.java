@@ -89,6 +89,15 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 
 		return propuestaPrecioDao.getListPropuestasPrecio(dtoPropuestaFiltro);
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public PropuestaPrecio createPropuestaPreciosAutom(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
+	
+		//TODO: CrearFuncionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Automatica"
+		// Consejo: seguir los mismos pasos de la propuesta manual
+		return new PropuestaPrecio();
+	}
 	
 	@Override
 	public Page getHistoricoPropuestasPrecios(DtoHistoricoPropuestaFilter dtoPropuestaFiltro) {
@@ -100,6 +109,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	@Transactional(readOnly = false)
 	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
 
+		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual"
+		
 		// Se instancia una lista de Activos, usando los id's de activos de la lista del buscador
 		List<Activo> activos = new ArrayList<Activo>();
 		for(VBusquedaActivosPrecios activoPrecio : activosPrecios){
@@ -117,7 +128,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		Boolean esPropManual = true;
 		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(uniqueListActivos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
 		
-		// Nuevo trabajo+tramite de propuesta de precios: La propuesta es necesaria para crear la relacion con el nuevo trabajo.
+		// Nuevo trabajo+tramite de propuesta de precios: Preciar o Repreciar
+		// La propuesta es necesaria en el create ya que es necesario crear la relacion con el nuevo trabajo.
 		DDSubtipoTrabajo subtipoTrabajoPropuestaPrecios = (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS);
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajoPropuestaPrecios, uniqueListActivos, propuestaPrecio);
 		
@@ -130,10 +142,18 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 	}
 	
-	@Override
+	/**
+	 * Crea una nueva propuesta de precios del tipo indicado, para una lista de activos
+	 * Es un metodo generico para crear cualquier propuesta de precios
+	 * @param activos
+	 * @param nombrePropuesta Nombre que se da a la propuesta
+	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
+	 * @param esPropManual Indicador del origen de la propuesta: Peticion o Manual
+	 * @return PropuestaPrecio
+	 */
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
-
+	private PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
+		
 		PropuestaPrecio propuestaPrecio = new PropuestaPrecio();
 		
 		propuestaPrecio.setNombrePropuesta(nombrePropuesta);

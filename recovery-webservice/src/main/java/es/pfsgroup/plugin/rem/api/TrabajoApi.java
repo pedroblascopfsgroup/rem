@@ -91,7 +91,11 @@ public interface TrabajoApi {
 	    
 	    /**
 	     * Crear trabajo a partir de una lista de activos y un subtipo dados:
-	     * - Nuevos trabajos del módulo de precios y marketing 
+	     * - Nuevos trabajos del módulo de precios y marketing
+	     * - Otros trabajos que no provengan de la pantalla "Crear trabajo", por esto no requiere el DtoFichaTrabajo
+	     *   solo requiere una lista de activos y el subtipo de trabajo a generar. 
+	     * - La propuesta ES OPCIONAL para crear el trabajo. Si se pasa la propuesta crea la relación, si no,
+	     *   solo crea el trabajo-tramite.
 	     * @param subtipoTrabajo
 	     * @param listaActivos
 	     * @param propuetaPrecio (Opcional) Si es un trabajo derivado de la propuesta, se le pasa la propuesta
@@ -101,8 +105,9 @@ public interface TrabajoApi {
 	    
 		/**
 		 * Crear trabajo desde la pantalla de crear trabajos:
-		 * Crea un trabajo desde el activo o desde la agrupación de activos (Nuevos trabajos Fase1)
-		 * o crea un trabajo introduciendo un listado de activos en excel (trabajos con tramite multiactivo Fase 2)
+		 * - Crea un trabajo desde el activo o desde la agrupación de activos (Nuevos trabajos Fase1)
+		 *   o crea un trabajo introduciendo un listado de activos en excel (trabajos con tramite multiactivo Fase 2)
+		 * - Son solo trabajos que provienen de la pantalla "Crear trabajo"
 		 * @param dtoTrabajo
 		 * @param id
 		 * @return

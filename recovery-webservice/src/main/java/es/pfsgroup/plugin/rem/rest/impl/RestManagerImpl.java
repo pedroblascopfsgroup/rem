@@ -1,8 +1,17 @@
 package es.pfsgroup.plugin.rem.rest.impl;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -80,6 +89,22 @@ public class RestManagerImpl implements RestManager {
 	@Override
 	public void guardarPeticionRest(PeticionRest peticion) {
 		peticionDao.saveOrUpdate(peticion);
+	}
+
+	@Override
+	public List<String> validateRequestObject(Serializable obj) {
+		ArrayList<String> error = new ArrayList<String>();
+		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<Serializable>> constraintViolations = validator
+				.validate(obj);
+		if (!constraintViolations.isEmpty()) {
+			for(ConstraintViolation<Serializable> visitaFailure: constraintViolations){
+				error.add((visitaFailure.getPropertyPath()+" "+visitaFailure.getMessage()));
+				
+			}
+		}
+		return error;
 	}
 
 }

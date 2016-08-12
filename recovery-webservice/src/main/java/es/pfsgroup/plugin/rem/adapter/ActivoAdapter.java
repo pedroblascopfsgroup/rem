@@ -115,6 +115,7 @@ import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VLlaves;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
@@ -2834,6 +2835,15 @@ public class ActivoAdapter {
 		Order order = new Order(OrderType.ASC, "descripcionTipoDoc");
 		
 		return genericDao.getListOrdered(VAdmisionDocumentos.class, order, filtro);
+		
+	}
+	
+	public List<VOfertasActivosAgrupacion>  getListOfertasActivos(Long idActivo) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());	
+		Order order = new Order(OrderType.ASC, "id");
+		
+		return genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order, filtro);
 		
 	}
 	

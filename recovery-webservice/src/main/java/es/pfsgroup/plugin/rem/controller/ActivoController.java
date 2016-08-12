@@ -1134,6 +1134,15 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
+
+		model.put("data", adapter.getListOfertasActivos(id));
+		return createModelAndViewJson(model);
+
+	}
 
 	/**
 	 * Método que recupera un Trámite según su id y lo mapea a un DTO

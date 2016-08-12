@@ -22,8 +22,10 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.web.dto.factory.DTOFactory;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
@@ -56,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.DtoVisitasAgrupacion;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -732,6 +735,36 @@ public class AgrupacionAdapter {
 	
 		return listaDtoVisitasAgrupacion;	
 				
+	}
+	
+	public List<VOfertasActivosAgrupacion>  getListOfertasAgrupacion(Long idAgrupacion) {
+		
+		Filter filtro= genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());	
+		Order order = new Order(OrderType.ASC, "id");
+		List<VOfertasActivosAgrupacion> resultadoOfertasAgrupacion= new ArrayList<VOfertasActivosAgrupacion>();
+		List<VOfertasActivosAgrupacion> todasOfertasAgrupacion= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order,filtro);
+		
+		if(todasOfertasAgrupacion != null && todasOfertasAgrupacion.size()!=0){
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+			if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)){
+				Activo activoPrincipal= agrupacion.getActivoPrincipal();
+				
+				for(VOfertasActivosAgrupacion vOfertas: todasOfertasAgrupacion){
+					if(activoPrincipal.getId().equals(Long.valueOf(vOfertas.getIdActivo()))){
+						resultadoOfertasAgrupacion.add(vOfertas);
+					}
+				}
+			}
+			else{
+				resultadoOfertasAgrupacion= todasOfertasAgrupacion;
+			}
+		}
+		else{
+			resultadoOfertasAgrupacion= todasOfertasAgrupacion;
+		}
+		
+		return resultadoOfertasAgrupacion;
+		
 	}
 	
 	

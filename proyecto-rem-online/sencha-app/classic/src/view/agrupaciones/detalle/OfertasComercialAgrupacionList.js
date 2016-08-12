@@ -1,9 +1,8 @@
-Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
+Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBase',
-    xtype		: 'ofertascomercialactivolist',
-
+    xtype		: 'ofertascomercialagrupacionlist',
     bind: {
-        store: '{storeOfertasActivo}'
+        store: '{storeOfertasAgrupacion}'
     },
         
     initComponent: function () {
@@ -12,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         
         me.columns= [
         
-		         {
+		          {
 		        	dataIndex: 'id',
 		            text: HreRem.i18n('header.oferta.numOferta'),
 		            flex: 0.5
@@ -68,7 +67,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.oferta.estadoExpediente'),
 		            flex: 1
 		        }
-		        
         ];
         
         
@@ -80,7 +78,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            bind: {
-		                store: '{storeOfertasActivo}'
+		                store: '{storeOfertasAgrupacion}'
 		            }
 		        }
 		];
@@ -91,3 +89,4 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
 
 });
+

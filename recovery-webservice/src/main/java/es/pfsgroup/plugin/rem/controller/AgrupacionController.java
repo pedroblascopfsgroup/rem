@@ -302,6 +302,15 @@ public class AgrupacionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListOfertasAgrupacion(Long id, ModelMap model){
+
+		model.put("data", adapter.getListOfertasAgrupacion(id));
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosAgrupacionById(Long id, ModelMap model){
 			
 

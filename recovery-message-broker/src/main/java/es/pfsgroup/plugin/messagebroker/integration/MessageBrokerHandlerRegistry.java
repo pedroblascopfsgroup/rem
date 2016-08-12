@@ -35,20 +35,23 @@ public class MessageBrokerHandlerRegistry {
 		}
 
 		public boolean isInitialized() {
-			synchronized (this) {
-				if (!initialized) {
+			if (!initialized) {
+				synchronized (this) {
+					// Si el contexto no está inicializado esperamos (max 10s) a
+					// ver si termina de inicializarse.
 					try {
 						this.wait(10000);
 					} catch (InterruptedException e) {
 						throw new RuntimeException(this.getClass().getSimpleName() + " Initialization problem.", e);
 					}
 				}
-				return initialized;
 			}
+			return initialized;
 		}
 
-		public void markAsInitialized() {
+		public synchronized void markAsInitialized() {
 			this.initialized = true;
+			this.notifyAll();
 		}
 
 	}
@@ -66,12 +69,8 @@ public class MessageBrokerHandlerRegistry {
 
 			@Override
 			public void run() {
-				synchronized (registryContainer) {
-					runInitialization();
-					registryContainer.markAsInitialized();
-					registryContainer.notifyAll();
-				}
-
+				runInitialization();
+				registryContainer.markAsInitialized();
 			}
 		});
 
@@ -141,11 +140,14 @@ public class MessageBrokerHandlerRegistry {
 	private void registerHandler(Map<String, HandlerInvocator> registry, String typeOfMessage, Object bean,
 			Method method) {
 		if ((typeOfMessage != null) && (!"".equals(typeOfMessage))) {
+			String hanlderInvocatorId;
 			if (AnnotationConstants.CLASS_AS_TYPE_OF_MESSAGE.equals(typeOfMessage)) {
-				registry.put(MessageBrokerUtils.lowercaseFirstChar(bean.getClass().getSimpleName()), new HandlerInvocator(bean, method));
+				hanlderInvocatorId = MessageBrokerUtils.lowercaseFirstChar(bean.getClass().getSimpleName());
 			} else {
-				registry.put(typeOfMessage, new HandlerInvocator(bean, method));
+				hanlderInvocatorId = typeOfMessage;
 			}
+
+			registry.put(hanlderInvocatorId, new HandlerInvocator(bean, method));
 		}
 	}
 

@@ -56,6 +56,9 @@ public class Oferta implements Serializable, Auditable {
     @SequenceGenerator(name = "OfertaGenerator", sequenceName = "S_OFR_OFERTA")
     private Long id;
 	
+    @Column(name = "OFR_WEBCOM_ID")
+    private Long idWebCom;
+	
     @Column(name = "OFR_NUM_OFERTA")
     private Long numOferta;
     
@@ -90,7 +93,7 @@ public class Oferta implements Serializable, Auditable {
     private Usuario usuarioAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PVE_ID")
+    @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
 	private ActivoProveedor prescriptor;
     
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -118,6 +121,14 @@ public class Oferta implements Serializable, Auditable {
 		this.id = id;
 	}
 	
+	public Long getIdWebCom() {
+		return idWebCom;
+	}
+
+	public void setIdWebCom(Long idWebCom) {
+		this.idWebCom = idWebCom;
+	}
+
 	public void setNumOferta(Long numOferta) {
 		this.numOferta = numOferta;
 	}

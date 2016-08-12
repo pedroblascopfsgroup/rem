@@ -20,9 +20,9 @@ import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.pfsgroup.plugin.rem.rest.api.RestManager;
+import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
-import net.sf.json.JSONObject;
 
 public class RestSecurityFilter implements Filter {
 
@@ -50,8 +50,10 @@ public class RestSecurityFilter implements Filter {
 			// imprescindible para poder inyectar componentes
 			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
+			RestRequestWrapper restRequest = new RestRequestWrapper((HttpServletRequest) request);
+
 			// obtenemos los datos de la peticion
-			JSONObject datajson = getDataJson(request);
+			RequestDto datajson = (RequestDto)restRequest.getRequestData(RequestDto.class);
 
 			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor
 			// por
@@ -59,8 +61,8 @@ public class RestSecurityFilter implements Filter {
 			String workingCode = "2038";// <------parametrizarlo en
 										// devon.properties
 
-			if (datajson.containsKey("workingcode") && !datajson.getString("workingcode").isEmpty()) {
-				workingCode = datajson.getString("workingcode");
+			if (datajson.getWorkingcode() != null && !datajson.getWorkingcode().isEmpty()) {
+				workingCode = datajson.getWorkingcode();
 			}
 
 			// Obtenemos la entidad partiendo del working code y establecemos el
@@ -85,7 +87,7 @@ public class RestSecurityFilter implements Filter {
 
 			// logamos el operador partiendo del parametro signature
 			String signature = ((HttpServletRequest) request).getHeader("signature");
-			String id = datajson.getString("id");
+			String id = datajson.getId();
 			peticion.setToken(id);
 			String ipClient = ((HttpServletRequest) request).getRemoteAddr();
 
@@ -94,7 +96,7 @@ public class RestSecurityFilter implements Filter {
 			if (broker != null) {
 				peticion.setBroker(broker);
 
-				if (!restManager.validateSignature(broker, signature, getDataString(request))) {
+				if (!restManager.validateSignature(broker, signature, restRequest.getBody())) {
 					logger.error("REST: La firma no es correcta");
 					peticion.setResult("ERROR");
 					peticion.setErrorDesc("INVALID_SIGNATURE");
@@ -107,7 +109,8 @@ public class RestSecurityFilter implements Filter {
 						peticion.setErrorDesc("REPETEAD_REQUEST");
 						throwInvalidId(response);
 					} else {
-						chain.doFilter(request, response);
+						chain.doFilter(restRequest, response);
+						
 						peticion.setResult("OK");
 
 					}
@@ -227,48 +230,7 @@ public class RestSecurityFilter implements Filter {
 		response.getWriter().write(error);
 	}
 
-	/**
-	 * Obtiene la peticion como string
-	 * 
-	 * @param req
-	 * @return
-	 */
-	private String getDataString(ServletRequest req) {
-
-		HttpServletRequest request = (HttpServletRequest) req;
-		String data = null;
-		String method = request.getMethod();
-		if (method != null) {
-			if (method.equals("GET") || method.equals("FICTICIO")) {
-				String[] tokens = request.getPathInfo().split("/");
-				if (tokens != null && tokens.length > 0) {
-					 //data = tokens[tokens.length - 1];
-					data = request.getParameter("data");
-				}
-
-			} else if (method.equals("POST") || method.equals("GET") || method.equals("DELETE")) {
-				data = request.getParameter("data");
-			}
-		}
-		return data;
-	}
-
-	/**
-	 * Obtiene la peticion como json
-	 * 
-	 * @param req
-	 * @return
-	 */
-	private JSONObject getDataJson(ServletRequest req) {
-
-		JSONObject json = null;
-		String data = getDataString(req);
-		if (data != null) {
-			json = JSONObject.fromObject(data);
-		}
-		return json;
-	}
-
+	
 	/**
 	 * Crea un objeto de tipo peticion rest
 	 * 

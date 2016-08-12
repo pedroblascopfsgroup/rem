@@ -35,7 +35,7 @@ import es.capgemini.pfs.users.domain.Usuario;
  *
  */
 @Entity
-@Table(name = "CLI_CLIENTE_COMERCIAL", schema = "${entity.schema}")
+@Table(name = "CLC_CLIENTE_COMERCIAL", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)

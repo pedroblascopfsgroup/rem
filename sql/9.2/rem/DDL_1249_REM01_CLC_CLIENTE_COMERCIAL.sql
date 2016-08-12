@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160803
+--## FECHA_CREACION=20160811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -34,7 +34,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CLI_CLIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CLC_CLIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar LOS CLIENTES COMERCIALES.'; -- Vble. para los comentarios de las tablas
 
     
@@ -46,6 +46,14 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_TABLA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comprobaciones previas');
 	
+		-- Verificar si la tabla erronea existe
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''CLI_CLIENTE_COMERCIAL'' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' || V_ESQUEMA || '.'||V_TEXT_TABLA||'... Ya existe. Se borrará.');
+		EXECUTE IMMEDIATE 'DROP TABLE '||V_ESQUEMA||'.CLI_CLIENTE_COMERCIAL CASCADE CONSTRAINTS';
+		
+	END IF;
 	
 	-- Verificar si la tabla ya existe
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
@@ -56,12 +64,21 @@ BEGIN
 		
 	END IF;
 
-	-- Comprobamos si existe la secuencia
+	-- Comprobamos si existe la secuencia erronea
 	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_CLI_CLIENTE_COMERCIAL'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
 	IF V_NUM_TABLAS = 1 THEN
 		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_CLI_CLIENTE_COMERCIAL... Ya existe. Se borrará.');  
 		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_CLI_CLIENTE_COMERCIAL';
+		
+	END IF;
+	
+		-- Comprobamos si existe la secuencia
+	V_SQL := 'SELECT COUNT(1) FROM ALL_SEQUENCES WHERE SEQUENCE_NAME = ''S_CLC_CLIENTE_COMERCIAL'' and SEQUENCE_OWNER = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS; 
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.S_CLC_CLIENTE_COMERCIAL... Ya existe. Se borrará.');  
+		EXECUTE IMMEDIATE 'DROP SEQUENCE '||V_ESQUEMA||'.S_CLC_CLIENTE_COMERCIAL';
 		
 	END IF;
 
@@ -70,7 +87,7 @@ BEGIN
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
 			CLC_ID           						NUMBER(16,0)                NOT NULL,
-			CLC_WEBCOM_ID							NUMBER(16,0)                NOT NULL,
+			CLC_WEBCOM_ID							NUMBER(16,0),
 			CLC_RAZON_SOCIAL						VARCHAR2(256 CHAR),
 			CLC_NOMBRE								VARCHAR2(256 CHAR),
 			CLC_APELLIDOS							VARCHAR2(256 CHAR),						

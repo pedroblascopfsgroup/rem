@@ -28,6 +28,7 @@
 	<integration:gateway id="messageBrokerGateway"
 		default-request-channel="async.input" service-interface="es.pfsgroup.plugin.messagebroker.integration.MessageBrokerGateway" />
 		
+	<bean id="handlerRegistry" class="es.pfsgroup.plugin.messagebroker.integration.MessageBrokerHandlerRegistry"></bean>
 		
 	<bean id="messageBroker" class="es.pfsgroup.plugin.messagebroker.MessageBroker">
 		<property name="messageBrokerGateway" ref="messageBrokerGateway" />
@@ -42,14 +43,22 @@
 	
 	<integration:service-activator id="asyncServiceActivatorForRequest"
 		input-channel="async.input" output-channel="async.output" method="messageRequest">
-		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator" />
+		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator">
+			<property name="handlerRegistry">
+				<ref bean="handlerRegistry" />
+			</property>
+		</bean>
 		<integration:poller ref="asyncPoller" />
 	</integration:service-activator>
 	
 	
 	<integration:service-activator id="asyncServiceActivatorForResponse"
 		input-channel="async.output" output-channel="nullChannel" method="messageResponse">
-		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator" />
+		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator">
+			<property name="handlerRegistry">
+				<ref bean="handlerRegistry" />
+			</property>
+		</bean>
 		<!-- <integration:poller ref="asyncPoller" /> -->	
 	</integration:service-activator>
 

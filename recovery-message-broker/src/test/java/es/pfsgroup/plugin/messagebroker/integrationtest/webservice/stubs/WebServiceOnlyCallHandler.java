@@ -3,7 +3,8 @@ package es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.RequestDto;
+import es.pfsgroup.plugin.messagebroker.integrationtest.RequestDto;
+import es.pfsgroup.plugin.messagebroker.integrationtest.common.AsyncCallMonitor;
 
 @Service
 public class WebServiceOnlyCallHandler {

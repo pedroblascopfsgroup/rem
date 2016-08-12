@@ -4,32 +4,38 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageBuilder;
 
-import es.pfsgroup.plugin.messagebroker.StandardHeaders;
 import es.pfsgroup.plugin.messagebroker.exceptions.WrongMessage;
 
 public class AsyncServiceActivator implements ApplicationContextAware {
 
 	private ApplicationContext springContext;
 
+	private MessageBrokerHandlerRegistry handlerRegistry;
+
 	public Message<Object> messageRequest(Message<Object> msg) {
 		String typeOfMessage = extractTypeOfMessage(msg);
-		
-		Object service = getService(msg, typeOfMessage);
 
-		String requestMethodName = typeOfMessage + "Request";
+		HandlerInvocator handlerInvocator = handlerRegistry.getRequestHandler(typeOfMessage);
 
-		Object response = invoqueMethodAndManageExceptions(msg, service, requestMethodName);
-		
-		
+		Object response;
+		if (handlerInvocator != null) {
+			response = invoqueMethodAndManageExceptions(msg, handlerInvocator);
+		} else {
+			String requestMethodName = typeOfMessage + "Request";
+			Object service = getService(msg, typeOfMessage);
+			response = invoqueMethodAndManageExceptions(msg, service, requestMethodName);
+		}
+
 		MessageBuilder<? extends Object> msgBuilder = null;
 		if (response != null) {
 			msgBuilder = MessageBuilder.withPayload(response);
-		}else{
+		} else {
 			msgBuilder = MessageBuilder.withPayload(EmptyPayload.getInstance());
 		}
 		msgBuilder.copyHeaders(msg.getHeaders());
@@ -37,23 +43,26 @@ public class AsyncServiceActivator implements ApplicationContextAware {
 		return (Message<Object>) msgBuilder.build();
 	}
 
-	
-	public void messageResponse(Message<Object> msg){
-		
-		if (EmptyPayload.checkEquals(msg.getPayload())){
+	public void messageResponse(Message<Object> msg) {
+
+		if (EmptyPayload.checkEquals(msg.getPayload())) {
 			return;
 		}
 		String typeOfMessage = extractTypeOfMessage(msg);
 		
-		Object service = getService(msg, typeOfMessage);
+		HandlerInvocator handlerInvocator = handlerRegistry.getResponseHandler(typeOfMessage);
+		if (handlerInvocator != null) {
+			invoqueMethodAndManageExceptions(msg, handlerInvocator);
+		}else{
+			Object service = getService(msg, typeOfMessage);
+			String responseMethodName = typeOfMessage + "Response";
+			invoqueMethodAndManageExceptions(msg, service, responseMethodName);
+		}
+
 		
-		String responseMethodName = typeOfMessage + "Response";
-		
-		invoqueMethodAndManageExceptions(msg, service, responseMethodName);
-		
+
 	}
 
-	
 	private Object getService(Message<Object> msg, String typeOfMessage) {
 		String serviceBeanName = typeOfMessage + "Handler";
 		Object service = springContext.getBean(serviceBeanName);
@@ -63,7 +72,6 @@ public class AsyncServiceActivator implements ApplicationContextAware {
 		return service;
 	}
 
-
 	private String extractTypeOfMessage(Message<Object> msg) {
 		String typeOfMessage = (String) msg.getHeaders().get(StandardHeaders.TYPE_OF_MESSAGE);
 
@@ -72,12 +80,10 @@ public class AsyncServiceActivator implements ApplicationContextAware {
 		}
 		return typeOfMessage;
 	}
-	
-	
-	
+
 	private Object invoqueMethodAndManageExceptions(Message<Object> msg, Object service, String methodName) {
 		Object parameter = msg.getPayload();
-		
+
 		try {
 			Method requestMethod = service.getClass().getDeclaredMethod(methodName, parameter.getClass());
 			Object response = requestMethod.invoke(service, parameter);
@@ -100,9 +106,19 @@ public class AsyncServiceActivator implements ApplicationContextAware {
 		}
 	}
 
+	private Object invoqueMethodAndManageExceptions(Message<Object> msg, HandlerInvocator invocator) {
+		String methodName = invocator.getMethodName();
+		Object service = invocator.getBean();
+		return this.invoqueMethodAndManageExceptions(msg, service, methodName);
+	}
+
 	@Override
 	public void setApplicationContext(ApplicationContext arg0) throws BeansException {
 		this.springContext = arg0;
 
+	}
+
+	public void setHandlerRegistry(MessageBrokerHandlerRegistry handlerRegistry) {
+		this.handlerRegistry = handlerRegistry;
 	}
 }

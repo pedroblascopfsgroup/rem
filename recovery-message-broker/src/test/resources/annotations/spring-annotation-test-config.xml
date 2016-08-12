@@ -17,7 +17,7 @@
 
 	default-autowire="byName">
 
-	<context:component-scan base-package="es.pfsgroup.plugin.messagebroker.integrationtest.common,es.pfsgroup.plugin.messagebroker.integrationtest.webservice" />
+	<context:component-scan base-package="es.pfsgroup.plugin.messagebroker.integrationtest.common,es.pfsgroup.plugin.messagebroker.integrationtest.annotationdriven" />
 
 
 

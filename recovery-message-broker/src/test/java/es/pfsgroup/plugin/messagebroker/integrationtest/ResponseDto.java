@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.messagebroker.integrationtest.webservice;
+package es.pfsgroup.plugin.messagebroker.integrationtest;
 
 public class ResponseDto {
 

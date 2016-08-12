@@ -10,7 +10,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.messagebroker.integration.MessageBrokerGateway;
-import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.AsyncCallMonitor;
+import es.pfsgroup.plugin.messagebroker.integrationtest.RequestDto;
+import es.pfsgroup.plugin.messagebroker.integrationtest.ResponseDto;
+import es.pfsgroup.plugin.messagebroker.integrationtest.common.AsyncCallMonitor;
 import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.HandlerFakeMessageHandler;
 import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.WebServiceCallAndResponseHandler;
 import es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs.WebServiceOnlyCallHandler;

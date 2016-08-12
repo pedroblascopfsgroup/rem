@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.messagebroker;
+package es.pfsgroup.plugin.messagebroker.integration;
 
 public class StandardHeaders {
 

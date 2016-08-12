@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.messagebroker.integrationtest.webservice.stubs;
+package es.pfsgroup.plugin.messagebroker.integrationtest.common;
 
 import org.springframework.stereotype.Component;
 

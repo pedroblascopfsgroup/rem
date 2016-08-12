@@ -91,7 +91,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
-import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
+import es.pfsgroup.plugin.rem.rest.dto.RequestActivoDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -1756,17 +1756,17 @@ public class ActivoController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET, value = "get")
+	@RequestMapping(method = RequestMethod.GET, value = "/activo")
 	public ModelAndView getActivo(ModelMap model, @RequestParam(value = "data") String data,
 			RestRequestWrapper request) {
 		try {
 
-			RequestDto jsonData = request.getRequestData();
+			RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
 
 			ArrayList<ActivoDto> activos = new ArrayList<ActivoDto>();
 
-			for (int i = 0; i < jsonData.getData().getIdActivoBien().size(); i++) {
-				Activo actv = adapter.getActivoById(jsonData.getData().getIdActivoBien().get(i));
+			for (int i = 0; i < ((ActivoDto)jsonData.getData()).getIdActivoBien().size(); i++) {
+				Activo actv = adapter.getActivoById(((ActivoDto)jsonData.getData()).getIdActivoBien().get(i));
 
 				if (actv != null) {
 					ActivoDto actvDto = new ActivoDto();
@@ -1788,7 +1788,7 @@ public class ActivoController {
 	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		RequestDto jsonData = request.getRequestData();
+		RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
 		System.out.println(jsonData.getId());
 		model.put("data", "hola update");
 		return new ModelAndView("jsonView", model);
@@ -1799,7 +1799,7 @@ public class ActivoController {
 	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		RequestDto jsonData = request.getRequestData();
+		RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
 		System.out.println(jsonData.getId());
 		model.put("data", "hola delete");
 		return new ModelAndView("jsonView", model);

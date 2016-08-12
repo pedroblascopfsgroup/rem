@@ -108,7 +108,15 @@ public class PreciosController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public void createPropuestaPreciosAutom(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// Metodo para crear propuestas por peticion automatica
+		// TODO: Crear la llamada al manager basandose en el de propuesta manual
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
 	public void generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		// Metodo para crear propuestas por peticion manual
 		
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());

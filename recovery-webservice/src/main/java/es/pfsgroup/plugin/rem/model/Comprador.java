@@ -25,6 +25,7 @@ import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.pfsgroup.commons.utils.Checks;
 
 
 /**
@@ -100,6 +101,110 @@ public class Comprador implements Serializable, Auditable {
     
 
 	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public DDTipoPersona getTipoPersona() {
+		return tipoPersona;
+	}
+
+	public void setTipoPersona(DDTipoPersona tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+
+	public DDTipoDocumento getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(DDTipoDocumento tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+	public String getTelefono1() {
+		return telefono1;
+	}
+
+	public void setTelefono1(String telefono1) {
+		this.telefono1 = telefono1;
+	}
+
+	public String getTelefono2() {
+		return telefono2;
+	}
+
+	public void setTelefono2(String telefono2) {
+		this.telefono2 = telefono2;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public String getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(String municipio) {
+		this.municipio = municipio;
+	}
+
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+
+	public String getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(String provincia) {
+		this.provincia = provincia;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -114,6 +219,21 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getFullName() {
+		
+		String fullName = "";
+		
+		if(!Checks.esNulo(this.getNombre())) {
+			fullName = fullName + this.getNombre();
+		}
+		
+		if(!Checks.esNulo(this.getApellidos())) {
+			fullName = fullName + " " + this.getApellidos();
+		}
+
+		return fullName;
 	}
     
     

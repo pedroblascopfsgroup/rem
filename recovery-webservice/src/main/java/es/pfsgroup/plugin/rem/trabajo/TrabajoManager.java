@@ -336,6 +336,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@Transactional(readOnly = false)
 	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) {
+		 /*
+		 * Crear trabajo a partir de una lista de activos y un subtipo dados:
+		 * - Nuevos trabajos del módulo de precios y marketing
+		 * - Otros trabajos que no provengan de la pantalla "Crear trabajo", por esto no requiere el DtoFichaTrabajo
+		 *   solo requiere una lista de activos y el subtipo de trabajo a generar. 
+		 * - La propuesta ES OPCIONAL para crear el trabajo. Si se pasa la propuesta crea la relación, si no,
+		 *   solo crea el trabajo-tramite.
+		 */
 		Trabajo trabajo = new Trabajo();
 
 		try {
@@ -371,8 +379,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 			}
 
-			// Antes de crear el tramite, se relacionan la propuesta y el trabajo, porque el tramite puede requerir la propuesta
-			trabajo.setPropuestaPrecio(propuestaPrecio);
+			// Si es un trabajo derivado de propuesta de precios:
+			// - Antes de crear el tramite, se relacionan la propuesta y el trabajo, porque el tramite puede requerir la propuesta
+			// - Si no viene de una propuesta, solo crea el trabajo-tramite
+			if (!Checks.esNulo(propuestaPrecio)){
+				trabajo.setPropuestaPrecio(propuestaPrecio);
+			}
 			
 			trabajoDao.saveOrUpdate(trabajo);
 			
@@ -392,6 +404,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.create")
 	@Transactional
 	public Long create(DtoFichaTrabajo dtoTrabajo) {
+		/*
+		 * Crear trabajo desde la pantalla de crear trabajos:
+		 * - Crea un trabajo desde el activo o desde la agrupación de activos (Nuevos trabajos Fase1)
+		 *   o crea un trabajo introduciendo un listado de activos en excel (trabajos con tramite multiactivo Fase 2)
+		 * - Son solo trabajos que provienen de la pantalla "Crear trabajo"
+		 */
 		Trabajo trabajo = new Trabajo();
 		
 		if(!Checks.esNulo(dtoTrabajo.getIdProceso())){
@@ -771,6 +789,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
 		
 		// TODO Dani: Cuando estén implementados el resto de trámites habría que crear un mapa para los distintos tipos de trámites por cada tipo de trabajo.
+		// Tramites [FASE 1] -----------------------
 		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)){ // Obtención documental
 			if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE))//CEE
 				tipoTramite = tipoProcedimientoManager.getByCodigo("T003"); //Trámite de obtención documental CEE
@@ -795,10 +814,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		// Tramites [FASE 2] -----------------------
 		//
-		// Modulo de Precios
-		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS)){ // Propuesta de precios
+		// Modulo de Precios -----------------------
+		//
+		// Propuesta de precios
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_PRECIOS)){ 
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T009");
 		}
+		//Tramite de actualizacion de precios / propuesta descuento
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_TRAMITAR_PROPUESTA_DESCUENTO)){
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
+		//Tramite de bloqueo de precios
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS)){
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
+		
 		
 		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
 		

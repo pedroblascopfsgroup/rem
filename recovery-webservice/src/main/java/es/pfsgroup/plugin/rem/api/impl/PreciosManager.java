@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
+import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VActivosPropuestaDao;
+import es.pfsgroup.plugin.rem.propuestaprecios.dao.VNumActivosTipoPrecioDao;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
 
 @Service("preciosManager")
@@ -60,7 +62,10 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	private PropuestaPrecioDao propuestaPrecioDao;
 	
 	@Autowired
-	private VActivosPropuestaDao activosPropuestaDao;
+	private VActivosPropuestaDao vActivosPropuestaDao;
+	
+	@Autowired
+	private VNumActivosTipoPrecioDao vNumActivosTipoPrecioDao;
 	
 	@Autowired
 	private PropuestaPreciosExcelFactoryApi propuestaPreciosExcelFactory;
@@ -200,7 +205,13 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	@Override
 	public List<VBusquedaActivosPropuesta> getActivosByIdPropuesta(Long idPropuesta) {
 		
-		return activosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta);
+		return vActivosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta);
+	}
+	
+	@Override
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera() {
+		
+		return vNumActivosTipoPrecioDao.getNumActivosByTipoPrecioAndCartera();
 	}
 
 }

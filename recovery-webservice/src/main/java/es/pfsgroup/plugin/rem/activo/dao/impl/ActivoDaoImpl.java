@@ -338,6 +338,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conBloqueo", dto.getConBloqueo());
    		
+   		//HREOS-639 - Indicador de activos para preciar/repreciar/descuento
+   		if(dto.getTipoPropuestaCodigo().equals("01")) {
+   			hb.appendWhere("act.fechaPreciar is null");
+   		} else {
+   			hb.appendWhere("act.fechaPreciar is not null");
+   		}
+   		
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 

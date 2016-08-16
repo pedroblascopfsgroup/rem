@@ -33,9 +33,9 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
+import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
 
 @Controller
@@ -205,6 +205,24 @@ public class PreciosController {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getNumActivosByTipoPrecio(ModelMap model)
+	{
+		
+		try {
 
+			List<VBusquedaNumActivosTipoPrecio> listaCountActivos = preciosApi.getNumActivosByTipoPrecioAndCartera();
 
+			model.put("data", listaCountActivos);
+			model.put("totalCount", listaCountActivos.size());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

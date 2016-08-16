@@ -23,9 +23,18 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		searchForm = this.lookupReference('generacionPropuestasManual');
 		
 		if (searchForm.isValid()) {	
-			
-			store.getProxy().extraParams = me.getFormCriteria(searchForm);
-			
+
+			var activeTab = me.getView().down("generacionpropuestastabpanel").getActiveTab();
+	    	switch (activeTab.xtype) {
+	    		
+	    		case 'generacionpropuestasmanual':
+	    			store.getProxy().extraParams = me.getFormCriteria(searchForm);
+	    			break;
+	    			
+	    		case 'generacionpropuestasautomatica':
+	    			store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo}
+	    			break;
+	    	}	
 			return true;		
 		}
 	},
@@ -58,7 +67,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
     		
     		case 'generacionpropuestasmanual':
     			me.exportarExcelManual();
-    			break;    		
+    			break;
     	}
 
     },
@@ -73,7 +82,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	
     		case 'generacionpropuestasmanual':
     			me.generarPropuestaManual();
-    			break;    		
+    			break;
     	}
 
     },
@@ -165,6 +174,34 @@ Ext.define('HreRem.view.precios.PreciosController', {
 			store.getProxy().extraParams = {idPropuesta: idPropuesta};	
 			
 			return true;
+		}
+	},
+	
+	//HREOS-639 Identifica la celda seleccionada (col,fila) del grid de generacionPropuestasAutomatica
+	cellClickPropuestaPrecioInclusionAutomatica: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+		var me = this;	
+		
+		if(cellIndex != 0 && cellIndex != 1) {
+			this.tipoPropuestaCodigo = me.tipoPropuestaByColumnaSeleccionadaAutomatica(cellIndex);
+			this.entidadPropietariaCodigo = record.data.entidadPropietariaCodigo;
+			
+			me.lookupReference('generacionPropuestasActivosList').expand();	
+			this.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1);	
+		}
+	},
+
+	//HREOS-639 Devuelve Codigo Propuesta Segun la columna seleccionada en el grid del tab Inclusion Automatica
+	tipoPropuestaByColumnaSeleccionadaAutomatica: function(col) {
+		switch(col) {
+			case 2:
+				return "01";//Preciar
+				break;
+			case 3:
+				return "02";//Repreciar
+				break;
+			case 4:
+				return "03";//De descuento (oculta)
+				break;
 		}
 	}
 

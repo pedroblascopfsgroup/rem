@@ -834,7 +834,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		//
 		// Trámite de actualización de estados
 		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_PUBLICACIONES)){
-			tipoTramite = tipoProcedimientoManager.getByCodigo("T12");
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T012");
 		}
 		
 		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);

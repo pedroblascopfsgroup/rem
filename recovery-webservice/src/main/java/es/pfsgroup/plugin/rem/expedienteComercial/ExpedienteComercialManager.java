@@ -21,7 +21,7 @@ import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
-	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);
+	protected static final Log logger = LogFactory.getLog(ExpedienteComercialManager.class);
 	
 	public final String PESTANA_FICHA = "ficha";
 
@@ -63,22 +63,45 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	private DtoFichaExpediente expedienteToDtoFichaExpediente(ExpedienteComercial expediente) {
 
 		DtoFichaExpediente dto = new DtoFichaExpediente();
+		Oferta oferta = null;
+		Activo activo = null;
 		
-		Oferta oferta = expediente.getOferta();
-		Activo activo = oferta.getActivoPrincipal();
+		if(!Checks.esNulo(expediente)) {
+			
+			oferta = expediente.getOferta();
+			if(!Checks.esNulo(oferta)) {
+				activo = oferta.getActivoPrincipal();
+			}
 		
-		dto.setNumExpediente(expediente.getNumExpediente());
-		if(!Checks.esNulo(activo.getCartera())) {
-			dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
+		
+			if(!Checks.esNulo(oferta) && !Checks.esNulo(activo)) {		
+			
+				dto.setNumExpediente(expediente.getNumExpediente());	
+				if(!Checks.esNulo(activo.getCartera())) {
+					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
+				}		
+				
+				dto.setPropietario(activo.getFullNamePropietario());		
+				if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+					dto.setMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
+				}
+				
+				dto.setImporte(oferta.getImporteOferta());
+				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
+					dto.setComprador(expediente.getCompradorPrincipal().getFullName());
+				}
+				
+				if(!Checks.esNulo(expediente.getEstado())) {
+					dto.setEstado(expediente.getEstado().getDescripcion());
+				}		
+				dto.setFechaAlta(expediente.getFechaAlta());
+				dto.setFechaSancion(expediente.getFechaSancion());
+				
+				if(!Checks.esNulo(expediente.getReserva())) {
+					dto.setFechaReserva(expediente.getReserva().getFechaEnvio());
+				}
+			}
 		}
-		
-		dto.setPropietario(activo.getFullNamePropietario());
-		dto.setMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
-		dto.setImporte(oferta.getImporteOferta());
-		dto.setComprador(expediente.getCompradorPrincipal().getFullName());
-		dto.setEstado(expediente.getEstado().getDescripcion());
-		dto.setFechaAlta(expediente.getFechaAlta());
-		dto.setFechaSancion(expediente.getFechaSancion());		
 		
 		return dto;
 	}

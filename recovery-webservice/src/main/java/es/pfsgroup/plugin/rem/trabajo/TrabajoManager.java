@@ -537,7 +537,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				for(int i = 1; i < exc.getNumeroFilas(); i++){
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(exc.dameCelda(i,0)));
 					Activo activo = genericDao.get(Activo.class, filtro);
-					listaActivos.add(activo);
+					if (activo != null){
+						listaActivos.add(activo);
+					}
 				}
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
@@ -587,7 +589,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 	private Trabajo crearTrabajoPorSubidaActivos(DtoFichaTrabajo dtoTrabajo){
 			
-		List<Activo> listaActivos = getListaActivosProceso(dtoTrabajo.getIdProceso());
+		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 			
 			Trabajo trabajo = new Trabajo();
 			try {

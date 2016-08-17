@@ -59,7 +59,7 @@ public class CompradorExpediente implements Serializable {
     private String apellidosRepresentante;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TDI_ID_RTE	")
+    @JoinColumn(name = "DD_TDI_ID_RTE")
 	private DDTipoDocumento tipoDocumentoRepresentante;
     
     @Column(name = "CEX_DOCUMENTO_RTE")
@@ -90,10 +90,10 @@ public class CompradorExpediente implements Serializable {
     private Double porcionCompra;
     
     @Column(name="CEX_TITULAR_RESERVA")
-    private Boolean titularReserva;
+    private Integer titularReserva;
     
     @Column(name="CEX_TITULAR_CONTRATACION")
-    private Boolean titularContratacion;
+    private Integer titularContratacion;
     
    
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -252,23 +252,20 @@ public class CompradorExpediente implements Serializable {
 		this.porcionCompra = porcionCompra;
 	}
 
-	public Boolean getTitularReserva() {
+	public Integer getTitularReserva() {
 		return titularReserva;
 	}
 
-	public void setTitularReserva(Boolean titularReserva) {
+	public void setTitularReserva(Integer titularReserva) {
 		this.titularReserva = titularReserva;
 	}
 
-	public Boolean getTitularContratacion() {
+	public Integer getTitularContratacion() {
 		return titularContratacion;
 	}
 	
-	public Boolean isTitularContratacion() {
-		return titularContratacion;
-	}
 
-	public void setTitularContratacion(Boolean titularContratacion) {
+	public void setTitularContratacion(Integer titularContratacion) {
 		this.titularContratacion = titularContratacion;
 	}
 

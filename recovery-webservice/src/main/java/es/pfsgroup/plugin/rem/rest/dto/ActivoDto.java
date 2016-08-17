@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class ActivoDto implements Serializable{
 	
@@ -11,7 +12,15 @@ public class ActivoDto implements Serializable{
 	private String provincia;
 	private String direccion;
 	private Long numActivo;
+	private List<Long> idActivoBien;
 	
+	public List<Long> getIdActivoBien() {
+		return idActivoBien;
+	}
+
+	public void setIdActivoBien(List<Long> idActivoBien) {
+		this.idActivoBien = idActivoBien;
+	}
 	
 
 	public String getDescripcion() {

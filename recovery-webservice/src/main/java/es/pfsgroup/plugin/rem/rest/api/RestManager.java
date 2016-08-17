@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.rest.api;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -40,4 +42,12 @@ public interface RestManager {
 	 * @param peticion
 	 */
 	public void guardarPeticionRest(PeticionRest peticion);
+	
+	
+	/**
+	 * Valida el pojo pasado a la rest api
+	 * @param obj
+	 * @return
+	 */
+	public List<String> validateRequestObject(Serializable obj);
 }

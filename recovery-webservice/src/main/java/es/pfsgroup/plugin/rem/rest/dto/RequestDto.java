@@ -11,8 +11,8 @@ public class RequestDto implements Serializable {
 	private String id;
 	@JsonProperty(required = false)
 	private String workingcode;
-	@JsonProperty(required = true)
-	private DataDto data;
+	
+	//private DataDto data;
 
 	public String getId() {
 		return id;
@@ -22,13 +22,13 @@ public class RequestDto implements Serializable {
 		this.id = id;
 	}
 
-	public DataDto getData() {
+	/*public DataDto getData() {
 		return data;
 	}
 
 	public void setData(DataDto data) {
 		this.data = data;
-	}
+	}*/
 
 	public String getWorkingcode() {
 		return workingcode;

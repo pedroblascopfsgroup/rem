@@ -114,7 +114,7 @@ public class ActivoOferta implements Serializable {
         private Activo activo;
 
         @ManyToOne
-        @JoinColumn(name = "TBJ_ID")
+        @JoinColumn(name = "OFR_ID")
         private Oferta oferta;
 
         /**

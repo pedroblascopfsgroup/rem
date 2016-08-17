@@ -36,7 +36,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
  *
  */
 @Entity
-@Table(name = "RES_RESERVA", schema = "${entity.schema}")
+@Table(name = "RES_RESERVAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)

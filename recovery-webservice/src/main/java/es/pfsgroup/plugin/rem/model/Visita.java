@@ -56,6 +56,9 @@ public class Visita implements Serializable, Auditable {
     @Column(name = "VIS_NUM_VISITA")
     private Long numVisita;
     
+    @Column(name = "VIS_WEBCOM_ID")
+    private Long idWebCom;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
@@ -123,6 +126,14 @@ public class Visita implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIdWebCom() {
+		return idWebCom;
+	}
+
+	public void setIdWebCom(Long idWebCom) {
+		this.idWebCom = idWebCom;
 	}
 
 	public Long getNumVisita() {

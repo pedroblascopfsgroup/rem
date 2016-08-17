@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160810
+--## FECHA_CREACION=20160811
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -84,7 +84,9 @@ BEGIN
 			ECO_ID           						NUMBER(16,0)                NOT NULL,
 			ECO_NUM_EXPEDIENTE						NUMBER(16,0)                NOT NULL,
 			OFR_ID									NUMBER(16,0)				NOT NULL,
-			DD_EEC_ID								NUMBER(16,2),			
+			DD_EEC_ID								NUMBER(16,2),	
+			ECO_FECHA_ALTA							DATE,
+			ECO_FECHA_SANCION						DATE,		
 			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 							VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 			FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 

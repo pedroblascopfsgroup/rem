@@ -11,10 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 
 public class RestRequestWrapper extends HttpServletRequestWrapper {
 	private final String body;
@@ -74,9 +73,12 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		return this.body;
 	}
 
-	public RequestDto getRequestData() throws JsonParseException, JsonMappingException, IOException {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Object getRequestData(Class clase) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		RequestDto dataJson = mapper.readValue(this.body, RequestDto.class);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.generateJsonSchema(clase); 
+		Object dataJson = mapper.readValue(this.body, clase);
 		return dataJson;
 	}
 }

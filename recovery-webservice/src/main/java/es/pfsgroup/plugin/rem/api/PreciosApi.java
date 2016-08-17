@@ -23,7 +23,7 @@ public interface PreciosApi {
 	public Page getActivos(DtoActivoFilter dtoActivoFiltro);
 
 	/**
-	 * Crea una nueva propuesta de precios de tipo manual
+	 * Crea una nueva propuesta de precios de tipo peticion manual
 	 * @param activosPrecios Lista de activos seleccionada en la pantalla de propuestas de precios manuales
 	 * @param nombrePropuesta Nombre que se da a la propuesta
 	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
@@ -32,14 +32,14 @@ public interface PreciosApi {
 	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo);
 
 	/**
-	 * Crea una nueva propuesta de precios del tipo indicado, para una lista de activos
-	 * @param activos
-	 * @param nombrePropuesta Nombre que se da a la propuesta
-	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
-	 * @param esPropManual Indicador del origen de la propuesta: Peticion o Manual
-	 * @return PropuestaPrecio
+	 * Crea una propuesta de precios de tipo peticion automatica
+	 * @param activosPrecios
+	 * @param nombrePropuesta
+	 * @param tipoPropuestaCodigo
+	 * @return
 	 */
-	public PropuestaPrecio createPropuestaPrecios(List<Activo> activos, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManua);
+	public PropuestaPrecio createPropuestaPreciosAutom(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo);
+	
 	
 	public ExcelReport createExcelPropuestaPrecios(List<VBusquedaActivosPrecios> activosPrecios, String entidadPropietariaCodigo, String nombrePropuesta);
 	

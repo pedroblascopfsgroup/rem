@@ -68,6 +68,10 @@ Ext.define('HreRem.view.precios.PreciosController', {
     		case 'generacionpropuestasmanual':
     			me.exportarExcelManual();
     			break;
+    			
+    		case 'generacionpropuestasautomatica':
+    			me.exportarExcelAutomatica();
+    			break;
     	}
 
     },
@@ -83,32 +87,30 @@ Ext.define('HreRem.view.precios.PreciosController', {
     		case 'generacionpropuestasmanual':
     			me.generarPropuestaManual();
     			break;
+    			
+    		case 'generacionpropuestasautomatica':
+    			me.generarPropuestaAutomatica();
+    			break;
     	}
 
     },
 	
     exportarExcelManual: function() {
 		
-    	var me = this,
-		config = {};
-		
+    	var me = this;
 		var searchForm = this.lookupReference('generacionPropuestasManual');
 		
 		if (searchForm.isValid()) {
 			var params = me.getFormCriteria(searchForm);
         }
 		
-		config.params = params;
-		config.url= $AC.getRemoteUrl("precios/generateExcelSeleccionManual");
-		
-		me.fireEvent("downloadFile", config);		
-    	
+		me.realizarExportacionExcel(params,me);
+
     },    
     
     generarPropuestaManual: function() {
     	
     	var me = this,
-    	config = {},
     	searchForm = this.lookupReference('generacionPropuestasManual');
     	
     	if(Ext.isEmpty(searchForm.down("[name=entidadPropietariaCodigo]").getValue())
@@ -116,30 +118,14 @@ Ext.define('HreRem.view.precios.PreciosController', {
     		
 			 me.fireEvent("warnToast", HreRem.i18n("msg.falta.filtro.propuesta.precios.manual"));   		
     			
-    		
     	} else {    	
     	
-	    	var messageBox = Ext.Msg.prompt(HreRem.i18n('title.generar.propuesta'),"<span class='txt-guardar-propuesta'>" + HreRem.i18n('txt.aviso.guardar.propuesta') + "</span>", function(btn, text){
-			    if (btn == 'ok'){
-			    	if (searchForm.isValid()) {
-						var params = me.getFormCriteria(searchForm);
-			        }        
-			        params.nombrePropuesta = text;
-			        
-			        config.params = params;
-					config.url= $AC.getRemoteUrl('precios/generarPropuestaManual'),
-					
-					me.fireEvent("downloadFile", config);
-			    }
-	    	});
-	
-			messageBox.textField.maskRe=/^[a-z0-9\s_/]+$/;
-			messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
-    	
-    	
+    		if (searchForm.isValid()) {
+				var params = me.getFormCriteria(searchForm);
+	        }   
+    		
+    		me.realizarGeneracionPropuesta(params);
     	}
-			
-    	
     },
     
     getFormCriteria: function(form) {
@@ -179,6 +165,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	
 	//HREOS-639 Identifica la celda seleccionada (col,fila) del grid de generacionPropuestasAutomatica
 	cellClickPropuestaPrecioInclusionAutomatica: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+		
 		var me = this;	
 		
 		if(cellIndex != 0 && cellIndex != 1) {
@@ -192,6 +179,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 
 	//HREOS-639 Devuelve Codigo Propuesta Segun la columna seleccionada en el grid del tab Inclusion Automatica
 	tipoPropuestaByColumnaSeleccionadaAutomatica: function(col) {
+		
 		switch(col) {
 			case 2:
 				return "01";//Preciar
@@ -203,6 +191,63 @@ Ext.define('HreRem.view.precios.PreciosController', {
 				return "03";//De descuento (oculta)
 				break;
 		}
+	},
+	
+	//HREOS-639 Generacion de propuesta automatica (segun celda seleccionada, tendra un propietario y un tipo propuesta)
+	generarPropuestaAutomatica: function() {
+		
+		var me = this,
+    	params = {};
+		
+		params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
+    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+    	
+    	me.realizarGeneracionPropuesta(params);	
+	},
+	
+	exportarExcelAutomatica: function() {
+		
+		var me = this,
+		params = {};
+		
+		params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
+    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+		
+    	me.realizarExportacionExcel(params,me);
+		
+			
+	},
+	
+	realizarExportacionExcel: function(params, me) {
+		
+		var config = {};
+		
+		config.params = params;
+		config.url= $AC.getRemoteUrl("precios/generateExcelSeleccionManual");
+		
+		me.fireEvent("downloadFile", config);
+    },    
+	
+	//HREOS-639 llamada a generar propuesta (manual y automatica usan la misma llamada)
+	realizarGeneracionPropuesta: function(params) {
+		
+		var me=this,
+		config = {};
+		
+		var messageBox = Ext.Msg.prompt(HreRem.i18n('title.generar.propuesta'),"<span class='txt-guardar-propuesta'>" + HreRem.i18n('txt.aviso.guardar.propuesta') + "</span>", function(btn, text){
+		    if (btn == 'ok'){
+		    	
+		    	params.nombrePropuesta = text;
+		        
+		        config.params = params;
+				config.url= $AC.getRemoteUrl('precios/generarPropuestaManual'),
+				
+				me.fireEvent("downloadFile", config);
+		    }
+    	});
+
+		messageBox.textField.maskRe=/^[a-z0-9\s_/]+$/;
+		messageBox.textField.mon(messageBox.textField.el, 'keypress', messageBox.textField.filterKeys, messageBox.textField);
 	}
 
 });

@@ -12,6 +12,10 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
         
         me.setTitle(HreRem.i18n('title.detalle.activos.propuesta'));
         
+        me.listeners = {	    	
+    			rowdblclick: 'onHistoricoActivosListDobleClick'
+    	    };
+        
         me.columns= [
         
 		        {	        	

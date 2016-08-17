@@ -22,6 +22,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -188,7 +189,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     	
     	for(CompradorExpediente compradorExp: this.compradores) {
     		
-    		if(compradorExp.isTitularContratacion()) {
+    		if(BooleanUtils.toBoolean(compradorExp.getTitularContratacion())) {
     			comprador = compradorExp.getPrimaryKey().getComprador();
     		}
     		

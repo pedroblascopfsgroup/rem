@@ -86,7 +86,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "VIS_ID")
     private Visita visita;
     
-    @Column(name = "VIS_FECHA_ACCION")
+    @Column(name = "OFR_FECHA_ACCION")
     private Date fechaAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)

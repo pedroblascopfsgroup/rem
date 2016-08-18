@@ -3,13 +3,16 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
     xtype		: 'generacionpropuestasautomatica',
     reference	: 'generacionPropuestasAutomatica',
     scrollable: 'y',
+    maxWidth: 600,
     bind: {
         store: '{numActivosByTipoPrecio}'
     },
 	listeners: {
 		cellclick : 'cellClickPropuestaPrecioInclusionAutomatica'
 	},
-
+	viewConfig : {
+		disableSelection: true
+	},
     initComponent: function () {
         
         var me = this;
@@ -32,17 +35,20 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasAutomatica', {
 		        {	        	
 		            dataIndex: 'numActivosPreciar',
 		            text: HreRem.i18n('header.precios.automatica.activos.preciar'),
-		            flex: 1		        	
+		            flex: 1,
+		            align: 'center'
 		        },
 		        {	        	
 		            dataIndex: 'numActivosRepreciar',
 		            text: HreRem.i18n('header.precios.automatica.activos.repreciar'),
-		            flex: 1		        	
+		            flex: 1,
+		            align: 'center'		        	
 		        },
 		        {	        	
 		        	dataIndex: 'numActivosDescuento',
 		            text: HreRem.i18n('header.precios.automatica.activos.descuento'),
 		            flex: 1,
+		            align: 'center',
 		            hidden: true
 		        }
         ];

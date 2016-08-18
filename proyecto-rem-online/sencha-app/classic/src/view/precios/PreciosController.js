@@ -169,8 +169,12 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		var me = this;	
 		
 		if(cellIndex != 0 && cellIndex != 1) {
+			
 			this.tipoPropuestaCodigo = me.tipoPropuestaByColumnaSeleccionadaAutomatica(cellIndex);
 			this.entidadPropietariaCodigo = record.data.entidadPropietariaCodigo;
+			
+			//Agrega / elimina fondo de la celda seleccionada
+			me.marcarDesmarcarCeldaInclusionAutomatica(e);
 			
 			me.lookupReference('generacionPropuestasActivosList').expand();	
 			this.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1);	
@@ -256,11 +260,19 @@ Ext.define('HreRem.view.precios.PreciosController', {
     	me.abrirPestañaActivosHistoricoPropuesta(record);
 	},
 	
-	// Función que abre la pestaña de Precios.propuestasPrecios del activo.
+	//HREOS-639 Función que abre la pestaña de Precios.propuestasPrecios del activo.
 	abrirPestañaActivosHistoricoPropuesta: function(record)  {
 		
 		var me = this;
 	   	me.getView().fireEvent('abrirDetalleActivoPrincipal', record);
+   },
+   
+   //HREOS-639 Rellena el fondo de la celda seleccionada, y lo deshace en la anterior seleccionada
+   marcarDesmarcarCeldaInclusionAutomatica : function (e) {
+	   
+       Ext.select("div.x-boundlist-selected").removeCls('x-boundlist-selected');
+       Ext.get(e.target).addCls('x-boundlist-selected');
    }
+  
 
 });

@@ -119,7 +119,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	},
     	
     	'preciosmain' : {
-    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPropuestaPrecio'
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPropuestaPrecio',
+			abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	},
     	
     	'menufavoritos': {

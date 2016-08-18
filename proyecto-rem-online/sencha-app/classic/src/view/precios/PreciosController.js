@@ -269,9 +269,24 @@ Ext.define('HreRem.view.precios.PreciosController', {
    
    //HREOS-639 Rellena el fondo de la celda seleccionada, y lo deshace en la anterior seleccionada
    marcarDesmarcarCeldaInclusionAutomatica : function (e) {
+	   	
+	   	Ext.select("div.x-boundlist-selected").removeCls('x-boundlist-selected');
+	   	Ext.get(e.target).addCls('x-boundlist-selected');
+   },
+   
+   //HREOS-641 Entra al hacer doble click sobre una propuesta del listado
+   onPropuestaPrecioListDobleClick : function(grid, record) {        
+		
+	   	var me = this;    	
+		me.abrirDetalleTrabajo(record);   	        	
+   },
+   
+   //HREOS-641 Abre un trabajo al hacer doble click en una propuesta
+   abrirDetalleTrabajo: function(record)  {
 	   
-       Ext.select("div.x-boundlist-selected").removeCls('x-boundlist-selected');
-       Ext.get(e.target).addCls('x-boundlist-selected');
+	   	var me = this;
+		record.data.id=record.data.idTrabajo;
+		me.getView().fireEvent('abrirDetalleTrabajo', record);	 
    }
   
 

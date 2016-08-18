@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteActualizacionPrecios" width="890" height="671">
+  <node name="inicio" x="343" y="70" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T010_AnalisisPeticionCargaList" x="275" y="228" width="275" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="349" y="391" width="132" height="36"/>
+</root-container>

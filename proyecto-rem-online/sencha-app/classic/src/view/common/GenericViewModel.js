@@ -313,7 +313,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'tiposTrabajo'}
 				}
     		},
-    	    	
+    		
+    		comboTipoTrabajoCreaFiltered: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered'
+				}
+    		},    	    	
 
     		comboEstadoTrabajo: {
 				model: 'HreRem.model.ComboBase',

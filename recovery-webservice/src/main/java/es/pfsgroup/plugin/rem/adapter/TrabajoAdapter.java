@@ -67,8 +67,8 @@ public class TrabajoAdapter {
     @Autowired
     private MSVExcelParser excelParser;
     	
-    @Autowired
-    private ActivoApi activoApi;
+//    @Autowired
+//    private ActivoApi activoApi;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -251,7 +251,7 @@ public class TrabajoAdapter {
 	
 	public List<DtoTrabajoListActivos> getListActivosByProceso(Long idProceso){
 		List<DtoTrabajoListActivos> listaActivos = new ArrayList<DtoTrabajoListActivos>();
-		MSVProcesoMasivo proceso = processAdapter.get(idProceso);
+		//MSVProcesoMasivo proceso = processAdapter.get(idProceso);
 		MSVDocumentoMasivo document = processAdapter.getMSVDocumento(idProceso);
 		
 		//MSVHojaExcel exc = excelParser.getExcel(fileItem.getFileItem().getFile());
@@ -264,14 +264,18 @@ public class TrabajoAdapter {
 				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo", Long.parseLong(exc.dameCelda(i, 0)));
 				Activo activo =  genericDao.get(Activo.class, filtro);
-				
-				beanUtilNotNull.copyProperty(dto, "idActivo", activo.getId());
-				beanUtilNotNull.copyProperty(dto, "numActivoRem", activo.getNumActivoRem());
-				beanUtilNotNull.copyProperty(dto, "numActivoHaya", activo.getNumActivo());
-				beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
-				beanUtilNotNull.copyProperty(dto, "subtipoActivo", activo.getSubtipoActivo().getDescripcion());
-				beanUtilNotNull.copyProperty(dto, "cartera", activo.getCartera().getDescripcion());
-				beanUtilNotNull.copyProperty(dto, "situacionComercial", activo.getSituacionComercial().getDescripcion());
+				if (!Checks.esNulo(activo)){	
+					beanUtilNotNull.copyProperty(dto, "idActivo", activo.getId());
+					beanUtilNotNull.copyProperty(dto, "numActivoRem", activo.getNumActivoRem());
+					beanUtilNotNull.copyProperty(dto, "numActivoHaya", activo.getNumActivo());
+					beanUtilNotNull.copyProperty(dto, "tipoActivo", activo.getTipoActivo().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "subtipoActivo", activo.getSubtipoActivo().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "cartera", activo.getCartera().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "situacionComercial", activo.getSituacionComercial().getDescripcion());
+				}else{
+					dto.setNumActivoHaya(exc.dameCelda(i, 0));
+					dto.setTipoActivo("No existe el activo");
+				}
 				//beanUtilNotNull.copyProperty(dto, "situacionPosesoria", activo.getSituacionPosesoria().);
 				
 				listaActivos.add(dto);

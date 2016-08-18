@@ -59,7 +59,7 @@ public class CompradorExpediente implements Serializable {
     private String apellidosRepresentante;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_TDI_ID_RTE	")
+    @JoinColumn(name = "DD_TDI_ID_RTE")
 	private DDTipoDocumento tipoDocumentoRepresentante;
     
     @Column(name = "CEX_DOCUMENTO_RTE")
@@ -263,6 +263,7 @@ public class CompradorExpediente implements Serializable {
 	public Integer getTitularContratacion() {
 		return titularContratacion;
 	}
+	
 
 	public void setTitularContratacion(Integer titularContratacion) {
 		this.titularContratacion = titularContratacion;

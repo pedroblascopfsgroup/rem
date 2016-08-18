@@ -1225,5 +1225,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	default:
     		break;
     	}
+    },
+    
+    onClickAbrirExpedienteComercial: function() {
+    	
+    	var me = this;
+    	me.getView().fireEvent('abrirDetalleExpediente', Ext.create('HreRem.model.Oferta',{idExpediente: 1, numExpediente: 666666}));
+    	
     }
 });

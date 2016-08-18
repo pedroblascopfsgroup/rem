@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -18,7 +19,6 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.Visita;
 
 
 public interface ActivoApi {
@@ -221,6 +222,14 @@ public interface ActivoApi {
 		 * @return Devuelve el último histórico por ID para el ID del activo.
 		 */
 		public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
+		
+		/**
+		 * Inserta o actualiza una visita aun activo
+		 * 
+		 * @param vista
+		 * @return
+		 */
+		public Visita insertOrUpdateVisitaActivo(Visita visita) throws IllegalAccessException, InvocationTargetException;
     }
 
 

@@ -12,67 +12,49 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         me.columns= [
         
 		          {
-		        	dataIndex: 'id',
+		        	dataIndex: 'numOferta',
 		            text: HreRem.i18n('header.oferta.numOferta'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'fechaCreacion',
 		            text: HreRem.i18n('header.oferta.fechaAlta'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            formatter: 'date("d/m/Y")',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'descripcionTipoOferta',
 		            text: HreRem.i18n('header.oferta.tipoOferta'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'numAgrupacionRem',
 		            text: HreRem.i18n('header.oferta.numAgrupacion'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'ofertante',
 		            text: HreRem.i18n('header.oferta.oferante'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 2
 		        },
 		        {
 		            dataIndex: 'comite',
 		            text: HreRem.i18n('header.oferta.comite'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'precioPublicado',
 		            text: HreRem.i18n('header.oferta.precioPublicado'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'estadoOferta',
 		            text: HreRem.i18n('header.oferta.estadoOferta'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 					editor: {
 						xtype: 'combobox',								        		
 						store: new Ext.data.Store({
@@ -92,25 +74,29 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        {
 		            dataIndex: 'numExpediente',
 		            text: HreRem.i18n('header.oferta.expediente'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 1
 		        },
 		        {
 	    			xtype: 'actioncolumn',
+	    			text: HreRem.i18n('header.oferta.expediente'),
 		        	dataIndex: 'numExpediente',
-			        handler: 'onEnlaceActivosClick',
 			        items: [{
-			            tooltip: 'Ver Expediente',
-			            isDisabled: function(view, rowIndex, colIndex, item, record) {
-			            	if (Ext.isEmpty(record.get("numExpediente")))
-			            		return true;
-			            	else
-			            		return false;
+			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
+			            getClass: function(v, metadata, record ) {
+			            	if (!Ext.isEmpty(record.get("numExpediente"))) {
+			            		return 'fa fa-folder-open';
+			            	}			            	
 			            },
-			            iconCls: 'ico-download'
+			            handler: 'onClickAbrirExpedienteComercial'
 			        }],
-		            flex     : 0.5,            
+			        renderer: function(value, metadata, record) {			        	
+			        	if(Ext.isEmpty(record.get("numExpediente"))) {
+			        		return "";
+			        	} else {
+			        		return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
+			        	}
+			        },
+		            flex     : 1,            
 		            align: 'center',
 		            menuDisabled: true,
 		            hideable: false
@@ -118,8 +104,6 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        {
 		            dataIndex: 'descripcionEstadoExpediente',
 		            text: HreRem.i18n('header.oferta.estadoExpediente'),
-		            cls: 'grid-no-seleccionable-col',
-					tdCls: 'grid-no-seleccionable-td',
 		            flex: 1
 		        }
         ];
@@ -148,14 +132,10 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         me.callParent(); 
         
     },
-    saveSuccessFn: function () {
-		var me = this;
-		return true;
-	},
 	
 	editFuncion: function(editor, context){
 
-		me= this;
+		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
 			var estado = context.record.get("estadoOferta");	
 			if(estado=='01'){

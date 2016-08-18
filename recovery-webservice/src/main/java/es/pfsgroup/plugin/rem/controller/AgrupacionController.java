@@ -354,7 +354,7 @@ public class AgrupacionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, @RequestParam Long id, ModelMap model){
+	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, ModelMap model){
 		
 		try {
 			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);

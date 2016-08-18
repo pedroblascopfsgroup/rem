@@ -50,7 +50,10 @@ Ext.define('HreRem.model.OfertaActivo', {
     	},
     	{
     		name : 'descripcionEstadoExpediente'
-    	}  	
+    	} ,
+    	{
+    		name : 'idExpediente'
+    	}
 
     ],
     

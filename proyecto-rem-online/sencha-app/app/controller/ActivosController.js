@@ -88,7 +88,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'agrupacionesdetallemain' : {    		
 		    abrirDetalleActivo : 'abrirDetalleActivoById',
-		    refrescarAgrupacion: 'refrescarDetalleAgrupacion'
+		    refrescarAgrupacion: 'refrescarDetalleAgrupacion',
+		    abrirDetalleExpediente: 'abrirDetalleExpediente'
     	},
     	
     	'trabajosmain' : {    		
@@ -486,6 +487,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	var me = this,
     	titulo = "Expediente " + record.get("numExpediente"),
     	id = record.get("idExpediente");
+    	debugger;
 		me.redirectTo('activos', true);    	
     	me.abrirDetalleExpedienteById(id, titulo, refLinks);    	
     	

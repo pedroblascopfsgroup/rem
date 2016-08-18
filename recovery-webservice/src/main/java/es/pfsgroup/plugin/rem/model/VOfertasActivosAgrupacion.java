@@ -19,14 +19,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@Column(name = "OFR_ID")
+	private String idOferta;
+	
 	@Column(name = "OFR_NUM_OFERTA")  
-	private String id;
+	private String numOferta;
 
 	@Column(name = "ACT_ID")
 	private String idActivo;
-
-	@Column(name = "OFR_ID")
-	private String idOferta;
 	
 	@Column(name = "AGR_ID")
 	private String idAgrupacion;
@@ -55,6 +55,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_EOF_CODIGO")
 	private String codigoEstadoOferta;
 	
+	@Column(name = "ECO_ID")
+	private String idExpediente;
+	
 	@Column(name = "ECO_NUM_EXPEDIENTE")
 	private String numExpediente;
 	
@@ -62,15 +65,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private String descripcionEstadoExpediente;
 	
 	
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getIdActivo() {
 		return idActivo;
 	}
@@ -173,6 +167,22 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setDescripcionEstadoExpediente(String descripcionEstadoExpediente) {
 		this.descripcionEstadoExpediente = descripcionEstadoExpediente;
+	}
+
+	public String getNumOferta() {
+		return numOferta;
+	}
+
+	public void setNumOferta(String numOferta) {
+		this.numOferta = numOferta;
+	}
+
+	public String getIdExpediente() {
+		return idExpediente;
+	}
+
+	public void setIdExpediente(String idExpediente) {
+		this.idExpediente = idExpediente;
 	}
 	
 	

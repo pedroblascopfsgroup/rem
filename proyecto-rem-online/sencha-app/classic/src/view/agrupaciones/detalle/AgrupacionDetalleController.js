@@ -476,6 +476,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		}
 
     	
+    },
+    
+    onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleExpediente', record);
+    	
     }
 	
 });

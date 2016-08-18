@@ -68,6 +68,7 @@ Ext.define('HreRem.view.common.ToolFieldSet', {
     	
         Ext.apply(toolbarCfg, {
             xtype:  'toolbar',
+            cls: 'x-toolbar-fieldset',
             style:'padding: 0px',
             flex: 1,
             items: buttons            

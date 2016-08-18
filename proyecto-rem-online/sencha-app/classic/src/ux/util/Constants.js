@@ -43,6 +43,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	PLAZA_APARCAMIENTO: '03'
     },
     
+    TIPOS_EXPEDIENTE_COMERCIAL: {
+    	
+    	VENTA: '01',
+    	ALQUILER: '02'
+    },
+    
     MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',

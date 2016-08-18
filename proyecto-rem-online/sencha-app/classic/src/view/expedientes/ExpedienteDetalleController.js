@@ -1,30 +1,10 @@
-Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
+Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.activodetalle',    
+    alias: 'controller.expedientedetalle',    
     
     control: {
-    	
-         'documentosactivo gridBase': {
-             abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
-             onClickRemove: 'borrarDocumentoAdjunto',
-             download: 'downloadDocumentoAdjunto',
-             afterupload: function(grid) {
-             	grid.getStore().load();
-             },
-             afterdelete: function(grid) {
-             	grid.getStore().load();
-             }
-         },
-         
-         'fotoswebactivo': {
-         	updateOrdenFotos: 'updateOrdenFotosInterno'
-         },
-         
-         'uxvalidargeolocalizacion': {
-         	actualizarCoordenadas: 'actualizarCoordenadas'
-         }
-         
-     },
+   	         
+    },
 	
 	
 	cargarTabData: function (form) {
@@ -32,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		model = null,
 		models = null,
 		nameModels = null,
-		id = me.getViewModel().get("activo.id");
+		id = me.getViewModel().get("expediente.id");
 		
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
@@ -1225,12 +1205,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	default:
     		break;
     	}
-    },
-    
-    onClickAbrirExpedienteComercial: function() {
-    	
-    	var me = this;
-    	me.getView().fireEvent('abrirDetalleExpediente', Ext.create('HreRem.model.Oferta',{idExpediente: 1, numExpediente: 666666}));
-    	
     }
 });

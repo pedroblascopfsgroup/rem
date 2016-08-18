@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.ActivosMain', {
     cls			: 'tabpanel-base',
     reference	: 'activosMain',
     layout		: 'fit',
-   	requires	: ['HreRem.view.activos.ActivosSearch','HreRem.view.activos.ActivosList','HreRem.view.activos.detalle.ActivosDetalle', 'HreRem.view.activos.detalle.ActivosDetalleMain',
+   	requires	: ['HreRem.view.activos.ActivosSearch','HreRem.view.activos.ActivosList', 'HreRem.view.activos.detalle.ActivosDetalleMain', 'HreRem.view.expedientes.ExpedienteDetalleMain',
    					'HreRem.view.activos.ActivosController','HreRem.view.activos.ActivosModel','Ext.ux.TabReorderer', 'HreRem.ux.button.BotonTab'],
     controller: 'activos',
     viewModel: {

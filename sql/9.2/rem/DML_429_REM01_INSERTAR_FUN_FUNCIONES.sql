@@ -34,7 +34,13 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-      T_FUNCION('Puede actualizar estados', 'ACTUALIZAR_ESTADOS')
+      T_FUNCION('Puede actualizar estado de publicación para publicar', 'ACTUALIZAR_PUBLICAR'),
+      T_FUNCION('Puede actualizar estado de publicación para ocultar activo', 'ACTUALIZAR_OCULTARACTIVO'),
+      T_FUNCION('Puede actualizar estado de publicación para desocultar activo', 'ACTUALIZAR_DESOCULTARACTIVO'),
+      T_FUNCION('Puede actualizar estado de publicación para ocultar precio', 'ACTUALIZAR_OCULTARPRECIO'),
+      T_FUNCION('Puede actualizar estado de publicación para desocultar precio', 'ACTUALIZAR_DESOCULTARPRECIO'),
+      T_FUNCION('Puede actualizar estado de publicación para despublicar', 'ACTUALIZAR_DESPUBLICAR'),
+      T_FUNCION('Puede actualizar estado de publicación para autorizar edición a mediador', 'ACTUALIZAR_AUTORIZAREDICION')
     ); 
     V_TMP_FUNCION T_FUNCION;
 

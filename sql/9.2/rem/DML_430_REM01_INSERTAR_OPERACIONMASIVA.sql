@@ -36,7 +36,14 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('AEST', 'Actualizar estados', 'Actualizar estados','ACTUALIZAR_ESTADOS','nD*')
+	  --T_FUNCION('AEST', 'Actualizar estados', 'Actualizar estados','ACTUALIZAR_ESTADOS','nD*'),
+	  T_FUNCION('APUB', 'Publicar activo', 'Publicar activo', 'ACTUALIZAR_PUBLICAR', 'nD*'),
+	  T_FUNCION('AOAC', 'Ocultar publicación activo', 'Ocultar publicación activo', 'ACTUALIZAR_OCULTARACTIVO', 'nD*'),
+	  T_FUNCION('ADAC', 'Desocultar publicación activo', 'Desocultar publicación activo', 'ACTUALIZAR_DESOCULTARACTIVO', 'nD*'),
+	  T_FUNCION('AOPR', 'Ocultar precio publicación', 'Ocultar precio publicación', 'ACTUALIZAR_OCULTARPRECIO', 'nD*'),
+	  T_FUNCION('ADPR', 'Desocultar precio publicación', 'Desocultar precio publicación', 'ACTUALIZAR_DESOCULTARPRECIO', 'nD*'),
+	  T_FUNCION('APUB', 'Despublicar', 'Despublicar', 'ACTUALIZAR_DESPUBLICAR', 'nD*'),
+	  T_FUNCION('AEME', 'Autorizar edición a mediador', 'Autorizar edición a mediador', 'ACTUALIZAR_AUTORIZAREDICION', 'nD*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

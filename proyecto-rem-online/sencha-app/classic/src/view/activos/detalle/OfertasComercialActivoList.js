@@ -90,8 +90,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			            },
 			            handler: 'onClickAbrirExpedienteComercial'
 			        }],
-			        renderer: function(value, metadata, record) {
-			        	debugger;
+			        renderer: function(value, metadata, record) 
 			        	if(Ext.isEmpty(record.get("numExpediente"))) {
 			        		return "";
 			        	} else {

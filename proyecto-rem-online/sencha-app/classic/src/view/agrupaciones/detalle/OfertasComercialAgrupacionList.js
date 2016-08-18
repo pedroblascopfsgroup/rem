@@ -72,11 +72,6 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'numExpediente',
-		            text: HreRem.i18n('header.oferta.expediente'),
-		            flex: 1
-		        },
-		        {
 	    			xtype: 'actioncolumn',
 	    			text: HreRem.i18n('header.oferta.expediente'),
 		        	dataIndex: 'numExpediente',

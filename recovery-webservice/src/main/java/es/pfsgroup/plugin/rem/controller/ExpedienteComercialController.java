@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,8 +23,15 @@ import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateR
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
+import es.capgemini.devon.dto.WebDto;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 
 @Controller
@@ -32,6 +40,12 @@ public class ExpedienteComercialController {
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private List<ExpedienteAvisadorApi> avisadores;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -102,6 +116,31 @@ public class ExpedienteComercialController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings({ "unchecked"})
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getAvisosExpedienteById(Long id, WebDto webDto, ModelMap model){
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		ExpedienteComercial expediente = expedienteComercialApi.findOne(id);	
+		
+		DtoAviso avisosFormateados = new DtoAviso();
+		avisosFormateados.setDescripcion("");
+		
+		for (ExpedienteAvisadorApi avisador: avisadores) {
+			
+			DtoAviso aviso  = avisador.getAviso(expediente, usuarioLogado);
+			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+			}
+			
+        }
+		
+		model.put("data", avisosFormateados);
+		
+		return createModelAndViewJson(model);
+		
 	}
 	
 	

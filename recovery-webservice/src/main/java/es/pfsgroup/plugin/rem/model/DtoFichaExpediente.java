@@ -27,9 +27,21 @@ public class DtoFichaExpediente extends WebDto {
     
     private Long idAgrupacion;
     
+    private Long numAgrupacion;
+    
+    private Long idActivo;
+    
+    private Long numActivo;
+    
     private Long numExpediente;
     
-    private String mediador;
+    private Long numEntidad;
+    
+    private String tipoExpedienteCodigo;
+    
+    private String tipoExpedienteDescripcion;
+
+	private String mediador;
     
     private String propietario;
     
@@ -72,6 +84,30 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setIdAgrupacion(Long idAgrupacion) {
 		this.idAgrupacion = idAgrupacion;
+	}
+
+	public Long getNumAgrupacion() {
+		return numAgrupacion;
+	}
+
+	public void setNumAgrupacion(Long numAgrupacion) {
+		this.numAgrupacion = numAgrupacion;
+	}
+
+	public Long getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+
+	public Long getNumActivo() {
+		return numActivo;
+	}
+
+	public void setNumActivo(Long numActivo) {
+		this.numActivo = numActivo;
 	}
 
 	public Long getNumExpediente() {
@@ -162,6 +198,31 @@ public class DtoFichaExpediente extends WebDto {
 	public void setFechaFin(Date fechaFin) {
 		this.fechaFin = fechaFin;
 	}
+	
+    public String getTipoExpedienteCodigo() {
+		return tipoExpedienteCodigo;
+	}
+
+	public void setTipoExpedienteCodigo(String tipoExpedienteCodigo) {
+		this.tipoExpedienteCodigo = tipoExpedienteCodigo;
+	}
+
+	public String getTipoExpedienteDescripcion() {
+		return tipoExpedienteDescripcion;
+	}
+
+	public void setTipoExpedienteDescripcion(String tipoExpedienteDescripcion) {
+		this.tipoExpedienteDescripcion = tipoExpedienteDescripcion;
+	}
+
+	public Long getNumEntidad() {
+		return numEntidad;
+	}
+
+	public void setNumEntidad(Long numEntidad) {
+		this.numEntidad = numEntidad;
+	}
+
    	
    	
    	

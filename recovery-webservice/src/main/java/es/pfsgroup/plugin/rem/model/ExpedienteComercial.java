@@ -81,10 +81,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ECO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private Formalizacion formalizacion;   
+    private Formalizacion formalizacion;
+    
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private CondicionanteExpediente condicionante; 
     
     @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY)
     private List<CompradorExpediente> compradores;
+    
+    @Column(name="ECO_FECHA_ANULACION")
+    private Date fechaAnulacion;
+    
+    @Column(name="ECO_MOTIVO_ANULACION")
+    private String motivoAnulacion;
+    
 
      
 	@Version   
@@ -198,6 +210,30 @@ public class ExpedienteComercial implements Serializable, Auditable {
     	return comprador;
     	
     }
+
+	public CondicionanteExpediente getCondicionante() {
+		return condicionante;
+	}
+
+	public void setCondicionante(CondicionanteExpediente condicionante) {
+		this.condicionante = condicionante;
+	}
+
+	public Date getFechaAnulacion() {
+		return fechaAnulacion;
+	}
+
+	public void setFechaAnulacion(Date fechaAnulacion) {
+		this.fechaAnulacion = fechaAnulacion;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
     
     
    

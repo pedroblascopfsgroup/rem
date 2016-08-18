@@ -15,7 +15,7 @@ function print_use() {
     echo "      ./config/tool/properties/build_config_files.sh <cliente> <entorno>"
     echo ""
     echo "Parámetros:"
-    echo "      <cliente>: cajamar, bankia, haya/bcc, haya/sareb"
+    echo "      <cliente>: cajamar, bankia, haya/bcc, haya/sareb, rem"
     echo "      <entorno>: val01, val02, desa, pre, pro, etc."
     echo ""
 }
@@ -39,12 +39,12 @@ cliente=`echo $cliente_cartera | cut -d/ -f1`
 entorno=$2
 
 
-if [[ ! -f config/batch/${cliente}/devon.properties ]] ; then
-    echo ""
-    echo "No existe el fichero:" config/batch/${cliente}/devon.properties
-    echo ""
-    exit 1
-fi
+#if [[ ! -f config/batch/${cliente}/devon.properties ]] ; then
+#    echo ""
+#    echo "No existe el fichero:" config/batch/${cliente}/devon.properties
+#    echo ""
+#    exit 1
+#fi
 
 if [[ ! -f config/web/${cliente}/devon.properties ]] ; then
     echo ""
@@ -64,7 +64,9 @@ mkdir -p config/tmp/batch/$cliente/
 mkdir -p config/tmp/batch/$cliente_cartera/
 mkdir -p config/tmp/web/$cliente/
 
-cp config/batch/${cliente}/devon.properties config/tmp/batch/$cliente/devon.properties
+if [[ -f config/batch/${cliente}/devon.properties ]] ; then
+    cp config/batch/${cliente}/devon.properties config/tmp/batch/$cliente/devon.properties
+fi
 cp config/batch/${cliente_cartera}/config.ini config/tmp/batch/$cliente_cartera/config.ini
 cp config/web/${cliente}/devon.properties config/tmp/web/$cliente/devon.properties
 if [[ -f config/batch/${cliente_cartera}/setBatchEnv.sh ]] ; then
@@ -80,7 +82,9 @@ while read line; do
         if [ $cliente == 'bankia' ]; then
             VALUE=${VALUE//:/\\\\:}
         fi
-        sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/devon.properties
+        if [[ -f config/tmp/batch/${cliente}/devon.properties ]] ; then
+            sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente}/devon.properties
+        fi
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/batch/${cliente_cartera}/config.ini
         sed -e "s/${KEY}/${VALUE}/g" -i config/tmp/web/${cliente}/devon.properties
         if [[ -f config/tmp/batch/${cliente_cartera}/setBatchEnv.sh ]] ; then
@@ -91,7 +95,9 @@ done < ./config/tool/properties/${cliente}/${entorno}.properties
 
 echo "Ficheros generados:"
 echo ""
-ls config/tmp/batch/${cliente}/devon.properties
+if [[ -f config/tmp/batch/${cliente}/devon.properties ]] ; then
+    ls config/tmp/batch/${cliente}/devon.properties
+fi
 ls config/tmp/batch/${cliente_cartera}/config.ini
 if [[ -f config/tmp/batch/${cliente_cartera}/setBatchEnv.sh ]] ; then
     ls config/tmp/batch/${cliente_cartera}/setBatchEnv.sh

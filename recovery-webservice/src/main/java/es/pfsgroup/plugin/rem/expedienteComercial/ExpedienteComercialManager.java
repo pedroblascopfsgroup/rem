@@ -15,7 +15,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 
 
 @Service("expedienteComercialManager")
@@ -79,7 +78,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setNumExpediente(expediente.getNumExpediente());	
 				if(!Checks.esNulo(activo.getCartera())) {
 					dto.setEntidadPropietariaDescripcion(activo.getCartera().getDescripcion());
-				}		
+				}	
+				
+				if(!Checks.esNulo(oferta.getTipoOferta())) {
+					dto.setTipoExpedienteDescripcion(oferta.getTipoOferta().getDescripcion());
+					dto.setTipoExpedienteCodigo(oferta.getTipoOferta().getCodigo());
+				}
 				
 				dto.setPropietario(activo.getFullNamePropietario());		
 				if(!Checks.esNulo(activo.getInfoComercial()) && !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
@@ -99,6 +103,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				
 				if(!Checks.esNulo(expediente.getReserva())) {
 					dto.setFechaReserva(expediente.getReserva().getFechaEnvio());
+				}
+				
+				if(!Checks.esNulo(oferta.getAgrupacion())) {
+					dto.setIdAgrupacion(oferta.getAgrupacion().getId());
+					dto.setNumEntidad(oferta.getAgrupacion().getNumAgrupRem());
+				} else {
+					dto.setIdActivo(activo.getId());
+					dto.setNumEntidad(activo.getNumActivo());
 				}
 			}
 		}

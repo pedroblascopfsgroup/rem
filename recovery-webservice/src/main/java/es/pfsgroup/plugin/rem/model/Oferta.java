@@ -265,6 +265,9 @@ public class Oferta implements Serializable, Auditable {
 		
 		if(!Checks.esNulo(this.getAgrupacion())) {
 			activo = this.getAgrupacion().getActivoPrincipal();
+			if(Checks.esNulo(activo)) {
+				activo = this.getAgrupacion().getActivos().get(0).getActivo();
+			}
 		}else if(!Checks.esNulo(this.getActivosOferta()) && !this.getActivosOferta().isEmpty()) {
 			activo = this.getActivosOferta().get(0).getPrimaryKey().getActivo();
 		}	

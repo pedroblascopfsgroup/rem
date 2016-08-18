@@ -4,7 +4,7 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     xtype		: 'comercialagrupacion',
     reference	: 'comercialagrupacionref',
     layout		: 'fit',
-    requires: ['HreRem.view.agrupacion.detalle.VisitasComercialAgrupacion'],    
+    requires: ['HreRem.view.agrupacion.detalle.VisitasComercialAgrupacion','HreRem.view.agrupacion.detalle.OfertasComercialAgrupacion'],    
     
 	listeners: {
 			    	
@@ -113,6 +113,9 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
 			
 			{
 				xtype: 'visitascomercialagrupacion'
+			},
+			{
+				xtype: 'ofertascomercialagrupacion'
 			}
 			
     	];

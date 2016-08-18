@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
@@ -133,6 +134,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosPropuesta", DDEstadoPropuestaPrecio.class);
 		mapa.put("estadosPropuestaActivo", DDEstadoPropuestaActivo.class);
 		mapa.put("estadoDisponibilidadComercial", DDEstadoDisponibilidadComercial.class);
+		mapa.put("estadosOfertas", DDEstadoOferta.class);
 
 		return Collections.unmodifiableMap(mapa);
 	}

@@ -1,21 +1,20 @@
-Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
+Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
-    xtype		: 'ofertascomercialactivolist',
+    xtype		: 'ofertascomercialagrupacionlist',
     bind: {
-        store: '{storeOfertasActivo}'
+        store: '{storeOfertasAgrupacion}'
     },
         
     initComponent: function () {
         
-        var me = this; 
-        
+        var me = this;  
         
         me.columns= [
         
-		         {
+		          {
 		        	dataIndex: 'numOferta',
 		            text: HreRem.i18n('header.oferta.numOferta'),
-		            flex: 1
+		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'fechaCreacion',
@@ -35,13 +34,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		        },
 		        {
 		            dataIndex: 'ofertante',
-		            text: HreRem.i18n('header.oferta.ofertante'),
-		            flex: 1
+		            text: HreRem.i18n('header.oferta.oferante'),
+		            flex: 2
 		        },
 		        {
 		            dataIndex: 'comite',
 		            text: HreRem.i18n('header.oferta.comite'),
-		            flex: 1
+		            flex: 0.5
 		        },
 		        {
 		            dataIndex: 'precioPublicado',
@@ -72,11 +71,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 					},
 		            flex: 1
 		        },
-		        /*{
-		            dataIndex: 'numExpediente',
-		            text: HreRem.i18n('header.oferta.expediente'),
-		            flex: 1
-		        },*/
 		        {
 	    			xtype: 'actioncolumn',
 	    			text: HreRem.i18n('header.oferta.expediente'),
@@ -90,7 +84,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			            },
 			            handler: 'onClickAbrirExpedienteComercial'
 			        }],
-			        renderer: function(value, metadata, record) {
+			        renderer: function(value, metadata, record) {			        	
 			        	if(Ext.isEmpty(record.get("numExpediente"))) {
 			        		return "";
 			        	} else {
@@ -107,17 +101,15 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            text: HreRem.i18n('header.oferta.estadoExpediente'),
 		            flex: 1
 		        }
-		        
         ];
         
-        me.addListener ('beforeedit', function(editor, context) {
-            var estado = context.record.get("codigoEstadoOferta");
-            var numAgrupacion = context.record.get("numAgrupacionRem");  
-            var allowEdit = estado != '01' && estado != '02' && Ext.isEmpty(numAgrupacion);
+         me.addListener ('beforeedit', function(editor, context) {
+            var estado = context.record.get("codigoEstadoOferta");  
+            var allowEdit = estado != '01' && estado != '02';
             this.editOnSelect = allowEdit;
             return allowEdit;
-        });  
-
+        });
+        
         
         me.dockedItems = [
 		        {
@@ -127,20 +119,17 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            bind: {
-		                store: '{storeOfertasActivo}'
+		                store: '{storeOfertasAgrupacion}'
 		            }
 		        }
 		];
-		
+		    
         me.callParent(); 
         
     },
-   	saveSuccessFn: function () {
-		var me = this;
-		return true;
-	},
 	
 	editFuncion: function(editor, context){
+
 		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
 			var estado = context.record.get("estadoOferta");	
@@ -244,11 +233,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
 	
 	isValidRecord: function (record, context) {
+		
 		var me = this;
 		for (i=0; i<me.getStore().getData().items.length;i++){
 			
 			if(me.getStore().getData().items[i].data.idOferta != record.data.idOferta){
-				codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
+				var codigoEstadoOferta=  me.getStore().getData().items[i].data.codigoEstadoOferta;
 				
 				if(codigoEstadoOferta=='01' && record.data.estadoOferta=='01'){
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
@@ -265,15 +255,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		return true;		
-	},
-   
-	
-	
-   funcionRecargar: function() {
-		var me = this; 
-		me.recargar = false;
-		me.lookupController().cargarTabData(me);
-   }
+	}
 
 
 });
+

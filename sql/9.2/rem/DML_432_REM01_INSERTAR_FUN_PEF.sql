@@ -36,17 +36,13 @@ DECLARE
       T_FUNCION('ACTUALIZAR_ESTADOS')
     ); 
     V_TMP_FUNCION T_FUNCION;
-    V_PERFILES VARCHAR2(100 CHAR) := '';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
+    V_PERFILES VARCHAR2(100 CHAR) := 'Super';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
     V_MSQL_1 VARCHAR2(4000 CHAR);
 
 BEGIN	
     -- LOOP Insertando valores en FUN_PEF
     DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.FUN_PEF... Empezando a insertar datos en la tabla');
-    
-    -- Deshabilitamos temporalmente la opción de DASHBOARD
-	V_SQL := 'DELETE FROM '||V_ESQUEMA||'.FUN_PEF WHERE FUN_ID = (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''MENU_DASHBOARD'')';
-	EXECUTE IMMEDIATE V_SQL;
-			
+    			
     FOR I IN V_FUNCION.FIRST .. V_FUNCION.LAST
       LOOP
             V_TMP_FUNCION := V_FUNCION(I);

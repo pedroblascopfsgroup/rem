@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 
@@ -341,6 +342,22 @@ public class AgrupacionController {
 		
 		try {
 			boolean success = adapter.saveAgrupacion(dtoAgrupacion, id);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveOfertaAgrupacion(DtoOfertaActivo dtoOferta, @RequestParam Long id, ModelMap model){
+		
+		try {
+			boolean success = adapter.saveOfertaAgrupacion(dtoOferta);
 			model.put("success", success);
 			
 		} catch (Exception e) {

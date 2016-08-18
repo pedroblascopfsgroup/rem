@@ -31,7 +31,7 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "AGR_ID")
 	private String idAgrupacion;
 	
-	@Column(name = "FECHACREAR")
+	@Column(name = "OFR_FECHA_ACCION")
 	private Date fechaCreacion;
 	
 	@Column(name = "DD_TOF_DESCRIPCION")  
@@ -51,6 +51,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	@Column(name = "DD_EOF_DESCRIPCION")
 	private String estadoOferta;
+	
+	@Column(name = "DD_EOF_CODIGO")
+	private String codigoEstadoOferta;
 	
 	@Column(name = "ECO_NUM_EXPEDIENTE")
 	private String numExpediente;
@@ -146,6 +149,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setEstadoOferta(String estadoOferta) {
 		this.estadoOferta = estadoOferta;
+	}
+	
+	public String getCodigoEstadoOferta() {
+		return codigoEstadoOferta;
+	}
+
+	public void setCodigoEstadoOferta(String codigoEstadoOferta) {
+		this.codigoEstadoOferta = codigoEstadoOferta;
 	}
 
 	public String getNumExpediente() {

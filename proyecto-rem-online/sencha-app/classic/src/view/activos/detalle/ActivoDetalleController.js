@@ -1041,7 +1041,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			return true;		
 		}
 	},
-	
+
 	getFormCriteria: function(form) {
     	
     	var me = this, initialData = {};

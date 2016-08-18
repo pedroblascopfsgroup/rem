@@ -35,7 +35,9 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -54,13 +56,16 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.DtoVisitasAgrupacion;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
@@ -82,8 +87,10 @@ public class AgrupacionAdapter {
     
     @Autowired
     private MSVFicheroDao ficheroDao;
- 
     
+    @Autowired
+    private ActivoManager activoManager;
+ 
     @Autowired 
     private ActivoApi activoApi;
     
@@ -101,6 +108,9 @@ public class AgrupacionAdapter {
     
     @Autowired
     protected TipoProcedimientoManager tipoProcedimiento;
+    
+    @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
     
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
     
@@ -764,6 +774,50 @@ public class AgrupacionAdapter {
 		}
 		
 		return resultadoOfertasAgrupacion;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto){
+		
+		try{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
+			Oferta oferta = genericDao.get(Oferta.class, filtro);
+			
+			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getEstadoOferta());
+			
+			oferta.setEstadoOferta(tipoOferta);
+			
+			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
+			if(tipoOferta.getCodigo().equals("01")){
+				List<VOfertasActivosAgrupacion> listaOfertas= getListOfertasAgrupacion(dto.getIdAgrupacion());
+				
+				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
+					
+					if(!vOferta.getIdOferta().equals(dto.getIdOferta().toString())){
+						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(vOferta.getIdOferta()));
+						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
+						
+						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
+						if(!vTipoOferta.getCodigo().equals("02")){
+							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
+							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
+						}
+					}
+				}
+				
+				activoManager.crearExpediente(oferta);
+			}
+			
+			genericDao.update(Oferta.class, oferta);
+			
+		}catch(Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
+		}
+		
+		
+		return true;
 		
 	}
 	

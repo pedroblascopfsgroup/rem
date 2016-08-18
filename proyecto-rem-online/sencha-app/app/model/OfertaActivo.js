@@ -3,7 +3,8 @@
  */
 Ext.define('HreRem.model.OfertaActivo', {
     extend: 'HreRem.model.Base',
-
+	idProperty: 'id',
+	
     fields: [
     	
     	{
@@ -42,6 +43,9 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name : 'estadoOferta'
     	},
     	{
+    		name : 'codigoEstadoOferta'
+    	},
+    	{
     		name : 'numExpediente'
     	},
     	{
@@ -52,9 +56,10 @@ Ext.define('HreRem.model.OfertaActivo', {
     
     proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById'
-        
+		writeAll: true,
+		api: {
+            update: 'activo/saveOfertaActivo'
+        }
     }    
 
 });

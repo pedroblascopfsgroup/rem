@@ -2842,6 +2842,8 @@ public class ActivoAdapter {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());	
 		Order order = new Order(OrderType.ASC, "id");
+		List<VOfertasActivosAgrupacion> p= genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order, filtro);
+		
 		
 		return genericDao.getListOrdered(VOfertasActivosAgrupacion.class, order, filtro);
 		

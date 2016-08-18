@@ -43,6 +43,9 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     		name : 'estadoOferta'
     	},
     	{
+    		name : 'codigoEstadoOferta'
+    	},
+    	{
     		name : 'numExpediente'
     	},
     	{
@@ -51,10 +54,12 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     		
     ],
     
-	proxy: {
+    proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById'
-    }
+		writeAll: true,
+		api: {
+            update: 'agrupacion/saveOfertaAgrupacion'
+        }
+    } 
 
 });

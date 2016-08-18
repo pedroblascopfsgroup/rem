@@ -39,7 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
  *
  */
 @Entity
-@Table(name = "OFR_OFERTA", schema = "${entity.schema}")
+@Table(name = "OFR_OFERTAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -85,7 +85,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "VIS_ID")
     private Visita visita;
     
-    @Column(name = "VIS_FECHA_ACCION")
+    @Column(name = "OFR_FECHA_ACCION")
     private Date fechaAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)

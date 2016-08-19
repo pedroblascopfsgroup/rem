@@ -185,6 +185,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		propuestaPrecioDao.saveOrUpdate(propuestaPrecio);
 		
+		this.eliminarMarcaActivosPropuesta(propuestaPrecio.getActivosPropuesta(), tipoPropuestaPrecio);
+		
 		return propuestaPrecio;
 		
 	}
@@ -233,6 +235,33 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera() {
 		
 		return vNumActivosTipoPrecioDao.getNumActivosByTipoPrecioAndCartera();
+	}
+	
+	/**
+	 * Método para quitar la marca del Activo (preciar/repreciar/descuento) una vez se ha generado la propuesta correspondiente
+	 * @param listaActProp
+	 * @param tipoPropuestaPrecio
+	 */
+	private void eliminarMarcaActivosPropuesta(List<ActivoPropuesta> listaActProp, DDTipoPropuestaPrecio tipoPropuestaPrecio) {
+		
+		for(ActivoPropuesta actProp : listaActProp) {
+			Activo activo = actProp.getPrimaryKey().getActivo();
+			
+			switch (Integer.parseInt(tipoPropuestaPrecio.getCodigo())) {
+				case 1:
+					activo.setFechaPreciar(null);
+					break;
+				case 2:
+					activo.setFechaRepreciar(null);
+					break;
+				case 3:
+					activo.setFechaDescuento(null);
+					break;
+			}
+			
+			activoDao.update(activo);
+			
+		}
 	}
 
 }

@@ -210,6 +210,8 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
 	    	
 	    	me.realizarGeneracionPropuesta(params);
+	    	
+	    	
 		}
 		else {
 			 me.fireEvent("warnToast", HreRem.i18n("msg.generar.propuesta.sin.activos"));
@@ -255,9 +257,10 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		    	params.nombrePropuesta = text;
 		        
 		        config.params = params;
-				config.url= $AC.getRemoteUrl('precios/generarPropuestaManual'),
+				config.url= $AC.getRemoteUrl('precios/generarPropuestaManual');
 				
 				me.fireEvent("downloadFile", config);
+				
 		    }
     	});
 

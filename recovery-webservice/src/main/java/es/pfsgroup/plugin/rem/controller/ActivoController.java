@@ -91,7 +91,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
-import es.pfsgroup.plugin.rem.rest.dto.RequestActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -1761,7 +1761,7 @@ public class ActivoController {
 			RestRequestWrapper request) {
 		try {
 
-			RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
+			ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
 
 			ArrayList<ActivoDto> activos = new ArrayList<ActivoDto>();
 
@@ -1788,7 +1788,7 @@ public class ActivoController {
 	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
+		ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
 		System.out.println(jsonData.getId());
 		model.put("data", "hola update");
 		return new ModelAndView("jsonView", model);
@@ -1799,7 +1799,7 @@ public class ActivoController {
 	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
+		ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
 		System.out.println(jsonData.getId());
 		model.put("data", "hola delete");
 		return new ModelAndView("jsonView", model);

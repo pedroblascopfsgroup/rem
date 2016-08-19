@@ -65,15 +65,12 @@ public class MSVActualizarEstadoPublicacion extends MSVExcelValidatorAbstract {
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 			if (!isActiveExists(exc)){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
-//				List<String> listaErrores = new ArrayList<String>();
-//				listaErrores.add(ACTIVE_NOT_EXISTS);
 				
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 				mapaErrores.put(ACTIVE_NOT_EXISTS, isActiveNotExistsRows(exc));
 				
 				try{
 					exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-					//String nomFicheroErrores = exc.crearExcelErrores(listaErrores);
 					String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
 					FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 					dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);

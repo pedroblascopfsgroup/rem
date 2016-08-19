@@ -1041,7 +1041,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			return true;		
 		}
 	},
-	
+
 	getFormCriteria: function(form) {
     	
     	var me = this, initialData = {};
@@ -1225,5 +1225,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	default:
     		break;
     	}
+    },
+    
+    onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleExpediente', record);
+    	
     }
 });

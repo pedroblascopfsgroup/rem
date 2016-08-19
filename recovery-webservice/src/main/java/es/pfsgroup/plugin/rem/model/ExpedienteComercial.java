@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,11 +16,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
@@ -59,10 +63,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "DD_EEC_ID")
 	private DDEstadosExpedienteComercial estado;      
     
+    @Column(name = "ECO_FECHA_ALTA")
+    private Date fechaAlta;
+    
+    @Column(name = "ECO_FECHA_SANCION")
+    private Date fechaSancion;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
-    private Oferta oferta;
-    
+    private Oferta oferta;    
     
     @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ECO_ID")
@@ -72,7 +81,22 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ECO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private Formalizacion formalizacion;   
+    private Formalizacion formalizacion;
+    
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private CondicionanteExpediente condicionante; 
+    
+    @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY)
+    private List<CompradorExpediente> compradores;
+    
+    @Column(name="ECO_FECHA_ANULACION")
+    private Date fechaAnulacion;
+    
+    @Column(name="ECO_MOTIVO_ANULACION")
+    private String motivoAnulacion;
+    
 
      
 	@Version   
@@ -106,6 +130,30 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setEstado(DDEstadosExpedienteComercial estado) {
 		this.estado = estado;
+	}
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public Date getFechaSancion() {
+		return fechaSancion;
+	}
+
+	public void setFechaSancion(Date fechaSancion) {
+		this.fechaSancion = fechaSancion;
+	}
+
+	public List<CompradorExpediente> getCompradores() {
+		return compradores;
+	}
+
+	public void setCompradores(List<CompradorExpediente> compradores) {
+		this.compradores = compradores;
 	}
 
 	public Oferta getOferta() {
@@ -148,7 +196,44 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
     
-    
+    public Comprador getCompradorPrincipal() {
+    	Comprador comprador = null;
+    	
+    	for(CompradorExpediente compradorExp: this.compradores) {
+    		
+    		if(BooleanUtils.toBoolean(compradorExp.getTitularContratacion())) {
+    			comprador = compradorExp.getPrimaryKey().getComprador();
+    		}
+    		
+    	}
+    	
+    	return comprador;
+    	
+    }
+
+	public CondicionanteExpediente getCondicionante() {
+		return condicionante;
+	}
+
+	public void setCondicionante(CondicionanteExpediente condicionante) {
+		this.condicionante = condicionante;
+	}
+
+	public Date getFechaAnulacion() {
+		return fechaAnulacion;
+	}
+
+	public void setFechaAnulacion(Date fechaAnulacion) {
+		this.fechaAnulacion = fechaAnulacion;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
     
     
    

@@ -28,6 +28,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
@@ -39,7 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
  *
  */
 @Entity
-@Table(name = "OFR_OFERTA", schema = "${entity.schema}")
+@Table(name = "OFR_OFERTAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -85,7 +86,7 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "VIS_ID")
     private Visita visita;
     
-    @Column(name = "VIS_FECHA_ACCION")
+    @Column(name = "OFR_FECHA_ACCION")
     private Date fechaAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -104,7 +105,22 @@ public class Oferta implements Serializable, Auditable {
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
-    private List<TextosOferta> textos;  
+    private List<TextosOferta> textos;
+    
+    @OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
+    private List<ActivoOferta> activosOferta;
+    
+    @Column(name = "OFR_FECHA_ALTA")
+    private Date fechaAlta;
+    
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
 
 	@Version   
 	private Long version;
@@ -226,6 +242,14 @@ public class Oferta implements Serializable, Auditable {
 		this.textos = textos;
 	}
 
+	public List<ActivoOferta> getActivosOferta() {
+		return activosOferta;
+	}
+
+	public void setActivosOferta(List<ActivoOferta> activosOferta) {
+		this.activosOferta = activosOferta;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -240,6 +264,27 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	/**
+	 * Devuelve un activo. El activo principal si es una agrupación, 
+	 * el primer y único activo relacionado con la oferta si no es agrupación.
+	 * @return Activo activo
+	 */
+	public Activo getActivoPrincipal() {
+		
+		Activo activo = null;
+		
+		if(!Checks.esNulo(this.getAgrupacion())) {
+			activo = this.getAgrupacion().getActivoPrincipal();
+			if(Checks.esNulo(activo)) {
+				activo = this.getAgrupacion().getActivos().get(0).getActivo();
+			}
+		}else if(!Checks.esNulo(this.getActivosOferta()) && !this.getActivosOferta().isEmpty()) {
+			activo = this.getActivosOferta().get(0).getPrimaryKey().getActivo();
+		}	
+		return activo;
+		
 	}
     
     

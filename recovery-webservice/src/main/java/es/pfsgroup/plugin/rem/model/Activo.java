@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -338,7 +337,11 @@ public class Activo implements Serializable, Auditable {
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    private List<Visita> visitas;    
+    private List<Visita> visitas;  
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private List<ActivoOferta> ofertas;
     
 	@Version   
 	private Long version;
@@ -1351,6 +1354,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setVisitas(List<Visita> visitas) {
 		this.visitas = visitas;
+	}
+
+	public List<ActivoOferta> getOfertas() {
+		return ofertas;
+	}
+
+	public void setOfertas(List<ActivoOferta> ofertas) {
+		this.ofertas = ofertas;
 	}
 
 }

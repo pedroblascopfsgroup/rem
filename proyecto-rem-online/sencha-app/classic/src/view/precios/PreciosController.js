@@ -23,7 +23,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		searchForm = this.lookupReference('generacionPropuestasManual');
 		
 		if (searchForm.isValid()) {	
-
+			
 			var activeTab = me.getView().down("generacionpropuestastabpanel").getActiveTab();
 	    	switch (activeTab.xtype) {
 	    		
@@ -172,6 +172,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 			
 			this.tipoPropuestaCodigo = me.tipoPropuestaByColumnaSeleccionadaAutomatica(cellIndex);
 			this.entidadPropietariaCodigo = record.data.entidadPropietariaCodigo;
+			this.numActivosToGenerar = record.get(view.panel.headerCt.getHeaderAtIndex(cellIndex).dataIndex);
 			
 			//Agrega / elimina fondo de la celda seleccionada
 			me.marcarDesmarcarCeldaInclusionAutomatica(e);
@@ -203,10 +204,16 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		var me = this,
     	params = {};
 		
-		params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
-    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
-    	
-    	me.realizarGeneracionPropuesta(params);	
+		if(me.numActivosToGenerar > 0) {
+		
+			params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
+	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+	    	
+	    	me.realizarGeneracionPropuesta(params);
+		}
+		else {
+			 me.fireEvent("warnToast", HreRem.i18n("msg.generar.propuesta.sin.activos"));
+		}
 	},
 	
 	exportarExcelAutomatica: function() {
@@ -214,11 +221,15 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		var me = this,
 		params = {};
 		
-		params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
-    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
-		
-    	me.realizarExportacionExcel(params,me);
-		
+		if(me.numActivosToGenerar > 0) {
+			params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
+	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+			
+	    	me.realizarExportacionExcel(params,me);
+		}
+		else {
+			me.fireEvent("warnToast", HreRem.i18n("msg.generar.excel.sin.activos"));
+		}
 			
 	},
 	

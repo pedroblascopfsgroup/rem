@@ -101,6 +101,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 		//TODO: CrearFuncionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Automatica"
 		// Consejo: seguir los mismos pasos de la propuesta manual
+		// No se utiliza, he reaprovechando el Manual, que hace lo mismo
 		return new PropuestaPrecio();
 	}
 	
@@ -112,9 +113,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
 
-		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual"
+		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual - Automatica"
 		
 		// Se instancia una lista de Activos, usando los id's de activos de la lista del buscador
 		List<Activo> activos = new ArrayList<Activo>();
@@ -130,7 +131,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		List<Activo> uniqueListActivos = new ArrayList<Activo>(uniqueSetActivos);
 		
 		// Nueva propuesta de precios con activos asociados
-		Boolean esPropManual = true;
+		//Boolean esPropManual = true;
 		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(uniqueListActivos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
 		
 		// Nuevo trabajo+tramite de propuesta de precios: Preciar o Repreciar

@@ -99,6 +99,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setEstado(expediente.getEstado().getDescripcion());
 				}		
 				dto.setFechaAlta(expediente.getFechaAlta());
+				dto.setFechaAltaOferta(oferta.getFechaAlta());
 				dto.setFechaSancion(expediente.getFechaSancion());
 				
 				if(!Checks.esNulo(expediente.getReserva())) {

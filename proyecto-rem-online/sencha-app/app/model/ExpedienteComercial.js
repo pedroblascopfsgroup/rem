@@ -37,6 +37,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			dateFormat: 'c'
     		},
     		{
+    			name: 'fechaAltaOferta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
     			name: 'fechaSancion',
     			type:'date',
     			dateFormat: 'c'		

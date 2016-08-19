@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Luis Caballero
---## FECHA_CREACION=20161109
+--## FECHA_CREACION=20160810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -52,7 +52,7 @@ BEGIN
 	AS
 		SELECT
 			    OFR.OFR_NUM_OFERTA,
-		        OFR.OFR_FECHA_ACCION,
+		        OFR.OFR_FECHA_ALTA,
 		        TOF.DD_TOF_DESCRIPCION,
 		        AGR.AGR_NUM_AGRUP_REM,
 		        CLC.CLC_NOMBRE || '' '' ||CLC.CLC_APELLIDOS AS OFERTANTE,

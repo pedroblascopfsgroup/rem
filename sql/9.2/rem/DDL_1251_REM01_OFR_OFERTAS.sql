@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160811
+--## FECHA_CREACION=20160812
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -91,6 +91,7 @@ BEGIN
 			DD_TOF_ID								NUMBER(16,2),
 			VIS_ID									NUMBER(16),
 			OFR_FECHA_ACCION						DATE,
+			OFR_FECHA_ALTA							DATE,
 			USU_ID									NUMBER(16),
 			PVE_ID_PRESCRIPTOR						NUMBER(16),
 			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 

@@ -31,7 +31,7 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "AGR_ID")
 	private String idAgrupacion;
 	
-	@Column(name = "OFR_FECHA_ACCION")
+	@Column(name = "OFR_FECHA_ALTA")
 	private Date fechaCreacion;
 	
 	@Column(name = "DD_TOF_DESCRIPCION")  

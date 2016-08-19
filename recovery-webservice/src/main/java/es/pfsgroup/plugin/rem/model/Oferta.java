@@ -109,6 +109,18 @@ public class Oferta implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
     private List<ActivoOferta> activosOferta;
+    
+    @Column(name = "OFR_FECHA_ALTA")
+    private Date fechaAlta;
+    
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
 
 	@Version   
 	private Long version;

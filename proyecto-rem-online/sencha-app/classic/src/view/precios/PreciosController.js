@@ -211,7 +211,6 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	    	
 	    	me.realizarGeneracionPropuesta(params);
 	    	
-	    	
 		}
 		else {
 			 me.fireEvent("warnToast", HreRem.i18n("msg.generar.propuesta.sin.activos"));
@@ -260,6 +259,19 @@ Ext.define('HreRem.view.precios.PreciosController', {
 				config.url= $AC.getRemoteUrl('precios/generarPropuestaManual');
 				
 				me.fireEvent("downloadFile", config);
+				
+				Ext.Msg.show({
+				    title:HreRem.i18n('msg.generar.propuesta.ok.title'),
+				    message: HreRem.i18n('msg.generar.propuesta.ok.mensaje'),
+				    buttons: Ext.Msg.OK,
+				    icon: Ext.Msg.INFO,
+				    fn: function(btn) {
+				    	//Refrescamos los resultados de los contadores de activos, y el listado donde se muestran los activos
+			        	me.getViewModel().data.numActivosByTipoPrecio.load();
+			        	me.numActivosToGenerar = 0;
+			        	me.getViewModel().data.activos.load();
+				    }
+				});    
 				
 		    }
     	});

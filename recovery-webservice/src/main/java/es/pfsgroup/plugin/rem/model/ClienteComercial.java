@@ -29,6 +29,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 
 
@@ -132,16 +133,20 @@ public class ClienteComercial implements Serializable, Auditable {
     @Column(name = "CLC_PUERTA")
     private String puerta;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_LOC_ID")
-    private Localidad municipio;
-    
     @Column(name = "CLC_CODIGO_POSTAL")
     private String codigoPostal;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_PRV_ID")
     private DDProvincia provincia;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID")
+    private Localidad municipio;
+      
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_UPO_ID")
+	private DDUnidadPoblacional unidadPoblacional;
     
     @Column(name = "CLC_OBSERVACIONES")
     private String observaciones;
@@ -349,15 +354,7 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-
-	public Localidad getMunicipio() {
-		return municipio;
-	}
-
-	public void setMunicipio(Localidad municipio) {
-		this.municipio = municipio;
-	}
-
+	
 	public String getCodigoPostal() {
 		return codigoPostal;
 	}
@@ -372,6 +369,22 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setProvincia(DDProvincia provincia) {
 		this.provincia = provincia;
+	}
+	
+	public Localidad getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(Localidad municipio) {
+		this.municipio = municipio;
+	}
+
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
 	}
 
 	public String getObservaciones() {

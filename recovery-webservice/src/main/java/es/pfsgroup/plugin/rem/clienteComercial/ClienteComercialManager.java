@@ -21,6 +21,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -286,6 +287,13 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						listaErrores.add("No existe la provincia en REM especificado en el campo codProvincia: " + clienteDto.getCodProvincia());
 					}
 				}
+				if(!Checks.esNulo(clienteDto.getCodPedania())){
+					Filter filtroPed = genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania());
+					DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtroPed);							
+					if(Checks.esNulo(pedania)){
+						listaErrores.add("No existe la pedania en REM especificada en el campo codPedania: " + clienteDto.getCodPedania());
+					}
+				}
 			}
 			
 		}catch (Exception e){
@@ -369,6 +377,12 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 					DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvincia()));							
 					if(!Checks.esNulo(provincia)){
 						cliente.setProvincia(provincia);
+					}
+				}
+				if(!Checks.esNulo(clienteDto.getCodPedania())){
+					DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania()));							
+					if(!Checks.esNulo(pedania)){
+						cliente.setUnidadPoblacional(pedania);
 					}
 				}
 				
@@ -518,16 +532,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				if(requestMap.containsKey("puerta")){
 					cliente.setPuerta(clienteDto.getPuerta());
 				}
-				if(requestMap.containsKey("codMunicipio")){
-					if(!Checks.esNulo(clienteDto.getCodMunicipio())){
-						Localidad localidad = (Localidad) genericDao.get(Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));							
-						if(!Checks.esNulo(localidad)){
-							cliente.setMunicipio(localidad);
-						}
-					}else{
-						cliente.setMunicipio(null);
-					}
-				}
 				if(requestMap.containsKey("codigoPostal")){
 					cliente.setCodigoPostal(clienteDto.getCodigoPostal());
 				}
@@ -539,6 +543,26 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						}
 					}else{
 						cliente.setProvincia(null);
+					}
+				}				
+				if(requestMap.containsKey("codMunicipio")){
+					if(!Checks.esNulo(clienteDto.getCodMunicipio())){
+						Localidad localidad = (Localidad) genericDao.get(Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));							
+						if(!Checks.esNulo(localidad)){
+							cliente.setMunicipio(localidad);
+						}
+					}else{
+						cliente.setMunicipio(null);
+					}
+				}
+				if(requestMap.containsKey("codPedania")){
+					if(!Checks.esNulo(clienteDto.getCodPedania())){
+						DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania()));							
+						if(!Checks.esNulo(pedania)){
+							cliente.setUnidadPoblacional(pedania);
+						}
+					}else{
+						cliente.setUnidadPoblacional(null);
 					}
 				}
 				if(requestMap.containsKey("observaciones")){

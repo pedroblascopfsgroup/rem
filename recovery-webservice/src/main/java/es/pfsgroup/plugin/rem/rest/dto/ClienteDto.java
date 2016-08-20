@@ -58,12 +58,14 @@ public class ClienteDto implements Serializable{
 	private String planta;
 	@Size(max=17)
 	private String puerta;
-	@Size(max=20)
-	private String codMunicipio;
 	@Size(max=5)
 	private String codigoPostal;
 	@Size(max=20)
+	private String codMunicipio;
+	@Size(max=20)
 	private String codProvincia;
+	@Size(max=20)
+	private String codPedania;
 	@Size(max=250)
 	private String observaciones;
 	
@@ -207,12 +209,6 @@ public class ClienteDto implements Serializable{
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-	public String getCodMunicipio() {
-		return codMunicipio;
-	}
-	public void setCodMunicipio(String codMunicipio) {
-		this.codMunicipio = codMunicipio;
-	}
 	public String getCodigoPostal() {
 		return codigoPostal;
 	}
@@ -224,6 +220,18 @@ public class ClienteDto implements Serializable{
 	}
 	public void setCodProvincia(String codProvincia) {
 		this.codProvincia = codProvincia;
+	}
+	public String getCodMunicipio() {
+		return codMunicipio;
+	}
+	public void setCodMunicipio(String codMunicipio) {
+		this.codMunicipio = codMunicipio;
+	}
+	public String getCodPedania() {
+		return codPedania;
+	}
+	public void setCodPedania(String codPedania) {
+		this.codPedania = codPedania;
 	}
 	public String getObservaciones() {
 		return observaciones;

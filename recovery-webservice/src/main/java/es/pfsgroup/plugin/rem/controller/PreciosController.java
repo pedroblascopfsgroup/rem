@@ -33,9 +33,9 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
+import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
 
 @Controller
@@ -113,13 +113,18 @@ public class PreciosController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void createPropuestaPreciosAutom(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// Metodo para crear propuestas por peticion automatica
-		// TODO: Crear la llamada al manager basandose en el de propuesta manual
+		
+		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response,false);		
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		
 		// Metodo para crear propuestas por peticion manual
+		
+		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response,true);
+	}
+	
+	private void generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response, Boolean esManual) throws Exception {
 		
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
@@ -129,12 +134,11 @@ public class PreciosController {
 		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
 		
 		//Genera la propuesta en BBDD y asocia los activos
-		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo());
+		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo(), esManual);
 		
 		// FIXME Se genera una excel básica, pendiente de definir
 		ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
 		excelReportGeneratorApi.generateAndSend(report, response);
-		
 	}
 	
 	/****************************************************************************************************************/
@@ -213,6 +217,24 @@ public class PreciosController {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getNumActivosByTipoPrecio(ModelMap model)
+	{
+		
+		try {
 
+			List<VBusquedaNumActivosTipoPrecio> listaCountActivos = preciosApi.getNumActivosByTipoPrecioAndCartera();
 
+			model.put("data", listaCountActivos);
+			model.put("totalCount", listaCountActivos.size());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

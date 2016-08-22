@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
+import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
 public interface PreciosApi {
 	
@@ -28,7 +29,7 @@ public interface PreciosApi {
 	 * @param tipoPropuestaCodigo Tipo de propuesta solicitada: Preciar, Repreciar, Descuento
 	 * @return PropuestaPrecio
 	 */
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo);
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual);
 
 	/**
 	 * Crea una propuesta de precios de tipo peticion automatica
@@ -59,10 +60,17 @@ public interface PreciosApi {
 	
 	/**
 	 * HREOS-641
-	 * Devuelve una Page de activos asociados a la propuesta recibida
+	 * Devuelve una lista de activos asociados a la propuesta recibida
 	 * @param idPropuesta
 	 * @return
 	 */
 	public List<VBusquedaActivosPropuesta> getActivosByIdPropuesta(Long idPropuesta);
+
+	/**
+	 * HREOS-639
+	 * Devuelve una lista con la cantidad de activos por Tipo Precio-Propuesta, agrupadas segun cartera
+	 * @return
+	 */
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera();
 
 }

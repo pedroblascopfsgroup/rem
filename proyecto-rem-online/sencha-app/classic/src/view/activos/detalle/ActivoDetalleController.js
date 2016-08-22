@@ -1041,7 +1041,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			return true;		
 		}
 	},
-	
+
 	getFormCriteria: function(form) {
     	
     	var me = this, initialData = {};
@@ -1227,10 +1227,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    onClickAbrirExpedienteComercial: function() {
+    onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
     	
-    	var me = this;
-    	me.getView().fireEvent('abrirDetalleExpediente', Ext.create('HreRem.model.Oferta',{idExpediente: 1, numExpediente: 666666}));
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleExpediente', record);
     	
     }
 });

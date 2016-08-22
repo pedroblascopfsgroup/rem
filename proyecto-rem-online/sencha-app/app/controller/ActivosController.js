@@ -88,7 +88,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'agrupacionesdetallemain' : {    		
 		    abrirDetalleActivo : 'abrirDetalleActivoById',
-		    refrescarAgrupacion: 'refrescarDetalleAgrupacion'
+		    refrescarAgrupacion: 'refrescarDetalleAgrupacion',
+		    abrirDetalleExpediente: 'abrirDetalleExpediente'
     	},
     	
     	'trabajosmain' : {    		

@@ -39,6 +39,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -58,17 +59,22 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
@@ -94,9 +100,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoDao activoDao;
-
-	@Autowired
-	private GenericAdapter adapter;
+	
+    @Autowired
+    private GenericAdapter adapter;
+    
+    @Autowired
+    private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -225,6 +234,75 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 
+	@Override
+	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
+	@Transactional(readOnly = false)
+    public boolean saveOfertaActivo(DtoOfertaActivo dto) {
+		
+		boolean resultado = true;
+		
+		try{
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
+			Oferta oferta = genericDao.get(Oferta.class, filtro);
+			
+			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getEstadoOferta());
+			
+			oferta.setEstadoOferta(tipoOferta);
+			
+			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
+			if(tipoOferta.getCodigo().equals("01")){
+				List<VOfertasActivosAgrupacion> listaOfertas= activoAdapter.getListOfertasActivos(dto.getIdActivo());
+				
+				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
+					
+					if(!vOferta.getIdOferta().equals(dto.getIdOferta().toString())){
+						Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(vOferta.getIdOferta()));
+						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
+						
+						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
+						if(!vTipoOferta.getCodigo().equals("02")){
+							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
+							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
+						}
+					}
+				}
+				
+				crearExpediente(oferta);
+				
+			}
+			
+			genericDao.update(Oferta.class, oferta);
+			
+		}catch(Exception ex) {
+			logger.error(ex.getMessage());
+			resultado = false;
+		}
+		
+
+	    return resultado;
+	}
+	
+	public boolean crearExpediente(Oferta oferta){
+		
+		try{
+			ExpedienteComercial nuevoExpediente= new ExpedienteComercial();
+			nuevoExpediente.setOferta(oferta);
+			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
+			nuevoExpediente.setEstado(estadoExpediente);
+			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
+			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
+			
+		}catch(Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
+		}
+		
+		return true;
+		
+	}
+	
+	
+	
 	@Override
 	@BusinessOperation(overrides = "activoManager.saveActivoValoracion")
 	@Transactional(readOnly = false)

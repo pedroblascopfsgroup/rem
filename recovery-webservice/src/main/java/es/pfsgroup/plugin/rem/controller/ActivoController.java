@@ -84,6 +84,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -91,7 +92,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.rest.dto.ActivoDto;
-import es.pfsgroup.plugin.rem.rest.dto.RequestActivoDto;
+import es.pfsgroup.plugin.rem.rest.dto.ActivoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -565,7 +566,24 @@ public class ActivoController {
 
 		return createModelAndViewJson(model);
 
-	}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model) {
+
+		try {
+			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1138,6 +1156,15 @@ public class ActivoController {
 	public ModelAndView getListAdmisionCheckDocumentos(Long id, WebDto webDto, ModelMap model) {
 
 		model.put("data", adapter.getListAdmisionCheckDocumentos(id));
+		return createModelAndViewJson(model);
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
+
+		model.put("data", adapter.getListOfertasActivos(id));
 		return createModelAndViewJson(model);
 
 	}
@@ -1761,7 +1788,7 @@ public class ActivoController {
 			RestRequestWrapper request) {
 		try {
 
-			RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
+			ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
 
 			ArrayList<ActivoDto> activos = new ArrayList<ActivoDto>();
 
@@ -1788,7 +1815,7 @@ public class ActivoController {
 	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
+		ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
 		System.out.println(jsonData.getId());
 		model.put("data", "hola update");
 		return new ModelAndView("jsonView", model);
@@ -1799,7 +1826,7 @@ public class ActivoController {
 	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		RequestActivoDto jsonData = (RequestActivoDto)request.getRequestData(RequestActivoDto.class);
+		ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
 		System.out.println(jsonData.getId());
 		model.put("data", "hola delete");
 		return new ModelAndView("jsonView", model);

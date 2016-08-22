@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
@@ -81,6 +82,9 @@ public interface ActivoApi {
 	    
 	    @BusinessOperationDefinition("activoManager.savePrecioVigente")
 	    public boolean savePrecioVigente(DtoPrecioVigente precioVigenteDto);
+	    
+	    @BusinessOperationDefinition("activoManager.saveOfertaActivo")
+	    public boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto);
 	    
 		/**
 		 * saveActivoValoracion: Para un activo dado, actualiza o crea una valoracion por tipo de precio.

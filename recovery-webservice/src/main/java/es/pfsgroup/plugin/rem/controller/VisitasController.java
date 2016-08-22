@@ -10,18 +10,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.rest.api.RestManager;
-import es.pfsgroup.plugin.rem.rest.dto.RequestVisitaDto;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
+import es.pfsgroup.plugin.rem.rest.dto.VisitaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 
 @Controller
 public class VisitasController {
 
 	@Autowired
-	private RestManager restManager;
+	private RestApi restApi;
 	
 	@Autowired 
     private ActivoApi activoApi;
@@ -42,9 +41,9 @@ public class VisitasController {
 	public ModelAndView insertUpdateVisita(ModelMap model, RestRequestWrapper request) {
 		try {
 
-			RequestVisitaDto jsonData = (RequestVisitaDto) request.getRequestData(RequestVisitaDto.class);
+			VisitaRequestDto jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			for (VisitaDto visita : jsonData.getData()) {
-				List<String> error = restManager.validateRequestObject(visita);
+				List<String> error = restApi.validateRequestObject(visita);
 				if (error.isEmpty()) {
 					
 					Visita visitaBbdd = new Visita();
@@ -74,7 +73,7 @@ public class VisitasController {
 	public ModelAndView getVisita(ModelMap model, RestRequestWrapper request) {
 		try {
 
-			RequestVisitaDto jsonData = (RequestVisitaDto) request.getRequestData(RequestVisitaDto.class);
+			VisitaRequestDto jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 
 			model.put("id", jsonData.getId());
 			model.put("data", "hola mon get");

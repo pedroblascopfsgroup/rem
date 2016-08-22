@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Gestor', 'HreRem.model.GestorActivo', 
     'HreRem.model.AdmisionDocumento', 'HreRem.model.AdjuntoActivo', 'HreRem.model.BusquedaTrabajo',
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
-    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo'],
+    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo','HreRem.model.OfertaActivo'],
     
     data: {
     	activo: null,
@@ -329,6 +329,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    		     proxy: {
    		        type: 'uxproxy',
    		        remoteUrl: 'activo/getListVisitasActivoById',
+   		        extraParams: {id: '{activo.id}'}
+   	    	 }
+       		},
+       		storeOfertasActivo: {    	
+       		 pageSize: $AC.getDefaultPageSize(),
+       		 model: 'HreRem.model.OfertaActivo',
+   		     proxy: {
+   		        type: 'uxproxy',
+   		        remoteUrl: 'activo/getListOfertasActivos',
    		        extraParams: {id: '{activo.id}'}
    	    	 }
        		},

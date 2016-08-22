@@ -24,8 +24,13 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 
 
 /**
@@ -53,7 +58,10 @@ public class ClienteComercial implements Serializable, Auditable {
     private Long id;
 	
     @Column(name = "CLC_WEBCOM_ID")
-    private Long idWebCom;
+    private Long idClienteWebcom;
+    
+    @Column(name = "CLC_REM_ID")
+    private Long idClienteRem;
     
     @Column(name = "CLC_RAZON_SOCIAL")
     private String razonSocial;
@@ -67,7 +75,8 @@ public class ClienteComercial implements Serializable, Auditable {
     @Column(name = "CLC_FECHA_ACCION")
     private Date fechaAccion;
     
-    @Column(name = "USU_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USU_ID")
     private Usuario usuarioAccion;
     
     @ManyToOne(fetch = FetchType.LAZY)
@@ -94,28 +103,53 @@ public class ClienteComercial implements Serializable, Auditable {
     private String email;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPC_ID")
+	private DDTiposColaborador tipoColaborador;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
-	private ActivoProveedor prescriptor;
+	private ActivoProveedor provPrescriptor;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_RESPONSABLE")
-	private ActivoProveedor apiResponsable;
+	private ActivoProveedor provApiResponsable;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TVI_ID")
+	private DDTipoVia tipoVia;
     
     @Column(name = "CLC_DIRECCION")
     private String direccion;
     
-    @Column(name = "CLC_MUNICIPIO")
-    private String municipio;
+    @Column(name = "CLC_NUMEROCALLE")
+    private String numeroCalle;
+    
+    @Column(name = "CLC_ESCALERA")
+    private String escalera;
+    
+    @Column(name = "CLC_PLANTA")
+    private String planta;
+    
+    @Column(name = "CLC_PUERTA")
+    private String puerta;
     
     @Column(name = "CLC_CODIGO_POSTAL")
     private String codigoPostal;
     
-    @Column(name = "CLC_PROVINCIA")
-    private String provincia;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID")
+    private DDProvincia provincia;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID")
+    private Localidad municipio;
+      
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_UPO_ID")
+	private DDUnidadPoblacional unidadPoblacional;
     
     @Column(name = "CLC_OBSERVACIONES")
     private String observaciones;
-    
    
 	@Version   
 	private Long version;
@@ -123,6 +157,10 @@ public class ClienteComercial implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
     
+
+	
+	
+	
 
 	public Long getId() {
 		return id;
@@ -132,12 +170,20 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public Long getIdWebCom() {
-		return idWebCom;
+	public Long getIdClienteWebcom() {
+		return idClienteWebcom;
 	}
 
-	public void setIdWebCom(Long idWebCom) {
-		this.idWebCom = idWebCom;
+	public void setIdClienteWebcom(Long idClienteWebcom) {
+		this.idClienteWebcom = idClienteWebcom;
+	}
+
+	public Long getIdClienteRem() {
+		return idClienteRem;
+	}
+
+	public void setIdClienteRem(Long idClienteRem) {
+		this.idClienteRem = idClienteRem;
 	}
 
 	public String getRazonSocial() {
@@ -237,12 +283,36 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.email = email;
 	}
 
-	public ActivoProveedor getApiResponsable() {
-		return apiResponsable;
+	public DDTiposColaborador getTipoColaborador() {
+		return tipoColaborador;
 	}
 
-	public void setApiResponsable(ActivoProveedor apiResponsable) {
-		this.apiResponsable = apiResponsable;
+	public void setTipoColaborador(DDTiposColaborador tipoColaborador) {
+		this.tipoColaborador = tipoColaborador;
+	}
+
+	public ActivoProveedor getProvPrescriptor() {
+		return provPrescriptor;
+	}
+
+	public void setProvPrescriptor(ActivoProveedor provPrescriptor) {
+		this.provPrescriptor = provPrescriptor;
+	}
+
+	public ActivoProveedor getProvApiResponsable() {
+		return provApiResponsable;
+	}
+
+	public void setProvApiResponsable(ActivoProveedor provApiResponsable) {
+		this.provApiResponsable = provApiResponsable;
+	}
+
+	public DDTipoVia getTipoVia() {
+		return tipoVia;
+	}
+
+	public void setTipoVia(DDTipoVia tipoVia) {
+		this.tipoVia = tipoVia;
 	}
 
 	public String getDireccion() {
@@ -253,14 +323,38 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.direccion = direccion;
 	}
 
-	public String getMunicipio() {
-		return municipio;
+	public String getNumeroCalle() {
+		return numeroCalle;
 	}
 
-	public void setMunicipio(String municipio) {
-		this.municipio = municipio;
+	public void setNumeroCalle(String numeroCalle) {
+		this.numeroCalle = numeroCalle;
 	}
 
+	public String getEscalera() {
+		return escalera;
+	}
+
+	public void setEscalera(String escalera) {
+		this.escalera = escalera;
+	}
+
+	public String getPlanta() {
+		return planta;
+	}
+
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+
+	public String getPuerta() {
+		return puerta;
+	}
+
+	public void setPuerta(String puerta) {
+		this.puerta = puerta;
+	}
+	
 	public String getCodigoPostal() {
 		return codigoPostal;
 	}
@@ -269,12 +363,28 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.codigoPostal = codigoPostal;
 	}
 
-	public String getProvincia() {
+	public DDProvincia getProvincia() {
 		return provincia;
 	}
 
-	public void setProvincia(String provincia) {
+	public void setProvincia(DDProvincia provincia) {
 		this.provincia = provincia;
+	}
+	
+	public Localidad getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(Localidad municipio) {
+		this.municipio = municipio;
+	}
+
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
 	}
 
 	public String getObservaciones() {
@@ -283,14 +393,6 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
-	}
-
-	public ActivoProveedor getPrescriptor() {
-		return prescriptor;
-	}
-
-	public void setPrescriptor(ActivoProveedor prescriptor) {
-		this.prescriptor = prescriptor;
 	}
 
 	public Long getVersion() {
@@ -308,9 +410,6 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-    
-    
-    
-    
+
    
 }

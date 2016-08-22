@@ -2,7 +2,7 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 import java.util.List;
 
-public class RequestVisitaDto extends RequestDto{
+public class VisitaRequestDto extends RequestDto{
 
 	private static final long serialVersionUID = -1461203975934437526L;
 	

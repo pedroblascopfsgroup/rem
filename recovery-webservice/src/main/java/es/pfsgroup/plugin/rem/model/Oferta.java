@@ -109,6 +109,18 @@ public class Oferta implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
     private List<ActivoOferta> activosOferta;
+    
+    @Column(name = "OFR_FECHA_ALTA")
+    private Date fechaAlta;
+    
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
 
 	@Version   
 	private Long version;
@@ -265,6 +277,9 @@ public class Oferta implements Serializable, Auditable {
 		
 		if(!Checks.esNulo(this.getAgrupacion())) {
 			activo = this.getAgrupacion().getActivoPrincipal();
+			if(Checks.esNulo(activo)) {
+				activo = this.getAgrupacion().getActivos().get(0).getActivo();
+			}
 		}else if(!Checks.esNulo(this.getActivosOferta()) && !this.getActivosOferta().isEmpty()) {
 			activo = this.getActivosOferta().get(0).getPrimaryKey().getActivo();
 		}	

@@ -18,7 +18,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.log
@@ -30,7 +30,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.sql"
-	      return
+	      cat DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1239_REM_HAYA01_MIG_ACTIVO_CABECERA.sql"
@@ -42,7 +43,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.log
@@ -54,7 +55,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.sql"
-	      return
+	      cat DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1240_REM_HAYA01_MIG_ACTIVO_TITULO.sql"
@@ -66,7 +68,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.log
@@ -78,7 +80,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.sql"
-	      return
+	      cat DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1241_REM_HAYA01_MIG_ACTIVO_PLANDINVENTAS.sql"
@@ -90,7 +93,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.log
@@ -102,7 +105,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.sql"
-	      return
+	      cat DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1242_REM_HAYA01_MIG_ACTIVO_ADJ_JUDICIAL.sql"
@@ -114,7 +118,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.log
@@ -126,7 +130,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.sql"
-	      return
+	      cat DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1243_REM_HAYA01_MIG_ACTIVO_ADJ_NO_JUDICIAL.sql"
@@ -138,7 +143,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.log
@@ -150,7 +155,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.sql"
-	      return
+	      cat DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1244_REM_HAYA01_MIG_ACTIVO_COM_PROP_CABECERA.sql"
@@ -162,7 +168,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.log
@@ -174,7 +180,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.sql"
-	      return
+	      cat DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1245_REM_HAYA01_MIG_ACTIVO_DATOSADICIONALES.sql"
@@ -186,7 +193,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.log
@@ -198,7 +205,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.sql"
-	      return
+	      cat DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1246_REM_HAYA01_MIG_PROPIETARIOS_CABECERA.sql"
@@ -210,7 +218,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.log
@@ -222,7 +230,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.sql"
-	      return
+	      cat DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1247_REM_HAYA01_MIG_PROPIETARIOS_ACTIVO.sql"
@@ -234,7 +243,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.log
@@ -246,7 +255,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.sql"
-	      return
+	      cat DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1248_REM_HAYA01_MIG_CATASTRO_ACTIVO.sql"
@@ -258,7 +268,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.log
@@ -270,7 +280,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.sql"
-	      return
+	      cat DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1249_REM_HAYA01_MIG_CARGAS_ACTIVO.sql"
@@ -282,7 +293,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.log
@@ -294,7 +305,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.sql"
-	      return
+	      cat DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1250_REM_HAYA01_MIG_OCUPANTES_ACTIVO.sql"
@@ -306,7 +318,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.log
@@ -318,7 +330,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.sql"
-	      return
+	      cat DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1251_REM_HAYA01_MIG_LLAVES_ACTIVO.sql"
@@ -330,7 +343,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.log
@@ -342,7 +355,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.sql"
-	      return
+	      cat DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1252_REM_HAYA01_MIG_MOVIMIENTOS_LLAVE.sql"
@@ -354,7 +368,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.log
@@ -366,7 +380,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.sql"
-	      return
+	      cat DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1253_REM_HAYA01_MIG_TASACIONES_ACTIVO.sql"
@@ -378,7 +393,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.log
@@ -390,7 +405,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.sql"
-	      return
+	      cat DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1254_REM_HAYA01_MIG_INFOCOMERCIAL_ACTIVO.sql"
@@ -402,7 +418,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.log
@@ -414,7 +430,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.sql"
-	      return
+	      cat DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1255_REM_HAYA01_MIG_CALIDADES_ACTIVO.sql"
@@ -426,7 +443,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.log
@@ -438,7 +455,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.sql"
-	      return
+	      cat DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1256_REM_HAYA01_MIG_INFOCOMERCIAL_DISTRIBUCION.sql"
@@ -450,7 +468,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.log
@@ -462,7 +480,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.sql"
-	      return
+	      cat DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1257_REM_HAYA01_MIG_OBSERVACIONES_ACTIVOS.sql"
@@ -474,7 +493,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.log
@@ -486,7 +505,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.sql"
-	      return
+	      cat DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1258_REM_HAYA01_MIG_IMAGENES_CABECERA.sql"
@@ -498,7 +518,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.log
@@ -510,7 +530,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.sql"
-	      return
+	      cat DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1259_REM_HAYA01_MIG_IMAGENES_ACTIVO.sql"
@@ -522,7 +543,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.log
@@ -534,7 +555,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.sql"
-	      return
+	      cat DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1260_REM_HAYA01_MIG_DOCUMENTOS_ACTIVO.sql"
@@ -546,7 +568,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.log
@@ -558,7 +580,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.sql"
-	      return
+	      cat DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1261_REM_HAYA01_MIG_AGRUPACIONES_ACTIVO.sql"
@@ -570,7 +593,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.log
@@ -582,7 +605,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.sql"
-	      return
+	      cat DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1262_REM_HAYA01_MIG_AGRUPACIONES.sql"
@@ -594,7 +618,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.log
@@ -606,7 +630,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.sql"
-	      return
+	      cat DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1263_REM_HAYA01_MIG_OBSERVACIONES_AGRUPACION.sql"
@@ -618,7 +643,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.log
@@ -630,7 +655,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.sql"
-	      return
+	      cat DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1264_REM_HAYA01_MIG_IMAGENES_AGRUPACION.sql"
@@ -642,7 +668,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.log
@@ -654,7 +680,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.sql"
-	      return
+	      cat DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1265_REM_HAYA01_MIG_SUBDIVISIONES_AGRUPACION.sql"
@@ -666,7 +693,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.log
@@ -678,7 +705,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.sql"
-	      return
+	      cat DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1266_REM_HAYA01_MIG_IMAGENES_SUBDIVISION.sql"
@@ -690,7 +718,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1267_REM_HAYA01_MIG_PROVEEDORES.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1267_REM_HAYA01_MIG_PROVEEDORES.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1267_REM_HAYA01_MIG_PROVEEDORES.log
@@ -702,7 +730,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1267_REM_HAYA01_MIG_PROVEEDORES.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1267_REM_HAYA01_MIG_PROVEEDORES.sql"
-	      return
+	      cat DDL_1267_REM_HAYA01_MIG_PROVEEDORES.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1267_REM_HAYA01_MIG_PROVEEDORES.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1267_REM_HAYA01_MIG_PROVEEDORES.sql"
@@ -714,7 +743,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.log
@@ -726,7 +755,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.sql"
-	      return
+	      cat DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1268_REM_HAYA01_MIG_ACTIVO_COM_PROP_CUOTAS.sql"
@@ -738,7 +768,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.log
@@ -750,7 +780,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.sql"
-	      return
+	      cat DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1269_REM_HAYA01_MIG_ENTIDAD_PROVEEDOR.sql"
@@ -762,7 +793,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1270_REM_HAYA01_MIG_TRABAJO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1270_REM_HAYA01_MIG_TRABAJO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1270_REM_HAYA01_MIG_TRABAJO.log
@@ -774,7 +805,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1270_REM_HAYA01_MIG_TRABAJO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1270_REM_HAYA01_MIG_TRABAJO.sql"
-	      return
+	      cat DDL_1270_REM_HAYA01_MIG_TRABAJO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1270_REM_HAYA01_MIG_TRABAJO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1270_REM_HAYA01_MIG_TRABAJO.sql"
@@ -786,7 +818,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.log
@@ -798,7 +830,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.sql"
-	      return
+	      cat DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1271_REM_HAYA01_MIG_PRESUPUESTO_TRABAJO.sql"
@@ -810,7 +843,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.log
@@ -822,7 +855,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.sql"
-	      return
+	      cat DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1272_REM_HAYA01_MIG_PROVISION_SUPLIDO.sql"
@@ -834,7 +868,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.log
@@ -846,7 +880,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.sql"
-	      return
+	      cat DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1273_REM_HAYA01_MIG_PROVEEDOR_CONTACTO.sql"
@@ -858,7 +893,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1274_REM_HAYA01_MIG_PRECIO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1274_REM_HAYA01_MIG_PRECIO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1274_REM_HAYA01_MIG_PRECIO.log
@@ -870,7 +905,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1274_REM_HAYA01_MIG_PRECIO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1274_REM_HAYA01_MIG_PRECIO.sql"
-	      return
+	      cat DDL_1274_REM_HAYA01_MIG_PRECIO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1274_REM_HAYA01_MIG_PRECIO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1274_REM_HAYA01_MIG_PRECIO.sql"
@@ -882,7 +918,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.log
@@ -894,7 +930,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.sql"
-	      return
+	      cat DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1275_REM_HAYA01_MIG_ADMISION_DOCUMENTOS.sql"
@@ -906,7 +943,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600802" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_tables.sql > DB_SNAPSHOT_PREV_tables_REM01_DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.log
@@ -918,12 +955,28 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql" "201600802" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql"
-	      return
+	      cat DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg4.sql "DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql" "201600802" "REM01" "OK" "" > /dev/null
 	      echo " OK : DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql"
 	  fi
 	fi
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160805" "0" "NO" > /dev/null
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.log
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO-REM01-reg3.1.sql > DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.log
+	echo " -- : DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.sql"
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.log
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.sql" "REM01" "Luis Caballero" "online"  "9.1" "20160810" "0" "NO" > /dev/null
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.log
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION-REM01-reg3.1.sql > DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.log
+	echo " -- : DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.sql"
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_014_REM01_VI_OFERTAS_ACTIVOS_AGRUPACION.log
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160810" "0" "NO" > /dev/null
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA-REM01-reg3.1.sql > DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
+	echo " -- : DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.sql"
+	exit | sqlplus -s -l REM01/$2 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
 }
 
 run_scripts "$@" | tee output.log

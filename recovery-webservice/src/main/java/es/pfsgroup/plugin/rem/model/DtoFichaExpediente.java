@@ -61,6 +61,8 @@ public class DtoFichaExpediente extends WebDto {
        
    	private Date fechaFin;
    	
+   	private Date fechaAltaOferta;
+   	
 
 	public Long getIdExpediente() {
 		return idExpediente;
@@ -221,6 +223,14 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setNumEntidad(Long numEntidad) {
 		this.numEntidad = numEntidad;
+	}
+
+	public Date getFechaAltaOferta() {
+		return fechaAltaOferta;
+	}
+
+	public void setFechaAltaOferta(Date fechaAltaOferta) {
+		this.fechaAltaOferta = fechaAltaOferta;
 	}
 
    	

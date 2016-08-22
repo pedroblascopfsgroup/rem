@@ -338,6 +338,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conBloqueo", dto.getConBloqueo());
    		
+   		//HREOS-639 - Indicador de activos para preciar/repreciar/descuento
+   		if(!Checks.esNulo(dto.getTipoPropuestaCodigo())) {
+	   		if(dto.getTipoPropuestaCodigo().equals("01")) {
+	   			hb.appendWhere("act.fechaPreciar is not null");
+	   			hb.appendWhere("act.fechaRepreciar is null");
+	   			} else if(dto.getTipoPropuestaCodigo().equals("02")) {
+	   				hb.appendWhere("act.fechaRepreciar is not null");
+	   				} else  if(dto.getTipoPropuestaCodigo().equals("03")){
+	   					hb.appendWhere("act.fechaDescuento is not null");
+	   		}
+   		}
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 
@@ -419,6 +430,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
 		 
 		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+	}
+	
+    public Long getNextNumOferta() {
+		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
 
 }

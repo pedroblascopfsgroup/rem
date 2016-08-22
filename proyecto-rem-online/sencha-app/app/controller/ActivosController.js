@@ -88,7 +88,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'agrupacionesdetallemain' : {    		
 		    abrirDetalleActivo : 'abrirDetalleActivoById',
-		    refrescarAgrupacion: 'refrescarDetalleAgrupacion'
+		    refrescarAgrupacion: 'refrescarDetalleAgrupacion',
+		    abrirDetalleExpediente: 'abrirDetalleExpediente'
     	},
     	
     	'trabajosmain' : {    		
@@ -116,6 +117,11 @@ Ext.define('HreRem.controller.ActivosController', {
 	
     	'publicacionmain' : {
     		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPublicacion'
+    	},
+    	
+    	'preciosmain' : {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPropuestaPrecio',
+			abrirDetalleTrabajo: 'abrirDetalleTrabajo'
     	},
     	
     	'menufavoritos': {
@@ -719,5 +725,13 @@ Ext.define('HreRem.controller.ActivosController', {
     		}
     	}
     	Ext.resumeLayouts(true);
+    },
+    
+    abrirDetalleActivoPropuestaPrecio: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PROPUESTAS'])
     }
 });

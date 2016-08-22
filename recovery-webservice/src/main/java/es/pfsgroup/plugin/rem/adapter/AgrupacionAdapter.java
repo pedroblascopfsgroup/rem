@@ -695,7 +695,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperties(dtoAgrupacionVisitas, activoPrincipal.getVisitas().get(i));
 						//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
 						
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "idVisita", activoPrincipal.getVisitas().get(i).getId());
+						BeanUtils.copyProperty(dtoAgrupacionVisitas, "numVisita", activoPrincipal.getVisitas().get(i).getId());
 						BeanUtils.copyProperty(dtoAgrupacionVisitas, "fechaSolicitud", activoPrincipal.getVisitas().get(i).getFechaSolicitud());
 						if(activoPrincipal.getVisitas().get(i).getCliente()!=null){
 							BeanUtils.copyProperty(dtoAgrupacionVisitas, "nombre", activoPrincipal.getVisitas().get(i).getCliente().getNombre()+activoPrincipal.getVisitas().get(i).getCliente().getApellidos());

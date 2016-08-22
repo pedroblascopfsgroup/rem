@@ -8,7 +8,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoCargas', 'HreRem.model.ActivoCargasTab', 'HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.ActivoValoraciones', 'HreRem.model.ActivoTasacion',
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
-    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial'],
+    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu'],
 
     
     refs: [
@@ -144,7 +144,14 @@ Ext.define('HreRem.controller.ActivosController', {
     			me.abrirDetalleTrabajoById(favorito.openId, favorito.text);  
     			
     		}
-    	}   	
+    	},
+    	'comercialmainmenu': {    		
+			abrirDetalleActivo: function(idActivo) {
+				var me = this;
+    			me.abrirDetalleActivoById(idActivo);      
+				
+			}
+    	}
 
     },
     

@@ -2116,7 +2116,7 @@ public class ActivoAdapter {
 					BeanUtils.copyProperties(dtoActivoVisitas, activo.getVisitas().get(i));
 					//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
 					
-					BeanUtils.copyProperty(dtoActivoVisitas, "idVisita", activo.getVisitas().get(i).getId());
+					BeanUtils.copyProperty(dtoActivoVisitas, "numVisita", activo.getVisitas().get(i).getId());
 					BeanUtils.copyProperty(dtoActivoVisitas, "fechaSolicitud", activo.getVisitas().get(i).getFechaSolicitud());
 					if(activo.getVisitas().get(i).getCliente()!=null){
 						BeanUtils.copyProperty(dtoActivoVisitas, "nombre", activo.getVisitas().get(i).getCliente().getNombre()+activo.getVisitas().get(i).getCliente().getApellidos());

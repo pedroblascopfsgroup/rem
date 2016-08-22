@@ -958,6 +958,11 @@ function run_scripts {
 	      echo " OK : DDL_1276_REM_HAYA01_MIG_PRESUPUESTO_ACTIVO.sql"
 	  fi
 	fi
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.sql" "REM01" "JOSE VILLEL" "online"  "9.1" "20160817" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS-REM01-reg3.1.sql > DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.log
+	echo " -- : DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_009_REM01_VI_BUSQUEDA_ACTIVOS_PRECIOS.log
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160805" "0" "NO"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.log
 	exit | sqlplus -s -l $1 @./scripts/DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO-REM01-reg3.1.sql > DDL_014_REM01_VI_BUSQUEDA_PROPUESTAS_PRECIO.log
@@ -973,6 +978,11 @@ function run_scripts {
 	exit | sqlplus -s -l $1 @./scripts/DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA-REM01-reg3.1.sql > DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
 	echo " -- : DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.sql"
 	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_015_REM01_VI_BUSQUEDA_ACTIVOS_PROPUESTA.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_ENTITY01_reg3.sql "DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.sql" "REM01" "JORGE ROS" "online"  "9.2" "20160811" "0" "NO"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_PREV_objects_REM01_DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.log
+	exit | sqlplus -s -l $1 @./scripts/DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO-REM01-reg3.1.sql > DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.log
+	echo " -- : DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.sql"
+	exit | sqlplus -s -l $1 @./scripts/DDL_000_REM01_metadata_objects.sql > DB_SNAPSHOT_POST_objects_REM01_DDL_016_REM01_VI_BUSQUEDA_NUM_ACTIVOS_TIPO_PRECIO.log
 }
 
 run_scripts "$@" | tee output.log

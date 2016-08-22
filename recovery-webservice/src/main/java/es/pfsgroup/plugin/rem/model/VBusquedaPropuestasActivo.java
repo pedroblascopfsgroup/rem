@@ -48,7 +48,7 @@ public class VBusquedaPropuestasActivo implements Serializable {
 	private String numTrabajo;
 	
 	@Column(name="TRA_ID")
-    private String numTramite;
+    private String idTramite;
 	
 	@Column(name = "ACT_ID")
 	private String idActivo;	
@@ -179,12 +179,12 @@ public class VBusquedaPropuestasActivo implements Serializable {
 		this.numTrabajo = numTrabajo;
 	}
 
-	public String getNumTramite() {
-		return numTramite;
+	public String getIdTramite() {
+		return idTramite;
 	}
 
-	public void setNumTramite(String numTramite) {
-		this.numTramite = numTramite;
+	public void setIdTramite(String idTramite) {
+		this.idTramite = idTramite;
 	}
 
 	public String getEstadoCodigo() {

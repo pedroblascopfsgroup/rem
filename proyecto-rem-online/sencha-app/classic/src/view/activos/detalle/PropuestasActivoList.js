@@ -37,17 +37,58 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoList', {
 		            }
 		            
 		        },
+		        {
+		        	xtype: 'actioncolumn',
+		            dataIndex: 'numTrabajo',
+		            text: HreRem.i18n('header.num.trabajo'),
+		            items: [{
+			            tooltip: HreRem.i18n('tooltip.ver.trabajo'),
+			            getClass: function(v, metadata, record ) {
+			            	if (!Ext.isEmpty(record.get("numTrabajo"))) {
+			            		return 'app-list-ico ico-pestana-trabajos';
+			            	}			            	
+			            },
+			            handler: 'onEnlaceTrabajoClick'
+			        }],
+			        renderer: function(value, metadata, record) {
+			        	if(Ext.isEmpty(record.get("numTrabajo"))) {
+			        		return "";
+			        	} else {
+			        		return '<div style="display:inline; margin-right: 15px; font-size: 11px;">'+ value+'</div>'
+			        	}
+			        },
+		            flex: 1,
+		            align: 'center'
+		            //hidden: true		        	
+		        },
 		        {	        	
-		            dataIndex: 'numTramite',
+		           /* dataIndex: 'idTramite',
 		            text: HreRem.i18n('header.tramite'),
 		            flex: 1,
 		            hidden: true
-		        },
-		        {	        	
-		            dataIndex: 'numTrabajo',
-		            text: HreRem.i18n('header.num.trabajo'),
-		            flex: 1,
-		            hidden: true		        	
+		            */
+		            
+		            xtype: 'actioncolumn',
+	    			text: HreRem.i18n('header.tramite'),
+		        	dataIndex: 'idTramite',
+			        items: [{
+			            tooltip: HreRem.i18n('tooltip.ver.tramite'),
+			            getClass: function(v, metadata, record ) {
+			            	if (!Ext.isEmpty(record.get("idTramite"))) {
+			            		return 'app-list-ico ico-ver-tarea';
+			            	}			            	
+			            },
+			            handler: 'onEnlaceTramiteClick'
+			        }],
+			        renderer: function(value, metadata, record) {
+			        	if(Ext.isEmpty(record.get("idTramite"))) {
+			        		return "";
+			        	} else {
+			        		return '<div style="display:inline; margin-right: 15px; font-size: 11px;">'+ value+'</div>'
+			        	}
+			        },
+		            flex     : 1,            
+		            align: 'center'
 		        },
 		        {	        	
 		            dataIndex: 'entidadPropietariaDescripcion',

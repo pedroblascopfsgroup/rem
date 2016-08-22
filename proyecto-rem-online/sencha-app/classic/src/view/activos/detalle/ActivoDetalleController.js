@@ -1233,5 +1233,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleExpediente', record);
     	
+    },
+    
+    onEnlaceTrabajoClick: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	record.data.id=record.data.idTrabajo;
+    	me.getView().fireEvent('abrirDetalleTrabajo', record);
+    	
+    },
+    
+    onEnlaceTramiteClick: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleTramite', grid, record);	
     }
 });

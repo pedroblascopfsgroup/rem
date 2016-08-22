@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd"
+	default-autowire="byName"> 
+	
+<bean class="es.pfsgroup.framework.paradise.bulkUpload.bvfactory.impl.validators.querys.MSVFactoriaQuerysSQLValidarAgrupacionObraNueva" init-method="init">
+	<property name="configValidacion">
+		<map>			
+			<entry key="0" value-ref="MSVSQLOk"/>
+			<entry key="1" value-ref="MSVSQLNoAgrupacion"/>
+			<entry key="2" value-ref="MSVSQLNoActivo"/>
+			<entry key="3" value-ref="MSVSQLNoPrincipal"/>
+		</map>
+	</property>
+	<property name="sqlValidacion">
+		<map>
+			<entry>
+				<key><value>AGRUPACION</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          WHEN (SELECT count(*) FROM ACT_AGR_AGRUPACION G where G.AGR_NUM_AGRUP_REM = VALUETOKEN AND G.BORRADO = 0) = 0 THEN 1
+				          ELSE 0
+				        END RESULT
+				    FROM DUAL]]>				
+				</value>
+			</entry>
+			<entry>
+				<key><value>ACTIVO</value></key>
+				<value>
+					<![CDATA[
+						SELECT CASE
+				          WHEN (SELECT count(*) FROM ACT_ACTIVO A where A.ACT_NUM_ACTIVO = VALUETOKEN AND A.BORRADO = 0) = 0 THEN 2
+				          ELSE 0
+				        END RESULT
+				    FROM DUAL]]>				
+				</value>
+			</entry>
+		</map>
+	</property>	
+  </bean> 
+ 
+</beans>	
+

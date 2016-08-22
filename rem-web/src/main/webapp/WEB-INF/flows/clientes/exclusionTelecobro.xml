@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dtoTelecobro" class="es.capgemini.pfs.telecobro.dto.DtoTelecobro" />
+    
+    <input name="idCliente" type="java.lang.Long" />
+    
+    <view-state id="formulario" view="clientes/exclusionTelecobro">
+        <on-entry>
+            <evaluate expression="executor.execute('telecobroManager.getMotivosExclusionTelecobro')" result="flowScope.motivosExclusion" />
+        </on-entry>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+    
+    <end-state id="update" view="default">   
+        <on-entry>
+            <evaluate expression="binder.bindAndValidate(flowRequestContext, dtoTelecobro)" />
+            <evaluate expression="executor.execute('telecobroManager.crearSolicitudExclusionTelecobro', dtoTelecobro)" result="flowScope.dummy" />
+        </on-entry>
+    </end-state>
+    
+    <end-state id="close" view="default" />
+</flow>

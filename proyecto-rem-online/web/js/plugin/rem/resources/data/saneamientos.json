@@ -1,0 +1,23 @@
+{
+    "total": 2,
+    "saneamientos": [
+        {
+            "idActivo": 100285127,
+            "idOferta": 1050,
+            "cargaPendiente": "Notaria",
+            "importeCargaPendiente": "1.000,00",
+            "cuentaPendiente": "Vendedor"
+                     
+        },
+        {
+            "idActivo": 100285127,
+            "idOferta": 1051,
+            "cargaPendiente": "Notaria",
+            "importeCargaPendiente": "1.000,00",
+            "cuentaPendiente": "Ley"
+                     
+        }
+        
+    ],
+    "success": true
+}

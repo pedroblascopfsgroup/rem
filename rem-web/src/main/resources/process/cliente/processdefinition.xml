@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<process-definition name="cliente" xmlns="urn:jbpm.org:jpdl-3.2">
+
+    <start-state name="Inicio">
+        <transition to="CrearCliente" />
+    </start-state>
+      
+    <state name="delayStart">
+      <timer duedate="1 second" transition="start"></timer>
+      <transition to="CrearCliente" name="start"></transition>
+    </state>
+    
+    <node name="CrearCliente">
+        <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+            <targetBean>creaClienteActionHandler</targetBean>
+        </action>
+        <transition name="EsperarCarencia" to="EsperarCarencia"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </node>
+    
+    <node name="EnviarGestionVencidos">
+        <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+            <targetBean>enviarGestionVencidosActionHandler</targetBean>
+        </action>
+        <transition name="GestionVencidos" to="GestionVencidos"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </node>
+    
+    <state name="EsperarCarencia">
+        <event type="node-enter">
+            <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+                <targetBean>esperaCarenciaActionHandler</targetBean>
+            </action>
+        </event>
+        <transition name="EnviarGestionVencidos" to="EnviarGestionVencidos">
+        </transition>
+		<transition to="Fin" name="Fin"></transition>
+    </state>
+    
+    <state name="GestionVencidos">
+        <event type="node-enter">
+            <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+                <targetBean>gestionVencidosActionHandler</targetBean>
+            </action>
+        </event>
+        <transition to="ExpedimentarCliente" name="EnviarExpedimentarCliente"/>
+        <transition to="VerificarTelecobro" name="EnviarAVerificarTelecobro"></transition>
+		<transition to="Fin" name="Fin"></transition>
+    </state>
+    
+    <state name="VerificarTelecobro">
+        <event type="node-enter">
+            <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+                <targetBean>verificarTelecobroActionHandler</targetBean>
+            </action>
+        </event>
+        <transition to="ConTelecobro" name="EnviarAConTelecobro"></transition>
+        <transition to="SolicitarExcluirTelecobro" name="EnviarASolicitarExcluirTelecobro"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="ExpedimentarCliente" name="EnviarExpedimentarCliente"></transition>
+    </state>
+    
+    <state name="SolicitarExcluirTelecobro">
+        <event type="node-enter">
+            <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+                <targetBean>solicitarExcluirTelecobroActionHandler</targetBean>
+            </action>
+        </event>
+        <transition to="ConTelecobro" name="EnviarAConTelecobro"></transition>
+        <transition to="SinTelecobro" name="EnviarASinTelecobro"></transition>
+		<transition to="Fin" name="Fin"></transition>
+		<transition to="ExpedimentarCliente" name="EnviarExpedimentarCliente"></transition>
+    </state>
+    
+    <state name="ConTelecobro">
+        <event type="node-enter">
+            <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+                <targetBean>conTelecobroActionHandler</targetBean>
+            </action>
+        </event>
+		<transition to="Fin"></transition>
+		<transition to="ExpedimentarCliente" name="EnviarExpedimentarCliente"></transition>
+    </state>
+    
+    <state name="SinTelecobro">
+        <event type="node-enter">
+            <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+                <targetBean>sinTelecobroActionHandler</targetBean>
+            </action>
+        </event>
+		<transition to="ExpedimentarCliente" name="EnviarExpedimentarCliente"></transition>
+    </state>
+
+    <node name="ExpedimentarCliente">
+        <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+            <targetBean>expedimentaClienteActionHandler</targetBean>
+            </action>
+        <transition to="GestionVencidos" name="EnviarGestionVencidos"/>    
+        <transition to="Fin" name="Fin"></transition>
+    </node>
+    
+    <end-state name="Fin"></end-state>
+    
+    <event type="process-end">
+        <action name="myAction" config-type="bean" class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+            <targetBean>eliminaClienteActionHandler</targetBean>
+        </action>
+    </event>
+</process-definition>

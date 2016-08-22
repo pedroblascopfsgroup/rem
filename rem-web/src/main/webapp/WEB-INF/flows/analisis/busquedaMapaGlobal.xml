@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<!-- renderiza el formulario -->
+    <end-state id="listado" view="analisis/busquedaMapaGlobal" >
+	    <on-entry>
+	    	<evaluate expression="executor.execute('mapaGlobalOficinaManager.getCriteriosAnalisis')" result="flowScope.criteriosAnalisis" />
+	    	<evaluate expression="executor.execute('segmentoManager.getSegmentos')" result="flowScope.segmentos" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+            <evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoProducto')" result="flowScope.tiposContratos"/>
+            <evaluate expression="executor.execute('faseManager.getFases')" result="flowScope.fases" />
+	    </on-entry>
+    </end-state> 	
+    
+</flow>

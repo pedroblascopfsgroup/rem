@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.16" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.3.0.v20080606 Build &lt;2.3.0.v20080618-0630></property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <styles>
+        <style name="crosstab-cell" id="4">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="type">a4</property>
+            <property name="headerHeight">25mm</property>
+            <property name="footerHeight">25mm</property>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <label id="6">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <text-property name="text">PLANTILLA TIPO I - DEMANDA EJECUTIVA SOBRE BIENES HIPOTECADOS</text-property>
+        </label>
+        <label id="74">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="76">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#0000FF</property>
+            <property name="textUnderline">underline</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[Se debe Revisar / confirmar todos los apartados señalados en azul y seguir las instrucciones respecto a eliminar unos apartados u otros.]]></text-property>
+        </text>
+        <label id="75">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <label id="8">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">13pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textUnderline">underline</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">center</property>
+            <text-property name="text">AL TRIBUNAL DE PRIMERA INSTANCIA DE</text-property>
+        </label>
+        <label id="13">
+            <property name="fontSize">24pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="12">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<P>    Don/Doña Apalino Cuesta Gómez Procurador de los Tribunales, en nombre y representación de <STRONG>BANCO DE PRUEBAS</STRONG>,  con domicilio social en Madrid, Rue del Percebe, nº 3, con C.I.F. A-123456789, asistido en este proceso por el Abogado Don/Doña <VALUE-OF>dto.getNombreAbogado()</VALUE-OF>, con número de colegiado 1234567 del Ilustre Colegio de Abogados de  y representado por el Procurador que suscribe, en virtud de copia de escritura de poder para pleitos que acompaño para su unión en autos por testimonio con devolución de los originales, ante el Tribunal comparezco y de la forma más procedente en derecho <STRONG><U>DIGO</U><STRONG>:</P>
+<P>    Que en cumplimiento de las instrucciones recibidas de mi representado y de conformidad a lo en los artículos 681 y siguientes  de la Ley de Enjuiciamiento Civil y 129 y siguientes de la Ley Hipotecaria, por medio del presente escrito formulo <STRONG>DEMANDA EJECUTIVA EN RECLAMACIÓN DE DEUDAS GARANTIZADAS CON HIPOTECA</STRONG>, en reclamación de la cantidad de <VALUE-OF>dto.getMontoPrincipal()</VALUE-OF>, respecto de las fincas que más adelante se describirán, frente a:</P>
+]]></text-property>
+        </text>
+        <text id="126">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<P><FONT face="Arial"><PRE><VALUE-OF>dto.getNombresDomiciliosDemandados()</VALUE-OF></PRE></FONT>
+</P>
+    Se interpone la presente demanda en base a los siguientes]]></text-property>
+        </text>
+        <label id="22">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="20">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textUnderline">underline</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">center</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[HECHOS]]></text-property>
+        </text>
+        <label id="23">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="21">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;nbsp;<STRONG>PRIMERO.-</STRONG> En virtud de escritura pública autorizada por Notario, Banco Español de Crédito, S.A. concedió un préstamo con garantía hipotecaria con las siguientes características:]]></text-property>
+        </text>
+        <label id="36">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <grid id="24">
+            <property name="width">100%</property>
+            <column id="25">
+                <property name="width">1.0520833333333333in</property>
+            </column>
+            <column id="26"/>
+            <row id="27">
+                <cell id="28">
+                    <text id="30">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Prestatarios:]]></text-property>
+                    </text>
+                </cell>
+                <cell id="29">
+                    <text id="32">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">left</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[<FONT face="Arial"><PRE><VALUE-OF>dto.getNombresDemandados()</VALUE-OF></PRE></FONT>]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+        <label id="34">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="33">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="color">#0000FF</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[Hipotecantes: Señalar en caso de ser distintos que los prestatarios.
+<BR />Fiadores:]]></text-property>
+        </text>
+        <text id="77">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[Principal: <VALUE-OF>dto.getMontoPrincipal()</VALUE-OF><BR />
+Fecha del otorgamiento:<BR />
+Fecha del vencimiento:<BR />
+Notario autorizante:<BR />
+Lugar otorgamiento:<BR />
+Protocolo:<BR />
+Responsabilidad hipotecaria total:<BR /><BR />
+]]></text-property>
+        </text>
+        <text id="127">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;#8226;   Por _____________ Euros de principal del préstamo.<BR />
+&amp;#8226;   Hasta un máximo de __________Euros por _______ meses de intereses ordinarios.<BR />
+&amp;#8226;   Hasta un máximo de ____________ Euros por ______ años de intereses moratorios<BR />
+&amp;#8226;   La cantidad de _______________ Euros en concepto de costas y gastos.]]></text-property>
+        </text>
+        <label id="37">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="38">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;nbsp;<STRONG>SEGUNDO.-</STRONG> De entre los pactos contenidos en dicho contrato, interesa destacar los siguientes:]]></text-property>
+        </text>
+        <label id="39">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <grid id="40">
+            <property name="width">100%</property>
+            <column id="41">
+                <property name="width">0.25in</property>
+            </column>
+            <column id="42"/>
+            <row id="43">
+                <cell id="44">
+                    <text id="64">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[1.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="45">
+                    <text id="65">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Los prestatarios reconocieron haber recibido el principal del préstamo.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="46">
+                <cell id="47">
+                    <text id="68">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[2.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="48">
+                    <text id="66">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[No obstante la duración pactada, se convino que el Banco podría considerarlo vencido de pleno derecho y exigibles la totalidad de las obligaciones de pago contraídas por los prestatarios, en el supuesto de falta de pago en las fechas contractualmente previstas, pacto que figura inscrito en el Registro de la Propiedad.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="49">
+                <cell id="50">
+                    <text id="69">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[3.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="51">
+                    <text id="67">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Se estipuló que la amortización del préstamo y el pago de los intereses devengados se realizaría mediante cuotas (<FONT color="blue">mensuales, trimestrales, anuales</FONT>), comprensivas de capital e intereses.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="52">
+                <cell id="53"/>
+                <cell id="54">
+                    <label id="85">
+                        <property name="fontSize">8pt</property>
+                        <property name="marginTop">0pt</property>
+                    </label>
+                    <text id="79">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">10pt</property>
+                        <property name="fontWeight">bold</property>
+                        <property name="color">#0000FF</property>
+                        <property name="textUnderline">underline</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">left</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Nota: Dejar el apartado 4 que corresponda, en función de tratarse de un préstamo a interés variable o fijo.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="55">
+                <cell id="56">
+                    <text id="81">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[4.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="57">
+                    <text id="84">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[El préstamo devengará un tipo de interés ordinario, variable, revisable, que será el resultante de añadir <FONT color="blue">______</FONT> los puntos porcentuales pactados al tipo de referencia  acordado  en la escritura de hipoteca, redondeado al alza al más cercano múltiplo, que serán liquidados y exigibles en la forma pactada, junto en su caso con las comisiones acordadas.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="58">
+                <cell id="59">
+                    <text id="82">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[4.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="60">
+                    <text id="86">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Se pactó un interés fijo del <FONT color="blue">_____ %</FONT> nominal anual (<FONT color="blue">Cláusula ____</FONT>).]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="61">
+                <cell id="62">
+                    <text id="87">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[5.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="63">
+                    <text id="88">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Cualesquiera cantidades debidas por la parte prestataria por razón del presente contrato no pagadas a su vencimiento, devengarán diariamente intereses moratorios a favor del Banco desde el día siguiente a la fecha del impago hasta aquel en que se hagan efectivas.]]></text-property>
+                    </text>
+                    <text id="121">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[El tipo de interés de demora será el resultante de <FONT color="blue">añadir 5 puntos porcentuales</FONT> al tipo de interés ordinario aplicable en el momento en que se produzca el vencimiento anticipado.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="89">
+                <cell id="90">
+                    <text id="92">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[6.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="91">
+                    <text id="93">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[Quedó fijado en la escritura, como domicilio a efectos de requerimientos y  notificaciones el señalado en el encabezamiento.]]></text-property>
+                    </text>
+                </cell>
+            </row>
+            <row id="94">
+                <cell id="95">
+                    <text id="97">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[7.]]></text-property>
+                    </text>
+                </cell>
+                <cell id="96">
+                    <text id="98">
+                        <property name="fontFamily">"Arial"</property>
+                        <property name="fontSize">11pt</property>
+                        <property name="marginTop">0pt</property>
+                        <property name="textAlign">justify</property>
+                        <property name="contentType">html</property>
+                        <text-property name="content"><![CDATA[La garantía hipotecaria quedo constituida sobre las fincas que a continuación se indican:]]></text-property>
+                    </text>
+                </cell>
+            </row>
+        </grid>
+        <label id="100">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="101">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<FONT face="Arial"><PRE><VALUE-OF>dto.getListaFincas()</VALUE-OF></PRE></FONT>]]></text-property>
+        </text>
+        <label id="102">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="103">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[    Responsabilidad hipotecaria:<BR />
+	<BR />
+		Responde de _____________ Euros por principal del préstamo.<BR />
+		Hasta un máximo de __________Euros por _______ meses de intereses ordinarios.<BR />
+		Hasta un máximo de ____________ Euros por ______ años de intereses moratorios.<BR />
+		La cantidad de _______________ Euros en concepto de costas y gastos.<BR />
+		Tasada a efectos de subasta en _______ Euros.<BR />
+]]></text-property>
+        </text>
+        <text id="104">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;nbsp;<B>TERCERO.-</B>  Ante el incumplimiento por la parte prestataria de su obligación de hacer frente al pago de las cuotas de capital e intereses en la forma convenida, Banesto, de acuerdo con lo pactado, ha decidido declarar vencida la obligación, determinando la deuda reclamable, resultando la siguiente liquidación:]]></text-property>
+        </text>
+        <text id="105">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;#8226;   Capital pendiente 	de vencimiento 		.........................<BR />
+&amp;#8226;   Capital de cuotas impagadas  ...............................<BR />
+&amp;#8226;   Intereses remuneratorios de cuotas impagadas  .......<BR />
+&amp;#8226;   Intereses de demora de las cuotas impagadas	  .......<BR />
+&amp;#8226;   Total deuda   			...........................<BR />
+&amp;#8226;   Fecha vencimiento anticipado	...........................<BR />
+&amp;#8226;   Fecha liquidación 			..........................]]></text-property>
+        </text>
+        <label id="107">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="106">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[   A la cifra que se reclama, habrán de añadirse los intereses que desde el día antes indicado, se devenguen al tipo moratorio pactado en la escritura hasta el momento del pago a mi mandante.]]></text-property>
+        </text>
+        <label id="124">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="108">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;nbsp;<B>CUARTO.-</B> BANCO DE PRUEBAS procedió a notificar el vencimiento y a requerir de pago a la parte prestataria mediante acta notarial de conformidad a lo dispuesto en el artículo 686 de la LEC del importe debido, sin que hasta la fecha se haya satisfecho la deuda contraída.]]></text-property>
+        </text>
+        <label id="125">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="123">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[&amp;nbsp;<B>QUINTO.-</B> Habiendo resultado infructuosas todas las gestiones amistosas realizadas para el cobro de la deuda, no le queda otra alternativa a mi representado para la recuperación de su legítimo crédito que acudir al amparo judicial, lo que efectúa mediante la interposición de la presente demanda, aportando los siguientes documentos justificativos de lo citado.]]></text-property>
+        </text>
+        <label id="109">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="110">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textUnderline">none</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">center</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[DOCUMENTOS]]></text-property>
+        </text>
+        <label id="111">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="112">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<P>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<B>Documento nº 1</B>: Copia de la escritura de poder para pleitos a favor del Procurador que suscribe la demanda.</P>
+<P>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<B>Documento nº 2</B>:  Primera copia de la escritura de préstamo con garantía  hipotecaria donde consta su inscripción en el Registro de la Propiedad.</P>
+<P>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<B>Documento nº 3 y 4</B>: Extracto de la cuenta del préstamo con el detalle de las cuotas impagadas y certificado de saldo expedido por el Banco e intervenido por Notario, que acredita haberse practicado la liquidación en la forma prevista por las partes en la escritura y que el saldo resultante coincide con el que aparece deudor en la cuenta abierta a la ejecutada.</P>
+<P>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<B>Documento nº 5</B>:  Liquidaciones de intereses de la cuenta que expresan las operaciones de cálculo que arrojan como saldo la cantidad determinada por la que se pide el despacho de ejecución.</P>
+<P>&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;<B>Documento nº 6</B>: <FONT color="blue">Notificación del vencimiento y de</FONT> requirimiento de pago efectuado a la parte demandada, <FONT color="blue">mediante acta notarial</FONT>.</P>]]></text-property>
+        </text>
+        <label id="113">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="114">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="textUnderline">none</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">center</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[FUNDAMENTOS DE DERECHO]]></text-property>
+        </text>
+        <label id="115">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="117">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">justify</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[<P>I.- <B>CAPACIDAD.-</B> Mi representada y el/los demandados tienen la capacidad necesaria para ser parte en este proceso conforme al artículo 6 y siguientes de la LEC, reuniendo los requisitos establecidos en el art. 538.1 de dicha Ley para ser parte en el presente proceso de ejecución.</P>
+<P>II.- <B>REPRESENTACIÓN.-</B> Esta parte ha justificado debidamente la  representación procesal necesaria para comparecer en juicio conforme los artículos 23, 31 y 539 de la LEC.</P>
+<P>III.- <B>COMPETENCIA.-</B> Es competente el Juzgado al que me dirijo a tenor de lo dispuesto en el art. 684 de la L.E.C. por ser el correspondiente al lugar donde radican las fincas hipotecadas.</P>
+<P>IV.- <B>LEGITIMACIÓN.-</B>  Conforme a los arts 1.876 del Código Civil y 104 de la Ley Hipotecaria, la hipoteca sujeta directa e inmediatamente los bienes sobre los que se impone, cualquiera que sea su poseedor, al cumplimiento de la obligación para cuya seguridad fue constituida. Mi representada está legitimada como titular del derecho de hipoteca.</P>
+<P>V.- <B>PROCEDIMIENTO.-</B> El art. 129 de la Ley Hipotecaria establece que la acción hipotecaria podrá ejercitarse directamente contra los bienes hipotecados sujetando su ejercicio a lo dispuesto en el Título IV del Libro III de la Ley de Enjuiciamiento Civil, con las especialidades que se establecen en su capítulo V, artículos 681 y siguientes.</P>
+<P>VI <B>FONDO DEL ASUNTO.-</B> En el presente escrito se enumeran los hechos y razones jurídicas determinantes de la certeza, subsistencia y exigibilidad del crédito.</P>
+<P>Conforme a lo preceptuado en el art. 682 de la L.E:C, en la escritura de constitución de hipoteca, se determina el precio en que los interesados tasan las fincas, para que sirvan de tipo en la subasta y consta un domicilio para la práctica de los requerimientos y notificaciones.</P>
+<P>Se ha cumplido lo prevenido en el art. 685 de la L:E:C:  al haberse acompañado a la demanda el título y demás documentos con los requisitos exigidos por la Ley.</P>
+<P>VII <B>COSTAS.-</B> Conforme a lo preceptuado en el art. 583.2 de la L.E.C., para el proceso de ejecución, serán a cargo del deudor todas las costas causadas aunque pague en el acto del requerimiento.</P>
+<P>Por lo expuesto,</P>
+<P>&amp;nbsp;<B>SUPLICO AL JUZGADO</B>, que teniendo por presentado este escrito con sus documentos adjuntos y copia de todo ello, se sirva admitirlo y tenerme por comparecido en nombre e interés de BANCO DE PRUEBAS, acordando la tramitación de este procedimiento por los trámites del art. 681 y siguientes de la L.E.C., contra las fincas hipotecadas descritas en la presente demanda, dictando auto por el que se despache ejecución, acordándose en el mismo:</P>
+<P>1º. Reclamar del Registrador certificación en la que conste la titularidad del dominio y demás derechos reales de las fincas hipotecadas y en la que se exprese asimismo que la hipoteca a favor de mi mandante se halla subsistente y sin cancelar.</P>
+<P>2º. Y con cumplimiento de los demás trámites legales, decretar la subasta de las fincas hipotecadas para, con el precio obtenido del remate, hacer pago a mi representada de la cantidad de <VALUE-OF>dto.getMontoPrincipal()</VALUE-OF>, más los intereses que al tipo moratorio pactado se devenguen y las costas y gastos que se ocasionen en la tramitación de este procedimiento.</P>
+<P>&amp;nbsp;<B>OTROSI DIGO</B>: Que habiendose llevado a cabo mediante acta notarial el requermiento previo en la forma prevista en el apartado 2º del artº 686 de la LEC,  esta representación considera que no debe practicarse judicialmente.</P>
+<P>&amp;nbsp;<B>SOLICITO AL TRIBUNAL</B>, que tenga por hechas las anteriores manifetaciones a los efectos oportunos.</P>]]></text-property>
+        </text>
+        <label id="120">
+            <property name="fontSize">14pt</property>
+            <property name="marginTop">0pt</property>
+        </label>
+        <text id="119">
+            <property name="fontFamily">"Arial"</property>
+            <property name="fontSize">11pt</property>
+            <property name="marginTop">0pt</property>
+            <property name="textAlign">left</property>
+            <property name="contentType">html</property>
+            <text-property name="content"><![CDATA[Es justicia que pido en , <VALUE-OF>dto.getFecha()</VALUE-OF>.]]></text-property>
+        </text>
+    </body>
+</report>

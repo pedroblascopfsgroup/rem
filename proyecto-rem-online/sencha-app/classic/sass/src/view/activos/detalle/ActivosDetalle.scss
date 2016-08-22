@@ -1,0 +1,92 @@
+.grid-no-seleccionable-primera-col {
+	background-color: #fff !important;
+	border-color: #fff;
+}
+
+.grid-no-seleccionable-primera-col .x-column-header-over {
+	background-color: #fff !important;
+}
+
+.grid-no-seleccionable-col {
+	background-color: #edf2f4 !important;
+	padding: 2px;
+	border-left: 2px solid #fff;
+	border-right: 2px solid #fff;
+}
+
+.grid-no-seleccionable-primera-col.x-column-header-focus .x-column-header-inner:after, 
+.grid-no-seleccionable-col.x-column-header-focus .x-column-header-inner:after {
+	border: none !important;
+}
+
+.grid-no-seleccionable-primera-col .x-grid-td, 
+.grid-no-seleccionable-col .x-grid-td{
+	border-left: 2px solid #fff;
+	border-right: 2px solid #fff;
+	padding: 2px;
+},
+
+.grid-no-seleccionable-field-editor {
+	margin-left: 10px;
+},
+
+.grid-no-seleccionable-td.x-grid-cell-selected,.grid-no-seleccionable-td.x-grid-cell-selected .x-grid-item-over {
+	background-color: #fff !important;
+	color: inherit !important;
+}
+
+.panel-base.grid-no-seleccionable .x-grid-row .x-grid-cell-selected,
+.panel-base.grid-no-seleccionable .x-grid-item-over,
+.panel-base.grid-no-seleccionable .x-grid-item-selected,
+.panel-base.grid-no-seleccionable .x-grid-item-selected .x-grid-item-focused{
+	background-color: #fff !important;
+	color: inherit !important;
+}
+
+
+
+.fieldset-precios-vigentes .grid-no-seleccionable-primera-col {
+	background-color: #f5f5f5 !important;
+	border-color: #f5f5f5;
+}
+
+.fieldset-precios-vigentes .grid-no-seleccionable-primera-col .x-column-header-over {
+	background-color: #f5f5f5 !important;
+}
+
+.fieldset-precios-vigentes .grid-no-seleccionable-col {
+	background-color: #fff !important;
+	padding: 2px;
+	border-left: 2px solid #f5f5f5;
+	border-right: 2px solid #f5f5f5;
+}
+
+.fieldset-precios-vigentes .grid-no-seleccionable-primera-col .x-grid-td, 
+.fieldset-precios-vigentes .grid-no-seleccionable-col .x-grid-td{
+	border-left: 2px solid #f5f5f5;
+	border-right: 2px solid #f5f5f5;
+	padding: 2px;
+},
+
+.grid-no-seleccionable-field-editor {
+	margin-left: 10px;
+},
+
+.fieldset-precios-vigentes .grid-no-seleccionable-td.x-grid-cell-selected,
+.fieldset-precios-vigentes .grid-no-seleccionable-td.x-grid-cell-selected .x-grid-item-over {
+	background-color: #f5f5f5 !important;
+	color: inherit !important;
+}
+
+.panel-base.grid-no-seleccionable .x-grid-row .x-grid-cell-selected,
+.panel-base.grid-no-seleccionable .x-grid-item-over,
+.panel-base.grid-no-seleccionable .x-grid-item-selected,
+.panel-base.grid-no-seleccionable .x-grid-item-selected .x-grid-item-focused{
+	background-color: #fff !important;
+	color: inherit !important;
+}
+
+
+.toolbar-detalle-btn {
+	background-color: #e7e5e8 !important;
+}

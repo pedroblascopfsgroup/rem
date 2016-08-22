@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="procedimiento" class="es.capgemini.pfs.asunto.model.Procedimiento" />
+    <var name="dtoRecDocProcedimiento" class="es.capgemini.pfs.asunto.dto.DtoRecopilacionDocProcedimiento" />
+
+    <input name="idProcedimiento" type="java.lang.Long" />
+
+    <view-state id="formulario" view="${view}" model="dtoRecDocProcedimiento">
+        <binder>
+            <binding property="procedimiento.id" />
+            <binding property="procedimiento.fechaRecopilacion" />
+            <binding property="procedimiento.observacionesRecopilacion" />
+        </binder>
+        <on-entry>
+            <evaluate expression="executor.execute('procedimientoManager.getProcedimiento',idProcedimiento)" result="flowScope.procedimiento" />        
+            <set name="dtoRecDocProcedimiento.procedimiento" value="procedimiento" />
+            <set name="flowScope.view" value="'procedimientos/recopilarDocProcedimiento.js'" />
+        </on-entry>
+        <on-render>
+            <set name="flowScope.view" value="'default'" />
+        </on-render>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="close" bind="false" />
+    </view-state>
+
+    <action-state id="update">
+        <evaluate expression="executor.execute('procedimientoManager.saveRecopilacionProcedimiento', dtoRecDocProcedimiento)" />
+        <transition to="close" />
+    </action-state>
+
+    <end-state id="close" view="default" />
+</flow>

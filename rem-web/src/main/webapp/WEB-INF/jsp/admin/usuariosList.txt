@@ -1,0 +1,246 @@
+{
+    "users": [{
+        "accountNonExpired": true,
+        "accountNonLocked": true,
+        "alta": {
+            "date": 11,
+            "day": 3,
+            "hours": 9,
+            "minutes"
+
+            : 35,
+            "month": 5,
+            "nanos": 0,
+            "seconds": 20,
+            "time": 1213169720000,
+            "timezoneOffset": -120,
+            "year": 108
+        },
+        "apellido1"
+
+        : "Administrador",
+        "apellido2": "",
+        "authorities": [{
+            "authority": "ROLE_ADMIN"
+        },
+        {
+            "authority": "ROLE_ANONYMOUS"
+
+        },
+        {
+            "authority": "ROLE_USER"
+        }],
+        "credentialsNonExpired": true,
+        "email": "admin@pfs.es",
+        "enabled": true,
+        "entidad"
+
+        : null,
+        "nombre": "Usario",
+        "password": "admin",
+        "username": "admin"
+    },
+    {
+        "accountNonExpired": true,
+        "accountNonLocked"
+
+        : true,
+        "alta": {
+            "date": 11,
+            "day": 3,
+            "hours": 0,
+            "minutes": 0,
+            "month": 5,
+            "nanos": 0,
+            "seconds": 0,
+            "time": 1213135200000
+
+            ,
+            "timezoneOffset": -120,
+            "year": 108
+        },
+        "apellido1": "",
+        "apellido2": "",
+        "authorities": [],
+        "credentialsNonExpired"
+
+        : true,
+        "email": "",
+        "enabled": false,
+        "entidad": null,
+        "nombre": "asdf",
+        "password": "",
+        "username": "sdfxxx"
+    },
+    {
+        "accountNonExpired"
+
+        : true,
+        "accountNonLocked": true,
+        "alta": {
+            "date": 11,
+            "day": 3,
+            "hours": 9,
+            "minutes": 35,
+            "month": 5,
+            "nanos": 0,
+            "seconds"
+
+            : 20,
+            "time": 1213169720000,
+            "timezoneOffset": -120,
+            "year": 108
+        },
+        "apellido1": "Ram?rez",
+        "apellido2": "",
+        "authorities"
+
+        : [{
+            "authority": "ROLE_ANONYMOUS"
+        },
+        {
+            "authority": "ROLE_USER"
+        }],
+        "credentialsNonExpired": true,
+        "email": "aramirez
+
+@bancaja.es",
+        "enabled": true,
+        "entidad": {
+            "descripcion": "Entidad 1",
+            "id": 1
+        },
+        "nombre": "Alberto",
+        "password"
+
+        : "user11",
+        "username": "user11"
+    },
+    {
+        "accountNonExpired": true,
+        "accountNonLocked": true,
+        "alta": {
+            "date": 11,
+            "day"
+
+            : 3,
+            "hours": 9,
+            "minutes": 35,
+            "month": 5,
+            "nanos": 0,
+            "seconds": 20,
+            "time": 1213169720000,
+            "timezoneOffset": -120
+
+            ,
+            "year": 108
+        },
+        "apellido1": "Rodr?guez",
+        "apellido2": "",
+        "authorities": [{
+            "authority": "ROLE_ANONYMOUS"
+        },
+        {
+            "authority"
+
+            : "ROLE_USER"
+        }],
+        "credentialsNonExpired": true,
+        "email": "arridriguez@bancaja.es",
+        "enabled": true,
+        "entidad"
+
+        : {
+            "descripcion": "Entidad 1",
+            "id": 1
+        },
+        "nombre": "Esteban",
+        "password": "user12",
+        "username": "user12"
+    },
+    {
+        "accountNonExpired"
+
+        : true,
+        "accountNonLocked": true,
+        "alta": {
+            "date": 11,
+            "day": 3,
+            "hours": 9,
+            "minutes": 35,
+            "month": 5,
+            "nanos": 0,
+            "seconds"
+
+            : 20,
+            "time": 1213169720000,
+            "timezoneOffset": -120,
+            "year": 108
+        },
+        "apellido1": "Mart?nez",
+        "apellido2": "Torrijo"
+
+        ,
+        "authorities": [{
+            "authority": "ROLE_ANONYMOUS"
+        },
+        {
+            "authority": "ROLE_USER"
+        }],
+        "credentialsNonExpired": true
+
+        ,
+        "email": "amartinez@caixa.es",
+        "enabled": true,
+        "entidad": {
+            "descripcion": "Entidad 2",
+            "id": 2
+        },
+        "nombre": "Roberto"
+
+        ,
+        "password": "user21",
+        "username": "user21"
+    },
+    {
+        "accountNonExpired": true,
+        "accountNonLocked": true,
+        "alta": {
+            "date"
+
+            : 11,
+            "day": 3,
+            "hours": 0,
+            "minutes": 0,
+            "month": 5,
+            "nanos": 0,
+            "seconds": 0,
+            "time": 1213135200000,
+            "timezoneOffset"
+
+            : -120,
+            "year": 108
+        },
+        "apellido1": "",
+        "apellido2": "",
+        "authorities": [],
+        "credentialsNonExpired": true,
+        "email"
+
+        : "",
+        "enabled": false,
+        "entidad": null,
+        "nombre": "xcvxc",
+        "password": "xcv",
+        "username": "xcvxc"
+    }],
+    "events": {
+        "stats"
+
+        : ["op:usuarioManager.saveOrUpdate 1213177884618", "op:usuarioManager.findByUsername 1213177884836"]
+    },
+    "flowExecutionKey"
+
+    : "e8s1",
+    "success": true
+}

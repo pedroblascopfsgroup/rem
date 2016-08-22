@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idExpediente" type="java.lang.Long" required="false"/>	
+	<input name="idTarea" type="java.lang.Long" required="false"/>
+	
+		
+    <end-state id="tarea" view="expedientes/decisionSolicitudCancelacion">
+		<on-entry>
+			<evaluate expression="requestParameters.espera" result="flowScope.espera" />
+			<evaluate expression="executor.execute('expedienteManager.buscarSolCancPorTarea', idTarea)" result="flowScope.solicitud"/>
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"/>
+		</on-entry>
+    </end-state> 	
+    
+</flow>

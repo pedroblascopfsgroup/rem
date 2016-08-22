@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+
+    <var name="dto" class="es.capgemini.pfs.politica.dto.DtoGestionesRealizadas" />
+
+    <input name="id" type="java.lang.Long" />
+
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaById', id)" result="flowScope.analisisPolitica" />
+		<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="politica/editGestionesRealizadas">
+        <on-entry>
+        	<set name="flowScope.readOnly" value="false" />
+        </on-entry>
+        <transition on="update" to="update" />
+        <transition on="cancel" to="cancel" bind="false" />
+    </view-state>
+
+	<end-state id="update" view="default">
+		<on-entry>
+			<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarGestionesRealizadas', dto)" />
+		</on-entry>
+	</end-state>
+
+	<end-state id="cancel" view="default" />
+
+</flow>

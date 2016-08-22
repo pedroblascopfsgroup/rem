@@ -1,0 +1,415 @@
+package es.pfsgroup.plugin.rem.model;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Version;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
+
+import es.capgemini.pfs.auditoria.Auditable;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
+
+
+/**
+ * Modelo que gestiona la informacion de un cliente comercial
+ *  
+ * @author Jose Villel
+ *
+ */
+@Entity
+@Table(name = "CLC_CLIENTE_COMERCIAL", schema = "${entity.schema}")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
+@Inheritance(strategy=InheritanceType.JOINED)
+public class ClienteComercial implements Serializable, Auditable {
+	
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+		
+	@Id
+    @Column(name = "CLC_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ClienteComercialGenerator")
+    @SequenceGenerator(name = "ClienteComercialGenerator", sequenceName = "S_CLC_CLIENTE_COMERCIAL")
+    private Long id;
+	
+    @Column(name = "CLC_WEBCOM_ID")
+    private Long idClienteWebcom;
+    
+    @Column(name = "CLC_REM_ID")
+    private Long idClienteRem;
+    
+    @Column(name = "CLC_RAZON_SOCIAL")
+    private String razonSocial;
+    
+    @Column(name = "CLC_NOMBRE")
+    private String nombre;
+    
+    @Column(name = "CLC_APELLIDOS")
+    private String apellidos;
+    
+    @Column(name = "CLC_FECHA_ACCION")
+    private Date fechaAccion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USU_ID")
+    private Usuario usuarioAccion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID")
+	private DDTipoDocumento tipoDocumento;
+    
+    @Column(name = "CLC_DOCUMENTO")
+    private String documento;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_REPRESENTANTE	")
+	private DDTipoDocumento tipoDocumentoRepresentante;
+    
+    @Column(name = "CLC_DOCUMENTO_REPRESENTANTE")
+    private String documentoRepresentante;
+    
+    @Column(name = "CLC_TELEFONO1")
+    private String telefono1;
+    
+    @Column(name = "CLC_TELEFONO2")
+    private String telefono2;
+    
+    @Column(name = "CLC_EMAIL")
+    private String email;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPC_ID")
+	private DDTiposColaborador tipoColaborador;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
+	private ActivoProveedor provPrescriptor;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_RESPONSABLE")
+	private ActivoProveedor provApiResponsable;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TVI_ID")
+	private DDTipoVia tipoVia;
+    
+    @Column(name = "CLC_DIRECCION")
+    private String direccion;
+    
+    @Column(name = "CLC_NUMEROCALLE")
+    private String numeroCalle;
+    
+    @Column(name = "CLC_ESCALERA")
+    private String escalera;
+    
+    @Column(name = "CLC_PLANTA")
+    private String planta;
+    
+    @Column(name = "CLC_PUERTA")
+    private String puerta;
+    
+    @Column(name = "CLC_CODIGO_POSTAL")
+    private String codigoPostal;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_PRV_ID")
+    private DDProvincia provincia;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_LOC_ID")
+    private Localidad municipio;
+      
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_UPO_ID")
+	private DDUnidadPoblacional unidadPoblacional;
+    
+    @Column(name = "CLC_OBSERVACIONES")
+    private String observaciones;
+   
+	@Version   
+	private Long version;
+
+	@Embedded
+	private Auditoria auditoria;
+    
+
+	
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getIdClienteWebcom() {
+		return idClienteWebcom;
+	}
+
+	public void setIdClienteWebcom(Long idClienteWebcom) {
+		this.idClienteWebcom = idClienteWebcom;
+	}
+
+	public Long getIdClienteRem() {
+		return idClienteRem;
+	}
+
+	public void setIdClienteRem(Long idClienteRem) {
+		this.idClienteRem = idClienteRem;
+	}
+
+	public String getRazonSocial() {
+		return razonSocial;
+	}
+
+	public void setRazonSocial(String razonSocial) {
+		this.razonSocial = razonSocial;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+
+	public Date getFechaAccion() {
+		return fechaAccion;
+	}
+
+	public void setFechaAccion(Date fechaAccion) {
+		this.fechaAccion = fechaAccion;
+	}
+
+	public Usuario getUsuarioAccion() {
+		return usuarioAccion;
+	}
+
+	public void setUsuarioAccion(Usuario usuarioAccion) {
+		this.usuarioAccion = usuarioAccion;
+	}
+
+	public DDTipoDocumento getTipoDocumento() {
+		return tipoDocumento;
+	}
+
+	public void setTipoDocumento(DDTipoDocumento tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+
+	public String getDocumento() {
+		return documento;
+	}
+
+	public void setDocumento(String documento) {
+		this.documento = documento;
+	}
+
+	public DDTipoDocumento getTipoDocumentoRepresentante() {
+		return tipoDocumentoRepresentante;
+	}
+
+	public void setTipoDocumentoRepresentante(
+			DDTipoDocumento tipoDocumentoRepresentante) {
+		this.tipoDocumentoRepresentante = tipoDocumentoRepresentante;
+	}
+
+	public String getDocumentoRepresentante() {
+		return documentoRepresentante;
+	}
+
+	public void setDocumentoRepresentante(String documentoRepresentante) {
+		this.documentoRepresentante = documentoRepresentante;
+	}
+
+	public String getTelefono1() {
+		return telefono1;
+	}
+
+	public void setTelefono1(String telefono1) {
+		this.telefono1 = telefono1;
+	}
+
+	public String getTelefono2() {
+		return telefono2;
+	}
+
+	public void setTelefono2(String telefono2) {
+		this.telefono2 = telefono2;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public DDTiposColaborador getTipoColaborador() {
+		return tipoColaborador;
+	}
+
+	public void setTipoColaborador(DDTiposColaborador tipoColaborador) {
+		this.tipoColaborador = tipoColaborador;
+	}
+
+	public ActivoProveedor getProvPrescriptor() {
+		return provPrescriptor;
+	}
+
+	public void setProvPrescriptor(ActivoProveedor provPrescriptor) {
+		this.provPrescriptor = provPrescriptor;
+	}
+
+	public ActivoProveedor getProvApiResponsable() {
+		return provApiResponsable;
+	}
+
+	public void setProvApiResponsable(ActivoProveedor provApiResponsable) {
+		this.provApiResponsable = provApiResponsable;
+	}
+
+	public DDTipoVia getTipoVia() {
+		return tipoVia;
+	}
+
+	public void setTipoVia(DDTipoVia tipoVia) {
+		this.tipoVia = tipoVia;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public String getNumeroCalle() {
+		return numeroCalle;
+	}
+
+	public void setNumeroCalle(String numeroCalle) {
+		this.numeroCalle = numeroCalle;
+	}
+
+	public String getEscalera() {
+		return escalera;
+	}
+
+	public void setEscalera(String escalera) {
+		this.escalera = escalera;
+	}
+
+	public String getPlanta() {
+		return planta;
+	}
+
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+
+	public String getPuerta() {
+		return puerta;
+	}
+
+	public void setPuerta(String puerta) {
+		this.puerta = puerta;
+	}
+	
+	public String getCodigoPostal() {
+		return codigoPostal;
+	}
+
+	public void setCodigoPostal(String codigoPostal) {
+		this.codigoPostal = codigoPostal;
+	}
+
+	public DDProvincia getProvincia() {
+		return provincia;
+	}
+
+	public void setProvincia(DDProvincia provincia) {
+		this.provincia = provincia;
+	}
+	
+	public Localidad getMunicipio() {
+		return municipio;
+	}
+
+	public void setMunicipio(Localidad municipio) {
+		this.municipio = municipio;
+	}
+
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
+
+   
+}

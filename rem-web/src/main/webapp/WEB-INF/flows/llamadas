@@ -1,0 +1,1290 @@
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\login.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\testEntityDatasources.xml
+            <evaluate expression="executor.execute('getConfigByDTO', configListDTO)" result="flowScope.config"/>
+            <evaluate expression="executor.execute('getConfigByDTO', configListDTO)" result="flowScope.config"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\aceptarAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.aceptarAcuerdo',idAcuerdo)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\acuerdosAsunto.xml
+	    	<evaluate expression="executor.execute('acuerdoManager.getAcuerdosDelAsunto',id)" result="flowScope.acuerdos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\altaAcuerdo.xml
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asunto"/>
+    		<evaluate expression="executor.execute('asuntosManager.esGestor',idAsunto)" result="flowScope.esGestor"/>
+    		<evaluate expression="executor.execute('asuntosManager.esSupervisor',idAsunto)" result="flowScope.esSupervisor"/>
+			<evaluate expression="executor.execute('acuerdoManager.getTipoAcuerdoList')" result="flowScope.tiposAcuerdo"/>
+			<evaluate expression="executor.execute('acuerdoManager.getSolicitanteList')" result="flowScope.solicitantes"/>
+			<evaluate expression="executor.execute('acuerdoManager.getEstadoAcuerdoList')" result="flowScope.estados"/>	
+			<evaluate expression="executor.execute('acuerdoManager.getTipoPagoAcuerdoList')" result="flowScope.tiposPago"/>
+			<evaluate expression="executor.execute('acuerdoManager.getPeriodicidadAcuerdoList')" result="flowScope.periodicidad"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\cancelarAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.cancelarAcuerdo',idAcuerdo)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\consultaAcuerdo.xml
+            <evaluate expression="executor.execute('acuerdoManager.getAcuerdoById',idAcuerdo)" result="flowScope.acuerdo" />
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asunto"/>
+    		<evaluate expression="executor.execute('asuntosManager.esGestor',idAsunto)" result="flowScope.esGestor"/>
+    		<evaluate expression="executor.execute('asuntosManager.esSupervisor',idAsunto)" result="flowScope.esSupervisor"/>
+			<evaluate expression="executor.execute('acuerdoManager.getTipoAcuerdoList')" result="flowScope.tiposAcuerdo"/>
+			<evaluate expression="executor.execute('acuerdoManager.getSolicitanteList')" result="flowScope.solicitantes"/>
+			<evaluate expression="executor.execute('acuerdoManager.getEstadoAcuerdoList')" result="flowScope.estados"/>	
+			<evaluate expression="executor.execute('acuerdoManager.getTipoPagoAcuerdoList')" result="flowScope.tiposPago"/>
+			<evaluate expression="executor.execute('acuerdoManager.getPeriodicidadAcuerdoList')" result="flowScope.periodicidad"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\detalleAcuerdo.xml
+	    	<evaluate expression="executor.execute('acuerdoManager.getActuacionesAExplorarAcuerdo',id)" result="flowScope.actuacionesAExplorar" />
+	    	<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById',id)" result="flowScope.acuerdo" />
+	    	<evaluate expression="executor.execute('acuerdoManager.puedeEditar',id)" result="flowScope.puedeEditar" />
+	    	<evaluate expression="executor.execute('asuntosManager.esGestor',idAsunto)" result="flowScope.esGestor"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\editaAnalisisAcuerdo.xml
+    		<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById',idAcuerdo)" result="flowScope.acuerdo" />
+    		<evaluate expression="executor.execute('acuerdoManager.getCambioSolvenciaAcuerdoList')" result="flowScope.cambio" />
+    		<evaluate expression="executor.execute('acuerdoManager.getAnalisisCapacidadPagoList')" result="flowScope.capacidad" />
+    		<evaluate expression="executor.execute('acuerdoManager.getConclusionTituloAcuerdoList')" result="flowScope.conclusion" />		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\editActuacionesAExplorarAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.getActuacionesAExplorarAcuerdoById', idActuacion)" result="flowScope.actuaciones" />
+            <evaluate expression="executor.execute('acuerdoManager.getSubtipoSolucionAmistosaAcuerdoByCodigo', codSubtipoSolucion)" result="flashScope.subtipoSolucionAmistosa" />
+            <evaluate expression="executor.execute('acuerdoManager.getValoracionActuacionAmistosaList')" result="flashScope.tiposValoracionActuacionAmistosa" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\editActuacionesRealizadasAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.getActuacionAcuerdo', idActuacion)" result="flowScope.actuacion" />
+			<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById', idAcuerdo)" result="flowScope.acuerdo" />
+            <evaluate expression="executor.execute('acuerdoManager.getTipoActuacionAcuerdoList')" result="flashScope.tiposAA" />
+            <evaluate expression="executor.execute('acuerdoManager.getResultadoAcuerdoActuacionList')" result="flashScope.tiposResultados" />
+            <evaluate expression="executor.execute('tipoAyudaAcuerdoManager.getList')" result="flashScope.tiposAAA" />
+    	<evaluate expression="executor.execute('acuerdoManager.saveActuacionesRealizadasAcuerdo', dtoActuacion)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\editarAcuerdo.xml
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asunto"/>
+    		<evaluate expression="executor.execute('asuntosManager.esGestor',idAsunto)" result="flowScope.esGestor"/>
+    		<evaluate expression="executor.execute('asuntosManager.esSupervisor',idAsunto)" result="flowScope.esSupervisor"/>
+			<evaluate expression="executor.execute('acuerdoManager.getTipoAcuerdoList')" result="flowScope.tiposAcuerdo"/>
+			<evaluate expression="executor.execute('acuerdoManager.getSolicitanteList')" result="flowScope.solicitantes"/>
+			<evaluate expression="executor.execute('acuerdoManager.getEstadoAcuerdoList')" result="flowScope.estados"/>	
+			<evaluate expression="executor.execute('acuerdoManager.getTipoPagoAcuerdoList')" result="flowScope.tiposPago"/>
+			<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById', idAcuerdo)" result="flowScope.acuerdo"/>
+			<evaluate expression="executor.execute('acuerdoManager.getPeriodicidadAcuerdoList')" result="flowScope.periodicidad"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\finalizarAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.finalizarAcuerdo',idAcuerdo)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\guardarAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.guardarAcuerdo', dto)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\guardarAnalisisAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.guardarAnalisisAcuerdo', dto)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\guardarGestionyAnalisisRevision.xml
+			<evaluate expression="executor.execute('expedienteManager.guardarGestionyAnalisisRevision', dto)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\proponerAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.proponerAcuerdo',idAcuerdo)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\rechazarAcuerdo.xml
+			<evaluate expression="executor.execute('acuerdoManager.rechazarAcuerdo',idAcuerdo)"/>		
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\acuerdos\saveActuacionAExplorar.xml
+			<evaluate expression="executor.execute('acuerdoManager.saveActuacionAExplorarAcuerdo', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\borrarUsuario.xml
+			<evaluate expression="executor.execute('usuarioManager.delete', id)"  />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\borrarUsuario2.xml
+			<evaluate expression="executor.execute('usuarioManager.delete', id)"  />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\deleteUsuario.xml
+	    	<evaluate expression="executor.execute('usuarioManager.delete', id)"  />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\editarUsuarios.xml
+			<evaluate expression="executor.execute('usuarioManager.findUsersPage', formListadoUsuarios)" result="flowScope.pagina"/>
+    	<evaluate expression="executor.execute('usuarioManager.updateList',formListadoUsuarios.usuarios)"></evaluate>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\editUsuario.xml
+			<evaluate expression="executor.execute('usuarioManager.get', id)" result="flowScope.usuario"/>
+		<evaluate expression="executor.execute('usuarioManager.saveOrUpdate', altaUsuario.usuario)"  />
+			<evaluate expression="executor.execute('usuarioManager.saveOrUpdate', altaUsuario.usuario)"  />
+		<evaluate expression="executor.execute('usuarioManager.deleteUsuario', usuario)"  />
+   		<evaluate expression="executor.execute('usuarioManager.deleteUsuario', usuario)"  />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\jsonUsers.xml
+			<evaluate expression="executor.execute('usuarioManager.findByUsername', requestParameters.filtro)" result="flashScope.users"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\listadoUsuarios.xml
+			<evaluate expression="executor.execute('usuarioManager.findUsersPage', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\nuevoUsuario.xml
+    		<evaluate expression="executor.execute('usuarioManager.saveOrUpdate', usuario)"  />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\usuariosData.xml
+			<evaluate expression="executor.execute('usuarioManager.findUsersPage', beanBuscarUsuarios, flowRequestContext)" result="flowScope.pagina">
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\admin\usuariosList.xml
+			<evaluate expression="executor.execute('usuarioManager.findByUsername', requestParameters.filtro)" result="flashScope.usuarios"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\analisis\buscarSubfases.xml
+	    	<evaluate expression="executor.execute('faseManager.getSubfases',codigo)" result="flowScope.subfases" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\analisis\busquedaMapaGlobal.xml
+	    	<evaluate expression="executor.execute('mapaGlobalOficinaManager.getCriteriosAnalisis')" result="flowScope.criteriosAnalisis" />
+	    	<evaluate expression="executor.execute('segmentoManager.getSegmentos')" result="flowScope.segmentos" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+            <evaluate expression="executor.execute('contratoManager.getTiposDeContratos')" result="flowScope.tiposContratos" />
+            <evaluate expression="executor.execute('faseManager.getFases')" result="flowScope.fases" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\analisis\exportAnalisisData.xml
+		  	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+			<evaluate expression="executor.execute('segmentoManager.getSegmentosByCodigos', dto.codigoSegmentos)" result="flowScope.segmentos" />
+			<evaluate expression="executor.execute('tipoProductoManager.getTiposProductoByCodigos', dto.tiposContratos)" result="flowScope.tiposContratos" />
+			<evaluate expression="executor.execute('faseManager.getFaseByCodigoOrEmptyObj', dto.codigoFase)" result="flowScope.fase" />
+			<evaluate expression="executor.execute('faseManager.getSubfasesByCodigos', dto.codigoSubfases)" result="flowScope.subfases" />
+			<evaluate expression="executor.execute('zonaManager.getNivelByIdOrEmptyObj', dto.jerarquia)" result="flowScope.jerarquia" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.findDDCriterioAnalisisByCodigo', dto.criterioSalida)" result="flowScope.criterioSalida" />
+			<evaluate expression="executor.execute('zonaManager.getNivelByIdOrEmptyObj', dto.criterioSalidaJerarquico)" result="flowScope.criterioSalidaJ" />
+			<evaluate expression="executor.execute('zonaManager.findZonasBycodigo', dto.codigoZonas)" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('configManager.getConfigByKey', 'entidadDescripcion')" result="flowScope.entidadDescripcion" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.exportarABirt', dto)" result="flowScope.dtoExportRows" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.contarRegistrosPorFase', dto, dtoExportRows)" result="flowScope.dtoExportRowsCount" />
+			<evaluate expression="executor.execute('mapaGlobalOficinaManager.exportarACsv', dto)" result="flowScope.fileItem" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\analisis\listadoMapaGlobal.xml
+            <evaluate expression="executor.execute('mapaGlobalOficinaManager.buscar', dto)" result="flowScope.resultados" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\aceptarAsunto.xml
+		<evaluate expression="executor.execute('asuntosManager.guardarFichaAceptacion',dtoFicha)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\altaAsuntos.xml
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+		<evaluate expression="executor.execute('asuntosManager.crearAsunto',dtoAsunto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\altaPreasuntos.xml
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+		<evaluate expression="executor.execute('asuntosManager.crearPreasunto',dtoAsunto, idAsuntoOrigen)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\bajarAdjuntoAsunto.xml
+			<evaluate expression="executor.execute('asuntosManager.bajarAdjunto', asuntoId, id)" result="flowScope.fileItem"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\borraAsunto.xml
+		<evaluate expression="executor.execute('asuntosManager.borrarAsunto',idAsunto)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\borraCobroPago.xml
+		<evaluate expression="executor.execute('cobroPagoManager.delete',id)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\borrarAdjunto.xml
+			<evaluate expression="executor.execute('asuntosManager.deleteAdjunto', asuntoId, id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\buscarGestores.xml
+	    	<evaluate expression="executor.execute('despachoExternoManager.getGestoresDespacho',id)" result="flowScope.gestores" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\buscarSubtipoCobroPago.xml
+	    	<evaluate expression="executor.execute('cobroPagoManager.getSubtiposCobroPagoByTipo',tipo)" result="flowScope.subtipos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\buscarSupervisores.xml
+            <evaluate expression="executor.execute('despachoExternoManager.getAllSupervisores')" result="flowScope.supervisores" />
+              <evaluate expression="executor.execute('despachoExternoManager.getSupervisoresDespacho',id)" result="flowScope.supervisores" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\buscarSupervisoresDespachos.xml
+            <evaluate expression="executor.execute('despachoExternoManager.getSupervisoresDespacho',id)" result="flowScope.supervisores" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\cambioGestorAsunto.xml
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asuntoEditar"></evaluate>
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+        <evaluate expression="executor.execute('asuntosManager.cambiarGestorAsunto',dtoAsunto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\cerrarSesionAsunto.xml
+			<evaluate expression="executor.execute('asuntosManager.tomarDecisionComite', idAsunto, observaciones)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\cobroPago.xml
+		<evaluate expression="executor.execute('cobroPagoManager.get', id)" result="flowScope.cobroPago"/>
+		<evaluate expression="executor.execute('cobroPagoManager.getInstance',idAsunto)"
+		<evaluate expression="executor.execute('dictionaryManager.get','DDEstadoCobroPago')" result="flowScope.estado"/>
+		<evaluate expression="executor.execute('cobroPagoManager.getProcedimientosPorAsunto',idAsunto)" result="flowScope.procedimientos"/>
+		<!-- <evaluate expression="executor.execute('dictionaryManager.get','DDSubtipoCobroPago')" result="flowScope.subTipo"/> -->
+		<evaluate expression="executor.execute('dictionaryManager.get','DDTipoCobroPago')" result="flowScope.tipo"/>
+		<evaluate expression="executor.execute('cobroPagoManager.createOrUpdate',dtoCobroPago)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\consultaAdjuntos.xml
+   			<evaluate expression="executor.execute('asuntosManager.get', id)" result="flowScope.entity" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\consultaAdjuntosContratos.xml
+   			<evaluate expression="executor.execute('asuntosManager.getContratosQueTienenAdjuntos', id)" result="flowScope.entities" />
+   			<evaluate expression="executor.execute('asuntosManager.get', id)" result="flowScope.asunto" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\consultaAdjuntosExpedientes.xml
+   			<evaluate expression="executor.execute('asuntosManager.getExpedienteSiTieneAdjuntos', id)" result="flowScope.entities" />
+   			<evaluate expression="executor.execute('asuntosManager.getExpedienteAsList', id)" result="flowScope.entities" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\consultaAdjuntosPersonas.xml
+   			<evaluate expression="executor.execute('asuntosManager.obtenerPersonasDeUnAsunto', id)" result="flowScope.entities" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\consultaAsunto.xml
+	    	<evaluate expression="executor.execute('asuntosManager.get',id)" result="flowScope.asunto" />
+	    	<evaluate expression="executor.execute('asuntosManager.puedoDevolverAsunto',id)" result="flowScope.puedoDevolver" />
+	    	<evaluate expression="executor.execute('asuntosManager.puedeTomarAccionAsunto',id)" result="flowScope.puedeTomarAccion" />
+	    	<evaluate expression="executor.execute('asuntosManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
+	    	<evaluate expression="executor.execute('asuntosManager.puedeVerDecisionComite',id)" result="flowScope.puedeVerDecisionComite" />
+	    	<evaluate expression="executor.execute('asuntosManager.esGestor',id)" result="flowScope.esGestor" />
+	    	<evaluate expression="executor.execute('asuntosManager.esSupervisor',id)" result="flowScope.esSupervisor" />
+	    	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\devolverAsunto.xml
+		<evaluate expression="executor.execute('asuntosManager.guardarFichaAceptacion',dtoFicha)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\editaAsuntos.xml
+    		<evaluate expression="executor.execute('asuntosManager.get',idAsunto)" result="flowScope.asuntoEditar"></evaluate>
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+        <evaluate expression="executor.execute('asuntosManager.modificarAsunto',dtoAsunto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\editaProcedimientoAsunto.xml
+	    	<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnAsunto',idAsuntoOrigen)" result="flowScope.asuntos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+            <evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', idExpediente)" result="flowScope.contratos" />
+          <evaluate expression="executor.execute('asuntosManager.findExpedienteContratosPorId', idAsuntoOrigen)" result="flowScope.contratos" />
+	    	<evaluate expression="executor.execute('contratoManager.get',idContrato)" result="flowScope.contrato" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getPersonasAsociadasAContratoProcedimiento', idContrato,idProcedimiento)" result="flowScope.personas"/>
+		<evaluate expression="executor.execute('procedimientoManager.salvarProcedimiento',dto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\editarFichaAceptacionAsunto.xml
+    		<evaluate expression="executor.execute('asuntosManager.get',id)" result="flowScope.asunto" />
+		<evaluate expression="executor.execute('asuntosManager.guardarFichaAceptacion',dtoFicha)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\elevarComiteAsunto.xml
+		<evaluate expression="executor.execute('asuntosManager.guardarFichaAceptacion',dtoFicha)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\exportAsuntos.xml
+         <evaluate expression="executor.execute('asuntosManager.findAsuntosPaginated', dto)" result="flowScope.asuntos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\historiaAceptacion.xml
+		<evaluate expression="executor.execute('asuntosManager.get', idAsunto)" result="flowScope.asunto" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\listadoActuacionesAsunto.xml
+		<evaluate expression="executor.execute('asuntosManager.obtenerActuacionesAsunto',id)" result="flowScope.listado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\listadoAsuntosAsuntoData.xml
+			<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnAsunto',id)" result="flowScope.asuntos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\listadoAsuntosData.xml
+			<evaluate expression="executor.execute('asuntosManager.findAsuntosPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\listadoBusquedaAsuntos.xml
+            <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('asuntosManager.getEstadosAsuntos')" result="flowScope.estados" />
+			<evaluate expression="executor.execute('procedimientoManager.getEstadosProcedimientos')" result="flowScope.estadosAnalisis" />
+			<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\listadoCobroPago.xml
+		<evaluate expression="executor.execute('cobroPagoManager.getListbyAsuntoId',id)" result="flowScope.listado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\listadoContratosActuacionesAsuntosData.xml
+         <evaluate expression="executor.execute('asuntosManager.findExpedienteContratosPorId', idAsunto)" result="flowScope.contratosActuaciones" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\procedimientosAsunto.xml
+			<evaluate expression="executor.execute('asuntosManager.obtenerContratosDeUnAsuntoYSusHijos', id)" result="flowScope.contratos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\tabTitulosAsuntos.xml
+   			<evaluate expression="executor.execute('asuntosManager.findContratosTitulos', id)" result="flowScope.contratos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\asuntos\uploadAdjuntoAsuntos.xml
+            <evaluate expression="executor.execute('fileUpload.fileUpload', externalContext)" result="flowScope.uploadForm"/>
+            <evaluate expression="executor.execute('asuntosManager.upload', uploadForm)" result="flowScope.resultado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\buscarDatosAcuerdo.xml
+	    	<evaluate expression="executor.execute('acuerdoManager.getAcuerdoById',id)" result="flowScope.datos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\buscarDatosProrroga.xml
+	    	<evaluate expression="executor.execute('prorrogaManager.get',id)" result="flowScope.datos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\buscarDatosRecurso.xml
+	    	<evaluate expression="executor.execute('recursoManager.get',id)" result="flowScope.datos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\buscarDatosTarea.xml
+	    	<evaluate expression="executor.execute('tareaNotificacionManager.get',id)" result="flowScope.datos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\buscarJuzgados.xml
+	    	<evaluate expression="executor.execute('juzgadosManager.getJuzgadosByPlaza',id)" result="flowScope.juzgados" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\creaBpm.xml
+			<evaluate expression="executor.execute('testBPMManager.creaBPM',idProcedimiento)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\infoBpm.xml
+			<evaluate expression="executor.execute('testBPMManager.getToken',tokenId)" result="flowScope.token"/>
+			<evaluate expression="executor.execute('testBPMManager.getTareaExterna',tokenId)" result="flowScope.tareaExterna"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\bpm\signalBpm.xml
+			<evaluate expression="executor.execute('testBPMManager.signal',tokenId,transitionName)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\antecedenteExternoData.xml
+			<evaluate expression="executor.execute('antecedenteExternoManager.getAntecedenteExternoPersona',id)" result="flowScope.externo"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\antecedenteObservacionData.xml
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', id)" result="flowScope.antecedente" />        
+			<evaluate expression="executor.execute('antecedenteManager.findByPersonaId',id)" result="flowScope.antecedenteObservacion"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\antecedentes.xml
+            <evaluate expression="executor.execute('personaManager.crearAntecedenteBase', idPersona)" result="flowScope.dummy" />
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', idPersona)" result="flowScope.antecedente" />        
+        <evaluate expression="executor.execute('antecedenteManager.saveOrUpdate', dtoAntecedente)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\antecedentesExternos.xml
+            <evaluate expression="executor.execute('personaManager.crearAntecedenteBase', idPersona)" result="flowScope.dummy" />
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', idPersona)" result="flowScope.antecedente" />
+        <evaluate expression="executor.execute('antecedenteExternoManager.update', dtoAntecedenteExterno)" />
+        <evaluate expression="executor.execute('antecedenteExternoManager.save', dtoAntecedenteExterno, antecedente)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\asuntosData.xml
+			<evaluate expression="executor.execute('clienteManager.findClientes', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\bajarAdjuntoPersona.xml
+			<evaluate expression="executor.execute('personaManager.downloadAdjunto', id)" result="flowScope.fileItem" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\bienes.xml
+			<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<evaluate expression="executor.execute('bienManager.getTipoBienList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\bienesData.xml
+			<evaluate expression="executor.execute('personaManager.getBienes',id)" result="flowScope.bienes"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\borrarAdjuntoPersona.xml
+			<evaluate expression="executor.execute('personaManager.deleteAdjunto', personaId, id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\borrarBien.xml
+			<evaluate expression="executor.execute('bienManager.delete', id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\borrarIngreso.xml
+			<evaluate expression="executor.execute('ingresoManager.deleteIngreso', id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\buscarFechasCirbe.xml
+	    	<evaluate expression="executor.execute('cirbeManager.getFechasExtraccionPersona',idPersona, fecha1, fecha2, fecha3)" result="flowScope.result" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\buscarFechasDesde.xml
+	    	<evaluate expression="executor.execute('cirbeManager.getFechasExtraccionPersona',idPersona)" result="flowScope.result" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\buscarFechasHasta.xml
+	    	<evaluate expression="executor.execute('cirbeManager.getFechasExtraccionPersonaDesde',idPersona,fecha)" result="flowScope.result" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\buscarZonas.xml
+	    	<evaluate expression="executor.execute('zonaManager.getZonasPorNivel',id)" result="flowScope.zonas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\consultaAdjuntosPersona.xml
+   			<evaluate expression="executor.execute('personaManager.get', id)" result="flowScope.entity" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\consultaBienes.xml
+			<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\consultaCliente.xml
+            <evaluate expression="executor.execute('personaManager.getIdByCodigo', codigo)" result="flowScope.id" />
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPolitica', id)" result="flowScope.analisisPolitica" />
+            <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+            <evaluate expression="executor.execute('personaManager.get', id)" result="flowScope.persona" />
+            <evaluate expression="executor.execute('antecedenteManager.findByPersonaId', id)" result="flowScope.antecedente" />
+            <evaluate expression="executor.execute('expedienteManager.obtenerExpedientesDeUnaPersona', id)" result="flowScope.expedientes" />
+            <evaluate expression="executor.execute('expedienteManager.obtenerExpedientesDeUnaPersonaNoCancelados', id)" result="flowScope.expedientesNoCancelados" />
+            <evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnaPersona', id)" result="flowScope.asuntos" />
+            <evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesCliente',id)" result="flowScope.tareaPendiente" />
+            <evaluate expression="executor.execute('personaManager.obtenerExpedientePropuestoPersona', id)" result="flowScope.expedientePropuesto" />
+            <evaluate expression="executor.execute('telecobroManager.getSubtipoTareaTelecobro', id)" result="flowScope.subtipoTareaTelecobro" />
+            <evaluate expression="executor.execute('cirbeManager.getFechaCirbe', id, flowScope.hoy)" result="flowScope.fechaCirbeActual" />
+            <evaluate expression="executor.execute('cirbeManager.getFechaCirbe', id, flowScope.unMes)" result="flowScope.fechaCirbe30Dias" />
+            <evaluate expression="executor.execute('cirbeManager.getFechaCirbe', id, flowScope.dosMeses)" result="flowScope.fechaCirbe60Dias" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\consultaDecisionTelecobro.xml
+            <evaluate expression="executor.execute('clienteManager.get', idEntidad)" result="flowScope.cliente" />                      
+            <evaluate expression="executor.execute('tareaNotificacionManager.get', idTarea)" result="flowScope.respuesta" />
+            <evaluate expression="executor.execute('tareaNotificacionManager.finalizarNotificacion', idTarea)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\contratosDeUnCliente.xml
+			<evaluate expression="executor.execute('contratoManager.buscarContratosCliente', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\decisionTelecobro.xml
+            <evaluate expression="executor.execute('clienteManager.get', idEntidad)" result="flowScope.cliente" />
+            <evaluate expression="executor.execute('telecobroManager.getTareaTelecobroDecision', idEntidad)" result="flowScope.tarea" />
+            <evaluate expression="executor.execute('telecobroManager.aceptarSolicitudExclusionTelecobro', dtoTelecobro)" result="flowScope.dummy" />
+            <evaluate expression="executor.execute('telecobroManager.rechazarSolicitudExclusionTelecobro', dtoTelecobro)" result="flowScope.dummy" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\exclusionTelecobro.xml
+            <evaluate expression="executor.execute('telecobroManager.getMotivosExclusionTelecobro')" result="flowScope.motivosExclusion" />
+            <evaluate expression="executor.execute('telecobroManager.crearSolicitudExclusionTelecobro', dtoTelecobro)" result="flowScope.dummy" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\exportClientes.xml
+         <evaluate expression="executor.execute('personaManager.findClientes', dto)" result="flowScope.lista"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\exportClientesData.xml
+			<evaluate expression="executor.execute('personaManager.exportClientes', dto)" result="flowScope.fileItem"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\fechaInicialCirbe.xml
+	    	<evaluate expression="executor.execute('cirbeManager.getFechaCirbe',idPersona,diasAtras)" result="flowScope.fecha" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\fechasScoringData.xml
+	    	<evaluate expression="executor.execute('scoringManager.getFechasPuntuacionTotal',idPersona,fechas)" result="flowScope.result" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\ingresos.xml
+			<evaluate expression="executor.execute('ingresoManager.getIngreso', id)" result="flowScope.ingreso"/>
+			<evaluate expression="executor.execute('ingresoManager.getListTipoIngreso')" result="flashScope.tiposIngreso" />
+    	<evaluate expression="executor.execute('ingresoManager.createOrUpdate', dtoIngreso, idPersona)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\ingresosData.xml
+			<evaluate expression="executor.execute('personaManager.getIngresos',id)" result="flowScope.ingresos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\listadoClientes.xml
+            <evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
+	    	<evaluate expression="executor.execute('estadoManager.getEstadosClientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('segmentoManager.getSegmentos')" result="flowScope.segmentos" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('personaManager.getTiposPersonas')" result="flowScope.tiposPersona" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+            <evaluate expression="executor.execute('contratoManager.getEstadosFinancieros')" result="flowScope.estadosFinancieros" />
+            <evaluate expression="executor.execute('ddTipoItinerarioManager.getTipoItinerarios')" result="flowScope.gestion" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\listadoClientesData.xml
+			<evaluate expression="executor.execute('personaManager.findClientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\riesgosDirData.xml
+			<evaluate expression="executor.execute('clienteManager.findClientes', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\riesgosIndData.xml
+			<evaluate expression="executor.execute('clienteManager.findClientes', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\scoringData.xml
+	    	<evaluate expression="executor.execute('scoringManager.getScoringPersona',idPersona,fechas)" result="flowScope.result" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\solvencia.xml
+			<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
+    	<evaluate expression="executor.execute('personaManager.updateSolvencia', dtoSolvenciaPersona)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\solvenciaObservacionData.xml
+			<evaluate expression="executor.execute('personaManager.get',id)" result="flowScope.personaObservacion"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\tabCirbeData.xml
+	    	<evaluate expression="executor.execute('cirbeManager.getCirbeData',idPersona,fecha1,fecha2,fecha3)" result="flowScope.result" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\tabGrupoClienteData.xml
+	    	<evaluate expression="executor.execute('personaGrupoManager.getPersonasGrupo',dto)" result="flowScope.pagina" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\umbral.xml
+		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona" />
+    		<evaluate expression="executor.execute('personaManager.getExpedienteConContratoPaseTitular',idPersona)" result="flowScope.expedienteTitular" />
+    	<evaluate expression="executor.execute('personaManager.updateUmbral', dtoUmbral)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\umbralData.xml
+			<evaluate expression="executor.execute('personaManager.get',id)" result="flowScope.personaUmbral" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\uploadAdjuntosPersona.xml
+            <evaluate expression="executor.execute('fileUpload.fileUpload', externalContext)" result="flowScope.uploadForm" />
+            <evaluate expression="executor.execute('personaManager.upload', uploadForm)" result="flowScope.resultado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\clientes\verificarBien.xml
+			<evaluate expression="executor.execute('bienManager.verificarBien', id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\acta.xml
+      	 <evaluate expression="executor.execute('comiteManager.getActaPDF',id)" result="flowScope.dtoActa"/>
+         <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')"   result="flowScope.usuario" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\actaComite.xml
+            <evaluate expression="executor.execute('comiteManager.getDtoParaSesion', idSesion)" result="flowScope.dtoSesionComite" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\actaComiteData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\celebracion.xml
+      <evaluate expression="executor.execute('comiteManager.getDto', idComite)" result="flowScope.dtoSesionComite" />
+    <evaluate expression="executor.execute('comiteManager.crearSesion', dtoSesionComite)" result="flowScope.dummy" />
+      <evaluate expression="executor.execute('comiteManager.crearSesion', dtoSesionComite)" result="flowScope.dummy" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\cerrarSesionComite.xml
+         <evaluate expression="executor.execute('comiteManager.cerrarSesion', idComite, ignorarErrores)" result="flowScope.respuesta" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\elevarAComiteSuperior.xml
+         <evaluate expression="executor.execute('comiteManager.elevarAComiteSuperior', idComite, idExpediente)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\listadoActasData.xml
+      <evaluate expression="executor.execute('comiteManager.findSesionesComiteCerradasCurrentUser')" result="flowScope.comites" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\listadoComiteExpedientes.xml
+            <evaluate expression="executor.execute('comiteManager.get', idComite)" result="flowScope.comite" />
+            <evaluate expression="executor.execute('comiteManager.getDtoParaSesion', idSesion)" result="flowScope.dtoSesionComite" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\listadoComitesADelegarData.xml
+  		<evaluate expression="executor.execute('comiteManager.buscarComitesDelegar', idExpediente)" result="flowScope.comites" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\comites\listadoComitesData.xml
+      <evaluate expression="executor.execute('comiteManager.findComitesCurrentUser')" result="flowScope.comites" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\asuntosContrato.xml
+                        <evaluate expression="executor.execute('contratoManager.getAsuntosContrato', idContrato)"  result="flowScope.asuntos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\bajarAdjuntoContrato.xml
+			<evaluate expression="executor.execute('contratoManager.downloadAdjunto', id)" result="flowScope.fileItem" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\borrarAdjuntoContrato.xml
+			<evaluate expression="executor.execute('contratoManager.deleteAdjunto', contratoId, id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\busquedaContratosData.xml
+	    	<evaluate expression="executor.execute('contratoManager.buscarContratos', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\consultaAdjuntosContrato.xml
+   			<evaluate expression="executor.execute('contratoManager.get', id)" result="flowScope.entity" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\consultaContrato.xml
+    		<evaluate expression="executor.execute('contratoManager.get', id)" result="flowScope.contrato"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\expedientesContrato.xml
+            <evaluate expression="executor.execute('contratoManager.getExpedientesHistoricosContrato', idContrato)"  result="flowScope.expedientes"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\exportContratos.xml
+	    	<evaluate expression="executor.execute('contratoManager.exportContratos', dto)" result="flowScope.contratosPage" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\listadoBusquedaContratos.xml
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+	    	<evaluate expression="executor.execute('contratoManager.getEstadosContrato')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('contratoManager.getEstadosFinancieros')" result="flowScope.estadosFinancieros" />
+	    	<evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\listadoContratosData.xml
+	    	<evaluate expression="executor.execute('personaManager.obtenerContratosGeneracionExpManual', idPersona)" result="flowScope.contratos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\listadoContratosExcluirData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', id)" result="flowScope.expedienteContratos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\superaLimiteExport.xml
+	    	<evaluate expression="executor.execute('contratoManager.superaLimiteExport', dto)" result="flowScope.resultados" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\tabTitulosContratos.xml
+			<evaluate expression="executor.execute('contratoManager.getTitulosContratoPaginado', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\tituloContrato.xml
+            <evaluate expression="executor.execute('tituloManager.getDto', idContrato, idTitulo)" result="flowScope.dtoTitulo" />
+            <evaluate expression="executor.execute('ddSituacionManager.getList')" result="flashScope.situaciones" />
+            <evaluate expression="executor.execute('ddTipoTituloManager.getListGeneral')" result="flashScope.tiposDocumentoGeneral" />
+            <evaluate expression="executor.execute('tituloManager.saveTitulo', dtoTitulo)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\contratos\uploadAdjuntosContrato.xml
+            <evaluate expression="executor.execute('fileUpload.fileUpload', externalContext)" result="flowScope.uploadForm" />
+            <evaluate expression="executor.execute('contratoManager.upload', uploadForm)" result="flowScope.resultado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\asuntos.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\bajarAdjuntoExpediente.xml
+			<evaluate expression="executor.execute('expedienteManager.bajarAdjunto', id)" result="flowScope.fileItem"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\borrarAdjuntoExpedientes.xml
+			<evaluate expression="executor.execute('expedienteManager.deleteAdjunto', expedienteId, id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\borrarCreacionManualExpediente.xml
+			<evaluate expression="executor.execute('expedienteManager.cancelacionExpManual', idExpediente, idPersona)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\borrarProcedimiento.xml
+			<evaluate expression="executor.execute('procedimientoManager.borrarProcedimiento', id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\borrarTitulo.xml
+			<evaluate expression="executor.execute('tituloManager.deleteTitulo', id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\buscarTiposDocumento.xml
+            <evaluate expression="executor.execute('ddTipoTituloManager.buscarTipos', codigoTipoDocGen)" result="flashScope.tiposDocumento"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\cancelacionExp.xml
+	    	<evaluate expression="executor.execute('expedienteManager.cancelacionExp', id, true)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\cerrarSesion.xml
+			<evaluate expression="executor.execute('expedienteManager.tomarDecisionComite', idExpediente, observaciones)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\consultaAdjuntosContratosDelExpediente.xml
+   			<evaluate expression="executor.execute('expedienteManager.findContratosConAdjuntos', id)" result="flowScope.entities" />
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\consultaAdjuntosExpediente.xml
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.entity" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\consultaAdjuntosPersonasDelExpediente.xml
+   			<evaluate expression="executor.execute('expedienteManager.findPersonasContratosConAdjuntos', id)" result="flowScope.entities" />
+   			<evaluate expression="executor.execute('expedienteManager.findPersonasByExpedienteId', id)" result="flowScope.entities" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\consultaExpediente.xml
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente"/>
+			<evaluate expression="executor.execute('expedienteManager.findExclusionExpedienteClienteByExpedienteId', id)" result="flashScope.exclusion" />
+			<evaluate expression="executor.execute('expedienteManager.getPersonasMarcadoObligatorio', id)" result="flashScope.marcadoObligatorio" />
+			<evaluate expression="executor.execute('expedienteManager.getPersonasMarcadoOpcional', id)" result="flashScope.marcadoOpcional" />
+			<evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesExpediente',id)" result="flowScope.tareaPendiente"/>
+   			<evaluate expression="executor.execute('expedienteManager.puedeMostrarSolapaDecisionComite', id)" result="flowScope.puedeMostrarSolapaDecisionComite" />
+   			<evaluate expression="executor.execute('expedienteManager.puedeMostrarSolapaMarcadoPoliticas', id)" result="flowScope.puedeMostrarSolapaMarcadoPoliticas" />
+   			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerProrrogaExpediente',id)" result="flowScope.prorrogaPendiente"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerSolicitudCancelacionExpediente',id)" result="flowScope.solicitudCancelacion"/>
+   			<evaluate expression="executor.execute('comiteManager.buscarComiteParaElevar',id)" result="flowScope.comiteElevar"/>   			
+    		<evaluate expression="executor.execute('comiteManager.buscarComitesDelegar', id)" result="flowScope.comitesDelegar" />
+	    	<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\contratosDeUnExpediente.xml
+			<evaluate expression="executor.execute('contratoManager.buscarContratosExpediente', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\contratosDeUnExpedienteSinPaginar.xml
+			<evaluate expression="executor.execute('expedienteManager.contratosDeUnExpedienteSinPaginar', dto)" result="flowScope.expedienteContratos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\contratosExpedientes.xml
+			<evaluate expression="executor.execute('procedimientoManager.getProcedimientosDeExpediente', id)" result="flowScope.procedimientos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\creacionManualExpediente.xml
+			<evaluate expression="executor.execute('personaManager.obtenerIdExpedientePropuestoPersona', idPersona)" result="flowScope.idExpediente"/>
+			<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', idExpediente)" result="flowScope.propuesta"/>
+    		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
+            <evaluate expression="executor.execute('personaManager.obtenerNumContratosGeneracionExpManual', idPersona)" result="flowScope.nContratos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\creacionManualExpedienteSeguimiento.xml
+		<evaluate expression="executor.execute('personaManager.obtenerIdExpedientePropuestoPersona', idPersona)" result="flowScope.idExpediente" />
+		<evaluate expression="executor.execute('expedienteManager.crearExpedienteManualSeg', idPersona)" result="flowScope.expediente" />
+		<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente" />
+		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta" />
+    		<evaluate expression="executor.execute('expedienteManager.getMotivosExpedienteManual')" result="flowScope.motivos" />
+    		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta" />
+    		<evaluate expression="executor.execute('personaManager.getClienteActivo', idPersona)" result="flowScope.clienteActivo" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\creacionManualExpediente_2.xml
+			<evaluate expression="executor.execute('expedienteManager.crearExpedienteManual', idPersona, idContrato)" result="flowScope.expediente"/>
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"/>
+    		<evaluate expression="executor.execute('expedienteManager.getMotivosExpedienteManual')" result="flowScope.motivos"/>
+    		<evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona"/>
+    		<evaluate expression="executor.execute('expedienteManager.getPropuestaExpedienteManual', expediente.id)" result="flowScope.propuesta"/>
+    	<evaluate expression="executor.execute('expedienteManager.cancelacionExp', expediente.id, false)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\creacionManualExpediente_3.xml
+			<evaluate expression="executor.execute('expedienteManager.proponerActivarExpediente', idExpediente, idPersona, codigoMotivo, observaciones, isSupervisor, idPropuesta)" />
+			<evaluate expression="executor.execute('expedienteManager.proponerActivarExpediente', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\decisionExcluirClientesExpediente.xml
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente" />
+			<evaluate expression="executor.execute('expedienteManager.findExclusionExpedienteClienteByExpedienteId', id)" result="flashScope.exclusion" />
+			<evaluate expression="executor.execute('expedienteManager.findPersonasByExpedienteId', id)" result="flowScope.personas"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\decisionSolicitudCancelacion.xml
+			<evaluate expression="executor.execute('expedienteManager.buscarSolicitudCancelacion', idSolicitud)" result="flowScope.solicitud"/>
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\decisionSolicitudCancelacionConTarea.xml
+			<evaluate expression="executor.execute('expedienteManager.buscarSolCancPorTarea', idTarea)" result="flowScope.solicitud"/>
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', idExpediente)" result="flowScope.expediente"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\devolverExpedienteCE.xml
+            <evaluate expression="executor.execute('expedienteManager.devolverExpedienteACompletar', id, respuesta)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\devolverExpedienteRE.xml
+            <evaluate expression="executor.execute('expedienteManager.devolverExpedienteARevision', id, respuesta)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\editaGestionyAnalisis.xml
+			<evaluate expression="executor.execute('expedienteManager.buscarAAA', id)" result="flowScope.aaa"/>
+			<evaluate expression="executor.execute('causaImpagoManager.getList')" result="flashScope.causasImpago"/>
+			<evaluate expression="executor.execute('tipoAyudaActuacionManager.getList')" result="flashScope.tiposAyuda"/>
+			<evaluate expression="executor.execute('expedienteManager.getTiposPropuestaActuacion')" result="flashScope.tiposPropuestaActuacion"/>
+    	<evaluate expression="executor.execute('expedienteManager.updateActitudAptitudActuacion', dtoActitudAptitudActuacion)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\editaGestionyAnalisisRevision.xml
+    		<evaluate expression="executor.execute('expedienteManager.buscarAAA', id)" result="flowScope.aaa"/>
+	    	<evaluate expression="executor.execute('expedienteManager.updateActitudAptitudActuacionRevision', dtoActitudAptitudActuacion)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\editaProcedimiento.xml
+	    	<evaluate expression="executor.execute('asuntosManager.get', idAsunto)" result="flowScope.asunto" />
+            <evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnExpediente',idExpediente)" result="flowScope.asuntos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+	    	<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', idExpediente)" result="flowScope.contratos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getPersonasAsociadasAContratoProcedimiento', idContrato,idProcedimiento)" result="flowScope.personas"/>
+		<evaluate expression="executor.execute('procedimientoManager.salvarProcedimiento',dto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\elevarExpedienteDC.xml
+	    	<evaluate expression="executor.execute('expedienteManager.elevarExpedienteADecisionComite', id, isSupervisor)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\elevarExpedienteRE.xml
+	    	<evaluate expression="executor.execute('expedienteManager.elevarExpedienteARevision', id, isSupervisor)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\enviarDecisionSolicitudCancelacion.xml
+    		<evaluate expression="executor.execute('expedienteManager.tomarDecisionCancelacion', idExpediente,idSolicitud, decision)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\enviarSolicitudCancelacion.xml
+			<evaluate expression="executor.execute('tareaNotificacionManager.solicitarCancelacionExpediente', id, detalle, esSupervisor)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\excluirClientesExpediente.xml
+			<evaluate expression="executor.execute('expedienteManager.findPersonasByExpedienteId', id)" result="flowScope.personas"/>
+			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente" />
+			<evaluate expression="executor.execute('expedienteManager.findExclusionExpedienteClienteByExpedienteId', id)" result="flashScope.exclusion" />
+    	<evaluate expression="executor.execute('expedienteManager.saveExclusionExpedienteCliente', dto, id)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\excluirContrato.xml
+			<evaluate expression="executor.execute('expedienteManager.existeDecisionIniciada', idExpediente)" />
+    		<evaluate expression="executor.execute('expedienteManager.excluirContratosAlExpediente', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\incluirContrato.xml
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+	    	<evaluate expression="executor.execute('contratoManager.getEstadosContrato')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('contratoManager.getEstadosFinancieros')" result="flowScope.estadosFinancieros" />
+	    	<evaluate expression="executor.execute('tipoProductoManager.getTiposProducto')" result="flowScope.tiposProducto" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\incluirContratoUpdate.xml
+    		<evaluate expression="executor.execute('expedienteManager.incluirContratosAlExpediente', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\isDecisionIniciada.xml
+			<evaluate expression="executor.execute('expedienteManager.existeDecisionIniciada', idExpediente)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoAsuntosExpedienteData.xml
+			<!-- evaluate expression="executor.execute('asuntosManager.getSuepervisorAsunto',idSesion)" result="flowScope.supervisor" /-->			 
+            <evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnExpediente',id)" result="flowScope.asuntos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoContratos.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoContratosActuacionesData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', idExpediente)" result="flowScope.contratosActuaciones" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoExpedientes.xml
+	    	<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.situacion" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+            <evaluate expression="executor.execute('ddTipoItinerarioManager.getTipoItinerarios')" result="flowScope.gestion" />
+	    	<evaluate expression="executor.execute('expedienteManager.getEstadosDelExpediente')" result="flowScope.estado" />
+	    	<evaluate expression="executor.execute('segmentoManager.getSegmentos')" result="flowScope.segmentos" />
+	    	<evaluate expression="executor.execute('personaManager.getTiposPersonas')" result="flowScope.tiposPersona" />
+            <evaluate expression="executor.execute('comiteManager.getComites')" result="flowScope.comites" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoExpedientesData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoExpedientesExcelData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesParaExcel', dto)" result="flowScope.lista"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoNivelCumplimiento.xml
+			<evaluate expression="executor.execute('expedienteManager.getReglasElevacionExpediente', idExpediente)" result="flowScope.reglasElevacion" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoNivelCumplimientoEspecifico.xml
+			<evaluate expression="executor.execute('expedienteManager.getEntidadReglaElevacionExpediente', idExpediente, idReglaElevacion)" result="flowScope.listadoEntidadRegla" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\listadoProcedimientos.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\marcadoPolitica.xml
+			<evaluate expression="executor.execute('contratoManager.buscarContratosExpediente', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\personasParaProcedimiento.xml
+			<evaluate expression="executor.execute('procedimientoManager.getPersonasDeLosContratosProcedimiento', contratos, idProcedimiento)" result="flowScope.procedimientoPersonas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\procedimientosExpediente.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', id)" result="flowScope.expedienteContratos"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\rechazarSolicitarCancelacionExp.xml
+	    	<evaluate expression="executor.execute('expedienteManager.rechazarCancelacionExpediente', id)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\reporteExpediente.xml
+    		 <evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.exp" />
+    		 <evaluate expression="executor.execute('estadoManager.findByCodigo', exp.estadoItinerario.siguienteEstado)" result="flowScope.estadoIti" />
+    		 <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario" />
+    		 <evaluate expression="executor.execute('expedienteManager.findTitulosExpediente', id)" result="flowScope.titulos" />
+    		 <evaluate expression="executor.execute('expedienteManager.getPersonasPoliticasDelExpediente', id)" result="flowScope.perPoliticas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\sinActuacion.xml
+			<evaluate expression="executor.execute('contratoManager.marcarSinActuacion', idContratos, idExpediente)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\solicitarCancelacionExp.xml
+	    	<evaluate expression="executor.execute('expedienteManager.solicitarCancelacionExpediente', id)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\solicitudCancelacion.xml
+    		<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\tabCabecera.xml
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.buscarTareaActualExpediente', id)" result="flowScope.tarea"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\tabGestionyAnalisisData.xml
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\tabTitulos.xml
+			<evaluate expression="executor.execute('contratoManager.contratosDelExpedienteParaTitulos', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\titulo.xml
+            <evaluate expression="executor.execute('tituloManager.getDto', idContrato, idTitulo)" result="flowScope.dtoTitulo" />
+            <evaluate expression="executor.execute('ddSituacionManager.getList')" result="flashScope.situaciones" />
+            <evaluate expression="executor.execute('ddTipoTituloManager.getListGeneral')" result="flashScope.tiposDocumentoGeneral" />
+            <evaluate expression="executor.execute('tituloManager.saveTitulo', dtoTitulo)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\expedientes\uploadAdjuntoExpedientes.xml
+            <evaluate expression="executor.execute('fileUpload.fileUpload', externalContext)" result="flowScope.uploadForm"/>
+            <evaluate expression="executor.execute('expedienteManager.upload', uploadForm)" result="flowScope.resultado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\acuerdos.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<!--<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>-->
+    	<!--<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\altaProcedimiento.xml
+	    	<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnExpediente', idExpediente)" result="flowScope.asuntos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+	    	<evaluate expression="executor.execute('contratoManager.get',idContrato)" result="flowScope.contrato" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getPersonasAsociadasAContratoProcedimiento', idContrato,idProcedimiento)" result="flowScope.personas"/>
+		<evaluate expression="executor.execute('procedimientoManager.salvarProcedimiento',dto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\ayuda.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\consultaGestor.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\decision.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<!--<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>-->
+    	<!--<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\listadoClientesData.xml
+			<evaluate expression="executor.execute('personaManager.findClientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\mapaGlobal.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\moverProcedimientos.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<!--<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>-->
+    	<!--<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\preAsunto.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\altaEdicionArquetipo.xml
+			<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\altaEdicionItinerario.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\altaEdicionProducto.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\altaEdicionSegmento.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\listadoArquetipos.xml
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\listadoArquetiposData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\listadoItinerarios.xml
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\arquetiposItinerarios\listadoItinerariosData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\asuntos\altaAsuntos_fase2.xml
+    		<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+		<evaluate expression="executor.execute('asuntosManager.crearAsunto',dtoAsunto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\asuntos\listadoBusquedaAsuntos11.xml
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\asuntos\listadoComitesPreAsunto.xml
+    		<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('tareaNotificacionManager.contestarProrroga',dtoTarea)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\asuntos\procedimientosPreAsunto.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<!--<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>-->
+    	<!--<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\bienes\cargasBienes.xml
+			<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('bienManager.createOrUpdate', dtoBien, idPersona)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\bienes\listadoBusquedaBienes.xml
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flowScope.tiposBien"/>
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\clientes\consultaCliente_fase2.xml
+    			<evaluate expression="executor.execute('personaManager.get', id)" result="flowScope.persona"/>
+    			<evaluate expression="executor.execute('expedienteManager.obtenerExpedientesDeUnaPersona', id)" result="flowScope.expedientes"/>
+    			<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnaPersona', id)" result="flowScope.asuntos"/>
+    			<evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesCliente',id)" result="flowScope.tareaPendiente"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\clientes\listadoClientes_fase2.xml
+	    	<evaluate expression="executor.execute('estadoManager.getEstadosClientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('segmentoManager.getSegmentos')" result="flowScope.segmentos" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('personaManager.getTiposPersonas')" result="flowScope.tiposPersona" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\expedientes\consultaExpediente_fase2.xml
+   			<evaluate expression="executor.execute('expedienteManager.getExpediente', id)" result="flowScope.expediente"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.buscarTareaActualExpediente', id)" result="flowScope.tarea"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.buscarComunicacionesExpediente',id)" result="flowScope.tareaPendiente"/>
+   			<evaluate expression="executor.execute('expedienteManager.puedeMostrarSolapaDecisionComite', id)" result="flowScope.puedeMostrar"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerProrrogaExpediente',id)" result="flowScope.prorrogaPendiente"/>
+   			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerSolicitudCancelacionExpediente',id)" result="flowScope.solicitudCancelacion"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\expedientes\listadoExpedientes_fase2.xml
+	    	<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+			<evaluate expression="executor.execute('personaManager.getTiposPersonas')" result="flowScope.tiposPersona" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\plazosGestionExterna\altaEdicionPlazoGE.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\plazosGestionExterna\listadoPlazosGE.xml
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('estadoManager.getEstadosExpedientes')" result="flowScope.estados" />
+	    	<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\plazosGestionExterna\listadoPlazosGEData.xml
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesPaginated', dto)" result="flowScope.pagina"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\fase2\tareas\generarNotificacion_fase2.xml
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('tareaNotificacionManager.crearTareaComunicacion',dtoTarea)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\favoritos\consoleItems.xml
+			<evaluate expression="executor.execute('consoleManager.listConsoleItems', dto)" result="flowScope.consoleItems" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\favoritos\mantenerFavoritos.xml
+			<evaluate expression="executor.execute('favoritosManager.mantenerFavoritos', dto)" result="flowScope.favoritos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\generico\genericForm.xml
+			<!--<evaluate expression="executor.execute('bienManager.get', id)" result="flowScope.bien"/>-->
+			<evaluate expression="executor.execute('genericFormManager.get',idTareaExterna)" result="flowScope.form" />
+            <evaluate expression="executor.execute('genericFormManager.getValoresTareas',idProcedimiento)" result="flowScope.valores" />
+		<evaluate expression="executor.execute('genericFormManager.saveValues',dtoGenericForm)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\main\acercade.xml
+    		<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\main\alertas.xml
+	    	<evaluate expression="executor.execute('tareaNotificacionManager.getNotificacionesAlertas')" result="flowScope.alertas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\main\arbol_tareas.xml
+			<evaluate expression="executor.execute('estadoManager.getEstados')" result="flowScope.estados" />
+			<evaluate expression="executor.execute('tareaNotificacionManager.obtenerCantidadDeTareasPendientes', dto)" result="flowScope.countTareas" />
+			<evaluate expression="executor.execute('objetivoManager.obtenerCantidadObjetivosPendientes')" result="flowScope.countObjetivos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\main\main.xml
+    		<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+    		<evaluate expression="executor.execute('contratoManager.getUltimaFechaCarga')" result="flowScope.ultimaFechaCarga"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\activarMetrica.xml
+			<evaluate expression="executor.execute('metricaManager.activarMetrica', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\borrarMetrica.xml
+			<evaluate expression="executor.execute('metricaManager.borrarMetricaActiva', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\descargarMetrica.xml
+			<evaluate expression="executor.execute('metricaManager.descargarMetrica', dto)" result="flowScope.fileItem" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\editNumIntervalos.xml
+		<evaluate expression="executor.execute('parametrizacionManager.buscarParametroPorNombre', 'scoring.rangoIntervalo')" result="flowScope.parametrizacion" />
+    	<evaluate expression="executor.execute('parametrizacionManager.update', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\indicadores.xml
+	    	<evaluate expression="executor.execute('parametrizacionManager.buscarParametroPorNombre', 'scoring.rangoIntervalo')" result="flowScope.numeroIntervalos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\metricasDefectoData.xml
+	    	<evaluate expression="executor.execute('metricaManager.getMetricasTiposPersona', dtoUpload)" result="flowScope.data" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\metricasSegmentoData.xml
+    		<evaluate expression="executor.execute('metricaManager.getMetricasSegmentos', dtoUpload)" result="flowScope.data" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\numIntervalosData.xml
+	    	<evaluate expression="executor.execute('parametrizacionManager.buscarParametroPorNombre', 'scoring.rangoIntervalo')" result="flowScope.numeroIntervalos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\metricas\uploadMetricaDefault.xml
+            <evaluate expression="executor.execute('fileUpload.fileUpload', externalContext)" result="flowScope.uploadForm" />
+            <evaluate expression="executor.execute('metricaManager.cargarMetrica', uploadForm)" result="flowScope.dtoFileUpload" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\aceptarPropuestaCumplimiento.xml
+            <evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+            <evaluate expression="executor.execute('objetivoManager.aceptarCumplimiento', dto)" />
+            <evaluate expression="executor.execute('objetivoManager.rechazarCumplimiento', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\aceptarTareaObjetivo.xml
+            <evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+    	<evaluate expression="executor.execute('objetivoManager.aceptarPropuestaBorrado', idObjetivo)" />
+        <evaluate expression="executor.execute('objetivoManager.rechazarPropuestaBorrado', idObjetivo)" />
+    	<evaluate expression="executor.execute('objetivoManager.aceptarPropuestaObjetivo', idObjetivo)" />
+        <evaluate expression="executor.execute('objetivoManager.rechazarPropuestaObjetivo', idObjetivo)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\analisisOperaciones.xml
+            <evaluate expression="executor.execute('analisisPoliticaManager.getPersonasOperaciones', id)" result="flowScope.listadoAnalisisOperaciones" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\analisisPersona.xml
+            <evaluate expression="executor.execute('analisisPoliticaManager.getParcelasPersonasParaConsulta', id)" result="flowScope.listadoAnalisis" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\borrarObjetivo.xml
+            <evaluate expression="executor.execute('objetivoManager.borrarObjetivo', idObjetivo)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\cerrarDecisionPolitica.xml
+            <evaluate expression="executor.execute('politicaManager.cerrarDecisionPolitica',idExpediente)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\compruebaPermisosUsuario.xml
+            <evaluate expression="executor.execute('politicaManager.compruebaPermisosUsuario', idPolitica)" result="flowScope.permisos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\datosPolitica.xml
+          <evaluate expression="executor.execute('politicaManager.getDtoPolitica', idPolitica, idPersona)" result="flowScope.dtoPolitica" />
+          <evaluate expression="executor.execute('politicaManager.getTipoPoliticaList')" result="flashScope.tiposPolitica" />
+          <evaluate expression="executor.execute('politicaManager.getPerfiList')" result="flashScope.perfiles" />
+        <evaluate expression="executor.execute('politicaManager.guardarPolitica', dtoPolitica)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\editarAnalisisOperaciones.xml
+        	<evaluate expression="executor.execute('analisisPoliticaManager.getTiposValoracion')" result="flowScope.valoraciones" />
+        	<evaluate expression="executor.execute('analisisPoliticaManager.getTiposImpacto')" result="flowScope.impactos" />
+            <evaluate expression="executor.execute('analisisPoliticaManager.editarAnalisisOperaciones', idContrato, idAppSeleccionado)" result="flowScope.analisisPO" />
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarAnalisisOperaciones', dto)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\editarAnalisisPersona.xml
+        	<evaluate expression="executor.execute('analisisPoliticaManager.getTiposValoracion')" result="flowScope.valoraciones" />
+        	<evaluate expression="executor.execute('analisisPoliticaManager.getTiposImpacto')" result="flowScope.impactos" />
+            <evaluate expression="executor.execute('analisisPoliticaManager.editarAnalisisPersona', idParcela, idAppSeleccionado)" result="flowScope.analisisPP" />
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarAnalisisParcelaPersona', dto)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\editarGestionesRealizadas.xml
+		<evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaById', id)" result="flowScope.analisisPolitica" />
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarGestionesRealizadas', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\editarRevision.xml
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaById', idAppSeleccionado)" result="flowScope.analisisPP" />
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarComentarioAnalisis', dto)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\editObjetivo.xml
+		<evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+    	<evaluate expression="executor.execute('objetivoManager.guardarObjetivo', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\gestionesRealizadas.xml
+            <evaluate expression="executor.execute('analisisPoliticaManager.getTiposGestiones', id)" result="flowScope.listadoGestiones" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\justificarObjetivo.xml
+		<evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+    	<evaluate expression="executor.execute('objetivoManager.guardarObjetivo', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\listadoEstadosPolitica.xml
+            <evaluate expression="executor.execute('politicaManager.buscarPoliticasCicloMarcadoPolitica', idCicloMarcadoPolitica)" result="flowScope.politicas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\listadoHistPoliticas.xml
+            <evaluate expression="executor.execute('politicaManager.buscarPoliticasParaPersona', id)" result="flowScope.cicloPoliticas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\listadoObjetivos.xml
+            <evaluate expression="executor.execute('politicaManager.buscarObjetivosPolitica', idPolitica)" result="flowScope.objetivos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\listadoZonas.xml
+            <evaluate expression="executor.execute('zonaManager.getZonasPorPerfil',idPerfil)" result="flowScope.zonas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\observacionesGestionData.xml
+	    	<evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaById', id)" result="flowScope.analisisPolitica" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\propuestaCumplimiento.xml
+    		<evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+        	<evaluate expression="executor.execute('objetivoManager.proponerCumplimiento', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\revisionGesSupData.xml
+	    	<evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaById', id)" result="flowScope.analisisPolitica" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\politica\verAnalisisPolitica.xml
+            <evaluate expression="executor.execute('analisisPoliticaManager.getAnalisisPoliticaHistorico', idPolitica)" result="flowScope.analisisPolitica" />
+            <evaluate expression="executor.execute('personaManager.get', idPersona)" result="flowScope.persona" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\cancelarTarea.xml
+			<evaluate expression="executor.execute('tareaExternaManager.get',id)" result="flowScope.tarea" />
+      <evaluate expression="executor.execute('tareaExternaManager.vueltaAtras',id)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\consultaProcedimiento.xml
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento',id)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.esGestor',id)" result="flowScope.esGestor" />
+	    	<evaluate expression="executor.execute('procedimientoManager.esSupervisor',id)" result="flowScope.esSupervisor" />
+            <evaluate expression="executor.execute('procedimientoManager.buscarTareaPendiente',id)" result="flowScope.tareaPendiente" />
+	    	<evaluate expression="executor.execute('recursoManager.puedeCrearRecurso',id)" result="flowScope.puedeCrearRecurso" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\decisionProcedimiento.xml
+	<evaluate expression="executor.execute('decisionProcedimientoManager.get', id)" result="flowScope.decisionProcedimiento"/>
+		<evaluate expression="executor.execute('decisionProcedimientoManager.getInstance',idProcedimiento)"
+				<evaluate expression="executor.execute('dictionaryManager.get','DDCausaDecision')" result="flashScope.causaDecision"/>
+				<evaluate expression="executor.execute('dictionaryManager.get','DDEstadoDecision')" result="flashScope.estadoDecision"/>
+				<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+	    		<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    		<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+	    		<evaluate expression="executor.execute('procedimientoManager.getPersonasAfectadas', idProcedimiento)" result="flowScope.personas"/>
+				<evaluate expression="executor.execute('decisionProcedimientoManager.getInstance',idProcedimiento)" result="flowScope.esConulta" />
+				<evaluate expression="executor.execute('procedimientoManager.esGestor',idProcedimiento)" result="flowScope.esGestor" />
+	    		<evaluate expression="executor.execute('procedimientoManager.esSupervisor',idProcedimiento)" result="flowScope.esSupervisor" />
+		<evaluate expression="executor.execute('decisionProcedimientoManager.crearPropuesta',dtoDecisionProcedimiento)" />
+		<evaluate expression="executor.execute('decisionProcedimientoManager.rechazarPropuesta',dtoDecisionProcedimiento)"/>
+		<evaluate expression="executor.execute('decisionProcedimientoManager.aceptarPropuesta',dtoDecisionProcedimiento)"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\embargoBienes.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\formularioDemanda.xml
+    		 <evaluate expression="executor.execute('procedimientoManager.formularioDemanda', id)" result="flowScope.dto" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\historicoProcedimiento.xml
+         <evaluate expression="executor.execute('historicoProcedimientoManager.getListByProcedimiento', idProcedimiento)" result="flowScope.tareas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\interrupcionRecurso.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\listadoBusquedaProcedimientos.xml
+			<evaluate expression="executor.execute('despachoExternoManager.getDespachosExternos')" result="flowScope.despachos" />
+			<evaluate expression="executor.execute('usuarioManager.getZonasUsuarioLogado')" result="flowScope.zonas" />
+	    	<evaluate expression="executor.execute('zonaManager.getNiveles')" result="flowScope.niveles" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\listadoContratosProcedimiento.xml
+			<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\listadoDecisionProcedimiento.xml
+		<evaluate expression="executor.execute('decisionProcedimientoManager.getList',id)" result="flowScope.listado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\listadoEmbargoProcedimiento.xml
+		<evaluate expression="executor.execute('procedimientoManager.getBienesDeUnProcedimiento',idProcedimiento)" result="flowScope.listado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\listadoRecursos.xml
+			<evaluate expression="executor.execute('recursoManager.getRecursosPorProcedimiento',idProcedimiento)" result="flowScope.recursos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\procedimientoDerivado.xml
+	<evaluate expression="executor.execute('decisionProcedimientoManager.get', id)" result="flowScope.decisionProcedimiento"/>
+		<evaluate expression="executor.execute('decisionProcedimientoManager.getInstance',idProcedimiento)"
+	    	<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnAsunto',idAsuntoOrigen)" result="flowScope.asuntos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+	    	<evaluate expression="executor.execute('contratoManager.get',idContrato)" result="flowScope.contrato" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getPersonasAsociadasAContratoProcedimiento', idContrato,idProcedimiento)" result="flowScope.personas"/>
+		<evaluate expression="executor.execute('procedimientoManager.guardarProcedimiento',dto)" result="flowScope.id"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\procedimientosDerivados.xml
+		<evaluate expression="executor.execute('decisionProcedimientoManager.getProcedimientosDerivados',id)" result="flowScope.listado" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\propuestasAcuerdo.xml
+	    	<evaluate expression="executor.execute('expedienteManager.getExpedientes')" result="flowScope.expedientes" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\recopilarDocProcedimiento.xml
+            <evaluate expression="executor.execute('procedimientoManager.getProcedimiento',idProcedimiento)" result="flowScope.procedimiento" />        
+        <evaluate expression="executor.execute('procedimientoManager.saveRecopilacionProcedimiento', dtoRecDocProcedimiento)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\recopilarDocProcedimientoData.xml
+			<evaluate expression="executor.execute('procedimientoManager.getProcedimiento',idProcedimiento)" result="flowScope.procedimiento"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\recursos.xml
+		<evaluate expression="executor.execute('recursoManager.get', id)" result="flowScope.recurso"/>
+		<evaluate expression="executor.execute('recursoManager.getInstance',idProcedimiento)" result="flowScope.recurso" />
+    		<evaluate expression="executor.execute('dictionaryManager.get','DDActor')" result="flashScope.DDActor"/>
+    		<evaluate expression="executor.execute('dictionaryManager.get','DDTipoRecurso')" result="flashScope.DDTipoRecurso"/>
+    		<evaluate expression="executor.execute('dictionaryManager.get','DDCausaRecurso')" result="flashScope.DDCausaRecurso"/>
+    		<evaluate expression="executor.execute('dictionaryManager.get','DDResultadoResolucion')" result="flashScope.DDResultadoResolucion"/>
+			<!--<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>-->
+    	<evaluate expression="executor.execute('recursoManager.createOrUpdate',dtoRecurso)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\tareasProcedimiento.xml
+			<evaluate expression="executor.execute('tareaExternaManager.obtenerTareasDeUsuarioPorProcedimiento',idProcedimiento)" result="flowScope.tareas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\procedimientos\embargoProcedimiento\embargoProcedimiento.xml
+	<evaluate expression="executor.execute('embargoProcedimientoManager.get', idEmbargo)" result="flowScope.embargoProcedimiento"/>
+		<evaluate expression="executor.execute('embargoProcedimientoManager.getInstance',id)" result="flowScope.embargoProcedimiento" />
+    	<evaluate expression="executor.execute('embargoProcedimientoManager.createOrUpdate',dtoEmbargoProcedimiento,id,idProcedimiento)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\public\cambiarDatosUsuario.xml
+            <evaluate expression="executor.execute('usuarioManager.getByUsername', username)" result="flowScope.usuario"/>
+        <evaluate expression="executor.execute('usuarioManager.guardarUsuario', dtoUsuario)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\public\cambiarDatosUsuarioInterno.xml
+            <evaluate expression="executor.execute('usuarioManager.getByUsername', username)" result="flowScope.usuario"/>
+        <evaluate expression="executor.execute('usuarioManager.guardarUsuarioInterno', dtoUsuario)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\public\guardarUsuario.xml
+            <evaluate expression="executor.execute('usuarioManager.guardarUsuario', dtoUsuario)" result="flowScope.respuesta" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\public\recuperarPassword.xml
+         <evaluate expression="executor.execute('usuarioManager.recuperarPassword', username)" result="flowScope.respuesta" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\ruleengine\ruleExecute.xml
+			<evaluate expression="executor.execute('ruleExecutor.checkRule',ruleDefinition)" result="flowScope.r" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\consultaNotificacion.xml
+    	<evaluate expression="executor.execute('tareaNotificacionManager.finalizarNotificacion', idTarea)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\decisionProrroga.xml
+    		<evaluate expression="executor.execute('prorrogaManager.obtenerRespuestas', codigoTipoProrroga)" result="flowScope.respuestas" />
+    		<evaluate expression="executor.execute('prorrogaManager.obtenerDecisionProrroga',idTareaOriginal)" result="flowScope.decisionProrroga" />
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('tareaNotificacionManager.contestarProrroga',dtoTarea)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\finalizarNotificacion.xml
+			<evaluate expression="executor.execute('tareaNotificacionManager.finalizarNotificacion', idTarea)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\generarNotificacion.xml
+    	    <evaluate expression="executor.execute('tareaNotificacionManager.puedeResponder',dtoTarea)" result="flowScope.puedeResponder"/>
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('tareaNotificacionManager.crearTareaComunicacion',dtoTarea)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\generarTarea.xml
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('tareaNotificacionManager.crearTareaComunicacion',dtoTarea)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\listadoObjetivosGestorData.xml
+			<evaluate expression="executor.execute('objetivoManager.buscarObjetivosGestor')" result="flowScope.listadoObjetivos" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\listadoTareasBusqueda.xml
+			<evaluate expression="executor.execute('tareaNotificacionManager.buscarTareasPendiente', dto)" result="flowScope.tareas" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\listadoTareasExcelData.xml
+			<evaluate expression="executor.execute('tareaNotificacionManager.buscarTareasParaExcel', dto)" result="flowScope.lista"/>
+			<evaluate expression="executor.execute('tareaNotificacionManager.puedeMostrarVR')" result="flowScope.show_vr"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\solicitarProrroga.xml
+    		<evaluate expression="executor.execute('prorrogaManager.obtenerCausas', codigoTipoProrroga)" result="flowScope.causas" />
+            <evaluate expression="executor.execute('prorrogaManager.obtenerPlazo', idTipoEntidadInformacion, idEntidadInformacion)" result="flowScope.plazo" />
+			<evaluate expression="executor.execute('tipoBien.getList')" result="flashScope.tiposBien"/>
+    	<evaluate expression="executor.execute('tareaNotificacionManager.crearProrroga',dtoTarea)" /> 
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\tareas\updateTarea.xml
+			<evaluate expression="executor.execute('tareaNotificacionManager.crearTareaComunicacion', dto)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\test\excepcion1.xml
+	    	<evaluate expression="executor.execute('exceptionTestManager.throwNullPointerException',null)" />
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\test\hibernate.xml
+    		<evaluate expression="executor.execute('itinerarioManager.test', '5')" result="flowScope.i"></evaluate>
+    		<evaluate expression="executor.execute('itinerarioManager.test2', flowScope.i)"></evaluate>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\test\reporteActa.xml
+    		 <evaluate expression="executor.execute('comiteManager.getActaPDF', 1)" result="flowScope.dtoActa"/>
+    		 <evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\test\reporteDemo.xml
+    		 <evaluate expression="executor.execute('personaManager.getList')" result="flowScope.personas"/>
+
+---- C:\WINDOWS\ms_angel\workspaces\wk_pfs\rec-web\modules\web\main\webapp\WEB-INF\flows\test\reportes.xml
+    		 <evaluate expression="executor.execute('personaManager.getList')" result="flowScope.report_personas"/>
+
+  666 lines in    311 files

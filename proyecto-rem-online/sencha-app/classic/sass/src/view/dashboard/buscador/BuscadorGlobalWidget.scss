@@ -1,0 +1,76 @@
+
+.trigger-filter-expanded .ico-chevron-down {
+  
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  rotation: 180deg;
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+
+}
+
+.global-filter-panel {
+  background-color: #fff !important;
+  -webkit-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  -ms-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.filter-button-buscador .x-btn-icon-el,
+.search-button-buscador .x-btn-icon-el {
+    color: $color-blue; 
+}
+
+
+.searchfield-input .x-form-trigger-wrap, .searchfield-input .x-form-trigger-wrap-focus{
+  border-width: 2px;
+  border-style: solid;
+  border-color: #d1d1d1;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.searchfield-input.sf-con-borde, .searchfield-input.sf-con-borde .x-form-text-default {
+    height: 31px;
+}
+
+.searchfield-input.sf-sin-borde, .searchfield-input.sf-sin-borde .x-form-text-default {
+    height: 35px;
+} 
+
+.search-button-buscador, .search-button-buscador:hover, .search-button-buscador.x-btn-focus, .search-button-buscador.x-btn.x-btn-pressed {
+  vertical-align: middle;
+  line-height: 50px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #d1d1d1;
+  border-right: none;
+  border-top-left-radius: 7px;
+  border-bottom-left-radius: 7px; 
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px; 
+  background-color: #fff; 
+  color: $color-blue;
+}
+
+.filter-button-buscador, .filter-button-buscador:hover, .filter-button-buscador.x-btn-focus, .filter-button-buscador.x-btn.x-btn-pressed {
+  vertical-align: middle;
+  line-height: 50px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #d1d1d1;
+  border-left: none;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px; 
+  border-top-right-radius: 7px;
+  border-bottom-right-radius: 7px; 
+  background-color: #fff; 
+  color: $color-blue;
+  
+}
+
+.filter-button-buscador .x-btn-icon-el,
+.search-button-buscador .x-btn-icon-el {
+    color: $color-blue; 
+}
+

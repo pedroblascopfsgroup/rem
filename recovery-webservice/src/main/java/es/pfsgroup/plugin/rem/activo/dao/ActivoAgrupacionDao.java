@@ -1,0 +1,38 @@
+package es.pfsgroup.plugin.rem.activo.dao;
+
+import java.util.List;
+
+import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.dao.AbstractDao;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
+
+public interface ActivoAgrupacionDao extends AbstractDao<ActivoAgrupacion, Long>{
+	
+	/* Nombre que le damos al Agrupacion buscado en la HQL */
+	public static final String NAME_OF_ENTITY_ACT = "act";
+	
+	Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado);
+
+	Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado);
+	
+	Long getNextNumAgrupacionRemManual();
+
+	Long haveActivoPrincipal(Long id);
+
+	Long haveActivoRestringidaAndObraNueva(Long id);
+	
+	List<ActivoFoto> getFotosActivosAgrupacionById(Long id);
+
+	Page getListSubdivisionesAgrupacionById(DtoAgrupacionFilter agrupacionFilter);
+
+	Page getListActivosSubdivisionById(DtoSubdivisiones subdivision);
+
+	List<ActivoFoto> getFotosSubdivision(DtoSubdivisiones subdivision);
+
+	List<ActivoFoto> getFotosAgrupacionById(Long id);
+}

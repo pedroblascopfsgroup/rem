@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <input name="jsp" type="java.lang.String" />
+	<input name="br" type="java.lang.String" />
+	<input name="bf" type="java.lang.String" />
+	<input name="tb" type="java.lang.String" />
+
+	<decision-state id="loadButtonsLeft">
+		<if test="bf == '' || bf == null" then="loadButtonsRight" else="buttonsLeft"/>
+	</decision-state>
+	
+	<action-state id="buttonsLeft">
+		<evaluate expression="executor.execute(bf)" result="flowScope.buttonsLeft"/>
+    	<transition to="loadButtonsRight" />
+    </action-state>
+	
+	<decision-state id="loadButtonsRight">
+		<if test="br == '' || br == null" then="loadTabs" else="buttonsRight"/>
+	</decision-state>
+	
+	<action-state id="buttonsRight">
+		<evaluate expression="executor.execute(br)" result="flowScope.buttonsRight"/>
+    	<transition to="loadTabs" />
+    </action-state>
+
+	<decision-state id="loadTabs">
+		<if test="tb == '' || tb == null" then="getEntidad" else="tabs"/>
+	</decision-state>
+	
+	<action-state id="tabs">
+		<evaluate expression="executor.execute(tb)" result="flowScope.tabs"/>
+    	<transition to="getEntidad" />
+    </action-state>
+	
+	<!-- renderiza el formulario -->
+    <view-state id="getEntidad" view="${jsp}" >
+        <on-render>
+			<evaluate expression="executor.execute('usuarioManager.getUsuarioLogado')" result="flowScope.usuario"/>
+        </on-render>
+    </view-state>
+</flow>

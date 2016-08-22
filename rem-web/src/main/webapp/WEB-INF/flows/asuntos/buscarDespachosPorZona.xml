@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <input name="zonas" type="java.lang.String"/>
+    <input name="tipoDespacho" type="java.lang.String"/>
+	
+	<!-- renderiza el formulario -->
+    <end-state id="listadoAsuntos" view="asuntos/listadoDespachosJSON" >
+	    <on-entry>
+            <evaluate expression="executor.execute('despachoExternoManager.getDespachosPorTipoZona',zonas,tipoDespacho)" result="flowScope.despachos" />
+	    </on-entry>
+    </end-state> 	
+    
+</flow>

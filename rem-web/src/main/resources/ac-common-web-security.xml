@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:beans="http://www.springframework.org/schema/beans" 
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.1.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+    
+    
+    
+    <!-- Provide an alias for the authenticationManager 
+    <authentication-manager alias="authenticationManager"/>-->
+    
+    <!-- Provide an alias for the authenticationManager -->
+    <beans:bean id="authenticationManager"
+		class="org.springframework.security.providers.ProviderManager">
+		<beans:property name="providers">
+			<beans:list>
+			  <beans:ref local="authenticationProviderRSA"/> 	
+			  <beans:ref local="authenticationProvider"/>
+			  <!-- <beans:ref local="authenticationProviderRSI"/> -->
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+    
+  
+    
+    
+  
+     <beans:bean id="authenticationProvider" class="es.capgemini.devon.security.DevonAuthenticationProvider">
+        <custom-authentication-provider />
+        <beans:property name="userDetailsService" ref="userService"/>
+        <beans:property name="postAuthenticationFilters">
+            <beans:list>
+                <beans:bean class="es.capgemini.pfs.security.CredentialsExpiredAuthenticationFilter"/>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+    
+    <beans:bean id="authenticationProviderRSI" class="es.capgemini.pfs.security.RSIAuthenticationProvider">
+        <custom-authentication-provider />
+        <beans:property name="userDetailsService" ref="userService"/>
+        <beans:property name="preAuthenticationFilters">
+            <beans:list>
+                <beans:bean class="es.capgemini.devon.security.IpAuthenticationFilter">
+                    <beans:property name="filterIps">
+                        <util:properties id="filterIps" location="classpath:rsiFilterIps.properties" />
+                    </beans:property>
+                </beans:bean>
+                <beans:bean class="es.capgemini.pfs.security.RSIAuthenticationFilter"/>
+            </beans:list>
+        </beans:property>
+        <beans:property name="postAuthenticationFilters">
+            <beans:list>
+                <beans:bean class="es.capgemini.pfs.security.UpdateCentroRSIAuthenticationFilter"/>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+    
+	 <beans:bean id="authenticationProviderRSA" class="es.capgemini.pfs.security.RSAAutenticationProvider">
+        <custom-authentication-provider />
+        <beans:property name="userDetailsService" ref="userServiceRSA"/>
+    </beans:bean>
+    
+       
+    <!-- Default WebAuthenticationDetailsSource 
+    <beans:bean id="webAuthenticationDetailsSource" class="org.springframework.security.ui.WebAuthenticationDetailsSource"/>
+	-->
+   
+    
+    <!-- Provide a default userService
+    <user-service id="userService">
+        <user name="admin" password="admin" authorities="ROLE_ANONYMOUS, ROLE_USER, ROLE_ADMIN" />
+        <user name="user11" password="user11" authorities="ROLE_ANONYMOUS, ROLE_USER" />
+    </user-service>
+     -->
+     
+     <!--
+        Custom URL WebAuthenticationDetailsSource para agregar "Entidad" y "Centro"
+    
+    <beans:bean id="webAuthenticationDetailsSource" class="org.springframework.security.ui.WebAuthenticationDetailsSource">
+        <beans:property name="clazz" value="es.capgemini.pfs.security.RSIWebAuthenticationDetails"/>
+    </beans:bean>-->
+	
+	<beans:bean id="webAuthenticationDetailsSource" class="org.springframework.security.ui.WebAuthenticationDetailsSource">
+        <beans:property name="clazz" value="es.capgemini.pfs.security.RSAWebAuthenticationDetails"/>
+    </beans:bean>
+    
+    <!-- Custom Hibernate UserDetailsService -->
+    
+    <beans:bean id="userService" class="es.capgemini.pfs.security.DefaultUserDetailsService"/>
+    
+	<beans:bean id="userServiceRSA" class="es.capgemini.pfs.security.RSAUserDetailsService"/>
+</beans:beans>

@@ -1,0 +1,29 @@
+{
+    "total": 2,
+    "ofertantes": [
+
+        {
+            "idOferta": 1050,
+            "ofertante": "Juan José Rodriguez",
+            "docIdentificativo": "54995124T",
+            "telefono": "648998546",
+            "email":  "juanjo@pfsgroup.es",
+			"fechaVisita": "31/05/2015",
+			"tipo": "",
+			"porcentajeCompra": "100%"
+                       
+        },
+        {
+        	"idOferta": 1051,
+            "ofertante": "María Moreno García",
+            "docIdentificativo": "74999855L",
+            "telefono": "666551122",
+            "email":  "mariamoreno@pfsgroup.es",
+			"fechaVisita": "31/05/2015",
+			"tipo": "",
+			"porcentajeCompra": "100%"
+        }
+        
+    ],
+    "success": true
+}

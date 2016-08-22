@@ -1,0 +1,78 @@
+ {
+ 
+ 	"data" : [
+		            {
+		                "text":   "Dashboard",
+		                "view":   "dashboard.DashBoardMain",
+		                "iconCls": "app-menu-ico ico-dashboard",
+		                "cls": "app-menu-item",
+		                "leaf":   true,
+		                "routeId": "home",
+		                "secFunPermToRender": "MENU_DASHBOARD"
+		            },
+		            {
+		                "text":   "Tareas",
+		                "view":   "agenda.AgendaMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-diary",
+		                "cls": "app-menu-item",
+		                "routeId": "agenda",
+		                "secFunPermToRender": "MENU_AGENDA"
+		            },
+		            {
+		                "text":   "Activos",
+		                "view":   "activos.ActivosMain",
+		                "iconCls": "app-menu-ico ico-home",
+		                "cls": "app-menu-item",
+		                "leaf":   true,
+		                "routeId": "activos",
+		                "secFunPermToRender": "MENU_ACTIVOS"		                
+		            },
+		            {
+		                "text":   "Agrupaciones",
+		                "view":   "agrupaciones.AgrupacionesMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-agrupaciones",
+		                "cls": "app-menu-item",
+		                "routeId": "agrupaciones",
+		                "secFunPermToRender": "MENU_AGRUPACIONES"
+		            },
+		            {
+		                "text":   "Trabajos",
+		                "view":   "trabajos.TrabajosMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-trabajos",
+		                "cls": "app-menu-item",
+		                "routeId": "trabajos",
+		                "secFunPermToRender": "MENU_TRABAJOS"
+		            },
+		            {
+		                "text":   "Precios",
+		                "view":   "precios.PreciosMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-precios",
+		                "cls": "app-menu-item",
+		                "routeId": "precios"
+		            },
+		           	{
+		                "text":   "Publicacion",
+		                "view":   "publicacion.PublicacionMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-publicacion",
+		                "cls": "app-menu-item",
+		                "routeId": "publicacion"
+		            },
+		            {
+		                "text":   "Carga Masiva",
+		                "view":   "masivo.MasivoMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-masivo",
+		                "cls": "app-menu-item",
+		                "routeId": "masivo",
+		                "secFunPermToRender": "MENU_MASIVO"
+		            }
+            
+            
+            
+	]
+}

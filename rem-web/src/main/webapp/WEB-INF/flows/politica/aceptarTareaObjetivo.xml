@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idObjetivo" type="java.lang.Long" />
+    <input name="checkBoxTexto" type="java.lang.String" />
+    <input name="aceptarBorrar" type="java.lang.String" />
+
+    <view-state id="formulario" view="politica/editObjetivo">
+    	<on-entry>
+            <evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+    		<evaluate expression="flowScope.objetivo.getPolitica().getCicloMarcadoPolitica().getPersona()" result="flowScope.persona" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoObjetivo')" result="flowScope.tiposObjetivo"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoOperador')" result="flowScope.tiposOperador"/>
+    		<set name="flowScope.readOnly" value="true" />
+            <set name="flowScope.chkBoxTxt" value="checkBoxTexto" />
+    	</on-entry>
+		<transition on="aceptar" to="aceptar" />
+        <transition on="rechazar" to="rechazar" />
+		<transition on="cancel" to="close" bind="false" />
+    </view-state>
+
+	<!-- Se está aceptando o borrando un objetivo? -->
+	<decision-state id="aceptar">
+		<if test="aceptarBorrar=='aceptar'" then="aceptarPropuesta" else="aceptarBorrado" />
+	</decision-state>
+
+	<decision-state id="rechazar">
+		<if test="aceptarBorrar=='aceptar'" then="rechazarPropuesta" else="rechazarBorrado" />
+	</decision-state>
+
+	<!-- borrando -->
+    <action-state id="aceptarBorrado">
+    	<evaluate expression="executor.execute('objetivoManager.aceptarPropuestaBorrado', idObjetivo)" />
+		<transition to="close" />
+	</action-state>
+    
+    <action-state id="rechazarBorrado">
+        <evaluate expression="executor.execute('objetivoManager.rechazarPropuestaBorrado', idObjetivo)" />
+        <transition to="close" />
+    </action-state>
+
+	<!-- aceptado -->
+    <action-state id="aceptarPropuesta">
+    	<evaluate expression="executor.execute('objetivoManager.aceptarPropuestaObjetivo', idObjetivo)" />
+		<transition to="close" />
+	</action-state>
+    
+    <action-state id="rechazarPropuesta">
+        <evaluate expression="executor.execute('objetivoManager.rechazarPropuestaObjetivo', idObjetivo)" />
+        <transition to="close" />
+    </action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

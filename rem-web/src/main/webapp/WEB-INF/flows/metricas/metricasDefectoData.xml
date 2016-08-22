@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var class="es.capgemini.pfs.upload.dto.DtoFileUpload" name="dtoUpload" />
+
+	<action-state id="leerSesion">
+		<!-- Leemos de la sesión si tenemos un DTO con el resultado del último upload -->
+		<evaluate expression="externalContext.sessionMap.get('dtoFileUpload')" result="flowScope.dto" />
+		<transition to="dtoEsVacio" />
+	</action-state>
+
+	<decision-state id="dtoEsVacio">
+		<!-- Si no existiera se pasa como parámetro en el estado final un DTO que diga que el archivo es válido -->
+		<if test="dto!=null" then="asignar" else="obtenerListado" />
+	</decision-state>
+
+	<action-state id="asignar">
+		<!-- Pasamos como parámetro en el estado final el DTO de que se almacenó en sesión -->
+		<set name="dtoUpload" value="dto" />
+		<transition to="obtenerListado" />
+	</action-state>
+
+    <end-state id="obtenerListado" view="metricas/metricasDefectoJSON">
+	    <on-entry>
+	    	<evaluate expression="externalContext.sessionMap.remove('dtoFileUpload')" />
+	    	<evaluate expression="executor.execute('metricaManager.getMetricasTiposPersona', dtoUpload)" result="flowScope.data" />
+	    </on-entry>
+    </end-state> 	
+
+</flow>

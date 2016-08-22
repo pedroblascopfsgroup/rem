@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+	<input name="tipo_tarea" type="java.lang.Long"/>
+	<input name="alerta" type="java.lang.Boolean"/>
+	<input name="espera" type="java.lang.Boolean"/>
+	<input name="dto" type="es.capgemini.pfs.tareaNotificacion.dto.DtoBuscarTareaNotificacion"/>
+	<input name="titulo" type="java.lang.String"/>
+	<input name="icon" type="java.lang.String"/>
+	<input name="fechaVencDesde" type="java.lang.String"/>
+	<input name="fechaVencDesdeOp" type="java.lang.String"/>
+	<input name="fechaVencHasta" type="java.lang.String"/>
+	<input name="fechaVencHastaOp" type="java.lang.String"/>
+	<input name="fechaInicioDesde" type="java.lang.String"/>
+	<input name="fechaInicioDesdeOp" type="java.lang.String"/>
+	<input name="fechaInicioHasta" type="java.lang.String"/>
+	<input name="fechaInicioHastaOp" type="java.lang.String"/>
+	<input name="isBusqueda" type="java.lang.Boolean"/>
+	<input name="noGrouping" type="java.lang.Boolean"/>
+	<input name="traerGestionVencidos" type="java.lang.Boolean"/>
+	<input name="tituloAdicionalGrid" type="java.lang.String"/>
+	
+	
+	<!-- renderiza el formulario -->
+    <end-state id="listado" view="tareas/listadoTareas" >	
+	    
+		<on-entry>
+	    	
+    		<evaluate expression="requestParameters.codigoTipoTarea" result="flowScope.codigoTipoTarea" />
+			<evaluate expression="requestParameters.alerta" result="flowScope.alerta" />
+			<evaluate expression="requestParameters.espera" result="flowScope.espera" />
+			<evaluate expression="requestParameters.titulo" result="flowScope.titulo" />
+			<evaluate expression="requestParameters.icon" result="flowScope.icon" />
+	    </on-entry>
+		
+    </end-state> 
+
+    
+</flow>

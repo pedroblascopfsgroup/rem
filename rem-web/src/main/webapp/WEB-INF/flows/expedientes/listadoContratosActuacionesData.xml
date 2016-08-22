@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<input name="idExpediente" type="java.lang.Long" />
+
+    <end-state id="contratos" view="expedientes/listadoContratosActuacionesJSON">
+	    <on-entry>
+			<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', idExpediente)" result="flowScope.contratosActuaciones" />
+		</on-entry>
+    </end-state>
+</flow>

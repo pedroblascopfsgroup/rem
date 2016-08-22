@@ -1,0 +1,21 @@
+<%@ taglib prefix="json" uri="http://www.atg.com/taglibs/json" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="app" tagdir="/WEB-INF/tags" %>
+<%@ tag body-content="empty"%>
+
+<%@ attribute name="name" required="true" type="java.lang.String"%>
+
+<%@ attribute name="label" required="true" type="java.lang.String"%>
+<%@ attribute name="labelKey" required="true" type="java.lang.String"%>
+<%@ attribute name="value" required="true" type="java.lang.String"%>
+<%@ attribute name="obligatory" required="false" type="java.lang.Boolean"%>
+<%@ attribute name="searchOnEnter" required="false" type="java.lang.Boolean"%>
+<%@ attribute name="width" required="false" type="java.lang.Integer"%>
+
+<c:set var="_width" value="175" />
+
+<c:if test="${width != null}">
+	<c:set var="_width" value="${width}" />
+</c:if>
+app.${name}('<s:message code="${labelKey}" text="${label}" />','${value}',{labelStyle:'width:20%;font-weight:bolder'});

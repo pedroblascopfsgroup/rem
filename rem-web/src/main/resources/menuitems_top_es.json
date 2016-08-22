@@ -1,0 +1,21 @@
+ {
+ 
+ 	"data" : [
+		            {
+		                "text":   "Alertas",
+		                "view":   "agenda.AgendaAlertasMain",
+		                "leaf":   true,
+		                "iconCls" : "app-tb-ico ico-envelope",
+		                "cls": "app-menu-item",
+		                "routeId": "alertas"
+		            },
+		            {
+		                "text":   "Avisos",
+		                "view":   "agenda.AgendaAvisosMain",
+		                "leaf":   true,
+		                "iconCls" : "app-tb-ico ico-bell",
+		                "cls": "app-menu-item",
+		                "routeId": "avisos"
+		            }    
+	]
+}

@@ -1,0 +1,447 @@
+--/*
+--######################################### 
+--## AUTOR=David González
+--## FECHA_CREACION=20160216
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-67B
+--## PRODUCTO=NO
+--## 
+--## Finalidad: COMPROBACION DE DICCIONARIOS: Comprobamos que los codigos de diccionario que nos 
+--##    										llegan en migracion existen en nuestros diccionarios
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := '#ESQUEMA#';
+V_ESQUEMA_MASTER VARCHAR2(20 CHAR) := '#ESQUEMA_MASTER#';
+DESCRIPCION VARCHAR2(50 CHAR);
+V_TABLA VARCHAR(30 CHAR) := 'MIG_ADA_DATOS_ADI';
+FICHERO VARCHAR2(30 CHAR) := 'ACTIVO_DATOSADICIONALES.dat';
+SENTENCIA VARCHAR2(300 CHAR);
+V_NUM NUMBER(10);
+CAMPO VARCHAR2(30 CHAR);
+DICCIONARIO VARCHAR2(30 CHAR);
+COD_DICC VARCHAR2(30 CHAR);
+CLAVE VARCHAR2(30 CHAR) := 'ACT_NUMERO_ACTIVO';
+
+BEGIN
+
+  SENTENCIA := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''DD_COD_NOT_EXISTS'' AND OWNER = '''||V_ESQUEMA||'''';
+  EXECUTE IMMEDIATE SENTENCIA INTO V_NUM;
+  
+  IF V_NUM = 0 THEN
+  
+    DBMS_OUTPUT.PUT_LINE('[ERROR] NO EXISTE LA TABLA '||V_ESQUEMA||'.DD_COD_NOT_EXISTS. EJECUTAR DDL.');
+  
+  ELSE
+  
+  EXECUTE IMMEDIATE '
+  DELETE FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS
+  WHERE FICHERO_ORIGEN = '''||FICHERO||'''
+  '
+  ;
+  
+  COMMIT;
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] SE VA A PROCEDER A VALIDAR LOS CODIGOS DE DICCIONARIO.');
+    
+  --DD_TVP_TIPO_VPO--
+  
+  CAMPO := 'TIPO_VPO';
+  DICCIONARIO := 'DD_TVP_TIPO_VPO';
+  COD_DICC := 'DD_TVP_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_TPO_TIPO_TITULO_POSESORIO--
+  
+  CAMPO := 'TIPO_TITULO_POSESORIO';
+  DICCIONARIO := 'DD_TPO_TIPO_TITULO_POSESORIO';
+  COD_DICC := 'DD_TPO_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_LOC_LOCALIDAD--
+  
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] Modificando campo MUNICIPIO_REGISTRO...');
+  DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo 0 a la izquierda...');
+  
+  EXECUTE IMMEDIATE '
+  UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+  SET MUNICIPIO_REGISTRO = LPAD(MUNICIPIO_REGISTRO,5,''0'')
+  '
+  ;
+  
+  
+  CAMPO := 'MUNICIPIO_REGISTRO';
+  DICCIONARIO := 'DD_LOC_LOCALIDAD';
+  COD_DICC := 'DD_LOC_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_LOC_LOCALIDAD--
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] Modificando campo MUNICIPIO_REG_ANTERIOR...');
+  DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo 0 a la izquierda...');
+  
+  EXECUTE IMMEDIATE '
+  UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+  SET MUNICIPIO_REG_ANTERIOR = LPAD(MUNICIPIO_REG_ANTERIOR,5,''0'')
+  '
+  ;
+  
+  CAMPO := 'MUNICIPIO_REG_ANTERIOR';
+  DICCIONARIO := 'DD_LOC_LOCALIDAD';
+  COD_DICC := 'DD_LOC_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_LOC_LOCALIDAD--
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] Modificando campo MUNICIPIO...');
+  DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo 0 a la izquierda...');
+  
+  EXECUTE IMMEDIATE '
+  UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
+  SET MUNICIPIO = LPAD(MUNICIPIO,5,''0'')
+  '
+  ;
+    
+  CAMPO := 'MUNICIPIO';
+  DICCIONARIO := 'DD_LOC_LOCALIDAD';
+  COD_DICC := 'DD_LOC_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_EDH_ESTADO_DIV_HORIZONTAL--
+  
+  CAMPO := 'ESTADO_DIVISION_HORIZONTAL';
+  DICCIONARIO := 'DD_EDH_ESTADO_DIV_HORIZONTAL';
+  COD_DICC := 'DD_EDH_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_EON_ESTADO_OBRA_NUEVA--
+  
+  CAMPO := 'ESTADO_OBRA_NUEVA';
+  DICCIONARIO := 'DD_EON_ESTADO_OBRA_NUEVA';
+  COD_DICC := 'DD_EON_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_TUB_TIPO_UBICACION--
+  
+  CAMPO := 'TIPO_UBICACION';
+  DICCIONARIO := 'DD_TUB_TIPO_UBICACION';
+  COD_DICC := 'DD_TUB_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_TVI_TIPO_VIA--
+  
+  CAMPO := 'TIPO_VIA';
+  DICCIONARIO := 'DD_TVI_TIPO_VIA';
+  COD_DICC := 'DD_TVI_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_UPO_UNID_POBLACIONAL--
+  
+  CAMPO := 'UNIDAD_INFERIOR_MUNICIPIO';
+  DICCIONARIO := 'DD_UPO_UNID_POBLACIONAL';
+  COD_DICC := 'DD_UPO_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+    
+  COMMIT;
+  
+  -------
+  
+  --DD_PRV_PROVINCIA--
+  
+  CAMPO := 'PROVINCIA';
+  DICCIONARIO := 'DD_PRV_PROVINCIA';
+  COD_DICC := 'DD_PRV_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' IS NOT NULL
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  -------
+  
+  --DD_CIC_CODIGO_ISO_CIRBE--
+  
+  CAMPO := 'PAIS';
+  DICCIONARIO := 'DD_CIC_CODIGO_ISO_CIRBE_BKP';
+  COD_DICC := 'DD_CIC_CODIGO';
+  
+  EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.DD_COD_NOT_EXISTS (
+  SELECT 
+  MIG.'||CLAVE||',
+  '''||FICHERO||''',
+  '''||CAMPO||''',
+  '''||DICCIONARIO||''',
+  MIG.'||CAMPO||',
+  SYSDATE
+  FROM '||V_ESQUEMA||'.'||V_TABLA||' MIG
+  WHERE MIG.'||CAMPO||' NOT IN (
+    SELECT '||COD_DICC||'
+    FROM '||V_ESQUEMA_MASTER||'.'||DICCIONARIO||'
+  )
+  AND MIG.'||CAMPO||' != ''UNDEFINED''
+  )
+  '
+  ;
+  
+  COMMIT;
+  
+  DBMS_OUTPUT.put_line('[INFO] CHECKEO FINALIZADO.');
+  
+  EXECUTE IMMEDIATE '
+  SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_COD_NOT_EXISTS WHERE FICHERO_ORIGEN = '''||FICHERO||''''
+  INTO V_NUM;
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] SE HAN INFORMADO '||V_NUM||' CÓDIGOS DE DICCIONARIO INEXISTENTES');
+  
+  END IF;
+  
+  -------
+  
+  EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

@@ -17,13 +17,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>Central</id>
-			<url>http://192.168.0.16:8081/nexus/content/groups/recovery</url>
-		</repository>
-	</repositories>
-
 	<dependencyManagement>
 		<dependencies>
 

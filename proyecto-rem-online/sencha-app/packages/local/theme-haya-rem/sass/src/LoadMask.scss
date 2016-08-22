@@ -1,0 +1,23 @@
+/**
+ * @var {string}
+ * The icon to display in the message inner element
+ */
+$loadmask-msg-inner-icon: dynamic('loadingrem');
+
+/**
+ * @var {number/list}
+ * The padding of the message element
+ */
+$loadmask-msg-text-padding: 71px 20px 0;
+
+/**
+ * @var {color}
+ * The background-color of the LoadMask's message element
+ */
+$loadmask-msg-background-color: transparent !default;
+
+/**
+ * @var {color}
+ * The text color of the message inner element
+ */
+$loadmask-msg-inner-color: #0A94D6 !default;

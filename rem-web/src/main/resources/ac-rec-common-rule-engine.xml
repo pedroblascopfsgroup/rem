@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-2.5.xsd"
+  default-autowire="byName">
+
+ 
+  <bean id="arquetiposRuleExecutorConf" class="es.capgemini.pfs.ruleengine.RuleExecutorConfig">
+    <property name="tableFrom" value="${arquetipo.tableFrom}" />
+    <property name="tableToUpdate" value="${arquetipo.tableToUpdate}" />
+    <property name="columnToUpdate" value="${arquetipo.columnToUpdate}" />
+    <property name="columnFromRef" value="${arquetipo.columnFromRef}" />
+    <property name="columnToRef" value="${arquetipo.columnToRef}" />
+    <property name="ruleDefinitionType" value="${arquetipo.ruleDefinitionType}" />
+  </bean>
+  
+  <bean id="prepoliticasRuleExecutorConf" class="es.capgemini.pfs.ruleengine.RuleExecutorConfig">
+    <property name="tableFrom" value="${prepolitica.tableFrom}" />
+    <property name="tableToUpdate" value="${prepolitica.tableToUpdate}" />
+    <property name="columnToUpdate" value="${prepolitica.columnToUpdate}" />
+    <property name="columnFromRef" value="${prepolitica.columnFromRef}" />
+    <property name="columnToRef" value="${prepolitica.columnToRef}" />
+    <property name="ruleDefinitionType" value="${prepolitica.ruleDefinitionType}" />
+  </bean>
+  <!-- 
+  <bean id="arquetiposRuleExecutor" class="es.capgemini.pfs.ruleengine.RuleExecutor">
+  	<property name="config" ref="arquetiposRuleExecutorConf" />
+  </bean>
+   -->
+
+ 
+</beans>

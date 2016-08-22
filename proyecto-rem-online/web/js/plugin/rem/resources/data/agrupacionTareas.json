@@ -1,0 +1,14 @@
+{
+    "agrupaciontareas": [
+		//Supervisor
+		{"idGestor": 21	,"gestor": "Supervisor"	, "categoria": "vencidas"	 , "idEstado": 2	, "estado": "vencidas"			, "cantidad": "2"	, "total": "7"	, "porcentaje": 0.29},
+		{"idGestor": 21	,"gestor": "Supervisor"	, "categoria": "cerca_vencer", "idEstado": 1	, "estado": "cerca de vencer"	, "cantidad": "3"	, "total": "7"	, "porcentaje": 0.43}, 
+		{"idGestor": 21	,"gestor": "Supervisor"	, "categoria": "activas"	 , "idEstado": 0	, "estado": "activas"			, "cantidad": "2"	, "total": "7"	, "porcentaje": 0.29},
+
+		//Gestor
+		{"idGestor": 21	,"gestor": "Gestor"	, "categoria": "vencidas"	 , "idEstado": 2	, "estado": "vencidas"			, "cantidad": "1"	, "total": "1"	, "porcentaje": 1},
+		{"idGestor": 21	,"gestor": "Gestor"	, "categoria": "cerca_vencer", "idEstado": 1	, "estado": "cerca de vencer"	, "cantidad": "0"	, "total": "1"	, "porcentaje": 0}, 
+		{"idGestor": 21	,"gestor": "Gestor"	, "categoria": "activas"	 , "idEstado": 0	, "estado": "activas"			, "cantidad": "0"	, "total": "1"	, "porcentaje": 0}
+  ],
+    "success": true
+}

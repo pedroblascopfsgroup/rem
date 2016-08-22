@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dto" class="es.capgemini.pfs.asunto.dto.ProcedimientoDto"/> 
+	
+	
+	<input name="idProcedimientoPadre" type="java.lang.Long"/>
+	<input name="pantalla" type="java.lang.String"/>
+	<decision-state id="newOrEdit">
+		<if test="id!=null" then="buscar" else="crear"/>
+	</decision-state>
+	<action-state id="buscar">
+	<evaluate expression="executor.execute('decisionProcedimientoManager.get', id)" result="flowScope.decisionProcedimiento"/>
+	<transition to="formulario" />
+	</action-state>
+	<action-state id="crear">
+		<evaluate expression="executor.execute('decisionProcedimientoManager.getInstance',idProcedimiento)"
+			result="flowScope.decisionProcedimiento" />
+		<transition to="formulario" />
+	</action-state>
+
+	<!-- renderiza el formulario -->
+    <view-state id="formulario" view="expedientes/editaProcedimiento" >
+	    <on-entry>
+	    	<evaluate expression="requestParameters.idContrato" result="flowScope.idContrato" /> 
+	    	<evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnAsunto',idAsuntoOrigen)" result="flowScope.asuntos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getProcedimiento', idProcedimiento)" result="flowScope.procedimiento" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposActuacion')" result="flowScope.tiposActuacion" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+	    	<evaluate expression="executor.execute('contratoManager.get',idContrato)" result="flowScope.contrato" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getPersonasAsociadasAContratoProcedimiento', idContrato,idProcedimiento)" result="flowScope.personas"/>
+	    </on-entry>
+	    <transition on="updateProcedimiento" to="updateProcedimiento"/>
+    </view-state>
+    
+    <end-state id="updateProcedimiento" view="asuntos/returnJSON">
+	  <on-entry>	
+		<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+		<evaluate expression="executor.execute('procedimientoManager.guardarProcedimiento',dto)" result="flowScope.id"/>
+	  </on-entry>
+	</end-state> 	
+    
+</flow>

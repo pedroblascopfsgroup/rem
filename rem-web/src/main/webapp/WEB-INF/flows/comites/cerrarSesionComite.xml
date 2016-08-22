@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+   <input name="idComite" type="java.lang.Long" />
+   <input name="ignorarErrores" type="java.lang.Boolean" />
+            
+    <view-state id="cerrarSesion" view="generico/respuestaJSON">
+      <on-entry>
+         <evaluate expression="executor.execute('comiteManager.cerrarSesion', idComite, ignorarErrores)" result="flowScope.respuesta" />
+      </on-entry>
+    </view-state>
+  
+</flow>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+    <var name="dto" class="es.capgemini.pfs.politica.dto.DtoListaAnalisisPersona"/>
+    
+    
+	
+	<input name="idPersona" type="java.lang.Long" />
+	<input name="tamanio" type="java.lang.Integer" />
+    
+    <view-state id="listado" view="politica/edicionMasivaAnalisisParcelaPersona" model="dto">
+        <on-entry>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDValoracion')" result="flowScope.valoraciones"/>
+        	<evaluate expression="executor.execute('dictionaryManager.getList', 'DDImpacto')" result="flowScope.impactos"/>
+            <evaluate expression="requestParameters.idPersona" result="flowScope.idPersona"/>
+        </on-entry>
+        <transition on="saveOrUpdate" to="saveOrUpdate"/>
+    </view-state>
+
+	<end-state id="saveOrUpdate" view="default">
+		<on-entry>
+			<evaluate expression="executor.execute('analisisPoliticaManager.guardarAnalisisPersonaMasivo', dto)"/>
+		</on-entry>
+	</end-state>
+</flow>

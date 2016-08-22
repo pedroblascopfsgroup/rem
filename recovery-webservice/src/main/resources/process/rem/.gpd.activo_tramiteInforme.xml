@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteInforme" width="1309" height="775">
+  <node name="inicio" x="89" y="8" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_AnalisisPeticion" x="420" y="107" width="167" height="40">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_AnalisisPeticionDecision" x="395" y="190" width="218" height="36">
+    <edge>
+      <label x="5" y="-17"/>
+    </edge>
+    <edge>
+      <label x="-14" y="-22"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_SolicitudExtraordinaria" x="755" y="270" width="210" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_AutorizacionPropietario" x="752" y="334" width="217" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_AutorizacionPropietarioDecision" x="729" y="401" width="262" height="36">
+    <edge>
+      <label x="-26" y="-19"/>
+      <bendpoint w1="214" h1="-4" w2="-170" h2="99"/>
+    </edge>
+    <edge>
+      <label x="4" y="-17"/>
+    </edge>
+  </node>
+  <node name="T006_EmisionInforme" x="419" y="403" width="179" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_ValidacionInforme" x="417" y="554" width="188" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T006_ValidacionInformeDecision" x="397" y="615" width="233" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+      <bendpoint w1="-135" h1="4" w2="-130" h2="216"/>
+      <bendpoint w1="-135" h1="-106" w2="-130" h2="106"/>
+      <bendpoint w1="-136" h1="-216" w2="-131" h2="-4"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="-87" y="-24"/>
+      <bendpoint w1="642" h1="-1" w2="-87" h2="428"/>
+    </edge>
+  </node>
+  <node name="T006_CierreEconomico" x="416" y="738" width="196" height="36">
+    <edge>
+      <label x="-127" y="-14"/>
+      <bendpoint w1="733" h1="-5" w2="6" h2="488"/>
+    </edge>
+  </node>
+  <node name="T006_ComprobarTipoGestor" x="25" y="110" width="262" height="36">
+    <edge>
+      <label x="-62" y="-18"/>
+    </edge>
+    <edge>
+      <label x="5" y="-123"/>
+      <bendpoint w1="-1" h1="154" w2="-373" h2="-139"/>
+    </edge>
+  </node>
+  <node name="Fin" x="1176" y="186" width="132" height="36"/>
+</root-container>

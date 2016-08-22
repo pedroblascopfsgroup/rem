@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="formListadoUsuarios" class="es.capgemini.pfs.users.web.FormListadoUsuarios"/>
+<!--
+    <var name="flowScope.busqueda" class="es.capgemini.pfs.users.dto.DtoBuscarUsuarios" />
+-->    
+    <view-state id="listado" view="admin/editarUsuarios" model="formListadoUsuarios">
+    	<transition on="getData" to="getData1"  />
+    </view-state> 	
+    
+    
+    <view-state id="getData1" view="admin/listadoUsuariosJSON" model="formListadoUsuarios">
+		<on-render>
+			<!-- esto es una forma de sacar trazas desde el flow -->
+			<evaluate expression="eventManager.fireEvent('genericChannel','hola mundo feliz')"></evaluate>
+			<evaluate expression="executor.execute('usuarioManager.findUsersPage', formListadoUsuarios)" result="flowScope.pagina"/>
+			<set name="formListadoUsuarios.usuarios" value="pagina.results"></set>
+		</on-render>
+		<transition on="update" to="update"/>
+		<transition on="getData" to="getData1"/>
+		<!-- <exception-handler bean="swfExceptionHandler" /> -->
+	</view-state>
+	
+    
+    <action-state id="update">
+    	<evaluate expression="executor.execute('usuarioManager.updateList',formListadoUsuarios.usuarios)"></evaluate>
+    		<transition to="getData1" />
+    </action-state>
+    
+    <exception-handler bean="swfExceptionHandler" />
+</flow>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<var name="dto" class="es.capgemini.pfs.politica.dto.DtoObjetivo" />
+   
+	<input name="idObjetivo" type="java.lang.Long" />
+	<input name="idPersona" type="java.lang.Long" />
+	<input name="idContrato" type="java.lang.Long" />
+	<input name="idPolitica" type="java.lang.Long" />
+
+	<decision-state id="newOrEdit">
+		<if test="idObjetivo!=null" then="buscar" else="formulario" />
+	</decision-state>
+
+	<action-state id="buscar">
+		<evaluate expression="executor.execute('objetivoManager.getObjetivo', idObjetivo)" result="flowScope.objetivo" />
+		<transition to="formulario" />
+	</action-state>
+
+    <view-state id="formulario" view="${view}" model="dto">
+    	<on-entry>
+    		<evaluate expression="personaManager.get(idPersona)" result="flowScope.persona" />
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoObjetivo')" result="flowScope.tiposObjetivo"/>
+			<evaluate expression="executor.execute('dictionaryManager.getList', 'DDTipoOperador')" result="flowScope.tiposOperador"/>
+    		<set name="flowScope.readOnly" value="false" />
+            <set name="flowScope.dto.idPolitica" value="idPolitica" />
+    		<set name="flowScope.view" value="'politica/editObjetivo'" />
+    	</on-entry>
+
+		<transition on="update" to="update" />
+		<transition on="cancel" to="close" bind="false" />
+    </view-state>
+
+    <action-state id="update">
+    	<evaluate expression="executor.execute('objetivoManager.guardarObjetivo', dto)" />
+		<transition to="close" />
+	</action-state>
+
+	<end-state id="close" view="default" />
+
+</flow>

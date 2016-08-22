@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-web-app>
+	<container-descriptor>
+		<prefer-web-inf-classes>false</prefer-web-inf-classes>
+		<prefer-application-packages>
+			<package-name>antlr.*</package-name>
+			<package-name>org.mozilla.*</package-name>
+			<package-name>javax.persistence.*</package-name>
+			<package-name>com.sun.activation.*</package-name>
+			<package-name>com.sun.mail.*</package-name>
+			<package-name>javax.activation.*</package-name>
+			<package-name>javax.ejb.*</package-name>
+			<package-name>javax.ejb.spi.*</package-name>
+			<package-name>javax.interceptor.*</package-name>
+			<package-name>javax.transaction.*</package-name>
+			<package-name>javax.transaction.xa.*</package-name>
+			<package-name>javax.xml.namespace.*</package-name>
+			<package-name>javax.xml.rpc.*</package-name>
+			<package-name>javax.mail.*</package-name>
+			<package-name>javax.mail.event.*</package-name>
+			<package-name>javax.mail.internet.*</package-name>
+			<package-name>javax.mail.search.*</package-name>
+			<package-name>javax.mail.util.*</package-name>
+		</prefer-application-packages>
+		<servlet-reload-check-secs>-1</servlet-reload-check-secs>
+		<show-archived-real-path-enabled>true
+		</show-archived-real-path-enabled>
+	</container-descriptor>
+	<jsp-descriptor>
+		<page-check-seconds>-1</page-check-seconds>
+	</jsp-descriptor>
+	<session-descriptor>
+		<cookie-http-only>true</cookie-http-only>
+	</session-descriptor>
+</weblogic-web-app>

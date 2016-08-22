@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    <attribute name="alwaysRedirectOnPause" value="false" />
+		
+	<var name="flowScope.usuario" class="es.capgemini.pfs.users.domain.Usuario" />
+	
+    <view-state id="editUsuario" view="admin/editUsuario" model="usuario">
+    	<transition on="update" to="validateUsuario"></transition>
+    </view-state>
+    
+    <decision-state id="validateUsuario">
+    	<on-entry>
+    		<evaluate expression="usuario.validateIntegrity(messageContext)" result="flowScope.usuarioIsValid"></evaluate>
+    	</on-entry>
+    	<if test="flowScope.usuarioIsValid" then="updateUsuario" else="devuelveErrores" />
+    </decision-state>
+    
+    <view-state id="devuelveErrores" view="json"></view-state>
+    
+    <view-state id="updateUsuario" view="json">
+    	<on-render>
+    		<evaluate expression="executor.execute('usuarioManager.saveOrUpdate', usuario)"  />
+    	</on-render>
+    </view-state>
+   
+</flow>

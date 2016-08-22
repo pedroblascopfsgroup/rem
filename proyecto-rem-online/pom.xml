@@ -1,0 +1,65 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>es.pfsgroup</groupId>
+		<artifactId>recovery</artifactId>
+		<version>9.1-SNAPSHOT</version>
+	</parent>
+
+	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<jsDebug>true</jsDebug>	
+	</properties>
+
+	<groupId>es.pfsgroup.plugin</groupId>
+	<artifactId>proyecto-rem-online</artifactId>
+	<packaging>jar</packaging>
+	<name>proyecto-rem-online</name>
+
+	<!-- De momento las dependencias están vacías, sólo javascript
+	<dependencies>
+		
+	</dependencies>
+    -->
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src\web</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src\main\resources</directory>				
+			</resource>
+			<resource>
+				<directory>src//web</directory>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>src//main//resources</directory>				
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
+		<profile>
+		<id>rem-delivery</id>
+		<properties>
+			<jsDebug>false</jsDebug>				
+		</properties>
+	</profile>	
+	</profiles>
+	
+	
+</project>

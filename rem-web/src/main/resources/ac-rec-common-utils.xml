@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" 
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  					 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
+  default-autowire="byName" default-merge="true">
+
+  <context:component-scan base-package="es.pfsgroup" />
+  <context:component-scan base-package="es.capgemini.pfs" />
+  
+  <import resource="classpath:devon/resources/bpm/ac-devon-bpm.xml" />
+
+  <!-- Add jbpm Mappings to "masterSessionFactory" -->
+  <alias name="jbpm.mappings" alias="master.additionalMappings" />
+
+   <!-- Añadimos un listado de procesos interos de Recovery -->
+   <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/cliente/processdefinition.xml" p:version="-1" />
+   <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/expediente/processdefinition.xml" p:version="-1" />
+   <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/tareaSolicitada/processdefinition.xml" p:version="-1" />
+   <bean parent="bpm.processFactory" p:definitionLocation="classpath:process/objetivoPolitica/processdefinition.xml" p:version="-1" />
+   
+   
+   <!-- Creamos la configuración jBPM -->
+   <bean id="jbpmConfiguration" parent="bpm.configuration" depends-on="dbIdContextHolder">
+      <property name="sessionFactory" ref="entitySessionFactory" />
+      <property name="processDefinitions" ref="jBPMProcessDefinitionSet" />
+   </bean>
+
+
+
+  <bean id="jbpmTemplate" class="org.springmodules.workflow.jbpm31.JbpmTemplate">
+    <constructor-arg index="0" ref="jbpmConfiguration" />
+  </bean>
+ 
+  <bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >
+  	<property name="contextScripts">
+  		<list>
+  			<value><![CDATA[
+  			def damePlazo= {
+  				new java.text.SimpleDateFormat('yyyy-MM-dd').parse(it).getTime()-System.currentTimeMillis()
+  			}
+
+  			def isBienesConFechaSolicitud = {
+  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaSolicitud() != null) {return true}};
+  				return false;
+  			}
+
+  			def isBienesConFechaDecreto= {
+  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaDecreto() != null) {return true}};
+  				return false;
+  			}
+
+  			def isBienesConFechaRegistro= {
+  				for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+  					if (bien.getEmbargoProcedimiento() != null && bien.getEmbargoProcedimiento().getFechaRegistro() != null) {return true}};
+  				return false;
+  			}
+
+            def tieneBienes= {
+               for (bien in procedimientoManager.getBienesDeUnProcedimiento(idProcedimiento)) {
+                  if (bien.getPersonas() != null) {return true}};
+               return false;
+            }
+
+			def dameNumAuto = {
+  				return procedimientoManager.getProcedimiento(idProcedimiento).getCodigoProcedimientoEnJuzgado();
+  			}
+  			
+  			def dameNumJuzgado = {
+  				def result;
+  				if (procedimientoManager.getProcedimiento(idProcedimiento).getJuzgado()!=null)
+  					{result=procedimientoManager.getProcedimiento(idProcedimiento).getJuzgado().getCodigo();}
+  				else
+  					{result=0;}
+  				return result;
+  			}
+  			
+   			def damePlaza = {
+  				def result;
+  				if (procedimientoManager.getProcedimiento(idProcedimiento).getJuzgado()!=null)
+  					{result=procedimientoManager.getProcedimiento(idProcedimiento).getJuzgado().getPlaza().getCodigo();}
+  				else
+  					{result='';}
+  				return result;
+  			}
+
+            def cuentaCreditosInsinuadosSup= {
+               def counte = 0;
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+                  if ((credito.getTipoSupervisor() != null)&&(credito.getPrincipalSupervisor() != null)) {counte = counte + 1}};
+               return Integer.toString(counte);
+            }
+            
+            def cuentaCreditosInsinuadosExt= {
+               def counte = 0;
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+                  if ((credito.getTipoExterno() != null)&&(credito.getPrincipalExterno() != null)) {counte = counte + 1}};
+               return Integer.toString(counte);
+            }
+
+            def cuentaCreditosInsinuadosDef= {
+               def counte = 0;
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+                  if ((credito.getTipoDefinitivo() != null)&&(credito.getPrincipalDefinitivo() != null)) {counte = counte + 1}};
+               return Integer.toString(counte);
+            }
+                        
+            def creditosDefinitivosPendientes= {
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+                  if ((credito.getTipoDefinitivo() == null)||(credito.getPrincipalDefinitivo() == null)||(credito.getEstadoCredito() == null)||(credito.getEstadoCredito().getCodigo() != '4')) {return true;}};
+               return false;
+            }
+ 
+            def creditosDefinitivosDefinidosEInsinuados= {
+               def counte = 0;
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+               		counte = counte + 1;
+               		if ((credito.getTipoDefinitivo() == null)||(credito.getPrincipalDefinitivo() == null)||(credito.getEstadoCredito() == null)||(credito.getEstadoCredito().getCodigo() != '5')) {return false;}
+               };
+               if (counte == 0) {return false;} else {return true;}
+            }
+            
+            def creditosDespuesDeIACConDemanda= {
+               def cuentaPendientesDemanda = 0;
+               def cuentaDefinitivos = 0;
+               def cuentaTotal = 0;
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+                  cuentaTotal = cuentaTotal + 1;
+                  if (credito.getEstadoCredito().getCodigo() == '3') {cuentaPendientesDemanda = cuentaPendientesDemanda + 1;}
+                  if (credito.getEstadoCredito().getCodigo() == '2') {cuentaDefinitivos = cuentaDefinitivos + 1;}
+               };
+               if (cuentaTotal > cuentaPendientesDemanda + cuentaDefinitivos) {return false;}
+               if (cuentaPendientesDemanda < 1) {return false;}
+               return true;
+            }
+            
+            def creditosDespuesDeIACSinDemanda= {
+               def concursoManager = ctx.getBean("concursoManager");
+               for (credito in concursoManager.dameCreditosInsinuados(idProcedimiento)) {
+                  if (credito.getEstadoCredito().getCodigo() != '2') {return false;}};
+               return true;
+            }
+            
+            def convenioPropioDefinido= {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getInicioConvenio().getCodigo() == '1') {return true;}};
+               return false;
+            }
+             
+            def creditosDefinidosEnConvenioPropioCompletados = {
+               def counte = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getInicioConvenio().getCodigo() == '1'){ 
+                  	  counte = 0;
+                  	  for (convenioCredito in convenio.getConvenioCreditos()) {
+						  counte = counte + 1;
+						  if (convenioCredito.getQuita()==null) {return false;}
+                  	  	  if (convenioCredito.getEspera()==null) {return false;}
+                  	  };
+					  if (counte==0) {return false;}                  	  
+                  }
+               };  
+               return true;
+            }
+            
+            def creditosDefinidosEnConvenioPropioAdmitidoNoAdmitido = {
+               def counte = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getInicioConvenio().getCodigo() == '1'){ 
+                  	  if ((convenio.getEstadoConvenio().getCodigo() != '2')&&(convenio.getEstadoConvenio().getCodigo() != '4')) {
+                  	  	return false;
+                  	  }               	  
+                  }
+               };  
+               return true;
+            }
+                 
+            def checkPosturaEnConveniosDeTercerosOConcursado= {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if ((convenio.getInicioConvenio().getCodigo() == '3') || (convenio.getInicioConvenio().getCodigo() == '2')){
+                  		if ((convenio.getPosturaConvenio() == null)||(convenio.getAdherirse() == null)) {return false;}
+                  }
+               };
+               return true;
+            }     
+             
+            def unConvenioAprovadoEnJunta = {
+               def cuentaAprovados = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getEstadoConvenio().getCodigo() == '3') {cuentaAprovados = cuentaAprovados + 1;}
+               };
+               if (cuentaAprovados==1) {return true;} else {return false;}
+            }
+ 
+            def existeConvenioAnticipado = {
+               def cuentaAnticipado = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getTipoConvenio().getCodigo() == '1') {
+                  	  cuentaAnticipado = cuentaAnticipado + 1
+                  	  if (cuentaAnticipado>1) {return false;}
+                  	  if (convenio.getDescripcionAnticipado() == null) {return false;}
+                  }
+               };
+               if (cuentaAnticipado<1) {return false;} else {return true;}
+            }             
+            
+            def existeConvenioAnticipadoAdmitido = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '2')) {
+                  	 return true;
+                  }
+               };
+               return false;
+            } 
+
+            def existeConvenioAnticipadoNoAdmitido = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '4')) {
+                  	 return true;
+                  }
+               };
+               return false;
+            }
+
+			def existeConvenioAnticipadoNoAdmitidoTrasAprobacion = {
+				def convenioManager = ctx.getBean("convenioManager");
+				for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                	if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '6')) {
+                  		return true;
+                  	}
+               	};
+               	return false;
+			}
+
+			def existeConvenioAnticipadoAdmitidoTrasAprobacion = {
+				def convenioManager = ctx.getBean("convenioManager");
+				for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                	if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getEstadoConvenio().getCodigo() == '5')) {
+                  		return true;
+                  	}
+               	};
+               	return false;
+			}
+           
+           	def todosLosConveniosNoAdmitidos = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getEstadoConvenio().getCodigo() != '4') {return false;}
+               };
+               return true;
+            } 
+            
+            def todosLosConvenioEnEstadoFinal = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if ((convenio.getEstadoConvenio().getCodigo() != '5')&&(convenio.getEstadoConvenio().getCodigo() != '6')) {
+                  	 return false;
+                  }
+               };
+               return true;
+            } 
+            
+			def NoExisteConvenioNoAdmitidoTrasAprovacion = {
+               def cuentaConvenioNoAdmitidoTrasAprovacion = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getEstadoConvenio().getCodigo() == '6') {
+                  	 cuentaConvenioNoAdmitidoTrasAprovacion = cuentaConvenioNoAdmitidoTrasAprovacion + 1;
+                  }
+               };
+               if (cuentaConvenioNoAdmitidoTrasAprovacion == 0) {return true;} else {return false;}
+            } 
+ 
+            def ExistenConvenioAdmitidoTrasAprovacion = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getEstadoConvenio().getCodigo() == '5') {return true;}
+               };
+               return false;
+            } 
+                       
+            def NoExisteConvenioAdmitidoTrasAprovacion = {
+               def cuentaConvenioAdmitidoTrasAprovacion = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getEstadoConvenio().getCodigo() == '5') {
+                  	 cuentaConvenioAdmitidoTrasAprovacion = cuentaConvenioAdmitidoTrasAprovacion + 1;
+                  }
+               };
+               if (cuentaConvenioAdmitidoTrasAprovacion == 1) {return false;} else {return true;}
+            } 
+
+            def existeConvenioAnticipadoConAdhesion = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if ((convenio.getTipoConvenio().getCodigo() == '1') && (convenio.getAdherirse() == null)) {
+                  	 return false;
+                  }
+               };
+               return true;
+            } 
+             
+            def damePosturaConvenioAnticipadoConAdhesion = {
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getTipoConvenio().getCodigo() == '1') {
+                   		if (convenio.getAdherirse() != null) {return convenio.getAdherirse().getCodigo();}
+                  }
+               };
+               return '02';
+            }              
+             
+            def creditosDefinitivosEnConvenioAnticipado = {
+               def cuentaAnticipado = 0;
+               def cuentaCreditos = 0;
+               def convenioManager = ctx.getBean("convenioManager");
+               for (convenio in convenioManager.listaConveniosPorProcedimiento(idProcedimiento)) {
+                  if (convenio.getTipoConvenio().getCodigo() == '1') {
+                  	 cuentaAnticipado = cuentaAnticipado + 1;
+                  	 cuentaCreditos = 0;
+                  	 for (convenioCredito in convenio.getConvenioCreditos()){
+                  	 	cuentaCreditos = cuentaCreditos + 1;
+                  	 	if (convenioCredito.getCredito().getPrincipalDefinitivo() == null) {return false;}
+                  	 	if (convenioCredito.getCredito().getTipoDefinitivo() == null) {return false;}
+					 };
+					 if (cuentaCreditos == 0) {return false;}
+                  }
+               };
+               if (cuentaAnticipado==1) {return true;} else {return false;}
+            }
+
+			def asuntoConProcurador = {
+				if (procedimientoManager.getProcedimiento(idProcedimiento).getAsunto().getProcurador() != null ) 
+					{return true}
+				else
+					{return false}
+			}
+  			 ]]></value>
+  		</list>
+  	</property>
+  </bean>  
+
+  <bean id="mailManager" parent="mail.mailManager">
+    <property name="host" value="${mailManager.host}" />
+    <!--property name="username" value="${agendaMultifuncion.mail.from}" />
+    <property name="password" value="${agendaMultifuncion.mail.pw}" />
+    <property name="javaMailProperties">
+    <props>
+        <prop key="mail.smtp.host">${mailManager.host}</prop>
+        <prop key="mail.smtp.port">${mailManager.port}</prop>
+        <prop key="mail.smtp.auth">true</prop>
+        <prop key="mail.smtp.starttls.enable">true</prop>
+    </props>
+    </property-->
+  </bean>
+    
+  <import resource="classpath:ac-rec-common-rule-engine.xml"/>
+    
+</beans>
+
+

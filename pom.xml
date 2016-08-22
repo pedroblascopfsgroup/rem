@@ -8,6 +8,7 @@
 
 	<properties>
 		<devon.version>1.1.0</devon.version>
+		<evolution.version>9.1-SNAPSHOT</evolution.version>
 
 		<!--
 				PROYECTOS RECOVERY QUE FALTAN POR INCLUIR:
@@ -445,11 +446,89 @@
 				<artifactId>servlet-api</artifactId>
 				<version>2.3</version>
 			</dependency>
-<!-- 	GESTOR DOCUMENTAL LIBRARIES -->
+			<!-- GESTOR DOCUMENTAL LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-gestordocumental-plugin</artifactId>
 				<version>${project.version}</version>
+			</dependency>
+			<!-- REM LIBRARIES -->
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>proyecto-rem-online</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		    <dependency>
+		        <groupId>es.pfsgroup.plugin</groupId>
+		        <artifactId>recovery-webservice</artifactId>
+		        <version>${project.version}</version>
+		    </dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>paradise-framework</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<!-- REM: GESTOR DOCUMENTAL LIBRARIES -->
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-gestordocumentalREM-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		    <!-- EVOLUTION -->
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-coreextension-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-mejoras-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-agendaMultifuncion-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-bpmframework-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-geninformes-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-nuevoModeloBienesCommon-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-procedimientos-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-calendario-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-procedimientos-bpm-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>rec-common-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-domain-evol</artifactId>
+				<version>${evolution.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -625,6 +704,20 @@
 
 				<module>rec-web</module>
 				<module>rec-batch</module>
+			</modules>
+		</profile>
+
+		<profile>
+			<id>rem</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>proyecto-rem-online</module>
+				<module>recovery-webservice</module>
+				<module>paradise-framework</module>
+				<module>recovery-gestordocumentalREM-plugin</module>	
+				<module>rem-web</module>
 			</modules>
 		</profile>
 

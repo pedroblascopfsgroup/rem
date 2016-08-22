@@ -1,0 +1,30 @@
+{
+    "total": 3,
+    "propuestas": [
+
+        {
+            "idOferta": 1050,
+            "importe": "78.000,00",
+            "fechaPropuesta": "31/05/2015",
+            "fechaResolucion": "25/07/2015",
+            "estado":  "Rechazada"
+                       
+        },
+        {
+        	"idOferta": 1050,
+            "importe": "70.000,00",
+            "fechaPropuesta": "15/05/2015",
+            "fechaResolucion": "10/06/2015",
+            "estado":  "Rechazada"
+        },
+        {
+        	"idOferta": 1051,
+            "importe": "95.000,00",
+            "fechaPropuesta": "31/05/2015",
+            "fechaResolucion": "25/07/2015",
+            "estado":  "Aceptada"
+        }
+        
+    ],
+    "success": true
+}

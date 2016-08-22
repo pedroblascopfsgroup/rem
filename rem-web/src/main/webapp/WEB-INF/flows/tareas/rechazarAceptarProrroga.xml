@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+   <var name="dtoTarea" class="es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga" />
+
+	<input name="idEntidadInformacion" type="java.lang.Long"/>
+	<input name="idTipoEntidadInformacion" type="java.lang.String"/>
+	<input name="descripcionCausa" type="java.lang.String"/>
+	<input name="motivo" type="java.lang.String"/>
+	<input name="idTareaOriginal" type="java.lang.Long"/>
+	<input name="aceptada" type="java.lang.String"/>	
+	<input name="descripcion" type="java.lang.String"/>
+	<input name="codigoTipoProrroga" type="java.lang.String"/> 
+	<input name="codigoRespuesta" type="java.lang.String"/> 
+    
+    <end-state id="decisionProrroga" view="default">
+        <on-entry>
+        	<evaluate expression="binder.bindAndValidate(flowRequestContext,dtoTarea)" />
+            <evaluate expression="executor.execute('tareaNotificacionManager.contestarProrroga',dtoTarea)"/>
+        </on-entry>
+    </end-state>
+</flow>

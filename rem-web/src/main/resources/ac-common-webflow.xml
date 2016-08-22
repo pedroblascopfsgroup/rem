@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/beans" 
+   xmlns:beans="http://www.springframework.org/schema/beans"
+   xmlns:tx="http://www.springframework.org/schema/tx"
+   xmlns:aop="http://www.springframework.org/schema/aop"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+               http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+               http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+              
+	<!-- ViewResolver para el formato MS Word (.doc) -->
+    <beans:bean id="reportDOCViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="viewNames" value="reportDOC*"/>
+        <beans:property name="viewClass" value="es.capgemini.pfs.view.ReportDOCView"/>
+        <beans:property name="prefix" value="/reports/" />
+        <beans:property name="suffix" value=".rptdesign" />
+        <beans:property name="order" value="30"/> 
+    </beans:bean>
+    
+    <!-- ViewResolver para JSON -->
+    <beans:bean id="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
+    	<!--<property name="convertAllMapValues"><value>true</value></property>
+    	<property name="ignoreNullValues"><value>true</value></property>-->
+      <!--<beans:property name="jsonWriter" value="jsonWriter"/> -->
+      <property name="jsonViewFilter"><ref bean="jsonViewFilter"/></property>
+      <property name="jsonWriter"><ref bean="jsonWriter" /></property>
+    </beans:bean>
+    
+    <!-- MultipartResolver multipart/form-data -->
+    <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+    <beans:bean name="jsonViewFilter" class="org.springframework.web.servlet.view.json.filter.SimplePropertyFilter">
+        <property name="excludeBeforePropNames">
+              <list>
+                    <!--<value>localizacionActual.bien</value>-->
+                   <!-- <value>datosRegistralesActivo.bien</value>
+                    <value>bienCargaEconomica.bien</value>
+                    <value>bienCargaRegistral.bien</value>-->
+              </list>
+        </property>
+    </beans:bean>
+    
+    <beans:bean id="jsonWriter" class="org.springframework.web.servlet.view.json.writer.sojo.SojoJsonStringWriter">
+    	<property name="convertAllMapValues"><value>true</value></property>
+        <property name="keepValueTypesMode" value="NONE"/> 
+		<property name="enableJsonConfigSupport"><value>true</value></property>
+    </beans:bean>
+
+	<!-- ViewResolver para el PDF/XLS dinámico de simulación de Scoring & Alertas -->
+    <beans:bean id="reportSimulacionViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="viewNames" value="reportSimulacion*"/>
+        <beans:property name="viewClass" value="es.capgemini.pfs.metrica.simulacion.report.SimulacionAlertasReportView"/>
+        <beans:property name="prefix" value="/reports/" />
+        <beans:property name="suffix" value=".rptdesign" />
+        <beans:property name="order" value="30"/> 
+    </beans:bean>
+
+	<!-- ViewResolver para el PDF/XLS dinámico de simulación de Scoring & Alertas -->
+    <beans:bean id="reportFormularioDemandaViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <beans:property name="viewNames" value="reportFormularioDemanda*"/>
+        <beans:property name="viewClass" value="es.capgemini.pfs.procedimientos.report.ReportFormularioDemanda"/>
+        <beans:property name="prefix" value="/reports/" />
+        <beans:property name="suffix" value=".rptdesign" />
+        <beans:property name="order" value="30"/> 
+    </beans:bean>
+
+    <beans:bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+        <beans:property name="viewResolvers">
+            <beans:list>
+                <beans:ref bean="xmlViewResolver"/>
+                <beans:ref bean="fwkJspViewResolver"/>
+                <beans:ref bean="reportPDFViewResolver"/>
+                <beans:ref bean="reportXLSViewResolver"/>
+                <beans:ref bean="reportHTMLViewResolver"/>
+                <beans:ref bean="reportDOCViewResolver"/>
+                <beans:ref bean="reportSimulacionViewResolver"/>
+                <beans:ref bean="reportFormularioDemandaViewResolver"/>
+                <beans:ref bean="jspViewResolver"/>
+                <beans:ref bean="jsonView"/> 
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+	
+
+    
+</beans:beans>

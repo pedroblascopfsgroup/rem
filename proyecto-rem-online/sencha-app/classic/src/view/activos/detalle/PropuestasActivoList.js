@@ -23,9 +23,37 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoList', {
 		            flex: 1		        	
 		        },
 		        {	        	
+		            dataIndex: 'tipoPropuesta',
+		            text: HreRem.i18n('header.tipo.propuesta'),
+		            flex: 1,
+		            renderer: function(value) {
+		            	var record = me.lookupController().getViewModel().get("comboTiposPropuesta").findRecord("codigo", value);
+		            	if(Ext.isEmpty(record)) {
+		            		return "-";
+		            	} else {
+		            		return record.get("descripcion");
+		            	}
+		            	
+		            }
+		            
+		        },
+		        {	        	
+		            dataIndex: 'numTramite',
+		            text: HreRem.i18n('header.tramite'),
+		            flex: 1,
+		            hidden: true
+		        },
+		        {	        	
+		            dataIndex: 'numTrabajo',
+		            text: HreRem.i18n('header.num.trabajo'),
+		            flex: 1,
+		            hidden: true		        	
+		        },
+		        {	        	
 		            dataIndex: 'entidadPropietariaDescripcion',
 		            text: HreRem.i18n('header.cartera'),
-		            flex: 1		        	
+		            flex: 1,
+		            hidden: true        	
 		        },
 		        {	        	
 		            dataIndex: 'estadoDescripcion',
@@ -62,9 +90,30 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoList', {
 		            flex: 1
 		        },
 		        {	        	
+		            dataIndex: 'estadoActivoCodigo',
+		            text: HreRem.i18n('fieldlabel.estado.activo.propuesta'),
+		            flex: 1,
+		            renderer: function(value) {
+		            	var record = me.lookupController().getViewModel().get("comboEstadosPropuestaActivo").findRecord("codigo", value);
+		            	if(Ext.isEmpty(record)) {
+		            		return "-";
+		            	} else {
+		            		return record.get("descripcion");
+		            	}
+		            	
+		            }
+		            
+		        },
+		        {	        	
+		            dataIndex: 'motivoDescarte',
+		            text: HreRem.i18n('header.motivo.descarte'),
+		            flex: 1
+		        },
+		        {	        	
 		            dataIndex: 'observaciones',
 		            text: HreRem.i18n('header.observaciones'),
-		            flex: 1		        	
+		            flex: 1,
+		            hidden: true
 		        }
         ];
         

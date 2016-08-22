@@ -396,6 +396,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoCodigo", dto.getEstadoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoActivoCodigo", dto.getEstadoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.idActivo", dto.getIdActivo());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb,"propact.gestor", dto.getGestorPrecios(),true);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"propact.tipoPropuesta", dto.getTipoPropuesta());
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 

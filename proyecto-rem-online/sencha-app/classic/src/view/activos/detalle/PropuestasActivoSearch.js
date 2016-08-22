@@ -60,12 +60,21 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoSearch', {
 									},
 									{ 
 									    xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.tipo.propuesta'),
+										name: 'tipoPropuesta',
+										bind: {
+											store: '{comboTiposPropuesta}'
+										}
+									}
+									/*,
+									{ 
+									    xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 										name: 'entidadPropietariaCodigo',
 										bind: {
 											store: '{comboEntidadPropietaria}'
 										}
-									}
+									}*/
 									
 								]
 				            },
@@ -128,7 +137,11 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoSearch', {
 											store: '{comboEstadosPropuestaActivo}'
 										}
 										
-									}									
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.gestor.precios'),
+									    name: 'gestorPrecios'  			
+									}
 									/*
 									,{ // TODO Gestores de precios
 										xtype: 'comboboxfieldbase',

@@ -35,6 +35,7 @@ public class DDEstadoPublicacion implements Auditable, Dictionary {
     public static final String CODIGO_PUBLICADO_OCULTO = "03";
     public static final String CODIGO_PUBLICADO_PRECIOOCULTO = "04";
     public static final String CODIGO_DESPUBLICADO = "05";
+    public static final String CODIGO_NO_PUBLICADO = "06";
     
 	private static final long serialVersionUID = 1L;
 

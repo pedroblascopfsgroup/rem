@@ -199,11 +199,13 @@ public class MSVHojaExcel {
 		int numErrores = mapaErrores.size();
 		
 		Iterator<String> it = mapaErrores.keySet().iterator();
+		int columna = numColumnas;
 		while(it.hasNext()){
 			String error = (String) it.next();
 			for(int i = 0; i < mapaErrores.get(error).size(); i++){
-				addTexto(hoja, numColumnas, mapaErrores.get(error).get(i), error);
+				addTexto(hoja, columna, mapaErrores.get(error).get(i), error);
 			}
+			columna++;
 		}
 		
 		copy.write();

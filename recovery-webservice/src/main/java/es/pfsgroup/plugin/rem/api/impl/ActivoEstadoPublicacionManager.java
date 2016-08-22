@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
+import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -58,6 +59,31 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private GenericAdapter genericAdapter;
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+    
+    public DtoCambioEstadoPublicacion getState(Long idActivo){
+    	DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
+    	Activo activo = activoApi.get(idActivo);
+    	dtoCambioEstadoPublicacion.setActivo(idActivo);
+    	
+    	DDEstadoPublicacion estadoPublicacion = activo.getEstadoPublicacion();
+    	if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO)){
+    		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO)){
+    		dtoCambioEstadoPublicacion.setPublicacionForzada(true);
+    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)){
+    		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+    		dtoCambioEstadoPublicacion.setOcultacionForzada(true);
+    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
+    		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+    		dtoCambioEstadoPublicacion.setOcultacionPrecio(true);
+    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
+    		dtoCambioEstadoPublicacion.setDespublicacionForzada(true);
+    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)){
+    		//Se quedaría todo a false en este estado
+    	}
+    	
+    	return dtoCambioEstadoPublicacion;
+    }
     
     @Override
     @Transactional(readOnly = false)

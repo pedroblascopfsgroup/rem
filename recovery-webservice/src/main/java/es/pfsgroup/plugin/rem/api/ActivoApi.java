@@ -39,6 +39,8 @@ public interface ActivoApi {
 	    @BusinessOperationDefinition("activoManager.get")
 	    public Activo get(Long id);
 	    
+		public Activo getByNumActivo(Long id);
+	    
 	    @BusinessOperationDefinition("activoManager.saveOrUpdate")
 	    public boolean saveOrUpdate(Activo activo);
 	    

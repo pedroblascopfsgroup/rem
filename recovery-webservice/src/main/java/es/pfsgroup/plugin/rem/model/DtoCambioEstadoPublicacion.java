@@ -3,14 +3,13 @@ package es.pfsgroup.plugin.rem.model;
 public class DtoCambioEstadoPublicacion {
 
 	private Long idActivo;
-	private Boolean publicacionOrdinaria;
-	private Boolean publicacionForzada;
-	private Boolean ocultacionForzada;
-	private Boolean ocultacionPrecio;
-	private Boolean despublicacionForzada;
+	private Boolean publicacionOrdinaria = false;
+	private Boolean publicacionForzada = false;
+	private Boolean ocultacionForzada = false;
+	private Boolean ocultacionPrecio = false;
+	private Boolean despublicacionForzada = false;
 	private String motivo;
 	private String observaciones;
-	
 	
 	public Long getIdActivo(){
 		return idActivo;

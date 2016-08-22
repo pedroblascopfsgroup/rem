@@ -19,7 +19,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
-import es.pfsgroup.plugin.rem.rest.api.RestManager;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
@@ -30,7 +30,7 @@ public class RestSecurityFilter implements Filter {
 	private EntidadDao entidadDao;
 
 	@Autowired
-	private RestManager restManager;
+	private RestApi restApi;
 
 	@Override
 	public void destroy() {
@@ -91,34 +91,48 @@ public class RestSecurityFilter implements Filter {
 			peticion.setToken(id);
 			String ipClient = ((HttpServletRequest) request).getRemoteAddr();
 
-			Broker broker = restManager.getBrokerByIp(ipClient);
+			Broker broker = restApi.getBrokerByIp(ipClient);
 
 			if (broker != null) {
 				peticion.setBroker(broker);
 
-				if (!restManager.validateSignature(broker, signature, restRequest.getBody())) {
+				if (!restApi.validateSignature(broker, signature, restRequest.getBody())) {
 					logger.error("REST: La firma no es correcta");
-					peticion.setResult("ERROR");
-					peticion.setErrorDesc("INVALID_SIGNATURE");
+					peticion.setResult(RestApi.CODE_ERROR);
+					peticion.setErrorDesc(RestApi.REST_MSG_INVALID_SIGNATURE);
 					throwUnauthorized(response);
 
 				} else {
-					if (!restManager.validateId(broker, id)) {
+					if (!restApi.validateId(broker, id)) {
 						logger.error("REST: El id de la petición ya se ha ejecutado previamente");
-						peticion.setResult("ERROR");
-						peticion.setErrorDesc("REPETEAD_REQUEST");
+						peticion.setResult(RestApi.CODE_ERROR);
+						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
 						throwInvalidId(response);
+						
+					} else if(!restRequest.getBody().contains("data")) {
+						logger.error("REST: Petición no contiene información en el campo data.");
+						peticion.setResult(RestApi.CODE_ERROR);
+						peticion.setErrorDesc(RestApi.REST_MSG_REQUEST_WITHOUT_DATA);
+						throwInvalidRequest(response);
+						
 					} else {
 						chain.doFilter(restRequest, response);
 						
-						peticion.setResult("OK");
+						peticion.setResult(RestApi.CODE_OK);
+						
+/*						//Actualizar estado petición
+						peticion = restApi.getLastPeticionByToken(jsonData.getId());
+						if(!Checks.esNulo(peticion)){
+							peticion.setResult(RestApi.CODE_OK);
+							restApi.guardarPeticionRest(peticion);
+						}*/
 
 					}
 				}
 			} else {
 				logger.error("REST: El operador cuya IP publica es ".concat(ipClient).concat("no está dado de alta"));
-				peticion.setResult("ERROR");
-				peticion.setErrorDesc("BROKER_NOT_EXIST");
+				peticion.setResult(RestApi.CODE_ERROR);
+				peticion.setErrorDesc(RestApi.REST_MSG_BROKER_NOT_EXIST);
 				throwBrokerNotExist(response);
 			}
 		} catch (Exception e) {
@@ -135,7 +149,7 @@ public class RestSecurityFilter implements Filter {
 
 		}
 		if (hibernateEnable) {
-			restManager.guardarPeticionRest(peticion);
+			restApi.guardarPeticionRest(peticion);
 		}
 	}
 
@@ -154,7 +168,7 @@ public class RestSecurityFilter implements Filter {
 
 		HttpServletResponse response = (HttpServletResponse) res;
 
-		String error = "{\"data\":null,\"error\":\"INVALID_SIGNATURE\"}";
+		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_INVALID_SIGNATURE + "\"}";
 
 		response.reset();
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -171,7 +185,24 @@ public class RestSecurityFilter implements Filter {
 
 		HttpServletResponse response = (HttpServletResponse) res;
 
-		String error = "{\"data\":null,\"error\":\"REPETEAD_REQUEST\"}";
+		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_REPETEAD_REQUEST + "\"}";
+
+		response.reset();
+		response.setHeader("Content-Type", "application/json;charset=UTF-8");
+		response.getWriter().write(error);
+	}
+	
+	/**
+	 * Error data invalida
+	 * 
+	 * @param res
+	 * @throws IOException
+	 */
+	private void throwInvalidRequest(ServletResponse res) throws IOException {
+
+		HttpServletResponse response = (HttpServletResponse) res;
+
+		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_REQUEST_WITHOUT_DATA + "\"}";
 
 		response.reset();
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -188,7 +219,25 @@ public class RestSecurityFilter implements Filter {
 
 		HttpServletResponse response = (HttpServletResponse) res;
 
-		String error = "{\"data\":null,\"error\":\"BROKER_NOT_EXIST\"}";
+		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_BROKER_NOT_EXIST + "\"}";
+
+		response.reset();
+		response.setHeader("Content-Type", "application/json;charset=UTF-8");
+		response.getWriter().write(error);
+	}
+	
+	
+	/**
+	 * Error de workingcode
+	 * 
+	 * @param res
+	 * @throws IOException
+	 */
+	private void throwErrorWorkingCodeInvalido(ServletResponse res) throws IOException {
+
+		HttpServletResponse response = (HttpServletResponse) res;
+
+		String error = "{\"data\":null,\"error\":\"" + RestApi.REST_MSG_INVALID_WORKINGCODE + "\"}";
 
 		response.reset();
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
@@ -219,16 +268,6 @@ public class RestSecurityFilter implements Filter {
 		response.getWriter().write(error);
 	}
 
-	private void throwErrorWorkingCodeInvalido(ServletResponse res) throws IOException {
-
-		HttpServletResponse response = (HttpServletResponse) res;
-
-		String error = "{\"data\":null,\"error\":\"INVALID_WORKINGCODE: \"}";
-
-		response.reset();
-		response.setHeader("Content-Type", "application/json;charset=UTF-8");
-		response.getWriter().write(error);
-	}
 
 	
 	/**

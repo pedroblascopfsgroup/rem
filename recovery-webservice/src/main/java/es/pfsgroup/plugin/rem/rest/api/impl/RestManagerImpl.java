@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.rest.impl;
+package es.pfsgroup.plugin.rem.rest.api.impl;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -16,14 +16,14 @@ import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
-import es.pfsgroup.plugin.rem.rest.api.RestManager;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
 @Service("restManager")
-public class RestManagerImpl implements RestManager {
+public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	BrokerDao brokerDao;
@@ -79,6 +79,7 @@ public class RestManagerImpl implements RestManager {
 		}
 		return resultado;
 	}
+	
 
 	@Override
 	public Broker getBrokerByIp(String ip) {
@@ -106,5 +107,19 @@ public class RestManagerImpl implements RestManager {
 		}
 		return error;
 	}
+	
+	@Override
+	public PeticionRest getPeticionById(Long id){
+		return peticionDao.get(id);
+	}
+	
+	
+	@Override
+	public PeticionRest getLastPeticionByToken(String token){
+		return peticionDao.getLastPeticionByToken(token);
+	}
+
+
+	
 
 }

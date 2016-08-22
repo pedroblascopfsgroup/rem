@@ -65,6 +65,19 @@ Ext.define('HreRem.view.precios.PreciosModel', {
 		    	listeners : {
 		            beforeload : 'beforeLoadActivosByPropuesta'
 		        }
-       		}
+       		},
+    		
+    		numActivosByTipoPrecio: {
+    			
+    			pageSize: $AC.getDefaultPageSize(),
+    	    	proxy: {
+    		        type: 'uxproxy',
+    		        remoteUrl: 'precios/getNumActivosByTipoPrecio',
+    			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    	    	},
+    	    	session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true
+    		}
     }
 });

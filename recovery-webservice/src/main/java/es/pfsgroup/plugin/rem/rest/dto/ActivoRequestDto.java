@@ -1,6 +1,6 @@
 package es.pfsgroup.plugin.rem.rest.dto;
 
-public class RequestActivoDto extends RequestDto{
+public class ActivoRequestDto extends RequestDto{
 
 	private static final long serialVersionUID = -6286705518756963532L;
 	

@@ -13,7 +13,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("expediente.id");
-		
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),

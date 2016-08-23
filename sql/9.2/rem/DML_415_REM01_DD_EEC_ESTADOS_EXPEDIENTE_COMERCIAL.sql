@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160808
+--## FECHA_CREACION=20160809
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -40,7 +40,8 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('01'	,'En tramitación'					,'En tramitación'),
         T_TIPO_DATA('02'	,'Anulado'							,'Anulado'),
-        T_TIPO_DATA('03'	,'Firmado'							,'Firmado')
+        T_TIPO_DATA('03'	,'Firmado'							,'Firmado'),
+        T_TIPO_DATA('04'	,'Contraofertado'					,'Contraofertado')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

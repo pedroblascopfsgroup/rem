@@ -37,6 +37,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			dateFormat: 'c'
     		},
     		{
+    			name: 'fechaAltaOferta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
     			name: 'fechaSancion',
     			type:'date',
     			dateFormat: 'c'		
@@ -76,7 +81,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteComercial.json',
-		remoteUrl: 'expedientecomercial/getTabExpediente',
+		
+		api: {
+            read: 'expedientecomercial/getTabExpediente'
+        },
+		
         extraParams: {tab: 'ficha'}
     }    
 

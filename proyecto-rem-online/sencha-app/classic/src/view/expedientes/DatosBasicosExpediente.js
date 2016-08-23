@@ -60,13 +60,13 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				title: HreRem.i18n('title.tramite.expediente'),
 				items: [
 					{ 
-						fieldLabel: HreRem.i18n('fieldlabel.fecha.alta'),
-	                	bind:		'{expediente.fechaAlta}',
+						fieldLabel: HreRem.i18n('fieldlabel.fecha.alta.oferta'),
+	                	bind:		'{expediente.fechaAltaOferta}',
 	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
 	                },
 	                {
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.aceptacion'),
-	                	bind:		'{expediente.fechaAceptacion}',
+	                	bind:		'{expediente.fechaAlta}',
 	                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
 	                },
 	                {
@@ -111,7 +111,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},	
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
-							bind: '{expediente.peticionario}'
+							bind: '{expediente.peticionarioAnulacion}'
 						},
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.entregas.a.cuenta'),
@@ -120,7 +120,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
-							bind: '{expediente.importeDevolucion}'
+							bind: '{expediente.importeDevolucionEntregas}'
 						}
 						
 				

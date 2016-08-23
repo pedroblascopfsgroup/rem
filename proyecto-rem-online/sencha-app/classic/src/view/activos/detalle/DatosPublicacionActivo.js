@@ -6,8 +6,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     scrollable	: 'y',
     saveMultiple: true,
     disableValidation: true,
-    records: ['activohistoricoestadopublicacion', 'activoCondicionantesDisponibilidad'], 
-    recordsClass: ['HreRem.model.ActivoHistoricoEstadoPublicacion', 'HreRem.model.ActivoCondicionantesDisponibilidad'],
+    records: ['activohistoricoestadopublicacion', 'activoCondicionantesDisponibilidad', 'datosPublicacion'], 
+    recordsClass: ['HreRem.model.ActivoHistoricoEstadoPublicacion', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacion'],
     requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.ActivoHistoricoEstadoPublicacion' ,'HreRem.model.CondicionEspecifica', 'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosList'],
     listeners: {
     	boxready:'cargarTabData'
@@ -345,8 +345,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									xtype:'textfieldbase',
 						        	fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicado'),
 						        	reference: 'textfielddiastotalespublicado',
-						        	listeners:{
-						        		afterrender: 'getTotalCountDiasPeriodo'
+						        	bind:{
+						        		value: '{datosPublicacion.totalDiasPublicado}'
 						        	},
 				                	readOnly: true
 								},
@@ -354,8 +354,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									xtype:'textfieldbase',
 						        	fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
 						        	reference: 'textfieldportalesexternos',
-						        	listeners:{
-						        		//afterrender: 'getActivoHaEstadoPublicado'
+						        	bind:{
+						        		value: '{datosPublicacion.portalesExternos}'
 						        	},
 				                	readOnly: true
 								}

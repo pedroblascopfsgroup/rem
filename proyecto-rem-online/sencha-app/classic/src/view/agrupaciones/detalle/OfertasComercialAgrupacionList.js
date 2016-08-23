@@ -88,11 +88,11 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			        	if(Ext.isEmpty(record.get("numExpediente"))) {
 			        		return "";
 			        	} else {
-			        		return '<div style="float:left; margin-top:3px; font-size: 11px; line-height: 1em;">'+ value+'</div>'
+			        		return '<div style="display:inline; margin-right: 15px; font-size: 11px;">'+ value+'</div>'
 			        	}
 			        },
 		            flex     : 1,            
-		            align: 'center',
+		            align: 'right',
 		            menuDisabled: true,
 		            hideable: false
 		        },

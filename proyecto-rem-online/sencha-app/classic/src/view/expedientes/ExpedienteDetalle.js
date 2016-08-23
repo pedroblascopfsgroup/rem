@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
-    requires : ['HreRem.view.expedientes.DatosBasicosExpediente'],
+    requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente'],
     
 		
     listeners: {
@@ -90,6 +90,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        {
 		        	xtype: 'datosbasicosexpediente', ocultarBotonesEdicion: true
 		        	
+		        },
+		        {
+		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
 		        }
 
 		],

@@ -119,6 +119,11 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPublicacion'
     	},
     	
+    	'preciosmain' : {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPropuestaPrecio',
+			abrirDetalleTrabajo: 'abrirDetalleTrabajo'
+    	},
+    	
     	'menufavoritos': {
     		
     		abrirfavoritoactivo: function(menuFavoritos, favorito) {
@@ -529,7 +534,6 @@ Ext.define('HreRem.controller.ActivosController', {
 		    		titulo = "Expediente " + expediente.get("numExpediente");
 		    		tab.setTitle(titulo);
 		    	}
-		    	
 		    	tab.getViewModel().set("expediente", expediente);
 		    	tab.configCmp(expediente);
 		    	
@@ -809,7 +813,15 @@ Ext.define('HreRem.controller.ActivosController', {
     	titulo = "Activo " + record.get("numActivo"),
     	id = record.get("idActivo");
 		me.redirectTo('activos', true);
-    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTAS'])
+		me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTAS']);
+    },
+
+    abrirDetalleActivoPropuestaPrecio: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PROPUESTAS'])
     }
     
 });

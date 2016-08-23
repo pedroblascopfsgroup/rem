@@ -20,14 +20,10 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
-import es.pfsgroup.plugin.rem.rest.api.RestManager;
 
 @Controller
 public class OfertasController {
 
-	@Autowired
-	private RestManager restManager;
-	
 	@Autowired 
     private ActivoApi activoApi;
 	

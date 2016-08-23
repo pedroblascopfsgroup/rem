@@ -137,7 +137,7 @@ public abstract class EXTAbstractTareaNotificacionManager extends BusinessOperat
 				//replaceGestorInList(listaRetorno, usuarioLogado);
 				//replaceSupervisorInList(listaRetorno, usuarioLogado);
 				((PageHibernate) page).setResults(listaRetorno);
-				((PageHibernate) page).setTotalCount(listaRetorno.size());
+				//((PageHibernate) page).setTotalCount(listaRetorno.size());
 			} else {
 				page = new Page() {
 

@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta.dao.impl;
 
+
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -59,5 +61,17 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return new DtoPage(ofertas, pageVisitas.getTotalCount());
 		
 	}
+
+
+	@Override
+	public Page getListTextosOfertaById(DtoTextosOferta dto, Long id) {
+		
+		HQLBuilder hb = new HQLBuilder(" from TextosOferta txo");		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "txo.oferta.id", id);
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+
+	}
+
 
 }

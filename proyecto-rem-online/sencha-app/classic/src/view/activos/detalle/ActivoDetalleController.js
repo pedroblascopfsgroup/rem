@@ -1062,6 +1062,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.up('form').getForm().reset();				
 	},
 	
+	// Función que define el estado de un activo según su estado de disponibilidad comercial.
     onChangeEstadoDisponibilidadComercial: function(field){
     	var me = this;
     	var store = me.getViewModel().getStore('storeEstadoDisponibilidadComercial');
@@ -1078,22 +1079,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		});
     	}
     },
-    
-    getTotalCountDiasPeriodo: function(field) {
-		 var me = this;
-		 var dias = 0;
-		 var store = me.getViewModel().getStore('historicoEstados');
-	   	
-		 store.on("load", function(){
-			 var allRecords = store.getData();
-			
-			 allRecords.each(function(record) {
-				 console.log(record);
-				 dias += parseInt(record.getData().diasPeriodo);
-			 });
-			 field.setValue(dias);
-	   	});
-	 },
     
     // Esta función es llamada cuando cambia el estado de publicación del activo.
     onChangeEstadoPublicacion: function(field){
@@ -1138,11 +1123,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('seccionOcultacionPrecio').hide();
     		view.lookupReference('seccionDespublicacionForzada').hide();
     		break;
-    	default: // Por defecto todos se muestran.
+    	default: // Por defecto se trata como No Publicado.
     		view.lookupReference('seccionPublicacionForzada').show();
-    		view.lookupReference('seccionOcultacionForzada').show();
-			view.lookupReference('seccionOcultacionPrecio').show();
-			view.lookupReference('seccionDespublicacionForzada').show();
+			view.lookupReference('seccionOcultacionForzada').hide();
+			view.lookupReference('seccionOcultacionPrecio').hide();
+			view.lookupReference('seccionDespublicacionForzada').hide();
     		break;
     	}
     },
@@ -1233,5 +1218,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleExpediente', record);
     	
+    },
+    
+    onEnlaceTrabajoClick: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	record.data.id=record.data.idTrabajo;
+    	me.getView().fireEvent('abrirDetalleTrabajo', record);
+    	
+    },
+    
+    onEnlaceTramiteClick: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleTramite', grid, record);	
     }
 });

@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.visita.dao.impl;
 
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +14,13 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Repository("VisitaDao")
 public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements VisitaDao{
 	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getListVisitas(DtoVisitasFilter dtoVisitasFilter) {
@@ -24,10 +28,10 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		
 		HQLBuilder hb = new HQLBuilder(" from Visita vis");
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.numVisita", dtoVisitasFilter.getNumVisita());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.numVisitaRem", dtoVisitasFilter.getNumVisita());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.activo.numActivo", dtoVisitasFilter.getNumActivo());
 		
-		hb.orderBy("vis.numVisita", HQLBuilder.ORDER_ASC);
+		hb.orderBy("vis.numVisitaRem", HQLBuilder.ORDER_ASC);
 		
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
 		
@@ -38,7 +42,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			DtoVisitasFilter dtoFilter= new DtoVisitasFilter();
 			
 			dtoFilter.setNumActivo(v.getActivo().getNumActivo());
-			dtoFilter.setNumVisita(v.getNumVisita());
+			dtoFilter.setNumVisita(v.getNumVisitaRem());
 			dtoFilter.setNumActivoRem(v.getActivo().getNumActivoRem());
 			dtoFilter.setFechaSolicitud(v.getFechaSolicitud());
 			dtoFilter.setNombre(v.getCliente().getNombre()+v.getCliente().getApellidos());
@@ -52,7 +56,26 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		}
 		
 		return new DtoPage(visitasFiltradas, pageVisitas.getTotalCount());
+	}
+
+	
+	@Override
+	public Long getNextNumVisitaRem() {
+		String sql = "SELECT S_VIS_NUM_VISITA.NEXTVAL FROM DUAL";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+	}
+	
+	
+	@Override
+	public List<Visita> getListaVisitas(VisitaDto visitaDto) {
 		
+		HQLBuilder hql = new HQLBuilder("from Visita");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idVisitaWebcom", visitaDto.getIdVisitaWebcom());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numVisitaRem", visitaDto.getIdVisitaRem());
+		
+		
+		return HibernateQueryUtils.list(this, hql);
+
 	}
 
 }

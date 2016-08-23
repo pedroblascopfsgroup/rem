@@ -47,6 +47,9 @@ public class VBusquedaPropuestasActivo implements Serializable {
 	@Column(name="TBJ_NUM_TRABAJO")
 	private String numTrabajo;
 	
+	@Column(name="TRA_ID")
+    private String idTramite;
+	
 	@Column(name = "ACT_ID")
 	private String idActivo;	
 		
@@ -74,6 +77,11 @@ public class VBusquedaPropuestasActivo implements Serializable {
     @Column(name="GESTOR_PRECIOS")
     private String gestor;
 
+    @Column(name="TIPO_CODIGO")
+    private String tipoPropuesta;
+    
+    @Column(name="MOTIVO_DESCARTE")
+    private String motivoDescarte;
 
 	public String getNumPropuesta() {
 		return numPropuesta;
@@ -171,6 +179,14 @@ public class VBusquedaPropuestasActivo implements Serializable {
 		this.numTrabajo = numTrabajo;
 	}
 
+	public String getIdTramite() {
+		return idTramite;
+	}
+
+	public void setIdTramite(String idTramite) {
+		this.idTramite = idTramite;
+	}
+
 	public String getEstadoCodigo() {
 		return estadoCodigo;
 	}
@@ -217,6 +233,22 @@ public class VBusquedaPropuestasActivo implements Serializable {
 
 	public void setGestor(String gestor) {
 		this.gestor = gestor;
+	}
+
+	public String getTipoPropuesta() {
+		return tipoPropuesta;
+	}
+
+	public void setTipoPropuesta(String tipoPropuesta) {
+		this.tipoPropuesta = tipoPropuesta;
+	}
+
+	public String getMotivoDescarte() {
+		return motivoDescarte;
+	}
+
+	public void setMotivoDescarte(String motivoDescarte) {
+		this.motivoDescarte = motivoDescarte;
 	}
 
 }

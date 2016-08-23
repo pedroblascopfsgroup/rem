@@ -45,7 +45,7 @@ public class Posicionamiento implements Serializable, Auditable {
 	private static final long serialVersionUID = 1L;
 		
 	@Id
-    @Column(name = "FOR_ID")
+    @Column(name = "POS_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "PosicionamientoGenerator")
     @SequenceGenerator(name = "PosicionamientoGenerator", sequenceName = "S_POS_POSICIONAMIENTO")
     private Long id;

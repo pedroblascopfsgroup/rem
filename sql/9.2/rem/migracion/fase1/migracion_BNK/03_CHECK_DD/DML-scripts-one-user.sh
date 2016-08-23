@@ -12,7 +12,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1339_CHECK_DD_MIG_ACA_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1339_CHECK_DD_MIG_ACA_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1339_CHECK_DD_MIG_ACA_CABECERA-REM01-reg3.1.sql > DML_1339_CHECK_DD_MIG_ACA_CABECERA.log
@@ -20,7 +20,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1339_CHECK_DD_MIG_ACA_CABECERA.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1339_CHECK_DD_MIG_ACA_CABECERA.sql"
-	      return
+	      cat DML_1339_CHECK_DD_MIG_ACA_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1339_CHECK_DD_MIG_ACA_CABECERA.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1339_CHECK_DD_MIG_ACA_CABECERA.sql"
@@ -32,7 +33,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1340_CHECK_DD_MIG_ATI_TITULO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1340_CHECK_DD_MIG_ATI_TITULO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1340_CHECK_DD_MIG_ATI_TITULO-REM01-reg3.1.sql > DML_1340_CHECK_DD_MIG_ATI_TITULO.log
@@ -40,7 +41,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1340_CHECK_DD_MIG_ATI_TITULO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1340_CHECK_DD_MIG_ATI_TITULO.sql"
-	      return
+	      cat DML_1340_CHECK_DD_MIG_ATI_TITULO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1340_CHECK_DD_MIG_ATI_TITULO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1340_CHECK_DD_MIG_ATI_TITULO.sql"
@@ -52,7 +54,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL-REM01-reg3.1.sql > DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.log
@@ -60,7 +62,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.sql"
-	      return
+	      cat DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1342_CHECK_DD_MIG_ADJ_JUDICIAL.sql"
@@ -72,7 +75,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL-REM01-reg3.1.sql > DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.log
@@ -80,7 +83,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.sql"
-	      return
+	      cat DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1343_CHECK_DD_MIG_ADJ_NO_JUDICIAL.sql"
@@ -92,7 +96,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI-REM01-reg3.1.sql > DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.log
@@ -100,7 +104,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.sql"
-	      return
+	      cat DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1345_CHECK_DD_MIG_ADA_DATOS_ADI.sql"
@@ -112,7 +117,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA-REM01-reg3.1.sql > DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.log
@@ -120,7 +125,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.sql"
-	      return
+	      cat DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1346_CHECK_DD_MIG_APC_PROP_CABECERA.sql"
@@ -132,7 +138,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO-REM01-reg3.1.sql > DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.log
@@ -140,7 +146,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.sql"
-	      return
+	      cat DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1347_CHECK_DD_MIG_APA_PROP_ACTIVO.sql"
@@ -152,7 +159,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO-REM01-reg3.1.sql > DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.log
@@ -160,7 +167,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.sql"
-	      return
+	      cat DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1349_CHECK_DD_MIG_ACA_CARGAS_ACTIVO.sql"
@@ -172,7 +180,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE-REM01-reg3.1.sql > DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.log
@@ -180,7 +188,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.sql"
-	      return
+	      cat DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1352_CHECK_DD_MIG_AML_MOVIMIENTOS_LLAVE.sql"
@@ -192,7 +201,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO-REM01-reg3.1.sql > DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.log
@@ -200,7 +209,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.sql"
-	      return
+	      cat DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1353_CHECK_DD_MIG_ATA_TASACIONES_ACTIVO.sql"
@@ -212,7 +222,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO-REM01-reg3.1.sql > DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.log
@@ -220,7 +230,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.sql"
-	      return
+	      cat DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1354_CHECK_DD_MIG_AIA_INFOCOMERCIAL_ACTIVO.sql"
@@ -232,7 +243,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO-REM01-reg3.1.sql > DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.log
@@ -240,7 +251,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.sql"
-	      return
+	      cat DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1355_CHECK_DD_MIG_ACA_CALIDADES_ACTIVO.sql"
@@ -252,7 +264,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION-REM01-reg3.1.sql > DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.log
@@ -260,7 +272,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.sql"
-	      return
+	      cat DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1356_CHECK_DD_MIG_AID_INFOCOMERCIAL_DISTRIBUCION.sql"
@@ -272,7 +285,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA-REM01-reg3.1.sql > DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.log
@@ -280,7 +293,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.sql"
-	      return
+	      cat DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1358_CHECK_DD_MIG_AIC_IMAGENES_CABECERA.sql"
@@ -292,7 +306,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO-REM01-reg3.1.sql > DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.log
@@ -300,7 +314,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.sql"
-	      return
+	      cat DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1360_CHECK_DD_MIG_ADA_DOCUMENTOS_ACTIVO.sql"
@@ -312,7 +327,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES-REM01-reg3.1.sql > DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.log
@@ -320,7 +335,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.sql"
-	      return
+	      cat DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1362_CHECK_DD_MIG_AAG_AGRUPACIONES.sql"
@@ -332,7 +348,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION-REM01-reg3.1.sql > DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.log
@@ -340,7 +356,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.sql"
-	      return
+	      cat DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1365_CHECK_DD_MIG_ASA_SUBDIVISIONES_AGRUPACION.sql"
@@ -352,7 +369,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1367_CHECK_DD_MIG_APR_PROVEEDORES-REM01-reg3.1.sql > DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.log
@@ -360,7 +377,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.sql"
-	      return
+	      cat DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1367_CHECK_DD_MIG_APR_PROVEEDORES.sql"
@@ -372,7 +390,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS-REM01-reg3.1.sql > DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.log
@@ -380,7 +398,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.sql"
-	      return
+	      cat DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1368_CHECK_DD_MIG_CPC_PROP_CUOTAS.sql"
@@ -392,7 +411,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR-REM01-reg3.1.sql > DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.log
@@ -400,7 +419,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.sql"
-	      return
+	      cat DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1369_CHECK_DD_MIG_AEP_ENTIDAD_PROVEEDOR.sql"
@@ -412,7 +432,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1370_CHECK_DD_MIG_ATR_TRABAJO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1370_CHECK_DD_MIG_ATR_TRABAJO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1370_CHECK_DD_MIG_ATR_TRABAJO-REM01-reg3.1.sql > DML_1370_CHECK_DD_MIG_ATR_TRABAJO.log
@@ -420,7 +440,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1370_CHECK_DD_MIG_ATR_TRABAJO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1370_CHECK_DD_MIG_ATR_TRABAJO.sql"
-	      return
+	      cat DML_1370_CHECK_DD_MIG_ATR_TRABAJO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1370_CHECK_DD_MIG_ATR_TRABAJO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1370_CHECK_DD_MIG_ATR_TRABAJO.sql"
@@ -432,7 +453,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO-REM01-reg3.1.sql > DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.log
@@ -440,7 +461,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.sql"
-	      return
+	      cat DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1371_CHECK_DD_MIG_APT_PRESUPUESTO_TRABAJO.sql"
@@ -452,7 +474,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO-REM01-reg3.1.sql > DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.log
@@ -460,7 +482,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.sql"
-	      return
+	      cat DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1372_CHECK_DD_MIG_APS_PROVISION_SUPLIDO.sql"
@@ -472,7 +495,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO-REM01-reg3.1.sql > DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.log
@@ -480,7 +503,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.sql"
-	      return
+	      cat DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1373_CHECK_DD_MIG_APC_PROVEEDOR_CONTACTO.sql"
@@ -492,7 +516,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1374_CHECK_DD_MIG_APC_PRECIO.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1374_CHECK_DD_MIG_APC_PRECIO.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1374_CHECK_DD_MIG_APC_PRECIO-REM01-reg3.1.sql > DML_1374_CHECK_DD_MIG_APC_PRECIO.log
@@ -500,7 +524,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1374_CHECK_DD_MIG_APC_PRECIO.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1374_CHECK_DD_MIG_APC_PRECIO.sql"
-	      return
+	      cat DML_1374_CHECK_DD_MIG_APC_PRECIO.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1374_CHECK_DD_MIG_APC_PRECIO.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1374_CHECK_DD_MIG_APC_PRECIO.sql"
@@ -512,7 +537,7 @@ function run_scripts {
 	    echo " YE : Fichero ya ejecutado DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.sql"
 	elif [ $RESULTADO != 0 ] ; then
 	    echo "Fin de ejecución por fallo. Remita los ficheros de logs para que se analice lo sucedido."
-	    return
+	    exit 1
 	else
 	  exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg3.sql "DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.sql" "REM01" "CLV" "batch"  "0.1" "201600803" "HREOS-719" "NO" > /dev/null
 	  exit | sqlplus -s -l $1 @./scripts/DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS-REM01-reg3.1.sql > DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.log
@@ -520,7 +545,8 @@ function run_scripts {
 	  if [ $RESULTADO != 0 ] ; then
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.sql" "201600803" "REM01" "KO" "" > /dev/null
 	      echo "@KO@: DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.sql"
-	      return
+	      cat DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.log
+	      exit 1
 	  else
 	      exit | sqlplus -s -l $1 @./scripts/DML_000_ENTITY01_reg4.sql "DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.sql" "201600803" "REM01" "OK" "" > /dev/null
 	      echo " OK : DML_1375_CHECK_DD_MIG_ADD_ADMISION_DOCUMENTOS.sql"

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -74,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -88,6 +91,9 @@ import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
 
+	private final String ESTADO_PORTALES_EXTERNOS_PUBLICADO = "Ha estado publicado";
+	private final String ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO = "No ha estado publicado";
+	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 	protected static final Log logger = LogFactory.getLog(ActivoManager.class);
@@ -822,19 +828,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		for (ActivoHistoricoEstadoPublicacion estado : listaEstadosPublicacion) {
 			DtoEstadoPublicacion dtoEstadoPublicacion = new DtoEstadoPublicacion();
 			try {
-				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "idActivo", estado.getActivo().getId());
+				if(!Checks.esNulo(estado.getActivo())) {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "idActivo", estado.getActivo().getId());
+				}
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "fechaDesde", estado.getFechaDesde());
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "fechaHasta", estado.getFechaHasta());
-				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", estado.getPortal().getDescripcion());
-				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion",
-						estado.getTipoPublicacion().getDescripcion());
-				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "estadoPublicacion",
-						estado.getEstadoPublicacion().getDescripcion());
+				if(!Checks.esNulo(estado.getPortal())) {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", estado.getPortal().getDescripcion());
+				}
+				if(!Checks.esNulo(estado.getTipoPublicacion())) {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", estado.getTipoPublicacion().getDescripcion());
+				}
+				if(!Checks.esNulo(estado.getEstadoPublicacion())) {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "estadoPublicacion", estado.getEstadoPublicacion().getDescripcion());
+				}
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "motivo", estado.getMotivo());
-				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "diasPeriodo", 0);
+				// Calcular los días que ha estado en un estado eliminando el tiempo de las fechas.
+				int dias = 0;
+				if(!Checks.esNulo(estado.getFechaDesde()) && !Checks.esNulo(estado.getFechaHasta())){
+					SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+				    Date fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
+				    Date fechaDesdeSinTiempo = sdf.parse(sdf.format(estado.getFechaDesde()));
+				    Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
+					Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);
+					dias = Integer.valueOf(diferenciaDias.intValue());
+				}
+				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "diasPeriodo", dias);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 
@@ -874,5 +898,66 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			visitasDao.update(toUpdate);
 		}
 		return visita;
+	}
+
+	@Override
+	public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo) {
+		// Obtener los estados y sumar los dias de cada fase aplicando criterio de funcional además comprobar
+		// si alguno de ellos es de publicación/publicación forzada y especificar estado publicación en portales externos.
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.ASC, "id");
+		List<ActivoHistoricoEstadoPublicacion> listaEstadosPublicacion = genericDao
+				.getListOrdered(ActivoHistoricoEstadoPublicacion.class, order, filtro);
+		
+		int dias = 0;
+		boolean despublicado = false;
+		boolean estadoPublicacionPortalesExternos = false;
+		
+		for (ActivoHistoricoEstadoPublicacion estado : listaEstadosPublicacion) {
+			if(!Checks.esNulo(estado.getEstadoPublicacion())){
+				if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo()) || 
+						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())){
+					// Comprobar si ha estado publicado en algún estado para especificarlo en estado publicación portales externos.
+					estadoPublicacionPortalesExternos = true;
+				}
+				
+				if(despublicado && (DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo()) || 
+						DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo()))){
+					// Si el estado anterior es despublicado y el actual es publicado, se reinicia el contador de días.
+					despublicado = false;
+					dias = 0;
+					
+				} else if(DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
+					// Si el estado es despublicado se marca para la siguiente iteración.
+					despublicado = true;
+					
+				} else if(!DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(estado.getEstadoPublicacion().getCodigo())){
+					if(!Checks.esNulo(estado.getFechaDesde()) && !Checks.esNulo(estado.getFechaHasta())){
+						// Cualquier otro estado distinto a publicado oculto sumará días de publicación.
+						try{
+						SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+					    Date fechaHastaSinTiempo = sdf.parse(sdf.format(estado.getFechaHasta()));
+					    Date fechaDesdeSinTiempo = sdf.parse(sdf.format(estado.getFechaDesde()));
+					    Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
+						Long diferenciaDias = diferenciaMilis / (1000 * 60 * 60 * 24);
+						dias += Integer.valueOf(diferenciaDias.intValue());
+						}catch(ParseException e){
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+		
+		// Rellenar dto.
+		DtoDatosPublicacion dto = new DtoDatosPublicacion();
+		dto.setIdActivo(idActivo);
+		dto.setTotalDiasPublicado(dias);
+		if(estadoPublicacionPortalesExternos){
+			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_PUBLICADO);
+		} else {
+			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO);
+		}
+		return dto;
 	}
 }

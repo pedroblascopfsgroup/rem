@@ -99,6 +99,7 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoSearch', {
 										name: 'fechaDesde',
 										fieldLabel:  HreRem.i18n('fieldlabel.desde'),
 										publish: 'value',
+										formatter: 'date("d/m/Y")',
 										bind: {
 											disabled: '{!comboTipoFecha.selection}'
 										}
@@ -107,6 +108,7 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoSearch', {
 										xtype: 'datefieldbase',
 										name: 'fechaHasta',
 										fieldLabel: HreRem.i18n('fieldlabel.hasta'),
+										formatter: 'date("d/m/Y")',
 										bind: {
 											disabled: '{!comboTipoFecha.selection}',
 											minValue: '{datefielddesde.value}'

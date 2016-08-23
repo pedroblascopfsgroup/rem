@@ -343,6 +343,15 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private List<ActivoOferta> ofertas;
     
+    @Column(name = "ACT_FECHA_IND_PRECIAR")
+    private Date fechaPreciar;
+    
+    @Column(name = "ACT_FECHA_IND_REPRECIAR")
+    private Date fechaRepreciar;
+    
+    @Column(name = "ACT_FECHA_IND_DESCUENTO")
+    private Date fechaDescuento;
+    
 	@Version   
 	private Long version;
 
@@ -1364,4 +1373,29 @@ public class Activo implements Serializable, Auditable {
 		this.ofertas = ofertas;
 	}
 
+	public Date getFechaPreciar() {
+		return fechaPreciar;
+	}
+
+	public void setFechaPreciar(Date fechaPreciar) {
+		this.fechaPreciar = fechaPreciar;
+	}
+
+	public Date getFechaRepreciar() {
+		return fechaRepreciar;
+	}
+
+	public void setFechaRepreciar(Date fechaRepreciar) {
+		this.fechaRepreciar = fechaRepreciar;
+	}
+
+	public Date getFechaDescuento() {
+		return fechaDescuento;
+	}
+
+	public void setFechaDescuento(Date fechaDescuento) {
+		this.fechaDescuento = fechaDescuento;
+	}
+	
+	
 }

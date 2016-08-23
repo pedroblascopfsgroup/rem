@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -122,6 +123,15 @@ public class VBusquedaActivosPrecios implements Serializable {
     
     @Column(name="CON_BLOQUEO")
     private Integer conBloqueo;
+    
+    @Column(name="FECHA_PRECIAR")
+    private Date fechaPreciar;
+    
+    @Column(name="FECHA_REPRECIAR")
+    private Date fechaRepreciar;
+    
+    @Column(name="FECHA_DESCUENTO")
+    private Date fechaDescuento;
     
 
 	public String getId() {
@@ -382,6 +392,29 @@ public class VBusquedaActivosPrecios implements Serializable {
 		this.conBloqueo = conBloqueo;
 	}
 
+	public Date getFechaPreciar() {
+		return fechaPreciar;
+	}
+
+	public void setFechaPreciar(Date fechaPreciar) {
+		this.fechaPreciar = fechaPreciar;
+	}
+
+	public Date getFechaRepreciar() {
+		return fechaRepreciar;
+	}
+
+	public void setFechaRepreciar(Date fechaRepreciar) {
+		this.fechaRepreciar = fechaRepreciar;
+	}
+
+	public Date getFechaDescuento() {
+		return fechaDescuento;
+	}
+
+	public void setFechaDescuento(Date fechaDescuento) {
+		this.fechaDescuento = fechaDescuento;
+	}
 
 
 }

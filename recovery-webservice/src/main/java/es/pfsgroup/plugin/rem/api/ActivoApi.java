@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -200,7 +201,21 @@ public interface ActivoApi {
 		public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica);
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
+		/**
+		 * Este método obtiene los estados, el historial, de publicación de un activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
 		public List<DtoEstadoPublicacion> getEstadoPublicacionByActivo(Long idActivo);
+		
+		/**
+		 * Este método obtiene los datos del apartado 'datos publicación' de la tab 'publicacion' de un activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuelve un dto con los datos obtenidos.
+		 */
+		public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo);
 
 		/**
 		 * Recupera una página de propuestas según el filtro recibido
@@ -210,7 +225,7 @@ public interface ActivoApi {
 		public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
 
 		/**
-		 * Este metodo obtiene una página de resultados de la búsqueda de Activos Publicación.
+		 * Este método obtiene una página de resultados de la búsqueda de Activos Publicación.
 		 * @param dtoActivosPublicacion
 		 * @return Devuelve los resultados paginados del grid de la búsqueda de activos publicación.
 		 */

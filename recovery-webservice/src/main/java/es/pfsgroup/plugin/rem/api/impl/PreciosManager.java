@@ -35,6 +35,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
+import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.PropuestaPrecioDao;
 import es.pfsgroup.plugin.rem.propuestaprecios.dao.VActivosPropuestaDao;
+import es.pfsgroup.plugin.rem.propuestaprecios.dao.VNumActivosTipoPrecioDao;
 import es.pfsgroup.plugin.rem.service.PropuestaPreciosExcelService;
 
 @Service("preciosManager")
@@ -60,7 +62,10 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	private PropuestaPrecioDao propuestaPrecioDao;
 	
 	@Autowired
-	private VActivosPropuestaDao activosPropuestaDao;
+	private VActivosPropuestaDao vActivosPropuestaDao;
+	
+	@Autowired
+	private VNumActivosTipoPrecioDao vNumActivosTipoPrecioDao;
 	
 	@Autowired
 	private PropuestaPreciosExcelFactoryApi propuestaPreciosExcelFactory;
@@ -96,6 +101,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 		//TODO: CrearFuncionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Automatica"
 		// Consejo: seguir los mismos pasos de la propuesta manual
+		// No se utiliza, he reaprovechando el Manual, que hace lo mismo
 		return new PropuestaPrecio();
 	}
 	
@@ -107,9 +113,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo, Boolean esPropManual){
 
-		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual"
+		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual - Automatica"
 		
 		// Se instancia una lista de Activos, usando los id's de activos de la lista del buscador
 		List<Activo> activos = new ArrayList<Activo>();
@@ -125,7 +131,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		List<Activo> uniqueListActivos = new ArrayList<Activo>(uniqueSetActivos);
 		
 		// Nueva propuesta de precios con activos asociados
-		Boolean esPropManual = true;
+		//Boolean esPropManual = true;
 		PropuestaPrecio propuestaPrecio = createPropuestaPrecios(uniqueListActivos, nombrePropuesta, tipoPropuestaCodigo, esPropManual);
 		
 		// Nuevo trabajo+tramite de propuesta de precios: Preciar o Repreciar
@@ -179,6 +185,8 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 		
 		propuestaPrecioDao.saveOrUpdate(propuestaPrecio);
 		
+		this.eliminarMarcaActivosPropuesta(propuestaPrecio.getActivosPropuesta(), tipoPropuestaPrecio);
+		
 		return propuestaPrecio;
 		
 	}
@@ -220,7 +228,40 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	@Override
 	public List<VBusquedaActivosPropuesta> getActivosByIdPropuesta(Long idPropuesta) {
 		
-		return activosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta);
+		return vActivosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta);
+	}
+	
+	@Override
+	public List<VBusquedaNumActivosTipoPrecio> getNumActivosByTipoPrecioAndCartera() {
+		
+		return vNumActivosTipoPrecioDao.getNumActivosByTipoPrecioAndCartera();
+	}
+	
+	/**
+	 * Método para quitar la marca del Activo (preciar/repreciar/descuento) una vez se ha generado la propuesta correspondiente
+	 * @param listaActProp
+	 * @param tipoPropuestaPrecio
+	 */
+	private void eliminarMarcaActivosPropuesta(List<ActivoPropuesta> listaActProp, DDTipoPropuestaPrecio tipoPropuestaPrecio) {
+		
+		for(ActivoPropuesta actProp : listaActProp) {
+			Activo activo = actProp.getPrimaryKey().getActivo();
+			
+			switch (Integer.parseInt(tipoPropuestaPrecio.getCodigo())) {
+				case 1:
+					activo.setFechaPreciar(null);
+					break;
+				case 2:
+					activo.setFechaRepreciar(null);
+					break;
+				case 3:
+					activo.setFechaDescuento(null);
+					break;
+			}
+			
+			activoDao.update(activo);
+			
+		}
 	}
 
 }

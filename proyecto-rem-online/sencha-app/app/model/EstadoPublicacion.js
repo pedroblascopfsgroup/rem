@@ -37,14 +37,8 @@ Ext.define('HreRem.model.EstadoPublicacion', {
 
 	proxy: {
 		type: 'uxproxy',
-		//localUrl: 'activos.json',
-		remoteUrl: 'activo/getEstadoPublicacionByActivo',
-
 		api: {
-            read: 'activo/getEstadoPublicacionByActivo',
-            create: 'activo/getEstadoPublicacionByActivo',
-            update: 'activo/getEstadoPublicacionByActivo',
-            destroy: 'activo/getEstadoPublicacionByActivo'
+            read: 'activo/getEstadoPublicacionByActivo'
         }
 
     }

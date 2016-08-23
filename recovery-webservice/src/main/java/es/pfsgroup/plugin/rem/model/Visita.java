@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
 
@@ -50,21 +51,18 @@ public class Visita implements Serializable, Auditable {
 	@Id
     @Column(name = "VIS_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "VisitaGenerator")
-    @SequenceGenerator(name = "VisitaGenerator", sequenceName = "S_VIS_VISITA")
+    @SequenceGenerator(name = "VisitaGenerator", sequenceName = "S_VIS_VISITAS")
     private Long id;
 	
     @Column(name = "VIS_NUM_VISITA")
-    private Long numVisita;
+    private Long numVisitaRem;
     
     @Column(name = "VIS_WEBCOM_ID")
-    private Long idWebCom;
+    private Long idVisitaWebcom;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private Activo activo;
-    
-    @Column(name="VIS_FECHA_SOLICTUD")
-    private Date fechaSolicitud;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CLC_ID")
@@ -78,8 +76,11 @@ public class Visita implements Serializable, Auditable {
     @JoinColumn(name = "DD_SVI_ID")
 	private DDSubEstadosVisita subEstadoVisita;
     
-    @Column(name = "VIS_FECHA_ACCION")
-    private Date fechaAccion;
+    @Column(name="VIS_FECHA_VISITA")
+    private Date fechaVisita;   
+    
+    @Column(name="VIS_FECHA_SOLICTUD")
+    private Date fechaSolicitud;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USU_ID")
@@ -90,27 +91,24 @@ public class Visita implements Serializable, Auditable {
 	private ActivoProveedor prescriptor;
     
     @Column(name="VIS_VISITA_PRESCRIPTOR")
-    private Integer visitaPrescriptor;    
+    private Integer realizaVisitaPrescriptor;    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_API_RESPONSABLE")
 	private ActivoProveedor apiResponsable;    
     
     @Column(name="VIS_VISITA_API_RESPONSABLE")
-    private Integer visitaApiResponsable;    
+    private Integer realizaVisitaApiResponsable;    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_API_CUSTODIO")
 	private ActivoProveedor apiCustodio;    
     
     @Column(name="VIS_VISITA_API_CUSTODIO")
-    private Integer visitaApiCustodio;
+    private Integer realizaVisitaApiCustodio;
     
     @Column(name="VIS_OBSERVACIONES")
     private String observaciones;
-    
-    @Column(name="VIS_FECHA_VISITA")
-    private Date fechaVisita;   
     
     
 	@Version   
@@ -128,20 +126,20 @@ public class Visita implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public Long getIdWebCom() {
-		return idWebCom;
+	public Long getNumVisitaRem() {
+		return numVisitaRem;
 	}
 
-	public void setIdWebCom(Long idWebCom) {
-		this.idWebCom = idWebCom;
+	public void setNumVisitaRem(Long numVisitaRem) {
+		this.numVisitaRem = numVisitaRem;
 	}
 
-	public Long getNumVisita() {
-		return numVisita;
+	public Long getIdVisitaWebcom() {
+		return idVisitaWebcom;
 	}
 
-	public void setNumVisita(Long numVisita) {
-		this.numVisita = numVisita;
+	public void setIdVisitaWebcom(Long idVisitaWebcom) {
+		this.idVisitaWebcom = idVisitaWebcom;
 	}
 
 	public Activo getActivo() {
@@ -150,14 +148,6 @@ public class Visita implements Serializable, Auditable {
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;
-	}
-
-	public Date getFechaSolicitud() {
-		return fechaSolicitud;
-	}
-
-	public void setFechaSolicitud(Date fechaSolicitud) {
-		this.fechaSolicitud = fechaSolicitud;
 	}
 
 	public ClienteComercial getCliente() {
@@ -184,12 +174,20 @@ public class Visita implements Serializable, Auditable {
 		this.subEstadoVisita = subEstadoVisita;
 	}
 
-	public Date getFechaAccion() {
-		return fechaAccion;
+	public Date getFechaVisita() {
+		return fechaVisita;
 	}
 
-	public void setFechaAccion(Date fechaAccion) {
-		this.fechaAccion = fechaAccion;
+	public void setFechaVisita(Date fechaVisita) {
+		this.fechaVisita = fechaVisita;
+	}
+	
+	public Date getFechaSolicitud() {
+		return fechaSolicitud;
+	}
+
+	public void setFechaSolicitud(Date fechaSolicitud) {
+		this.fechaSolicitud = fechaSolicitud;
 	}
 
 	public Usuario getUsuarioAccion() {
@@ -208,14 +206,14 @@ public class Visita implements Serializable, Auditable {
 		this.prescriptor = prescriptor;
 	}
 
-	public Integer getVisitaPrescriptor() {
-		return visitaPrescriptor;
+	public Integer getRealizaVisitaPrescriptor() {
+		return realizaVisitaPrescriptor;
 	}
 
-	public void setVisitaPrescriptor(Integer visitaPrescriptor) {
-		this.visitaPrescriptor = visitaPrescriptor;
+	public void setRealizaVisitaPrescriptor(Integer realizaVisitaPrescriptor) {
+		this.realizaVisitaPrescriptor = realizaVisitaPrescriptor;
 	}
-
+	
 	public ActivoProveedor getApiResponsable() {
 		return apiResponsable;
 	}
@@ -224,12 +222,12 @@ public class Visita implements Serializable, Auditable {
 		this.apiResponsable = apiResponsable;
 	}
 
-	public Integer getVisitaApiResponsable() {
-		return visitaApiResponsable;
+	public Integer getRealizaVisitaApiResponsable() {
+		return realizaVisitaApiResponsable;
 	}
 
-	public void setVisitaApiResponsable(Integer visitaApiResponsable) {
-		this.visitaApiResponsable = visitaApiResponsable;
+	public void setRealizaVisitaApiResponsable(Integer realizaVisitaApiResponsable) {
+		this.realizaVisitaApiResponsable = realizaVisitaApiResponsable;
 	}
 
 	public ActivoProveedor getApiCustodio() {
@@ -240,12 +238,12 @@ public class Visita implements Serializable, Auditable {
 		this.apiCustodio = apiCustodio;
 	}
 
-	public Integer getVisitaApiCustodio() {
-		return visitaApiCustodio;
+	public Integer getRealizaVisitaApiCustodio() {
+		return realizaVisitaApiCustodio;
 	}
 
-	public void setVisitaApiCustodio(Integer visitaApiCustodio) {
-		this.visitaApiCustodio = visitaApiCustodio;
+	public void setRealizaVisitaApiCustodio(Integer realizaVisitaApiCustodio) {
+		this.realizaVisitaApiCustodio = realizaVisitaApiCustodio;
 	}
 
 	public String getObservaciones() {
@@ -254,14 +252,6 @@ public class Visita implements Serializable, Auditable {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
-	}
-
-	public Date getFechaVisita() {
-		return fechaVisita;
-	}
-
-	public void setFechaVisita(Date fechaVisita) {
-		this.fechaVisita = fechaVisita;
 	}
 
 	public Long getVersion() {

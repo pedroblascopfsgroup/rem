@@ -512,7 +512,6 @@ Ext.define('HreRem.controller.ActivosController', {
 		    		titulo = "Expediente " + expediente.get("numExpediente");
 		    		tab.setTitle(titulo);
 		    	}
-		    	
 		    	tab.getViewModel().set("expediente", expediente);
 		    	tab.configCmp(expediente);
 		    	

@@ -159,6 +159,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 		this.tipoProveedor = tipoProveedor;
 	}
 
+	public DDTiposColaborador getTipoColaborador() {
+		return tipoColaborador;
+	}
+
+	public void setTipoColaborador(DDTiposColaborador tipoColaborador) {
+		this.tipoColaborador = tipoColaborador;
+	}
+
 	public String getCodProveedorUvem() {
 		return codProveedorUvem;
 	}

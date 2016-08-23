@@ -81,7 +81,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'expedienteComercial.json',
-		remoteUrl: 'expedientecomercial/getTabExpediente',
+		
+		api: {
+            read: 'expedientecomercial/getTabExpediente'
+        },
+		
         extraParams: {tab: 'ficha'}
     }    
 

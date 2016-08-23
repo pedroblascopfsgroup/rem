@@ -19,6 +19,8 @@ public class DtoPropuestaFilter extends WebDto {
 	private String fechaHasta;
 	private String estadoCodigo;
 	private String estadoActivoCodigo;
+	private String gestorPrecios;
+	private String tipoPropuesta;
 	
 	public String getIdActivo() {
 		return idActivo;
@@ -74,5 +76,18 @@ public class DtoPropuestaFilter extends WebDto {
 	public void setEstadoActivoCodigo(String estadoActivoCodigo) {
 		this.estadoActivoCodigo = estadoActivoCodigo;
 	}
+	public String getGestorPrecios() {
+		return gestorPrecios;
+	}
+	public void setGestorPrecios(String gestorPrecios) {
+		this.gestorPrecios = gestorPrecios;
+	}
+	public String getTipoPropuesta() {
+		return tipoPropuesta;
+	}
+	public void setTipoPropuesta(String tipoPropuesta) {
+		this.tipoPropuesta = tipoPropuesta;
+	}
+	
 
 }

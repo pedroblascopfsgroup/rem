@@ -111,7 +111,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},	
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.peticionario'),
-							bind: '{expediente.peticionario}'
+							bind: '{expediente.peticionarioAnulacion}'
 						},
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.devolucion.entregas.a.cuenta'),
@@ -120,7 +120,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.importe.devolucion'),
-							bind: '{expediente.importeDevolucion}'
+							bind: '{expediente.importeDevolucionEntregas}'
 						}
 						
 				

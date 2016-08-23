@@ -37,6 +37,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "DD_TOF_DESCRIPCION")  
 	private String descripcionTipoOferta;
 	
+	@Column(name = "ACT_NUM_ACTIVO")
+	private String numActivo; 
+	
 	@Column(name = "AGR_NUM_AGRUP_REM")
 	private String numAgrupacionRem; 
 	
@@ -63,6 +66,12 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name = "DD_EEC_DESCRIPCION")
 	private String descripcionEstadoExpediente;
+	
+	@Column(name = "DD_SAC_DESCRIPCION")
+	private String subtipoActivo;
+	
+	@Column(name = "DD_TOF_CODIGO")  
+	private String codigoTipoOferta;
 	
 	
 	public String getIdActivo() {
@@ -184,9 +193,30 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	public void setIdExpediente(String idExpediente) {
 		this.idExpediente = idExpediente;
 	}
-	
-	
 
+	public String getNumActivo() {
+		return numActivo;
+	}
+
+	public void setNumActivo(String numActivo) {
+		this.numActivo = numActivo;
+	}
+
+	public String getSubtipoActivo() {
+		return subtipoActivo;
+	}
+
+	public void setSubtipoActivo(String subtipoActivo) {
+		this.subtipoActivo = subtipoActivo;
+	}
+
+	public String getDescripcionCodigoOferta() {
+		return codigoTipoOferta;
+	}
+
+	public void setDescripcionCodigoOferta(String codigoTipoOferta) {
+		this.codigoTipoOferta = codigoTipoOferta;
+	}
 	
 	 
 }

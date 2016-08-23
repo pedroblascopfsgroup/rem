@@ -27,6 +27,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.numVisita", dtoVisitasFilter.getNumVisita());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.activo.numActivo", dtoVisitasFilter.getNumActivo());
 		
+		hb.orderBy("vis.numVisita", HQLBuilder.ORDER_ASC);
 		
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
 		

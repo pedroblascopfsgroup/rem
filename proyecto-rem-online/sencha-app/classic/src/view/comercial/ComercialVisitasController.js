@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.comercial.ComercialController', {
+Ext.define('HreRem.view.comercial.ComercialVisitasController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.comercial',
+    alias: 'controller.comercialvisitas',
 
 	//Funcion que se ejecuta al hacer click en el botón buscar
 	onSearchClick: function(btn) {
@@ -82,7 +82,7 @@ Ext.define('HreRem.view.comercial.ComercialController', {
 	    grid.setSelection(record);
 	    var idActivo = record.get("idActivo");
 	    me.redirectTo('activos', true);
-	    me.getView().fireEvent('abrirDetalleActivo', idActivo);
+	    me.getView().fireEvent('abrirDetalleActivo', record);
     	
     }
 

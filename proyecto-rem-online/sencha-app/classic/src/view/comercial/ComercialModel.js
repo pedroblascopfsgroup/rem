@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.comercial.ComercialModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.comercial',
-    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Visitas'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.Visitas','HreRem.model.Ofertas'],
     
     stores: {
     	
@@ -20,6 +20,40 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 	        listeners : {
 	            beforeload : 'paramLoading'
 	        }
+    	},
+    	
+    	ofertasComercial: {
+    		pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Ofertas',
+	    	proxy: {
+		        type: 'uxproxy',
+		        localUrl: '/ofertas.json',
+		        remoteUrl: 'ofertas/getListOfertas'
+	    	},
+	    	autoLoad: true,
+	    	session: true,
+	    	remoteSort: true,
+	    	remoteFilter: true,
+	        listeners : {
+	            beforeload : 'paramLoading'
+	        }
+    	},
+    	
+    	comboTipoOferta: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'tiposOfertas'}
+					}
+    	},
+    	comboEstadoOferta: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'estadosOfertas'}
+					}
     	}
     		
     }

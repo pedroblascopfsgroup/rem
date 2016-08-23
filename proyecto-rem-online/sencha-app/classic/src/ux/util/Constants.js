@@ -72,7 +72,10 @@ Ext.define('HreRem.ux.util.Constants', {
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
 		PRESUPUESTO:	'gestionactivo.presupuestoasignadosactivo',
-		PUBLICACION:	'publicacionactivo'
+		PUBLICACION:	'publicacionactivo',
+		OFERTAS:		'comercialactivo.ofertascomercialactivo',
+		VISITAS:		'comercialactivo.visitascomercialactivo',
+		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace		
     },
     

@@ -9,7 +9,9 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ComercialApi;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Service("comercialManager")
@@ -25,6 +27,9 @@ public class ComercialManager extends BusinessOperationOverrider<ComercialApi> i
 	private VisitaDao visitaDao;
 	
 	@Autowired
+	private OfertaDao ofertaDao;
+	
+	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
 		
@@ -38,6 +43,12 @@ public class ComercialManager extends BusinessOperationOverrider<ComercialApi> i
 	public DtoPage getListVisitas(DtoVisitasFilter dtoVisitasFilter) {
 
 		return visitaDao.getListVisitas(dtoVisitasFilter);
+	}
+	
+	@Override
+	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter) {
+
+		return ofertaDao.getListOfertas(dtoOfertasFilter);
 	}
 
 	

@@ -391,7 +391,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 		}catch (Exception e){
 			e.printStackTrace();
-			errorsList.add("Ha ocurrido un error en base de datos al dar de alta el cliente webcom: " + clienteDto.getIdClienteWebcom() + ". Traza: " + e.getMessage());
+			errorsList.add("Ha ocurrido un error en base de datos al dar de alta el cliente con idClienteWebcom: " + clienteDto.getIdClienteWebcom() + ". Traza: " + e.getMessage());
 			return errorsList;
 		}
 		

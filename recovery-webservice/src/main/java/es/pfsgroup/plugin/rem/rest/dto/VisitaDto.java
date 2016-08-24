@@ -17,155 +17,124 @@ public class VisitaDto implements Serializable {
 	@NotNull
 	private Long idActivoHaya;
 	@NotNull
-	private Long idEstadoVisita;
+	@Size(max=20)
+	private String codEstadoVisita;
+	@Size(max=20)
+	private String codDetalleEstadoVisita;
 	@NotNull
-	private Long idDetalleEstadoVisita;
+	private Date fechaVisita;
 	@NotNull
 	private Date fecha;
 	@NotNull
 	private Long idUsuarioRem;
 	@NotNull
-	private Long idTipoPrescriptor;
-	@NotNull
-	@Size(max=5)
-	private String prescriptor;
-	private boolean visitaPrescriptor;
-	@Size(max=5)
-	private String apiResponsable;
-	private boolean visitaApiResponsable;
-	@Size(max=5)
-	private String apiCustodio;
-	private boolean visitaApiCustodio;
+	private Long idPrescriptor;
+	private Boolean visitaPrescriptor;
+	private Long idApiResponsable;
+	private Boolean visitaApiResponsable;
+	private Long idApiCustodio;
+	private Boolean visitaApiCustodio;
 	@Size(max=250)
 	private String observaciones;
-
+	
+	
+	
+	
 	public Long getIdVisitaWebcom() {
 		return idVisitaWebcom;
 	}
-
 	public void setIdVisitaWebcom(Long idVisitaWebcom) {
 		this.idVisitaWebcom = idVisitaWebcom;
 	}
-
-	public Long getIdClienteRem() {
-		return idClienteRem;
-	}
-
-	public void setIdClienteRem(Long idClienteRem) {
-		this.idClienteRem = idClienteRem;
-	}
-
-	public Long getIdActivoHaya() {
-		return idActivoHaya;
-	}
-
-	public void setIdActivoHaya(Long idActivoHaya) {
-		this.idActivoHaya = idActivoHaya;
-	}
-
-	public Long getIdEstadoVisita() {
-		return idEstadoVisita;
-	}
-
-	public void setIdEstadoVisita(Long idEstadoVisita) {
-		this.idEstadoVisita = idEstadoVisita;
-	}
-
-	public Long getIdDetalleEstadoVisita() {
-		return idDetalleEstadoVisita;
-	}
-
-	public void setIdDetalleEstadoVisita(Long idDetalleEstadoVisita) {
-		this.idDetalleEstadoVisita = idDetalleEstadoVisita;
-	}
-
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-
 	public Long getIdVisitaRem() {
 		return idVisitaRem;
 	}
-
 	public void setIdVisitaRem(Long idVisitaRem) {
 		this.idVisitaRem = idVisitaRem;
 	}
-
+	public Long getIdClienteRem() {
+		return idClienteRem;
+	}
+	public void setIdClienteRem(Long idClienteRem) {
+		this.idClienteRem = idClienteRem;
+	}
+	public Long getIdActivoHaya() {
+		return idActivoHaya;
+	}
+	public void setIdActivoHaya(Long idActivoHaya) {
+		this.idActivoHaya = idActivoHaya;
+	}
+	public String getCodEstadoVisita() {
+		return codEstadoVisita;
+	}
+	public void setCodEstadoVisita(String codEstadoVisita) {
+		this.codEstadoVisita = codEstadoVisita;
+	}
+	public String getCodDetalleEstadoVisita() {
+		return codDetalleEstadoVisita;
+	}
+	public void setCodDetalleEstadoVisita(String codDetalleEstadoVisita) {
+		this.codDetalleEstadoVisita = codDetalleEstadoVisita;
+	}
+	public Date getFechaVisita() {
+		return fechaVisita;
+	}
+	public void setFechaVisita(Date fechaVisita) {
+		this.fechaVisita = fechaVisita;
+	}
+	public Date getFecha() {
+		return fecha;
+	}
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
 	public Long getIdUsuarioRem() {
 		return idUsuarioRem;
 	}
-
 	public void setIdUsuarioRem(Long idUsuarioRem) {
 		this.idUsuarioRem = idUsuarioRem;
+	}	
+	public Long getIdPrescriptor() {
+		return idPrescriptor;
 	}
-
-	public Long getIdTipoPrescriptor() {
-		return idTipoPrescriptor;
+	public void setIdPrescriptor(Long idPrescriptor) {
+		this.idPrescriptor = idPrescriptor;
 	}
-
-	public void setIdTipoPrescriptor(Long idTipoPrescriptor) {
-		this.idTipoPrescriptor = idTipoPrescriptor;
-	}
-
-	public String getPrescriptor() {
-		return prescriptor;
-	}
-
-	public void setPrescriptor(String prescriptor) {
-		this.prescriptor = prescriptor;
-	}
-
-	public boolean isVisitaPrescriptor() {
+	public Boolean getVisitaPrescriptor() {
 		return visitaPrescriptor;
 	}
-
-	public void setVisitaPrescriptor(boolean visitaPrescriptor) {
+	public void setVisitaPrescriptor(Boolean visitaPrescriptor) {
 		this.visitaPrescriptor = visitaPrescriptor;
 	}
-
-	public String getApiResponsable() {
-		return apiResponsable;
+	public Long getIdApiResponsable() {
+		return idApiResponsable;
 	}
-
-	public void setApiResponsable(String apiResponsable) {
-		this.apiResponsable = apiResponsable;
+	public void setIdApiResponsable(Long idApiResponsable) {
+		this.idApiResponsable = idApiResponsable;
 	}
-
-	public boolean isVisitaApiResponsable() {
+	public Boolean getVisitaApiResponsable() {
 		return visitaApiResponsable;
 	}
-
-	public void setVisitaApiResponsable(boolean visitaApiResponsable) {
+	public void setVisitaApiResponsable(Boolean visitaApiResponsable) {
 		this.visitaApiResponsable = visitaApiResponsable;
 	}
-
-	public String getApiCustodio() {
-		return apiCustodio;
+	public Long getIdApiCustodio() {
+		return idApiCustodio;
 	}
-
-	public void setApiCustodio(String apiCustodio) {
-		this.apiCustodio = apiCustodio;
+	public void setIdApiCustodio(Long idApiCustodio) {
+		this.idApiCustodio = idApiCustodio;
 	}
-
-	public boolean isVisitaApiCustodio() {
+	public Boolean getVisitaApiCustodio() {
 		return visitaApiCustodio;
 	}
-
-	public void setVisitaApiCustodio(boolean visitaApiCustodio) {
+	public void setVisitaApiCustodio(Boolean visitaApiCustodio) {
 		this.visitaApiCustodio = visitaApiCustodio;
 	}
-
 	public String getObservaciones() {
 		return observaciones;
 	}
-
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
 	
-
 }

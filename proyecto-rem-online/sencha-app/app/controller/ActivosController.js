@@ -8,7 +8,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoCargas', 'HreRem.model.ActivoCargasTab', 'HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.ActivoValoraciones', 'HreRem.model.ActivoTasacion',
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
-    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial'],
+    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu'],
 
     
     refs: [
@@ -149,7 +149,15 @@ Ext.define('HreRem.controller.ActivosController', {
     			me.abrirDetalleTrabajoById(favorito.openId, favorito.text);  
     			
     		}
-    	}   	
+    	},
+    	'visitascomercialmain': {    		
+			abrirDetalleActivo: 'abrirDetalleActivoComercialVisitas'
+    	},
+    	'ofertascomercialmain': {
+    		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
+			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
+			abrirDetalleExpediente: 'abrirDetalleExpediente'
+    	}
 
     },
     
@@ -252,9 +260,18 @@ Ext.define('HreRem.controller.ActivosController', {
 		 */
 		if (refLinks != null){
 	    	var me = this,
-	    	tabActivo = tab.down('tabpanel'),
+	    	tabActivo= null,
 	    	activeTabXtype = null,
 	    	refs = refLinks.split('.');
+	    	
+	    	var array = tab.getXTypes().split('/')
+	    	
+	    	if(array.indexOf('tabpanel') != -1){
+	    		var tabActivo = tab;
+	    	}
+	    	else{
+	    		tabActivo = tab.down('tabpanel');
+	    	}
 	    	
 	    	activeTabXtype = refs[0];
 			var slicedRefLinks = refLinks.split('.').slice(1).join('.');
@@ -546,6 +563,54 @@ Ext.define('HreRem.controller.ActivosController', {
 		});
 
     },
+    
+    abrirDetalleAgrupacionComercialOfertasById: function(id, titulo, refLinks) {
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab (me.getActivosMain(), 'agrupacion', "agrupacionesdetallemain",  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime(); 
+    	
+    	HreRem.model.AgrupacionFicha.load(id, {
+    		scope: this,
+		    success: function(agrupacion) {
+		    	me.logTime("Load agrupacion success"); 
+		    	me.setLogTime();	    	
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Agrupacion " + agrupacion.get("numAgrupacionRem");
+		    		tab.setTitle(titulo);
+		    	}
+		    	
+		    	tab.getViewModel().set("agrupacionficha", agrupacion);
+		    	tab.configCmp(agrupacion);
+		    	
+		    	
+				HreRem.model.AgrupacionAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+				    	if (tab != null && tab.getViewModel() != null)
+				    		tab.getViewModel().set("avisos", avisos);
+				    	
+				    }
+				});
+				tab.unmask();
+				/* Selector de subPestanyas del Trabajo:
+		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
+		    	 * para evitar el uso de Notify() si no hay activacion de pesta�as (refLinks != null)
+		    	 */
+		    	if (refLinks != null){
+		    		tab.getViewModel().notify();
+					me.seleccionarTabByXtype(tab, refLinks);
+				}
+				
+		    	me.logTime("Fin Set values"); 
+		    }
+		});
+
+    },
 
     
     /**
@@ -726,6 +791,31 @@ Ext.define('HreRem.controller.ActivosController', {
     	Ext.resumeLayouts(true);
     },
     
+    
+    abrirDetalleAgrupacionComercialOfertas: function(record) {
+    	var me = this,
+    	titulo = "Agrupación " + record.get("numAgrupacionRem"),
+    	id = record.get("idAgrupacion");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleAgrupacionComercialOfertasById(id, titulo, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTASAGRU'])
+    },
+    
+    abrirDetalleActivoComercialVisitas: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['VISITAS'])
+    },
+    
+    abrirDetalleActivoComercialOfertas: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+		me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTAS']);
+    },
+
     abrirDetalleActivoPropuestaPrecio: function(record) {
     	var me = this,
     	titulo = "Activo " + record.get("numActivo"),
@@ -733,4 +823,5 @@ Ext.define('HreRem.controller.ActivosController', {
 		me.redirectTo('activos', true);
     	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PROPUESTAS'])
     }
+    
 });

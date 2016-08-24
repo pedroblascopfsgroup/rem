@@ -20,7 +20,7 @@ Ext.define('HreRem.MenuPrincipal', {
 	 */
    requires: ['HreRem.view.dashboard.DashBoardMain', 'HreRem.view.agenda.AgendaMain', 'HreRem.view.activos.ActivosMain', 'HreRem.view.agrupaciones.AgrupacionesMain',
 	'HreRem.view.trabajos.TrabajosMain', 'HreRem.view.masivo.MasivoMain', 'HreRem.view.agenda.AgendaAlertasMain', 'HreRem.view.agenda.AgendaAvisosMain',
-	'HreRem.view.precios.PreciosMain', 'HreRem.view.publicacion.PublicacionMain'],
+	'HreRem.view.precios.PreciosMain', 'HreRem.view.publicacion.PublicacionMain', 'HreRem.view.comercial.ComercialMainMenu'],
     
     viewModel: {
         type: 'mainviewport'
@@ -40,7 +40,7 @@ Ext.define('HreRem.MenuPrincipal', {
 	        if(!Ext.isEmpty(me.cls)) {
 	        	me.element.addCls(me.cls);
         	}
-	 }    
+	 }   
 
 });
 

@@ -1,14 +1,23 @@
 /**
  *  Modelo para el tab Informacion Administrativa de Activos 
  */
-Ext.define('HreRem.model.VisitasAgrupacion', {
+Ext.define('HreRem.model.Visitas', {
     extend: 'HreRem.model.Base',
     idProperty: 'id',
 
-    fields: [    
-  
+    fields: [ 
+    	{
+    		name: 'tipoEntidad'
+    	},
+    	{
+    		name: 'numActivo'
+    	},
+    	{
+    		name: 'idActivo'
+    		
+    	},
 		{
-			name : 'numVisita'
+			name : 'idVisita'
 		},
 		{
 			name : 'fechaSolicitud',

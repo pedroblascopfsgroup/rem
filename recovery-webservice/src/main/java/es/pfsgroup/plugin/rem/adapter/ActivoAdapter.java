@@ -2117,12 +2117,10 @@ public class ActivoAdapter {
 					//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
 					
 					BeanUtils.copyProperty(dtoActivoVisitas, "numVisita", activo.getVisitas().get(i).getNumVisitaRem());
-					BeanUtils.copyProperty(dtoActivoVisitas, "fechaSolicitud", activo.getVisitas().get(i).getFechaSolicitud());
 					if(activo.getVisitas().get(i).getCliente()!=null){
-						BeanUtils.copyProperty(dtoActivoVisitas, "nombre", activo.getVisitas().get(i).getCliente().getNombre()+activo.getVisitas().get(i).getCliente().getApellidos());
+						BeanUtils.copyProperty(dtoActivoVisitas, "nombre", activo.getVisitas().get(i).getCliente().getNombreCompleto());
 						BeanUtils.copyProperty(dtoActivoVisitas, "numDocumento", activo.getVisitas().get(i).getCliente().getDocumento());
 					}
-					BeanUtils.copyProperty(dtoActivoVisitas, "fechaVisita", activo.getVisitas().get(i).getFechaVisita());
 					
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();

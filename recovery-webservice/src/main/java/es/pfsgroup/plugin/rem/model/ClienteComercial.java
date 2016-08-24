@@ -29,6 +29,7 @@ import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 
@@ -409,6 +410,26 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public String getNombreCompleto(){
+		String nombre= "";
+		if(!Checks.esNulo(this.razonSocial)){
+			nombre= this.razonSocial;
+		}
+		else if(!Checks.esNulo(this.nombre)){
+			if(!Checks.esNulo(this.apellidos)){
+				nombre= this.nombre + " " + this.apellidos;
+			}
+			else{
+				nombre= this.nombre;
+			}
+		}
+		else if(!Checks.esNulo(this.apellidos)){
+				nombre= this.apellidos;
+		}
+		
+		return nombre;
 	}
 
    

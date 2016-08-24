@@ -16,17 +16,17 @@ public class DtoVisitasAgrupacion {
 
 	
 	
-	private String idVisita;
+	private String numVisita;
 	private Date fechaSolicitud;
 	private String nombre;
 	private String numDocumento;
 	private Date fechaVisita;
 	
-	public String getIdVisita() {
-		return idVisita;
+	public String getNumVisita() {
+		return numVisita;
 	}
-	public void setIdVisita(String idVisita) {
-		this.idVisita = idVisita;
+	public void setNumVisita(String numVisita) {
+		this.numVisita = numVisita;
 	}
 	public Date getFechaSolicitud() {
 		return fechaSolicitud;

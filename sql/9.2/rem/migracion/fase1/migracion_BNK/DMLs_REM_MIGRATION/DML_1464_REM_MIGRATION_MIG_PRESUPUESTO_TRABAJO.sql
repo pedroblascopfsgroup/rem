@@ -258,7 +258,7 @@ BEGIN
   
   -- Registros insertados en REM
   V_SENTENCIA := '
-	SELECT COUNT(TBJ_ID) FROM '||V_ESQUEMA||'.'||V_TABLA||'
+	SELECT COUNT(TBJ_ID) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIGRAREM01BNK''
   '
   ;
   

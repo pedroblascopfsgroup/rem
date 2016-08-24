@@ -18,6 +18,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -26,11 +27,13 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 
@@ -139,6 +142,28 @@ public class ExpedienteComercialController {
 		
 		model.put("data", avisosFormateados);
 		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListTextosOfertaById(DtoTextosOferta dto, @RequestParam Long id, ModelMap model) {
+		
+		
+	try {
+		
+		DtoPage page =  expedienteComercialApi.getListTextosOfertaById(dto, id);
+		
+		model.put("data", page.getResults());
+		model.put("totalCount", page.getTotalCount());
+		model.put("success", true);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		model.put("success", false);
+	}
+
 		return createModelAndViewJson(model);
 		
 	}

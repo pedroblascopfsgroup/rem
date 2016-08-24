@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.api;
 
+import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 
@@ -20,6 +22,15 @@ public interface ExpedienteComercialApi {
 		 * @return Object
 		 */
 	    public Object getTabExpediente(Long id, String tab);
+
+
+	    /**
+	     * Método que recupera una página de textos de la oferta de un expediente
+	     * @param dto
+	     * @param id
+	     * @return
+	     */
+		public DtoPage getListTextosOfertaById(DtoTextosOferta dto, Long id);
 	    
 	    
 	    

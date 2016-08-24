@@ -66,8 +66,8 @@ public interface ClienteComercialApi {
 	
 	
 	/**
-	 * Actualiza un nuevo ClienteComercial a partir de la información pasada por parámetro.
-	 * @param clienteDto con la información del clienteComercial a dar de alta
+	 * Actualiza un ClienteComercial a partir de la información pasada por parámetro.
+	 * @param clienteDto con la información del clienteComercial a actualizar
 	 * @param requestMap mapa con los parámetros a actualizar. Si no vienen, no hay que actualizar. Si vienen y están a null, hay que seterlos a null
 	 * @return List<String> con la lista de errores detectados
 	 */

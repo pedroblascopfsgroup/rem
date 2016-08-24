@@ -684,7 +684,7 @@ INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
   
   -- Registros insertados en REM
   V_SENTENCIA := '
-	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA||'
+	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA||' WHERE USUARIOCREAR = ''MIGRAREM01BNK''
   '
   ;
   
@@ -747,7 +747,7 @@ INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
   
   -- Registros insertados en REM
   V_SENTENCIA := '
-	SELECT COUNT(EDI_ID) FROM '||V_ESQUEMA||'.'||V_TABLA3||'
+	SELECT COUNT(EDI_ID) FROM '||V_ESQUEMA||'.'||V_TABLA3||' WHERE USUARIOCREAR = ''MIGRAREM01BNK''
   '
   ;
   
@@ -806,7 +806,7 @@ INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
   
   -- Registros insertados en REM
   V_SENTENCIA := '
-	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA4||'
+	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA4||' WHERE USUARIOCREAR = ''MIGRAREM01BNK''
   '
   ;
   
@@ -870,7 +870,7 @@ INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
   
   -- Registros insertados en REM
   V_SENTENCIA := '
-	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA5||'
+	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA5||' WHERE USUARIOCREAR = ''MIGRAREM01BNK''
   '
   ;
   
@@ -922,7 +922,7 @@ INSERT INTO '||V_ESQUEMA||'.'||V_TABLA6||' (
   
   -- Registros insertados en REM
   V_SENTENCIA := '
-	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA6||'
+	SELECT COUNT(ICO_ID) FROM '||V_ESQUEMA||'.'||V_TABLA6||' WHERE USUARIOCREAR = ''MIGRAREM01BNK''
   '
   ;
   

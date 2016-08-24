@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +41,7 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 	private static final String DEVON_PROPERTIES = "devon.properties";
 	private static final String IPLUS_INSTALADO = "iplus.instalado";
 	private static final String IPLUS_INSTALADO_SI = "SI";
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -166,16 +169,27 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 		try{
 			List<AdjuntoAsunto> aaList = genericDao.getList(AdjuntoAsunto.class, 
 					genericDao.createFilter(FilterType.EQUALS, "asunto.id", asuId));
+			logger.debug("Adjuntos recovery obtenidos " + aaList.size());
 			if (!Checks.esNulo(aaList)) {
 				for (AdjuntoAsunto aa : aaList) {
+					logger.debug("Comprobamos adjunto recovery  " + aa.getId());
 					if (!Checks.esNulo(aa.getNombre())) {
+						logger.debug("Nombre adjunto recovery no nulo");
+						logger.debug("Nombre adjunto recovery " + aa.getNombre());
 						String nombreAA = aa.getNombre().toUpperCase();
+						logger.debug("Nombre adjunto recovery upper " + nombreAA);
 						nombre = nombre.toUpperCase();
+						logger.debug("Nombre adjunto iplus upper " + nombre);
 						if (nombre.endsWith(nombreAA)) {
+							logger.debug("Nombre endsWith nombreAA");
 							proc = aa.getProcedimiento();
+							logger.debug("Procedimiento: " + aa.getProcedimiento().getId());
 							contentType = aa.getContentType();
+							logger.debug("contentType: " + aa.getContentType());
 							longitud = aa.getLength();
+							logger.debug("longitud: " + aa.getLength());
 							tipoDocumento = ((EXTAdjuntoAsunto)aa).getTipoFichero();
+							logger.debug("tipoDocumento: " + ((EXTAdjuntoAsunto)aa).getTipoFichero().getCodigo());
 							break;
 						}
 					}
@@ -189,7 +203,7 @@ public class IPLUSUtilsImpl implements IPLUSUtils {
 		auxDto.setContentType(contentType);
 		auxDto.setLongitud(longitud);
 		auxDto.setTipoDocumento(tipoDocumento);
-		
+		logger.debug("Devuelve auxDto " + (Checks.esNulo(auxDto)? "NULO": "RELLENO"));
 		return auxDto;
 	}
 

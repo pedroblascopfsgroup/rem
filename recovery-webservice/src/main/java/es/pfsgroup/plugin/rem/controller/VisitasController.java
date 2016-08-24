@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
@@ -21,16 +25,20 @@ public class VisitasController {
 
 	@Autowired
 	private RestApi restApi;
-	
-	@Autowired 
-    private ActivoApi activoApi;
 
+	@Autowired 
+    private VisitaApi visitaApi;
+	
+	
+	
 	/**
-	 * Inserta o actualiza una visita Ejem:
-	 * {"id":"109238120575","data":[{"idClienteRem":"22","idVisitaWebcom":"45",
-	 * "idEstadoVisita":"1","idTipoPrescriptor":"1","fecha":"365299200",
-	 * "idActivoHaya":"33","idDetalleEstadoVisita":"44","prescriptor":"presc",
-	 * "idUsuarioRem":"22"}]}
+	 * Inserta o actualiza una lista de Visitas Ejem: IP:8080/pfs/rest/clientes
+	 * HEADERS:
+	 * Content-Type - application/json
+	 * signature - sdgsdgsdgsdg
+	 * 
+	 * BODY:
+	 * {"id":"111111112112","data": [{"idVisitaWebcom": "1", "idClienteRem": "2", "idActivoHaya": "0", "codEstadoVisita": "05","codDetalleEstadoVisita": "07", "fechaVisita": "448070400", "fecha": "448070400", "idUsuarioRem": "1", "idPrescriptor": "5045", "visitaPrescriptor": false, "idApiResponsable": "1010", "visitaApiResponsable": false, "idApiCustodio": "1008", "visitaApiCustodio": false, "observaciones": "Observaciones" }]}
 	 * 
 	 * @param model
 	 * @param request
@@ -38,50 +46,72 @@ public class VisitasController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/visitas")
-	public ModelAndView insertUpdateVisita(ModelMap model, RestRequestWrapper request) {
+	public ModelAndView saveOrUpdateVisita(ModelMap model, RestRequestWrapper request) {
+		VisitaRequestDto jsonData = null;
+		List<String> errorsList = null;
+		Visita visita = null;
+		
+		VisitaDto visitaDto = null;
+		Map<String, Object> map = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> requestMapList = null;
+		
 		try {
 
-			VisitaRequestDto jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
-			for (VisitaDto visita : jsonData.getData()) {
-				List<String> error = restApi.validateRequestObject(visita);
-				if (error.isEmpty()) {
+			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
+			List<VisitaDto> listaVisitaDto = jsonData.getData();			
+			requestMapList = request.getRequestMapList();
+			if(Checks.esNulo(requestMapList) && requestMapList.isEmpty()){
+				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				
+			}else{
+				
+				for(int i=0; i < listaVisitaDto.size();i++){
 					
-					Visita visitaBbdd = new Visita();
-					visitaBbdd.setId(visita.getIdVisitaRem());
-					//cli_clientes
-					visitaBbdd.setCliente(null);
+					Visita vis = null;
+					errorsList = new ArrayList<String>();
+					map = new HashMap<String, Object>();
+					visitaDto = listaVisitaDto.get(i);
 					
-					activoApi.insertOrUpdateVisitaActivo(visitaBbdd);
+					visita = visitaApi.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());		
+					if(Checks.esNulo(visita)){
+						errorsList = visitaApi.saveVisita(visitaDto);
+						
+					}else{
+						errorsList = visitaApi.updateVisita(visita, visitaDto, requestMapList.get(i));
+						
+					}
+														
+					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){
+						vis = visitaApi.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());	
+						map.put("idVisitaWebcom", vis.getIdVisitaWebcom());
+						map.put("idVisitaRem", vis.getNumVisitaRem());
+						map.put("success", true);
+					}else{
+						map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
+						map.put("idVisitaRem", visitaDto.getIdClienteRem());
+						map.put("success", false);
+						map.put("errorMessages", errorsList);
+					}					
+					listaRespuesta.add(map);	
 					
-					model.put("id", jsonData.getId());
-					model.put("data", "hola mon update");
-				} else {
-					model.put("id", jsonData.getId());
-					model.put("error", error);
 				}
+			
+				model.put("id", jsonData.getId());	
+				model.put("data", listaRespuesta);
+				model.put("error", "");
+				
 			}
 
 		} catch (Exception e) {
-			model.put("error", e);
+			e.printStackTrace();
+			model.put("id", jsonData.getId());	
+			model.put("data", listaRespuesta);
+			model.put("error", e.getMessage().toUpperCase());
 		}
 
 		return new ModelAndView("jsonView", model);
 	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET, value = "/visitas")
-	public ModelAndView getVisita(ModelMap model, RestRequestWrapper request) {
-		try {
-
-			VisitaRequestDto jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
-
-			model.put("id", jsonData.getId());
-			model.put("data", "hola mon get");
-		} catch (Exception e) {
-			model.put("data", e);
-		}
-
-		return new ModelAndView("jsonView", model);
-	}
+	
 
 }

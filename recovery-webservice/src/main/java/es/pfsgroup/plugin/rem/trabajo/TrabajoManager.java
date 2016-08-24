@@ -785,12 +785,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 	}
 
+	// TODO Este método hay que cambiarlo.
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo){
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
-		
-		// TODO Dani: Cuando estén implementados el resto de trámites habría que crear un mapa para los distintos tipos de trámites por cada tipo de trabajo.
+
 		// Tramites [FASE 1] -----------------------
 		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)){ // Obtención documental
 			if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE))//CEE
@@ -831,6 +831,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
 		
+		
+		// Módulo de Publicaciones ------------------
+		//
+		// Trámite de actualización de estados
+		if(trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_PUBLICACIONES)){
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T012");
+		}
 		
 		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
 		

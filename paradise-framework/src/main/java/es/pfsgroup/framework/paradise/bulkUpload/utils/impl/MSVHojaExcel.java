@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.StringUtils;
 
 import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.Checks;
-
 import jxl.Cell;
 import jxl.CellType;
 import jxl.DateCell;
@@ -181,6 +182,35 @@ public class MSVHojaExcel {
 		copy.write();
 		copy.close();
 
+		return nombreFicheroErrores;
+	}
+	
+	public String crearExcelErroresMejorado(Map<String,List<Integer>> mapaErrores) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if(!isOpen){
+			abrir();
+		}
+		
+		String nombreFicheroErrores = getNombreFicheroErrores();
+		
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
+		
+		WritableSheet hoja = copy.getSheet(0);
+		int numColumnas = this.getNumeroColumnas();
+		int numErrores = mapaErrores.size();
+		
+		Iterator<String> it = mapaErrores.keySet().iterator();
+		int columna = numColumnas;
+		while(it.hasNext()){
+			String error = (String) it.next();
+			for(int i = 0; i < mapaErrores.get(error).size(); i++){
+				addTexto(hoja, columna, mapaErrores.get(error).get(i), error);
+			}
+			columna++;
+		}
+		
+		copy.write();
+		copy.close();
+		
 		return nombreFicheroErrores;
 	}
 

@@ -148,6 +148,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public Activo getByNumActivo(Long id){
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", id);
+		return genericDao.get(Activo.class, filter);
+	}
+	
+	@Override
 	@BusinessOperation(overrides = "activoManager.saveOrUpdate")
 	@Transactional
 	public boolean saveOrUpdate(Activo activo) {

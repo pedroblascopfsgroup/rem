@@ -6,6 +6,7 @@ import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoAltaProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoFiltroProcesos;
+import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVProcesoMasivo;
 
@@ -73,4 +74,18 @@ public interface MSVProcesoApi {
 	 * @return MSVDocumentoMasivo
 	 */
 	public MSVDocumentoMasivo getMSVDocumento(Long idProcess);
+	
+	/**
+	 * Devuelve el proceso masivo a partir de un id de proceso
+	 * @param idProcess
+	 * @return MSVProcesoMasivo
+	 */
+	public MSVProcesoMasivo get(Long idProcess);
+	
+	/**
+	 * Devuelve la operacion masiva en base a su id
+	 * @param idTipoOperacion
+	 * @return MSVDDOperacionMasiva
+	 */
+	public MSVDDOperacionMasiva getOperacionMasiva(Long idTipoOperacion);
 }

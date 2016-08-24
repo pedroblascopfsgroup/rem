@@ -1790,6 +1790,15 @@ public class ActivoController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoEstadoPublicacion(Long id, ModelMap model){
+		
+		model.put("data", activoEstadoPublicacionApi.getHistoricoEstadoPublicacionByActivo(id));
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET, value = "/activo")
 	public ModelAndView getActivo(ModelMap model, @RequestParam(value = "data") String data,
 			RestRequestWrapper request) {

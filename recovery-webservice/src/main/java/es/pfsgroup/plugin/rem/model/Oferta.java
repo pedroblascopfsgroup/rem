@@ -30,6 +30,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 
@@ -79,6 +80,10 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EOF_ID")
 	private DDEstadoOferta estadoOferta;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EVO_ID")
+	private DDEstadosVisitaOferta estadoVisitaOferta;    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TOF_ID")
@@ -188,6 +193,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setEstadoOferta(DDEstadoOferta estadoOferta) {
 		this.estadoOferta = estadoOferta;
+	}
+
+	public DDEstadosVisitaOferta getEstadoVisitaOferta() {
+		return estadoVisitaOferta;
+	}
+
+	public void setEstadoVisitaOferta(DDEstadosVisitaOferta estadoVisitaOferta) {
+		this.estadoVisitaOferta = estadoVisitaOferta;
 	}
 
 	public DDTipoOferta getTipoOferta() {

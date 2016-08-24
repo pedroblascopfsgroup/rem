@@ -68,23 +68,22 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	title:  HreRem.i18n('title.comite.sancionador'),
 		                	colspan: 2,
 		                	margin: '0 10 10 0',
-		                	layout: 'hbox',
+		                	height: 90,
+		                	layout: 'vbox',
 		                	items: [
-					                	{
-					                		xtype: 'button',
-					                		text: HreRem.i18n('fieldlabel.verificar.comite'),
-					                		margin: '0 10 0 0',
-					                		disabled: true // TODO Comités sin definir
-					                	},
-					                	{
+		                				{
 					                		xtype: 'displayfieldbase',
 					                		fieldLabel:  HreRem.i18n('fieldlabel.comite'),
 					                		bind: {
 					                			value : '{datosbasicosoferta.comite}'
 					                		}   		
+					                	},		                	
+					                	{
+					                		xtype: 'button',
+					                		text: HreRem.i18n('fieldlabel.verificar.comite'),
+					                		margin: '0 10 0 0',
+					                		disabled: true // TODO Comités sin definir
 					                	}
-					                	
-		                	
 		                	]
 		                		
 		                	
@@ -92,23 +91,39 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                {
 		                	xtype: 'fieldset',
 		                	margin: '0 10 10 0',
+		                	height: 90,
 		                	title:  HreRem.i18n('title.visita'),
-		                	layout: 'hbox',
+		                	layout: 'vbox',
 		                	items: [
-					                	{
-					                		xtype: 'button',
-					                		text: HreRem.i18n('fieldlabel.asignar.visita'),
-					                		margin: '0 10 0 0' 
-					                	},
-					                	{
-					                		xtype: 'displayfieldbase',
-					                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visita'),
-					                		bind: {
-					                			value : '{datosbasicosoferta.numVisita}'
-					                		}   		
-					                	}
-					                	
-		                	
+										{ 
+											xtype: 'comboboxfieldbase',
+											reference: 'comboEstadosVisita',
+								        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+								        	bind: {
+							            		store: '{comboEstadosVisitaOferta}',
+							            		value: '{datosbasicosoferta.estadoVisitaOfertaCodigo}'
+							            	}
+								        },	
+		                				{
+		                					xtype: 'container',
+		                					layout: 'hbox',
+			                				items: [
+							                	{
+							                		xtype: 'button',
+							                		text: HreRem.i18n('fieldlabel.asignar.visita'),
+							                		margin: '0 10 0 0',
+							                		hidden: true
+							                		
+							                	},
+							                	{
+							                		xtype: 'displayfieldbase',
+							                		fieldLabel:  HreRem.i18n('fieldlabel.numero.visita'),
+							                		bind: {
+							                			value : '{datosbasicosoferta.numVisita}'
+							                		}   		
+							                	}
+							                ]
+			                			}
 		                	]
 		                		
 		                	
@@ -123,7 +138,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
                 	{
 					    xtype		: 'gridBaseEditableRow',
 					    idPrincipal : 'expediente.id',
-					    topBar: true,
+					    topBar: false,
 					    reference: 'listadoTextosOferta',
 						cls	: 'panel-base shadow-panel',
 						bind: {
@@ -133,22 +148,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						columns: [
 						   {    text: HreRem.i18n('header.campo'),
 					        	dataIndex: 'campoDescripcion',
-					        	flex: 1,
-					        	editor: {
-						        		xtype: 'combobox',
-						        		cls: 'grid-no-seleccionable-field-editor',
-						        		store: Ext.create('Ext.data.Store',{								        		
-						        			model: 'HreRem.model.ComboBase',
-											proxy: {
-												type: 'uxproxy',
-												remoteUrl: 'generic/getDiccionario',
-												extraParams: {diccionario: 'tiposTextoOferta'}
-											},
-											autoLoad: true
-										}),								            	
-						            	displayField: 'descripcion',
-										valueField: 'codigo'    											
-								}
+					        	flex: 1
 					       },
 						   {
 					            text: HreRem.i18n('header.texto'),
@@ -157,21 +157,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					            editor: {
 			       					xtype:'textarea'
 					       		}
-							}
-					       	        
-					    ],
-			           
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storeTextosOferta}'
-					            }
-					        }
-					    ]
-					    
+							}					       	        
+					    ]					    
 					}
             	]
             } 
@@ -188,6 +175,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;		
-		me.lookupController().cargarTabData(me);    	
+		me.lookupController().cargarTabData(me);  
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});		
+		
     }
 });

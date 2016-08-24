@@ -13,7 +13,7 @@ Ext.define('HreRem.view.agrupacion.detalle.VisitasComercialAgrupacionList', {
         
 		         {
 		        	
-		            dataIndex: 'idVisita',
+		            dataIndex: 'numVisita',
 		            text: HreRem.i18n('header.numero.visita'),
 		            flex: 0.5
 		        },

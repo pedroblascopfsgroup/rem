@@ -695,13 +695,11 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperties(dtoAgrupacionVisitas, activoPrincipal.getVisitas().get(i));
 						//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
 						
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "idVisita", activoPrincipal.getVisitas().get(i).getId());
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "fechaSolicitud", activoPrincipal.getVisitas().get(i).getFechaSolicitud());
+						BeanUtils.copyProperty(dtoAgrupacionVisitas, "numVisita", activoPrincipal.getVisitas().get(i).getNumVisitaRem());
 						if(activoPrincipal.getVisitas().get(i).getCliente()!=null){
-							BeanUtils.copyProperty(dtoAgrupacionVisitas, "nombre", activoPrincipal.getVisitas().get(i).getCliente().getNombre()+activoPrincipal.getVisitas().get(i).getCliente().getApellidos());
+							BeanUtils.copyProperty(dtoAgrupacionVisitas, "nombre", activoPrincipal.getVisitas().get(i).getCliente().getNombreCompleto());
 							BeanUtils.copyProperty(dtoAgrupacionVisitas, "numDocumento", activoPrincipal.getVisitas().get(i).getCliente().getDocumento());
 						}
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "fechaVisita", activoPrincipal.getVisitas().get(i).getFechaVisita());
 						
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
@@ -725,13 +723,11 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperties(dtoAgrupacionVisitas, visita);
 						//BeanUtils.copyProperties(dtoActivoVisitas, activo.getAgrupaciones().get(i).getAgrupacion());
 						
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "idVisita", visita.getId());
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "fechaSolicitud", visita.getFechaSolicitud());
+						BeanUtils.copyProperty(dtoAgrupacionVisitas, "numVisita", visita.getNumVisitaRem());
 						if(visita.getCliente()!=null){
-							BeanUtils.copyProperty(dtoAgrupacionVisitas, "nombre", visita.getCliente().getNombre()+visita.getCliente().getApellidos());
+							BeanUtils.copyProperty(dtoAgrupacionVisitas, "nombre", visita.getCliente().getNombreCompleto());
 							BeanUtils.copyProperty(dtoAgrupacionVisitas, "numDocumento", visita.getCliente().getDocumento());
 						}
-						BeanUtils.copyProperty(dtoAgrupacionVisitas, "fechaVisita", visita.getFechaVisita());
 						
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();

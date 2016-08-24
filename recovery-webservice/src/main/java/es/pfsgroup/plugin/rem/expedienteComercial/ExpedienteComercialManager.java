@@ -93,7 +93,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);	
 		List<TextosOferta> lista = (List<TextosOferta>) genericDao.getList(TextosOferta.class, filtro);
-		
 		List<DtoTextosOferta> textos = new ArrayList<DtoTextosOferta>();
 		
 		for (TextosOferta textoOferta: lista) {

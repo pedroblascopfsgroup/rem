@@ -70,6 +70,14 @@
 		                "cls": "app-menu-item",
 		                "routeId": "masivo",
 		                "secFunPermToRender": "MENU_MASIVO"
+		            },
+		            {
+		                "text":   "Comercial",
+		                "view":   "comercial.ComercialMainMenu",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-precios",
+		                "cls": "app-menu-item",
+		                "routeId": "comercial"
 		            }
             
             

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160809
+--## FECHA_CREACION=20160810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -74,7 +74,7 @@ BEGIN
 			TXO_ID           						NUMBER(16,0)                NOT NULL,
 			OFR_ID									NUMBER(16,0)				NOT NULL,
 			DD_TTX_ID								NUMBER(16,0)				NOT NULL,	
-			TXO_TEXTO								VARCHAR2(512 CHAR),		
+			TXO_TEXTO								VARCHAR2(2048 CHAR),		
 			VERSION 								NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 			USUARIOCREAR 							VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 			FECHACREAR 								TIMESTAMP (6) 				NOT NULL ENABLE, 

@@ -2,7 +2,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
-    requires : ['HreRem.view.expedientes.DatosBasicosExpediente'],
+    requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente'],
     
 		
     listeners: {
@@ -65,24 +65,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 						xtype: 'buttontab',
 						itemId: 'botoneditar',
 					    handler	: 'onClickBotonEditar',
-					    iconCls: 'edit-button-color',
-					    bind: {hidden: '{editing}'}
+					    iconCls: 'edit-button-color'
 					},
 					{
 						xtype: 'buttontab',
 						itemId: 'botonguardar',
 					    handler	: 'onClickBotonGuardar', 
 					    iconCls: 'save-button-color',
-				        hidden: true,
-					    bind: {hidden: '{!editing}'}
+				        hidden: true
 					},
 					{
 						xtype: 'buttontab',
 						itemId: 'botoncancelar',
 					    handler	: 'onClickBotonCancelar', 
 					    iconCls: 'cancel-button-color',
-					   	hidden: true,
-					    bind: {hidden: '{!editing}'}
+					   	hidden: true
 					}
 			]
 		},
@@ -90,6 +87,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        {
 		        	xtype: 'datosbasicosexpediente', ocultarBotonesEdicion: true
 		        	
+		        },
+		        {
+		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
 		        }
 
 		],

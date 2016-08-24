@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 import es.capgemini.devon.dto.WebDto;
 
 
@@ -21,7 +23,7 @@ public class DtoFichaExpediente extends WebDto {
 	private static final long serialVersionUID = 3574353502838449106L;
 	
 
-	private Long idExpediente;
+	private Long id;
 	
     private Long idOferta;
     
@@ -63,13 +65,27 @@ public class DtoFichaExpediente extends WebDto {
    	
    	private Date fechaAltaOferta;
    	
+   	private Date fechaPosicionamiento;
+   	
+   	private String motivoAnulacion;
+   	
+   	private Date fechaAnulacion;
+   	
+    private Date fechaContabilizacionPropietario;
+    
+    private String peticionarioAnulacion;
+    
+    private Double importeDevolucionEntregas;
+    
+    private Date fechaDevolucionEntregas;
+   	
 
-	public Long getIdExpediente() {
-		return idExpediente;
+	public Long getId() {
+		return id;
 	}
 
-	public void setIdExpediente(Long idExpediente) {
-		this.idExpediente = idExpediente;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getIdOferta() {
@@ -231,6 +247,63 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaAltaOferta(Date fechaAltaOferta) {
 		this.fechaAltaOferta = fechaAltaOferta;
+	}
+
+	public Date getFechaPosicionamiento() {
+		return fechaPosicionamiento;
+	}
+
+	public void setFechaPosicionamiento(Date fechaPosicionamiento) {
+		this.fechaPosicionamiento = fechaPosicionamiento;
+	}
+
+	public String getMotivoAnulacion() {
+		return motivoAnulacion;
+	}
+
+	public void setMotivoAnulacion(String motivoAnulacion) {
+		this.motivoAnulacion = motivoAnulacion;
+	}
+
+	public Date getFechaAnulacion() {
+		return fechaAnulacion;
+	}
+
+	public void setFechaAnulacion(Date fechaAnulacion) {
+		this.fechaAnulacion = fechaAnulacion;
+	}
+
+	public Date getFechaContabilizacionPropietario() {
+		return fechaContabilizacionPropietario;
+	}
+
+	public void setFechaContabilizacionPropietario(
+			Date fechaContabilizacionPropietario) {
+		this.fechaContabilizacionPropietario = fechaContabilizacionPropietario;
+	}
+
+	public String getPeticionarioAnulacion() {
+		return peticionarioAnulacion;
+	}
+
+	public void setPeticionarioAnulacion(String peticionarioAnulacion) {
+		this.peticionarioAnulacion = peticionarioAnulacion;
+	}
+
+	public Double getImporteDevolucionEntregas() {
+		return importeDevolucionEntregas;
+	}
+
+	public void setImporteDevolucionEntregas(Double importeDevolucionEntregas) {
+		this.importeDevolucionEntregas = importeDevolucionEntregas;
+	}
+
+	public Date getFechaDevolucionEntregas() {
+		return fechaDevolucionEntregas;
+	}
+
+	public void setFechaDevolucionEntregas(Date fechaDevolucionEntregas) {
+		this.fechaDevolucionEntregas = fechaDevolucionEntregas;
 	}
 
    	

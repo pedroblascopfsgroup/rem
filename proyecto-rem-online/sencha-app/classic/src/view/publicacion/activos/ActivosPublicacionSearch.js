@@ -31,46 +31,47 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 				       		{ 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.admision'),
-					        	name: 'admision'
-					        	
+					        	name: 'admision',
+					        	inputValue: true					        	
 					        },
 				       		{ 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacion'),
-					        	name: 'publicacion'
-					        	
+					        	name: 'publicacion',
+					        	inputValue: true					        	
 					        },
 					        { 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.gestion'),
-					        	name: 'gestion'
+					        	name: 'gestion',
+					        	inputValue: true					        }
+						]
+			    	},
+			    	{
+			    		items: [
+					       	{ 
+					        	xtype: 'checkboxfield',
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.precios'),
+					        	name: 'precio',
+					        	inputValue: true					        	
+					        },
+				       		{ 
+					        	xtype: 'checkboxfield',
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacionForzada'),
+					        	name: 'publiForzada',
+					        	inputValue: true					        	
+					        },
+					        { 
+					        	xtype: 'checkboxfield',
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.despublicacionForzada'),
+					        	name: 'despubliForzada',
+					        	inputValue: true
 					        }
 						]
 			    	},
 			    	{
 			    		items: [
-					       		{ 
-					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.precios'),
-					        	name: 'precio'
-					        	
-					        },
-				       		{ 
-					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacionForzada'),
-					        	name: 'publiForzada'
-					        	
-					        },
-					        { 
-					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.despublicacionForzada'),
-					        	name: 'despubliForzada'
-					        }
-							]
-			    	},
-			    	{
-			    		items: [
-					       		{ 
+					       	{ 
 				       			fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.numActivoHaya'),
 				            	name: 'numActivo',
 				            	labelWidth:	150,
@@ -89,13 +90,14 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        { 
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publiConPrecioConsultar'),
-					        	name: 'precioConsultar'
+					        	name: 'precioConsultar',
+					        	inputValue: true					        
 					        }
-							]
+						]
 			    	},
 			    	{
 			    		items: [
-					       		{ 
+					       	{ 
 				       			xtype: 'combo',
 					        	fieldLabel: HreRem.i18n('fieldlabel.publicaciones.activos.search.tipoActivo'),
 					        	name: 'tipoActivo',
@@ -115,7 +117,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 				            	displayField: 'descripcion',
 	    						valueField: 'codigo'
 					        }
-							]
+						]
 			    	}
 			    ]
 			}

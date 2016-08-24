@@ -18,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -29,6 +30,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
 
@@ -88,8 +90,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private CondicionanteExpediente condicionante; 
     
-    @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
     private List<CompradorExpediente> compradores;
+    
+    @OneToMany(mappedBy = "expediente", fetch = FetchType.LAZY)
+    @OrderBy("fechaPosicionamiento DESC")
+    private List<Posicionamiento> posicionamientos;
     
     @Column(name="ECO_FECHA_ANULACION")
     private Date fechaAnulacion;
@@ -97,7 +103,17 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_MOTIVO_ANULACION")
     private String motivoAnulacion;
     
-
+    @Column(name="ECO_FECHA_CONT_PROPIETARIO")
+    private Date fechaContabilizacionPropietario;
+    
+    @Column(name="ECO_PETICIONARIO_ANULACION")
+    private String peticionarioAnulacion;
+    
+    @Column(name="ECO_IMP_DEV_ENTREGAS")
+    private Double importeDevolucionEntregas;
+    
+    @Column(name="ECO_FECHA_DEV_ENTREGAS")
+    private Date fechaDevolucionEntregas;
      
 	@Version   
 	private Long version;
@@ -112,9 +128,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	
+	}	
 
 	public Long getNumExpediente() {
 		return numExpediente;
@@ -195,21 +209,6 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-    
-    public Comprador getCompradorPrincipal() {
-    	Comprador comprador = null;
-    	
-    	for(CompradorExpediente compradorExp: this.compradores) {
-    		
-    		if(BooleanUtils.toBoolean(compradorExp.getTitularContratacion())) {
-    			comprador = compradorExp.getPrimaryKey().getComprador();
-    		}
-    		
-    	}
-    	
-    	return comprador;
-    	
-    }
 
 	public CondicionanteExpediente getCondicionante() {
 		return condicionante;
@@ -234,6 +233,75 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setMotivoAnulacion(String motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
 	}
+	
+    public List<Posicionamiento> getPosicionamientos() {
+		return posicionamientos;
+	}
+
+	public void setPosicionamientos(List<Posicionamiento> posicionamientos) {
+		this.posicionamientos = posicionamientos;
+	}
+
+	public Date getFechaContabilizacionPropietario() {
+		return fechaContabilizacionPropietario;
+	}
+
+	public void setFechaContabilizacionPropietario(
+			Date fechaContabilizacionPropietario) {
+		this.fechaContabilizacionPropietario = fechaContabilizacionPropietario;
+	}
+
+	public String getPeticionarioAnulacion() {
+		return peticionarioAnulacion;
+	}
+
+	public void setPeticionarioAnulacion(String peticionarioAnulacion) {
+		this.peticionarioAnulacion = peticionarioAnulacion;
+	}
+
+	public Double getImporteDevolucionEntregas() {
+		return importeDevolucionEntregas;
+	}
+
+	public void setImporteDevolucionEntregas(Double importeDevolucionEntregas) {
+		this.importeDevolucionEntregas = importeDevolucionEntregas;
+	}
+
+	public Date getFechaDevolucionEntregas() {
+		return fechaDevolucionEntregas;
+	}
+
+	public void setFechaDevolucionEntregas(Date fechaDevolucionEntregas) {
+		this.fechaDevolucionEntregas = fechaDevolucionEntregas;
+	}
+
+	public Comprador getCompradorPrincipal() {
+    	Comprador comprador = null;
+    	
+    	if(!Checks.esNulo(this.compradores)) {
+    	
+	    	for(CompradorExpediente compradorExp: this.compradores) {
+	    		
+	    		if(BooleanUtils.toBoolean(compradorExp.getTitularContratacion())) {
+	    			comprador = compradorExp.getPrimaryKey().getComprador();
+	    		}	    		
+	    	}
+    	}
+    	
+    	return comprador;
+    	
+    }
+    
+    public Posicionamiento getUltimoPosicionamiento() {
+    	
+    	Posicionamiento posicionamiento = null;
+    	
+    	if(!Checks.esNulo(this.posicionamientos) && !this.posicionamientos.isEmpty()) {    		
+    		posicionamiento = this.posicionamientos.get(0);
+    	}
+    	
+    	return posicionamiento;
+    }
     
     
    

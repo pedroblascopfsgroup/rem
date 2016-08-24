@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -23,7 +24,7 @@ public class ExpedienteAvisoDerechoTanteo implements ExpedienteAvisadorApi {
 
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		if (BooleanUtils.toBoolean(expediente.getCondicionante().getSujetoTanteoRetracto())) {			
+		if (!Checks.esNulo(expediente.getCondicionante()) && BooleanUtils.toBoolean(expediente.getCondicionante().getSujetoTanteoRetracto())) {			
 			dtoAviso.setDescripcion("Derecho y tanteo de la administración");
 			dtoAviso.setId(String.valueOf(expediente.getId()));			
 		}

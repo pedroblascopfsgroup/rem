@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -13,6 +16,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -394,8 +398,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.numPropuesta", dto.getNumPropuesta());
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "propact.nombrePropuesta", dto.getNombrePropuesta());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoCodigo", dto.getEstadoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoActivoCodigo", dto.getEstadoCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoActivoCodigo", dto.getEstadoActivoCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.idActivo", dto.getIdActivo());
+   		HQLBuilder.addFiltroLikeSiNotNull(hb,"propact.gestor", dto.getGestorPrecios(),true);
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"propact.tipoPropuesta", dto.getTipoPropuesta());
+   		
+   		if(!Checks.esNulo(dto.getTipoDeFecha())) {
+   			switch(Integer.parseInt(dto.getTipoDeFecha())) {
+	   			case 1:
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEmision");	
+	   				break;
+	   			case 2:
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEnvio");	
+	   				break;
+	   			case 3:
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaSancion");	
+	   				break;
+	   			case 4:
+	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaCarga");	
+	   				break;
+   				default:
+   					break;
+   			}
+   		}
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 
@@ -410,8 +435,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.despublicadoForzado", dto.getDespubliForzado());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicadoForzado", dto.getPubliForzado());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.despublicadoForzado", dto.getDespubliForzada());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicadoForzado", dto.getPubliForzada());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.gestion", dto.getGestion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
@@ -436,5 +461,29 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
+    
+    private void agregarFiltroFecha(HQLBuilder hb, String fechaD, String fechaH, String tipoFecha) {
+    	try {
+   			
+			if (fechaD != null) {
+				Date fechaDesde = DateFormat.toDate(fechaD);
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, fechaDesde, null);
+			}
+			
+			if (fechaH != null) {
+				Date fechaHasta = DateFormat.toDate(fechaH);
+		
+				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+
+				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
+			}
+			
+   		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+    }
 
 }

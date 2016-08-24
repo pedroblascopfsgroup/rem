@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -58,6 +59,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 
 @Component
 public class DiccionarioTargetClassMap{
@@ -135,6 +137,9 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosPropuestaActivo", DDEstadoPropuestaActivo.class);
 		mapa.put("estadoDisponibilidadComercial", DDEstadoDisponibilidadComercial.class);
 		mapa.put("estadosOfertas", DDEstadoOferta.class);
+		mapa.put("tiposTextoOferta", DDTiposTextoOferta.class);
+		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
+		
 
 		return Collections.unmodifiableMap(mapa);
 	}

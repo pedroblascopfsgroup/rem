@@ -30,6 +30,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 
@@ -70,9 +71,19 @@ public class Oferta implements Serializable, Auditable {
 	@Column(name="OFR_IMPORTE")
 	private Double importeOferta;
 	
+	@Column(name="OFR_IMPORTE_CONTRAOFERTA")
+	private Double importeContraOferta;
+	
+	@Column(name="OFR_FECHA_CONTRAOFERTA")
+	private Date fechaContraoferta;
+	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EOF_ID")
 	private DDEstadoOferta estadoOferta;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EVO_ID")
+	private DDEstadosVisitaOferta estadoVisitaOferta;    
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TOF_ID")
@@ -96,6 +107,10 @@ public class Oferta implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
 	private ActivoProveedor prescriptor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_API_RESPONSABLE")
+	private ActivoProveedor apiResponsable;
     
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
@@ -112,6 +127,9 @@ public class Oferta implements Serializable, Auditable {
     
     @Column(name = "OFR_FECHA_ALTA")
     private Date fechaAlta;
+    
+    @Column(name = "OFR_FECHA_NOTIFICACION")
+    private Date fechaNotificacion;
     
 
 	public Date getFechaAlta() {
@@ -175,6 +193,14 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setEstadoOferta(DDEstadoOferta estadoOferta) {
 		this.estadoOferta = estadoOferta;
+	}
+
+	public DDEstadosVisitaOferta getEstadoVisitaOferta() {
+		return estadoVisitaOferta;
+	}
+
+	public void setEstadoVisitaOferta(DDEstadosVisitaOferta estadoVisitaOferta) {
+		this.estadoVisitaOferta = estadoVisitaOferta;
 	}
 
 	public DDTipoOferta getTipoOferta() {
@@ -285,6 +311,38 @@ public class Oferta implements Serializable, Auditable {
 		}	
 		return activo;
 		
+	}
+
+	public Double getImporteContraOferta() {
+		return importeContraOferta;
+	}
+
+	public void setImporteContraOferta(Double importeContraOferta) {
+		this.importeContraOferta = importeContraOferta;
+	}
+
+	public Date getFechaContraoferta() {
+		return fechaContraoferta;
+	}
+
+	public void setFechaContraoferta(Date fechaContraoferta) {
+		this.fechaContraoferta = fechaContraoferta;
+	}
+
+	public ActivoProveedor getApiResponsable() {
+		return apiResponsable;
+	}
+
+	public void setApiResponsable(ActivoProveedor apiResponsable) {
+		this.apiResponsable = apiResponsable;
+	}
+
+	public Date getFechaNotificacion() {
+		return fechaNotificacion;
+	}
+
+	public void setFechaNotificacion(Date fechaNotificacion) {
+		this.fechaNotificacion = fechaNotificacion;
 	}
     
     

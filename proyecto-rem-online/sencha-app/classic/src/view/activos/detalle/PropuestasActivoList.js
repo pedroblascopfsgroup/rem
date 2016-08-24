@@ -23,9 +23,78 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoList', {
 		            flex: 1		        	
 		        },
 		        {	        	
+		            dataIndex: 'tipoPropuesta',
+		            text: HreRem.i18n('header.tipo.propuesta'),
+		            flex: 1,
+		            renderer: function(value) {
+		            	var record = me.lookupController().getViewModel().get("comboTiposPropuesta").findRecord("codigo", value);
+		            	if(Ext.isEmpty(record)) {
+		            		return "-";
+		            	} else {
+		            		return record.get("descripcion");
+		            	}
+		            	
+		            }
+		            
+		        },
+		        {
+		        	xtype: 'actioncolumn',
+		            dataIndex: 'numTrabajo',
+		            text: HreRem.i18n('header.num.trabajo'),
+		            items: [{
+			            tooltip: HreRem.i18n('tooltip.ver.trabajo'),
+			            getClass: function(v, metadata, record ) {
+			            	if (!Ext.isEmpty(record.get("numTrabajo"))) {
+			            		return 'app-list-ico ico-pestana-trabajos';
+			            	}			            	
+			            },
+			            handler: 'onEnlaceTrabajoClick'
+			        }],
+			        renderer: function(value, metadata, record) {
+			        	if(Ext.isEmpty(record.get("numTrabajo"))) {
+			        		return "";
+			        	} else {
+			        		return '<div style="display:inline; margin-right: 15px; font-size: 11px;">'+ value+'</div>'
+			        	}
+			        },
+		            flex: 1,
+		            align: 'center'
+		            //hidden: true		        	
+		        },
+		        {	        	
+		           /* dataIndex: 'idTramite',
+		            text: HreRem.i18n('header.tramite'),
+		            flex: 1,
+		            hidden: true
+		            */
+		            
+		            xtype: 'actioncolumn',
+	    			text: HreRem.i18n('header.tramite'),
+		        	dataIndex: 'idTramite',
+			        items: [{
+			            tooltip: HreRem.i18n('tooltip.ver.tramite'),
+			            getClass: function(v, metadata, record ) {
+			            	if (!Ext.isEmpty(record.get("idTramite"))) {
+			            		return 'app-list-ico ico-ver-tarea';
+			            	}			            	
+			            },
+			            handler: 'onEnlaceTramiteClick'
+			        }],
+			        renderer: function(value, metadata, record) {
+			        	if(Ext.isEmpty(record.get("idTramite"))) {
+			        		return "";
+			        	} else {
+			        		return '<div style="display:inline; margin-right: 15px; font-size: 11px;">'+ value+'</div>'
+			        	}
+			        },
+		            flex     : 1,            
+		            align: 'center'
+		        },
+		        {	        	
 		            dataIndex: 'entidadPropietariaDescripcion',
 		            text: HreRem.i18n('header.cartera'),
-		            flex: 1		        	
+		            flex: 1,
+		            hidden: true        	
 		        },
 		        {	        	
 		            dataIndex: 'estadoDescripcion',
@@ -62,9 +131,30 @@ Ext.define('HreRem.view.activos.detalle.PropuestasActivoList', {
 		            flex: 1
 		        },
 		        {	        	
+		            dataIndex: 'estadoActivoCodigo',
+		            text: HreRem.i18n('fieldlabel.estado.activo.propuesta'),
+		            flex: 1,
+		            renderer: function(value) {
+		            	var record = me.lookupController().getViewModel().get("comboEstadosPropuestaActivo").findRecord("codigo", value);
+		            	if(Ext.isEmpty(record)) {
+		            		return "-";
+		            	} else {
+		            		return record.get("descripcion");
+		            	}
+		            	
+		            }
+		            
+		        },
+		        {	        	
+		            dataIndex: 'motivoDescarte',
+		            text: HreRem.i18n('header.motivo.descarte'),
+		            flex: 1
+		        },
+		        {	        	
 		            dataIndex: 'observaciones',
 		            text: HreRem.i18n('header.observaciones'),
-		            flex: 1		        	
+		            flex: 1,
+		            hidden: true
 		        }
         ];
         

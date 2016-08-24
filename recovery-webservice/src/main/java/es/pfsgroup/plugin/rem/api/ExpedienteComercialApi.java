@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
+import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 
@@ -20,6 +24,33 @@ public interface ExpedienteComercialApi {
 		 * @return Object
 		 */
 	    public Object getTabExpediente(Long id, String tab);
+
+
+	    /**
+	     * Método que recupera los textos de la oferta de un expediente
+	     * @param id
+	     * @return
+	     */
+		public List<DtoTextosOferta> getListTextosOfertaById(Long id);
+
+		
+		/**
+		 * Método que guarda un texto de oferta para un expediente comercial
+		 * @param dto
+		 * @param idEntidad id del expediente
+		 * @return resultado de la operacion
+		 */
+		public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+
+
+		/**
+		 * Método que guarda la información de la pestaña datos básicos de la oferta
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
+		
 	    
 	    
 	    

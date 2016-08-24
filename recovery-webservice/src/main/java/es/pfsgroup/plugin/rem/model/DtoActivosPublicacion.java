@@ -42,20 +42,20 @@ public class DtoActivosPublicacion extends WebDto {
 		this.subtipoActivo = subtipoActivo;
 	}
 
-	public Boolean getDespubliForzado() {
+	public Boolean getDespubliForzada() {
 		return despubliForzada;
 	}
 
-	public void setDespubliForzado(Boolean despubliForzado) {
-		this.despubliForzada = despubliForzado;
+	public void setDespubliForzada(Boolean despubliForzada) {
+		this.despubliForzada = despubliForzada;
 	}
 
-	public Boolean getPubliForzado() {
+	public Boolean getPubliForzada() {
 		return publiForzada;
 	}
 
-	public void setPubliForzado(Boolean publiForzado) {
-		this.publiForzada = publiForzado;
+	public void setPubliForzada(Boolean publiForzada) {
+		this.publiForzada = publiForzada;
 	}
 
 	public Boolean getAdmision() {

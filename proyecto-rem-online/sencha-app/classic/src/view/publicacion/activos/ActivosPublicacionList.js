@@ -14,9 +14,10 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 	    };
 	    var estadoRenderer =  function(value) {
         	var src = '',
-        	alt = '';
+        	alt = '',
+        	valor = (value == "true");
         	
-        	if (value) {
+        	if (valor) {
         		src = 'icono_OK.svg';
         		alt = 'OK';
         	} else { 

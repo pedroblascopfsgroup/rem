@@ -28,7 +28,7 @@ public class DtoAcuerdo extends WebDto {
 	private Long periodo;
 	private String fechaCierre;
 	private String fechaLimite;
-	private Long importeCostas;	
+	private Float importeCostas;	
 	private String guid;
 	private Long idJBPM;
 	private Date fechaEstado;
@@ -217,12 +217,12 @@ public class DtoAcuerdo extends WebDto {
 		this.fechaLimite = fechaLimite;
 	}
 
-	public Long getImporteCostas() {
+	public Float getImporteCostas() {
 		return importeCostas;
 	}
 
 
-	public void setImporteCostas(Long importeCostas) {
+	public void setImporteCostas(Float importeCostas) {
 		this.importeCostas = importeCostas;
 	}
 	

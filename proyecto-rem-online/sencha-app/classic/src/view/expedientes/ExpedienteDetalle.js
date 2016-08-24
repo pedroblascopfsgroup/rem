@@ -65,24 +65,21 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 						xtype: 'buttontab',
 						itemId: 'botoneditar',
 					    handler	: 'onClickBotonEditar',
-					    iconCls: 'edit-button-color',
-					    bind: {hidden: '{editing}'}
+					    iconCls: 'edit-button-color'
 					},
 					{
 						xtype: 'buttontab',
 						itemId: 'botonguardar',
 					    handler	: 'onClickBotonGuardar', 
 					    iconCls: 'save-button-color',
-				        hidden: true,
-					    bind: {hidden: '{!editing}'}
+				        hidden: true
 					},
 					{
 						xtype: 'buttontab',
 						itemId: 'botoncancelar',
 					    handler	: 'onClickBotonCancelar', 
 					    iconCls: 'cancel-button-color',
-					   	hidden: true,
-					    bind: {hidden: '{!editing}'}
+					   	hidden: true
 					}
 			]
 		},

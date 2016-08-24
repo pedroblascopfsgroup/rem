@@ -516,13 +516,16 @@
        			else {
        		
 	       		//var params = detalleFieldSet.getForm().getValues();
-	       		
 	       		var params = {};
 	       		for (var objectName in objetosDinamicos) {
 	       			if (objetosDinamicos.hasOwnProperty(objectName)) {
 		       			var object = objetosDinamicos[objectName];
 		       			var parameter = {};
-		       			parameter[objectName] = object.value;
+		       			if(object instanceof Ext.ux.form.XDateField){
+		       				parameter[objectName] = object.value;
+		       			}else{
+		       				parameter[objectName] = object.getValue();
+		       			}
 		       			Ext.apply(params, parameter);
 	       			}
 	       		}
@@ -537,7 +540,7 @@
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
 	       		Ext.apply(params, {idTermino : idTermino });     		
-	       		
+	       		btnGuardar.setDisabled(true);
 	       		Ext.Ajax.request({
 					url: page.resolveUrl('mejacuerdo/crearTerminoAcuerdo')
 					,method: 'POST'
@@ -552,6 +555,7 @@
 						page.fireEvent(app.event.DONE);
 					}
 					,error: function(){
+						btnGuardar.setDisabled(false);
 						Ext.MessageBox.show({
 				           title: 'Guardado',
 				           msg: '<s:message code="plugin.mejoras.asunto.ErrorGuardado" text="**Error guardado" />',
@@ -617,7 +621,10 @@
 		bienesStore.on('load', function() {
 	       	if("${termino.bienes}"!=null && "${termino.bienes}"!=''){
 	        	<c:forEach var="bien" items="${termino.bienes}">
-			    	comboBienes.setValue("${bien.bien.id}"); 
+	        		var BieIdStr = parseInt("${bien.bien.id}");
+	        		var arrayBien = new Array();
+	        		arrayBien.push(BieIdStr);
+			    	comboBienes.setValue(arrayBien); 
 				</c:forEach>
 		    }
 		});

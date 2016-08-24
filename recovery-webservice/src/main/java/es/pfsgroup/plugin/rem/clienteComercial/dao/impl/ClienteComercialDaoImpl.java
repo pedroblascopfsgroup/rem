@@ -27,7 +27,6 @@ public class ClienteComercialDaoImpl extends AbstractEntityDao<ClienteComercial,
 	public List<ClienteComercial> getListaClientes(ClienteDto clienteDto) {
 		
 		HQLBuilder hql = new HQLBuilder("from ClienteComercial");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "id", clienteDto.getIdClienteRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idClienteWebcom", clienteDto.getIdClienteWebcom());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idClienteRem", clienteDto.getIdClienteRem());
 		

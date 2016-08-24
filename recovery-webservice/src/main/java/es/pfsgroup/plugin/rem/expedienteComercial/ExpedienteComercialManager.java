@@ -272,7 +272,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//dto.setComite();
 		
 		if(!Checks.esNulo(oferta.getVisita())) {
-			dto.setNumVisita(oferta.getVisita().getNumVisita());
+			dto.setNumVisita(oferta.getVisita().getNumVisitaRem());
 		}
 		
 		if(!Checks.esNulo(oferta.getEstadoVisitaOferta())) {

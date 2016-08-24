@@ -22,7 +22,6 @@ import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
-import es.pfsgroup.recovery.integration.bpm.payload.AcuerdoPayload;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -66,19 +65,22 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
     	dtoCambioEstadoPublicacion.setActivo(idActivo);
     	
     	DDEstadoPublicacion estadoPublicacion = activo.getEstadoPublicacion();
-    	if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO)){
+    	if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estadoPublicacion)){
     		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
-    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO)){
+    	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estadoPublicacion)){
     		dtoCambioEstadoPublicacion.setPublicacionForzada(true);
-    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)){
+    	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(estadoPublicacion)){
     		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
     		dtoCambioEstadoPublicacion.setOcultacionForzada(true);
-    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
+    	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO.equals(estadoPublicacion)){
     		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
     		dtoCambioEstadoPublicacion.setOcultacionPrecio(true);
-    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
+    	}else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setPublicacionForzada(true);
+    		dtoCambioEstadoPublicacion.setOcultacionPrecio(true);
+    	} else if(DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(estadoPublicacion)){
     		dtoCambioEstadoPublicacion.setDespublicacionForzada(true);
-    	} else if(estadoPublicacion.equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)){
+    	} else if(DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(estadoPublicacion)){
     		//Se quedaría todo a false en este estado
     	}
     	

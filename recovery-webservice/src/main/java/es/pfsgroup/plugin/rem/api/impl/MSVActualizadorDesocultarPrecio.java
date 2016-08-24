@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 
 @Component
 public class MSVActualizadorDesocultarPrecio implements MSVLiberator {
@@ -55,8 +56,10 @@ public class MSVActualizadorDesocultarPrecio implements MSVLiberator {
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
 			Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 			DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
+
 			dtoCambioEstadoPublicacion.setActivo(activo.getId());
 			dtoCambioEstadoPublicacion.setOcultacionPrecio(false);
+				
 			activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
 		}
 

@@ -7,14 +7,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
@@ -23,6 +24,8 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 
 
@@ -36,6 +39,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private OfertaDao ofertaDao;
@@ -74,21 +80,19 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public DtoPage getListTextosOfertaById (DtoTextosOferta dto, Long id) {
+	public List<DtoTextosOferta> getListTextosOfertaById (Long idExpediente) {
 		
-		ExpedienteComercial expediente = findOne(id);
-		Oferta oferta = expediente.getOferta();
+		ExpedienteComercial expediente = findOne(idExpediente);
+		Oferta oferta = expediente.getOferta();		
+		List<Dictionary> tiposTexto = genericAdapter.getDiccionario("tiposTextoOferta");		
 		Long idOferta = null;
 		
 		if(!Checks.esNulo(oferta)) {
 			idOferta = oferta.getId();
-		}
-		
-		Page page = ofertaDao.getListTextosOfertaById(dto, idOferta);
-		
-		List<TextosOferta> lista = (List<TextosOferta>) page.getResults();
+		}		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);	
+		List<TextosOferta> lista = (List<TextosOferta>) genericDao.getList(TextosOferta.class, filtro);
 		List<DtoTextosOferta> textos = new ArrayList<DtoTextosOferta>();
 		
 		for (TextosOferta textoOferta: lista) {
@@ -99,11 +103,73 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			texto.setCampoCodigo(textoOferta.getTipoTexto().getCodigo());
 			texto.setTexto(textoOferta.getTexto());
 			textos.add(texto);
+			// Sólamente habrá un tipo de texto por oferta, de esta manera conseguimos tener en la lista todos los tipos,
+			// tengan valor o no
+			tiposTexto.remove(textoOferta.getTipoTexto());
 		}
 		
-		return new DtoPage(textos, page.getTotalCount()); 
-
+		// Añadimos los tipos que no han sido nunca creados para esta oferta
+		Long contador = new Long(-1);
+		for (Dictionary tipoTextoOferta: tiposTexto) {
+			DtoTextosOferta texto = new DtoTextosOferta();
+			texto.setId(contador--);
+			texto.setCampoDescripcion(tipoTextoOferta.getDescripcion());
+			texto.setCampoCodigo(tipoTextoOferta.getCodigo());
+			textos.add(texto);			
+		}	
 		
+		return textos;
+		
+	}
+	
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) {
+		
+		TextosOferta textoOferta = null;
+		
+		ExpedienteComercial expedienteComercial = findOne(idEntidad);
+		Oferta oferta = expedienteComercial.getOferta();
+		
+		// Estamos creando un texto que no existia
+		if(dto.getId()<0) {
+			textoOferta = new TextosOferta();
+			textoOferta.setOferta(oferta);
+			textoOferta.setTexto(dto.getTexto());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
+			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);			
+			textoOferta.setTipoTexto(tipoTexto);
+		// Modificamos un texto existente	
+		} else {			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
+			textoOferta = genericDao.get(TextosOferta.class, filtro);
+			textoOferta.setTexto(dto.getTexto());			
+		}
+		
+		genericDao.save(TextosOferta.class, textoOferta);
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente) {
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		Oferta oferta = expedienteComercial.getOferta();
+		
+		if(!Checks.esNulo(dto.getEstadoVisitaOfertaCodigo())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoVisitaOfertaCodigo());
+			DDEstadosVisitaOferta estado = genericDao.get(DDEstadosVisitaOferta.class, filtro);	
+			oferta.setEstadoVisitaOferta(estado);	
+		}
+		
+		expedienteComercial.setOferta(oferta);
+		
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
+		return true;
 	}
 
 
@@ -206,6 +272,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		if(!Checks.esNulo(oferta.getVisita())) {
 			dto.setNumVisita(oferta.getVisita().getNumVisitaRem());
+		}
+		
+		if(!Checks.esNulo(oferta.getEstadoVisitaOferta())) {
+			dto.setEstadoVisitaOfertaCodigo(oferta.getEstadoVisitaOferta().getCodigo());
+			dto.setEstadoVisitaOfertaDescripcion(oferta.getEstadoVisitaOferta().getDescripcion());
 		}
 		
 				

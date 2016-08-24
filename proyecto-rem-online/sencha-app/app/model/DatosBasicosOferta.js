@@ -39,7 +39,13 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     		},
     		{
     			name:'numVisita'
-    		}    		
+    		}, 
+    		{
+    			name: 'estadoVisitaOfertaCodigo'	
+    		},
+    		{
+    			name:'estadoVisitaOfertaDescripcion'
+    		}
     ],
     
 	proxy: {
@@ -47,7 +53,8 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 		localUrl: 'expedienteComercial.json',
 		
 		api: {
-            read: 'expedientecomercial/getTabExpediente'
+            read: 'expedientecomercial/getTabExpediente',
+            update: 'expedientecomercial/saveDatosBasicosOferta'
         },
 		
         extraParams: {tab: 'datosbasicosoferta'}

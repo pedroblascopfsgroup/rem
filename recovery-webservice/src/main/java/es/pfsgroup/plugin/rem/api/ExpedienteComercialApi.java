@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.api;
 
-import es.pfsgroup.framework.paradise.utils.DtoPage;
+import java.util.List;
+
+import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -25,12 +27,30 @@ public interface ExpedienteComercialApi {
 
 
 	    /**
-	     * Método que recupera una página de textos de la oferta de un expediente
-	     * @param dto
+	     * Método que recupera los textos de la oferta de un expediente
 	     * @param id
 	     * @return
 	     */
-		public DtoPage getListTextosOfertaById(DtoTextosOferta dto, Long id);
+		public List<DtoTextosOferta> getListTextosOfertaById(Long id);
+
+		
+		/**
+		 * Método que guarda un texto de oferta para un expediente comercial
+		 * @param dto
+		 * @param idEntidad id del expediente
+		 * @return resultado de la operacion
+		 */
+		public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+
+
+		/**
+		 * Método que guarda la información de la pestaña datos básicos de la oferta
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
+		
 	    
 	    
 	    

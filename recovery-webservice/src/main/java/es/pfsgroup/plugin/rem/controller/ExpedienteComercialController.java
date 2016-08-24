@@ -27,12 +27,12 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -148,15 +148,14 @@ public class ExpedienteComercialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListTextosOfertaById(DtoTextosOferta dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView getListTextosOfertaById(@RequestParam Long id, ModelMap model) {
 		
 		
 	try {
 		
-		DtoPage page =  expedienteComercialApi.getListTextosOfertaById(dto, id);
+		List<DtoTextosOferta> lista  =  expedienteComercialApi.getListTextosOfertaById(id);
 		
-		model.put("data", page.getResults());
-		model.put("totalCount", page.getTotalCount());
+		model.put("data", lista);
 		model.put("success", true);
 		
 	} catch (Exception e) {
@@ -168,7 +167,37 @@ public class ExpedienteComercialController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveTextoOferta(DtoTextosOferta dto, @RequestParam Long idEntidad, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveTextoOferta(dto, idEntidad));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosBasicosOferta(DtoDatosBasicosOferta dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveDatosBasicosOferta(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

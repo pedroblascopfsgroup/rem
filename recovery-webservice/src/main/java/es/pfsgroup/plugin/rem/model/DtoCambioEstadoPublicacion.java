@@ -8,7 +8,10 @@ public class DtoCambioEstadoPublicacion {
 	private Boolean ocultacionForzada = false;
 	private Boolean ocultacionPrecio = false;
 	private Boolean despublicacionForzada = false;
-	private String motivo;
+	private String motivoPublicacion;
+	private String motivoOcultacionPrecio;
+	private String motivoDespublicacionForzada;
+	private String motivoOcultacionForzada;
 	private String observaciones;
 	
 	public Long getIdActivo(){
@@ -16,12 +19,6 @@ public class DtoCambioEstadoPublicacion {
 	}
 	public void setActivo(Long idActivo){
 		this.idActivo = idActivo;
-	}
-	public Boolean getPublicacionOrdinaria() {
-		return publicacionOrdinaria;
-	}
-	public void setPublicacionOrdinaria(Boolean publicacionOrdinaria) {
-		this.publicacionOrdinaria = publicacionOrdinaria;
 	}
 	public Boolean getPublicacionForzada() {
 		return publicacionForzada;
@@ -47,12 +44,6 @@ public class DtoCambioEstadoPublicacion {
 	public void setDespublicacionForzada(Boolean despublicacionForzada) {
 		this.despublicacionForzada = despublicacionForzada;
 	}
-	public String getMotivo() {
-		return motivo;
-	}
-	public void setMotivo(String motivo) {
-		this.motivo = motivo;
-	}
 	public String getObservaciones() {
 		return observaciones;
 	}
@@ -61,5 +52,35 @@ public class DtoCambioEstadoPublicacion {
 	}
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+	public String getMotivoPublicacion() {
+		return motivoPublicacion;
+	}
+	public void setMotivoPublicacion(String motivoPublicacion) {
+		this.motivoPublicacion = motivoPublicacion;
+	}
+	public String getMotivoOcultacionPrecio() {
+		return motivoOcultacionPrecio;
+	}
+	public void setMotivoOcultacionPrecio(String motivoOcultacionPrecio) {
+		this.motivoOcultacionPrecio = motivoOcultacionPrecio;
+	}
+	public String getMotivoDespublicacionForzada() {
+		return motivoDespublicacionForzada;
+	}
+	public void setMotivoDespublicacionForzada(String motivoDespublicacionForzada) {
+		this.motivoDespublicacionForzada = motivoDespublicacionForzada;
+	}
+	public String getMotivoOcultacionForzada() {
+		return motivoOcultacionForzada;
+	}
+	public void setMotivoOcultacionForzada(String motivoOcultacionForzada) {
+		this.motivoOcultacionForzada = motivoOcultacionForzada;
+	}
+	public Boolean getPublicacionOrdinaria() {
+		return publicacionOrdinaria;
+	}
+	public void setPublicacionOrdinaria(Boolean publicacionOrdinaria) {
+		this.publicacionOrdinaria = publicacionOrdinaria;
 	}
 }

@@ -298,6 +298,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		try{
 			ExpedienteComercial nuevoExpediente= new ExpedienteComercial();
+			Visita visita = null;
+			List<Visita> listaVisitasCliente = new ArrayList<Visita>();
+			
+			// Si el activo principal de la oferta aceptada tiene visitas, 
+			// asociamos la visita más reciente del mismo cliente comercial a la oferta
+			if(!Checks.esNulo(oferta.getActivoPrincipal())) {
+				if(!Checks.esNulo(oferta.getActivoPrincipal().getVisitas()) && !oferta.getActivoPrincipal().getVisitas().isEmpty()) {
+					
+					for(Visita v: oferta.getActivoPrincipal().getVisitas() ) {
+						
+						if(oferta.getCliente().getDocumento().equals(v.getCliente().getDocumento())) {
+							listaVisitasCliente.add(v);
+						}
+					}
+					
+					if(!listaVisitasCliente.isEmpty()) {
+						oferta.setVisita(listaVisitasCliente.get(0));			
+						genericDao.save(Oferta.class, oferta);
+					}
+
+				}
+			}
+			
 			nuevoExpediente.setOferta(oferta);
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
 			nuevoExpediente.setEstado(estadoExpediente);

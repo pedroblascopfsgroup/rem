@@ -20,11 +20,10 @@ Ext.define('HreRem.model.TextosOferta', {
     
 	proxy: {
 		type: 'uxproxy',
+		writeAll: true,
 		localUrl: 'textosOferta.json',
 		api: {
-            create: 'expedienteComercial/createTextoOferta',
-            update: 'expedienteComercial/saveTextoOferta',
-            destroy: 'expedienteComercial/deleteTextoOferta'
+            update: 'expedientecomercial/saveTextoOferta'
         }
     }
 

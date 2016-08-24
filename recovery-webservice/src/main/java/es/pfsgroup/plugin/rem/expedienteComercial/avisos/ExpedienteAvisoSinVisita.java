@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.expedienteComercial.avisos;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
@@ -12,10 +11,10 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 
-@Service("expedienteAvisoDerechoTanteo")
-public class ExpedienteAvisoDerechoTanteo implements ExpedienteAvisadorApi {
+@Service("expedienteAvisoSinVisita")
+public class ExpedienteAvisoSinVisita implements ExpedienteAvisadorApi {
 	
-	protected static final Log logger = LogFactory.getLog(ExpedienteAvisoDerechoTanteo.class);
+	protected static final Log logger = LogFactory.getLog(ExpedienteAvisoSinVisita.class);
 	
 
 	@Override
@@ -24,8 +23,8 @@ public class ExpedienteAvisoDerechoTanteo implements ExpedienteAvisadorApi {
 
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		if (!Checks.esNulo(expediente.getCondicionante()) && BooleanUtils.toBoolean(expediente.getCondicionante().getSujetoTanteoRetracto())) {			
-			dtoAviso.setDescripcion("Derecho y tanteo de la administración");
+		if (!Checks.esNulo(expediente.getOferta()) && Checks.esNulo(expediente.getOferta().getVisita())) {			
+			dtoAviso.setDescripcion("No hay visita asignada");
 			dtoAviso.setId(String.valueOf(expediente.getId()));			
 		}
 

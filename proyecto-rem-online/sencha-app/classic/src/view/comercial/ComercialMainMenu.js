@@ -21,7 +21,7 @@ Ext.define('HreRem.view.comercial.ComercialMainMenu', {
 				xtype: 'ofertascomercialmain', reference: 'ofertasComercialMain'
 			},
 			{	
-				xtype: 'configuracionmain', reference: 'configuracionMain'
+				xtype: 'configuracionmain', reference: 'configuracionMain', disabled: true
 			}
         ];
         

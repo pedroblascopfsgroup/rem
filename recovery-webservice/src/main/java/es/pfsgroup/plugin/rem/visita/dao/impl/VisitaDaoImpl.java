@@ -45,7 +45,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			dtoFilter.setNumVisita(v.getNumVisitaRem());
 			dtoFilter.setNumActivoRem(v.getActivo().getNumActivoRem());
 			dtoFilter.setFechaSolicitud(v.getFechaSolicitud());
-			dtoFilter.setNombre(v.getCliente().getNombre()+v.getCliente().getApellidos());
+			dtoFilter.setNombre(v.getCliente().getNombreCompleto());
 			dtoFilter.setNumDocumento(v.getCliente().getDocumento());
 			dtoFilter.setFechaVisita(v.getFechaVisita());
 			

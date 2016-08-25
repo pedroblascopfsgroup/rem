@@ -17,10 +17,11 @@ public class DtoEntregaReserva extends WebDto{
 	private static final long serialVersionUID = 0L;
 
 	private Long idEntrega;
-	private String importe;
+	private Double importe;
 	private Date fechaCobro;
 	private Date fechaComprador;
 	private String observaciones;
+	private String titular;
 	
 	public Long getIdEntrega() {
 		return idEntrega;
@@ -28,10 +29,10 @@ public class DtoEntregaReserva extends WebDto{
 	public void setIdEntrega(Long idEntrega) {
 		this.idEntrega = idEntrega;
 	}
-	public String getImporte() {
+	public Double getImporte() {
 		return importe;
 	}
-	public void setImporte(String importe) {
+	public void setImporte(Double importe) {
 		this.importe = importe;
 	}
 	public Date getFechaCobro() {
@@ -51,6 +52,12 @@ public class DtoEntregaReserva extends WebDto{
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public String getTitular() {
+		return titular;
+	}
+	public void setTitular(String titular) {
+		this.titular = titular;
 	}
 	
 	

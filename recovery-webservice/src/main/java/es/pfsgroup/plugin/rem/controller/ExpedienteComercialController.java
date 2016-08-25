@@ -172,7 +172,6 @@ public class ExpedienteComercialController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListEntregasReserva(@RequestParam Long id, ModelMap model) {
 		
-		
 	try {
 		
 		List<DtoEntregaReserva> lista  =  expedienteComercialApi.getListEntregasReserva(id);

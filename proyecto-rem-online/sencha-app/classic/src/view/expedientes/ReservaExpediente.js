@@ -92,16 +92,17 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 						   {
 					            text: HreRem.i18n('header.fecha.cobro'),
 					            dataIndex: 'fechaCobro',
+					            formatter: 'date("d/m/Y H:s")',
 					            flex: 1
 						   },
 						   {
-						   		text: HreRem.i18n('header.fecha.comprador'),
-					            dataIndex: 'comprador',
+						   		text: HreRem.i18n('header.comprador'),
+					            dataIndex: 'titular',
 					            flex: 1
 						   },						   
 						   {
 						   		text: HreRem.i18n('header.observacion'),
-					            dataIndex: 'observacion',
+					            dataIndex: 'observaciones',
 					            flex: 1						   
 						   }	
 					    ]					    

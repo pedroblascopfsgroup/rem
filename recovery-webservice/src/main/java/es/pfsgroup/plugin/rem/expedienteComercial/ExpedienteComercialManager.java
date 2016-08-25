@@ -133,20 +133,24 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public List<DtoEntregaReserva> getListEntregasReserva(Long id) {
 		
 		ExpedienteComercial expediente = findOne(id);
+		List<DtoEntregaReserva> lista = new ArrayList<DtoEntregaReserva>();
 		
 		if(!Checks.esNulo(expediente.getReserva())) {
 			
 			for(EntregaReserva entrega: expediente.getReserva().getEntregas()) {
+				DtoEntregaReserva entregaReserva = new DtoEntregaReserva();
+				
+				entregaReserva.setIdEntrega(entrega.getId());
+				entregaReserva.setFechaCobro(entrega.getFechaEntrega());
+				entregaReserva.setImporte(entrega.getImporte());
+				entregaReserva.setObservaciones(entrega.getObservaciones());
+				entregaReserva.setTitular(entrega.getTitular());	
+				
+				lista.add(entregaReserva);
 
 			}
-
 		}
-				
-		
-		expediente.getReserva().getEntregas();
-		
-		
-		return null;
+		return lista;
 	}
 	
 

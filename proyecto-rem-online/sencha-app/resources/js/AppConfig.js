@@ -98,7 +98,7 @@ var AppConfig  = $AC = (function () {
 		},
 		
 		getVersion: function() {			
-			return this.isDebugMode() || Ext.isEmpty(version) ? Ext.manifest.version : version;
+			return Ext.isEmpty(version) ? Ext.manifest.version : version;
 		},
 		
 		getLabelVersion: function() {			

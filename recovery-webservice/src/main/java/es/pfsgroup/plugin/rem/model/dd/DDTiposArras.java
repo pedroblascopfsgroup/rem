@@ -19,16 +19,16 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de los tipos de activos
+ * Modelo que gestiona el diccionario de los tipos de arras de una reserva
  * 
  * @author Anahuac de Vicente
  *
  */
 @Entity
-@Table(name = "DD_TPA_TIPO_ACTIVO", schema = "${entity.schema}")
+@Table(name = "DD_TAR_TIPOS_ARRAS", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoActivo implements Auditable, Dictionary {
+public class DDTiposArras implements Auditable, Dictionary {
 	
 
 	/**
@@ -37,18 +37,18 @@ public class DDTipoActivo implements Auditable, Dictionary {
 	private static final long serialVersionUID = 2307957295534774606L;
 
 	@Id
-	@Column(name = "DD_TPA_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoActivoGenerator")
-	@SequenceGenerator(name = "DDTipoActivoGenerator", sequenceName = "S_DD_TPA_TIPO_ACTIVO")
+	@Column(name = "DD_TAR_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoArrasGenerator")
+	@SequenceGenerator(name = "DDTipoArrasGenerator", sequenceName = "S_DD_TAR_TIPO_ARRAS")
 	private Long id;
 	
-	@Column(name = "DD_TPA_CODIGO")   
+	@Column(name = "DD_TAR_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TPA_DESCRIPCION")   
+	@Column(name = "DD_TAR_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TPA_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TAR_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
 	

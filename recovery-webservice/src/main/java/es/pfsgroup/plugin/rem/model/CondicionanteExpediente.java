@@ -62,10 +62,13 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TCC_ID")
-	private DDTipoCalculo tipoCalculo;
+	private DDTipoCalculo tipoCalculoReserva;
     
     @Column(name="COE_PORCENTAJE_RESERVA")
     private Double porcentajeReserva;
+    
+    @Column(name="COE_IMPORTE_RESERVA")
+    private Double importeReserva;
 
     @Column(name="COE_PLAZO_FIRMA_RESERVA")
     private Integer plazoFirmaReserva;
@@ -184,12 +187,20 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.solicitaFinanciacion = solicitaFinanciacion;
 	}
 
-	public DDTipoCalculo getTipoCalculo() {
-		return tipoCalculo;
+	public DDTipoCalculo getTipoCalculoReserva() {
+		return tipoCalculoReserva;
 	}
 
-	public void setTipoCalculo(DDTipoCalculo tipoCalculo) {
-		this.tipoCalculo = tipoCalculo;
+	public void setTipoCalculoReserva(DDTipoCalculo tipoCalculoReserva) {
+		this.tipoCalculoReserva = tipoCalculoReserva;
+	}
+
+	public Double getImporteReserva() {
+		return importeReserva;
+	}
+
+	public void setImporteReserva(Double importeReserva) {
+		this.importeReserva = importeReserva;
 	}
 
 	public Double getPorcentajeReserva() {

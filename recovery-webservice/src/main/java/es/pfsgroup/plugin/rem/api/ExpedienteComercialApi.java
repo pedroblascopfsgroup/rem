@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -50,6 +51,13 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		boolean saveDatosBasicosOferta(DtoDatosBasicosOferta dto, Long idExpediente);
+
+
+		/**
+		 * Método que recupera las entregas de una reserva para un expediente
+		 * @return
+		 */
+		public List<DtoEntregaReserva> getListEntregasReserva(Long id);
 		
 	    
 	    

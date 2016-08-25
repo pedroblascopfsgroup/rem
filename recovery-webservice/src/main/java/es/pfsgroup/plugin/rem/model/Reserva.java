@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
@@ -27,6 +28,8 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 
 
 /**
@@ -58,7 +61,15 @@ public class Reserva implements Serializable, Auditable {
     private ExpedienteComercial expediente;
 	
     @Column(name = "RES_NUM_RESERVA")
-    private Long numReserva;  
+    private Long numReserva;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAR_ID")
+	private DDTiposArras tipoArras;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ERE_ID")
+	private DDEstadosReserva estadoReserva;
     
     @Column(name="RES_FECHA_ENVIO")
     private Date fechaEnvio;
@@ -143,6 +154,38 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setMotivoAnulacion(String motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
+	}
+
+	public ExpedienteComercial getExpediente() {
+		return expediente;
+	}
+
+	public void setExpediente(ExpedienteComercial expediente) {
+		this.expediente = expediente;
+	}
+
+	public DDTiposArras getTipoArras() {
+		return tipoArras;
+	}
+
+	public void setTipoArras(DDTiposArras tipoArras) {
+		this.tipoArras = tipoArras;
+	}
+
+	public DDEstadosReserva getEstadoReserva() {
+		return estadoReserva;
+	}
+
+	public void setEstadoReserva(DDEstadosReserva estadoReserva) {
+		this.estadoReserva = estadoReserva;
+	}
+
+	public List<EntregaReserva> getEntregas() {
+		return entregas;
+	}
+
+	public void setEntregas(List<EntregaReserva> entregas) {
+		this.entregas = entregas;
 	}
 
 	public Long getVersion() {

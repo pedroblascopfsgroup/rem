@@ -19,10 +19,14 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
@@ -36,6 +40,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
+	public final String PESTANA_RESERVA = "reserva";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -69,6 +74,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto = expedienteToDtoFichaExpediente(expediente);
 			} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 				dto = expedienteToDtoDatosBasicosOferta(expediente);
+			} else if (PESTANA_RESERVA.equals(tab)) {
+				dto = expedienteToDtoReserva(expediente);
 			}
 			
 
@@ -79,7 +86,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return dto;
 
 	}
-	
+
 	@Override
 	public List<DtoTextosOferta> getListTextosOfertaById (Long idExpediente) {
 		
@@ -120,6 +127,26 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return textos;
 		
+	}
+	
+	@Override
+	public List<DtoEntregaReserva> getListEntregasReserva(Long id) {
+		
+		ExpedienteComercial expediente = findOne(id);
+		
+		if(!Checks.esNulo(expediente.getReserva())) {
+			
+			for(EntregaReserva entrega: expediente.getReserva().getEntregas()) {
+
+			}
+
+		}
+				
+		
+		expediente.getReserva().getEntregas();
+		
+		
+		return null;
 	}
 	
 
@@ -280,6 +307,35 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 				
+		return dto;
+	}
+	
+	private DtoReserva expedienteToDtoReserva(ExpedienteComercial expediente) {
+		DtoReserva dto = new DtoReserva();
+		
+		Reserva reserva = expediente.getReserva();
+		
+		if(!Checks.esNulo(reserva)) {
+			
+			dto.setIdReserva(reserva.getId());
+			dto.setNumReserva(reserva.getNumReserva());			
+			dto.setFechaEvio(reserva.getFechaEnvio());
+			dto.setFechaFirma(reserva.getFechaFirma());
+			dto.setFechaVencimiento(reserva.getFechaVencimiento());
+			if(!Checks.esNulo(reserva.getEstadoReserva())) {
+				dto.setEstadoReservaDescripcion(reserva.getEstadoReserva().getDescripcion());
+			}
+			
+			if(!Checks.esNulo(reserva.getTipoArras())) {
+				dto.setTipoArrasCodigo(reserva.getTipoArras().getCodigo());
+			}	
+			if(!Checks.esNulo(expediente.getCondicionante())) {
+				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
+				dto.setImporte(expediente.getCondicionante().getImporteReserva());
+			}
+		}
+		
+		
 		return dto;
 	}
 

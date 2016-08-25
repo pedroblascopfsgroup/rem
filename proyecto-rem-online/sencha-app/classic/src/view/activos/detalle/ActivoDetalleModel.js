@@ -459,6 +459,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		
     		storeTasaciones: {
 				 model: 'HreRem.model.ActivoTasacion',
+				 sorters: [{ property: 'fechaValorTasacion', direction: 'DESC' }],
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'activo/getListTasacionById',

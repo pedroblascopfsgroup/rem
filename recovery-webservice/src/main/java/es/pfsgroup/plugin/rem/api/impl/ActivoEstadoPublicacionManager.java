@@ -40,6 +40,34 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
     
+    public DtoCambioEstadoPublicacion getState(Long idActivo){
+    	DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = new DtoCambioEstadoPublicacion();
+    	Activo activo = activoApi.get(idActivo);
+    	dtoCambioEstadoPublicacion.setActivo(idActivo);
+    	
+    	DDEstadoPublicacion estadoPublicacion = activo.getEstadoPublicacion();
+    	if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+    	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setPublicacionForzada(true);
+    	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+    		dtoCambioEstadoPublicacion.setOcultacionForzada(true);
+    	} else if(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
+    		dtoCambioEstadoPublicacion.setOcultacionPrecio(true);
+    	}else if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setPublicacionForzada(true);
+    		dtoCambioEstadoPublicacion.setOcultacionPrecio(true);
+    	} else if(DDEstadoPublicacion.CODIGO_DESPUBLICADO.equals(estadoPublicacion)){
+    		dtoCambioEstadoPublicacion.setDespublicacionForzada(true);
+    	} else if(DDEstadoPublicacion.CODIGO_NO_PUBLICADO.equals(estadoPublicacion)){
+    		//Se quedaría todo a false en este estado
+    	}
+    	
+    	return dtoCambioEstadoPublicacion;
+    }
+    
     @Override
     @Transactional(readOnly = false)
     public boolean publicacionChangeState(DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion){

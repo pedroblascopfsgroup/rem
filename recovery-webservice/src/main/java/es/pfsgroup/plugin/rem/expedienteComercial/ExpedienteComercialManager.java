@@ -18,6 +18,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -41,6 +43,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public final String PESTANA_FICHA = "ficha";
 	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
 	public final String PESTANA_RESERVA = "reserva";
+	public final String PESTANA_CONDICIONES = "condiciones";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -76,6 +79,8 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto = expedienteToDtoDatosBasicosOferta(expediente);
 			} else if (PESTANA_RESERVA.equals(tab)) {
 				dto = expedienteToDtoReserva(expediente);
+			} else if (PESTANA_CONDICIONES.equals(tab)) {
+				dto = expedienteToDtoCondiciones(expediente);
 			}
 			
 
@@ -270,6 +275,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setFechaContabilizacionPropietario(expediente.getFechaContabilizacionPropietario());
 				dto.setFechaDevolucionEntregas(expediente.getFechaDevolucionEntregas());
 				dto.setImporteDevolucionEntregas(expediente.getImporteDevolucionEntregas());
+				
+				if(!Checks.esNulo(expediente.getCondicionante())) {
+					dto.setTieneReserva(expediente.getCondicionante().getImporteReserva() != null);
+				}
+				
 
 			}
 		}
@@ -339,6 +349,18 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 		}
 		
+		
+		return dto;
+	}
+	
+	private DtoCondiciones expedienteToDtoCondiciones(ExpedienteComercial expediente) {
+		
+		DtoCondiciones dto = new DtoCondiciones(); 
+		CondicionanteExpediente condiciones = expediente.getCondicionante();
+		
+		if(!Checks.esNulo(condiciones)) {			
+			dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+		}
 		
 		return dto;
 	}

@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -59,6 +60,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
 	@Column(name="COE_SOLICITA_FINANCIACION")
 	private Integer solicitaFinanciacion;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ESF_ID")
+	private DDEstadoFinanciacion estadoFinanciacion;
 		
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TCC_ID")
@@ -412,6 +417,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	public void setTipoPorCuentaDescalificacion(
 			DDTiposPorCuenta tipoPorCuentaDescalificacion) {
 		this.tipoPorCuentaDescalificacion = tipoPorCuentaDescalificacion;
+	}
+
+	public DDEstadoFinanciacion getEstadoFinanciacion() {
+		return estadoFinanciacion;
+	}
+
+	public void setEstadoFinanciacion(DDEstadoFinanciacion estadoFinanciacion) {
+		this.estadoFinanciacion = estadoFinanciacion;
 	}
 
 	public Long getVersion() {

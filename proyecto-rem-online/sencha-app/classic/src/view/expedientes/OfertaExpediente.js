@@ -30,7 +30,7 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
 			tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null) {
-            	if (tabPanel.lookupController().getViewModel().get("editing")) {	
+            	if (tabPanel.down("[itemId=botonguardar]").isVisible()) {	
 	        		Ext.Msg.show({
 	        			   title: HreRem.i18n('title.descartar.cambios'),
 	        			   msg: HreRem.i18n('msg.desea.descartar'),

@@ -2,7 +2,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     extend		: 'Ext.tab.Panel',
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
-    requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente'],
+    requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
+    			'HreRem.view.expedientes.ReservaExpediente'],
     
 		
     listeners: {
@@ -27,7 +28,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
 	        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
 	        	if (tabCurrent != null) {
-	        		if (tabPanel.lookupController().getViewModel().get("editing")){	
+	        		if (tabPanel.down("[itemId=botonguardar]").isVisible()){	
 	            		Ext.Msg.show({
 	            			   title: HreRem.i18n('title.descartar.cambios'),
 	            			   msg: HreRem.i18n('msg.desea.descartar'),
@@ -90,6 +91,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        },
 		        {
 		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'reservaexpediente' 
 		        }
 
 		],

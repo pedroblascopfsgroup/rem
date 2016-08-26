@@ -94,7 +94,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			btn.hide();
 			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
 			btn.up('tabbar').down('button[itemId=botoneditar]').show();
-		
+			me.getViewModel().set("editing", false);
+			
 			if (!form.saveMultiple) {
 				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
 					// Si la API tiene metodo de escritura (create or update).
@@ -158,6 +159,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();
 		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+		me.getViewModel().set("editing", true);		
 
 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
 						function (field, index) 
@@ -199,6 +201,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
+		me.getViewModel().set("editing", false);
 		
 		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
 						function (field, index) 

@@ -459,6 +459,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		
     		storeTasaciones: {
 				 model: 'HreRem.model.ActivoTasacion',
+				 sorters: [{ property: 'fechaValorTasacion', direction: 'DESC' }],
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'activo/getListTasacionById',
@@ -687,10 +688,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     			pageSize: $AC.getDefaultPageSize(),
 		    	proxy: {
 			        type: 'uxproxy',
-			        remoteUrl: 'activo/getHistoricoValoresPrecios'
+			        remoteUrl: 'activo/getHistoricoValoresPrecios',
+			        extraParams: {idActivo: '{activo.id}'}
 		    	},
-		    	remoteSort: true,
-		    	remoteFilter: true
+		    	sorters: [{ property: 'fechaFin', direction: 'DESC' }],
+		        groupField: 'descripcionTipoPrecio'
     		},
     		
     		storePropuestasActivo: {

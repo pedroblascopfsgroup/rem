@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.expedientedetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.EntregaReserva'],
     
     data: {
     	expediente: null
@@ -47,12 +47,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	 }
     	},
     	
+    	storeEntregasACuenta: {    
+    		 pageSize: $AC.getDefaultPageSize(),
+    		 model: 'HreRem.model.EntregaReserva',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getListEntregasReserva',
+		        extraParams: {id: '{expediente.id}'}
+	    	 }
+    	},
+    	
     	comboEstadosVisitaOferta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosVisitaOferta'}
+			}   
+    		
+    	},
+    	
+    	comboTiposArras: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposArras'}
 			}   
     		
     	}

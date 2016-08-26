@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20160825
+--## FECHA_CREACION=20160826
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1.0-X
 --## INCIDENCIA_LINK=0

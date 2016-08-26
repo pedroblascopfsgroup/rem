@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -19,9 +21,12 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -161,25 +166,21 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
-		
 		DtoActivoFichaCabecera dto = (DtoActivoFichaCabecera) webDto;
 		
 		try {
-			
 			beanUtilNotNull.copyProperties(activo, dto);
 			
 			if (activo.getLocalizacion() == null) {
 				activo.setLocalizacion(new ActivoLocalizacion());
 				activo.getLocalizacion().setActivo(activo);
 			}
+			
 			if (activo.getLocalizacion().getLocalizacionBien() == null ){
 				NMBLocalizacionesBien localizacionesVacia = new NMBLocalizacionesBien();
 				localizacionesVacia.setBien(activo.getBien());
 				activo.getLocalizacion().setLocalizacionBien(localizacionesVacia);
-				
 				activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
-				
-				
 			}
 			
 			beanUtilNotNull.copyProperties(activo.getLocalizacion(), dto);
@@ -187,14 +188,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 			activo.setLocalizacion(genericDao.save(ActivoLocalizacion.class, activo.getLocalizacion()));
 
-			
 			if (activo.getComunidadPropietarios() == null) {	
 				activo.setComunidadPropietarios(new ActivoComunidadPropietarios());
 			}
 			
 			beanUtilNotNull.copyProperties(activo.getComunidadPropietarios(), dto);
 			beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "direccion", dto.getDireccionComunidad());
-			
 			
 			String cuentaUno = "";
 			String cuentaDos = "";
@@ -245,93 +244,79 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));
 
-			
-			
-			
 			if (dto.getPaisCodigo() != null) {
-				
 				DDCicCodigoIsoCirbeBKP pais = (DDCicCodigoIsoCirbeBKP) diccionarioApi.dameValorDiccionarioByCod(DDCicCodigoIsoCirbeBKP.class,  dto.getPaisCodigo());
-				
 				activo.getLocalizacion().getLocalizacionBien().setPais(pais);
-				
 			}
 			
 			if (dto.getTipoViaCodigo() != null) {
-
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoViaCodigo());
 				DDTipoVia tipoViaNueva = (DDTipoVia) genericDao.get(DDTipoVia.class, filtro);
-				
 				activo.getLocalizacion().getLocalizacionBien().setTipoVia(tipoViaNueva);
-				
 			}
 			
 			if (dto.getProvinciaCodigo() != null) {
-				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
 				DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
-				
 				activo.getLocalizacion().getLocalizacionBien().setProvincia(provincia);
 			}
 			
 			if (dto.getMunicipioCodigo() != null) {
-				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
 				Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
-				
 				activo.getLocalizacion().getLocalizacionBien().setLocalidad(municipioNuevo);
 			}
 			
 			if (dto.getInferiorMunicipioCodigo() != null) {
-				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getInferiorMunicipioCodigo());
 				DDUnidadPoblacional inferiorNuevo = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, filtro);
-				
 				activo.getLocalizacion().getLocalizacionBien().setUnidadPoblacional(inferiorNuevo);
 			}
 			
 			activo.getLocalizacion().setLocalizacionBien(genericDao.save(NMBLocalizacionesBien.class, activo.getLocalizacion().getLocalizacionBien()));
 			
 			if (dto.getTipoActivoCodigo() != null) {
-				
 				DDTipoActivo tipoActivo = (DDTipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivo.class,  dto.getTipoActivoCodigo());
-	
 				activo.setTipoActivo(tipoActivo);
-
 			}
 			
 			if (dto.getSubtipoActivoCodigo() != null) {
-				
 				DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigo());
-	
 				activo.setSubtipoActivo(subtipoActivo);
-
 			}
 			
 			if (dto.getTipoTitulo() != null) {
-				
 				DDTipoTituloActivo tipoTitulo = (DDTipoTituloActivo) diccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class,  dto.getTipoTitulo());
-	
 				activo.setTipoTitulo(tipoTitulo);
-				
 			}
 			
 			if (dto.getTipoUsoDestinoCodigo() != null) {
-				
 				DDTipoUsoDestino tipoUsoDestino = (DDTipoUsoDestino) diccionarioApi.dameValorDiccionarioByCod(DDTipoUsoDestino.class,  dto.getTipoUsoDestinoCodigo());
-	
 				activo.setTipoUsoDestino(tipoUsoDestino);
-				
 			}
 			
 			if (dto.getEstadoActivoCodigo() != null) {
-				
 				DDEstadoActivo estadoActivo = (DDEstadoActivo) diccionarioApi.dameValorDiccionarioByCod(DDEstadoActivo.class,  dto.getEstadoActivoCodigo());
-	
 				activo.setEstadoActivo(estadoActivo);
-				
 			}
 			
-			
+			// Se genera un registro en el histórico por la modificación de los datos en el apartado de 'Datos Admisión' de informe comercial.
+			if(!Checks.esNulo(dto.getTipoActivoCodigo()) || !Checks.esNulo(dto.getSubtipoActivoCodigo()) ||
+					!Checks.esNulo(dto.getTipoViaCodigo()) || !Checks.esNulo(dto.getNombreVia()) || 
+					!Checks.esNulo(dto.getNumeroDomicilio()) || !Checks.esNulo(dto.getEscalera()) ||
+					!Checks.esNulo(dto.getPiso()) || !Checks.esNulo(dto.getPuerta()) ||
+					!Checks.esNulo(dto.getCodPostal()) || !Checks.esNulo(dto.getMunicipioCodigo()) ||
+					!Checks.esNulo(dto.getProvinciaCodigo()) || !Checks.esNulo(dto.getLatitud()) ||
+					!Checks.esNulo(dto.getLongitud())){
+			ActivoEstadosInformeComercialHistorico activoEstadoInfComercialHistorico = new ActivoEstadosInformeComercialHistorico();
+			activoEstadoInfComercialHistorico.setActivo(activo);
+			Filter filtroDDInfComercial = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_MODIFICACION);
+			DDEstadoInformeComercial ddInfComercial = genericDao.get(DDEstadoInformeComercial.class, filtroDDInfComercial);
+			activoEstadoInfComercialHistorico.setEstadoInformeComercial(ddInfComercial);
+			activoEstadoInfComercialHistorico.setFecha(new Date());
+			activoEstadoInfComercialHistorico.setMotivo(DtoEstadosInformeComercialHistorico.ESTADO_MOTIVO_MODIFICACION_MANUAL);
+			genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadoInfComercialHistorico);
+			}
 			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

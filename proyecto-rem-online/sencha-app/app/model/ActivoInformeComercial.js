@@ -99,8 +99,6 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     ],
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getTabActivo',
 		api: {
             read: 'activo/getTabActivo',
             create: 'activo/saveActivoInformeComercial',

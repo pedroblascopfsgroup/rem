@@ -6,11 +6,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     collapsed: false,
     scrollable	: 'y',
     saveMultiple: true,
+    refreshAfterSave: true,
     records: ['activoInforme','informeComercial'], 
     recordsClass: ['HreRem.model.Activo','HreRem.model.ActivoInformeComercial'],    
     requires: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
-    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda'
-    ],
+    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
+    'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial'],
     
     listeners: {
     	
@@ -107,28 +108,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				defaultType: 'textfieldbase',
 				items :
 					[
-						{
-							xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.emision'),
-							bind: '{informeComercial.fechaEmisionInforme}'
-							//, readOnly: true
-						},
-						{
-							xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.aceptacion'),
-							bind: '{informeComercial.fechaAceptacion}'
-							//, readOnly: true
-						},
-						{
-							xtype: 'datefieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.rechazo'),
-							bind: '{informeComercial.fechaRechazo}'
-							//, readOnly: true
-						}
-				]
+						{xtype: "historicoestadosinformecomercial", reference: "historicoestadosinformecomercial"}
+					]
 			},
 			
-// Datos Básicos ---
+// Datos BÃ¡sicos ---
 			{
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.datos.basicos'),
@@ -437,7 +421,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				]
 			},
 
-// Información General ---
+// Informaciï¿½n General ---
 			{    
   
 				xtype:'fieldsettable',
@@ -636,11 +620,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		var me = this; 
 		me.recargar = false;
     	me.lookupController().cargarTabData(me);
-
-//		Ext.Array.each(me.query('grid'), function(grid) {
-//  			grid.getStore().load();
-//  		});
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+		});
     },
+    
     actualizarCoordenadas: function(latitud, longitud) {
     	var me = this;
     	

@@ -94,10 +94,8 @@ public class TabActivoInformeComercial implements TabActivoService {
 			}
 			
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

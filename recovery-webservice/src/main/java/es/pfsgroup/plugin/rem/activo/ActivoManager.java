@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
@@ -63,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -888,6 +890,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			listaDtoEstadosPublicacion.add(dtoEstadoPublicacion);
 		}
 		return listaDtoEstadosPublicacion;
+	}
+	
+	@Override
+	public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.ASC, "id");
+		List<ActivoEstadosInformeComercialHistorico> listaEstadoInfoComercial = genericDao
+				.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filtro);
+		
+		List<DtoEstadosInformeComercialHistorico> listaDtoEstadosInfoComercial = new ArrayList<DtoEstadosInformeComercialHistorico>();
+		
+		for (ActivoEstadosInformeComercialHistorico estado : listaEstadoInfoComercial) {
+			DtoEstadosInformeComercialHistorico dtoEstadosInfoComercial = new DtoEstadosInformeComercialHistorico();
+			try {
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "id", idActivo);
+				if(!Checks.esNulo(estado.getEstadoInformeComercial())){
+					beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "estadoInfoComercial", estado.getEstadoInformeComercial().getDescripcion());
+				}
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "motivo", estado.getMotivo());
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			listaDtoEstadosInfoComercial.add(dtoEstadosInfoComercial);
+		}
+		
+		return listaDtoEstadosInfoComercial;
 	}
 
 	@Override

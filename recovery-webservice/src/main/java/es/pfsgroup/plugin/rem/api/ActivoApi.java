@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -245,6 +246,14 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Visita insertOrUpdateVisitaActivo(Visita visita) throws IllegalAccessException, InvocationTargetException;
+
+		/**
+		 * Este método obtiene los estados, el historial, de acciones del informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
     }
 
 

@@ -15,6 +15,7 @@
     <bean id="ActivoGenericSaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericSaveActionHandler"></bean>
     <bean id="activoGenericEnterEmailActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterEmailActionHandler"></bean>
 	<bean id="activoComprobarPropuestaPreciosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarPropuestaPreciosActionHandler"></bean>
+	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"></bean>
 	    
     <bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"></bean>
     

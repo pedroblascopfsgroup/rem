@@ -2827,6 +2827,18 @@ public class ActivoAdapter {
 		return idBpm;
 	}
 
+	
+	public Long crearTramitePublicacion(Long idActivo){
+		
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo("T011");//Trámite de publicación
+		
+		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+		Long idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+				
+		return idBpm;
+	}
+	
+	
 	public List<VAdmisionDocumentos>  getListAdmisionCheckDocumentos(Long idActivo) {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());	

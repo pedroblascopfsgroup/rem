@@ -71,7 +71,7 @@ DECLARE
                 '3*24*60*60*1000L',
                 'NULL',
                 '',
-                '',
+                'valores[''''T011_RevisionInformeComercial''''][''''comboAceptacion''''] == DDSiNo.No ? (valores[''''T011_RevisionInformeComercial''''][''''motivoDenegacion''''] == '''''''' ? ''''Si rechaza el informe debe indicar un motivo'''' : null) : null',
                 'valores[''''T011_RevisionInformeComercial''''][''''comboAceptacion''''] == DDSiNo.Si ? (valores[''''T011_RevisionInformeComercial''''][''''comboDatosIguales''''] == DDSiNo.No ? ''''Aceptacion'''' : ''''Rechazo'''') : ''''Rechazo'''')'                
             ),
 

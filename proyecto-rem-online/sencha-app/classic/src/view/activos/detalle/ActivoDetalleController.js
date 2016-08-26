@@ -305,6 +305,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
     },
     
+    onTramitePublicacionClick: function(btn){
+    	
+    	var me = this;
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var url = $AC.getRemoteUrl('activo/crearTramitePublicacion');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo: idActivo},
+    		
+    		success: function(response, opts){
+    			me.getViewModel().data.storeTramites.load();
+    			if(Ext.decode(response.responseText).errorCreacion)
+    				me.fireEvent("errorToast", Ext.decode(response.responseText).errorCreacion); 
+    			else
+    				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+    },
+    
     onClickCrearTrabajo: function (btn) {
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");

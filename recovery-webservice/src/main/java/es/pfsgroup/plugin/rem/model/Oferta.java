@@ -55,7 +55,7 @@ public class Oferta implements Serializable, Auditable {
 	@Id
     @Column(name = "OFR_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "OfertaGenerator")
-    @SequenceGenerator(name = "OfertaGenerator", sequenceName = "S_OFR_OFERTA")
+    @SequenceGenerator(name = "OfertaGenerator", sequenceName = "S_OFR_OFERTAS")
     private Long id;
 	
     @Column(name = "OFR_WEBCOM_ID")
@@ -122,7 +122,7 @@ public class Oferta implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<TextosOferta> textos;
     
-    @OneToMany(mappedBy = "oferta", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ActivoOferta> activosOferta;
     
     @Column(name = "OFR_FECHA_ALTA")

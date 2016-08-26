@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160821
+--## FECHA_CREACION=20160822
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -98,7 +98,7 @@ BEGIN
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
 			CLC_ID           						NUMBER(16,0)                NOT NULL,
-			CLC_WEBCOM_ID							NUMBER(16,0)				NOT NULL, 
+			CLC_WEBCOM_ID							NUMBER(16,0), 
 			CLC_REM_ID     							NUMBER(16,0)                NOT NULL, 
 			CLC_RAZON_SOCIAL						VARCHAR2(256 CHAR),
 			CLC_NOMBRE								VARCHAR2(256 CHAR),

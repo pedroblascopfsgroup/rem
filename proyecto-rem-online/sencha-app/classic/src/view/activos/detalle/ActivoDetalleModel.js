@@ -705,6 +705,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 					extraParams: {diccionario: 'estadoDisponibilidadComercial'}
 				},
 				autoload: true
-			}
+			},
+			
+		comboEstadoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}   	
+	    },
+	    
+	    comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}   	
+	    },
+	    
+	    comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDocumentos'}
+			}   	
+	    }
      }    
 });

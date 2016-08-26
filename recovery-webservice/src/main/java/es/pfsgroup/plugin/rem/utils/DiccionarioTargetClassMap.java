@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -141,6 +142,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposOfertas", DDTipoOferta.class);
 		mapa.put("tiposTextoOferta", DDTiposTextoOferta.class);
 		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
+		mapa.put("tiposDocumentos", DDTipoDocumento.class);
 		
 
 		return Collections.unmodifiableMap(mapa);

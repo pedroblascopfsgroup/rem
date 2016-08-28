@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.trabajo;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
@@ -92,6 +91,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
@@ -154,6 +155,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
+	@Autowired
+	private RestApi restApi;
+	
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Override
@@ -169,7 +173,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(usuarioCartera))
 			dto.setCartera(usuarioCartera.getCartera().getCodigo());
 		
-		return trabajoDao.findAll(dto, usuarioLogado);
+		return trabajoDao.findAll(dto);
 	}
 	
 	@Override
@@ -402,7 +406,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.create")
-	@Transactional
+	@Transactional(readOnly = false)
 	public Long create(DtoFichaTrabajo dtoTrabajo) {
 		/*
 		 * Crear trabajo desde la pantalla de crear trabajos:
@@ -643,6 +647,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			return trabajo;
 	}
 		
+
 	private Trabajo crearTrabajoPorActivo(Activo activo, DtoFichaTrabajo dtoTrabajo) {
 		
 		Trabajo trabajo = new Trabajo();		
@@ -651,10 +656,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			
 			dtoToTrabajo(dtoTrabajo, trabajo);
 			
-			trabajo.setFechaSolicitud(new Date());
 			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());			
 			trabajo.setActivo(activo);
-			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());			
+			trabajo.setFechaSolicitud(new Date());		
+			if(!Checks.esNulo(dtoTrabajo.getIdSolicitante())){
+				Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));							
+				if(!Checks.esNulo(user)){
+					trabajo.setSolicitante(user);
+				}else{
+					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());	
+				}		
+			}else{
+				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());			
+			}				
 			trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 			
 			ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());			
@@ -739,6 +753,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(Checks.esNulo(dtoTrabajo.getCubreSeguro())) trabajo.setCubreSeguro(false);
 			
+		if(!Checks.esNulo(dtoTrabajo.getFechaConcreta())) trabajo.setFechaHoraConcreta(dtoTrabajo.getFechaConcreta());
+		
 		if(dtoTrabajo.getEstadoCodigo()!=null) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoTrabajo.getEstadoCodigo());
 			DDEstadoTrabajo estadoTrabajo = (DDEstadoTrabajo) genericDao.get(DDEstadoTrabajo.class, filtro);
@@ -765,6 +781,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) genericDao.get(DDSubtipoTrabajo.class, filtro);
 			
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
+		}
+		
+		if(dtoTrabajo.getIdMediador() !=null) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdMediador());
+			ActivoProveedor mediador = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtro);
+			
+			trabajo.setMediador(mediador);
 		}
 	}
 	
@@ -2019,5 +2042,200 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 		return Double.toString(participacion);
    }
  
+
+   @Override
+   public Boolean existsTrabajoByIdTrabajoWebcom(Long idTrabajoWebcom) {		
+	   	Boolean existe = null;
+		DtoTrabajoFilter dtoTrabajo = null;
+		
+		try{
+			
+			if(Checks.esNulo(idTrabajoWebcom)){
+				throw new Exception("El parámetro idTrabajoWebcom es obligatorio.");
+				
+			}else{				
+				dtoTrabajo = new DtoTrabajoFilter();
+				dtoTrabajo.setIdTrabajoWebcom(idTrabajoWebcom);
+				existe = trabajoDao.existsTrabajo(dtoTrabajo);						
+			}
+			
+		} catch(Exception ex) {
+			ex.printStackTrace();		
+		}
+	
+	return existe;
+}
+	
+	
+   
+   
+   @Override
+   public List<String> validateTrabajoPostRequestData(TrabajoDto trabajoDto) {
+		List<String> listaErrores = new ArrayList<String>();
+		Boolean existe = null;
+		
+		try{
+			
+			if(Checks.esNulo(trabajoDto.getIdTrabajoWebcom())){
+				listaErrores.add("El campo IdTrabajoWebcom es nulo y es obligatorio.");
+
+			} else {
+			
+				existe = existsTrabajoByIdTrabajoWebcom(trabajoDto.getIdTrabajoWebcom());		
+				if(Checks.esNulo(existe)){
+					listaErrores.add("Ha ocurrido un error al verificar si existe en REM el IdTrabajoWebcom: " + trabajoDto.getIdTrabajoWebcom() + ". No se dará de alta.");
+					
+				}else if(!Checks.esNulo(existe) && existe){
+					listaErrores.add("Ya existe en REM el trabajo con id de webcom IdTrabajoWebcom: " + trabajoDto.getIdTrabajoWebcom() + ". No se dará de alta.");
+					
+				} else {
+					
+					List<String> error = restApi.validateRequestObject(trabajoDto);
+					if (!Checks.esNulo(error) && !error.isEmpty()) {
+						listaErrores.add("No se cumple la especificación de parámetros para el alta de IdTrabajoWebcom: " + trabajoDto.getIdTrabajoWebcom() + ".Traza: " + error);			
+					}			
+					if(!Checks.esNulo(trabajoDto.getIdActivoHaya())){
+						Activo activo = (Activo) genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", trabajoDto.getIdActivoHaya()));							
+						if(Checks.esNulo(activo)){
+							listaErrores.add("No existe el activo en REM especificado en el campo idActivoHaya: " + trabajoDto.getIdActivoHaya());
+						}
+					}		
+					if(!Checks.esNulo(trabajoDto.getCodTipoTrabajo())){
+						DDTipoTrabajo tipotbj = (DDTipoTrabajo) genericDao.get(DDTipoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodTipoTrabajo()));							
+						if(Checks.esNulo(tipotbj)){
+							listaErrores.add("No existe el código del trabajo en REM especificado en el campo codTipoTrabajo: " + trabajoDto.getCodTipoTrabajo());							
+						}else if(!Checks.esNulo(tipotbj) && !tipotbj.getCodigo().equalsIgnoreCase(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) {
+							listaErrores.add("El código del trabajo especificado en el campo codTipoTrabajo: " + trabajoDto.getCodTipoTrabajo() + " no es actuación técnica:" + DDTipoTrabajo.CODIGO_ACTUACION_TECNICA);
+						}
+					}				
+					if(!Checks.esNulo(trabajoDto.getCodSubtipoTrabajo())){
+						DDSubtipoTrabajo subtipotbj = (DDSubtipoTrabajo) genericDao.get(DDSubtipoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodSubtipoTrabajo()));							
+						if(Checks.esNulo(subtipotbj)){
+							listaErrores.add("No existe el código del subtipo de trabajo en REM especificado en el campo codSubtipoTrabajo: " + trabajoDto.getCodSubtipoTrabajo());
+						} else if(!Checks.esNulo(subtipotbj) && !subtipotbj.getCodigoTipoTrabajo().equalsIgnoreCase(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)){
+							listaErrores.add("El código del subtipo de trabajo en REM especificado en el campo codSubtipoTrabajo: " + trabajoDto.getCodSubtipoTrabajo() + " no es de tipo " + DDTipoTrabajo.CODIGO_ACTUACION_TECNICA);
+						}
+					}	
+					if(!Checks.esNulo(trabajoDto.getIdUsuarioRem())){
+						Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdUsuarioRem()));							
+						if(Checks.esNulo(user)){
+							listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + trabajoDto.getIdUsuarioRem());
+						}
+					}
+					if(!Checks.esNulo(trabajoDto.getIdApiResponsable())){
+						ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdApiResponsable()));							
+						if(Checks.esNulo(apiResp)){
+							listaErrores.add("No existe el apiResponsable en REM especificado en el campo idApiResponsable: " + trabajoDto.getIdApiResponsable());
+						}
+					}
+				}
+			}
+			
+		}catch (Exception e){
+			e.printStackTrace();
+			listaErrores.add("Ha ocurrido un error al validar los parámetros del trabajo IdTrabajoWebcom: " + trabajoDto.getIdTrabajoWebcom() + ". Traza: " + e.getMessage());
+			return listaErrores;
+		}
+			
+		return listaErrores;
+	}
+
+   
+   
+   @Override
+   public DtoFichaTrabajo convertTrabajoDto2DtoFichaTrabajo(TrabajoDto trabajoDto){
+	   DtoFichaTrabajo dtoFichaTrabajo = null;
+	   String descripcion = "";
+	   
+	   try{
+   			if(!Checks.esNulo(trabajoDto)){
+   				dtoFichaTrabajo = new DtoFichaTrabajo();
+   				
+   				if(!Checks.esNulo(trabajoDto.getIdTrabajoWebcom())){
+   					dtoFichaTrabajo.setIdTrabajoWebcom(trabajoDto.getIdTrabajoWebcom());
+   				}
+   				if(!Checks.esNulo(trabajoDto.getIdActivoHaya())){
+   					Activo activo = (Activo) genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", trabajoDto.getIdActivoHaya()));
+   					if(!Checks.esNulo(activo)){
+   						dtoFichaTrabajo.setIdActivo(activo.getId());
+   					}
+   				}   				
+   				if(!Checks.esNulo(trabajoDto.getCodTipoTrabajo())){
+					dtoFichaTrabajo.setTipoTrabajoCodigo(trabajoDto.getCodTipoTrabajo());
+				}				
+				if(!Checks.esNulo(trabajoDto.getCodSubtipoTrabajo())){
+					dtoFichaTrabajo.setSubtipoTrabajoCodigo(trabajoDto.getCodSubtipoTrabajo());
+				}	
+				if(!Checks.esNulo(trabajoDto.getFechaAccion())){
+					dtoFichaTrabajo.setFechaSolicitud(trabajoDto.getFechaAccion());
+				}	
+				if(!Checks.esNulo(trabajoDto.getIdUsuarioRem())){
+					dtoFichaTrabajo.setIdSolicitante(trabajoDto.getIdUsuarioRem());
+				}	
+				if(!Checks.esNulo(trabajoDto.getDescripcion())){
+					String descStr = "Descripcion: ";
+					descripcion = descripcion.concat(descStr).concat(trabajoDto.getDescripcion()).concat("<br>");
+				}
+				if(!Checks.esNulo(trabajoDto.getNombreContacto())){
+					String nombreStr = "Nombre contacto: ";
+					descripcion = descripcion.concat(nombreStr).concat(trabajoDto.getNombreContacto()).concat("<br>");
+				}
+				if(!Checks.esNulo(trabajoDto.getTelefonoContacto())){
+					String telfStr = "Teléfono contacto: ";
+					descripcion = descripcion.concat(telfStr).concat(trabajoDto.getTelefonoContacto()).concat("<br>");					
+				}
+				if(!Checks.esNulo(trabajoDto.getEmailContacto())){
+					String emailStr = "Email contacto: ";
+					descripcion = descripcion.concat(emailStr).concat(trabajoDto.getEmailContacto()).concat("<br>");					
+				}
+				if(!Checks.esNulo(trabajoDto.getDescripcionContacto())){
+					String descontStr = "Descripcion contacto: ";
+					descripcion = descripcion.concat(descontStr).concat(trabajoDto.getDescripcionContacto()).concat("<br>");					
+				}
+				if(!Checks.esNulo(descripcion) && !descripcion.equalsIgnoreCase("")){
+					dtoFichaTrabajo.setDescripcion(descripcion);
+				}	
+				if(!Checks.esNulo(trabajoDto.getIdApiResponsable())){
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdApiResponsable()));								
+					if(!Checks.esNulo(apiResp)){
+						dtoFichaTrabajo.setIdMediador(apiResp.getId());
+					}
+				}				
+				if(!Checks.esNulo(trabajoDto.getNombreRequiriente())){
+					dtoFichaTrabajo.setTerceroNombre(trabajoDto.getNombreRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getTelefonoRequiriente())){
+					dtoFichaTrabajo.setTerceroTel1(trabajoDto.getTelefonoRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getEmailRequiriente())){
+					dtoFichaTrabajo.setTerceroEmail(trabajoDto.getEmailRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getDescripcionRequiriente())){				
+					dtoFichaTrabajo.setTerceroContacto(trabajoDto.getDescripcionRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getFechaHoraConcretaRequiriente())){				
+					dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaHoraConcretaRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getFechaTopeRequiriente())){				
+					dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaTopeRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())){				
+					dtoFichaTrabajo.setUrgente(trabajoDto.getUrgentePrioridadRequiriente());
+				}
+				if(!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())){				
+					dtoFichaTrabajo.setRiesgoInminenteTerceros(trabajoDto.getRiesgoPrioridadRequiriente());
+				}			
+   			}
+   			
+   			
+	   }catch (Exception e){
+			e.printStackTrace();
+	   }
+	   
+	   return dtoFichaTrabajo;
+   }
+	
+   
+   
 
 }

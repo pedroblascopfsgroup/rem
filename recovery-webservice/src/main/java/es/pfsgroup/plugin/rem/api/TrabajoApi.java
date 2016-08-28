@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -30,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
@@ -456,7 +456,28 @@ public interface TrabajoApi {
 	    
 	    @BusinessOperationDefinition("trabajoManager.getFechaPagoTrabajo")
 	    public String getFechaPagoTrabajo(TareaExterna tareaExterna);
+	    
+	    
+	    /**
+	     * Devuelve si existe un Trabajo por idTrabajoWebcom.
+	     * @param idTrabajoWebcom a consultar
+	     * @return Trabajo
+	     */
+	    public Boolean existsTrabajoByIdTrabajoWebcom(Long idTrabajoWebcom);
+	    
+	    /**
+		 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
+		 * @param TrabajoDto con los parametros de entrada
+		 * @return List<String> 
+		 */
+	    public List<String> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
 
+	    /**
+		 * Devuelve un DtoFichaTrabajo a partir del TrabajoDto pasado por parámetros
+		 * @param TrabajoDto con los parametros de entrada
+		 * @return DtoFichaTrabajo
+		 */	    
+	    public DtoFichaTrabajo convertTrabajoDto2DtoFichaTrabajo(TrabajoDto trabajoDto);
 
     }
 

@@ -304,9 +304,13 @@ public class MSVProcesoManager implements MSVProcesoApi {
 		return ficheroDao.findByIdProceso(idProcess);
 	}
 	
+	
 	public MSVProcesoMasivo get(Long idProcess){
 		return procesoDao.get(idProcess);
 	}	
 	
+	public MSVDDOperacionMasiva getOperacionMasiva(Long idTipoOperacion){
+		return genericDao.get(MSVDDOperacionMasiva.class, genericDao.createFilter(FilterType.EQUALS, "id", idTipoOperacion));
+	}
 	
 }	

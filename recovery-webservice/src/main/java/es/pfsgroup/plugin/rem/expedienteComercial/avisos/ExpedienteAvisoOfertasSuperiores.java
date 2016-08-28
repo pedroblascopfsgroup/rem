@@ -58,30 +58,5 @@ public class ExpedienteAvisoOfertasSuperiores implements ExpedienteAvisadorApi {
 		return dtoAviso;
 		
 	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 }

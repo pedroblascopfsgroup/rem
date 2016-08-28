@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -167,6 +168,26 @@ public class ExpedienteComercialController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListEntregasReserva(@RequestParam Long id, ModelMap model) {
+		
+	try {
+		
+		List<DtoEntregaReserva> lista  =  expedienteComercialApi.getListEntregasReserva(id);
+		
+		model.put("data", lista);
+		model.put("success", true);
+		
+	} catch (Exception e) {
+		e.printStackTrace();
+		model.put("success", false);
+	}
+
+		return createModelAndViewJson(model);
+		
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveTextoOferta(DtoTextosOferta dto, @RequestParam Long idEntidad, ModelMap model) {

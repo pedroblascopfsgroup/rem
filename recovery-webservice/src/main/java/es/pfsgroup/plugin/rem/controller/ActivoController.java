@@ -1279,6 +1279,27 @@ public class ActivoController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	/**
+	 * Método que crea el trámite de publicación a partir de un activo (Para pruebas)
+	 * @param idActivo
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView crearTramitePublicacion(Long idActivo, ModelMap model) {
+
+		try {
+			model.put("data", adapter.crearTramitePublicacion(idActivo));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	/**
 	 * Método que crea un nuevo trábajo a partir de un activo
@@ -1743,8 +1764,15 @@ public class ActivoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadoInformeComercialByActivo(Long id, ModelMap model) {
+		model.put("data", activoApi.getEstadoInformeComercialByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosPublicacionByActivo(Long id, ModelMap model) {
-		model.put("data", activoApi.getDatosPublicacionByActivo(id));
+		model.put("data", activoApi.getEstadoInformeComercialByActivo(id));
 		return createModelAndViewJson(model);
 	}
 	

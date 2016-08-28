@@ -363,7 +363,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoValoraciones hist");
 	
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", dto.getIdActivo());   		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", Long.parseLong(dto.getIdActivo()));   		
    		
 		return HibernateQueryUtils.page(this, hb, dto);
 

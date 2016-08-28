@@ -7,7 +7,7 @@ import es.capgemini.devon.dto.WebDto;
 
 /**
  * Dto para los textos de una oferta
- * @author Benjamín Guerrero
+ * @author Jose Villel
  *
  */
 public class DtoTextosOferta extends WebDto{

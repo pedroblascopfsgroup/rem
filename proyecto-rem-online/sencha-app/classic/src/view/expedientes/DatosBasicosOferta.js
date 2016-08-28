@@ -40,11 +40,13 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.notificacion'),
-		                	bind:		'{datosbasicosoferta.fechaNotificacion}'
+		                	bind:		'{datosbasicosoferta.fechaNotificacion}',
+		                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.alta'),
-		                	bind:		'{datosbasicosoferta.fechaAlta}'
+		                	bind:		'{datosbasicosoferta.fechaAlta}',
+		                	renderer: Ext.util.Format.dateRenderer('d-m-Y')
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado'),

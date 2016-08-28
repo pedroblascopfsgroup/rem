@@ -464,6 +464,23 @@
   background: url(images/ico_publicacion_activado.svg) center center no-repeat;
 }
 
+.app-menu-ico.ico-comercializacion {  
+  background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+}
+.app-menu-ico.ico-comercializacion:hover {  
+  background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+  background-color: $color-blue-soft;
+  border-top: 2px solid   $color-blue-soft;
+  border-bottom: 2px solid  $color-blue-soft;
+}
+.app-menu-ico.x-treelist-item-selected.ico-comercializacion {  
+  //background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+  background-color: #054664 !important;
+}
+.app-menu-ico.x-treelist-item-selected.ico-comercializacion:hover {  
+  background: url(images/ico_modulocomercial_actdeshover.svg) center center no-repeat;
+}
+
 
 .app-menu-item.x-treelist-floater {
 	  width: 120px !important;

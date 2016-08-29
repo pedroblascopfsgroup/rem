@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -926,6 +927,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaDtoEstadosInfoComercial;
+	}
+	
+	@Override
+	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.ASC, "id");
+		List<HistoricoMediador> listaHistoricoMediador = genericDao
+				.getListOrdered(HistoricoMediador.class, order, filtro);
+		
+		List<DtoHistoricoMediador> listaDtoHistoricoMediador = new ArrayList<DtoHistoricoMediador>();
+		
+		for (HistoricoMediador historico : listaHistoricoMediador) {
+			DtoHistoricoMediador dtoHistoricoMediador = new DtoHistoricoMediador();
+			try {
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", idActivo);
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaDesde", historico.getFechaDesde());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "codigo", historico.getCodigo());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador", historico.getMediador());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getTelefono());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getEmail());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			listaDtoHistoricoMediador.add(dtoHistoricoMediador);
+		}
+		
+		return listaDtoHistoricoMediador;
 	}
 
 	@Override

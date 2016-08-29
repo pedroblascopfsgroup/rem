@@ -1778,6 +1778,13 @@ public class ActivoController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoMediadorByActivo(Long id, ModelMap model) {
+		model.put("data", activoApi.getHistoricoMediadorByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion, ModelMap model){
 		try {

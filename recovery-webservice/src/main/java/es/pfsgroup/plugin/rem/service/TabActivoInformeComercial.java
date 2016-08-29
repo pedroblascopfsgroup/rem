@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +56,16 @@ public class TabActivoInformeComercial implements TabActivoService {
 		try {
 			
 			if (!Checks.esNulo(activo.getInfoComercial())){
-
 				// Copia al "informe comercial" todos los atributos de "informacion comercial"
 				beanUtilNotNull.copyProperties(informeComercial,  activo.getInfoComercial());
-
+				
+				// Datos del mediador (proveedor).
+				if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())){
+					beanUtilNotNull.copyProperty(informeComercial, "codigoMediador", activo.getInfoComercial().getMediadorInforme().getId());
+					beanUtilNotNull.copyProperty(informeComercial, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
+					beanUtilNotNull.copyProperty(informeComercial, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
+					beanUtilNotNull.copyProperty(informeComercial, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
+				}
 			}
 			
 			// Entre las valoraciones del activo, se buscan los importes estimados de Venta y Renta 
@@ -93,6 +100,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
 			}
 			
+		
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

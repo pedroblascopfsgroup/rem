@@ -684,6 +684,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				autoload: true
     		},
     		
+    		historicoMediador:{
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.HistoricoMediador',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getHistoricoMediadorByActivo',
+    				extraParams: {id: '{activo.id}'}
+    			},
+				autoload: true
+    		},
+    		
     		storeHistoricoValoresPrecios : {    			
     			pageSize: $AC.getDefaultPageSize(),
 		    	proxy: {

@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -256,6 +257,14 @@ public interface ActivoApi {
 		 * @return Devuleve un dto con los datos obtenidos.
 		 */
 		public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
+
+		/**
+		 * Este método obtiene los estados, el historial, del mediador de la pestaña informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo);
     }
 
 

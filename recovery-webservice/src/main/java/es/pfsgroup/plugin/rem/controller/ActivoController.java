@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -1874,5 +1875,20 @@ public class ActivoController {
 		System.out.println(jsonData.getId());
 		model.put("data", "hola delete");
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createOferta(DtoOfertasFilter dtoOferta,ModelMap model) throws Exception {
+		try {
+			boolean success = adapter.createOfertaActivo(dtoOferta);//trabajoApi.createPresupuestoTrabajo(presupuestoDto, idTrabajo);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+
 	}
 }

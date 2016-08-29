@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.adapter;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,9 +19,11 @@ import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
@@ -38,6 +42,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -49,7 +54,10 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
@@ -57,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.DtoVisitasAgrupacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -68,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
@@ -89,8 +99,10 @@ public class AgrupacionAdapter {
     private MSVFicheroDao ficheroDao;
     
     @Autowired
+    private ActivoDao activoDao;
+    
+    @Autowired
     private ActivoManager activoManager;
- 
     @Autowired 
     private ActivoApi activoApi;
     
@@ -817,6 +829,65 @@ public class AgrupacionAdapter {
 		
 	}
 	
+	@Transactional(readOnly = false)
+	public boolean createOfertaAgrupacion(DtoOfertasFilter dto){
+		
+		try{
+			ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
+			ClienteComercial clienteComercial= new ClienteComercial();
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "04");
+			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
+			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());
+			Long numOferta= activoDao.getNextNumOferta();
+			Long clcremid= activoDao.getNextClienteRemId();
+			
+			clienteComercial.setNombre(dto.getNombreCliente());
+			clienteComercial.setApellidos(dto.getApellidosCliente());
+			clienteComercial.setDocumento(dto.getNumDocumentoCliente());
+			clienteComercial.setTipoDocumento(tipoDocumento);
+			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
+			clienteComercial.setIdClienteRem(clcremid);
+			
+			genericDao.save(ClienteComercial.class, clienteComercial);
+
+			Oferta oferta= new Oferta();
+			
+			
+			
+			oferta.setNumOferta(numOferta);
+			oferta.setAgrupacion(agrupacion);
+			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			oferta.setEstadoOferta(estadoOferta);
+			oferta.setTipoOferta(tipoOferta);
+			oferta.setFechaAlta(new Date());
+			
+			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
+			
+			//En cada activo de la agrupacion se añade una oferta en la tabla ACT_OFR
+			for(ActivoAgrupacionActivo activos: agrupacion.getActivos()){
+				
+				ActivoOferta activoOferta= new ActivoOferta();
+				ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
+				
+				activoOfertaPk.setActivo(activos.getActivo());
+				activoOfertaPk.setOferta(oferta);
+				activoOferta.setPrimaryKey(activoOfertaPk);
+				
+				listaActivosOfertas.add(activoOferta);
+			}
+			
+			oferta.setActivosOferta(listaActivosOfertas);
+			oferta.setCliente(clienteComercial);
+			genericDao.save(Oferta.class, oferta);
+			
+			
+		}catch(Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
+		}
+		
+		return true;
+	}	
 	
 	
 	//public List<DtoActivoAviso> getAvisosActivoById(Long id) {

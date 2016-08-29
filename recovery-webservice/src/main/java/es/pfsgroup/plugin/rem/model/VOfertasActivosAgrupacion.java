@@ -19,6 +19,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
+	@Column(name= "ID")
+	private String id;
+	
 	@Column(name = "OFR_ID")
 	private String idOferta;
 	

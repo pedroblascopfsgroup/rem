@@ -1262,5 +1262,56 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleTramite', grid, record);	
-    }
+    },
+    
+    onClickBotonCancelarOferta: function(btn) {	
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	},
+	
+	onClickBotonGuardarOferta: function(btn){
+		var me =this;
+		var window= btn.up('window'),
+		form= window.down('formBase');
+	
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.parent.funcionRecargar();
+	    	window.destroy();    	
+   		
+		};
+
+		me.onSaveFormularioCompletoOferta(form, success);	
+		
+	},
+	
+	onSaveFormularioCompletoOferta: function(form, success) {
+		var me = this;
+		record = form.getBindRecord();
+		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
+		
+		if(form.isFormValid()) {
+
+			form.mask(HreRem.i18n("msg.mask.espere"));
+			
+			record.save({
+				
+			    success: success,
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+			    	form.unmask();
+			    }
+			    		    
+			});
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	
+	}
+	
 });

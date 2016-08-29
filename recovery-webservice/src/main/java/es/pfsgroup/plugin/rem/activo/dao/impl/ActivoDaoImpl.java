@@ -462,6 +462,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
     
+    public Long getNextClienteRemId() {
+		String sql = "SELECT S_CLC_REM_ID.NEXTVAL FROM DUAL ";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+	}
+    
     private void agregarFiltroFecha(HQLBuilder hb, String fechaD, String fechaH, String tipoFecha) {
     	try {
    			

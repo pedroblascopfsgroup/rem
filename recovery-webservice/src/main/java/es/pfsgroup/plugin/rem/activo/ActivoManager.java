@@ -53,6 +53,7 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -301,7 +302,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		try{
 			ExpedienteComercial nuevoExpediente= new ExpedienteComercial();
-			Visita visita = null;
 			List<Visita> listaVisitasCliente = new ArrayList<Visita>();
 			
 			// Si el activo principal de la oferta aceptada tiene visitas, 
@@ -933,21 +933,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo){
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Order order = new Order(OrderType.ASC, "id");
-		List<HistoricoMediador> listaHistoricoMediador = genericDao
-				.getListOrdered(HistoricoMediador.class, order, filtro);
+		List<ActivoInformeComercialHistoricoMediador> listaHistoricoMediador = genericDao
+				.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
 		
 		List<DtoHistoricoMediador> listaDtoHistoricoMediador = new ArrayList<DtoHistoricoMediador>();
 		
-		for (HistoricoMediador historico : listaHistoricoMediador) {
+		for (ActivoInformeComercialHistoricoMediador historico : listaHistoricoMediador) {
 			DtoHistoricoMediador dtoHistoricoMediador = new DtoHistoricoMediador();
 			try {
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", idActivo);
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaDesde", historico.getFechaDesde());
 				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
-				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "codigo", historico.getCodigo());
-				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador", historico.getMediador());
-				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getTelefono());
-				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getEmail());
+				if(!Checks.esNulo(historico.getMediadorInforme())){
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "codigo", historico.getMediadorInforme().getId());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador", historico.getMediadorInforme().getNombre());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getMediadorInforme().getTelefono1());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getMediadorInforme().getEmail());
+				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {

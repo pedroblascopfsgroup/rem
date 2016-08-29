@@ -145,7 +145,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND BORRADO = 0"
 				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
 				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
-				+ "				WHERE DD_EPU_CODIGO IN ('01'))");
+				+ "				WHERE DD_EPU_CODIGO IN ('01','02'))");
 		if("0".equals(resultado))
 			return false;
 		else
@@ -175,7 +175,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			AND BORRADO = 0"
 				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
 				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
-				+ "				WHERE DD_EPU_CODIGO IN ('01'))");
+				+ "				WHERE DD_EPU_CODIGO IN ('02'))");
 		if("0".equals(resultado))
 			return false;
 		else

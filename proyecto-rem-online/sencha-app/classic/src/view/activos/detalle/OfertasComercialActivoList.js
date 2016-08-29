@@ -152,14 +152,19 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				var datosBasicos= items[i].down('datosbasicosactivo');
 				var record= datosBasicos.getBindRecord(),
 				idActivo= record.get('id'),
-				numActivo= record.get('numActivo');
+				numActivo= record.get('numActivo'),
+				pertenceAgrupacionRestringida= record.get('pertenceAgrupacionRestringida');
 				break;
 			}
 		}
 		
-		var parent= me.up('ofertascomercialactivo');
-		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
-		Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
+		if(pertenceAgrupacionRestringida=="false" || pertenceAgrupacionRestringida==undefined){
+			var parent= me.up('ofertascomercialactivo');
+			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
+			Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.boton.add.oferta.activo"));
+		}
 	    				    	
 	},
 	

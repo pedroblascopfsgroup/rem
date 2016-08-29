@@ -101,6 +101,7 @@ public class DtoActivoFichaCabecera extends WebDto {
 	private String estadoPublicacionDescripcion;
 	private String estadoPublicacionCodigo;
 	private String tipoComercializacionDescripcion;
+	private Boolean pertenceAgrupacionRestringida;
 
 	private int page;
 	private int start;
@@ -776,5 +777,15 @@ public class DtoActivoFichaCabecera extends WebDto {
 	public void setEstadoPublicacionCodigo(String estadoPublicacionCodigo) {
 		this.estadoPublicacionCodigo = estadoPublicacionCodigo;
 	}
+
+	public Boolean getPertenceAgrupacionRestringida() {
+		return pertenceAgrupacionRestringida;
+	}
+
+	public void setPertenceAgrupacionRestringida(
+			Boolean pertenceAgrupacionRestringida) {
+		this.pertenceAgrupacionRestringida = pertenceAgrupacionRestringida;
+	}
+	
 
 }

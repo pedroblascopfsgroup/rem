@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
@@ -3249,10 +3250,16 @@ public class ActivoAdapter {
 			ClienteComercial clienteComercial= new ClienteComercial();
 			
 			Activo activo= activoApi.get(dto.getIdActivo());
-			if(!Checks.esNulo(dto.getIdAgrupacion())){
-				ActivoAgrupacion agrupacion = activoAgrupacionApi.get(dto.getIdAgrupacion());
-				oferta.setAgrupacion(agrupacion);
+			
+			if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
+				for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+					ActivoAgrupacion agrupacion = agrupaciones.getAgrupacion();
+					if(agrupacion.getActivoPrincipal().getId().equals(activo.getId())){
+						oferta.setAgrupacion(agrupacion);
+					}
+				}
 			}
+
 			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "04");
 			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
 			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());

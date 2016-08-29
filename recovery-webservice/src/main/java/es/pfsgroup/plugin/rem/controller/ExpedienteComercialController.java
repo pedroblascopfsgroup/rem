@@ -27,6 +27,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
@@ -34,6 +35,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -215,6 +217,83 @@ public class ExpedienteComercialController {
 			e.printStackTrace();
 			model.put("success", false);
 		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getObservaciones(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto = expedienteComercialApi.getListObservaciones(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveObservacion(DtoObservacion dtoObservacion){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.saveObservacion(dtoObservacion);
+			model.put("success", success);			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createObservacion(DtoObservacion dtoObservacion, Long idEntidad){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.createObservacion(dtoObservacion, idEntidad);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteObservacion(@RequestParam Long id){
+		
+		ModelMap model = new ModelMap();		
+		try {
+			boolean success = expedienteComercialApi.deleteObservacion(id);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
 		
 		return createModelAndViewJson(model);
 		

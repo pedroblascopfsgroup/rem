@@ -1,8 +1,11 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,25 +14,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.diccionarios.Dictionary;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.observacionesExpediente.dao.ObservacionExpedienteDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 
 
@@ -50,6 +59,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private OfertaDao ofertaDao;
+	
+	@Autowired
+	private ObservacionExpedienteDao observacionComercialDao;
+	
+	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 
 	@Override
@@ -341,6 +355,122 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		
 		return dto;
+	}
+	
+	@Override
+	public DtoPage getListObservaciones(Long idExpediente) {
+		
+		List<ObservacionesExpedienteComercial> lista = observacionComercialDao.getList();
+		List<DtoObservacion> observaciones = new ArrayList<DtoObservacion>();
+		
+		for (ObservacionesExpedienteComercial observacion: lista) {
+			
+			DtoObservacion dtoObservacion = observacionToDto(observacion);
+			observaciones.add(dtoObservacion);
+		}
+		
+		return new DtoPage(observaciones, observaciones.size());
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean saveObservacion(DtoObservacion dtoObservacion) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoObservacion.getId()));
+		ObservacionesExpedienteComercial observacion = genericDao.get(ObservacionesExpedienteComercial.class, filtro);
+		
+		try {
+			
+			beanUtilNotNull.copyProperties(observacion, dtoObservacion);			
+			genericDao.save(ObservacionesExpedienteComercial.class, observacion);
+			
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return true;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean createObservacion(DtoObservacion dtoObservacion, Long idExpediente) {
+		
+		ObservacionesExpedienteComercial observacion = new ObservacionesExpedienteComercial();
+		ExpedienteComercial expediente = findOne(idExpediente);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		try {
+			
+			observacion.setObservacion(dtoObservacion.getObservacion());
+			observacion.setFecha(new Date());
+			observacion.setUsuario(usuarioLogado);
+			observacion.setExpediente(expediente);
+			
+			genericDao.save(ObservacionesExpedienteComercial.class, observacion);
+
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+
+		return true;
+		
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteObservacion(Long idObservacion) {
+		
+		try {
+			
+			genericDao.deleteById(ObservacionesExpedienteComercial.class, idObservacion);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+
+		return true;
+		
+	}
+	
+	/**
+	 * Parsea una observacion a objeto Dto.
+	 * @param observacion
+	 * @return
+	 */
+	private DtoObservacion observacionToDto(ObservacionesExpedienteComercial observacion) {
+		
+		DtoObservacion observacionDto = new DtoObservacion();
+		
+		try {
+			
+			String nombreCompleto = observacion.getUsuario().getNombre();
+			Long idUsuario = observacion.getUsuario().getId();
+			
+			if (observacion.getUsuario().getApellido1() != null) {
+				
+				nombreCompleto += observacion.getUsuario().getApellido1();
+				
+				if (observacion.getUsuario().getApellido2() != null) {
+					nombreCompleto += observacion.getUsuario().getApellido2();
+				}
+				
+			}
+			
+			if(!Checks.esNulo(observacion.getAuditoria().getFechaModificar())){
+				observacionDto.setFechaModificacion(observacion.getAuditoria().getFechaModificar());				
+			}
+
+			BeanUtils.copyProperties(observacionDto, observacion);
+			observacionDto.setNombreCompleto(nombreCompleto);
+			observacionDto.setIdUsuario(idUsuario);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return observacionDto;
 	}
 
 }

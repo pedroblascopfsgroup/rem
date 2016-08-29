@@ -2,8 +2,10 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -58,10 +60,36 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public List<DtoEntregaReserva> getListEntregasReserva(Long id);
+
+
+		/**
+		 * Método que recupera las observaciones del expediente comercial
+		 * @return
+		 */
+		public DtoPage getListObservaciones(Long idExpediente);
 		
 	    
-	    
-	    
+		/**
+	     * Actualiza una observacion
+	     * @param dtoObservacion
+	     * @return
+	     */
+		public boolean saveObservacion(DtoObservacion dtoObservacion);
+
+	    /**
+	     * Crea una observación
+	     * @param dtoObservacion
+	     * @param idTrabajo
+	     * @return
+	     */
+		public boolean createObservacion(DtoObservacion dtoObservacion, Long idExpediente);
+
+	    /**
+	     * Elimina una observación
+	     * @param idObservacion
+	     * @return
+	     */
+		public boolean deleteObservacion(Long idObservacion);
 	   
 }
 

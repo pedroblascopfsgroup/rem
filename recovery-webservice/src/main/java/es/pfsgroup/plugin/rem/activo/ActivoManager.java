@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -744,6 +745,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				.get(VCondicionantesDisponibilidad.class, idActivoFilter);
 
 		return condicionantesDisponibilidad;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dtoCondicionanteDisponibilidad) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+
+		try {
+			beanUtilNotNull.copyProperty(condicionantesDisponibilidad, "otro", dtoCondicionanteDisponibilidad.getOtro());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
+		
+		return true;
 	}
 
 	@Override

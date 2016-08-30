@@ -79,44 +79,44 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionForzada()) && dtoCambioEstadoPublicacion.getOcultacionForzada()) { // Publicación oculto.
 			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO)){
-				return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
 			motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionForzada();
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getOcultacionPrecio()) && dtoCambioEstadoPublicacion.getOcultacionPrecio()) { // Publicación precio oculto.
 			if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(activo.getEstadoPublicacion().getCodigo())){ // Si viene de publicación forzada.
 				if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO)){
-					return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+					return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 				}
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO);
 			} else { // Si viene de publicación ordinaria.
 				if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO)){
-					return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+					return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 				}
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO);
 			}
 			motivo = dtoCambioEstadoPublicacion.getMotivoOcultacionPrecio();
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getDespublicacionForzada()) && dtoCambioEstadoPublicacion.getDespublicacionForzada()) { // Despublicación forzada.
 			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_DESPUBLICADO)){
-				return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_DESPUBLICADO);
 			motivo = dtoCambioEstadoPublicacion.getMotivoDespublicacionForzada();
 		
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionForzada()) && dtoCambioEstadoPublicacion.getPublicacionForzada()) { // Publicación forzada.
 			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO)){
-				return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO);
 			motivo = dtoCambioEstadoPublicacion.getMotivoPublicacion();
 		} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()){ // Publicación ordinaria.
 			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_PUBLICADO)){
-				return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO);
 		} else { // Deseleccionada cualquier opción.
 			if(activo.getEstadoPublicacion().getCodigo().equals(DDEstadoPublicacion.CODIGO_NO_PUBLICADO)){
-				return false; // Si es el mismo estado en el que se encuentra el activo, devolver error.
+				return true; // Enviar True, pero no realizar nada. De otro modo no sigue guardando otros modelos.
 			}
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_NO_PUBLICADO);
 		}

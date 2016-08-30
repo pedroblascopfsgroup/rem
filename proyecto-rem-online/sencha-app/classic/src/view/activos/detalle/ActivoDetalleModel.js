@@ -152,15 +152,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
-			 },	
-		getIconClsCondicionantesOtro: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.otro');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },	
+			 },
 		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.ocupadoSinTitulo');
 			   	if(!eval(condicion)) {
@@ -176,7 +168,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
-			 },	
+			 },
+		 getSiNoFromOtro: function(get) {
+				var condicion = get('activoCondicionantesDisponibilidad.otro');
+
+			   	if(Ext.isEmpty(condicion)) {
+			   		return '0';
+			   	} else {
+			   		return '1';
+			   	}
+			 },
 		 //FinCondicionantes
 	     
 	     getSrcSelloCalidad: function(get) {

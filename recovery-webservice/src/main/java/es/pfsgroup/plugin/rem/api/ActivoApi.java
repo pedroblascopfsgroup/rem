@@ -13,6 +13,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -20,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -199,10 +201,18 @@ public interface ActivoApi {
 		 */
 		public boolean deleteValoracionPrecio(Long id);
 		
+		/**
+		 * Este método obtiene un objeto con los condicionantes del activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuelve un objeto con los datos obtenidos.
+		 */
 		public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo);
 		
 		public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo);
+		
 		public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica);
+		
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
 		/**
@@ -265,6 +275,15 @@ public interface ActivoApi {
 		 * @return Devuleve un dto con los datos obtenidos.
 		 */
 		public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo);
+
+		/**
+		 * Este método recibe un objeto con los condicionantes del activo y lo almacena en la DDBB.
+		 * 
+		 * @param id: ID del activo a filtrar los datos.
+		 * @param dto: dto con los datos a insertar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto);
     }
 
 

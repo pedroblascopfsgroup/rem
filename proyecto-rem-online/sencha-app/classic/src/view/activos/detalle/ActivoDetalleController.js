@@ -1240,6 +1240,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
+    // Esta función es llamada cuando cambia el estado del combo 'otro' en los
+    // condicionantes de la publicación del activo. Muestra u oculta el área de
+    // texto que muestra el condicionante 'otro'.
+    onChangeComboOtro: function(combo) {
+    	var me = this;
+    	var view = me.getView();
+
+    	if(combo.getValue() === '0'){
+    		view.lookupReference('fieldtextCondicionanteOtro').reset();
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
+    	} else {
+    		view.lookupReference('fieldtextCondicionanteOtro').show();
+    	}
+    },
+    
     onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
     	
     	var me = this,

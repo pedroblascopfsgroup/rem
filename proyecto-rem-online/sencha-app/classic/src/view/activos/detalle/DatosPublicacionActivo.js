@@ -166,16 +166,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                	{
 					                		xtype: 'button',
 					                		cls: 'no-pointer',
-								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.otro')+'</div>',
-								    		style : 'background: transparent; border: none;',
-								    		bind: {
-					                			iconCls: '{getIconClsCondicionantesOtro}'
-					                		},
-					                		iconAlign: 'left'
-					                	},
-					                	{
-					                		xtype: 'button',
-					                		cls: 'no-pointer',
 								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.ocupadosintitulo')+'</div>',
 								    		style : 'background: transparent; border: none;',
 					                		bind: {
@@ -192,15 +182,44 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                			iconCls: '{getIconClsCondicionantesDivHorizontal}'
 					                		},
 					                		iconAlign: 'left'
-					                	}
+					                	},
+					                	{
+								        	// Label vacia para generar un espacio por cuestión de estética.
+								        	xtype: 'label',
+								        	colspan: 1
+								        },
+					                	{
+						                	xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('title.publicaciones.condicion.otro'),
+						                	reference: 'comboCondicionanteOtro',
+						                	bind: {
+						                		store: '{comboSiNoRem}',
+						                		value: '{getSiNoFromOtro}'
+						                	},
+						                	listeners: {
+					                			change: 'onChangeComboOtro'
+					                		}
+					                    },
+					                    {
+								        	// Label vacia para generar un espacio por cuestión de estética.
+								        	xtype: 'label',
+								        	reference: 'textareaCondicionantesSpan',
+								        	colspan: 2
+								        },
+					                	{
+						                	xtype: 'textareafieldbase',
+						                	reference: 'fieldtextCondicionanteOtro',
+						                	bind: {
+						                		value: '{activoCondicionantesDisponibilidad.otro}',
+						                		hidden: '{!activoCondicionantesDisponibilidad.otro}'
+						                	},
+						                	maxLength: '255'
+					                    }
 									  ]
 							 },
-							 
-							{xtype: "historicocondicioneslist", reference: "historicocondicioneslist"}
-								
 							 // Grid del histórico de condiciones específicas.
+							{xtype: "historicocondicioneslist", reference: "historicocondicioneslist"}
 							]
-						
 					},
 					{
 						xtype:'fieldsettable',
@@ -309,7 +328,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 							            	}
 								        },
 								        {
-								        	// Label vacia para generar una línea por cuestion de estética.
+								        	// Label vacia para generar una línea por cuestión de estética.
 								        	xtype: 'label',
 								        	colspan: 3
 								        }

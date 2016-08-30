@@ -1,81 +1,33 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Where;
-
-import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
-
-
+import es.capgemini.devon.dto.WebDto;
 
 /**
- * Gestiona la vista que identifica los condicionantes de disponibilidad de cada activo
- * 
- * @author Daniel Gutiérrez
+ * Dto que gestiona la disponibilidad de la publicación de un activo.
  *
  */
-@Entity
-@Table(name = "V_COND_DISPONIBILIDAD", schema = "${entity.schema}")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
-public class VCondicionantesDisponibilidad  implements Serializable {
-
-	/**
-	 * 
-	 */
+public class DtoCondicionantesDisponibilidad extends WebDto {
 	private static final long serialVersionUID = 1L;
-
-	@Id
-    @Column(name = "ACT_ID")
-    private Long idActivo;
-
-	@Column(name = "RUINA")
+	
+	private String idActivo;
 	private Boolean ruina;
-	
-	@Column(name = "PENDIENTE_INSCRIPCION")
 	private Boolean pendienteInscripcion;
-	
-	@Column(name = "OBRANUEVA_SINDECLARAR")
 	private Boolean obraNuevaSinDeclarar;
-	
-	@Column(name = "SIN_TOMA_POSESION_INICIAL")
 	private Boolean sinTomaPosesionInicial;
-	
-	@Column(name = "PROINDIVISO")
 	private Boolean proindiviso;
-	
-	@Column(name = "OBRANUEVA_ENCONSTRUCCION")
 	private Boolean obraNuevaEnConstruccion;
-	
-	@Column(name = "OCUPADO_CONTITULO")
 	private Boolean ocupadoConTitulo;
-	
-	@Column(name = "TAPIADO")
 	private Boolean tapiado;
-	
-	@Column(name = "OTRO")
 	private String otro;
-	
-	@Column(name = "OCUPADO_SINTITULO")
 	private Boolean ocupadoSinTitulo;
-	
-	@Column(name = "DIVHORIZONTAL_NOINSCRITA")
 	private Boolean divHorizontalNoInscrita;
 	
 
-	public Long getIdActivo() {
+	public String getIdActivo() {
 		return idActivo;
 	}
 
-	public void setIdActivo(Long idActivo) {
+	public void setIdActivo(String idActivo) {
 		this.idActivo = idActivo;
 	}
 
@@ -166,5 +118,6 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	public void setDivHorizontalNoInscrita(Boolean divHorizontalNoInscrita) {
 		this.divHorizontalNoInscrita = divHorizontalNoInscrita;
 	}
+	
 	
 }

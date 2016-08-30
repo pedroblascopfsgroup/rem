@@ -299,6 +299,26 @@ public class ExpedienteComercialController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getActivosExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);

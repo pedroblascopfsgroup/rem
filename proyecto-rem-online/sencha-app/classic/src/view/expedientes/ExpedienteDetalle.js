@@ -3,7 +3,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
     requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
-    			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente'],
+    			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente','HreRem.view.expedientes.ActivosExpediente'],
     
 		
     listeners: {
@@ -97,6 +97,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        },
 		        {
 		        	xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
 		        }
 
 		],

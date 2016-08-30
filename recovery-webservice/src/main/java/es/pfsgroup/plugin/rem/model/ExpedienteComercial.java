@@ -114,6 +114,11 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_DEV_ENTREGAS")
     private Date fechaDevolucionEntregas;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TBJ_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Trabajo trabajo;
      
 	@Version   
 	private Long version;
@@ -302,6 +307,16 @@ public class ExpedienteComercial implements Serializable, Auditable {
     	
     	return posicionamiento;
     }
+
+	public Trabajo getTrabajo() {
+		return trabajo;
+	}
+
+	public void setTrabajo(Trabajo trabajo) {
+		this.trabajo = trabajo;
+	}
+    
+    
     
     
    

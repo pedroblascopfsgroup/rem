@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -84,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -267,7 +269,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			oferta.setEstadoOferta(tipoOferta);
 			
 			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
-			if(tipoOferta.getCodigo().equals("01")){
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
 				List<VOfertasActivosAgrupacion> listaOfertas= activoAdapter.getListOfertasActivos(dto.getIdActivo());
 				
 				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
@@ -277,14 +279,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
 						
 						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if(!vTipoOferta.getCodigo().equals("02")){
-							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
+						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
+							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
 							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
 						}
 					}
 				}
+
+				List<Activo>listaActivos= new ArrayList<Activo>();
+				for(ActivoOferta activoOferta: oferta.getActivosOferta()){
+					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+				}
+				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
 				
-				crearExpediente(oferta);
+				crearExpediente(oferta, trabajo);
 				
 			}
 			
@@ -299,7 +308,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	    return resultado;
 	}
 	
-	public boolean crearExpediente(Oferta oferta){
+	public boolean crearExpediente(Oferta oferta, Trabajo trabajo){
 		
 		try{
 			ExpedienteComercial nuevoExpediente= new ExpedienteComercial();
@@ -329,6 +338,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
 			nuevoExpediente.setEstado(estadoExpediente);
 			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
+			nuevoExpediente.setTrabajo(trabajo);
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 			
 		}catch(Exception ex) {

@@ -862,6 +862,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T012");
 		}
 		
+		if(Checks.esNulo(tipoTramite.getId())){
+			return null;
+		}
 		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
 		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());

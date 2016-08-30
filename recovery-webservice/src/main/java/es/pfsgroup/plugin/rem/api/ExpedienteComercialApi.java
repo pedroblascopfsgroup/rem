@@ -90,6 +90,12 @@ public interface ExpedienteComercialApi {
 	     * @return
 	     */
 		public boolean deleteObservacion(Long idObservacion);
+		
+		/**
+		 * Método que recupera los activos del expediente comercial
+		 * @return
+		 */
+		public DtoPage getActivosExpediente(Long idExpediente);
 	   
 }
 

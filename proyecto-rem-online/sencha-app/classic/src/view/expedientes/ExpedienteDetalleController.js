@@ -253,6 +253,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		me.getView().fireEvent("refrescarExpediente", me.getView());
 		
-	}	
+	},
+	
+	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		var grid = tableView.up('grid');
+		var record = grid.store.getAt(indiceFila);
+		
+		grid.setSelection(record);
+		
+		//grid.fireEvent("abriractivo", record);
+		me.getView().fireEvent('abrirDetalleActivoPrincipal', record.get('idActivo'));
+	}
 
 });

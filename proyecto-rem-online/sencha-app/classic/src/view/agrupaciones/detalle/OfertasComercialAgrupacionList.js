@@ -34,7 +34,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        },
 		        {
 		            dataIndex: 'ofertante',
-		            text: HreRem.i18n('header.oferta.oferante'),
+		            text: HreRem.i18n('header.oferta.ofertante'),
 		            flex: 2
 		        },
 		        {

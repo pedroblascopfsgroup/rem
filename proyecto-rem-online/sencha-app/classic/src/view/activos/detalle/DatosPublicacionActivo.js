@@ -232,6 +232,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.publicacionforzada'),
 								 reference: 'seccionPublicacionForzada',
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -252,14 +254,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	readOnly: true
 								        },
 								        {
-								        	xtype: 'comboboxfieldbase',
+								        	xtype: 'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
-								        	reference: 'comboboxpublicacionpublicar',
+								        	reference: 'textfieldpublicacionpublicar',
 								        	colspan: 3,
 								        	bind: {
-								        		// TODO: store: '{comboEstadoPublicacionMotivos}',
 							            		value: '{activohistoricoestadopublicacion.motivoPublicacion}'
-							            	}
+							            	},
+							            	maxLength: '100'
 								        }
 								        ]
 							 },
@@ -269,6 +271,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionprecio'),
 								 reference: 'seccionOcultacionPrecio',
 								 hidden: true,
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -281,14 +285,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	}
 								        },
 								        {
-								        	xtype: 'comboboxfieldbase',
+								        	xtype: 'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
-								        	reference: 'comboboxpublicacionocultacionprecio',
+								        	reference: 'textfieldpublicacionocultacionprecio',
 								        	bind: {
-								        		// TODO: store: '{comboEstadoPublicacionMotivos}',
 							            		value: '{activohistoricoestadopublicacion.motivoOcultacionPrecio}'			            		
 							            	},
-							            	colspan: 3
+							            	colspan: 3,
+							            	maxLength: '100'
 								        	
 								        },
 								        {
@@ -306,6 +310,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 title: HreRem.i18n('title.publicaciones.estados.despublicacionforzada'),
 								 reference: 'seccionDespublicacionForzada',
 								 hidden: true,
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -318,14 +324,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	}
 								        },
 								        {
-								        	xtype: 'comboboxfieldbase',
+								        	xtype: 'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
-								        	reference: 'comboboxpublicaciondespublicar',
+								        	reference: 'textfieldpublicaciondespublicar',
 								        	colspan: 3,
 								        	bind: {
-								        		// TODO: store: '{comboEstadoPublicacionMotivos}',
 							            		value: '{activohistoricoestadopublicacion.motivoDespublicacionForzada}'			            		
-							            	}
+							            	},
+							            	maxLength: '100'
 								        },
 								        {
 								        	// Label vacia para generar una línea por cuestión de estética.
@@ -340,6 +346,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionforzada'),
 								 reference: 'seccionOcultacionForzada',
 								 hidden: true,
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -352,14 +360,14 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								        	}
 								        },
 								        {
-								        	xtype: 'comboboxfieldbase',
+								        	xtype: 'textfieldbase',
 								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
-								        	reference: 'comboboxpublicacionocultacionforzada',
+								        	reference: 'textfieldpublicacionocultacionforzada',
 								        	colspan: 3,
 								        	bind: {
-								        		// TODO: store: '{comboEstadoPublicacionMotivos}',
 							            		value: '{activohistoricoestadopublicacion.motivoOcultacionForzada}'			            		
-							            	}
+							            	},
+							            	maxLength: '100'
 								        },
 								        {
 								        	// Label vacia para generar una línea por cuestion de estética.

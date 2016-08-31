@@ -1182,12 +1182,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     // los componentes de cada sección que no esté seleccionada.
     onchkbxEstadoPublicacionChange: function(chkbx) {
     	var me = this;
-    	if(!chkbx.getValue()){
-    		// si el checkbox esta siendo desactivado no hacer nada.
+    	var id = chkbx.getReference();
+    	var view = me.getView();
+
+    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada"){
+    		// si el checkbox esta siendo desactivado y no es de publicación, no hacer nada.
     		return;
     	}
-    	var id = chkbx.getId();
-    	var view = me.getView();
     	
     	switch (id){
     	case "chkbxpublicacionforzada":
@@ -1195,43 +1196,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
-    		view.lookupReference('comboboxpublicaciondespublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
     	case "chkbxpublicacionocultarprecio":
     		// checkbox.
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionpublicar').reset();
-    		view.lookupReference('comboboxpublicaciondespublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		break;
     	case "chkbxpublicaciondespublicar":
     		view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionpublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
-    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
     	case "chkbxpublicacionocultacionforzada":
     		// checkbox.
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionpublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
-    		view.lookupReference('comboboxpublicaciondespublicar').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;

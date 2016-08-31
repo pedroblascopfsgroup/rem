@@ -889,9 +889,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "fechaHasta", estado.getFechaHasta());
 				if(!Checks.esNulo(estado.getPortal())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", estado.getPortal().getDescripcion());
+				} else {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", "-");
 				}
 				if(!Checks.esNulo(estado.getTipoPublicacion())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", estado.getTipoPublicacion().getDescripcion());
+				} else {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", "-");
 				}
 				if(!Checks.esNulo(estado.getEstadoPublicacion())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "estadoPublicacion", estado.getEstadoPublicacion().getDescripcion());

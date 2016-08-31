@@ -148,6 +148,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_FORZADA);
 				DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 				beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
+				
 			} else if(!Checks.esNulo(dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) && dtoCambioEstadoPublicacion.getPublicacionOrdinaria()) {
 				Filter filtroPortal = genericDao.createFilter(FilterType.EQUALS, "codigo", DDPortal.CODIGO_HAYA);
 				DDPortal portal = genericDao.get(DDPortal.class, filtroPortal);
@@ -156,7 +157,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				Filter filtroTpu = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoPublicacion.CODIGO_ORDINARIA);
 				DDTipoPublicacion tipoPublicacion = genericDao.get(DDTipoPublicacion.class, filtroTpu);
 				beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "tipoPublicacion", tipoPublicacion);
+				
 			}
+			
 			beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "motivo", motivo);
 			beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "fechaDesde" , new Date());
 			beanUtilNotNull.copyProperty(activoHistoricoEstadoPublicacion, "estadoPublicacion", estadoPublicacion);
@@ -189,9 +192,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			for(ActivoHistoricoEstadoPublicacion estado: list){
 				if(DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO_FORZADO;
+					dto.setMotivoPublicacion(estado.getMotivo());
 					break;
 				} else if(DDEstadoPublicacion.CODIGO_PUBLICADO.equals(estado.getEstadoPublicacion().getCodigo())) {
 					tipoPublicacionInicial = DDEstadoPublicacion.CODIGO_PUBLICADO;
+					dto.setMotivoPublicacion(estado.getMotivo());
 					break;
 				}
 			}

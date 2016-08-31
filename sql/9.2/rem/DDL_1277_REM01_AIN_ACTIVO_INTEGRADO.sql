@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Tabla para gestionar los adjuntos del proveedor
+--## Finalidad: Tabla para gestionar los activos integrados de una entidad.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -34,8 +34,8 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_APR_ADJUNTO_PROVEEDOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
-    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar los adjuntos de un proveedor.'; -- Vble. para los comentarios de las tablas
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'AIN_ACTIVO_INTEGRADO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar los activos integrados de una entidad.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
 
@@ -67,16 +67,13 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		APR_ID		           		NUMBER(16,0)			NOT NULL,
+		AIN_ID		           		NUMBER(16,0)			NOT NULL,
+		ACT_ID						NUMBER(16,0)			NOT NULL,
 		PVE_ID						NUMBER(16,0)			NOT NULL,
-		DD_TPD_ID					NUMBER(16,0)			NOT NULL,
-		ADJ_ID						NUMBER(16,0),
-		APR_NOMBRE					VARCHAR2(255 CHAR),
-		APR_CONTENT_TYPE			VARCHAR2(100 CHAR),
-		APR_LENGTH					NUMBER(16,0),
-		APR_DESCRIPCION				VARCHAR2(1024 CHAR),
-		APR_FECHA_DOCUMENTO			DATE,
-		DD_EDP_ID					NUMBER(16,0),
+		AIN_PARTICIPACION			NUMBER(16,0),
+		AIN_FECHA_INCLUSION			DATE,
+		AIN_FECHA_EXCLUSION			DATE,
+		AIN_MOTIVO_EXCLUSION		VARCHAR2(200 CHAR),
 		VERSION 					NUMBER(38,0) 			DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 		NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 			NOT NULL ENABLE, 
@@ -99,13 +96,13 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(APR_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(AIN_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (APR_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (AIN_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	
@@ -123,6 +120,19 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 
+	--Comprobamos si existe foreign key FK_ACT_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_ACT_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_ACT_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ACT_ID FOREIGN KEY (ACT_ID) REFERENCES '||V_ESQUEMA||'.ACT_ACTIVO (ACT_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ACT_ID... Foreign key creada.');
+	END IF;
+	
 	--Comprobamos si existe foreign key FK_PVE_ID
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_PVE_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
@@ -131,81 +141,34 @@ BEGIN
 		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_ID... Ya existe. No hacemos nada.');		
 	ELSE
 	-- Creamos foreign key FK_PVE_ID
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PVE_ID FOREIGN KEY (PVE_ID) REFERENCES '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR (PVE_ID) ON DELETE SET NULL)';
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PVE_ID FOREIGN KEY (PVE_ID) REFERENCES '||V_ESQUEMA||'.PVE_PROVEEDOR (PVE_ID) ON DELETE SET NULL)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_PVE_ID... Foreign key creada.');
 	END IF;
 	
-	--Comprobamos si existe foreign key FK_DD_TPD_ID
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_TPD_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPD_ID... Ya existe. No hacemos nada.');		
-	ELSE
-	-- Creamos foreign key FK_DD_TPD_ID
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TPD_ID FOREIGN KEY (DD_TPD_ID) REFERENCES '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO (DD_TPD_ID) ON DELETE SET NULL)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_TPD_ID... Foreign key creada.');
-	END IF;
-	
-	--Comprobamos si existe foreign key FK_ADJ_ID
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_ADJ_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADJ_ID... Ya existe. No hacemos nada.');		
-	ELSE
-	-- Creamos foreign key FK_ADJ_ID
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADJ_ID FOREIGN KEY (ADJ_ID) REFERENCES '||V_ESQUEMA||'.ADJ_ADJUNTOS (ADJ_ID) ON DELETE SET NULL)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ADJ_ID... Foreign key creada.');
-	END IF;
-	
-	--Comprobamos si existe foreign key FK_DD_EDP_ID
-	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_EDP_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
-	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
-	
-	IF V_NUM_TABLAS = 1 THEN
-		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EDP_ID... Ya existe. No hacemos nada.');		
-	ELSE
-	-- Creamos foreign key FK_DD_EPD_ID
-		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_EDP_ID FOREIGN KEY (DD_EDP_ID) REFERENCES '||V_ESQUEMA||'.DD_EDP_ESTADO_DOC_PROVEEDOR (DD_EDP_ID) ON DELETE SET NULL)';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_EDP_ID... Foreign key creada.');
-	END IF;
 	
 		
-		V_TEXT1 := 'Código identificador único de adjunto proveedor.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APR_ID IS '''||V_TEXT1||'''  ';
+		V_TEXT1 := 'Código identificador único de la relación.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AIN_ID IS '''||V_TEXT1||'''  ';
 		
-		V_TEXT1 := 'Código identificador único del proveedor.';
+		V_TEXT1 := 'Código identificador único del activo integrado.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_ID IS '''||V_TEXT1||'''  ';
+		
+		V_TEXT1 := 'Código identificador únido del proveedor en el que está integrado el activo.';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_ID IS '''||V_TEXT1||'''  ';
 		
-		V_TEXT1 := 'Tipo de documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPD_ID IS '''||V_TEXT1||'''  ';
+		V_TEXT1 := 'Participación del activo en la entidad.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AIN_PARTICIPACION IS '''||V_TEXT1||'''  ';
 		
-		V_TEXT1 := 'Localizador/clave/ruta del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADJ_ID IS '''||V_TEXT1||'''  ';
+		V_TEXT1 := 'Fecha de inclusión en la entidad.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AIN_FECHA_INCLUSION IS '''||V_TEXT1||'''  ';
 		
-		V_TEXT1 := 'Nombre descriptivo del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APR_NOMBRE IS '''||V_TEXT1||'''  ';
+		V_TEXT1 := 'Fecha de exclusión en la entidad.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AIN_FECHA_EXCLUSION IS '''||V_TEXT1||'''  ';
 		
-		V_TEXT1 := 'Tipo de contenido del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APR_CONTENT_TYPE IS '''||V_TEXT1||'''  ';
-		
-		V_TEXT1 := 'Tamaño en bytes del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APR_LENGTH IS '''||V_TEXT1||'''  ';
-		
-		V_TEXT1 := 'Descripción breve del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APR_DESCRIPCION IS '''||V_TEXT1||'''  ';
-		
-		V_TEXT1 := 'Fecha de subida del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.APR_FECHA_DOCUMENTO IS '''||V_TEXT1||'''  ';
-		
-		V_TEXT1 := 'Estado del documento.';
-		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EDP_ID IS '''||V_TEXT1||'''  ';
-		
+		V_TEXT1 := 'Motivo de exclusión en la entidad.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.AIN_MOTIVO_EXCLUSION IS '''||V_TEXT1||'''  ';
+
 		V_TEXT1 := 'Indica la version del registro.';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.VERSION IS '''||V_TEXT1||'''  ';
 		

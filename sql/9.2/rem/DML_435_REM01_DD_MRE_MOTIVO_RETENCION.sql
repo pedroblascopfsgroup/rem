@@ -38,7 +38,12 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        --T_TIPO_DATA('01'	,'Platino'	,'Platino'), No se saben todavía los motivos de retención
+        T_TIPO_DATA('01'	,'Instrucciones del propietario'			,'Instrucciones del propietario'),
+        T_TIPO_DATA('02'	,'Entidad no constituida'					,'Entidad no constituida'),
+		T_TIPO_DATA('03'	,'Entidad no localizada'					,'Entidad no localizada'),
+		T_TIPO_DATA('04'	,'Sin cuenta bancaria a nombre de Entidad'	,'Sin cuenta bancaria a nombre de Entidad'),
+		T_TIPO_DATA('05'	,'Falta documentación mínima'				,'Falta documentación mínima'),
+		T_TIPO_DATA('06'	,'Gasto impugnado'							,'Gasto impugnado')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

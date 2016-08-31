@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -46,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -146,8 +148,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
 		mapa.put("estadosInformeComercial", DDEstadoInformeComercial.class);
 		mapa.put("tiposArras", DDTiposArras.class);
-				mapa.put("tiposDocumentos", DDTipoDocumento.class);
-
+		mapa.put("tiposDocumentos", DDTipoDocumento.class);
+		mapa.put("tiposDocumentoExpediente", DDTipoDocumentoExpediente.class);
+		mapa.put("subtiposDocumentoExpediente", DDSubtipoDocumentoExpediente.class);
+		
 		return Collections.unmodifiableMap(mapa);
 	}
 	

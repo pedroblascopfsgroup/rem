@@ -26,7 +26,9 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 
 
 
@@ -49,8 +51,8 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 	
 	@Id
     @Column(name = "ADE_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "AdjuntoExpedienteGenerator")
-    @SequenceGenerator(name = "AdjuntoExpedienteGenerator", sequenceName = "S_ADE_ADJUNTO_EXPEDIENTE")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "AdjuntoExpedienteComercialGenerator")
+    @SequenceGenerator(name = "AdjuntoExpedienteComercialGenerator", sequenceName = "S_ADE_ADJUNTO_EXPEDIENTE")
     private Long id;
 	
 	@ManyToOne
@@ -59,7 +61,15 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TPD_ID")
-    private DDTipoDocumentoActivo tipoDocumentoActivo;   
+    private DDTipoDocumentoActivo tipoDocumentoActivo;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_TDE_ID")
+	private DDTipoDocumentoExpediente tipoDocumentoExpediente;
+	
+	@ManyToOne
+    @JoinColumn(name = "DD_SDE_ID")
+	private DDSubtipoDocumentoExpediente subtipoDocumentoExpediente;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "ADJ_ID")
@@ -130,8 +140,30 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 	public void setTipoDocumentoActivo(DDTipoDocumentoActivo tipoDocumentoActivo) {
 		this.tipoDocumentoActivo = tipoDocumentoActivo;
 	}
+	
+	public DDTipoDocumentoExpediente getTipoDocumentoExpediente() {
+		return tipoDocumentoExpediente;
+	}
+
+	public void setTipoDocumentoExpediente(
+			DDTipoDocumentoExpediente tipoDocumentoExpediente) {
+		this.tipoDocumentoExpediente = tipoDocumentoExpediente;
+	}
+
+	public DDSubtipoDocumentoExpediente getSubtipoDocumentoExpediente() {
+		return subtipoDocumentoExpediente;
+	}
+
+	public void setSubtipoDocumentoExpediente(
+			DDSubtipoDocumentoExpediente subtipoDocumentoExpediente) {
+		this.subtipoDocumentoExpediente = subtipoDocumentoExpediente;
+	}
 
 	public Adjunto getAdjunto() {
+		FileItem fileItem = adjunto.getFileItem();
+        fileItem.setContentType(contentType);
+        fileItem.setFileName(nombre);
+        fileItem.setLength(tamanyo);		
 		return adjunto;
 	}
 

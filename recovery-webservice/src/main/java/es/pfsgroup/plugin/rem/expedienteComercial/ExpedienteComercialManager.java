@@ -15,12 +15,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -32,6 +37,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoList;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -46,6 +53,9 @@ import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.observacionesExpediente.dao.ObservacionExpedienteDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -71,6 +81,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private ObservacionExpedienteDao observacionComercialDao;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -563,6 +576,101 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return dtoActivo;
+	}
+	
+	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+		
+		ExpedienteComercial expediente = findOne(dtoAdjunto.getIdExpediente());
+		AdjuntoExpedienteComercial adjuntoExpediente = expediente.getAdjunto(dtoAdjunto.getId());
+		
+		FileItem fileItem = adjuntoExpediente.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoExpediente.getContentType());
+		fileItem.setFileName(adjuntoExpediente.getNombre());
+		
+		return adjuntoExpediente.getAdjunto().getFileItem();
+	}
+	
+	@Override
+	public List<DtoAdjuntoExpediente> getAdjuntos(Long idExpediente) {
+		
+		List<DtoAdjuntoExpediente> listaAdjuntos = new ArrayList<DtoAdjuntoExpediente>();
+		
+		try{
+			ExpedienteComercial expediente = findOne(idExpediente);
+
+			for (AdjuntoExpedienteComercial adjunto : expediente.getAdjuntos()) {
+				DtoAdjuntoExpediente dto = new DtoAdjuntoExpediente();
+				
+				BeanUtils.copyProperties(dto, adjunto);
+				dto.setIdExpediente(expediente.getId());
+				dto.setDescripcionTipo(adjunto.getTipoDocumentoExpediente().getDescripcion());
+				dto.setDescripcionSubtipo(adjunto.getSubtipoDocumentoExpediente().getDescripcion());
+				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());				
+				
+				listaAdjuntos.add(dto);
+			}
+		
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+		return listaAdjuntos;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public String upload(WebFileItem fileItem) throws Exception {
+
+		//Subida de adjunto al Expediente Comercial
+		ExpedienteComercial expediente = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+		
+		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		
+		AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
+		adjuntoExpediente.setAdjunto(adj);
+		
+		adjuntoExpediente.setExpediente(expediente);
+		
+		
+		//COMENTAR CON ANAHUAC SI LO NECESITA PARA DOCUMENTOS EXPEDIENTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "01");//Pong 01 por defecto, ya que no sabemos si se usará este campo
+		//Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);		
+		adjuntoExpediente.setTipoDocumentoActivo(tipoDocumento);
+		
+		//Setear tipo y subtipo del adjunto a subir
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		adjuntoExpediente.setTipoDocumentoExpediente((DDTipoDocumentoExpediente) genericDao.get(DDTipoDocumentoExpediente.class, filtro));
+		
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		adjuntoExpediente.setSubtipoDocumentoExpediente((DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
+		
+		
+		adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
+		adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
+		adjuntoExpediente.setNombre(fileItem.getFileItem().getFileName());
+		adjuntoExpediente.setDescripcion(fileItem.getParameter("descripcion"));
+		adjuntoExpediente.setFechaDocumento(new Date());
+		Auditoria.save(adjuntoExpediente);
+        
+		expediente.getAdjuntos().add(adjuntoExpediente);		
+		
+		genericDao.save(ExpedienteComercial.class, expediente);
+	        
+		return null;
+
+	}
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+		ExpedienteComercial expediente = findOne(dtoAdjunto.getIdExpediente());
+		AdjuntoExpedienteComercial adjunto = expediente.getAdjunto(dtoAdjunto.getId());
+		
+	    if (adjunto == null) { return false; }
+	    expediente.getAdjuntos().remove(adjunto);
+	    genericDao.save(ExpedienteComercial.class, expediente);
+	    
+	    return true;
 	}
 
 }

@@ -3,9 +3,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
     requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
-    			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente','HreRem.view.expedientes.ActivosExpediente'],
-    
-		
+    			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente',
+    			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente'],
+
     listeners: {
    		
 			boxready: function (tabPanel) {
@@ -100,8 +100,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        },
 		        {
 		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'documentosexpediente', ocultarBotonesEdicion: true
 		        }
-
 		],
 		
 		evaluarBotonesEdicion: function(tab) {    	

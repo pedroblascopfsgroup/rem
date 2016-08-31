@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
@@ -25,13 +27,18 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
@@ -52,6 +59,9 @@ public class ExpedienteComercialController {
 	
 	@Autowired
 	private List<ExpedienteAvisadorApi> avisadores;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -319,12 +329,108 @@ public class ExpedienteComercialController {
 		
 	}
 	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoExpediente (HttpServletRequest request, HttpServletResponse response) {
+        
+		DtoAdjuntoExpediente dtoAdjunto = new DtoAdjuntoExpediente();
+		
+		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
+		dtoAdjunto.setIdExpediente(Long.parseLong(request.getParameter("idExpediente")));
+	
+		
+       	FileItem fileItem = expedienteComercialApi.getFileItemAdjunto(dtoAdjunto);
+		
+       	try { 
+       		ServletOutputStream salida = response.getOutputStream(); 
+       			
+       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+       		response.setHeader("Cache-Control", "max-age=0");
+       		response.setHeader("Expires", "0");
+       		response.setHeader("Pragma", "public");
+       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+       		response.setContentType(fileItem.getContentType());
+       		
+       		// Write
+       		FileUtils.copy(fileItem.getInputStream(), salida);
+       		salida.flush();
+       		salida.close();
+       		
+       	} catch (Exception e) { 
+       		e.printStackTrace();
+       	}
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntos(Long idExpediente, ModelMap model){
+
+		model.put("data", expedienteComercialApi.getAdjuntos(idExpediente));
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	/**
+	 * Recibe y guarda un adjunto
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView upload(HttpServletRequest request, HttpServletResponse response)
+		throws Exception {
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			
+			String errores = expedienteComercialApi.upload(fileItem);			
+
+			model.put("errores", errores);
+			model.put("success", errores==null);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errores", e.getCause());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+     * Borra un adjunto del expediente comercial
+     * @param asuntoId long
+     * @param adjuntoId long
+     */
+	@RequestMapping(method = RequestMethod.POST)
+    public ModelAndView deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+		
+		boolean success= false;
+		
+		try {
+			success = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+    	
+    	return createModelAndViewJson(new ModelMap("success", success));
+    }
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);
 	}
-	
-	
-
 	
 }

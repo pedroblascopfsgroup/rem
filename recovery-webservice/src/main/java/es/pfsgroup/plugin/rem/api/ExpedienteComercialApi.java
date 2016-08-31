@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -96,6 +99,34 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public DtoPage getActivosExpediente(Long idExpediente);
+
+		/**
+		 * Recupera el adjunto del Expediente comercial
+		 * @param dtoAdjunto
+		 * @return
+		 */
+		public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto);
+		
+		/**
+		 * Recupera info de los adjuntos asociados al expediente comercial
+		 * @param id
+		 * @return
+		 */
+		public List<DtoAdjuntoExpediente> getAdjuntos(Long id);
+		
+		/**
+		 * 
+		 * @param fileItem
+		 * @return
+		 */
+		public String upload(WebFileItem fileItem) throws Exception;
+		
+		/**
+	     * Sube un adjunto del expediente comercial
+	     * @param dtoAdjunto
+	     * @return
+	     */
+		public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
 	   
 }
 

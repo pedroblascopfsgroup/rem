@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_TEP_TIPO_ENTIDAD_PROVEEDOR los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_TDP_TIPO_DOC_PROVEEDOR los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -38,9 +38,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Entidad'			,'Instrucciones del propietario'),
-        T_TIPO_DATA('02'	,'Administración'	,'Administración'),
-		T_TIPO_DATA('03'	,'Proveedor'		,'Proveedor')
+        T_TIPO_DATA('01'	,'NIF'						,'NIF'),
+        T_TIPO_DATA('02'	,'Cuenta bancaria'			,'Cuenta bancaria'),
+		T_TIPO_DATA('03'	,'Escritura constitución'	,'Escritura constitución'),
+		T_TIPO_DATA('04'	,'Estatutos vigentes'		,'Estatutos vigentes'),
+        T_TIPO_DATA('05'	,'Acta de asamblea'			,'Acta de asamblea'),
+		T_TIPO_DATA('06'	,'Convocatoria'				,'Convocatoria'),
+		T_TIPO_DATA('07'	,'Circular comunidad'		,'Circular comunidad')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -50,23 +54,23 @@ BEGIN
 
 	 
     -- LOOP para insertar los valores en DD_TEP_TIPO_ENTIDAD_PROVEEDOR -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TEP_TIPO_ENTIDAD_PROVEEDOR] ');
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TDP_TIPO_DOC_PROVEEDOR] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR WHERE DD_TEP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TDP_TIPO_DOC_PROVEEDOR WHERE DD_TDP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR '||
-                    'SET DD_TEP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_TEP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TDP_TIPO_DOC_PROVEEDOR '||
+                    'SET DD_TDP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_TDP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
 					'WHERE DD_TEP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
@@ -76,10 +80,10 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TEP_TIPO_ENTIDAD_PROV.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TDP_TIPO_DOC_PROVEEDOR.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TEP_TIPO_ENTIDAD_PROVEEDOR (' ||
-                      'DD_TEP_ID, DD_TEP_CODIGO, DD_TEP_DESCRIPCION, DD_TEP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TDP_TIPO_DOC_PROVEEDOR (' ||
+                      'DD_TDP_ID, DD_TDP_CODIGO, DD_TDP_DESCRIPCION, DD_TDP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
@@ -87,7 +91,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TIPO_ENTIDAD_PROVEEDOR ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TDP_TIPO_DOC_PROVEEDOR ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

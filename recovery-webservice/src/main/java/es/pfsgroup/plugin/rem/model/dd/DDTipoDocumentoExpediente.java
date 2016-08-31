@@ -19,39 +19,36 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de estados de una oferta.
- * 
- * @author Jose Villel
+ * Modelo que gestiona el diccionario de los tipos de documentos adjuntados al expediente comercial
+ * @author jros
  *
  */
 @Entity
-@Table(name = "DD_EOF_ESTADOS_OFERTA", schema = "${entity.schema}")
+@Table(name = "DD_TDE_TIPO_DOC_EXP", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadoOferta implements Auditable, Dictionary {
+public class DDTipoDocumentoExpediente implements Auditable, Dictionary {
 	
-	public static final String CODIGO_ACEPTADA= "01";
-	public static final String CODIGO_RECHAZADA= "02";
-	public static final String CODIGO_CONGELADA= "03";
-	public static final String CODIGO_PENDIENTE= "04";
-	
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4995317294002266864L;
 
 	@Id
-	@Column(name = "DD_EOF_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoOfertaGenerator")
-	@SequenceGenerator(name = "DDEstadoOfertaGenerator", sequenceName = "S_DD_EOF_ESTADOS_OFERTA")
+	@Column(name = "DD_TDE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDocumentoExpedienteGenerator")
+	@SequenceGenerator(name = "DDTipoDocumentoExpedienteGenerator", sequenceName = "S_DD_TDE_TIPO_DOC_EXP")
 	private Long id;
-	    
-	@Column(name = "DD_EOF_CODIGO")   
+	 
+	@Column(name = "DD_TDE_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_EOF_DESCRIPCION")   
+	@Column(name = "DD_TDE_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_EOF_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
-
+	@Column(name = "DD_TDE_DESCRIPCION_LARGA")   
+	private String descripcionLarga;
+	    
 	@Version   
 	private Long version;
 
@@ -105,5 +102,6 @@ public class DDEstadoOferta implements Auditable, Dictionary {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
-
+	
+	
 }

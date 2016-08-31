@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -69,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.DtoVisitasAgrupacion;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -76,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
@@ -134,6 +137,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private AgrupacionValidatorFactoryApi agrupacionValidatorFactory;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
 	
 	private final Log logger = LogFactory.getLog(getClass());
     
@@ -797,7 +803,7 @@ public class AgrupacionAdapter {
 			oferta.setEstadoOferta(tipoOferta);
 			
 			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
-			if(tipoOferta.getCodigo().equals("01")){
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
 				List<VOfertasActivosAgrupacion> listaOfertas= getListOfertasAgrupacion(dto.getIdAgrupacion());
 				
 				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
@@ -807,14 +813,23 @@ public class AgrupacionAdapter {
 						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
 						
 						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if(!vTipoOferta.getCodigo().equals("02")){
+						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
 							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
 							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
 						}
 					}
 				}
 				
-				activoManager.crearExpediente(oferta);
+				List<Activo>listaActivos= new ArrayList<Activo>();
+				
+				for(ActivoOferta activoOferta: oferta.getActivosOferta()){
+					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+				}
+				
+				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
+				
+				activoManager.crearExpediente(oferta,trabajo);
 			}
 			
 			genericDao.update(Oferta.class, oferta);

@@ -3,7 +3,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     alias: 'controller.expedientedetalle',    
     
     control: {
-   	         
+    	'documentosexpediente gridBase': {
+            abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+            onClickRemove: 'borrarDocumentoAdjunto',
+            download: 'downloadDocumentoAdjunto',
+            afterupload: function(grid) {
+            	grid.getStore().load();
+            },
+            afterdelete: function(grid) {
+            	grid.getStore().load();
+            }
+        }
     },
 	
 	
@@ -253,6 +263,56 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		me.getView().fireEvent("refrescarExpediente", me.getView());
 		
-	}	
+	},
+	
+	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		var grid = tableView.up('grid');
+		var record = grid.store.getAt(indiceFila);
+		
+		grid.setSelection(record);
+		
+		//grid.fireEvent("abriractivo", record);
+		me.getView().fireEvent('abrirDetalleActivoPrincipal', record.get('idActivo'));
+	},
+
+	abrirFormularioAdjuntarDocumentos: function(grid) {
+		
+		var me = this,
+		idExpediente = me.getViewModel().get("expediente.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
+		
+	},
+	
+	borrarDocumentoAdjunto: function(grid, record) {
+		var me = this;
+		idExpediente = me.getViewModel().get("expediente.id");
+
+		record.erase({
+			params: {idExpediente: idExpediente},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });	
+	},
+	
+	downloadDocumentoAdjunto: function(grid, record) {
+		
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"expedientecomercial/bajarAdjuntoExpediente."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idExpediente=record.get("idExpediente");
+		
+		me.fireEvent("downloadFile", config);
+	}
 
 });

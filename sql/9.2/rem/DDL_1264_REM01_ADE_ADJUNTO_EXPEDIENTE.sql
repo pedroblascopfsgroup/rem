@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160810
+--## FECHA_CREACION=20160829
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -74,6 +74,8 @@ BEGIN
 		ADE_ID 							NUMBER(16,0)				NOT NULL,
 		ECO_ID							NUMBER(16,0)				NOT NULL,
 		DD_TPD_ID						NUMBER(16,0)				NOT NULL,
+		DD_TDE_ID						NUMBER(16,0)				NOT NULL,
+		DD_SDE_ID						NUMBER(16,0)				NOT NULL,
 		ADJ_ID 							NUMBER(16,0),
 		ADE_NOMBRE						VARCHAR2(255 CHAR),
 		ADE_CONTENT_TYPE				VARCHAR2(100 CHAR),
@@ -128,6 +130,16 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_ADE_DDTDOC... Foreign key creada.');
 	
+	-- Creamos foreign key DD_TDE_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_TDE_DDTDOC FOREIGN KEY (DD_TDE_ID) REFERENCES '||V_ESQUEMA||'.DD_TDE_TIPO_DOC_EXP (DD_TDE_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_TDE_DDTDOC... Foreign key creada.');
+	
+	-- Creamos foreign key DD_SDE_ID
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_SDE_DDSUBTDOC FOREIGN KEY (DD_SDE_ID) REFERENCES '||V_ESQUEMA||'.DD_SDE_SUBTIPO_DOC_EXP (DD_SDE_ID) ON DELETE SET NULL)';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_SDE_DDSUBTDOC... Foreign key creada.');
+	
 	-- Creamos foreign key ADJ_ID
 	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_ADE_ADJUNTO FOREIGN KEY (ADJ_ID) REFERENCES '||V_ESQUEMA||'.ADJ_ADJUNTOS (ADJ_ID) ON DELETE SET NULL)';
 	EXECUTE IMMEDIATE V_MSQL;
@@ -136,7 +148,24 @@ BEGIN
 	-- Creamos comentario	
 	V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS '''||V_COMMENT_TABLE||'''';		
 	EXECUTE IMMEDIATE V_MSQL;
-	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado sobre la tabla.');
+	
+	-- Comentarios sobre las columnas
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADE_ID IS ''Código identificador único de adjunto expediente.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ECO_ID IS ''Código identificador único del expediente comercial.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPD_ID IS ''Tipo de documento.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TDE_ID IS ''Tipo de documento de expediente.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_SDE_ID IS ''Subipo de documento de expediente.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADJ_ID IS ''Localizador/clave/ruta del documento.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADE_NOMBRE IS ''Nombre descriptivo del documento.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADE_CONTENT_TYPE IS ''Tipo de contenido del documento.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADE_LENGTH IS ''Tamaño en bytes del documento.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADE_DESCRIPCION IS ''Descripción breve del documento.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ADE_FECHA_DOCUMENTO IS ''Fecha de subida del documento.''';
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentarios creados sobre las columnas.');
+	
+	
 	
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');

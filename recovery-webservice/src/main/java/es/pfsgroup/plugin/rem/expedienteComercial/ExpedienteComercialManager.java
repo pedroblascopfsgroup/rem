@@ -3,7 +3,9 @@ package es.pfsgroup.plugin.rem.expedienteComercial;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -13,17 +15,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoSolado;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoList;
+import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -37,6 +52,10 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.observacionesExpediente.dao.ObservacionExpedienteDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -62,6 +81,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private ObservacionExpedienteDao observacionComercialDao;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -471,6 +493,184 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		return observacionDto;
+	}
+	
+	@Override
+	public DtoPage getActivosExpediente(Long idExpediente) {
+		
+		ExpedienteComercial expediente= findOne(idExpediente);
+		List<DtoActivosExpediente> activos= new ArrayList<DtoActivosExpediente>();
+		List<ActivoOferta> activosExpediente= expediente.getOferta().getActivosOferta();
+		List<Activo> listaActivosExpediente= new ArrayList<Activo>();
+		
+		//Se crea un mapa para cada dato que se quiere obtener
+		Map<Activo,Float> activoPorcentajeParti= new HashMap<Activo, Float>();	
+		Map<Activo,Double> activoPrecioAprobado= new HashMap<Activo, Double>();
+		Map<Activo,Double> activoPrecioMinimo= new HashMap<Activo, Double>();
+		Map<Activo,Double> activoImporteParticipacion= new HashMap<Activo, Double>();
+		
+		//Recorre los activos de la oferta y los añade a la lista de activos a mostrar
+		for(ActivoOferta activoOferta: activosExpediente){
+			listaActivosExpediente.add(activoOferta.getPrimaryKey().getActivo());
+		}
+		
+		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
+		for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
+			activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo(), activoTrabajo.getParticipacion());
+			activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo(), 
+											(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
+		}
+
+		//Por cada activo recorre todas sus valoraciones para adquirir el precio aprobado de venta y el precio minimo autorizado
+		for(Activo activo: listaActivosExpediente){
+			for(ActivoValoraciones valoracion: activo.getValoracion()){
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())){
+					activoPrecioAprobado.put(activo, valoracion.getImporte());
+				}
+				if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(valoracion.getTipoPrecio().getCodigo())){
+					activoPrecioMinimo.put(activo, valoracion.getImporte());
+				}
+				
+			}
+			
+			//Convierte todos los datos obtenidos en un dto
+			DtoActivosExpediente dtoActivo= activosToDto(activo, activoPorcentajeParti, activoPrecioAprobado,activoPrecioMinimo, activoImporteParticipacion);
+			activos.add(dtoActivo);
+		}
+		
+		return new DtoPage(activos, activos.size());
+	}
+	
+	/**
+	 * Parsea un activo a objeto Dto.
+	 * @param activo
+	 * @return
+	 */
+	private DtoActivosExpediente activosToDto(Activo activo, Map<Activo,Float> activoPorcentajeParti, Map<Activo,Double> activoPrecioAprobado, 
+												Map<Activo,Double> activoPrecioMinimo, Map<Activo,Double> activoImporteParticipacion) {
+		
+		DtoActivosExpediente dtoActivo= new DtoActivosExpediente();
+		
+		try{
+			dtoActivo.setIdActivo(activo.getId());
+			dtoActivo.setNumActivo(activo.getNumActivo());
+			dtoActivo.setSubtipoActivo(activo.getSubtipoActivo().getDescripcion());
+			//Falta precio minimo y precio aprobado venta
+			
+			if(!Checks.estaVacio(activoPorcentajeParti)){
+				dtoActivo.setPorcentajeParticipacion(activoPorcentajeParti.get(activo));
+			}
+			if(!Checks.estaVacio(activoPrecioAprobado)){
+				dtoActivo.setPrecioAprobadoVenta(activoPrecioAprobado.get(activo));
+			}
+			if(!Checks.estaVacio(activoPrecioMinimo)){
+				dtoActivo.setPrecioMinimo(activoPrecioMinimo.get(activo));
+			}
+			if(!Checks.estaVacio(activoImporteParticipacion)){
+				dtoActivo.setImporteParticipacion((activoImporteParticipacion.get(activo)));
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dtoActivo;
+	}
+	
+	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+		
+		ExpedienteComercial expediente = findOne(dtoAdjunto.getIdExpediente());
+		AdjuntoExpedienteComercial adjuntoExpediente = expediente.getAdjunto(dtoAdjunto.getId());
+		
+		FileItem fileItem = adjuntoExpediente.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoExpediente.getContentType());
+		fileItem.setFileName(adjuntoExpediente.getNombre());
+		
+		return adjuntoExpediente.getAdjunto().getFileItem();
+	}
+	
+	@Override
+	public List<DtoAdjuntoExpediente> getAdjuntos(Long idExpediente) {
+		
+		List<DtoAdjuntoExpediente> listaAdjuntos = new ArrayList<DtoAdjuntoExpediente>();
+		
+		try{
+			ExpedienteComercial expediente = findOne(idExpediente);
+
+			for (AdjuntoExpedienteComercial adjunto : expediente.getAdjuntos()) {
+				DtoAdjuntoExpediente dto = new DtoAdjuntoExpediente();
+				
+				BeanUtils.copyProperties(dto, adjunto);
+				dto.setIdExpediente(expediente.getId());
+				dto.setDescripcionTipo(adjunto.getTipoDocumentoExpediente().getDescripcion());
+				dto.setDescripcionSubtipo(adjunto.getSubtipoDocumentoExpediente().getDescripcion());
+				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());				
+				
+				listaAdjuntos.add(dto);
+			}
+		
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+
+		return listaAdjuntos;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public String upload(WebFileItem fileItem) throws Exception {
+
+		//Subida de adjunto al Expediente Comercial
+		ExpedienteComercial expediente = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
+		
+		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		
+		AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
+		adjuntoExpediente.setAdjunto(adj);
+		
+		adjuntoExpediente.setExpediente(expediente);
+		
+		
+		//COMENTAR CON ANAHUAC SI LO NECESITA PARA DOCUMENTOS EXPEDIENTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "01");//Pong 01 por defecto, ya que no sabemos si se usará este campo
+		//Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);		
+		adjuntoExpediente.setTipoDocumentoActivo(tipoDocumento);
+		
+		//Setear tipo y subtipo del adjunto a subir
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		adjuntoExpediente.setTipoDocumentoExpediente((DDTipoDocumentoExpediente) genericDao.get(DDTipoDocumentoExpediente.class, filtro));
+		
+		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		adjuntoExpediente.setSubtipoDocumentoExpediente((DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
+		
+		
+		adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
+		adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
+		adjuntoExpediente.setNombre(fileItem.getFileItem().getFileName());
+		adjuntoExpediente.setDescripcion(fileItem.getParameter("descripcion"));
+		adjuntoExpediente.setFechaDocumento(new Date());
+		Auditoria.save(adjuntoExpediente);
+        
+		expediente.getAdjuntos().add(adjuntoExpediente);		
+		
+		genericDao.save(ExpedienteComercial.class, expediente);
+	        
+		return null;
+
+	}
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+		ExpedienteComercial expediente = findOne(dtoAdjunto.getIdExpediente());
+		AdjuntoExpedienteComercial adjunto = expediente.getAdjunto(dtoAdjunto.getId());
+		
+	    if (adjunto == null) { return false; }
+	    expediente.getAdjuntos().remove(adjunto);
+	    genericDao.save(ExpedienteComercial.class, expediente);
+	    
+	    return true;
 	}
 
 }

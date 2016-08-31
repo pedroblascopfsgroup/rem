@@ -1,7 +1,8 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.expedientedetalle',
-    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente'],
+    requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
+                'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial'],
     
     data: {
     	expediente: null
@@ -86,8 +87,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    		remoteUrl: 'expedientecomercial/getObservaciones',
 	    		extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-    	}
+    	},
 
-    	
+    	storeActivosExpediente: {
+    		pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.ActivosExpediente',
+	    	proxy: {
+	    		type: 'uxproxy',
+	    		remoteUrl: 'expedientecomercial/getActivosExpediente',
+	    		extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+    	},
+
+    	storeDocumentosExpediente: {
+			 pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.AdjuntoExpedienteComercial',
+      	     proxy: {
+      	        type: 'uxproxy',
+      	        remoteUrl: 'expedientecomercial/getListAdjuntos',
+      	        extraParams: {idExpediente: '{expediente.id}'}
+          	 },
+          	 groupField: 'descripcionTipo'
+		}
+	
     }
 });

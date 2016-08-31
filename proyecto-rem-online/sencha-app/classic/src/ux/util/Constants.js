@@ -49,6 +49,16 @@ Ext.define('HreRem.ux.util.Constants', {
     	ALQUILER: '02'
     },
     
+    TIPOS_TRABAJO: {
+    	TASACION: '01',
+		OBTENCION_DOCUMENTACION: '02',
+		ACTUACION_TECNICA: '03',
+		PRECIOS: '04',
+		PUBLICACIONES: '05',
+		COMERCIALIZACION: '06'
+    	
+    },
+    
     MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',

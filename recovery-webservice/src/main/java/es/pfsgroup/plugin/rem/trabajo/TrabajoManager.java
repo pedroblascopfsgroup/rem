@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.trabajo;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
@@ -867,7 +866,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		if(trabajo.getProveedorContacto()!=null && trabajo.getProveedorContacto().getProveedor() != null) dtoTrabajo.setNombreProveedor(trabajo.getProveedorContacto().getProveedor().getNombreComercial());		
 		
-		if(trabajo.getTipoTrabajo()!=null) dtoTrabajo.setTipoTrabajoDescripcion(trabajo.getTipoTrabajo().getDescripcion());
+		if(trabajo.getTipoTrabajo()!=null) {
+			dtoTrabajo.setTipoTrabajoDescripcion(trabajo.getTipoTrabajo().getDescripcion());
+			dtoTrabajo.setTipoTrabajoCodigo(trabajo.getTipoTrabajo().getCodigo());
+		}
 		
 		if(trabajo.getSubtipoTrabajo()!=null) dtoTrabajo.setSubtipoTrabajoDescripcion(trabajo.getSubtipoTrabajo().getDescripcion());
 		

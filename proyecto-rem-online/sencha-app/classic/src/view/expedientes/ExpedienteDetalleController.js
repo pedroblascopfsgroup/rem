@@ -313,6 +313,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.params.idExpediente=record.get("idExpediente");
 		
 		me.fireEvent("downloadFile", config);
+	},
+	
+	onListadoTramitesTareasExpedienteDobleClick : function(gridView,record) {
+		var me = this;
+		
+		if(Ext.isEmpty(record.get("fechaFin"))) { // Si la tarea está activa
+			me.getView().fireEvent('abrirDetalleTramiteTarea',gridView,record);
+		} else {
+			me.getView().fireEvent('abrirDetalleTramiteHistoricoTarea',gridView,record);
+		}
 	}
 
 });

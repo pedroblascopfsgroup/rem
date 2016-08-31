@@ -36,12 +36,14 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -62,6 +64,9 @@ public class ExpedienteComercialController {
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private TrabajoAdapter trabajoAdapter;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -427,6 +432,28 @@ public class ExpedienteComercialController {
     	
     	return createModelAndViewJson(new ModelMap("success", success));
     }
+	
+	/**
+	 * Recupera los tramites asociados al expediente comercial
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTramitesTareas(Long idExpediente, WebDto webDto, ModelMap model) {
+		
+		ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
+		List<DtoListadoTramites> tramites = trabajoAdapter.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
+		
+		// TODO Cambiar si finalmente es posible que un trababjo tenga más de un trámite
+		DtoListadoTramites tramite = new DtoListadoTramites(); 
+		if(!Checks.estaVacio(tramites)) {
+			tramite = tramites.get(0);
+		}
+		
+		model.put("tramite", tramite);
+		
+		return createModelAndViewJson(model);
+	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

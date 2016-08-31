@@ -108,6 +108,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
       	        extraParams: {idExpediente: '{expediente.id}'}
           	 },
           	 groupField: 'descripcionTipo'
+		},
+		
+		tareasTramiteExpediente: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.TareaList',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getTramitesTareas',
+		        extraParams: {idExpediente: '{expediente.id}'},
+		        rootProperty: 'tramite.tareas'
+	    	}
+
 		}
 	
     }

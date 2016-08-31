@@ -234,6 +234,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 reference: 'seccionPublicacionForzada',
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -273,6 +274,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 hidden: true,
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -312,6 +314,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 hidden: true,
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
@@ -348,6 +351,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 hidden: true,
 								 margin: '5 8 10 8',
 								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',

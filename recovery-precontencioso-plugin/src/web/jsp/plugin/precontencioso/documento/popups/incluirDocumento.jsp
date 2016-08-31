@@ -36,7 +36,6 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	var unidadesGestion=<app:dict value="${unidadesGestion}" />;
 	var comboUnidadesGestion = app.creaDblSelect(unidadesGestion,
 		'<s:message code="precontencioso.grid.documento.incluirDocumento.unidadGestion" text="**Unidad de Gestión" />',config); 
-	
 		
 	var btnCancelar= new Ext.Button({
 		text : '<s:message code="app.cancelar" text="**Cancelar" />'
@@ -160,8 +159,8 @@ var myCboxSelModel = new Ext.grid.CheckboxSelectionModel({
 	 	parametros.plaza = plaza.getValue();
 	 	parametros.idufir = idufir.getValue();
 	 	parametros.provinciaNotario = comboProvinciaNotario.getValue();	 	
-	 	
-		parametros.idPrc = data.id;
+	 	parametros.observacionesEDP = observacionesEDP.getValue();
+	 	parametros.idPrc = data.id;
 
 	 	return parametros;
 	 }	
@@ -437,6 +436,14 @@ var gridDocs = new Ext.grid.GridPanel({
 		,value : '<s:message text="${dtoDoc.idufir}" javaScriptEscape="true" />'
 		,fieldLabel : '<s:message code="precontencioso.grid.documento.incluirDocumento.idufir" text="**IDUFIR" />'
 	});  	
+	
+	var observacionesEDP = new Ext.form.TextArea({
+			name : 'observacionesEDP'
+            ,fieldLabel: '<s:message code="precontencioso.grid.documento.incluirDocumento.observaciones" text="**Observaciones" />'
+            ,height : 60
+            ,width : 170
+            ,value : '<s:message text="${dtoDoc.observacionesEDP}" javaScriptEscape="true" />'
+    });
 
 	
 	var panelSuperior={
@@ -482,7 +489,7 @@ var gridDocs = new Ext.grid.GridPanel({
 		,autoHeight : true
    	    ,autoWidth : true
 		,defaults : {xtype : 'fieldset', border:false , cellCls : 'vtop', bodyStyle : 'padding-left:0px'}
-		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza]}
+		,items:[{items: [ comboTipoDocumento, notario, asiento, finca, numFinca, numRegistro, plaza <sec:authorize ifAllGranted="ROLE_PUEDE_VER_OBSERVACIONES_EDP">	,observacionesEDP</sec:authorize>]}
 				,{items: [ comboProvinciaNotario, protocolo, fechaEscritura, tomo, libro, folio, idufir]}
 		]
 	});	
@@ -501,5 +508,45 @@ var gridDocs = new Ext.grid.GridPanel({
 	
 
 	page.add(panel);
+	debugger;
+	<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+		if(data.esGestoria) {
+			btnAgregarUnidadGestion.setDisabled(true);
+			comboUnidadesGestion.setDisabled(true);
+			comboTipoDocumento.setDisabled(true);
+			notario.setDisabled(true);
+			asiento.setDisabled(true);
+			finca.setDisabled(true);
+			numFinca.setDisabled(true);
+			numRegistro.setDisabled(true);
+			plaza.setDisabled(true);
+			comboProvinciaNotario.setDisabled(true);
+			protocolo.setDisabled(true);
+			fechaEscritura.setDisabled(true);
+			tomo.setDisabled(true);
+			libro.setDisabled(true);
+			folio.setDisabled(true);
+			idufir.setDisabled(true);
+			observacionesEDP.setDisabled(true);
+		}else{
+			btnAgregarUnidadGestion.setDisabled(false);
+			comboUnidadesGestion.setDisabled(false);
+			comboTipoDocumento.setDisabled(false);
+		 	notario.setDisabled(false);
+			asiento.setDisabled(false);
+			finca.setDisabled(false);
+			numFinca.setDisabled(false);
+			numRegistro.setDisabled(false);
+			plaza.setDisabled(false);
+			comboProvinciaNotario.setDisabled(false);
+			protocolo.setDisabled(false);
+			fechaEscritura.setDisabled(false);
+			tomo.setDisabled(false);
+			libro.setDisabled(false);
+			folio.setDisabled(false);
+			idufir.setDisabled(false);
+			observacionesEDP.setDisabled(false);
+		}
+	</c:if>
 	
 </fwk:page>

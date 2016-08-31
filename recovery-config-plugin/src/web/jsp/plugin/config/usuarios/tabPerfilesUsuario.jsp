@@ -63,7 +63,15 @@
 			}
 		}
 	});	
-	
+
+	if ('${usuarioEnOtraCartera}' == 'true') {
+		btAdd.setVisible(false);
+		btElimina.setVisible(false);
+	} else {
+		btAdd.setVisible(true);
+		btElimina.setVisible(true);
+	}
+
 	<pfs:grid name="gridPerfiles" dataStore="perfilesDS"  columnModel="perfilesCM" titleKey="plugin.config.usuarios.consulta.perfiles.control.grid.title" title="**Perfiles Asociados" collapsible="false" bbar="btAdd,btElimina" />
 	
 	

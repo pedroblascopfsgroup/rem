@@ -32,8 +32,10 @@ import es.pfsgroup.plugin.rem.excel.ActivosPreciosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
+import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
 
 @Controller
@@ -49,6 +51,7 @@ public class PreciosController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;		
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivos(DtoActivoFilter dtoActivoFiltro,
 			ModelMap model) {
@@ -70,12 +73,13 @@ public class PreciosController {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
+	public ModelAndView getPropuestas(DtoHistoricoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
 		
 		try {
 
-			Page page = preciosApi.getPropuestas(dtoPropuestaFiltro);
+			Page page = preciosApi.getHistoricoPropuestasPrecios(dtoPropuestaFiltro);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
@@ -107,16 +111,34 @@ public class PreciosController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public void createPropuestaPreciosAutom(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// Metodo para crear propuestas por peticion automatica
+		
+		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response,false);		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
 	public void generarPropuestaManual(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		// Metodo para crear propuestas por peticion manual
+		
+		generarPropuesta(dtoActivoFilter,nombrePropuesta,request,response,true);
+	}
+	
+	private void generarPropuesta(DtoActivoFilter dtoActivoFilter, String nombrePropuesta, HttpServletRequest request, HttpServletResponse response, Boolean esManual) throws Exception {
 		
 		dtoActivoFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoActivoFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
+		//Obtiene la lista de activos buscada por filtros de pantalla
+		@SuppressWarnings("unchecked")
+		List<VBusquedaActivosPrecios> listaActivos = (List<VBusquedaActivosPrecios>) preciosApi.getActivos(dtoActivoFilter).getResults();
+		
+		//Genera la propuesta en BBDD y asocia los activos
+		preciosApi.createPropuestaPreciosManual(listaActivos, nombrePropuesta, dtoActivoFilter.getTipoPropuestaCodigo(), esManual);
+		
 		// FIXME Se genera una excel básica, pendiente de definir
-		ExcelReport report = preciosApi.createPropuestaPrecios(dtoActivoFilter, nombrePropuesta);
-		
-		excelReportGeneratorApi.generateAndSend(report, response);		
-		
+		ExcelReport report = preciosApi.createExcelPropuestaPrecios(listaActivos, dtoActivoFilter.getEntidadPropietariaCodigo(), nombrePropuesta);
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
 	/****************************************************************************************************************/
@@ -173,8 +195,46 @@ public class PreciosController {
         
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivosByPropuesta(Long idPropuesta,
+			ModelMap model) {
 
+		try {
 
+			List<VBusquedaActivosPropuesta> listaActivos = preciosApi.getActivosByIdPropuesta(idPropuesta);
 
+			model.put("data", listaActivos);
+			model.put("totalCount", listaActivos.size());
+			model.put("success", true);
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getNumActivosByTipoPrecio(ModelMap model)
+	{
+		
+		try {
+
+			List<VBusquedaNumActivosTipoPrecio> listaCountActivos = preciosApi.getNumActivosByTipoPrecioAndCartera();
+
+			model.put("data", listaCountActivos);
+			model.put("totalCount", listaCountActivos.size());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 }

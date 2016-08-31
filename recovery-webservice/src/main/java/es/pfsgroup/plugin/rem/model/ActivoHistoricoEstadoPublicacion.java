@@ -21,7 +21,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDPortal;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
@@ -46,7 +45,7 @@ public class ActivoHistoricoEstadoPublicacion implements Serializable, Auditable
 	@Id
     @Column(name = "HEP_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoHistoricoEstadoPublicacionGenerator")
-    @SequenceGenerator(name = "ActivoHistoricoEstadoPublicacionGenerator", sequenceName = "S_HEP_HIST_EST_PUBLICACION")
+    @SequenceGenerator(name = "ActivoHistoricoEstadoPublicacionGenerator", sequenceName = "S_ACT_HEP_HIST_EST_PUBLICACION")
     private Long id;
 
 	@ManyToOne

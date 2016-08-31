@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionMain', {
 	extend		: 'Ext.panel.Panel',
     xtype		: 'activospublicacionmain',
-    requires	: /* Componentes que van dentro: Búsqueda y grid */[],
+    requires	: ['HreRem.view.publicacion.activos.ActivosPublicacionSearch', 'HreRem.view.publicacion.activos.ActivosPublicacionList'],
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -14,7 +14,12 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionMain', {
         me.setTitle(HreRem.i18n('title.publicaciones.activos'));
         
         me.items = [
-                    /* Aquí metemos los xtype que tenemos que definir: Búsqueda y Grid con stock */
+                    {	
+                    	xtype: 'activospublicacionsearch', reference: 'ActivosPublicacionSearch'
+                    },
+                    {	
+                    	xtype: 'activospublicacionlist', reference: 'ActivosPublicacionList'
+                    }
         
         ];
         

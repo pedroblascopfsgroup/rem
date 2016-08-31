@@ -75,7 +75,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleCabecera', {
 					                   		flex: 4,
 					                   		maxWidth: 900,
 											height: 150,
-					                   		margin: '5 10 10 10 ',
+					                   		margin: '5 10 10 30 ',
 											defaultType: 'displayfield',
 											defaults: {
 												labelWidth: 80},

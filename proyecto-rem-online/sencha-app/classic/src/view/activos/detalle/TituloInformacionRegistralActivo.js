@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     xtype: 'tituloinformacionregistralactivo',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'tituloinformacionregistralactivo',
     scrollable	: 'y',
     recargar: false,

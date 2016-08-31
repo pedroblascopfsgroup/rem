@@ -116,6 +116,6 @@ public interface LiquidacionApi {
 	 * @param idProc
 	 * @return
 	 */
-	LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idProc);
+	LiquidacionPCO getLiquidacionByCnt(Long cntId, Long idAsunto);
 
 }

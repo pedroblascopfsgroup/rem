@@ -65,9 +65,10 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 			   				        	flex:2 
 			   				        },
 			   				        {   
-			   				        	text: HreRem.i18n('header.listado.tasacion.fechaFin'),
+			   				        	text: HreRem.i18n('fieldlabel.fecha'),
 			   				        	dataIndex:	'fechaValorTasacion',
-			   				        	flex:2
+			   				        	flex:2,
+			   				        	formatter: 'date("d/m/Y")'	
 			   				        },
 			   				        {   
 			   				        	text: HreRem.i18n('header.listado.tasacion.nomTasadora'),
@@ -104,7 +105,7 @@ Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
 						formatter: 'date("d/m/Y")',
 						fieldLabel: HreRem.i18n('fieldlabel.detail.tasacion.fechaTasacion'),
 						width:		250,
-						bind:		'{tasacion.fechaInicioTasacion}',
+						bind:		'{tasacion.fechaValorTasacion}',
 						readOnly: true
 					},
 					{ 

@@ -30,9 +30,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoPublicacion implements Auditable, Dictionary {
 	
-    public static final String CODIGO_NOPUBLICADO = "01";
-    public static final String CODIGO_PUBLICADOVISIBLE = "02";
-    public static final String CODIGO_PUBLICADOOCULTO = "03";
+    public static final String CODIGO_PUBLICADO = "01";
+    public static final String CODIGO_PUBLICADO_FORZADO = "02";
+    public static final String CODIGO_PUBLICADO_OCULTO = "03";
+    public static final String CODIGO_PUBLICADO_PRECIOOCULTO = "04";
+    public static final String CODIGO_DESPUBLICADO = "05";
+    public static final String CODIGO_NO_PUBLICADO = "06";
+    public static final String CODIGO_PUBLICADO_FORZADO_PRECIOOCULTO = "07";
     
 	private static final long serialVersionUID = 1L;
 

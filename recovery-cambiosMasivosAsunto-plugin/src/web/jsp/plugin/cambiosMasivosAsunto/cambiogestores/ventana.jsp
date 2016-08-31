@@ -366,6 +366,18 @@
 				   				},
 				   				icon: icon
 							});
+							<%-- Al finalizar una gestion, resetear los campos --%>
+							comboTipoGestor.reset();
+							comboDespachosOriginal.reset();
+							comboDespachosOriginal.setDisabled(true);	
+							comboGestorOriginal.reset();
+							comboGestorOriginal.setDisabled(true);	
+							comboDespachosDestino.reset();
+							comboDespachosDestino.setDisabled(true);
+							comboGestorDestino.reset();
+							comboGestorDestino.setDisabled(true);
+							fechaInicio.reset();
+							fechaFin.reset();
 						}
 					}); 
 				}else{

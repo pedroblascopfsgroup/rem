@@ -88,5 +88,12 @@
 		bbar="btNuevo,btBorrar" 
 		rowdblclick="opengrupo" />
 		
+	if ('${usuarioEnOtraCartera}' == 'true') {
+		btNuevo.setVisible(false);
+		btBorrar.setVisible(false);
+	} else {
+		btNuevo.setVisible(true);
+		btBorrar.setVisible(true);
+	}
 	
 </pfslayout:tabpage>

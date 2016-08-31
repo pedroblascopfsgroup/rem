@@ -28,6 +28,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Table(name = "DD_TAC_TIPO_ACTUACION", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class DDTipoActuacion implements Dictionary, Auditable {
+	
+	
+	public static final String TIPO_ACTUACION_PRECONTENCIOSO = "PCO";
+	public static final String TIPO_ACTUACION_CNT_BLOQUEADOS = "04";
+	public static final String TIPO_ACTUACION_EJECUTIVO_CAMBIARIO = "EJ";
 
     /**
      * serialVersionUID.

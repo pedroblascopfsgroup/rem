@@ -179,7 +179,7 @@ FOR v_procurador IN (SELECT USU_ID, USU_USERNAME
                , zpu.fechacrear
                )
                  VALUES('||V_ESQUEMA||'.s_zon_pef_usu.nextval
-                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'')
+                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'' or zon_cod = ''1'')
                 , (select pef_id from cm01.pef_perfiles where pef_codigo = ''GEST_EXTERNO'')
                 , (select usu_id from cmmaster.usu_usuarios where usu_username = '''||v_procurador.USU_USERNAME||''')
                 , '''||V_USUARIO||'''
@@ -187,7 +187,7 @@ FOR v_procurador IN (SELECT USU_ID, USU_USERNAME
             
    SELECT COUNT(*) INTO V_EXISTE
   FROM CM01.ZON_PEF_USU
-  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01')
+  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01' or zon_cod = '1')
     AND PEF_ID = (select pef_id from cm01.pef_perfiles where pef_codigo = 'GEST_EXTERNO')
     AND USU_ID = (select usu_id from cmmaster.usu_usuarios where usu_username = v_procurador.USU_USERNAME);
   
@@ -526,7 +526,7 @@ FOR v_letrado IN (SELECT USU_ID, USU_USERNAME
                , zpu.fechacrear
                )
                  VALUES('||V_ESQUEMA||'.s_zon_pef_usu.nextval
-                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'')
+                , (select max(zon_id) from cm01.zon_zonificacion where zon_cod = ''01'' or zon_cod = ''1'')
                 , (select pef_id from cm01.pef_perfiles where pef_codigo = ''GEST_EXTERNO'')
                 , (select usu_id from cmmaster.usu_usuarios where usu_username = '''||v_letrado.USU_USERNAME||''')
                 , '''||V_USUARIO||'''
@@ -534,7 +534,7 @@ FOR v_letrado IN (SELECT USU_ID, USU_USERNAME
             
    SELECT COUNT(*) INTO V_EXISTE
   FROM CM01.ZON_PEF_USU
-  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01')
+  WHERE ZON_ID = (select max(zon_id) from cm01.zon_zonificacion where zon_cod = '01' or zon_cod = '1')
     AND PEF_ID = (select pef_id from cm01.pef_perfiles where pef_codigo = 'GEST_EXTERNO')
     AND USU_ID = (select usu_id from cmmaster.usu_usuarios where usu_username = v_letrado.USU_USERNAME);
   
@@ -596,7 +596,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABEC
     select '||V_ESQUEMA||'.s_GAA_GESTOR_ADICIONAL_ASUNTO.nextval uk,
            aux.asu_id, 
            aux.usd_id,
-           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GESCON''), 
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''LETR''), 
            '''||V_USUARIO||''', 
            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
     from 
@@ -613,7 +613,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABEC
          where not exists (select 1 from '||V_ESQUEMA||'.GAA_GESTOR_ADICIONAL_ASUNTO gaa where gaa.asu_id = asu.asu_id 
                                                                                            and gaa.dd_tge_id = (select dd_tge_id 
                                                                                                                   from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
-                                                                                                                  where dd_tge_codigo=''GESCON'')
+                                                                                                                  where dd_tge_codigo=''LETR'')
                           )
       ) auxi where auxi.ranking = 1
      ) aux');
@@ -633,7 +633,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABEC
            aux.asu_id, 
            aux.usd_id,
            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF''), 
-           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''GESCON''), 
+           (select dd_tge_id from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor where dd_tge_codigo=''LETR''), 
            '''||V_USUARIO||''', 
            TO_TIMESTAMP(TO_CHAR(SYSTIMESTAMP,''DD/MM/RR HH24:MI:SS.FF''),''DD/MM/RR HH24:MI:SS.FF'')
     from 
@@ -650,7 +650,7 @@ FOR v_letrado IN (SELECT DISTINCT CD_DESPACHO FROM CM01.MIG_PROCEDIMIENTOS_CABEC
           where not exists (select 1 from '||V_ESQUEMA||'.GAH_GESTOR_ADICIONAL_HISTORICO gah where gah.gah_asu_id = asu.asu_id 
                                                                                                and GAH_TIPO_GESTOR_ID = (select dd_tge_id 
                                                                                                                            from '||V_ESQUEMA_MASTER||'.dd_tge_tipo_gestor 
-                                                                                                                          where dd_tge_codigo=''GESCON'')
+                                                                                                                          where dd_tge_codigo=''LETR'')
                             )
       ) auxi where auxi.ranking = 1
      ) aux');    

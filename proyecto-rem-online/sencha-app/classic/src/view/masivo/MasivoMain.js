@@ -22,7 +22,7 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 	initComponent: function() {
 		
 		
-		var me = this;		
+		var me = this;
 		
 		me.items = [
 		
@@ -168,15 +168,15 @@ Ext.define('HreRem.view.masivo.MasivoMain', {
 					    	]
 					    	
 					    	
-					    }/*,
+					    },
 				        {
 				            xtype: 'pagingtoolbar',
 				            dock: 'bottom',
 				            displayInfo: true,
 				            bind: {
-				                store: '{storeCargamasiva}'
+				                store: '{storeListadoProcesos}'
 				            }
-				        }*/
+				        }
 				    ]
 				
 				}

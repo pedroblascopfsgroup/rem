@@ -78,7 +78,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													width: 		'100%',
 													colspan: 1,
 										        	bind: {
-									            		store: '{comboTipoTrabajo}',
+									            		store: '{comboTipoTrabajoCreaFiltered}',
 									            		value: '{trabajo.tipoTrabajoCodigo}'
 									            	},
 						    						listeners: {

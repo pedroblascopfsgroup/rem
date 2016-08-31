@@ -61,6 +61,8 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 	private Date fechaVencReal;
 	
 	private String destinatarioTarea;
+	
+	private String descripcionTipo;
 
 	public MEJHistoricoAsuntoViewDto(HistoricoAsuntoInfo historicoAsunto) {
 		if (Checks.esNulo(historicoAsunto)){
@@ -307,6 +309,14 @@ public class MEJHistoricoAsuntoViewDto implements Serializable {
 
 	public void setAgenda(Boolean agenda) {
 		this.agenda = agenda;
+	}
+
+	public String getDescripcionTipo() {
+		return descripcionTipo;
+	}
+
+	public void setDescripcionTipo(String descripcionTipo) {
+		this.descripcionTipo = descripcionTipo;
 	}	
 	
 }

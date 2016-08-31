@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionComercialActivo', {
     xtype: 'informacioncomercialactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'informacioncomercialactivoref',
     //layout: 'fit',
     scrollable: 'y',

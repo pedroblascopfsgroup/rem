@@ -30,8 +30,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoDisponibilidadComercial implements Auditable, Dictionary {
 	
-    public static final String CODIGO_HAYA = "01";
-    public static final String CODIGO_INVERSORES = "02";
+    public static final String CODIGO_CONDICIONADO = "01";
+    public static final String CODIGO_NO_CONDICIONADO = "02";
 
 	private static final long serialVersionUID = 1L;
 

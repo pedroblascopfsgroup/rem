@@ -31,8 +31,7 @@ public class PrecontenciosoGestorProcuradorHandler extends PROBaseActionHandler 
 	public void run(ExecutionContext executionContext) throws Exception {
 		Procedimiento prc = getProcedimiento(executionContext);
 		if(!Checks.esNulo(prc.getAsunto())){
-			if(extAsuntoManager.tieneActorEnAsunto(prc.getAsunto().getId(), coreProjectContext.getTiposGestoresDeProcuradores()) 
-					&& pcoManager.existeTipoGestor(prc.getId(), "CENTROPROCURA")){	
+			if(pcoManager.existeTipoGestor(prc.getId(), "CENTROPROCURA")){	
 				executionContext.getToken().signal("avanzaConProcu");
 			}else{
 				executionContext.getToken().signal("avanza");

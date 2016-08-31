@@ -4,7 +4,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     alias: 'viewmodel.agrupaciondetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoAgrupacion', 
-    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones'],
+    'HreRem.model.ActivoSubdivision', 'HreRem.model.Subdivisiones', 'HreRem.model.VisitasAgrupacion','HreRem.model.OfertasAgrupacion','HreRem.model.OfertaComercial'],
     
     data: {
     	agrupacionficha: null
@@ -107,6 +107,25 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	    	 }
     	},
     	
+    	storeVisitasAgrupacion: {  
+	   	     pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.VisitasAgrupacion',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'agrupacion/getListVisitasAgrupacionById',
+		        extraParams: {id: '{agrupacionficha.id}'}
+	    	 }
+    	},
+    	storeOfertasAgrupacion: {  
+	   	     pageSize: $AC.getDefaultPageSize(),
+			 model: 'HreRem.model.OfertasAgrupacion',
+		     proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'agrupacion/getListOfertasAgrupacion',
+		        extraParams: {id: '{agrupacionficha.id}'}
+	    	 }
+    	},
+    	
     	storeSubdivisiones: {    			
     		 model: 'HreRem.model.Subdivisiones',
 		     proxy: {
@@ -138,7 +157,34 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		        remoteUrl: 'agrupacion/getFotosSubdivisionById',
 		        extraParams: {id: '{subdivisionFoto.id}', agrId: '{subdivisionFoto.agrupacionId}'}
 		     }
-    	}
+    	},
+    	
+    	comboEstadoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}   	
+	    },
+	    
+	    comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}   	
+	    },
+	    
+	    comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDocumentos'}
+			}   	
+	    }
     	
     	
      }    

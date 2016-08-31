@@ -316,6 +316,8 @@ var contratoBloqueado = new Ext.form.Label({
  if(d.bloqueoContrato!=null && d.bloqueoContrato!=''){
  	contratoBloqueado.show();
  	contratoBloqueado.setText('Contrato bloqueado: '+d.bloqueoContrato);
+ }else{
+ 	contratoBloqueado.setVisible(false);
  }
   
   if(d.condEspec!=null)

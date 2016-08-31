@@ -151,7 +151,7 @@ public class Acuerdo implements Serializable, Auditable {
 	private Date fechaLimite;	
 	
 	@Column(name = "ACU_IMPORTE_COSTAS")
-	private Long importeCostas;	
+	private Float importeCostas;	
 	
     @ManyToOne
     @JoinColumn(name = "ACU_USER_PROPONENTE")
@@ -556,11 +556,11 @@ public class Acuerdo implements Serializable, Auditable {
 		this.proponente = proponente;
 	}
 
-	public Long getImporteCostas() {
+	public Float getImporteCostas() {
 		return importeCostas;
 	}
 
-	public void setImporteCostas(Long importeCostas) {
+	public void setImporteCostas(Float importeCostas) {
 		this.importeCostas = importeCostas;
 	}
 	

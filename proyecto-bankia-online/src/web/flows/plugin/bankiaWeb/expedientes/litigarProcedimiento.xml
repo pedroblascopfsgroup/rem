@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/webflow http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+    
+    <var name="dto" class="es.capgemini.pfs.asunto.dto.ProcedimientoDto"/>
+    
+	<input name="idExpediente" type="java.lang.Long"/>
+	<input name="idContratos" type="java.lang.String" />
+	<input name="idAsunto" type="java.lang.Long" />
+	<input name="litigar" type="java.lang.Boolean" />
+	
+	<decision-state id="newOrEdit">
+		<if test="idAsunto!=null" then="buscar" else="litigarProcedimiento" />
+	</decision-state>
+
+	<action-state id="buscar">
+	    	<evaluate expression="executor.execute('asuntosManager.get', idAsunto)" result="flowScope.asunto" />
+			<transition to="litigarProcedimiento" />
+	</action-state>	
+	
+	<!-- renderiza el formulario -->
+    <view-state id="litigarProcedimiento" view="plugin/bankiaWeb/expedientes/litigarProcedimiento" >
+	    <on-entry>
+	    	<evaluate expression="executor.execute('extAsuntosManager.crearAsuntoLitigio', idExpediente, idContratos, litigar)" result="flowScope.idAsunto" />
+	    	<evaluate expression="executor.execute('asuntosManager.get', idAsunto)" result="flowScope.asunto" />
+	    	<evaluate expression="requestParameters.idExpediente" result="idExpediente" />
+            <evaluate expression="executor.execute('asuntosManager.obtenerAsuntosDeUnExpediente',idExpediente)" result="flowScope.asuntos" />
+			<evaluate expression="executor.execute('procedimientoManager.getTiposActuacionByTipoAsunto', idAsunto)" result="flowScope.tiposActuacion" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposProcedimiento')" result="flowScope.tiposProcedimientos" />
+	    	<evaluate expression="executor.execute('procedimientoManager.getTiposReclamacion')" result="flowScope.tiposReclamacion" />
+	    	<evaluate expression="executor.execute('expedienteManager.findExpedientesContratoPorId', idExpediente)" result="flowScope.contratos" />
+	    	<evaluate expression="requestParameters.idContratos" result="idContratos" />
+	    	<evaluate expression="requestParameters.litigar" result="litigar" />
+	    </on-entry>
+	    <transition on="updateProcedimiento" to="grabarlitigio"/>
+    </view-state>
+    
+    <decision-state id="grabarlitigio">
+    	<if test="litigar==true" then="litigar" else="nolitigar" />
+    </decision-state>
+    
+    <end-state id="litigar" view="asuntos/returnJSON">
+	  <on-entry>	
+		<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+		<evaluate expression="executor.execute('procedimientoManager.salvarProcedimiento',dto)" result="flowScope.id"/>
+		<evaluate expression="executor.execute('plugin.precontencioso.salvarProcedimientoPCO',dto, id)" result="flowScope.id"/>
+	  </on-entry>
+	</end-state>
+	
+	<end-state id="nolitigar" view="asuntos/returnJSON">
+	  <on-entry>	
+		<evaluate expression="binder.bindAndValidate(flowRequestContext,dto)" />
+		<evaluate expression="executor.execute('plugin.proyectoBankiaOnline.noLitigar',dto)" />
+		<evaluate expression="requestParameters.idAsunto" result="flowScope.id" />
+	  </on-entry>
+	</end-state>
+</flow>

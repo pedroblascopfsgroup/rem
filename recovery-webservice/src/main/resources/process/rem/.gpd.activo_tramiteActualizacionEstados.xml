@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root-container name="activo_tramiteActualizacionEstados" width="882" height="818">
+  <node name="inicio" x="327" y="98" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T012_AnalisisPeticionActualizacionEstado" x="255" y="193" width="278" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="Fin" x="327" y="293" width="132" height="36"/>
+</root-container>

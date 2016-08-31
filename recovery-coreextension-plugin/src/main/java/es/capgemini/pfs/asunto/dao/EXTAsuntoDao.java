@@ -6,9 +6,11 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.dto.DtoReportAnotacionAgenda;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.asunto.model.DDTiposAsunto;
+import es.capgemini.pfs.contrato.model.Contrato;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.expediente.model.Expediente;
+import es.capgemini.pfs.expediente.model.ExpedienteContrato;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoFondo;
 import es.pfsgroup.recovery.ext.impl.asunto.dto.EXTDtoBusquedaAsunto;
@@ -26,6 +28,11 @@ public interface EXTAsuntoDao extends AbstractDao<Asunto, Long>{
 	
 	Long crearAsuntoConEstado(GestorDespacho gestorDespacho, GestorDespacho supervisor, GestorDespacho procurador,
 			String nombreAsunto, Expediente expediente, String observaciones, String codigoEstadoAsunto, DDTiposAsunto tipoAsunto);
+	
+	Long crearAsuntoConEstado(GestorDespacho gestorDespacho,
+			GestorDespacho supervisor, GestorDespacho procurador,
+			String nombreAsunto, Expediente expediente, String observaciones,
+			String codigoEstadoAsunto, DDTiposAsunto tipoAsunto, List<Contrato> expContratos);	
 	
 	 /**
      * Modifica un Asunto.

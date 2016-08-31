@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -12,17 +13,26 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.Visita;
 
 
 public interface ActivoApi {
@@ -34,6 +44,8 @@ public interface ActivoApi {
 	     */
 	    @BusinessOperationDefinition("activoManager.get")
 	    public Activo get(Long id);
+	    
+		public Activo getByNumActivo(Long id);
 	    
 	    @BusinessOperationDefinition("activoManager.saveOrUpdate")
 	    public boolean saveOrUpdate(Activo activo);
@@ -77,6 +89,9 @@ public interface ActivoApi {
 	    
 	    @BusinessOperationDefinition("activoManager.savePrecioVigente")
 	    public boolean savePrecioVigente(DtoPrecioVigente precioVigenteDto);
+	    
+	    @BusinessOperationDefinition("activoManager.saveOfertaActivo")
+	    public boolean saveOfertaActivo(DtoOfertaActivo precioVigenteDto);
 	    
 		/**
 		 * saveActivoValoracion: Para un activo dado, actualiza o crea una valoracion por tipo de precio.
@@ -186,13 +201,35 @@ public interface ActivoApi {
 		 */
 		public boolean deleteValoracionPrecio(Long id);
 		
+		/**
+		 * Este método obtiene un objeto con los condicionantes del activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuelve un objeto con los datos obtenidos.
+		 */
 		public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo);
 		
 		public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo);
+		
 		public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica);
+		
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
+		/**
+		 * Este método obtiene los estados, el historial, de publicación de un activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
 		public List<DtoEstadoPublicacion> getEstadoPublicacionByActivo(Long idActivo);
+		
+		/**
+		 * Este método obtiene los datos del apartado 'datos publicación' de la tab 'publicacion' de un activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuelve un dto con los datos obtenidos.
+		 */
+		public DtoDatosPublicacion getDatosPublicacionByActivo(Long idActivo);
 
 		/**
 		 * Recupera una página de propuestas según el filtro recibido
@@ -200,8 +237,53 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Page getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro);
+
+		/**
+		 * Este método obtiene una página de resultados de la búsqueda de Activos Publicación.
+		 * @param dtoActivosPublicacion
+		 * @return Devuelve los resultados paginados del grid de la búsqueda de activos publicación.
+		 */
+		public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
 		
+		/**
+		 * Este método obtiene el último HistoricoEstadoPublicacion por el ID de activo.
+		 * @param activoID : ID del activo para buscar el HistoricoEstadoPublicacion.
+		 * @return Devuelve el último histórico por ID para el ID del activo.
+		 */
+		public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
 		
+		/**
+		 * Inserta o actualiza una visita aun activo
+		 * 
+		 * @param vista
+		 * @return
+		 */
+		public Visita insertOrUpdateVisitaActivo(Visita visita) throws IllegalAccessException, InvocationTargetException;
+
+		/**
+		 * Este método obtiene los estados, el historial, de acciones del informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
+
+		/**
+		 * Este método obtiene los estados, el historial, del mediador de la pestaña informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo);
+
+		/**
+		 * Este método recibe un objeto con los condicionantes del activo y lo almacena en la DDBB.
+		 * 
+		 * @param id: ID del activo a filtrar los datos.
+		 * @param dto: dto con los datos a insertar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto);
     }
 
 

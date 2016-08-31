@@ -553,6 +553,7 @@ public class MEJDecisionProcedimientoManager extends
         decisionProcedimiento.setEstadoDecision(estadoDecision);
         decisionProcedimiento.setFinalizada(false);
         decisionProcedimiento.setParalizada(false);
+        decisionProcedimiento.setNumOperacion(dtoDecisionProcedimiento.getNumOperacion());
 
         decisionProcedimientoDao.saveOrUpdate(decisionProcedimiento);
         

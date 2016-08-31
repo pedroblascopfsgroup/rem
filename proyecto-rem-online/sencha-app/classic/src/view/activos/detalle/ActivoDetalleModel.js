@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Gestor', 'HreRem.model.GestorActivo', 
     'HreRem.model.AdmisionDocumento', 'HreRem.model.AdjuntoActivo', 'HreRem.model.BusquedaTrabajo',
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
-    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes'],
+    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo','HreRem.model.OfertaActivo'],
     
     data: {
     	activo: null,
@@ -152,15 +152,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
-			 },	
-		getIconClsCondicionantesOtro: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.otro');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },	
+			 },
 		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.ocupadoSinTitulo');
 			   	if(!eval(condicion)) {
@@ -176,7 +168,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	} else {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
-			 },	
+			 },
+		 getSiNoFromOtro: function(get) {
+				var condicion = get('activoCondicionantesDisponibilidad.otro');
+
+			   	if(Ext.isEmpty(condicion)) {
+			   		return '0';
+			   	} else {
+			   		return '1';
+			   	}
+			 },
 		 //FinCondicionantes
 	     
 	     getSrcSelloCalidad: function(get) {
@@ -201,7 +202,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     	
 	     	
-	     }
+	     },
+	     
+	     getEstadoPublicacionCodigo: function(get) {
+			var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
+			return codigo;
+		 }
 	 },
 
     stores: {
@@ -317,6 +323,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        extraParams: {id: '{activo.id}'}
 	    	 }
     		},
+    		
+    		storeVisitasActivo: {    	
+       		 pageSize: $AC.getDefaultPageSize(),
+       		 model: 'HreRem.model.VisitasActivo',
+   		     proxy: {
+   		        type: 'uxproxy',
+   		        remoteUrl: 'activo/getListVisitasActivoById',
+   		        extraParams: {id: '{activo.id}'}
+   	    	 }
+       		},
+       		storeOfertasActivo: {    	
+       		 pageSize: $AC.getDefaultPageSize(),
+       		 model: 'HreRem.model.OfertaActivo',
+   		     proxy: {
+   		        type: 'uxproxy',
+   		        remoteUrl: 'activo/getListOfertasActivos',
+   		        extraParams: {id: '{activo.id}'}
+   	    	 }
+       		},
     		
     		storeFotos: {    			
     		 model: 'HreRem.model.Fotos',
@@ -435,6 +460,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		
     		storeTasaciones: {
 				 model: 'HreRem.model.ActivoTasacion',
+				 sorters: [{ property: 'fechaValorTasacion', direction: 'DESC' }],
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'activo/getListTasacionById',
@@ -644,17 +670,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getEstadoPublicacionByActivo',
     				extraParams: {id: '{activo.id}'}
-    			}
+    			},
+				autoload: true
+    		},
+    		
+    		historicoInformeComercial:{
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.InformeComercial',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getEstadoInformeComercialByActivo',
+    				extraParams: {id: '{activo.id}'}
+    			},
+				autoload: true
+    		},
+    		
+    		historicoMediador:{
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.HistoricoMediador',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getHistoricoMediadorByActivo',
+    				extraParams: {id: '{activo.id}'}
+    			},
+				autoload: true
     		},
     		
     		storeHistoricoValoresPrecios : {    			
     			pageSize: $AC.getDefaultPageSize(),
 		    	proxy: {
 			        type: 'uxproxy',
-			        remoteUrl: 'activo/getHistoricoValoresPrecios'
+			        remoteUrl: 'activo/getHistoricoValoresPrecios',
+			        extraParams: {idActivo: '{activo.id}'}
 		    	},
-		    	remoteSort: true,
-		    	remoteFilter: true
+		    	sorters: [{ property: 'fechaFin', direction: 'DESC' }],
+		        groupField: 'descripcionTipoPrecio'
     		},
     		
     		storePropuestasActivo: {
@@ -670,8 +720,43 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		            beforeload : 'beforeLoadPropuestas'
 		        }
 		        
-    		}
-
-	
+    		},
+    		
+    		storeEstadoDisponibilidadComercial: {    		
+				model: 'HreRem.model.DDBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoDisponibilidadComercial'}
+				},
+				autoload: true
+			},
+			
+		comboEstadoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosOfertas'}
+			}   	
+	    },
+	    
+	    comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}   	
+	    },
+	    
+	    comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDocumentos'}
+			}   	
+	    }
      }    
 });

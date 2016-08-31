@@ -40,7 +40,6 @@
 		labelKey="precontencioso.grid.documento.informarDocumento.respuestaSolicitud" 
  		label="**Respuesta Solicitud" value="" dd="${respuestasSolicitud}" 
 		propertyCodigo="codigo" propertyDescripcion="descripcion" />
-
 	comboRespuestasSolicitud.setValue('${solicitud.respuesta}');
 
 	var fechaEnvio = new Ext.ux.form.XDateField({
@@ -191,6 +190,26 @@
 	page.add(panel);
 	
 	function estadoInicial() {
+		<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+			if(data.esGestoria) {
+				adjuntado.setDisabled(true);
+				ejecutivo.setDisabled(false);
+				fechaResultado.setDisabled(false);
+				comboRespuestasSolicitud.setDisabled(false);
+				fechaEnvio.setDisabled(false);
+				fechaRecepcion.setDisabled(true);
+				comentario.setDisabled(false);
+			}else{
+			 	adjuntado.setDisabled(false);
+				ejecutivo.setDisabled(true);
+				fechaResultado.setDisabled(true);
+				comboRespuestasSolicitud.setDisabled(true);
+				fechaEnvio.setDisabled(true);
+				fechaRecepcion.setDisabled(false);
+				comentario.setDisabled(true);
+			}
+		</c:if>
+		
 		comboEstadosDocumento.setDisabled(true);
 		if ('${solicitud.actor}' == '<fwk:const value="es.pfsgroup.plugin.precontencioso.documento.model.DDTipoActorPCO.GESTORIA" />') {
 			adjuntado.setDisabled(true);

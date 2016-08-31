@@ -31,6 +31,7 @@ public interface EXTAsuntoApi  {
 	public static final String EXT_BO_ES_TITULIZADA = "es.pfsgroup.recovery.ext.api.asunto.esTitulizada";
 	public static final String EXT_BO_ES_GET_FONDO = "es.pfsgroup.recovery.ext.api.asunto.getFondo";
 	public static final String EXT_BO_ES_TIPO_GESTOR_ASIGNADO = "es.pfsgroup.recovery.ext.api.asunto.esTipoGestorAsignado";
+	public static final String EXT_BO_GET_ASUNTO_BY_ID = "es.pfsgroup.recovery.ext.api.asunto.getAsuntoById";
 	public static final String BO_ZONA_MGR_GET_ZONAS_POR_NIVEL_BY_CODIGO = "es.pfsgroup.recovery.ext.api.asunto.getZonasPorNivel";
 	public static final String EXT_BO_MSG_ERROR_ENVIO_CDD = "asuntosManager.getMsgErrorEnvioCDD";
     public static final String EXT_BO_MSG_ERROR_ENVIO_CDD_NUSE = "asuntosManager.getMsgErrorEnvioCDDNuse";

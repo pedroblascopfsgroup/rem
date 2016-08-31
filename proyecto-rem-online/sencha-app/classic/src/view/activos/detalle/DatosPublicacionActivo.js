@@ -5,11 +5,13 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     collapsed: false,
     scrollable	: 'y',
     saveMultiple: true,
+    refreshAfterSave: true,
     disableValidation: true,
-    records: ['activoCondicionantesDisponibilidad'], 
-    recordsClass: ['HreRem.model.ActivoCondicionantesDisponibilidad'],    
-    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.CondicionEspecifica', 'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion'],
-    
+    records: ['activohistoricoestadopublicacion', 'activoCondicionantesDisponibilidad', 'datosPublicacion'], 
+    recordsClass: ['HreRem.model.ActivoHistoricoEstadoPublicacion', 'HreRem.model.ActivoCondicionantesDisponibilidad', 'HreRem.model.DatosPublicacion'],
+    requires: ['HreRem.model.ActivoCondicionantesDisponibilidad','HreRem.model.ActivoHistoricoEstadoPublicacion' ,'HreRem.model.CondicionEspecifica', 
+               'HreRem.view.activos.detalle.HistoricoCondicionesList','HreRem.model.EstadoPublicacion', 'HreRem.view.activos.detalle.HistoricoEstadosList',
+               'HreRem.model.DatosPublicacion'],
     listeners: {
     	boxready:'cargarTabData'
     },
@@ -18,7 +20,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     initComponent: function () {
 
         var me = this;
-       
+
         var items = [
 			        {
 						xtype:'fieldsettable',
@@ -27,18 +29,28 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 							[
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  'Tipo de comercialización',
-				                	value: 'Venta y alquiler'
+				                	fieldLabel:  HreRem.i18n('title.publicaciones.tipoComercializacion'),
+				                	bind: '{activo.tipoComercializacionDescripcion}',
+				                	readOnly: true
 			                    },
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  'Estado de publicación',
-				                	value: 'No publicado'
+				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoPublicacion'),
+				                	bind: '{activo.estadoPublicacionDescripcion}',
+				                	listeners: {
+				                		change: 'onChangeEstadoPublicacion'
+				                	},
+				                	readOnly: true
 			                    },
 			                    {
 				                	xtype: 'textfieldbase',
-				                	fieldLabel:  'Estado de disponibilidad comercial',
-				                	value: 'Condicionado'
+				                	fieldLabel:  HreRem.i18n('title.publicaciones.estadoDisponibilidadComercial'),
+				                	reference: 'fieldEstadoDisponibilidadComercial',
+				                	bind: '{activoCondicionantesDisponibilidad.estadoDisponibilidadComercial}',
+				                	listeners: {
+				                		change: 'onChangeEstadoDisponibilidadComercial'
+				                	},
+				                	readOnly: true
 			                    }
 							]
 						
@@ -154,16 +166,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                	{
 					                		xtype: 'button',
 					                		cls: 'no-pointer',
-								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.otro')+'</div>',
-								    		style : 'background: transparent; border: none;',
-								    		bind: {
-					                			iconCls: '{getIconClsCondicionantesOtro}'
-					                		},
-					                		iconAlign: 'left'
-					                	},
-					                	{
-					                		xtype: 'button',
-					                		cls: 'no-pointer',
 								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.ocupadosintitulo')+'</div>',
 								    		style : 'background: transparent; border: none;',
 					                		bind: {
@@ -180,15 +182,44 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                			iconCls: '{getIconClsCondicionantesDivHorizontal}'
 					                		},
 					                		iconAlign: 'left'
-					                	}
+					                	},
+					                	{
+								        	// Label vacia para generar un espacio por cuestión de estética.
+								        	xtype: 'label',
+								        	colspan: 1
+								        },
+					                	{
+						                	xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('title.publicaciones.condicion.otro'),
+						                	reference: 'comboCondicionanteOtro',
+						                	bind: {
+						                		store: '{comboSiNoRem}',
+						                		value: '{getSiNoFromOtro}'
+						                	},
+						                	listeners: {
+					                			change: 'onChangeComboOtro'
+					                		}
+					                    },
+					                    {
+								        	// Label vacia para generar un espacio por cuestión de estética.
+								        	xtype: 'label',
+								        	reference: 'textareaCondicionantesSpan',
+								        	colspan: 2
+								        },
+					                	{
+						                	xtype: 'textareafieldbase',
+						                	reference: 'fieldtextCondicionanteOtro',
+						                	bind: {
+						                		value: '{activoCondicionantesDisponibilidad.otro}',
+						                		hidden: '{!activoCondicionantesDisponibilidad.otro}'
+						                	},
+						                	maxLength: '255'
+					                    }
 									  ]
 							 },
-							 
+							 // Grid del histórico de condiciones específicas.
 							{xtype: "historicocondicioneslist", reference: "historicocondicioneslist"}
-								
-							 //Grid del histórico de condiciones específicas
 							]
-						
 					},
 					{
 						xtype:'fieldsettable',
@@ -200,14 +231,38 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.publicacionforzada'),
+								 reference: 'seccionPublicacionForzada',
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultar')
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.forzada'),
+								        	reference: 'chkbxpublicacionforzada',
+								        	colspan: 3,
+								        	bind: '{activohistoricoestadopublicacion.publicacionForzada}',
+								        	listeners:{
+								        		change: 'onchkbxEstadoPublicacionChange'
+								        	}
 								        },
 								        {
-								        	xtype:'textfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
+								        	xtype:'checkboxfieldbase',
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ordinaria'),
+								        	reference: 'chkbxpublicacionordinaria',
+								        	colspan: 3,
+								        	bind: '{activohistoricoestadopublicacion.publicacionOrdinaria}',
+								        	readOnly: true
+								        },
+								        {
+								        	xtype: 'textfieldbase',
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
+								        	reference: 'textfieldpublicacionpublicar',
+								        	colspan: 3,
+								        	bind: {
+							            		value: '{activohistoricoestadopublicacion.motivoPublicacion}'
+							            	},
+							            	maxLength: '100'
 								        }
 								        ]
 							 },
@@ -215,18 +270,39 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionprecio'),
+								 reference: 'seccionOcultacionPrecio',
+								 hidden: true,
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultarprecio')
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultarprecio'),
+								        	reference: 'chkbxpublicacionocultarprecio',
+								        	colspan: 3,
+								        	bind: '{activohistoricoestadopublicacion.ocultacionPrecio}',
+								        	listeners:{
+								        		change: 'onchkbxEstadoPublicacionChange'
+								        	}
 								        },
 								        {
-								        	xtype:'textfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
+								        	xtype: 'textfieldbase',
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
+								        	reference: 'textfieldpublicacionocultacionprecio',
+								        	bind: {
+							            		value: '{activohistoricoestadopublicacion.motivoOcultacionPrecio}'			            		
+							            	},
+							            	colspan: 3,
+							            	maxLength: '100'
+								        	
 								        },
 								        {
 								        	xtype:'textareafieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.observaciones')
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.observaciones'),
+								        	reference: 'textareapublicacionocultacionprecio',
+								        	colspan: 3,
+								        	bind: '{activohistoricoestadopublicacion.observaciones}'
 								        }
 								        ]
 							 },
@@ -234,14 +310,36 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.despublicacionforzada'),
+								 reference: 'seccionDespublicacionForzada',
+								 hidden: true,
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.despublicar')
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.despublicar'),
+								        	reference: 'chkbxpublicaciondespublicar',
+								        	colspan: 3,
+								        	bind: '{activohistoricoestadopublicacion.despublicacionForzada}',
+								        	listeners:{
+								        		change: 'onchkbxEstadoPublicacionChange'
+								        	}
 								        },
 								        {
-								        	xtype:'textfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
+								        	xtype: 'textfieldbase',
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
+								        	reference: 'textfieldpublicaciondespublicar',
+								        	colspan: 3,
+								        	bind: {
+							            		value: '{activohistoricoestadopublicacion.motivoDespublicacionForzada}'			            		
+							            	},
+							            	maxLength: '100'
+								        },
+								        {
+								        	// Label vacia para generar una línea por cuestión de estética.
+								        	xtype: 'label',
+								        	colspan: 3
 								        }
 								        ]
 							 },
@@ -249,14 +347,36 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 								 xtype:'fieldsettable',
 								 defaultType:'textfieldbase',
 								 title: HreRem.i18n('title.publicaciones.estados.ocultacionforzada'),
+								 reference: 'seccionOcultacionForzada',
+								 hidden: true,
+								 margin: '5 8 10 8',
+								 minHeight	: 150,
+								 collapsible: false,
 								 items:[
 								        {
 								        	xtype:'checkboxfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultar')
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.ocultar'),
+								        	reference: 'chkbxpublicacionocultacionforzada',
+								        	colspan: 3,
+								        	bind: '{activohistoricoestadopublicacion.ocultacionForzada}',
+								        	listeners:{
+								        		change: 'onchkbxEstadoPublicacionChange'
+								        	}
 								        },
 								        {
-								        	xtype:'textfieldbase',
-								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo')
+								        	xtype: 'textfieldbase',
+								        	fieldLabel: HreRem.i18n('title.publicaciones.estados.motivo'),
+								        	reference: 'textfieldpublicacionocultacionforzada',
+								        	colspan: 3,
+								        	bind: {
+							            		value: '{activohistoricoestadopublicacion.motivoOcultacionForzada}'			            		
+							            	},
+							            	maxLength: '100'
+								        },
+								        {
+								        	// Label vacia para generar una línea por cuestion de estética.
+								        	xtype: 'label',
+								        	colspan: 3
 								        }
 								        ]
 							 }
@@ -268,7 +388,25 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						title: HreRem.i18n('title.publicaciones.historico'),
 						items :
 							[							 
-								{xtype: "historicoestadoslist", reference: "historicoestadoslist"}
+								{xtype: "historicoestadoslist", reference: "historicoestadoslist", colspan: 3},
+								{
+									xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('title.publicaciones.estados.totalDiasPublicado'),
+						        	reference: 'textfielddiastotalespublicado',
+						        	bind:{
+						        		value: '{datosPublicacion.totalDiasPublicado}'
+						        	},
+				                	readOnly: true
+								},
+								{
+									xtype:'textfieldbase',
+						        	fieldLabel: HreRem.i18n('title.publicaciones.estado.portalesExternos'),
+						        	reference: 'textfieldportalesexternos',
+						        	bind:{
+						        		value: '{datosPublicacion.portalesExternos}'
+						        	},
+				                	readOnly: true
+								}
 							 ]
 					}
 		];
@@ -280,7 +418,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
    },
    
    getIconClsCondicionantes: function(get,condicion) {
-    	
     	if(condicion) {
     		return 'app-tbfiedset-ico icono-ok'
     	} else {
@@ -291,10 +428,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
-//		me.lookupController().cargarTabData(me);
-//		Ext.Array.each(me.query('grid'), function(grid) {
-//  			grid.getStore().load();
-//  		});
+		me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});
     }
     
 });

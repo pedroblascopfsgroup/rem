@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -37,11 +37,14 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
@@ -319,9 +322,39 @@ public class Activo implements Serializable, Auditable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USU_ID")
 	private Usuario gestorBloqueoPrecio;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPU_ID")
+    private DDTipoPublicacion tipoPublicacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EPU_ID")
+    private DDEstadoPublicacion estadoPublicacion;
     
-    @Version   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TCO_ID")
+    private DDTipoComercializacion tipoComercializacion;
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @OrderBy("fechaVisita")
+    private List<Visita> visitas;  
+    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private List<ActivoOferta> ofertas;
+    
+    @Column(name = "ACT_FECHA_IND_PRECIAR")
+    private Date fechaPreciar;
+    
+    @Column(name = "ACT_FECHA_IND_REPRECIAR")
+    private Date fechaRepreciar;
+    
+    @Column(name = "ACT_FECHA_IND_DESCUENTO")
+    private Date fechaDescuento;
+    
+	@Version   
 	private Long version;
 
 	@Embedded
@@ -1302,5 +1335,69 @@ public class Activo implements Serializable, Auditable {
 		this.gestorBloqueoPrecio = gestorBloqueoPrecio;
 	}
     
+    public DDTipoPublicacion getTipoPublicacion() {
+		return tipoPublicacion;
+	}
+
+	public void setTipoPublicacion(DDTipoPublicacion tipoPublicacion) {
+		this.tipoPublicacion = tipoPublicacion;
+	}
+	
+	public DDEstadoPublicacion getEstadoPublicacion() {
+		return estadoPublicacion;
+	}
+
+	public void setEstadoPublicacion(DDEstadoPublicacion estadoPublicacion) {
+		this.estadoPublicacion = estadoPublicacion;
+	}
+
+	public DDTipoComercializacion getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+
+	public void setTipoComercializacion(DDTipoComercializacion tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
+	}
+	
+	public List<Visita> getVisitas() {
+		return visitas;
+	}
+
+	public void setVisitas(List<Visita> visitas) {
+		this.visitas = visitas;
+	}
+
+	public List<ActivoOferta> getOfertas() {
+		return ofertas;
+	}
+
+	public void setOfertas(List<ActivoOferta> ofertas) {
+		this.ofertas = ofertas;
+	}
+
+	public Date getFechaPreciar() {
+		return fechaPreciar;
+	}
+
+	public void setFechaPreciar(Date fechaPreciar) {
+		this.fechaPreciar = fechaPreciar;
+	}
+
+	public Date getFechaRepreciar() {
+		return fechaRepreciar;
+	}
+
+	public void setFechaRepreciar(Date fechaRepreciar) {
+		this.fechaRepreciar = fechaRepreciar;
+	}
+
+	public Date getFechaDescuento() {
+		return fechaDescuento;
+	}
+
+	public void setFechaDescuento(Date fechaDescuento) {
+		this.fechaDescuento = fechaDescuento;
+	}
+	
 	
 }

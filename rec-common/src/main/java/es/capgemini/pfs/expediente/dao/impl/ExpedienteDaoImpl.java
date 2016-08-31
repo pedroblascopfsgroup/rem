@@ -1,6 +1,10 @@
 package es.capgemini.pfs.expediente.dao.impl;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,14 +40,13 @@ import es.capgemini.pfs.itinerario.model.DDTipoItinerario;
 import es.capgemini.pfs.itinerario.model.Estado;
 import es.capgemini.pfs.itinerario.model.ReglasElevacion;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.persona.model.DDTipoGestorEntidad;
 import es.capgemini.pfs.persona.model.Persona;
 import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.capgemini.pfs.utils.StringUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 
 /**
  * Clase que agrupa m�todo para la creaci�n y acceso de datos de los
@@ -55,6 +58,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> implements ExpedienteDao {
 
     private final Log logger = LogFactory.getLog(getClass());
+    
+    private static final String FORMATO_FECHA_BD = "dd/MM/yyyy 00:00:00";
 
     @Resource
     private PaginationManager paginationManager;
@@ -1091,6 +1096,20 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
             hql.append(" and LOWER(exp.descripcionExpediente) LIKE '%'|| :descExpediente ||'%' ");
             paramsMap.put("descExpediente", dtoExpediente.getDescripcion().toLowerCase().replaceAll("'", "''"));
         }
+        
+     // Fecha creación.
+        if(!Checks.esNulo(dtoExpediente.getFechaCreacion())){
+        	Date fechaEnDate = null;
+			try {
+				fechaEnDate =  new java.sql.Date(DateFormat.toDate(dtoExpediente.getFechaCreacion()).getTime());
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha creación", e);
+			}
+			if(!Checks.esNulo(fechaEnDate)){
+	        	String consultaMontad = montaWhereConDateUnico(fechaEnDate, "exp.auditoria.fechaCrear");
+	        	hql.append(consultaMontad);
+			}
+        }
 
         // Si no se esta buscando expedientes por comite uso esta busqueda de estado
         if (dtoExpediente.getIdComite() == null && !StringUtils.emtpyString(dtoExpediente.getIdEstado())) {
@@ -1250,7 +1269,25 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         hql.append(")");
         return paginationManager.getHibernatePage(getHibernateTemplate(), hql.toString(), dtoExpediente, paramsMap);
 	}
-        
+     
+	private String montaWhereConDateUnico(Date fechaEnDate, String cadena){
+		Calendar c = Calendar.getInstance();
+		c.setTime(fechaEnDate);
+		c.add(Calendar.DATE, 1);
+		Date diaSiguiente = c.getTime();
+		SimpleDateFormat dateFormatInit = new SimpleDateFormat(FORMATO_FECHA_BD);
+		String formatInit = dateFormatInit.format(fechaEnDate);
+		String formatFin = dateFormatInit.format(diaSiguiente);
+		
+		String montado = String.format("and %s >= to_date('%s', 'DD/MM/YYYY HH24:MI:SS') and %s < to_date('%s', 'DD/MM/YYYY HH24:MI:SS')"
+				, cadena
+				, formatInit
+				, cadena
+				, formatFin);
+
+		return montado;
+	}
+    
 	@Override
 	public Page buscarExpedientesRecobroPaginadoDinamico(DtoBuscarExpedientes dtoExpediente,Usuario usuarioLogueado,String paramsDinamicos) {
 	
@@ -1275,7 +1312,10 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         
         hql.append(" where exp.auditoria.borrado = 0 ");
 
-		
+		//Y que solo séan de recobro
+        hql.append(" and exp.tipoExpediente.codigo = '" + DDTipoExpediente.TIPO_EXPEDIENTE_RECOBRO +"' ");        
+        
+        
         if (requiereRiesgoSaldo) {
             hql.append(" and expc.expediente.id = exp.id and expc.auditoria.borrado = 0");
             hql.append(" and expc.contrato.id = c.id ");
@@ -1292,6 +1332,20 @@ public class ExpedienteDaoImpl extends AbstractEntityDao<Expediente, Long> imple
         if (!StringUtils.emtpyString(dtoExpediente.getDescripcion())) {
             hql.append(" and LOWER(exp.descripcionExpediente) LIKE '%'|| :descExpediente ||'%' ");
             paramsMap.put("descExpediente", dtoExpediente.getDescripcion().toLowerCase().replaceAll("'", "''"));
+        }
+        
+        // Fecha creación.
+        if(!Checks.esNulo(dtoExpediente.getFechaCreacion())){
+        	Date fechaEnDate = null;
+			try {
+				fechaEnDate =  new java.sql.Date(DateFormat.toDate(dtoExpediente.getFechaCreacion()).getTime());
+			} catch (ParseException e) {
+				logger.error("Error parseando la fecha creación", e);
+			}
+			if(!Checks.esNulo(fechaEnDate)){
+	        	String consultaMontad = montaWhereConDateUnico(fechaEnDate, "exp.auditoria.fechaCrear");
+	        	hql.append(consultaMontad);
+			}
         }
 
         // Si no se esta buscando expedientes por comite uso esta busqueda de estado

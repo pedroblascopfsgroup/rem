@@ -120,29 +120,48 @@ public class AdjuntoManager implements AdjuntoApi{
 		List<EXTAdjuntoDto> adjuntosAsunto = new ArrayList<EXTAdjuntoDto>();
 		
 		if (iplus != null && iplus.instalado()) {
+			logger.debug("iplus instalado");
 			Set<AdjuntoAsunto> setAdjuntos = obtieneAdjuntosIplus(asunto.getId());
+			logger.debug("Adjuntos iplus obtenidos " + setAdjuntos.size());
 			for (AdjuntoAsunto adjuntoAsunto : setAdjuntos) {
 				adjuntoAsunto.setAsunto(asunto);
+				logger.debug("Procesando adjunto " + adjuntoAsunto.getDescripcion());
 				IPLUSAdjuntoAuxDto dtoAux = iplus.completarInformacionAdjunto(asunto.getId(), adjuntoAsunto.getDescripcion());
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " procesado");
 				Procedimiento procedimiento = dtoAux.getProc();
 				adjuntoAsunto.setProcedimiento(procedimiento);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido procedimiento " + (Checks.esNulo(procedimiento)? "" :procedimiento.getId()));
 				String contentType = dtoAux.getContentType();
+				if(Checks.esNulo(contentType)){
+					contentType = "application/octet-stream";
+				}
 				adjuntoAsunto.setContentType(contentType);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadido contentType " + (Checks.esNulo(contentType)? "" :contentType));
 				Long longitud = dtoAux.getLongitud();
+				if(Checks.esNulo(longitud)){
+					longitud = 0L; 
+				}
 				adjuntoAsunto.setLength(longitud);
+				logger.debug("Adjunto " + adjuntoAsunto.getDescripcion() + " añadida longitud " + (Checks.esNulo(longitud)? "" :longitud));
 				//DDTipoFicheroAdjunto tipoFicheroAdjunto = dtoAux.getTipoDocumento();
 				//adjuntoAsunto.setTipoDocumento(tipoDocumento);
 			}
 			adjuntosAsunto.addAll(creaObjetosEXTAsuntos(setAdjuntos, usuario, borrarOtrosUsu));
+			logger.debug("Añadidos adjuntos");
+		}else{
+			logger.debug("iplus NO instalado");
+			Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+			adjuntosAsunto.addAll(adjuntosRecovery);
 		}
-		Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
+		//RECOVERY-2606
+		/*Set<EXTAdjuntoDto> adjuntosRecovery = creaObjetosEXTAsuntos(asunto.getAdjuntos(), usuario, borrarOtrosUsu);
 		Set<EXTAdjuntoDto> adjuntosRecovery2 = null;
 		if (iplus != null && iplus.instalado()) {
 			adjuntosRecovery2 = iplus.eliminarRepetidos(adjuntosRecovery, adjuntosAsunto);
 		} else {
 			adjuntosRecovery2 = adjuntosRecovery;
 		}
-		adjuntosAsunto.addAll(adjuntosRecovery2);
+		adjuntosAsunto.addAll(adjuntosRecovery);*/
 		
 		return ordenaListado(adjuntosAsunto);
 	}
@@ -922,7 +941,7 @@ public class AdjuntoManager implements AdjuntoApi{
 			
 		};
 		Collections.sort(adjuntosAsunto, comparador);
-
+		logger.debug("Listado Adjuntos ordenado");
 		return adjuntosAsunto;
 	}
 	
@@ -943,5 +962,17 @@ public class AdjuntoManager implements AdjuntoApi{
 		return exp;
 	}
 
+
+	/* PARA UNA NECESIDAD PARTICULAR DE HAYA*/
+	@Override
+	public List<Long> obtenerIdsTiposDocMapeados(Long idAsunto) {
+		return null;
+	}
+
+
+	/* PARA UNA NECESIDAD PARTICULAR DE HAYA*/
+	public List<Long> obtenerIdsTiposDocMapeadosProc(Long idProcedimiento) {
+		return null;
+	}
 	
 }

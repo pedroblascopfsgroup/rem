@@ -5,26 +5,36 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.persistence.GeneratedValue;
 
+import org.hibernate.cfg.Configuration;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.hibernate.dao.HibernateDao; //import es.capgemini.devon.hibernate.pagination.PaginationManager;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 //import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.dao.DICDiccionarioEditableLogDaoInterface;
+import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.dao.DICDiccionarioModeloDao;
 import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.dao.DICGenericDao;
+import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.dao.impl.DICDiccionarioModeloDaoImpl;
 import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.dto.DICDtoBusquedaDiccionario;
 import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.dto.DICDtoValorDiccionario;
 import es.pfsgroup.plugin.recovery.diccionarios.diccionarios.model.DICDiccionarioEditableInterface;
@@ -44,7 +54,10 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 	protected abstract DICDiccionarioEditableLogDaoInterface<L, Long> getLogDao();
 
 	private Map<String, HibernateDao> daos = new HashMap<String, HibernateDao>();
-
+	
+	@Autowired
+	private DICDiccionarioModeloDao dicDiccionarioModeloDao;
+	
 	// private PaginationManager paginationManager;
 
 	public void setDaos(final Map<String, HibernateDao> d) {
@@ -77,7 +90,7 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 
 		// return paginationManager.getHibernatePage(getHibernateTemplate(),
 		// hb.toString(), dto, hb.getParameters());
-		// TODO completar la b˙squeda de diccionarios para que devuelva una
+		// TODO completar la bÔøΩsqueda de diccionarios para que devuelva una
 		// lista paginada
 		return (List<D>) hb;
 	}
@@ -123,12 +136,19 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 
 	protected void nuevoDiccionarioDatosLinea(DICDtoValorDiccionario dto) {
 		HibernateDao dao = getDao(dto.getIdDiccionarioEditable());
-		Serializable nuevo = createPersistentObject(dto, dao);
-		
-		createSucesoDiccionarioLog(null, dto);
-		
-		dao.save(nuevo);
-
+		D dicc=getDiccionarioEditable(dto.getIdDiccionarioEditable());
+		String nombreTabla=dicc.getNombreTabla();
+		if(existeCodDic(dto,nombreTabla)==1){
+			throw new IllegalStateException("El codigo introducido ya existe");
+		}else{
+			if(existeCodDic(dto,nombreTabla)==2){
+				dicDiccionarioModeloDao.updateLineaDic(dto,nombreTabla);	
+			}else{
+				Serializable nuevo = createPersistentObject(dto, dao);		
+				createSucesoDiccionarioLog(null, dto);
+				dao.save(nuevo);
+			}		
+		}
 	}
 
 	private Serializable createPersistentObject(DICDtoValorDiccionario dto,
@@ -144,23 +164,65 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 			throw new BusinessOperationException(e);
 		}
 	}
-
+	
+	private int existeCodDic(DICDtoValorDiccionario dto,String nombreTabla) {
+		List<DICDtoValorDiccionario> lineas = new ArrayList<DICDtoValorDiccionario>();
+		lineas=getDiccionarioDatos(dto.getIdDiccionarioEditable());
+		int existe=0;
+		for (DICDtoValorDiccionario dc : lineas) {
+			//Si existe c√≥digo sin borrado (mensaje de error)
+			if(dc.getCodigo().equals(dto.getCodigo()) && !dc.getAuditoria().isBorrado()){
+				existe=1;
+				break;
+			}else{
+				//Si existe c√≥digo con borrado (update)
+				if(dicDiccionarioModeloDao.existeCodigoConBorrado(dto,nombreTabla)){
+					existe=2;
+				}	
+			}
+		}
+		return existe;
+	}
+	
+	
 	protected void editarDiccionarioDatosLinea(DICDtoValorDiccionario dto) {
 		HibernateDao dao = getDao(dto.getIdDiccionarioEditable());
 		Object viejo = dao.get(dto.getIdLineaEnDiccionario());
+		D dicc=getDiccionarioEditable(dto.getIdDiccionarioEditable());
+		String nombreTabla=dicc.getNombreTabla();
+		
+		if(!dto.getCodigoDiccionarioEditable().equals(dto.getCodigo())){
+			if(existeCodDic(dto,nombreTabla)==1){
+				throw new IllegalStateException("El codigo introducido ya existe");
+			}else{
+				if(existeCodDic(dto,nombreTabla)==2){
+					dicDiccionarioModeloDao.updateLineaDic(dto,nombreTabla);
+					eliminarDiccionarioDatosLinea(dto.getIdDiccionarioEditable(),dto.getIdLineaEnDiccionario());
+				}else{
+						editaDicLinea(dto, dao, viejo);	
+					}
+				}
+			}else{
+				editaDicLinea(dto, dao, viejo);	
+			}
+		
+	}
+
+	private void editaDicLinea(DICDtoValorDiccionario dto, HibernateDao dao,
+			Object viejo) {
 		if (Checks.esNulo(viejo)) {
-			throw new IllegalStateException(
-					"No exise la linea que se quiere editar");
+		throw new IllegalStateException(
+				"No exise la linea que se quiere editar");
 		}
 		DICDtoValorDiccionario valorAntiguo = createDto(dto
-				.getIdDiccionarioEditable(), viejo);
+		.getIdDiccionarioEditable(), viejo);
 		try {
 			changePersistentObject(dto, viejo,dao);
 			dao.save((Serializable) viejo);
 			createSucesoDiccionarioLog(valorAntiguo, dto);
-		} catch (Exception e) {
-			throw new BusinessOperationException(e);
-		}
+			} 	catch (Exception e) {
+				throw new BusinessOperationException(e);
+			}
 	}
 
 	private void changePersistentObject(DICDtoValorDiccionario dto, Object o, HibernateDao dao)
@@ -172,6 +234,15 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 				dto.getDescripcion());
 		c.getMethod("setDescripcionLarga", String.class).invoke(o,
 				dto.getDescripcionLarga());
+	}
+	
+	private void changePersistentAuditoriaObject(DICDtoValorDiccionario dto, Object o, HibernateDao dao)
+			throws Exception {
+		Class c = o.getClass();
+		Auditoria audi = new Auditoria();
+		audi.setBorrado(false);
+		dto.setAuditoria(audi);
+		c.getMethod("setAuditoria", Auditoria.class).invoke(o, dto.getAuditoria());
 	}
 
 	private void seteaIdSiNoSecuencia(Object o,HibernateDao dao) {
@@ -233,6 +304,10 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 					.invoke(dc, null));
 			dto.setDescripcionLarga((String) c.getMethod("getDescripcionLarga",
 					null).invoke(dc, null));
+			dto.setCodigoDiccionarioEditable((String) c.getMethod("getCodigo", null).invoke(dc,
+					null));
+			dto.setAuditoria((Auditoria) c.getMethod("getAuditoria", null).invoke(dc,	null));
+			
 			return dto;
 		} catch (Exception e) {
 			throw new BusinessOperationException(e);
@@ -246,18 +321,18 @@ public abstract class DICAbstractDiccionarioEditableManager<D extends DICDiccion
 					"Borrado", valorAntiguo.getDescripcion(), " ");
 		} else {
 			if (valorNuevo.getIdLineaEnDiccionario() != null) {
-					// EdiciÛn
+					// EdiciÔøΩn
 					if (!valorNuevo.getDescripcion().equals(valorAntiguo.getDescripcion())) {
 						saveLogDiccionario(valorNuevo.getIdDiccionarioEditable(), 
-								"EdiciÛn", valorAntiguo.getDescripcion(), valorNuevo.getDescripcion());
+								"EdiciÔøΩn", valorAntiguo.getDescripcion(), valorNuevo.getDescripcion());
 					}
 					if (!valorNuevo.getDescripcionLarga().equals(valorAntiguo.getDescripcionLarga())) {
 						saveLogDiccionario(valorNuevo.getIdDiccionarioEditable(), 
-								"EdiciÛn", valorAntiguo.getDescripcionLarga(), valorNuevo.getDescripcionLarga());
+								"EdiciÔøΩn", valorAntiguo.getDescripcionLarga(), valorNuevo.getDescripcionLarga());
 					}
 					if (!valorNuevo.getCodigo().equals(valorAntiguo.getCodigo())) {
 						saveLogDiccionario(valorNuevo.getIdDiccionarioEditable(), 
-								"EdiciÛn", valorAntiguo.getCodigo(), valorNuevo.getCodigo());
+								"EdiciÔøΩn", valorAntiguo.getCodigo(), valorNuevo.getCodigo());
 					}
 			} else {
 					// Nuevo

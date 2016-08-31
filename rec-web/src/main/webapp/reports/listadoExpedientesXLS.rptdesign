@@ -13,7 +13,7 @@
                 <structure>
                     <property name="position">1</property>
                     <property name="name">codigo</property>
-                    <property name="dataType">integer</property>
+                    <property name="dataType">string</property>
                 </structure>
                 <structure>
                     <property name="position">2</property>
@@ -114,7 +114,7 @@
                     <structure>
                         <property name="position">1</property>
                         <property name="name">codigo</property>
-                        <property name="dataType">integer</property>
+                        <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">2</property>
@@ -179,7 +179,10 @@
 var exp = expIt.next();
 
 row["codigo"] = exp.getId();
-if (row["codigo"] == null || row["codigo"]== "null") row["codigo"] = "";
+if (row["codigo"] == null || row["codigo"]== "null") 
+	row["codigo"] = "";
+else
+	row["codigo"] = exp.getId().toString();
 
 row["descripcion"] = exp.getDescripcionExpediente();
 if (row["descripcion"] == null || row["descripcion"]== "null") row["descripcion"] = "";
@@ -600,9 +603,44 @@ return true;]]></method>
                         <property name="borderTopColor">#000000</property>
                         <property name="borderTopStyle">solid</property>
                         <property name="borderTopWidth">thin</property>
-                        <data id="35">
+                        <data id="90">
+                            <property name="backgroundAttachment">scroll</property>
+                            <property name="backgroundPositionX">0%</property>
+                            <property name="backgroundPositionY">0%</property>
+                            <property name="backgroundRepeat">repeat</property>
+                            <property name="fontFamily">"@Arial Unicode MS"</property>
+                            <property name="fontSize">10pt</property>
+                            <property name="fontWeight">normal</property>
+                            <property name="fontStyle">normal</property>
+                            <property name="fontVariant">normal</property>
+                            <property name="color">black</property>
+                            <property name="textLineThrough">none</property>
+                            <property name="textOverline">none</property>
+                            <property name="textUnderline">none</property>
+                            <property name="borderBottomColor">black</property>
                             <property name="borderBottomStyle">none</property>
                             <property name="borderBottomWidth">thin</property>
+                            <property name="marginTop">0pt</property>
+                            <property name="marginLeft">0pt</property>
+                            <property name="marginBottom">0pt</property>
+                            <property name="marginRight">0pt</property>
+                            <property name="paddingTop">1pt</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="paddingBottom">1pt</property>
+                            <property name="paddingRight">1pt</property>
+                            <property name="letterSpacing">normal</property>
+                            <property name="lineHeight">normal</property>
+                            <property name="orphans">2</property>
+                            <property name="textTransform">none</property>
+                            <property name="whiteSpace">normal</property>
+                            <property name="widows">2</property>
+                            <property name="wordSpacing">normal</property>
+                            <property name="display">block</property>
+                            <property name="pageBreakAfter">auto</property>
+                            <property name="pageBreakBefore">auto</property>
+                            <property name="pageBreakInside">auto</property>
+                            <property name="showIfBlank">false</property>
+                            <property name="canShrink">false</property>
                             <property name="resultSetColumn">codigo</property>
                         </data>
                     </cell>

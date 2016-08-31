@@ -20,6 +20,7 @@
 			<json:property name="tareaActivaSaneamiento" value="${bie.tareaActivaSaneamiento}" />
 			<json:property name="tareaActivaPosesion" value="${bie.tareaActivaPosesion}" />
 			<json:property name="tareaActivaLlaves" value="${bie.tareaActivaLlaves}" />
+			<json:property name="numFinca" value="${bie.numFinca}" />
 		</json:object>
 	</json:array>
 </fwk:json>

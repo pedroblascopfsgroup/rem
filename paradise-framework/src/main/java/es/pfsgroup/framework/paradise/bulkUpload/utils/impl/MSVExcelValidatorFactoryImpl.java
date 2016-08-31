@@ -20,7 +20,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVListadoActivosExcelValidator listadoActivosExcelValidator;
-	 	
+	
+	@Autowired
+	private MSVActualizarEstadoPublicacion actualizarEstadoPublicacion;
 
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -31,7 +33,14 @@ public class MSVExcelValidatorFactoryImpl {
 			return agrupacionObraNuevaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;
-			}
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(codTipoOperacion) ||
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(codTipoOperacion) ||
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(codTipoOperacion) ||
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(codTipoOperacion) ||
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(codTipoOperacion) ||
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(codTipoOperacion) ||
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion))
+				return actualizarEstadoPublicacion;
 		
 		return null;
 	}

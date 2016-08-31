@@ -38,19 +38,26 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
 			model.setId(id);
-			model.load({
-			    success: function(record) {
-			    	
-			    	form.setBindRecord(record);			    	
-			    	form.unmask();
-			    	if(Ext.isFunction(form.afterLoad)) {
-			    		form.afterLoad();
-			    	}
-			    	
-			    }
-			});
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record) {
+				    	form.setBindRecord(record);			    	
+				    	form.unmask();
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    }
+				});
+			} else {
+				// Si la API no contiene metodo de lectura (read).
+				form.setBindRecord(model);			    	
+		    	form.unmask();
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+			}
 		} else {
-			
 			models = form.getModelsInstance();
 			me.cargarTabDataMultiple(form, 0, models, form.records);
 		}
@@ -62,21 +69,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		id = me.getViewModel().get("activo.id");
 		
 		models[index].setId(id);
-		models[index].load({
-		    success: function(record) {		    	
-		    	me.getViewModel().set(nameModels[index], record);
-		    	index++;
-						
-				if (index < models.length) {							
-					me.cargarTabDataMultiple(form, index, models, nameModels);
-				} else {	
-					form.unmask();				
+		
+		if(Ext.isDefined(models[index].getProxy().getApi().read)) {
+			// Si la API tiene metodo de lectura (read).
+			models[index].load({
+			    success: function(record) {		    	
+			    	me.getViewModel().set(nameModels[index], record);
+			    	index++;
+							
+					if (index < models.length) {							
+						me.cargarTabDataMultiple(form, index, models, nameModels);
+					} else {	
+						form.unmask();				
+					}
+			    },			            
+				failure: function (a, operation) {
+					 form.unmask();
 				}
-		    },			            
-			failure: function (a, operation) {
-				 form.unmask();
+			});
+		} else {
+			// Si la API no contiene metodo de lectura (read).
+			me.getViewModel().set(nameModels[index], models[index]);
+	    	index++;
+					
+			if (index < models.length) {							
+				me.cargarTabDataMultiple(form, index, models, nameModels);
+			} else {	
+				form.unmask();				
 			}
-		});
+		}
 	
 	},
 	
@@ -167,70 +188,73 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().set("editing", false);
 		
 			if (!form.saveMultiple) {
-		
-				me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
-				
-				form.getBindRecord().save({
+				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+					// Si la API tiene metodo de escritura (create or update).
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
-					success: function (a, operation, c) 
-						{
- 							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					form.getBindRecord().save({
+						success: function (a, operation, c) {
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 							me.getView().unmask();
 							me.refrescarActivo(form.refreshAfterSave);
 							me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 			            },
-			            
+				            
 			            failure: function (a, operation) {
 			            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 							 me.getView().unmask();
 			            }
-				});
-				
+					});
+				}
 			//Guardamos múltiples records	
 			} else {
-				
 				var records = form.getBindRecords();
-				
 				var contador = 0;
-				me.saveMultipleRecords(contador, records);
-				
+				me.saveMultipleRecords(contador, records, form);
 			}
 		} else {
-		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 		
 	},
 	
-	saveMultipleRecords: function(contador, records) {
-		
+	saveMultipleRecords: function(contador, records, form) {
 		var me = this;
 		
-		records[contador].save({
-				
-				success: function (a, operation, c) 
-					{
+		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
+			// Si la API tiene metodo de escritura (create or update).
+			
+			records[contador].save({
+				success: function (a, operation, c) {
 						contador++;
 						
 						if (contador < records.length) {
-							
-							me.saveMultipleRecords(contador, records);
-							
+							me.saveMultipleRecords(contador, records, form);
 						} else {
 							 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));						
 							 me.getView().unmask();
-							 me.refrescarActivo(false);
+							 me.refrescarActivo(form.refreshAfterSave);
 							 me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-							 
 						}
-		            },
-		            
-		            failure: function (a, operation) {
- 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						me.getView().unmask();
-		            }
+	            },
+	            failure: function (a, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.getView().unmask();
+	            }
 			});		
-		
+		} else {
+			// Si la API no contiene metodo de escritura (create or update).
+			contador++;
+			
+			if (contador < records.length) {
+				me.saveMultipleRecords(contador, records, form);
+			} else {
+				 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));						
+				 me.getView().unmask();
+				 me.refrescarActivo(form.refreshAfterSave);
+				 me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+			}
+		}
 	},
 	
 	
@@ -253,6 +277,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
     	var url = $AC.getRemoteUrl('activo/crearTramite');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo: idActivo},
+    		
+    		success: function(response, opts){
+    			me.getViewModel().data.storeTramites.load();
+    			if(Ext.decode(response.responseText).errorCreacion)
+    				me.fireEvent("errorToast", Ext.decode(response.responseText).errorCreacion); 
+    			else
+    				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    },
+		    callback: function(record, operation) {
+    			me.getView().unmask();
+		    }
+    	});
+    },
+    
+    onTramitePublicacionClick: function(btn){
+    	
+    	var me = this;
+    	var idActivo = me.getViewModel().get("activo.id");
+    	var url = $AC.getRemoteUrl('activo/crearTramitePublicacion');
 
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
 		
@@ -1014,7 +1066,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			return true;		
 		}
 	},
-	
+
 	getFormCriteria: function(form) {
     	
     	var me = this, initialData = {};
@@ -1033,7 +1085,233 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     // Funcion que se ejecuta al hacer click en el botón limpiar
 	onCleanFiltersClick: function(btn) {			
 		btn.up('form').getForm().reset();				
-	}
+	},
 	
+	// Función que define el estado de un activo según su estado de disponibilidad comercial.
+    onChangeEstadoDisponibilidadComercial: function(field){
+    	var me = this;
+    	var store = me.getViewModel().getStore('storeEstadoDisponibilidadComercial');
+    	if(!store.isLoaded()) {
+    		store.load();
+    	}
+    	if(field.getValue()) {
+    		store.on("load", function(){ // Condicionado.
+    			field.setValue(store.findRecord('codigo','01').getData().descripcion);
+        	});
+    	} else {
+    		store.on("load", function(){ // No condicionado.
+    			field.setValue(store.findRecord('codigo','02').getData().descripcion);
+    		});
+    	}
+    },
+    
+    // Esta función es llamada cuando cambia el estado de publicación del activo.
+    onChangeEstadoPublicacion: function(field){
+    	var me = this;
+    	var view = me.getView();
+    	var codigo = this.getViewModel().getData().getEstadoPublicacionCodigo;
+
+    	switch (codigo){
+    	case "01": // Publicado.
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').show();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').show();
+    		break;
+    	case "02": // Publicación forzada.
+    		view.lookupReference('seccionPublicacionForzada').show();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').hide();
+    		break;
+    	case "03": // Publicado oculto.
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').show();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').show();
+    		break;
+    	case "04": // Publicado con precio oculto.
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').show();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').show();
+    		break;
+    	case "05": // Despublicado.
+    		view.lookupReference('seccionPublicacionForzada').hide();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').hide();
+    		view.lookupReference('seccionDespublicacionForzada').show();
+    		break;
+    	case "06": // No publicado.
+    		view.lookupReference('seccionPublicacionForzada').show();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').hide();
+    		view.lookupReference('seccionDespublicacionForzada').hide();
+    		break;
+    	case "07": // Publicado forzado con precio oculto.
+    		view.lookupReference('seccionPublicacionForzada').show();
+    		view.lookupReference('seccionOcultacionForzada').hide();
+    		view.lookupReference('seccionOcultacionPrecio').show();
+    		view.lookupReference('seccionDespublicacionForzada').hide();
+    		break;
+    	default: // Por defecto se trata como No Publicado.
+    		view.lookupReference('seccionPublicacionForzada').show();
+			view.lookupReference('seccionOcultacionForzada').hide();
+			view.lookupReference('seccionOcultacionPrecio').hide();
+			view.lookupReference('seccionDespublicacionForzada').hide();
+    		break;
+    	}
+    },
+    
+    // Esta funcion es llamado cuando algún checkbox del apartado de 'Estados de publicación' es activado
+    // y se encarga de permitir tener sólo un checkbox de estado activado. Además, reinicia el estado de
+    // los componentes de cada sección que no esté seleccionada.
+    onchkbxEstadoPublicacionChange: function(chkbx) {
+    	var me = this;
+    	var id = chkbx.getReference();
+    	var view = me.getView();
+
+    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada"){
+    		// si el checkbox esta siendo desactivado y no es de publicación, no hacer nada.
+    		return;
+    	}
+    	
+    	switch (id){
+    	case "chkbxpublicacionforzada":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
+    	case "chkbxpublicacionocultarprecio":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		break;
+    	case "chkbxpublicaciondespublicar":
+    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
+    	case "chkbxpublicacionocultacionforzada":
+    		// checkbox.
+    		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
+    		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		// textarea.
+    		view.lookupReference('textareapublicacionocultacionprecio').reset();
+    		break;
+    	default:
+    		break;
+    	}
+    },
+    
+    // Esta función es llamada cuando cambia el estado del combo 'otro' en los
+    // condicionantes de la publicación del activo. Muestra u oculta el área de
+    // texto que muestra el condicionante 'otro'.
+    onChangeComboOtro: function(combo) {
+    	var me = this;
+    	var view = me.getView();
+
+    	if(combo.getValue() === '0'){
+    		view.lookupReference('fieldtextCondicionanteOtro').reset();
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
+    	} else {
+    		view.lookupReference('fieldtextCondicionanteOtro').show();
+    	}
+    },
+    
+    onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleExpediente', record);
+    	
+    },
+    
+    onEnlaceTrabajoClick: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	record.data.id=record.data.idTrabajo;
+    	me.getView().fireEvent('abrirDetalleTrabajo', record);
+    	
+    },
+    
+    onEnlaceTramiteClick: function(grid, rowIndex, colIndex) {
+    	
+    	var me = this,
+    	record = grid.getStore().getAt(rowIndex);
+    	me.getView().fireEvent('abrirDetalleTramite', grid, record);	
+    },
+    
+    onClickBotonCancelarOferta: function(btn) {	
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	},
+	
+	onClickBotonGuardarOferta: function(btn){
+		var me =this;
+		var window= btn.up('window'),
+		form= window.down('formBase');
+	
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.parent.funcionRecargar();
+	    	window.destroy();    	
+   		
+		};
+
+		me.onSaveFormularioCompletoOferta(form, success);	
+		
+	},
+	
+	onSaveFormularioCompletoOferta: function(form, success) {
+		var me = this;
+		record = form.getBindRecord();
+		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
+		
+		if(form.isFormValid()) {
+
+			form.mask(HreRem.i18n("msg.mask.espere"));
+			
+			record.save({
+				
+			    success: success,
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+			    	form.unmask();
+			    }
+			    		    
+			});
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	
+	}
 	
 });

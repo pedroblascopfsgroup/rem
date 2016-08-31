@@ -28,7 +28,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 
@@ -122,6 +121,10 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoFoto> fotos;
+    
+    @OneToMany(mappedBy = "agrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "AGR_ID")
+    private List<Oferta> ofertas;
     
     @Version   
 	private Long version;
@@ -266,6 +269,14 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 
 	public void setAgrupacionObservacion(List<ActivoAgrupacionObservacion> agrupacionObservacion) {
 		this.agrupacionObservacion = agrupacionObservacion;
+	}
+
+	public List<Oferta> getOfertas() {
+		return ofertas;
+	}
+
+	public void setOfertas(List<Oferta> ofertas) {
+		this.ofertas = ofertas;
 	}
 
 	public Long getVersion() {

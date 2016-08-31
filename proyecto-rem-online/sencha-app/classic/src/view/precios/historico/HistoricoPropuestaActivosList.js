@@ -12,16 +12,15 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
         
         me.setTitle(HreRem.i18n('title.detalle.activos.propuesta'));
         
+        me.listeners = {	    	
+    			rowdblclick: 'onHistoricoActivosListDobleClick'
+    	    };
+        
         me.columns= [
         
 		        {	        	
 		            dataIndex: 'numActivo',
 		            text: HreRem.i18n('header.numero.activo.haya'),
-		            flex: 1		        	
-		        },
-		        {	        	
-		            dataIndex: 'entidadPropietariaDescripcion',
-		            text: HreRem.i18n('header.cartera'),
 		            flex: 1		        	
 		        },
 		        {	        	
@@ -55,7 +54,7 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'estado',
+		            dataIndex: 'descripcionEstadoActivo',
 		            text: HreRem.i18n('header.estado'),
 		            flex: 1
 		        },
@@ -65,18 +64,28 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'tipoPrecio',
-		            text: HreRem.i18n('header.tipo.precio'),
+		            dataIndex: 'precioMinimoAutorizado',
+		            text: HreRem.i18n('header.precio.minimo.autorizado'),
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'precioPropuesto',
-		            text: HreRem.i18n('header.precio.propuesto'),
+		            dataIndex: 'precioAprobadoVenta',
+		            text: HreRem.i18n('header.precio.aprobado.venta'),
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'precioSancionado',
-		            text: HreRem.i18n('header.precio.sancionado'),
+		            dataIndex: 'precioAprobadoRenta',
+		            text: HreRem.i18n('header.precio.apobado.renta'),
+		            flex: 1
+		        },
+		        {	        	
+		            dataIndex: 'precioDescuentoAprobado',
+		            text: HreRem.i18n('header.precio.descuento.autorizado'),
+		            flex: 1
+		        },
+		        {	        	
+		            dataIndex: 'precioDescuentoPublicado',
+		            text: HreRem.i18n('header.precio.descuento.publicado'),
 		            flex: 1
 		        }
         ];

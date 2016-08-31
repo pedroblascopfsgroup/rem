@@ -510,7 +510,7 @@ public class SubastaManager implements SubastaApi {
 				
 				Float tipoSubasta = 0F;
 				if (bien instanceof NMBBien) {
-					tipoSubasta = ((NMBBien)bien).getTipoSubasta();
+					tipoSubasta = ((NMBBien)bien).getTipoSubasta().floatValue();
 				}
 				dActaComite.setTipo(tipoSubasta);
 				

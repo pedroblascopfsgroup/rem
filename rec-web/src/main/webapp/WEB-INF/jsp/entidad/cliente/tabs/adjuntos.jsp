@@ -104,6 +104,32 @@
 	    }, tipoDocRecord)
 	});
 	
+	var tipoDocStoreAuxiliar = page.getStore({
+		 flow: '' 
+		,reader: new Ext.data.JsonReader({
+	    	 root : 'diccionario'
+	     }, tipoDocRecord)
+	});
+	
+	<%--RECOVERY-1005   Acota los resultados del store segun el texto introducido --%>
+	var acotarResultadosCombo = function(cadena, combo, storeCompleto, storeAux) {
+		 if (!Ext.isEmpty(cadena)){			            			            
+	        storeAux.removeAll();
+	        
+			storeCompleto.each(function(rec) {
+			    if (rec.data.descripcion.toUpperCase().indexOf(cadena.toUpperCase()) > -1) {
+			        storeAux.add(rec);
+			    }
+			});							
+            combo.bindStore(storeAux);    				            
+		}
+        else {
+        	combo.bindStore(storeCompleto); 
+        }
+       
+		combo.onLoad();
+	};
+	
 	subir.on('click', function(){
 		tipoDocStore.webflow({tipoEntidad:'<fwk:const value="es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad.CODIGO_ENTIDAD_PERSONA" />'});
 		
@@ -113,15 +139,24 @@
 				,name:'comboTipoDoc'
 				<app:test id="tipoDocCombo" addComa="true" />
 				,hiddenName:'comboTipoDoc'
-				,store:tipoDocStore
+				,store: tipoDocStore
 				,displayField:'descripcion'
 				,valueField:'codigo'
 				,mode: 'remote'
-				,emptyText:'----'
+				,emptyText:''
 				,width:250
 				,resizable:true
 				,triggerAction: 'all'
 				,fieldLabel : 'Tipo documento'
+				,id: 'idcomboTipoFicheroPersona'
+				 //RECOVERY-1005 - Metodo doQuery personalizado para que se despligue resultados por coincidencias (no solo de la primeras letras)
+				,doQuery : function(q, forceAll){
+					var me = Ext.getCmp('idcomboTipoFicheroPersona'), i;
+		           	var elemento = me.getEl();
+		           	var cadenaIntroducida = elemento.getValue();
+		           	
+		           	acotarResultadosCombo(cadenaIntroducida,me,tipoDocStore,tipoDocStoreAuxiliar);
+				}
 			}
 		);
 		
@@ -271,7 +306,7 @@
 	
 	var grid = app.crearGrid(store, cm, {
 		title : '<s:message code="adjuntos.grid" text="**Ficheros adjuntos" />'
-		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_PERSONAS">subir, borrar, editarDescripcionAdjuntoPersona</sec:authorize>]
+		,bbar : [<sec:authorize ifAnyGranted="ROLE_PUEDE_VER_BOTONES_ADJUNTOS_PERSONAS">subir <sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>, borrar, editarDescripcionAdjuntoPersona</sec:authorize></sec:authorize>]
 		,height: 400
 		,collapsible:true
 		,width : 600
@@ -292,11 +327,6 @@
 			editarDescripcionAdjuntoPersona.enable();
 		}
 	});
-	
-	<sec:authorize ifAllGranted='BOTON_BORRAR_INVISIBLE'>
-		borrar.setVisible(false);
-		editarDescripcionAdjuntoPersona.setVisible(false);
-	</sec:authorize>
 	
 	panel.add(grid);
 	entidad.cacheStore(grid.getStore());

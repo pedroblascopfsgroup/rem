@@ -28,10 +28,12 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	private Map<String, List<String>> despachosProcuradores;
 	private Map<String, String> mapaContratoVigor;
 	private Map<String, String> mapaClasificacionDespachoPerfil;
-	private Map<String, String> mapaRelacionBankia;
+	private Map<String, String> mapaRelacionEntidad;
 	private Map<String, String> mapaDescripcionIVA;
 	private Map<String, String> mapaCodEstAse;
 	private Map<String, String> tiposGestorGestoriaAdjudicacion;
+	private Map<String, List<String>> quitarTiposGestoresDefectoAsuntos;
+	private Map<String, Map<String, String>> cambioUsuarioTipoGestorDefecto;
 	
 	public CoreProjectContextImpl() {
 		entidadesDesparalizacion = new HashSet<String>();
@@ -221,12 +223,12 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	}
 
 	
-	public Map<String, String> getMapaRelacionBankia() {
-		return mapaRelacionBankia;
+	public Map<String, String> getMapaRelacionEntidad() {
+		return mapaRelacionEntidad;
 	}
 
-	public void setMapaRelacionBankia(Map<String, String> mapaRelacionBankia) {
-		this.mapaRelacionBankia = mapaRelacionBankia;
+	public void setMapaRelacionEntidad(Map<String, String> mapaRelacionEntidad) {
+		this.mapaRelacionEntidad = mapaRelacionEntidad;
 	}
 
 	
@@ -262,5 +264,23 @@ public class CoreProjectContextImpl implements CoreProjectContext {
 	public void setTiposGestorGestoriaAdjudicacion(
 			Map<String, String> tiposGestorGestoriaAdjudicacion) {
 		this.tiposGestorGestoriaAdjudicacion = tiposGestorGestoriaAdjudicacion;
+	}
+
+	public Map<String, List<String>> getQuitarTiposGestoresDefectoAsuntos() {
+		return quitarTiposGestoresDefectoAsuntos;
+	}
+
+	public void setQuitarTiposGestoresDefectoAsuntos(
+			Map<String, List<String>> quitarTiposGestoresDefectoAsuntos) {
+		this.quitarTiposGestoresDefectoAsuntos = quitarTiposGestoresDefectoAsuntos;
+	}
+
+	public Map<String, Map<String, String>> getCambioUsuarioTipoGestorDefecto() {
+		return cambioUsuarioTipoGestorDefecto;
+	}
+
+	public void setCambioUsuarioTipoGestorDefecto(
+			Map<String, Map<String, String>> cambioUsuarioTipoGestorDefecto) {
+		this.cambioUsuarioTipoGestorDefecto = cambioUsuarioTipoGestorDefecto;
 	}
 }

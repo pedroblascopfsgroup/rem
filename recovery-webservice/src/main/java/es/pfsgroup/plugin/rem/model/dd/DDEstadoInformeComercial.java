@@ -17,40 +17,36 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-
 /**
- * Modelo que gestiona el diccionario de estados del Informe Comercial
- * 
- * @author Bender
+ * Modelo que gestiona el diccionario de los estados de acciones del informe comercial.
  *
  */
 @Entity
-@Table(name = "DD_ICE_ESTADO_INF_COMERCIAL", schema = "${entity.schema}")
+@Table(name = "DD_AIC_ACCION_INF_COMERCIAL", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoInformeComercial implements Auditable, Dictionary {
-	
-    public static final String CODIGO_ICE_ACEPTACION = "01";
-    public static final String CODIGO_ICE_EMISION = "02";
-    public static final String CODIGO_ICE_MODIFICACION = "03";
-    public static final String CODIGO_ICE_RECHAZO = "04";
-        
 	private static final long serialVersionUID = 1L;
+	public static final String ESTADO_INFORME_COMERCIAL_MODIFICACION = "01";
+	public static final String ESTADO_INFORME_COMERCIAL_ACEPTACION = "02";
+	public static final String ESTADO_INFORME_COMERCIAL_EMISION = "03";
+	public static final String ESTADO_INFORME_COMERCIAL_RECHAZO = "04";
 
+	
 	@Id
-	@Column(name = "DD_ICE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoInfComercialGenerator")
-	@SequenceGenerator(name = "DDEstadoInfComercialGenerator", sequenceName = "S_DD_ICE_ESTADO_INF_COMERCIAL")
+	@Column(name = "DD_AIC_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadoInformeComercialGenerator")
+	@SequenceGenerator(name = "DDEstadoInformeComercialGenerator", sequenceName = "S_DD_AIC_ACCION_INF_COMERCIAL")
 	private Long id;
-	    
-	@Column(name = "DD_ICE_CODIGO")   
+
+	@Column(name = "DD_AIC_CODIGO")   
 	private String codigo;
-	 
-	@Column(name = "DD_ICE_DESCRIPCION")   
+
+	@Column(name = "DD_AIC_DESCRIPCION")   
 	private String descripcion;
-	    
-	@Column(name = "DD_ICE_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+
+	@Column(name = "DD_AIC_DESCRIPCION_LARGA")   
+	private String descripcionLarga;
 
 	@Version   
 	private Long version;
@@ -73,7 +69,7 @@ public class DDEstadoInformeComercial implements Auditable, Dictionary {
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
 	}
-
+	
 	public String getDescripcion() {
 		return descripcion;
 	}

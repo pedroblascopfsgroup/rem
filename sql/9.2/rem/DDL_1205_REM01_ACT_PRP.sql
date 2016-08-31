@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160622
+--## FECHA_CREACION=20160810
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -62,6 +62,7 @@ BEGIN
 		ACT_PRP_PRECIO_PROPUESTO			NUMBER(16,2),
 		ACT_PRP_PRECIO_SANCIONADO			NUMBER(16,2),
 		DD_EPA_ID							NUMBER(16,2),
+		ACT_PRP_MOTIVO_DESCARTE				VARCHAR2(256 CHAR),				
 		VERSION 							NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE
 	)
 	LOGGING 
@@ -98,6 +99,10 @@ BEGIN
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Comentario creado.');
 	
+	V_TEXT1 := 'Descripcion del motivo de descarte del activo para la propuesta asociada';
+	V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_PRP_MOTIVO_DESCARTE IS '''||V_TEXT1||'''  ';
+	EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'.ACT_PRP_MOTIVO_DESCARTE.... Comentario creado.');
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... OK');
 	

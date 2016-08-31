@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
@@ -13,6 +12,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -25,8 +25,11 @@ import es.pfsgroup.plugin.rem.model.DtoPresupuestosTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
+import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
@@ -86,9 +89,26 @@ public interface TrabajoApi {
 	    @BusinessOperationDefinition("trabajoManager.actualizarImporteTotalTrabajo")
 	    public Trabajo actualizarImporteTotalTrabajo(Long idTrabajo);
 	    
+	    /**
+	     * Crear trabajo a partir de una lista de activos y un subtipo dados:
+	     * - Nuevos trabajos del módulo de precios y marketing
+	     * - Otros trabajos que no provengan de la pantalla "Crear trabajo", por esto no requiere el DtoFichaTrabajo
+	     *   solo requiere una lista de activos y el subtipo de trabajo a generar. 
+	     * - La propuesta ES OPCIONAL para crear el trabajo. Si se pasa la propuesta crea la relación, si no,
+	     *   solo crea el trabajo-tramite.
+	     * @param subtipoTrabajo
+	     * @param listaActivos
+	     * @param propuetaPrecio (Opcional) Si es un trabajo derivado de la propuesta, se le pasa la propuesta
+	     * @return
+	     */
+	    public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio);
+	    
 		/**
-		 * 
-		 * @param trabajo
+		 * Crear trabajo desde la pantalla de crear trabajos:
+		 * - Crea un trabajo desde el activo o desde la agrupación de activos (Nuevos trabajos Fase1)
+		 *   o crea un trabajo introduciendo un listado de activos en excel (trabajos con tramite multiactivo Fase 2)
+		 * - Son solo trabajos que provienen de la pantalla "Crear trabajo"
+		 * @param dtoTrabajo
 		 * @param id
 		 * @return
 		 */
@@ -436,7 +456,28 @@ public interface TrabajoApi {
 	    
 	    @BusinessOperationDefinition("trabajoManager.getFechaPagoTrabajo")
 	    public String getFechaPagoTrabajo(TareaExterna tareaExterna);
+	    
+	    
+	    /**
+	     * Devuelve si existe un Trabajo por idTrabajoWebcom.
+	     * @param idTrabajoWebcom a consultar
+	     * @return Trabajo
+	     */
+	    public Boolean existsTrabajoByIdTrabajoWebcom(Long idTrabajoWebcom);
+	    
+	    /**
+		 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
+		 * @param TrabajoDto con los parametros de entrada
+		 * @return List<String> 
+		 */
+	    public List<String> validateTrabajoPostRequestData(TrabajoDto trabajoDto);
 
+	    /**
+		 * Devuelve un DtoFichaTrabajo a partir del TrabajoDto pasado por parámetros
+		 * @param TrabajoDto con los parametros de entrada
+		 * @return DtoFichaTrabajo
+		 */	    
+	    public DtoFichaTrabajo convertTrabajoDto2DtoFichaTrabajo(TrabajoDto trabajoDto);
 
     }
 

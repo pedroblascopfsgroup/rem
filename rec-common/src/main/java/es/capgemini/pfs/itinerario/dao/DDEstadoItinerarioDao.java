@@ -25,4 +25,11 @@ public interface DDEstadoItinerarioDao extends AbstractDao<DDEstadoItinerario, L
      * @return los estados.
      */
     List<DDEstadoItinerario> findByEntidad(String tipoEntidad);
+    
+    /**
+     * devuelve los estados correspondientes a un tipo de entidad y un tipo de itinerario.
+     * @param tipoEntidad el tipo de entidad y codigo del tipo de itinerario
+     * @return los estados.
+     */
+    List<DDEstadoItinerario> findByEntidadAndTipoItinerario(String tipoEntidad, String codigoTipoItinerario);
 }

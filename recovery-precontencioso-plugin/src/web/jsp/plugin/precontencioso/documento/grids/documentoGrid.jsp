@@ -919,6 +919,15 @@ var cargaTiposDeDocumentosFiltro = function(){
 }
 
 var ponerVisibilidadBotonesDoc = function(visibles, invisibles) {
+	
+	<c:if test="${usuarioLogado.entidad.descripcion eq 'BANKIA'}">
+		if(data.esGestoria) {
+			excluirDocButton.setDisable(true);
+			descartarDocButton.setDisable(true);
+			anularSolicitudesButton.setDisable(true);
+		}	
+	</c:if>
+	
 	for (var i=0; i < visibles.length; i++){
 		if (typeof(Ext.getCmp(visibles[i].boton)) != 'undefined') {
 			Ext.getCmp(visibles[i].boton).setVisible(true);

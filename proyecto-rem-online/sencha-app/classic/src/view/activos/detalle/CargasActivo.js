@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
     xtype: 'cargasactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'cargasactivo',
     scrollable	: 'y',
     listeners: {

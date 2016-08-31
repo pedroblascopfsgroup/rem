@@ -51,6 +51,33 @@ Ext.define('HreRem.view.precios.PreciosModel', {
 					remoteUrl: 'generic/getDiccionario',
 					extraParams: {diccionario: 'subtiposTitulo'}
 				}
+    		},
+    		
+    		activosPropuesta: {    
+       		 	pageSize: $AC.getDefaultPageSize(),
+	       		proxy: {
+			        type: 'uxproxy',
+			        remoteUrl: 'precios/getActivosByPropuesta',
+			        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+		    	},
+		    	remoteSort: true,
+		    	remoteFilter: true,
+		    	listeners : {
+		            beforeload : 'beforeLoadActivosByPropuesta'
+		        }
+       		},
+    		
+    		numActivosByTipoPrecio: {
+    			
+    			pageSize: $AC.getDefaultPageSize(),
+    	    	proxy: {
+    		        type: 'uxproxy',
+    		        remoteUrl: 'precios/getNumActivosByTipoPrecio',
+    			    actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
+    	    	},
+    	    	session: true,
+    	    	remoteSort: true,
+    	    	remoteFilter: true
     		}
     }
 });

@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
       xtype : 'datoscomunidadactivo',
       cls : 'panel-base shadow-panel',
       collapsed : false,
+      disableValidation: true,
       reference : 'datoscomunidadactivo',
       scrollable : 'y',
       recordName : "activo",

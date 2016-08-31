@@ -7,8 +7,8 @@ Ext.define('HreRem.controller.ActivosController', {
     models: ['HreRem.model.Activo','HreRem.model.ActivoDatosRegistrales','HreRem.model.ActivoPropietario','HreRem.model.ActivoInformacionAdministrativa',
     'HreRem.model.ActivoCargas', 'HreRem.model.ActivoCargasTab', 'HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.ActivoValoraciones', 'HreRem.model.ActivoTasacion',
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
-    'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
-    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo'],
+    'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
+    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu', 'HreRem.view.expedientes.ExpedienteDetalleMain'],
 
     
     refs: [
@@ -63,6 +63,7 @@ Ext.define('HreRem.controller.ActivosController', {
         	crearnotificacion: 'crearNotificacion',
         	abrirDetalleTramite : 'abrirDetalleTramite',
         	abrirDetalleTrabajo: 'abrirDetalleTrabajo',
+        	abrirDetalleExpediente: 'abrirDetalleExpediente',
         	refrescarActivo: 'refrescarDetalleActivo'
     	},
 
@@ -87,7 +88,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     	'agrupacionesdetallemain' : {    		
 		    abrirDetalleActivo : 'abrirDetalleActivoById',
-		    refrescarAgrupacion: 'refrescarDetalleAgrupacion'
+		    refrescarAgrupacion: 'refrescarDetalleAgrupacion',
+		    abrirDetalleExpediente: 'abrirDetalleExpediente'
     	},
     	
     	'trabajosmain' : {    		
@@ -113,6 +115,15 @@ Ext.define('HreRem.controller.ActivosController', {
     		refrescarTramite: 'refrescarDetalleTramite'
     	},
 	
+    	'publicacionmain' : {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPublicacion'
+    	},
+    	
+    	'preciosmain' : {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPropuestaPrecio',
+			abrirDetalleTrabajo: 'abrirDetalleTrabajo'
+    	},
+    	
     	'menufavoritos': {
     		
     		abrirfavoritoactivo: function(menuFavoritos, favorito) {
@@ -138,7 +149,19 @@ Ext.define('HreRem.controller.ActivosController', {
     			me.abrirDetalleTrabajoById(favorito.openId, favorito.text);  
     			
     		}
-    	}   	
+    	},
+    	'visitascomercialmain': {    		
+			abrirDetalleActivo: 'abrirDetalleActivoComercialVisitas'
+    	},
+    	'ofertascomercialmain': {
+    		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
+			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
+			abrirDetalleExpediente: 'abrirDetalleExpediente'
+    	},
+    	'expedientedetallemain': {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
+    		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea'
+    	}
 
     },
     
@@ -217,7 +240,7 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	
 		    	/* Selector de subpestanyas del activo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
-		    	 * para evitar el uso de Notify() si no hay activacion de pestañas (refLinks != null)
+		    	 * para evitar el uso de Notify() si no hay activacion de pestaï¿½as (refLinks != null)
 		    	 */
 		    	if (refLinks != null){
 		    		tab.getViewModel().notify();
@@ -233,17 +256,26 @@ Ext.define('HreRem.controller.ActivosController', {
     seleccionarTabByXtype: function (tab, refLinks) {
 
 		/* - seleccionarTabByXtype es una funcion que se llama a si misma recursivamente, 
-		 *   tantas veces como xtype de pestañas contenga refLinks, separados por puntos
-		 * - Cada llamada activa una pestaña por xtype y pasa a la siguiente llamada el resto
+		 *   tantas veces como xtype de pestaï¿½as contenga refLinks, separados por puntos
+		 * - Cada llamada activa una pestaï¿½a por xtype y pasa a la siguiente llamada el resto
     	 * - La 1a llamada debe ir precedida por un Notify(), que es necesario para evitar un error
-    	 *   por falta de algún dato. El error bloquea la aplicacion 
+    	 *   por falta de algï¿½n dato. El error bloquea la aplicacion 
     	 * - Notify() se hace fuera de la funcion selectora porque no se puede usar en llamadas recursivas
 		 */
 		if (refLinks != null){
 	    	var me = this,
-	    	tabActivo = tab.down('tabpanel'),
+	    	tabActivo= null,
 	    	activeTabXtype = null,
 	    	refs = refLinks.split('.');
+	    	
+	    	var array = tab.getXTypes().split('/')
+	    	
+	    	if(array.indexOf('tabpanel') != -1){
+	    		var tabActivo = tab;
+	    	}
+	    	else{
+	    		tabActivo = tab.down('tabpanel');
+	    	}
 	    	
 	    	activeTabXtype = refs[0];
 			var slicedRefLinks = refLinks.split('.').slice(1).join('.');
@@ -285,6 +317,14 @@ Ext.define('HreRem.controller.ActivosController', {
 		    }
 		});
     	
+    },
+    
+    abrirDetalleActivoPublicacion: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("id");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PUBLICACION'])
     },
     
     abrirDetalleAgrupacion: function(record) {
@@ -454,7 +494,7 @@ Ext.define('HreRem.controller.ActivosController', {
 				
 				/* Selector de subPestanyas del Trabajo:
 		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
-		    	 * para evitar el uso de Notify() si no hay activacion de pestañas (refLinks != null)
+		    	 * para evitar el uso de Notify() si no hay activacion de pestaï¿½as (refLinks != null)
 		    	 */
 		    	if (refLinks != null){
 		    		tab.getViewModel().notify();
@@ -463,6 +503,113 @@ Ext.define('HreRem.controller.ActivosController', {
 				
 				tab.unmask();
 
+		    	me.logTime("Fin Set values"); 
+		    }
+		});
+
+    },
+    
+    abrirDetalleExpediente: function(record, refLinks) {
+    	var me = this,
+    	titulo = "Expediente " + record.get("numExpediente"),
+    	id = record.get("idExpediente");
+		me.redirectTo('activos', true);    	
+    	me.abrirDetalleExpedienteById(id, titulo, refLinks);    	
+    	
+    },
+    
+    abrirDetalleExpedienteById: function(id, titulo, refLinks) {
+
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab (me.getActivosMain(), 'expediente', "expedientedetallemain",  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime(); 
+    	
+    	HreRem.model.ExpedienteComercial.load(id, {
+    		scope: this,
+		    success: function(expediente) {
+		    	me.logTime("Load expediente success"); 
+		    	me.setLogTime();	    	
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Expediente " + expediente.get("numExpediente");
+		    		tab.setTitle(titulo);
+		    	}
+		    	tab.getViewModel().set("expediente", expediente);
+		    	tab.configCmp(expediente);
+		    	
+		    	HreRem.model.ExpedienteAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+			    		//var tab = me.getActivosMain().items.getByKey('expediente_' + id);
+			    		if (tab != null && tab.getViewModel() != null)
+			    			tab.getViewModel().set("avisos", avisos);				    	
+				    }
+				});
+				
+				
+				/* Selector de subPestanyas del Trabajo:
+		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
+		    	 * para evitar el uso de Notify() si no hay activacion de pestaï¿½as (refLinks != null)
+		    	 */
+		    	if (refLinks != null){
+		    		tab.getViewModel().notify();
+					me.seleccionarTabByXtype(tab, refLinks);
+				}
+				
+				tab.unmask();
+
+		    	me.logTime("Fin Set values"); 
+		    }
+		});
+
+    },
+    
+    abrirDetalleAgrupacionComercialOfertasById: function(id, titulo, refLinks) {
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab (me.getActivosMain(), 'agrupacion', "agrupacionesdetallemain",  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime(); 
+    	
+    	HreRem.model.AgrupacionFicha.load(id, {
+    		scope: this,
+		    success: function(agrupacion) {
+		    	me.logTime("Load agrupacion success"); 
+		    	me.setLogTime();	    	
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Agrupacion " + agrupacion.get("numAgrupacionRem");
+		    		tab.setTitle(titulo);
+		    	}
+		    	
+		    	tab.getViewModel().set("agrupacionficha", agrupacion);
+		    	tab.configCmp(agrupacion);
+		    	
+		    	
+				HreRem.model.AgrupacionAviso.load(id, {
+		    		scope: this,
+				    success: function(avisos) {
+				    	if (tab != null && tab.getViewModel() != null)
+				    		tab.getViewModel().set("avisos", avisos);
+				    	
+				    }
+				});
+				tab.unmask();
+				/* Selector de subPestanyas del Trabajo:
+		    	 * - Se hace la comprobacion aqui (ademas de dentro de la funcion), 
+		    	 * para evitar el uso de Notify() si no hay activacion de pestaï¿½as (refLinks != null)
+		    	 */
+		    	if (refLinks != null){
+		    		tab.getViewModel().notify();
+					me.seleccionarTabByXtype(tab, refLinks);
+				}
+				
 		    	me.logTime("Fin Set values"); 
 		    }
 		});
@@ -646,5 +793,39 @@ Ext.define('HreRem.controller.ActivosController', {
     		}
     	}
     	Ext.resumeLayouts(true);
+    },
+    
+    
+    abrirDetalleAgrupacionComercialOfertas: function(record) {
+    	var me = this,
+    	titulo = "AgrupaciÃ³n " + record.get("numAgrupacionRem"),
+    	id = record.get("idAgrupacion");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleAgrupacionComercialOfertasById(id, titulo, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTASAGRU'])
+    },
+    
+    abrirDetalleActivoComercialVisitas: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['VISITAS'])
+    },
+    
+    abrirDetalleActivoComercialOfertas: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+		me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['OFERTAS']);
+    },
+
+    abrirDetalleActivoPropuestaPrecio: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PROPUESTAS'])
     }
+    
 });

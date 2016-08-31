@@ -5,8 +5,10 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +65,9 @@ import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
+import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
+import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
@@ -73,9 +78,6 @@ public class TrabajoController {
 	
 	@Autowired
 	private TrabajoApi trabajoApi;
-	
-//	@Autowired
-//	private ActivoTramiteApi activoTramiteApi;
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -371,6 +373,7 @@ public class TrabajoController {
 		return createModelAndViewJson(model);
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createTarifaTrabajo(DtoTarifaTrabajo tarifaDto,@RequestParam Long idTrabajo){
 		
@@ -389,6 +392,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createPresupuestoTrabajo(DtoPresupuestosTrabajo presupuestoDto,@RequestParam Long idTrabajo){
 		
@@ -407,6 +411,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView savePresupuestoTrabajo(DtoPresupuestosTrabajo presupuestoDto){
 
@@ -426,6 +431,7 @@ public class TrabajoController {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deletePresupuestoTrabajo(@RequestParam Long id){
 
@@ -486,6 +492,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosAgrupacion(DtoAgrupacionFilter filtro, Long id, ModelMap model){
 
@@ -637,6 +644,7 @@ public class TrabajoController {
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getFotosById(Long id, Boolean solicitanteProveedor, WebDto webDto, ModelMap model, HttpServletRequest request, HttpServletResponse response){
 		
@@ -761,6 +769,7 @@ public class TrabajoController {
 
 	
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateFotosById(DtoFoto dtoFoto, ModelMap model){
 		
@@ -779,6 +788,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteFotosTrabajoById(@RequestParam Long[] id, ModelMap model){
 		
@@ -796,6 +806,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getAdvertenciaCrearTrabajo(@RequestParam Long idActivo, @RequestParam String codigoSubtipoTrabajo, ModelMap model){
 		
@@ -812,6 +823,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboProveedor(Long idTrabajo, ModelMap model){
 		
@@ -821,6 +833,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPresupuestoById(Long id, ModelMap model){
 
@@ -830,6 +843,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getRecargosProveedor(Long idTrabajo, ModelMap model){
 		
@@ -839,6 +853,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createRecargoProveedor(DtoRecargoProveedor recargoDto,@RequestParam Long idEntidad){
 		ModelMap model = new ModelMap();
@@ -895,6 +910,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getProvisionesSuplidos(Long idTrabajo, ModelMap model){
 		
@@ -904,6 +920,7 @@ public class TrabajoController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createProvisionSuplido(DtoProvisionSuplido provisionSuplidoDto,@RequestParam Long idEntidad){
 		ModelMap model = new ModelMap();
@@ -984,6 +1001,102 @@ public class TrabajoController {
 		return createModelAndViewJson(model);
 			
 	}
+	
+	
+	
+	
+	/**
+	 * Inserta una lista de Trabajos Ejem: IP:8080/pfs/rest/trabajo
+	 * HEADERS:
+	 * Content-Type - application/json
+	 * signature - sdgsdgsdgsdg
+	 * 
+	 * BODY:
+	 * {"id":"111111113112","data": [{"idTrabajoWebcom": "1", "idActivoHaya": "0", "codTipoTrabajo": "03","codSubtipoTrabajo": "26", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1", "descripcion": "Descripción del trabajo", "idApiResponsable": "5045", "nombreContacto": "Contacto", "telefonoContacto": "987654321", "emailContacto": "prueba@dominio.es",  "descripcionContacto": "El contacto esta disponible de lunes a viernes de 8:00 a 14:00 horas.", "nombreRequiriente": "Nombre requiremente", "telefonoRequiriente": "987654321", "emailRequiriente": "prueba@dominio.es", "descripcionRequiriente": "Para contactar con el requirente preguntar por Juan.", "fechaHoraConcretaRequiriente": "2016-01-01T10:10:10",  "fechaTopeRequiriente": "2016-01-01T10:10:10", "urgentePrioridadRequiriente": true, "riesgoPrioridadRequiriente": true}]}	 *  
+	 *
+	 * @param model
+	 * @param request
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/trabajo")
+	public ModelAndView saveTrabajosWS(ModelMap model, RestRequestWrapper request) {		
+		TrabajoRequestDto jsonData = null;
+		List<String> errorsList = null;
+		TrabajoDto trabajoDto = null;		
+		DtoFichaTrabajo dtoFichaTrabajo = null;
+		Map<String, Object> map = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		ArrayList<Map<String, Object>> requestMapList = null;
+
+		try {
+			
+			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
+			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
+			requestMapList = request.getRequestMapList();
+			if(Checks.esNulo(requestMapList) && requestMapList.isEmpty()){
+				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
+				
+			}else{
+				for(int i=0; i < listaTrabajoDto.size();i++){
+
+					Long idTrabajo = null;
+					Trabajo trabajo = null;
+					errorsList = new ArrayList<String>();
+					map = new HashMap<String, Object>();
+					trabajoDto = listaTrabajoDto.get(i);
+					
+					errorsList = trabajoApi.validateTrabajoPostRequestData(trabajoDto);
+					if(!Checks.esNulo(errorsList) && errorsList.isEmpty()){					
+						dtoFichaTrabajo = trabajoApi.convertTrabajoDto2DtoFichaTrabajo(trabajoDto);
+						if(Checks.esNulo(dtoFichaTrabajo)){
+							errorsList.add("Ha ocurrido un error al procesar la petición. Error de conversion de tipos al construir el dtoTrabajo.");
+						}else{
+							idTrabajo = trabajoApi.create(dtoFichaTrabajo);
+							if(Checks.esNulo(idTrabajo)){
+								errorsList.add("Ha ocurrido un error al crear el trabajo.");
+							}else{
+								trabajo = trabajoApi.findOne(idTrabajo);
+							}
+						}					
+					}
+					
+					
+					if(!Checks.esNulo(errorsList) && errorsList.isEmpty() && !Checks.esNulo(trabajo)){
+						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
+						map.put("idTrabajoRem", trabajo.getNumTrabajo());
+						map.put("success", true);
+					}else{
+						map.put("idTrabajoWebcom", trabajoDto.getIdTrabajoWebcom());
+						map.put("idTrabajoRem", "");
+						map.put("success", false);
+						map.put("errorMessages", errorsList);
+					}
+					listaRespuesta.add(map);
+					
+				}
+			
+				model.put("id", jsonData.getId());	
+				model.put("data", listaRespuesta);
+				model.put("error", "");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("id", jsonData.getId());	
+			model.put("data", listaRespuesta);
+			model.put("error", e.getMessage().toUpperCase());
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 
 }

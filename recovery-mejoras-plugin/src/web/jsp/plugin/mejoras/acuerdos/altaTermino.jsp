@@ -423,11 +423,11 @@
 			fechaActual = Date.parse(fechaActual);
        		if(formulario.isValid() && detalleFieldSet.getForm().isValid()){
        			var dateSolucionPrevista = null;
-       			if (Ext.getCmp('fechaSolucionPrevista')!=undefined) {
-       				dateSolucionPrevista = Date.parse(Ext.getCmp('fechaSolucionPrevista').getValue());
+       			if (objetosDinamicos['fechaSolucionPrevista']!=undefined) {
+       				dateSolucionPrevista = Date.parse(objetosDinamicos['fechaSolucionPrevista'].getValue());
        			}
        			
-       			if(dateSolucionPrevista != null && !isNaN(parseFloat(dateSolucionPrevista)) && Ext.getCmp('fechaSolucionPrevista').getValue() < fechaActual){
+       			if(dateSolucionPrevista != null && !isNaN(parseFloat(dateSolucionPrevista)) && objetosDinamicos['fechaSolucionPrevista'].getValue() < fechaActual){
        				Ext.Msg.show({
 				   		title:'Aviso',
 				   		msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.fechaActual" text="**Fecha solicitud prevista no puede ser menor a la actual." />',
@@ -435,6 +435,18 @@
 					});
 					
 					return false;
+       			}
+       			
+       			if (Ext.getCmp('importePrevistoRegularizar')!=undefined) {
+       				if (Ext.getCmp('importePrevistoRegularizar').value <= 0) {
+       					Ext.Msg.show({
+       						title:'Aviso',
+       						msg: '<s:message code="plugin.mejoras.acuerdos.tabTerminos.terminos.terminos.agregar.aviso.importePrevistoRegularizar" text="**El campo Importe Previsto Regularizar debe ser mayor que 0" />',
+       						buttons: Ext.Msg.OK
+       					});
+       					return false;
+       					
+       				}
        			}
        			
        			<%--
@@ -504,13 +516,16 @@
        			else {
        		
 	       		//var params = detalleFieldSet.getForm().getValues();
-	       		
 	       		var params = {};
 	       		for (var objectName in objetosDinamicos) {
 	       			if (objetosDinamicos.hasOwnProperty(objectName)) {
 		       			var object = objetosDinamicos[objectName];
 		       			var parameter = {};
-		       			parameter[objectName] = object.value;
+		       			if(object instanceof Ext.ux.form.XDateField){
+		       				parameter[objectName] = object.value;
+		       			}else{
+		       				parameter[objectName] = object.getValue();
+		       			}
 		       			Ext.apply(params, parameter);
 	       			}
 	       		}
@@ -525,7 +540,7 @@
 	       		Ext.apply(params, {contratosIncluidos : '${contratosIncluidos}'});
 	       		Ext.apply(params, {bienesIncluidos : comboBienes.getValue()});     		
 	       		Ext.apply(params, {idTermino : idTermino });     		
-	       		
+	       		btnGuardar.setDisabled(true);
 	       		Ext.Ajax.request({
 					url: page.resolveUrl('mejacuerdo/crearTerminoAcuerdo')
 					,method: 'POST'
@@ -540,6 +555,7 @@
 						page.fireEvent(app.event.DONE);
 					}
 					,error: function(){
+						btnGuardar.setDisabled(false);
 						Ext.MessageBox.show({
 				           title: 'Guardado',
 				           msg: '<s:message code="plugin.mejoras.asunto.ErrorGuardado" text="**Error guardado" />',
@@ -605,7 +621,10 @@
 		bienesStore.on('load', function() {
 	       	if("${termino.bienes}"!=null && "${termino.bienes}"!=''){
 	        	<c:forEach var="bien" items="${termino.bienes}">
-			    	comboBienes.setValue("${bien.bien.id}"); 
+	        		var BieIdStr = parseInt("${bien.bien.id}");
+	        		var arrayBien = new Array();
+	        		arrayBien.push(BieIdStr);
+			    	comboBienes.setValue(arrayBien); 
 				</c:forEach>
 		    }
 		});

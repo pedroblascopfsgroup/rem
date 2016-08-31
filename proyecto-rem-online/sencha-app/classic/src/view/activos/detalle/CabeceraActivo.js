@@ -31,6 +31,10 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
         			text: HreRem.i18n('btn.nuevo.tramite'),
         			handler: 'onTramiteClick',
         			secFunPermToShow: 'BOTON_CREAR_TRAMITE'
+        		},
+        		{
+        			text: 'Lanzar T. de Publicacion (sólo pruebas)',
+        			handler: 'onTramitePublicacionClick'
         		}
 	    		
 	    	]

@@ -34,6 +34,7 @@ public class DDEstadoSubasta implements Auditable, Dictionary {
 	public static final String PCO = "PCO";
 	public static final String PAC = "PAC";
 	public static final String PCE = "PCE";
+	public static final String EPU = "EPU";
 
 	@Id
 	@Column(name = "DD_ESU_ID")

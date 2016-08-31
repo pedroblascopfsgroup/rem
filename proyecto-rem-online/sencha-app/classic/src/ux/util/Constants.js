@@ -43,6 +43,12 @@ Ext.define('HreRem.ux.util.Constants', {
     	PLAZA_APARCAMIENTO: '03'
     },
     
+    TIPOS_EXPEDIENTE_COMERCIAL: {
+    	
+    	VENTA: '01',
+    	ALQUILER: '02'
+    },
+    
     MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',
@@ -65,7 +71,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		CHECKDOC:		'admisionactivo.admisioncheckdocactivo',
 		GESTION:		'gestionactivo',
 		HISTORICO:		'gestionactivo.historicopeticionesactivo',
-		PRESUPUESTO:	'gestionactivo.presupuestoasignadosactivo'
+		PRESUPUESTO:	'gestionactivo.presupuestoasignadosactivo',
+		PUBLICACION:	'publicacionactivo',
+		OFERTAS:		'comercialactivo.ofertascomercialactivo',
+		VISITAS:		'comercialactivo.visitascomercialactivo',
+		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
+		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace		
     },
     

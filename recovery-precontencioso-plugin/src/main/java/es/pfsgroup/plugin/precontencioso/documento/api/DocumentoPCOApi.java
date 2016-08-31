@@ -4,6 +4,7 @@ import java.util.List;
 
 import es.capgemini.pfs.despachoExterno.model.GestorDespacho;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.precontencioso.documento.dto.DocumentoPCODto;
@@ -216,4 +217,12 @@ public interface DocumentoPCOApi {
 	 * @return List<DDProvincia>
 	 */
 	public List<DDProvincia> getProvincias();
+	
+	/**
+	 * Obtiene una lista de localidades filtradas por la provincia.
+	 * 
+	 * @param idProvincia : ID de la provincia a filtrar.
+	 * @return Devuelve una Lista de localidades.
+	 */
+	public List<Localidad> getLocalidades(Long idProvincia);
 }

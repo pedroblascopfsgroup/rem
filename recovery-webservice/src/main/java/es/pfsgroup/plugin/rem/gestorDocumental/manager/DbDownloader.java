@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
-import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 
 @Component
 public class DbDownloader implements Downloader {
@@ -20,8 +20,13 @@ public class DbDownloader implements Downloader {
 	
 	@Override
 	public FileItem getFileItem(Long id) {
-		Adjunto adj = genericDao.get(Adjunto.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
-		return adj.getFileItem();
+		ActivoAdjuntoActivo adjuntoActivo = genericDao.get(ActivoAdjuntoActivo.class, genericDao.createFilter(FilterType.EQUALS, "id", id));
+
+		FileItem fileItem = adjuntoActivo.getAdjunto().getFileItem();
+		fileItem.setContentType(adjuntoActivo.getContentType());
+		fileItem.setFileName(adjuntoActivo.getNombre());
+
+		return adjuntoActivo.getAdjunto().getFileItem();
 	}
 
 	@Override

@@ -1,0 +1,2 @@
+apr_wait_adequacies.sh
+apr_main_adequacies.sh

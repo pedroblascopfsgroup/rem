@@ -95,5 +95,14 @@
 		titleKey="plugin.config.usuarios.consulta.despachos.contro.grid.title" collapsible="false" 
 		bbar="btNuevo,btBorrar" 
 		rowdblclick="opendespacho" />
+
+	if ('${usuarioEnOtraCartera}' == 'true') {
+		btNuevo.setVisible(false);
+		btBorrar.setVisible(false);
+	} else {
+		btNuevo.setVisible(true);
+		btBorrar.setVisible(true);
+	}
+
 	
 </pfslayout:tabpage>

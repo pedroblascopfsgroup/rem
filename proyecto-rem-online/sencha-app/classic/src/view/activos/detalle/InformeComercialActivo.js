@@ -6,11 +6,13 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     collapsed: false,
     scrollable	: 'y',
     saveMultiple: true,
+    refreshAfterSave: true,
     records: ['activoInforme','informeComercial'], 
     recordsClass: ['HreRem.model.Activo','HreRem.model.ActivoInformeComercial'],    
     requires: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
-    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda'
-    ],
+    'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
+    'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial', 'HreRem.view.activos.detalle.HistoricoMediadorGrid',
+    'HreRem.model.HistoricoMediador'],
     
     listeners: {
     	
@@ -51,8 +53,35 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.mediador'),
 				defaultType: 'textfieldbase',
-				items :	[
+
+				items :
+					[
+					// Fila 0
+						{
+							// Label vacia para desplazar la línea por cuestión de estética.
+							xtype: 'label',
+							bind: {
+				        		hidden: '{informeComercial.nombreMediador}'
+				        	}
+						},
+						{
+				        	xtype: 'label',
+				        	cls:'x-form-item',
+				        	text: HreRem.i18n('fieldlabel.mediador.notFound'),
+				        	style: 'font-size: small;text-align: center;font-weight: bold;color: #DF7401;',
+				        	colspan: 2,
+				        	readOnly: true,
+				        	reference: 'mediadorNotFoundLabel',
+				        	bind: {
+				        		hidden: '{informeComercial.nombreMediador}'
+				        	}
+						},
 					// Fila 1
+						{ 
+							fieldLabel: HreRem.i18n('fieldlabel.codigo'),
+							bind: '{informeComercial.codigoMediador}',
+							readOnly: true
+						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 							bind: '{informeComercial.nombreMediador}',
@@ -63,12 +92,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							bind: '{informeComercial.telefonoMediador}',
 							readOnly: true
 						},
+						// Fila 2
 						{
 							fieldLabel: HreRem.i18n('fieldlabel.email'),
 							bind: '{informeComercial.emailMediador}',
 							readOnly: true
 						},
-					// Fila 2
 						{
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.frecepcion.llaves'),
@@ -93,9 +122,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fautorizacion.hasta'),
 							bind: '{informeComercial.fechaAutorizacionHasta}',
-							readOnly: true
-						}
-
+							readOnly: true,
+							colspan: 2
+						},
+					// Fila 4
+						{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
 				]
 			},
 
@@ -120,11 +151,13 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							xtype: 'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.rechazo'),
 							bind: '{informeComercial.fechaRechazo}'
-						}
+						},
+						{xtype: "historicoestadosinformecomercial", reference: "historicoestadosinformecomercial"}
 				]
 			},
 			
 // Datos Básicos
+
 			{
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.datos.basicos'),
@@ -414,6 +447,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 
 // Información General ---
 			{
+
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.informacion.general'),
 				defaultType: 'textfieldbase',
@@ -713,6 +747,9 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		var me = this; 
 		me.recargar = false;
     	me.lookupController().cargarTabData(me);
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+		});
     },
     
     actualizarCoordenadas: function(latitud, longitud) {

@@ -1,6 +1,3 @@
-/**
- * This view is used to present the details of a single AgendaItem.
- */
 Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     extend: 'HreRem.model.Base',
     idProperty: 'idActivo',
@@ -38,23 +35,28 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     		},
     		{
     			name:'divHorizontalNoInscrita'
+    		},
+    		// Referente a la cabecera de datos publicacion. Campo calculado con datos de este modelo.
+    		{
+    			name: 'estadoDisponibilidadComercial',
+				calculate: function(data){
+					if(data.ruina || data.pendienteInscripcion || data.obraNuevaSinDeclarar || data.sinTomaPosesionInicial
+							|| data.proindiviso || data.obraNuevaEnConstruccion || data.ocupadoConTitulo || data.tapiado
+							|| data.ocupadoSinTitulo || data.divHorizontalNoInscrita || !Ext.isEmpty(data.otro)){
+						return true;
+					}
+				}
     		}
 
     ],
     
 	proxy: {
 		type: 'uxproxy',
-		remoteUrl: 'activo/getCondicionantesDisponibilidad',
 		api: {
             read: 'activo/getCondicionantesDisponibilidad',
-            create: 'activo/getCondicionantesDisponibilidad',
-            update: 'activo/getCondicionantesDisponibilidad',
+            update: 'activo/saveCondicionantesDisponibilidad',
+            create: 'activo/saveCondicionantesDisponibilidad',
             destroy: 'activo/getCondicionantesDisponibilidad'
         }
-//		,
-//		extraParams: {pestana: '2'}
     }
-    
-    
-
 });

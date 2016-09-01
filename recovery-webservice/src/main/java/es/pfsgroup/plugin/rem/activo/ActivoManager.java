@@ -344,43 +344,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveActivoValoracion")
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
-
-		// Actualizacion Valoracion existente
-		if (!Checks.esNulo(activoValoracion)) {
-			// Si ya existia una valoracion, actualizamos el importe que se ha
-			// modificado por web
-			// Pero antes, pasa la valoracion anterior al historico
-			saveActivoValoracionHistorico(activoValoracion);
-
-			// Actualiza la valoracion: nuevo importe y nuevo periodo de
-			// vigencia
-			activoValoracion.setImporte(dto.getImporte());
-			activoValoracion.setFechaInicio(dto.getFechaInicio());
-			activoValoracion.setFechaFin(dto.getFechaFin());
-			activoValoracion.setFechaCarga(new Date());
-
-			genericDao.update(ActivoValoraciones.class, activoValoracion);
-
-		} else {
-
-			// Si no existia una valoracion del tipo indicado, crea una nueva
-			// valoracion de este tipo (para un activo)
-			activoValoracion = new ActivoValoraciones();
-			DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class,
-					dto.getCodigoTipoPrecio());
-
-			activoValoracion.setActivo(activo);
-			activoValoracion.setTipoPrecio(tipoPrecio);
-			activoValoracion.setImporte(dto.getImporte());
-			activoValoracion.setFechaInicio(dto.getFechaInicio());
-			activoValoracion.setFechaFin(dto.getFechaFin());
-			activoValoracion.setFechaAprobacion(null);
-			activoValoracion.setFechaCarga(new Date());
-			activoValoracion.setGestor(adapter.getUsuarioLogado());
-
-			genericDao.save(ActivoValoraciones.class, activoValoracion);
+		try {
+		
+			// Actualizacion Valoracion existente
+			if (!Checks.esNulo(activoValoracion)) {
+				// Si ya existia una valoracion, actualizamos el importe que se ha
+				// modificado por web
+				// Pero antes, pasa la valoracion anterior al historico
+				saveActivoValoracionHistorico(activoValoracion);
+				
+				beanUtilNotNull.copyProperties(activoValoracion, dto);
+				activoValoracion.setFechaCarga(new Date());
+				
+				genericDao.update(ActivoValoraciones.class, activoValoracion);
+	
+			} else {
+	
+				// Si no existia una valoracion del tipo indicado, crea una nueva
+				// valoracion de este tipo (para un activo)
+				activoValoracion = new ActivoValoraciones();
+				beanUtilNotNull.copyProperties(activoValoracion, dto);
+				activoValoracion.setFechaCarga(new Date());
+				
+				DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class,
+						dto.getCodigoTipoPrecio());
+	
+				activoValoracion.setActivo(activo);
+				activoValoracion.setTipoPrecio(tipoPrecio);
+				activoValoracion.setGestor(adapter.getUsuarioLogado());
+	
+				genericDao.save(ActivoValoraciones.class, activoValoracion);
+			}
+			
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
 		}
-
+		
 		return true;
 	}
 

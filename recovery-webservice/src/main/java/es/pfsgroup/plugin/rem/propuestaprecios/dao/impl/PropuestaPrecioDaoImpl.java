@@ -73,8 +73,6 @@ public class PropuestaPrecioDaoImpl extends AbstractEntityDao<PropuestaPrecio, L
    			}
    		}
    		
-   		hb.orderBy("prp.numPropuesta", HQLBuilder.ORDER_ASC);
-   		
 		return HibernateQueryUtils.page(this, hb, dto);
     }
     

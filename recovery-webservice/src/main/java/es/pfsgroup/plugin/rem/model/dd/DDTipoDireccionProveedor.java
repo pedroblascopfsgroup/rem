@@ -1,5 +1,3 @@
-
-
 package es.pfsgroup.plugin.rem.model.dd;
 
 import javax.persistence.Column;
@@ -21,42 +19,33 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de los tipos de proveedores de los activos
+ * Modelo que gestiona el diccionario de tipos de dirección de proveedor.
  * 
- * @author Anahuac de Vicente
+ * @author Daniel Gutiérrez
  *
  */
 @Entity
-@Table(name = "DD_TPR_TIPO_PROVEEDOR", schema = "${entity.schema}")
+@Table(name = "DD_TDP_TIPO_DIR_PROVEEDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDTipoProveedor implements Auditable, Dictionary {
-	
+public class DDTipoDireccionProveedor implements Auditable, Dictionary {
 
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	public static final String COD_ASEGURADORA = "03";
 
 	@Id
-	@Column(name = "DD_TPR_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoProveedorGenerator")
-	@SequenceGenerator(name = "DDTipoProveedorGenerator", sequenceName = "S_DD_TPR_TIPO_PROVEEDOR")
+	@Column(name = "DD_TDP_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoDireccionProveedorGenerator")
+	@SequenceGenerator(name = "DDTipoDireccionProveedorGenerator", sequenceName = "S_DD_TDP_TIPO_DIR_PROVEEDOR")
 	private Long id;
 	    
-	@Column(name = "DD_TPR_CODIGO")   
+	@Column(name = "DD_TDP_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_TPR_DESCRIPCION")   
+	@Column(name = "DD_TDP_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_TPR_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	@Column(name = "DD_TEP_ID")
-	private Long tipoEntidadProveedor; 
+	@Column(name = "DD_TDP_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
 
 	@Version   
 	private Long version;
@@ -64,14 +53,20 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
 	public Long getId() {
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getCodigo() {
+		return codigo;
+	}
+
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 
 	public String getDescripcion() {
@@ -90,22 +85,6 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
-	public Long getTipoEntidadProveedor() {
-		return tipoEntidadProveedor;
-	}
-
-	public void setTipoEntidadProveedor(Long tipoEntidadProveedor) {
-		this.tipoEntidadProveedor = tipoEntidadProveedor;
-	}
-	
 	public Long getVersion() {
 		return version;
 	}
@@ -123,6 +102,3 @@ public class DDTipoProveedor implements Auditable, Dictionary {
 	}
 
 }
-
-
-

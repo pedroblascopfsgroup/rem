@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -21,8 +22,16 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
+import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoZonaGeografica;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
@@ -124,8 +133,83 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_NUM_CUENTA")
 	private String numCuenta;
 
+	@ManyToOne
+	@JoinColumn(name = "DD_TPE_ID")
+	private DDTipoPersona tipoPersona;
 	
+	@Column(name = "PVE_NIF")
+	private String nif;
+    
+	@Column(name = "PVE_FECHA_ALTA")
+	private Date fechaAlta;
 	
+	@Column(name = "PVE_FECHA_BAJA")
+	private Date fechaBaja;
+	
+	@Column(name = "PVE_LOCALIZADA")
+	private Integer localizada;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_EPR_ID")
+	private DDEstadoProveedor estadoProveedor;
+	
+	@Column(name = "PVE_FECHA_CONSTITUCION")
+	private Date fechaConstitucion;
+	
+	@Column(name = "PVE_AMBITO")
+	private String ambito;
+	
+	@Column(name = "PVE_OBSERVACIONES")
+	private String observaciones;
+	
+	@Column(name = "PVE_HOMOLOGADO")
+	private Integer homologado;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_CPR_ID")
+	private DDCalificacionProveedor calificacionProveedor;
+	
+	@Column(name = "PVE_TOP")
+	private Integer top;
+	
+	@Column(name = "PVE_TITULAR_CUENTA")
+	private String titularCuenta;
+	
+	@Column(name = "PVE_RETENER")
+	private Integer retener;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_MRE_ID")
+	private DDMotivoRetencion motivoRetencion;
+	
+	@Column(name = "PVE_FECHA_RETENCION")
+	private Date fechaRetencion;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_TDP_ID")
+	private DDTipoDocumentoProveedor tipoDocumentoProveedor;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_TVI_ID")
+	private DDTipoVia tipoVia;
+	
+	@Column(name = "PVE_DIRNUM")
+	private Long dirNumero;
+	
+	@Column(name = "PVE_DIRPTA")
+	private Long dirPuerta;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_UPO_ID")
+	private DDUnidadPoblacional unidadPoblacional;
+	
+	@Column(name = "PVE_FECHA_PBC")
+	private Date fechaProcesoBlanqueo;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_RPB_ID")
+	private DDResultadoProcesoBlanqueo resultadoProcesoBlanqueo;
+
 	@Version   
 	private Long version;
 	
@@ -312,6 +396,193 @@ public class ActivoProveedor implements Serializable, Auditable {
 		this.numCuenta = numCuenta;
 	}
 
+	public DDTipoPersona getTipoPersona() {
+		return tipoPersona;
+	}
+
+	public void setTipoPersona(DDTipoPersona tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+
+	public String getNif() {
+		return nif;
+	}
+
+	public void setNif(String nif) {
+		this.nif = nif;
+	}
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public Integer getLocalizada() {
+		return localizada;
+	}
+
+	public void setLocalizada(Integer localizada) {
+		this.localizada = localizada;
+	}
+
+	public DDEstadoProveedor getEstadoProveedor() {
+		return estadoProveedor;
+	}
+
+	public void setEstadoProveedor(DDEstadoProveedor estadoProveedor) {
+		this.estadoProveedor = estadoProveedor;
+	}
+
+	public Date getFechaConstitucion() {
+		return fechaConstitucion;
+	}
+
+	public void setFechaConstitucion(Date fechaConstitucion) {
+		this.fechaConstitucion = fechaConstitucion;
+	}
+
+	public String getAmbito() {
+		return ambito;
+	}
+
+	public void setAmbito(String ambito) {
+		this.ambito = ambito;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public Integer getHomologado() {
+		return homologado;
+	}
+
+	public void setHomologado(Integer homologado) {
+		this.homologado = homologado;
+	}
+
+	public DDCalificacionProveedor getCalificacionProveedor() {
+		return calificacionProveedor;
+	}
+
+	public void setCalificacionProveedor(
+			DDCalificacionProveedor calificacionProveedor) {
+		this.calificacionProveedor = calificacionProveedor;
+	}
+
+	public Integer getTop() {
+		return top;
+	}
+
+	public void setTop(Integer top) {
+		this.top = top;
+	}
+
+	public String getTitularCuenta() {
+		return titularCuenta;
+	}
+
+	public void setTitularCuenta(String titularCuenta) {
+		this.titularCuenta = titularCuenta;
+	}
+
+	public Integer getRetener() {
+		return retener;
+	}
+
+	public void setRetener(Integer retener) {
+		this.retener = retener;
+	}
+
+	public DDMotivoRetencion getMotivoRetencion() {
+		return motivoRetencion;
+	}
+
+	public void setMotivoRetencion(DDMotivoRetencion motivoRetencion) {
+		this.motivoRetencion = motivoRetencion;
+	}
+
+	public Date getFechaRetencion() {
+		return fechaRetencion;
+	}
+
+	public void setFechaRetencion(Date fechaRetencion) {
+		this.fechaRetencion = fechaRetencion;
+	}
+
+	public DDTipoDocumentoProveedor getTipoDocumentoProveedor() {
+		return tipoDocumentoProveedor;
+	}
+
+	public void setTipoDocumentoProveedor(
+			DDTipoDocumentoProveedor tipoDocumentoProveedor) {
+		this.tipoDocumentoProveedor = tipoDocumentoProveedor;
+	}
+
+	public DDTipoVia getTipoVia() {
+		return tipoVia;
+	}
+
+	public void setTipoVia(DDTipoVia tipoVia) {
+		this.tipoVia = tipoVia;
+	}
+
+	public Long getDirNumero() {
+		return dirNumero;
+	}
+
+	public void setDirNumero(Long dirNumero) {
+		this.dirNumero = dirNumero;
+	}
+
+	public Long getDirPuerta() {
+		return dirPuerta;
+	}
+
+	public void setDirPuerta(Long dirPuerta) {
+		this.dirPuerta = dirPuerta;
+	}
+
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
+	}
+
+	public Date getFechaProcesoBlanqueo() {
+		return fechaProcesoBlanqueo;
+	}
+
+	public void setFechaProcesoBlanqueo(Date fechaProcesoBlanqueo) {
+		this.fechaProcesoBlanqueo = fechaProcesoBlanqueo;
+	}
+
+	public DDResultadoProcesoBlanqueo getResultadoProcesoBlanqueo() {
+		return resultadoProcesoBlanqueo;
+	}
+
+	public void setResultadoProcesoBlanqueo(
+			DDResultadoProcesoBlanqueo resultadoProcesoBlanqueo) {
+		this.resultadoProcesoBlanqueo = resultadoProcesoBlanqueo;
+	}
+	
 	public Long getVersion() {
 		return version;
 	}

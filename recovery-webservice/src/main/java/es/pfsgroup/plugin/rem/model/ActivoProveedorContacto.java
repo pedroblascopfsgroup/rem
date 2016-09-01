@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,6 +25,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.plugin.rem.model.dd.DDCargoProveedorContacto;
 
 
 
@@ -97,8 +99,25 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
 	@Column(name = "PVC_EMAIL")
 	private String email;
 	
+	@Column(name = "PVC_PRINCIPAL")
+	private Integer principal;
 	
+	@ManyToOne
+	@JoinColumn(name = "DD_CPC_ID")
+	private DDCargoProveedorContacto cargoProveedorContacto;
     
+	@Column(name = "PVC_CARGO")
+	private String cargo;
+	
+	@Column(name = "PVC_FECHA_ALTA")
+	private Date fechaAlta;
+	
+	@Column(name = "PVC_FECHA_BAJA")
+	private Date fechaBaja;
+	
+	@Column(name = "PVC_OBSERVACIONES")
+	private String observaciones;
+
 	@Version   
 	private Long version;
 	
@@ -226,6 +245,55 @@ public class ActivoProveedorContacto implements Serializable, Auditable {
         
         return usuario.getApellidoNombre();
     }
+    
+    public Integer getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(Integer principal) {
+		this.principal = principal;
+	}
+
+	public DDCargoProveedorContacto getCargoProveedorContacto() {
+		return cargoProveedorContacto;
+	}
+
+	public void setCargoProveedorContacto(
+			DDCargoProveedorContacto cargoProveedorContacto) {
+		this.cargoProveedorContacto = cargoProveedorContacto;
+	}
+
+	public String getCargo() {
+		return cargo;
+	}
+
+	public void setCargo(String cargo) {
+		this.cargo = cargo;
+	}
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 	
 	
 }

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
@@ -30,12 +31,11 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoSolado;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.DtoActivoList;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -84,6 +84,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 	
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -671,6 +674,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	    genericDao.save(ExpedienteComercial.class, expediente);
 	    
 	    return true;
+	}
+	
+	@Override
+	public Page getCompradoresByExpediente(Long idExpediente, WebDto dto) {
+		
+		return expedienteComercialDao.getCompradoresByExpediente(idExpediente, dto);
 	}
 
 }

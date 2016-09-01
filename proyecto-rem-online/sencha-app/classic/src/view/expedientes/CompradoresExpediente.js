@@ -7,15 +7,6 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
 
-	//recordName: "compradores",
-	
-	//recordClass: "HreRem.model.Reserva",
-    
-   // requires: ['HreRem.model.Reserva'],
-    /*
-    listeners: {
-			boxready:'cargarTabData'
-	},*/
     
     initComponent: function () {
 
@@ -31,13 +22,13 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    xtype		: 'gridBase',
 					    reference: 'listadoCompradores',
 						cls	: 'panel-base shadow-panel',
-						/*bind: {
+						bind: {
 							store: '{storeCompradoresExpediente}'
 						},									
-						*/
+						
 						columns: [
 						   {    text: HreRem.i18n('header.id.cliente'),
-					        	dataIndex: 'idCliente',
+					        	dataIndex: 'id',
 					        	flex: 1
 					       },
 						   {
@@ -80,9 +71,9 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            xtype: 'pagingtoolbar',
 					            dock: 'bottom',
 					            displayInfo: true,
-					            /*bind: {
-					                store: '{storeObservaciones}'
-					            }*/
+					            bind: {
+					                store: '{storeCompradoresExpediente}'
+					            }
 					        }
 					    ]
 					}
@@ -160,15 +151,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 	    
 	    me.callParent(); 
     },
-    /*
+    
     funcionRecargar: function() {
-    	
-    	var me = this; 
-		me.recargar = false;		
-		me.lookupController().cargarTabData(me);  
-		Ext.Array.each(me.query('grid'), function(grid) {
-  			grid.getStore().load();
-  		});		
+		var me = this; 
+		me.recargar = false;
+		var listadoCompradores = me.down("[reference=listadoCompradores]");
 		
-    }*/
+		// FIXME ¿¿Deberiamos cargar la primera página??
+		listadoCompradores.getStore().load();
+    }
+    
+    
 });

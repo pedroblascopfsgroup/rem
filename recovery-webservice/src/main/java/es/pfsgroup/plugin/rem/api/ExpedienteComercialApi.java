@@ -2,8 +2,10 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
@@ -127,6 +129,13 @@ public interface ExpedienteComercialApi {
 	     * @return
 	     */
 		public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
+		
+		/**
+		 * Recupera la lista de compradores asociados al expediente
+		 * @param idExpediente
+		 * @return
+		 */
+		public Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
 	   
 }
 

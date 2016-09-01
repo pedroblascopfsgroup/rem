@@ -2,7 +2,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.expedientedetalle',
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
-                'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial'],
+                'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
+                'HreRem.model.CompradorExpediente'],
     
     data: {
     	expediente: null
@@ -120,6 +121,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        rootProperty: 'tramite.tareas'
 	    	}
 
+		},
+		
+		storeCompradoresExpediente: {
+			pageSize: 10,
+	    	model: 'HreRem.model.CompradorExpediente',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getCompradoresExpediente',
+		        extraParams: {idExpediente: '{expediente.id}'}
+		        
+	    	}
 		}
 	
     }

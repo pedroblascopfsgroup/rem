@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -451,6 +452,31 @@ public class ExpedienteComercialController {
 		}
 		
 		model.put("tramite", tramite);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * Recupera la lista de compradores para la pestanya Compradores /PBC de un expediente
+	 * @param idExpediente
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCompradoresExpediente(Long idExpediente, WebDto dto, ModelMap model) {
+
+		try {
+			
+			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
 		
 		return createModelAndViewJson(model);
 	}

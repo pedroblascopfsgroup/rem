@@ -84,9 +84,71 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosFinanciacion'}
 			}   
+    	},
+    	
+    	comboEntidadesFinancieras: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesFinancieras'}
+			}   
+    	},
+    	
+    	comboTipoCalculo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposCalculo'}
+			}   
+    	},
+    	
+    	comboTiposPorCuenta: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposPorCuenta'}
+			}   
+    	},
+    	
+    	comboTiposPorCuentaPrueba: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposPorCuenta'}
+			}   
+    	},
+    	
+    	comboTiposImpuesto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposImpuestos'}
+			}   
+    	},
+    	
+    	comboSituacionTitulo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosTitulo'}
+			}   
+    	},
+    	
+    	comboSituacionPosesoria: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionesPosesoria'}
+			}   
     	}
-    	
-    	
+
     		
     		
     }    

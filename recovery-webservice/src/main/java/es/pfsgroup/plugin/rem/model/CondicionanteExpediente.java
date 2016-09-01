@@ -25,6 +25,8 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -159,8 +161,15 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_TPC_ID_DESCALIFICACION")
 	private DDTiposPorCuenta tipoPorCuentaDescalificacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SIP_ID")
+	private DDSituacionesPosesoria situacionPosesoria;
     
-	@Version   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ETI_ID")
+	private DDEstadoTitulo estadoTitulo;
+    
+    @Version   
 	private Long version;
 
 	@Embedded
@@ -443,8 +452,23 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDSituacionesPosesoria getSituacionPosesoria() {
+		return situacionPosesoria;
+	}
 
-     
+	public void setSituacionPosesoria(DDSituacionesPosesoria situacionPosesoria) {
+		this.situacionPosesoria = situacionPosesoria;
+	}
+
+	public DDEstadoTitulo getEstadoTitulo() {
+		return estadoTitulo;
+	}
+
+	public void setEstadoTitulo(DDEstadoTitulo estadoTitulo) {
+		this.estadoTitulo = estadoTitulo;
+	}
+	
+
     
    
 }

@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesFinancieras;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -62,6 +64,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 
 @Component
@@ -145,6 +149,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
 		mapa.put("tiposArras", DDTiposArras.class);
 		mapa.put("estadosFinanciacion", DDEstadoFinanciacion.class);
+		mapa.put("entidadesFinancieras", DDEntidadesFinancieras.class);
+		mapa.put("tiposPorCuenta", DDTiposPorCuenta.class);
+		mapa.put("tiposImpuestos", DDTiposImpuesto.class);
+		mapa.put("situacionesPosesoria", DDSituacionesPosesoria.class);
 		
 
 		return Collections.unmodifiableMap(mapa);

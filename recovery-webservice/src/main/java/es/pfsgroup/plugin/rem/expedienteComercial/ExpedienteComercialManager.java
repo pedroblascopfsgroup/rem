@@ -15,6 +15,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -30,7 +32,14 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 
@@ -54,7 +63,11 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	@Autowired
 	private OfertaDao ofertaDao;
 	
-
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	private  BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
 	@Override
 	public ExpedienteComercial findOne(Long id) {
 		
@@ -358,11 +371,262 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		DtoCondiciones dto = new DtoCondiciones(); 
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
 		
-		if(!Checks.esNulo(condiciones)) {			
+		//Si el expediente pertenece a una agrupacion miramos el activo principal
+		if(!Checks.esNulo(expediente.getOferta().getAgrupacion())){
+			
+			Activo activoPrincipal= expediente.getOferta().getActivoPrincipal();
+			
+			if(!Checks.esNulo(activoPrincipal)){
+				dto.setFechaUltimaActualizacion(activoPrincipal.getFechaRevisionCarga());
+				dto.setVpo(activoPrincipal.getVpo());
+				
+				if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria())){
+				
+					dto.setFechaTomaPosesion(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion());
+					dto.setOcupado(activoPrincipal.getSituacionPosesoria().getOcupado());
+					dto.setConTitulo(activoPrincipal.getSituacionPosesoria().getConTitulo());
+					if(!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getTipoTituloPosesorio())){
+						dto.setTipoTitulo(activoPrincipal.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
+					}
+				}	
+			}
+			
+			
+		}
+		else{
+			
+			Activo activo= expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo();
+			
+			if(!Checks.esNulo(activo)){
+				dto.setFechaUltimaActualizacion(activo.getFechaRevisionCarga());
+				dto.setVpo(activo.getVpo());
+				
+				if(!Checks.esNulo(activo.getSituacionPosesoria())){
+					dto.setFechaTomaPosesion(activo.getSituacionPosesoria().getFechaTomaPosesion());
+					dto.setOcupado(activo.getSituacionPosesoria().getOcupado());
+					dto.setConTitulo(activo.getSituacionPosesoria().getConTitulo());
+					if(!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())){
+						dto.setTipoTitulo(activo.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
+					}
+				}
+				
+			}
+			
+		}
+		
+		if(!Checks.esNulo(condiciones)){
+			//Economicas-Financiación
 			dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+			if(!Checks.esNulo(condiciones.getEstadoFinanciacion())){
+				dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
+			}
+			dto.setEntidadFinanciacion(condiciones.getEntidadFinanciacion());			
+			dto.setEstadoTramite(condiciones.getEstadoTramite());
+			dto.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
+			dto.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
+			dto.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
+			
+			//Economicas-Reserva
+			if(!Checks.esNulo(condiciones.getTipoCalculoReserva())){
+				dto.setTipoCalculo(condiciones.getTipoCalculoReserva().getCodigo());
+			}
+			dto.setPorcentajeReserva(condiciones.getPorcentajeReserva());
+			dto.setPlazoFirmaReserva(condiciones.getPlazoFirmaReserva());
+			dto.setImporteReserva(condiciones.getImporteReserva());
+			
+			//Economicas-Fiscales
+			if(!Checks.esNulo(condiciones.getTipoImpuesto())){
+				dto.setTipoImpuestoCodigo(condiciones.getTipoImpuesto().getCodigo());
+			}
+			dto.setTipoAplicable(condiciones.getTipoAplicable());
+			dto.setRenunciaExencion(condiciones.getRenunciaExencion());
+			dto.setReservaConImpuesto(condiciones.getReservaConImpuesto());
+			
+			//Economicas-Gastos Compraventa
+			dto.setGastosPlusvalia(condiciones.getGastosPlusvalia());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaPlusvalia())){
+				dto.setPlusvaliaPorCuentaDe(condiciones.getTipoPorCuentaPlusvalia().getCodigo());
+			}
+			dto.setGastosNotaria(condiciones.getGastosNotaria());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaNotaria())){
+				dto.setNotariaPorCuentaDe(condiciones.getTipoPorCuentaNotaria().getCodigo());
+			}
+			dto.setGastosOtros(condiciones.getGastosOtros());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaGastosOtros())){
+				dto.setGastosCompraventaOtrosPorCuentaDe(condiciones.getTipoPorCuentaGastosOtros().getCodigo());
+			}
+			
+			//Economicas-Cargas pendientes
+			dto.setImpuestos(condiciones.getCargasImpuestos());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaImpuestos())){
+				dto.setImpuestosPorCuentaDe(condiciones.getTipoPorCuentaImpuestos().getCodigo());
+			}
+			dto.setComunidades(condiciones.getCargasComunidad());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaComunidad())){
+				dto.setComunidadesPorCuentaDe(condiciones.getTipoPorCuentaComunidad().getCodigo());
+			}
+			dto.setCargasOtros(condiciones.getCargasOtros());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaCargasOtros())){
+				dto.setCargasPendientesOtrosPorCuentaDe(condiciones.getTipoPorCuentaCargasOtros().getCodigo());
+			}
+			
+			//Juridicas-situacion del activo
+			dto.setSujetoTramiteTanteo(condiciones.getSujetoTanteoRetracto());
+			dto.setEstadoTramite(condiciones.getEstadoTramite());
+			
+			//Juridicas-Requerimientos del comprador
+			dto.setEstadoTituloCodigo(condiciones.getEstadoTitulo().getCodigo());
+			dto.setPosesionInical(condiciones.getPosesionInicial());
+			dto.setSituacionPosesoriaCodigo(condiciones.getSituacionPosesoria().getCodigo());
+			
+			dto.setRenunciaSaneamientoEviccion(condiciones.getRenunciaSaneamientoEviccion());
+			dto.setRenunciaSaneamientoVicios(condiciones.getRenunciaSaneamientoVicios());
+			
+			//Condicionantes administrativos
+			dto.setProcedeDescalificacion(condiciones.getProcedeDescalificacion());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaDescalificacion())){
+				dto.setProcedeDescalificacionPorCuentaDe(condiciones.getTipoPorCuentaDescalificacion().getCodigo());
+			}
+			dto.setLicencia(condiciones.getLicencia());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaLicencia())){
+				dto.setLicenciaPorCuentaDe(condiciones.getTipoPorCuentaLicencia().getCodigo());
+			}
 		}
 		
 		return dto;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente){
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
+		
+		if(!Checks.esNulo(condiciones)){
+			condiciones.setExpediente(expedienteComercial);
+			condiciones= dtoCondicionantestoCondicionante(condiciones, dto);
+		}
+		
+		else{	
+			condiciones= new CondicionanteExpediente();
+			condiciones.setExpediente(expedienteComercial);
+			condiciones= dtoCondicionantestoCondicionante(condiciones, dto);		
+		}
+		
+		genericDao.save(CondicionanteExpediente.class, condiciones);
+		return true;
+		
+	}
+	
+	public CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones, DtoCondiciones dto){
+		try{
+			
+			beanUtilNotNull.copyProperties(condiciones, dto);
+			
+			//condiciones.setSolicitaFinanciacion(dto.getSolicitaFinanciacion());
+			//condiciones.setEntidadFinanciacion(dto.getEntidadFinanciacion());
+			
+			if(!Checks.esNulo(dto.getEstadosFinanciacion())){
+				DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class, dto.getEstadosFinanciacion());
+				condiciones.setEstadoFinanciacion(estadoFinanciacion);
+			}
+			//Reserva
+			if(!Checks.esNulo(dto.getTipoCalculo())){
+				DDTipoCalculo tipoCalculo= (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dto.getTipoCalculo());
+				condiciones.setTipoCalculoReserva(tipoCalculo);
+			}
+			//condiciones.setPorcentajeReserva(dto.getPorcentajeReserva());
+			//condiciones.setPlazoFirmaReserva(dto.getPlazoFirmaReserva());
+			//condiciones.setImporteReserva(dto.getImporteReserva());
+			
+			//Fiscales
+			if(!Checks.esNulo(dto.getTipoImpuestoCodigo())){
+				DDTiposImpuesto tipoImpuesto= (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
+				condiciones.setTipoImpuesto(tipoImpuesto);
+			}
+			//condiciones.setTipoAplicable(dto.getTipoAplicable());
+			
+//			if(!Checks.esNulo(dto.getRenunciaExencion())){
+//				if(dto.getRenunciaExencion().equals(true)){
+//					condiciones.setRenunciaExencion(1);
+//				}else if(dto.getRenunciaExencion().equals(false)){
+//					condiciones.setRenunciaExencion(0);
+//				}
+//			}
+//			
+//			if(!Checks.esNulo(dto.getReservaConImpuesto())){
+//				if(dto.getReservaConImpuesto().equals(true)){
+//					condiciones.setReservaConImpuesto(1);
+//				}else if(dto.getRenunciaExencion().equals(false)){
+//					condiciones.setReservaConImpuesto(0);
+//				}
+//			}
+			
+			//Gastos compraventa
+			//condiciones.setGastosPlusvalia(dto.getGastosPlusvalia());
+			//condiciones.setGastosNotaria(dto.getGastosNotaria());
+			//condiciones.setGastosOtros(dto.getGastosOtros());
+			
+			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaPlusvalia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getPlusvaliaPorCuentaDe());
+				condiciones.setTipoPorCuentaPlusvalia(tipoPorCuentaPlusvalia);
+			}
+			if(!Checks.esNulo(dto.getNotariaPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaNotaria= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getNotariaPorCuentaDe());
+				condiciones.setTipoPorCuentaNotaria(tipoPorCuentaNotaria);
+			}
+			if(!Checks.esNulo(dto.getGastosCompraventaOtrosPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaGCVOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getGastosCompraventaOtrosPorCuentaDe());
+				condiciones.setTipoPorCuentaGastosOtros(tipoPorCuentaGCVOtros);
+			}
+			
+			//Cargas pendientes
+			//condiciones.setCargasOtros(dto.getCargasOtros());
+			if(!Checks.esNulo(dto.getImpuestosPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaImpuestos= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getImpuestosPorCuentaDe());
+				condiciones.setTipoPorCuentaImpuestos(tipoPorCuentaImpuestos);
+			}
+			if(!Checks.esNulo(dto.getComunidadesPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaComunidad= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getComunidadesPorCuentaDe());
+				condiciones.setTipoPorCuentaComunidad(tipoPorCuentaComunidad);
+			}
+			if(!Checks.esNulo(dto.getCargasPendientesOtrosPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaCPOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getCargasPendientesOtrosPorCuentaDe());
+				condiciones.setTipoPorCuentaCargasOtros(tipoPorCuentaCPOtros);
+			}
+	
+			//Requerimientos del comprador
+			if(!Checks.esNulo(dto.getEstadoTituloCodigo())){
+				DDEstadoTitulo estadoTitulo= (DDEstadoTitulo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, dto.getEstadoTituloCodigo());
+				condiciones.setEstadoTitulo(estadoTitulo);
+			}
+			if(!Checks.esNulo(dto.getSituacionPosesoriaCodigo())){
+				DDSituacionesPosesoria situacionPosesoria= (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, dto.getSituacionPosesoriaCodigo());
+				condiciones.setSituacionPosesoria(situacionPosesoria);
+			}
+			
+			//Renuncia a saneamiento por
+			//condiciones.setRenunciaSaneamientoEviccion(dto.getRenunciaSaneamientoEviccion());
+			//condiciones.setRenunciaSaneamientoVicios(dto.getRenunciaSaneamientoVicios());
+			
+			//Condiciones administrativas
+			//condiciones.setProcedeDescalificacion(dto.getProcedeDescalificacion());
+			if(!Checks.esNulo(dto.getProcedeDescalificacionPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaDescalificacion= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getProcedeDescalificacionPorCuentaDe());
+				condiciones.setTipoPorCuentaDescalificacion(tipoPorCuentaDescalificacion);
+			}
+			//condiciones.setLicencia(dto.getLicencia());
+			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaLicencia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getLicenciaPorCuentaDe());
+				condiciones.setTipoPorCuentaLicencia(tipoPorCuentaLicencia);
+			}
+		}catch(Exception ex) {
+			logger.error(ex.getMessage());
+			return condiciones;
+		}
+		
+		return condiciones;
 	}
 
 }

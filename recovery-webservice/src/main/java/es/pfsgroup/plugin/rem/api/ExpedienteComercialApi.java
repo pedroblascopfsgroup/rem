@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -58,6 +59,14 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public List<DtoEntregaReserva> getListEntregasReserva(Long id);
+		
+		/**
+		 * Método que guarda la información de la pestaña Condicionantes del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 		
 	    
 	    

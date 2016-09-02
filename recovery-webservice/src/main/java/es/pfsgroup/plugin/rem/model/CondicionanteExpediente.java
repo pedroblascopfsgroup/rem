@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -148,7 +149,7 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Integer vpo;
     
     @Column(name="COE_LICENCIA")
-    private Integer licencia;
+    private String licencia;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPC_ID_LICENCIA")
@@ -168,6 +169,24 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_ETI_ID")
 	private DDEstadoTitulo estadoTitulo;
+    
+    @Column(name="COE_ESTADO_TRAMITE")
+    private String estadoTramite;
+    
+    @Column(name="COE_ENTIDAD_FINANCIACION_AJENA")
+    private String entidadFinanciacion;
+    
+    @Column(name="COE_POSESION_INICIAL")
+    private Integer posesionInicial;
+    
+	@Column(name = "COE_INICIO_EXPEDIENTE")
+	private Date fechaInicioExpediente;
+	
+	@Column(name = "COE_INICIO_FINANCIACION")
+	private Date fechaInicioFinanciacion;
+	
+	@Column(name = "COE_FIN_FINANCIACION")
+	private Date fechaFinFinanciacion;
     
     @Version   
 	private Long version;
@@ -395,11 +414,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.vpo = vpo;
 	}
 
-	public Integer getLicencia() {
+	public String getLicencia() {
 		return licencia;
 	}
 
-	public void setLicencia(Integer licencia) {
+	public void setLicencia(String licencia) {
 		this.licencia = licencia;
 	}
 
@@ -467,8 +486,55 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	public void setEstadoTitulo(DDEstadoTitulo estadoTitulo) {
 		this.estadoTitulo = estadoTitulo;
 	}
-	
 
-    
+	public String getEstadoTramite() {
+		return estadoTramite;
+	}
+
+	public void setEstadoTramite(String estadoTramite) {
+		this.estadoTramite = estadoTramite;
+	}
+
+	public String getEntidadFinanciacion() {
+		return entidadFinanciacion;
+	}
+
+	public void setEntidadFinanciacion(String entidadFinanciacion) {
+		this.entidadFinanciacion = entidadFinanciacion;
+	}
+
+	public Integer getPosesionInicial() {
+		return posesionInicial;
+	}
+
+	public void setPosesionInicial(Integer posesionInicial) {
+		this.posesionInicial = posesionInicial;
+	}
+
+	public Date getFechaInicioExpediente() {
+		return fechaInicioExpediente;
+	}
+
+	public void setFechaInicioExpediente(Date fechaInicioExpediente) {
+		this.fechaInicioExpediente = fechaInicioExpediente;
+	}
+
+	public Date getFechaInicioFinanciacion() {
+		return fechaInicioFinanciacion;
+	}
+
+	public void setFechaInicioFinanciacion(Date fechaInicioFinanciacion) {
+		this.fechaInicioFinanciacion = fechaInicioFinanciacion;
+	}
+
+	public Date getFechaFinFinanciacion() {
+		return fechaFinFinanciacion;
+	}
+
+	public void setFechaFinFinanciacion(Date fechaFinFinanciacion) {
+		this.fechaFinFinanciacion = fechaFinFinanciacion;
+	}
+		
+
    
 }

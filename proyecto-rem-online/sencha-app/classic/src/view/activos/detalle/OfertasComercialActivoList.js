@@ -142,7 +142,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	editFuncion: function(editor, context){
 		var me= this;
-		me.mask(HreRem.i18n("msg.mask.espere"));
+		
 			var estado = context.record.get("estadoOferta");	
 			if(estado=='01'){
 				
@@ -152,7 +152,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				   buttons: Ext.MessageBox.YESNO,
 				   fn: function(buttonId) {
 				        if (buttonId == 'yes') {
-				            
+				            me.mask(HreRem.i18n("msg.mask.espere"));
 							if (me.isValidRecord(context.record)) {				
 			
 				        		context.record.save({

@@ -40,40 +40,40 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 			                	fieldLabel:  HreRem.i18n('fieldlabel.solicita.financiacion'),
 					        	bind: {
 				            		store: '{comboSiNoRem}',
-				            		value: '{condiciones.comboSolicitaFinanciacion}'
+				            		value: '{condiciones.solicitaFinanciacion}'
 				            	},
 					            displayField: 'descripcion',
 		    					valueField: 'codigo',
-		    					allowBlank: false
+		    					allowBlank: false,
+		    					listeners: {
+			                		change:  'onHaCambiadoSolicitaFinanciacion'
+			            		}
 					        },
 					        {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.expediente'),
-					        	bind: '{condiciones.inicioExpediente}'					        						        	
+					        	bind: '{condiciones.fechaInicioExpediente}'					        						        	
 					        },
 					        {
 					        	xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.financiacion'),
-					        	bind: '{condiciones.inicioFinanciacion}'				        						        	
+					        	bind: '{condiciones.fechaInicioFinanciacion}'				        						        	
 					        },
 					        { 
-								xtype: 'comboboxfieldbase',
+								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.entidad.financiera'),
-					        	bind: {
-				            		store: '{comboEntidadesFinancieras}',
-				            		value: '{condiciones.comboEntidadFinancieraCodigo}'
-				            	},
-					            	displayField: 'descripcion',
-		    						valueField: 'codigo'
+					        	bind: '{condiciones.entidadFinanciacion}',
+					        	reference: 'entidadFinanciacion',
+		    					disabled: true
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente'),
 					        	bind: {
 				            		store: '{comboEstadosFinanciacion}',
-				            		value: '{condiciones.comboEstadosFinanciacion}'
+				            		value: '{condiciones.estadosFinanciacion}'
 				            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo'
@@ -82,7 +82,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        	xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fin.financiacion'),
-					        	bind: '{condiciones.FinFinanciacion}'				        						        	
+					        	bind: '{condiciones.fechaFinFinanciacion}'				        						        	
 					        }
 					        
 					        
@@ -112,31 +112,40 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.calculo.reserva'),
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.comboTipoCalculoCodigo}'
+								            		value: '{condiciones.tipoCalculo}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
-		    									allowBlank: false
+		    									listeners: {
+			                						change:  'onHaCambiadoTipoCalculo'
+			            						},
+			            						editable: true
 									        },
 											{ 
 												xtype: 'numberfieldbase',
 												reference: 'porcentajeReserva',
 										 		symbol: HreRem.i18n("symbol.porcentaje"),
 												fieldLabel: HreRem.i18n('fieldlabel.portencaje.reserva'),
-				                				bind: '{condiciones.porcentajeReserva}'
+				                				bind: '{condiciones.porcentajeReserva}',
+				                				reference: 'porcentajeReserva',
+				                				disabled: true
 							                },
 							                { 
 							                	xtype: 'numberfieldbase',
 							                	reference: 'plazoParaFirmar',
 										 		symbol: HreRem.i18n("symbol.dias"),
 							                	fieldLabel: HreRem.i18n('fieldlabel.plazo.firmar'),
-							                	bind: '{condiciones.plazoFirmar}'
+							                	bind: '{condiciones.plazoFirmaReserva}',
+							                	reference: 'plazoFirmaReserva',
+							                	disabled: true
 							                },
 							                { 
 							                	xtype: 'numberfieldbase',
 										 		symbol: HreRem.i18n("symbol.euro"),
 										 		fieldLabel: HreRem.i18n('fieldlabel.importe.reserva'),
-										 		bind: '{condiciones.importeReserva}'
+										 		bind: '{condiciones.importeReserva}',
+										 		reference: 'importeReserva',
+										 		disabled: true
 											}
 				
 										]
@@ -159,7 +168,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.impuesto'),
 									        	bind: {
 								            		store: '{comboTiposImpuesto}',
-								            		value: '{condiciones.comboTipoImpuesto}'
+								            		value: '{condiciones.tipoImpuestoCodigo}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
@@ -170,6 +179,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												reference: 'tipoAplicable',
 										 		symbol: HreRem.i18n("symbol.porcentaje"),
 												fieldLabel: HreRem.i18n('fieldlabel.tipo.aplicable'),
+												reference: 'tipoAplicable',
 				                				bind: '{condiciones.tipoAplicable}'
 							                },
 									        {		                
@@ -216,17 +226,22 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												reference: 'gastosCompraventaPlusvalia',
 										 		symbol: HreRem.i18n("symbol.euro"),
 												fieldLabel: HreRem.i18n('fieldlabel.plusvalia'),
-				                				bind: '{condiciones.Plusvalia}'
+				                				bind: '{condiciones.gastosPlusvalia}',
+				                				listeners: {
+				                					change: 'onHaCambiadoPlusvalia'
+				                				}
 							                },
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}'
-								            		,value: '{condiciones.comboPlusvaliaPorCuentaDe}'
+								            		,value: '{condiciones.plusvaliaPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
+					    						valueField: 'codigo',
+					    						reference: 'plusvaliaPorCuentaDe',
+					    						disabled: true
 									        },
 											
 							                { 
@@ -234,34 +249,44 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												reference: 'gastosCompraventaNotaria',
 										 		symbol: HreRem.i18n("symbol.euro"),
 												fieldLabel: HreRem.i18n('fieldlabel.notaria'),
-				                				bind: '{condiciones.notaria}'
+				                				bind: '{condiciones.gastosNotaria}',
+				                				listeners: {
+				                					change: 'onHaCambiadoNotaria'
+				                				}
 							                },	
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}',
-								            		value: '{condiciones.comboNotariaPorCuentaDe}'
+								            		value: '{condiciones.notariaPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
+					    						valueField: 'codigo',
+					    						reference: 'notariaPorCuentaDe',
+					    						disabled: true
 									        },
 									        { 
 												xtype: 'numberfieldbase',
 												reference: 'gastosCompraventaOtros',
 										 		symbol: HreRem.i18n("symbol.euro"),
 												fieldLabel: HreRem.i18n('fieldlabel.otros'),
-				                				bind: '{condiciones.gastosCompraventaOtros}'
+				                				bind: '{condiciones.gastosOtros}',
+				                				listeners: {
+				                					change: 'onHaCambiadoCompraVentaOtros'
+				                				}
 							                },	
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}',
-								            		value: '{condiciones.comboOtrosPorCuentaDe}'
+								            		value: '{condiciones.gastosCompraventaOtrosPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
+					    						valueField: 'codigo',
+					    						reference: 'compraventaOtrosPorCuentaDe',
+					    						disabled: true
 									        }
 				
 										]
@@ -275,27 +300,25 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								        type: 'table',
 						        		columns: 2
 						        	},
-									defaultType: 'textfieldbase',
+									defaultType: 'displayfieldbase',
 									title: HreRem.i18n("fieldlabel.cargas.Pendientes"),
 									items :
 										[								
-											 {
-									        	xtype:'datefieldbase',
-												formatter: 'date("d/m/Y")',
-									        	fieldLabel: HreRem.i18n('fieldlabel.fecha.ultima.actualizacion'),
-									        	bind: '{condiciones.fechaUltimaActualizacion}',
-									        	readOnly: true
+											 {	
+											 	xtype:'datefieldbase',
+											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.ultima.actualizacion'),
+					        					bind: '{condiciones.fechaUltimaActualizacion}',
+					        					readOnly: true
 									        },
 									        {
 									        					        						        	
 									        },
 											{ 
-												xtype: 'numberfieldbase',
+												xtype: 'displayfieldbase',
 												reference: 'cargasPendientesImpuestos',
 										 		symbol: HreRem.i18n('symbol.euro'),
 												fieldLabel: HreRem.i18n('fieldlabel.impuestos'),
-				                				bind: '{condiciones.impuestos}',
-				                				readOnly: true
+				                				bind: '{condiciones.impuestos}'
 							                },	
 											{ 
 												xtype: 'comboboxfieldbase',
@@ -305,16 +328,18 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		value: '{condiciones.impuestosPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
+					    						valueField: 'codigo',
+					    						reference: 'impuestosPorCuentaDe',
+					    						disabled: '{!esImpuestoMayorQueCero}',
+					    						allowBlank: '{!esImpuestoMayorQueCero}'
 									        },
 											
 							                { 
-												xtype: 'numberfieldbase',
+												xtype: 'displayfieldbase',
 												reference: 'cargasPendientesComunidades',
 										 		symbol: HreRem.i18n('symbol.euro'),
 												fieldLabel: HreRem.i18n('fieldlabel.comunidades'),
-				                				bind: '{condiciones.comunidades}',
-				                				readOnly: true
+				                				bind: '{condiciones.comunidades}'
 							                },	
 											{ 
 												xtype: 'comboboxfieldbase',
@@ -324,14 +349,20 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		value: '{condiciones.comunidadesPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
+					    						valueField: 'codigo',
+					    						reference: 'comunidadesPorCuentaDe',
+					    						disabled: '{!esComunidadesMayorQueCero}',
+					    						allowBlank: '{!esComunidadesMayorQueCero}'
 									        },
 									        { 
 												xtype: 'numberfieldbase',
 												reference: 'cargasPendientesOtros',
 										 		symbol: HreRem.i18n('symbol.euro'),
 												fieldLabel: HreRem.i18n('fieldlabel.otros'),
-				                				bind: '{condiciones.cargasPendientesOtros}'
+				                				bind: '{condiciones.cargasOtros}',
+				                				listeners: {
+				                					change: 'onHaCambiadoCargasPendientesOtros'
+				                				}
 							                },	
 											{ 
 												xtype: 'comboboxfieldbase',
@@ -341,7 +372,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		value: '{condiciones.cargasPendientesOtrosPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo'
+					    						valueField: 'codigo',
+					    						reference: 'cargasPendientesOtrosPorCuentaDe',
+					    						disabled: true
 									        }
 									        
 									        
@@ -367,9 +400,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						title: HreRem.i18n('title.situacion.activo'),
 						items : [
 							{
-				        		xtype:'datefieldbase',
-								formatter: 'date("d/m/Y")',
-								readOnly: true,
+				        		xtype:'displayfieldbase',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.toma.posesion'),
 					        	bind: '{condiciones.fechaTomaPosesion}'					        						        	
 					        },
@@ -382,17 +413,28 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        { 
 								
 			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.tramite'),
-					        	bind: '{condiciones.estadoTramite}'
+					        	bind: '{condiciones.estadoTramite}',
+					        	disabled: '{onEstaSujetoTanteo}'
 					        },
 					        { 
-								
-			                	fieldLabel:  HreRem.i18n('fieldlabel.ocupado'),
-					        	bind: '{condiciones.ocupado}'
+								xtype:'comboboxfieldbase',
+								fieldLabel:  HreRem.i18n('fieldlabel.ocupado'),
+								readOnly:true,
+								reference: 'comboOcupado',
+				        		bind: {
+			            			store: '{comboSiNoRem}',
+			            			value: '{condiciones.ocupado}'
+			            		}
 					        },
 					        { 
-								
+								xtype:'comboboxfieldbase',
+								readOnly:true,
+								reference: 'comboConTitulo',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.con.titulo'),
-					        	bind: '{condiciones.conTitulo}'
+					        	bind: {
+			            			store: '{comboSiNoRem}',
+			            			value: '{condiciones.conTitulo}'
+			            		}
 					        },
 					        { 
 								
@@ -425,7 +467,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.situacion,titulo'),
 						        	bind: {
 					            		store: '{comboSituacionTitulo}',
-					            		value: '{condiciones.comboSituacionTitulo}'			            		
+					            		value: '{condiciones.estadoTituloCodigo}'			            		
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo'
@@ -435,7 +477,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.comboConPosesionInicial}'			            		
+					            		value: '{condiciones.posesionInical}'			            		
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo'
@@ -446,7 +488,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.situacion.posesoria'),
 						        	bind: {
 					            		store: '{comboSituacionPosesoria}',
-					            		value: '{condiciones.comboSituacionPosesoria}'			            		
+					            		value: '{condiciones.situacionPosesoriaCodigo}'			            		
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo'
@@ -471,7 +513,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.eviccion'),
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.comboEviccion}'			            		
+					            		value: '{condiciones.renunciaSaneamientoEviccion}'			            		
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo',
@@ -482,7 +524,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.vicios.ocultos'),
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.comboViciosOcultos}'			            		
+					            		value: '{condiciones.renunciaSaneamientoVicios}'			            		
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo',
@@ -505,34 +547,45 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				items : [
 				
 							{ 
-								
+								xtype:'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.vpo'),
-					        	bind: '{condiciones.vpo}',
-					        	readOnly: true
+								readOnly:true,
+								reference: 'comboVpo',
+								bind: {
+			            			store: '{comboSiNoRem}',
+			            			value: '{condiciones.vpo}'
+			            		}
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.procede.descalificacion'),
 					        	bind: {
 				            		store: '{comboSiNoRem}',
-				            		value: '{condiciones.comboProcedeDescalificacion}'
+				            		value: '{condiciones.procedeDescalificacion}'
 				            	},
-				            	allowBlank: false
+				            	allowBlank: false,
+				            	listeners: {
+				            		change: 'onHaCambiadoProcedeDescalificacion'
+				            	}
 					        },
 					        { 
 								xtype: 'comboboxfieldbase',
 							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 								bind: {
 									store: '{comboTiposPorCuenta}',
-								    value: '{condiciones.ProcedeDescalificacionTiposPorCuentaDe}'
-								}
+								    value: '{condiciones.procedeDescalificacionPorCuentaDe}'
+								},
+								reference: 'procedeDescalificacionPorCuentaDe',
+								disabled: true
 					        },	
 					        { 
-								xtype: 'comboboxfieldbase',
+								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.licencia'),
 					        	bind: {
-//				            		store: '{}',
-//				            		value: '{}'
+				            		value: '{condiciones.licencia}'
+				            	},
+				            	listeners: {
+				            		change: 'onHaCambiadoLicencia'
 				            	}
 					        },
 					        
@@ -544,8 +597,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 								bind: {
 									store: '{comboTiposPorCuenta}',
-								    value: '{condiciones.LicenciaTiposPorCuentaDe}'
-								}
+								    value: '{condiciones.licenciaPorCuentaDe}'
+								},
+								reference: 'licenciaPorCuentaDe',
+								disabled: true
 					        }
 				
 				

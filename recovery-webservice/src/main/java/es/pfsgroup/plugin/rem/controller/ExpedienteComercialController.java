@@ -32,6 +32,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -210,6 +211,22 @@ public class ExpedienteComercialController {
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveDatosBasicosOferta(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCondicionesExpediente(DtoCondiciones dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveCondicionesExpediente(dto, id));
 			
 		} catch (Exception e) {
 			e.printStackTrace();

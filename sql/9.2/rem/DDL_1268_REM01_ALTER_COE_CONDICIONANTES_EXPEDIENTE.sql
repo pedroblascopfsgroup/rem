@@ -1,12 +1,12 @@
 --/*
 --##########################################
---## AUTOR=DANIEL GUTIÉRREZ
---## FECHA_CREACION=20160715
+--## AUTOR=Luis Caballero
+--## FECHA_CREACION=20160902
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
---## Finalidad: Añadir columnas DD_SIP_ID y DD_ETI_ID en tabla COE_CONDICIONANTES_EXPEDIENTE.
+--## Finalidad: Añadir columnas DD_SIP_ID, DD_ETI_ID y COE_POSESION_INICIAL en tabla COE_CONDICIONANTES_EXPEDIENTE.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -39,6 +39,17 @@ DECLARE
     
     
 BEGIN
+	
+	-- Comprobamos si existe columna DD_SIP_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''COE_POSESION_INICIAL'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.COE_POSESION_INICIAL... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (COE_POSESION_INICIAL NUMBER(1,0))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.COE_POSESION_INICIAL... Creado');
+	END IF;
 
 	-- Comprobamos si existe columna DD_SIP_ID
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_SIP_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';

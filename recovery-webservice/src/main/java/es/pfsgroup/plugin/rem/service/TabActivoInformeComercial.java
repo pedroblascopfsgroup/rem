@@ -120,19 +120,21 @@ public class TabActivoInformeComercial implements TabActivoService {
 				beanUtilNotNull.copyProperty(informeComercial, "valorEstimadoRenta", activoValoracionEstimadoRenta.getImporte());
 			}			
 			
-			// Datos de la Comunidad de vecinos al Dto
+			// Datos de la Comunidad de vecinos al Dto.
 			if (!Checks.esNulo(activo.getComunidadPropietarios())){
 				ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
 				comunidadPropietarios = activo.getComunidadPropietarios();
 				
-				// Comunidad inscrita = constituida
+				// Comunidad inscrita = constituida.
 				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad", comunidadPropietarios.getConstituida());
-				// Cuota de la comunidad, tomada del importe medio
-				beanUtilNotNull.copyProperty(informeComercial, "cuotaComunidad", comunidadPropietarios.getImporteMedio());
-				// Nombre y telefono Presidente
+				// Derrama de la comunidad.
+				beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad", activo.getInfoComercial().getDerramaOrientativaComunidad());
+				// Cuota de la comunidad, tomada del importe medio.
+				beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad", activo.getInfoComercial().getCuotaOrientativaComunidad());
+				// Nombre y telefono Presidente.
 				beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad", comunidadPropietarios.getNomPresidente());
 				beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad", comunidadPropietarios.getTelfPresidente());
-				// Nombre y telefono Administrador
+				// Nombre y telefono Administrador.
 				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", comunidadPropietarios.getNomAdministrador());
 				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
 			}
@@ -197,7 +199,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "tipoVia", tipoVia);
 				}
 				
-				
 				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroVia", activoInformeDto.getNumeroVia());
 				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "planta", activoInformeDto.getPlanta());
 				
@@ -252,20 +253,13 @@ public class TabActivoInformeComercial implements TabActivoService {
 			ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
 			comunidadPropietarios = activo.getComunidadPropietarios();
 			
-			if (!Checks.esNulo(activoInformeDto.getInscritaComunidad())) 
-				comunidadPropietarios.setConstituida(activoInformeDto.getInscritaComunidad());
-			
-			if (!Checks.esNulo(activoInformeDto.getNomPresidenteComunidad()))
-				comunidadPropietarios.setNomPresidente(activoInformeDto.getNomPresidenteComunidad());
-			
-			if (!Checks.esNulo(activoInformeDto.getTelAdministradorComunidad()))
-				comunidadPropietarios.setTelfPresidente(activoInformeDto.getTelAdministradorComunidad());
-			
-			if (!Checks.esNulo(activoInformeDto.getNomAdministradorComunidad()))
-				comunidadPropietarios.setNomAdministrador(activoInformeDto.getNomAdministradorComunidad());
-			
-			if (!Checks.esNulo(activoInformeDto.getTelAdministradorComunidad()))
-				comunidadPropietarios.setTelfAdministrador(activoInformeDto.getTelAdministradorComunidad());
+			beanUtilNotNull.copyProperty(comunidadPropietarios, "constituida", activoInformeDto.getInscritaComunidad());
+			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
+			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
+			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomPresidente", activoInformeDto.getNomPresidenteComunidad());
+			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfAdministrador", activoInformeDto.getTelAdministradorComunidad());
+			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomAdministrador", activoInformeDto.getNomAdministradorComunidad());
+			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfPresidente", activoInformeDto.getTelPresidenteComunidad());
 
 			activo.setComunidadPropietarios(comunidadPropietarios);
 			

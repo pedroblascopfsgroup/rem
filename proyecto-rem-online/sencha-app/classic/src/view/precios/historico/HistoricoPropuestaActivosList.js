@@ -62,31 +62,6 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
 		            dataIndex: 'motivoDescarte',
 		            text: HreRem.i18n('header.motivo.descarte'),
 		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioMinimoAutorizado',
-		            text: HreRem.i18n('header.precio.minimo.autorizado'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioAprobadoVenta',
-		            text: HreRem.i18n('header.precio.aprobado.venta'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioAprobadoRenta',
-		            text: HreRem.i18n('header.precio.apobado.renta'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioDescuentoAprobado',
-		            text: HreRem.i18n('header.precio.descuento.autorizado'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioDescuentoPublicado',
-		            text: HreRem.i18n('header.precio.descuento.publicado'),
-		            flex: 1
 		        }
         ];
         

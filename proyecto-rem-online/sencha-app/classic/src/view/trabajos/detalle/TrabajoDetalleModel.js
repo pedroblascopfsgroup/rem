@@ -54,8 +54,6 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    	 else
 	    		 return false;
 	    }
-	    
-
     },
     
     stores: {

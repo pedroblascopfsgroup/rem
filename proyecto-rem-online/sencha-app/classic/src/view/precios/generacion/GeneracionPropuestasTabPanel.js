@@ -5,13 +5,19 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasTabPanel', {
     
     requires	: ['HreRem.view.precios.generacion.GeneracionPropuestasManual', 'HreRem.view.precios.generacion.GeneracionPropuestasAutomatica'],
 
+    listeners	: {
+    	
+    	tabchange: 'onTabChangeGeneracionPropuestasTabPanel'
+    },
+    
     initComponent: function () {
         
         var me = this;
         
         me.items = [
-	        			{	
-	        				xtype: 'generacionpropuestasautomatica'
+
+						{
+							xtype: 'generacionpropuestasautomatica'
 	        			},
 	        			{	
 							xtype: 'generacionpropuestasmanual'

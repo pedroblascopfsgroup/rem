@@ -323,7 +323,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		} else {
 			me.getView().fireEvent('abrirDetalleTramiteHistoricoTarea',gridView,record);
 		}
-	}
+	},
 	
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
 		debugger;

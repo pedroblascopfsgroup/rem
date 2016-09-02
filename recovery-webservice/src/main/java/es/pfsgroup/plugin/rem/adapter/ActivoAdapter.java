@@ -12,7 +12,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
@@ -20,6 +19,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
@@ -58,33 +59,27 @@ import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManagerApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
-import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoConfigDocumento;
-import es.pfsgroup.plugin.rem.model.ActivoCuotasComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
-import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
-import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
-import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -101,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoListadoTareas;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
@@ -109,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.DtoVisitasActivo;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -118,20 +115,12 @@ import es.pfsgroup.plugin.rem.model.VLlaves;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUbicaAparcamiento;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
-import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -202,6 +191,11 @@ public class ActivoAdapter {
 	@Autowired
 	private TabActivoFactoryApi tabActivoFactory;
 	
+    @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+    @Autowired
+    private ActivoDao activoDao;
 
 	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
@@ -2827,6 +2821,18 @@ public class ActivoAdapter {
 		return idBpm;
 	}
 
+	
+	public Long crearTramitePublicacion(Long idActivo){
+		
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo("T011");//Trámite de publicación
+		
+		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+		Long idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+				
+		return idBpm;
+	}
+	
+	
 	public List<VAdmisionDocumentos>  getListAdmisionCheckDocumentos(Long idActivo) {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());	
@@ -3245,5 +3251,73 @@ public class ActivoAdapter {
 		
 		return true;
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean createOfertaActivo(DtoOfertasFilter dto){
+		
+		try{
+			Oferta oferta= new Oferta();
+			ActivoOferta activoOferta= new ActivoOferta();
+			ActivoOfertaPk activoOfertaPk= new ActivoOfertaPk();
+			ClienteComercial clienteComercial= new ClienteComercial();
+			
+			Activo activo= activoApi.get(dto.getIdActivo());
+			
+			if(!Checks.esNulo(activo.getAgrupaciones()) && activo.getAgrupaciones().size()!=0){
+				for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+					ActivoAgrupacion agrupacion = agrupaciones.getAgrupacion();
+					if(agrupacion.getActivoPrincipal().getId().equals(activo.getId())){
+						oferta.setAgrupacion(agrupacion);
+					}
+				}
+			}
+
+			DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "04");
+			DDTipoOferta tipoOferta = (DDTipoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOferta.class, dto.getTipoOferta());
+			DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getTipoDocumento());
+			Long numOferta= activoDao.getNextNumOferta();
+
+			Long clcremid= activoDao.getNextClienteRemId();
+			clienteComercial.setNombre(dto.getNombreCliente());
+			clienteComercial.setApellidos(dto.getApellidosCliente());
+			clienteComercial.setDocumento(dto.getNumDocumentoCliente());
+			clienteComercial.setTipoDocumento(tipoDocumento);
+			clienteComercial.setRazonSocial(dto.getRazonSocialCliente());
+			clienteComercial.setIdClienteRem(clcremid);
+			
+			genericDao.save(ClienteComercial.class, clienteComercial);
+			
+			
+			oferta.setNumOferta(numOferta);
+			
+			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			oferta.setEstadoOferta(estadoOferta);
+			oferta.setTipoOferta(tipoOferta);
+			oferta.setFechaAlta(new Date());
+			
+			List<ActivoOferta> listaActivosOfertas= new ArrayList<ActivoOferta>();
+			activoOfertaPk.setActivo(activo);
+			activoOfertaPk.setOferta(oferta);
+			activoOferta.setPrimaryKey(activoOfertaPk);
+			listaActivosOfertas.add(activoOferta);
+			oferta.setActivosOferta(listaActivosOfertas);	
+			
+			
+			
+			
+			oferta.setCliente(clienteComercial);
+			
+
+			
+			genericDao.save(Oferta.class, oferta);
+			
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+		
+		return true;
+	}	
 
 }

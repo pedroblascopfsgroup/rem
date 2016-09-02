@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
@@ -85,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
@@ -1279,6 +1281,27 @@ public class ActivoController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	/**
+	 * Método que crea el trámite de publicación a partir de un activo (Para pruebas)
+	 * @param idActivo
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView crearTramitePublicacion(Long idActivo, ModelMap model) {
+
+		try {
+			model.put("data", adapter.crearTramitePublicacion(idActivo));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	/**
 	 * Método que crea un nuevo trábajo a partir de un activo
@@ -1667,13 +1690,25 @@ public class ActivoController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto, ModelMap model){
+		try {
+			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {
-
 		try {
-
 			DtoPage page = activoApi.getHistoricoValoresPrecios(dto);
 
 			model.put("data", page.getResults());
@@ -1686,7 +1721,6 @@ public class ActivoController {
 		}
 
 		return createModelAndViewJson(model);
-
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1743,8 +1777,22 @@ public class ActivoController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadoInformeComercialByActivo(Long id, ModelMap model) {
+		model.put("data", activoApi.getEstadoInformeComercialByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosPublicacionByActivo(Long id, ModelMap model) {
 		model.put("data", activoApi.getDatosPublicacionByActivo(id));
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoMediadorByActivo(Long id, ModelMap model) {
+		model.put("data", activoApi.getHistoricoMediadorByActivo(id));
 		return createModelAndViewJson(model);
 	}
 	
@@ -1846,5 +1894,20 @@ public class ActivoController {
 		System.out.println(jsonData.getId());
 		model.put("data", "hola delete");
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createOferta(DtoOfertasFilter dtoOferta,ModelMap model) throws Exception {
+		try {
+			boolean success = adapter.createOfertaActivo(dtoOferta);//trabajoApi.createPresupuestoTrabajo(presupuestoDto, idTrabajo);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		return createModelAndViewJson(model);
+
 	}
 }

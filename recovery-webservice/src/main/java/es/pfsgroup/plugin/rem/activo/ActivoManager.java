@@ -49,9 +49,12 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -61,8 +64,11 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -79,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -262,7 +269,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			oferta.setEstadoOferta(tipoOferta);
 			
 			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
-			if(tipoOferta.getCodigo().equals("01")){
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
 				List<VOfertasActivosAgrupacion> listaOfertas= activoAdapter.getListOfertasActivos(dto.getIdActivo());
 				
 				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
@@ -272,14 +279,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
 						
 						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if(!vTipoOferta.getCodigo().equals("02")){
-							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
+						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
+							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
 							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
 						}
 					}
 				}
+
+				List<Activo>listaActivos= new ArrayList<Activo>();
+				for(ActivoOferta activoOferta: oferta.getActivosOferta()){
+					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+				}
+				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
 				
-				crearExpediente(oferta);
+				crearExpediente(oferta, trabajo);
 				
 			}
 			
@@ -294,11 +308,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	    return resultado;
 	}
 	
-	public boolean crearExpediente(Oferta oferta){
+	public boolean crearExpediente(Oferta oferta, Trabajo trabajo){
 		
 		try{
 			ExpedienteComercial nuevoExpediente= new ExpedienteComercial();
-			Visita visita = null;
 			List<Visita> listaVisitasCliente = new ArrayList<Visita>();
 			
 			// Si el activo principal de la oferta aceptada tiene visitas, 
@@ -325,6 +338,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
 			nuevoExpediente.setEstado(estadoExpediente);
 			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
+			nuevoExpediente.setTrabajo(trabajo);
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 			
 		}catch(Exception ex) {
@@ -342,43 +356,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveActivoValoracion")
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
-
-		// Actualizacion Valoracion existente
-		if (!Checks.esNulo(activoValoracion)) {
-			// Si ya existia una valoracion, actualizamos el importe que se ha
-			// modificado por web
-			// Pero antes, pasa la valoracion anterior al historico
-			saveActivoValoracionHistorico(activoValoracion);
-
-			// Actualiza la valoracion: nuevo importe y nuevo periodo de
-			// vigencia
-			activoValoracion.setImporte(dto.getImporte());
-			activoValoracion.setFechaInicio(dto.getFechaInicio());
-			activoValoracion.setFechaFin(dto.getFechaFin());
-			activoValoracion.setFechaCarga(new Date());
-
-			genericDao.update(ActivoValoraciones.class, activoValoracion);
-
-		} else {
-
-			// Si no existia una valoracion del tipo indicado, crea una nueva
-			// valoracion de este tipo (para un activo)
-			activoValoracion = new ActivoValoraciones();
-			DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class,
-					dto.getCodigoTipoPrecio());
-
-			activoValoracion.setActivo(activo);
-			activoValoracion.setTipoPrecio(tipoPrecio);
-			activoValoracion.setImporte(dto.getImporte());
-			activoValoracion.setFechaInicio(dto.getFechaInicio());
-			activoValoracion.setFechaFin(dto.getFechaFin());
-			activoValoracion.setFechaAprobacion(null);
-			activoValoracion.setFechaCarga(new Date());
-			activoValoracion.setGestor(adapter.getUsuarioLogado());
-
-			genericDao.save(ActivoValoraciones.class, activoValoracion);
+		try {
+		
+			// Actualizacion Valoracion existente
+			if (!Checks.esNulo(activoValoracion)) {
+				// Si ya existia una valoracion, actualizamos el importe que se ha
+				// modificado por web
+				// Pero antes, pasa la valoracion anterior al historico
+				saveActivoValoracionHistorico(activoValoracion);
+				
+				beanUtilNotNull.copyProperties(activoValoracion, dto);
+				activoValoracion.setFechaCarga(new Date());
+				
+				genericDao.update(ActivoValoraciones.class, activoValoracion);
+	
+			} else {
+	
+				// Si no existia una valoracion del tipo indicado, crea una nueva
+				// valoracion de este tipo (para un activo)
+				activoValoracion = new ActivoValoraciones();
+				beanUtilNotNull.copyProperties(activoValoracion, dto);
+				activoValoracion.setFechaCarga(new Date());
+				
+				DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class,
+						dto.getCodigoTipoPrecio());
+	
+				activoValoracion.setActivo(activo);
+				activoValoracion.setTipoPrecio(tipoPrecio);
+				activoValoracion.setGestor(adapter.getUsuarioLogado());
+	
+				genericDao.save(ActivoValoraciones.class, activoValoracion);
+			}
+			
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
 		}
-
+		
 		return true;
 	}
 
@@ -742,6 +756,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return condicionantesDisponibilidad;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dtoCondicionanteDisponibilidad) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+
+		try {
+			beanUtilNotNull.copyProperty(condicionantesDisponibilidad, "otro", dtoCondicionanteDisponibilidad.getOtro());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
+		
+		return true;
+	}
 
 	@Override
 	public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo) {
@@ -864,9 +899,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "fechaHasta", estado.getFechaHasta());
 				if(!Checks.esNulo(estado.getPortal())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", estado.getPortal().getDescripcion());
+				} else {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", "-");
 				}
 				if(!Checks.esNulo(estado.getTipoPublicacion())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", estado.getTipoPublicacion().getDescripcion());
+				} else {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", "-");
 				}
 				if(!Checks.esNulo(estado.getEstadoPublicacion())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "estadoPublicacion", estado.getEstadoPublicacion().getDescripcion());
@@ -894,6 +933,69 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			listaDtoEstadosPublicacion.add(dtoEstadoPublicacion);
 		}
 		return listaDtoEstadosPublicacion;
+	}
+	
+	@Override
+	public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.ASC, "id");
+		List<ActivoEstadosInformeComercialHistorico> listaEstadoInfoComercial = genericDao
+				.getListOrdered(ActivoEstadosInformeComercialHistorico.class, order, filtro);
+		
+		List<DtoEstadosInformeComercialHistorico> listaDtoEstadosInfoComercial = new ArrayList<DtoEstadosInformeComercialHistorico>();
+		
+		for (ActivoEstadosInformeComercialHistorico estado : listaEstadoInfoComercial) {
+			DtoEstadosInformeComercialHistorico dtoEstadosInfoComercial = new DtoEstadosInformeComercialHistorico();
+			try {
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "id", idActivo);
+				if(!Checks.esNulo(estado.getEstadoInformeComercial())){
+					beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "estadoInfoComercial", estado.getEstadoInformeComercial().getDescripcion());
+				}
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "motivo", estado.getMotivo());
+				beanUtilNotNull.copyProperty(dtoEstadosInfoComercial, "fecha", estado.getFecha());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			listaDtoEstadosInfoComercial.add(dtoEstadosInfoComercial);
+		}
+		
+		return listaDtoEstadosInfoComercial;
+	}
+	
+	@Override
+	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.ASC, "id");
+		List<ActivoInformeComercialHistoricoMediador> listaHistoricoMediador = genericDao
+				.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
+		
+		List<DtoHistoricoMediador> listaDtoHistoricoMediador = new ArrayList<DtoHistoricoMediador>();
+		
+		for (ActivoInformeComercialHistoricoMediador historico : listaHistoricoMediador) {
+			DtoHistoricoMediador dtoHistoricoMediador = new DtoHistoricoMediador();
+			try {
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", idActivo);
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaDesde", historico.getFechaDesde());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
+				if(!Checks.esNulo(historico.getMediadorInforme())){
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "codigo", historico.getMediadorInforme().getId());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador", historico.getMediadorInforme().getNombre());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getMediadorInforme().getTelefono1());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getMediadorInforme().getEmail());
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			listaDtoHistoricoMediador.add(dtoHistoricoMediador);
+		}
+		
+		return listaDtoHistoricoMediador;
 	}
 
 	@Override

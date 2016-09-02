@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
@@ -34,7 +35,6 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
@@ -226,9 +226,9 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	}
 	
 	@Override
-	public List<VBusquedaActivosPropuesta> getActivosByIdPropuesta(Long idPropuesta) {
+	public Page getActivosByIdPropuesta(Long idPropuesta, WebDto webDto) {
 		
-		return vActivosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta);
+		return vActivosPropuestaDao.getListActivosByPropuestaPrecio(idPropuesta,webDto);
 	}
 	
 	@Override

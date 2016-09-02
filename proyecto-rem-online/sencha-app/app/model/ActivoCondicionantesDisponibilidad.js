@@ -42,7 +42,7 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 				calculate: function(data){
 					if(data.ruina || data.pendienteInscripcion || data.obraNuevaSinDeclarar || data.sinTomaPosesionInicial
 							|| data.proindiviso || data.obraNuevaEnConstruccion || data.ocupadoConTitulo || data.tapiado
-							|| data.ocupadoSinTitulo || data.divHorizontalNoInscrita){
+							|| data.ocupadoSinTitulo || data.divHorizontalNoInscrita || !Ext.isEmpty(data.otro)){
 						return true;
 					}
 				}
@@ -52,9 +52,10 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     
 	proxy: {
 		type: 'uxproxy',
-		remoteUrl: 'activo/getCondicionantesDisponibilidad',
 		api: {
             read: 'activo/getCondicionantesDisponibilidad',
+            update: 'activo/saveCondicionantesDisponibilidad',
+            create: 'activo/saveCondicionantesDisponibilidad',
             destroy: 'activo/getCondicionantesDisponibilidad'
         }
     }

@@ -13,6 +13,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -20,8 +21,11 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -197,10 +201,18 @@ public interface ActivoApi {
 		 */
 		public boolean deleteValoracionPrecio(Long id);
 		
+		/**
+		 * Este método obtiene un objeto con los condicionantes del activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuelve un objeto con los datos obtenidos.
+		 */
 		public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo);
 		
 		public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo);
+		
 		public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica);
+		
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
 		/**
@@ -247,6 +259,31 @@ public interface ActivoApi {
 		 * @return
 		 */
 		public Visita insertOrUpdateVisitaActivo(Visita visita) throws IllegalAccessException, InvocationTargetException;
+
+		/**
+		 * Este método obtiene los estados, el historial, de acciones del informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
+
+		/**
+		 * Este método obtiene los estados, el historial, del mediador de la pestaña informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo);
+
+		/**
+		 * Este método recibe un objeto con los condicionantes del activo y lo almacena en la DDBB.
+		 * 
+		 * @param id: ID del activo a filtrar los datos.
+		 * @param dto: dto con los datos a insertar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto);
     }
 
 

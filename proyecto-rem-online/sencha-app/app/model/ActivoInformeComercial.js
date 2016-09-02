@@ -17,16 +17,16 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     			name:'fechaRecepcionLlaves'
     		},
      		{
-    			name:'tipoActivo'
+    			name:'tipoActivoCodigo'
     		},
      		{
-    			name:'subTipoActivo'
+    			name:'subtipoActivoCodigo'
     		},
      		{
     			name:'estadoActivo'
     		},
      		{
-    			name:'tipoVia'
+    			name:'tipoViaCodigo'
     		},
      		{
     			name:'nombreVia'
@@ -93,14 +93,32 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		},
      		{
     			name:'justificacionRenta'
+    		},
+    		{
+    			name:'fechaEstimacionVenta',
+    			type:'date'
+    		},
+     		{
+    			name:'fechaEstimacionRenta',
+    			type:'date'
+    		},
+    		{
+    			name: 'inferiorMunicipioCodigo'
+    		},
+    		{
+    			name: 'ubicacionActivoCodigo'
+    		},
+    		{
+    			name: 'derramaOrientativaComunidad'
+    		},
+    		{
+    			name: 'cuotaOrientativaComunidad'
     		}
     		
     		
     ],
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getTabActivo',
 		api: {
             read: 'activo/getTabActivo',
             create: 'activo/saveActivoInformeComercial',

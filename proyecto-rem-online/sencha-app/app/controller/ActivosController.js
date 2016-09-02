@@ -8,7 +8,7 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoCargas', 'HreRem.model.ActivoCargasTab', 'HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.ActivoValoraciones', 'HreRem.model.ActivoTasacion',
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
-    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu'],
+    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu', 'HreRem.view.expedientes.ExpedienteDetalleMain'],
 
     
     refs: [
@@ -157,6 +157,10 @@ Ext.define('HreRem.controller.ActivosController', {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
 			abrirDetalleExpediente: 'abrirDetalleExpediente'
+    	},
+    	'expedientedetallemain': {
+    		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
+    		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea'
     	}
 
     },

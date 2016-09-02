@@ -17,6 +17,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String estadoOferta;
 	private String tipoOferta;
 	private Long idAgrupacion;
+	private Long idActivo;
 	private String fechaAlta;
 	private Long numExpediente;
 	private String estadoExpediente;
@@ -25,6 +26,14 @@ public class DtoOfertasFilter extends WebDto {
 	private String ofertante;
 	private String comite;
 	private Boolean derechoTanteo;
+	private String fechaAccion;
+	private Long idOferta;
+	private String numAgrupacionRem;
+	private String nombreCliente;
+	private String apellidosCliente;
+	private String razonSocialCliente;
+	private String numDocumentoCliente;
+	private String tipoDocumento;
 	
 	
 	public Long getNumOferta() {
@@ -111,6 +120,63 @@ public class DtoOfertasFilter extends WebDto {
 	public void setDerechoTanteo(Boolean derechoTanteo) {
 		this.derechoTanteo = derechoTanteo;
 	}
+	public String getFechaAccion() {
+		return fechaAccion;
+	}
+	public void setFechaAccion(String fechaAccion) {
+		this.fechaAccion = fechaAccion;
+	}
+	public Long getIdOferta() {
+		return idOferta;
+	}
+	public void setIdOferta(Long idOferta) {
+		this.idOferta = idOferta;
+	}
+	public String getNumAgrupacionRem() {
+		return numAgrupacionRem;
+	}
+	public void setNumAgrupacionRem(String numAgrupacionRem) {
+		this.numAgrupacionRem = numAgrupacionRem;
+	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+	public String getNombreCliente() {
+		return nombreCliente;
+	}
+	public void setNombreCliente(String nombreCliente) {
+		this.nombreCliente = nombreCliente;
+	}
+	public String getApellidosCliente() {
+		return apellidosCliente;
+	}
+	public void setApellidosCliente(String apellidosCliente) {
+		this.apellidosCliente = apellidosCliente;
+	}
+	public String getRazonSocialCliente() {
+		return razonSocialCliente;
+	}
+	public void setRazonSocialCliente(String razonSocialCliente) {
+		this.razonSocialCliente = razonSocialCliente;
+	}
+	public String getNumDocumentoCliente() {
+		return numDocumentoCliente;
+	}
+	public void setNumDocumentoCliente(String numDocumentoCliente) {
+		this.numDocumentoCliente = numDocumentoCliente;
+	}
+	public String getTipoDocumento() {
+		return tipoDocumento;
+	}
+	public void setTipoDocumento(String tipoDocumento) {
+		this.tipoDocumento = tipoDocumento;
+	}
+	
+	
+	
 	
 	
 }

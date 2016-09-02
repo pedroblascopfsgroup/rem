@@ -15,6 +15,7 @@
     <bean id="ActivoGenericSaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericSaveActionHandler"></bean>
     <bean id="activoGenericEnterEmailActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterEmailActionHandler"></bean>
 	<bean id="activoComprobarPropuestaPreciosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarPropuestaPreciosActionHandler"></bean>
+	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"></bean>
 	    
     <bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"></bean>
     
@@ -160,6 +161,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePropuestaPrecios.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionPrecios.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePublicacion.xml" p:version="-1"/>
 	
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">

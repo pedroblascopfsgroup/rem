@@ -30,7 +30,11 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDEstadoOferta implements Auditable, Dictionary {
 	
-
+	public static final String CODIGO_ACEPTADA= "01";
+	public static final String CODIGO_RECHAZADA= "02";
+	public static final String CODIGO_CONGELADA= "03";
+	public static final String CODIGO_PENDIENTE= "04";
+	
 	private static final long serialVersionUID = 1L;
 
 	@Id

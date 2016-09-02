@@ -17,6 +17,8 @@ public class DtoFichaTrabajo {
 	
     private String numTrabajo;
     
+    private Long idTrabajoWebcom;
+    
     private String nombreProveedor;
     
     private String tipoTrabajoCodigo;
@@ -73,6 +75,8 @@ public class DtoFichaTrabajo {
 
     private String terceroTel2;
     
+    private Long idSolicitante;
+    
     private String solicitante;
     
     private String propietario;
@@ -111,24 +115,33 @@ public class DtoFichaTrabajo {
     
     private String nombreMediador;
     
+    private Long idMediador;
+    
     private Long idProceso;
     
 	
-    
-	public String getNumTrabajo() {
-		return numTrabajo;
-	}
-
-	public Long getIdTrabajo() {
+    public Long getIdTrabajo() {
 		return idTrabajo;
 	}
 
 	public void setIdTrabajo(Long idTrabajo) {
 		this.idTrabajo = idTrabajo;
 	}
-
+    
+	public String getNumTrabajo() {
+		return numTrabajo;
+	}
+	
 	public void setNumTrabajo(String numTrabajo) {
 		this.numTrabajo = numTrabajo;
+	}
+
+	public Long getIdTrabajoWebcom() {
+		return idTrabajoWebcom;
+	}
+
+	public void setIdTrabajoWebcom(Long idTrabajoWebcom) {
+		this.idTrabajoWebcom = idTrabajoWebcom;
 	}
 
 	public String getNombreProveedor() {
@@ -374,6 +387,14 @@ public class DtoFichaTrabajo {
 		this.terceroTel2 = terceroTel2;
 	}
 
+	public Long getIdSolicitante() {
+		return idSolicitante;
+	}
+
+	public void setIdSolicitante(Long idSolicitante) {
+		this.idSolicitante = idSolicitante;
+	}
+
 	public String getSolicitante() {
 		return solicitante;
 	}
@@ -526,6 +547,14 @@ public class DtoFichaTrabajo {
 		this.nombreMediador = nombreMediador;
 	}
 	
+	public Long getIdMediador() {
+		return idMediador;
+	}
+
+	public void setIdMediador(Long idMediador) {
+		this.idMediador = idMediador;
+	}
+
 	public Long getIdProceso() {
 		return idProceso;
 	}

@@ -111,7 +111,8 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	@Column(name = "SPS_FECHA_ACC_ANTIOCUPA")
 	private Date fechaAccesoAntiocupa;
 	
-	
+	@Column(name = "SPS_OTRO")
+	private String otro;
 
 	@Version   
 	private Long version;
@@ -288,6 +289,14 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 
 	public void setActivo(Activo activo) {
 		this.activo = activo;
+	}
+
+	public String getOtro() {
+		return otro;
+	}
+
+	public void setOtro(String otro) {
+		this.otro = otro;
 	}
 
 }

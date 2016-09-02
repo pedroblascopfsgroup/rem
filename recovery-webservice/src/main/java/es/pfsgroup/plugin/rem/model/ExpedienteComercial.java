@@ -26,6 +26,7 @@ import javax.persistence.Version;
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
@@ -114,6 +115,16 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_DEV_ENTREGAS")
     private Date fechaDevolucionEntregas;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TBJ_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private Trabajo trabajo;
+    
+    @OneToMany(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<AdjuntoExpedienteComercial> adjuntos;
      
 	@Version   
 	private Long version;
@@ -302,7 +313,34 @@ public class ExpedienteComercial implements Serializable, Auditable {
     	
     	return posicionamiento;
     }
+
+	public Trabajo getTrabajo() {
+		return trabajo;
+	}
+
+	public void setTrabajo(Trabajo trabajo) {
+		this.trabajo = trabajo;
+	}
     
+	public List<AdjuntoExpedienteComercial> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<AdjuntoExpedienteComercial> adjuntos) {
+		this.adjuntos = adjuntos;
+	}
+    
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntoExpedienteComercial getAdjunto(Long id) {
+        for (AdjuntoExpedienteComercial adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
     
    
 }

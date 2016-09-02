@@ -55,22 +55,7 @@ public class VBusquedaActivosPropuesta implements Serializable {
     
     @Column(name = "DIRECCION")
     private String direccion;
-    
-    @Column(name="PRECIO_APROBADO_VENTA")
-    private Double precioAprobadoVenta;
-    
-    @Column(name="PRECIO_APROBADO_RENTA")
-    private Double precioAprobadoRenta;
-    
-    @Column(name="PRECIO_MINIMO_AUTORIZADO")
-    private Double precioMinimoAutorizado;
-    
-    @Column(name="PRECIO_DESCUENTO_APROBADO")
-    private Double precioDescuentoAprobado;
-    
-    @Column(name="PRECIO_DESCUENTO_PUBLICADO")
-    private Double precioDescuentoPublicado;
-    
+
     @Column(name="ESTADO_CODIGO")
     private String codigoEstadoActivo;
     
@@ -182,46 +167,6 @@ public class VBusquedaActivosPropuesta implements Serializable {
 
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
-	}
-
-	public Double getPrecioAprobadoVenta() {
-		return precioAprobadoVenta;
-	}
-
-	public void setPrecioAprobadoVenta(Double precioAprobadoVenta) {
-		this.precioAprobadoVenta = precioAprobadoVenta;
-	}
-
-	public Double getPrecioAprobadoRenta() {
-		return precioAprobadoRenta;
-	}
-
-	public void setPrecioAprobadoRenta(Double precioAprobadoRenta) {
-		this.precioAprobadoRenta = precioAprobadoRenta;
-	}
-
-	public Double getPrecioMinimoAutorizado() {
-		return precioMinimoAutorizado;
-	}
-
-	public void setPrecioMinimoAutorizado(Double precioMinimoAutorizado) {
-		this.precioMinimoAutorizado = precioMinimoAutorizado;
-	}
-
-	public Double getPrecioDescuentoAprobado() {
-		return precioDescuentoAprobado;
-	}
-
-	public void setPrecioDescuentoAprobado(Double precioDescuentoAprobado) {
-		this.precioDescuentoAprobado = precioDescuentoAprobado;
-	}
-
-	public Double getPrecioDescuentoPublicado() {
-		return precioDescuentoPublicado;
-	}
-
-	public void setPrecioDescuentoPublicado(Double precioDescuentoPublicado) {
-		this.precioDescuentoPublicado = precioDescuentoPublicado;
 	}
 
 	public String getCodigoEstadoActivo() {

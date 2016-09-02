@@ -79,7 +79,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
 			            getClass: function(v, metadata, record ) {
 			            	if (!Ext.isEmpty(record.get("numExpediente"))) {
-			            		return 'fa fa-folder-open';
+			            		return 'fa fa-folder-open blue-medium-color';
 			            	}			            	
 			            },
 			            handler: 'onClickAbrirExpedienteComercial'

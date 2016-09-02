@@ -267,6 +267,22 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	
 
+	public Float getCuotaOrientativaComunidad() {
+		return cuotaOrientativaComunidad;
+	}
+
+	public void setCuotaOrientativaComunidad(Float cuotaOrientativaComunidad) {
+		this.cuotaOrientativaComunidad = cuotaOrientativaComunidad;
+	}
+
+	public Double getDerramaOrientativaComunidad() {
+		return derramaOrientativaComunidad;
+	}
+
+	public void setDerramaOrientativaComunidad(Double derramaOrientativaComunidad) {
+		this.derramaOrientativaComunidad = derramaOrientativaComunidad;
+	}
+
 	public Date getFechaEstimacionVenta() {
 		return fechaEstimacionVenta;
 	}

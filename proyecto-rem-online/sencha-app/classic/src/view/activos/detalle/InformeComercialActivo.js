@@ -746,31 +746,32 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.cuota.orientativa'),
-							bind : '{informeComercial.cuotaOrientativa}'
+							bind : '{informeComercial.cuotaOrientativaComunidad}'
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.derrama.orientativa'),
-							bind : '{informeComercial.derramaOrientativa}'
+							bind : '{informeComercial.derramaOrientativaComunidad}'
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.nombre.presidente'),							
-							bind : '{informeComercial.nomPresidenteComunidad}',
-							colspan: 2
+							bind : '{informeComercial.nomPresidenteComunidad}'
+							
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.telefono'),
 							vtype: 'telefono',
-							bind : '{informeComercial.telPresidenteComunidad}'
+							bind : '{informeComercial.telPresidenteComunidad}',
+							colspan: 2
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.nombre.administrador'),
-							bind : '{informeComercial.nomAdministradorComunidad}',
-							colspan: 2
+							bind : '{informeComercial.nomAdministradorComunidad}'
 						}, 
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.telefono'),
 							vtype: 'telefono',
-							bind : '{informeComercial.telAdministradorComunidad}'
+							bind : '{informeComercial.telAdministradorComunidad}',
+							colspan: 2
 						}
 				]
 			}

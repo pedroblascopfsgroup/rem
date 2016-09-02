@@ -107,6 +107,12 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		},
     		{
     			name: 'ubicacionActivoCodigo'
+    		},
+    		{
+    			name: 'derramaOrientativaComunidad'
+    		},
+    		{
+    			name: 'cuotaOrientativaComunidad'
     		}
     		
     		

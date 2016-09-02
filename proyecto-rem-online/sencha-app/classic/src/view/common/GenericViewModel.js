@@ -145,7 +145,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tiposUbicacion'}
+					extraParams: {diccionario: 'ubicacionActivo'}
 				}/*,autoLoad: true*/
     		},
     		

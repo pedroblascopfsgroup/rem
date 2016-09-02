@@ -17,7 +17,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-
 /**
  * Modelo que gestiona el diccionario de los estados de acciones del informe comercial.
  *
@@ -55,8 +54,6 @@ public class DDEstadoInformeComercial implements Auditable, Dictionary {
 	@Embedded
 	private Auditoria auditoria;
 
-
-
 	public Long getId() {
 		return id;
 	}
@@ -88,7 +85,6 @@ public class DDEstadoInformeComercial implements Auditable, Dictionary {
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
 	}
-
 
 	public Long getVersion() {
 		return version;

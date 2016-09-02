@@ -1018,23 +1018,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	Ext.create("HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion", {geoCodeAddr: geoCodeAddr, latLng: latLng,  parent: btn.up("form")}).show();  	
     },
     
-    checkDistrito: function(distrito) {
-    	// Comprobar primero si viene null.
-    	if(distrito == null){
-    		return false;
-    	}
+    // Este método comprueba si el municipio es 'Barcelona, Madrid, Valencia o Alicante/Alacant'.
+    checkDistrito: function(combobox) {
+    	var me = this;
+    	var view = me.getView();
+    	var distrito = combobox.getRawValue();
     	
-    	// Si no es null comprobar distrito.
-    	if(distrito === 'Valencia'){
-    		return true;
+    	// Comprobar distrito y mostrar u ocultar el textfield de distrito.
+    	if(Ext.isEmpty(distrito)) {
+    		view.lookupReference('fieldlabelDistrito').hide();
+    	} else if(distrito === 'Valencia'){
+    		view.lookupReference('fieldlabelDistrito').show();
     	} else if(distrito === 'Barcelona') {
-    		return true;
+    		view.lookupReference('fieldlabelDistrito').show();
     	} else if(distrito === 'Madrid') {
-    		return true;
+    		view.lookupReference('fieldlabelDistrito').show();
     	} else if(distrito === 'Alicante/Alacant') {
-    		return true;
+    		view.lookupReference('fieldlabelDistrito').show();
     	} else {
-    		return false;
+    		view.lookupReference('fieldlabelDistrito').hide();
     	}
     },
     
@@ -1284,6 +1286,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		};
 
 		me.onSaveFormularioCompletoOferta(form, success);	
+		
+	},
+	
+	// Este método copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisión'.
+	onClickCopiarDatosDelMediador: function(btn) {
+		var me =this;
+		var view = me.getView();
+
+		view.lookupReference('tipoActivoAdmisionInforme').setValue(view.lookupReference('tipoActivoMediadorInforme').getValue());
+		view.lookupReference('subtipoActivoComboAdmisionInforme').setValue(view.lookupReference('subtipoActivoComboMediadorInforme').getValue());
+		view.lookupReference('tipoViaAdmisionInforme').setValue(view.lookupReference('tipoViaMediadorInforme').getValue());
+		view.lookupReference('nombreViaAdmisionInforme').setValue(view.lookupReference('nombreViaMediadorInforme').getValue());
+		view.lookupReference('numeroAdmisionInforme').setValue(view.lookupReference('numeroMediadorInforme').getValue());
+		view.lookupReference('escaleraAdmisionInforme').setValue(view.lookupReference('escaleraMediadorInforme').getValue());
+		view.lookupReference('plantaAdmisionInforme').setValue(view.lookupReference('plantaMediadorInforme').getValue());
+		view.lookupReference('puertaAdmisionInforme').setValue(view.lookupReference('puertaMediadorInforme').getValue());
+		view.lookupReference('codPostalAdmisionInforme').setValue(view.lookupReference('codPostalMediadorInforme').getValue());
+		view.lookupReference('municipioComboAdmisionInforme').setValue(view.lookupReference('municipioComboMediadorInforme').getValue());
+		view.lookupReference('poblacionalAdmisionInforme').setValue(view.lookupReference('poblacionalMediadorInforme').getValue());
+		view.lookupReference('provinciaComboAdmisionInforme').setValue(view.lookupReference('provinciaComboMediadorInforme').getValue());
+		view.lookupReference('latitudAdmisionInforme').setValue(view.lookupReference('latitudmediador').getValue());
+		view.lookupReference('longitudAdmisionInforme').setValue(view.lookupReference('longitudmediador').getValue());
 		
 	},
 	

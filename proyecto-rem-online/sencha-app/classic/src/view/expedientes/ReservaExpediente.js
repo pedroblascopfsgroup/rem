@@ -4,7 +4,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
     cls	: 'panel-base shadow-panel',
     collapsed: false,
     disableValidation: true,
-    reference: 'reserva',
+    reference: 'reservaExpediente',
     scrollable	: 'y',
 
 	recordName: "reserva",
@@ -32,7 +32,6 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.num.reserva'),
 		                	bind:		'{reserva.numReserva}'
-
 		                },
 		                { 
 							xtype: 'comboboxfieldbase',

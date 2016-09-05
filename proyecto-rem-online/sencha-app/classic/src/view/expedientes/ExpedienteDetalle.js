@@ -5,7 +5,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
     			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente',
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
-    			'HreRem.view.expedientes.TramitesTareasExpediente'],
+    			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente'],
 
     listeners: {
    		
@@ -93,11 +93,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        {
 		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
 		        },
-		        {
-		        	xtype: 'reservaexpediente' 
+{
+		        	xtype: 'condicionesexpediente'
+		        },
+ {
+		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
-		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
+		        	xtype: 'reservaexpediente' , bind: {disabled: '{!expediente.tieneReserva}'}
 		        },
 		        {
 		        	xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true
@@ -108,6 +111,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        {
 		        	xtype: 'documentosexpediente', ocultarBotonesEdicion: true
 		        }
+
 		],
 		
 		evaluarBotonesEdicion: function(tab) {    	

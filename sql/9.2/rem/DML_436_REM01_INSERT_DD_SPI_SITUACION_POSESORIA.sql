@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160902
+--## AUTOR=Luis Caballero
+--## FECHA_CREACION=20160905
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_TIT_TIPOS_IMPUESTO los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Script que añade en DD_SIP_SITUACION_POSESORIA los datos añadidos en T_ARRAY_DATA
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -38,10 +38,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'IVA'					,'IVA'),
-        T_TIPO_DATA('02'	,'ITP'					,'ITP'),
-        T_TIPO_DATA('03'	,'IGIT'					,'IGIC'),
-        T_TIPO_DATA('04'	,'IPSI'					,'IPSI')
+        T_TIPO_DATA('01'		,'Libre'			,'Libre'),
+        T_TIPO_DATA('02'		,'Ocupado con título'			,'Ocupado con título')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -50,26 +48,26 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    -- LOOP para insertar los valores en DD_TIT_TIPOS_IMPUESTO -----------------------------------------------------------------
-    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TIT_TIPOS_IMPUESTO] ');
+    -- LOOP para insertar los valores en DD_SIP_SITUACION_POSESORIA -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_SIP_SITUACION_POSESORIA] ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_TIT_TIPOS_IMPUESTO WHERE DD_TIT_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.DD_SIP_SITUACION_POSESORIA WHERE DD_SIP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
         
         --Si existe lo modificamos
         IF V_NUM_TABLAS > 0 THEN				
           
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
-       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_TIT_TIPOS_IMPUESTO '||
-                    'SET DD_TIT_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
-					', DD_TIT_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.DD_SIP_SITUACION_POSESORIA '||
+                    'SET DD_SIP_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
+					', DD_SIP_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
 					', USUARIOMODIFICAR = ''DML'' , FECHAMODIFICAR = SYSDATE '||
-					'WHERE DD_TIT_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
+					'WHERE DD_SIP_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           
@@ -77,10 +75,10 @@ BEGIN
        ELSE
        
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
-          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_TIT_TIPOS_IMPUESTO.NEXTVAL FROM DUAL';
+          V_MSQL := 'SELECT '|| V_ESQUEMA ||'.S_DD_SIP_SITUACION_POSESORIA.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
-          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_TIT_TIPOS_IMPUESTO (' ||
-                      'DD_TIT_ID, DD_TIT_CODIGO, DD_TIT_DESCRIPCION, DD_TIT_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.DD_SIP_SITUACION_POSESORIA (' ||
+                      'DD_SIP_ID, DD_SIP_CODIGO, DD_SIP_DESCRIPCION, DD_SIP_DESCRIPCION_LARGA, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
                       'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', 0, ''DML'',SYSDATE,0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
@@ -88,7 +86,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_TIT_TIPOS_IMPUESTO ACTUALIZADO CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: DICCIONARIO DD_SIP_SITUACION_POSESORIA ACTUALIZADO CORRECTAMENTE ');
    
 
 EXCEPTION

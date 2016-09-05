@@ -71,7 +71,7 @@ public interface ExpedienteComercialApi {
 		 * Método que recupera las observaciones del expediente comercial
 		 * @return
 		 */
-		public DtoPage getListObservaciones(Long idExpediente);
+		public DtoPage getListObservaciones(Long idExpediente, WebDto dto);
 		
 	    
 		/**

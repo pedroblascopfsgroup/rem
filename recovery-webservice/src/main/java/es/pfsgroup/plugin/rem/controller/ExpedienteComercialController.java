@@ -240,13 +240,13 @@ public class ExpedienteComercialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getObservaciones(ModelMap model, Long idExpediente) {
+	public ModelAndView getObservaciones(ModelMap model, WebDto dto, Long idExpediente) {
 		
 		try {
-			DtoPage dto = expedienteComercialApi.getListObservaciones(idExpediente);
+			DtoPage page = expedienteComercialApi.getListObservaciones(idExpediente, dto);
 			
-			model.put("data", dto.getResults());
-			model.put("totalCount", dto.getTotalCount());
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 			
 		} catch (Exception e) {

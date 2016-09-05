@@ -21,4 +21,13 @@ public class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCome
 		
 		return HibernateQueryUtils.page(this, hql, webDto);
 	}
+	
+	@Override
+	public Page getObservacionesByExpediente(Long idExpediente, WebDto dto) {
+		
+		HQLBuilder hql = new HQLBuilder(" from ObservacionesExpedienteComercial obs");		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "obs.expediente.id", idExpediente);
+   		
+   		return HibernateQueryUtils.page(this, hql, dto);
+	}
 }

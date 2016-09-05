@@ -57,7 +57,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
-import es.pfsgroup.plugin.rem.observacionesExpediente.dao.ObservacionExpedienteDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 
 
@@ -78,9 +77,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private OfertaDao ofertaDao;
-	
-	@Autowired
-	private ObservacionExpedienteDao observacionComercialDao;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -382,19 +378,22 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return dto;
 	}
 	
+	
 	@Override
-	public DtoPage getListObservaciones(Long idExpediente) {
+	@SuppressWarnings("unchecked")
+	public DtoPage getListObservaciones(Long idExpediente, WebDto dto) {
+				
+		Page page = expedienteComercialDao.getObservacionesByExpediente(idExpediente, dto);
 		
-		List<ObservacionesExpedienteComercial> lista = observacionComercialDao.getList();
 		List<DtoObservacion> observaciones = new ArrayList<DtoObservacion>();
 		
-		for (ObservacionesExpedienteComercial observacion: lista) {
+		for (ObservacionesExpedienteComercial observacion: (List<ObservacionesExpedienteComercial>) page.getResults()) {
 			
 			DtoObservacion dtoObservacion = observacionToDto(observacion);
 			observaciones.add(dtoObservacion);
 		}
 		
-		return new DtoPage(observaciones, observaciones.size());
+		return new DtoPage(observaciones,page.getTotalCount());
 	}
 	
 	@Transactional(readOnly = false)

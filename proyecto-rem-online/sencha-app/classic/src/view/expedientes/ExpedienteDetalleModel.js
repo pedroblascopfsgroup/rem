@@ -87,7 +87,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    		type: 'uxproxy',
 	    		remoteUrl: 'expedientecomercial/getObservaciones',
 	    		extraParams: {idExpediente: '{expediente.id}'}
-	    	}
+	    	},
+	    	remoteSort: true,
+	    	remoteFilter: true
     	},
 
     	storeActivosExpediente: {
@@ -119,8 +121,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getTramitesTareas',
 		        extraParams: {idExpediente: '{expediente.id}'},
 		        rootProperty: 'tramite.tareas'
-	    	}
-
+	    	}/*,
+	    	remoteSort: true,
+	    	remoteFilter: true
+			*/
 		},
 		
 		storeCompradoresExpediente: {
@@ -130,8 +134,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getCompradoresExpediente',
 		        extraParams: {idExpediente: '{expediente.id}'}
-		        
-	    	}
+	    	},
+	    	remoteSort: true,
+	    	remoteFilter: true
 		}
 	
     }

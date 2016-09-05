@@ -40,6 +40,7 @@ public class DDTipoAcuerdoDaoImpl extends AbstractEntityDao<DDTipoAcuerdo, Long>
 		sb.append("Select tpa from DDTipoAcuerdo tpa ");
 		sb.append("where tpa.auditoria.borrado = 0 ");
 		sb.append("and tpa.tipoEntidad.id in ("+ambito+","+ambas+")");
+		sb.append("order by tpa.descripcion");
 		
 		List<DDTipoAcuerdo> lista = getHibernateTemplate().find(sb.toString());
 				

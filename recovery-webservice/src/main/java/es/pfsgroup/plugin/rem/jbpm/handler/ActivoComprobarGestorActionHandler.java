@@ -18,6 +18,7 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler{
 	private static final long serialVersionUID = 1920406024815248515L;
 	
 	private static final String CODIGO_TRAMITE_DOCUMENTAL = "T002";
+	private static final String CODIGO_TRAMITE_PROPUESTA_PRECIOS = "T009";
 	
 	@Autowired
 	GestorActivoApi gestorActivoApi;
@@ -45,6 +46,16 @@ public class ActivoComprobarGestorActionHandler extends ActivoBaseActionHandler{
 				getExecutionContext().getToken().signal("OtrosGestores");
 			
 		}
+		
+		if(CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())){
+			
+			//Si viene del Tramite de Propuesta de precios, debe comprobar si "es gestor precios/marketing u otros"
+			if(gestorActivoApi.isGestorPreciosOMarketing(tramite.getActivo(),usuario))
+				getExecutionContext().getToken().signal("GestorMarketingOPrecio");
+			else
+				getExecutionContext().getToken().signal("OtrosGestores");
+		}
+
 	}
 
 }

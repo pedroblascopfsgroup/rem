@@ -91,5 +91,100 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+	
+	@Override
+	public Boolean estadoPublicar(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('06'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean estadoOcultaractivo(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('01'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean estadoDesocultaractivo(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('03'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean estadoOcultarprecio(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('01','02'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean estadoDesocultarprecio(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('04','07'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean estadoDespublicar(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND DD_EPU_ID IN (SELECT DD_EPU_ID"
+				+ "				FROM DD_EPU_ESTADO_PUBLICACION EPU"
+				+ "				WHERE DD_EPU_CODIGO IN ('02'))");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean estadoAutorizaredicion(String numActivo){
+		return true;
+	}
 		
 }

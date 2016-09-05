@@ -55,13 +55,21 @@
 		                "routeId": "precios"
 		            },
 		           	{
-		                "text":   "Publicacion",
+		                "text":   "Publicación",
 		                "view":   "publicacion.PublicacionMain",
 		                "leaf":   true,
 		                "iconCls": "app-menu-ico ico-publicacion",
 		                "cls": "app-menu-item",
 		                "routeId": "publicacion"
 		            },
+		            {
+		                "text":   "Comercial",
+		                "view":   "comercial.ComercialMainMenu",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-comercializacion",
+		                "cls": "app-menu-item",
+		                "routeId": "comercial"
+		            },            
 		            {
 		                "text":   "Carga Masiva",
 		                "view":   "masivo.MasivoMain",
@@ -71,7 +79,6 @@
 		                "routeId": "masivo",
 		                "secFunPermToRender": "MENU_MASIVO"
 		            }
-            
             
             
 	]

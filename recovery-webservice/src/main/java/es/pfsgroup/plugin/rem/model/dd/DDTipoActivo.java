@@ -39,7 +39,7 @@ public class DDTipoActivo implements Auditable, Dictionary {
 	@Id
 	@Column(name = "DD_TPA_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoActivoGenerator")
-	@SequenceGenerator(name = "DDTipoActivoGenerator", sequenceName = "DD_TPA_TIPO_ACTIVO")
+	@SequenceGenerator(name = "DDTipoActivoGenerator", sequenceName = "S_DD_TPA_TIPO_ACTIVO")
 	private Long id;
 	
 	@Column(name = "DD_TPA_CODIGO")   

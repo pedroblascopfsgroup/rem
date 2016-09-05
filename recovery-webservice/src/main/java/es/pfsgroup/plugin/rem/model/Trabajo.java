@@ -20,6 +20,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -66,6 +67,9 @@ public class Trabajo implements Serializable, Auditable {
 	
     @Column(name = "TBJ_NUM_TRABAJO")
     private Long numTrabajo;
+    
+    @Column(name = "TBJ_WEBCOM_ID")
+    private Long idTrabajoWebcom;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVC_ID")
@@ -221,7 +225,11 @@ public class Trabajo implements Serializable, Auditable {
     
     @Column(name="TBJ_FECHA_PAGO")
     private Date fechaPago;
-    
+
+    @OneToOne(mappedBy = "trabajo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "TBJ_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private PropuestaPrecio propuestaPrecio;
        	
 	@Version   
 	private Long version;
@@ -246,6 +254,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNumTrabajo(Long numTrabajo) {
 		this.numTrabajo = numTrabajo;
+	}
+
+	public Long getIdTrabajoWebcom() {
+		return idTrabajoWebcom;
+	}
+
+	public void setIdTrabajoWebcom(Long idTrabajoWebcom) {
+		this.idTrabajoWebcom = idTrabajoWebcom;
 	}
 
 	public DDTipoTrabajo getTipoTrabajo() {
@@ -766,6 +782,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setMediador(ActivoProveedor mediador) {
 		this.mediador = mediador;
+	}
+
+	public PropuestaPrecio getPropuestaPrecio() {
+		return propuestaPrecio;
+	}
+
+	public void setPropuestaPrecio(PropuestaPrecio propuestaPrecio) {
+		this.propuestaPrecio = propuestaPrecio;
 	}
 
 

@@ -4,11 +4,11 @@ Ext.define('HreRem.model.ActivoHistoricoEstadoPublicacion', {
 
     fields: [    
     		{
-    			name:'publicacionOrdinaria',
+    			name:'publicacionForzada',
     			type: 'boolean'
     		},
     		{
-    			name:'publicacionForzada',
+    			name: 'publicacionOrdinaria',
     			type: 'boolean'
     		},
     		{
@@ -24,7 +24,16 @@ Ext.define('HreRem.model.ActivoHistoricoEstadoPublicacion', {
     			type: 'boolean'
     		},
     		{
-    			name:'motivo'
+    			name:'motivoPublicacion'
+    		},
+    		{
+    			name:'motivoOcultacionPrecio'
+    		},
+    		{
+    			name:'motivoDespublicacionForzada'
+    		},
+    		{
+    			name:'motivoOcultacionForzada'
     		},
     		{
     			name:'observaciones'
@@ -33,9 +42,11 @@ Ext.define('HreRem.model.ActivoHistoricoEstadoPublicacion', {
     
 	proxy: {
 		type: 'uxproxy',
+		writeAll: true,
 		api: {
             create: 'activo/setHistoricoEstadoPublicacion',
-            update: 'activo/setHistoricoEstadoPublicacion'
+            update: 'activo/setHistoricoEstadoPublicacion',
+            read: 'activo/getHistoricoEstadoPublicacion'
         }
     }
 });

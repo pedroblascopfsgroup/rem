@@ -87,6 +87,7 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			}
 			
 			if (activo.getInfoComercial().getMediadorInforme() != null) {
+				BeanUtils.copyProperty(activoDto, "codigoMediador", activo.getInfoComercial().getMediadorInforme().getId());
 				BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
 				BeanUtils.copyProperty(activoDto, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
 				BeanUtils.copyProperty(activoDto, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());

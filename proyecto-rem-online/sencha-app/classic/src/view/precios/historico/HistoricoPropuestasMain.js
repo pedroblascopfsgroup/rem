@@ -28,7 +28,9 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestasMain', {
 		        				reference: 'historicoPropuestasSearch'
 		        			},
 		        			{	
-		        				xtype: 'historicopropuestaslist'        			
+		        				xtype: 'historicopropuestaslist',
+								reference: 'historicoPropuestasList',
+								flex: 1
 		        			}
 		        		]
         			},

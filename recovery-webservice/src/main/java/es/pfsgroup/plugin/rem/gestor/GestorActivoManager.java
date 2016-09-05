@@ -215,5 +215,32 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 			return (usuarios.contains(usuario)? true : false);
 		}
 	}
+	
+	
+	// Comprobaciones para Gestores de Precios y Marketing ------------------------------------------------
+	
+	public Boolean isGestorPrecios(Activo activo, Usuario usuario){
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_PRECIOS);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+
+	public Boolean isGestorMarketing(Activo activo, Usuario usuario){
+		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", CODIGO_GESTOR_MARKETING);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
+		
+		List<Usuario> usuariosActivos = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipoGestor.getId(),activo);		
+		return usuariosActivos.contains(usuario);
+	}
+	
+	public Boolean isGestorPreciosOMarketing(Activo activo, Usuario usuario){
+		if (isGestorPrecios(activo, usuario) || isGestorMarketing(activo, usuario)){
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }

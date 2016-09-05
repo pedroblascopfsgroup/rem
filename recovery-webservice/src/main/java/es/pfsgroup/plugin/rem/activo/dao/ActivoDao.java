@@ -52,4 +52,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getActivosPublicacion(DtoActivosPublicacion dtoActivosPublicacion);
 
 	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID);
+	
+    public Long getNextNumOferta();
+    
+    public Long getNextClienteRemId();
 }

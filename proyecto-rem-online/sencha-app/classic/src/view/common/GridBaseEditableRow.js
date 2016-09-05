@@ -104,46 +104,11 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 		}
         
 		
+		
+		
 
 	    me.addListener ('edit', function(editor, context, eOpts) {
-			me.mask(HreRem.i18n("msg.mask.espere"));
-			
-			if (me.isValidRecord(context.record)) {				
-			
-        		context.record.save({
-
-                    params: {
-                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
-                    },
-                    success: function (a, operation, c) {
-                        context.store.load();
-                        me.unmask();
-                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-						me.saveSuccessFn();											
-						
-                    },
-                    
-					failure: function (a, operation) {
-                    	
-                    	context.store.load();
-                    	try {
-                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-                    		
-                    	}catch(err) {}
-                    	
-                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-                    		me.fireEvent("errorToast", response.msg);
-                    	} else {
-                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                    	}                        	
-						me.unmask();
-                    }
-                });	                            
-        		me.disableAddButton(false);
-        		me.disablePagingToolBar(false);
-        		me.getSelectionModel().deselectAll();
-        		editor.isNew = false;
-			}
+			me.editFuncion(editor, context);
         });
         
         me.addListener ('beforeedit', function(editor) {
@@ -415,6 +380,50 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
                
                }
    
-   }   
+   },
+   
+   editFuncion: function(editor, context){
+   		
+   		var me= this;
+		me.mask(HreRem.i18n("msg.mask.espere"));
+			
+			if (me.isValidRecord(context.record)) {				
+			
+        		context.record.save({
+
+                    params: {
+                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
+                    },
+                    success: function (a, operation, c) {
+                        context.store.load();
+                        me.unmask();
+                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
+						me.saveSuccessFn();											
+						
+                    },
+                    
+					failure: function (a, operation) {
+                    	
+                    	context.store.load();
+                    	try {
+                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+                    		
+                    	}catch(err) {}
+                    	
+                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+                    		me.fireEvent("errorToast", response.msg);
+                    	} else {
+                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                    	}                        	
+						me.unmask();
+                    }
+                });	                            
+        		me.disableAddButton(false);
+        		me.disablePagingToolBar(false);
+        		me.getSelectionModel().deselectAll();
+        		editor.isNew = false;
+			}
+        
+   }
     
 });

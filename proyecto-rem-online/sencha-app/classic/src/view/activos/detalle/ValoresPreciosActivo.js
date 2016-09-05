@@ -367,14 +367,18 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								bind		: {
 												store: '{storeHistoricoValoresPrecios}'
 								},
+								features: [{
+						            ftype: 'grouping',
+						            groupHeaderTpl: '{name}'
+						        }],
 								columns		: {
 								items:[
-								   {
-									text: HreRem.i18n('header.descripcion'),
-									dataIndex: 'descripcionTipoPrecio',
-									sortable: false,
-									flex: 1.5
-								   },
+								   {   
+									   text: HreRem.i18n('header.descripcion'),
+									   //dataIndex: 'descripcionTipoPrecio',
+									   //sortable: true,
+									   flex: 0.4
+							       },
 								   {
 									text: HreRem.i18n('header.importe'),
 									dataIndex: 'importe',
@@ -417,7 +421,8 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 								   }
 			    				]
 
-							},
+							}/* HREOS-627 Paginación eliminada
+							,
 							dockedItems : [
 						        {
 						            xtype: 'pagingtoolbar',
@@ -429,7 +434,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						                store: '{storeHistoricoValoresPrecios}'
 						            }
 						        }
-							]						 
+							]	*/					 
 						}
 				]
             }

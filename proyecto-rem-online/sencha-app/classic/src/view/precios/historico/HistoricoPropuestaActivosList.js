@@ -12,16 +12,15 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
         
         me.setTitle(HreRem.i18n('title.detalle.activos.propuesta'));
         
+        me.listeners = {	    	
+    			rowdblclick: 'onHistoricoActivosListDobleClick'
+    	    };
+        
         me.columns= [
         
 		        {	        	
 		            dataIndex: 'numActivo',
 		            text: HreRem.i18n('header.numero.activo.haya'),
-		            flex: 1		        	
-		        },
-		        {	        	
-		            dataIndex: 'entidadPropietariaDescripcion',
-		            text: HreRem.i18n('header.cartera'),
 		            flex: 1		        	
 		        },
 		        {	        	
@@ -55,28 +54,13 @@ Ext.define('HreRem.view.precios.historico.HistoricoPropuestaActivosList', {
 		            flex: 1
 		        },
 		        {	        	
-		            dataIndex: 'estado',
+		            dataIndex: 'descripcionEstadoActivo',
 		            text: HreRem.i18n('header.estado'),
 		            flex: 1
 		        },
 		        {	        	
 		            dataIndex: 'motivoDescarte',
 		            text: HreRem.i18n('header.motivo.descarte'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'tipoPrecio',
-		            text: HreRem.i18n('header.tipo.precio'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioPropuesto',
-		            text: HreRem.i18n('header.precio.propuesto'),
-		            flex: 1
-		        },
-		        {	        	
-		            dataIndex: 'precioSancionado',
-		            text: HreRem.i18n('header.precio.sancionado'),
 		            flex: 1
 		        }
         ];

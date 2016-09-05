@@ -145,7 +145,7 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tiposUbicacion'}
+					extraParams: {diccionario: 'ubicacionActivo'}
 				}/*,autoLoad: true*/
     		},
     		
@@ -313,7 +313,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'tiposTrabajo'}
 				}
     		},
-    	    	
+    		
+    		comboTipoTrabajoCreaFiltered: {
+	    		model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered'
+				}
+    		},    	    	
 
     		comboEstadoTrabajo: {
 				model: 'HreRem.model.ComboBase',

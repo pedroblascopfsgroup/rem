@@ -32,7 +32,10 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		},
     		{
     			name:'fechaValorTasacion',
-    			convert: function(value) {
+    			type:'date'
+    			/* HREOS-628 Cambiado por [type:'date'] para poder ordenar correctamente
+    			 
+    			  convert: function(value) {
     				if (!Ext.isEmpty(value)) {
 						if  ((typeof value) == 'string') {
 	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
@@ -40,7 +43,7 @@ Ext.define('HreRem.model.ActivoTasacion', {
 	    					return value;
 	    				}
     				}
-    			}
+    			}*/
     		},
     		{
     			name:'fechaRecepcionTasacion',

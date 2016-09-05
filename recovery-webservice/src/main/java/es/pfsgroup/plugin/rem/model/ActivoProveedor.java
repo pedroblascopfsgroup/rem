@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -24,9 +23,9 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoZonaGeografica;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
 
 
 
@@ -60,7 +59,11 @@ public class ActivoProveedor implements Serializable, Auditable {
     
     @ManyToOne
     @JoinColumn(name = "DD_TPR_ID")
-    private DDTipoProveedor tipoProveedor;   
+    private DDTipoProveedor tipoProveedor; 
+    
+    @ManyToOne
+    @JoinColumn(name = "DD_TPC_ID")
+    private DDTiposColaborador tipoColaborador; 
 
     @Column(name = "PVE_COD_UVEM")
 	private String codProveedorUvem;
@@ -154,6 +157,14 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setTipoProveedor(DDTipoProveedor tipoProveedor) {
 		this.tipoProveedor = tipoProveedor;
+	}
+
+	public DDTiposColaborador getTipoColaborador() {
+		return tipoColaborador;
+	}
+
+	public void setTipoColaborador(DDTiposColaborador tipoColaborador) {
+		this.tipoColaborador = tipoColaborador;
 	}
 
 	public String getCodProveedorUvem() {

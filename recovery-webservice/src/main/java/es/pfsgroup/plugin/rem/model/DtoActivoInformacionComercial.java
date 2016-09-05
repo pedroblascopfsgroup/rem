@@ -23,6 +23,7 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Date fechaAceptacion;
 	private Date fechaRechazo;
 	private Date fechaUltimaVisita;
+	private Long codigoMediador;
 	private String nombreMediador;
 	private String emailMediador;
 	private String telefonoMediador;
@@ -247,6 +248,12 @@ public class DtoActivoInformacionComercial extends WebDto {
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
+	}
+	public Long getCodigoMediador() {
+		return codigoMediador;
+	}
+	public void setCodigoMediador(Long codigoMediador) {
+		this.codigoMediador = codigoMediador;
 	}
 	public void setNumeroActivo(String numeroActivo) {
 		this.numeroActivo = numeroActivo;

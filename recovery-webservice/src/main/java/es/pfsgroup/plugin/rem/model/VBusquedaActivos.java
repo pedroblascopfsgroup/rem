@@ -20,7 +20,7 @@ public class VBusquedaActivos implements Serializable {
 	
 	@Id
 	@Column(name = "ACT_ID")
-	private String id;
+	private Long id;
     
     /*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SAC_ID")
@@ -189,11 +189,11 @@ public class VBusquedaActivos implements Serializable {
 	private String longitud;
 	
 	
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

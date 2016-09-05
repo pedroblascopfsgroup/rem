@@ -193,7 +193,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	xtype: 'checkboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),
 							                	readOnly: false,
-							                	bind:		'{reserva.conImpuesto}'		                
+							                	bind:		'{condiciones.reservaConImpuesto}'		                
 		                					}
 									        
 									        
@@ -325,12 +325,12 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}',
-								            		value: '{condiciones.impuestosPorCuentaDe}'
+								            		value: '{condiciones.impuestosPorCuentaDe}',
+								            		disabled: '{!esImpuestoMayorQueCero}'
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
 					    						reference: 'impuestosPorCuentaDe',
-					    						disabled: '{!esImpuestoMayorQueCero}',
 					    						allowBlank: '{!esImpuestoMayorQueCero}'
 									        },
 											
@@ -346,13 +346,15 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
 								            		store: '{comboTiposPorCuenta}',
-								            		value: '{condiciones.comunidadesPorCuentaDe}'
+								            		value: '{condiciones.comunidadesPorCuentaDe}',
+								            		disabled: '{!esComunidadesMayorQueCero}'
+					    							
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
-					    						reference: 'comunidadesPorCuentaDe',
-					    						disabled: '{!esComunidadesMayorQueCero}',
-					    						allowBlank: '{!esComunidadesMayorQueCero}'
+					    						allowBlank: '{!esComunidadesMayorQueCero}',
+					    						reference: 'comunidadesPorCuentaDe'
+					    						
 									        },
 									        { 
 												xtype: 'numberfieldbase',
@@ -411,10 +413,12 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							    bind:		'{condiciones.sujetoTramiteTanteo}'		                
 		                	},
 					        { 
-								
+								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.estado.tramite'),
-					        	bind: '{condiciones.estadoTramite}',
-					        	disabled: '{onEstaSujetoTanteo}'
+			                	bind: {
+					        		value: '{condiciones.estadoTramite}',
+					        		disabled: '{!onEstaSujetoTanteo}'
+			                	}
 					        },
 					        { 
 								xtype:'comboboxfieldbase',
@@ -477,7 +481,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        	fieldLabel: HreRem.i18n('fieldlabel.con.posesion.inicial'),
 						        	bind: {
 					            		store: '{comboSiNoRem}',
-					            		value: '{condiciones.posesionInical}'			            		
+					            		value: '{condiciones.posesionInicial}'			            		
 					            	},
 					            	displayField: 'descripcion',
 		    						valueField: 'codigo'
@@ -491,7 +495,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					            		value: '{condiciones.situacionPosesoriaCodigo}'			            		
 					            	},
 					            	displayField: 'descripcion',
-		    						valueField: 'codigo'
+		    						valueField: 'codigo',
+		    						editable: true
 						        }
 	            			]
 		                

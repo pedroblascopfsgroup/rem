@@ -35,7 +35,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esImpuestoMayorQueCero: function(get){
-	     	debugger;
 	     	var impuesto= get('condiciones.impuestos');
 	     	if(impuesto > 0){
 	     		return true;
@@ -45,7 +44,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     esComunidadesMayorQueCero: function(get){
-	     	debugger;
 	     	var comunidades= get('condiciones.comunidades');
 	     	if(comunidades > 0){
 	     		return true;
@@ -55,7 +53,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     onEstaSujetoTanteo: function(get){
-	     	debugger;
 	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
 	     	if(sujeto==1){
 	     		return true;

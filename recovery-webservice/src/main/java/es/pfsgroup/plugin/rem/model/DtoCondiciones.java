@@ -35,8 +35,8 @@ public class DtoCondiciones extends WebDto {
 	private Double importeReserva;
 	private String tipoImpuestoCodigo;
 	private Double tipoAplicable;
-	private Integer renunciaExencion;
-	private Integer reservaConImpuesto;
+	private Boolean renunciaExencion;
+	private Boolean reservaConImpuesto;
 	private Double gastosPlusvalia;
 	private String plusvaliaPorCuentaDe;
 	private Double gastosNotaria;
@@ -59,10 +59,11 @@ public class DtoCondiciones extends WebDto {
 	private Double cargasOtros;
 	private String situacionPosesoriaCodigo;
 	private String licenciaPorCuentaDe;
-	private Integer posesionInical;
 	private Date fechaInicioExpediente;
 	private Date fechaInicioFinanciacion;
 	private Date fechaFinFinanciacion;
+	private Integer posesionInicial;
+	
 	
 
 	//********Datos que vienen del activos (no se editan)********
@@ -226,19 +227,19 @@ public class DtoCondiciones extends WebDto {
 		this.tipoAplicable = tipoAplicable;
 	}
 
-	public Integer getRenunciaExencion() {
+	public Boolean getRenunciaExencion() {
 		return renunciaExencion;
 	}
 
-	public void setRenunciaExencion(Integer renunciaExencion) {
+	public void setRenunciaExencion(Boolean renunciaExencion) {
 		this.renunciaExencion = renunciaExencion;
 	}
 
-	public Integer getReservaConImpuesto() {
+	public Boolean getReservaConImpuesto() {
 		return reservaConImpuesto;
 	}
 
-	public void setReservaConImpuesto(Integer reservaConImpuesto) {
+	public void setReservaConImpuesto(Boolean reservaConImpuesto) {
 		this.reservaConImpuesto = reservaConImpuesto;
 	}
 
@@ -422,14 +423,6 @@ public class DtoCondiciones extends WebDto {
 		this.licenciaPorCuentaDe = licenciaPorCuentaDe;
 	}
 
-	public Integer getPosesionInical() {
-		return posesionInical;
-	}
-
-	public void setPosesionInical(Integer posesionInical) {
-		this.posesionInical = posesionInical;
-	}
-
 	public Date getFechaInicioExpediente() {
 		return fechaInicioExpediente;
 	}
@@ -452,8 +445,15 @@ public class DtoCondiciones extends WebDto {
 
 	public void setFechaFinFinanciacion(Date fechaFinFinanciacion) {
 		this.fechaFinFinanciacion = fechaFinFinanciacion;
+	}
+
+	public Integer getPosesionInicial() {
+		return posesionInicial;
+	}
+
+	public void setPosesionInicial(Integer posesionInicial) {
+		this.posesionInicial = posesionInicial;
 	}  
-   	
    	
    	
 }

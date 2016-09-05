@@ -89,10 +89,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Double tipoAplicable;
 
     @Column(name="COE_RENUNCIA_EXENCION")
-    private Integer renunciaExencion;
+    private Boolean renunciaExencion;
 
     @Column(name="COE_RESERVA_CON_IMPUESTO")
-    private Integer reservaConImpuesto;
+    private Boolean reservaConImpuesto;
 
     @Column(name="COE_GASTOS_PLUSVALIA")
     private Double gastosPlusvalia;
@@ -268,19 +268,19 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.tipoAplicable = tipoAplicable;
 	}
 
-	public Integer getRenunciaExencion() {
+	public Boolean getRenunciaExencion() {
 		return renunciaExencion;
 	}
 
-	public void setRenunciaExencion(Integer renunciaExencion) {
+	public void setRenunciaExencion(Boolean renunciaExencion) {
 		this.renunciaExencion = renunciaExencion;
 	}
 
-	public Integer getReservaConImpuesto() {
+	public Boolean getReservaConImpuesto() {
 		return reservaConImpuesto;
 	}
 
-	public void setReservaConImpuesto(Integer reservaConImpuesto) {
+	public void setReservaConImpuesto(Boolean reservaConImpuesto) {
 		this.reservaConImpuesto = reservaConImpuesto;
 	}
 

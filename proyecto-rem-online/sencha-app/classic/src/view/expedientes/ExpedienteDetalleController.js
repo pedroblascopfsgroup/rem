@@ -91,11 +91,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onSaveFormularioCompleto: function(btn, form) {
-
 		var me = this;
 		
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() || form.disableValidation) {
+		if(form.isFormValid() && form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -181,7 +180,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		
 		var me = this;	
 		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
 	},
@@ -326,7 +324,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
-		debugger;
 		var me = this,
     	disabled = value == 0,
     	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
@@ -341,7 +338,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoTipoCalculo: function(combo, value){
-		debugger;
 		var me = this;
 		var valorCombo= combo.getValue();
 		porcentajeReserva = me.lookupReference('porcentajeReserva');
@@ -378,7 +374,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoPlusvalia: function(combo, value){
-		debugger;
 		var me= this;
 		
 		porCuentaDe= me.lookupReference('plusvaliaPorCuentaDe');
@@ -393,7 +388,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoNotaria: function(combo, value){
-		debugger;
 		var me= this;
 		
 		notariaPorCuentaDe= me.lookupReference('notariaPorCuentaDe');
@@ -408,7 +402,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoCompraVentaOtros: function(combo, value){
-		debugger;
 		var me= this;
 		
 		compraventaOtrosPorCuentaDe= me.lookupReference('compraventaOtrosPorCuentaDe');
@@ -423,7 +416,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoProcedeDescalificacion: function(combo, value){
-		debugger;
 		var me= this;
 		
 		procedeDescalificacionPorCuentaDe= me.lookupReference('procedeDescalificacionPorCuentaDe');
@@ -439,7 +431,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoLicencia: function(combo, value){
-		debugger;
 		var me= this;
 		
 		licenciaPorCuentaDe= me.lookupReference('licenciaPorCuentaDe');
@@ -455,7 +446,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onHaCambiadoCargasPendientesOtros: function(combo, value){
-		debugger;
 		var me= this;
 		
 		cargasPendientesOtrosPorCuentaDe= me.lookupReference('cargasPendientesOtrosPorCuentaDe');

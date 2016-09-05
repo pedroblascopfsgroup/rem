@@ -388,7 +388,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setTipoArrasCodigo(reserva.getTipoArras().getCodigo());
 			}	
 			if(!Checks.esNulo(expediente.getCondicionante())) {
-				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
+				if(expediente.getCondicionante().getReservaConImpuesto()){
+					dto.setConImpuesto(1);
+				}
+				else{
+					dto.setConImpuesto(0);
+				}
+				//dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
 				dto.setImporte(expediente.getCondicionante().getImporteReserva());
 			}
 		}
@@ -533,10 +539,12 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		//Recorre la relacion activo-trabajo del expediente, por cada una guarda en un mapa el porcentaje de participacion del activo y el importe calculado a partir de dicho porcentaje
-		for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
-			activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo(), activoTrabajo.getParticipacion());
-			activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo(), 
-											(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
+		if(!Checks.esNulo(expediente.getTrabajo())){
+			for(ActivoTrabajo activoTrabajo: expediente.getTrabajo().getActivosTrabajo()){
+				activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo(), activoTrabajo.getParticipacion());
+				activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo(), 
+												(expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
+			}
 		}
 
 		//Por cada activo recorre todas sus valoraciones para adquirir el precio aprobado de venta y el precio minimo autorizado
@@ -766,7 +774,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			dto.setTipoAplicable(condiciones.getTipoAplicable());
 			dto.setRenunciaExencion(condiciones.getRenunciaExencion());
 			dto.setReservaConImpuesto(condiciones.getReservaConImpuesto());
-			
+						
 			//Economicas-Gastos Compraventa
 			dto.setGastosPlusvalia(condiciones.getGastosPlusvalia());
 			if(!Checks.esNulo(condiciones.getTipoPorCuentaPlusvalia())){
@@ -800,9 +808,13 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			dto.setEstadoTramite(condiciones.getEstadoTramite());
 			
 			//Juridicas-Requerimientos del comprador
-			dto.setEstadoTituloCodigo(condiciones.getEstadoTitulo().getCodigo());
-			dto.setPosesionInical(condiciones.getPosesionInicial());
-			dto.setSituacionPosesoriaCodigo(condiciones.getSituacionPosesoria().getCodigo());
+			if(!Checks.esNulo(condiciones.getEstadoTitulo())){
+				dto.setEstadoTituloCodigo(condiciones.getEstadoTitulo().getCodigo());
+			}
+			dto.setPosesionInicial((condiciones.getPosesionInicial()));
+			if(!Checks.esNulo(condiciones.getSituacionPosesoria())){
+				dto.setSituacionPosesoriaCodigo(condiciones.getSituacionPosesoria().getCodigo());
+			}
 			
 			dto.setRenunciaSaneamientoEviccion(condiciones.getRenunciaSaneamientoEviccion());
 			dto.setRenunciaSaneamientoVicios(condiciones.getRenunciaSaneamientoVicios());
@@ -849,49 +861,25 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			beanUtilNotNull.copyProperties(condiciones, dto);
 			
-			//condiciones.setSolicitaFinanciacion(dto.getSolicitaFinanciacion());
-			//condiciones.setEntidadFinanciacion(dto.getEntidadFinanciacion());
-			
 			if(!Checks.esNulo(dto.getEstadosFinanciacion())){
 				DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class, dto.getEstadosFinanciacion());
 				condiciones.setEstadoFinanciacion(estadoFinanciacion);
 			}
 			//Reserva
-			if(!Checks.esNulo(dto.getTipoCalculo())){
+			if(dto.getTipoCalculo()!=null){
 				DDTipoCalculo tipoCalculo= (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dto.getTipoCalculo());
-				condiciones.setTipoCalculoReserva(tipoCalculo);
+				if(!Checks.esNulo(tipoCalculo)){
+					condiciones.setTipoCalculoReserva(tipoCalculo);
+				}else{
+					condiciones.setTipoCalculoReserva(null);
+				}
 			}
-			//condiciones.setPorcentajeReserva(dto.getPorcentajeReserva());
-			//condiciones.setPlazoFirmaReserva(dto.getPlazoFirmaReserva());
-			//condiciones.setImporteReserva(dto.getImporteReserva());
 			
 			//Fiscales
 			if(!Checks.esNulo(dto.getTipoImpuestoCodigo())){
 				DDTiposImpuesto tipoImpuesto= (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
 				condiciones.setTipoImpuesto(tipoImpuesto);
 			}
-			//condiciones.setTipoAplicable(dto.getTipoAplicable());
-			
-//			if(!Checks.esNulo(dto.getRenunciaExencion())){
-//				if(dto.getRenunciaExencion().equals(true)){
-//					condiciones.setRenunciaExencion(1);
-//				}else if(dto.getRenunciaExencion().equals(false)){
-//					condiciones.setRenunciaExencion(0);
-//				}
-//			}
-//			
-//			if(!Checks.esNulo(dto.getReservaConImpuesto())){
-//				if(dto.getReservaConImpuesto().equals(true)){
-//					condiciones.setReservaConImpuesto(1);
-//				}else if(dto.getRenunciaExencion().equals(false)){
-//					condiciones.setReservaConImpuesto(0);
-//				}
-//			}
-			
-			//Gastos compraventa
-			//condiciones.setGastosPlusvalia(dto.getGastosPlusvalia());
-			//condiciones.setGastosNotaria(dto.getGastosNotaria());
-			//condiciones.setGastosOtros(dto.getGastosOtros());
 			
 			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaPlusvalia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getPlusvaliaPorCuentaDe());
@@ -907,7 +895,6 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			
 			//Cargas pendientes
-			//condiciones.setCargasOtros(dto.getCargasOtros());
 			if(!Checks.esNulo(dto.getImpuestosPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaImpuestos= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getImpuestosPorCuentaDe());
 				condiciones.setTipoPorCuentaImpuestos(tipoPorCuentaImpuestos);
@@ -926,22 +913,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDEstadoTitulo estadoTitulo= (DDEstadoTitulo) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoTitulo.class, dto.getEstadoTituloCodigo());
 				condiciones.setEstadoTitulo(estadoTitulo);
 			}
-			if(!Checks.esNulo(dto.getSituacionPosesoriaCodigo())){
+			if(dto.getSituacionPosesoriaCodigo()!=null){
 				DDSituacionesPosesoria situacionPosesoria= (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class, dto.getSituacionPosesoriaCodigo());
-				condiciones.setSituacionPosesoria(situacionPosesoria);
+				if(!Checks.esNulo(situacionPosesoria)){
+					condiciones.setSituacionPosesoria(situacionPosesoria);
+				}else{
+					condiciones.setSituacionPosesoria(null);
+				}
 			}
 			
 			//Renuncia a saneamiento por
-			//condiciones.setRenunciaSaneamientoEviccion(dto.getRenunciaSaneamientoEviccion());
-			//condiciones.setRenunciaSaneamientoVicios(dto.getRenunciaSaneamientoVicios());
-			
+
 			//Condiciones administrativas
-			//condiciones.setProcedeDescalificacion(dto.getProcedeDescalificacion());
 			if(!Checks.esNulo(dto.getProcedeDescalificacionPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaDescalificacion= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getProcedeDescalificacionPorCuentaDe());
 				condiciones.setTipoPorCuentaDescalificacion(tipoPorCuentaDescalificacion);
 			}
-			//condiciones.setLicencia(dto.getLicencia());
+			
 			if(!Checks.esNulo(dto.getLicenciaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaLicencia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getLicenciaPorCuentaDe());
 				condiciones.setTipoPorCuentaLicencia(tipoPorCuentaLicencia);

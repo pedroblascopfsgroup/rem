@@ -158,7 +158,7 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    	name: 'estadoTituloCodigo'
 	    },
 	    {
-	    	name: 'posesionInical'
+	    	name: 'posesionInicial'
 	    },
 	    {
 	    	name: 'situacionPosesoriaCodigo'

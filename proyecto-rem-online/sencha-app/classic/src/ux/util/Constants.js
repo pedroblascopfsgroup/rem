@@ -43,6 +43,17 @@ Ext.define('HreRem.ux.util.Constants', {
     	PLAZA_APARCAMIENTO: '03'
     },
     
+    TIPOS_ACTIVO: {
+    	
+    	SUELO: '01',
+    	VIVIENDA: '02',
+    	COMERCIAL_Y_TERCIARIO: '03',
+    	INDUSTRIAL: '04',
+    	EDIFICIO_COMPLETO: '05',
+    	EN_CONSTRUCCION: '06',
+    	OTROS: '07'
+    },
+    
     TIPOS_EXPEDIENTE_COMERCIAL: {
     	
     	VENTA: '01',

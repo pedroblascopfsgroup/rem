@@ -15,32 +15,10 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     'HreRem.model.HistoricoMediador'],
     
     listeners: {
-    	
     	boxready: function() {
-    		var me = this,
-    		model = me.lookupController().getViewModel();
-		    
-    		if(model.get("activo.isLocalComercial")) {
-		     	me.add({                    
-					xtype:'infolocalcomercial',
-					title: HreRem.i18n('title.local.comercial')
-		        });
-    		}
-    		if(model.get("activo.isPlazaAparcamiento")) {
-		     	me.add({    
-					xtype:'infoplazaaparcamiento',
-					title: HreRem.i18n('title.plaza.aparcamiento')
-	        	});
-    		}
-	    	if(model.get("activo.isVivienda")) {
-			     me.add({    
-		        	xtype: 'infovivienda'
-		        });	 
-	    	}
-
+    		var me = this;
 	    	me.lookupController().cargarTabData(me);
     	}
-
     },
     
     initComponent: function () {
@@ -774,8 +752,28 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 2
 						}
 				]
+			},
+// Añadir sección por tipo de activo.
+			{
+				xtype: 'infovivienda',
+				bind: {
+					hidden: '{!informeComercial.isViviendaMediador}'
+				}
+			},
+			{
+				xtype:'infoplazaaparcamiento',
+				title: HreRem.i18n('title.plaza.aparcamiento'),
+				bind: {
+					hidden: '{!informeComercial.isPlazaAparcamientoMediador}'
+				}
+			},
+			{
+				xtype:'infolocalcomercial',
+				title: HreRem.i18n('title.local.comercial'),
+				bind: {
+					hidden: '{!informeComercial.isLocalComercialMediador}'
+				}
 			}
-
 		];
         
     	me.setTitle(HreRem.i18n('title.informe.comercial.activo'));

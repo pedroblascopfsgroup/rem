@@ -38,6 +38,9 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			else if(dtoVisitasFilter.getSort().equals("numDocumento")){
 				dtoVisitasFilter.setSort("vis.cliente.documento");
 			}
+			else if(dtoVisitasFilter.getSort().equals("numActivo")){
+				dtoVisitasFilter.setSort("vis.activo.numActivo");
+			}
 		}
 		
 		//hb.orderBy("vis.numVisitaRem", HQLBuilder.ORDER_ASC);

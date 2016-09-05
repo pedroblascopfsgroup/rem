@@ -38,7 +38,8 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
 		            flex     : 1,            
 		            align: 'left',
 //		            menuDisabled: true,
-		            hideable: false
+		            hideable: false,
+		            sortable: true
 		        },
 		        {
 		            dataIndex: 'fechaSolicitud',

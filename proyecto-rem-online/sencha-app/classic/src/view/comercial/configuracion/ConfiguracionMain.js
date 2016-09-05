@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.comercial.configuracion.ConfiguracionMain', {
+Ext.define('HreRem.view.comercial.configuracion.ConfiguracionComercialMain', {
 	extend		: 'Ext.panel.Panel',
-    xtype		: 'configuracionmain',
+    xtype		: 'configuracioncomercialmain',
     requires	: [],
     layout: {
         type: 'vbox',

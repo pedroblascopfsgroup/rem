@@ -49,7 +49,7 @@ public class ActivoAdjuntoProveedor implements Serializable, Auditable {
 	@Id
     @Column(name = "APR_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ActivoAdjuntoProveedorGenerator")
-    @SequenceGenerator(name = "ActivoAdjuntoActivoGenerator", sequenceName = "S_ACT_APR_ADJUNTO_PROVEEDOR")
+    @SequenceGenerator(name = "ActivoAdjuntoProveedorGenerator", sequenceName = "S_ACT_APR_ADJUNTO_PROVEEDOR")
     private Long id;
 	
 	@ManyToOne

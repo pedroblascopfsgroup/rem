@@ -1785,7 +1785,7 @@ public class ActivoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosPublicacionByActivo(Long id, ModelMap model) {
-		model.put("data", activoApi.getEstadoInformeComercialByActivo(id));
+		model.put("data", activoApi.getDatosPublicacionByActivo(id));
 		return createModelAndViewJson(model);
 	}
 	

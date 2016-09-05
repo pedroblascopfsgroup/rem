@@ -1052,6 +1052,40 @@ body.x-masked > .x-mask {
     color: #900; 
 }
 
-.x-action-col-icon {
-    color: #0A94D6 !important;
+.panel-contadores .fieldsetBase.cabecera .x-fieldset-header-text {
+	color: #fff;
+}
+
+.panel-contadores .grid-base .x-grid-td {
+	line-height: 50px;
+	font-size: 2em;
+	cursor: pointer;
+}
+
+.panel-contadores .grid-base .x-grid-td .x-grid-cell-inner {
+	height: 50px;
+}
+
+.panel-contadores .grid-base .x-grid-cell-first.x-grid-td {
+	cursor: auto;
+}
+
+.panel-contadores .grid-base .x-grid-with-row-lines .x-grid-item, .x-grid-with-row-lines .x-grid-item {
+    border-width: 0px 0 0;
+}
+
+.panel-contadores .grid-base .x-grid-item-over {
+	background-color: #fff; 
+}
+
+.panel-contadores .grid-base .x-boundlist-selected {
+    background: #0A94D6;
+    border-color: #FFFFFF;
+    border-radius: 6px;
+    color: #fff;
+    font-weight: bold;
+}
+
+.blue-medium-color{
+	color: $color-blue-medium !important;
 }

@@ -164,7 +164,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	},
 	
 	//HREOS-639 Identifica la celda seleccionada (col,fila) del grid de generacionPropuestasAutomatica
-	cellClickPropuestaPrecioInclusionAutomatica: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
+	cellClickContadorAutomatico: function(view, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 		
 		var me = this;	
 		
@@ -295,7 +295,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
    
    //HREOS-639 Rellena el fondo de la celda seleccionada, y lo deshace en la anterior seleccionada
    marcarDesmarcarCeldaInclusionAutomatica : function (e) {
-	   	
+
 	   	Ext.select("div.x-boundlist-selected").removeCls('x-boundlist-selected');
 	   	Ext.get(e.target).addCls('x-boundlist-selected');
    },
@@ -313,7 +313,38 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	   	var me = this;
 		record.data.id=record.data.idTrabajo;
 		me.getView().fireEvent('abrirDetalleTrabajo', record);	 
+   },
+   
+   onClickBotonRefrescarContadores: function(btn) {
+   		
+   		var me = this,
+   		gridContadores = me.lookupReference("generacionPropuestasAutomaticaContadores");
+   		
+   		gridContadores.getStore().load(); 
+   		me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0);	
+   	
+   },
+   
+   onTabChangeGeneracionPropuestasTabPanel: function(tab) {
+   		var me = this;
+   		
+   		var activeTab = me.getView().down("generacionpropuestastabpanel").getActiveTab();
+   		
+    	switch (activeTab.xtype) {
+    		
+    		case 'generacionpropuestasmanual':
+    			me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1); 
+    			break;
+    			
+    		case 'generacionpropuestasautomatica':
+    		   	if(Ext.isEmpty(me.entidadPropietariaCodigo)) {
+    		   		me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0); 
+    		   	} else {
+    		   		me.lookupReference('generacionPropuestasActivosList').getStore().load();
+    			}
+    			break;
+    	}	
+   		  	
    }
-  
 
 });

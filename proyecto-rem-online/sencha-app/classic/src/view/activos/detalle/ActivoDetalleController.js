@@ -188,7 +188,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().set("editing", false);
 		
 			if (!form.saveMultiple) {
-				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+				if(form.getBindRecord() != null && (Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update))) {
 					// Si la API tiene metodo de escritura (create or update).
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
@@ -221,7 +221,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	saveMultipleRecords: function(contador, records, form) {
 		var me = this;
 		
-		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
+		if(records[contador] != null && (Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update))) {
 			// Si la API tiene metodo de escritura (create or update).
 			
 			records[contador].save({

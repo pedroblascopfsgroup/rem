@@ -32,7 +32,7 @@ public class VisitasExcelReport extends AbstractExcelReport implements ExcelRepo
 		
 		for(DtoVisitasFilter visita: listaVisitas){
 			List<String> fila = new ArrayList<String>();
-			fila.add(visita.getNumVisita().toString());
+			fila.add(visita.getNumVisitaRem().toString());
 			fila.add(visita.getNumActivo().toString());
 			fila.add(this.getDateStringValue(visita.getFechaSolicitud()));
 			fila.add(visita.getNombre());

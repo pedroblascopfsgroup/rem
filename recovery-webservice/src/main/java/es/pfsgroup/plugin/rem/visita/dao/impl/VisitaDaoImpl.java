@@ -28,10 +28,19 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 		
 		HQLBuilder hb = new HQLBuilder(" from Visita vis");
 		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.numVisitaRem", dtoVisitasFilter.getNumVisita());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.numVisitaRem", dtoVisitasFilter.getNumVisitaRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vis.activo.numActivo", dtoVisitasFilter.getNumActivo());
 		
-		hb.orderBy("vis.numVisitaRem", HQLBuilder.ORDER_ASC);
+		if (dtoVisitasFilter.getSort() != null){
+			if (dtoVisitasFilter.getSort().equals("nombre")){
+				dtoVisitasFilter.setSort("vis.cliente.nombre");
+			}
+			else if(dtoVisitasFilter.getSort().equals("numDocumento")){
+				dtoVisitasFilter.setSort("vis.cliente.documento");
+			}
+		}
+		
+		//hb.orderBy("vis.numVisitaRem", HQLBuilder.ORDER_ASC);
 		
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);
 		
@@ -42,7 +51,7 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			DtoVisitasFilter dtoFilter= new DtoVisitasFilter();
 			
 			dtoFilter.setNumActivo(v.getActivo().getNumActivo());
-			dtoFilter.setNumVisita(v.getNumVisitaRem());
+			dtoFilter.setNumVisitaRem((v.getNumVisitaRem()));
 			dtoFilter.setNumActivoRem(v.getActivo().getNumActivoRem());
 			dtoFilter.setFechaSolicitud(v.getFechaSolicitud());
 			dtoFilter.setNombre(v.getCliente().getNombreCompleto());

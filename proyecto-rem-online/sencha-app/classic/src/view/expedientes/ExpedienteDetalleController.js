@@ -91,11 +91,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onSaveFormularioCompleto: function(btn, form) {
-
 		var me = this;
 		
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() || form.disableValidation) {
+		if(form.isFormValid() && form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -181,7 +180,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		
 		var me = this;	
 		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
 	},
@@ -264,7 +262,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.getView().fireEvent("refrescarExpediente", me.getView());
 		
 	},
-	
+
 	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna){
 		var me = this;
 		var grid = tableView.up('grid');
@@ -323,6 +321,145 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		} else {
 			me.getView().fireEvent('abrirDetalleTramiteHistoricoTarea',gridView,record);
 		}
+	},
+	
+	onHaCambiadoSolicitaFinanciacion: function(combo, value){
+		var me = this,
+    	disabled = value == 0,
+    	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
+    	
+    	entidadFinanciacion.setDisabled(disabled);
+    	entidadFinanciacion.allowBlank = disabled;
+    	
+    	
+    	if(disabled) {
+    		entidadFinanciacion.setValue("");
+    	}
+	},
+	
+	onHaCambiadoTipoCalculo: function(combo, value){
+		var me = this;
+		var valorCombo= combo.getValue();
+		porcentajeReserva = me.lookupReference('porcentajeReserva');
+		importeReserva = me.lookupReference('importeReserva');
+		plazoParaFirmar = me.lookupReference('plazoFirmaReserva');
+		
+		if(valorCombo=='01'){
+			importeReserva.setValue("");
+			porcentajeReserva.setDisabled(false);
+			porcentajeReserva.allowBlank= false;
+			importeReserva.setDisabled(false)
+			importeReserva.setEditable(false);
+			importeReserva.allowBlank= true;
+			plazoParaFirmar.allowBlank= false;
+			plazoParaFirmar.setDisabled(false);
+		}
+		else if(valorCombo=='02'){
+			porcentajeReserva.setValue("");
+			porcentajeReserva.setDisabled(true);
+			importeReserva.setDisabled(false);
+			importeReserva.setEditable(true);
+			importeReserva.allowBlank= false;
+			plazoParaFirmar.allowBlank= false;
+			plazoParaFirmar.setDisabled(false);
+		}else{
+			porcentajeReserva.setValue("");
+			importeReserva.setValue("");
+			plazoParaFirmar.setValue("");
+			importeReserva.setDisabled(true);
+			porcentajeReserva.setDisabled(true);
+			plazoParaFirmar.setDisabled(true);
+			
+		}	
+	},
+	
+	onHaCambiadoPlusvalia: function(combo, value){
+		var me= this;
+		
+		porCuentaDe= me.lookupReference('plusvaliaPorCuentaDe');
+		
+		if(value>0){
+			porCuentaDe.setDisabled(false);
+			porCuentaDe.allowBlank= false;
+		}else{
+			porCuentaDe.setDisabled(true);
+			porCuentaDe.setValue("");
+		}
+	},
+	
+	onHaCambiadoNotaria: function(combo, value){
+		var me= this;
+		
+		notariaPorCuentaDe= me.lookupReference('notariaPorCuentaDe');
+		
+		if(value>0){
+			notariaPorCuentaDe.setDisabled(false);
+			notariaPorCuentaDe.allowBlank= false;
+		}else{
+			notariaPorCuentaDe.setValue("");
+			notariaPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoCompraVentaOtros: function(combo, value){
+		var me= this;
+		
+		compraventaOtrosPorCuentaDe= me.lookupReference('compraventaOtrosPorCuentaDe');
+		
+		if(value>0){
+			compraventaOtrosPorCuentaDe.setDisabled(false);
+			compraventaOtrosPorCuentaDe.allowBlank= false;
+		}else{
+			compraventaOtrosPorCuentaDe.setValue("");
+			compraventaOtrosPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoProcedeDescalificacion: function(combo, value){
+		var me= this;
+		
+		procedeDescalificacionPorCuentaDe= me.lookupReference('procedeDescalificacionPorCuentaDe');
+		
+		if(value==1){
+			procedeDescalificacionPorCuentaDe.setDisabled(false);
+			procedeDescalificacionPorCuentaDe.allowBlank= false;
+		}
+		else{
+			procedeDescalificacionPorCuentaDe.setValue("");
+			procedeDescalificacionPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoLicencia: function(combo, value){
+		var me= this;
+		
+		licenciaPorCuentaDe= me.lookupReference('licenciaPorCuentaDe');
+		
+		if(!Ext.isEmpty(value)){
+			licenciaPorCuentaDe.setDisabled(false);
+			licenciaPorCuentaDe.allowBlank= false;
+		}
+		else{
+			licenciaPorCuentaDe.setValue("");
+			licenciaPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoCargasPendientesOtros: function(combo, value){
+		var me= this;
+		
+		cargasPendientesOtrosPorCuentaDe= me.lookupReference('cargasPendientesOtrosPorCuentaDe');
+		
+		if(value > 0){
+			cargasPendientesOtrosPorCuentaDe.setDisabled(false);
+			cargasPendientesOtrosPorCuentaDe.allowBlank= false;
+		}
+		else{
+			cargasPendientesOtrosPorCuentaDe.setValue("");
+			cargasPendientesOtrosPorCuentaDe.setDisabled(true);
+		}
 	}
+	
+	
 
 });

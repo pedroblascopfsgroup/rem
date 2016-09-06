@@ -32,6 +32,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			
 			return tipoExpedidenteDescripcion + descEntidad + numEntidad;
 	     
+	     },
+	     
+	     esImpuestoMayorQueCero: function(get){
+	     	var impuesto= get('condiciones.impuestos');
+	     	if(impuesto > 0){
+	     		return true;
+	     	}
+	     	return false;
+	     	
+	     },
+	     
+	     esComunidadesMayorQueCero: function(get){
+	     	var comunidades= get('condiciones.comunidades');
+	     	if(comunidades > 0){
+	     		return true;
+	     	}
+	     	return false;
+	     	
+	     },
+	     
+	     onEstaSujetoTanteo: function(get){
+	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
+	     	if(sujeto==1){
+	     		return true;
+	     	}
+	     	return false;
 	     }
 	 },
 
@@ -78,7 +104,78 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		
     	},
     	
-    	storeObservaciones: {
+    	comboEstadosFinanciacion: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosFinanciacion'}
+			}   
+    	},
+    	
+    	comboEntidadesFinancieras: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesFinancieras'}
+			}   
+    	},
+    	
+    	comboTipoCalculo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposCalculo'}
+			}   
+    	},
+    	
+    	comboTiposPorCuenta: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposPorCuenta'}
+			}   
+    	},
+    	
+    	comboTiposPorCuentaPrueba: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposPorCuenta'}
+			}   
+    	},
+    	
+    	comboTiposImpuesto: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposImpuestos'}
+			}   
+    	},
+    	
+    	comboSituacionTitulo: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosTitulo'}
+			}   
+    	},
+    	
+    	comboSituacionPosesoria: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionesPosesoria'}
+			}   
+    	},
+storeObservaciones: {
 			
     		pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.ObservacionesExpediente',
@@ -121,6 +218,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	}
 
 		}
-	
-    }
+    		
+    		
+    }    
 });

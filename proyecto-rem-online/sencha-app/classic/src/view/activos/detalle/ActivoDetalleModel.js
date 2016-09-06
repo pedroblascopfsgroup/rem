@@ -757,6 +757,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposDocumentos'}
 			}   	
-	    }
+	    },
+	    
+	    comboUnidadPoblacional: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'unidadPoblacional'}
+			},
+			autoload: false  	
+    	}
      }    
 });

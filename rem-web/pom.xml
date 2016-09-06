@@ -1362,6 +1362,13 @@
 							<dockerFile>/recovery/app-server/tomcat/webapps/pfs/js/plugin/rem</dockerFile>
 						</param>
 					</watchList>
+					<senchaResources>
+					    <param>
+						<input>proyecto-rem-online/sencha-app</input>
+						<output>proyecto-rem-online/./src/web/js/plugin/rem</output>
+						<name>default</name>
+					    </param>
+					</senchaResources>
 				</configuration>
 			</plugin>
 		</plugins>

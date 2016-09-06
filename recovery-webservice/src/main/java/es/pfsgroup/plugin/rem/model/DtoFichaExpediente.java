@@ -2,8 +2,6 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-
 import es.capgemini.devon.dto.WebDto;
 
 
@@ -78,6 +76,8 @@ public class DtoFichaExpediente extends WebDto {
     private Double importeDevolucionEntregas;
     
     private Date fechaDevolucionEntregas;
+    
+    private boolean tieneReserva;
    	
 
 	public Long getId() {
@@ -304,6 +304,15 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setFechaDevolucionEntregas(Date fechaDevolucionEntregas) {
 		this.fechaDevolucionEntregas = fechaDevolucionEntregas;
+	}
+
+	public void setTieneReserva(boolean tieneReserva) {
+		this.tieneReserva = tieneReserva;
+	}
+	
+	public boolean getTieneReserva() {
+		return this.tieneReserva;
+		
 	}
 
    	

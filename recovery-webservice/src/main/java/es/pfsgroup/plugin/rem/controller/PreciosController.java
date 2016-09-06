@@ -24,6 +24,7 @@ import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateR
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
@@ -34,7 +35,6 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPropuesta;
 import es.pfsgroup.plugin.rem.model.VBusquedaNumActivosTipoPrecio;
 
 
@@ -197,15 +197,15 @@ public class PreciosController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getActivosByPropuesta(Long idPropuesta,
+	public ModelAndView getActivosByPropuesta(Long idPropuesta, WebDto webDto,
 			ModelMap model) {
 
 		try {
 
-			List<VBusquedaActivosPropuesta> listaActivos = preciosApi.getActivosByIdPropuesta(idPropuesta);
+			Page page = preciosApi.getActivosByIdPropuesta(idPropuesta,webDto);
 
-			model.put("data", listaActivos);
-			model.put("totalCount", listaActivos.size());
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 
 		} catch (Exception e) {

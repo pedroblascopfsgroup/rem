@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -127,6 +128,15 @@ public interface ExpedienteComercialApi {
 	     * @return
 	     */
 		public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
+
+		/**
+		 * Método que guarda la información de la pestaña Condicionantes del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
+		
 	   
 }
 

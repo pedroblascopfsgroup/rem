@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
 
 @Controller
@@ -477,6 +478,17 @@ public class ExpedienteComercialController {
 			e.printStackTrace();
 			model.put("success", false);
 		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCompradorById(Long idComprador, ModelMap model ) {
+		
+		VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(idComprador);
+		
+		model.put("comprador", comprador);
 		
 		return createModelAndViewJson(model);
 	}

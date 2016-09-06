@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
@@ -679,6 +680,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto dto) {
 		
 		return expedienteComercialDao.getCompradoresByExpediente(idExpediente, dto);
+	}
+	
+	@Override
+	public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idComprador) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", idComprador);
+		
+		return genericDao.get(VBusquedaDatosCompradorExpediente.class, filtro);
 	}
 
 }

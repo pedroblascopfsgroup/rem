@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
 
 public interface ExpedienteComercialApi {
@@ -136,6 +137,13 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
+		
+		/**
+		 * Recupera la informacion de un Comprador de un Expediente Comercial
+		 * @param idComprador
+		 * @return
+		 */
+		public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idComprador);
 	   
 }
 

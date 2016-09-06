@@ -3,7 +3,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     alias: 'viewmodel.expedientedetalle',
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
-                'HreRem.model.CompradorExpediente'],
+                'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador'],
     
     data: {
     	expediente: null
@@ -137,7 +137,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	},
 	    	remoteSort: true,
 	    	remoteFilter: true
-		}
+		},
+		
+		comboTipoPersona : {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposPersona'}
+			}
+    	},
+    	
+	    comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDocumentos'}
+			}   	
+	    },
+    	
+	    comboEstadoCivil: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosCiviles'}
+			}   	
+	    }
 	
     }
 });

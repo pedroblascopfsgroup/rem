@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -33,6 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -151,6 +153,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposDocumentos", DDTipoDocumento.class);
 		mapa.put("tiposDocumentoExpediente", DDTipoDocumentoExpediente.class);
 		mapa.put("subtiposDocumentoExpediente", DDSubtipoDocumentoExpediente.class);
+		mapa.put("tiposPersona", DDTipoPersona.class);
+		mapa.put("estadosCiviles", DDEstadosCiviles.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

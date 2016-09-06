@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     disableValidation: true,
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
-
+    controller: 'expedientedetalle',
     
     initComponent: function () {
 
@@ -25,7 +25,10 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						bind: {
 							store: '{storeCompradoresExpediente}'
 						},									
-						
+						listeners : {
+					    	rowdblclick: 'onCompradoresListDobleClick'	
+					    },
+					    
 						columns: [
 						   {    text: HreRem.i18n('header.id.cliente'),
 					        	dataIndex: 'id',

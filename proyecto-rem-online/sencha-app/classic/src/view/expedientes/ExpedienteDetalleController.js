@@ -323,6 +323,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		} else {
 			me.getView().fireEvent('abrirDetalleTramiteHistoricoTarea',gridView,record);
 		}
+	},
+	
+	onCompradoresListDobleClick : function(gridView,record) {
+		
+		var me=this,
+		idCliente = record.get("id");
+    	
+		me.getView().fireEvent('openModalWindow',"HreRem.view.expedientes.DatosComprador",{idCliente: idCliente});
+		
 	}
 
 });

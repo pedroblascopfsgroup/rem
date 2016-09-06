@@ -47,8 +47,9 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        },
 		            flex     : 1,            
 		            align: 'right',
-		            menuDisabled: true,
-		            hideable: false
+//		            menuDisabled: true,
+		            hideable: false,
+		            sortable: true
 		        },
 		        {	        	
 		            dataIndex: 'estadoOferta',
@@ -74,7 +75,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
 			            getClass: function(v, metadata, record ) {
 			            	if (!Ext.isEmpty(record.get("numExpediente"))) {
-			            		return 'fa fa-folder-open';
+			            		return 'fa fa-folder-open blue-medium-color';
 			            	}			            	
 			            },
 			            handler: 'onClickAbrirExpedienteComercial'
@@ -88,8 +89,9 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        },
 		            flex     : 1,            
 		            align: 'center',
-		            menuDisabled: true,
-		            hideable: false
+//		            menuDisabled: true,
+		            hideable: false,
+		            sortable: true
 		        },
 		        {
 		            dataIndex: 'descripcionEstadoExpediente',

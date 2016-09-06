@@ -1785,7 +1785,7 @@ public class ActivoController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDatosPublicacionByActivo(Long id, ModelMap model) {
-		model.put("data", activoApi.getEstadoInformeComercialByActivo(id));
+		model.put("data", activoApi.getDatosPublicacionByActivo(id));
 		return createModelAndViewJson(model);
 	}
 	
@@ -1875,7 +1875,7 @@ public class ActivoController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = "update")
+	@RequestMapping(method = RequestMethod.POST, value = "/activo")
 	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
@@ -1886,7 +1886,7 @@ public class ActivoController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.DELETE, value = "delete")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/activo")
 	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 

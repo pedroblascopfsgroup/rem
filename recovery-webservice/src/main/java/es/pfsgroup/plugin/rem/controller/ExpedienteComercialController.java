@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
@@ -240,6 +241,22 @@ public class ExpedienteComercialController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCondicionesExpediente(DtoCondiciones dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveCondicionesExpediente(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getObservaciones(ModelMap model, WebDto dto, Long idExpediente) {
 		
@@ -497,5 +514,8 @@ public class ExpedienteComercialController {
 
 		return new ModelAndView("jsonView", model);
 	}
+	
+	
+
 	
 }

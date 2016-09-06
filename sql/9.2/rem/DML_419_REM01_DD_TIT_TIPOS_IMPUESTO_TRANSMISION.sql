@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160810
+--## FECHA_CREACION=20160902
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -40,7 +40,8 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('01'	,'IVA'					,'IVA'),
         T_TIPO_DATA('02'	,'ITP'					,'ITP'),
-        T_TIPO_DATA('03'	,'IGIT'					,'IGIT')
+        T_TIPO_DATA('03'	,'IGIT'					,'IGIC'),
+        T_TIPO_DATA('04'	,'IPSI'					,'IPSI')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

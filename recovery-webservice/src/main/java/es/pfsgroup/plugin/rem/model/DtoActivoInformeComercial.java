@@ -3,13 +3,12 @@ package es.pfsgroup.plugin.rem.model;
 import java.util.Date;
 
 /**
- * Dto para la pestaña de informe comercial de la ficha de Activo
- * Este Dto se basa en informacion comercial y añade info extra para la pantalla
+ * Dto para la pestaña de informe comercial de la ficha de Activo.
+ * Este Dto se basa en información comercial y añade info extra para la pantalla.
+ * 
  * @author Bender
- *
  */
 public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
-
 	private static final long serialVersionUID = 0L;
 
 	private int autorizacionWeb;
@@ -17,8 +16,6 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Date fechaRecepcionLlaves;
 	private String tipoActivoCodigo;
 	private String subtipoActivoCodigo;
-	// TODO: Confirmar que hay que quitarlo (estado Activo)
-	private String estadoActivoCodigo;
 	private String tipoViaCodigo;
 	private String nombreVia;
 	private String numeroVia;
@@ -43,7 +40,36 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Double valorEstimadoRenta;
 	private String justificacionVenta;
 	private String justificacionRenta;
+	private Date fechaEstimacionVenta;
+	private Date fechaEstimacionRenta;
+	private String inferiorMunicipioCodigo;
+	private String ubicacionActivoCodigo;
 	
+	
+	public String getInferiorMunicipioCodigo() {
+		return inferiorMunicipioCodigo;
+	}
+	public Date getFechaEstimacionVenta() {
+		return fechaEstimacionVenta;
+	}
+	public void setFechaEstimacionVenta(Date fechaEstimacionVenta) {
+		this.fechaEstimacionVenta = fechaEstimacionVenta;
+	}
+	public Date getFechaEstimacionRenta() {
+		return fechaEstimacionRenta;
+	}
+	public void setFechaEstimacionRenta(Date fechaEstimacionRenta) {
+		this.fechaEstimacionRenta = fechaEstimacionRenta;
+	}
+	public String getUbicacionActivoCodigo() {
+		return ubicacionActivoCodigo;
+	}
+	public void setUbicacionActivoCodigo(String ubicacionActivoCodigo) {
+		this.ubicacionActivoCodigo = ubicacionActivoCodigo;
+	}
+	public void setInferiorMunicipioCodigo(String inferiorMunicipioCodigo) {
+		this.inferiorMunicipioCodigo = inferiorMunicipioCodigo;
+	}
 	public int getAutorizacionWeb() {
 		return autorizacionWeb;
 	}
@@ -73,12 +99,6 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	}
 	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
 		this.subtipoActivoCodigo = subtipoActivoCodigo;
-	}
-	public String getEstadoActivoCodigo() {
-		return estadoActivoCodigo;
-	}
-	public void setEstadoActivoCodigo(String estadoActivoCodigo) {
-		this.estadoActivoCodigo = estadoActivoCodigo;
 	}
 	public String getTipoViaCodigo() {
 		return tipoViaCodigo;

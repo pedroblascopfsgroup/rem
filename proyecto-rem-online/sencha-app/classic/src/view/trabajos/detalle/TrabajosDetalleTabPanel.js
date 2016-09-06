@@ -23,6 +23,33 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalleTabPanel', {
 					} else {		
 		            	tabPanel.evaluarBotonesEdicion(tab);
 					}
+					
+					var tipoTrabajoCodigo = tabPanel.lookupController().getViewModel().get("trabajo.tipoTrabajoCodigo");
+					var tab = null;
+					
+					switch (tipoTrabajoCodigo) {
+					
+						case CONST.TIPOS_TRABAJO["PRECIOS"]:
+							tab = tabPanel.down("[xtype='fotostrabajo']");
+							if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
+							tab = tabPanel.down("[xtype='gestioneconomicatrabajo']")
+							if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
+							break;
+							
+						case CONST.TIPOS_TRABAJO["PUBLICACIONES"]:
+							tab = tabPanel.down("[xtype='fotostrabajo']");
+							if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
+							tab = tabPanel.down("[xtype='gestioneconomicatrabajo']");
+							if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
+							break;
+							
+						case CONST.TIPOS_TRABAJO["COMERCIALIZACION"]:
+							tab = tabPanel.down("[xtype='fotostrabajo']")
+							if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
+							tab = tabPanel.down("[xtype='gestioneconomicatrabajo']")
+							if(!Ext.isEmpty(tab)) {tab.setDisabled(true);}
+							break;
+					}
    					  					
    				},
 			    	

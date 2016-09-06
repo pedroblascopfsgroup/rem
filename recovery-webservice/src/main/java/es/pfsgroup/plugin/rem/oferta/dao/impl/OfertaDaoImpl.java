@@ -41,8 +41,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		}
 		
 		try {
-			Date fechaAlta = DateFormat.toDate(dtoOfertasFilter.getFechaAlta());
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.fechaCreacion", fechaAlta);
+			Date fechaAltaDesde = DateFormat.toDate(dtoOfertasFilter.getFechaAltaDesde());
+			Date fechaAltaHasta = DateFormat.toDate(dtoOfertasFilter.getFechaAltaHasta());
+			HQLBuilder.addFiltroBetweenSiNotNull(hb, "voferta.fechaCreacion", fechaAltaDesde, fechaAltaHasta);
+			
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -50,7 +52,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoTipoOferta", dtoOfertasFilter.getTipoOferta());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.codigoEstadoOferta", dtoOfertasFilter.getEstadoOferta());
 		
-		hb.orderBy("voferta.numOferta", HQLBuilder.ORDER_ASC);
+		//hb.orderBy("voferta.numOferta", HQLBuilder.ORDER_ASC);
 		//Faltan los dos combos
 
 	

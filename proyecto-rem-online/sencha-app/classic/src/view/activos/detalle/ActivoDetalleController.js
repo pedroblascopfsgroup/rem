@@ -188,7 +188,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().set("editing", false);
 		
 			if (!form.saveMultiple) {
-				if(Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update)) {
+				if(form.getBindRecord() != null && (Ext.isDefined(form.getBindRecord().getProxy().getApi().create) || Ext.isDefined(form.getBindRecord().getProxy().getApi().update))) {
 					// Si la API tiene metodo de escritura (create or update).
 					me.getView().mask(HreRem.i18n("msg.mask.loading"));
 					
@@ -221,7 +221,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	saveMultipleRecords: function(contador, records, form) {
 		var me = this;
 		
-		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
+		if(records[contador] != null && (Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update))) {
 			// Si la API tiene metodo de escritura (create or update).
 			
 			records[contador].save({
@@ -290,11 +290,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				me.fireEvent("errorToast", Ext.decode(response.responseText).errorCreacion); 
     			else
     				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//    			Ext.Msg.show({
-//        			   title: 'Nuevo trámite',
-//        			   msg: 'Trámite creado correctamente',
-//        			   buttons: Ext.MessageBox.OK
-//    			});
     		},
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
@@ -536,8 +531,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		me.lookupReference('usuarioGestor').getStore().getProxy().setExtraParams({'idTipoGestor':idTipoGestor});    
 		me.lookupReference('usuarioGestor').getStore().load();
-    	
-		//me.getView().fireEvent('onChangeTipoGestor',{idTipoGestor: idTipoGestor});
 	},
       
 	onChangeTipoTitulo: function(btn,value) {
@@ -629,8 +622,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-				/*activeTab.getForm().clearInvalid();
-				activeTab.getBindRecord().reject();*/
 				me.onClickBotonRefrescar();
 				
 			}
@@ -639,7 +630,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var records = activeTab.getBindRecords();
 			
 			for (i=0; i<records.length; i++) {
-				//records[i].reject();
 				me.onClickBotonRefrescar();
 			}
 
@@ -760,7 +750,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	updateOrdenFotosInterno: function(data, record, store) {
 
-		//store.beginUpdate();
 		var me = this;
 		me.storeGuardado = store;
 		me.ordenGuardado = 0;
@@ -772,11 +761,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			if (store.getData().items[i].data.orden != orden) {
 				store.getAt(i).data.orden = orden;
-				//store.getAt(i).dirty = true;
-				/*modificados[contadorModificados] = Ext.util.JSON.encode(store.getAt(i).data);
-				modificados[contadorModificados] = Ext.util.JSON.decode(modificados[contadorModificados]);
-				contadorModificados++;
-				*/
+				
 				//FIXME: ¿Poner máscara?
 				//me.getView().mask(HreRem.i18n("msg.mask.loading"));
 				var url =  $AC.getRemoteUrl('activo/updateFotosById');
@@ -790,8 +775,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    			
 	    		    ,success: function (a, operation, context) {
 
-	                	//me.getStore().load();
-	                    //context.store.load();
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
@@ -810,7 +793,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                },
 	                
 	                failure: function (a, operation, context) {
-	                	//context.store.load();
 	                	  Ext.toast({
 						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
 						     width: 360,
@@ -834,8 +816,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
-    	
-    	//Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'activo', idEntidad: idActivo, parent: grid}).show();
+
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarFoto", {idEntidad: idActivo, parent: grid}).show();
 		
 	},
@@ -859,8 +840,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							idSeleccionados[i] = storeTemp.getAt(nodos[i].getAttribute('data-recordindex')).getId();
 							
 						}
-						
-						//idActivo = me.getViewModel().get("activo.id");
 			    		
 			        	var url =  $AC.getRemoteUrl('activo/deleteFotosActivoById');
 			    		Ext.Ajax.request({
@@ -878,7 +857,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									     height: 100,
 									     align: 't'
 									 });
-									 //me.unmask();
                                 },
                                 
                                 failure: function (a, operation, context) {
@@ -889,7 +867,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									     height: 100,
 									     align: 't'									     
 									 });
-									 //me.unmask();
                                 }
 			    		     
 			    		 });
@@ -911,13 +888,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			config.url=$AC.getWebPath()+"activo/getFotoActivoById."+$AC.getUrlPattern();
 			config.params = {};
-	
-			/*for (var i=0; i<nodos.length; i++) {
-	
-				config.params.idFoto=storeTemp.getAt(nodos[i].getAttribute('data-recordindex')).getId();
-				me.fireEvent("downloadFile", config);
-				
-			}*/
 			
 			config.params.idFoto=storeTemp.getAt(nodos[0].getAttribute('data-recordindex')).getId();
 			
@@ -935,7 +905,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	    if(nodos) {
 	        
-	        node = nodos[0];//.getElementsByTagName('img');
+	        node = nodos[0];
 			cmp  = me.findComponentByElement(node);
 	        
 	        html = cmp.container.dom.innerHTML;
@@ -1025,8 +995,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		tooltip.setHtml(browser + ': ' +
             record.get(item.field) + '%' + ' ( ' + Ext.util.Format.currency(cantidad) + ' )');
-        /*tooltip.setHtml(browser + ' on ' + record.get('presupuesto') + ': ' +
-            record.get(item.field) + '%');*/
     },
 
     onColumnRender: function (v) {
@@ -1039,17 +1007,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickVerificarDireccion: function(btn) {
-    	
     	var me = this,
     	geoCodeAddr = null,
     	latLng = {};
-    	
-    	latLng.latitud = me.getViewModel().get("activo.latitud");
-    	latLng.longitud= me.getViewModel().get("activo.longitud");
+
+    	latLng.latitud = me.getViewModel().get("informeComercial.latitud");
+    	latLng.longitud= me.getViewModel().get("informeComercial.longitud");
     	geoCodeAddr = me.getViewModel().get("geoCodeAddr");
     	
-    	
     	Ext.create("HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion", {geoCodeAddr: geoCodeAddr, latLng: latLng,  parent: btn.up("form")}).show();  	
+    },
+    
+    // Este método comprueba si el municipio es 'Barcelona, Madrid, Valencia o Alicante/Alacant'.
+    checkDistrito: function(combobox) {
+    	var me = this;
+    	var view = me.getView();
+    	var distrito = combobox.getRawValue();
+    	
+    	// Comprobar distrito y mostrar u ocultar el textfield de distrito.
+    	if(Ext.isEmpty(distrito)) {
+    		view.lookupReference('fieldlabelDistrito').hide();
+    	} else if(distrito === 'Valencia'){
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else if(distrito === 'Barcelona') {
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else if(distrito === 'Madrid') {
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else if(distrito === 'Alicante/Alacant') {
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else {
+    		view.lookupReference('fieldlabelDistrito').hide();
+    	}
     },
     
     actualizarCoordenadas: function(parent, latitud, longitud) {
@@ -1298,6 +1286,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		};
 
 		me.onSaveFormularioCompletoOferta(form, success);	
+		
+	},
+	
+	// Este método copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisión'.
+	onClickCopiarDatosDelMediador: function(btn) {
+		var me =this;
+		var view = me.getView();
+
+		view.lookupReference('tipoActivoAdmisionInforme').setValue(view.lookupReference('tipoActivoMediadorInforme').getValue());
+		view.lookupReference('subtipoActivoComboAdmisionInforme').setValue(view.lookupReference('subtipoActivoComboMediadorInforme').getValue());
+		view.lookupReference('tipoViaAdmisionInforme').setValue(view.lookupReference('tipoViaMediadorInforme').getValue());
+		view.lookupReference('nombreViaAdmisionInforme').setValue(view.lookupReference('nombreViaMediadorInforme').getValue());
+		view.lookupReference('numeroAdmisionInforme').setValue(view.lookupReference('numeroMediadorInforme').getValue());
+		view.lookupReference('escaleraAdmisionInforme').setValue(view.lookupReference('escaleraMediadorInforme').getValue());
+		view.lookupReference('plantaAdmisionInforme').setValue(view.lookupReference('plantaMediadorInforme').getValue());
+		view.lookupReference('puertaAdmisionInforme').setValue(view.lookupReference('puertaMediadorInforme').getValue());
+		view.lookupReference('codPostalAdmisionInforme').setValue(view.lookupReference('codPostalMediadorInforme').getValue());
+		view.lookupReference('municipioComboAdmisionInforme').setValue(view.lookupReference('municipioComboMediadorInforme').getValue());
+		view.lookupReference('poblacionalAdmisionInforme').setValue(view.lookupReference('poblacionalMediadorInforme').getValue());
+		view.lookupReference('provinciaComboAdmisionInforme').setValue(view.lookupReference('provinciaComboMediadorInforme').getValue());
+		view.lookupReference('latitudAdmisionInforme').setValue(view.lookupReference('latitudmediador').getValue());
+		view.lookupReference('longitudAdmisionInforme').setValue(view.lookupReference('longitudmediador').getValue());
 		
 	},
 	

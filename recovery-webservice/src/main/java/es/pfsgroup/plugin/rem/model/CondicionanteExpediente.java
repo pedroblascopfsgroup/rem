@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -24,6 +25,9 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
@@ -59,6 +63,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
 	@Column(name="COE_SOLICITA_FINANCIACION")
 	private Integer solicitaFinanciacion;
+	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ESF_ID")
+	private DDEstadoFinanciacion estadoFinanciacion;
 		
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TCC_ID")
@@ -81,10 +89,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Double tipoAplicable;
 
     @Column(name="COE_RENUNCIA_EXENCION")
-    private Integer renunciaExencion;
+    private Boolean renunciaExencion;
 
     @Column(name="COE_RESERVA_CON_IMPUESTO")
-    private Integer reservaConImpuesto;
+    private Boolean reservaConImpuesto;
 
     @Column(name="COE_GASTOS_PLUSVALIA")
     private Double gastosPlusvalia;
@@ -141,7 +149,7 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Integer vpo;
     
     @Column(name="COE_LICENCIA")
-    private Integer licencia;
+    private String licencia;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPC_ID_LICENCIA")
@@ -154,8 +162,33 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @JoinColumn(name = "DD_TPC_ID_DESCALIFICACION")
 	private DDTiposPorCuenta tipoPorCuentaDescalificacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SIP_ID")
+	private DDSituacionesPosesoria situacionPosesoria;
     
-	@Version   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_ETI_ID")
+	private DDEstadoTitulo estadoTitulo;
+    
+    @Column(name="COE_ESTADO_TRAMITE")
+    private String estadoTramite;
+    
+    @Column(name="COE_ENTIDAD_FINANCIACION_AJENA")
+    private String entidadFinanciacion;
+    
+    @Column(name="COE_POSESION_INICIAL")
+    private Integer posesionInicial;
+    
+	@Column(name = "COE_INICIO_EXPEDIENTE")
+	private Date fechaInicioExpediente;
+	
+	@Column(name = "COE_INICIO_FINANCIACION")
+	private Date fechaInicioFinanciacion;
+	
+	@Column(name = "COE_FIN_FINANCIACION")
+	private Date fechaFinFinanciacion;
+    
+    @Version   
 	private Long version;
 
 	@Embedded
@@ -235,19 +268,19 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.tipoAplicable = tipoAplicable;
 	}
 
-	public Integer getRenunciaExencion() {
+	public Boolean getRenunciaExencion() {
 		return renunciaExencion;
 	}
 
-	public void setRenunciaExencion(Integer renunciaExencion) {
+	public void setRenunciaExencion(Boolean renunciaExencion) {
 		this.renunciaExencion = renunciaExencion;
 	}
 
-	public Integer getReservaConImpuesto() {
+	public Boolean getReservaConImpuesto() {
 		return reservaConImpuesto;
 	}
 
-	public void setReservaConImpuesto(Integer reservaConImpuesto) {
+	public void setReservaConImpuesto(Boolean reservaConImpuesto) {
 		this.reservaConImpuesto = reservaConImpuesto;
 	}
 
@@ -381,11 +414,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.vpo = vpo;
 	}
 
-	public Integer getLicencia() {
+	public String getLicencia() {
 		return licencia;
 	}
 
-	public void setLicencia(Integer licencia) {
+	public void setLicencia(String licencia) {
 		this.licencia = licencia;
 	}
 
@@ -414,6 +447,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.tipoPorCuentaDescalificacion = tipoPorCuentaDescalificacion;
 	}
 
+	public DDEstadoFinanciacion getEstadoFinanciacion() {
+		return estadoFinanciacion;
+	}
+
+	public void setEstadoFinanciacion(DDEstadoFinanciacion estadoFinanciacion) {
+		this.estadoFinanciacion = estadoFinanciacion;
+	}
+
 	public Long getVersion() {
 		return version;
 	}
@@ -430,8 +471,70 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
+	public DDSituacionesPosesoria getSituacionPosesoria() {
+		return situacionPosesoria;
+	}
 
-     
-    
+	public void setSituacionPosesoria(DDSituacionesPosesoria situacionPosesoria) {
+		this.situacionPosesoria = situacionPosesoria;
+	}
+
+	public DDEstadoTitulo getEstadoTitulo() {
+		return estadoTitulo;
+	}
+
+	public void setEstadoTitulo(DDEstadoTitulo estadoTitulo) {
+		this.estadoTitulo = estadoTitulo;
+	}
+
+	public String getEstadoTramite() {
+		return estadoTramite;
+	}
+
+	public void setEstadoTramite(String estadoTramite) {
+		this.estadoTramite = estadoTramite;
+	}
+
+	public String getEntidadFinanciacion() {
+		return entidadFinanciacion;
+	}
+
+	public void setEntidadFinanciacion(String entidadFinanciacion) {
+		this.entidadFinanciacion = entidadFinanciacion;
+	}
+
+	public Integer getPosesionInicial() {
+		return posesionInicial;
+	}
+
+	public void setPosesionInicial(Integer posesionInicial) {
+		this.posesionInicial = posesionInicial;
+	}
+
+	public Date getFechaInicioExpediente() {
+		return fechaInicioExpediente;
+	}
+
+	public void setFechaInicioExpediente(Date fechaInicioExpediente) {
+		this.fechaInicioExpediente = fechaInicioExpediente;
+	}
+
+	public Date getFechaInicioFinanciacion() {
+		return fechaInicioFinanciacion;
+	}
+
+	public void setFechaInicioFinanciacion(Date fechaInicioFinanciacion) {
+		this.fechaInicioFinanciacion = fechaInicioFinanciacion;
+	}
+
+	public Date getFechaFinFinanciacion() {
+		return fechaFinFinanciacion;
+	}
+
+	public void setFechaFinFinanciacion(Date fechaFinFinanciacion) {
+		this.fechaFinFinanciacion = fechaFinFinanciacion;
+	}
+		
+
    
 }

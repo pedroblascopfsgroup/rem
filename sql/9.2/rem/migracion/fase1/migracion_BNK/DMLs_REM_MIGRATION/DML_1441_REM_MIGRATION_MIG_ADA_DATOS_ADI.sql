@@ -562,7 +562,7 @@ BEGIN
   
   MIG.MUNICIPIO														                                                  BIE_LOC_POBLACION,
   MIG.LOC_NOMBRE_VIA||'',''||MIG.LOC_NUMERO_DOMICILIO				        BIE_LOC_DIRECCION,
-  MIG.LOC_COD_POST													                                            BIE_LOC_COD_POST,
+  LPAD(MIG.LOC_COD_POST,5,0)													                                            BIE_LOC_COD_POST,
   ''0''                                                                                               VERSION,
   ''MIGRAREM01BNK''                                                                                           USUARIOCREAR,
   SYSDATE                                                                                      FECHACREAR,
@@ -642,9 +642,7 @@ BEGIN
 	)
 	SELECT
 	ACT.LOC_ID									              LOC_ID,
-	(SELECT ACT_ID
-	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-	WHERE ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO)         ACT_ID,
+	ACT.ACT_ID,
 	ACT.BIE_LOC_ID									          BIE_LOC_ID,
 	(SELECT DD_TUB_ID
 	FROM '||V_ESQUEMA||'.DD_TUB_TIPO_UBICACION
@@ -665,9 +663,10 @@ BEGIN
 	ON NOTT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
 	INNER JOIN ACT_NUM_ACTIVO ACT
 	ON ACT.ACT_NUMERO_ACTIVO = MIG.ACT_NUMERO_ACTIVO
+	INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = MIG.ACT_NUMERO_ACTIVO
 	WHERE NOTT.ACT_NUM_ACTIVO IS NULL
 	AND NOT EXISTS (
-    SELECT ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_6||'
+    SELECT LOC.ACT_ID FROM '||V_ESQUEMA||'.'||V_TABLA_6||' LOC WHERE LOC.ACT_ID = ACT.ACT_ID	
     )
   ')
   ;

@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.expedientedetalle',    
+    alias: 'controller.expedientedetalle',  
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado'],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -458,8 +459,45 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			cargasPendientesOtrosPorCuentaDe.setValue("");
 			cargasPendientesOtrosPorCuentaDe.setDisabled(true);
 		}
+	},
+
+//	Para la búsqueda de Comparecientes en nombre del vendedor	
+//		
+//	onClickBotonCancelarBusquedaCompareciente: function(btn) {	
+//		var me = this,
+//		window = btn.up('window');
+//    	window.close();
+//	},
+//	
+//	onClickBotonBuscarCompareciente: function(btn){
+//		debugger;
+//		var me= this;
+//		var initialData = {};
+//
+//		var searchForm = btn.up('formBase');
+//		
+//		if (searchForm.isValid()) {
+//			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+//			
+//			Ext.Object.each(criteria, function(key, val) {
+//				if (Ext.isEmpty(val)) {
+//					delete criteria[key];
+//				}
+//			});
+//			this.lookupReference('listadocomparecientesnombrevendedor').getStore().loadPage(1);
+//        }
+//		
+//	}
+	onNotarioDblClick: function(grid, rec){
+		var me= this;
+		var detalle= Ext.create('HreRem.view.expedientes.NotarioSeleccionado',{grid:grid, notario:rec}).show();
+		
+	},
+	
+	onClickBotonCerrarNotarioDetalle: function(btn){
+		var me = this,
+		window = btn.up('window');
+    	window.close();		
 	}
-	
-	
 
 });

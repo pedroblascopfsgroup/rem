@@ -2,7 +2,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.expedientedetalle',
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
-                'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial'],
+                'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
+                'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
+                'HreRem.model.ComparecienteBusqueda'],
     
     data: {
     	expediente: null
@@ -217,7 +219,75 @@ storeObservaciones: {
 		        rootProperty: 'tramite.tareas'
 	    	}
 
+		},
+		
+		storePosicionamientos: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Posicionamiento',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getPosicionamientosExpediente',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+		
+		storeSubsanaciones: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Subsanacion',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getSubsanacionesExpediente',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+		
+		storeNotarios: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.Notario',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getNotariosExpediente',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
 		}
+		
+//		COMPARECIENTES EN NOMBRE DEL VENDEDOR
+		
+//		storeComparecientes: {
+//			pageSize: $AC.getDefaultPageSize(),
+//	    	model: 'HreRem.model.ComparecienteVendedor',
+//	    	proxy: {
+//		        type: 'uxproxy',
+//		        remoteUrl: 'expedientecomercial/getComparecientesExpediente',
+//		        extraParams: {idExpediente: '{expediente.id}'}
+//	    	}
+//		},
+//		
+//		comboTipoCompareciente: {
+//			model: 'HreRem.model.ComboBase',
+//			proxy: {
+//				type: 'uxproxy',
+//				remoteUrl: 'generic/getDiccionario',
+//				extraParams: {diccionario: 'tiposComparecientes'}
+//			} 
+//		},
+//		
+//		storeBusquedaComparecientes: {
+//    		pageSize: $AC.getDefaultPageSize(),
+//	    	model: 'HreRem.model.ComparecienteBusqueda',
+//	    	proxy: {
+//		        type: 'uxproxy',
+//		        localUrl: '/busquedacomparecientes.json',
+//		        remoteUrl: 'expedientecomercial/getComparecientesBusqueda'
+//	    	},
+//	    	autoLoad: true,
+//	    	session: true,
+//	    	remoteSort: true,
+//	    	remoteFilter: true,
+//	        listeners : {
+//	            beforeload : 'paramLoading'
+//	        }
+//    	}
     		
     		
     }    

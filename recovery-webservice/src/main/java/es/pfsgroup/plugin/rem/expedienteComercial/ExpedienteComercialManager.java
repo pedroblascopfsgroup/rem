@@ -33,24 +33,34 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
+import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
@@ -76,6 +86,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
 	public final String PESTANA_RESERVA = "reserva";
 	public final String PESTANA_CONDICIONES = "condiciones";
+	public final String PESTANA_FORMALIZACION= "formalizacion";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -124,6 +135,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto = expedienteToDtoReserva(expediente);
 			} else if (PESTANA_CONDICIONES.equals(tab)) {
 				dto = expedienteToDtoCondiciones(expediente);
+			}
+			else if(PESTANA_FORMALIZACION.equals(tab)) {
+				dto= expedienteToDtoFormalizacion(expediente);
 			}
 			
 
@@ -933,5 +947,184 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		
 		return condiciones;
 	}
+	
+	public DtoPage getPosicionamientosExpediente(Long idExpediente){
+		
+		ExpedienteComercial expediente= findOne(idExpediente);
+		
+		List<Posicionamiento> listaPosicionamientos= expediente.getPosicionamientos();
+		List<DtoPosicionamiento> posicionamientos = new ArrayList<DtoPosicionamiento>();
+		
+		for(Posicionamiento posicionamiento: listaPosicionamientos){
+			DtoPosicionamiento posicionamientoDto= posicionamientoToDto(posicionamiento);
+			posicionamientos.add(posicionamientoDto);
+		}
+		
+		return new DtoPage(posicionamientos, posicionamientos.size());
+		
+		
+	}
+	
+	public DtoPosicionamiento posicionamientoToDto(Posicionamiento posicionamiento){
+		
+		DtoPosicionamiento posicionamientoDto= new DtoPosicionamiento();
+		posicionamientoDto.setFechaAviso(posicionamiento.getFechaAviso());
+		posicionamientoDto.setNotaria(posicionamiento.getNotaria());
+		posicionamientoDto.setFechaPosicionamiento(posicionamiento.getFechaPosicionamiento());
+		posicionamientoDto.setMotivoAplazamiento(posicionamiento.getMotivoAplazamiento());
+		
+		return posicionamientoDto;
+		
+	}
+	
+	public DtoPage getComparecientesExpediente(Long idExpediente){
+		
+		//ExpedienteComercial expediente= findOne(idExpediente);
+		List<ComparecienteVendedor> listaComparecientes= new ArrayList<ComparecienteVendedor>();
+		List<DtoComparecienteVendedor> comparecientes= new ArrayList<DtoComparecienteVendedor>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		listaComparecientes= genericDao.getList(ComparecienteVendedor.class, filtro);
+		
+		for(ComparecienteVendedor compareciente: listaComparecientes){
+			DtoComparecienteVendedor comparecienteDto= comparecienteToDto(compareciente);
+			comparecientes.add(comparecienteDto);
+		}
+		
+		return new DtoPage(comparecientes, comparecientes.size());
+		
+	}
+	
+	public DtoComparecienteVendedor comparecienteToDto(ComparecienteVendedor compareciente){
+		DtoComparecienteVendedor comparecienteDto= new DtoComparecienteVendedor();
+		comparecienteDto.setNombre(compareciente.getNombre());
+		comparecienteDto.setDireccion((compareciente.getDireccion()));
+		comparecienteDto.setTelefono(compareciente.getEmail());
+		comparecienteDto.setEmail((compareciente.getEmail()));
+		comparecienteDto.setTipoCompareciente(compareciente.getTipoCompareciente().getDescripcion());
+		
+		return comparecienteDto;
+
+	}
+	
+	public DtoPage getSubsanacionesExpediente(Long idExpediente){
+		
+		//ExpedienteComercial expediente= findOne(idExpediente);
+		List<Subsanaciones> listaSubsanaciones= new ArrayList<Subsanaciones>();
+		List<DtoSubsanacion> subsanaciones= new ArrayList<DtoSubsanacion>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
+		listaSubsanaciones= genericDao.getList(Subsanaciones.class, filtro);
+		
+		for(Subsanaciones subsanacion: listaSubsanaciones){
+			DtoSubsanacion subsanacionDto= subsanacionToDto(subsanacion);
+			subsanaciones.add(subsanacionDto);
+		}
+		
+		return new DtoPage(subsanaciones, subsanaciones.size());
+		
+	}
+	
+	public DtoSubsanacion subsanacionToDto(Subsanaciones subsanacion){
+		DtoSubsanacion subsanacionDto= new DtoSubsanacion();
+		subsanacionDto.setFechaPeticion(subsanacion.getFechaPeticion());
+		subsanacionDto.setPeticionario(subsanacion.getPeticionario());
+		subsanacionDto.setMotivo(subsanacion.getMotivo());
+		subsanacionDto.setEstado(subsanacion.getEstado().getDescripcion());
+		subsanacionDto.setGastosSubsanacion(subsanacion.getGastosSubsanacion());
+		subsanacionDto.setGastosInscripcion(subsanacion.getGastosInscripcion());
+		
+		return subsanacionDto;
+	}
+	
+	public DtoPage getNotariosExpediente(Long idExpediente){
+		ExpedienteComercial expediente= findOne(idExpediente);
+		List<DtoActivoProveedorContacto> proveedoresContacto= new ArrayList<DtoActivoProveedorContacto>();
+		
+		if(!Checks.esNulo(expediente.getTrabajo())){
+			ActivoProveedorContacto proveedorContacto= expediente.getTrabajo().getProveedorContacto();
+			if(!Checks.esNulo(proveedorContacto)){
+				proveedoresContacto.add(activoProveedorContactoToDto(proveedorContacto));
+			}
+		}
+		
+		return new DtoPage(proveedoresContacto, proveedoresContacto.size());
+		
+	}
+	
+	public DtoActivoProveedorContacto activoProveedorContactoToDto(ActivoProveedorContacto proveedorContacto){
+		DtoActivoProveedorContacto proveedorContactoDto= new DtoActivoProveedorContacto();
+		String nombreCompleto= "";
+		if(!Checks.esNulo(proveedorContacto.getNombre())){
+			nombreCompleto= proveedorContacto.getNombre() + " ";
+		}
+		if(!Checks.esNulo(proveedorContacto.getApellido1())){
+			nombreCompleto= nombreCompleto + proveedorContacto.getApellido1() + " ";
+		}
+		if(!Checks.esNulo(proveedorContacto.getApellido2())){
+			nombreCompleto= nombreCompleto + proveedorContacto.getApellido2();
+		}
+		if(!Checks.esNulo(proveedorContacto.getProveedor())){
+			proveedorContactoDto.setNombre(proveedorContacto.getProveedor().getNombre());
+		}
+		proveedorContactoDto.setPersonaContacto(nombreCompleto);
+		proveedorContactoDto.setDireccion(proveedorContacto.getDireccion());
+
+		//Falta cargo
+
+		if(!Checks.esNulo(proveedorContacto.getTelefono1())){
+			proveedorContactoDto.setTelefono(proveedorContacto.getTelefono1());
+		}
+		else{
+			proveedorContactoDto.setTelefono(proveedorContacto.getTelefono2());
+		}
+		proveedorContactoDto.setEmail(proveedorContacto.getEmail());
+		if(!Checks.esNulo(proveedorContacto.getProvincia())){
+			proveedorContactoDto.setProvincia(proveedorContacto.getProvincia().getDescripcion());
+		}
+		if(!Checks.esNulo(proveedorContacto.getTipoDocIdentificativo())){
+			proveedorContactoDto.setTipoDocIdentificativo(proveedorContacto.getTipoDocIdentificativo().getDescripcion());
+		}
+		proveedorContactoDto.setDocIdentificativo(proveedorContacto.getDocIdentificativo());
+		proveedorContactoDto.setCodigoPostal(proveedorContacto.getCodigoPostal());
+		proveedorContactoDto.setFax(proveedorContacto.getFax());
+		proveedorContactoDto.setTelefono2(proveedorContacto.getTelefono2());
+		
+		
+		return proveedorContactoDto;
+		
+	}
+	
+	public DtoFormalizacionResolucion expedienteToDtoFormalizacion(ExpedienteComercial expediente){
+		
+		DtoFormalizacionResolucion formalizacionDto= new DtoFormalizacionResolucion();
+		List<Formalizacion> listaResolucionFormalizacion= new ArrayList<Formalizacion>();
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
+		listaResolucionFormalizacion= genericDao.getList(Formalizacion.class, filtro);
+		
+		//Un expediente de venta solo puede tener una resolucion, en el extraño caso que tenga más de una elegimos la primera
+		if(listaResolucionFormalizacion.size()>0){
+			formalizacionDto= formalizacionToDto(listaResolucionFormalizacion.get(0));
+		}
+		
+		return formalizacionDto;
+
+	}
+	
+	public DtoFormalizacionResolucion formalizacionToDto(Formalizacion formalizacion){
+		DtoFormalizacionResolucion resolucionDto= new DtoFormalizacionResolucion();
+		
+		resolucionDto.setPeticionario(formalizacion.getPeticionario());
+		resolucionDto.setMotivoResolucion(formalizacion.getMotivoResolucion());
+		resolucionDto.setGastosCargo(formalizacion.getGastosCargo());
+		resolucionDto.setFormaPago(formalizacion.getFormaPago());
+		resolucionDto.setFechaPeticion(formalizacion.getFechaPeticion());
+		resolucionDto.setFechaResolucion(formalizacion.getFechaResolucion());
+		resolucionDto.setImporte(formalizacion.getImporte());
+		resolucionDto.setFechaPago(formalizacion.getFechaPago());
+		
+		return resolucionDto;
+	}
+	
 
 }

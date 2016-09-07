@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.messagebroker.integrationtest.RequestDto;
 import es.pfsgroup.plugin.messagebroker.integrationtest.ResponseDto;
 import es.pfsgroup.plugin.messagebroker.integrationtest.annotationdriven.stubs.AnnotatedHandlerMock;
 import es.pfsgroup.plugin.messagebroker.integrationtest.annotationdriven.stubs.AnnotationDrivenStub;
+import es.pfsgroup.plugin.messagebroker.integrationtest.annotationdriven.stubs.TestErrorsStub;
 import es.pfsgroup.plugin.messagebroker.integrationtest.common.AsyncCallMonitor;
 import junit.framework.Assert;
 
@@ -131,6 +132,22 @@ public class AnnotationDrivenMessageBrokerTest {
 
 		
 		
+	}
+	
+	@Test
+	public void testReintentos(){
+		RequestDto request = new RequestDto();
+		TestErrorsStub handler = (TestErrorsStub) ctx.getBean("testErrorStub");
+		
+		messageBroker.sendAsync(TestErrorsStub.class, request);
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+		
+		}
+		
+		Assert.assertEquals(6, handler.getNumRetries());
 	}
 
 }

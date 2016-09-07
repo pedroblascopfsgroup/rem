@@ -21,6 +21,12 @@
 		<integration:queue capacity="25"/>
 	</integration:channel>
 	
+	<integration:channel id="routing-channel">
+	</integration:channel>
+	
+	<integration:channel id="retries-channel">
+	</integration:channel>
+	
 	<integration:channel id="async.output">
 		<!-- <integration:queue capacity="25"/> -->
 	</integration:channel>
@@ -34,6 +40,12 @@
 		<property name="messageBrokerGateway" ref="messageBrokerGateway" />
 	</bean>
 	
+	<bean id="serviceActivator" class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator">
+			<property name="handlerRegistry">
+				<ref bean="handlerRegistry" />
+			</property>
+		</bean>
+	
 	
 	<!-- Procesado asíncrono de mensajes -->
 	<integration:poller id="asyncPoller" receive-timeout="30000">
@@ -41,25 +53,26 @@
 				time-unit="MILLISECONDS" />
 	</integration:poller>
 	
+	
+	
+	
 	<integration:service-activator id="asyncServiceActivatorForRequest"
-		input-channel="async.input" output-channel="async.output" method="messageRequest">
-		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator">
-			<property name="handlerRegistry">
-				<ref bean="handlerRegistry" />
-			</property>
-		</bean>
+		input-channel="async.input" output-channel="routing-channel" ref="serviceActivator" method="messageRequest">
 		<integration:poller ref="asyncPoller" />
 	</integration:service-activator>
 	
+	<!-- <integration:header-value-router input-channel="routing-channel" header-name="ROUTER_CHANNEL" /> -->
+	
+	<integration:router input-channel="routing-channel" ref="serviceActivator" method="route" default-output-channel="retries-channel">
+	</integration:router>
+	
+	<integration:router input-channel="retries-channel" ref="serviceActivator" method="retryRequest" default-output-channel="async.output">
+	</integration:router>
 	
 	<integration:service-activator id="asyncServiceActivatorForResponse"
-		input-channel="async.output" output-channel="nullChannel" method="messageResponse">
-		<bean class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator">
-			<property name="handlerRegistry">
-				<ref bean="handlerRegistry" />
-			</property>
-		</bean>
+		input-channel="async.output" output-channel="nullChannel" ref="serviceActivator" method="messageResponse">
 		<!-- <integration:poller ref="asyncPoller" /> -->	
 	</integration:service-activator>
-
+	
+	
 </beans>

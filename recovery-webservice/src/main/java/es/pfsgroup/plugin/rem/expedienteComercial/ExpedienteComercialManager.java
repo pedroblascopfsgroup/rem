@@ -58,7 +58,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -656,16 +655,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		adjuntoExpediente.setAdjunto(adj);
 		
 		adjuntoExpediente.setExpediente(expediente);
-		
-		
-		//COMENTAR CON ANAHUAC SI LO NECESITA PARA DOCUMENTOS EXPEDIENTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "01");//Pong 01 por defecto, ya que no sabemos si se usará este campo
-		//Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);		
-		adjuntoExpediente.setTipoDocumentoActivo(tipoDocumento);
-		
+
 		//Setear tipo y subtipo del adjunto a subir
-		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		adjuntoExpediente.setTipoDocumentoExpediente((DDTipoDocumentoExpediente) genericDao.get(DDTipoDocumentoExpediente.class, filtro));
 		
 		filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));

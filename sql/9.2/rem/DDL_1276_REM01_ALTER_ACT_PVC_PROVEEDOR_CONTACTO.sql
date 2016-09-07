@@ -38,7 +38,32 @@ DECLARE
     
 BEGIN
 	
+	-- Comprobamos si existe columna PRD_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PRD_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRD_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PRD_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRD_ID... Creado');
+		V_TEXT1 := 'Dirección del proveedor contacto.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRD_ID IS '''||V_TEXT1||'''  ';
+	END IF;
 
+	--Comprobamos si existe foreign key FK_PRD_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_PRD_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PRD_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_PRD_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_PRD_ID FOREIGN KEY (PRD_ID) REFERENCES '||V_ESQUEMA||'.ACT_PRD_PROVEEDOR_DIRECCION (PRD_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.PRD_ID... Foreign key creada.');
+	END IF;
+	
 	-- Comprobamos si existe columna PVC_PRINCIPAL (si es así, no hacemos nada)
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVC_PRINCIPAL'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
 	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
@@ -129,7 +154,6 @@ BEGIN
 		V_TEXT1 := 'Observaciones del proveedor contacto.';
 		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVC_OBSERVACIONES IS '''||V_TEXT1||'''  ';
 	END IF;
-	
 	
 	EXCEPTION
 	     WHEN OTHERS THEN

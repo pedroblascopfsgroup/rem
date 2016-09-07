@@ -3,19 +3,22 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
     xtype		: 'configuracionproveedores',
     reference	: 'configuracionProveedores',
     scrollable: 'y',
+    requires: ['HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresFiltros'],
+    
     initComponent: function () {
         
         var me = this;
         
         me.setTitle(HreRem.i18n("title.configuracion.proveedores"));  
         
-        me.columns= [
+        me.items= [
 	        			{	
 	        				xtype: 'configuracionproveedoresfiltros'
-	        			},
-	        			{	
-	        				xtype: 'configuracionproveedoreslist'
 	        			}
+//						,
+//	        			{	
+//	        				xtype: 'configuracionproveedoreslist'
+//	        			}
         ];
         
         me.callParent(); 

@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
     extend: 'HreRem.view.common.DDViewModel',
     alias: 'viewmodel.configuracion',
+    requires: ['HreRem.model.Proveedor'],
     
     stores: { 
     	

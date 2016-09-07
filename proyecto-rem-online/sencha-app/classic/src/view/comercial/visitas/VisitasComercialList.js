@@ -14,7 +14,7 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
         me.columns= [
         
 		        {	        	
-		            dataIndex: 'numVisita',
+		            dataIndex: 'numVisitaRem',
 		            text: HreRem.i18n('header.numero.visita'),
 		            flex: 1		        	
 		        },
@@ -37,8 +37,9 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
 			        },
 		            flex     : 1,            
 		            align: 'left',
-		            menuDisabled: true,
-		            hideable: false
+//		            menuDisabled: true,
+		            hideable: false,
+		            sortable: true
 		        },
 		        {
 		            dataIndex: 'fechaSolicitud',

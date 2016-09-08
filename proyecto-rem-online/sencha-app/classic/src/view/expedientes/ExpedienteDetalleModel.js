@@ -4,7 +4,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
-                'HreRem.model.ComparecienteBusqueda'],
+                'HreRem.model.ComparecienteBusqueda', 'HreRem.model.GastoGestionEconomica'],
     
     data: {
     	expediente: null
@@ -249,7 +249,7 @@ storeObservaciones: {
 		        remoteUrl: 'expedientecomercial/getNotariosExpediente',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
-		}
+		},
 		
 //		COMPARECIENTES EN NOMBRE DEL VENDEDOR
 		
@@ -288,6 +288,26 @@ storeObservaciones: {
 //	            beforeload : 'paramLoading'
 //	        }
 //    	}
+		
+		storeGastosSoportadosPropietarios: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.GastoGestionEconomica',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getGastosSoportadoPropietario',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+		
+		storeGastosSoportadosHaya: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.GastoGestionEconomica',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getGastosSoportadoHaya',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		}
     		
     		
     }    

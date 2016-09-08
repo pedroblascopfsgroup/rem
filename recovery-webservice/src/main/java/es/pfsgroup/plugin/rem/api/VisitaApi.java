@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 
@@ -38,7 +40,13 @@ public interface VisitaApi {
      * @return Visita
      */
     public Visita getVisitaByIdVisitaWebcomNumVisitaRem(Long idVisitaWebcom, Long numVisitaRem) throws Exception;
-    
+       
+    /**
+	 * Devuelve un Page de Visitas aplicando el filtro que recibe.
+	 * @param dtoVisitasFilter con los parametros de filtro
+	 * @return Page<Visita> 
+	 */
+    public DtoPage getListVisitas(DtoVisitasFilter dtoVisitasFilter);
     
 	/**
 	 * Devuelve una lista de Visitas aplicando el filtro que recibe.

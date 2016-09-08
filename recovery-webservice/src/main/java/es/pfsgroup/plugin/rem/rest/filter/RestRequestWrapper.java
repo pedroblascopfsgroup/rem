@@ -13,7 +13,11 @@ import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -25,7 +29,8 @@ import es.pfsgroup.commons.utils.Checks;
 public class RestRequestWrapper extends HttpServletRequestWrapper {
 	private final String body;
 	private final ArrayList<Map<String, Object>> requestMapList = new ArrayList<Map<String, Object>>();
-
+	protected static final Log logger = LogFactory.getLog(RestRequestWrapper.class);
+	
 	public RestRequestWrapper(HttpServletRequest request) throws IOException, Exception {
 		super(request);
 		StringBuilder stringBuilder = new StringBuilder();
@@ -56,7 +61,7 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		
 		if (stringBuilder.toString() != null && !stringBuilder.toString().isEmpty()) {
 			body = stringBuilder.toString();
-			this.convertRequest2MapList();
+			//this.convertRequest2MapList();
 		}else{
 			body = request.getParameter("data");
 		}
@@ -86,6 +91,33 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 		return this.requestMapList;
 	}
 	
+	public JSONObject getJsonObject() throws Exception {
+		JSONObject json = null;
+		
+		try {
+			
+			json = JSONObject.fromObject(body);
+			
+			if(Checks.esNulo(json)){
+				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");	
+				
+			}else if(!json.containsKey("data") ){
+				throw new Exception("No se han podido recuperar los datos de la petición. Falta campo data.");	
+				
+			}else if(!json.getJSONArray("data").isArray()){
+				throw new Exception("No se han podido recuperar los datos de la petición. El campo data no es un array.");	
+				
+			}else {			
+				logger.info("Petición correcta.");
+			}
+			
+		}catch (Exception e) {
+			throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");			
+		}
+		return json;
+	}
+	
+	
 	private void convertRequest2MapList() throws Exception {
 		
 		try {
@@ -96,7 +128,7 @@ public class RestRequestWrapper extends HttpServletRequestWrapper {
 					dataStr = dataStr.replace("\"", "");
 					int init = dataStr.indexOf("{");
 					int last = dataStr.lastIndexOf("}");
-					dataStr = dataStr.substring(init + 1, last -1);	 //Creo que el last -1 debería ser sólo last... revisar aunque no afecta			
+					dataStr = dataStr.substring(init + 1, last);		
 					String[] elemStr = dataStr.split("\\},\\{"); 
 					if(!Checks.esNulo(elemStr)){				
 						for(String elem : elemStr){

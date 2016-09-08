@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivoHistorico;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoAgrupacionActivoManager")
@@ -158,6 +160,21 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 	@Override
 	public boolean estaAgrupacionActivoConFechaBaja(Activo activo){
 		return activoAgrupacionActivoDao.estaAgrupacionActivoConFechaBaja(activo);
+	}
+	
+	@Override
+	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo){		
+		List<ActivoAgrupacionActivo> lista = null;
+				
+		try{
+			
+			lista = activoAgrupacionActivoDao.getListActivosAgrupacion(dtoAgrupActivo);
+		
+		} catch(Exception ex) {
+			ex.printStackTrace();	
+		}
+		
+		return lista;	
 	}
 
 }

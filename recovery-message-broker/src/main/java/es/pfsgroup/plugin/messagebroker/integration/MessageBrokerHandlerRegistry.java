@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.messagebroker.integration;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -18,11 +20,13 @@ import es.pfsgroup.plugin.messagebroker.MessageBrokerUtils;
 import es.pfsgroup.plugin.messagebroker.annotations.AnnotationConstants;
 import es.pfsgroup.plugin.messagebroker.annotations.AsyncRequestHandler;
 import es.pfsgroup.plugin.messagebroker.annotations.AsyncResponseHandler;
+import es.pfsgroup.plugin.messagebroker.exceptions.DuplicateHandlerException;
 
 public class MessageBrokerHandlerRegistry {
 
 	private static class RegistryContainer {
 		boolean initialized = false;
+
 		private final Map<String, HandlerInvocator> requestHandlers = new HashMap<String, HandlerInvocator>();
 		private final Map<String, HandlerInvocator> responseHandlers = new HashMap<String, HandlerInvocator>();
 
@@ -53,7 +57,6 @@ public class MessageBrokerHandlerRegistry {
 			this.initialized = true;
 			this.notifyAll();
 		}
-
 	}
 
 	@Autowired
@@ -63,6 +66,8 @@ public class MessageBrokerHandlerRegistry {
 
 	private final RegistryContainer registryContainer = new RegistryContainer();
 
+	private List<String> duplicateHandlers = new ArrayList<String>();
+
 	@PostConstruct
 	public void initialize() throws BeansException {
 		Thread initializerThread = new Thread(new Runnable() {
@@ -71,12 +76,16 @@ public class MessageBrokerHandlerRegistry {
 			public void run() {
 				runInitialization();
 				registryContainer.markAsInitialized();
+
+				if (!duplicateHandlers.isEmpty()) {
+					throw new DuplicateHandlerException(duplicateHandlers);
+				}
 			}
 		});
 
 		initializerThread.start();
 	}
-
+	
 	public HandlerInvocator getRequestHandler(String typeOfMessage) {
 		if (!registryContainer.isInitialized()) {
 			throw new IllegalStateException("The Handler Registry is not yet initialized.");
@@ -93,6 +102,7 @@ public class MessageBrokerHandlerRegistry {
 
 	private void runInitialization() {
 		String[] beanNames = beanFactory.getBeanDefinitionNames();
+
 		for (String name : beanNames) {
 			final String beanName = name;
 			BeanDefinition bd = null;
@@ -108,6 +118,7 @@ public class MessageBrokerHandlerRegistry {
 				} catch (ClassNotFoundException e) {
 					throw new RuntimeException(e);
 				}
+
 				ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
 
 					@Override
@@ -147,8 +158,15 @@ public class MessageBrokerHandlerRegistry {
 				hanlderInvocatorId = typeOfMessage;
 			}
 
+			if (registry.get(hanlderInvocatorId) != null) {
+				duplicateHandlers.add(hanlderInvocatorId);
+			}
+
 			registry.put(hanlderInvocatorId, new HandlerInvocator(bean, method));
 		}
 	}
 
+	public List<String> getDuplicateHandlers() {
+		return duplicateHandlers;
+	}
 }

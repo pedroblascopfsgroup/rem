@@ -103,8 +103,8 @@ public class AnnotationDrivenMessageBrokerTest {
 			} catch (InterruptedException e) {
 			}
 
-			Assert.assertNotNull("El handler debería haber almacenado la petición al hacer la llamada",
-					handler.getRequest());
+			Assert.assertNotNull("El handler debería haber almacenado la petición al hacer la llamada", handler.getRequest());
+			Assert.assertTrue("Se debería haber confirmado que la llamda se ha realizado de forma asíncrona", asnyncMonitor.isAsyncCallConfirmed());
 		}
 
 	}

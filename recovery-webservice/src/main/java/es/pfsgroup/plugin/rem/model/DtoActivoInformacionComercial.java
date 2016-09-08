@@ -73,6 +73,9 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Boolean reformaPortal;
 	private Boolean reformaAscensor;
 	private Boolean reformaCubierta;
+	private Boolean reformaOtrasZonasComunes;
+	private String entornoComunicaciones;
+	private String entornoInfraestructuras;
 	private String ediDescripcion;
 	private String reformaOtroDescEdificio;
 	
@@ -246,6 +249,24 @@ public class DtoActivoInformacionComercial extends WebDto {
     private String tipoInfoComercialCodigo;
     private String tipoActivoCodigo;
 	
+	public String getEntornoComunicaciones() {
+		return entornoComunicaciones;
+	}
+	public void setEntornoComunicaciones(String entornoComunicaciones) {
+		this.entornoComunicaciones = entornoComunicaciones;
+	}
+	public String getEntornoInfraestructuras() {
+		return entornoInfraestructuras;
+	}
+	public void setEntornoInfraestructuras(String entornoInfraestructuras) {
+		this.entornoInfraestructuras = entornoInfraestructuras;
+	}
+	public Boolean getReformaOtrasZonasComunes() {
+		return reformaOtrasZonasComunes;
+	}
+	public void setReformaOtrasZonasComunes(Boolean reformaOtrasZonasComunes) {
+		this.reformaOtrasZonasComunes = reformaOtrasZonasComunes;
+	}
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}

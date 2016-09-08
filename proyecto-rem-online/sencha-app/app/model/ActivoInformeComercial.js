@@ -195,7 +195,6 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     			name: 'cuotaOrientativaComunidad'
     		}
     		
-    		
     ],
 	proxy: {
 		type: 'uxproxy',

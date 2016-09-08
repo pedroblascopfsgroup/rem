@@ -91,7 +91,24 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 				            },
 				            {
 			            	    items: [   
+			            	    	{ 
+					                	xtype:'datefield',
+								 		fieldLabel: HreRem.i18n('header.oferta.fechaAltaDesde'),
+								 		width: 		275,
+								 		name: 'fechaAltaDesde'
+									},
 									{ 
+					                	xtype:'datefield',
+								 		fieldLabel: HreRem.i18n('header.oferta.fechaAltaHasta'),
+								 		width: 		275,
+								 		name: 'fechaAltaHasta'
+									}
+									
+								]
+				            },
+				            {
+			            	    items: [   
+			            	    { 
 							        	xtype: 'combo',
 							        	//hidden: true,
 							        	editable: false,
@@ -104,13 +121,8 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 						            	},
 						            	displayField: 'descripcion',
 										valueField: 'codigo'
-						        	},
-									{ 
-					                	xtype:'datefield',
-								 		fieldLabel: HreRem.i18n('header.oferta.fechaAlta'),
-								 		width: 		275,
-								 		name: 'fechaAlta'
-									}
+						        }
+									
 									
 									
 								]

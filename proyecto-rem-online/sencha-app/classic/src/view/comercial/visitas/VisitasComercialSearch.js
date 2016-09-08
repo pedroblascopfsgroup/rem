@@ -50,7 +50,7 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialSearch', {
 		
 									{
 										fieldLabel: HreRem.i18n('header.numero.visita'),
-									    name: 'numVisita'        	
+									    name: 'numVisitaRem'        	
 									}
 									
 									

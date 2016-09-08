@@ -59,16 +59,16 @@ public class ComparecienteVendedor implements Serializable, Auditable {
     @JoinColumn(name = "DD_TCO_ID")
     private DDTiposCompareciente tipoCompareciente;
     
-    @Column(name = "TCO_NOMBRE")
+    @Column(name = "COV_NOMBRE")
     private String nombre;
         
-    @Column(name = "TCO_DIRECCION")
+    @Column(name = "COV_DIRECCION")
     private String direccion;    
       
-    @Column(name = "TCO_TELEFONO1")
+    @Column(name = "COV_TELEFONO1")
     private String telefono1;
      
-    @Column(name = "TCO_EMAIL")
+    @Column(name = "COV_EMAIL")
     private String email;    
    
 	@Version   

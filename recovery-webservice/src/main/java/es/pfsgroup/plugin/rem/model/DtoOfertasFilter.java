@@ -18,7 +18,8 @@ public class DtoOfertasFilter extends WebDto {
 	private String tipoOferta;
 	private Long idAgrupacion;
 	private Long idActivo;
-	private String fechaAlta;
+	private String fechaAltaDesde;
+	private String fechaAltaHasta;
 	private Long numExpediente;
 	private String estadoExpediente;
 	private String subtipoActivo;
@@ -72,11 +73,17 @@ public class DtoOfertasFilter extends WebDto {
 	public void setIdAgrupacion(Long idAgrupacion) {
 		this.idAgrupacion = idAgrupacion;
 	}
-	public String getFechaAlta() {
-		return fechaAlta;
+	public String getFechaAltaDesde() {
+		return fechaAltaDesde;
 	}
-	public void setFechaAlta(String fechaAlta) {
-		this.fechaAlta = fechaAlta;
+	public void setFechaAltaDesde(String fechaAltaDesde) {
+		this.fechaAltaDesde = fechaAltaDesde;
+	}
+	public String getFechaAltaHasta() {
+		return fechaAltaHasta;
+	}
+	public void setFechaAltaHasta(String fechaAltaHasta) {
+		this.fechaAltaHasta = fechaAltaHasta;
 	}
 	public Long getNumExpediente() {
 		return numExpediente;

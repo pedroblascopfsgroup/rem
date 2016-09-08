@@ -16,10 +16,12 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisita;
 import es.pfsgroup.plugin.rem.model.dd.DDSubEstadosVisita;
@@ -165,7 +167,11 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	}
 	
 	
-	
+	@Override
+	public DtoPage getListVisitas(DtoVisitasFilter dtoVisitasFilter) {
+
+		return visitaDao.getListVisitas(dtoVisitasFilter);
+	}
 	
 	
 	@Override

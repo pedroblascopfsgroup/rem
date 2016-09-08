@@ -152,7 +152,7 @@ public class RestSecurityFilter implements Filter  {
 
 		} finally {
 			if (securityContext!=null) {
-				 securityContext.getAuthentication().setAuthenticated(false);
+				 //securityContext.getAuthentication().setAuthenticated(false);
 				 SecurityContextHolder.clearContext();
 			}
 		}

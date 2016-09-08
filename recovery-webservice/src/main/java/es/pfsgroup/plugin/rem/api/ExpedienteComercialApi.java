@@ -6,6 +6,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
@@ -127,6 +128,64 @@ public interface ExpedienteComercialApi {
 	     * @return
 	     */
 		public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
+
+		/**
+		 * Método que guarda la información de la pestaña Condicionantes del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
+		
+		/**
+		 * Método que obtiene el posicionamiento del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getPosicionamientosExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los comparecientes del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getComparecientesExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene las subsanaciones del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getSubsanacionesExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los notarios del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getNotariosExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los gastos del expediente soportados por el propietario
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los gastos del expediente soportados por Haya
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getGastosSoportadoHaya(Long idExpediente);
+			
+		
 	   
 }
 

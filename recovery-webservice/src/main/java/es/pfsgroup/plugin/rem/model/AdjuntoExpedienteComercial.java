@@ -27,7 +27,6 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 
 
@@ -58,10 +57,6 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 	@ManyToOne
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;   	
-	
-	@ManyToOne
-    @JoinColumn(name = "DD_TPD_ID")
-    private DDTipoDocumentoActivo tipoDocumentoActivo;
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TDE_ID")
@@ -131,14 +126,6 @@ public class AdjuntoExpedienteComercial implements Serializable, Auditable {
 
 	public void setExpediente(ExpedienteComercial expediente) {
 		this.expediente = expediente;
-	}
-
-	public DDTipoDocumentoActivo getTipoDocumentoActivo() {
-		return tipoDocumentoActivo;
-	}
-
-	public void setTipoDocumentoActivo(DDTipoDocumentoActivo tipoDocumentoActivo) {
-		this.tipoDocumentoActivo = tipoDocumentoActivo;
 	}
 	
 	public DDTipoDocumentoExpediente getTipoDocumentoExpediente() {

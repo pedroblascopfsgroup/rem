@@ -6,7 +6,7 @@
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=HREOS-788
 --## PRODUCTO=NO
---## Finalidad: Tabla auxiliar para almacenar las filas rechazadas procedentes del fichero de altas de activos Bankia.
+--## Finalidad: Interfax Stock UVEM-REM. Rechazos.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
@@ -66,9 +66,9 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		ERRORCODE 					VARCHAR2(255 CHAR), 
-		ERRORMESSAGE 				VARCHAR2(512 CHAR), 
-		ROWREJECTED 				VARCHAR2(2048 CHAR)
+		ERRORCODE 						VARCHAR2(255 CHAR), 
+		ERRORMESSAGE 					VARCHAR2(512 CHAR), 
+		ROWREJECTED						VARCHAR2(2048 CHAR)
 	)
 	LOGGING 
 	NOCOMPRESS 

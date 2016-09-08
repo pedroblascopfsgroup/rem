@@ -1,8 +1,11 @@
 package es.pfsgroup.plugin.rem.activo.dao;
 
+import java.util.List;
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 
 public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionActivo, Long>{
 	
@@ -26,4 +29,6 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	public boolean isUniqueAgrupacionActivo(Long idActivo, String codigoTipoAgrupacion);
 	
 	public boolean estaAgrupacionActivoConFechaBaja(Activo activo);
+	
+	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo);
 }

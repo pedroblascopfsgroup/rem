@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,11 +15,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 
@@ -32,7 +37,7 @@ import es.capgemini.pfs.persona.model.DDTipoDocumento;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 @Inheritance(strategy=InheritanceType.JOINED)	
-public class TitularesAdicionalesOferta {
+public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	
     /**
 	 * 
@@ -42,7 +47,7 @@ public class TitularesAdicionalesOferta {
 	@Id
     @Column(name = "TIA_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "TitularesAdicionalesOfertaGenerator")
-    @SequenceGenerator(name = "TitularesAdicionalesOfertaGenerator", sequenceName = "S_OFR_TIA_TITULARES_ADICIONALES")
+    @SequenceGenerator(name = "TitularesAdicionalesOfertaGenerator", sequenceName = "S_OFR_TIA_TIT_ADICIONALES")
     private Long id;
 	
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,7 +63,15 @@ public class TitularesAdicionalesOferta {
     
     @Column(name = "TIA_DOCUMENTO")
     private String documento;
+  
+    @Version   
+	private Long version;
 
+	@Embedded
+	private Auditoria auditoria;
+	
+	
+	
 	
     public Long getId() {
 		return id;
@@ -100,6 +113,16 @@ public class TitularesAdicionalesOferta {
 		this.documento = documento;
 	}
 	
-	
+	public void setVersion(Long version) {
+		this.version = version;
+	}
+
+	public Auditoria getAuditoria() {
+		return auditoria;
+	}
+
+	public void setAuditoria(Auditoria auditoria) {
+		this.auditoria = auditoria;
+	}
 
 }

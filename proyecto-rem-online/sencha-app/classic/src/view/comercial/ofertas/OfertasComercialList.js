@@ -47,8 +47,9 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        },
 		            flex     : 1,            
 		            align: 'right',
-		            menuDisabled: true,
-		            hideable: false
+//		            menuDisabled: true,
+		            hideable: false,
+		            sortable: true
 		        },
 		        {	        	
 		            dataIndex: 'estadoOferta',
@@ -88,8 +89,9 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialList', {
 			        },
 		            flex     : 1,            
 		            align: 'center',
-		            menuDisabled: true,
-		            hideable: false
+//		            menuDisabled: true,
+		            hideable: false,
+		            sortable: true
 		        },
 		        {
 		            dataIndex: 'descripcionEstadoExpediente',

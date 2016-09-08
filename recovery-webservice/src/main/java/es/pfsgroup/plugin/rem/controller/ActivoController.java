@@ -1877,7 +1877,7 @@ public class ActivoController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST, value = "update")
+	@RequestMapping(method = RequestMethod.POST, value = "/activo")
 	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
@@ -1888,7 +1888,7 @@ public class ActivoController {
 	}
 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.DELETE, value = "delete")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/activo")
 	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 

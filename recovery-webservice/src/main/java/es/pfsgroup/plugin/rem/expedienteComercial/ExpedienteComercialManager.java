@@ -796,6 +796,20 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setGastosCompraventaOtrosPorCuentaDe(condiciones.getTipoPorCuentaGastosOtros().getCodigo());
 			}
 			
+			//Economicas-Gastos Alquiler
+			dto.setGastosIbi(condiciones.getGastosIbi());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaIbi())){
+				dto.setIbiPorCuentaDe(condiciones.getTipoPorCuentaIbi().getCodigo());
+			}
+			dto.setGastosComunidad(condiciones.getGastosComunidad());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaComunidadAlquiler())){
+				dto.setComunidadPorCuentaDe(condiciones.getTipoPorCuentaComunidadAlquiler().getCodigo());
+			}
+			dto.setGastosSuministros(condiciones.getGastosSuministros());
+			if(!Checks.esNulo(condiciones.getTipoPorCuentaSuministros())){
+				dto.setSuministrosPorCuentaDe(condiciones.getTipoPorCuentaSuministros().getCodigo());
+			}
+			
 			//Economicas-Cargas pendientes
 			dto.setImpuestos(condiciones.getCargasImpuestos());
 			if(!Checks.esNulo(condiciones.getTipoPorCuentaImpuestos())){
@@ -888,6 +902,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				condiciones.setTipoImpuesto(tipoImpuesto);
 			}
 			
+			//Gastos CompraVenta
 			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaPlusvalia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getPlusvaliaPorCuentaDe());
 				condiciones.setTipoPorCuentaPlusvalia(tipoPorCuentaPlusvalia);
@@ -899,6 +914,20 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			if(!Checks.esNulo(dto.getGastosCompraventaOtrosPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaGCVOtros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getGastosCompraventaOtrosPorCuentaDe());
 				condiciones.setTipoPorCuentaGastosOtros(tipoPorCuentaGCVOtros);
+			}
+			
+			//Gastos Alquiler
+			if(!Checks.esNulo(dto.getIbiPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaIbi= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getIbiPorCuentaDe());
+				condiciones.setTipoPorCuentaIbi(tipoPorCuentaIbi);
+			}
+			if(!Checks.esNulo(dto.getComunidadPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaComunidad= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getComunidadPorCuentaDe());
+				condiciones.setTipoPorCuentaComunidadAlquiler(tipoPorCuentaComunidad);
+			}
+			if(!Checks.esNulo(dto.getSuministrosPorCuentaDe())){
+				DDTiposPorCuenta tipoPorCuentaSuministros= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getSuministrosPorCuentaDe());
+				condiciones.setTipoPorCuentaSuministros(tipoPorCuentaSuministros);
 			}
 			
 			//Cargas pendientes

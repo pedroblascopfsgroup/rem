@@ -26,7 +26,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     getTipoExpedienteCabecera: function(get) {
-	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
 	     	var idAgrupacion = get('expediente.idAgrupacion');
 			var numEntidad = get('expediente.numEntidad');
@@ -57,6 +56,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     onEstaSujetoTanteo: function(get){
 	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
 	     	if(sujeto==1){
+	     		return true;
+	     	}
+	     	return false;
+	     },
+	     
+	     esOfertaVenta: function(get){
+	     	var me= this;
+	     	var expediente= me.getData().expediente;
+	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
+	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
+	     	if(tipoOferta=='Venta'){
 	     		return true;
 	     	}
 	     	return false;

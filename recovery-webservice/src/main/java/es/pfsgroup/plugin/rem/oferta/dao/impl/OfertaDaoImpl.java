@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.oferta.dao.impl;
 
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 @Repository("OfertaDao")
 public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements OfertaDao{
@@ -74,6 +76,26 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
    		return HibernateQueryUtils.page(this, hb, dto);
 
 	}
+	
+	
+	@Override
+	public Long getNextNumOfertaRem() {
+		String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL";
+		return ((BigDecimal) getSession().createSQLQuery(sql).uniqueResult()).longValue();
+	}
+	
+	
+	@Override
+	public List<Oferta> getListaOfertas(OfertaDto ofertaDto){
+
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idWebCom", ofertaDto.getIdOfertaWebcom());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "numOferta", ofertaDto.getIdOfertaRem());
+		
+		
+		return HibernateQueryUtils.list(this, hql);
+	}
+	
 
 
 }

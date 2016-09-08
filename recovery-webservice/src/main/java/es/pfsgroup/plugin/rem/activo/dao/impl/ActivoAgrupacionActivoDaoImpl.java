@@ -10,6 +10,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionActivoDao")
@@ -116,5 +117,18 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
    	    List<ActivoAgrupacionActivo> list = HibernateQueryUtils.list(this, hb);
 		return (list.size()!=0);
 	}
+	
+	@Override
+	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo){
+
+		HQLBuilder hql = new HQLBuilder("from ActivoAgrupacionActivo aa");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.activo.id", dtoAgrupActivo.getActId());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.id", dtoAgrupActivo.getAgrId());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.tipoAgrupacion.codigo", dtoAgrupActivo.getAgrId());
+		
+		
+		return HibernateQueryUtils.list(this, hql);
+	}
+	
     
 }

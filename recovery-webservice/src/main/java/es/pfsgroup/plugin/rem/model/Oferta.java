@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -269,6 +270,9 @@ public class Oferta implements Serializable, Auditable {
 	}
 
 	public List<ActivoOferta> getActivosOferta() {
+		
+		if(activosOferta == null) activosOferta = new ArrayList<ActivoOferta>(); 
+		
 		return activosOferta;
 	}
 

@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ComercialApi;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -36,9 +35,6 @@ public class VisitasController {
 	
 	@Autowired 
     private ActivoApi activoApi;
-	
-	@Autowired
-	private ComercialApi comercialApi;
 	
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
@@ -109,7 +105,7 @@ public class VisitasController {
 						map.put("success", true);
 					}else{
 						map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());
-						map.put("idVisitaRem", visitaDto.getIdClienteRem());
+						map.put("idVisitaRem", visitaDto.getIdVisitaRem());
 						map.put("success", false);
 						map.put("errorMessages", errorsList);
 					}					
@@ -140,7 +136,7 @@ public class VisitasController {
 		try {
 
 			//Page page = comercialApi.getListVisitas(dtoVisitasFilter);
-			DtoPage page = comercialApi.getListVisitas(dtoVisitasFilter);
+			DtoPage page = visitaApi.getListVisitas(dtoVisitasFilter);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
@@ -162,7 +158,7 @@ public class VisitasController {
 		dtoVisitasFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
 		
-		List<DtoVisitasFilter> listaVisitas = (List<DtoVisitasFilter>) comercialApi.getListVisitas(dtoVisitasFilter).getResults();
+		List<DtoVisitasFilter> listaVisitas = (List<DtoVisitasFilter>) visitaApi.getListVisitas(dtoVisitasFilter).getResults();
 		
 		ExcelReport report = new VisitasExcelReport(listaVisitas);
 		

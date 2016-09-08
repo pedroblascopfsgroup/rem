@@ -19,6 +19,7 @@ public class DtoAgrupacionFilter extends WebDto {
 	private String publicado;
 	private String agrupacionId;
 	private Long agrId;
+	private Long actId;
 	private String codCartera;
 
 	public String getNombre() {
@@ -83,6 +84,14 @@ public class DtoAgrupacionFilter extends WebDto {
 
 	public void setAgrId(Long agrId) {
 		this.agrId = agrId;
+	}
+
+	public Long getActId() {
+		return actId;
+	}
+
+	public void setActId(Long actId) {
+		this.actId = actId;
 	}
 
 	public String getCodCartera() {

@@ -137,6 +137,55 @@ public interface ExpedienteComercialApi {
 		 */
 		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 		
+		/**
+		 * Método que obtiene el posicionamiento del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getPosicionamientosExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los comparecientes del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getComparecientesExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene las subsanaciones del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getSubsanacionesExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los notarios del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getNotariosExpediente(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los gastos del expediente soportados por el propietario
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los gastos del expediente soportados por Haya
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getGastosSoportadoHaya(Long idExpediente);
+			
+		
 	   
 }
 

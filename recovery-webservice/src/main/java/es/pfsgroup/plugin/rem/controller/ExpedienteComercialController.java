@@ -472,6 +472,128 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPosicionamientosExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getPosicionamientosExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComparecientesExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getComparecientesExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSubsanacionesExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getSubsanacionesExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getNotariosExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getNotariosExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosSoportadoPropietario(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getGastosSoportadoPropietario(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosSoportadoHaya(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getGastosSoportadoHaya(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);

@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
@@ -1124,6 +1125,24 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		resolucionDto.setFechaPago(formalizacion.getFechaPago());
 		
 		return resolucionDto;
+	}
+
+	public DtoPage getGastosSoportadoPropietario(Long idExpediente) {
+		List<DtoGastoExpediente> gastosExpediente= new ArrayList<DtoGastoExpediente>();
+		DtoGastoExpediente gastoExpedienteDto= new DtoGastoExpediente();
+		
+		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
+		
+		return new DtoPage(gastosExpediente, gastosExpediente.size());
+	}
+	
+	public DtoPage getGastosSoportadoHaya(Long idExpediente) {
+		List<DtoGastoExpediente> gastosExpediente= new ArrayList<DtoGastoExpediente>();
+		DtoGastoExpediente gastoExpedienteDto= new DtoGastoExpediente();
+		
+		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
+		
+		return new DtoPage(gastosExpediente, gastosExpediente.size());
 	}
 	
 

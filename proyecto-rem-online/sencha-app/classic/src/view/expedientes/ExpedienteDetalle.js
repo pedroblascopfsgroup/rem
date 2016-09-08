@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente',
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
-    			'HreRem.view.expedientes.FormalizacionExpediente'],
+    			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente'],
 
     listeners: {
    		
@@ -114,6 +114,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        },
 		        {
 		        	xtype: 'formalizacionexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true
 		        }
 
 		],

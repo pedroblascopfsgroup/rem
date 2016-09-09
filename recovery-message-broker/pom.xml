@@ -90,6 +90,23 @@
 			<version>UNKNOWN</version>
 			<scope>compile</scope>
 		</dependency>
+
+
+		<!-- Dependencias de Recovery evolution (inicio)-->
+		<dependency>
+			<groupId>es.pfsgroup.plugin.evolution</groupId>
+			<artifactId>rec-common-evol</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>es.pfsgroup.plugin.evolution</groupId>
+			<artifactId>recovery-coreextension-plugin-evol</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- Dependencias de Recovery evolution (fin)-->
+
+
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

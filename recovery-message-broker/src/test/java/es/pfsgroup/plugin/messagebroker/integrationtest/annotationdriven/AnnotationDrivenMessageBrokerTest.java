@@ -29,9 +29,11 @@ public class AnnotationDrivenMessageBrokerTest {
 		/*
 		 * Inicializamos el contexto de Spring
 		 */
-		String[] configLocations = new String[] { "optionalConfiguration/ac-recovery-message-broker.xml",
-				"/annotations/spring-annotation-test-config.xml" };
-		ctx = new ClassPathXmlApplicationContext(configLocations);
+		if (ctx == null) {
+			String[] configLocations = new String[] { "optionalConfiguration/ac-recovery-message-broker.xml",
+					"/annotations/spring-annotation-test-config.xml" };
+			ctx = new ClassPathXmlApplicationContext(configLocations);
+		}
 
 		/*
 		 * Obtenemos el bean messageBroker para invocar y el stub para validar
@@ -43,9 +45,9 @@ public class AnnotationDrivenMessageBrokerTest {
 		// asíncrona.
 		asnyncMonitor = (AsyncCallMonitor) ctx.getBean("asyncCallMonitor");
 	}
-	
+
 	@After
-	public void tearDown(){
+	public void tearDown() {
 		AnnotationDrivenStub handler = (AnnotationDrivenStub) ctx.getBean("annotationDrivenStub");
 		handler.cleanStub();
 	}
@@ -81,9 +83,7 @@ public class AnnotationDrivenMessageBrokerTest {
 		}
 
 	}
-	
-	
-	
+
 	@Test
 	public void testLlamadaAsincronaConAnotacionesSoloRequest() {
 		RequestDto request = new RequestDto();
@@ -108,13 +108,13 @@ public class AnnotationDrivenMessageBrokerTest {
 		}
 
 	}
-	
+
 	@Test
-	public void testClaseComoTypeOfMessage(){
+	public void testClaseComoTypeOfMessage() {
 		RequestDto request = new RequestDto();
 
 		AnnotatedHandlerMock handler = (AnnotatedHandlerMock) ctx.getBean("annotatedHandlerMock");
-		
+
 		synchronized (asnyncMonitor) {
 			messageBroker.sendAsync(AnnotatedHandlerMock.class, request);
 			asnyncMonitor.setMessageBrokerFinished(true);
@@ -126,27 +126,24 @@ public class AnnotationDrivenMessageBrokerTest {
 			} catch (InterruptedException e) {
 			}
 
-			Assert.assertTrue("Verificamos que el mock se haya ejecutado",
-					handler.isExecuted());
+			Assert.assertTrue("Verificamos que el mock se haya ejecutado", handler.isExecuted());
 		}
 
-		
-		
 	}
-	
+
 	@Test
-	public void testReintentos(){
+	public void testReintentos() {
 		RequestDto request = new RequestDto();
 		TestErrorsStub handler = (TestErrorsStub) ctx.getBean("testErrorStub");
-		
+
 		messageBroker.sendAsync(TestErrorsStub.class, request);
-		
+
 		try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
-		
+
 		}
-		
+
 		Assert.assertEquals(6, handler.getNumRetries());
 	}
 

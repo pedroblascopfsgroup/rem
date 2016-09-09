@@ -194,39 +194,11 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                	bind:		'{activoInforme.puerta}'
 					                },
 					            // Fila 3
-					                {
-										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
-										reference: 'codPostalAdmisionInforme',
-										bind:		'{activoInforme.codPostal}',
-										vtype: 'codigoPostal',
-										maskRe: /^\d*$/, 
-					                	maxLength: 5
-									},
-					                {
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-										reference: 'municipioComboAdmisionInforme',													
-						            	bind: {
-						            		store: '{comboMunicipioAdmisionIC}',
-						            		value: '{activoInforme.municipioCodigo}',
-						            		disabled: '{!activoInforme.provinciaCodigo}'
-						            	}
-									},
-									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.unidad.poblacional'),
-										reference: 'poblacionalAdmisionInforme',													
-									    bind: {
-									    	store: '{comboUnidadPoblacional}',
-									        value: '{activoInforme.inferiorMunicipioCodigo}'
-									    }
-									},
-								// Fila 4
 									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 										reference: 'provinciaComboAdmisionInforme',
-										chainedStore: 'comboMunicipio',
+										chainedStore: 'comboMunicipioAdmisionIC',
 										chainedReference: 'municipioComboAdmisionInforme',
 						            	bind: {
 						            		store: '{comboProvincia}',
@@ -235,6 +207,40 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			    						listeners: {
 											select: 'onChangeChainedCombo'
 			    						}
+									},
+					                {
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+										chainedStore: 'comboInferiorMunicipioAdmisionIC',
+										chainedReference: 'poblacionalAdmisionInforme',
+										reference: 'municipioComboAdmisionInforme',													
+						            	bind: {
+						            		store: '{comboMunicipioAdmisionIC}',
+						            		value: '{activoInforme.municipioCodigo}',
+						            		disabled: '{!activoInforme.provinciaCodigo}'
+						            	},
+			    						listeners: {
+											select: 'onChangeChainedCombo'
+			    						}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.unidad.poblacional'),
+										reference: 'poblacionalAdmisionInforme',													
+									    bind: {
+									    	store: '{comboInferiorMunicipioAdmisionIC}',
+									        value: '{activoInforme.inferiorMunicipioCodigo}',
+									        disabled: '{!activoInforme.municipioCodigo}'
+									    }
+									},
+								// Fila 4
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+										reference: 'codPostalAdmisionInforme',
+										bind:		'{activoInforme.codPostal}',
+										vtype: 'codigoPostal',
+										maskRe: /^\d*$/, 
+					                	maxLength: 5
 									},
 									{ 
 										fieldLabel: HreRem.i18n('fieldlabel.latitud'),
@@ -336,41 +342,10 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                },
 					            // Fila 3
 					                {
-										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
-										reference: 'codPostalMediadorInforme',
-										bind:		'{informeComercial.codigoPostal}',
-										vtype: 'codigoPostal',
-										maskRe: /^\d*$/, 
-					                	maxLength: 5	                	
-									},
-					                {
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
-										reference: 'municipioComboMediadorInforme',
-						            	bind: {
-						            		store: '{comboMunicipioMediadorIC}',
-						            		value: '{informeComercial.municipioCodigo}',
-						            		disabled: '{!informeComercial.provinciaCodigo}'
-						            	},
-						            	listeners: {
-						            		change: 'checkDistrito'
-						                }
-									},
-									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.unidad.poblacional'),
-										reference: 'poblacionalMediadorInforme',													
-									    bind: {
-									    	store: '{comboUnidadPoblacional}',
-									        value: '{informeComercial.inferiorMunicipioCodigo}'
-									    }
-									},
-								// Fila 4
-									{
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 										reference: 'provinciaComboMediadorInforme',
-										chainedStore: 'comboMunicipio',
+										chainedStore: 'comboMunicipioMediadorIC',
 										chainedReference: 'municipioComboMediadorInforme',
 						            	bind: {
 						            		store: '{comboProvincia}',
@@ -379,6 +354,41 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 			    						listeners: {
 											select: 'onChangeChainedCombo'
 			    						}
+									},
+					                {
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.municipio'),
+										reference: 'municipioComboMediadorInforme',
+										chainedStore: 'comboInferiorMunicipioMediadorIC',
+										chainedReference: 'poblacionalMediadorInforme',
+						            	bind: {
+						            		store: '{comboMunicipioMediadorIC}',
+						            		value: '{informeComercial.municipioCodigo}',
+						            		disabled: '{!informeComercial.provinciaCodigo}'
+						            	},
+						            	listeners: {
+						            		select: 'onChangeChainedCombo',
+						            		change: 'checkDistrito'
+						                }
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.unidad.poblacional'),
+										reference: 'poblacionalMediadorInforme',													
+									    bind: {
+									    	store: '{comboInferiorMunicipioMediadorIC}',
+									        value: '{informeComercial.inferiorMunicipioCodigo}',
+									        disabled: '{!informeComercial.municipioCodigo}'
+									    }
+									},
+								// Fila 4
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
+										reference: 'codPostalMediadorInforme',
+										bind:		'{informeComercial.codigoPostal}',
+										vtype: 'codigoPostal',
+										maskRe: /^\d*$/, 
+					                	maxLength: 5	                	
 									},
 									{
 										xtype: 'comboboxfieldbase',

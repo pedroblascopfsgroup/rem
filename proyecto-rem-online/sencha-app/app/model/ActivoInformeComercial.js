@@ -176,11 +176,13 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		},
     		{
     			name:'fechaEstimacionVenta',
-    			type:'date'
+    			type:'date',
+    			dateFormat: 'c'
     		},
      		{
     			name:'fechaEstimacionRenta',
-    			type:'date'
+    			type:'date',
+    			dateFormat: 'c'
     		},
     		{
     			name: 'inferiorMunicipioCodigo'

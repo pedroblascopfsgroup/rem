@@ -79,8 +79,11 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private String ediDescripcion;
 	private String reformaOtroDescEdificio;
 	
-	//Para la info de calidades
+	//Para la info de suelo e industrial.
+	private String infoDescripcion;
+	private String infoDistribucionInterior;
 	
+	//Para la info de calidades
 	private Integer ocio;
 	private Integer hoteles;
 	private String hotelesDesc;
@@ -249,6 +252,18 @@ public class DtoActivoInformacionComercial extends WebDto {
     private String tipoInfoComercialCodigo;
     private String tipoActivoCodigo;
 	
+	public String getInfoDescripcion() {
+		return infoDescripcion;
+	}
+	public void setInfoDescripcion(String infoDescripcion) {
+		this.infoDescripcion = infoDescripcion;
+	}
+	public String getInfoDistribucionInterior() {
+		return infoDistribucionInterior;
+	}
+	public void setInfoDistribucionInterior(String infoDistribucionInterior) {
+		this.infoDistribucionInterior = infoDistribucionInterior;
+	}
 	public String getEntornoComunicaciones() {
 		return entornoComunicaciones;
 	}

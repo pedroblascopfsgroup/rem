@@ -718,6 +718,12 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     	    },
     	    {
     	    	name:'zonaComunOtros'
+    	    },
+    	    {
+    	    	name: 'infoDescripcion'
+    	    },
+    	    {
+    	    	name: 'infoDistribucionInterior'
     	    }
     ],
     

@@ -307,8 +307,13 @@ public class TabActivoInformeComercial implements TabActivoService {
 			}
 
 			// Actualizar los datos de comunidad de propietarios
-			ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
-			comunidadPropietarios = activo.getComunidadPropietarios();
+			ActivoComunidadPropietarios comunidadPropietarios;
+			if(!Checks.esNulo(activo.getComunidadPropietarios())) {
+				comunidadPropietarios = activo.getComunidadPropietarios();
+			} else {
+				comunidadPropietarios = new ActivoComunidadPropietarios();
+			}
+			
 			
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "constituida", activoInformeDto.getInscritaComunidad());
 			beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
@@ -317,6 +322,8 @@ public class TabActivoInformeComercial implements TabActivoService {
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfAdministrador", activoInformeDto.getTelAdministradorComunidad());
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "nomAdministrador", activoInformeDto.getNomAdministradorComunidad());
 			beanUtilNotNull.copyProperty(comunidadPropietarios, "telfPresidente", activoInformeDto.getTelPresidenteComunidad());
+			
+			genericDao.save(ActivoComunidadPropietarios.class, comunidadPropietarios);
 
 			activo.setComunidadPropietarios(comunidadPropietarios);
 			

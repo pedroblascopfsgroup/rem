@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     requires: ['HreRem.model.Activo', 'HreRem.view.common.FieldSetTable', 'HreRem.model.ActivoInformeComercial', 'HreRem.model.Distribuciones',
     'HreRem.view.activos.detalle.InfoLocalComercial', 'HreRem.view.activos.detalle.InfoPlazaAparcamiento', 'HreRem.view.activos.detalle.InfoVivienda',
     'HreRem.view.activos.detalle.HistoricoEstadosInformeComercial', 'HreRem.model.InformeComercial', 'HreRem.view.activos.detalle.HistoricoMediadorGrid',
-    'HreRem.model.HistoricoMediador', 'HreRem.view.activos.detalle.PropuestaActivosVinculadosList'],
+    'HreRem.model.HistoricoMediador', 'HreRem.view.activos.detalle.PropuestaActivosVinculadosList', 'HreRem.view.activos.detalle.InfoIndustrialYSuelo'],
     
     listeners: {
     	boxready: function() {
@@ -711,18 +711,25 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 //							}
 						},
 						{
+							xtype: 'numberfieldbase',
+							maxLength: 9,
+							decimalPrecision: 2,
+							renderer: Ext.util.Format.numberRenderer('0,000.00'),
 							fieldLabel : HreRem.i18n('fieldlabel.cuota.orientativa'),
 							allowBlank: false,
 							bind : '{informeComercial.cuotaOrientativaComunidad}'
 						},
 						{
+							xtype: 'numberfieldbase',
+							maxLength: 17,
+							decimalPrecision: 2,
+							renderer: Ext.util.Format.numberRenderer('0,000.00'),
 							fieldLabel : HreRem.i18n('fieldlabel.derrama.orientativa'),
 							bind : '{informeComercial.derramaOrientativaComunidad}'
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.nombre.presidente'),							
 							bind : '{informeComercial.nomPresidenteComunidad}'
-							
 						},
 						{
 							fieldLabel : HreRem.i18n('fieldlabel.telefono'),
@@ -742,7 +749,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						}
 				]
 			},
-// Añadir sección por tipo de activo.
+			
+// Añadir sección por tipo de activo
 			{
 				xtype: 'infovivienda',
 				bind: {
@@ -761,6 +769,20 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				title: HreRem.i18n('title.local.comercial'),
 				bind: {
 					hidden: '{!informeComercial.isLocalComercialMediador}'
+				}
+			},
+			{
+				xtype: 'infoindustrialysuelo',
+				title: HreRem.i18n('title.industrial'),
+				bind: {
+					hidden: '{!informeComercial.isIndustrialMediador}'
+				}
+			},
+			{
+				xtype: 'infoindustrialysuelo',
+				title: HreRem.i18n('title.suelo'),
+				bind: {
+					hidden: '{!informeComercial.isSueloMediador}'
 				}
 			}
 		];

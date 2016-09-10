@@ -241,6 +241,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    					}
     		},
     		
+    		comboInferiorMunicipioMediadorIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboInferiorMunicipio',
+					extraParams: {codigoMunicipio: '{informeComercial.municipioCodigo}'}
+					}
+    		},
+    		
+    		comboInferiorMunicipioAdmisionIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboInferiorMunicipio',
+					extraParams: {codigoMunicipio: '{activoInforme.municipioCodigo}'}
+					}
+    		},
+    		
     		comboMunicipioRegistro: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

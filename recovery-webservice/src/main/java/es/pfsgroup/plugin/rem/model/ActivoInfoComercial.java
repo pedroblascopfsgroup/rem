@@ -257,6 +257,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_UPO_ID")
 	private DDUnidadPoblacional unidadPoblacional;
 	
+	@Column(name = "ICO_INFO_DESCRIPCION")
+	private String infoDescripcion;
+	
+	@Column(name = "ICO_INFO_DISTRIBUCION_INTERIOR")
+	private String infoDistribucionInterior;
+	
 	@Version   
 	private Long version;
 	
@@ -708,6 +714,22 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getInfoDescripcion() {
+		return infoDescripcion;
+	}
+
+	public void setInfoDescripcion(String infoDescripcion) {
+		this.infoDescripcion = infoDescripcion;
+	}
+
+	public String getInfoDistribucionInterior() {
+		return infoDistribucionInterior;
+	}
+
+	public void setInfoDistribucionInterior(String infoDistribucionInterior) {
+		this.infoDistribucionInterior = infoDistribucionInterior;
 	}
 	
 	

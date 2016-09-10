@@ -369,8 +369,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onChangeChainedCombo: function(combo) {
     	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);    	
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+    	
     	me.getViewModel().notify();
+    	
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}

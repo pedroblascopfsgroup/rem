@@ -29,8 +29,10 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 public class UvemManager implements UvemManagerApi {
 
 	private String URL = "http://midtr2epd.cm.es:31485/bisa/endpoint";
+	
+	private GMPETS07_INS servicioGMPETS07_INS;
 
-	public Integer solicitarTasacion(Long bienId, String nombreGestor, String gestion)
+	public Integer ejecutarSolicitarTasacion(Long bienId, String nombreGestor, String gestion)
 			throws WIMetaServiceException, WIException, TipoDeDatoException {
 		int numeroIdentificadorTasacion = -1;
 
@@ -42,8 +44,8 @@ public class UvemManager implements UvemManagerApi {
 		WIService.init(htInitParams);
 
 		// instanciamos el servicio
-		GMPETS07_INS servicioGMPETS07_INS = new GMPETS07_INS();
-
+		servicioGMPETS07_INS = new GMPETS07_INS();
+		
 		// Requeridos por el servicio;
 		servicioGMPETS07_INS.setnumeroCliente(0);
 		servicioGMPETS07_INS.setnumeroUsuario("");
@@ -56,6 +58,7 @@ public class UvemManager implements UvemManagerApi {
 		es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraTecnica cabeceraTecnica = new es.cajamadrid.servicios.GM.GMPETS07_INS.StructCabeceraTecnica();
 		StructCabeceraAplicacionGMPETS07_INS cabeceraAplicacion = new StructCabeceraAplicacionGMPETS07_INS();
 
+				
 		// Seteamos cabeceras
 		servicioGMPETS07_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMPETS07_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
@@ -144,8 +147,38 @@ public class UvemManager implements UvemManagerApi {
 		// recuperando resultado...
 		numeroIdentificadorTasacion = servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
 		
+		
+		
 
 		return numeroIdentificadorTasacion;
+	}
+	
+	public int resultadoSolicitarTasacion(){
+		return servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
+	}
+
+	@Override
+	public void ejecutarNumCliente(String nudnio, String cocldo, String idclow, String qcenre) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resultadoNumCliente() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void ejecutarDatosCliente(String copace, String idclow, String iddsfu, String qcenre) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resultadoDatosCliente() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

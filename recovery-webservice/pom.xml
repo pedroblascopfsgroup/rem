@@ -652,6 +652,16 @@
 		</dependency>
 		<dependency>
 			<groupId>es.bankia</groupId>
+			<artifactId>GMJC93_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMJC11_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
 			<artifactId>hessian</artifactId>
 			<version>4.0.7</version>
 		</dependency>

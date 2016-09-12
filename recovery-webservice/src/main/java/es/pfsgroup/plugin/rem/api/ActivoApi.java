@@ -30,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -284,6 +285,31 @@ public interface ActivoApi {
 		 * @return Devuelve si se ha completado la operación con exito o no.
 		 */
 		public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto);
+
+		/**
+		 * Este método recibe un ID de activo y obtiene los activos vinculados al mismo.
+		 * 
+		 * @param dto: dto con los datos a filtrar la busqueda para el page.
+		 * @return Devuelve una lista con los datos obtenidos.
+		 */
+		public List<DtoPropuestaActivosVinculados> getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
+
+		/**
+		 * Este método recibe un número de activo y el ID del activo de origen y crea un nuevo registro
+		 * vinculando ambos.
+		 * 
+		 * @param dto: dto con los datos a insertar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public boolean createPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
+
+		/**
+		 * Este método borra de manera lógica la vinculación entre activos por el ID de la asociación.
+		 * 
+		 * @param dto: dto con los datos a borrar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public boolean deletePropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
     }
 
 

@@ -4,7 +4,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Gestor', 'HreRem.model.GestorActivo', 
     'HreRem.model.AdmisionDocumento', 'HreRem.model.AdjuntoActivo', 'HreRem.model.BusquedaTrabajo',
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
-    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo','HreRem.model.OfertaActivo'],
+    'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo','HreRem.model.OfertaActivo',
+    'HreRem.model.PropuestaActivosVinculados'],
     
     data: {
     	activo: null,
@@ -238,6 +239,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 						remoteUrl: 'activo/getComboInferiorMunicipio',
 						extraParams: {codigoMunicipio: '{activo.municipioCodigo}'}
    					}
+    		},
+    		
+    		comboInferiorMunicipioMediadorIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboInferiorMunicipio',
+					extraParams: {codigoMunicipio: '{informeComercial.municipioCodigo}'}
+					}
+    		},
+    		
+    		comboInferiorMunicipioAdmisionIC: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'activo/getComboInferiorMunicipio',
+					extraParams: {codigoMunicipio: '{activoInforme.municipioCodigo}'}
+					}
     		},
     		
     		comboMunicipioRegistro: {
@@ -767,6 +786,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'unidadPoblacional'}
 			},
 			autoload: false  	
-    	}
+    	},
+    	
+    	storePropuestaActivosVinculados:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.PropuestaActivosVinculados',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getPropuestaActivosVinculadosByActivo',
+				extraParams: {idActivo: '{activo.id}'}
+			},
+			autoload: true
+		}
      }    
 });

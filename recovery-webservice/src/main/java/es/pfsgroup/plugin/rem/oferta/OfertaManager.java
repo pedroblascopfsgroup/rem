@@ -245,7 +245,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					if(!Checks.esNulo(jsonFields) && ((JSONObject)jsonFields).containsKey("idActivoHaya") && Checks.esNulo(ofertaDto.getIdActivoHaya())){
 						listaErrores.add("El campo idActivoHaya es nulo y es obligatorio en actualizaciones.");
-					}			
+					}
+					//Mirar si hace falta validar que no se pueda modificar la oferta si ha pasado al comité
+					if(!Checks.esNulo(oferta.getEstadoOferta()) && !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)){
+						listaErrores.add("No es posible actualizar la oferta porque se encuentra en el estado: " + oferta.getEstadoOferta().getDescripcion());
+					}
 				}
 				if(!Checks.esNulo(ofertaDto.getIdVisitaRem())){
 					Visita visita = (Visita) genericDao.get(Visita.class, genericDao.createFilter(FilterType.EQUALS, "numVisitaRem", ofertaDto.getIdVisitaRem()));							
@@ -355,31 +359,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 				if(!Checks.esNulo(ofertaDto.getIdActivoHaya())){
-					ActivoOferta actOfr = null;					
-					List<ActivoAgrupacionActivo> listaAgrAct = null;
+					ActivoOferta actOfr = null;	
+					List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+					List<ActivoAgrupacionActivo> listaAgrups = null;
+					List<ActivoAgrupacionActivo> listaActivos = null;
 					List<Activo> lact = new ArrayList<Activo>();
 					
 					Activo activo = (Activo) genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));							
 					if(!Checks.esNulo(activo)){				
+						//Añadimos el activo de la oferta
+						lact.add(activo);	
+						actOfr = buildActivoOferta(activo, oferta, null);
+						listaActOfr.add(actOfr);
 						
+						//Añadimos a la oferta el resto de activos de las agupaciones restringidas a las que pertenece el activo
 						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
 						dtoAgrupActivo.setActId(activo.getId());
 						dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-						listaAgrAct = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-						if(!Checks.esNulo(listaAgrAct) && listaAgrAct.size()>0){
-							//Recorremos las agrupaciones del activo para ver si está en una agrupación de ObraNueva						
-							for(int i=0; i < listaAgrAct.size();i++){
-								ActivoAgrupacionActivo agrAct = listaAgrAct.get(i);
-								if(!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion()) && !Checks.esNulo(lact) && !lact.contains(agrAct.getActivo())){									
-									lact.add(agrAct.getActivo());
-									actOfr = buildActivoOferta(agrAct.getActivo(), oferta, null);
-									if(!Checks.esNulo(actOfr) && !oferta.getActivosOferta().contains(actOfr)){		
-										oferta.getActivosOferta().add(actOfr);
+						listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
+						if(!Checks.esNulo(listaAgrups) && listaAgrups.size()>0){
+							//Recorremos las agrupaciones del activo						
+							for(int i=0; i < listaAgrups.size();i++){
+								ActivoAgrupacionActivo agrAct = listaAgrups.get(i);
+								if(!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())){
+									oferta.setAgrupacion(agrAct.getAgrupacion());
+									DtoAgrupacionFilter dtoAgrupActivo2 = new DtoAgrupacionFilter();
+									dtoAgrupActivo2.setAgrId(agrAct.getAgrupacion().getId());
+									listaActivos = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo2);
+									
+									if(!Checks.esNulo(listaActivos) && listaActivos.size()>0){
+										//Para cada agrupacion obtenemos los activos de la agrupacion para añadirlos a la oferta.
+										for(int j=0; j < listaActivos.size();j++){
+											agrAct = listaActivos.get(j);
+											if(!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getActivo()) && !Checks.esNulo(lact) && !lact.contains(agrAct.getActivo())){	
+												lact.add(agrAct.getActivo());	
+												actOfr = buildActivoOferta(agrAct.getActivo(), oferta, null);
+												listaActOfr.add(actOfr);
+											}
+										}
 									}
-								}
-							}
-						}else{						
-							oferta.getActivosOferta().add(buildActivoOferta(activo, oferta, null));
+								}									
+							}			
+						}
+						if(!Checks.esNulo(listaActOfr) && listaActOfr.size()>0){	
+							oferta.setActivosOferta(listaActOfr);
 						}
 					}
 				}		
@@ -460,16 +483,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			//ValidateUpdate
 			errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 			if(errorsList.isEmpty()){
-					
 				
-				if(((JSONObject)jsonFields).containsKey("idOfertaWebcom")){
-					oferta.setIdWebCom(ofertaDto.getIdOfertaWebcom());
-				}
-				if(((JSONObject)jsonFields).containsKey("idOfertaRem")){
-					oferta.setNumOferta(ofertaDto.getIdOfertaRem());
-				}
 				if(((JSONObject)jsonFields).containsKey("importeContraoferta")){
 					oferta.setImporteContraOferta(ofertaDto.getImporteContraoferta());
+				}
+				
+				if(((JSONObject)jsonFields).containsKey("codEstadoOferta")){
+					if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
+						DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
+						if(!Checks.esNulo(estadoOfr)){
+							oferta.setEstadoOferta(estadoOfr);
+						}
+					}else{
+						oferta.setEstadoOferta(null);
+					}
 				}
 				
 				ofertaDao.saveOrUpdate(oferta);

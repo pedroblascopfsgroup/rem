@@ -74,9 +74,11 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -1090,5 +1092,84 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO);
 		}
 		return dto;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DtoPropuestaActivosVinculados> getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+		Page p = activoDao.getPropuestaActivosVinculadosByActivo(dto);
+		List<PropuestaActivosVinculados> activosVinculados = (List<PropuestaActivosVinculados>) p.getResults();
+		List<DtoPropuestaActivosVinculados> dtoActivosVinculados = new ArrayList<DtoPropuestaActivosVinculados>();
+		
+		for(PropuestaActivosVinculados vinculado: activosVinculados) {
+			DtoPropuestaActivosVinculados nuevoDto = new DtoPropuestaActivosVinculados();
+			try {
+				beanUtilNotNull.copyProperty(nuevoDto, "id", vinculado.getId());
+				beanUtilNotNull.copyProperty(nuevoDto, "activoVinculadoNumero", vinculado.getActivoVinculado().getNumActivo());
+				beanUtilNotNull.copyProperty(nuevoDto, "activoVinculadoID", vinculado.getActivoVinculado().getId());
+				beanUtilNotNull.copyProperty(nuevoDto, "totalCount", p.getTotalCount());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			if(!Checks.esNulo(nuevoDto)) {
+				dtoActivosVinculados.add(nuevoDto);
+			}
+		}
+
+		return dtoActivosVinculados;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+		PropuestaActivosVinculados propuestaActivosVinculados = new PropuestaActivosVinculados();
+		Activo activoOrigen = activoDao.get(dto.getActivoOrigenID());
+		Activo activoVinculado = activoDao.getActivoByNumActivo(dto.getActivoVinculadoNumero());
+		
+		if(Checks.esNulo(activoVinculado) || Checks.esNulo(activoOrigen)){
+			// No se ha encontrado algún activo. El activo origen por ID. El activo vinculado por numero de activo.
+			return false;
+		}
+		
+		try {
+			beanUtilNotNull.copyProperty(propuestaActivosVinculados, "activoOrigen", activoOrigen);
+			beanUtilNotNull.copyProperty(propuestaActivosVinculados, "activoVinculado", activoVinculado);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		genericDao.save(PropuestaActivosVinculados.class, propuestaActivosVinculados);
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deletePropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+		Long id;
+		
+		try{
+			id = Long.parseLong(dto.getId());
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		PropuestaActivosVinculados activoVinculado = activoDao.getPropuestaActivosVinculadosByID(id);
+		
+		if(!Checks.esNulo(activoVinculado)) {
+			activoVinculado.getAuditoria().setBorrado(true);
+			activoVinculado.getAuditoria().setFechaBorrar(new Date());
+			activoVinculado.getAuditoria().setUsuarioBorrar(adapter.getUsuarioLogado().getUsername());
+			genericDao.update(PropuestaActivosVinculados.class, activoVinculado);
+			return true;
+		}
+		
+		return false;
 	}
 }

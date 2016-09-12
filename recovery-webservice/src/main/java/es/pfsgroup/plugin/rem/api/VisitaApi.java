@@ -59,11 +59,11 @@ public interface VisitaApi {
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
 	 * @param VisitaDto con los parametros de entrada
-	 * @param requestMap mapa de parámetros para validar campos en caso de venir informados
+	 * @param jsonFields estructura de parámetros para validar campos en caso de venir informados
 	 * @param alta true si es para validar el alta, false para validar la actualización
 	 * @return List<String> 
 	 */
-	public List<String> validateVisitaPostRequestData(VisitaDto visitaDto,  Map<String, Object> requestMap, Boolean alta);
+	public List<String> validateVisitaPostRequestData(VisitaDto visitaDto,  Object jsonFields, Boolean alta);
 
 	
 	/**
@@ -77,10 +77,10 @@ public interface VisitaApi {
 	/**
 	 * Actualiza una Visita a partir de la información pasada por parámetro.
 	 * @param visitaDto con la información de la Visita a actualizar
-	 * @param requestMap mapa con los parámetros a actualizar. Si no vienen, no hay que actualizar. Si vienen y están a null, hay que seterlos a null
+	 * @param jsonFields estructura de parámetros a actualizar. Si no vienen, no hay que actualizar. Si vienen y están a null, hay que seterlos a null
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public List<String> updateVisita(Visita visita, VisitaDto visitaDto, Map<String, Object> requestMap);
+	public List<String> updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields);
 	
 	
 	/**

@@ -92,6 +92,15 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'reformaCubierta'
     		},
     		{
+    			name: 'reformaOtrasZonasComunes'
+    		},
+    		{
+    			name: 'entornoComunicaciones'
+    		},
+    		{
+    			name: 'entornoInfraestructuras'
+    		},
+    		{
     			name:'ediDescripcion'
     		},
     		{
@@ -709,6 +718,12 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     	    },
     	    {
     	    	name:'zonaComunOtros'
+    	    },
+    	    {
+    	    	name: 'infoDescripcion'
+    	    },
+    	    {
+    	    	name: 'infoDistribucionInterior'
     	    }
     ],
     

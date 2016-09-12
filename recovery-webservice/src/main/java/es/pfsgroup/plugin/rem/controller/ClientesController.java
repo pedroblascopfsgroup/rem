@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -61,14 +63,16 @@ public class ClientesController {
 		ClienteDto clienteDto = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		ArrayList<Map<String, Object>> requestMapList = null;
+		JSONObject jsonFields = null;
 
 		try {
 			
 			jsonData = (ClienteRequestDto) request.getRequestData(ClienteRequestDto.class);
 			List<ClienteDto> listaClienteDto = jsonData.getData();			
-			requestMapList = request.getRequestMapList();
-			if(Checks.esNulo(requestMapList) && requestMapList.isEmpty()){
+			jsonFields = request.getJsonObject();
+
+			
+			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
 				
 			}else{
@@ -84,7 +88,7 @@ public class ClientesController {
 						errorsList = clienteComercialApi.saveClienteComercial(clienteDto);
 						
 					}else{
-						errorsList = clienteComercialApi.updateClienteComercial(cliente, clienteDto, requestMapList.get(i));
+						errorsList = clienteComercialApi.updateClienteComercial(cliente, clienteDto, jsonFields.getJSONArray("data").get(i));
 						
 					}
 														

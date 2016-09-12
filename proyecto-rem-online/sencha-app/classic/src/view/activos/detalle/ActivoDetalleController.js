@@ -1,3 +1,4 @@
+
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',    
@@ -368,8 +369,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onChangeChainedCombo: function(combo) {
     	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);    	
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+    	
     	me.getViewModel().notify();
+    	
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
@@ -1336,6 +1339,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 	
+	},
+	
+	onActivosVinculadosClick: function(tableView, indiceFila, indiceColumna) {
+    	var me = this;
+    	var grid = tableView.up('grid');
+    	var record = grid.store.getAt(indiceFila);
+
+    	grid.setSelection(record);
+
+    	me.getView().fireEvent('abrirDetalleActivo', record.get('activoVinculadoID'), "Activo " + record.get("activoVinculadoNumero"));
 	}
 	
 });

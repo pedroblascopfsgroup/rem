@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -70,14 +72,16 @@ public class VisitasController {
 		VisitaDto visitaDto = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		ArrayList<Map<String, Object>> requestMapList = null;
+		JSONObject jsonFields = null;
 		
 		try {
 
 			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			List<VisitaDto> listaVisitaDto = jsonData.getData();			
-			requestMapList = request.getRequestMapList();
-			if(Checks.esNulo(requestMapList) && requestMapList.isEmpty()){
+			jsonFields = request.getJsonObject();
+
+			
+			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
 				
 			}else{
@@ -94,7 +98,7 @@ public class VisitasController {
 						errorsList = visitaApi.saveVisita(visitaDto);
 						
 					}else{
-						errorsList = visitaApi.updateVisita(visita, visitaDto, requestMapList.get(i));
+						errorsList = visitaApi.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
 						
 					}
 														

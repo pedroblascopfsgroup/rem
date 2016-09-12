@@ -560,6 +560,11 @@
 		  <artifactId>sojo-optional</artifactId>
 		  <version>0.5.0</version>
 		</dependency>
+		<dependency>
+		  <groupId>net.sf.ezmorph</groupId>
+		  <artifactId>ezmorph</artifactId>
+		  <version>1.0.6</version>
+		</dependency>
 				
 		<!-- <dependency>
 			<groupId>groupId</groupId>

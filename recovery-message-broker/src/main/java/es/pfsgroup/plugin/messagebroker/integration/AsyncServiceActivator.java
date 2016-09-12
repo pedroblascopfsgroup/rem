@@ -7,14 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.integration.annotation.Header;
 import org.springframework.integration.core.Message;
 import org.springframework.integration.message.MessageBuilder;
-
-import com.sun.xml.internal.bind.api.impl.NameConverter.Standard;
 
 import es.pfsgroup.plugin.messagebroker.exceptions.MessageBrokerControlledException;
 import es.pfsgroup.plugin.messagebroker.exceptions.RetriesRequiredException;

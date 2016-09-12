@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -19,6 +21,8 @@ public class UVEMController {
 	@Autowired
 	private UvemManagerApi uvemManager;
 
+	private final Log logger = LogFactory.getLog(getClass());
+
 	/**
 	 * Solicita la tasacion de un bien
 	 * 
@@ -31,20 +35,73 @@ public class UVEMController {
 	 *            Bankia o haya o null
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView solicitarTasacion(ModelMap model, @RequestParam(required = true) Long bienId,
 			@RequestParam(required = true) String nombreGestor, @RequestParam(required = false) String gestion) {
 		try {
-			int numeroIdentificadorTasacion = uvemManager.solicitarTasacion(bienId, nombreGestor, gestion);
-
+			uvemManager.ejecutarSolicitarTasacion(bienId, nombreGestor, gestion);
+			int numeroIdentificadorTasacion = uvemManager.resultadoSolicitarTasacion();
+			model.put("numeroIdentificadorTasacion", numeroIdentificadorTasacion);
 		} catch (WIException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (TipoDeDatoException e) {
-			// TODO: handle exception
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
+		return new ModelAndView("jsonView", model);
+	}
+
+	/**
+	 * Servicio que a partir del nº y tipo de documento, así como Entidad del
+	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes
+	 * 
+	 * @param model
+	 * @param nudnio:
+	 *            Documento según lo expresado en COCLDO. DNI, CIF, etc
+	 * @param cocldo:
+	 *            Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
+	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
+	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
+	 *            Otros persona física. J Otros persona jurídica.
+	 * @param idclow:
+	 *            Identificador Cliente Oferta
+	 * @param qcenre:
+	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
+	 *            habitat 05021
+	 * @return
+	 */
+	public ModelAndView numCliente(ModelMap model, @RequestParam(required = true) String nudnio,
+			@RequestParam(required = true) String cocldo, @RequestParam(required = true) String idclow,
+			@RequestParam(required = true) String qcenre) {
+
+		uvemManager.ejecutarNumCliente(nudnio, cocldo, idclow, qcenre);
+		uvemManager.resultadoNumCliente();
+
+		return new ModelAndView("jsonView", model);
+	}
+
+	/**
+	 * Servicio REM  UVEM para que a partir del nº cliente URSUS se devuelvan
+	 * los datos del mismo, tanto identificativos como de cara a poder dar
+	 * cumplimiento a la normativa relativa a PBC.
+	 * 
+	 * @param model
+	 * @param copace:
+	 *            Codigo Objeto Acceso
+	 * @param idclow:
+	 *            Identificador Cliente Oferta
+	 * @param iddsfu:
+	 *            Identificador Discriminador Funcion
+	 * @param qcenre:
+	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
+	 *            habitat 05021
+	 * @return
+	 */
+	public ModelAndView datosCliente(ModelMap model, @RequestParam(required = true) String copace,
+			@RequestParam(required = true) String idclow, String iddsfu, @RequestParam(required = true) String qcenre) {
+		uvemManager.ejecutarDatosCliente(copace, idclow, iddsfu, qcenre);
+		uvemManager.resultadoDatosCliente();
 		return new ModelAndView("jsonView", model);
 	}
 

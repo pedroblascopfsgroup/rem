@@ -112,10 +112,10 @@ Ext.define('HreRem.view.agrupacion.detalle.ComercialAgrupacion', {
     	var items = [
 			
 			{
-				xtype: 'visitascomercialagrupacion'
+				xtype: 'visitascomercialagrupacion', ocultarBotonesEdicion: true
 			},
 			{
-				xtype: 'ofertascomercialagrupacion'
+				xtype: 'ofertascomercialagrupacion', ocultarBotonesEdicion: true
 			}
 			
     	];

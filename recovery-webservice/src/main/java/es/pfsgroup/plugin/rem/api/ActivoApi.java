@@ -13,6 +13,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -20,13 +21,16 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -198,10 +202,18 @@ public interface ActivoApi {
 		 */
 		public boolean deleteValoracionPrecio(Long id);
 		
+		/**
+		 * Este método obtiene un objeto con los condicionantes del activo.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuelve un objeto con los datos obtenidos.
+		 */
 		public VCondicionantesDisponibilidad getCondicionantesDisponibilidad(Long idActivo);
 		
 		public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo);
+		
 		public Boolean createCondicionEspecifica(Long idActivo, DtoCondicionEspecifica dtoCondicionEspecifica);
+		
 		public Boolean saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica);
 		
 		/**
@@ -256,6 +268,48 @@ public interface ActivoApi {
 		 * @return Devuleve un dto con los datos obtenidos.
 		 */
 		public List<DtoEstadosInformeComercialHistorico> getEstadoInformeComercialByActivo(Long idActivo);
+
+		/**
+		 * Este método obtiene los estados, el historial, del mediador de la pestaña informe comercial.
+		 * 
+		 * @param idActivo: ID del activo a filtrar los datos.
+		 * @return Devuleve un dto con los datos obtenidos.
+		 */
+		public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo);
+
+		/**
+		 * Este método recibe un objeto con los condicionantes del activo y lo almacena en la DDBB.
+		 * 
+		 * @param id: ID del activo a filtrar los datos.
+		 * @param dto: dto con los datos a insertar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto);
+
+		/**
+		 * Este método recibe un ID de activo y obtiene los activos vinculados al mismo.
+		 * 
+		 * @param dto: dto con los datos a filtrar la busqueda para el page.
+		 * @return Devuelve una lista con los datos obtenidos.
+		 */
+		public List<DtoPropuestaActivosVinculados> getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
+
+		/**
+		 * Este método recibe un número de activo y el ID del activo de origen y crea un nuevo registro
+		 * vinculando ambos.
+		 * 
+		 * @param dto: dto con los datos a insertar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public boolean createPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
+
+		/**
+		 * Este método borra de manera lógica la vinculación entre activos por el ID de la asociación.
+		 * 
+		 * @param dto: dto con los datos a borrar en la DDBB.
+		 * @return Devuelve si se ha completado la operación con exito o no.
+		 */
+		public boolean deletePropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
     }
 
 

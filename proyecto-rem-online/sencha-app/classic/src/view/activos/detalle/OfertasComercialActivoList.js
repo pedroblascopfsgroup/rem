@@ -4,6 +4,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     bind: {
         store: '{storeOfertasActivo}'
     },
+    requires: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo'],
+    topBar: true,
         
     initComponent: function () {
         
@@ -85,7 +87,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
 			            getClass: function(v, metadata, record ) {
 			            	if (!Ext.isEmpty(record.get("numExpediente"))) {
-			            		return 'fa fa-folder-open';
+			            		return 'fa fa-folder-open blue-medium-color';
 			            	}			            	
 			            },
 			            handler: 'onClickAbrirExpedienteComercial'
@@ -140,9 +142,35 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		return true;
 	},
 	
+	onAddClick: function (btn) {
+		var me = this;
+		var items= me.up('activosdetalle').getRefItems();
+		
+		for(var i=0;i<=items.length;i++){
+			if(items[i].getXType()=='datosgeneralesactivo'){
+				
+				var datosBasicos= items[i].down('datosbasicosactivo');
+				var record= datosBasicos.getBindRecord(),
+				idActivo= record.get('id'),
+				numActivo= record.get('numActivo'),
+				pertenceAgrupacionRestringida= record.get('pertenceAgrupacionRestringida');
+				break;
+			}
+		}
+		
+		if(pertenceAgrupacionRestringida=="false" || pertenceAgrupacionRestringida==undefined){
+			var parent= me.up('ofertascomercialactivo');
+			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
+			Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent}).show();
+		}else{
+			me.fireEvent("errorToast", HreRem.i18n("msg.boton.add.oferta.activo"));
+		}
+	    				    	
+	},
+	
 	editFuncion: function(editor, context){
 		var me= this;
-		me.mask(HreRem.i18n("msg.mask.espere"));
+		
 			var estado = context.record.get("estadoOferta");	
 			if(estado=='01'){
 				
@@ -152,7 +180,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 				   buttons: Ext.MessageBox.YESNO,
 				   fn: function(buttonId) {
 				        if (buttonId == 'yes') {
-				            
+				            me.mask(HreRem.i18n("msg.mask.espere"));
 							if (me.isValidRecord(context.record)) {				
 			
 				        		context.record.save({

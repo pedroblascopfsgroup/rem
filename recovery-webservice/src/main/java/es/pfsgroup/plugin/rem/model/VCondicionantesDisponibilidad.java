@@ -12,6 +12,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 
 
 
@@ -61,7 +62,7 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	private Boolean tapiado;
 	
 	@Column(name = "OTRO")
-	private Boolean otro;
+	private String otro;
 	
 	@Column(name = "OCUPADO_SINTITULO")
 	private Boolean ocupadoSinTitulo;
@@ -142,11 +143,11 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 		this.tapiado = tapiado;
 	}
 
-	public Boolean getOtro() {
+	public String getOtro() {
 		return otro;
 	}
 
-	public void setOtro(Boolean otro) {
+	public void setOtro(String otro) {
 		this.otro = otro;
 	}
 

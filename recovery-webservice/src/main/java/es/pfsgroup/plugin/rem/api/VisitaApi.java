@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 import java.util.Map;
 
+import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 
@@ -38,7 +40,13 @@ public interface VisitaApi {
      * @return Visita
      */
     public Visita getVisitaByIdVisitaWebcomNumVisitaRem(Long idVisitaWebcom, Long numVisitaRem) throws Exception;
-    
+       
+    /**
+	 * Devuelve un Page de Visitas aplicando el filtro que recibe.
+	 * @param dtoVisitasFilter con los parametros de filtro
+	 * @return Page<Visita> 
+	 */
+    public DtoPage getListVisitas(DtoVisitasFilter dtoVisitasFilter);
     
 	/**
 	 * Devuelve una lista de Visitas aplicando el filtro que recibe.
@@ -51,11 +59,11 @@ public interface VisitaApi {
 	/**
 	 * Devuelve una lista de errores encontrados en los parámetros de entrada de las peticiones POST.
 	 * @param VisitaDto con los parametros de entrada
-	 * @param requestMap mapa de parámetros para validar campos en caso de venir informados
+	 * @param jsonFields estructura de parámetros para validar campos en caso de venir informados
 	 * @param alta true si es para validar el alta, false para validar la actualización
 	 * @return List<String> 
 	 */
-	public List<String> validateVisitaPostRequestData(VisitaDto visitaDto,  Map<String, Object> requestMap, Boolean alta);
+	public List<String> validateVisitaPostRequestData(VisitaDto visitaDto,  Object jsonFields, Boolean alta);
 
 	
 	/**
@@ -69,10 +77,10 @@ public interface VisitaApi {
 	/**
 	 * Actualiza una Visita a partir de la información pasada por parámetro.
 	 * @param visitaDto con la información de la Visita a actualizar
-	 * @param requestMap mapa con los parámetros a actualizar. Si no vienen, no hay que actualizar. Si vienen y están a null, hay que seterlos a null
+	 * @param jsonFields estructura de parámetros a actualizar. Si no vienen, no hay que actualizar. Si vienen y están a null, hay que seterlos a null
 	 * @return List<String> con la lista de errores detectados
 	 */
-	public List<String> updateVisita(Visita visita, VisitaDto visitaDto, Map<String, Object> requestMap);
+	public List<String> updateVisita(Visita visita, VisitaDto visitaDto, Object jsonFields);
 	
 	
 	/**

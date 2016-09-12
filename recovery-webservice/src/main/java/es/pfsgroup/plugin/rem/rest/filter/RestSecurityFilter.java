@@ -14,24 +14,32 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.Authentication;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
+import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
-public class RestSecurityFilter implements Filter {
+public class RestSecurityFilter implements Filter  {
 
 	@Autowired
 	private EntidadDao entidadDao;
 
 	@Autowired
 	private RestApi restApi;
-
+	
+	
 	@Override
 	public void destroy() {
 
@@ -40,12 +48,13 @@ public class RestSecurityFilter implements Filter {
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 		PeticionRest peticion = crearPeticionObj(request);
 		boolean hibernateEnable = false;
-
+		Entidad entidad = null;
+		SecurityContext securityContext = null;
+		
 		try {
 			// imprescindible para poder inyectar componentes
 			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
@@ -55,9 +64,7 @@ public class RestSecurityFilter implements Filter {
 			// obtenemos los datos de la peticion
 			RequestDto datajson = (RequestDto)restRequest.getRequestData(RequestDto.class);
 
-			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor
-			// por
-			// defecto
+			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor por defecto
 			String workingCode = "2038";// <------parametrizarlo en
 										// devon.properties
 
@@ -65,11 +72,8 @@ public class RestSecurityFilter implements Filter {
 				workingCode = datajson.getWorkingcode();
 			}
 
-			// Obtenemos la entidad partiendo del working code y establecemos el
-			// contextholder
+			// Obtenemos la entidad partiendo del working code y establecemos el contextholder
 			// necesario para acceder al esquema de la entidad
-			Entidad entidad = null;
-
 			try {
 				entidad = entidadDao.findByWorkingCode(workingCode);
 			} catch (Exception e) {
@@ -82,6 +86,13 @@ public class RestSecurityFilter implements Filter {
 			} else {
 				logger.error("El workingcode no pertenece a ninguna entidad");
 				throwErrorWorkingCodeInvalido(response);
+				return;
+			}
+			
+
+			//Realizamos login en la plataforma		
+			securityContext = doLogin(entidad);			
+			if(Checks.esNulo(securityContext)){
 				return;
 			}
 
@@ -119,14 +130,6 @@ public class RestSecurityFilter implements Filter {
 						chain.doFilter(restRequest, response);
 						
 						peticion.setResult(RestApi.CODE_OK);
-						
-/*						//Actualizar estado petición
-						peticion = restApi.getLastPeticionByToken(jsonData.getId());
-						if(!Checks.esNulo(peticion)){
-							peticion.setResult(RestApi.CODE_OK);
-							restApi.guardarPeticionRest(peticion);
-						}*/
-
 					}
 				}
 			} else {
@@ -147,6 +150,11 @@ public class RestSecurityFilter implements Filter {
 
 			throwErrorGeneral(response, e);
 
+		} finally {
+			if (securityContext!=null) {
+				 //securityContext.getAuthentication().setAuthenticated(false);
+				 SecurityContextHolder.clearContext();
+			}
 		}
 		if (hibernateEnable) {
 			restApi.guardarPeticionRest(peticion);
@@ -157,6 +165,10 @@ public class RestSecurityFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 
 	}
+	
+	
+	
+	
 
 	/**
 	 * Error firma invalida
@@ -287,5 +299,60 @@ public class RestSecurityFilter implements Filter {
 		return peticion;
 
 	}
+	
+	
+	/**
+	 * Crea un usuario ficticio. 
+	 * Los datos del usuario ficticio deberán existir en base de datos ya que en posteriores ejecuciones se accederá a ésta para login.
+	 * 
+	 * @param entidad de base de datos del usuario ficticio
+	 * @return user usuario ficticio.
+	 */
+	private UsuarioSecurity loadUser(Entidad entidad) {
+		UsuarioSecurity user = new UsuarioSecurity();
+		user.setId(-1L);
+		user.setUsername(RestApi.REST_LOGGED_USER_USERNAME);
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setEnabled(true);
+		user.setEntidad(entidad);
+		return user;
+	}
+	
+	
+
+	/**
+	 * Realiza el login de un usuario ficticio en una entidad de base de datos pasada por parámetro.
+	 * Los datos del usuario ficticio deberán existir en base de datos ya que en posteriores ejecuciones se accederá a ésta para login.
+	 * 
+	 * @param entidad de base de datos del usuario ficticio
+	 * @return securityContext
+	 */
+	protected SecurityContext doLogin(Entidad entidad) { 
+
+		if (Checks.esNulo(entidad)) {
+			logger.error("No se ha proporcionado la entidad de base de datos a la que conectarse.");
+			return null;
+		}
+
+		logger.debug("[INTEGRACION] Authenticando usuario para ws...");
+		UsuarioSecurity user = loadUser(entidad);
+		SecurityContext securityContext = SecurityContextHolder.getContext();
+		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(), RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
+		authToken.setDetails(user);
+		
+		
+		AuthenticationRestService authRestService = new AuthenticationRestService();
+		authRestService.setUserNameprefix("REST-");
+		
+		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
+		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
+		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
+		securityContext.setAuthentication(authentication);
+		logger.debug(String.format("Usuario autenticado [%s]!", authToken.getName()));
+		
+		return securityContext;
+	}
+
 
 }

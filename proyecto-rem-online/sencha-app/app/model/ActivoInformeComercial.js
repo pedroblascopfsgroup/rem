@@ -17,16 +17,96 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     			name:'fechaRecepcionLlaves'
     		},
      		{
-    			name:'tipoActivo'
+    			name:'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isViviendaMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['VIVIENDA'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isPlazaAparcamientoMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['PLAZA_APARCAMIENTO'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isLocalComercialMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isIndustrialMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['INDUSTRIAL'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isEdificioCompletoMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isSueloMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['SUELO'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isEnConstruccionMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'];
+    			},
+    			depends: 'tipoActivoCodigo'
+    		},
+    		{
+    			name: 'isOtrosMediador',
+    			calculate: function(data) {
+    				if(Ext.isEmpty(data.tipoActivoCodigo)){
+    					return false;
+    				}
+    				return data.tipoActivoCodigo == CONST.TIPOS_ACTIVO['OTROS'];
+    			},
+    			depends: 'tipoActivoCodigo'
     		},
      		{
-    			name:'subTipoActivo'
+    			name:'subtipoActivoCodigo'
     		},
      		{
     			name:'estadoActivo'
     		},
      		{
-    			name:'tipoVia'
+    			name:'tipoViaCodigo'
     		},
      		{
     			name:'nombreVia'
@@ -93,8 +173,29 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     		},
      		{
     			name:'justificacionRenta'
+    		},
+    		{
+    			name:'fechaEstimacionVenta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+     		{
+    			name:'fechaEstimacionRenta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'inferiorMunicipioCodigo'
+    		},
+    		{
+    			name: 'ubicacionActivoCodigo'
+    		},
+    		{
+    			name: 'derramaOrientativaComunidad'
+    		},
+    		{
+    			name: 'cuotaOrientativaComunidad'
     		}
-    		
     		
     ],
 	proxy: {

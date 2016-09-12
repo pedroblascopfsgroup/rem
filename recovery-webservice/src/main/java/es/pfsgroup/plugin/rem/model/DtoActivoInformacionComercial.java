@@ -23,6 +23,7 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Date fechaAceptacion;
 	private Date fechaRechazo;
 	private Date fechaUltimaVisita;
+	private Long codigoMediador;
 	private String nombreMediador;
 	private String emailMediador;
 	private String telefonoMediador;
@@ -72,11 +73,17 @@ public class DtoActivoInformacionComercial extends WebDto {
 	private Boolean reformaPortal;
 	private Boolean reformaAscensor;
 	private Boolean reformaCubierta;
+	private Boolean reformaOtrasZonasComunes;
+	private String entornoComunicaciones;
+	private String entornoInfraestructuras;
 	private String ediDescripcion;
 	private String reformaOtroDescEdificio;
 	
-	//Para la info de calidades
+	//Para la info de suelo e industrial.
+	private String infoDescripcion;
+	private String infoDistribucionInterior;
 	
+	//Para la info de calidades
 	private Integer ocio;
 	private Integer hoteles;
 	private String hotelesDesc;
@@ -245,8 +252,44 @@ public class DtoActivoInformacionComercial extends WebDto {
     private String tipoInfoComercialCodigo;
     private String tipoActivoCodigo;
 	
+	public String getInfoDescripcion() {
+		return infoDescripcion;
+	}
+	public void setInfoDescripcion(String infoDescripcion) {
+		this.infoDescripcion = infoDescripcion;
+	}
+	public String getInfoDistribucionInterior() {
+		return infoDistribucionInterior;
+	}
+	public void setInfoDistribucionInterior(String infoDistribucionInterior) {
+		this.infoDistribucionInterior = infoDistribucionInterior;
+	}
+	public String getEntornoComunicaciones() {
+		return entornoComunicaciones;
+	}
+	public void setEntornoComunicaciones(String entornoComunicaciones) {
+		this.entornoComunicaciones = entornoComunicaciones;
+	}
+	public String getEntornoInfraestructuras() {
+		return entornoInfraestructuras;
+	}
+	public void setEntornoInfraestructuras(String entornoInfraestructuras) {
+		this.entornoInfraestructuras = entornoInfraestructuras;
+	}
+	public Boolean getReformaOtrasZonasComunes() {
+		return reformaOtrasZonasComunes;
+	}
+	public void setReformaOtrasZonasComunes(Boolean reformaOtrasZonasComunes) {
+		this.reformaOtrasZonasComunes = reformaOtrasZonasComunes;
+	}
 	public String getNumeroActivo() {
 		return numeroActivo;
+	}
+	public Long getCodigoMediador() {
+		return codigoMediador;
+	}
+	public void setCodigoMediador(Long codigoMediador) {
+		this.codigoMediador = codigoMediador;
 	}
 	public void setNumeroActivo(String numeroActivo) {
 		this.numeroActivo = numeroActivo;

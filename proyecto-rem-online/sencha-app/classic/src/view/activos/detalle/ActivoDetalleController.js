@@ -1,3 +1,4 @@
+
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',    
@@ -290,11 +291,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				me.fireEvent("errorToast", Ext.decode(response.responseText).errorCreacion); 
     			else
     				me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//    			Ext.Msg.show({
-//        			   title: 'Nuevo trámite',
-//        			   msg: 'Trámite creado correctamente',
-//        			   buttons: Ext.MessageBox.OK
-//    			});
     		},
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
@@ -373,8 +369,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onChangeChainedCombo: function(combo) {
     	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);    	
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+    	
     	me.getViewModel().notify();
+    	
     	if(!Ext.isEmpty(chainedCombo.getValue())) {
 			chainedCombo.clearValue();
     	}
@@ -536,8 +534,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		me.lookupReference('usuarioGestor').getStore().getProxy().setExtraParams({'idTipoGestor':idTipoGestor});    
 		me.lookupReference('usuarioGestor').getStore().load();
-    	
-		//me.getView().fireEvent('onChangeTipoGestor',{idTipoGestor: idTipoGestor});
 	},
       
 	onChangeTipoTitulo: function(btn,value) {
@@ -629,8 +625,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		if (!activeTab.saveMultiple) {
 			if(activeTab && activeTab.getBindRecord && activeTab.getBindRecord()) {
-				/*activeTab.getForm().clearInvalid();
-				activeTab.getBindRecord().reject();*/
 				me.onClickBotonRefrescar();
 				
 			}
@@ -639,7 +633,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var records = activeTab.getBindRecords();
 			
 			for (i=0; i<records.length; i++) {
-				//records[i].reject();
 				me.onClickBotonRefrescar();
 			}
 
@@ -760,7 +753,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	updateOrdenFotosInterno: function(data, record, store) {
 
-		//store.beginUpdate();
 		var me = this;
 		me.storeGuardado = store;
 		me.ordenGuardado = 0;
@@ -772,11 +764,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			if (store.getData().items[i].data.orden != orden) {
 				store.getAt(i).data.orden = orden;
-				//store.getAt(i).dirty = true;
-				/*modificados[contadorModificados] = Ext.util.JSON.encode(store.getAt(i).data);
-				modificados[contadorModificados] = Ext.util.JSON.decode(modificados[contadorModificados]);
-				contadorModificados++;
-				*/
+				
 				//FIXME: ¿Poner máscara?
 				//me.getView().mask(HreRem.i18n("msg.mask.loading"));
 				var url =  $AC.getRemoteUrl('activo/updateFotosById');
@@ -790,8 +778,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    			
 	    		    ,success: function (a, operation, context) {
 
-	                	//me.getStore().load();
-	                    //context.store.load();
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
@@ -810,7 +796,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                },
 	                
 	                failure: function (a, operation, context) {
-	                	//context.store.load();
 	                	  Ext.toast({
 						     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN',
 						     width: 360,
@@ -834,8 +819,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
-    	
-    	//Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumento", {entidad: 'activo', idEntidad: idActivo, parent: grid}).show();
+
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarFoto", {idEntidad: idActivo, parent: grid}).show();
 		
 	},
@@ -859,8 +843,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 							idSeleccionados[i] = storeTemp.getAt(nodos[i].getAttribute('data-recordindex')).getId();
 							
 						}
-						
-						//idActivo = me.getViewModel().get("activo.id");
 			    		
 			        	var url =  $AC.getRemoteUrl('activo/deleteFotosActivoById');
 			    		Ext.Ajax.request({
@@ -878,7 +860,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									     height: 100,
 									     align: 't'
 									 });
-									 //me.unmask();
                                 },
                                 
                                 failure: function (a, operation, context) {
@@ -889,7 +870,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 									     height: 100,
 									     align: 't'									     
 									 });
-									 //me.unmask();
                                 }
 			    		     
 			    		 });
@@ -911,13 +891,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			config.url=$AC.getWebPath()+"activo/getFotoActivoById."+$AC.getUrlPattern();
 			config.params = {};
-	
-			/*for (var i=0; i<nodos.length; i++) {
-	
-				config.params.idFoto=storeTemp.getAt(nodos[i].getAttribute('data-recordindex')).getId();
-				me.fireEvent("downloadFile", config);
-				
-			}*/
 			
 			config.params.idFoto=storeTemp.getAt(nodos[0].getAttribute('data-recordindex')).getId();
 			
@@ -935,7 +908,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	    if(nodos) {
 	        
-	        node = nodos[0];//.getElementsByTagName('img');
+	        node = nodos[0];
 			cmp  = me.findComponentByElement(node);
 	        
 	        html = cmp.container.dom.innerHTML;
@@ -1025,8 +998,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		tooltip.setHtml(browser + ': ' +
             record.get(item.field) + '%' + ' ( ' + Ext.util.Format.currency(cantidad) + ' )');
-        /*tooltip.setHtml(browser + ' on ' + record.get('presupuesto') + ': ' +
-            record.get(item.field) + '%');*/
     },
 
     onColumnRender: function (v) {
@@ -1039,17 +1010,37 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickVerificarDireccion: function(btn) {
-    	
     	var me = this,
     	geoCodeAddr = null,
     	latLng = {};
-    	
-    	latLng.latitud = me.getViewModel().get("activo.latitud");
-    	latLng.longitud= me.getViewModel().get("activo.longitud");
+
+    	latLng.latitud = me.getViewModel().get("informeComercial.latitud");
+    	latLng.longitud= me.getViewModel().get("informeComercial.longitud");
     	geoCodeAddr = me.getViewModel().get("geoCodeAddr");
     	
-    	
     	Ext.create("HreRem.ux.window.geolocalizacion.ValidarGeoLocalizacion", {geoCodeAddr: geoCodeAddr, latLng: latLng,  parent: btn.up("form")}).show();  	
+    },
+    
+    // Este método comprueba si el municipio es 'Barcelona, Madrid, Valencia o Alicante/Alacant'.
+    checkDistrito: function(combobox) {
+    	var me = this;
+    	var view = me.getView();
+    	var distrito = combobox.getRawValue();
+    	
+    	// Comprobar distrito y mostrar u ocultar el textfield de distrito.
+    	if(Ext.isEmpty(distrito)) {
+    		view.lookupReference('fieldlabelDistrito').hide();
+    	} else if(distrito === 'Valencia'){
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else if(distrito === 'Barcelona') {
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else if(distrito === 'Madrid') {
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else if(distrito === 'Alicante/Alacant') {
+    		view.lookupReference('fieldlabelDistrito').show();
+    	} else {
+    		view.lookupReference('fieldlabelDistrito').hide();
+    	}
     },
     
     actualizarCoordenadas: function(parent, latitud, longitud) {
@@ -1182,12 +1173,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     // los componentes de cada sección que no esté seleccionada.
     onchkbxEstadoPublicacionChange: function(chkbx) {
     	var me = this;
-    	if(!chkbx.getValue()){
-    		// si el checkbox esta siendo desactivado no hacer nada.
+    	var id = chkbx.getReference();
+    	var view = me.getView();
+
+    	if(!chkbx.getValue() && id != "chkbxpublicacionforzada"){
+    		// si el checkbox esta siendo desactivado y no es de publicación, no hacer nada.
     		return;
     	}
-    	var id = chkbx.getId();
-    	var view = me.getView();
     	
     	switch (id){
     	case "chkbxpublicacionforzada":
@@ -1195,48 +1187,61 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
-    		view.lookupReference('comboboxpublicaciondespublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
     	case "chkbxpublicacionocultarprecio":
     		// checkbox.
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionpublicar').reset();
-    		view.lookupReference('comboboxpublicaciondespublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		break;
     	case "chkbxpublicaciondespublicar":
     		view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicacionocultacionforzada').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionpublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
-    		view.lookupReference('comboboxpublicacionocultacionforzada').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicacionocultacionforzada').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
     	case "chkbxpublicacionocultacionforzada":
     		// checkbox.
-    		view.lookupReference('chkbxpublicacionforzada').setValue(false);
     		view.lookupReference('chkbxpublicacionocultarprecio').setValue(false);
     		view.lookupReference('chkbxpublicaciondespublicar').setValue(false);
-    		// combobox.
-    		view.lookupReference('comboboxpublicacionpublicar').reset();
-    		view.lookupReference('comboboxpublicacionocultacionprecio').reset();
-    		view.lookupReference('comboboxpublicaciondespublicar').reset();
+    		// textfield.
+    		view.lookupReference('textfieldpublicacionpublicar').reset();
+    		view.lookupReference('textfieldpublicacionocultacionprecio').reset();
+    		view.lookupReference('textfieldpublicaciondespublicar').reset();
     		// textarea.
     		view.lookupReference('textareapublicacionocultacionprecio').reset();
     		break;
     	default:
     		break;
+    	}
+    },
+    
+    // Esta función es llamada cuando cambia el estado del combo 'otro' en los
+    // condicionantes de la publicación del activo. Muestra u oculta el área de
+    // texto que muestra el condicionante 'otro'.
+    onChangeComboOtro: function(combo) {
+    	var me = this;
+    	var view = me.getView();
+
+    	if(combo.getValue() === '0'){
+    		view.lookupReference('fieldtextCondicionanteOtro').reset();
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
+    	} else {
+    		view.lookupReference('fieldtextCondicionanteOtro').show();
     	}
     },
     
@@ -1262,5 +1267,88 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleTramite', grid, record);	
-    }
+    },
+    
+    onClickBotonCancelarOferta: function(btn) {	
+		var me = this,
+		window = btn.up('window');
+    	window.close();
+	},
+	
+	onClickBotonGuardarOferta: function(btn){
+		var me =this;
+		var window= btn.up('window'),
+		form= window.down('formBase');
+	
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.parent.funcionRecargar();
+	    	window.destroy();    	
+   		
+		};
+
+		me.onSaveFormularioCompletoOferta(form, success);	
+		
+	},
+	
+	// Este método copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisión'.
+	onClickCopiarDatosDelMediador: function(btn) {
+		var me =this;
+		var view = me.getView();
+
+		view.lookupReference('tipoActivoAdmisionInforme').setValue(view.lookupReference('tipoActivoMediadorInforme').getValue());
+		view.lookupReference('subtipoActivoComboAdmisionInforme').setValue(view.lookupReference('subtipoActivoComboMediadorInforme').getValue());
+		view.lookupReference('tipoViaAdmisionInforme').setValue(view.lookupReference('tipoViaMediadorInforme').getValue());
+		view.lookupReference('nombreViaAdmisionInforme').setValue(view.lookupReference('nombreViaMediadorInforme').getValue());
+		view.lookupReference('numeroAdmisionInforme').setValue(view.lookupReference('numeroMediadorInforme').getValue());
+		view.lookupReference('escaleraAdmisionInforme').setValue(view.lookupReference('escaleraMediadorInforme').getValue());
+		view.lookupReference('plantaAdmisionInforme').setValue(view.lookupReference('plantaMediadorInforme').getValue());
+		view.lookupReference('puertaAdmisionInforme').setValue(view.lookupReference('puertaMediadorInforme').getValue());
+		view.lookupReference('codPostalAdmisionInforme').setValue(view.lookupReference('codPostalMediadorInforme').getValue());
+		view.lookupReference('municipioComboAdmisionInforme').setValue(view.lookupReference('municipioComboMediadorInforme').getValue());
+		view.lookupReference('poblacionalAdmisionInforme').setValue(view.lookupReference('poblacionalMediadorInforme').getValue());
+		view.lookupReference('provinciaComboAdmisionInforme').setValue(view.lookupReference('provinciaComboMediadorInforme').getValue());
+		view.lookupReference('latitudAdmisionInforme').setValue(view.lookupReference('latitudmediador').getValue());
+		view.lookupReference('longitudAdmisionInforme').setValue(view.lookupReference('longitudmediador').getValue());
+		
+	},
+	
+	onSaveFormularioCompletoOferta: function(form, success) {
+		var me = this;
+		record = form.getBindRecord();
+		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
+		
+		if(form.isFormValid()) {
+
+			form.mask(HreRem.i18n("msg.mask.espere"));
+			
+			record.save({
+				
+			    success: success,
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+			    },
+			    callback: function(record, operation) {
+			    	form.unmask();
+			    }
+			    		    
+			});
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	
+	},
+	
+	onActivosVinculadosClick: function(tableView, indiceFila, indiceColumna) {
+    	var me = this;
+    	var grid = tableView.up('grid');
+    	var record = grid.store.getAt(indiceFila);
+
+    	grid.setSelection(record);
+
+    	me.getView().fireEvent('abrirDetalleActivo', record.get('activoVinculadoID'), "Activo " + record.get("activoVinculadoNumero"));
+	}
+	
 });

@@ -92,6 +92,15 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'reformaCubierta'
     		},
     		{
+    			name: 'reformaOtrasZonasComunes'
+    		},
+    		{
+    			name: 'entornoComunicaciones'
+    		},
+    		{
+    			name: 'entornoInfraestructuras'
+    		},
+    		{
     			name:'ediDescripcion'
     		},
     		{
@@ -263,13 +272,16 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     			name:'tipoRentaCodigo'
     		},
     		{
+    			name:'codigoMediador'
+    		},
+    		{
     			name:'nombreMediador'
     		},
     		{
-    			name:'telefonoMediador'
+    			name:'emailMediador'
     		},
     		{
-    			name:'emailMediador'
+    			name:'telefonoMediador'
     		},
     		//Parte de calidades
     		{
@@ -706,13 +718,17 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
     	    },
     	    {
     	    	name:'zonaComunOtros'
+    	    },
+    	    {
+    	    	name: 'infoDescripcion'
+    	    },
+    	    {
+    	    	name: 'infoDistribucionInterior'
     	    }
     ],
     
 	proxy: {
 		type: 'uxproxy',
-		localUrl: 'activos.json',
-		remoteUrl: 'activo/getTabActivo',
 		api: {
             read: 'activo/getTabActivo',
             create: 'activo/saveActivoInformacionComercial',
@@ -721,7 +737,5 @@ Ext.define('HreRem.model.ActivoInformacionComercial', {
         },
 		extraParams: {tab: 'informacioncomercial'}
     }
-    
-    
 
 });

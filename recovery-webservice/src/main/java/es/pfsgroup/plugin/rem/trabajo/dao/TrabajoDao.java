@@ -14,7 +14,7 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	/* Nombre que le damos al trabajo buscado en la HQL */
 	public static final String NAME_OF_ENTITY = "tbj";
 	
-	Page findAll(DtoTrabajoFilter dtoTrabajoFiltro, Usuario usuLogado);
+	Page findAll(DtoTrabajoFilter dtoTrabajoFiltro);
 	
 	Long getNextNumTrabajo();
 
@@ -31,5 +31,7 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	Page getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro,	Usuario usuarioLogado);
 	
 	Page getPresupuestosTrabajo(DtoGestionEconomicaTrabajo filtro,	Usuario usuarioLogado);
+	
+	Boolean existsTrabajo(DtoTrabajoFilter dtoTrabajoFiltro);
 
 }

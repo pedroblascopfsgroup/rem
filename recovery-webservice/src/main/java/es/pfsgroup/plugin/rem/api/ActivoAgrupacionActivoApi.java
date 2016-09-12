@@ -1,9 +1,12 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.List;
+
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 
 public interface ActivoAgrupacionActivoApi {
 	
@@ -40,5 +43,12 @@ public interface ActivoAgrupacionActivoApi {
 	public boolean estaAgrupacionActivoConFechaBaja(Activo activo);
 
 	public boolean isUniqueAgrupacionActivo(Activo activo, ActivoAgrupacion agrupacionActivo);
+	
+	/**
+	 * Devuelve una lista de ActivoAgrupacionActivo aplicando el filtro que recibe.
+	 * @param dtoAgrupActivo con los parametros de filtro
+	 * @return List<ActivoAgrupacionActivo> 
+	 */
+	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo);
 
 }

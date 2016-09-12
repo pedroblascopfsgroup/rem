@@ -27,6 +27,9 @@ public class VBusquedaTrabajos implements Serializable {
     @Column(name = "TBJ_NUM_TRABAJO")
     private String numTrabajo;
     
+    @Column(name = "TBJ_WEBCOM_ID")
+    private Long idTrabajoWebcom;
+    
     @Column(name="NUM_ACTIVO_AGRUPACION")
     private Long numActivoAgrupacion;
 
@@ -114,6 +117,14 @@ public class VBusquedaTrabajos implements Serializable {
 		this.numTrabajo = numTrabajo;
 	}
 	
+	public Long getIdTrabajoWebcom() {
+		return idTrabajoWebcom;
+	}
+
+	public void setIdTrabajoWebcom(Long idTrabajoWebcom) {
+		this.idTrabajoWebcom = idTrabajoWebcom;
+	}
+
 	public Long getNumActivoAgrupacion() {
 		return numActivoAgrupacion;
 	}

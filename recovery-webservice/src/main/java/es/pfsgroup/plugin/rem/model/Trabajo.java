@@ -68,6 +68,9 @@ public class Trabajo implements Serializable, Auditable {
     @Column(name = "TBJ_NUM_TRABAJO")
     private Long numTrabajo;
     
+    @Column(name = "TBJ_WEBCOM_ID")
+    private Long idTrabajoWebcom;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVC_ID")
     private ActivoProveedorContacto proveedorContacto;
@@ -251,6 +254,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setNumTrabajo(Long numTrabajo) {
 		this.numTrabajo = numTrabajo;
+	}
+
+	public Long getIdTrabajoWebcom() {
+		return idTrabajoWebcom;
+	}
+
+	public void setIdTrabajoWebcom(Long idTrabajoWebcom) {
+		this.idTrabajoWebcom = idTrabajoWebcom;
 	}
 
 	public DDTipoTrabajo getTipoTrabajo() {

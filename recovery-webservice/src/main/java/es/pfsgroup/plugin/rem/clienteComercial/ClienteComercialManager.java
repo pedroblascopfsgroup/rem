@@ -2,7 +2,8 @@ package es.pfsgroup.plugin.rem.clienteComercial;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -405,7 +406,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	
 	@Override
 	@Transactional(readOnly = false)
-	public List<String> updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Map<String, Object> requestMap) {
+	public List<String> updateClienteComercial(ClienteComercial cliente, ClienteDto clienteDto, Object jsonFields) {
 		List<String> errorsList = null;
 		
 		try{
@@ -414,25 +415,25 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			errorsList = validateClientePostRequestData(clienteDto, false);
 			if(errorsList.isEmpty()){
 					
-				if(requestMap.containsKey("idClienteWebcom")){
+				if(((JSONObject)jsonFields).containsKey("idClienteWebcom")){
 					cliente.setIdClienteWebcom(clienteDto.getIdClienteWebcom());
 				}
-				if(requestMap.containsKey("idClienteRem")){
+				if(((JSONObject)jsonFields).containsKey("idClienteRem")){
 					cliente.setIdClienteRem(clienteDto.getIdClienteRem());
 				}
-				if(requestMap.containsKey("razonSocial")){
+				if(((JSONObject)jsonFields).containsKey("razonSocial")){
 					cliente.setRazonSocial(clienteDto.getRazonSocial());
 				}
-				if(requestMap.containsKey("nombre")){
+				if(((JSONObject)jsonFields).containsKey("nombre")){
 					cliente.setNombre(clienteDto.getNombre());
 				}
-				if(requestMap.containsKey("apellidos")){
+				if(((JSONObject)jsonFields).containsKey("apellidos")){
 					cliente.setApellidos(clienteDto.getApellidos());
 				}
-				if(requestMap.containsKey("fechaAccion")){
+				if(((JSONObject)jsonFields).containsKey("fechaAccion")){
 					cliente.setFechaAccion(clienteDto.getFechaAccion());
 				}
-				if(requestMap.containsKey("idUsuarioRem")) {
+				if(((JSONObject)jsonFields).containsKey("idUsuarioRem")) {
 					if(!Checks.esNulo(clienteDto.getIdUsuarioRem())){
 						Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRem()));							
 						if(!Checks.esNulo(user)) {
@@ -442,7 +443,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setUsuarioAccion(null);
 					}
 				}
-				if(requestMap.containsKey("codTipoDocumento")) {					
+				if(((JSONObject)jsonFields).containsKey("codTipoDocumento")) {					
 					if(!Checks.esNulo(clienteDto.getCodTipoDocumento())){
 						DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));							
 						if(!Checks.esNulo(tipoDoc)){ 
@@ -452,10 +453,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoDocumento(null);
 					}		
 				}
-				if(requestMap.containsKey("documento")){
+				if(((JSONObject)jsonFields).containsKey("documento")){
 					cliente.setDocumento(clienteDto.getDocumento());
 				}
-				if(requestMap.containsKey("codTipoDocumentoRepresentante")) {					
+				if(((JSONObject)jsonFields).containsKey("codTipoDocumentoRepresentante")) {					
 					if(!Checks.esNulo(clienteDto.getCodTipoDocumentoRepresentante())){
 						DDTipoDocumento tipoDocRep = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumentoRepresentante()));							
 						if(!Checks.esNulo(tipoDocRep)){
@@ -465,19 +466,19 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoDocumentoRepresentante(null);
 					}		
 				}
-				if(requestMap.containsKey("documentoRepresentante")){
+				if(((JSONObject)jsonFields).containsKey("documentoRepresentante")){
 					cliente.setDocumentoRepresentante(clienteDto.getDocumentoRepresentante());
 				}
-				if(requestMap.containsKey("telefono1")){
+				if(((JSONObject)jsonFields).containsKey("telefono1")){
 					cliente.setTelefono1(clienteDto.getTelefono1());
 				}
-				if(requestMap.containsKey("telefono2")){
+				if(((JSONObject)jsonFields).containsKey("telefono2")){
 					cliente.setTelefono2(clienteDto.getTelefono2());
 				}
-				if(requestMap.containsKey("email")){
+				if(((JSONObject)jsonFields).containsKey("email")){
 					cliente.setEmail(clienteDto.getEmail());
 				}
-				if(requestMap.containsKey("codTipoPrescriptor")){
+				if(((JSONObject)jsonFields).containsKey("codTipoPrescriptor")){
 					if(!Checks.esNulo(clienteDto.getCodTipoPrescriptor())){
 						DDTiposColaborador tipoCol= (DDTiposColaborador) genericDao.get(DDTiposColaborador.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoPrescriptor()));							
 						if(!Checks.esNulo(tipoCol)){
@@ -487,7 +488,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoColaborador(null);
 					}
 				}
-				if(requestMap.containsKey("idPrescriptor")){					
+				if(((JSONObject)jsonFields).containsKey("idPrescriptor")){					
 					if(!Checks.esNulo(clienteDto.getIdPrescriptor())){
 						ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdPrescriptor()));							
 						if(!Checks.esNulo(prescriptor)){
@@ -497,7 +498,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setProvPrescriptor(null);
 					}
 				}
-				if(requestMap.containsKey("idApiResponsable")){
+				if(((JSONObject)jsonFields).containsKey("idApiResponsable")){
 					if(!Checks.esNulo(clienteDto.getIdApiResponsable())){
 						ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdApiResponsable()));							
 						if(!Checks.esNulo(apiResp)){
@@ -507,7 +508,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setProvApiResponsable(null);
 					}
 				}			
-				if(requestMap.containsKey("codTipoVia")){
+				if(((JSONObject)jsonFields).containsKey("codTipoVia")){
 					if(!Checks.esNulo(clienteDto.getCodTipoVia())){
 						DDTipoVia tipovia = (DDTipoVia) genericDao.get(DDTipoVia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoVia()));							
 						if(!Checks.esNulo(tipovia)){
@@ -517,25 +518,25 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoVia(null);
 					}
 				}
-				if(requestMap.containsKey("direccion")){
+				if(((JSONObject)jsonFields).containsKey("direccion")){
 					cliente.setDireccion(clienteDto.getDireccion());
 				}
-				if(requestMap.containsKey("numeroCalle")){
+				if(((JSONObject)jsonFields).containsKey("numeroCalle")){
 					cliente.setNumeroCalle(clienteDto.getNumeroCalle());
 				}
-				if(requestMap.containsKey("escalera")){
+				if(((JSONObject)jsonFields).containsKey("escalera")){
 					cliente.setEscalera(clienteDto.getEscalera());
 				}
-				if(requestMap.containsKey("planta")){
+				if(((JSONObject)jsonFields).containsKey("planta")){
 					cliente.setPlanta(clienteDto.getPlanta());
 				}
-				if(requestMap.containsKey("puerta")){
+				if(((JSONObject)jsonFields).containsKey("puerta")){
 					cliente.setPuerta(clienteDto.getPuerta());
 				}
-				if(requestMap.containsKey("codigoPostal")){
+				if(((JSONObject)jsonFields).containsKey("codigoPostal")){
 					cliente.setCodigoPostal(clienteDto.getCodigoPostal());
 				}
-				if(requestMap.containsKey("codProvincia")){
+				if(((JSONObject)jsonFields).containsKey("codProvincia")){
 					if(!Checks.esNulo(clienteDto.getCodProvincia())){
 						DDProvincia provincia = (DDProvincia) genericDao.get(DDProvincia.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodProvincia()));							
 						if(!Checks.esNulo(provincia)){
@@ -545,7 +546,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setProvincia(null);
 					}
 				}				
-				if(requestMap.containsKey("codMunicipio")){
+				if(((JSONObject)jsonFields).containsKey("codMunicipio")){
 					if(!Checks.esNulo(clienteDto.getCodMunicipio())){
 						Localidad localidad = (Localidad) genericDao.get(Localidad.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodMunicipio()));							
 						if(!Checks.esNulo(localidad)){
@@ -555,7 +556,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setMunicipio(null);
 					}
 				}
-				if(requestMap.containsKey("codPedania")){
+				if(((JSONObject)jsonFields).containsKey("codPedania")){
 					if(!Checks.esNulo(clienteDto.getCodPedania())){
 						DDUnidadPoblacional pedania = (DDUnidadPoblacional) genericDao.get(DDUnidadPoblacional.class, genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodPedania()));							
 						if(!Checks.esNulo(pedania)){
@@ -565,7 +566,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setUnidadPoblacional(null);
 					}
 				}
-				if(requestMap.containsKey("observaciones")){
+				if(((JSONObject)jsonFields).containsKey("observaciones")){
 					cliente.setObservaciones(clienteDto.getObservaciones());
 				}
 			

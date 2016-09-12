@@ -22,6 +22,8 @@ import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
+
+
 @Service("restManager")
 public class RestManagerImpl implements RestApi {
 
@@ -30,7 +32,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	PeticionDao peticionDao;
-
+	
+	
+	
 	@Override
 	public boolean validateSignature(Broker broker, String signature, String peticion)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -118,7 +122,6 @@ public class RestManagerImpl implements RestApi {
 	public PeticionRest getLastPeticionByToken(String token){
 		return peticionDao.getLastPeticionByToken(token);
 	}
-
 
 	
 

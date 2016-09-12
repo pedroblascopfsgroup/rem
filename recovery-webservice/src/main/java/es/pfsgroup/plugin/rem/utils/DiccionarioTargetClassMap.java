@@ -10,16 +10,19 @@ import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesFinancieras;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -27,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -37,8 +41,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
@@ -49,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFachada;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
@@ -67,7 +74,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVivienda;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposCompareciente;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 
 @Component
 public class DiccionarioTargetClassMap{
@@ -110,6 +121,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("subtiposTitulo", DDSubtipoTituloActivo.class);
 		mapa.put("estadosTitulo", DDEstadoTitulo.class);
 		mapa.put("tiposUbicacion", DDTipoUbicacion.class);
+		mapa.put("ubicacionActivo", DDUbicacionActivo.class);
 		mapa.put("ubicacionesAparcamiento", DDTipoUbicaAparcamiento.class);
 		mapa.put("estadosConstruccion", DDEstadoConstruccion.class);
 		mapa.put("estadosConservacion", DDEstadoConservacion.class);
@@ -155,7 +167,16 @@ public class DiccionarioTargetClassMap{
 		mapa.put("subtipoProveedor", DDTipoProveedor.class);
 		mapa.put("tipoPersona", DDTipoPersona.class);
 		mapa.put("municipio", Localidad.class);
-		
+		mapa.put("tiposDocumentos", DDTipoDocumento.class);
+		mapa.put("tiposDocumentoExpediente", DDTipoDocumentoExpediente.class);
+		mapa.put("subtiposDocumentoExpediente", DDSubtipoDocumentoExpediente.class);
+		mapa.put("unidadPoblacional", DDUnidadPoblacional.class);
+		mapa.put("estadosFinanciacion", DDEstadoFinanciacion.class);
+		mapa.put("entidadesFinancieras", DDEntidadesFinancieras.class);
+		mapa.put("tiposPorCuenta", DDTiposPorCuenta.class);
+		mapa.put("tiposImpuestos", DDTiposImpuesto.class);
+		mapa.put("situacionesPosesoria", DDSituacionesPosesoria.class);
+		mapa.put("tiposComparecientes", DDTiposCompareciente.class);
 		return Collections.unmodifiableMap(mapa);
 	}
 	

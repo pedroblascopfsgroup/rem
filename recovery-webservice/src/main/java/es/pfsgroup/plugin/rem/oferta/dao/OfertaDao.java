@@ -1,12 +1,15 @@
 package es.pfsgroup.plugin.rem.oferta.dao;
 
 
+import java.util.List;
+
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
 
 public interface OfertaDao extends AbstractDao<Oferta, Long>{
@@ -23,7 +26,9 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	public Page getListTextosOfertaById(DtoTextosOferta dto, Long id);
 	
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter);
+
+	public Long getNextNumOfertaRem();
 	
-	
+	public List<Oferta> getListaOfertas(OfertaDto ofertaDto);
 
 }

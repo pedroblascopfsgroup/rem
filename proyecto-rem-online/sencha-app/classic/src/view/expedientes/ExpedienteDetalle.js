@@ -3,9 +3,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     xtype		: 'expedientedetalle',
 	cls			: 'panel-base shadow-panel tabPanel-segundo-nivel',
     requires : ['HreRem.view.expedientes.DatosBasicosExpediente', 'HreRem.view.expedientes.OfertaExpediente',
-    			'HreRem.view.expedientes.ReservaExpediente'],
-    
-		
+    			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente',
+    			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
+    			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
+    			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente'],
+
     listeners: {
    		
 			boxready: function (tabPanel) {
@@ -92,8 +94,29 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        {
 		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
 		        },
+{
+		        	xtype: 'condicionesexpediente'
+		        },
+ {
+		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
+		        },
 		        {
-		        	xtype: 'reservaexpediente' 
+		        	xtype: 'reservaexpediente' , bind: {disabled: '{!expediente.tieneReserva}'}
+		        },
+		        {
+		        	xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'documentosexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'formalizacionexpediente', ocultarBotonesEdicion: true
+		        },
+		        {
+		        	xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true
 		        }
 
 		],

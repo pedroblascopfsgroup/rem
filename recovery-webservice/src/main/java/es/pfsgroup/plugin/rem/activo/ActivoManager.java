@@ -53,6 +53,8 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoValoraciones;
+import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -62,17 +64,21 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
@@ -81,6 +87,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -264,7 +271,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			oferta.setEstadoOferta(tipoOferta);
 			
 			//Si el estado de la oferta cambia a Aceptada cambiamos el resto de estados a Congelada excepto los que ya estuvieran en Rechazada
-			if(tipoOferta.getCodigo().equals("01")){
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())){
 				List<VOfertasActivosAgrupacion> listaOfertas= activoAdapter.getListOfertasActivos(dto.getIdActivo());
 				
 				for(VOfertasActivosAgrupacion vOferta: listaOfertas){
@@ -274,14 +281,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						Oferta ofertaFiltro = genericDao.get(Oferta.class, filtroOferta);
 						
 						DDEstadoOferta vTipoOferta = ofertaFiltro.getEstadoOferta();
-						if(!vTipoOferta.getCodigo().equals("02")){
-							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, "03");
+						if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(vTipoOferta.getCodigo())){
+							DDEstadoOferta vTipoOfertaActualizar = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_CONGELADA);
 							ofertaFiltro.setEstadoOferta(vTipoOfertaActualizar);
 						}
 					}
 				}
+
+				List<Activo>listaActivos= new ArrayList<Activo>();
+				for(ActivoOferta activoOferta: oferta.getActivosOferta()){
+					listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+				}
+				DDSubtipoTrabajo subtipoTrabajo= (DDSubtipoTrabajo) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, DDSubtipoTrabajo.CODIGO_SANCION_OFERTA);
+				Trabajo trabajo= trabajoApi.create(subtipoTrabajo, listaActivos, null);
 				
-				crearExpediente(oferta);
+				crearExpediente(oferta, trabajo);
 				
 			}
 			
@@ -296,11 +310,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	    return resultado;
 	}
 	
-	public boolean crearExpediente(Oferta oferta){
+	public boolean crearExpediente(Oferta oferta, Trabajo trabajo){
 		
 		try{
 			ExpedienteComercial nuevoExpediente= new ExpedienteComercial();
-			Visita visita = null;
 			List<Visita> listaVisitasCliente = new ArrayList<Visita>();
 			
 			// Si el activo principal de la oferta aceptada tiene visitas, 
@@ -327,6 +340,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDEstadosExpedienteComercial estadoExpediente = (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosExpedienteComercial.class, "01");
 			nuevoExpediente.setEstado(estadoExpediente);
 			nuevoExpediente.setNumExpediente(activoDao.getNextNumOferta());
+			nuevoExpediente.setTrabajo(trabajo);
 			genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 			
 		}catch(Exception ex) {
@@ -344,43 +358,43 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@BusinessOperation(overrides = "activoManager.saveActivoValoracion")
 	@Transactional(readOnly = false)
 	public boolean saveActivoValoracion(Activo activo, ActivoValoraciones activoValoracion, DtoPrecioVigente dto) {
-
-		// Actualizacion Valoracion existente
-		if (!Checks.esNulo(activoValoracion)) {
-			// Si ya existia una valoracion, actualizamos el importe que se ha
-			// modificado por web
-			// Pero antes, pasa la valoracion anterior al historico
-			saveActivoValoracionHistorico(activoValoracion);
-
-			// Actualiza la valoracion: nuevo importe y nuevo periodo de
-			// vigencia
-			activoValoracion.setImporte(dto.getImporte());
-			activoValoracion.setFechaInicio(dto.getFechaInicio());
-			activoValoracion.setFechaFin(dto.getFechaFin());
-			activoValoracion.setFechaCarga(new Date());
-
-			genericDao.update(ActivoValoraciones.class, activoValoracion);
-
-		} else {
-
-			// Si no existia una valoracion del tipo indicado, crea una nueva
-			// valoracion de este tipo (para un activo)
-			activoValoracion = new ActivoValoraciones();
-			DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class,
-					dto.getCodigoTipoPrecio());
-
-			activoValoracion.setActivo(activo);
-			activoValoracion.setTipoPrecio(tipoPrecio);
-			activoValoracion.setImporte(dto.getImporte());
-			activoValoracion.setFechaInicio(dto.getFechaInicio());
-			activoValoracion.setFechaFin(dto.getFechaFin());
-			activoValoracion.setFechaAprobacion(null);
-			activoValoracion.setFechaCarga(new Date());
-			activoValoracion.setGestor(adapter.getUsuarioLogado());
-
-			genericDao.save(ActivoValoraciones.class, activoValoracion);
+		try {
+		
+			// Actualizacion Valoracion existente
+			if (!Checks.esNulo(activoValoracion)) {
+				// Si ya existia una valoracion, actualizamos el importe que se ha
+				// modificado por web
+				// Pero antes, pasa la valoracion anterior al historico
+				saveActivoValoracionHistorico(activoValoracion);
+				
+				beanUtilNotNull.copyProperties(activoValoracion, dto);
+				activoValoracion.setFechaCarga(new Date());
+				
+				genericDao.update(ActivoValoraciones.class, activoValoracion);
+	
+			} else {
+	
+				// Si no existia una valoracion del tipo indicado, crea una nueva
+				// valoracion de este tipo (para un activo)
+				activoValoracion = new ActivoValoraciones();
+				beanUtilNotNull.copyProperties(activoValoracion, dto);
+				activoValoracion.setFechaCarga(new Date());
+				
+				DDTipoPrecio tipoPrecio = (DDTipoPrecio) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPrecio.class,
+						dto.getCodigoTipoPrecio());
+	
+				activoValoracion.setActivo(activo);
+				activoValoracion.setTipoPrecio(tipoPrecio);
+				activoValoracion.setGestor(adapter.getUsuarioLogado());
+	
+				genericDao.save(ActivoValoraciones.class, activoValoracion);
+			}
+			
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			return false;
 		}
-
+		
 		return true;
 	}
 
@@ -744,6 +758,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return condicionantesDisponibilidad;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dtoCondicionanteDisponibilidad) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+
+		try {
+			beanUtilNotNull.copyProperty(condicionantesDisponibilidad, "otro", dtoCondicionanteDisponibilidad.getOtro());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return false;
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		genericDao.save(ActivoSituacionPosesoria.class, condicionantesDisponibilidad);
+		
+		return true;
+	}
 
 	@Override
 	public List<DtoCondicionEspecifica> getCondicionEspecificaByActivo(Long idActivo) {
@@ -866,9 +901,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "fechaHasta", estado.getFechaHasta());
 				if(!Checks.esNulo(estado.getPortal())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", estado.getPortal().getDescripcion());
+				} else {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "portal", "-");
 				}
 				if(!Checks.esNulo(estado.getTipoPublicacion())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", estado.getTipoPublicacion().getDescripcion());
+				} else {
+					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "tipoPublicacion", "-");
 				}
 				if(!Checks.esNulo(estado.getEstadoPublicacion())) {
 					beanUtilNotNull.copyProperty(dtoEstadoPublicacion, "estadoPublicacion", estado.getEstadoPublicacion().getDescripcion());
@@ -926,6 +965,39 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaDtoEstadosInfoComercial;
+	}
+	
+	@Override
+	public List<DtoHistoricoMediador> getHistoricoMediadorByActivo(Long idActivo){
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.ASC, "id");
+		List<ActivoInformeComercialHistoricoMediador> listaHistoricoMediador = genericDao
+				.getListOrdered(ActivoInformeComercialHistoricoMediador.class, order, filtro);
+		
+		List<DtoHistoricoMediador> listaDtoHistoricoMediador = new ArrayList<DtoHistoricoMediador>();
+		
+		for (ActivoInformeComercialHistoricoMediador historico : listaHistoricoMediador) {
+			DtoHistoricoMediador dtoHistoricoMediador = new DtoHistoricoMediador();
+			try {
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "id", idActivo);
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaDesde", historico.getFechaDesde());
+				beanUtilNotNull.copyProperty(dtoHistoricoMediador, "fechaHasta", historico.getFechaHasta());
+				if(!Checks.esNulo(historico.getMediadorInforme())){
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "codigo", historico.getMediadorInforme().getId());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "mediador", historico.getMediadorInforme().getNombre());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getMediadorInforme().getTelefono1());
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getMediadorInforme().getEmail());
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			listaDtoHistoricoMediador.add(dtoHistoricoMediador);
+		}
+		
+		return listaDtoHistoricoMediador;
 	}
 
 	@Override
@@ -1020,5 +1092,84 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			dto.setPortalesExternos(this.ESTADO_PORTALES_EXTERNOS_NO_PUBLICADO);
 		}
 		return dto;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DtoPropuestaActivosVinculados> getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+		Page p = activoDao.getPropuestaActivosVinculadosByActivo(dto);
+		List<PropuestaActivosVinculados> activosVinculados = (List<PropuestaActivosVinculados>) p.getResults();
+		List<DtoPropuestaActivosVinculados> dtoActivosVinculados = new ArrayList<DtoPropuestaActivosVinculados>();
+		
+		for(PropuestaActivosVinculados vinculado: activosVinculados) {
+			DtoPropuestaActivosVinculados nuevoDto = new DtoPropuestaActivosVinculados();
+			try {
+				beanUtilNotNull.copyProperty(nuevoDto, "id", vinculado.getId());
+				beanUtilNotNull.copyProperty(nuevoDto, "activoVinculadoNumero", vinculado.getActivoVinculado().getNumActivo());
+				beanUtilNotNull.copyProperty(nuevoDto, "activoVinculadoID", vinculado.getActivoVinculado().getId());
+				beanUtilNotNull.copyProperty(nuevoDto, "totalCount", p.getTotalCount());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+			
+			if(!Checks.esNulo(nuevoDto)) {
+				dtoActivosVinculados.add(nuevoDto);
+			}
+		}
+
+		return dtoActivosVinculados;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+		PropuestaActivosVinculados propuestaActivosVinculados = new PropuestaActivosVinculados();
+		Activo activoOrigen = activoDao.get(dto.getActivoOrigenID());
+		Activo activoVinculado = activoDao.getActivoByNumActivo(dto.getActivoVinculadoNumero());
+		
+		if(Checks.esNulo(activoVinculado) || Checks.esNulo(activoOrigen)){
+			// No se ha encontrado algún activo. El activo origen por ID. El activo vinculado por numero de activo.
+			return false;
+		}
+		
+		try {
+			beanUtilNotNull.copyProperty(propuestaActivosVinculados, "activoOrigen", activoOrigen);
+			beanUtilNotNull.copyProperty(propuestaActivosVinculados, "activoVinculado", activoVinculado);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+
+		genericDao.save(PropuestaActivosVinculados.class, propuestaActivosVinculados);
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean deletePropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+		Long id;
+		
+		try{
+			id = Long.parseLong(dto.getId());
+		} catch(NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		PropuestaActivosVinculados activoVinculado = activoDao.getPropuestaActivosVinculadosByID(id);
+		
+		if(!Checks.esNulo(activoVinculado)) {
+			activoVinculado.getAuditoria().setBorrado(true);
+			activoVinculado.getAuditoria().setFechaBorrar(new Date());
+			activoVinculado.getAuditoria().setUsuarioBorrar(adapter.getUsuarioLogado().getUsername());
+			genericDao.update(PropuestaActivosVinculados.class, activoVinculado);
+			return true;
+		}
+		
+		return false;
 	}
 }

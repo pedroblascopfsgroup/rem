@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
@@ -25,15 +27,25 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfiguratorTemplate;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
@@ -50,6 +62,12 @@ public class ExpedienteComercialController {
 	
 	@Autowired
 	private List<ExpedienteAvisadorApi> avisadores;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private TrabajoAdapter trabajoAdapter;
 	
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
@@ -219,6 +237,362 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCondicionesExpediente(DtoCondiciones dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveCondicionesExpediente(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getObservaciones(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto = expedienteComercialApi.getListObservaciones(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveObservacion(DtoObservacion dtoObservacion){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.saveObservacion(dtoObservacion);
+			model.put("success", success);			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createObservacion(DtoObservacion dtoObservacion, Long idEntidad){
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.createObservacion(dtoObservacion, idEntidad);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteObservacion(@RequestParam Long id){
+		
+		ModelMap model = new ModelMap();		
+		try {
+			boolean success = expedienteComercialApi.deleteObservacion(id);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getActivosExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getActivosExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoExpediente (HttpServletRequest request, HttpServletResponse response) {
+        
+		DtoAdjuntoExpediente dtoAdjunto = new DtoAdjuntoExpediente();
+		
+		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
+		dtoAdjunto.setIdExpediente(Long.parseLong(request.getParameter("idExpediente")));
+	
+		
+       	FileItem fileItem = expedienteComercialApi.getFileItemAdjunto(dtoAdjunto);
+		
+       	try { 
+       		ServletOutputStream salida = response.getOutputStream(); 
+       			
+       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+       		response.setHeader("Cache-Control", "max-age=0");
+       		response.setHeader("Expires", "0");
+       		response.setHeader("Pragma", "public");
+       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+       		response.setContentType(fileItem.getContentType());
+       		
+       		// Write
+       		FileUtils.copy(fileItem.getInputStream(), salida);
+       		salida.flush();
+       		salida.close();
+       		
+       	} catch (Exception e) { 
+       		e.printStackTrace();
+       	}
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntos(Long idExpediente, ModelMap model){
+
+		model.put("data", expedienteComercialApi.getAdjuntos(idExpediente));
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	/**
+	 * Recibe y guarda un adjunto
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView upload(HttpServletRequest request, HttpServletResponse response)
+		throws Exception {
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			
+			String errores = expedienteComercialApi.upload(fileItem);			
+
+			model.put("errores", errores);
+			model.put("success", errores==null);
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("errores", e.getCause());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+     * Borra un adjunto del expediente comercial
+     * @param asuntoId long
+     * @param adjuntoId long
+     */
+	@RequestMapping(method = RequestMethod.POST)
+    public ModelAndView deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
+		
+		boolean success= false;
+		
+		try {
+			success = expedienteComercialApi.deleteAdjunto(dtoAdjunto);
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+    	
+    	return createModelAndViewJson(new ModelMap("success", success));
+    }
+	
+	/**
+	 * Recupera los tramites asociados al expediente comercial
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTramitesTareas(Long idExpediente, WebDto webDto, ModelMap model) {
+		
+		ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
+		List<DtoListadoTramites> tramites = trabajoAdapter.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
+		
+		// TODO Cambiar si finalmente es posible que un trababjo tenga más de un trámite
+		DtoListadoTramites tramite = new DtoListadoTramites(); 
+		if(!Checks.estaVacio(tramites)) {
+			tramite = tramites.get(0);
+		}
+		
+		model.put("tramite", tramite);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getPosicionamientosExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getPosicionamientosExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComparecientesExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getComparecientesExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSubsanacionesExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getSubsanacionesExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getNotariosExpediente(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getNotariosExpediente(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosSoportadoPropietario(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getGastosSoportadoPropietario(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosSoportadoHaya(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getGastosSoportadoHaya(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

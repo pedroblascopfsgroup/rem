@@ -1,9 +1,20 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.expedientedetalle',    
+    alias: 'controller.expedientedetalle',  
+    requires: ['HreRem.view.expedientes.NotarioSeleccionado'],
     
     control: {
-   	         
+    	'documentosexpediente gridBase': {
+            abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
+            onClickRemove: 'borrarDocumentoAdjunto',
+            download: 'downloadDocumentoAdjunto',
+            afterupload: function(grid) {
+            	grid.getStore().load();
+            },
+            afterdelete: function(grid) {
+            	grid.getStore().load();
+            }
+        }
     },
 	
 	
@@ -81,11 +92,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onSaveFormularioCompleto: function(btn, form) {
-
 		var me = this;
 		
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
-		if(form.isFormValid() || form.disableValidation) {
+		if(form.isFormValid() && form.disableValidation) {
 
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -171,7 +181,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
     
 	onClickBotonGuardar: function(btn) {
-		
 		var me = this;	
 		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());				
 	},
@@ -253,6 +262,242 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		me.getView().fireEvent("refrescarExpediente", me.getView());
 		
-	}	
+	},
+
+	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna){
+		var me = this;
+		var grid = tableView.up('grid');
+		var record = grid.store.getAt(indiceFila);
+		
+		grid.setSelection(record);
+		
+		//grid.fireEvent("abriractivo", record);
+		me.getView().fireEvent('abrirDetalleActivoPrincipal', record.get('idActivo'));
+	},
+
+	abrirFormularioAdjuntarDocumentos: function(grid) {
+		
+		var me = this,
+		idExpediente = me.getViewModel().get("expediente.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", {entidad: 'expedientecomercial', idEntidad: idExpediente, parent: grid}).show();
+		
+	},
+	
+	borrarDocumentoAdjunto: function(grid, record) {
+		var me = this;
+		idExpediente = me.getViewModel().get("expediente.id");
+
+		record.erase({
+			params: {idExpediente: idExpediente},
+            success: function(record, operation) {
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+           		 grid.fireEvent("afterdelete", grid);
+            },
+            failure: function(record, operation) {
+                  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                  grid.fireEvent("afterdelete", grid);
+            }
+            
+        });	
+	},
+	
+	downloadDocumentoAdjunto: function(grid, record) {
+		
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"expedientecomercial/bajarAdjuntoExpediente."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idExpediente=record.get("idExpediente");
+		
+		me.fireEvent("downloadFile", config);
+	},
+	
+	onListadoTramitesTareasExpedienteDobleClick : function(gridView,record) {
+		var me = this;
+		
+		if(Ext.isEmpty(record.get("fechaFin"))) { // Si la tarea está activa
+			me.getView().fireEvent('abrirDetalleTramiteTarea',gridView,record);
+		} else {
+			me.getView().fireEvent('abrirDetalleTramiteHistoricoTarea',gridView,record);
+		}
+	},
+	
+	onHaCambiadoSolicitaFinanciacion: function(combo, value){
+		var me = this,
+    	disabled = value == 0,
+    	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
+    	
+    	entidadFinanciacion.setDisabled(disabled);
+    	entidadFinanciacion.allowBlank = disabled;
+    	
+    	
+    	if(disabled) {
+    		entidadFinanciacion.setValue("");
+    	}
+	},
+	
+	onHaCambiadoTipoCalculo: function(combo, value){
+		var me = this;
+		var valorCombo= combo.getValue();
+		porcentajeReserva = me.lookupReference('porcentajeReserva');
+		importeReserva = me.lookupReference('importeReserva');
+		plazoParaFirmar = me.lookupReference('plazoFirmaReserva');
+		
+		if(valorCombo=='01'){
+			importeReserva.setValue("");
+			porcentajeReserva.setDisabled(false);
+			porcentajeReserva.allowBlank= false;
+			importeReserva.setDisabled(false)
+			importeReserva.setEditable(false);
+			importeReserva.allowBlank= true;
+			plazoParaFirmar.allowBlank= false;
+			plazoParaFirmar.setDisabled(false);
+		}
+		else if(valorCombo=='02'){
+			porcentajeReserva.setValue("");
+			porcentajeReserva.setDisabled(true);
+			importeReserva.setDisabled(false);
+			importeReserva.setEditable(true);
+			importeReserva.allowBlank= false;
+			plazoParaFirmar.allowBlank= false;
+			plazoParaFirmar.setDisabled(false);
+		}else{
+			porcentajeReserva.setValue("");
+			importeReserva.setValue("");
+			plazoParaFirmar.setValue("");
+			importeReserva.setDisabled(true);
+			porcentajeReserva.setDisabled(true);
+			plazoParaFirmar.setDisabled(true);
+			
+		}	
+	},
+	
+	onHaCambiadoPlusvalia: function(combo, value){
+		var me= this;
+		
+		porCuentaDe= me.lookupReference('plusvaliaPorCuentaDe');
+		
+		if(value>0){
+			porCuentaDe.setDisabled(false);
+			porCuentaDe.allowBlank= false;
+		}else{
+			porCuentaDe.setDisabled(true);
+			porCuentaDe.setValue("");
+		}
+	},
+	
+	onHaCambiadoNotaria: function(combo, value){
+		var me= this;
+		
+		notariaPorCuentaDe= me.lookupReference('notariaPorCuentaDe');
+		
+		if(value>0){
+			notariaPorCuentaDe.setDisabled(false);
+			notariaPorCuentaDe.allowBlank= false;
+		}else{
+			notariaPorCuentaDe.setValue("");
+			notariaPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoCompraVentaOtros: function(combo, value){
+		var me= this;
+		
+		compraventaOtrosPorCuentaDe= me.lookupReference('compraventaOtrosPorCuentaDe');
+		
+		if(value>0){
+			compraventaOtrosPorCuentaDe.setDisabled(false);
+			compraventaOtrosPorCuentaDe.allowBlank= false;
+		}else{
+			compraventaOtrosPorCuentaDe.setValue("");
+			compraventaOtrosPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoProcedeDescalificacion: function(combo, value){
+		var me= this;
+		
+		procedeDescalificacionPorCuentaDe= me.lookupReference('procedeDescalificacionPorCuentaDe');
+		
+		if(value==1){
+			procedeDescalificacionPorCuentaDe.setDisabled(false);
+			procedeDescalificacionPorCuentaDe.allowBlank= false;
+		}
+		else{
+			procedeDescalificacionPorCuentaDe.setValue("");
+			procedeDescalificacionPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoLicencia: function(combo, value){
+		var me= this;
+		
+		licenciaPorCuentaDe= me.lookupReference('licenciaPorCuentaDe');
+		
+		if(!Ext.isEmpty(value)){
+			licenciaPorCuentaDe.setDisabled(false);
+			licenciaPorCuentaDe.allowBlank= false;
+		}
+		else{
+			licenciaPorCuentaDe.setValue("");
+			licenciaPorCuentaDe.setDisabled(true);
+		}
+	},
+	
+	onHaCambiadoCargasPendientesOtros: function(combo, value){
+		var me= this;
+		
+		cargasPendientesOtrosPorCuentaDe= me.lookupReference('cargasPendientesOtrosPorCuentaDe');
+		
+		if(value > 0){
+			cargasPendientesOtrosPorCuentaDe.setDisabled(false);
+			cargasPendientesOtrosPorCuentaDe.allowBlank= false;
+		}
+		else{
+			cargasPendientesOtrosPorCuentaDe.setValue("");
+			cargasPendientesOtrosPorCuentaDe.setDisabled(true);
+		}
+	},
+
+//	Para la búsqueda de Comparecientes en nombre del vendedor	
+//		
+//	onClickBotonCancelarBusquedaCompareciente: function(btn) {	
+//		var me = this,
+//		window = btn.up('window');
+//    	window.close();
+//	},
+//	
+//	onClickBotonBuscarCompareciente: function(btn){
+//		debugger;
+//		var me= this;
+//		var initialData = {};
+//
+//		var searchForm = btn.up('formBase');
+//		
+//		if (searchForm.isValid()) {
+//			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
+//			
+//			Ext.Object.each(criteria, function(key, val) {
+//				if (Ext.isEmpty(val)) {
+//					delete criteria[key];
+//				}
+//			});
+//			this.lookupReference('listadocomparecientesnombrevendedor').getStore().loadPage(1);
+//        }
+//		
+//	}
+	onNotarioDblClick: function(grid, rec){
+		var me= this;
+		var detalle= Ext.create('HreRem.view.expedientes.NotarioSeleccionado',{grid:grid, notario:rec}).show();
+		
+	},
+	
+	onClickBotonCerrarNotarioDetalle: function(btn){
+		var me = this,
+		window = btn.up('window');
+    	window.close();		
+	}
 
 });

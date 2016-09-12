@@ -30,6 +30,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
@@ -246,6 +247,21 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	@Column(name = "ICO_DERRAMACP_ORIENTATIVA")
 	private Double derramaOrientativaComunidad;
 	
+	@Column(name = "ICO_FECHA_ESTIMACION_VENTA")
+	private Date fechaEstimacionVenta;
+	
+	@Column(name = "ICO_FECHA_ESTIMACION_RENTA")
+	private Date fechaEstimacionRenta;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_UPO_ID")
+	private DDUnidadPoblacional unidadPoblacional;
+	
+	@Column(name = "ICO_INFO_DESCRIPCION")
+	private String infoDescripcion;
+	
+	@Column(name = "ICO_INFO_DISTRIBUCION_INTERIOR")
+	private String infoDistribucionInterior;
 	
 	@Version   
 	private Long version;
@@ -256,6 +272,46 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	
 	
+
+	public Float getCuotaOrientativaComunidad() {
+		return cuotaOrientativaComunidad;
+	}
+
+	public void setCuotaOrientativaComunidad(Float cuotaOrientativaComunidad) {
+		this.cuotaOrientativaComunidad = cuotaOrientativaComunidad;
+	}
+
+	public Double getDerramaOrientativaComunidad() {
+		return derramaOrientativaComunidad;
+	}
+
+	public void setDerramaOrientativaComunidad(Double derramaOrientativaComunidad) {
+		this.derramaOrientativaComunidad = derramaOrientativaComunidad;
+	}
+
+	public Date getFechaEstimacionVenta() {
+		return fechaEstimacionVenta;
+	}
+
+	public void setFechaEstimacionVenta(Date fechaEstimacionVenta) {
+		this.fechaEstimacionVenta = fechaEstimacionVenta;
+	}
+
+	public Date getFechaEstimacionRenta() {
+		return fechaEstimacionRenta;
+	}
+
+	public void setFechaEstimacionRenta(Date fechaEstimacionRenta) {
+		this.fechaEstimacionRenta = fechaEstimacionRenta;
+	}
+
+	public DDUnidadPoblacional getUnidadPoblacional() {
+		return unidadPoblacional;
+	}
+
+	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
+		this.unidadPoblacional = unidadPoblacional;
+	}
 
 	public Long getId() {
 		return id;
@@ -658,6 +714,22 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getInfoDescripcion() {
+		return infoDescripcion;
+	}
+
+	public void setInfoDescripcion(String infoDescripcion) {
+		this.infoDescripcion = infoDescripcion;
+	}
+
+	public String getInfoDistribucionInterior() {
+		return infoDistribucionInterior;
+	}
+
+	public void setInfoDistribucionInterior(String infoDistribucionInterior) {
+		this.infoDistribucionInterior = infoDistribucionInterior;
 	}
 	
 	

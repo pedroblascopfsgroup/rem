@@ -4,6 +4,9 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
     bind: {
         store: '{storeOfertasAgrupacion}'
     },
+    requires: ['HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion'],
+    
+    topBar: true,
         
     initComponent: function () {
         
@@ -34,7 +37,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		        },
 		        {
 		            dataIndex: 'ofertante',
-		            text: HreRem.i18n('header.oferta.oferante'),
+		            text: HreRem.i18n('header.oferta.ofertante'),
 		            flex: 2
 		        },
 		        {
@@ -79,7 +82,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 			            tooltip: HreRem.i18n('tooltip.ver.expediente'),
 			            getClass: function(v, metadata, record ) {
 			            	if (!Ext.isEmpty(record.get("numExpediente"))) {
-			            		return 'fa fa-folder-open';
+			            		return 'fa fa-folder-open blue-medium-color';
 			            	}			            	
 			            },
 			            handler: 'onClickAbrirExpedienteComercial'
@@ -127,6 +130,25 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
         me.callParent(); 
         
     },
+    
+    onAddClick: function (btn) {
+		var me = this;
+		var items= me.up('agrupacionesdetalle').getRefItems();
+		
+		for(var i=0;i<=items.length;i++){
+			if(items[i].getXType()=='fichaagrupacion'){
+				var record= items[i].getBindRecord(),
+				idAgrupacion= record.get('id'),
+				numAgrupacionRem= record.get('numAgrupRem');
+				break;
+			}
+		}
+
+		var parent= me.up('ofertascomercialagrupacion');
+		oferta = Ext.create('HreRem.model.OfertaComercial', {idAgrupacion: idAgrupacion, numAgrupacionRem: numAgrupacionRem});
+		Ext.create('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion',{oferta: oferta, parent: parent}).show();
+		    				    	
+	},
 	
 	editFuncion: function(editor, context){
 

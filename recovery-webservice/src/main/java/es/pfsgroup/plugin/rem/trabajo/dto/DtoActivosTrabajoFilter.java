@@ -9,6 +9,11 @@ import es.capgemini.devon.dto.WebDto;
  */
 public class DtoActivosTrabajoFilter extends WebDto {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String idTrabajo;
 	private String idActivo;
 	private String estadoCodigo;

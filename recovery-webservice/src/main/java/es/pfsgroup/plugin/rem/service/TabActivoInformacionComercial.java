@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -51,117 +52,106 @@ public class TabActivoInformacionComercial implements TabActivoService {
 
 		DtoActivoInformacionComercial activoDto = new DtoActivoInformacionComercial();
 		
-		if (activo.getInfoComercial() != null) {
+		if (!Checks.esNulo(activo.getInfoComercial())) {
 			BeanUtils.copyProperties(activoDto, activo.getInfoComercial());
 			
-			if (activo.getInfoComercial().getEdificio() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getEdificio())) {
 				BeanUtils.copyProperties(activoDto, activo.getInfoComercial().getEdificio());
 			}
 			
-			if (activo.getInfoComercial().getUbicacionActivo() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
 				BeanUtils.copyProperty(activoDto, "ubicacionActivoCodigo", activo.getInfoComercial().getUbicacionActivo());
 			}
 			
-			if (activo.getInfoComercial().getTipoInfoComercial() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getTipoInfoComercial())) {
 				BeanUtils.copyProperty(activoDto, "tipoInfoComercialCodigo", activo.getInfoComercial().getTipoInfoComercial().getCodigo());
 			}
 			
-			if (activo.getInfoComercial().getUbicacionActivo() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getUbicacionActivo())) {
 				BeanUtils.copyProperty(activoDto, "ubicacionActivoCodigo", activo.getInfoComercial().getUbicacionActivo().getCodigo());
 			}
 		
-			if (activo.getInfoComercial().getEstadoConstruccion() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getEstadoConstruccion())) {
 				BeanUtils.copyProperty(activoDto, "estadoConstruccionCodigo", activo.getInfoComercial().getEstadoConstruccion().getCodigo());
 			}
 			
-			if (activo.getInfoComercial().getEstadoConservacion() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getEstadoConservacion())) {
 				BeanUtils.copyProperty(activoDto, "estadoConservacionCodigo", activo.getInfoComercial().getEstadoConservacion().getCodigo());
 			}
 			
-			if (activo.getInfoComercial().getEdificio() != null && activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getEdificio()) && !Checks.esNulo(activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio())) {
 				BeanUtils.copyProperty(activoDto, "estadoConservacionEdificioCodigo", activo.getInfoComercial().getEdificio().getEstadoConservacionEdificio().getCodigo());
 			}
 			
-			if (activo.getInfoComercial().getEdificio() != null && activo.getInfoComercial().getEdificio().getTipoFachada() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getEdificio()) && !Checks.esNulo(activo.getInfoComercial().getEdificio().getTipoFachada())) {
 				BeanUtils.copyProperty(activoDto, "tipoFachadaCodigo", activo.getInfoComercial().getEdificio().getTipoFachada().getCodigo());
 			}
 			
-			if (activo.getInfoComercial().getMediadorInforme() != null) {
+			if (!Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
+				BeanUtils.copyProperty(activoDto, "codigoMediador", activo.getInfoComercial().getMediadorInforme().getId());
 				BeanUtils.copyProperty(activoDto, "nombreMediador", activo.getInfoComercial().getMediadorInforme().getNombre());
 				BeanUtils.copyProperty(activoDto, "telefonoMediador", activo.getInfoComercial().getMediadorInforme().getTelefono1());
 				BeanUtils.copyProperty(activoDto, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
 			}
 			
-			if (activo.getInfoComercial() instanceof ActivoVivienda)
-			{	
-				if (activo.getInfoComercial().getTipoInfoComercial() != null) {						
+			if (activo.getInfoComercial() instanceof ActivoVivienda) {	
+				if (!Checks.esNulo(activo.getInfoComercial().getTipoInfoComercial())) {						
 
-					if (((ActivoVivienda)activo.getInfoComercial()).getTipoVivienda() != null) {
+					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoVivienda())) {
 						BeanUtils.copyProperty(activoDto, "tipoViviendaCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoVivienda().getCodigo());
 					}
 					
-					if (((ActivoVivienda)activo.getInfoComercial()).getTipoOrientacion() != null) {
+					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoOrientacion())) {
 						BeanUtils.copyProperty(activoDto, "tipoOrientacionCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoOrientacion().getCodigo());
 					}
 					
-					if (((ActivoVivienda)activo.getInfoComercial()).getTipoRenta() != null) {
+					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoRenta())) {
 						BeanUtils.copyProperty(activoDto, "tipoRentaCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoRenta().getCodigo());
 					}
 				}
 			}
 			
-			if (activo.getInfoComercial().getInfraestructura()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getInfraestructura())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getInfraestructura());
 			}
 			
-			if (activo.getInfoComercial().getCarpinteriaInterior()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getCarpinteriaInterior())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getCarpinteriaInterior());
-				if (activo.getInfoComercial().getCarpinteriaInterior().getAcabadoCarpinteria()!=null)
-				{
+				if (!Checks.esNulo(activo.getInfoComercial().getCarpinteriaInterior().getAcabadoCarpinteria())) {
 					beanUtilNotNull.copyProperty(activoDto, "acabadoCarpinteriaCodigo", activo.getInfoComercial().getCarpinteriaInterior().getAcabadoCarpinteria().getCodigo());
 				}
 			}
 			
-			if (activo.getInfoComercial().getCarpinteriaExterior()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getCarpinteriaExterior())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getCarpinteriaExterior());
 			}
 			
-			if (activo.getInfoComercial().getParamentoVertical()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getParamentoVertical())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getParamentoVertical());
 			}
 			
-			if (activo.getInfoComercial().getSolado()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getSolado())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getSolado());
 			}
 			
-			if (activo.getInfoComercial().getCocina()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getCocina())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getCocina());
 			}
 			
-			if (activo.getInfoComercial().getBanyo()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getBanyo())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getBanyo());
 			}
 			
-			if (activo.getInfoComercial().getInstalacion()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getInstalacion())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getInstalacion());
 			}
 			
-			if (activo.getInfoComercial().getZonaComun()!=null)
-			{
+			if (!Checks.esNulo(activo.getInfoComercial().getZonaComun())) {
 				beanUtilNotNull.copyProperties(activoDto, activo.getInfoComercial().getZonaComun());
 			}
 		}
 		
-		if (activo.getTipoActivo() != null)
-		{
+		if (!Checks.esNulo(activo.getTipoActivo())) {
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
 		}
 		
@@ -171,12 +161,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
-
 		DtoActivoInformacionComercial dto = (DtoActivoInformacionComercial) webDto;
 		
 		try {
-			
-			if (activo.getInfoComercial() == null) {
+			if (Checks.esNulo(activo.getInfoComercial())) {
 				activo.setInfoComercial(new ActivoInfoComercial());
 				activo.getInfoComercial().setActivo(activo);
 			}
@@ -185,26 +173,25 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			
 			activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 			
-			if (dto.getUbicacionActivoCodigo() != null)
-			{
+			if (!Checks.esNulo(dto.getUbicacionActivoCodigo())) {
 				DDUbicacionActivo ubicacionActivo = (DDUbicacionActivo) 
 						diccionarioApi.dameValorDiccionarioByCod(DDUbicacionActivo.class, dto.getUbicacionActivoCodigo());
 				activo.getInfoComercial().setUbicacionActivo(ubicacionActivo);
 			}
-			if (dto.getEstadoConstruccionCodigo() != null)
-			{
+			
+			if (!Checks.esNulo(dto.getEstadoConstruccionCodigo())) {
 				DDEstadoConstruccion estadoConstruccion = (DDEstadoConstruccion) 
 						diccionarioApi.dameValorDiccionarioByCod(DDEstadoConstruccion.class, dto.getEstadoConstruccionCodigo());
 				activo.getInfoComercial().setEstadoConstruccion(estadoConstruccion);
 			}
-			if (dto.getEstadoConservacionCodigo() != null)
-			{
+			
+			if (!Checks.esNulo(dto.getEstadoConservacionCodigo())) {
 				DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) 
 						diccionarioApi.dameValorDiccionarioByCod(DDEstadoConservacion.class, dto.getEstadoConservacionCodigo());
 				activo.getInfoComercial().setEstadoConservacion(estadoConservacion);
 			}
 
-			if (activo.getInfoComercial().getEdificio() == null) {
+			if (Checks.esNulo(activo.getInfoComercial().getEdificio())) {
 				activo.getInfoComercial().setEdificio(new ActivoEdificio());
 			}
 
@@ -212,41 +199,39 @@ public class TabActivoInformacionComercial implements TabActivoService {
 			activo.getInfoComercial().getEdificio().setInfoComercial(activo.getInfoComercial());
 			activo.getInfoComercial().setEdificio(genericDao.save(ActivoEdificio.class, activo.getInfoComercial().getEdificio()));
 			
-			if (dto.getEstadoConservacionEdificioCodigo() != null) {
+			if (!Checks.esNulo(dto.getEstadoConservacionEdificioCodigo())) {
 				
 				DDEstadoConservacion estadoConservacionEdificio = (DDEstadoConservacion) 
 						diccionarioApi.dameValorDiccionarioByCod(DDEstadoConservacion.class, dto.getEstadoConservacionEdificioCodigo());
 	
 				activo.getInfoComercial().getEdificio().setEstadoConservacionEdificio(estadoConservacionEdificio);
-				
 			}
 			
-			if (dto.getTipoFachadaCodigo() != null) {
-				
+			if (!Checks.esNulo(dto.getTipoFachadaCodigo())) {
 				DDTipoFachada tipoFachada = (DDTipoFachada) 
 						diccionarioApi.dameValorDiccionarioByCod(DDTipoFachada.class, dto.getTipoFachadaCodigo());
 	
 				activo.getInfoComercial().getEdificio().setTipoFachada(tipoFachada);
-				
 			}
 				
-			if (activo.getInfoComercial() instanceof ActivoVivienda)
-			{
-				if (dto.getTipoViviendaCodigo() != null) {
+			if (activo.getInfoComercial() instanceof ActivoVivienda) {
+				if (!Checks.esNulo(dto.getTipoViviendaCodigo())) {
 					DDTipoVivienda tipoVivienda = (DDTipoVivienda) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoVivienda.class, dto.getTipoViviendaCodigo());
 		
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					vivienda.setTipoVivienda(tipoVivienda);
 				}
-				if (dto.getTipoRentaCodigo() != null) {
+				
+				if (!Checks.esNulo(dto.getTipoRentaCodigo())) {
 					DDTipoRenta tipoRenta = (DDTipoRenta) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoRenta.class, dto.getTipoRentaCodigo());
 		
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					vivienda.setTipoRenta(tipoRenta);
 				}
-				if (dto.getTipoOrientacionCodigo() != null) {
+				
+				if (!Checks.esNulo(dto.getTipoOrientacionCodigo())) {
 					DDTipoOrientacion tipoOrientacion = (DDTipoOrientacion) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoOrientacion.class, dto.getTipoOrientacionCodigo());
 		
@@ -254,19 +239,17 @@ public class TabActivoInformacionComercial implements TabActivoService {
 					vivienda.setTipoOrientacion(tipoOrientacion);
 				}
 				
-			}
-			else if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento)
-			{
+			} else if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento) {
 				ActivoPlazaAparcamiento plazaAparcamiento = (ActivoPlazaAparcamiento) activo.getInfoComercial();
 				
-				if (dto.getUbicacionAparcamientoCodigo() != null) {
+				if (!Checks.esNulo(dto.getUbicacionAparcamientoCodigo())) {
 					DDTipoUbicaAparcamiento ubicacionAparcamiento = (DDTipoUbicaAparcamiento) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoUbicaAparcamiento.class, dto.getUbicacionAparcamientoCodigo());
 
 					plazaAparcamiento.setUbicacionAparcamiento(ubicacionAparcamiento);
-					
 				}
-				if (dto.getTipoCalidadCodigo() != null) {
+				
+				if (!Checks.esNulo(dto.getTipoCalidadCodigo())) {
 					DDTipoCalidad tipoCalidad = (DDTipoCalidad) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoCalidad.class, dto.getTipoRentaCodigo());
 

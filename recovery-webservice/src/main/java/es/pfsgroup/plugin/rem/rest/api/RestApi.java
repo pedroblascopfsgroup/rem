@@ -18,6 +18,8 @@ public interface RestApi {
 	public static final String REST_MSG_REPETEAD_REQUEST = "REPETEAD_REQUEST";
 	public static final String REST_MSG_REQUEST_WITHOUT_DATA = "REQUEST_WITHOUT_DATA";
 	public static final String REST_MSG_INVALID_WORKINGCODE = "INVALID_WORKINGCODE";
+	public static final String REST_LOGGED_USER_USERNAME = "USER";
+	public static final Object REST_LOGGED_USER_EMPTY_PASSWORD = "";
 	
 	/**
 	 * Valida la firma
@@ -76,4 +78,6 @@ public interface RestApi {
 	 * @return PeticionRest
 	 */	
 	public PeticionRest getLastPeticionByToken(String token);
+	
+
 }

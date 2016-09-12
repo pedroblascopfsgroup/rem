@@ -122,9 +122,10 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo){
 
 		HQLBuilder hql = new HQLBuilder("from ActivoAgrupacionActivo aa");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.id", dtoAgrupActivo.getId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.activo.id", dtoAgrupActivo.getActId());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.id", dtoAgrupActivo.getAgrId());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.tipoAgrupacion.codigo", dtoAgrupActivo.getAgrId());
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "aa.agrupacion.tipoAgrupacion.codigo", dtoAgrupActivo.getTipoAgrupacion());
 		
 		
 		return HibernateQueryUtils.list(this, hql);

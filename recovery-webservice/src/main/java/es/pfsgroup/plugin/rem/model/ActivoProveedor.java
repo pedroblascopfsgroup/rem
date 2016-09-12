@@ -185,24 +185,6 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_FECHA_RETENCION")
 	private Date fechaRetencion;
 	
-	@ManyToOne
-	@JoinColumn(name = "DD_TDP_ID")
-	private DDTipoDocumentoProveedor tipoDocumentoProveedor;
-	
-	@ManyToOne
-	@JoinColumn(name = "DD_TVI_ID")
-	private DDTipoVia tipoVia;
-	
-	@Column(name = "PVE_DIRNUM")
-	private Long dirNumero;
-	
-	@Column(name = "PVE_DIRPTA")
-	private Long dirPuerta;
-	
-	@ManyToOne
-	@JoinColumn(name = "DD_UPO_ID")
-	private DDUnidadPoblacional unidadPoblacional;
-	
 	@Column(name = "PVE_FECHA_PBC")
 	private Date fechaProcesoBlanqueo;
 	
@@ -523,47 +505,6 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setFechaRetencion(Date fechaRetencion) {
 		this.fechaRetencion = fechaRetencion;
-	}
-
-	public DDTipoDocumentoProveedor getTipoDocumentoProveedor() {
-		return tipoDocumentoProveedor;
-	}
-
-	public void setTipoDocumentoProveedor(
-			DDTipoDocumentoProveedor tipoDocumentoProveedor) {
-		this.tipoDocumentoProveedor = tipoDocumentoProveedor;
-	}
-
-	public DDTipoVia getTipoVia() {
-		return tipoVia;
-	}
-
-	public void setTipoVia(DDTipoVia tipoVia) {
-		this.tipoVia = tipoVia;
-	}
-
-	public Long getDirNumero() {
-		return dirNumero;
-	}
-
-	public void setDirNumero(Long dirNumero) {
-		this.dirNumero = dirNumero;
-	}
-
-	public Long getDirPuerta() {
-		return dirPuerta;
-	}
-
-	public void setDirPuerta(Long dirPuerta) {
-		this.dirPuerta = dirPuerta;
-	}
-
-	public DDUnidadPoblacional getUnidadPoblacional() {
-		return unidadPoblacional;
-	}
-
-	public void setUnidadPoblacional(DDUnidadPoblacional unidadPoblacional) {
-		this.unidadPoblacional = unidadPoblacional;
 	}
 
 	public Date getFechaProcesoBlanqueo() {

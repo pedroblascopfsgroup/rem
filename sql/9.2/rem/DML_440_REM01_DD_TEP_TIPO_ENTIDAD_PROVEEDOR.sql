@@ -38,7 +38,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'Entidad'			,'Instrucciones del propietario'),
+        T_TIPO_DATA('01'	,'Entidad'			,'Entidad'),
         T_TIPO_DATA('02'	,'Administración'	,'Administración'),
 		T_TIPO_DATA('03'	,'Proveedor'		,'Proveedor')
 		); 

@@ -1,149 +1,265 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresFiltros', {
-    extend		: 'HreRem.view.common.FormBase',
-    xtype		: 'configuracionproveedoresfiltros',
-    reference	: 'configuracionProveedoresFiltros',
-    scrollable: 'y',
-    initComponent: function () {
-        
-        var me = this;
-        
-        me.setTitle(HreRem.i18n("title.configuracion.proveedores.filtro"));  
-        
-        me.items= [ 
-                   
-			{
-				xtype: 'panel',
-				layout: 'column',
-				cls: 'panel-busqueda-directa',
-				title: HreRem.i18n('title.busqueda.directa'),
-				collapsible: true,
-				collapsed: false,
-			    defaults: {
+    extend: 'HreRem.view.common.FormBase',
+    xtype: 'configuracionproveedoresfiltros',
+    reference: 'configuracionProveedoresFiltros',
+    isSearchForm: true,
+    cls	: 'panel-base shadow-panel',
+    collapsible: true,
+    collapsed: false,    
+    layout: {
+        type: 'accordion',
+        titleCollapse: false,
+        animate: true,
+        vertical: true,
+        multi: true
+    },    
+
+	initComponent: function() {
+	
+		var me = this;
+    	me.setTitle(HreRem.i18n('title.configuracion.proveedores.filtro'));
+	    me.items= [
+	         {
+    			xtype: 'panel',
+    			collapsible: false,
+    			layout: 'column',
+    			title: HreRem.i18n('title.configuracion.proveedores.filtro'),
+    			cls: 'panel-busqueda-avanzada',
+    			defaults: {
 			        layout: 'form',
 			        xtype: 'container',
-			        defaultType: 'textfieldbase',
-			        style: 'width: 25%'
+			        defaultType: 'textfield'
 			    },
-			    items: [   
-				    	{
-				    	defaults: {
-				    		addUxReadOnlyEditFieldPlugin: false
-				    	},
-				    	items:[
-					        { 
-					        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.haya'),
-					        	name: 'numActivo'
-					        },
-					        { 
-								xtype: 'comboboxfieldbase',
-							    addUxReadOnlyEditFieldPlugin: false,
-					        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
-					        	name: 'entidadPropietariaCodigo',
-					        	bind: {
-				            		store: '{comboEntidadPropietaria}'
-				            	}
-					        }
-					    ]},
-				    	{
-				    	defaults: {
-				    		addUxReadOnlyEditFieldPlugin: false
-				    	},
-				    	items:[
-						        { 
-						        	fieldLabel: HreRem.i18n('fieldlabel.poblacion'),
-						        	name: 'localidadDescripcion'
-				
-						        },
-						        { 
-						        	xtype: 'comboboxfieldbase',
-							    	addUxReadOnlyEditFieldPlugin: false,
-						        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
-						        	name: 'provinciaCodigo',
-						        	bind: {
-					            		store: '{comboFiltroProvincias}'
-					            	}
-						        }
-						    ]},
-					    {
-					   	defaults: {
-				    		addUxReadOnlyEditFieldPlugin: false
-				    	},
-					    items:[
-					        {
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.origen'),
-					        	name: 'tipoTituloActivoCodigo',
-								//store: { type: 'diccionario', tipo: 'tiposTitulo'},
-					        	bind: {
-					            	store: '{comboTipoTitulo}'
-					            },
-								matchFieldWidth: false
-					        },
-					        { 
-					        	xtype: 'comboboxfieldbase',
-					        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo'),
-					        	name: 'subtipoActivoCodigo',
-					        	bind: {
-				            		store: '{comboFiltroSubtipoActivo}'
-				            	},
-					        	matchFieldWidth: false
-				
-					        }
-					        
-					    ]},
-					    {	
-					    defaults: {
-				    		addUxReadOnlyEditFieldPlugin: false
-				    	},
-					    items:[
-					        { 
-					        	fieldLabel: HreRem.i18n('fieldlabel.finca.registral'),
-					        	name: 'finca'
-					        },
-					        { 
-					        	fieldLabel: HreRem.i18n('fieldlabel.referencia.catastral'),
-					        	name: 'refCatastral'
-					        }
-					    ]}
-				    ]
-				},
-//                {
-//                	dataIndex: 'entidadPropietariaCodigo',
-//		            text: HreRem.i18n('header.precios.automatica.activos.cartera.codigo'),
-//		            flex: 1,
-//		            hidden: true
-//                },'HreRem.view.common.GridBase',
-//		        {	        	
-//		        	dataIndex: 'entidadPropietariaDescripcion',
-//		            text: HreRem.i18n('header.cartera'),
-//		            flex: 2	        	
-//		        },
-//		        {	        	
-//		            dataIndex: 'numActivosPreciar',
-//		            text: HreRem.i18n('header.precios.automatica.activos.preciar'),
-//		            flex: 1,
-//		            align: 'center'
-//		        },
-//		        {	        	
-//		            dataIndex: 'numActivosRepreciar',
-//		            text: HreRem.i18n('header.precios.automatica.activos.repreciar'),
-//		            flex: 1,
-//		            align: 'center'		        	
-//		        },
-//		        {	        	
-//		        	dataIndex: 'numActivosDescuento',
-//		            text: HreRem.i18n('header.precios.automatica.activos.descuento'),
-//		            flex: 1,
-//		            align: 'center',
-//		            hidden: true
-//		        }
-        ];
-        
-        me.callParent(); 
+				items: [
+							{
+								columnWidth: 1,
+								items:[    			
 
-        
-    }
-
-
+										{    			                
+											xtype:'fieldsettable',
+											defaultType: 'textfield',
+											title:HreRem.i18n('title.configuracion.proveedores.datosgenerales'),
+											colspan: 3,
+											items :	[
+												{ 
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.id'),
+													name:		'idProveedor',
+													colspan: 2
+												},
+												{ 
+													xtype: 'combo',
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.estado'),
+													bind: {
+														store: '{comboEstadoProveedor}'
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												},
+												// fila 1
+												{							
+													xtype: 'combo',
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.tipo'),
+													bind: {
+														store: '{comboTipoProveedor}',
+														value: '{proveedor.tipoProveedorCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												},
+												{ 
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nombrecomercial'),
+													name:		'nombreComercial'
+												},
+												{ 
+													xtype: 'datefield',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedores.fechadesde'),
+													name:		'fechaDesde'
+												},
+												// fila 2
+												{							
+													xtype: 'combo',
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.subtipo'),
+													bind: {
+														store: '{comboSubtipoProveedor}',
+														value: '{proveedor.subtipoProveedorCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo',
+													colspan: 2
+												},
+												{ 
+													xtype: 'datefield',
+													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.fechahasta'),
+													name:		'fechaHasta'
+												},
+												// fila 3
+												{
+													xtype: 'combo',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedores.tipopersona'),
+													bind: {
+														store: '{comboTipoPersona}',
+														value: '{proveedor.tipoPersonaCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												},
+												{
+													xtype: 'combo',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedores.cartera'),
+													bind: {
+														store: '{comboCartera}',
+														value: '{proveedor.carteraCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												},
+												{
+													xtype: 'combo',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedores.propietario'),
+													bind: {
+														store: '{comboPropietario}',
+														value: '{proveedor.propietarioCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												},
+												// Fila 4
+												{ 
+													xtype: 'combo',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedores.ambito'),
+													bind: {
+														store: '{comboAmbito}',
+														value: '{proveedor.ambitoCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												},
+												{ 
+													xtype: 'combo',
+													fieldLabel: HreRem.i18n('fieldlabel.proveedores.subcartera'),
+													bind: {
+														store: '{comboSubcartera}',
+														value: '{proveedor.subcarteraCodigo}'			            		
+													},
+									            	displayField: 'descripcion',
+													valueField: 'codigo'
+												}
+											]
+							                
+							            },
+							            {    			                
+											xtype:'fieldsettable',
+											defaultType: 'textfield',
+											title:HreRem.i18n('title.configuracion.proveedores.direccion'),
+											colspan: 3,
+											items :	[
+											       	 // fila 0
+												 	{
+												 		xtype: 'combo',
+												 		name: 'provinciaCodigo',
+												 		reference: 'provinciaCombo',
+												 		fieldLabel:	HreRem.i18n('fieldlabel.proveedores.provincia'),
+											        	bind: {
+										            		store: '{comboProvincia}'
+										            	},
+										            	displayField: 'descripcion',
+														valueField: 'codigo',
+														published: 'value'
+												 	},
+												 	{
+												 		xtype: 'combo',
+												 		name: 'municipioCodigo',
+												 		reference: 'municipioCombo',
+												 		fieldLabel:	HreRem.i18n('fieldlabel.proveedores.municipio'),
+												 		queryMode: 'remote',
+												 		forceSelection: true,
+											        	bind: {
+										            		store: '{comboMunicipio}',
+										            		disabled: '{!provinciaCombo.value}',
+										            		filters: {
+										            			property: 'codigo',
+										            			value: '{provinciaCombo.value}'
+										            		}
+										            	},
+										            	displayField: 'descripcion',
+														valueField: 'codigo'
+												 	},
+												 	{
+														fieldLabel:  HreRem.i18n('fieldlabel.proveedores.cp'),
+									                	bind:		'{proveedor.cp}'
+												 	}
+											]
+							                
+							            },
+							            {    			                
+											xtype:'fieldsettable',
+											defaultType: 'textfield',
+											title:HreRem.i18n('title.configuracion.proveedores.persona'),
+											colspan: 3,
+											items :	[
+											       	 // fila 0
+													{ 
+														fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nif'),
+									                	name:		'nif'
+											        },
+													{ 
+														xtype: 'combo',
+											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nombre'),
+											        	bind: {
+										            		store: '{comboContacto}'
+										            	},
+														colspan: 2,
+										            	displayField: 'descripcion',
+														valueField: 'codigo'
+											        }
+											]
+							                
+							            },
+							            {    			                
+											xtype:'fieldsettable',
+											defaultType: 'textfield',
+											title:HreRem.i18n('title.configuracion.proveedores.mediadores'),
+											colspan: 3,
+											items :	[
+											       	 // fila 0
+													{ 
+														xtype: 'combo',
+											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.homologado'),
+											        	bind: {
+										            		store: '{comboSiNoNSRem}'
+										            	},
+										            	displayField: 'descripcion',
+														valueField: 'codigo'
+											        },
+													{ 
+														xtype: 'combo',
+											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.calificacion'),
+											        	bind: {
+										            		store: '{comboCalificacion}'
+										            	},
+										            	displayField: 'descripcion',
+														valueField: 'codigo'
+											        },			       
+													{ 
+														xtype: 'combo',
+											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.top'),
+											        	bind: {
+										            		store: '{comboSiNoNSRem}'
+										            	},
+										            	displayField: 'descripcion',
+														valueField: 'codigo'	
+											        }
+											]
+							                
+							            }
+							            
+	            				]
+	            			
+	            			}
+				]
+    		}
+	    ];
+	   	
+	    me.callParent();
+	}
 });
-

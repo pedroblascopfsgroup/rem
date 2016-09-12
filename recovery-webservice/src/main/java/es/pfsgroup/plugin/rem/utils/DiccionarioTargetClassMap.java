@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
+import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -17,6 +19,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -30,6 +33,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
@@ -51,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOrientacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
@@ -145,7 +150,12 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
 		mapa.put("estadosInformeComercial", DDEstadoInformeComercial.class);
 		mapa.put("tiposArras", DDTiposArras.class);
-
+		mapa.put("estadoProveedor", DDEstadoProveedor.class);
+		mapa.put("tipoProveedor", DDEntidadProveedor.class);
+		mapa.put("subtipoProveedor", DDTipoProveedor.class);
+		mapa.put("tipoPersona", DDTipoPersona.class);
+		mapa.put("municipio", Localidad.class);
+		
 		return Collections.unmodifiableMap(mapa);
 	}
 	

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DANIEL GUTIERREZ
---## FECHA_CREACION=20160831
+--## FECHA_CREACION=20160909
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
 --## INCIDENCIA_LINK=0
@@ -38,8 +38,13 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('01'	,'En constitución'	,'En constitución'),
-        T_TIPO_DATA('02'	,'Disuelto'			,'Disuelto')
+        T_TIPO_DATA('01'	,'Pendiente de constitución: a tramitar'	,'Pendiente de constitución: a tramitar'),
+        T_TIPO_DATA('02'	,'Pendiente de constitución: no tramitar'	,'Pendiente de constitución: no tramitar'),
+        T_TIPO_DATA('03'	,'En proceso de constitución'				,'En proceso de constitución'),
+        T_TIPO_DATA('04'	,'Vigente'									,'Vigente'),
+        T_TIPO_DATA('05'	,'En liquidación'							,'En liquidación'),
+        T_TIPO_DATA('06'	,'Disuelta'									,'Disuelta'),
+        T_TIPO_DATA('07'	,'Baja como proveedor'						,'Baja como proveedor')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

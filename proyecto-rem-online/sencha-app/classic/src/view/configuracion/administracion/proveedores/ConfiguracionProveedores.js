@@ -15,10 +15,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 	        			{	
 	        				xtype: 'configuracionproveedoresfiltros'
 	        			}
-//						,
-//	        			{	
-//	        				xtype: 'configuracionproveedoreslist'
-//	        			}
+						,
+	        			{	
+	        				xtype: 'configuracionproveedoreslist'
+	        			}
         ];
         
         me.callParent(); 

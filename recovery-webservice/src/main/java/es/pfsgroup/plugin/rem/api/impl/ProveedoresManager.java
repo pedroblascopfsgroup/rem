@@ -56,8 +56,9 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 	
 	@Override
 	public Page getProveedores(DtoProveedorFilter dtoProveedorFiltro) {
-
-		return genericDao.getPage(ActivoProveedor.class, dtoProveedorFiltro);
+		//TODO: Hay que hacer una vista para obtener los datos de los diccionarios que tiene el proveedor dentro,
+		//a esta vista hay que pasarle los valores de los filtros e ir añadiéndoselos al HQL que se genera.
+		return null;
 		
 	}	
 

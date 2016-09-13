@@ -3,6 +3,9 @@ package es.pfsgroup.plugin.rem.api;
 import com.gfi.webIntegrator.WIException;
 import com.gfi.webIntegrator.WIMetaServiceException;
 
+import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
+import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
+import es.cajamadrid.servicios.GM.GMPETS07_INS.GMPETS07_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 
 /**
@@ -32,7 +35,7 @@ public interface UvemManagerApi {
 	 * 
 	 * @return
 	 */
-	public int resultadoSolicitarTasacion();
+	public GMPETS07_INS resultadoSolicitarTasacion();
 
 	/**
 	 * Servicio que a partir del nº y tipo de documento, así como Entidad del
@@ -51,12 +54,12 @@ public interface UvemManagerApi {
 	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
 	 *            habitat 05021
 	 */
-	public void ejecutarNumCliente(String nudnio, String cocldo, String idclow, String qcenre);
+	public void ejecutarNumCliente(String nudnio, String cocldo, String idclow, String qcenre) throws WIException;
 
 	/**
 	 * 
 	 */
-	public void resultadoNumCliente();
+	public GMPAJC11_INS resultadoNumCliente();
 
 	/**
 	 * Servicio REM  UVEM para que a partir del nº cliente URSUS se devuelvan
@@ -73,11 +76,11 @@ public interface UvemManagerApi {
 	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
 	 *            habitat 05021
 	 */
-	public void ejecutarDatosCliente(String copace, String idclow, String iddsfu, String qcenre);
+	public void ejecutarDatosCliente(String copace, Long idclow, String iddsfu, String qcenre)  throws WIException;
 
 	/**
 	 * 
 	 */
-	public void resultadoDatosCliente();
+	public GMPAJC93_INS resultadoDatosCliente();
 
 }

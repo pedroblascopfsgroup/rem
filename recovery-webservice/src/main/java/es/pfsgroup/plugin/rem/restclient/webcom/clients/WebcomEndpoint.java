@@ -8,6 +8,11 @@ public class WebcomEndpoint {
 		return new WebcomEndpoint();
 	}
 	
+	public static WebcomEndpoint estadoOferta() {
+		return new WebcomEndpoint();
+	}
+	
+	
 	public String getCharset() {
 		return "UTF-8";
 	}
@@ -27,6 +32,4 @@ public class WebcomEndpoint {
 	public String getApiKey() {
 		return "0123456789";
 	}
-
-
 }

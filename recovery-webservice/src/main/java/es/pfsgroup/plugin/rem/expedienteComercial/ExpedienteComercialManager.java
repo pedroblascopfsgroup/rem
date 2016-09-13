@@ -1174,5 +1174,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		return new DtoPage(gastosExpediente, gastosExpediente.size());
 	}
 	
+	public DtoPage getHonorarios(Long idExpediente) {
+		List<DtoGastoExpediente> gastosExpediente= new ArrayList<DtoGastoExpediente>();
+		DtoGastoExpediente gastoExpedienteDto= new DtoGastoExpediente();
+		
+		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
+		
+		return new DtoPage(gastosExpediente, gastosExpediente.size());
+	}
+	
 
 }

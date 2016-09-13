@@ -554,10 +554,10 @@ public class ExpedienteComercialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGastosSoportadoPropietario(ModelMap model, Long idExpediente) {
+	public ModelAndView getHonorarios(ModelMap model, Long idExpediente) {
 		
 		try {
-			DtoPage dto= expedienteComercialApi.getGastosSoportadoPropietario(idExpediente);
+			DtoPage dto= expedienteComercialApi.getHonorarios(idExpediente);
 			
 			model.put("data", dto.getResults());
 			model.put("totalCount", dto.getTotalCount());
@@ -571,27 +571,6 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 		
 	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGastosSoportadoHaya(ModelMap model, Long idExpediente) {
-		
-		try {
-			DtoPage dto= expedienteComercialApi.getGastosSoportadoHaya(idExpediente);
-			
-			model.put("data", dto.getResults());
-			model.put("totalCount", dto.getTotalCount());
-			model.put("success", true);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			model.put("success", false);
-		}	
-		
-		return createModelAndViewJson(model);
-		
-	}
-	
 	
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {

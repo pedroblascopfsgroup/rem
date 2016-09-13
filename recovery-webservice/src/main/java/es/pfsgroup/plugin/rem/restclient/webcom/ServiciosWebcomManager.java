@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 
 import java.util.HashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
@@ -17,13 +19,15 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstant
 @Service
 public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implements ServiciosWebcomApi {
 
+	private final Log logger = LogFactory.getLog(getClass());
+
 	@Autowired
 	private HttpClientFacade httpClient;
 
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
-	@Autowired
+	@Autowired(required = false)
 	private MessageBroker messageBroker;
 
 	@Autowired
@@ -34,6 +38,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 
 	@Override
 	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, Long idEstado, String motivoRechazo) {
+		logger.info("Invocando servicio Webcom: Estado Trabajo");
 		HashMap<String, Object> params = createParametersMap(proxyFactory);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
@@ -52,6 +57,7 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	@Override
 	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, Long idEstadoOferta, Long idActivoHaya,
 			Long idEstadoExpediente, Boolean vendido) {
+		logger.info("Invocando servicio Webcom: Estado Oferta");
 		HashMap<String, Object> params = createParametersMap(proxyFactory);
 
 		params.put(EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);

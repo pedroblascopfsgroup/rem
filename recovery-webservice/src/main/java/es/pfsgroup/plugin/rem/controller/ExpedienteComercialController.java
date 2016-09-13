@@ -501,13 +501,37 @@ public class ExpedienteComercialController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCompradorById(Long idComprador, ModelMap model ) {
+	public ModelAndView getCompradorById(Long id, ModelMap model ) {
 		
-		VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(idComprador);
-		
-		model.put("comprador", comprador);
+		try {
+			VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(id);
+			model.put("data", comprador);
+			//model.put("success", true);
+		}catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
 		
 		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFichaComprador(VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id, ModelMap model){
+		
+//		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			model.put("success", success);			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
 	}
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {

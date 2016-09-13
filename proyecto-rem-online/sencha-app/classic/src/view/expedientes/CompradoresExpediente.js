@@ -7,7 +7,8 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     reference: 'compradoresexpedienteref',
     scrollable	: 'y',
     controller: 'expedientedetalle',
-    
+   
+
     initComponent: function () {
 
         var me = this;
@@ -26,7 +27,9 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 							store: '{storeCompradoresExpediente}'
 						},									
 						listeners : {
-					    	rowdblclick: 'onCompradoresListDobleClick'	
+					    	rowdblclick: 'onCompradoresListDobleClick',
+					    	rowclick: 'onCompradoresListClick'
+					    	
 					    },
 					    
 						columns: [
@@ -67,7 +70,17 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   		text: HreRem.i18n('header.email'),
 					            dataIndex: 'email',
 					            flex: 1						   
-						   }	
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.estado.pbc'),
+					            dataIndex: 'estadoPbc',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.relacion.hre'),
+					            dataIndex: 'relacionHre',
+					            flex: 1						   
+						   }
 					    ],
 					    dockedItems : [
 					        {
@@ -84,24 +97,117 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 			},
 			{
 				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',				
+				defaultType: 'displayfieldbase',
+				reference: 'estadoPbcCompradoRef',
 				title: HreRem.i18n('title.estado.pbc.comprador'),
 				items :
 					[
-		               /* {
-		                	fieldLabel:  HreRem.i18n('fieldlabel...'),
-		                	bind:		'{comprador.responsable}'
-
-		                },
-		                { 
-							xtype: 'comboboxfieldbase',
-							reference: 'comboEstadoPBC',
-		                	fieldLabel:  HreRem.i18n('fieldlabel....'),
-				        	bind: {
-			            		store: '{comboEstadoPBC}',
-			            		value: '{comprador.estadoPbc}'
-			            	}
-				        }*/     
+					
+						{
+						xtype:'fieldsettable',
+						collapsible: false,
+						border: false,
+							defaultType: 'displayfieldbase',				
+							items : [
+					
+								{
+						        	xtype:'fieldset',
+						        	width: '80%',
+									border: false,
+									defaultType: 'textfieldbase',
+									items :
+										[
+											{			
+											    xtype		: 'gridBase',
+											    features: [{ftype:'grouping'}],
+											    reference: 'listadoDocumentosExpediente',
+												cls	: 'panel-base shadow-panel',
+												bind: {
+													store: '{storeDocumentosExpediente}'
+												},
+												columns: [
+												
+													{
+												        xtype: 'actioncolumn',
+												        width: 30,	
+												        hideable: false,
+												        items: [{
+												           	iconCls: 'ico-download',
+												           	tooltip: HreRem.i18n("tooltip.download"),
+												            handler: function(grid, rowIndex, colIndex) {
+												                var grid = me.down('gridBase'),
+												                record = grid.getStore().getAt(rowIndex);
+												               
+												                grid.fireEvent("download", grid, record);					                
+										            		}
+												        }]
+										    		},
+												    {   text: HreRem.i18n('header.documento'),
+											        	dataIndex: 'documento',
+											        	flex: 4
+											        },
+											        {   text: HreRem.i18n('header.aplica'),
+											        	dataIndex: 'aplica',
+											        	flex: 1,
+											        	width: 50
+											        },
+											        {   text: HreRem.i18n('header.obtenido'),
+											        	dataIndex: 'obtenido',
+											        	flex: 1,
+											        	width: 50
+											        }
+											    ]
+				
+	         			 					}	
+				
+										]
+								},
+						        
+						        {
+						        	xtype:'fieldset',
+						        	border: false,
+									defaultType: 'textfieldbase',
+									items :
+										[		
+										
+											{
+		                						fieldLabel:  HreRem.i18n('fieldlabel.responsable.tramitacion'),
+		                						bind:		'{detalleComprador.responsableTramitacion}'
+		               						},	
+										
+											 { 
+									        	xtype: 'comboboxfieldbase',							        	
+									        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+									        	bind: {
+								            		store: '{comboEstado}',
+								            		value: '{estado}'
+								            	},
+					            				displayField: 'descripcion',
+		    									valueField: 'codigo',
+		    									readOnly: true
+									        },
+									        {	
+											 	xtype:'datefieldbase',
+											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.peticion'),
+					        					bind: '{fechaPeticion}',
+					        					readOnly: true
+									        },
+									        {	
+											 	xtype:'datefieldbase',
+											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.resolucion'),
+					        					bind: '{fechaResolucion}',
+					        					readOnly: true
+									        }
+									        
+									        
+									        
+											
+										]
+						        	}
+						        ]
+					}
+						
+					    
 		        ]
             },
             {
@@ -110,20 +216,40 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 				title: HreRem.i18n('title.detalle.pbc'),
 				items :
 					[
-		               /* {
-		                	fieldLabel:  HreRem.i18n('fieldlabel...'),
-		                	bind:		'{comprador.responsable}'
+		                {
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.proporcional.oferta'),
+		                	bind:		'{detalleComprador.importeProporcionalOferta}',
+		                	readOnly: true
 
 		                },
 		                { 
 							xtype: 'comboboxfieldbase',
-							reference: 'comboEstadoPBC',
-		                	fieldLabel:  HreRem.i18n('fieldlabel....'),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.destino.activo'),
 				        	bind: {
-			            		store: '{comboEstadoPBC}',
-			            		value: '{comprador.estadoPbc}'
-			            	}
-				        }*/     
+			            		store: '{comboDestinoActivo}',
+			            		value: '{destinoActivo}'
+			            	},
+			            	displayField: 'descripcion',
+		    				valueField: 'codigo',
+		    				allowBlank: false,
+		    				listeners: {
+		    					change: 'onHaCambiadoDestinoActivo'
+		    				}
+				        },
+				        {	
+				        	xtype: 'textfieldbase',
+				        	reference: 'otrosDetallePbc',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.otros'),
+		                	bind:		'{detalleComprador.otros}',
+		                	allowBlank: false,
+		                	disabled: '{!esDestinoActivoOtros}'
+		                },
+				        {	
+				        	xtype: 'numberfieldbase',
+				        	symbol: HreRem.i18n("symbol.euro"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.financiado'),
+		                	bind:		'{detalleComprador.importeFinanciado}'
+		                }
 		        ]
             },
             {
@@ -132,20 +258,26 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 				title: HreRem.i18n('title.politica.corporativa'),
 				items :
 					[
-		               /* {
-		                	fieldLabel:  HreRem.i18n('fieldlabel...'),
-		                	bind:		'{comprador.responsable}'
-
-		                },
-		                { 
-							xtype: 'comboboxfieldbase',
-							reference: 'comboEstadoPBC',
-		                	fieldLabel:  HreRem.i18n('fieldlabel....'),
+						{
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboConflictoIntereses',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.conflicto.intereses'),
 				        	bind: {
-			            		store: '{comboEstadoPBC}',
-			            		value: '{comprador.estadoPbc}'
-			            	}
-				        }*/     
+			            		store: '{comboConflictoIntereses}',
+			            		value: '{conflictoIntereses}'
+			            	},
+			            	allowBlank: false
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboRiesgoReputacional',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
+				        	bind: {
+			            		store: '{comboRiesgoReputacional}',
+			            		value: '{riesgoReputacional}'
+			            	},
+			            	allowBlank: false
+		                }
 		        ]
             }
     	];
@@ -162,6 +294,9 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		
 		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoCompradores.getStore().load();
+		
+//		me.lookupController().cargarTabData(me);
+
     }
     
     

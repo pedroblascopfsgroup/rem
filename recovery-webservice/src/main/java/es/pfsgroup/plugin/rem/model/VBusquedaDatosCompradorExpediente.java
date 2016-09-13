@@ -20,6 +20,9 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "COM_ID")
 	private String id;
 	
+	@Column(name = "ECO_ID")
+	private String idExpedienteComercial;
+	
 	@Column(name = "COD_TIPO_PERSONA")
 	private String codTipoPersona;
 	
@@ -115,6 +118,17 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "CEX_EMAIL_RTE")
 	private String emailRte;
+	
+    @Column(name="CEX_RESPONSABLE_TRAMITACION")
+    private String responsableTramitacion;
+    
+    @Column(name="CEX_IMPTE_PROPORCIONAL_OFERTA")
+    private Double importeProporcionalOferta;
+    
+    @Column(name="CEX_IMPTE_FINANCIADO")
+    private Double importeFinanciado;
+    
+    
 
 	public String getId() {
 		return id;
@@ -378,6 +392,38 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setEmailRte(String emailRte) {
 		this.emailRte = emailRte;
+	}
+
+	public String getIdExpedienteComercial() {
+		return idExpedienteComercial;
+	}
+
+	public void setIdExpedienteComercial(String idExpedienteComercial) {
+		this.idExpedienteComercial = idExpedienteComercial;
+	}
+
+	public String getResponsableTramitacion() {
+		return responsableTramitacion;
+	}
+
+	public void setResponsableTramitacion(String responsableTramitacion) {
+		this.responsableTramitacion = responsableTramitacion;
+	}
+
+	public Double getImporteProporcionalOferta() {
+		return importeProporcionalOferta;
+	}
+
+	public void setImporteProporcionalOferta(Double importeProporcionalOferta) {
+		this.importeProporcionalOferta = importeProporcionalOferta;
+	}
+
+	public Double getImporteFinanciado() {
+		return importeFinanciado;
+	}
+
+	public void setImporteFinanciado(Double importeFinanciado) {
+		this.importeFinanciado = importeFinanciado;
 	}
 	
 	

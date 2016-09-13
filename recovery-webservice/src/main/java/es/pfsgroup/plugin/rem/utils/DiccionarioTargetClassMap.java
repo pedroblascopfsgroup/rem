@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 
 @Component
 public class DiccionarioTargetClassMap{
@@ -169,6 +170,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposPorCuenta", DDTiposPorCuenta.class);
 		mapa.put("tiposImpuestos", DDTiposImpuesto.class);
 		mapa.put("situacionesPosesoria", DDSituacionesPosesoria.class);
+		mapa.put("usosActivo", DDUsosActivo.class);
 		
 
 		return Collections.unmodifiableMap(mapa);

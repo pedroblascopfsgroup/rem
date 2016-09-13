@@ -9,28 +9,32 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     viewModel: {
         type: 'expedientedetalle'
     },
+
     
     idComprador: null,
     
-    recordName: "comprador",
-	
-	recordClass: "HreRem.model.FichaComprador",
+    
     
     requires: ['HreRem.model.FichaComprador'],
     
 	listeners: {
+		boxready: 'cargarData',
 	
-		boxready: function(window) {
-			
+//		boxready: function(window) {
+//			
+//			var me = this;
+//			
+//			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
+//				function (field, index) 
+//					{ 								
+//						field.fireEvent('edit');
+//						if(index == 0) field.focus();
+//					}
+//			);
+//		},
+		show: function() {			
 			var me = this;
-			
-			Ext.Array.each(window.down('form').query('field[isReadOnlyEdit]'),
-				function (field, index) 
-					{ 								
-						field.fireEvent('edit');
-						if(index == 0) field.focus();
-					}
-			);
+			me.resetWindow();			
 		}
 	},
 	
@@ -49,8 +53,24 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	    				xtype: 'formBase', 
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
-	    				cls:'',	    				
-					    
+	   			 		recordName: "comprador",
+	
+						recordClass: "HreRem.model.FichaComprador",
+	    				cls:'',
+	    				listeners: { 
+	    				
+		    				boxready: function(window){
+		    					var me = this;
+								
+								Ext.Array.each(window.query('field[isReadOnlyEdit]'),
+									function (field, index) 
+										{ 								
+											field.fireEvent('edit');
+											if(index == 0) field.focus();
+										}
+								);
+		    				}
+	    				},
 					    
     					items: [
         							{    
@@ -91,8 +111,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 						                			xtype:'numberfieldbase',
 										        	fieldLabel:  HreRem.i18n('fieldlabel.porcion.compra'),
 										        	reference: 'porcionCompra',
-										        	bind: '{comprador.porcentajeCompra }',
-									            	allowBlank: false
+										        	bind: '{comprador.porcentajeCompra}'
 										        },
 										        {
 						                			xtype: 'comboboxfieldbase',
@@ -125,7 +144,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 													reference: 'tipoDocumento',
 										        	bind: {
-									            		store: '{comboTipoDocumento}'
+									            		store: '{comboTipoDocumento}',
+									            		value: '{comprador.codTipoDocumento}'
 									            	}
 									            	
 										        },
@@ -133,23 +153,22 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
 													reference: 'numeroDocumento',
 										        	bind: {
-									            		value: '{numeroDocumento}'
-									            	},
-									            	allowBlank: false
+									            		value: '{comprador.numDocumento}'
+									            	}
+
 						                		},
 												{ 
 										        	fieldLabel:  HreRem.i18n('header.nombre.razon.social'),
 										        	reference: 'nombreRazonSocial',
 										        	bind: {
-									            		value: '{nombreRazonSocial}'
-									            	},
-									            	allowBlank: false
+									            		value: '{comprador.nombreRazonSocial}'
+									            	}
 										        },
 										        { 
 										        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 										        	reference: 'direccion',
 										        	bind: {
-									            		value: '{direccion}'
+									            		value: '{comprador.direccion}'
 									            	}
 													
 										        },
@@ -157,7 +176,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.municipio'),
 										        	reference: 'municipio',
 										        	bind: {
-									            		value: '{municipio}'
+									            		value: '{comprador.municipio}'
 									            	}
 													
 										        },
@@ -165,7 +184,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
 										        	reference: 'telefono1',
 										        	bind: {
-									            		value: '{telefono1}'
+									            		value: '{comprador.telefono1}'
 									            	}
 													
 										        },
@@ -173,7 +192,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.provincia'),
 										        	reference: 'provincia',
 										        	bind: {
-									            		value: '{provincia}'
+									            		value: '{comprador.provincia}'
 									            	}
 													
 										        },
@@ -181,7 +200,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
 										        	reference: 'telefono2',
 										        	bind: {
-									            		value: '{telefono2}'
+									            		value: '{comprador.telefono2}'
 									            	}
 													
 										        },
@@ -190,7 +209,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
 										        	reference: 'codigoPostal',
 										        	bind: {
-									            		value: '{codigoPostal}'
+									            		value: '{comprador.codigoPostal}'
 									            	}
 													
 										        },
@@ -198,7 +217,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.email'),
 										        	reference: 'email',
 										        	bind: {
-									            		value: '{email}'
+									            		value: '{comprador.email}'
 									            	}
 													
 										        }
@@ -224,7 +243,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
 													reference: 'estadoCivil',
 										        	bind: {
-									            		store: '{comboEstadoCivil}'
+									            		store: '{comboEstadoCivil}',
+									            		value: '{comprador.codEstadoCivil}'
 									            	}
 									            	
 									            	
@@ -234,7 +254,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 													reference: 'regimenEconomico',
 										        	bind: {
-									            		store: '{regimenEconomico}'
+									            		store: '{regimenEconomico}',
+									            		value: '{comprador.corRegimenEconomico}'
 									            	}
 									            	
 						                		},
@@ -242,7 +263,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),
 										        	reference: 'numRegConyuge',
 										        	bind: {
-									            		value: '{numRegConyuge}'
+									            		value: '{comprador.numRegConyuge}'
 									            	}
 													
 										        },
@@ -255,7 +276,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.antiguo.deudor'),
 										        	reference: 'antiguoDeudor',
 										        	bind: {
-										        		store: '{comboSiNoRem}'
+										        		store: '{comboSiNoRem}',
+										        		value: '{comprador.antiguoDeudor}'
 									            	}
 													
 										        },
@@ -264,7 +286,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.ant.deudor'),
 										        	reference: 'relacionAntDeudor',
 										        	bind: {
-										        		store: '{comboSiNoRem}'
+										        		store: '{comboSiNoRem}',
+										        		value: '{comprador.relacionAntDeudor}'
 									            	}
 													
 										        }
@@ -290,7 +313,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 													reference: 'tipoDocumentoRte',
 										        	bind: {
-									            		store: '{comboTipoDocumento}'
+									            		store: '{comboTipoDocumento}',
+									            		value: '{comprador.codTipoDocumentoRte}'
 									            	},
 									            	listeners : {
 									            		change: function(combo, value) {
@@ -308,7 +332,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
 													reference: 'numeroDocumentoRte',
 										        	bind: {
-									            		value: '{numeroDocumentoRte}'
+									            		value: '{numeroDocumentoRte}',
+									            		value: '{comprador.numDocumentoRte}'
 									            	},
 									            	listeners : {
 									            		change: function(combo, value) {
@@ -327,7 +352,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('header.nombre.razon.social'),
 										        	reference: 'nombreRazonSocialRte',
 										        	bind: {
-									            		value: '{nombreRazonSocialRte}'
+									            		value: '{comprador.nombreRazonSocialRte}'
 									            	}
 													
 										        },
@@ -335,7 +360,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 										        	reference: 'direccionRte',
 										        	bind: {
-									            		value: '{direccionRte}'
+									            		value: '{comprador.direccionRte}'
 									            	}
 													
 										        },
@@ -343,7 +368,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.municipio'),
 										        	reference: 'municipioRte',
 										        	bind: {
-									            		value: '{municipioRte}'
+									            		value: '{comprador.municipioRte}'
 									            	}
 													
 										        },
@@ -351,7 +376,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
 										        	reference: 'telefono1Rte',
 										        	bind: {
-									            		value: '{telefono1Rte}'
+									            		value: '{comprador.telefono1Rte}'
 									            	}
 													
 										        },
@@ -359,7 +384,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.provincia'),
 										        	reference: 'provinciaRte',
 										        	bind: {
-									            		value: '{provinciaRte}'
+									            		value: '{comprador.provinciaRte}'
 									            	}
 													
 										        },
@@ -367,7 +392,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
 										        	reference: 'telefono2Rte',
 										        	bind: {
-									            		value: '{telefono2Rte}'
+									            		value: '{comprador.telefono2Rte}'
 									            	}
 													
 										        },
@@ -376,7 +401,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
 										        	reference: 'codigoPostalRte',
 										        	bind: {
-									            		value: '{codigoPostalRte}'
+									            		value: '{comprador.codigoPostalRte}'
 									            	}
 													
 										        },
@@ -384,7 +409,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.email'),
 										        	reference: 'emailRte',
 										        	bind: {
-									            		value: '{emailRte}'
+									            		value: '{comprador.emailRte}'
 									            	}
 													
 										        }
@@ -394,9 +419,16 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
         				]
     			}
     	]
-    	
+
     	me.callParent();    	
     
+    },
+    
+     resetWindow: function() {
+    	var me = this,    	
+    	form = me.down('formBase');
+		form.setBindRecord(comprador);
+	
     }
 
 });

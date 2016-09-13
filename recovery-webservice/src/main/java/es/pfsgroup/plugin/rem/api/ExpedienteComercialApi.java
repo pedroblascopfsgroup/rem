@@ -155,6 +155,14 @@ public interface ExpedienteComercialApi {
 		 */
 		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 		
+		/**
+		 * Método que guarda la información de la pestaña de un comprador del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
+		
 	   
 }
 

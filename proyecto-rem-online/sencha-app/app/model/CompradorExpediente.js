@@ -30,6 +30,12 @@ Ext.define('HreRem.model.CompradorExpediente', {
     		},
     		{
     			name:'email'
+    		},
+    		{
+    			name:'estadoPbc'
+    		},
+    		{
+    			name:'relacionHre'
     		}
     		
     ],

@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.expedientedetalle',    
+    alias: 'controller.expedientedetalle',  
+    requires: ['HreRem.view.expedientes.DatosComprador'],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -324,11 +325,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onCompradoresListDobleClick : function(gridView,record) {
-		
 		var me=this,
 		idCliente = record.get("id");
-    	
-		me.getView().fireEvent('openModalWindow',"HreRem.view.expedientes.DatosComprador",{idCliente: idCliente});
+		var storeGrid= gridView.store;
+    	Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid }).show();
+
 	},
 
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
@@ -467,8 +468,128 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			cargasPendientesOtrosPorCuentaDe.setDisabled(true);
 		}
 
+	},
+	
+	cargarData: function (window) {
+		var me = this,
+		model = null,
+		models = null,
+		nameModels = null,
+		id = window.idComprador;
+		var form= window.down('formBase');
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		if(!form.saveMultiple) {	
+			model = form.getModelInstance(),
+			model.setId(id);
+			if(Ext.isDefined(model.getProxy().getApi().read)) {
+				// Si la API tiene metodo de lectura (read).
+				model.load({
+				    success: function(record) {
+				    	form.setBindRecord(record);			    	
+				    	form.unmask();
+				    	if(Ext.isFunction(form.afterLoad)) {
+				    		form.afterLoad();
+				    	}
+				    }
+				});
+			}
+		}
+	},
+	
+	onClickBotonModificarComprador: function(btn){
+		var me = this,
+		window = btn.up("window"),
+		form = window.down("form");
+		
+		form.recordName = "comprador";
+		form.recordClass = "HreRem.model.FichaComprador";
+		
+		var success = function(record, operation) {
+			me.getView().unmask();
+	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    	window.destroy();
+//	    	window.parent.funcionRecargar();
+//	    	window.hide();
+
+		};
+		
+		var failure = function(record, operation) {
+			me.getView().unmask();
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    	window.destroy();
+//	    	window.parent.funcionRecargar();
+//	    	window.hide();
+
+		};
+
+		//En este caso, actualizar
+		me.onSaveFormularioCompletoComprador(form, success, failure);
+	},
+	
+	   	onSaveFormularioCompletoComprador: function(form, success, failure) {
+		var me = this,
+		datoscom= form.up(),
+		storeGrid= datoscom.storeGrid,
+		record = form.getBindRecord();
+		success = success || function() {
+			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			storeGrid.load();
+		};
+		failure = failure || function() {
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			storeGrid.load();
+		}; 
+		
+		if(form.isFormValid()) {
+			var idExpedienteComercial = record.get("idExpedienteComercial");
+
+			form.mask(HreRem.i18n("msg.mask.espere"));
+			
+			record.save({
+				params: {idExpedienteComercial: idExpedienteComercial},
+			    success: success,
+			 	failure: failure,
+			    callback: function(record, operation) {
+			    	storeGrid.load();
+			    	
+			    }
+			    		    
+			});
+		} else {
+		
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+		}
+	
+	},
+	
+	onCompradoresListClick: function(gridView,record){
+		var me=this,
+		idCliente = record.get("id"),
+		model = Ext.create('HreRem.model.FichaComprador');
+		
+		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
+		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+	
+		model.setId(idCliente);
+		model.load({			
+		    success: function(record) {	
+		    	me.getViewModel().set("detalleComprador", record);
+		    	fieldset.unmask();
+		    }
+		});
+	},
+	
+	onHaCambiadoDestinoActivo: function(combo, value){
+		var me = this,
+    	otrosDetallePbc = me.lookupReference('otrosDetallePbc');
+    	
+    	if(value=='05'){
+    		otrosDetallePbc.setDisabled(false);
+    		otrosDetallePbc.alloBlank= false;
+    	}else{
+    		otrosDetallePbc.setValue("");
+    		otrosDetallePbc.setDisabled(true);
+    	}
 	}
-	
-	
 
 });

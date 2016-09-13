@@ -59,6 +59,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
+	     },
+	     
+	     esDestinoActivoOtros: function(get){
+	     	var destinoActivo= get('destinoActivo');
+	     	if(destinoActivo=='05'){
+	     		return true;
+	     	}
+	     	return false;
 	     }
 	 },
 
@@ -232,9 +240,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getCompradoresExpediente',
 		        extraParams: {idExpediente: '{expediente.id}'}
-	    	},
-	    	remoteSort: true,
-	    	remoteFilter: true
+	    	}
 		},
 		
 		comboTipoPersona : {
@@ -262,6 +268,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosCiviles'}
 			}   	
+	    },
+	    
+	    comboDestinoActivo: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'usosActivo'}
+			} 
 	    }
 	
     }

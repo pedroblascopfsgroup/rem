@@ -20,6 +20,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -68,8 +69,15 @@ public class ServiciosWebcomTestsBase {
 	}
 
 	protected void assertDataContains(JSONArray requestData, int idx, String key) {
-		assertTrue("data[i]." + key + " es requerido", requestData.getJSONObject(idx).containsKey(key));
+		assertTrue("data[i]." + key + " es requerido para el test", requestData.getJSONObject(idx).containsKey(key));
 	}
+	
+	
+	protected void assertDataBasicContent(JSONArray requestData, int idx){
+		assertDataContains(requestData, 0, EstadoTrabajoConstantes.FECHA_ACCION);
+		assertDataContains(requestData, 0, EstadoTrabajoConstantes.ID_USUARIO_REM_ACCION);
+	}
+	
 
 	protected void assertDataEquals(JSONArray requestData, int idx, String key, Object expected) {
 		assertDataContains(requestData, idx, key);

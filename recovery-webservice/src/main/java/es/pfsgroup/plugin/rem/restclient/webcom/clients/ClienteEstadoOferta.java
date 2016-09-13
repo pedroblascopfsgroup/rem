@@ -9,21 +9,22 @@ import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
-public class ClienteEstadoTrabajo extends ClienteWebcomBase implements ClienteWebcom {
+public class ClienteEstadoOferta extends ClienteWebcomBase implements ClienteWebcom{
 	
 	@Autowired
 	private HttpClientFacade httpClient;
-
-	public ClienteEstadoTrabajo() {
-		this.setEndpoint(WebcomEndpoint.estadoTrabajo());
+	
+	public ClienteEstadoOferta(){
+		this.setEndpoint(WebcomEndpoint.estadoOferta());
 		this.setHttpClient(httpClient);
 	}
+	
 
 	@Override
 	public Map<String, Object> enviaPeticion(Map<String, Object> params) throws ErrorServicioWebcom {
-		return send(params);
+		return this.send(params);
 	}
-	
+
 	@Override
 	public void procesaRespuesta(Map<String, Object> respuesta) {
 		this.receive(respuesta);

@@ -12,8 +12,6 @@ import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcom;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import net.sf.json.JSONArray;

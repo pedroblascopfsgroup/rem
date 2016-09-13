@@ -19,6 +19,8 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 import net.sf.json.JSONObject;
@@ -27,37 +29,57 @@ import net.sf.sojo.interchange.json.JsonParser;
 @Component
 public class HttpClientFacade {
 
-	public JSONObject processRequest(String serviceUrl, String sendMethod, Map<String, String> headers, JSONObject requestJson,
-			int responseTimeOut, String charSet) throws HttpClientException {
+	private final Log logger = LogFactory.getLog(getClass());
+
+	public JSONObject processRequest(String serviceUrl, String sendMethod, Map<String, String> headers,
+			JSONObject requestJson, int responseTimeOut, String charSet) throws HttpClientException {
+		
 		if (StringUtils.isBlank(serviceUrl)) {
 			throw new HttpClientFacadeInternalError("Service URL is required");
 		}
-		
-		if (requestJson == null){
+
+		if (requestJson == null) {
 			throw new HttpClientFacadeInternalError("JSON request is required");
 		}
 		
+		logger.debug("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
+				+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
+		
+
 		// Essentially return a new HttpClient(), but can be pulled from Spring
 		// context
 		HttpMethod method = null;
-		Integer responseCode = null; 
+		Integer responseCode = null;
 		try {
 			HttpClient httpclient = new HttpClient();
 			method = getHttpMethodFromString(sendMethod, requestJson, charSet);
-			if (headers != null && (! headers.isEmpty())){
-				for (Entry<String, String> e : headers.entrySet()){
+			logger.debug("Método de conexión: " + method.toString());
+			
+			if (headers != null && (!headers.isEmpty())) {
+				for (Entry<String, String> e : headers.entrySet()) {
+					logger.debug("Se añade Header [" + e.getKey() + " : " + e.getValue() + "]");
 					method.addRequestHeader(e.getKey(), e.getValue());
 				}
 			}
 			// Below
 			method.setPath(serviceUrl);
+			logger.debug("http.protocol.version : " + HttpVersion.HTTP_1_1);
 			httpclient.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+			
+			logger.debug("http.socket.timeout : " + responseTimeOut);
 			httpclient.getParams().setParameter("http.socket.timeout", responseTimeOut);
+			
+			logger.debug("http.protocol.content-charset : " + charSet);
 			httpclient.getParams().setParameter("http.protocol.content-charset", charSet);
 
+			logger.debug("Lanzando peticion : httpClient.executeMethod()");
 			responseCode = httpclient.executeMethod(method);
-			String respBody = getResponseBody(method);// See details Below
+			logger.debug("Petición finalizada. Response Code : " + responseCode);
 			
+			String respBody = getResponseBody(method);// See details Below
+			logger.debug("-- RESPONSE BODY --");
+			logger.debug(respBody);
+
 			return JSONObject.fromObject(respBody);
 		} catch (Exception e) {
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + ",PARAMS:"
@@ -70,11 +92,16 @@ public class HttpClientFacade {
 		}
 	}
 
-
 	private void setRequestParams(PostMethod method, JSONObject params, String charSet)
 			throws UnsupportedEncodingException {
-
-		StringRequestEntity entity = new StringRequestEntity(params.toString(), "application/json", charSet);
+		logger.debug("Configurando PostMethod");
+		String contentType = "application/json";
+		logger.debug(" - Content Type : " + contentType);
+		logger.debug(" - charset : " + charSet);
+		logger.debug("-- JSON Body --");
+		logger.debug(params.toString());
+		
+		StringRequestEntity entity = new StringRequestEntity(params.toString(), contentType, charSet);
 		method.setRequestEntity(entity);
 
 	}
@@ -121,7 +148,7 @@ public class HttpClientFacade {
 					if (in != null)
 						in.close();
 				} catch (IOException e) {
-					// logger.warn("Error Closing Response Stream",e);
+					 logger.warn("Error Closing Response Stream",e);
 				}
 			}
 			return StringEscapeUtils.unescapeHtml(stringOut.toString());

@@ -36,6 +36,11 @@
 		</dependency>
 
 		<dependency>
+		  <groupId>es.pfsgroup.plugin</groupId>
+		  <artifactId>recovery-message-broker</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>es.pfsgroup.plugin.evolution</groupId>
 			<artifactId>recovery-coreextension-plugin-evol</artifactId>
 			<optional>true</optional>

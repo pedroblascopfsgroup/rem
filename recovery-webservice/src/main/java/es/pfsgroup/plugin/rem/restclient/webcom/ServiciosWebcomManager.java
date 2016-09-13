@@ -2,10 +2,13 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 
 import java.util.HashMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
@@ -16,19 +19,26 @@ import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstant
 @Service
 public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implements ServiciosWebcomApi {
 
+	private final Log logger = LogFactory.getLog(getClass());
+
 	@Autowired
 	private HttpClientFacade httpClient;
 
-	@Autowired ApiProxyFactory proxyFactory;
-	
-	@Autowired ClienteEstadoTrabajo estadoTrabajoService; 
-	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
+	@Autowired(required = false)
+	private MessageBroker messageBroker;
+
+	@Autowired
+	private ClienteEstadoTrabajo estadoTrabajoService;
+
 	@Autowired
 	private ClienteEstadoOferta estadoOfertaService;
-	
 
 	@Override
 	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, Long idEstado, String motivoRechazo) {
+		logger.info("Invocando servicio Webcom: Estado Trabajo");
 		HashMap<String, Object> params = createParametersMap(proxyFactory);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
@@ -44,10 +54,10 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		invocarServicioRestWebcom(params, estadoTrabajoService);
 	}
 
-
 	@Override
 	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, Long idEstadoOferta, Long idActivoHaya,
 			Long idEstadoExpediente, Boolean vendido) {
+		logger.info("Invocando servicio Webcom: Estado Oferta");
 		HashMap<String, Object> params = createParametersMap(proxyFactory);
 
 		params.put(EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
@@ -68,15 +78,21 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		if (vendido != null) {
 			params.put(EstadoOfertaConstantes.VENDIDO, vendido);
 		}
-		
+
 		invocarServicioRestWebcom(params, estadoOfertaService);
 
 	}
 
-	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService, ClienteEstadoOferta estadoOfertaService) {
+	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService,
+			ClienteEstadoOferta estadoOfertaService) {
 		this.estadoTrabajoService = estadoTrabajoService;
 		this.estadoOfertaService = estadoOfertaService;
-		
+
+	}
+
+	@Override
+	protected MessageBroker getMessageBroker() {
+		return this.messageBroker;
 	}
 
 }

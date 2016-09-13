@@ -76,7 +76,11 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public Broker getBrokerByIp(String ip) {
-		Broker broker = brokerDao.getBrokerByIp(ip);
+		//Broker broker = brokerDao.getBrokerByIp(ip);
+		
+		Broker broker = new Broker();
+		broker.setIp(ip);
+		broker.setKey("0123456789");
 		return broker;
 	}
 

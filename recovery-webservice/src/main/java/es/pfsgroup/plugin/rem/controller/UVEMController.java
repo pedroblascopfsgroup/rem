@@ -12,6 +12,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.gfi.webIntegrator.WIException;
 
+import es.cajamadrid.servicios.GM.GMPAJC11_INS.GMPAJC11_INS;
+import es.cajamadrid.servicios.GM.GMPAJC93_INS.GMPAJC93_INS;
 import es.cm.arq.tda.tiposdedatosbase.TipoDeDatoException;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 
@@ -41,10 +43,13 @@ public class UVEMController {
 			@RequestParam(required = true) String nombreGestor, @RequestParam(required = false) String gestion) {
 		try {
 			uvemManager.ejecutarSolicitarTasacion(bienId, nombreGestor, gestion);
-			int numeroIdentificadorTasacion = uvemManager.resultadoSolicitarTasacion();
+			int numeroIdentificadorTasacion = uvemManager.resultadoSolicitarTasacion()
+					.getNumeroIdentificadorDeTasacionlnuita2();
 			model.put("numeroIdentificadorTasacion", numeroIdentificadorTasacion);
 		} catch (WIException e) {
 			logger.error(e.getMessage());
+			model.put("error", true);
+			model.put("errorDesc", e.getMessage());
 		} catch (TipoDeDatoException e) {
 			logger.error(e.getMessage());
 		}
@@ -57,9 +62,9 @@ public class UVEMController {
 	 * Cliente (y tipo) devolverá el/los nº cliente/s Ursus coincidentes
 	 * 
 	 * @param model
-	 * @param nudnio:
+	 * @param nDocumento:
 	 *            Documento según lo expresado en COCLDO. DNI, CIF, etc
-	 * @param cocldo:
+	 * @param tipoDocumento:
 	 *            Clase De Documento Identificador Cliente. 1 D.N.I 2 C.I.F. 3
 	 *            Tarjeta Residente. 4 Pasaporte 5 C.I.F país extranjero. 7
 	 *            D.N.I país extranjero. 8 Tarj. identif. diplomática 9 Menor. F
@@ -71,37 +76,36 @@ public class UVEMController {
 	 *            habitat 05021
 	 * @return
 	 */
-	public ModelAndView numCliente(ModelMap model, @RequestParam(required = true) String nudnio,
-			@RequestParam(required = true) String cocldo, @RequestParam(required = true) String idclow,
-			@RequestParam(required = true) String qcenre) {
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView datosCliente(ModelMap model, @RequestParam(required = true) String nDocumento,
+			@RequestParam(required = true) String tipoDocumento, @RequestParam(required = false) String qcenre) {
 
-		uvemManager.ejecutarNumCliente(nudnio, cocldo, idclow, qcenre);
-		uvemManager.resultadoNumCliente();
+		try {
 
-		return new ModelAndView("jsonView", model);
-	}
+			// si la entidad es null asumimos bankia
+			if (qcenre == null || qcenre.isEmpty()) {
+				qcenre = "00000";
+			}
 
-	/**
-	 * Servicio REM  UVEM para que a partir del nº cliente URSUS se devuelvan
-	 * los datos del mismo, tanto identificativos como de cara a poder dar
-	 * cumplimiento a la normativa relativa a PBC.
-	 * 
-	 * @param model
-	 * @param copace:
-	 *            Codigo Objeto Acceso
-	 * @param idclow:
-	 *            Identificador Cliente Oferta
-	 * @param iddsfu:
-	 *            Identificador Discriminador Funcion
-	 * @param qcenre:
-	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
-	 *            habitat 05021
-	 * @return
-	 */
-	public ModelAndView datosCliente(ModelMap model, @RequestParam(required = true) String copace,
-			@RequestParam(required = true) String idclow, String iddsfu, @RequestParam(required = true) String qcenre) {
-		uvemManager.ejecutarDatosCliente(copace, idclow, iddsfu, qcenre);
-		uvemManager.resultadoDatosCliente();
+			// obtenemos el n de cliente interno dado su documento y tipo de
+			// documento
+			uvemManager.ejecutarNumCliente(nDocumento, tipoDocumento, qcenre);
+			GMPAJC11_INS numclienteIns = uvemManager.resultadoNumCliente();
+
+			uvemManager.ejecutarDatosCliente(numclienteIns.getnumeroCliente(), qcenre);
+			GMPAJC93_INS datosClienteIns = uvemManager.resultadoDatosCliente();
+			
+			//edad
+			model.put("edad", datosClienteIns.getEdadDelClientenuedaw());
+			
+
+		} catch (WIException e) {
+			logger.error(e.getMessage());
+			model.put("error", true);
+			model.put("errorDesc", e.getMessage());
+		}
+
 		return new ModelAndView("jsonView", model);
 	}
 

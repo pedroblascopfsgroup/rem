@@ -113,6 +113,14 @@ public class Oferta implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID_API_RESPONSABLE")
 	private ActivoProveedor apiResponsable;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_CUSTODIO")
+	private ActivoProveedor custodio;   
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_FDV")
+	private ActivoProveedor fdv;
+    
     @OneToMany(mappedBy = "oferta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "OFR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -348,9 +356,22 @@ public class Oferta implements Serializable, Auditable {
 	public void setFechaNotificacion(Date fechaNotificacion) {
 		this.fechaNotificacion = fechaNotificacion;
 	}
-    
-    
-    
-    
-   
+
+	public ActivoProveedor getCustodio() {
+		return custodio;
+	}
+
+	public void setCustodio(ActivoProveedor custodio) {
+		this.custodio = custodio;
+	}
+
+	public ActivoProveedor getFdv() {
+		return fdv;
+	}
+
+	public void setFdv(ActivoProveedor fdv) {
+		this.fdv = fdv;
+	}
+
+
 }

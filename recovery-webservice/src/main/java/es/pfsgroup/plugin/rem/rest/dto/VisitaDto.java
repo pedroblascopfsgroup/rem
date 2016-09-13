@@ -21,22 +21,23 @@ public class VisitaDto implements Serializable {
 	private String codEstadoVisita;
 	@Size(max=20)
 	private String codDetalleEstadoVisita;
-	@NotNull
 	private Date fechaVisita;
+	@NotNull
+	private Long idProveedorRemPrescriptor;
+	@NotNull
+	private Long idProveedorRemCustodio;
+	private Long idProveedorRemResponsable;
+	private Long idProveedorRemFdv;
+	private Long idProveedorRemVisita;
+	//private Boolean visitaPrescriptor;
+	//private Boolean visitaApiResponsable;
+	//private Boolean visitaApiCustodio;
+	@Size(max=250)
+	private String observaciones;
 	@NotNull
 	private Date fecha;
 	@NotNull
 	private Long idUsuarioRem;
-	@NotNull
-	private Long idPrescriptor;
-	private Boolean visitaPrescriptor;
-	private Long idApiResponsable;
-	private Boolean visitaApiResponsable;
-	private Long idApiCustodio;
-	private Boolean visitaApiCustodio;
-	@Size(max=250)
-	private String observaciones;
-	
 	
 	
 	
@@ -82,6 +83,42 @@ public class VisitaDto implements Serializable {
 	public void setFechaVisita(Date fechaVisita) {
 		this.fechaVisita = fechaVisita;
 	}
+	public Long getIdProveedorRemPrescriptor() {
+		return idProveedorRemPrescriptor;
+	}
+	public void setIdProveedorRemPrescriptor(Long idProveedorRemPrescriptor) {
+		this.idProveedorRemPrescriptor = idProveedorRemPrescriptor;
+	}
+	public Long getIdProveedorRemCustodio() {
+		return idProveedorRemCustodio;
+	}
+	public void setIdProveedorRemCustodio(Long idProveedorRemCustodio) {
+		this.idProveedorRemCustodio = idProveedorRemCustodio;
+	}
+	public Long getIdProveedorRemResponsable() {
+		return idProveedorRemResponsable;
+	}
+	public void setIdProveedorRemResponsable(Long idProveedorRemResponsable) {
+		this.idProveedorRemResponsable = idProveedorRemResponsable;
+	}
+	public Long getIdProveedorRemFdv() {
+		return idProveedorRemFdv;
+	}
+	public void setIdProveedorRemFdv(Long idProveedorRemFdv) {
+		this.idProveedorRemFdv = idProveedorRemFdv;
+	}
+	public Long getIdProveedorRemVisita() {
+		return idProveedorRemVisita;
+	}
+	public void setIdProveedorRemVisita(Long idProveedorRemVisita) {
+		this.idProveedorRemVisita = idProveedorRemVisita;
+	}
+	public String getObservaciones() {
+		return observaciones;
+	}
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
 	public Date getFecha() {
 		return fecha;
 	}
@@ -94,23 +131,11 @@ public class VisitaDto implements Serializable {
 	public void setIdUsuarioRem(Long idUsuarioRem) {
 		this.idUsuarioRem = idUsuarioRem;
 	}	
-	public Long getIdPrescriptor() {
-		return idPrescriptor;
-	}
-	public void setIdPrescriptor(Long idPrescriptor) {
-		this.idPrescriptor = idPrescriptor;
-	}
-	public Boolean getVisitaPrescriptor() {
+	/*public Boolean getVisitaPrescriptor() {
 		return visitaPrescriptor;
 	}
 	public void setVisitaPrescriptor(Boolean visitaPrescriptor) {
 		this.visitaPrescriptor = visitaPrescriptor;
-	}
-	public Long getIdApiResponsable() {
-		return idApiResponsable;
-	}
-	public void setIdApiResponsable(Long idApiResponsable) {
-		this.idApiResponsable = idApiResponsable;
 	}
 	public Boolean getVisitaApiResponsable() {
 		return visitaApiResponsable;
@@ -118,23 +143,11 @@ public class VisitaDto implements Serializable {
 	public void setVisitaApiResponsable(Boolean visitaApiResponsable) {
 		this.visitaApiResponsable = visitaApiResponsable;
 	}
-	public Long getIdApiCustodio() {
-		return idApiCustodio;
-	}
-	public void setIdApiCustodio(Long idApiCustodio) {
-		this.idApiCustodio = idApiCustodio;
-	}
 	public Boolean getVisitaApiCustodio() {
 		return visitaApiCustodio;
 	}
 	public void setVisitaApiCustodio(Boolean visitaApiCustodio) {
 		this.visitaApiCustodio = visitaApiCustodio;
 	}
-	public String getObservaciones() {
-		return observaciones;
-	}
-	public void setObservaciones(String observaciones) {
-		this.observaciones = observaciones;
-	}
-	
+	*/
 }

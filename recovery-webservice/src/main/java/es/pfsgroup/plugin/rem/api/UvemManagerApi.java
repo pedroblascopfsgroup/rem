@@ -54,7 +54,7 @@ public interface UvemManagerApi {
 	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
 	 *            habitat 05021
 	 */
-	public void ejecutarNumCliente(String nudnio, String cocldo, String idclow, String qcenre) throws WIException;
+	public void ejecutarNumCliente(String nudnio, String cocldo, String qcenre) throws WIException;
 
 	/**
 	 * 
@@ -66,17 +66,13 @@ public interface UvemManagerApi {
 	 * los datos del mismo, tanto identificativos como de cara a poder dar
 	 * cumplimiento a la normativa relativa a PBC.
 	 * 
-	 * @param copace:
-	 *            Codigo Objeto Acceso
 	 * @param idclow:
 	 *            Identificador Cliente Oferta
-	 * @param iddsfu:
-	 *            Identificador Discriminador Funcion
 	 * @param qcenre:
 	 *            Cód. Entidad Representada Cliente Ursus, Bankia 00000, Bankia
 	 *            habitat 05021
 	 */
-	public void ejecutarDatosCliente(String copace, Long idclow, String iddsfu, String qcenre)  throws WIException;
+	public void ejecutarDatosCliente(Long idclow, String qcenre)  throws WIException;
 
 	/**
 	 * 

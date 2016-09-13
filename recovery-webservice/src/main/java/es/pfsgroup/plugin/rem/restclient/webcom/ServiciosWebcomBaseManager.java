@@ -7,6 +7,7 @@ import java.util.Map;
 
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
@@ -15,7 +16,9 @@ import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioW
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
-public class ServiciosWebcomBaseManager {
+public abstract class ServiciosWebcomBaseManager {
+
+	protected abstract MessageBroker getMessageBroker();
 
 	public ServiciosWebcomBaseManager() {
 		super();
@@ -26,7 +29,7 @@ public class ServiciosWebcomBaseManager {
 		if (!fieldExists(params, ConstantesGenericas.FECHA_ACCION)) {
 			missingFields.add(ConstantesGenericas.FECHA_ACCION);
 		}
-	
+
 		if (!fieldExists(params, ConstantesGenericas.ID_USUARIO_REM_ACCION)) {
 			missingFields.add(ConstantesGenericas.ID_USUARIO_REM_ACCION);
 		}
@@ -49,7 +52,7 @@ public class ServiciosWebcomBaseManager {
 
 	protected HashMap<String, Object> createParametersMap(ApiProxyFactory proxyFactory) {
 		Usuario usuLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-	
+
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put(ConstantesGenericas.FECHA_ACCION, WebcomRequestUtils.formatDate(new Date()));
 		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, usuLogado.getUsername());
@@ -65,7 +68,10 @@ public class ServiciosWebcomBaseManager {
 				// TODO Loguear el error
 			} else {
 				// TODO Reintentar
-				// messageBroker.sendAsync(ClienteEstadoTrabajo.class, params);
+				MessageBroker mb = this.getMessageBroker();
+				if (mb != null) {
+					mb.sendAsync(servicio.getClass(), params);
+				}
 			}
 		}
 	}

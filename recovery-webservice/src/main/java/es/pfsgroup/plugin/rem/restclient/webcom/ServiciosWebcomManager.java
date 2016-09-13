@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
@@ -19,13 +20,17 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	@Autowired
 	private HttpClientFacade httpClient;
 
-	@Autowired ApiProxyFactory proxyFactory;
-	
-	@Autowired ClienteEstadoTrabajo estadoTrabajoService; 
-	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
+
+	@Autowired
+	private MessageBroker messageBroker;
+
+	@Autowired
+	private ClienteEstadoTrabajo estadoTrabajoService;
+
 	@Autowired
 	private ClienteEstadoOferta estadoOfertaService;
-	
 
 	@Override
 	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, Long idEstado, String motivoRechazo) {
@@ -43,7 +48,6 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 
 		invocarServicioRestWebcom(params, estadoTrabajoService);
 	}
-
 
 	@Override
 	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, Long idEstadoOferta, Long idActivoHaya,
@@ -68,15 +72,21 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		if (vendido != null) {
 			params.put(EstadoOfertaConstantes.VENDIDO, vendido);
 		}
-		
+
 		invocarServicioRestWebcom(params, estadoOfertaService);
 
 	}
 
-	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService, ClienteEstadoOferta estadoOfertaService) {
+	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService,
+			ClienteEstadoOferta estadoOfertaService) {
 		this.estadoTrabajoService = estadoTrabajoService;
 		this.estadoOfertaService = estadoOfertaService;
-		
+
+	}
+
+	@Override
+	protected MessageBroker getMessageBroker() {
+		return this.messageBroker;
 	}
 
 }

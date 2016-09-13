@@ -247,7 +247,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						listaErrores.add("El campo idActivoHaya es nulo y es obligatorio en actualizaciones.");
 					}
 					//Mirar si hace falta validar que no se pueda modificar la oferta si ha pasado al comité
-					if(!Checks.esNulo(oferta.getEstadoOferta()) && !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)){
+					if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta()) && !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)){
 						listaErrores.add("No es posible actualizar la oferta porque se encuentra en el estado: " + oferta.getEstadoOferta().getDescripcion());
 					}
 				}

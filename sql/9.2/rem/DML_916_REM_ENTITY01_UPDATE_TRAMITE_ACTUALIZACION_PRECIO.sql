@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20160912
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-764
 --## PRODUCTO=SI
 --##
 --## Finalidad: Realiza las modificaciones necesarias para el trámite de información.

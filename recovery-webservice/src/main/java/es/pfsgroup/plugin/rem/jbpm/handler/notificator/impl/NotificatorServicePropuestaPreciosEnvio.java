@@ -20,11 +20,11 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 
 @Component
-public class NotificatorServiceProveedor extends AbstractNotificatorService implements NotificatorService {
-
-	private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
-	private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
+public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificatorService implements NotificatorService {
 	
+	private static final String CODIGO_T009_ENVIO_PROPUESTA_PROPIETARIO = "T009_EnvioPropuestaPropietario";
+
+
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
@@ -39,7 +39,7 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T004_RESULTADO_TARIFICADA, CODIGO_T004_RESULTADO_NOTARIFICADA};
+		return new String[]{CODIGO_T009_ENVIO_PROPUESTA_PROPIETARIO};
 	}
 	
 	@Resource(name = "mailManager")
@@ -62,25 +62,12 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 		String titulo = "";
 		String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
 
-		
-		if(activoTramiteApi.numeroFijacionPlazos(tramite)>1){
-			contenido = "<p>El gestor del activo "+dtoSendNotificator.getNumActivo()+" ha validado negativamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-					 + "(Número REM "+tramite.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situación en "+dtoSendNotificator.getDireccion()+"</p>"
-					 + "<p>El motivo del rechazo es "+activoTramiteApi.obtenerMotivoDenegacion(tramite)+".</p>"
-					 + "<p>Se le ha concedido un plazo para que subsane las deficiencias hasta el día "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
-	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
-	  		  		 + "<p>Gracias.</p>";
-			titulo = "Notificación de incorrección de ejecución de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-		}else{
-			contenido = "<p>Desde HAYA RE se le ha asignado una actuación técnica del tipo "+dtoSendNotificator.getTipoContrato()+", la cual se ha abierto en REM con "
-	  		  		 + "el número de trabajo " +tramite.getTrabajo().getNumTrabajo() + ".</p>"
-	  		  		 + "<p>El activo objeto de la actuación es el número " +dtoSendNotificator.getNumActivo() + ", situado en "+dtoSendNotificator.getDireccion()+"</p>"
-	  		  		 + "<p>La fecha de finalización del trabajo por su parte es el "+dtoSendNotificator.getFechaFinalizacion()+"</p>"
-	  		  		 + "<p>Por favor, entre en la aplicación REM y compruebe las condiciones del trabajo.</p>"
-	  		  		 + "<p>Gracias.</p>";
-			titulo = "Notificación de encargo de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+tramite.getTrabajo().getNumTrabajo()+")";
-		}
-		
+		/**
+		 * HREOS-763 Completar cuando haya más información para esta notificación
+		 */
+		contenido = "<p>El gestor del ....</p>";
+		titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+
 			  
 		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
 		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
@@ -90,5 +77,4 @@ public class NotificatorServiceProveedor extends AbstractNotificatorService impl
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 	}
-
 }

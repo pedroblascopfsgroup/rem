@@ -32,6 +32,7 @@ import es.capgemini.pfs.procesosJudiciales.TareaExternaManager;
 import es.capgemini.pfs.procesosJudiciales.TareaProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
@@ -736,10 +737,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
      * 
      */
     protected void enviaNotificacion(Long idTarea){
-    	
-		TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
-		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
-		NotificatorService notificatorUpdaterService = notificatorServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
+
+		NotificatorService notificatorUpdaterService = getNotificatorService(idTarea);
 		ActivoTramite tramite = getActivoTramite(executionContext);
 		
 		if(!Checks.esNulo(notificatorUpdaterService))
@@ -747,5 +746,31 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				
 		logger.debug("\tEnviamos correo en la tarea: " + getNombreNodo(executionContext));
 		
+    }
+    
+    /**
+     * HREOS-764
+     * Envia notificación teniendo en cuenta los valores introducidos en la tarea realizada.
+     * Esta notificación se envía al finalizar la tarea, y no al empezar. LLamada desde el LeaveHandler.
+     * @param idTarea
+     * @param valores
+     */
+    protected void enviaNotificacionFinTareaConValores(Long idTarea, List<TareaExternaValor> valores) {
+    	
+    	NotificatorService notificatorUpdaterService = getNotificatorService(idTarea);
+		ActivoTramite tramite = getActivoTramite(executionContext);
+		
+		if(!Checks.esNulo(notificatorUpdaterService))
+			notificatorUpdaterService.notificatorFinTareaConValores(tramite,valores);
+				
+		logger.debug("\tEnviamos correo en la tarea: " + getNombreNodo(executionContext));
+    }
+    
+    private NotificatorService getNotificatorService(Long idTarea) {
+    	TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
+		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
+		NotificatorService notificatorUpdaterService = notificatorServiceFactoryApi.getService(tareaProcedimiento.getCodigo());
+		
+		return notificatorUpdaterService;
     }
 }

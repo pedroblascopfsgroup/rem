@@ -53,45 +53,49 @@ public class NotificatorServiceActualizacionPreciosAnalisis extends AbstractNoti
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-		String motivo = comprobarAceptacionTarea(valores);
+		//Comprobamos que quien solicitó el trabajo y quien realiza la tarea no sean el mismo usuario
+		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado()) ){
 		
-		List<String> mailsPara = new ArrayList<String>();
-		List<String> mailsCC = new ArrayList<String>();
-		String correos = null;
-		
-		correos = tramite.getTrabajo().getSolicitante().getEmail();
-	    Collections.addAll(mailsPara, correos.split(";"));
-		mailsCC.add(this.getCorreoFrom());
-		
-		String contenido = "";
-		String titulo = "";
-		String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
-
-		/**
-		 * HREOS-763 Completar cuando haya más información para esta notificación
-		 */
-		if(Checks.esNulo(motivo)) {
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			String motivo = comprobarAceptacionTarea(valores);
 			
-			contenido = "<p>Desde HAYA RE le informamos de que el gestor del trabajo "+dtoSendNotificator.getNumTrabajo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-					 + ", por lo que se procederá a la actualización de precios de los activos incluidos en el listado adjuntado del trabajo.</p>"
-			  		 + "<p>Un saludo.</p>";
-		
-			titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			List<String> mailsPara = new ArrayList<String>();
+			List<String> mailsCC = new ArrayList<String>();
+			String correos = null;
 			
+			correos = tramite.getTrabajo().getSolicitante().getEmail();
+		    Collections.addAll(mailsPara, correos.split(";"));
+			mailsCC.add(this.getCorreoFrom());
+			
+			String contenido = "";
+			String titulo = "";
+			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+	
+			/**
+			 * HREOS-763 Completar cuando haya más información para esta notificación
+			 */
+			if(Checks.esNulo(motivo)) {
+				
+				contenido = "<p>Desde HAYA RE le informamos de que el gestor del trabajo "+dtoSendNotificator.getNumTrabajo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
+						 + ", por lo que se procederá a la actualización de precios de los activos incluidos en el listado adjuntado del trabajo.</p>"
+				  		 + "<p>Un saludo.</p>";
+			
+				titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+				
+			}
+			else {
+				contenido = "<p>Desde HAYA RE le informamos de que el gestor del trabajo "+dtoSendNotificator.getNumTrabajo()+" ha rechazado su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
+						 + ", por tanto, no habrá actualización de precios de los activos incluidos en el listado adjuntado del trabajo por el siguiente motivo:</p>"
+						 + "<p><i>"+motivo+"</i></p>"
+				  		 + "<p>Un saludo.</p>";
+			
+				titulo = "Notificación de rechazo de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+			}
+	
+				  
+			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
-		else {
-			contenido = "<p>Desde HAYA RE le informamos de que el gestor del trabajo "+dtoSendNotificator.getNumTrabajo()+" ha rechazado su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-					 + ", por tanto, no habrá actualización de precios de los activos incluidos en el listado adjuntado del trabajo por el siguiente motivo:</p>"
-					 + "<p><i>"+motivo+"</i></p>"
-			  		 + "<p>Un saludo.</p>";
-		
-			titulo = "Notificación de rechazo de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-		}
-
-			  
-		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
-		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 	}
 	
 	/**

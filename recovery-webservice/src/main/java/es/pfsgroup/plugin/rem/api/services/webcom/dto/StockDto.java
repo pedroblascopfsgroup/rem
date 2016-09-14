@@ -7,7 +7,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 
 public class StockDto {
-	
 	private LongDataType idActivoHaya;
 	private StringDataType codTipoVia;
 	private StringDataType nombreCalle;
@@ -15,18 +14,18 @@ public class StockDto {
 	private StringDataType escalera;
 	private StringDataType planta;
 	private StringDataType puerta;
-	private LongDataType idMunicipio;
-	private LongDataType idPedania;
-	private LongDataType idProvincia;
+	private StringDataType codMunicipio;
+	private StringDataType codPedania;
+	private StringDataType codProvincia;
 	private StringDataType codigoPostal;
 	private FloatDataType actualImporte;
 	private FloatDataType anteriorImporte;
 	private DateDataType desdeImporte;
 	private DateDataType hastaImporte;
-	private LongDataType idTipoInmueble;
-	private LongDataType idSubtipoInmueble;
+	private StringDataType codTipoInmueble;
+	private StringDataType codSubtipoInmueble;
 	private StringDataType fincaRegistral;
-	private LongDataType idMunicipioRegistro;
+	private StringDataType codMunicipioRegistro;
 	private StringDataType registro;
 	private StringDataType referenciaCatastral;
 	private FloatDataType superficie;
@@ -36,34 +35,32 @@ public class StockDto {
 	private LongDataType banyos;
 	private LongDataType aseos;
 	private LongDataType garajes;
-	private LongDataType idEstadoComercial;
-	private LongDataType idTipoVenta;
+	private BooleanDataType publicado;
+	private StringDataType codEstadoComercial;
+	private StringDataType codTipoVenta;
 	private FloatDataType lat;
 	private FloatDataType lng;
-	private LongDataType idEstadoConstruccion;
+	private StringDataType codEstadoConstruccion;
 	private LongDataType terrazas;
-	private LongDataType idEstadoPublicacion;
+	private StringDataType codEstadoPublicacion;
 	private DateDataType publicadoDesde;
 	private BooleanDataType reformas;
-	private LongDataType idRegimenProteccion;
+	private StringDataType codRegimenProteccion;
 	private StringDataType descripcion;
 	private StringDataType distribucion;
 	private StringDataType condicionesEspecificas;
-	private LongDataType idDetallePublicacion;
+	private StringDataType codDetallePublicacion;
 	private StringDataType codigoAgrupacionObraNueva;
 	private StringDataType codigoCabeceraObraNueva;
 	private LongDataType idProveedorRemAnterior;
-	private LongDataType idProveedorRemActual;
+	private LongDataType idProveedorRem;
 	private StringDataType nombreGestorComercial;
 	private StringDataType telefonoGestorComercial;
 	private StringDataType emailGestorComercial;
 	private StringDataType codCee;
 	private DateDataType antiguedad;
-	private LongDataType idCartera;
+	private StringDataType codCartera;
 	private StringDataType codRatio;
-	private BooleanDataType idEstado;
-	
-	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -106,23 +103,23 @@ public class StockDto {
 	public void setPuerta(StringDataType puerta) {
 		this.puerta = puerta;
 	}
-	public LongDataType getIdMunicipio() {
-		return idMunicipio;
+	public StringDataType getCodMunicipio() {
+		return codMunicipio;
 	}
-	public void setIdMunicipio(LongDataType idMunicipio) {
-		this.idMunicipio = idMunicipio;
+	public void setCodMunicipio(StringDataType codMunicipio) {
+		this.codMunicipio = codMunicipio;
 	}
-	public LongDataType getIdPedania() {
-		return idPedania;
+	public StringDataType getCodPedania() {
+		return codPedania;
 	}
-	public void setIdPedania(LongDataType idPedania) {
-		this.idPedania = idPedania;
+	public void setCodPedania(StringDataType codPedania) {
+		this.codPedania = codPedania;
 	}
-	public LongDataType getIdProvincia() {
-		return idProvincia;
+	public StringDataType getCodProvincia() {
+		return codProvincia;
 	}
-	public void setIdProvincia(LongDataType idProvincia) {
-		this.idProvincia = idProvincia;
+	public void setCodProvincia(StringDataType codProvincia) {
+		this.codProvincia = codProvincia;
 	}
 	public StringDataType getCodigoPostal() {
 		return codigoPostal;
@@ -154,17 +151,17 @@ public class StockDto {
 	public void setHastaImporte(DateDataType hastaImporte) {
 		this.hastaImporte = hastaImporte;
 	}
-	public LongDataType getIdTipoInmueble() {
-		return idTipoInmueble;
+	public StringDataType getCodTipoInmueble() {
+		return codTipoInmueble;
 	}
-	public void setIdTipoInmueble(LongDataType idTipoInmueble) {
-		this.idTipoInmueble = idTipoInmueble;
+	public void setCodTipoInmueble(StringDataType codTipoInmueble) {
+		this.codTipoInmueble = codTipoInmueble;
 	}
-	public LongDataType getIdSubtipoInmueble() {
-		return idSubtipoInmueble;
+	public StringDataType getCodSubtipoInmueble() {
+		return codSubtipoInmueble;
 	}
-	public void setIdSubtipoInmueble(LongDataType idSubtipoInmueble) {
-		this.idSubtipoInmueble = idSubtipoInmueble;
+	public void setCodSubtipoInmueble(StringDataType codSubtipoInmueble) {
+		this.codSubtipoInmueble = codSubtipoInmueble;
 	}
 	public StringDataType getFincaRegistral() {
 		return fincaRegistral;
@@ -172,11 +169,11 @@ public class StockDto {
 	public void setFincaRegistral(StringDataType fincaRegistral) {
 		this.fincaRegistral = fincaRegistral;
 	}
-	public LongDataType getIdMunicipioRegistro() {
-		return idMunicipioRegistro;
+	public StringDataType getCodMunicipioRegistro() {
+		return codMunicipioRegistro;
 	}
-	public void setIdMunicipioRegistro(LongDataType idMunicipioRegistro) {
-		this.idMunicipioRegistro = idMunicipioRegistro;
+	public void setCodMunicipioRegistro(StringDataType codMunicipioRegistro) {
+		this.codMunicipioRegistro = codMunicipioRegistro;
 	}
 	public StringDataType getRegistro() {
 		return registro;
@@ -232,17 +229,23 @@ public class StockDto {
 	public void setGarajes(LongDataType garajes) {
 		this.garajes = garajes;
 	}
-	public LongDataType getIdEstadoComercial() {
-		return idEstadoComercial;
+	public BooleanDataType getPublicado() {
+		return publicado;
 	}
-	public void setIdEstadoComercial(LongDataType idEstadoComercial) {
-		this.idEstadoComercial = idEstadoComercial;
+	public void setPublicado(BooleanDataType publicado) {
+		this.publicado = publicado;
 	}
-	public LongDataType getIdTipoVenta() {
-		return idTipoVenta;
+	public StringDataType getCodEstadoComercial() {
+		return codEstadoComercial;
 	}
-	public void setIdTipoVenta(LongDataType idTipoVenta) {
-		this.idTipoVenta = idTipoVenta;
+	public void setCodEstadoComercial(StringDataType codEstadoComercial) {
+		this.codEstadoComercial = codEstadoComercial;
+	}
+	public StringDataType getCodTipoVenta() {
+		return codTipoVenta;
+	}
+	public void setCodTipoVenta(StringDataType codTipoVenta) {
+		this.codTipoVenta = codTipoVenta;
 	}
 	public FloatDataType getLat() {
 		return lat;
@@ -256,11 +259,11 @@ public class StockDto {
 	public void setLng(FloatDataType lng) {
 		this.lng = lng;
 	}
-	public LongDataType getIdEstadoConstruccion() {
-		return idEstadoConstruccion;
+	public StringDataType getCodEstadoConstruccion() {
+		return codEstadoConstruccion;
 	}
-	public void setIdEstadoConstruccion(LongDataType idEstadoConstruccion) {
-		this.idEstadoConstruccion = idEstadoConstruccion;
+	public void setCodEstadoConstruccion(StringDataType codEstadoConstruccion) {
+		this.codEstadoConstruccion = codEstadoConstruccion;
 	}
 	public LongDataType getTerrazas() {
 		return terrazas;
@@ -268,11 +271,11 @@ public class StockDto {
 	public void setTerrazas(LongDataType terrazas) {
 		this.terrazas = terrazas;
 	}
-	public LongDataType getIdEstadoPublicacion() {
-		return idEstadoPublicacion;
+	public StringDataType getCodEstadoPublicacion() {
+		return codEstadoPublicacion;
 	}
-	public void setIdEstadoPublicacion(LongDataType idEstadoPublicacion) {
-		this.idEstadoPublicacion = idEstadoPublicacion;
+	public void setCodEstadoPublicacion(StringDataType codEstadoPublicacion) {
+		this.codEstadoPublicacion = codEstadoPublicacion;
 	}
 	public DateDataType getPublicadoDesde() {
 		return publicadoDesde;
@@ -286,11 +289,11 @@ public class StockDto {
 	public void setReformas(BooleanDataType reformas) {
 		this.reformas = reformas;
 	}
-	public LongDataType getIdRegimenProteccion() {
-		return idRegimenProteccion;
+	public StringDataType getCodRegimenProteccion() {
+		return codRegimenProteccion;
 	}
-	public void setIdRegimenProteccion(LongDataType idRegimenProteccion) {
-		this.idRegimenProteccion = idRegimenProteccion;
+	public void setCodRegimenProteccion(StringDataType codRegimenProteccion) {
+		this.codRegimenProteccion = codRegimenProteccion;
 	}
 	public StringDataType getDescripcion() {
 		return descripcion;
@@ -310,11 +313,11 @@ public class StockDto {
 	public void setCondicionesEspecificas(StringDataType condicionesEspecificas) {
 		this.condicionesEspecificas = condicionesEspecificas;
 	}
-	public LongDataType getIdDetallePublicacion() {
-		return idDetallePublicacion;
+	public StringDataType getCodDetallePublicacion() {
+		return codDetallePublicacion;
 	}
-	public void setIdDetallePublicacion(LongDataType idDetallePublicacion) {
-		this.idDetallePublicacion = idDetallePublicacion;
+	public void setCodDetallePublicacion(StringDataType codDetallePublicacion) {
+		this.codDetallePublicacion = codDetallePublicacion;
 	}
 	public StringDataType getCodigoAgrupacionObraNueva() {
 		return codigoAgrupacionObraNueva;
@@ -333,6 +336,12 @@ public class StockDto {
 	}
 	public void setIdProveedorRemAnterior(LongDataType idProveedorRemAnterior) {
 		this.idProveedorRemAnterior = idProveedorRemAnterior;
+	}
+	public LongDataType getIdProveedorRem() {
+		return idProveedorRem;
+	}
+	public void setIdProveedorRem(LongDataType idProveedorRem) {
+		this.idProveedorRem = idProveedorRem;
 	}
 	public StringDataType getNombreGestorComercial() {
 		return nombreGestorComercial;
@@ -364,11 +373,11 @@ public class StockDto {
 	public void setAntiguedad(DateDataType antiguedad) {
 		this.antiguedad = antiguedad;
 	}
-	public LongDataType getIdCartera() {
-		return idCartera;
+	public StringDataType getCodCartera() {
+		return codCartera;
 	}
-	public void setIdCartera(LongDataType idCartera) {
-		this.idCartera = idCartera;
+	public void setCodCartera(StringDataType codCartera) {
+		this.codCartera = codCartera;
 	}
 	public StringDataType getCodRatio() {
 		return codRatio;
@@ -376,17 +385,5 @@ public class StockDto {
 	public void setCodRatio(StringDataType codRatio) {
 		this.codRatio = codRatio;
 	}
-	public LongDataType getIdProveedorRemActual() {
-		return idProveedorRemActual;
-	}
-	public void setIdProveedorRemActual(LongDataType idProveedorRemActual) {
-		this.idProveedorRemActual = idProveedorRemActual;
-	}
-	public BooleanDataType getIdEstado() {
-		return idEstado;
-	}
-	public void setIdEstado(BooleanDataType idEstado) {
-		this.idEstado = idEstado;
-	}
-		
+			
 }

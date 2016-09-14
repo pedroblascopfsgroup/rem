@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.webcom.definition;
 
 public class ServicioStockConstantes extends ConstantesGenericas{
-	
 	public static final String ID_ACTIVO_HAYA = "idActivoHaya";
 	public static final String COD_TIPO_VIA = "codTipoVia";
 	public static final String NOMBRE_CALLE = "nombreCalle";
@@ -9,18 +8,18 @@ public class ServicioStockConstantes extends ConstantesGenericas{
 	public static final String ESCALERA = "escalera";
 	public static final String PLANTA = "planta";
 	public static final String PUERTA = "puerta";
-	public static final String ID_MUNICIPIO = "idMunicipio";
-	public static final String ID_PEDANIA = "idPedania";
-	public static final String ID_PROVINCIA = "idProvincia";
+	public static final String COD_MUNICIPIO = "codMunicipio";
+	public static final String COD_PEDANIA = "codPedania";
+	public static final String COD_PROVINCIA = "codProvincia";
 	public static final String CODIGO_POSTAL = "codigoPostal";
 	public static final String ACTUAL_IMPORTE = "actualImporte";
 	public static final String ANTERIOR_IMPORTE = "anteriorImporte";
 	public static final String DESDE_IMPORTE = "desdeImporte";
 	public static final String HASTA_IMPORTE = "hastaImporte";
-	public static final String ID_TIPO_INMUEBLE = "idTipoInmueble";
-	public static final String ID_SUBTIPO_INMUEBLE = "idSubtipoInmueble";
+	public static final String COD_TIPO_INMUEBLE = "codTipoInmueble";
+	public static final String COD_SUBTIPO_INMUEBLE = "codSubtipoInmueble";
 	public static final String FINCA_REGISTRAL = "fincaRegistral";
-	public static final String ID_MUNICIPIO_REGISTRO = "idMunicipioRegistro";
+	public static final String COD_MUNICIPIO_REGISTRO = "codMunicipioRegistro";
 	public static final String REGISTRO = "registro";
 	public static final String REFERENCIA_CATASTRAL = "referenciaCatastral";
 	public static final String SUPERFICIE = "superficie";
@@ -30,31 +29,30 @@ public class ServicioStockConstantes extends ConstantesGenericas{
 	public static final String BANYOS = "banyos";
 	public static final String ASEOS = "aseos";
 	public static final String GARAJES = "garajes";
-	public static final String ID_ESTADO_COMERCIAL = "idEstadoComercial";
-	public static final String ID_TIPO_VENTA = "idTipoVenta";
+	public static final String PUBLICADO = "publicado";
+	public static final String COD_ESTADO_COMERCIAL = "codEstadoComercial";
+	public static final String COD_TIPO_VENTA = "codTipoVenta";
 	public static final String LAT = "lat";
 	public static final String LNG = "lng";
-	public static final String ID_ESTADO_CONSTRUCCION = "idEstadoConstruccion";
+	public static final String COD_ESTADO_CONSTRUCCION = "codEstadoConstruccion";
 	public static final String TERRAZAS = "terrazas";
-	public static final String ID_ESTADO_PUBLICACION = "idEstadoPublicacion";
+	public static final String COD_ESTADO_PUBLICACION = "codEstadoPublicacion";
 	public static final String PUBLICADO_DESDE = "publicadoDesde";
 	public static final String REFORMAS = "reformas";
-	public static final String ID_REGIMEN_PROTECCION = "idRegimenProteccion";
+	public static final String COD_REGIMEN_PROTECCION = "codRegimenProteccion";
 	public static final String DESCRIPCION = "descripcion";
 	public static final String DISTRIBUCION = "distribucion";
 	public static final String CONDICIONES_ESPECIFICAS = "condicionesEspecificas";
-	public static final String ID_DETALLE_PUBLICACION = "idDetallePublicacion";
+	public static final String COD_DETALLE_PUBLICACION = "codDetallePublicacion";
 	public static final String CODIGO_AGRUPACION_OBRA_NUEVA = "codigoAgrupacionObraNueva";
 	public static final String CODIGO_CABECERA_OBRA_NUEVA = "codigoCabeceraObraNueva";
 	public static final String ID_PROVEEDOR_REM_ANTERIOR = "idProveedorRemAnterior";
-	public static final String ID_PROVEEDOR_REM_ACTUAL = "IdProveedorRemAnterior → idProveedorRemActual";
+	public static final String ID_PROVEEDOR_REM = "idProveedorRem";
 	public static final String NOMBRE_GESTOR_COMERCIAL = "nombreGestorComercial";
 	public static final String TELEFONO_GESTOR_COMERCIAL = "telefonoGestorComercial";
 	public static final String EMAIL_GESTOR_COMERCIAL = "emailGestorComercial";
 	public static final String COD_CEE = "codCee";
 	public static final String ANTIGUEDAD = "antiguedad";
-	public static final String ID_CARTERA = "idCartera";
+	public static final String COD_CARTERA = "codCartera";
 	public static final String COD_RATIO = "codRatio";
-	public static final String ID_ESTADO = "idEstado";
-
 }

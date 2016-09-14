@@ -1,9 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.webcom;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,15 +44,15 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private ClienteStock stockService;
 
 	@Override
-	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, Long idEstado, String motivoRechazo) {
+	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, String codEstado, String motivoRechazo) {
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
 		HashMap<String, Object> params = createParametersMap(proxyFactory);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
-		params.put(EstadoTrabajoConstantes.ID_ESTADO_TRABAJO, idEstado);
+		params.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 
 		compruebaObligatorios(params, EstadoTrabajoConstantes.ID_TRABAJO_REM, EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM,
-				EstadoTrabajoConstantes.ID_ESTADO_TRABAJO);
+				EstadoTrabajoConstantes.COD_ESTADO_TRABAJO);
 
 		if (motivoRechazo != null && (!"".equals(motivoRechazo))) {
 			params.put(EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
@@ -65,24 +63,24 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, Long idEstadoOferta, Long idActivoHaya,
-			Long idEstadoExpediente, Boolean vendido) {
+	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, String codEstadoOferta, Long idActivoHaya,
+			String codEstadoExpediente, Boolean vendido) {
 		logger.info("Invocando servicio Webcom: Estado Oferta");
 		HashMap<String, Object> params = createParametersMap(proxyFactory);
 
 		params.put(EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
 		params.put(EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
-		params.put(EstadoOfertaConstantes.ID_ESTADO_OFERTA, idEstadoOferta);
+		params.put(EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
 
 		compruebaObligatorios(params, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, EstadoOfertaConstantes.ID_OFERTA_REM,
-				EstadoOfertaConstantes.ID_ESTADO_OFERTA);
+				EstadoOfertaConstantes.COD_ESTADO_OFERTA);
 
 		if (idActivoHaya != null) {
 			params.put(EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya);
 		}
 
-		if (idEstadoExpediente != null) {
-			params.put(EstadoOfertaConstantes.ID_ESTADO_EXPEDIENTE, idEstadoExpediente);
+		if (codEstadoExpediente != null) {
+			params.put(EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
 		}
 
 		if (vendido != null) {

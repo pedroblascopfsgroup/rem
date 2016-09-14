@@ -76,7 +76,7 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'tipoExpedienteDescripcion'
     		}, 
     		{
-    			name: 'tieneReserva'	
+    			name: 'tieneReserva'
     		}
     		
     		

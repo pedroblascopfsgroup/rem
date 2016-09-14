@@ -80,6 +80,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
+	     },
+	     
+	     esExpedienteSinReserva: function(get) {
+	     	
+	     	var tieneReserva = get('expediente.tieneReserva');
+	     	return tieneReserva === "false";
+	     	
 	     }
 	 },
 

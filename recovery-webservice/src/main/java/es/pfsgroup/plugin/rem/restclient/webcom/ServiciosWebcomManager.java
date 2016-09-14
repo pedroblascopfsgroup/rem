@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.restclient.webcom;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,9 +13,12 @@ import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 
@@ -36,6 +42,9 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	@Autowired
 	private ClienteEstadoOferta estadoOfertaService;
 
+	@Autowired
+	private ClienteStock stockService;
+
 	@Override
 	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, Long idEstado, String motivoRechazo) {
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
@@ -50,8 +59,9 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 		if (motivoRechazo != null && (!"".equals(motivoRechazo))) {
 			params.put(EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
 		}
-
-		invocarServicioRestWebcom(params, estadoTrabajoService);
+		ParamsList paramsList = new ParamsList();
+		paramsList.add(params);
+		invocarServicioRestWebcom(paramsList, estadoTrabajoService);
 	}
 
 	@Override
@@ -79,14 +89,34 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 			params.put(EstadoOfertaConstantes.VENDIDO, vendido);
 		}
 
-		invocarServicioRestWebcom(params, estadoOfertaService);
+		ParamsList paramsList = new ParamsList();
+		paramsList.add(params);
+		invocarServicioRestWebcom(paramsList, estadoOfertaService);
 
 	}
 
-	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService,
-			ClienteEstadoOferta estadoOfertaService) {
+	@Override
+	public void enviarStock(List<StockDto> stock) {
+		logger.info("Invocando servicio Webcom: Stock");
+
+		ParamsList paramsList = new ParamsList();
+		if (stock != null) {
+			for (StockDto dto : stock) {
+				HashMap<String, Object> params = createParametersMap(proxyFactory);
+				params.putAll(Converter.dtoToMap(dto));
+				paramsList.add(params);
+			}
+		}
+
+		invocarServicioRestWebcom(paramsList, stockService);
+
+	}
+
+	public void setWebServiceClients(ClienteEstadoTrabajo estadoTrabajoService, ClienteEstadoOferta estadoOfertaService,
+			ClienteStock stockService) {
 		this.estadoTrabajoService = estadoTrabajoService;
 		this.estadoOfertaService = estadoOfertaService;
+		this.stockService = stockService;
 
 	}
 

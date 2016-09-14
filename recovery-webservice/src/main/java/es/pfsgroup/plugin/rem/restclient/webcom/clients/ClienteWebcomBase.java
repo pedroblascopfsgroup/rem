@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.restclient.webcom.clients;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +16,7 @@ import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacadeInternalError;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
+import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 import net.sf.json.JSONObject;
@@ -31,14 +33,14 @@ public abstract class ClienteWebcomBase {
 	 * Método que implementa cada Cliente REST de WebCom para enviar una
 	 * petición al servicio.
 	 * 
-	 * @param params
-	 *            Map con los parámetros (campos) que se quieren enviar.
+	 * @param paramsList
+	 *            Colección de Map con los parámetros (campos) que se quieren enviar.
 	 * @return
 	 * @throws ErrorServicioWebcom
 	 *             Si la invocación al servicio falla debe gestionarse la
 	 *             excepción.
 	 */
-	public abstract Map<String, Object> enviaPeticion(Map<String, Object> params) throws ErrorServicioWebcom;
+	public abstract Map<String, Object> enviaPeticion(ParamsList paramsList) throws ErrorServicioWebcom;
 
 	/**
 	 * Método que implementa cada Cliente REST de WebCom para processar la
@@ -53,12 +55,11 @@ public abstract class ClienteWebcomBase {
 	 * Método genérico para enviar una petición REST a Webcom.
 	 * @param httpClient Fachada del Http Client que se usará para la conexión.
 	 * @param endpoint Endpoint al que nos vamos a conectar. 
-	 * @param params Map de parámetros (campos) a enviar en la petición.
+	 * @param paramsList Colección de Map de parámetros (campos) a enviar en la petición.
 	 * @return
 	 * @throws ErrorServicioWebcom 
 	 */
-	protected Map<String, Object> send(HttpClientFacade httpClient, WebcomEndpoint endpoint, Map<String, Object> params) throws ErrorServicioWebcom {
-		logger.debug("Llamada a servicio " + endpoint.toString() + " con parámetros " + params);
+	protected Map<String, Object> send(HttpClientFacade httpClient, WebcomEndpoint endpoint, ParamsList paramsList) throws ErrorServicioWebcom {
 		
 		if (httpClient == null){
 			throw new IllegalArgumentException("El método no se ha invocado correctamente. Falta el httpClient.");
@@ -68,9 +69,15 @@ public abstract class ClienteWebcomBase {
 			throw new IllegalArgumentException("El método no se ha invocado correctamente. Falta el endpoint.");
 		}
 		
+		if (paramsList == null){
+			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
+		}
+		
+		logger.debug("Llamada a servicio " + endpoint.toString() + " con parámetros " + paramsList);
+		
 		try {
 			// Llamada al servicio
-			JSONObject requestBody = WebcomRequestUtils.createRequestJson(params);
+			JSONObject requestBody = WebcomRequestUtils.createRequestJson(paramsList);
 			logger.debug("Cuerpo de la petición: " + requestBody.toString());
 			
 			String signature = WebcomSignatureUtils.computeSignatue(endpoint.getApiKey(), getPublicAddress(), requestBody.toString());
@@ -109,6 +116,7 @@ public abstract class ClienteWebcomBase {
 	}
 
 	private String getPublicAddress() {
+		// TODO Obtener la IP pública de REM
 		return "1.2.3.4";
 	}
 

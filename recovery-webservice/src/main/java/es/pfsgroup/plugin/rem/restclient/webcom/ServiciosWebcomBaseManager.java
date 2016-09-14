@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -47,9 +48,9 @@ public abstract class ServiciosWebcomBaseManager {
 		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + fechaAccion);
 		params.put(ConstantesGenericas.FECHA_ACCION, fechaAccion);
 
-		String username = usuLogado.getUsername();
-		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + username);
-		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, username);
+		Long userId = usuLogado.getId();
+		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + userId);
+		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, userId);
 		return params;
 	}
 
@@ -88,38 +89,41 @@ public abstract class ServiciosWebcomBaseManager {
 	/**
 	 * Método genérico que invoca Servicios Web de WebCom
 	 * 
-	 * @param params
+	 * @param paramsList
 	 *            Parámetros que queremos enviarle al servicio.
 	 * @param servicio
 	 *            Implementación del servicio. Debe extender la clase
 	 *            {@link ClienteWebcomBase}.
 	 */
-	protected void invocarServicioRestWebcom(HashMap<String, Object> params, ClienteWebcomBase servicio) {
+	protected void invocarServicioRestWebcom(ParamsList paramsList, ClienteWebcomBase servicio) {
+		if (paramsList == null){
+			throw new IllegalArgumentException("'paramsList' no puede ser NULL");
+		}
+		
 		try {
 			
-			
 			logger.debug("Invocando al servicio " + servicio.getClass().getSimpleName()
-					+ ".enviarPeticion con parámetros " + params);
-			Map<String, Object> respuesta = servicio.enviaPeticion(params);
+					+ ".enviarPeticion con parámetros " + paramsList.toString());
+			Map<String, Object> respuesta = servicio.enviaPeticion(paramsList);
 
-			logger.debug("Procesando respuesta" + servicio.getClass().getSimpleName() + ".procesarRespuesta " + params);
+			logger.debug(
+					"Procesando respuesta" + servicio.getClass().getSimpleName() + ".procesarRespuesta " + respuesta);
 			servicio.procesaRespuesta(respuesta);
-			
-			
+
 		} catch (ErrorServicioWebcom e) {
 			logger.error("Error al invocar " + servicio.getClass().getSimpleName() + ".enviarPeticion con parámetros "
-					+ params, e);
+					+ paramsList.toString(), e);
 			if (ErrorServicioWebcom.INVALID_SIGNATURE.equals(e.getErrorWebcom())) {
 				// TODO Loguear errores de las llamadas que no se deban
 				// reintentar
 			} else {
 				logger.info("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
-						+ ".enviarPeticion con parámetros " + params);
+						+ ".enviarPeticion con parámetros " + paramsList.toString());
 				// TODO Configuración de colas para gestionar los reintentos
 				MessageBroker mb = this.getMessageBroker();
 				if (mb != null) {
-					mb.sendAsync(servicio.getClass(), params);
-				}else{
+					mb.sendAsync(servicio.getClass(), paramsList);
+				} else {
 					logger.warn("MESSAGE BROKER no está disponible");
 				}
 			}

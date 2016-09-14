@@ -1,10 +1,7 @@
 package es.pfsgroup.plugin.rem.restclient.webcom.clients;
 
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,16 +12,15 @@ import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 
 @Component
-public class ClienteEstadoOferta extends ClienteWebcomBase{
-	
+public class ClienteStock extends ClienteWebcomBase{
 	
 	@Autowired
 	private HttpClientFacade httpClient;
-	
+
 	@Override
 	@AsyncRequestHandler
 	public Map<String, Object> enviaPeticion(ParamsList paramsList) throws ErrorServicioWebcom {
-		return this.send(httpClient, WebcomEndpoint.estadoOferta(), paramsList);
+		return this.send(httpClient, WebcomEndpoint.stock(), paramsList);
 	}
 
 	@Override

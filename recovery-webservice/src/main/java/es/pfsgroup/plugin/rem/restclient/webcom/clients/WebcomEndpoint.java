@@ -9,16 +9,17 @@ package es.pfsgroup.plugin.rem.restclient.webcom.clients;
  *
  */
 public class WebcomEndpoint {
-	
+
 	private String httpMethod;
-	
 
 	private WebcomEndpoint(String httpMethod) {
 		this.httpMethod = httpMethod;
 	};
 
 	/**
-	 * Método factoría para obtener el endpoint para el servicio de actualización del estado del trabajo.
+	 * Método factoría para obtener el endpoint para el servicio de
+	 * actualización del estado del trabajo.
+	 * 
 	 * @return
 	 */
 	public static WebcomEndpoint estadoTrabajo() {
@@ -28,7 +29,9 @@ public class WebcomEndpoint {
 	}
 
 	/**
-	 * Método factoría para obtener el endpoint para el servicio de actualización del estado de una oferta.
+	 * Método factoría para obtener el endpoint para el servicio de
+	 * actualización del estado de una oferta.
+	 * 
 	 * @return
 	 */
 	public static WebcomEndpoint estadoOferta() {
@@ -38,7 +41,20 @@ public class WebcomEndpoint {
 	}
 
 	/**
+	 * Método factoría para obtener el endpoint para el servicio de envío del
+	 * stock de activos.
+	 * 
+	 * @return
+	 */
+	public static WebcomEndpoint stock() {
+		// TODO Configuración de las URL para los endpoints de los servicios a
+		// invocar
+		return new WebcomEndpoint("POST");
+	}
+
+	/**
 	 * Charset que debemos usar para conectarnos.
+	 * 
 	 * @return
 	 */
 	public String getCharset() {
@@ -47,6 +63,7 @@ public class WebcomEndpoint {
 
 	/**
 	 * Timeout para la conexión con el endpoint
+	 * 
 	 * @return
 	 */
 	public int getTimeout() {
@@ -56,6 +73,7 @@ public class WebcomEndpoint {
 
 	/**
 	 * Método con el que nos debemos conectar al endpoint.
+	 * 
 	 * @return
 	 */
 	public String getHttpMethod() {
@@ -64,6 +82,7 @@ public class WebcomEndpoint {
 
 	/**
 	 * Url para acceder al endpoint.
+	 * 
 	 * @return
 	 */
 	public String getEndpointUrl() {
@@ -72,15 +91,17 @@ public class WebcomEndpoint {
 
 	/**
 	 * AIP Key para WebCom
+	 * 
 	 * @return
 	 */
 	public String getApiKey() {
 		// TODO Obtener el API KEY del entorno WebCom al que nos conectamos
 		return "0123456789";
 	}
-	
+
 	@Override
 	public String toString() {
 		return "WebcomEndpoint [" + httpMethod + " => " + this.getEndpointUrl() + "]";
 	}
+
 }

@@ -170,21 +170,12 @@ public interface ExpedienteComercialApi {
 		public DtoPage getNotariosExpediente(Long idExpediente);
 		
 		/**
-		 * Método que obtiene los gastos del expediente soportados por el propietario
+		 * Método que obtiene los honorarios del expediente
 		 * @param dto
 		 * @param idExpediente
 		 * @return
 		 */
-		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
-		
-		/**
-		 * Método que obtiene los gastos del expediente soportados por Haya
-		 * @param dto
-		 * @param idExpediente
-		 * @return
-		 */
-		public DtoPage getGastosSoportadoHaya(Long idExpediente);
-			
+		public DtoPage getHonorarios(Long idExpediente);
 		
 	   
 }

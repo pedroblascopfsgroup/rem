@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.utils;
+package es.pfsgroup.plugin.rem.restclient.utils;
 
 import java.lang.reflect.Field;
 import java.util.Map;

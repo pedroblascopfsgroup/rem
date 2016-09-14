@@ -253,18 +253,18 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						listaErrores.add("No existe el tipo de prescriptor en REM especificado en el campo codTipoPrescriptor: " + clienteDto.getCodTipoPrescriptor());
 					}
 				}
-				if(!Checks.esNulo(clienteDto.getIdPrescriptor())){
-					Filter filtroPres = genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdPrescriptor());
+				if(!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())){
+					Filter filtroPres = genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemPrescriptor());
 					ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtroPres);							
 					if(Checks.esNulo(prescriptor)){
-						listaErrores.add("No existe el prescriptor en REM especificado en el campo idPrescriptor: " + clienteDto.getIdPrescriptor());
+						listaErrores.add("No existe el prescriptor en REM especificado en el campo idProveedorRemPrescriptor: " + clienteDto.getIdProveedorRemPrescriptor());
 					}
 				}
-				if(!Checks.esNulo(clienteDto.getIdApiResponsable())){
-					Filter filtroApi = genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdApiResponsable());
+				if(!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())){
+					Filter filtroApi = genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemResponsable());
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, filtroApi);							
 					if(Checks.esNulo(apiResp)){
-						listaErrores.add("No existe el api responsable en REM especificado en el campo idApiResponsable: " + clienteDto.getIdApiResponsable());
+						listaErrores.add("No existe el api responsable en REM especificado en el campo idProveedorRemResponsable: " + clienteDto.getIdProveedorRemResponsable());
 					}
 				}
 				if(!Checks.esNulo(clienteDto.getCodTipoVia())){
@@ -350,14 +350,14 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoColaborador(tipoCol);
 					}
 				}
-				if(!Checks.esNulo(clienteDto.getIdPrescriptor())){
-					ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdPrescriptor()));							
+				if(!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())){
+					ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemPrescriptor()));							
 					if(!Checks.esNulo(prescriptor)){
 						cliente.setProvPrescriptor(prescriptor);
 					}
 				}
-				if(!Checks.esNulo(clienteDto.getIdApiResponsable())){
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdApiResponsable()));							
+				if(!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())){
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemResponsable()));							
 					if(!Checks.esNulo(apiResp)){
 						cliente.setProvApiResponsable(apiResp);
 					}
@@ -488,9 +488,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoColaborador(null);
 					}
 				}
-				if(((JSONObject)jsonFields).containsKey("idPrescriptor")){					
-					if(!Checks.esNulo(clienteDto.getIdPrescriptor())){
-						ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdPrescriptor()));							
+				if(((JSONObject)jsonFields).containsKey("idProveedorRemPrescriptor")){					
+					if(!Checks.esNulo(clienteDto.getIdProveedorRemPrescriptor())){
+						ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemPrescriptor()));							
 						if(!Checks.esNulo(prescriptor)){
 							cliente.setProvPrescriptor(prescriptor);
 						}
@@ -498,9 +498,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setProvPrescriptor(null);
 					}
 				}
-				if(((JSONObject)jsonFields).containsKey("idApiResponsable")){
-					if(!Checks.esNulo(clienteDto.getIdApiResponsable())){
-						ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdApiResponsable()));							
+				if(((JSONObject)jsonFields).containsKey("idProveedorRemResponsable")){
+					if(!Checks.esNulo(clienteDto.getIdProveedorRemResponsable())){
+						ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdProveedorRemResponsable()));							
 						if(!Checks.esNulo(apiResp)){
 							cliente.setProvApiResponsable(apiResp);
 						}
@@ -518,8 +518,8 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 						cliente.setTipoVia(null);
 					}
 				}
-				if(((JSONObject)jsonFields).containsKey("direccion")){
-					cliente.setDireccion(clienteDto.getDireccion());
+				if(((JSONObject)jsonFields).containsKey("nombreCalle")){
+					cliente.setDireccion(clienteDto.getNombreCalle());
 				}
 				if(((JSONObject)jsonFields).containsKey("numeroCalle")){
 					cliente.setNumeroCalle(clienteDto.getNumeroCalle());

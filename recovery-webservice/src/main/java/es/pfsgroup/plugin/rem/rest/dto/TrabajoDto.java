@@ -31,7 +31,7 @@ public class TrabajoDto implements Serializable{
 	@Size(max=256)
 	private String descripcion;
 	@NotNull
-	private Long idApiResponsable;
+	private Long idProveedorRemResponsable;
 	@Size(max=60)
 	private String nombreContacto;
 	@Size(max=14)
@@ -48,8 +48,9 @@ public class TrabajoDto implements Serializable{
 	private String emailRequiriente;
 	@Size(max=250)
 	private String descripcionRequiriente;
-	private Date fechaHoraConcretaRequiriente;
-	private Date fechaTopeRequiriente;
+	private Boolean fechaPrioridadRequirienteEsExacta;
+	//private Date fechaTopeRequiriente;
+	private Date fechaPrioridadRequiriente;	
 	private Boolean urgentePrioridadRequiriente;
 	private Boolean riesgoPrioridadRequiriente;
 	
@@ -97,11 +98,11 @@ public class TrabajoDto implements Serializable{
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	public Long getIdApiResponsable() {
-		return idApiResponsable;
+	public Long getIdProveedorRemResponsable() {
+		return idProveedorRemResponsable;
 	}
-	public void setIdApiResponsable(Long idApiResponsable) {
-		this.idApiResponsable = idApiResponsable;
+	public void setIdProveedorRemResponsable(Long idProveedorRemResponsable) {
+		this.idProveedorRemResponsable = idProveedorRemResponsable;
 	}
 	public String getNombreContacto() {
 		return nombreContacto;
@@ -150,18 +151,31 @@ public class TrabajoDto implements Serializable{
 	}
 	public void setDescripcionRequiriente(String descripcionRequiriente) {
 		this.descripcionRequiriente = descripcionRequiriente;
+	}	
+	public Boolean getFechaPrioridadRequirienteEsExacta() {
+		return fechaPrioridadRequirienteEsExacta;
 	}
+	public void setFechaPrioridadRequirienteEsExacta(
+			Boolean fechaPrioridadRequirienteEsExacta) {
+		this.fechaPrioridadRequirienteEsExacta = fechaPrioridadRequirienteEsExacta;
+	}
+	/*public Date getFechaTopeRequiriente() {
+		return fechaTopeRequiriente;
+	}
+	public void setFechaTopeRequiriente(Date fechaTopeRequiriente) {
+		this.fechaTopeRequiriente = fechaTopeRequiriente;
+	}	
 	public Date getFechaHoraConcretaRequiriente() {
 		return fechaHoraConcretaRequiriente;
 	}
 	public void setFechaHoraConcretaRequiriente(Date fechaHoraConcretaRequiriente) {
 		this.fechaHoraConcretaRequiriente = fechaHoraConcretaRequiriente;
+	}*/
+	public Date getFechaPrioridadRequiriente() {
+		return fechaPrioridadRequiriente;
 	}
-	public Date getFechaTopeRequiriente() {
-		return fechaTopeRequiriente;
-	}
-	public void setFechaTopeRequiriente(Date fechaTopeRequiriente) {
-		this.fechaTopeRequiriente = fechaTopeRequiriente;
+	public void setFechaPrioridadRequiriente(Date fechaPrioridadRequiriente) {
+		this.fechaPrioridadRequiriente = fechaPrioridadRequiriente;
 	}
 	public Boolean getUrgentePrioridadRequiriente() {
 		return urgentePrioridadRequiriente;

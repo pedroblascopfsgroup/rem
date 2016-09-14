@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
@@ -209,7 +210,28 @@ public interface ExpedienteComercialApi {
 		 * @param idExpediente
 		 * @return
 		 */
+
+		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
+		
+		/**
+		 * Método que obtiene los gastos del expediente soportados por Haya
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		public DtoPage getGastosSoportadoHaya(Long idExpediente);
+
+		
+		/**
+		 * Modifica los datos de una reserva
+		 * @param dto
+		 * @param idEntidad
+		 * @return
+		 */
+		boolean saveReserva(DtoReserva dto, Long idEntidad);
+			
 		public DtoPage getHonorarios(Long idExpediente);
+
 		
 	   
 }

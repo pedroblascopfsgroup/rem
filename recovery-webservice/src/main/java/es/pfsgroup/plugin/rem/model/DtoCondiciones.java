@@ -36,7 +36,7 @@ public class DtoCondiciones extends WebDto {
 	private String tipoImpuestoCodigo;
 	private Double tipoAplicable;
 	private Boolean renunciaExencion;
-	private Boolean reservaConImpuesto;
+	private Integer reservaConImpuesto;
 	private Double gastosPlusvalia;
 	private String plusvaliaPorCuentaDe;
 	private Double gastosNotaria;
@@ -241,11 +241,11 @@ public class DtoCondiciones extends WebDto {
 		this.renunciaExencion = renunciaExencion;
 	}
 
-	public Boolean getReservaConImpuesto() {
+	public Integer getReservaConImpuesto() {
 		return reservaConImpuesto;
 	}
 
-	public void setReservaConImpuesto(Boolean reservaConImpuesto) {
+	public void setReservaConImpuesto(Integer reservaConImpuesto) {
 		this.reservaConImpuesto = reservaConImpuesto;
 	}
 

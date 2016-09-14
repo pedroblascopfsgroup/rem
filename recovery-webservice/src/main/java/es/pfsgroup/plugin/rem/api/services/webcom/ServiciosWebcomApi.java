@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.api.services.webcom;
 
+import java.util.List;
+
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+
 public interface ServiciosWebcomApi {
 	
 	/**
@@ -21,5 +25,7 @@ public interface ServiciosWebcomApi {
 	 * @param vendido Flag que indica si el activo está vendido.
 	 */
 	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, Long idEstadoOferta, Long idActivoHaya, Long idEstadoExpediente, Boolean vendido);
+	
+	public void enviarStock(List<StockDto> stock);
 
 }

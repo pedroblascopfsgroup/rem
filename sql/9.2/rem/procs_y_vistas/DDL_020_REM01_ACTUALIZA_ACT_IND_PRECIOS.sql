@@ -163,7 +163,7 @@ BEGIN
                 MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
                     (   SELECT DISTINCT ACT.ACT_ID  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT '||Aux_DD_CIP_TEXTO ||'
                     ) aux
-                      ON (ACT.ACT_ID = aux.ACT_ID)
+                      ON (ACT.ACT_ID = aux.ACT_ID AND ACT.DD_CRA_ID ='||nDD_CRA_ID||')
                       WHEN MATCHED THEN
                         UPDATE SET '||
                           vACT_FECHA_IND ||' = ''' ||V_FECHA||'''

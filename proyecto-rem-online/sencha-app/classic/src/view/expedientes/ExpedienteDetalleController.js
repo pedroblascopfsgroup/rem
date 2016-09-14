@@ -498,6 +498,47 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me = this,
 		window = btn.up('window');
     	window.close();		
+	},
+	onHaCambiadoIbi: function(combo, value){
+		var me= this;
+		
+		porCuentaDe= me.lookupReference('ibiPorCuentaDe');
+		
+		if(value>0){
+			porCuentaDe.setDisabled(false);
+			porCuentaDe.allowBlank= false;
+		}else{
+			porCuentaDe.setDisabled(true);
+			porCuentaDe.setValue("");
+		}
+	},
+	
+	onHaCambiadoComunidad: function(combo, value){
+		var me= this;
+		
+		porCuentaDe= me.lookupReference('comunidadPorCuentaDe');
+		
+		if(value>0){
+			porCuentaDe.setDisabled(false);
+			porCuentaDe.allowBlank= false;
+		}else{
+			porCuentaDe.setDisabled(true);
+			porCuentaDe.setValue("");
+		}
+	},
+	
+	onHaCambiadoAlquilerSuministros: function(combo, value){
+		var me= this;
+		
+		porCuentaDe= me.lookupReference('suministrosPorCuentaDe');
+		
+		if(value>0){
+			porCuentaDe.setDisabled(false);
+			porCuentaDe.allowBlank= false;
+		}else{
+			porCuentaDe.setDisabled(true);
+			porCuentaDe.setValue("");
+		}
 	}
 
 });

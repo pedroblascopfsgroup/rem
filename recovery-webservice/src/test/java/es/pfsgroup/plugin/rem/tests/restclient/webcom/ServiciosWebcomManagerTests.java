@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,40 +11,44 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcom;
-import es.pfsgroup.plugin.rem.restclient.webcom.definition.ConstantesGenericas;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
+import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import net.sf.json.JSONArray;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
-
 	@Mock
 	private ApiProxyFactory proxyFactory;
 
-	@Mock HttpClientFacade httpClient;
-	
+	@Mock
+	HttpClientFacade httpClient;
+
 	@InjectMocks
 	private ClienteEstadoTrabajo estadoTrabajoService;
-	
+
 	@InjectMocks
 	private ClienteEstadoOferta estadoOfertaService;
+	
+	@InjectMocks
+	private ClienteStock stockService;
 
 	@InjectMocks
 	private ServiciosWebcomManager manager;
-	
 
 	@Before
 	public void setup() {
 		initMocks(proxyFactory, httpClient);
-		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService);
-		
+		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService);
+
 	}
 
 	@Test
@@ -49,12 +56,12 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 		String method = "POST";
 		String charset = "UTF-8";
-		
+
 		Long idRem = 1L;
 		Long idWebcom = 100L;
 		Long idEstado = 50L;
 		String motivoRechazo = "Mi Motivo";
-		
+
 		manager.enviaActualizacionEstadoTrabajo(idRem, idWebcom, idEstado, motivoRechazo);
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -66,31 +73,70 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
 
 	}
-	
+
 	@Test
-	public void enviaActualizacionEstadoOfertaTest(){
+	public void enviaActualizacionEstadoOfertaTest() {
 		String method = "POST";
 		String charset = "UTF-8";
-		
+
 		Long idRem = 1L;
 		Long idWebcom = 2L;
 		Long idEstadoOferta = 2L;
 		Long idActivoHaya = 4L;
 		Long idEstadoExpediente = 5L;
 		Boolean vendido = Boolean.TRUE;
-		
-		manager.enviaActualizacionEstadoOferta(idRem, idWebcom, idEstadoOferta, idActivoHaya, idEstadoExpediente, vendido);
-		
+
+		manager.enviaActualizacionEstadoOferta(idRem, idWebcom, idEstadoOferta, idActivoHaya, idEstadoExpediente,
+				vendido);
+
 		JSONArray requestData = genericValidation(httpClient, method, charset);
-		
+
 		assertDataBasicContent(requestData, 0);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_WEBCOM , idWebcom);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_REM , idRem);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ACTIVO_HAYA , idActivoHaya);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ESTADO_OFERTA , idEstadoOferta);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ESTADO_EXPEDIENTE , idEstadoExpediente);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO , vendido);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ESTADO_OFERTA, idEstadoOferta);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ESTADO_EXPEDIENTE, idEstadoExpediente);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO, vendido);
+
+	}
+
+	@Test
+	public void enviarActualizacionStockTest() {
+		String method = "POST";
+		String charset = "UTF-8";
+
+		StockDto stock1 = new StockDto();
+		StockDto stock2 = new StockDto();
+
+		float actualImporte = 100.00F;
+		String codigoAgrupacionObraNueva = "ABCDE";
+
+		stock1.setActualImporte(WebcomDataType.floatDataType(actualImporte));
+		stock1.setIdEstado(WebcomDataType.booleanDataType(true));
+		stock2.setCodigoAgrupacionObraNueva(WebcomDataType.stringDataType(codigoAgrupacionObraNueva));
 		
+		// Seteamos un campo a Null explícitamente, para indicar un borrado
+		stock2.setCodCee(WebcomDataType.nullStringDataType());
+
+		List<StockDto> stock = new ArrayList<StockDto>();
+		stock.add(stock1);
+		stock.add(stock2);
+
+		manager.enviarStock(stock);
+
+		JSONArray requestData = genericValidation(httpClient, method, charset);
+
+		assertDataBasicContent(requestData, 0);
+		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE, actualImporte);
+		assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO, Boolean.TRUE);
+		assertDataEquals(requestData, 1, ServicioStockConstantes.CODIGO_AGRUPACION_OBRA_NUEVA, codigoAgrupacionObraNueva);
+		
+		// Comprobamos que los campos que ponemos explícitamente a Null aparezcan como NULL en el JSON
+		assertDataNull(requestData, 1, ServicioStockConstantes.COD_CEE);
+		
+		// Comprobamos que algunos de los campos no informados no estén en el JSON
+		assertDataIsMissing(requestData, 0, ServicioStockConstantes.ANTIGUEDAD);
 	}
 
 }

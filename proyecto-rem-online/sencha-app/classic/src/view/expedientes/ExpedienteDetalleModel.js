@@ -4,7 +4,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
-                'HreRem.model.ComparecienteBusqueda', 'HreRem.model.GastoGestionEconomica'],
+                'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario'],
     
     data: {
     	expediente: null
@@ -26,7 +26,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     getTipoExpedienteCabecera: function(get) {
-	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
 	     	var idAgrupacion = get('expediente.idAgrupacion');
 			var numEntidad = get('expediente.numEntidad');
@@ -57,6 +56,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     onEstaSujetoTanteo: function(get){
 	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
 	     	if(sujeto==1){
+	     		return true;
+	     	}
+	     	return false;
+	     },
+	     
+	     esOfertaVenta: function(get){
+	     	var me= this;
+	     	var expediente= me.getData().expediente;
+	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
+	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
+	     	if(tipoOferta=='Venta'){
 	     		return true;
 	     	}
 	     	return false;
@@ -289,25 +299,35 @@ storeObservaciones: {
 //	        }
 //    	}
 		
-		storeGastosSoportadosPropietarios: {
+		storeHoronarios: {
 			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.GastoGestionEconomica',
+	    	model: 'HreRem.model.Honorario',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'expedientecomercial/getGastosSoportadoPropietario',
-		        extraParams: {idExpediente: '{expediente.id}'}
-	    	}
-		},
-		
-		storeGastosSoportadosHaya: {
-			pageSize: $AC.getDefaultPageSize(),
-	    	model: 'HreRem.model.GastoGestionEconomica',
-	    	proxy: {
-		        type: 'uxproxy',
-		        remoteUrl: 'expedientecomercial/getGastosSoportadoHaya',
+		        remoteUrl: 'expedientecomercial/getHonorarios',
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		}
+		
+//		storeGastosSoportadosPropietarios: {
+//			pageSize: $AC.getDefaultPageSize(),
+//	    	model: 'HreRem.model.GastoGestionEconomica',
+//	    	proxy: {
+//		        type: 'uxproxy',
+//		        remoteUrl: 'expedientecomercial/getGastosSoportadoPropietario',
+//		        extraParams: {idExpediente: '{expediente.id}'}
+//	    	}
+//		},
+//		
+//		storeGastosSoportadosHaya: {
+//			pageSize: $AC.getDefaultPageSize(),
+//	    	model: 'HreRem.model.GastoGestionEconomica',
+//	    	proxy: {
+//		        type: 'uxproxy',
+//		        remoteUrl: 'expedientecomercial/getGastosSoportadoHaya',
+//		        extraParams: {idExpediente: '{expediente.id}'}
+//	    	}
+//		}
     		
     		
     }    

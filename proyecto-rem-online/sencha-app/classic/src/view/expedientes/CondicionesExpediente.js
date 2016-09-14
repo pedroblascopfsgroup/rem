@@ -32,6 +32,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					{   
 						xtype:'fieldsettable',
 						collapsible: false,
+						bind: {
+					    	hidden: '{!esOfertaVenta}',
+					    	disabled: '{!esOfertaVenta}'
+			            },
 						defaultType: 'displayfieldbase',				
 						title: HreRem.i18n('title.financiacion'),
 						items : [
@@ -91,6 +95,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					{
 						xtype:'fieldsettable',
 						collapsible: false,
+						
 						border: false,
 							defaultType: 'displayfieldbase',				
 							items : [
@@ -104,6 +109,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        		columns: 2
 						        	},
 									defaultType: 'textfieldbase',
+									bind: {
+					        			disabled: '{!esOfertaVenta}'
+			            			},
 									title: HreRem.i18n("fieldlabel.reserva"),
 									items :
 										[
@@ -186,14 +194,22 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	xtype: 'checkboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.exencion'),
 							                	readOnly: false,
-							                	bind:		'{condiciones.renunciaExencion}'		                
+							                	disabled: true,
+							                	bind: {
+					        						disabled:'{!esOfertaVenta}',
+					        						value: '{condiciones.renunciaExencion}'
+			            						}
 		                					},
 									        
 									        {		                
 							                	xtype: 'checkboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.reserva.con.impuesto'),
 							                	readOnly: false,
-							                	bind:		'{condiciones.reservaConImpuesto}'		                
+							                	disabled: true,
+							                	bind:	{
+							                		value: '{condiciones.reservaConImpuesto}',
+							                		disabled:'{!esOfertaVenta}'
+							                	}
 		                					}
 									        
 									        
@@ -211,6 +227,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					
 								{
 						        	xtype:'fieldset',
+						        	bind: {
+					        			hidden: '{!esOfertaVenta}'
+			                		},
 						        	height: 145,
 						        	margin: '0 10 10 0',
 						        	layout: {
@@ -291,6 +310,101 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				
 										]
 								},
+								
+								{
+									xtype:'fieldsettable',
+									bind: {
+					        			hidden: '{esOfertaVenta}'
+			                		},
+									collapsible: false,
+									border: false,
+										defaultType: 'displayfieldbase',				
+										items : [
+								
+											{
+									        	xtype:'fieldset',
+									        	height: 145,
+									        	margin: '0 10 10 0',
+									        	layout: {
+											        type: 'table',
+									        		columns: 2
+									        	},
+												defaultType: 'textfieldbase',
+												title: HreRem.i18n("fieldlabel.gastos.alquiler"),
+												items :
+													[
+														{ 
+															xtype: 'numberfieldbase',
+															reference: 'gastosAlquilerIbi',
+													 		symbol: HreRem.i18n("symbol.euro"),
+															fieldLabel: HreRem.i18n('fieldlabel.ibi'),
+							                				bind: '{condiciones.gastosIbi}',
+							                				listeners: {
+							                					change: 'onHaCambiadoIbi'
+							                				}
+										                },
+														{ 
+															xtype: 'comboboxfieldbase',
+										                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
+												        	bind: {
+											            		store: '{comboTiposPorCuenta}'
+											            		,value: '{condiciones.ibiPorCuentaDe}'
+											            	},
+											            	displayField: 'descripcion',
+								    						valueField: 'codigo',
+								    						reference: 'ibiPorCuentaDe',
+								    						disabled: true
+												        },
+														
+										                { 
+															xtype: 'numberfieldbase',
+															reference: 'gastosAlquilerComunidad',
+													 		symbol: HreRem.i18n("symbol.euro"),
+															fieldLabel: HreRem.i18n('fieldlabel.comunidad'),
+							                				bind: '{condiciones.gastosComunidad}',
+							                				listeners: {
+							                					change: 'onHaCambiadoComunidad'
+							                				}
+										                },	
+														{ 
+															xtype: 'comboboxfieldbase',
+										                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
+												        	bind: {
+											            		store: '{comboTiposPorCuenta}',
+											            		value: '{condiciones.comunidadPorCuentaDe}'
+											            	},
+											            	displayField: 'descripcion',
+								    						valueField: 'codigo',
+								    						reference: 'comunidadPorCuentaDe',
+								    						disabled: true
+												        },
+												        { 
+															xtype: 'numberfieldbase',
+															reference: 'gastosAlquilerSuministros',
+													 		symbol: HreRem.i18n("symbol.euro"),
+															fieldLabel: HreRem.i18n('fieldlabel.suministros'),
+							                				bind: '{condiciones.gastosSuministros}',
+							                				listeners: {
+							                					change: 'onHaCambiadoAlquilerSuministros'
+							                				}
+										                },	
+														{ 
+															xtype: 'comboboxfieldbase',
+										                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
+												        	bind: {
+											            		store: '{comboTiposPorCuenta}',
+											            		value: '{condiciones.suministrosPorCuentaDe}'
+											            	},
+											            	displayField: 'descripcion',
+								    						valueField: 'codigo',
+								    						reference: 'suministrosPorCuentaDe',
+								    						disabled: true
+												        }
+							
+													]
+											}
+										]
+								},
 						        
 						        {
 						        	xtype:'fieldset',
@@ -301,6 +415,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        		columns: 2
 						        	},
 									defaultType: 'displayfieldbase',
+									bind: {
+					        			disabled: '{!esOfertaVenta}'
+			            			},
 									title: HreRem.i18n("fieldlabel.cargas.Pendientes"),
 									items :
 										[								
@@ -391,7 +508,11 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 			{   
 				xtype:'fieldset',
 				collapsible: true,
-				defaultType: 'displayfieldbase',				
+				defaultType: 'displayfieldbase',
+				bind: {
+					hidden: '{!esOfertaVenta}',
+					disabled: '{!esOfertaVenta}'
+			    },
 				title: HreRem.i18n('title.juridicas'),
 				items : [
 				
@@ -547,7 +668,11 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 			},
 			{   
 				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',				
+				defaultType: 'displayfieldbase',
+				bind: {
+					hidden: '{!esOfertaVenta}',
+					disabled: '{!esOfertaVenta}'
+				},
 				title: HreRem.i18n('title.condicionantes.administrativos'),
 				items : [
 				

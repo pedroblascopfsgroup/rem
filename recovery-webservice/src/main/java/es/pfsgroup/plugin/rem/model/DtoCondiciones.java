@@ -63,6 +63,12 @@ public class DtoCondiciones extends WebDto {
 	private Date fechaInicioFinanciacion;
 	private Date fechaFinFinanciacion;
 	private Integer posesionInicial;
+	private Double gastosIbi;
+	private Double gastosComunidad;
+	private Double gastosSuministros;
+	private String ibiPorCuentaDe;
+	private String comunidadPorCuentaDe;
+	private String suministrosPorCuentaDe;
 	
 	
 
@@ -453,6 +459,54 @@ public class DtoCondiciones extends WebDto {
 
 	public void setPosesionInicial(Integer posesionInicial) {
 		this.posesionInicial = posesionInicial;
+	}
+
+	public Double getGastosIbi() {
+		return gastosIbi;
+	}
+
+	public void setGastosIbi(Double gastosIbi) {
+		this.gastosIbi = gastosIbi;
+	}
+
+	public Double getGastosComunidad() {
+		return gastosComunidad;
+	}
+
+	public void setGastosComunidad(Double gastosComunidad) {
+		this.gastosComunidad = gastosComunidad;
+	}
+
+	public Double getGastosSuministros() {
+		return gastosSuministros;
+	}
+
+	public void setGastosSuministros(Double gastosSuministros) {
+		this.gastosSuministros = gastosSuministros;
+	}
+
+	public String getIbiPorCuentaDe() {
+		return ibiPorCuentaDe;
+	}
+
+	public void setIbiPorCuentaDe(String ibiPorCuentaDe) {
+		this.ibiPorCuentaDe = ibiPorCuentaDe;
+	}
+
+	public String getComunidadPorCuentaDe() {
+		return comunidadPorCuentaDe;
+	}
+
+	public void setComunidadPorCuentaDe(String comunidadPorCuentaDe) {
+		this.comunidadPorCuentaDe = comunidadPorCuentaDe;
+	}
+
+	public String getSuministrosPorCuentaDe() {
+		return suministrosPorCuentaDe;
+	}
+
+	public void setSuministrosPorCuentaDe(String suministrosPorCuentaDe) {
+		this.suministrosPorCuentaDe = suministrosPorCuentaDe;
 	}  
    	
    	

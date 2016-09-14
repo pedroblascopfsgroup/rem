@@ -44,8 +44,19 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 	@Column(name="COM_EMAIL")
 	private String email;
 	
+    @Column(name = "COD_ESTADO_PBC")
+    private String codigoEstadoPbc;
+    
+    @Column(name = "DESC_ESTADO_PBC")
+    private String descripcionEstadoPbc;
+    
+    @Column(name="CEX_RELACION_HRE")
+    private String relacionHre;
+    
+    @Column(name="CEX_TITULAR_CONTRATACION")
+    private Integer titularContratacion;
 	
-
+	
 	public String getId() {
 		return id;
 	}
@@ -118,5 +129,37 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 		this.email = email;
 	}
 
+	public String getCodigoEstadoPbc() {
+		return codigoEstadoPbc;
+	}
+
+	public void setCodigoEstadoPbc(String codigoEstadoPbc) {
+		this.codigoEstadoPbc = codigoEstadoPbc;
+	}
+
+	public String getDescripcionEstadoPbc() {
+		return descripcionEstadoPbc;
+	}
+
+	public void setDescripcionEstadoPbc(String descripcionEstadoPbc) {
+		this.descripcionEstadoPbc = descripcionEstadoPbc;
+	}
+
+	public String getRelacionHre() {
+		return relacionHre;
+	}
+
+	public void setRelacionHre(String relacionHre) {
+		this.relacionHre = relacionHre;
+	}
+
+	public Integer getTitularContratacion() {
+		return titularContratacion;
+	}
+
+	public void setTitularContratacion(Integer titularContratacion) {
+		this.titularContratacion = titularContratacion;
+	}
+	
 
 }

@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -171,6 +172,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposImpuestos", DDTiposImpuesto.class);
 		mapa.put("situacionesPosesoria", DDSituacionesPosesoria.class);
 		mapa.put("usosActivo", DDUsosActivo.class);
+		mapa.put("regimenesMatrimoniales", DDRegimenesMatrimoniales.class);
 		
 
 		return Collections.unmodifiableMap(mapa);

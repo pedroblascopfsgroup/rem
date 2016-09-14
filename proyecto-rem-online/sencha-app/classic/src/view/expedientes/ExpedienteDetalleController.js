@@ -328,6 +328,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var me=this,
 		idCliente = record.get("id");
 		var storeGrid= gridView.store;
+//		me.getView().fireEvent('openModalWindow',"HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid});
     	Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: true, storeGrid:storeGrid }).show();
 
 	},
@@ -590,6 +591,46 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		otrosDetallePbc.setValue("");
     		otrosDetallePbc.setDisabled(true);
     	}
+	},
+	
+	onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec){
+		var me = this;
+    	me.gridOrigen = grid;
+		
+		if (rec.data.titularContratacion != 1) {
+			Ext.Msg.show({
+				   title: HreRem.i18n('title.confirmar.comprador.principal'),
+				   msg: HreRem.i18n('msg.confirmar.comprador.principal'),
+				   buttons: Ext.MessageBox.YESNO,
+				   fn: function(buttonId) {
+				        if (buttonId == 'yes') {	
+							me.getView().mask();
+							var url =  $AC.getRemoteUrl('expedientecomercial/marcarCompradorPrincipal');
+							Ext.Ajax.request({
+							
+							     url: url,
+							     params: {
+							     			idComprador: rec.data.id,
+							     			idExpedienteComercial: rec.data.idExpediente	
+							     		}
+								
+							    ,success: function (a, operation, context) {
+					                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+										me.getView().unmask();
+										me.gridOrigen.getStore().load();
+					            },
+					            
+					            failure: function (a, operation, context) {
+					            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+									 me.getView().unmask();
+					            }
+						     
+							});
+						}
+					}
+				});
+		}
+		
 	}
 
 });

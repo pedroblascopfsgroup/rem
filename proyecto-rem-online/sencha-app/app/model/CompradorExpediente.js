@@ -36,6 +36,12 @@ Ext.define('HreRem.model.CompradorExpediente', {
     		},
     		{
     			name:'relacionHre'
+    		},
+    		{
+    			name:'titularContratacion'
+    		},
+    		{
+    			name:'idExpedienteComercial'
     		}
     		
     ],

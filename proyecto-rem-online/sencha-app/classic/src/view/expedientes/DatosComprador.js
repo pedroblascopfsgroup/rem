@@ -5,10 +5,13 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     width	: Ext.Element.getViewportWidth() /1.8,    
     height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50,
 	reference: 'datoscompradorwindowref',
+	y:Ext.Element.getViewportHeight()*(10/100),
     controller: 'expedientedetalle',
     viewModel: {
         type: 'expedientedetalle'
     },
+    cls: '',//panel-base shadow-panel
+    collapsed: false,
 
     
     idComprador: null,
@@ -34,7 +37,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 //		},
 		show: function() {			
 			var me = this;
-			me.resetWindow();			
+//			me.resetWindow();			
 		}
 	},
 	
@@ -86,6 +89,13 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										},
 										items :
 											[
+											
+//											{
+//												xtype: 'checkboxfieldbase',
+//							                	fieldLabel:  HreRem.i18n('fieldlabel.comprador.principal'),
+//							                	readOnly: false,
+//							                	bind:		'{comprador.titularContratacion}'
+//											},
 												{ 
 													xtype: 'comboboxfieldbase',
 										        	fieldLabel: HreRem.i18n('fieldlabel.tipo.persona'),
@@ -163,6 +173,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		value: '{comprador.nombreRazonSocial}'
 									            	}
+										        },
+										        { 
+										        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
+										        	reference: 'apellidos',
+										        	bind: {
+									            		value: '{comprador.apellidos}'
+									            	}
+													
 										        },
 										        { 
 										        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
@@ -252,10 +270,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        {
 										        	xtype: 'comboboxfieldbase',
 										        	fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
-													reference: 'regimenEconomico',
+													reference: 'regimenMatrimonial',
 										        	bind: {
-									            		store: '{regimenEconomico}',
-									            		value: '{comprador.corRegimenEconomico}'
+									            		store: '{comboRegimenesMatrimoniales}',
+									            		value: '{comprador.codigoRegimenMatrimonial}'
 									            	}
 									            	
 						                		},
@@ -263,13 +281,17 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),
 										        	reference: 'numRegConyuge',
 										        	bind: {
-									            		value: '{comprador.numRegConyuge}'
+									            		value: '{comprador.documentoConyuge}'
 									            	}
 													
 										        },
-										        {
-											   		xtype: 'displayfield'
-											   		// como separador				   		
+										        { 
+										        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.hre'),
+										        	reference: 'relacionHre',
+										        	bind: {
+									            		value: '{comprador.relacionHre}'
+									            	}
+													
 										        },
 										        { 
 										        	xtype: 'comboboxfieldbase',
@@ -353,6 +375,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	reference: 'nombreRazonSocialRte',
 										        	bind: {
 									            		value: '{comprador.nombreRazonSocialRte}'
+									            	}
+													
+										        },
+										        { 
+										        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
+										        	reference: 'apellidosRte',
+										        	bind: {
+									            		value: '{comprador.apellidosRte}'
 									            	}
 													
 										        },

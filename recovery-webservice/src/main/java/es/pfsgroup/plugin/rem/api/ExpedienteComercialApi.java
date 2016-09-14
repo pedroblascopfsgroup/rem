@@ -163,6 +163,14 @@ public interface ExpedienteComercialApi {
 		 */
 		boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
 		
+		/**
+		 * Método que guarda el comprador como principal
+		 * @param idComercial
+		 * @param idExpedienteComercial
+		 * @return
+		 */
+		boolean marcarCompradorPrincipal(Long idComprador, Long idExpedienteComercial);
+		
 	   
 }
 

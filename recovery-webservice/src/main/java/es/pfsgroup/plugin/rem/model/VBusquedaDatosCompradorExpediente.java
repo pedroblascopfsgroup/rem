@@ -1,11 +1,17 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 
 @Entity
 @Table(name = "V_BUSQUEDA_DATOS_COMPRADOR_EXP", schema = "${entity.schema}")
@@ -128,6 +134,38 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
     @Column(name="CEX_IMPTE_FINANCIADO")
     private Double importeFinanciado;
     
+    @Column(name = "COD_ESTADO_PBC")
+    private String codigoEstadoPbc;
+    
+    @Column(name = "DESC_ESTADO_PBC")
+    private String descripcionEstadoPbc;
+    
+    @Column(name="CEX_RELACION_HRE")
+    private String relacionHre;
+    
+    @Column(name="COD_REM_CODIGO")
+    private String codigoRegimenMatrimonial;
+    
+    @Column(name="DESC_REM_CODIGO")
+    private String descripcionRegimenMatrimonial;
+    
+    @Column(name="APELLIDOS_COMPRADOR")
+    private String apellidos;
+    
+    @Column(name="APELLIDOS_COMPRADOR_RTE")
+    private String apellidosRte;
+    
+    @Column(name="CEX_FECHA_PETICION")
+    private Date fechaPeticion;
+    
+    @Column(name="CEX_FECHA_RESOLUCION")
+    private Date fechaResolucion;
+    
+	@Column(name = "COD_USO_ACTIVO")
+	private String codUsoActivo;
+	
+	@Column(name = "DESC_USO_ACTIVO")
+	private String descripcionUsoActivo;
     
 
 	public String getId() {
@@ -425,7 +463,94 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	public void setImporteFinanciado(Double importeFinanciado) {
 		this.importeFinanciado = importeFinanciado;
 	}
-	
-	
+
+	public String getCodigoEstadoPbc() {
+		return codigoEstadoPbc;
+	}
+
+	public void setCodigoEstadoPbc(String codigoEstadoPbc) {
+		this.codigoEstadoPbc = codigoEstadoPbc;
+	}
+
+	public String getDescripcionEstadoPbc() {
+		return descripcionEstadoPbc;
+	}
+
+	public void setDescripcionEstadoPbc(String descripcionEstadoPbc) {
+		this.descripcionEstadoPbc = descripcionEstadoPbc;
+	}
+
+	public String getRelacionHre() {
+		return relacionHre;
+	}
+
+	public void setRelacionHre(String relacionHre) {
+		this.relacionHre = relacionHre;
+	}
+
+	public String getCodigoRegimenMatrimonial() {
+		return codigoRegimenMatrimonial;
+	}
+
+	public void setCodigoRegimenMatrimonial(String codigoRegimenMatrimonial) {
+		this.codigoRegimenMatrimonial = codigoRegimenMatrimonial;
+	}
+
+	public String getDescripcionRegimenMatrimonial() {
+		return descripcionRegimenMatrimonial;
+	}
+
+	public void setDescripcionRegimenMatrimonial(
+			String descripcionRegimenMatrimonial) {
+		this.descripcionRegimenMatrimonial = descripcionRegimenMatrimonial;
+	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public void setApellidos(String apellidos) {
+		this.apellidos = apellidos;
+	}
+
+	public String getApellidosRte() {
+		return apellidosRte;
+	}
+
+	public void setApellidosRte(String apellidosRte) {
+		this.apellidosRte = apellidosRte;
+	}
+
+	public Date getFechaPeticion() {
+		return fechaPeticion;
+	}
+
+	public void setFechaPeticion(Date fechaPeticion) {
+		this.fechaPeticion = fechaPeticion;
+	}
+
+	public Date getFechaResolucion() {
+		return fechaResolucion;
+	}
+
+	public void setFechaResolucion(Date fechaResolucion) {
+		this.fechaResolucion = fechaResolucion;
+	}
+
+	public String getCodUsoActivo() {
+		return codUsoActivo;
+	}
+
+	public void setCodUsoActivo(String codUsoActivo) {
+		this.codUsoActivo = codUsoActivo;
+	}
+
+	public String getDescripcionUsoActivo() {
+		return descripcionUsoActivo;
+	}
+
+	public void setDescripcionUsoActivo(String descripcionUsoActivo) {
+		this.descripcionUsoActivo = descripcionUsoActivo;
+	}
 
 }

@@ -103,7 +103,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
-		        	xtype: 'compradoresexpediente'
+		        	xtype: 'compradoresexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
 		        	xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true

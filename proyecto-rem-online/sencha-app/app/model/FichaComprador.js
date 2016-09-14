@@ -149,7 +149,7 @@ Ext.define('HreRem.model.FichaComprador', {
 				name: 'importeProporcionalOferta'
 		},
 		{
-				name: 'destinoActivo'
+				name: 'codUsoActivo'
 		},
 		{
 				name: 'importeFinanciado'
@@ -159,6 +159,15 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 				name: 'riesgoReputacional'
+		},
+		{
+				name: 'regimenMatrimonial'
+		},
+		{
+				name: 'apellidos'
+		},
+		{
+				name: 'apellidosRte'
 		}
 		
     ],

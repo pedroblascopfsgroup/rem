@@ -33,9 +33,34 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    },
 					    
 						columns: [
+							{
+						        xtype: 'actioncolumn',
+						        reference: 'titularContratacion',
+//						        bind: {
+//						        	hidden: '{esAgrupacionObraNueva}'
+//						        },
+						        width: 30,
+						        text: HreRem.i18n('header.principal'),
+								hideable: false,
+								items: [
+								        	{
+									            getClass: function(v, meta, rec) {
+									                if (rec.get('titularContratacion') != 1) {
+									                	this.items[0].handler = 'onMarcarPrincipalClick';
+									                    return 'fa fa-check';
+									                } else {
+							            				this.items[0].handler = 'onMarcarPrincipalClick';
+									                    return 'fa fa-check green-color';
+									                }
+									            }
+								        	}
+								 ]
+				    		}, 
 						   {    text: HreRem.i18n('header.id.cliente'),
 					        	dataIndex: 'id',
-					        	flex: 1
+					        	flex: 1,
+					        	hidden: true,
+					        	hideable: false
 					       },
 						   {
 								text: HreRem.i18n('header.nombre.razon.social'),
@@ -73,7 +98,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.estado.pbc'),
-					            dataIndex: 'estadoPbc',
+					            dataIndex: 'descripcionEstadoPbc',
 					            flex: 1						   
 						   },
 						   {
@@ -99,12 +124,17 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 				xtype:'fieldsettable',
 				defaultType: 'displayfieldbase',
 				reference: 'estadoPbcCompradoRef',
-				title: HreRem.i18n('title.estado.pbc.comprador'),
+				title: HreRem.i18n('title.detalle.pbc'),
 				items :
 					[
 					
 						{
 						xtype:'fieldsettable',
+						layout: {
+							type: 'table',
+							columns: 2,
+							width: 200
+						},
 						collapsible: false,
 						border: false,
 							defaultType: 'displayfieldbase',				
@@ -112,7 +142,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					
 								{
 						        	xtype:'fieldset',
-						        	width: '80%',
+						        	width: 500,
 									border: false,
 									defaultType: 'textfieldbase',
 									items :
@@ -166,41 +196,87 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						        {
 						        	xtype:'fieldset',
 						        	border: false,
+						        	layout: {
+										type: 'table',
+										columns: 2,
+										width: 200
+									},
 									defaultType: 'textfieldbase',
 									items :
-										[		
+										[
+										{
+											xtype:'fieldset',
+						        			border: false,  
+											defaultType: 'textfieldbase',
+											items :
+												[
 										
-											{
-		                						fieldLabel:  HreRem.i18n('fieldlabel.responsable.tramitacion'),
-		                						bind:		'{detalleComprador.responsableTramitacion}'
-		               						},	
-										
-											 { 
-									        	xtype: 'comboboxfieldbase',							        	
-									        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+													{
+				                						fieldLabel:  HreRem.i18n('fieldlabel.responsable.tramitacion'),
+				                						bind:		'{detalleComprador.responsableTramitacion}'
+				               						},
+												
+													 { 
+											        	fieldLabel:  HreRem.i18n('fieldlabel.estado'),
+				                						bind:		'{detalleComprador.descripcionEstadoPbc}',
+				    									readOnly: true
+											        },
+											        {	
+													 	xtype:'datefieldbase',
+													 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.peticion'),
+							        					bind: '{detalleComprador.fechaPeticion}',
+							        					readOnly: true
+											        },
+											        {	
+													 	xtype:'datefieldbase',
+													 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.resolucion'),
+							        					bind: '{detalleComprador.fechaResolucion}',
+							        					readOnly: true
+											        }
+											      ]
+										},
+										{
+											xtype:'fieldset',
+						        			border: false,
+											defaultType: 'textfieldbase',
+											items :
+												[
+									        {
+							                	fieldLabel:  HreRem.i18n('fieldlabel.importe.proporcional.oferta'),
+							                	bind:		'{detalleComprador.importeProporcionalOferta}',
+							                	readOnly: true
+					
+							                },
+							                {	
+									        	xtype: 'numberfieldbase',
+									        	symbol: HreRem.i18n("symbol.euro"),
+							                	fieldLabel:  HreRem.i18n('fieldlabel.importe.financiado'),
+							                	bind:		'{detalleComprador.importeFinanciado}'
+							                },
+							                { 
+												xtype: 'comboboxfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.destino.activo'),
 									        	bind: {
-								            		store: '{comboEstado}',
-								            		value: '{estado}'
+								            		store: '{comboDestinoActivo}',
+								            		value: '{detalleComprador.codUsoActivo}'
 								            	},
-					            				displayField: 'descripcion',
-		    									valueField: 'codigo',
-		    									readOnly: true
+								            	displayField: 'descripcion',
+							    				valueField: 'codigo',
+							    				allowBlank: false,
+							    				listeners: {
+							    					change: 'onHaCambiadoDestinoActivo'
+							    				}
 									        },
 									        {	
-											 	xtype:'datefieldbase',
-											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.peticion'),
-					        					bind: '{fechaPeticion}',
-					        					readOnly: true
-									        },
-									        {	
-											 	xtype:'datefieldbase',
-											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha.resolucion'),
-					        					bind: '{fechaResolucion}',
-					        					readOnly: true
-									        }
-									        
-									        
-									        
+									        	xtype: 'textfieldbase',
+									        	reference: 'otrosDetallePbc',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.otros'),
+							                	bind:		'{detalleComprador.otros}',
+							                	allowBlank: false,
+							                	disabled: '{!esDestinoActivoOtros}'
+							                }
+							                ]}
+
 											
 										]
 						        	}
@@ -209,77 +285,36 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						
 					    
 		        ]
-            },
-            {
-				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',				
-				title: HreRem.i18n('title.detalle.pbc'),
-				items :
-					[
-		                {
-		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.proporcional.oferta'),
-		                	bind:		'{detalleComprador.importeProporcionalOferta}',
-		                	readOnly: true
-
-		                },
-		                { 
-							xtype: 'comboboxfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.destino.activo'),
-				        	bind: {
-			            		store: '{comboDestinoActivo}',
-			            		value: '{destinoActivo}'
-			            	},
-			            	displayField: 'descripcion',
-		    				valueField: 'codigo',
-		    				allowBlank: false,
-		    				listeners: {
-		    					change: 'onHaCambiadoDestinoActivo'
-		    				}
-				        },
-				        {	
-				        	xtype: 'textfieldbase',
-				        	reference: 'otrosDetallePbc',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.otros'),
-		                	bind:		'{detalleComprador.otros}',
-		                	allowBlank: false,
-		                	disabled: '{!esDestinoActivoOtros}'
-		                },
-				        {	
-				        	xtype: 'numberfieldbase',
-				        	symbol: HreRem.i18n("symbol.euro"),
-		                	fieldLabel:  HreRem.i18n('fieldlabel.importe.financiado'),
-		                	bind:		'{detalleComprador.importeFinanciado}'
-		                }
-		        ]
-            },
-            {
-				xtype:'fieldsettable',
-				defaultType: 'displayfieldbase',				
-				title: HreRem.i18n('title.politica.corporativa'),
-				items :
-					[
-						{
-		                	xtype: 'comboboxfieldbase',
-							reference: 'comboConflictoIntereses',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.conflicto.intereses'),
-				        	bind: {
-			            		store: '{comboConflictoIntereses}',
-			            		value: '{conflictoIntereses}'
-			            	},
-			            	allowBlank: false
-		                },
-		                {
-		                	xtype: 'comboboxfieldbase',
-							reference: 'comboRiesgoReputacional',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
-				        	bind: {
-			            		store: '{comboRiesgoReputacional}',
-			            		value: '{riesgoReputacional}'
-			            	},
-			            	allowBlank: false
-		                }
-		        ]
             }
+           
+//            {
+//				xtype:'fieldsettable',
+//				defaultType: 'displayfieldbase',				
+//				title: HreRem.i18n('title.politica.corporativa'),
+//				items :
+//					[
+//						{
+//		                	xtype: 'comboboxfieldbase',
+//							reference: 'comboConflictoIntereses',
+//		                	fieldLabel:  HreRem.i18n('fieldlabel.conflicto.intereses'),
+//				        	bind: {
+//			            		store: '{comboConflictoIntereses}',
+//			            		value: '{conflictoIntereses}'
+//			            	},
+//			            	allowBlank: false
+//		                },
+//		                {
+//		                	xtype: 'comboboxfieldbase',
+//							reference: 'comboRiesgoReputacional',
+//		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
+//				        	bind: {
+//			            		store: '{comboRiesgoReputacional}',
+//			            		value: '{riesgoReputacional}'
+//			            	},
+//			            	allowBlank: false
+//		                }
+//		        ]
+//            }
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

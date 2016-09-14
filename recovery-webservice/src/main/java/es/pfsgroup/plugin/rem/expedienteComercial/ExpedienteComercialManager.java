@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -985,6 +986,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				
 				//Datos de identificación
 				//Faltaria un campo para el apellido
+				if(!Checks.esNulo(dto.getApellidos())){
+					comprador.setApellidos(dto.getApellidos());
+				}
+				
 				if(!Checks.esNulo(dto.getCodTipoDocumento())){
 					DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumento());
 					comprador.setTipoDocumento(tipoDocumentoComprador);
@@ -1024,6 +1029,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					if(compradorExpediente.getPrimaryKey().getComprador().getId().equals(Long.parseLong(dto.getId())) &&
 							compradorExpediente.getPrimaryKey().getExpediente().getId().equals(Long.parseLong(dto.getIdExpedienteComercial()))){
 					
+//							if(!Checks.esNulo(dto.getTitularContratacion())){
+//								compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
+//							}
 							if(!Checks.esNulo(dto.getPorcentajeCompra())){
 								compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
 							}
@@ -1035,13 +1043,23 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 							}
 							
 							//Nexos
-							//Falta Numero reg.conyuge y Reg.economico
+							//Falta Reg.economico
 							if(!Checks.esNulo(dto.getCodEstadoCivil())){
 								DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
 								compradorExpediente.setEstadoCivil(estadoCivil);
 							}
+							if(!Checks.esNulo(dto.getDocumentoConyuge())){
+								compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+							}
 							if(!Checks.esNulo(dto.getRelacionAntDeudor())){
 								compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
+							}
+							if(!Checks.esNulo(dto.getRelacionHre())){
+								compradorExpediente.setRelacionHre(dto.getRelacionHre());
+							}
+							if(!Checks.esNulo(dto.getCodigoRegimenMatrimonial())){
+								DDRegimenesMatrimoniales regimenMatrimonial = (DDRegimenesMatrimoniales) utilDiccionarioApi.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class, dto.getCodigoRegimenMatrimonial());
+								compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
 							}
 							
 							if(!Checks.esNulo(dto.getAntiguoDeudor())){
@@ -1055,6 +1073,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 							}
 							if(!Checks.esNulo(dto.getNombreRazonSocialRte())){
 								compradorExpediente.setNombreRepresentante(dto.getNombreRazonSocialRte());
+							}
+							if(!Checks.esNulo(dto.getApellidosRte())){
+								compradorExpediente.setApellidosRepresentante(dto.getApellidosRte());
 							}
 							if(!Checks.esNulo(dto.getMunicipioRte())){
 								compradorExpediente.setMunicipioRepresentante(dto.getMunicipioRte());
@@ -1081,7 +1102,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 								compradorExpediente.setEmailRepresentante(dto.getEmailRte());
 						}
 						genericDao.save(Comprador.class, comprador);
-						genericDao.save(CompradorExpediente.class, compradorExpediente);
+						genericDao.update(CompradorExpediente.class, compradorExpediente);
 						
 					}
 				
@@ -1094,8 +1115,34 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			return false;
 		} 
 		return true;
+	
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean marcarCompradorPrincipal(Long idComprador, Long idExpedienteComercial){
 		
+		Filter filterLista= genericDao.createFilter(FilterType.EQUALS, "primaryKey.expediente.id", idExpedienteComercial);
+		List<CompradorExpediente> listaCompradores= genericDao.getList(CompradorExpediente.class, filterLista);
 		
+		try{
+			for(CompradorExpediente compradorExpediente: listaCompradores){
+				if(idComprador.equals(compradorExpediente.getPrimaryKey().getComprador().getId())){
+					compradorExpediente.setTitularContratacion(1);
+					genericDao.update(CompradorExpediente.class, compradorExpediente);
+					
+				}
+				else{
+					compradorExpediente.setTitularContratacion(0);
+					genericDao.update(CompradorExpediente.class, compradorExpediente);
+					
+				}
+			}
+			return true;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 		
 	}
 

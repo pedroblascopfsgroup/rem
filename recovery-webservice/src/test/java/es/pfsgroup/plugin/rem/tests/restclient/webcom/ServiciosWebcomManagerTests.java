@@ -59,17 +59,17 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 		Long idRem = 1L;
 		Long idWebcom = 100L;
-		Long idEstado = 50L;
+		String codEstado = "ABC";
 		String motivoRechazo = "Mi Motivo";
 
-		manager.enviaActualizacionEstadoTrabajo(idRem, idWebcom, idEstado, motivoRechazo);
+		manager.enviaActualizacionEstadoTrabajo(idRem, idWebcom, codEstado, motivoRechazo);
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
 		assertDataBasicContent(requestData, 0);
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
-		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.ID_ESTADO_TRABAJO, idEstado);
+		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 		assertDataEquals(requestData, 0, EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
 
 	}
@@ -81,12 +81,12 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 		Long idRem = 1L;
 		Long idWebcom = 2L;
-		Long idEstadoOferta = 2L;
+		String codEstadoOferta = "ABC";
 		Long idActivoHaya = 4L;
-		Long idEstadoExpediente = 5L;
+		String codEstadoExpediente = "DEF";
 		Boolean vendido = Boolean.TRUE;
 
-		manager.enviaActualizacionEstadoOferta(idRem, idWebcom, idEstadoOferta, idActivoHaya, idEstadoExpediente,
+		manager.enviaActualizacionEstadoOferta(idRem, idWebcom, codEstadoOferta, idActivoHaya, codEstadoExpediente,
 				vendido);
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -95,8 +95,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ESTADO_OFERTA, idEstadoOferta);
-		assertDataEquals(requestData, 0, EstadoOfertaConstantes.ID_ESTADO_EXPEDIENTE, idEstadoExpediente);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
+		assertDataEquals(requestData, 0, EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
 		assertDataEquals(requestData, 0, EstadoOfertaConstantes.VENDIDO, vendido);
 
 	}
@@ -113,7 +113,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		String codigoAgrupacionObraNueva = "ABCDE";
 
 		stock1.setActualImporte(WebcomDataType.floatDataType(actualImporte));
-		stock1.setIdEstado(WebcomDataType.booleanDataType(true));
+		// ¿El campo idEstado existirá o no?
+		//stock1.setIdEstado(WebcomDataType.booleanDataType(true));
 		stock2.setCodigoAgrupacionObraNueva(WebcomDataType.stringDataType(codigoAgrupacionObraNueva));
 		
 		// Seteamos un campo a Null explícitamente, para indicar un borrado
@@ -129,7 +130,8 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 		assertDataBasicContent(requestData, 0);
 		assertDataEquals(requestData, 0, ServicioStockConstantes.ACTUAL_IMPORTE, actualImporte);
-		assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO, Boolean.TRUE);
+		// ¿El campo idEstado existirá o no?
+		//assertDataEquals(requestData, 0, ServicioStockConstantes.ID_ESTADO, Boolean.TRUE);
 		assertDataEquals(requestData, 1, ServicioStockConstantes.CODIGO_AGRUPACION_OBRA_NUEVA, codigoAgrupacionObraNueva);
 		
 		// Comprobamos que los campos que ponemos explícitamente a Null aparezcan como NULL en el JSON

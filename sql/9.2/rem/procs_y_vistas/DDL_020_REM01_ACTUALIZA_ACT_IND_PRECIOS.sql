@@ -134,6 +134,8 @@ BEGIN
             FETCH v_pre_cursor INTO nDD_TPP_ID;
             EXIT WHEN v_pre_cursor%NOTFOUND;
 
+		      Aux_DD_CIP_TEXTO := NULL;
+
               OPEN v_cond_cursor FOR v_stmt_cond USING nDD_CRA_ID, nDD_TPP_ID;
                 LOOP
                   FETCH v_cond_cursor INTO vDD_CIP_TEXTO;

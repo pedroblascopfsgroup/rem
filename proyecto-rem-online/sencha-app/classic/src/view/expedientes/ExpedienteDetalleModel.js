@@ -4,7 +4,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.TextosOferta', 'HreRem.model.ActivosExpediente', 
                 'HreRem.model.EntregaReserva', 'HreRem.model.ObservacionesExpediente', 'HreRem.model.AdjuntoExpedienteComercial',
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
-                'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario'],
+                'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario',
+				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador'],
     
     data: {
     	expediente: null
@@ -26,6 +27,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	     
 	     getTipoExpedienteCabecera: function(get) {
+	     
 	     	var tipoExpedidenteDescripcion =  get('expediente.tipoExpedienteDescripcion');
 	     	var idAgrupacion = get('expediente.idAgrupacion');
 			var numEntidad = get('expediente.numEntidad');
@@ -61,7 +63,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return false;
 	     },
 	     
-	     esOfertaVenta: function(get){
+	     esDestinoActivoOtros: function(get){
+	     	var destinoActivo= get('destinoActivo');
+	     	if(destinoActivo=='05'){
+	     		return true;
+	     	}
+	     	return false;
+	     },
+
+		esOfertaVenta: function(get){
 	     	var me= this;
 	     	var expediente= me.getData().expediente;
 	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
@@ -79,6 +89,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	
 	     }
 	 },
+
+		esDestinoActivoOtros: function(get){
+	     	var destinoActivo= get('destinoActivo');
+	     	if(destinoActivo=='05'){
+	     		return true;
+	     	}
+	     	return false;
+	     },
 
     stores: {
     	
@@ -194,7 +212,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				extraParams: {diccionario: 'situacionesPosesoria'}
 			}   
     	},
-storeObservaciones: {
+    	
+    	storeObservaciones: {
 			
     		pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.ObservacionesExpediente',
@@ -202,7 +221,9 @@ storeObservaciones: {
 	    		type: 'uxproxy',
 	    		remoteUrl: 'expedientecomercial/getObservaciones',
 	    		extraParams: {idExpediente: '{expediente.id}'}
-	    	}
+	    	},
+	    	remoteSort: true,
+	    	remoteFilter: true
     	},
 
     	storeActivosExpediente: {
@@ -234,11 +255,68 @@ storeObservaciones: {
 		        remoteUrl: 'expedientecomercial/getTramitesTareas',
 		        extraParams: {idExpediente: '{expediente.id}'},
 		        rootProperty: 'tramite.tareas'
-	    	}
-
+	    	}/*,
+	    	remoteSort: true,
+	    	remoteFilter: true
+			*/
 		},
 		
-		storePosicionamientos: {
+		storeCompradoresExpediente: {
+			pageSize: 10,
+	    	model: 'HreRem.model.CompradorExpediente',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getCompradoresExpediente',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		},
+		
+		comboTipoPersona : {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposPersona'}
+			}
+    	},
+    	
+	    comboTipoDocumento: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposDocumentos'}
+			}   	
+	    },
+    	
+	    comboEstadoCivil: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosCiviles'}
+			}   	
+	    },
+	    
+	    comboDestinoActivo: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'usosActivo'}
+			} 
+	    },
+	    
+	    comboRegimenesMatrimoniales: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'regimenesMatrimoniales'}
+			}
+	    },
+
+				storePosicionamientos: {
 			pageSize: $AC.getDefaultPageSize(),
 	    	model: 'HreRem.model.Posicionamiento',
 	    	proxy: {
@@ -315,27 +393,7 @@ storeObservaciones: {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		}
-		
-//		storeGastosSoportadosPropietarios: {
-//			pageSize: $AC.getDefaultPageSize(),
-//	    	model: 'HreRem.model.GastoGestionEconomica',
-//	    	proxy: {
-//		        type: 'uxproxy',
-//		        remoteUrl: 'expedientecomercial/getGastosSoportadoPropietario',
-//		        extraParams: {idExpediente: '{expediente.id}'}
-//	    	}
-//		},
-//		
-//		storeGastosSoportadosHaya: {
-//			pageSize: $AC.getDefaultPageSize(),
-//	    	model: 'HreRem.model.GastoGestionEconomica',
-//	    	proxy: {
-//		        type: 'uxproxy',
-//		        remoteUrl: 'expedientecomercial/getGastosSoportadoHaya',
-//		        extraParams: {idExpediente: '{expediente.id}'}
-//	    	}
-//		}
-    		
-    		
-    }    
+	
+    }
+  
 });

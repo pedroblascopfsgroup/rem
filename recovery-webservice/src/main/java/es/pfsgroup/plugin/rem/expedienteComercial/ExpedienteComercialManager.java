@@ -65,17 +65,20 @@ import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.observacionesExpediente.dao.ObservacionExpedienteDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 
 
 @Service("expedienteComercialManager")
@@ -97,6 +100,10 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	
 	@Autowired
 	private OfertaDao ofertaDao;
+	
+	@Autowired
+	private ReservaDao reservaDao;
+	
 	
 	@Autowired
 	private ObservacionExpedienteDao observacionComercialDao;
@@ -335,7 +342,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setImporteDevolucionEntregas(expediente.getImporteDevolucionEntregas());
 				
 				if(!Checks.esNulo(expediente.getCondicionante())) {
-					dto.setTieneReserva(expediente.getCondicionante().getImporteReserva() != null);
+					dto.setTieneReserva(expediente.getCondicionante().getTipoCalculoReserva() != null);
 				}
 				
 
@@ -391,7 +398,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			
 			dto.setIdReserva(reserva.getId());
 			dto.setNumReserva(reserva.getNumReserva());			
-			dto.setFechaEvio(reserva.getFechaEnvio());
+			dto.setFechaEnvio(reserva.getFechaEnvio());
 			dto.setFechaFirma(reserva.getFechaFirma());
 			dto.setFechaVencimiento(reserva.getFechaVencimiento());
 			if(!Checks.esNulo(reserva.getEstadoReserva())) {
@@ -402,13 +409,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				dto.setTipoArrasCodigo(reserva.getTipoArras().getCodigo());
 			}	
 			if(!Checks.esNulo(expediente.getCondicionante())) {
-				if(expediente.getCondicionante().getReservaConImpuesto()){
-					dto.setConImpuesto(1);
-				}
-				else{
-					dto.setConImpuesto(0);
-				}
-				//dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
+				dto.setConImpuesto(expediente.getCondicionante().getReservaConImpuesto());
 				dto.setImporte(expediente.getCondicionante().getImporteReserva());
 			}
 		}
@@ -848,7 +849,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
 		
 		if(!Checks.esNulo(condiciones)){
-			condiciones.setExpediente(expedienteComercial);
+			//condiciones.setExpediente(expedienteComercial);
 			condiciones= dtoCondicionantestoCondicionante(condiciones, dto);
 		}
 		
@@ -859,6 +860,22 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		}
 		
 		genericDao.save(CondicionanteExpediente.class, condiciones);
+		
+		Reserva reserva = expedienteComercial.getReserva();
+		
+		// Creamos la reserva si se existe en condiciones y no se ha creado todavia
+		if(!Checks.esNulo(condiciones.getTipoCalculoReserva()) && Checks.esNulo(reserva)) {
+			reserva = new Reserva();
+			DDEstadosReserva estadoReserva = (DDEstadosReserva) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosReserva.class, DDEstadosReserva.CODIGO_PENDIENTE_FIRMA);
+			reserva.setEstadoReserva(estadoReserva);
+			reserva.setExpediente(expedienteComercial);
+			reserva.setNumReserva(reservaDao.getNextNumReservaRem());
+			
+			genericDao.save(Reserva.class, reserva);
+		} else {
+			
+		}
+		
 		return true;
 		
 	}
@@ -866,7 +883,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 	public CondicionanteExpediente dtoCondicionantestoCondicionante(CondicionanteExpediente condiciones, DtoCondiciones dto){
 		try{
 			
-			beanUtilNotNull.copyProperties(condiciones, dto);
+			beanUtilNotNull.copyProperties(condiciones, dto); 
 			
 			if(!Checks.esNulo(dto.getEstadosFinanciacion())){
 				DDEstadoFinanciacion estadoFinanciacion = (DDEstadoFinanciacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoFinanciacion.class, dto.getEstadosFinanciacion());
@@ -879,6 +896,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					condiciones.setTipoCalculoReserva(tipoCalculo);
 				}else{
 					condiciones.setTipoCalculoReserva(null);
+					condiciones.setPorcentajeReserva(null);
+					condiciones.setImporteReserva(null);
+					condiciones.setPlazoFirmaReserva(null);
 				}
 			}
 			
@@ -1143,6 +1163,25 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
 		
 		return new DtoPage(gastosExpediente, gastosExpediente.size());
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveReserva(DtoReserva dto, Long idExpediente) {
+		
+		ExpedienteComercial expediente= findOne(idExpediente);
+		Reserva reserva = expediente.getReserva();
+		
+
+		if(!Checks.esNulo(dto.getTipoArrasCodigo())) {
+			
+			DDTiposArras tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, dto.getTipoArrasCodigo());
+			reserva.setTipoArras(tipoArras);
+		}
+		
+		genericDao.save(Reserva.class, reserva);
+		
+		return true;
 	}
 	
 

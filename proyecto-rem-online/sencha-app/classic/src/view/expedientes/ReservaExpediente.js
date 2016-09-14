@@ -38,7 +38,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							reference: 'comboTiposArras',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.arras'),
 				        	bind: {
-			            		store: '{comboTiposArras}',
+			            		store: '{storeTiposArras}',
 			            		value: '{reserva.tipoArrasCodigo}'
 			            	}
 				        },		                
@@ -76,33 +76,47 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
             	title:  HreRem.i18n('title.historico.entregas.a.cuenta'),
             	items : [
                 	{
-					    xtype		: 'gridBase',
-					    reference: 'listadoEntregasCuenta',
+					    xtype		: 'gridBaseEditableRow',
+					    tbar		: true,
+					    reference	: 'listadoEntregasCuenta',
+					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
 						bind: {
-							store: '{storeEntregasACuenta}'
+							store: '{R}'
 						},									
 						
 						columns: [
 						   {    text: HreRem.i18n('header.importe'),
 					        	dataIndex: 'importe',
-					        	flex: 1
+					        	flex: 1,
+					        	editor: {
+					        		xtype:'textfield'
+					        	}
 					       },
 						   {
 					            text: HreRem.i18n('header.fecha.cobro'),
-					            dataIndex: 'fechaCobro',
+					            dataIndex: 'fechaEntrega',
 					            formatter: 'date("d/m/Y H:s")',
-					            flex: 1
+					            flex: 1,
+					            editor: {
+					        		xtype:'datefield'
+					        	}
 						   },
 						   {
 						   		text: HreRem.i18n('header.comprador'),
 					            dataIndex: 'titular',
-					            flex: 1
+					            flex: 1,
+					           	editor: {
+					        		xtype:'textfield'
+					        	}
 						   },						   
 						   {
 						   		text: HreRem.i18n('header.observacion'),
 					            dataIndex: 'observaciones',
-					            flex: 1						   
+					            flex: 1,
+					            editor: {
+					        		xtype:'textarea'
+					        	}
 						   }	
 					    ]					    
 					}

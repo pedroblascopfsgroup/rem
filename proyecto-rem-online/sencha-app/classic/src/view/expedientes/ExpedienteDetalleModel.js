@@ -96,7 +96,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		
     	},
     	
-    	comboTiposArras: {
+    	storeTiposArras: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',

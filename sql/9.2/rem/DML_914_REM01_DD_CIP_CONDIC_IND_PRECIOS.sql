@@ -106,18 +106,19 @@ DECLARE
 																																																  AND VAL32_AUX.VAL_FECHA_INICIO < SYSDATE
 																																																  AND (VAL32_AUX.VAL_FECHA_FIN IS NULL OR VAL32_AUX.VAL_FECHA_FIN <= SYSDATE)
 																																																  AND TAS32.TAS_FECHA_RECEPCION_TASACION >VAL32_AUX.VAL_FECHA_INICIO'),
-        T_TIPO_DATA('33'	,'Si hay valor JLL || F. valor JLL > F. tasación > F. precio existente'				,'Si hay valor JLL || F. valor JLL > F. tasación > F. precio existente','INNER JOIN REM01.ACT_VAL_VALORACIONES VAL32 ON VAL32.ACT_ID = ACT.ACT_ID 
-																																																  AND VAL32.BORRADO = 0 
-																																																  AND VAL32.DD_TPC_ID = (SELECT DD_TPC32.DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO DD_TPC32 WHERE DD_TPC32.DD_TPC_ID = VAL32.DD_TPC_ID  AND DD_TPC32.DD_TPC_CODIGO IN (''''16'''') AND DD_TPC32.BORRADO = 0)
-																																																  AND VAL32.VAL_FECHA_INICIO < SYSDATE
-																																																  AND (VAL32.VAL_FECHA_FIN IS NOT NULL OR VAL32.VAL_FECHA_FIN <= SYSDATE)
-																																														INNER JOIN REM01.ACT_TAS_TASACION TAS32 ON TAS32.ACT_ID = VAL32.ACT_ID
-																																																  AND VAL32.VAL_FECHA_INICIO > TAS32.TAS_FECHA_RECEPCION_TASACION
-																																																  AND TAS32.BORRADO = 0      
-																																														INNER JOIN REM01.ACT_VAL_VALORACIONES VAL32_AUX ON VAL32_AUX.ACT_ID = ACT.ACT_ID 
-																																																  AND VAL32_AUX.DD_TPC_ID = (SELECT DD_TPC31.DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO DD_TPC31 WHERE DD_TPC31.DD_TPC_ID = VAL32_AUX.DD_TPC_ID  AND DD_TPC31.DD_TPC_CODIGO IN (''''02'''',''''03'''',''''04'''') AND DD_TPC31.BORRADO = 0)
-																																																  AND VAL32_AUX.VAL_FECHA_INICIO < SYSDATE
-																																																  AND (VAL32_AUX.VAL_FECHA_FIN IS NULL OR VAL32_AUX.VAL_FECHA_FIN <= SY'),
+        T_TIPO_DATA('33'	,'Si hay valor JLL || F. valor JLL > F. tasación > F. precio existente'				,'Si hay valor JLL || F. valor JLL > F. tasación > F. precio existente','INNER JOIN REM01.ACT_VAL_VALORACIONES VAL33 ON VAL33.ACT_ID = ACT.ACT_ID 
+																																																  AND VAL33.BORRADO = 0 
+																																																  AND VAL33.DD_TPC_ID = (SELECT DD_TPC33.DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO DD_TPC33 WHERE DD_TPC33.DD_TPC_ID = VAL33.DD_TPC_ID  AND DD_TPC33.DD_TPC_CODIGO IN (''''16'''') AND DD_TPC33.BORRADO = 0)
+																																																  AND VAL33.VAL_FECHA_INICIO < SYSDATE
+																																																  AND (VAL33.VAL_FECHA_FIN IS NOT NULL OR VAL33.VAL_FECHA_FIN <= SYSDATE)
+																																														INNER JOIN REM01.ACT_TAS_TASACION TAS33 ON TAS33.ACT_ID = VAL33.ACT_ID
+																																																  AND VAL33.VAL_FECHA_INICIO > TAS33.TAS_FECHA_RECEPCION_TASACION
+																																																  AND TAS33.BORRADO = 0      
+																																														INNER JOIN REM01.ACT_VAL_VALORACIONES VAL33_AUX ON VAL33_AUX.ACT_ID = ACT.ACT_ID 
+																																																  AND VAL33_AUX.DD_TPC_ID = (SELECT DD_TPC33.DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO DD_TPC33 WHERE DD_TPC33.DD_TPC_ID = VAL33_AUX.DD_TPC_ID  AND DD_TPC33.DD_TPC_CODIGO IN (''''02'''',''''03'''',''''04'''') AND DD_TPC33.BORRADO = 0)
+																																																  AND VAL33_AUX.VAL_FECHA_INICIO < SYSDATE
+																																																  AND (VAL33_AUX.VAL_FECHA_FIN IS NULL OR VAL33_AUX.VAL_FECHA_FIN <= SYSDATE)
+																																																  AND TAS33.TAS_FECHA_RECEPCION_TASACION >VAL33_AUX.VAL_FECHA_INICIO'),
         T_TIPO_DATA('34'	,'Sin FSV ni JLL || F. valor Neto Contable >= F. tasacion > F. precio existente'				,'Sin FSV ni JLL || F. valor Neto Contable >= F. tasacion > F. precio existente','INNER JOIN REM01.ACT_VAL_VALORACIONES VAL34 ON VAL34.ACT_ID = ACT.ACT_ID 
 																																																						  AND VAL34.BORRADO = 0 
 																																																						  AND VAL34.DD_TPC_ID = (SELECT DD_TPC34.DD_TPC_ID FROM REM01.DD_TPC_TIPO_PRECIO DD_TPC34 WHERE DD_TPC34.DD_TPC_ID = VAL34.DD_TPC_ID  AND DD_TPC34.DD_TPC_CODIGO NOT IN (''''16'''',''''19'''',''''20'''') AND DD_TPC34.BORRADO = 0)

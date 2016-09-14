@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -54,7 +56,7 @@ public class VisitasController {
 	 * signature - sdgsdgsdgsdg
 	 * 
 	 * BODY:
-	 * {"id":"111111112112","data": [{"idVisitaWebcom": "1", "idClienteRem": "2", "idActivoHaya": "0", "codEstadoVisita": "05","codDetalleEstadoVisita": "07", "fechaVisita": "448070400", "fecha": "448070400", "idUsuarioRem": "1", "idPrescriptor": "5045", "visitaPrescriptor": false, "idApiResponsable": "1010", "visitaApiResponsable": false, "idApiCustodio": "1008", "visitaApiCustodio": false, "observaciones": "Observaciones" }]}
+	 * {"id":"111111112113","data": [{"idVisitaWebcom": "1", "idClienteRem": "2", "idActivoHaya": "0", "codEstadoVisita": "04","codDetalleEstadoVisita": "04", "fecha": "2016-01-01T10:10:10", "idUsuarioRem": "1", "idProveedorRemPrescriptor": "5045",  "idProveedorRemCustodio": "1010", "idProveedorRemResponsable": "1010", "idProveedorRemFdv": "1010" , "idProveedorRemVisita": "1010", "observaciones": "updated1" }]}
 	 * 
 	 * @param model
 	 * @param request
@@ -70,14 +72,16 @@ public class VisitasController {
 		VisitaDto visitaDto = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		ArrayList<Map<String, Object>> requestMapList = null;
+		JSONObject jsonFields = null;
 		
 		try {
 
 			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			List<VisitaDto> listaVisitaDto = jsonData.getData();			
-			requestMapList = request.getRequestMapList();
-			if(Checks.esNulo(requestMapList) && requestMapList.isEmpty()){
+			jsonFields = request.getJsonObject();
+
+			
+			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
 				
 			}else{
@@ -94,7 +98,7 @@ public class VisitasController {
 						errorsList = visitaApi.saveVisita(visitaDto);
 						
 					}else{
-						errorsList = visitaApi.updateVisita(visita, visitaDto, requestMapList.get(i));
+						errorsList = visitaApi.updateVisita(visita, visitaDto, jsonFields.getJSONArray("data").get(i));
 						
 					}
 														

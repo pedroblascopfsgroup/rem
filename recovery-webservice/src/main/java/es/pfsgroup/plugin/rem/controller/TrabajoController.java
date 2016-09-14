@@ -14,6 +14,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
@@ -1027,14 +1029,16 @@ public class TrabajoController {
 		DtoFichaTrabajo dtoFichaTrabajo = null;
 		Map<String, Object> map = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		ArrayList<Map<String, Object>> requestMapList = null;
-
+		JSONObject jsonFields = null;
+		
 		try {
 			
 			jsonData = (TrabajoRequestDto) request.getRequestData(TrabajoRequestDto.class);
 			List<TrabajoDto> listaTrabajoDto = jsonData.getData();			
-			requestMapList = request.getRequestMapList();
-			if(Checks.esNulo(requestMapList) && requestMapList.isEmpty()){
+			jsonFields = request.getJsonObject();
+
+			
+			if(Checks.esNulo(jsonFields) && jsonFields.isEmpty()){
 				throw new Exception("No se han podido recuperar los datos de la petición. Peticion mal estructurada.");
 				
 			}else{

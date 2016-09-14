@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -46,8 +47,10 @@ import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
 
 @Controller
@@ -256,13 +259,13 @@ public class ExpedienteComercialController {
 
 @SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getObservaciones(ModelMap model, Long idExpediente) {
+	public ModelAndView getObservaciones(ModelMap model, WebDto dto, Long idExpediente) {
 		
 		try {
-			DtoPage dto = expedienteComercialApi.getListObservaciones(idExpediente);
+			DtoPage page = expedienteComercialApi.getListObservaciones(idExpediente, dto);
 			
-			model.put("data", dto.getResults());
-			model.put("totalCount", dto.getTotalCount());
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 			
 		} catch (Exception e) {
@@ -571,7 +574,120 @@ public class ExpedienteComercialController {
 		return createModelAndViewJson(model);
 		
 	}
+
+	/**
+	 * Recupera la lista de compradores para la pestanya Compradores /PBC de un expediente
+	 * @param idExpediente
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCompradoresExpediente(Long idExpediente, WebDto dto, ModelMap model) {
+
+		try {
+			
+			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCompradorById(Long id, ModelMap model ) {
+		
+		try {
+			VBusquedaDatosCompradorExpediente comprador = expedienteComercialApi.getDatosCompradorById(id);
+			model.put("data", comprador);
+			//model.put("success", true);
+		}catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveFichaComprador(VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id, ModelMap model){
+		
+//		ModelMap model = new ModelMap();
+		
+		try {
+			boolean success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			model.put("success", success);			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView marcarCompradorPrincipal(@RequestParam Long idComprador, @RequestParam Long idExpedienteComercial, ModelMap model){
+		
+		try {
+			boolean success = expedienteComercialApi.marcarCompradorPrincipal(idComprador, idExpedienteComercial);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGastosSoportadoHaya(ModelMap model, Long idExpediente) {
+		
+		try {
+			DtoPage dto= expedienteComercialApi.getGastosSoportadoHaya(idExpediente);
+			
+			model.put("data", dto.getResults());
+			model.put("totalCount", dto.getTotalCount());
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveReserva(DtoReserva dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.saveReserva(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 

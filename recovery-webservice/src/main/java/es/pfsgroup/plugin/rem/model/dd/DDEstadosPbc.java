@@ -19,50 +19,41 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de los tipos de estado de una reserva
+ * Modelo que gestiona el diccionario de regímenes matrimoniales
  * 
  * @author Jose Villel
  *
  */
 @Entity
-@Table(name = "DD_ERE_ESTADOS_RESERVA", schema = "${entity.schema}")
+@Table(name = "DD_EPB_ESTADOS_PBC", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDEstadosReserva implements Auditable, Dictionary {
+public class DDEstadosPbc implements Auditable, Dictionary {
 	
 
-	public static final String CODIGO_PENDIENTE_FIRMA = "01";
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2307957295534774606L;
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_ERE_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadosReservaGenerator")
-	@SequenceGenerator(name = "DDEstadosReservaGenerator", sequenceName = "S_DD_ERE_ESTADOS_RESERVA")
+	@Column(name = "DD_EPB_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDEstadosPbcGenerator")
+	@SequenceGenerator(name = "DDEstadosPbcGenerator", sequenceName = "S_DD_EPB_ESTADOS_PBC")
 	private Long id;
-	
-	@Column(name = "DD_ERE_CODIGO")   
+	    
+	@Column(name = "DD_EPB_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_ERE_DESCRIPCION")   
+	@Column(name = "DD_EPB_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_ERE_DESCRIPCION_LARGA")   
-	private String descripcionLarga;
-	    
-	
-	    
+	@Column(name = "DD_EPB_DESCRIPCION_LARGA")   
+	private String descripcionLarga;	    
+
 	@Version   
 	private Long version;
-	
+
 	@Embedded
 	private Auditoria auditoria;
 
-	
-	
-	
 	public Long getId() {
 		return id;
 	}
@@ -111,8 +102,4 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	 
-	
-	
-	
 }

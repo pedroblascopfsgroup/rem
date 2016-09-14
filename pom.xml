@@ -468,6 +468,11 @@
 				<artifactId>paradise-framework</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-message-broker</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- REM: GESTOR DOCUMENTAL LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>

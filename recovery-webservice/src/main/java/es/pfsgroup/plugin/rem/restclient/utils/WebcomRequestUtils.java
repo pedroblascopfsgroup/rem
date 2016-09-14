@@ -47,7 +47,6 @@ public class WebcomRequestUtils {
 		SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat formaterTime = new SimpleDateFormat("hh:mm:ss");
 		return formaterDate.format(date) + "T" + formaterTime.format(date);
-		// return DateFormat.toString(date);
 	}
 
 }

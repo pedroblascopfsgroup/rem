@@ -41,7 +41,7 @@ DECLARE
         T_TIPO_DATA('RES_FECHA_SOLICITUD', 'DATE','', 'Fecha de solicitud de la reserva.'),
         T_TIPO_DATA('RES_FECHA_RESOLUCION', 'DATE','', 'Fecha de resolución de la reserva.'),
         T_TIPO_DATA('RES_IND_IMP_ANULACION', 'NUMBER','(1,0)', 'Indicador de si se devuelve la reserva.'),
-        T_TIPO_DATA('RES_IMPORTE_DEVUELTO', 'NUMBER','(16,2', 'Importe devuelto de la reserva.')
+        T_TIPO_DATA('RES_IMPORTE_DEVUELTO', 'NUMBER','(16,2)', 'Importe devuelto de la reserva.')
         
      
     ); 

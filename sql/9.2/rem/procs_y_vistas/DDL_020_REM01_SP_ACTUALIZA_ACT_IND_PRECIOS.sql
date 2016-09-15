@@ -134,6 +134,8 @@ BEGIN
             FETCH v_pre_cursor INTO nDD_TPP_ID;
             EXIT WHEN v_pre_cursor%NOTFOUND;
 
+		      Aux_DD_CIP_TEXTO := NULL;
+
               OPEN v_cond_cursor FOR v_stmt_cond USING nDD_CRA_ID, nDD_TPP_ID;
                 LOOP
                   FETCH v_cond_cursor INTO vDD_CIP_TEXTO;
@@ -161,7 +163,7 @@ BEGIN
                 MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
                     (   SELECT DISTINCT ACT.ACT_ID  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT '||Aux_DD_CIP_TEXTO ||'
                     ) aux
-                      ON (ACT.ACT_ID = aux.ACT_ID)
+                      ON (ACT.ACT_ID = aux.ACT_ID AND ACT.DD_CRA_ID ='||nDD_CRA_ID||')
                       WHEN MATCHED THEN
                         UPDATE SET '||
                           vACT_FECHA_IND ||' = ''' ||V_FECHA||'''

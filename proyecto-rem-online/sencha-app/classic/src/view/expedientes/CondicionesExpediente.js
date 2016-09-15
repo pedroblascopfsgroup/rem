@@ -136,6 +136,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												fieldLabel: HreRem.i18n('fieldlabel.portencaje.reserva'),
 				                				bind: '{condiciones.porcentajeReserva}',
 				                				reference: 'porcentajeReserva',
+				                				listeners: {
+							                		change:  'onHaCambiadoPorcentajeReserva'
+							            		},
 				                				disabled: true
 							                },
 							                { 

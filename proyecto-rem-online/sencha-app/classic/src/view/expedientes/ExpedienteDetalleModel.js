@@ -80,9 +80,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
-	     },   
-
-	     esOfertaVentaFicha: function(get){
+	     },
+	     
+	     esExpedienteSinReserva: function(get) {
+	     	
+	     	var tieneReserva = get('expediente.tieneReserva');
+	     	return tieneReserva === "false";
+	     	
+	     },
+		
+esOfertaVentaFicha: function(get){
 	     	var me = this;
 	     	var expediente= me.getData().expediente;
 	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
@@ -91,6 +98,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}
 	     	return false;
 	     }
+		
 	 },
 
 

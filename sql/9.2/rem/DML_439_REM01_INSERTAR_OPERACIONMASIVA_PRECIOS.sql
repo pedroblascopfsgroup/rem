@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20160912
+--## FECHA_CREACION=20160914
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -36,7 +36,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('ADPA', 'Actualizar precios de activo', 'Descuento precios de activo', 'PRECIOS_ACTUALIZAR', 'nD*'),
+	  T_FUNCION('ADPA', 'Actualizar precios de activo', 'Descuento precios de activo', 'PRECIOS_ACTUALIZAR', 'nD*,i,f,f,i,f,f,i,f,f,i,f,f,i,f,f'),
 	  T_FUNCION('BBPA', 'Bloquear precios de activo', 'Bloquear precios activo', 'PRECIOS_BLOQUEAR', 'nD*'),
 	  T_FUNCION('DBPA', 'Desbloquear precios de activo', 'Desbloquear precios activo', 'PRECIOS_DESBLOQUEAR', 'nD*')
     ); 

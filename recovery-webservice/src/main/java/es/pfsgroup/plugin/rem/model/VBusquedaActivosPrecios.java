@@ -109,12 +109,12 @@ public class VBusquedaActivosPrecios implements Serializable {
     @Column(name="PRECIO_MINIMO_AUTORIZADO")
     private Double precioMinimoAutorizado;
     
-    @Column(name="PRECIO_DESCUENTO_APROBADO")
+/*    @Column(name="PRECIO_DESCUENTO_APROBADO")
     private Double precioDescuentoAprobado;
     
     @Column(name="PRECIO_DESCUENTO_PUBLICADO")
     private Double precioDescuentoPublicado;
-    
+ */   
     @Column(name="FSV_VENTA")
     private Double fsvVenta;
     
@@ -351,7 +351,7 @@ public class VBusquedaActivosPrecios implements Serializable {
 	public void setPrecioMinimoAutorizado(Double precioMinimoAutorizado) {
 		this.precioMinimoAutorizado = precioMinimoAutorizado;
 	}
-
+/*
 	public Double getPrecioDescuentoAprobado() {
 		return precioDescuentoAprobado;
 	}
@@ -367,7 +367,7 @@ public class VBusquedaActivosPrecios implements Serializable {
 	public void setPrecioDescuentoPublicado(Double precioDescuentoPublicado) {
 		this.precioDescuentoPublicado = precioDescuentoPublicado;
 	}
-
+*/
 	public Double getFsvVenta() {
 		return fsvVenta;
 	}

@@ -53,6 +53,10 @@ public class NotificacionAdapter {
 		
 		if(!Checks.esNulo(notificacion.getStrFecha()))
 			fecha = formato.parse(notificacion.getStrFecha());
+		else{
+			if(!Checks.esNulo(notificacion.getFecha()))
+				fecha = notificacion.getFecha();
+		}
 		
 		DtoCrearAnotacion serviceDto = new DtoCrearAnotacion();
 		List<String> listaDireccionesCc = new ArrayList<String>();

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -48,6 +49,11 @@ public class NotificatorServiceTasacion implements NotificatorService {
 		String cuerpo = "Trámite afectado: "+ tramite.getId();
 		
 		genericAdapter.sendMail(mailsPara, mailsCC, "Notificación al tasador", cuerpo);
+	}
+	
+	@Override
+	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		
 	}
 
 

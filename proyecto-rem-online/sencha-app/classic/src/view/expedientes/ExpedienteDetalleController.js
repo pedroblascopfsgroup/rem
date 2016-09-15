@@ -509,7 +509,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	window.close();		
 	},
 	onHaCambiadoIbi: function(combo, value){
-		var me= this;
+		var me= this,
 		
 		porCuentaDe= me.lookupReference('ibiPorCuentaDe');
 		
@@ -549,7 +549,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			porCuentaDe.setValue("");
 		}
 	},
-	
+
+	onHaCambiadoPorcentajeReserva: function(combo, value) {
+		
+		var me = this,
+		importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2),
+		importeReserva = "",
+		importeReservaField = me.lookupReference('importeReserva');
+		importeReserva = importeOferta * value / 100;
+		
+		importeReservaField.setValue(importeReserva);
+		me.getViewModel().get('condiciones').set('importeReserva', importeReserva);
+	},
+
 	cargarData: function (window) {
 		var me = this,
 		model = null,
@@ -709,7 +721,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				});
 		}
-		
 	}
 
 });

@@ -53,6 +53,11 @@ public class OfertasController {
 	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
 		try {
 
+			if (dtoOfertasFilter.getSort() == null){
+				
+				dtoOfertasFilter.setSort("fechaCreacion");
+
+			}
 			//Page page = ofertaApi.getListOfertas(dtoOfertasFilter);
 			DtoPage page = ofertaApi.getListOfertas(dtoOfertasFilter);
 

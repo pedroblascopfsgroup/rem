@@ -1878,12 +1878,19 @@ public class ActivoController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/activo")
+	public ModelAndView updateActivoo(ModelMap model, RestRequestWrapper request)
+			throws JsonParseException, JsonMappingException, IOException {
+
+		model.put("data", "hola update!!!!!!!");
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST, value = "/inactivo")
 	public ModelAndView updateActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
-		System.out.println(jsonData.getId());
-		model.put("data", "hola update");
+		model.put("data", "hola inactivo");
 		return new ModelAndView("jsonView", model);
 	}
 
@@ -1892,8 +1899,6 @@ public class ActivoController {
 	public ModelAndView deleteActivo(ModelMap model, RestRequestWrapper request)
 			throws JsonParseException, JsonMappingException, IOException {
 
-		ActivoRequestDto jsonData = (ActivoRequestDto)request.getRequestData(ActivoRequestDto.class);
-		System.out.println(jsonData.getId());
 		model.put("data", "hola delete");
 		return new ModelAndView("jsonView", model);
 	}

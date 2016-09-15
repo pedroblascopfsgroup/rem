@@ -353,6 +353,36 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 					dto.setTieneReserva(expediente.getCondicionante().getTipoCalculoReserva() != null);
 				}
 				
+				if(!Checks.esNulo(expediente.getFechaInicioAlquiler())){
+					dto.setFechaInicioAlquiler(expediente.getFechaInicioAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getFechaFinAlquiler())){
+					dto.setFechaFinAlquiler(expediente.getFechaFinAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getImporteRentaAlquiler())){
+					dto.setImporteRentaAlquiler(expediente.getImporteRentaAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getNumContratoAlquiler())){
+					dto.setNumContratoAlquiler(expediente.getNumContratoAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getFechaPlazoOpcionCompraAlquiler())){
+					dto.setFechaPlazoOpcionCompraAlquiler(expediente.getFechaPlazoOpcionCompraAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getPrimaOpcionCompraAlquiler())){
+					dto.setPrimaOpcionCompraAlquiler(expediente.getPrimaOpcionCompraAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getPrecioOpcionCompraAlquiler())){
+					dto.setPrecioOpcionCompraAlquiler(expediente.getPrecioOpcionCompraAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getCondicionesOpcionCompraAlquiler())){
+					dto.setCondicionesOpcionCompraAlquiler(expediente.getCondicionesOpcionCompraAlquiler());
+				}
+				if(!Checks.esNulo(expediente.getConflictoIntereses())){
+					dto.setConflictoIntereses(expediente.getConflictoIntereses());
+				}
+				if(!Checks.esNulo(expediente.getRiesgoReputacional())){
+					dto.setRiesgoReputacional(expediente.getRiesgoReputacional());
+				}
 
 			}
 		}

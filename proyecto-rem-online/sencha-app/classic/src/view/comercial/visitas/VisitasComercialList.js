@@ -48,6 +48,11 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialList', {
 		            flex: 1
 		        },
 		        {	        	
+		            dataIndex: 'estadoVisita',
+		            text: HreRem.i18n('header.estado.visita'),
+		            flex: 1
+		        },
+		        {	        	
 		            dataIndex: 'nombre',
 		            text: HreRem.i18n('header.nombre'),
 		            flex: 1

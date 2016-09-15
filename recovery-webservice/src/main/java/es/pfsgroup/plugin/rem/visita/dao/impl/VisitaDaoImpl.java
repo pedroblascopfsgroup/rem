@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -60,6 +61,9 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 			dtoFilter.setNombre(v.getCliente().getNombreCompleto());
 			dtoFilter.setNumDocumento(v.getCliente().getDocumento());
 			dtoFilter.setFechaVisita(v.getFechaVisita());
+			if(!Checks.esNulo(v.getEstadoVisita())){
+				dtoFilter.setEstadoVisita(v.getEstadoVisita().getDescripcion());
+			}
 			
 			dtoFilter.setIdActivo(v.getActivo().getId());
 			

@@ -96,16 +96,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
-		        	xtype: 'reservaexpediente' , bind: {disabled: '{!expediente.tieneReserva}'}
-		        },
-		        {
 		        	xtype: 'condicionesexpediente'
 		        },
 		        {
 		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
-		        	xtype: 'reservaexpediente' , bind: {disabled: '{!expediente.tieneReserva}'}
+		        	xtype: 'reservaexpediente' , bind: {disabled: '{esExpedienteSinReserva}'}
 		        },
 				{
 		        	xtype: 'compradoresexpediente', ocultarBotonesEdicion: true

@@ -4,7 +4,7 @@ public class EstadoTrabajoConstantes extends ConstantesGenericas{
 	
 	public static final String MOTIVO_RECHAZO = "motivoRechazo";
 
-	public static final String ID_ESTADO_TRABAJO = "idEstadoTrabajo";
+	public static final String COD_ESTADO_TRABAJO = "codEstadoTrabajo";
 
 	public static final String ID_TRABAJO_REM = "idTrabajoRem";
 

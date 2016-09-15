@@ -166,6 +166,9 @@ public class VisitasController {
 		dtoVisitasFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoVisitasFilter.setLimit(excelReportGeneratorApi.getLimit());
 		
+		if (dtoVisitasFilter.getSort() == null){
+			dtoVisitasFilter.setSort("activo.numActivo, fechaSolicitud");
+		}
 		
 		List<DtoVisitasFilter> listaVisitas = (List<DtoVisitasFilter>) visitaApi.getListVisitas(dtoVisitasFilter).getResults();
 		

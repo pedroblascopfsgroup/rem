@@ -19,16 +19,21 @@ public class OfertaDto implements Serializable {
 	@NotNull
 	private Long idOfertaWebcom;
 	private Long idOfertaRem;
-	private Double importeContraoferta;
 	private Long idVisitaRem;
 	@NotNull
 	private Long idClienteRem;
 	@NotNull
 	private Long idActivoHaya;
 	@NotNull
-	private Date fechaAccion;
+	private Double importe;
+	private Double importeContraoferta;
+	private List<OfertaTitularAdicionalDto> titularesAdicionales;
 	@NotNull
-	private Long idUsuarioRem;
+	private Long idProveedorRemPrescriptor;
+	@NotNull
+	private Long idProveedorRemCustodio;
+	private Long idProveedorRemResponsable;
+	private Long idProveedorRemFdv;
 	@NotNull
 	@Size(max=20)
 	private String codEstadoOferta;
@@ -36,11 +41,9 @@ public class OfertaDto implements Serializable {
 	@Size(max=20)
 	private String codTipoOferta;
 	@NotNull
-	private Long idPrescriptor;
-	private Long idApiResponsable;
+	private Date fechaAccion;
 	@NotNull
-	private Double amount;
-	private List<OfertaTitularAdicionalDto> titularesAdicionales;
+	private Long idUsuarioRem;
 	
 	
 	
@@ -104,23 +107,35 @@ public class OfertaDto implements Serializable {
 	public void setCodTipoOferta(String codTipoOferta) {
 		this.codTipoOferta = codTipoOferta;
 	}
-	public Long getIdPrescriptor() {
-		return idPrescriptor;
+	public Double getImporte() {
+		return importe;
 	}
-	public void setIdPrescriptor(Long idPrescriptor) {
-		this.idPrescriptor = idPrescriptor;
+	public void setImporte(Double importe) {
+		this.importe = importe;
 	}
-	public Long getIdApiResponsable() {
-		return idApiResponsable;
+	public Long getIdProveedorRemPrescriptor() {
+		return idProveedorRemPrescriptor;
 	}
-	public void setIdApiResponsable(Long idApiResponsable) {
-		this.idApiResponsable = idApiResponsable;
+	public void setIdProveedorRemPrescriptor(Long idProveedorRemPrescriptor) {
+		this.idProveedorRemPrescriptor = idProveedorRemPrescriptor;
 	}
-	public Double getAmount() {
-		return amount;
+	public Long getIdProveedorRemCustodio() {
+		return idProveedorRemCustodio;
 	}
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setIdProveedorRemCustodio(Long idProveedorRemCustodio) {
+		this.idProveedorRemCustodio = idProveedorRemCustodio;
+	}
+	public Long getIdProveedorRemResponsable() {
+		return idProveedorRemResponsable;
+	}
+	public void setIdProveedorRemResponsable(Long idProveedorRemResponsable) {
+		this.idProveedorRemResponsable = idProveedorRemResponsable;
+	}
+	public Long getIdProveedorRemFdv() {
+		return idProveedorRemFdv;
+	}
+	public void setIdProveedorRemFdv(Long idProveedorRemFdv) {
+		this.idProveedorRemFdv = idProveedorRemFdv;
 	}
 	public List<OfertaTitularAdicionalDto> getTitularesAdicionales() {
 		return titularesAdicionales;

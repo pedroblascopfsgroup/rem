@@ -6,7 +6,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.ReservaExpediente', 'HreRem.view.expedientes.DiarioGestionesExpediente',
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
-    			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente'],
+    			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
+				'HreRem.view.expedientes.CompradoresExpediente'],
 
     listeners: {
    		
@@ -94,14 +95,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 		        {
 		        	xtype: 'ofertaexpediente', ocultarBotonesEdicion: true
 		        },
-{
+		        {
+		        	xtype: 'reservaexpediente' , bind: {disabled: '{!expediente.tieneReserva}'}
+		        },
+		        {
 		        	xtype: 'condicionesexpediente'
 		        },
- {
+		        {
 		        	xtype: 'activosexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
-		        	xtype: 'reservaexpediente' , bind: {disabled: '{!expediente.tieneReserva}'}
+		        	xtype: 'reservaexpediente' , bind: {disabled: '{esExpedienteSinReserva}'}
+		        },
+				{
+		        	xtype: 'compradoresexpediente', ocultarBotonesEdicion: true
 		        },
 		        {
 		        	xtype: 'diariogestionesexpediente', ocultarBotonesEdicion: true

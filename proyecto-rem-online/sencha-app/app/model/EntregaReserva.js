@@ -7,8 +7,23 @@ Ext.define('HreRem.model.EntregaReserva', {
 
     fields: [    
   
+        	{
+    			name: 'idEntrega'
+    		},
     		{
-    			name:'idRserva'
+    			name:'idReserva'
+    		},
+    		{
+    			name: 'importe'
+    		},
+    		{
+    			name: 'fechaEntrega'
+    		},
+    		{
+    			name: 'titular'
+    		},
+    		{
+    			name: 'observaciones'
     		}
     ]
 

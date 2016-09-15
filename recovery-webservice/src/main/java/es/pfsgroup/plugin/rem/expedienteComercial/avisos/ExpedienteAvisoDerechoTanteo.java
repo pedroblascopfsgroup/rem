@@ -24,7 +24,7 @@ public class ExpedienteAvisoDerechoTanteo implements ExpedienteAvisadorApi {
 
 		DtoAviso dtoAviso = new DtoAviso();
 		
-		if (!Checks.esNulo(expediente.getCondicionante()) && BooleanUtils.toBoolean(expediente.getCondicionante().getSujetoTanteoRetracto())) {			
+		if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSujetoTanteoRetracto()) && BooleanUtils.toBoolean(expediente.getCondicionante().getSujetoTanteoRetracto())) {			
 			dtoAviso.setDescripcion("Derecho y tanteo de la administración");
 			dtoAviso.setId(String.valueOf(expediente.getId()));			
 		}

@@ -247,7 +247,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						listaErrores.add("El campo idActivoHaya es nulo y es obligatorio en actualizaciones.");
 					}
 					//Mirar si hace falta validar que no se pueda modificar la oferta si ha pasado al comité
-					if(!Checks.esNulo(oferta.getEstadoOferta()) && !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)){
+					if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta()) && !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)){
 						listaErrores.add("No es posible actualizar la oferta porque se encuentra en el estado: " + oferta.getEstadoOferta().getDescripcion());
 					}
 				}
@@ -287,16 +287,28 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						listaErrores.add("No existe el código del tipo de la oferta en REM especificado en el campo codTipoOferta: " + ofertaDto.getCodTipoOferta());
 					}
 				}							
-				if(!Checks.esNulo(ofertaDto.getIdPrescriptor())){
-					ActivoProveedor pres = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdPrescriptor()));							
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())){
+					ActivoProveedor pres = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemPrescriptor()));							
 					if(Checks.esNulo(pres)){
-						listaErrores.add("No existe el prescriptor en REM especificado en el campo idPrescriptor: " + ofertaDto.getIdPrescriptor());
+						listaErrores.add("No existe el prescriptor en REM especificado en el campo idProveedorRemPrescriptor: " + ofertaDto.getIdProveedorRemPrescriptor());
 					}
-				}		
-				if(!Checks.esNulo(ofertaDto.getIdApiResponsable())){
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdApiResponsable()));							
+				}	
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())){
+					ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemCustodio()));							
+					if(Checks.esNulo(cust)){
+						listaErrores.add("No existe el apiResponsable en REM especificado en el campo idProveedorRemResponsable: " + ofertaDto.getIdProveedorRemCustodio());
+					}
+				}
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())){
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemResponsable()));							
 					if(Checks.esNulo(apiResp)){
-						listaErrores.add("No existe el apiResponsable en REM especificado en el campo idApiResponsable: " + ofertaDto.getIdApiResponsable());
+						listaErrores.add("No existe el apiResponsable en REM especificado en el campo idProveedorRemResponsable: " + ofertaDto.getIdProveedorRemResponsable());
+					}
+				}
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemFdv())){
+					ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));							
+					if(Checks.esNulo(fdv)){
+						listaErrores.add("No existe el apiResponsable en REM especificado en el campo idProveedorRemResponsable: " + ofertaDto.getIdProveedorRemFdv());
 					}
 				}
 				if(!Checks.esNulo(ofertaDto.getTitularesAdicionales())){					
@@ -424,20 +436,32 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setTipoOferta(tipoOfr);
 					}
 				}				
-				if(!Checks.esNulo(ofertaDto.getIdPrescriptor())){
-					ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdPrescriptor()));							
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemPrescriptor())){
+					ActivoProveedor prescriptor= (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemPrescriptor()));							
 					if(!Checks.esNulo(prescriptor)){
 						oferta.setPrescriptor(prescriptor);
 					}
 				}
-				if(!Checks.esNulo(ofertaDto.getIdApiResponsable())){
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdApiResponsable()));							
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemCustodio())){
+					ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));							
+					if(!Checks.esNulo(cust)){
+						oferta.setCustodio(cust);;
+					}
+				}
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemResponsable())){
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemResponsable()));							
 					if(!Checks.esNulo(apiResp)){
 						oferta.setApiResponsable(apiResp);
 					}
 				}
-				if(!Checks.esNulo(ofertaDto.getAmount())){
-					oferta.setImporteOferta(ofertaDto.getAmount());
+				if(!Checks.esNulo(ofertaDto.getIdProveedorRemFdv())){
+					ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdProveedorRemFdv()));							
+					if(!Checks.esNulo(fdv)){
+						oferta.setFdv(fdv);
+					}
+				}
+				if(!Checks.esNulo(ofertaDto.getImporte())){
+					oferta.setImporteOferta(ofertaDto.getImporte());
 				}
 				if(!Checks.esNulo(ofertaDto.getTitularesAdicionales())){
 					List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();

@@ -20,16 +20,16 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 
 @Component
-public class NotificatorServiceProveedorCierre extends AbstractNotificatorService implements NotificatorService {
-
-	private static final String CODIGO_T004_CIERRE_ECONOMICO = "T004_CierreEconomico";
+public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificatorService implements NotificatorService {
 	
+	private static final String CODIGO_T009_ENVIO_PROPUESTA_PROPIETARIO = "T009_EnvioPropuestaPropietario";
+
+
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
-	
 	
 	@Override
 	public String[] getKeys() {
@@ -39,7 +39,7 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 	@Override
 	public String[] getCodigoTarea() {
 		//TODO: poner los códigos de tipos de tareas
-		return new String[]{CODIGO_T004_CIERRE_ECONOMICO};
+		return new String[]{CODIGO_T009_ENVIO_PROPUESTA_PROPIETARIO};
 	}
 	
 	@Resource(name = "mailManager")
@@ -48,41 +48,36 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 	@Override
 	public void notificator(ActivoTramite tramite) {
 		
-		//Comprobamos que el proveedor no sea null para el caso de que salte a la tarea de Cierre
-		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto())){
+		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getEmail())) {
+			
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 			
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
-			String correos = null;
 			
-			correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-					
-			Collections.addAll(mailsPara, correos.split(";"));
-				
+			
+		    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+		    Collections.addAll(mailsPara, correos.split(";"));
 			mailsCC.add(this.getCorreoFrom());
 			
 			String contenido = "";
-			String titulo = "";		
-			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + "-") : "";
-			
-			contenido = "<p>Desde HAYA RE le informamos de que el gestor del activo "+dtoSendNotificator.getNumActivo()+" ha validado positivamente su ejecución del trabajo "+dtoSendNotificator.getTipoContrato()+" "
-						 + "(Número REM "+tramite.getActivo().getNumActivoRem()+"), relativo al activo nº "+dtoSendNotificator.getNumActivo()+", situado en "+dtoSendNotificator.getDireccion()+" "
-						 + ", por lo que se ha procedido a su cierre económico."
-				  		 + "<p>Un saludo.</p>";
-			
-			titulo = "Notificación de aceptación de ejecución de trabajo en REM (" + descripcionTrabajo + " Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-			 
-			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreoOld(contenido));
+			String titulo = "";
+			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+	
+			/**
+			 * HREOS-763 Completar cuando haya más información para esta notificación
+			 */
+			contenido = "<p>El gestor del ....</p>";
+			titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+	
+				  
+			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}
-		
-
 	}
 	
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 	}
-
 }

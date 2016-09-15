@@ -34,16 +34,18 @@
 	<integration:gateway id="messageBrokerGateway"
 		default-request-channel="async.input" service-interface="es.pfsgroup.plugin.messagebroker.integration.MessageBrokerGateway" />
 		
-	<bean id="handlerRegistry" class="es.pfsgroup.plugin.messagebroker.integration.MessageBrokerHandlerRegistry"></bean>
+	<!-- <bean id="handlerRegistry" class="es.pfsgroup.plugin.messagebroker.integration.MessageBrokerHandlerRegistry"></bean>
 		
 	<bean id="messageBroker" class="es.pfsgroup.plugin.messagebroker.MessageBroker">
 		<property name="messageBrokerGateway" ref="messageBrokerGateway" />
 	</bean>
-	
+	 -->
+	 
+	 
 	<bean id="serviceActivator" class="es.pfsgroup.plugin.messagebroker.integration.AsyncServiceActivator">
-			<property name="handlerRegistry">
+			<!-- <property name="handlerRegistry">
 				<ref bean="handlerRegistry" />
-			</property>
+			</property> -->
 		</bean>
 	
 	

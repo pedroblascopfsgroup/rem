@@ -92,7 +92,7 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Boolean renunciaExencion;
 
     @Column(name="COE_RESERVA_CON_IMPUESTO")
-    private Boolean reservaConImpuesto;
+    private Integer reservaConImpuesto;
 
     @Column(name="COE_GASTOS_PLUSVALIA")
     private Double gastosPlusvalia;
@@ -187,6 +187,27 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
 	@Column(name = "COE_FIN_FINANCIACION")
 	private Date fechaFinFinanciacion;
+	
+    @Column(name="COE_GASTOS_IBI")
+    private Double gastosIbi;
+    
+    @Column(name="COE_GASTOS_COMUNIDAD")
+    private Double gastosComunidad;
+    
+    @Column(name="COE_GASTOS_SUMINISTROS")
+    private Double gastosSuministros;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPC_ID_IBI")
+	private DDTiposPorCuenta tipoPorCuentaIbi;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPC_ID_COMUNIDAD_ALQUILER")
+	private DDTiposPorCuenta tipoPorCuentaComunidadAlquiler;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPC_ID_SUMINISTROS")
+	private DDTiposPorCuenta tipoPorCuentaSuministros;
     
     @Version   
 	private Long version;
@@ -276,11 +297,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.renunciaExencion = renunciaExencion;
 	}
 
-	public Boolean getReservaConImpuesto() {
+	public Integer getReservaConImpuesto() {
 		return reservaConImpuesto;
 	}
 
-	public void setReservaConImpuesto(Boolean reservaConImpuesto) {
+	public void setReservaConImpuesto(Integer reservaConImpuesto) {
 		this.reservaConImpuesto = reservaConImpuesto;
 	}
 
@@ -534,7 +555,57 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	public void setFechaFinFinanciacion(Date fechaFinFinanciacion) {
 		this.fechaFinFinanciacion = fechaFinFinanciacion;
 	}
-		
+
+	public Double getGastosIbi() {
+		return gastosIbi;
+	}
+
+	public void setGastosIbi(Double gastosIbi) {
+		this.gastosIbi = gastosIbi;
+	}
+
+	public Double getGastosComunidad() {
+		return gastosComunidad;
+	}
+
+	public void setGastosComunidad(Double gastosComunidad) {
+		this.gastosComunidad = gastosComunidad;
+	}
+
+	public Double getGastosSuministros() {
+		return gastosSuministros;
+	}
+
+	public void setGastosSuministros(Double gastosSuministros) {
+		this.gastosSuministros = gastosSuministros;
+	}
+
+	public DDTiposPorCuenta getTipoPorCuentaIbi() {
+		return tipoPorCuentaIbi;
+	}
+
+	public void setTipoPorCuentaIbi(DDTiposPorCuenta tipoPorCuentaIbi) {
+		this.tipoPorCuentaIbi = tipoPorCuentaIbi;
+	}
+
+	public DDTiposPorCuenta getTipoPorCuentaComunidadAlquiler() {
+		return tipoPorCuentaComunidadAlquiler;
+	}
+
+	public void setTipoPorCuentaComunidadAlquiler(
+			DDTiposPorCuenta tipoPorCuentaComunidadAlquiler) {
+		this.tipoPorCuentaComunidadAlquiler = tipoPorCuentaComunidadAlquiler;
+	}
+
+	public DDTiposPorCuenta getTipoPorCuentaSuministros() {
+		return tipoPorCuentaSuministros;
+	}
+
+	public void setTipoPorCuentaSuministros(
+			DDTiposPorCuenta tipoPorCuentaSuministros) {
+		this.tipoPorCuentaSuministros = tipoPorCuentaSuministros;
+	}
+	
 
    
 }

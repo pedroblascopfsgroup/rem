@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -21,6 +22,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 
@@ -126,6 +128,18 @@ public class CompradorExpediente implements Serializable {
     @Column(name="CEX_RESPONSABLE_TRAMITACION")
     private String responsableTramitacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_EPB_ID")
+    private DDEstadosPbc estadosPbc;
+    
+    @Column(name="CEX_RELACION_HRE")
+    private String relacionHre;
+    
+    @Column(name="CEX_FECHA_PETICION")
+    private Date fechaPeticion;
+    
+    @Column(name="CEX_FECHA_RESOLUCION")
+    private Date fechaResolucion;
     
     
 	@Version   
@@ -350,7 +364,42 @@ public class CompradorExpediente implements Serializable {
 		this.primaryKey = primaryKey;
 	}
 
-    /**
+    public DDEstadosPbc getEstadosPbc() {
+		return estadosPbc;
+	}
+
+	public void setEstadosPbc(DDEstadosPbc estadosPbc) {
+		this.estadosPbc = estadosPbc;
+	}
+
+	public String getRelacionHre() {
+		return relacionHre;
+	}
+
+	public void setRelacionHre(String relacionHre) {
+		this.relacionHre = relacionHre;
+	}
+	
+	public Date getFechaPeticion() {
+		return fechaPeticion;
+	}
+
+	public void setFechaPeticion(Date fechaPeticion) {
+		this.fechaPeticion = fechaPeticion;
+	}
+
+	public Date getFechaResolucion() {
+		return fechaResolucion;
+	}
+
+	public void setFechaResolucion(Date fechaResolucion) {
+		this.fechaResolucion = fechaResolucion;
+	}
+
+
+
+
+	/**
      * clase pk embebida
      */
     @Embeddable

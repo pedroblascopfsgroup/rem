@@ -53,7 +53,7 @@ public class Reserva implements Serializable, Auditable {
 	@Id
     @Column(name = "RES_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ReservaGenerator")
-    @SequenceGenerator(name = "ReservaGenerator", sequenceName = "S_RES_RESERVA")
+    @SequenceGenerator(name = "ReservaGenerator", sequenceName = "S_RES_RESERVAS")
     private Long id;
 	
 	@OneToOne(fetch = FetchType.LAZY)

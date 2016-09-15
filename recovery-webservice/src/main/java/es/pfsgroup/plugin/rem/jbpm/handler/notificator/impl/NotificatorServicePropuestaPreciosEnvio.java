@@ -48,29 +48,32 @@ public class NotificatorServicePropuestaPreciosEnvio extends AbstractNotificator
 	@Override
 	public void notificator(ActivoTramite tramite) {
 		
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-		
-		List<String> mailsPara = new ArrayList<String>();
-		List<String> mailsCC = new ArrayList<String>();
-		
-		
-	    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
-	    Collections.addAll(mailsPara, correos.split(";"));
-		mailsCC.add(this.getCorreoFrom());
-		
-		String contenido = "";
-		String titulo = "";
-		String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
-
-		/**
-		 * HREOS-763 Completar cuando haya más información para esta notificación
-		 */
-		contenido = "<p>El gestor del ....</p>";
-		titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
-
-			  
-		//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
-		genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		if(!Checks.esNulo(tramite.getTrabajo().getProveedorContacto()) && !Checks.esNulo(tramite.getTrabajo().getProveedorContacto().getEmail())) {
+			
+			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			
+			List<String> mailsPara = new ArrayList<String>();
+			List<String> mailsCC = new ArrayList<String>();
+			
+			
+		    String correos = tramite.getTrabajo().getProveedorContacto().getEmail();
+		    Collections.addAll(mailsPara, correos.split(";"));
+			mailsCC.add(this.getCorreoFrom());
+			
+			String contenido = "";
+			String titulo = "";
+			String descripcionTrabajo = !Checks.esNulo(tramite.getTrabajo().getDescripcion())? (tramite.getTrabajo().getDescripcion() + " - ") : "";
+	
+			/**
+			 * HREOS-763 Completar cuando haya más información para esta notificación
+			 */
+			contenido = "<p>El gestor del ....</p>";
+			titulo = "Notificación de análisis de petición de trabajo en REM (" + descripcionTrabajo + "Nº Trabajo "+dtoSendNotificator.getNumTrabajo()+")";
+	
+				  
+			//genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpoCorreo(dtoSendNotificator, contenido));
+			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
+		}
 	}
 	
 	@Override

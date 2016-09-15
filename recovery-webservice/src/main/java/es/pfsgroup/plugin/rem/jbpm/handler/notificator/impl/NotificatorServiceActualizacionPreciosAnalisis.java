@@ -54,7 +54,9 @@ public class NotificatorServiceActualizacionPreciosAnalisis extends AbstractNoti
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
 		//Comprobamos que quien solicitó el trabajo y quien realiza la tarea no sean el mismo usuario
-		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado()) ){
+		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail()) 
+				&& !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado()) )
+		{
 		
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 			String motivo = comprobarAceptacionTarea(valores);

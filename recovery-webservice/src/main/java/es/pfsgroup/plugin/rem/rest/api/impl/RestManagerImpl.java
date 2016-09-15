@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
+import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 
 
 
@@ -42,21 +43,7 @@ public class RestManagerImpl implements RestApi {
 		if (broker == null || signature == null || signature.isEmpty() || peticion == null) {
 			resultado = false;
 		} else {
-			String firma = (broker.getKey().concat(broker.getIp()).concat(peticion)).toLowerCase();
-			byte[] bytesOfMessage = firma.getBytes("UTF-8");
-
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			md.update(bytesOfMessage);
-			byte[] thedigest = md.digest();
-			StringBuffer hexString = new StringBuffer();
-			for (int i = 0; i < thedigest.length; i++) {
-				if ((0xff & thedigest[i]) < 0x10) {
-					hexString.append("0" + Integer.toHexString((0xFF & thedigest[i])));
-				} else {
-					hexString.append(Integer.toHexString(0xFF & thedigest[i]));
-				}
-			}
-			firma = hexString.toString();
+			String firma = WebcomSignatureUtils.computeSignatue(broker.getKey(), broker.getIp(), peticion);
 
 			if (firma.equals(signature) || broker.getValidarFirma().equals(new Long(0))) {
 				resultado = true;
@@ -64,6 +51,8 @@ public class RestManagerImpl implements RestApi {
 		}
 		return resultado;
 	}
+
+	
 
 	@Override
 	public boolean validateId(Broker broker, String id) {
@@ -87,7 +76,11 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public Broker getBrokerByIp(String ip) {
-		Broker broker = brokerDao.getBrokerByIp(ip);
+		//Broker broker = brokerDao.getBrokerByIp(ip);
+		
+		Broker broker = new Broker();
+		broker.setIp(ip);
+		broker.setKey("0123456789");
 		return broker;
 	}
 

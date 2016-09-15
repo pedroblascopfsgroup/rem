@@ -17,31 +17,41 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 				
             	xtype: 'fieldset',
             	collapsible: true,
-            	title:  HreRem.i18n('title.gastos.soportados.propietario'),
+            	title:  HreRem.i18n('title.horonarios'),
             	items : [
             	
                 	{
 					    xtype		: 'gridBase',
-					    reference: 'listadogastossoportadospropietario',
+					    reference: 'listadohoronarios',
 						cls	: 'panel-base shadow-panel',
 						bind: {
-							store: '{storeGastosSoportadosPropietarios}'
+							store: '{storeHoronarios}'
 						},									
 						
 						columns: [
 						   {
-					            text: HreRem.i18n('fieldlabel.accion'),
-					            dataIndex: 'accion',
+					            text: HreRem.i18n('fieldlabel.colaborador'),
+					            dataIndex: 'colaborador',
 					            flex: 1
 						   },
 						    {
-						   		text: HreRem.i18n('fieldlabel.codigo'),
-					            dataIndex: 'codigo',
+						   		text: HreRem.i18n('fieldlabel.tipo.proveedor'),
+					            dataIndex: 'tipoProveedor',
 					            flex: 1						   
 						   },						   
 						   {
-						   		text: HreRem.i18n('fieldlabel.nombre'),
-					            dataIndex: 'nombre',
+						   		text: HreRem.i18n('fieldlabel.proveedor'),
+					            dataIndex: 'proveedor',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.domicilio'),
+					            dataIndex: 'domicilio',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.id'),
+					            dataIndex: 'id',
 					            flex: 1						   
 						   },
 						   {
@@ -55,8 +65,18 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            flex: 1						   
 						   },
 						   {
-						   		text: HreRem.i18n('header.importe.final'),
-					            dataIndex: 'importeFinal',
+						   		text: HreRem.i18n('fieldlabel.honorarios'),
+					            dataIndex: 'horonarios',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.telefono'),
+					            dataIndex: 'telefono',
+					            flex: 1						   
+						   },
+						   {
+						   		text: HreRem.i18n('fieldlabel.email'),
+					            dataIndex: 'email',
 					            flex: 1						   
 						   }
 					    ],
@@ -66,73 +86,13 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            dock: 'bottom',
 					            displayInfo: true,
 					            bind: {
-					                store: '{storeGastosSoportadosPropietarios}'
+					                store: '{storeHoronarios}'
 					            }
 					        }
 			    		]
 					}
             	]
-            },
-			{
-				
-            	xtype: 'fieldset',
-            	collapsible: true,
-            	title:  HreRem.i18n('title.gastos.soportados.haya'),
-            	items : [
-            	
-                	{
-					    xtype		: 'gridBase',
-					    reference: 'listadogastossoportadoshaya',
-						cls	: 'panel-base shadow-panel',
-						bind: {
-							store: '{storeGastosSoportadosHaya}'
-						},									
-						
-						columns: [
-						   {
-					            text: HreRem.i18n('fieldlabel.accion'),
-					            dataIndex: 'accion',
-					            flex: 1
-						   },
-						    {
-						   		text: HreRem.i18n('fieldlabel.codigo'),
-					            dataIndex: 'codigo',
-					            flex: 1						   
-						   },						   
-						   {
-						   		text: HreRem.i18n('fieldlabel.nombre'),
-					            dataIndex: 'nombre',
-					            flex: 1						   
-						   },
-						   {
-						   		text: HreRem.i18n('header.tipo.calculo'),
-					            dataIndex: 'tipoCalculo',
-					            flex: 1						   
-						   },
-						   {
-						   		text: HreRem.i18n('header.importe.calculo'),
-					            dataIndex: 'importeCalculo',
-					            flex: 1						   
-						   },
-						   {
-						   		text: HreRem.i18n('header.importe.final'),
-					            dataIndex: 'importeFinal',
-					            flex: 1						   
-						   }
-					    ],
-					    dockedItems : [
-					        {
-					            xtype: 'pagingtoolbar',
-					            dock: 'bottom',
-					            displayInfo: true,
-					            bind: {
-					                store: '{storeGastosSoportadosHaya}'
-					            }
-					        }
-			    		]
-					}
-            	]
-            } 
+            }
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

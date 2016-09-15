@@ -36,6 +36,11 @@
 		</dependency>
 
 		<dependency>
+		  <groupId>es.pfsgroup.plugin</groupId>
+		  <artifactId>recovery-message-broker</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>es.pfsgroup.plugin.evolution</groupId>
 			<artifactId>recovery-coreextension-plugin-evol</artifactId>
 			<optional>true</optional>
@@ -560,6 +565,11 @@
 		  <artifactId>sojo-optional</artifactId>
 		  <version>0.5.0</version>
 		</dependency>
+		<dependency>
+		  <groupId>net.sf.ezmorph</groupId>
+		  <artifactId>ezmorph</artifactId>
+		  <version>1.0.6</version>
+		</dependency>
 				
 		<!-- <dependency>
 			<groupId>groupId</groupId>
@@ -648,6 +658,16 @@
 		<dependency>
 			<groupId>es.bankia</groupId>
 			<artifactId>GMPETS07_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMJC93_INS</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>es.bankia</groupId>
+			<artifactId>GMJC11_INS</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 		<dependency>

@@ -855,6 +855,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
 		
+		//Tramite de actualizacion de precios / carga de precios
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS)){
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
+		
 		
 		// Módulo de Publicaciones ------------------
 		//

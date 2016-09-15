@@ -138,7 +138,12 @@ public class VisitasController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListVisitas(DtoVisitasFilter dtoVisitasFilter, ModelMap model) {
 		try {
-
+			
+			if (dtoVisitasFilter.getSort() == null){
+				
+					dtoVisitasFilter.setSort("activo.numActivo, fechaSolicitud");
+	
+			}
 			//Page page = comercialApi.getListVisitas(dtoVisitasFilter);
 			DtoPage page = visitaApi.getListVisitas(dtoVisitasFilter);
 

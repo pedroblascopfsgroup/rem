@@ -6,7 +6,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
     disableValidation: true,
     reference: 'datosbasicosactivo',
     scrollable	: 'y',
-
 	recordName: "expediente",
 	
 	recordClass: "HreRem.model.ExpedienteComercial",
@@ -51,6 +50,105 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							fieldLabel:  HreRem.i18n('fiedlabel.numero.activo.agrupacion'),
 		                	bind:		'{expediente.numEntidad}'
 		                }
+						
+					]
+           },
+           {   
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',				
+				title: HreRem.i18n('title.titulo.alquiler'),
+				layout: {
+					type: 'table',
+					columns: 1
+				},
+				bind: {
+					hidden: '{esOfertaVentaFicha}',
+					disabled: '{esOfertaVentaFicha}'
+			    },
+				items :
+					[
+		                {   
+						xtype:'fieldsettable',
+						collapsible: false,
+						border: false,
+						defaultType: 'displayfieldbase',				
+						items : [
+						
+							{
+				        		xtype:'datefieldbase',
+								formatter: 'date("d/m/Y")',
+					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.inicio'),
+					        	bind: '{expediente.fechaInicioAlquiler}'					        						        	
+					        },
+					        {
+				        		xtype:'datefieldbase',
+								formatter: 'date("d/m/Y")',
+					        	fieldLabel: HreRem.i18n('fieldlabel.fecha.fin'),
+					        	bind: '{expediente.fechaFinAlquiler}'					        						        	
+					        },
+					        {
+					        	
+					        },
+					        { 
+								xtype: 'numberfieldbase',
+								symbol: HreRem.i18n("symbol.euro"),
+								fieldLabel: HreRem.i18n('fieldlabel.importe.renta.alquiler'),
+				                bind: '{expediente.importeRentaAlquiler}'
+							},
+							{ 
+								xtype: 'textfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
+					        	bind: '{expediente.numContratoAlquiler}'
+					        },
+							{ 
+								xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.situacion.contrato.alquiler'),
+					        	bind: {
+				            		store: '{comboSituacionContratoAlquiler}',
+				            		value: '{expediente.situacionContratoAlquiler}'
+				            	},
+					            displayField: 'descripcion',
+		    					valueField: 'codigo'
+					        }
+					        
+				        ]
+					},
+					{   
+						xtype:'fieldsettable',
+						collapsible: false,
+						defaultType: 'displayfieldbase',				
+						title: HreRem.i18n('title.opcion.compra.alquiler'),
+						items : [
+					        {
+				        		xtype:'datefieldbase',
+								formatter: 'date("d/m/Y")',
+					        	fieldLabel: HreRem.i18n('fieldlabel.plazo.opcion.compra.alquiler'),
+					        	bind: '{expediente.fechaPlazoOpcionCompraAlquiler}'					        						        	
+					        },
+							{ 
+								xtype: 'numberfieldbase',
+								symbol: HreRem.i18n("symbol.euro"),
+								fieldLabel: HreRem.i18n('fieldlabel.prima.opcion.compra.alquiler'),
+				                bind: '{expediente.primaOpcionCompraAlquiler}'
+							},
+							{ 
+								xtype: 'numberfieldbase',
+								symbol: HreRem.i18n("symbol.euro"),
+								fieldLabel: HreRem.i18n('fieldlabel.precio.opcion.compra.alquiler'),
+				                bind: '{expediente.precioOpcionCompraAlquiler}'
+							},
+							
+					       	{ 
+			                	xtype: 'textareafieldbase',
+			                	labelWidth: 200,
+			                	height: 160,
+			                	labelAlign: 'top',
+			                	fieldLabel: HreRem.i18n('fieldlabel.condiciones.opcion.compra.alquiler'),
+			                	bind:		'{expediente.condicionesOpcionCompraAlquiler}'
+			                }    
+					        
+				        ]
+					}
 						
 					]
            },
@@ -126,7 +224,35 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 				
 				]
 				
-           }
+           },
+           {
+				xtype:'fieldsettable',
+				defaultType: 'displayfieldbase',				
+				title: HreRem.i18n('title.politica.corporativa'),
+				items :
+					[
+						{
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboConflictoIntereses',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.conflicto.intereses'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+			            		value: '{expediente.conflictoIntereses}'
+			            	},
+			            	allowBlank: false
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+							reference: 'comboRiesgoReputacional',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.riesgo.reputacional'),
+				        	bind: {
+			            		store: '{comboSiNoRem}',
+			            		value: '{expediente.riesgoReputacional}'
+			            	},
+			            	allowBlank: false
+		                }
+		        ]
+            }
            
            
     	];

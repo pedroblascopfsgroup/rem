@@ -20,7 +20,6 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import es.pfsgroup.recovery.ext.api.utils.EXTJBPMProcessApi;
 
 public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler {
 
@@ -188,6 +187,8 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());
 		
 		dataUpdater.saveValues(tramite, valores);
+		
+		enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
 			
 		logger.debug("\tGuardamos los datos de la tarea: " + getNombreNodo(executionContext));
 	}

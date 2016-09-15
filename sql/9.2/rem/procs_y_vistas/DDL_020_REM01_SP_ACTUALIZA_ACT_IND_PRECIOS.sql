@@ -47,7 +47,7 @@ create or replace PROCEDURE ACTUALIZA_ACT_IND_PRECIOS (P_DD_CRA_ID IN REM01.ACT_
     
     v_updt           VARCHAR2(4000 CHAR);
 
-	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS_758';
+	V_USUARIO VARCHAR2(50 CHAR) := 'SP_ACT_IND_PRECIOS';
     V_FECHA    VARCHAR2(50 CHAR) := SYSDATE;
     
     dACT_FECHA_IND_PRECIAR       #ESQUEMA#.ACT_ACTIVO.ACT_FECHA_IND_PRECIAR%TYPE;
@@ -70,7 +70,7 @@ BEGIN
                    '        SET ACT_FECHA_IND_PRECIAR = NULL 
                                 ,ACT_FECHA_IND_REPRECIAR = NULL
                                ,ACT_FECHA_IND_DESCUENTO = NULL 
-                      WHERE 1 = 1 ' ;
+                      WHERE BORRADO = 0 ' ;
 
     IF P_ACT_ID IS NOT NULL THEN
       v_updt := v_updt || ' AND ACT_ID = '|| P_ACT_ID;
@@ -161,9 +161,9 @@ BEGIN
           
               EXECUTE IMMEDIATE '
                 MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
-                    (   SELECT DISTINCT ACT.ACT_ID  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT '||Aux_DD_CIP_TEXTO ||'
+                    (   SELECT DISTINCT ACT.ACT_ID  FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT '||Aux_DD_CIP_TEXTO ||'  AND ACT.BORRADO = 0
                     ) aux
-                      ON (ACT.ACT_ID = aux.ACT_ID AND ACT.DD_CRA_ID ='||nDD_CRA_ID||')
+                      ON (ACT.ACT_ID = aux.ACT_ID AND ACT.DD_CRA_ID ='||nDD_CRA_ID||' AND ACT.BORRADO = 0)
                       WHEN MATCHED THEN
                         UPDATE SET '||
                           vACT_FECHA_IND ||' = ''' ||V_FECHA||'''

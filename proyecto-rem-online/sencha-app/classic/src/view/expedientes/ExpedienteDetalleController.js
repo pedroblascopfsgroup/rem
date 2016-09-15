@@ -509,7 +509,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	window.close();		
 	},
 	onHaCambiadoIbi: function(combo, value){
-		var me= this;
+		var me= this,
 		
 		porCuentaDe= me.lookupReference('ibiPorCuentaDe');
 		

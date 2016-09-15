@@ -102,15 +102,6 @@ public class NotificacionController {
     	success = notificacionAdapter.saveNotificacionRespuesta(request.getParameterMap());
     	
     	return JsonViewer.createModelAndViewJson(model);
-    }
-    
-    @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView finalizarNotificacion(Long idTarea, ModelMap model){
-    	boolean success = false;
-    	model.put("success",success);
-    	success = notificacionAdapter.finalizarNotificacion(idTarea);
-    	
-    	return JsonViewer.createModelAndViewJson(model);
-    }
+    }   
 	
 }

@@ -71,8 +71,8 @@ DECLARE
     			'3*24*60*60*1000L',
     			'NULL',
     			'',
-    			'',
-    			''
+    			'valores[''''T010_AnalisisPeticionCargaList''''][''''comboAceptacion''''] == DDSiNo.NO ? (valores[''''T010_AnalisisPeticionCargaList''''][''''motivoDenegacion''''] == '''''''' ? ''''Si deniega la petici&oacute;n debe indicar un motivo'''' : null) : existeAdjuntoUGValidacion("20","T")',
+    			'valores[''''T010_AnalisisPeticionCargaList''''][''''comboAceptacion''''] == DDSiNo.SI ? ''''OK'''' : ''''KO'''' '
     	)
 
     );
@@ -86,9 +86,12 @@ DECLARE
     --		   TAP_CODIGO						TFI_ORDEN	TFI_TIPO	TFI_NOMBRE				TFI_LABEL																																																																																		TFI_ERROR_VALIDACION											TFI_VALIDACION									TFI_BUSINESS_OPERATION
    -- 	T_TFI('T005_ComprobacionGestor'			,'0'		,'textarea'	,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					),
     	T_TFI('T010_AnalisisPeticionCargaList'			,'0'		,'label'	    ,'titulo'				,'<p style="margin-bottom: 10px">Se ha formulado una solicitud para la actualizaci&oacute;n de precios.</p>'																																									,''																,''												,''					),
-    	T_TFI('T010_AnalisisPeticionCargaList'			,'1'		,'datemaxtod'	,'fechaCarga'		    ,'Fecha carga de listado'																																																																															,''																,''												,''			),
-    	T_TFI('T010_AnalisisPeticionCargaList'			,'2'		,'textarea'	    ,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					)
-		);
+    	--T_TFI('T010_AnalisisPeticionCargaList'			,'1'		,'datemaxtod'	,'fechaCarga'		    ,'Fecha carga de listado'																																																																															,''																,''												,''			),
+    	T_TFI('T010_AnalisisPeticionCargaList'			,'1'		,'combo'		,'comboAceptacion'		,'Aceptaci&oacute;n de la petici&oacute;n'																																																																						  		,''	                                                            ,''                                 			,'DDSiNo'			),
+		T_TFI('T010_AnalisisPeticionCargaList'			,'2'		,'textfield'	,'motivoDenegacion'		,'Motivo de denegaci&oacute;n'																																																																						   	,''																,''												,''					),
+    	T_TFI('T010_AnalisisPeticionCargaList'			,'3'		,'textarea'	    ,'observaciones'		,'Observaciones'																																																																																,''																,''												,''					)
+
+    	);
     V_TMP_T_TFI T_TFI;
     
     

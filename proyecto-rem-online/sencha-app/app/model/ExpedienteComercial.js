@@ -77,6 +77,45 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		}, 
     		{
     			name: 'tieneReserva'	
+    		},
+    		{
+    			name: 'fechaInicioAlquiler',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'fechaFinAlquiler',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'importeRentaAlquiler'	
+    		},
+    		{
+    			name: 'numContratoAlquiler'	
+    		},
+    		{
+    			name: 'situacionContratoAlquiler'	
+    		},
+    		{
+    			name: 'fechaPlazoOpcionCompraAlquiler',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name: 'primaOpcionCompraAlquiler'	
+    		},
+    		{
+    			name: 'precioOpcionCompraAlquiler'	
+    		},
+    		{
+    			name: 'condicionesOpcionCompraAlquiler'	
+    		},
+    		{
+    			name: 'conflictoIntereses'	
+    		},
+    		{
+    			name: 'riesgoReputacional'	
     		}
     		
     		

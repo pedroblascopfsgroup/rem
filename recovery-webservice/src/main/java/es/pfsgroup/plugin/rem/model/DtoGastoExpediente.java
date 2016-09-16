@@ -4,7 +4,7 @@ import es.capgemini.devon.dto.WebDto;
 
 
 /**
- * Dto que gestiona la informacion de los gastos del expediente.
+ * Dto que gestiona la informacion de los honorarios del expediente.
  *  
  * @author Luis Caballero
  *
@@ -20,35 +20,45 @@ public class DtoGastoExpediente extends WebDto {
 	
 
 	private Long id;
-	private String accion;
-	private String codigo;
-	private String nombre;
+	private String colaborador;
+	private String tipoProveedor;
+	private String proveedor;
+	private String domicilio;
 	private String tipoCalculo;
 	private Double importeCalculo;
-	private Double importeFinal;
+	private Double honorarios;
+	private String telefono;
+	private String email;
+	
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getAccion() {
-		return accion;
+	public String getColaborador() {
+		return colaborador;
 	}
-	public void setAccion(String accion) {
-		this.accion = accion;
+	public void setColaborador(String colaborador) {
+		this.colaborador = colaborador;
 	}
-	public String getCodigo() {
-		return codigo;
+	public String getTipoProveedor() {
+		return tipoProveedor;
 	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+	public void setTipoProveedor(String tipoProveedor) {
+		this.tipoProveedor = tipoProveedor;
 	}
-	public String getNombre() {
-		return nombre;
+	public String getProveedor() {
+		return proveedor;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
+	public void setProveedor(String proveedor) {
+		this.proveedor = proveedor;
+	}
+	public String getDomicilio() {
+		return domicilio;
+	}
+	public void setDomicilio(String domicilio) {
+		this.domicilio = domicilio;
 	}
 	public String getTipoCalculo() {
 		return tipoCalculo;
@@ -62,12 +72,25 @@ public class DtoGastoExpediente extends WebDto {
 	public void setImporteCalculo(Double importeCalculo) {
 		this.importeCalculo = importeCalculo;
 	}
-	public Double getImporteFinal() {
-		return importeFinal;
+	public Double getHonorarios() {
+		return honorarios;
 	}
-	public void setImporteFinal(Double importeFinal) {
-		this.importeFinal = importeFinal;
+	public void setHonorarios(Double honorarios) {
+		this.honorarios = honorarios;
 	}
+	public String getTelefono() {
+		return telefono;
+	}
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
 	
    		
 }

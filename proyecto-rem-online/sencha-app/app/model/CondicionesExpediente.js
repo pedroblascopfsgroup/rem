@@ -98,6 +98,24 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    	name: 'gastosCompraventaOtrosPorCuentaDe'
 	    },
 	    {
+	    	name: 'gastosIbi'
+	    },
+	    {
+	    	name: 'gastosComunidad'
+	    },
+	    {
+	    	name: 'gastosSuministros'
+	    },
+	    {
+	    	name: 'ibiPorCuentaDe'
+	    },
+	    {
+	    	name: 'comunidadPorCuentaDe'
+	    },
+	    {
+	    	name: 'suministrosPorCuentaDe'
+	    },
+	    {
 	    	name: 'fechaUltimaActualizacion',
 	    	convert: function(value) {
     				if (!Ext.isEmpty(value)) {

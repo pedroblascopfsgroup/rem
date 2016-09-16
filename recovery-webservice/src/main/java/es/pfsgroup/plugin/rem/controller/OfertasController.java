@@ -53,6 +53,11 @@ public class OfertasController {
 	public ModelAndView getListOfertas(DtoOfertasFilter dtoOfertasFilter, ModelMap model) {
 		try {
 
+			if (dtoOfertasFilter.getSort() == null){
+				
+				dtoOfertasFilter.setSort("fechaCreacion");
+
+			}
 			//Page page = ofertaApi.getListOfertas(dtoOfertasFilter);
 			DtoPage page = ofertaApi.getListOfertas(dtoOfertasFilter);
 
@@ -99,7 +104,7 @@ public class OfertasController {
 	 * signature - sdgsdgsdgsdg
 	 * 
 	 * BODY:
-	 * {"id":"111111114112","data": [{"idOfertaWebcom": "1", "idVisitaRem": "1", "idClienteRem": "1", "idActivoHaya": "0", "codEstadoOferta": "01","codTipoOferta": "01", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1", "importeContraoferta": null, "idPrescriptor": "5045", "idApiResponsable": "1010", "amount": "1000.2", "titularesAdicionales": [{"nombre": "Nombre1", "codTipoDocumento": "01", "documento":"48594626F"}, {"nombre": "Nombre2", "codTipoDocumento": "01", "documento":"48594628F"}]}]}	 * 
+	 * {"id":"111111114111","data": [{"idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1000", "idActivoHaya": "1000", "codEstadoOferta": "1000","codTipoOferta": "1000", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1000", "importeContraoferta": null, "idProveedorRemPrescriptor": "1000", "idProveedorRemCustodio": "1000", "idProveedorRemResponsable": "1000", "idProveedorRemFdv": "1000" , "importe": "1000.2", "titularesAdicionales": [{"nombre": "Nombre1", "codTipoDocumento": "1000", "documento":"48594626F"}, {"nombre": "Nombre2", "codTipoDocumento": "1001", "documento":"48594628F"}]}]}
 	 * @param model
 	 * @param request
 	 * @return

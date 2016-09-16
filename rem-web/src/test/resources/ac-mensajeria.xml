@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:integration="http://www.springframework.org/schema/integration"
+	xmlns:file="http://www.springframework.org/schema/integration/file"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+               http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+               http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
+               http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+               http://www.springframework.org/schema/integration
+			   http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+			  http://www.springframework.org/schema/integration/file
+			  http://www.springframework.org/schema/integration/file/spring-integration-file-1.0.xsd"
+
+	default-autowire="byName">
+
+	<!-- devon.properties -->
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="properties">
+			<util:properties>
+				<prop key="integracion.output">file:///tmp/output</prop>
+				<prop key="integracion.producer.cola">producer</prop>
+				<prop key="log4j.rootLogger">DEBUG, stdout</prop>
+			</util:properties>
+		</property>
+	</bean>
+
+
+	<bean id="salidaIntegracionAdapter"
+		class="es.pfsgroup.recovery.integration.file.FileIntegrationAdapter">
+		<constructor-arg value="${integracion.output}" />
+		<property name="charset" value="UTF-8" />
+	</bean>
+ 
+
+	<integration:channel id="salida" />
+	<integration:channel id="salida.proceesar.ok" />
+	<integration:channel id="salida.proceesar.ko" />
+
+	<integration:gateway id="testGW"
+		default-request-channel="salida" service-interface="es.pfsgroup.test.gateways.IGateway" />
+
+	<file:outbound-channel-adapter channel="salida"
+		directory="${integracion.output}" />
+
+ 
+	<file:inbound-channel-adapter
+		auto-startup="true" filename-pattern=".+.msg" channel="salida.asincrona"
+		directory="${integracion.output}">
+		<integration:poller>
+			<integration:interval-trigger interval="500"
+				time-unit="MILLISECONDS" />
+		</integration:poller>
+	</file:inbound-channel-adapter>
+  
+ 
+	<integration:chain input-channel="salida.asincrona"
+		output-channel="salida.procesar">
+		<integration:header-enricher
+			error-channel="salida.proceesar.ko" />
+		<file:file-to-string-transformer
+			delete-files="false" charset="UTF-8" />
+		<integration:service-activator ref="salidaIntegracionAdapter"
+			method="checkExistErrorFolder" />
+	</integration:chain>
+<!-- -->
+
+
+	<integration:service-activator
+		input-channel="salida.procesar" output-channel="salida.proceesar.ok" method="procesar">
+		<bean class="es.pfsgroup.test.gateways.ProcesarMensaje" />
+	</integration:service-activator>
+	
+	<integration:outbound-channel-adapter 
+		channel="salida.proceesar.ok" 
+		order="2" 
+		ref="salidaIntegracionAdapter" 
+		method="writeLogMsgStr" />
+	<integration:outbound-channel-adapter 
+		channel="salida.proceesar.ko" 
+		ref="salidaIntegracionAdapter" 
+		method="writeErrorMsg" />
+
+
+</beans>

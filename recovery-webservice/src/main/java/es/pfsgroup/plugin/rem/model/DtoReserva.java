@@ -27,7 +27,7 @@ public class DtoReserva extends WebDto {
 	
 	private String tipoArrasCodigo;
 	
-	private Date fechaEvio;
+	private Date fechaEnvio;
 	
 	private Double importe;
 	
@@ -63,12 +63,12 @@ public class DtoReserva extends WebDto {
 		this.tipoArrasCodigo = tipoArrasCodigo;
 	}
 
-	public Date getFechaEvio() {
-		return fechaEvio;
+	public Date getFechaEnvio() {
+		return fechaEnvio;
 	}
 
-	public void setFechaEvio(Date fechaEvio) {
-		this.fechaEvio = fechaEvio;
+	public void setFechaEnvio(Date fechaEnvio) {
+		this.fechaEnvio = fechaEnvio;
 	}
 
 	public Double getImporte() {

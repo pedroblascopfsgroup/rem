@@ -132,7 +132,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasActivosList', {
 		            text: HreRem.i18n('header.precio.minimo.autorizado'),
 		            renderer: Utils.rendererCurrency,
 		            flex: 1
-		        },
+		        }/*,
 		        {
 		        	dataIndex:'precioDescuentoAprobado',
 		            text: HreRem.i18n('header.precio.descuento.autorizado'),
@@ -144,7 +144,7 @@ Ext.define('HreRem.view.precios.generacion.GeneracionPropuestasActivosList', {
 		            text: HreRem.i18n('header.precio.descuento.publicado'),
 		            renderer: Utils.rendererCurrency,
 		            flex: 1
-		        }
+		        }*/
         ];
         
         

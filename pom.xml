@@ -468,6 +468,11 @@
 				<artifactId>paradise-framework</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin</groupId>
+				<artifactId>recovery-message-broker</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 			<!-- REM: GESTOR DOCUMENTAL LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
@@ -716,6 +721,7 @@
 				<module>proyecto-rem-online</module>
 				<module>recovery-webservice</module>
 				<module>paradise-framework</module>
+				<module>recovery-message-broker</module>
 				<module>recovery-gestordocumentalREM-plugin</module>	
 				<module>rem-web</module>
 			</modules>

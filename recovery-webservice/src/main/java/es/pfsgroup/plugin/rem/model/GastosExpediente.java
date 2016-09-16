@@ -52,6 +52,9 @@ public class GastosExpediente implements Serializable, Auditable {
     @SequenceGenerator(name = "GastosExpedienteGenerator", sequenceName = "S_GEX_GASTOS_EXPEDIENTE")
     private Long id;
 	
+	@Column(name="GEX_WEBCOM_ID")
+    private Long idWebCom;
+	
 	@OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ECO_ID")
     private ExpedienteComercial expediente;
@@ -69,7 +72,13 @@ public class GastosExpediente implements Serializable, Auditable {
 
     @Column(name="GEX_NOMBRE")
     private String nombre;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "GEX_PROVEEDOR")
+	private ActivoProveedor proveedor;
 
+    @Column(name="GEX_OBSERVACIONES")
+    private String observaciones;
     
     @Column(name="GEX_IMPORTE_CALCULO")
     private Double importeCalculo;
@@ -79,6 +88,9 @@ public class GastosExpediente implements Serializable, Auditable {
     
     @Column(name="GEX_PAGADOR")
     private String pagador;
+    
+    @Column(name="GEX_APROBADO")
+    private Integer aprobado;   
 
     
       
@@ -100,6 +112,14 @@ public class GastosExpediente implements Serializable, Auditable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getIdWebCom() {
+		return idWebCom;
+	}
+
+	public void setIdWebCom(Long idWebCom) {
+		this.idWebCom = idWebCom;
 	}
 
 	public ExpedienteComercial getExpediente() {
@@ -142,6 +162,22 @@ public class GastosExpediente implements Serializable, Auditable {
 		this.nombre = nombre;
 	}
 
+	public ActivoProveedor getProveedor() {
+		return proveedor;
+	}
+
+	public void setProveedor(ActivoProveedor proveedor) {
+		this.proveedor = proveedor;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
 	public Double getImporteCalculo() {
 		return importeCalculo;
 	}
@@ -164,6 +200,14 @@ public class GastosExpediente implements Serializable, Auditable {
 
 	public void setPagador(String pagador) {
 		this.pagador = pagador;
+	}
+
+	public Integer getAprobado() {
+		return aprobado;
+	}
+
+	public void setAprobado(Integer aprobado) {
+		this.aprobado = aprobado;
 	}
 
 	public Long getVersion() {

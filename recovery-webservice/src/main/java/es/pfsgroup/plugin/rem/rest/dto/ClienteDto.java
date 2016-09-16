@@ -44,12 +44,12 @@ public class ClienteDto implements Serializable{
 	private String email;
 	@Size(max=20)
 	private String codTipoPrescriptor;
-	private Long idPrescriptor;
-	private Long idApiResponsable;
+	private Long idProveedorRemPrescriptor;
+	private Long idProveedorRemResponsable;
 	@Size(max=20)
 	private String codTipoVia;
-	@Size(max=60)
-	private String direccion;
+	@Size(max=100)
+	private String nombreCalle;
 	@Size(max=100)
 	private String numeroCalle;
 	@Size(max=10)
@@ -161,17 +161,17 @@ public class ClienteDto implements Serializable{
 	public void setCodTipoPrescriptor(String codTipoPrescriptor) {
 		this.codTipoPrescriptor = codTipoPrescriptor;
 	}
-	public Long getIdPrescriptor() {
-		return idPrescriptor;
+	public Long getIdProveedorRemPrescriptor() {
+		return idProveedorRemPrescriptor;
 	}
-	public void setIdPrescriptor(Long idPrescriptor) {
-		this.idPrescriptor = idPrescriptor;
+	public void setIdProveedorRemPrescriptor(Long idProveedorRemPrescriptor) {
+		this.idProveedorRemPrescriptor = idProveedorRemPrescriptor;
 	}
-	public Long getIdApiResponsable() {
-		return idApiResponsable;
+	public Long getIdProveedorRemResponsable() {
+		return idProveedorRemResponsable;
 	}
-	public void setIdApiResponsable(Long idApiResponsable) {
-		this.idApiResponsable = idApiResponsable;
+	public void setIdProveedorRemResponsable(Long idProveedorRemResponsable) {
+		this.idProveedorRemResponsable = idProveedorRemResponsable;
 	}
 	public String getCodTipoVia() {
 		return codTipoVia;
@@ -179,11 +179,11 @@ public class ClienteDto implements Serializable{
 	public void setCodTipoVia(String codTipoVia) {
 		this.codTipoVia = codTipoVia;
 	}
-	public String getDireccion() {
-		return direccion;
+	public String getNombreCalle() {
+		return nombreCalle;
 	}
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
+	public void setNombreCalle(String nombreCalle) {
+		this.nombreCalle = nombreCalle;
 	}
 	public String getNumeroCalle() {
 		return numeroCalle;

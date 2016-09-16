@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
@@ -41,9 +41,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -83,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 
 @Component
 public class DiccionarioTargetClassMap{
@@ -174,17 +177,21 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposDocumentos", DDTipoDocumento.class);
 		mapa.put("tiposDocumentoExpediente", DDTipoDocumentoExpediente.class);
 		mapa.put("subtiposDocumentoExpediente", DDSubtipoDocumentoExpediente.class);
+		mapa.put("estadosCiviles", DDEstadosCiviles.class);
 		mapa.put("unidadPoblacional", DDUnidadPoblacional.class);
 		mapa.put("estadosFinanciacion", DDEstadoFinanciacion.class);
 		mapa.put("entidadesFinancieras", DDEntidadesFinancieras.class);
 		mapa.put("tiposPorCuenta", DDTiposPorCuenta.class);
 		mapa.put("tiposImpuestos", DDTiposImpuesto.class);
 		mapa.put("situacionesPosesoria", DDSituacionesPosesoria.class);
+		mapa.put("usosActivo", DDUsosActivo.class);
+		mapa.put("regimenesMatrimoniales", DDRegimenesMatrimoniales.class);
 		mapa.put("tiposComparecientes", DDTiposCompareciente.class);
 		mapa.put("calificacionProveedor", DDCalificacionProveedor.class);
 		mapa.put("resultadoProcesoBlanqueo", DDResultadoProcesoBlanqueo.class);
 		mapa.put("motivoRetencionPago", DDMotivoRetencion.class);
 		mapa.put("tipoActivosCartera", DDTipoActivosCartera.class);
+
 		return Collections.unmodifiableMap(mapa);
 	}
 	

@@ -85,6 +85,15 @@ public interface GenericApi {
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo);
 	
 	/**
+	 * Devuelve los subtipos de trabajo del tipo que recibe, pero no incluye los de tipo Precio (a excepcion 
+	 * de los subtipos (Carga, bloqueo y desbloqueo) del trámite de actualización de precios ).
+	 * @param tipoTrabajoCodigo
+	 * @return
+	 */
+	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajoCreaFiltered")
+	public List<DDSubtipoTrabajo> getComboSubtipoTrabajoCreaFiltered(String tipoTrabajoCodigo);
+	
+	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe y que sólo son tarificados
 	 * @param tipoTrabajoCodigo
 	 * @return

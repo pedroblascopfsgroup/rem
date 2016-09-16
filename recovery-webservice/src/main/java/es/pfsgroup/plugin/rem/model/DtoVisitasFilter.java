@@ -22,6 +22,7 @@ public class DtoVisitasFilter extends WebDto {
 	private String nombre;
 	private String numDocumento;
 	private Date fechaVisita;
+	private String estadoVisita;
 	
 
 	public Long getNumVisitaRem() {
@@ -77,6 +78,12 @@ public class DtoVisitasFilter extends WebDto {
 	}
 	public void setFechaVisita(Date fechaVisita) {
 		this.fechaVisita = fechaVisita;
+	}
+	public String getEstadoVisita() {
+		return estadoVisita;
+	}
+	public void setEstadoVisita(String estadoVisita) {
+		this.estadoVisita = estadoVisita;
 	}
 	
 	

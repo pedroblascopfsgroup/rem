@@ -107,6 +107,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.tipopersona'),
 													name: 'tipoPersonaCodigo',
+													disabled: true,
 													bind: {
 														store: '{comboTipoPersona}'			            		
 													},

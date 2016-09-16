@@ -257,6 +257,29 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	}
 	
 	@Override
+	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
+	public List<DDSubtipoTrabajo> getComboSubtipoTrabajoCreaFiltered(String tipoTrabajoCodigo) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");			
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
+		List<DDSubtipoTrabajo> listaSubtipos = (List<DDSubtipoTrabajo>) genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
+		List<DDSubtipoTrabajo> listaSubtiposFiltered = new ArrayList<DDSubtipoTrabajo>();
+		
+		for(DDSubtipoTrabajo subtipo : listaSubtipos) {
+			if(!DDTipoTrabajo.CODIGO_PRECIOS.equals(subtipo.getCodigoTipoTrabajo())) {
+					return listaSubtipos;
+			}
+			else if(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS.equals(subtipo.getCodigo()) 
+					|| DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())
+					|| DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())) {
+						listaSubtiposFiltered.add(subtipo);
+			}
+		}
+
+		return listaSubtiposFiltered;
+	}
+	
+	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajoTarificado")
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajoTarificado(String tipoTrabajoCodigo) {
 		//Generar una lista de todos los trabajos relacionados con el tipo de trabajo que

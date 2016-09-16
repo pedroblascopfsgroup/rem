@@ -1,11 +1,7 @@
 package es.pfsgroup.plugin.rem.proveedores.dao.impl;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +13,6 @@ import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedor;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 
 @Repository("ProveedoresDao")

@@ -78,6 +78,17 @@ public class DtoFichaExpediente extends WebDto {
     private Date fechaDevolucionEntregas;
     
     private boolean tieneReserva;
+    
+    private Date fechaInicioAlquiler;
+    private Date fechaFinAlquiler;
+    private Double importeRentaAlquiler;
+    private Integer numContratoAlquiler;
+    private Date fechaPlazoOpcionCompraAlquiler;
+    private Double primaOpcionCompraAlquiler;
+    private Double precioOpcionCompraAlquiler;
+    private String condicionesOpcionCompraAlquiler;
+    private Integer conflictoIntereses;
+    private Integer riesgoReputacional;
    	
 
 	public Long getId() {
@@ -315,7 +326,87 @@ public class DtoFichaExpediente extends WebDto {
 		
 	}
 
-   	
+	public Date getFechaInicioAlquiler() {
+		return fechaInicioAlquiler;
+	}
+
+	public void setFechaInicioAlquiler(Date fechaInicioAlquiler) {
+		this.fechaInicioAlquiler = fechaInicioAlquiler;
+	}
+
+	public Date getFechaFinAlquiler() {
+		return fechaFinAlquiler;
+	}
+
+	public void setFechaFinAlquiler(Date fechaFinAlquiler) {
+		this.fechaFinAlquiler = fechaFinAlquiler;
+	}
+
+	public Double getImporteRentaAlquiler() {
+		return importeRentaAlquiler;
+	}
+
+	public void setImporteRentaAlquiler(Double importeRentaAlquiler) {
+		this.importeRentaAlquiler = importeRentaAlquiler;
+	}
+
+	public Integer getNumContratoAlquiler() {
+		return numContratoAlquiler;
+	}
+
+	public void setNumContratoAlquiler(Integer numContratoAlquiler) {
+		this.numContratoAlquiler = numContratoAlquiler;
+	}
+
+	public Date getFechaPlazoOpcionCompraAlquiler() {
+		return fechaPlazoOpcionCompraAlquiler;
+	}
+
+	public void setFechaPlazoOpcionCompraAlquiler(
+			Date fechaPlazoOpcionCompraAlquiler) {
+		this.fechaPlazoOpcionCompraAlquiler = fechaPlazoOpcionCompraAlquiler;
+	}
+
+	public Double getPrimaOpcionCompraAlquiler() {
+		return primaOpcionCompraAlquiler;
+	}
+
+	public void setPrimaOpcionCompraAlquiler(Double primaOpcionCompraAlquiler) {
+		this.primaOpcionCompraAlquiler = primaOpcionCompraAlquiler;
+	}
+
+	public Double getPrecioOpcionCompraAlquiler() {
+		return precioOpcionCompraAlquiler;
+	}
+
+	public void setPrecioOpcionCompraAlquiler(Double precioOpcionCompraAlquiler) {
+		this.precioOpcionCompraAlquiler = precioOpcionCompraAlquiler;
+	}
+
+	public String getCondicionesOpcionCompraAlquiler() {
+		return condicionesOpcionCompraAlquiler;
+	}
+
+	public void setCondicionesOpcionCompraAlquiler(
+			String condicionesOpcionCompraAlquiler) {
+		this.condicionesOpcionCompraAlquiler = condicionesOpcionCompraAlquiler;
+	}
+
+	public Integer getConflictoIntereses() {
+		return conflictoIntereses;
+	}
+
+	public void setConflictoIntereses(Integer conflictoIntereses) {
+		this.conflictoIntereses = conflictoIntereses;
+	}
+
+	public Integer getRiesgoReputacional() {
+		return riesgoReputacional;
+	}
+
+	public void setRiesgoReputacional(Integer riesgoReputacional) {
+		this.riesgoReputacional = riesgoReputacional;
+	}
    	
    	
    	

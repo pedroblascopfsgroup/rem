@@ -89,26 +89,39 @@ public class Visita implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_PRESCRIPTOR")
 	private ActivoProveedor prescriptor;
-    
-    @Column(name="VIS_VISITA_PRESCRIPTOR")
-    private Integer realizaVisitaPrescriptor;    
-    
+ 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_API_RESPONSABLE")
 	private ActivoProveedor apiResponsable;    
     
-    @Column(name="VIS_VISITA_API_RESPONSABLE")
-    private Integer realizaVisitaApiResponsable;    
-    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PVE_ID_API_CUSTODIO")
 	private ActivoProveedor apiCustodio;    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_FDV")
+	private ActivoProveedor fdv; 
     
-    @Column(name="VIS_VISITA_API_CUSTODIO")
-    private Integer realizaVisitaApiCustodio;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "PVE_ID_PVE_VISITA")
+	private ActivoProveedor proveedorVisita; 
     
     @Column(name="VIS_OBSERVACIONES")
     private String observaciones;
+    
+    
+    
+    
+    
+/*    @Column(name="VIS_VISITA_PRESCRIPTOR")
+    private Integer realizaVisitaPrescriptor;   
+    
+    @Column(name="VIS_VISITA_API_RESPONSABLE")
+    private Integer realizaVisitaApiResponsable;    
+    
+    @Column(name="VIS_VISITA_API_CUSTODIO")
+    private Integer realizaVisitaApiCustodio;*/
+    
     
     
 	@Version   
@@ -205,14 +218,6 @@ public class Visita implements Serializable, Auditable {
 	public void setPrescriptor(ActivoProveedor prescriptor) {
 		this.prescriptor = prescriptor;
 	}
-
-	public Integer getRealizaVisitaPrescriptor() {
-		return realizaVisitaPrescriptor;
-	}
-
-	public void setRealizaVisitaPrescriptor(Integer realizaVisitaPrescriptor) {
-		this.realizaVisitaPrescriptor = realizaVisitaPrescriptor;
-	}
 	
 	public ActivoProveedor getApiResponsable() {
 		return apiResponsable;
@@ -221,13 +226,21 @@ public class Visita implements Serializable, Auditable {
 	public void setApiResponsable(ActivoProveedor apiResponsable) {
 		this.apiResponsable = apiResponsable;
 	}
-
-	public Integer getRealizaVisitaApiResponsable() {
-		return realizaVisitaApiResponsable;
+	
+	public ActivoProveedor getFdv() {
+		return fdv;
 	}
 
-	public void setRealizaVisitaApiResponsable(Integer realizaVisitaApiResponsable) {
-		this.realizaVisitaApiResponsable = realizaVisitaApiResponsable;
+	public void setFdv(ActivoProveedor fdv) {
+		this.fdv = fdv;
+	}
+
+	public ActivoProveedor getProveedorVisita() {
+		return proveedorVisita;
+	}
+
+	public void setProveedorVisita(ActivoProveedor proveedorVisita) {
+		this.proveedorVisita = proveedorVisita;
 	}
 
 	public ActivoProveedor getApiCustodio() {
@@ -238,14 +251,6 @@ public class Visita implements Serializable, Auditable {
 		this.apiCustodio = apiCustodio;
 	}
 
-	public Integer getRealizaVisitaApiCustodio() {
-		return realizaVisitaApiCustodio;
-	}
-
-	public void setRealizaVisitaApiCustodio(Integer realizaVisitaApiCustodio) {
-		this.realizaVisitaApiCustodio = realizaVisitaApiCustodio;
-	}
-
 	public String getObservaciones() {
 		return observaciones;
 	}
@@ -254,6 +259,30 @@ public class Visita implements Serializable, Auditable {
 		this.observaciones = observaciones;
 	}
 
+	/*public Integer getRealizaVisitaPrescriptor() {
+		return realizaVisitaPrescriptor;
+	}
+
+	public void setRealizaVisitaPrescriptor(Integer realizaVisitaPrescriptor) {
+		this.realizaVisitaPrescriptor = realizaVisitaPrescriptor;
+	}
+	
+	public Integer getRealizaVisitaApiResponsable() {
+		return realizaVisitaApiResponsable;
+	}
+
+	public void setRealizaVisitaApiResponsable(Integer realizaVisitaApiResponsable) {
+		this.realizaVisitaApiResponsable = realizaVisitaApiResponsable;
+	}
+	
+	public Integer getRealizaVisitaApiCustodio() {
+		return realizaVisitaApiCustodio;
+	}
+
+	public void setRealizaVisitaApiCustodio(Integer realizaVisitaApiCustodio) {
+		this.realizaVisitaApiCustodio = realizaVisitaApiCustodio;
+	}*/
+	
 	public Long getVersion() {
 		return version;
 	}

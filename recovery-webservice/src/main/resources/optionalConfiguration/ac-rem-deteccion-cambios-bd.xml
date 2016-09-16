@@ -25,7 +25,7 @@ http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<bean id="deteccionCambiosTrigger" parent="scheduling.schedulableTrigger">
 		<property name="jobDetail" ref="deteccionCambiosJob" />
-		<property name="cronExpression" value="0/10 * * * * ?" />
+		<property name="cronExpression" value="${rest.client.chrone.rem.time.trigger}" />
 
 	</bean>
 

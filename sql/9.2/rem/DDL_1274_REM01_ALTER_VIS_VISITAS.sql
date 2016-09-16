@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160914
+--## FECHA_CREACION=20160915
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -38,7 +38,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('VIS_FECHA_CONCERTACION', 'DATE','', 'Fecha de concertación de la visita')
+        T_TIPO_DATA('VIS_FECHA_CONCERTACION', 'DATE','', 'Fecha de concertación de la visita'),
+        T_TIPO_DATA('VIS_FECHA_CONTACTO', 'DATE','', 'Fecha de contacto')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

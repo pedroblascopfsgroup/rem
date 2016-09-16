@@ -28,9 +28,6 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	@Autowired
 	private HttpClientFacade httpClient;
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
-
 	@Autowired(required = false)
 	private MessageBroker messageBroker;
 
@@ -44,9 +41,10 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private ClienteStock stockService;
 
 	@Override
-	public void enviaActualizacionEstadoTrabajo(Long idRem, Long idWebcom, String codEstado, String motivoRechazo) {
+	public void enviaActualizacionEstadoTrabajo(Long usuarioId, Long idRem, Long idWebcom, String codEstado,
+			String motivoRechazo) {
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
-		HashMap<String, Object> params = createParametersMap(proxyFactory);
+		HashMap<String, Object> params = createParametersMap(usuarioId);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
 		params.put(EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
 		params.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
@@ -63,10 +61,10 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void enviaActualizacionEstadoOferta(Long idRem, Long idWebcom, String codEstadoOferta, Long idActivoHaya,
-			String codEstadoExpediente, Boolean vendido) {
+	public void enviaActualizacionEstadoOferta(Long usuarioId, Long idRem, Long idWebcom, String codEstadoOferta,
+			Long idActivoHaya, String codEstadoExpediente, Boolean vendido) {
 		logger.info("Invocando servicio Webcom: Estado Oferta");
-		HashMap<String, Object> params = createParametersMap(proxyFactory);
+		HashMap<String, Object> params = createParametersMap(usuarioId);
 
 		params.put(EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
 		params.put(EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
@@ -94,19 +92,19 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	}
 
 	@Override
-	public void enviarStock(List<StockDto> stock) {
+	public void enviarStock(Long usuarioId, List<StockDto> stock) {
 		logger.info("Invocando servicio Webcom: Stock");
 
 		ParamsList paramsList = new ParamsList();
-		if (stock != null) {
+		if ((stock != null) && (!stock.isEmpty())) {
 			for (StockDto dto : stock) {
-				HashMap<String, Object> params = createParametersMap(proxyFactory);
+				HashMap<String, Object> params = createParametersMap(usuarioId);
 				params.putAll(Converter.dtoToMap(dto));
 				paramsList.add(params);
 			}
-		}
 
-		invocarServicioRestWebcom(paramsList, stockService);
+			invocarServicioRestWebcom(paramsList, stockService);
+		}
 
 	}
 

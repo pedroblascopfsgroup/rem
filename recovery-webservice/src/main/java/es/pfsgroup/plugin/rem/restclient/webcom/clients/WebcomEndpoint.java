@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.restclient.webcom.clients;
 
+import java.util.Properties;
+
+import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
+
 /**
  * Esta clase encapsula la información necesaria para saber cómo conectarnos a
  * un determinado endpoint de WEBCOM. Así como métodos factoría para obtener las
@@ -10,10 +14,20 @@ package es.pfsgroup.plugin.rem.restclient.webcom.clients;
  */
 public class WebcomEndpoint {
 
+	private static final String DEFAULT_API_KEY = "0123456789";
+	private static final String DEFAULT_TIMEOUT = "10";
+	private static final String HTTP_UNKNOWN = "http://unknown";
+	private static final String UNKNOWN_ENDPOINT_VALUE = "unknown";
 	private String httpMethod;
+	private String endpointUrl;
+	private int timeout;
+	private String apiKey;
 
-	private WebcomEndpoint(String httpMethod) {
+	private WebcomEndpoint(String httpMethod, String endpointUrl, int timeout, String apiKey) {
 		this.httpMethod = httpMethod;
+		this.endpointUrl = endpointUrl;
+		this.timeout = timeout;
+		this.apiKey = apiKey;
 	};
 
 	/**
@@ -22,11 +36,12 @@ public class WebcomEndpoint {
 	 * 
 	 * @return
 	 */
-	public static WebcomEndpoint estadoTrabajo() {
-		// TODO Configuración de las URL para los endpoints de los servicios a
-		// invocar
-		return new WebcomEndpoint("POST");
+	public static WebcomEndpoint estadoTrabajo(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_TRABAJO_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
 	}
+
+	
 
 	/**
 	 * Método factoría para obtener el endpoint para el servicio de
@@ -34,10 +49,9 @@ public class WebcomEndpoint {
 	 * 
 	 * @return
 	 */
-	public static WebcomEndpoint estadoOferta() {
-		// TODO Configuración de las URL para los endpoints de los servicios a
-		// invocar
-		return new WebcomEndpoint("POST");
+	public static WebcomEndpoint estadoOferta(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ESTADO_OFERTA_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
 	}
 
 	/**
@@ -46,10 +60,9 @@ public class WebcomEndpoint {
 	 * 
 	 * @return
 	 */
-	public static WebcomEndpoint stock() {
-		// TODO Configuración de las URL para los endpoints de los servicios a
-		// invocar
-		return new WebcomEndpoint("POST");
+	public static WebcomEndpoint stock(Properties appProperties) {
+		String url = createEndpointUrl(appProperties, WebcomRESTDevonProperties.ACTUALIZAR_STOCK_ENDPOINT, UNKNOWN_ENDPOINT_VALUE);
+		return createWebcomEndpointInstance(appProperties, url);
 	}
 
 	/**
@@ -67,8 +80,7 @@ public class WebcomEndpoint {
 	 * @return
 	 */
 	public int getTimeout() {
-		// TODO Configuración del timeout para invocar los servicios.
-		return 10;
+		return this.timeout;
 	}
 
 	/**
@@ -86,7 +98,7 @@ public class WebcomEndpoint {
 	 * @return
 	 */
 	public String getEndpointUrl() {
-		return "http://test/test";
+		return this.endpointUrl;
 	}
 
 	/**
@@ -95,13 +107,27 @@ public class WebcomEndpoint {
 	 * @return
 	 */
 	public String getApiKey() {
-		// TODO Obtener el API KEY del entorno WebCom al que nos conectamos
-		return "0123456789";
+		return this.apiKey;
 	}
 
 	@Override
 	public String toString() {
 		return "WebcomEndpoint [" + httpMethod + " => " + this.getEndpointUrl() + "]";
+	}
+
+
+	private static String createEndpointUrl(Properties appProperties, String key, String defaultValue) {
+		String endpoint = (appProperties != null ? appProperties.getProperty(key, defaultValue)
+				: defaultValue);
+		
+		String url = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.BASE_URL, HTTP_UNKNOWN) + endpoint;
+		return url;
+	}
+	
+	private static WebcomEndpoint createWebcomEndpointInstance(Properties appProperties, String url) {
+		String timeout = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.TIMEOUT_CONEXION, DEFAULT_TIMEOUT);
+		String apiKey = WebcomRESTDevonProperties.extractDevonProperty(appProperties, WebcomRESTDevonProperties.SERVER_API_KEY, DEFAULT_API_KEY);
+		return new WebcomEndpoint("POST", url, Integer.parseInt(timeout), apiKey);
 	}
 
 }

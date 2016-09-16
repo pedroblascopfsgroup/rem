@@ -153,7 +153,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 											    reference: 'listadoDocumentosExpediente',
 												cls	: 'panel-base shadow-panel',
 												bind: {
-													store: '{storeDocumentosExpediente}'
+													//store: '{storeDocumentosExpediente}'
 												},
 												columns: [
 												
@@ -325,10 +325,16 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
+		//recargar grid
 		var listadoCompradores = me.down("[reference=listadoCompradores]");
-		
-		// FIXME ¿¿Deberiamos cargar la primera página??
 		listadoCompradores.getStore().load();
+		//recargar datos dependiendo de la fila seleccionada
+		var records= listadoCompradores.getSelection();
+		if(!Ext.isEmpty(records)){
+			var record = records[0];
+			var gridView= listadoCompradores.getView();
+			me.lookupController().onCompradoresListClick(gridView,record);
+		}
 		
 //		me.lookupController().cargarTabData(me);
 

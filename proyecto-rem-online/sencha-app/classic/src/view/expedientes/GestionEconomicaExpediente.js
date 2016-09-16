@@ -98,13 +98,13 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 
-    },
-    
-    
-    funcionRecargar: function() {
-    	var me = this; 
-		me.recargar = false;		
-		me.lookupController().cargarTabData(me);		
-		
     }
+    
+  // COMENTAR HASTA QUE SE DEFINA  
+//    funcionRecargar: function() {
+//    	var me = this; 
+//		me.recargar = false;		
+//		me.lookupController().cargarTabData(me);		
+//		
+//    }
 });

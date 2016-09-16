@@ -89,12 +89,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	
 	     },
 		
-esOfertaVentaFicha: function(get){
+		esOfertaVentaFicha: function(get){
 	     	var me = this;
 	     	var expediente= me.getData().expediente;
-	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
-	     	if(tipoOferta=='Venta'){
-	     		return true;
+	     	if(!Ext.isEmpty(expediente)){
+		     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
+		     	if(tipoOferta=='Venta'){
+		     		return true;
+		     	}
 	     	}
 	     	return false;
 	     }

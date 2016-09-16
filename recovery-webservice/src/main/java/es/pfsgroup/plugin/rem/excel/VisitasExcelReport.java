@@ -19,6 +19,7 @@ public class VisitasExcelReport extends AbstractExcelReport implements ExcelRepo
 		listaCabeceras.add("Nº Visita");
 		listaCabeceras.add("Nº Activo");
 		listaCabeceras.add("Fecha Solicitud");
+		listaCabeceras.add("Estado visita");
 		listaCabeceras.add("Nombre");
 		listaCabeceras.add("Nº Documento");
 		listaCabeceras.add("Fecha Visita");
@@ -35,6 +36,7 @@ public class VisitasExcelReport extends AbstractExcelReport implements ExcelRepo
 			fila.add(visita.getNumVisitaRem().toString());
 			fila.add(visita.getNumActivo().toString());
 			fila.add(this.getDateStringValue(visita.getFechaSolicitud()));
+			fila.add(visita.getEstadoVisita());
 			fila.add(visita.getNombre());
 			fila.add(visita.getNumDocumento());
 			fila.add(this.getDateStringValue(visita.getFechaVisita()));

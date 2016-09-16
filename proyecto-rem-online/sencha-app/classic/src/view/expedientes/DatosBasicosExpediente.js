@@ -100,16 +100,22 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 			                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
 					        	bind: '{expediente.numContratoAlquiler}'
 					        },
-							{ 
-								xtype: 'comboboxfieldbase',
+					        { 
+								xtype: 'textfieldbase',
 			                	fieldLabel:  HreRem.i18n('fieldlabel.situacion.contrato.alquiler'),
-					        	bind: {
-				            		store: '{comboSituacionContratoAlquiler}',
-				            		value: '{expediente.situacionContratoAlquiler}'
-				            	},
-					            displayField: 'descripcion',
-		    					valueField: 'codigo'
+					        	value: 'COMBO NO DEFINIDO'
 					        }
+//							{ 
+//								xtype: 'comboboxfieldbase',
+//			                	fieldLabel:  HreRem.i18n('fieldlabel.situacion.contrato.alquiler'),
+//					        	bind: {
+//				            		store: '{comboSituacionContratoAlquiler}',
+//				            		value: '{expediente.situacionContratoAlquiler}'
+//				            		//value: '{expediente.situacionContratoAlquiler}'
+//				            	},
+//					            displayField: 'descripcion',
+//		    					valueField: 'codigo'
+//					        }
 					        
 				        ]
 					},

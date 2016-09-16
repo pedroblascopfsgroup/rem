@@ -56,14 +56,20 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
+								reference: 'fechaInicioFinanciacion',
 					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.expediente'),
-					        	bind: '{condiciones.fechaInicioExpediente}'					        						        	
+					        	bind: '{condiciones.fechaInicioExpediente}',
+					        	maxValue: null
 					        },
 					        {
 					        	xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.financiacion'),
-					        	bind: '{condiciones.fechaInicioFinanciacion}'				        						        	
+					        	bind: '{condiciones.fechaInicioFinanciacion}',
+					        	maxValue: null,
+					        	listeners: {
+					        		change: 'onHaCambiadoFechaInicioFinanciacion'
+					        	}
 					        },
 					        { 
 								xtype: 'textfieldbase',
@@ -85,8 +91,13 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        {
 					        	xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
+								reference: 'fechaFinFinanciacion',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fin.financiacion'),
-					        	bind: '{condiciones.fechaFinFinanciacion}'				        						        	
+					        	bind: '{condiciones.fechaFinFinanciacion}',
+					        	maxValue: null,
+					        	listeners: {
+					        		change: 'onHaCambiadoFechaFinFinanciacion'
+					        	}
 					        }
 					        
 					        
@@ -118,6 +129,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.calculo.reserva'),
+							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
 								            		value: '{condiciones.tipoCalculo}'
@@ -125,7 +137,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
 		    									listeners: {
-			                						change:  'onHaCambiadoTipoCalculo'
+			                						select:  'onHaCambiadoTipoCalculo'
 			            						},
 			            						editable: true
 									        },

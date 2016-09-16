@@ -1,6 +1,9 @@
 package es.pfsgroup.plugin.rem.restclient.webcom.clients;
 
 import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,11 +19,14 @@ public class ClienteStock extends ClienteWebcomBase{
 	
 	@Autowired
 	private HttpClientFacade httpClient;
+	
+	@Resource
+	private Properties appProperties;
 
 	@Override
 	@AsyncRequestHandler
 	public Map<String, Object> enviaPeticion(ParamsList paramsList) throws ErrorServicioWebcom {
-		return this.send(httpClient, WebcomEndpoint.stock(), paramsList);
+		return this.send(httpClient, WebcomEndpoint.stock(appProperties), paramsList);
 	}
 
 	@Override
@@ -28,6 +34,11 @@ public class ClienteStock extends ClienteWebcomBase{
 	public void procesaRespuesta(Map<String, Object> respuesta) {
 		this.receive(respuesta);
 		
+	}
+	
+	@Override
+	protected Properties getAppProperties() {
+		return appProperties;
 	}
 
 }

@@ -41,8 +41,9 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 			            	}
 				        },		                
 		                {
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.envio'),
-		                	bind:		'{reserva.fechaEvio}'		                		
+		                	bind:		'{reserva.fechaEnvio}'
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),
@@ -53,6 +54,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	bind:		'{reserva.estadoReservaDescripcion}'
 		                },
 		                {
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.firma'),
 		                	bind:		'{reserva.fechaFirma}'		                		
 		                },
@@ -63,6 +65,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	bind:		'{reserva.conImpuesto}'		                
 		                },
 		                {
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.vencimiento'),
 		                	bind:		'{reserva.fechaVencimiento}'		                		
 		                }		               

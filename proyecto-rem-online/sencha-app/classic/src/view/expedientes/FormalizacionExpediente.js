@@ -57,7 +57,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						   {
 						   		text: HreRem.i18n('fieldlabel.cargo'),
 					            dataIndex: 'cargo',
-					            flex: 1						   
+					            flex: 1	,
+					            data: 'NO DEFINIDO'
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.telefono'),
@@ -211,7 +212,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						   {
 						   		text: HreRem.i18n('fieldlabel.tramite.subsanaciones'),
 					            dataIndex: 'tramiteSubsanacion',
-					            flex: 1						   
+					            flex: 1,
+					            data: 'NO DEFINIDO'
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.gastos.subsanacion'),
@@ -254,7 +256,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							xtype: 'container',
 							layout: {type: 'vbox'},
 							defaultType: 'textfieldbase',
-							width: '70%',
+							width: '33%',
 							items: [
 								{
 									xtype:'displayfieldbase',
@@ -270,12 +272,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									xtype:'displayfieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.gastos.cargo'),
 									bind: '{resolucion.gastosCargo}'				        						        	
-								},
-								{
-									xtype:'displayfieldbase',
-									fieldLabel: HreRem.i18n('fieldlabel.forma.pago'),
-									bind: '{resolucion.formaPago}'				        						        	
 								}
+								
 	            			]
 		                
 						},
@@ -283,8 +281,13 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 							xtype: 'container',
 							layout: {type: 'vbox'},
 							defaultType: 'textfieldbase',
-							width: '30%',
+							width: '33%',
 							items: [
+								{
+									xtype:'displayfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.forma.pago'),
+									bind: '{resolucion.formaPago}'				        						        	
+								},
 								{
 									xtype:'displayfieldbase',
 									formatter: 'date("d/m/Y")',
@@ -296,8 +299,18 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 									formatter: 'date("d/m/Y")',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion'),
 									bind: '{resolucion.fechaResolucion}'				        						        	
-								},
-				                {
+								}
+				                
+	            			]
+		                
+						},
+						{
+							xtype: 'container',
+							layout: {type: 'vbox'},
+							defaultType: 'textfieldbase',
+							width: '33%',
+							items: [
+								{
 									xtype:'displayfieldbase',
 									fieldLabel: HreRem.i18n('header.importe'),
 									symbol: HreRem.i18n("symbol.euro"),

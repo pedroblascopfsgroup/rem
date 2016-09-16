@@ -836,8 +836,14 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			}
 			dto.setTipoAplicable(condiciones.getTipoAplicable());
 			dto.setRenunciaExencion(condiciones.getRenunciaExencion());
-			dto.setReservaConImpuesto(condiciones.getReservaConImpuesto());
-						
+			if(!Checks.esNulo(condiciones.getReservaConImpuesto())){
+				if(condiciones.getReservaConImpuesto()==0){
+					dto.setReservaConImpuesto(false);
+				}
+				else{
+					dto.setReservaConImpuesto(true);
+				}
+			}						
 			//Economicas-Gastos Compraventa
 			dto.setGastosPlusvalia(condiciones.getGastosPlusvalia());
 			if(!Checks.esNulo(condiciones.getTipoPorCuentaPlusvalia())){
@@ -963,6 +969,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDTipoCalculo tipoCalculo= (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dto.getTipoCalculo());
 				if(!Checks.esNulo(tipoCalculo)){
 					condiciones.setTipoCalculoReserva(tipoCalculo);
+					if(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(tipoCalculo.getCodigo())){
+						condiciones.setPorcentajeReserva(null);
+					}
 				}else{
 					condiciones.setTipoCalculoReserva(null);
 					condiciones.setPorcentajeReserva(null);
@@ -976,7 +985,15 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDTiposImpuesto tipoImpuesto= (DDTiposImpuesto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposImpuesto.class, dto.getTipoImpuestoCodigo());
 				condiciones.setTipoImpuesto(tipoImpuesto);
 			}
-			
+			if(!Checks.esNulo(dto.getReservaConImpuesto())){
+				if(dto.getReservaConImpuesto()==false){
+					condiciones.setReservaConImpuesto(0);
+				}
+				else{
+					condiciones.setReservaConImpuesto(1);
+				}
+			}	
+
 			//Gastos CompraVenta
 			if(!Checks.esNulo(dto.getPlusvaliaPorCuentaDe())){
 				DDTiposPorCuenta tipoPorCuentaPlusvalia= (DDTiposPorCuenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPorCuenta.class, dto.getPlusvaliaPorCuentaDe());

@@ -118,6 +118,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.calculo.reserva'),
+							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
 								            		value: '{condiciones.tipoCalculo}'
@@ -125,7 +126,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
 		    									listeners: {
-			                						change:  'onHaCambiadoTipoCalculo'
+			                						select:  'onHaCambiadoTipoCalculo'
 			            						},
 			            						editable: true
 									        },

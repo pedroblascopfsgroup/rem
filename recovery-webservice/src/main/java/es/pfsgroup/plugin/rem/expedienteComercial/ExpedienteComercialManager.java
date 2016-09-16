@@ -933,6 +933,9 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 				DDTipoCalculo tipoCalculo= (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, dto.getTipoCalculo());
 				if(!Checks.esNulo(tipoCalculo)){
 					condiciones.setTipoCalculoReserva(tipoCalculo);
+					if(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO.equals(tipoCalculo.getCodigo())){
+						condiciones.setPorcentajeReserva(null);
+					}
 				}else{
 					condiciones.setTipoCalculoReserva(null);
 					condiciones.setPorcentajeReserva(null);

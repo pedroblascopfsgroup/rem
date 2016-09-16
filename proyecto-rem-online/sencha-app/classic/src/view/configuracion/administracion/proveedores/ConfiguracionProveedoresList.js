@@ -3,15 +3,19 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
     xtype		: 'configuracionproveedoreslist',
 	topBar: true,
 	idPrincipal : 'proveedor.id',
+	editOnSelect: false,
 	
     bind: {
         store: '{configuracionproveedores}'
     },
     
+    
     initComponent: function () {
-     	
      	var me = this;
 		
+     	me.listeners = {
+    			rowdblclick: 'abrirPestañaProveedor'
+    	    };
 	    
 		me.columns = [
 		        {
@@ -21,39 +25,40 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 		            hidden: true
 		        },
 		        {
-		            dataIndex: 'tipo',
+		            dataIndex: 'tipoProveedorDescripcion',
 		            text: HreRem.i18n('header.proveedorer.tipo'),
-		            flex: 1
+		            flex: 0.5
 		        },
 		        {
-		            dataIndex: 'subtipo',
+		            dataIndex: 'subtipoProveedorDescripcion',
 		            text: HreRem.i18n('header.proveedorer.subtipo'),
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'nif',
+		            dataIndex: 'nifProveedor',
 		            text: HreRem.i18n('header.proveedorer.NIF'),
-		            flex: 1
+		            flex: 0.5
 		        },
 		        {
-		            dataIndex: 'nombre',
+		            dataIndex: 'nombreProveedor',
 		            text: HreRem.i18n('header.proveedorer.nombre'),
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'nomcomercial',
+		            dataIndex: 'nombreComercialProveedor',
 		            text: HreRem.i18n('header.proveedorer.nomcomercial'),
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'estado',
+		            dataIndex: 'estadoProveedorDescripcion',
 		            text: HreRem.i18n('header.proveedorer.estado'),
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'observaciones',
 		            text: HreRem.i18n('header.proveedorer.observaciones'),
-		            flex: 1
+		            flex: 1,
+		            hidden: true
 		        }
 		
 		    ];

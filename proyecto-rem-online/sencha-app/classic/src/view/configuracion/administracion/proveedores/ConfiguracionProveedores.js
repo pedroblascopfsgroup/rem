@@ -3,7 +3,8 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
     xtype		: 'configuracionproveedores',
     reference	: 'configuracionProveedores',
     scrollable: 'y',
-    requires: ['HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresFiltros'],
+    requires: ['HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresFiltros',
+               'HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresList'],
     
     initComponent: function () {
         

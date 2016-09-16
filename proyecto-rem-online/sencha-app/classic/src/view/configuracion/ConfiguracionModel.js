@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
     extend: 'HreRem.view.common.GenericViewModel',
     alias: 'viewmodel.configuracion',
-    requires: ['HreRem.model.Proveedor'],
+    requires: ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.Proveedor'],
 
     stores: { 
     	
@@ -13,8 +13,12 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 		        remoteUrl: 'proveedores/getProveedores',
 		        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'}
 	    	},
+	    	session: true,
 	    	remoteSort: true,
-	    	remoteFilter: true
+	    	remoteFilter: true,
+	    	listeners : {
+	            beforeload : 'paramLoading'
+	        }
    		},
 		comboEstadoProveedor: {
 			model: 'HreRem.model.ComboBase',
@@ -36,9 +40,10 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 			model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'subtipoProveedor'}
-				}
+					remoteUrl: 'generic/getDiccionarioSubtipoProveedor',
+					extraParams: {codigoTipoProveedor: '{proveedor.tipoProveedorCodigo}'}
+				},
+				autoload: true
 		},
 		comboTipoPersona: {
 			model: 'HreRem.model.ComboBase',
@@ -63,15 +68,6 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 //					type: 'uxproxy',
 //					remoteUrl: 'generic/getDiccionario',
 //					extraParams: {diccionario: 'propietario'}
-//				}
-//		},
-// Hay que definirlo
-//		comboAmbito: {
-//			model: 'HreRem.model.ComboBase',
-//				proxy: {
-//					type: 'uxproxy',
-//					remoteUrl: 'generic/getDiccionario',
-//					extraParams: {diccionario: 'ambito'}
 //				}
 //		},
 // No localizo las subcarteras
@@ -99,6 +95,14 @@ Ext.define('HreRem.view.configuracion.ConfiguracionModel', {
 				extraParams: {diccionario: 'municipio'}
 			}
 		},
+		comboCalificacionProveedor: {
+			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'calificacionProveedor'}
+    			}
+		}
 // No es un diccionario, son todos los nombres de los contactos del provedor seleccionado
 //		comboContacto: {
 //			model: 'HreRem.model.ComboBase',

@@ -3,9 +3,11 @@ package es.pfsgroup.plugin.rem.controller;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomBooleanEditor;
@@ -25,7 +27,12 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.ParadiseCustomDateEditor;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.excel.ExcelReport;
+import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
+import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedor;
 
 
 @Controller
@@ -33,10 +40,10 @@ public class ProveedoresController {
 	
 	@Autowired
 	private ProveedoresApi proveedoresApi;
-		
 	
-	
-	/****************************************************************************************************************/
+	@Autowired
+	private ExcelReportGeneratorApi excelReportGeneratorApi;
+
 	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
@@ -91,17 +98,51 @@ public class ProveedoresController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getProveedorById(Long id, ModelMap model) {
+		model.put("data", proveedoresApi.getProveedorById(id));
+		model.put("success", true);
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveProveedorById(DtoActivoProveedor dto, ModelMap model) {
+		try{
+			boolean success = proveedoresApi.saveProveedorById(dto);
+			model.put("success", success);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelProveedores(DtoProveedorFilter dtoProveedorFiltro, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		dtoProveedorFiltro.setStart(excelReportGeneratorApi.getStart());
+		dtoProveedorFiltro.setLimit(excelReportGeneratorApi.getLimit());
+		
+		@SuppressWarnings("unchecked")
+		List<VBusquedaProveedor> listaProveedores = (List<VBusquedaProveedor>) proveedoresApi.getProveedores(dtoProveedorFiltro).getResults();
+
+		ExcelReport report = new ProveedorExcelReport(listaProveedores);
+		
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getProveedores(DtoProveedorFilter dtoProveedorFiltro, ModelMap model) {
-
 		try {
-
 			Page page = proveedoresApi.getProveedores(dtoProveedorFiltro);
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);

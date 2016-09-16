@@ -43,12 +43,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											items :	[
 												{ 
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.id'),
-													name:		'idProveedor',
+													name: 'id',
 													colspan: 2
 												},
 												{ 
 													xtype: 'combo',
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.estado'),
+													name: 'estadoProveedorCodigo',
 													bind: {
 														store: '{comboEstadoProveedor}'
 													},
@@ -59,29 +60,38 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												{							
 													xtype: 'combo',
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.tipo'),
+													name: 'tipoProveedorCodigo',
+													reference: 'cbTipoProveedorFilter',
+													chainedStore: 'comboSubtipoProveedor',
+													chainedReference: 'cbSubtipoProveedorFilter',
 													bind: {
 														store: '{comboTipoProveedor}',
-														value: '{proveedor.tipoProveedorCodigo}'			            		
+														value: '{proveedor.tipoProveedorCodigo}'
 													},
 									            	displayField: 'descripcion',
-													valueField: 'codigo'
+													valueField: 'codigo',
+													listeners: {
+										                select: 'onChangeChainedCombo'
+										            }
 												},
 												{ 
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nombrecomercial'),
-													name:		'nombreComercial'
+													name:		'nombreComercialProveedor'
 												},
 												{ 
 													xtype: 'datefield',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.fechadesde'),
-													name:		'fechaDesde'
+													name:		'fechaAlta'
 												},
 												// fila 2
 												{							
 													xtype: 'combo',
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.subtipo'),
+													name: 'subtipoProveedorCodigo',
+													reference: 'cbSubtipoProveedorFilter',
 													bind: {
 														store: '{comboSubtipoProveedor}',
-														value: '{proveedor.subtipoProveedorCodigo}'			            		
+														disabled: '{!proveedor.tipoProveedorCodigo}'
 													},
 									            	displayField: 'descripcion',
 													valueField: 'codigo',
@@ -90,15 +100,15 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												{ 
 													xtype: 'datefield',
 													fieldLabel:  HreRem.i18n('fieldlabel.proveedores.fechahasta'),
-													name:		'fechaHasta'
+													name:		'fechaBaja'
 												},
 												// fila 3
 												{
 													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.tipopersona'),
+													name: 'tipoPersonaCodigo',
 													bind: {
-														store: '{comboTipoPersona}',
-														value: '{proveedor.tipoPersonaCodigo}'			            		
+														store: '{comboTipoPersona}'			            		
 													},
 									            	displayField: 'descripcion',
 													valueField: 'codigo'
@@ -106,9 +116,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												{
 													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.cartera'),
+													name: 'cartera',
 													bind: {
-														store: '{comboCartera}',
-														value: '{proveedor.carteraCodigo}'			            		
+														store: '{comboCartera}'		            		
 													},
 									            	displayField: 'descripcion',
 													valueField: 'codigo'
@@ -116,9 +126,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												{
 													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.propietario'),
+													name: 'propietario',
+													disabled: true,
 													bind: {
-														store: '{comboPropietario}',
-														value: '{proveedor.propietarioCodigo}'			            		
+														store: '{comboPropietario}'			            		
 													},
 									            	displayField: 'descripcion',
 													valueField: 'codigo'
@@ -126,20 +137,11 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												// Fila 4
 												{ 
 													xtype: 'combo',
-													fieldLabel: HreRem.i18n('fieldlabel.proveedores.ambito'),
-													bind: {
-														store: '{comboAmbito}',
-														value: '{proveedor.ambitoCodigo}'			            		
-													},
-									            	displayField: 'descripcion',
-													valueField: 'codigo'
-												},
-												{ 
-													xtype: 'combo',
 													fieldLabel: HreRem.i18n('fieldlabel.proveedores.subcartera'),
+													disabled: true,
+													name: 'subcartera',
 													bind: {
-														store: '{comboSubcartera}',
-														value: '{proveedor.subcarteraCodigo}'			            		
+														store: '{comboSubcartera}'			            		
 													},
 									            	displayField: 'descripcion',
 													valueField: 'codigo'
@@ -152,6 +154,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											defaultType: 'textfield',
 											title:HreRem.i18n('title.configuracion.proveedores.direccion'),
 											colspan: 3,
+											collapsed: true,
 											items :	[
 											       	 // fila 0
 												 	{
@@ -186,6 +189,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 												 	},
 												 	{
 														fieldLabel:  HreRem.i18n('fieldlabel.proveedores.cp'),
+														name: 'codigoPostal',
 									                	bind:		'{proveedor.cp}'
 												 	}
 											]
@@ -196,15 +200,18 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											defaultType: 'textfield',
 											title:HreRem.i18n('title.configuracion.proveedores.persona'),
 											colspan: 3,
+											collapsed: true,
 											items :	[
 											       	 // fila 0
 													{ 
 														fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nif'),
-									                	name:		'nif'
+									                	name:		'nifProveedor'
 											        },
 													{ 
 														xtype: 'combo',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.nombre'),
+											        	disabled: true,
+											        	name: 'nombrePersContacto',
 											        	bind: {
 										            		store: '{comboContacto}'
 										            	},
@@ -220,11 +227,13 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 											defaultType: 'textfield',
 											title:HreRem.i18n('title.configuracion.proveedores.mediadores'),
 											colspan: 3,
+											collapsed: true,
 											items :	[
 											       	 // fila 0
 													{ 
 														xtype: 'combo',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.homologado'),
+											        	name: 'homologadoCodigo',
 											        	bind: {
 										            		store: '{comboSiNoNSRem}'
 										            	},
@@ -234,8 +243,9 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 													{ 
 														xtype: 'combo',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.calificacion'),
+											        	name: 'calificacionCodigo',
 											        	bind: {
-										            		store: '{comboCalificacion}'
+										            		store: '{comboCalificacionProveedor}'
 										            	},
 										            	displayField: 'descripcion',
 														valueField: 'codigo'
@@ -243,6 +253,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 													{ 
 														xtype: 'combo',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.proveedores.top'),
+											        	name: 'topCodigo',
 											        	bind: {
 										            		store: '{comboSiNoNSRem}'
 										            	},

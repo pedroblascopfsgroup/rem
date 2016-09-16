@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicatari
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
@@ -41,6 +42,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
@@ -48,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAdelanto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
@@ -177,6 +181,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposImpuestos", DDTiposImpuesto.class);
 		mapa.put("situacionesPosesoria", DDSituacionesPosesoria.class);
 		mapa.put("tiposComparecientes", DDTiposCompareciente.class);
+		mapa.put("calificacionProveedor", DDCalificacionProveedor.class);
+		mapa.put("resultadoProcesoBlanqueo", DDResultadoProcesoBlanqueo.class);
+		mapa.put("motivoRetencionPago", DDMotivoRetencion.class);
+		mapa.put("tipoActivosCartera", DDTipoActivosCartera.class);
 		return Collections.unmodifiableMap(mapa);
 	}
 	

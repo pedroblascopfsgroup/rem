@@ -22,16 +22,14 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
-import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.persona.model.DDTipoPersona;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoZonaGeografica;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
@@ -188,9 +186,16 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_FECHA_PBC")
 	private Date fechaProcesoBlanqueo;
 	
+	@Column(name = "PVE_CUSTODIO")
+	private Integer custodio;
+	
 	@ManyToOne
 	@JoinColumn(name = "DD_RPB_ID")
 	private DDResultadoProcesoBlanqueo resultadoProcesoBlanqueo;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_TAC_ID")
+	private DDTipoActivosCartera tipoActivosCartera;
 
 	@Version   
 	private Long version;
@@ -538,6 +543,22 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Integer getCustodio() {
+		return custodio;
+	}
+
+	public void setCustodio(Integer custodio) {
+		this.custodio = custodio;
+	}
+
+	public DDTipoActivosCartera getTipoActivosCartera() {
+		return tipoActivosCartera;
+	}
+
+	public void setTipoActivosCartera(DDTipoActivosCartera tipoActivosCartera) {
+		this.tipoActivosCartera = tipoActivosCartera;
 	}
 	
 	

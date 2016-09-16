@@ -81,6 +81,11 @@ public class GenericController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioSubtipoProveedor(String codigoTipoProveedor){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioSubtipoProveedor(codigoTipoProveedor)));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboEspecial(String diccionario){
 	
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboEspecial(diccionario)));
@@ -131,7 +136,7 @@ public class GenericController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboMunicipio(String codigoProvincia){		
+	public ModelAndView getComboMunicipio(String codigoProvincia){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMunicipio(codigoProvincia)));		
 	}
 	

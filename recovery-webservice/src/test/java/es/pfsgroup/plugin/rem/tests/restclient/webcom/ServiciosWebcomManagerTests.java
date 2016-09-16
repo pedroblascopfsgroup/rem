@@ -25,9 +25,8 @@ import net.sf.json.JSONArray;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
-
-	@Mock
-	private ApiProxyFactory proxyFactory;
+	
+	private static Long USUARIO_REM = 7337L;
 
 	@Mock
 	HttpClientFacade httpClient;
@@ -46,7 +45,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 
 	@Before
 	public void setup() {
-		initMocks(proxyFactory, httpClient);
+		initMocks(httpClient);
 		manager.setWebServiceClients(estadoTrabajoService, estadoOfertaService, stockService);
 
 	}
@@ -62,7 +61,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		String codEstado = "ABC";
 		String motivoRechazo = "Mi Motivo";
 
-		manager.enviaActualizacionEstadoTrabajo(idRem, idWebcom, codEstado, motivoRechazo);
+		manager.enviaActualizacionEstadoTrabajo(USUARIO_REM,idRem, idWebcom, codEstado, motivoRechazo);
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 
@@ -86,7 +85,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		String codEstadoExpediente = "DEF";
 		Boolean vendido = Boolean.TRUE;
 
-		manager.enviaActualizacionEstadoOferta(idRem, idWebcom, codEstadoOferta, idActivoHaya, codEstadoExpediente,
+		manager.enviaActualizacionEstadoOferta(USUARIO_REM, idRem, idWebcom, codEstadoOferta, idActivoHaya, codEstadoExpediente,
 				vendido);
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
@@ -124,7 +123,7 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		stock.add(stock1);
 		stock.add(stock2);
 
-		manager.enviarStock(stock);
+		manager.enviarStock(USUARIO_REM, stock);
 
 		JSONArray requestData = genericValidation(httpClient, method, charset);
 

@@ -1,0 +1,32 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- Scheduler task -->
+	<bean name="deteccionCambiosTask"
+		class="es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDTask" />
+
+	<!-- Scheduler job -->
+	<bean name="deteccionCambiosJob" class="org.springframework.scheduling.quartz.JobDetailBean">
+
+		<property name="jobClass"
+			value="es.pfsgroup.plugin.rem.restclient.schedule.DeteccionCambiosBDJob" />
+
+		<property name="jobDataAsMap">
+			<map>
+				<entry key="schedulerTask" value-ref="deteccionCambiosTask" />
+			</map>
+		</property>
+	</bean>
+
+	<!-- Cron Trigger, run every 10 seconds -->
+
+
+	<bean id="deteccionCambiosTrigger" parent="scheduling.schedulableTrigger">
+		<property name="jobDetail" ref="deteccionCambiosJob" />
+		<property name="cronExpression" value="0/10 * * * * ?" />
+
+	</bean>
+
+</beans>

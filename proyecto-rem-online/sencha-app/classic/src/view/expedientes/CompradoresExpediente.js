@@ -153,7 +153,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 											    reference: 'listadoDocumentosExpediente',
 												cls	: 'panel-base shadow-panel',
 												bind: {
-													store: '{storeDocumentosExpediente}'
+													//store: '{storeDocumentosExpediente}'
 												},
 												columns: [
 												

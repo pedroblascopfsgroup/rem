@@ -13,6 +13,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomBase;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
@@ -108,11 +109,12 @@ public abstract class ServiciosWebcomBaseManager {
 		} catch (ErrorServicioWebcom e) {
 			logger.error("Error al invocar " + servicio.getClass().getSimpleName() + ".enviarPeticion con parámetros "
 					+ paramsList.toString(), e);
-			if (ErrorServicioWebcom.INVALID_SIGNATURE.equals(e.getErrorWebcom())) {
+			if (! e.isHttpError()) {
+				logger.fatal("Se ha producido un error no-reintentable en la llamada a servicio REST de Webcom", e);
 				// TODO Loguear errores de las llamadas que no se deban
 				// reintentar
 			} else {
-				logger.info("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
+				logger.error("Se va a reintentar la invocación a " + servicio.getClass().getSimpleName()
 						+ ".enviarPeticion con parámetros " + paramsList.toString());
 				// TODO Configuración de colas para gestionar los reintentos
 				MessageBroker mb = this.getMessageBroker();
@@ -122,8 +124,9 @@ public abstract class ServiciosWebcomBaseManager {
 					logger.warn("MESSAGE BROKER no está disponible");
 				}
 			}
-		}
+		} 
 	}
+
 
 	/**
 	 * Comprueba si un determinado campo existe en el HashMap

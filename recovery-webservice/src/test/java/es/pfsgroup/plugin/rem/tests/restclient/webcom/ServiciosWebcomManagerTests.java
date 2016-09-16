@@ -1,5 +1,11 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyMap;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,20 +14,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.WebcomDataType;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
+import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoOferta;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteEstadoTrabajo;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteStock;
+import es.pfsgroup.plugin.rem.restclient.webcom.clients.exception.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoOfertaConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.EstadoTrabajoConstantes;
 import es.pfsgroup.plugin.rem.restclient.webcom.definition.ServicioStockConstantes;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
@@ -39,9 +51,14 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 	
 	@InjectMocks
 	private ClienteStock stockService;
+	
+	@Mock
+	private MessageBroker messageBroker;
 
 	@InjectMocks
 	private ServiciosWebcomManager manager;
+	
+	
 
 	@Before
 	public void setup() {
@@ -139,5 +156,37 @@ public class ServiciosWebcomManagerTests extends ServiciosWebcomTestsBase {
 		// Comprobamos que algunos de los campos no informados no estén en el JSON
 		assertDataIsMissing(requestData, 0, ServicioStockConstantes.ANTIGUEDAD);
 	}
+	
+	@Test
+	public void reintentosSiErrorHttpTest(){
+		Mockito.reset(httpClient);
+		try {
+			Mockito.when(httpClient.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),
+					anyString())).thenThrow(HttpClientException.class);
+			
+			manager.enviaActualizacionEstadoTrabajo(1L, 1L, 1L, "A", "B");
+			
+			Mockito.verify(messageBroker).sendAsync(Mockito.any(Class.class), Mockito.any());;
+		} catch (HttpClientException e) {
+			
+		}
+	}
+	
+	@Test
+	public void noReintentarSiErrorControladoWebcom(){
+		ClienteEstadoTrabajo mockServicio =  Mockito.spy(estadoTrabajoService);
+		manager.setWebServiceClients(mockServicio, estadoOfertaService, stockService);
+		try {
+			Mockito.doThrow(ErrorServicioWebcom.class).when(mockServicio).enviaPeticion(Mockito.any(ParamsList.class));
+			manager.enviaActualizacionEstadoTrabajo(1L, 1L, 1L, "A", "B");
+			
+			Mockito.verify(mockServicio).enviaPeticion(any(ParamsList.class));
+			Mockito.verifyZeroInteractions(messageBroker);
+			
+			
+		} catch (ErrorServicioWebcom e) {
+		}
+	}
+
 
 }

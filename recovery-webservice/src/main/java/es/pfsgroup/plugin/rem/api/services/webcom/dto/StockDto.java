@@ -35,7 +35,7 @@ public class StockDto {
 	private LongDataType banyos;
 	private LongDataType aseos;
 	private LongDataType garajes;
-	private BooleanDataType publicado;
+	private BooleanDataType nuevo;
 	private StringDataType codEstadoComercial;
 	private StringDataType codTipoVenta;
 	private FloatDataType lat;
@@ -229,12 +229,6 @@ public class StockDto {
 	public void setGarajes(LongDataType garajes) {
 		this.garajes = garajes;
 	}
-	public BooleanDataType getPublicado() {
-		return publicado;
-	}
-	public void setPublicado(BooleanDataType publicado) {
-		this.publicado = publicado;
-	}
 	public StringDataType getCodEstadoComercial() {
 		return codEstadoComercial;
 	}
@@ -384,6 +378,12 @@ public class StockDto {
 	}
 	public void setCodRatio(StringDataType codRatio) {
 		this.codRatio = codRatio;
+	}
+	public BooleanDataType getNuevo() {
+		return nuevo;
+	}
+	public void setNuevo(BooleanDataType nuevo) {
+		this.nuevo = nuevo;
 	}
 			
 }

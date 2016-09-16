@@ -21,7 +21,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     requires: ['HreRem.model.FichaComprador'],
     
 	listeners: {
-		boxready: 'cargarData',
+		boxready: 'cargarDatosComprador',
 	
 //		boxready: function(window) {
 //			

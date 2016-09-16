@@ -28,6 +28,9 @@ Ext.define('HreRem.model.Visitas', {
 			name : 'nombre'
 		},
 		{
+			name : 'estadoVisita'
+		},
+		{
 			name : 'numDocumento'
 		},
 		{

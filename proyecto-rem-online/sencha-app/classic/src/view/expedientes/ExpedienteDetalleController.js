@@ -353,7 +353,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		porcentajeReserva = me.lookupReference('porcentajeReserva'),
 		importeReserva = me.lookupReference('importeReserva'),
 		plazoParaFirmar = me.lookupReference('plazoFirmaReserva');
-		debugger;
+
 		if(CONST.TIPOS_CALCULO['PORCENTAJE'] == valorCombo){
 			me.getViewModel().get('condiciones').set('importeReserva', null);
 			porcentajeReserva.setDisabled(false);
@@ -391,7 +391,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		tipoCalculo = me.lookupReference('tipoCalculo').getValue();
 		
 		if(CONST.TIPOS_CALCULO['PORCENTAJE'] == tipoCalculo) {
-			debugger;
 			importeReserva = importeOferta * value / 100;
 		}
 		
@@ -526,7 +525,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	window.close();		
 	},
 	onHaCambiadoIbi: function(combo, value){
-		var me= this;
+		var me= this,
 		
 		porCuentaDe= me.lookupReference('ibiPorCuentaDe');
 		
@@ -567,7 +566,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-	cargarData: function (window) {
+	cargarDatosComprador: function (window) {
 		var me = this,
 		model = null,
 		models = null,
@@ -725,6 +724,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						}
 					}
 				});
+		}
+	},
+	
+	onHaCambiadoFechaInicioFinanciacion: function(field, value, oldValue){
+		var me= this;
+		var fechaInicioFinanciacion= value;
+		var fechaFinFinanciacion= me.lookupReference('fechaFinFinanciacion').value;
+		if(!Ext.isEmpty(fechaFinFinanciacion) && !Ext.isEmpty(fechaInicioFinanciacion) && fechaInicioFinanciacion>fechaFinFinanciacion){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
+		var fieldFechaFinFinanciacion= me.lookupReference('fechaFinFinanciacion');
+		fieldFechaFinFinanciacion.setMinValue(fechaInicioFinanciacion);
+	},
+	
+	onHaCambiadoFechaFinFinanciacion: function(field, value, oldValue){
+		var me= this;
+		var fechaFinFinanciacion= value;
+		var fechaInicioFinanciacion= me.lookupReference('fechaInicioFinanciacion').value;
+		if(!Ext.isEmpty(fechaInicioFinanciacion) && !Ext.isEmpty(fechaFinFinanciacion) && fechaInicioFinanciacion>fechaFinFinanciacion){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
 		}
 	}
 

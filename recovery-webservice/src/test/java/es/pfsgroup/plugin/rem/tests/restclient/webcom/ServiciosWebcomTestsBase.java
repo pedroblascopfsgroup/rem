@@ -31,26 +31,24 @@ import net.sf.json.JSONObject;
 
 public class ServiciosWebcomTestsBase {
 	
-	public static final String USUARIO_REM = "TEST";
-	
 
 	public ServiciosWebcomTestsBase() {
 		super();
 	}
 
-	protected void initMocks(ApiProxyFactory apiProxyMock, HttpClientFacade httpClientMock) {
+	protected void initMocks(HttpClientFacade httpClientMock) {
 		if (httpClientMock == null){
 			throw new IllegalStateException("'httpClientMock' no puede ser NULL");
 		}
 		
-		if (apiProxyMock != null) {
-			UsuarioApi usuarioApi = mock(UsuarioApi.class);
-			Usuario usuarioMock = mock(Usuario.class);
-			when(apiProxyMock.proxy(UsuarioApi.class)).thenReturn(usuarioApi);
-			when(usuarioApi.getUsuarioLogado()).thenReturn(usuarioMock);
-			when(usuarioMock.getUsername()).thenThrow(new IllegalAccessError("No se debería obtener el username del usuario logado."));
-			when(usuarioMock.getId()).thenReturn(1000L);
-		}
+//		if (apiProxyMock != null) {
+//			UsuarioApi usuarioApi = mock(UsuarioApi.class);
+//			Usuario usuarioMock = mock(Usuario.class);
+//			when(apiProxyMock.proxy(UsuarioApi.class)).thenReturn(usuarioApi);
+//			when(usuarioApi.getUsuarioLogado()).thenReturn(usuarioMock);
+//			when(usuarioMock.getUsername()).thenThrow(new IllegalAccessError("No se debería obtener el username del usuario logado."));
+//			when(usuarioMock.getId()).thenReturn(1000L);
+//		}
 	
 		try {
 			when(httpClientMock.processRequest(anyString(), anyString(), anyMap(), any(JSONObject.class), anyInt(),

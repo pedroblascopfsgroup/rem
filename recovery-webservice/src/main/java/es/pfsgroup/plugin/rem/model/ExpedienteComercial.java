@@ -125,6 +125,37 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "ECO_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     private List<AdjuntoExpedienteComercial> adjuntos;
+    
+    @Column(name="ECO_FECHA_INICIO_ALQUILER")
+    private Date fechaInicioAlquiler;
+    
+    @Column(name="ECO_FECHA_FIN_ALQUILER")
+    private Date fechaFinAlquiler;
+    
+    @Column(name="ECO_IMPORTE_RENTA_ALQUILER")
+    private Double importeRentaAlquiler;
+    
+    @Column(name="ECO_NUMERO_CONTRATO_ALQUILER")
+    private Integer numContratoAlquiler;
+    
+    @Column(name="ECO_PLAZO_OPCION_COMPRA")
+    private Date fechaPlazoOpcionCompraAlquiler;
+    
+    @Column(name="ECO_PRIMA_OPCION_COMPRA")
+    private Double primaOpcionCompraAlquiler;
+    
+    @Column(name="ECO_PRECIO_OPCION_COMPRA")
+    private Double precioOpcionCompraAlquiler;
+    
+    @Column(name="ECO_CONDICIONES_OPCION_COMPRA")
+    private String condicionesOpcionCompraAlquiler;
+    
+    @Column(name="ECO_CONFLICTO_INTERESES")
+    private Integer conflictoIntereses;
+    
+    @Column(name="ECO_RIESGO_REPUTACIONAL")
+    private Integer riesgoReputacional;
+    
      
 	@Version   
 	private Long version;
@@ -341,6 +372,89 @@ public class ExpedienteComercial implements Serializable, Auditable {
         }
         return null;
     }
+
+	public Date getFechaInicioAlquiler() {
+		return fechaInicioAlquiler;
+	}
+
+	public void setFechaInicioAlquiler(Date fechaInicioAlquiler) {
+		this.fechaInicioAlquiler = fechaInicioAlquiler;
+	}
+
+	public Date getFechaFinAlquiler() {
+		return fechaFinAlquiler;
+	}
+
+	public void setFechaFinAlquiler(Date fechaFinAlquiler) {
+		this.fechaFinAlquiler = fechaFinAlquiler;
+	}
+
+	public Double getImporteRentaAlquiler() {
+		return importeRentaAlquiler;
+	}
+
+	public void setImporteRentaAlquiler(Double importeRentaAlquiler) {
+		this.importeRentaAlquiler = importeRentaAlquiler;
+	}
+
+	public Integer getNumContratoAlquiler() {
+		return numContratoAlquiler;
+	}
+
+	public void setNumContratoAlquiler(Integer numContratoAlquiler) {
+		this.numContratoAlquiler = numContratoAlquiler;
+	}
+
+	public Date getFechaPlazoOpcionCompraAlquiler() {
+		return fechaPlazoOpcionCompraAlquiler;
+	}
+
+	public void setFechaPlazoOpcionCompraAlquiler(
+			Date fechaPlazoOpcionCompraAlquiler) {
+		this.fechaPlazoOpcionCompraAlquiler = fechaPlazoOpcionCompraAlquiler;
+	}
+
+	public Double getPrimaOpcionCompraAlquiler() {
+		return primaOpcionCompraAlquiler;
+	}
+
+	public void setPrimaOpcionCompraAlquiler(Double primaOpcionCompraAlquiler) {
+		this.primaOpcionCompraAlquiler = primaOpcionCompraAlquiler;
+	}
+
+	public Double getPrecioOpcionCompraAlquiler() {
+		return precioOpcionCompraAlquiler;
+	}
+
+	public void setPrecioOpcionCompraAlquiler(Double precioOpcionCompraAlquiler) {
+		this.precioOpcionCompraAlquiler = precioOpcionCompraAlquiler;
+	}
+
+	public String getCondicionesOpcionCompraAlquiler() {
+		return condicionesOpcionCompraAlquiler;
+	}
+
+	public void setCondicionesOpcionCompraAlquiler(
+			String condicionesOpcionCompraAlquiler) {
+		this.condicionesOpcionCompraAlquiler = condicionesOpcionCompraAlquiler;
+	}
+
+	public Integer getConflictoIntereses() {
+		return conflictoIntereses;
+	}
+
+	public void setConflictoIntereses(Integer conflictoIntereses) {
+		this.conflictoIntereses = conflictoIntereses;
+	}
+
+	public Integer getRiesgoReputacional() {
+		return riesgoReputacional;
+	}
+
+	public void setRiesgoReputacional(Integer riesgoReputacional) {
+		this.riesgoReputacional = riesgoReputacional;
+	}
+	
     
    
 }

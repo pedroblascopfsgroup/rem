@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.plugin.rem.notificaciones.NotificacionesWsManager;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionDto;
 import es.pfsgroup.plugin.rem.rest.dto.NotificacionRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -32,21 +33,18 @@ public class NotificacionesController {
 
 	private final Log logger = LogFactory.getLog(getClass());
 
+	@Autowired
+	private NotificacionesWsManager notifWsManager;
+
 	/**
 	 * Inserta una notificacion Ejem: IP:8080/pfs/rest/notificaciones HEADERS:
 	 * Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
-	 * BODY: {"id":"109238120575","data":[{"titulo":"titulo notif1"
-	 * ,"descripcion":"descipcion notf1"
-	 * ,"fechaRealizacion":"2016-01-01T10:10:10","codTipoNotificacion":"NOTIF",
-	 * "idActivoHaya":3142424,"idNotificacionRem":4343423434,
-	 * "idNotificacionWebcom":34234343,"idUsuarioRemAccion":56,
-	 * "idUsuarioDestinoRem":1},{"titulo":"titulo notif2","descripcion":
-	 * "descipcion notf2"
-	 * ,"fechaRealizacion":"2016-01-01T10:10:10","codTipoNotificacion":"NOTIF",
-	 * "idActivoHaya":3142424,"idNotificacionRem":4343423434,
-	 * "idNotificacionWebcom":34234343,"idUsuarioRemAccion":56,
-	 * "idUsuarioDestinoRem":1}]}
+	 * BODY: {"id":"109238120575","data":[{"titulo":"notificaaaaaaaaaaa",
+	 * "descripcion":"descipcion notf1qqqqqq"
+	 * ,"codTipoNotificacion":"N","idActivoHaya":37153,"idNotificacionWebcom":
+	 * 34234343,"idUsuarioRemAccion":29468,"fechaAccion":"2016-01-01T10:10:10",
+	 * "fechaRealizacion":"2016-10-01T10:10:10"}]}
 	 *
 	 * @param model
 	 * @param request
@@ -72,30 +70,38 @@ public class NotificacionesController {
 
 			for (NotificacionDto notificacion : notificaciones) {
 				map = new HashMap<String, Object>();
-				errorsList = new ArrayList<String>();
-				Notificacion notificacionBbdd = new Notificacion();
-				notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
-				notificacionBbdd.setDestinatario(notificacion.getIdUsuarioDestinoRem());
-				notificacionBbdd.setTitulo(notificacion.getTitulo());
-				notificacionBbdd.setDescripcion(notificacion.getDescripcion());
-				notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
-				Notificacion notifrem = notificacionAdapter.saveNotificacion(notificacionBbdd);
-				map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
-				map.put("idNotificacionRem", "falta");
-				map.put("success", true);
-				map.put("errorMessages", errorsList);
+				errorsList = notifWsManager.validateNotificacionRequest(notificacion);
+				if (errorsList.size() == 0) {
+					Notificacion notificacionBbdd = new Notificacion();
+					notificacionBbdd.setIdActivo(notificacion.getIdActivoHaya());
+					notificacionBbdd.setDestinatario(notificacion.getIdUsuarioRemAccion());
+					notificacionBbdd.setTitulo(notificacion.getTitulo());
+					notificacionBbdd.setDescripcion(notificacion.getDescripcion());
+					notificacionBbdd.setFecha(notificacion.getFechaRealizacion());
+					Notificacion notifrem = notificacionAdapter.saveNotificacion(notificacionBbdd);
+					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
+					map.put("idNotificacionRem", notifrem.getIdsNotificacionCreada().get(0));
+					map.put("success", true);
+					map.put("errorMessages", errorsList);
+				} else {
+					map.put("idNotificacionWebcom", notificacion.getIdNotificacionWebcom());
+					map.put("success", false);
+					map.put("errorMessages", errorsList);
+				}
 				listaRespuesta.add(map);
 			}
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
 			model.put("error", "");
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e);
 			model.put("id", jsonData.getId());
 			model.put("data", listaRespuesta);
 			model.put("error", e.getMessage().toUpperCase());
+			map.put("success", false);
 		}
-		listaRespuesta.add(map);
 		return new ModelAndView("jsonView", model);
 	}
+
 }

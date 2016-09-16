@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -77,6 +78,11 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 		}
 		
 
+	}
+	
+	@Override
+	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		
 	}
 
 }

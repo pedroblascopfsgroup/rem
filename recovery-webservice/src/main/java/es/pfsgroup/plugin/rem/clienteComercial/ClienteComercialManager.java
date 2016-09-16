@@ -430,9 +430,9 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				if(((JSONObject)jsonFields).containsKey("apellidos")){
 					cliente.setApellidos(clienteDto.getApellidos());
 				}
-				if(((JSONObject)jsonFields).containsKey("fechaAccion")){
+				/*if(((JSONObject)jsonFields).containsKey("fechaAccion")){
 					cliente.setFechaAccion(clienteDto.getFechaAccion());
-				}
+				}*/
 				if(((JSONObject)jsonFields).containsKey("idUsuarioRem")) {
 					if(!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())){
 						Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteDto.getIdUsuarioRemAccion()));							

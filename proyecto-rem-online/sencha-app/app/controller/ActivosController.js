@@ -8,7 +8,8 @@ Ext.define('HreRem.controller.ActivosController', {
     'HreRem.model.ActivoCargas', 'HreRem.model.ActivoCargasTab', 'HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.ActivoValoraciones', 'HreRem.model.ActivoTasacion',
     'HreRem.model.ActivoInformacionComercial','HreRem.model.Tramite','HreRem.model.FichaTrabajo', 'HreRem.model.ActivoAviso', 
     'HreRem.model.AgrupacionAviso', 'HreRem.model.TrabajoAviso', 'HreRem.model.ExpedienteAviso','HreRem.view.activos.tramites.TramitesDetalle', 'HreRem.model.GestionEconomicaTrabajo', 
-    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu', 'HreRem.view.expedientes.ExpedienteDetalleMain'],
+    'HreRem.model.SeleccionTarifas', 'HreRem.model.TarifasTrabajo', 'HreRem.model.PresupuestosTrabajo', 'HreRem.model.ExpedienteComercial','HreRem.view.comercial.ComercialMainMenu',
+    'HreRem.view.expedientes.ExpedienteDetalleMain', 'HreRem.model.FichaProveedorModel', 'HreRem.view.configuracion.administracion.proveedores.detalle.ProveedoresDetalleTabPanel'],
 
     
     refs: [
@@ -31,15 +32,16 @@ Ext.define('HreRem.controller.ActivosController', {
 				{
 					ref: 'DatosGeneralesActivo',
 					selector: 'datosgeneralesactivo'
+				},
+				{
+					ref: 'configuracionMain',
+					selector: 'configuracionmain'
 				}
-				
-				
 				
 	],
     
     
     control: {
-    	
     	
     	'activosmain' : {    		
     		abrirDetalleActivo : 'abrirDetalleActivo',
@@ -151,17 +153,24 @@ Ext.define('HreRem.controller.ActivosController', {
     			
     		}
     	},
+    	
     	'visitascomercialmain': {    		
 			abrirDetalleActivo: 'abrirDetalleActivoComercialVisitas'
     	},
+    	
     	'ofertascomercialmain': {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
 			abrirDetalleExpediente: 'abrirDetalleExpediente'
     	},
+    	
     	'expedientedetallemain': {
     		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
     		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea'
+    	},
+    	
+    	'configuracionmain': {
+    		abrirDetalleProveedor: 'abrirDetalleProveedor'
     	}
 
     },
@@ -827,6 +836,48 @@ Ext.define('HreRem.controller.ActivosController', {
     	id = record.get("idActivo");
 		me.redirectTo('activos', true);
     	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['PROPUESTAS'])
+    },
+    
+    abrirDetalleProveedor: function(record, refLinks) {
+    	var me = this,
+    	titulo = "Proveedor " + record.get("id"),
+    	id = record.get("id");
+		me.redirectTo('activos', true);    	
+    	me.abrirDetalleProveedorById(id, titulo, refLinks);    	
+    	
+    },
+    
+    abrirDetalleProveedorById: function(id, titulo, refLinks) {
+
+    	var me = this,
+    	cfg = {}, 
+    	tab=null;
+
+    	cfg.title = titulo;
+    	tab = me.createTab (me.getActivosMain(), 'proveedor', "proveedoresdetalletabpanel",  id, cfg);
+    	tab.mask(HreRem.i18n('msg.mask.loading'));
+    	me.setLogTime(); 
+    	
+    	HreRem.model.FichaProveedorModel.load(id, {
+    		scope: this,
+		    success: function(proveedor) {
+		    	me.logTime("Load provedor success"); 
+		    	me.setLogTime();
+		    			    	
+		    	if(Ext.isEmpty(titulo)) {		    		
+		    		titulo = "Proveedor " + proveedor.get("id");
+		    		tab.setTitle(titulo);
+		    	}
+		    	
+		    	tab.getViewModel().set("proveedor", proveedor);
+		    	tab.configCmp(proveedor);
+
+				tab.unmask();
+
+		    	me.logTime("Fin Set values"); 
+		    }
+		});
+
     }
     
 });

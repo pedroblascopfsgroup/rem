@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 
 public class WebcomRequestUtils {
+	
+	private static SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 	public static JSONObject createRequestJson(ParamsList paramsList) {
 		JSONArray dataArray = new JSONArray();
@@ -32,11 +35,11 @@ public class WebcomRequestUtils {
 
 	private static JSONObject createJSONData(Map<String, String> stringParameters) {
 		JSONObject data = new JSONObject();
-		if (stringParameters != null){
-			for (Entry<String, String> e : stringParameters.entrySet()){
-				if (e.getValue() != null){
+		if (stringParameters != null) {
+			for (Entry<String, String> e : stringParameters.entrySet()) {
+				if (e.getValue() != null) {
 					data.put(e.getKey(), e.getValue());
-				}else{
+				} else {
 					data.put(e.getKey(), JSONNull.getInstance());
 				}
 			}
@@ -53,7 +56,12 @@ public class WebcomRequestUtils {
 					if (value instanceof NullDataType) {
 						strParams.put(p.getKey(), null);
 					} else {
-						strParams.put(p.getKey(), WebcomDataType.valueOf(value).toString());
+						Object valueOf = WebcomDataType.valueOf(value);
+						if (valueOf instanceof Date) {
+							strParams.put(p.getKey(), formatDate((Date) valueOf));
+						} else {
+							strParams.put(p.getKey(), valueOf.toString());
+						}
 					}
 				}
 			}
@@ -69,9 +77,11 @@ public class WebcomRequestUtils {
 	}
 
 	public static String formatDate(Date date) {
-		SimpleDateFormat formaterDate = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat formaterTime = new SimpleDateFormat("hh:mm:ss");
-		return formaterDate.format(date) + "T" + formaterTime.format(date);
+		return formaterDate.format(date);
+	}
+
+	public static Date parseDate(String string) throws ParseException {
+		return formaterDate.parse(string);
 	}
 
 }

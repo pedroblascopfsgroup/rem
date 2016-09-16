@@ -4,7 +4,7 @@ public class LongDataType extends WebcomDataType<Long>{
 	
 	private Long value;
 	
-	protected LongDataType(Long val){
+	public LongDataType(Long val){
 		this.value = val;
 	}
 
@@ -12,5 +12,4 @@ public class LongDataType extends WebcomDataType<Long>{
 	public Long getValue() {
 		return this.value;
 	}
-
 }

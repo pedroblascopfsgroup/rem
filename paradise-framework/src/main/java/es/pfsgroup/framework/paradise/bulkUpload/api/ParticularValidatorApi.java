@@ -26,4 +26,8 @@ public interface  ParticularValidatorApi {
 	
 	public Boolean estadoAutorizaredicion(String numActivo);
 	
+	public Boolean existeBloqueoPreciosActivo(String numActivo);
+	
+	public Boolean existeOfertaAprobadaActivo(String numActivo);
+	
 }

@@ -1,12 +1,17 @@
 package es.pfsgroup.framework.paradise.agenda.model;
 
+import java.util.Date;
+import java.util.List;
+
 public class Notificacion {
 
 	Long idActivo;
+	List<Long> idsNotificacionCreada;
 	Long destinatario;
 	String titulo;
 	String descripcion;
 	String strFecha;
+	Date fecha;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -38,7 +43,16 @@ public class Notificacion {
 	public void setStrFecha(String strFecha) {
 		this.strFecha = strFecha;
 	}
-	
-	
-	
+	public Date getFecha() {
+		return fecha;
+	}
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+	public List<Long> getIdsNotificacionCreada() {
+		return idsNotificacionCreada;
+	}
+	public void setIdsNotificacionCreada(List<Long> idsNotificacionCreada) {
+		this.idsNotificacionCreada = idsNotificacionCreada;
+	}	
 }

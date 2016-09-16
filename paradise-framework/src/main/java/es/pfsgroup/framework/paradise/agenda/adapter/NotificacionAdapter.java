@@ -17,7 +17,6 @@ import es.capgemini.pfs.tareaNotificacion.model.DDTipoEntidad;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.dao.NotificacionDao;
@@ -26,6 +25,7 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoCrearAnotacionR
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.manager.RecoveryAnotacionApi;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacion;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoCrearAnotacionUsuario;
+
 
 @Service
 public class NotificacionAdapter {
@@ -46,13 +46,17 @@ public class NotificacionAdapter {
     	return notificacionDao.findOne(id);
     }
     
-	public Notificacion saveNotificacion(Notificacion notificacion) throws ParseException
+   public Notificacion saveNotificacion(Notificacion notificacion) throws ParseException
 	{
 		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
 		Date fecha = null;
 		
 		if(!Checks.esNulo(notificacion.getStrFecha()))
 			fecha = formato.parse(notificacion.getStrFecha());
+		else{
+			if(!Checks.esNulo(notificacion.getFecha()))
+				fecha = notificacion.getFecha();
+		}
 		
 		DtoCrearAnotacion serviceDto = new DtoCrearAnotacion();
 		List<String> listaDireccionesCc = new ArrayList<String>();
@@ -73,9 +77,11 @@ public class NotificacionAdapter {
 		serviceDto.setDireccionesMailPara(listaDireccionesPara);
 
 		serviceDto.setIdUg(notificacion.getIdActivo());
-		serviceDto.setCodUg("61");
+		serviceDto.setCodUg(DDTipoEntidad.CODIGO_ENTIDAD_ACTIVO);
 		
-		recoveryAnotacionApi.createAnotacion(serviceDto);
+		List<Long> idsTareaNotificacion = recoveryAnotacionApi.createAnotacion(serviceDto);
+		
+		notificacion.setIdsNotificacionCreada(idsTareaNotificacion);
 		
 		return notificacion;
 	}

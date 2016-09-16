@@ -56,14 +56,20 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        {
 				        		xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
+								reference: 'fechaInicioFinanciacion',
 					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.expediente'),
-					        	bind: '{condiciones.fechaInicioExpediente}'					        						        	
+					        	bind: '{condiciones.fechaInicioExpediente}',
+					        	maxValue: null
 					        },
 					        {
 					        	xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
 					        	fieldLabel: HreRem.i18n('fieldlabel.inicio.financiacion'),
-					        	bind: '{condiciones.fechaInicioFinanciacion}'				        						        	
+					        	bind: '{condiciones.fechaInicioFinanciacion}',
+					        	maxValue: null,
+					        	listeners: {
+					        		change: 'onHaCambiadoFechaInicioFinanciacion'
+					        	}
 					        },
 					        { 
 								xtype: 'textfieldbase',
@@ -85,8 +91,13 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					        {
 					        	xtype:'datefieldbase',
 								formatter: 'date("d/m/Y")',
+								reference: 'fechaFinFinanciacion',
 					        	fieldLabel: HreRem.i18n('fieldlabel.fin.financiacion'),
-					        	bind: '{condiciones.fechaFinFinanciacion}'				        						        	
+					        	bind: '{condiciones.fechaFinFinanciacion}',
+					        	maxValue: null,
+					        	listeners: {
+					        		change: 'onHaCambiadoFechaFinFinanciacion'
+					        	}
 					        }
 					        
 					        
@@ -136,6 +147,9 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												fieldLabel: HreRem.i18n('fieldlabel.portencaje.reserva'),
 				                				bind: '{condiciones.porcentajeReserva}',
 				                				reference: 'porcentajeReserva',
+				                				listeners: {
+							                		change:  'onHaCambiadoPorcentajeReserva'
+							            		},
 				                				disabled: true
 							                },
 							                { 

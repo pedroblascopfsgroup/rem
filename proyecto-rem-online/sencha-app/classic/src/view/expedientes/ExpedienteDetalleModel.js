@@ -72,7 +72,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 
 		esOfertaVenta: function(get){
-	     	var me= this;
+			var me= this;
 	     	var expediente= me.getData().expediente;
 	     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
 	     	var sujeto= get('condiciones.sujetoTramiteTanteo');
@@ -80,16 +80,29 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     		return true;
 	     	}
 	     	return false;
-	     }
-	 },
-
-		esDestinoActivoOtros: function(get){
-	     	var destinoActivo= get('destinoActivo');
-	     	if(destinoActivo=='05'){
-	     		return true;
+	     },
+	     
+	     esExpedienteSinReserva: function(get) {
+	     	
+	     	var tieneReserva = get('expediente.tieneReserva');
+	     	return tieneReserva === "false";
+	     	
+	     },
+		
+		esOfertaVentaFicha: function(get){
+	     	var me = this;
+	     	var expediente= me.getData().expediente;
+	     	if(!Ext.isEmpty(expediente)){
+		     	var tipoOferta= expediente.get('tipoExpedienteDescripcion');
+		     	if(tipoOferta=='Venta'){
+		     		return true;
+		     	}
 	     	}
 	     	return false;
-	     },
+	     }
+		
+	 },
+
 
     stores: {
     	

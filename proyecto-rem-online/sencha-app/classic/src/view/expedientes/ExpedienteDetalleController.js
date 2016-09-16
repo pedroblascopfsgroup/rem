@@ -509,7 +509,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	window.close();		
 	},
 	onHaCambiadoIbi: function(combo, value){
-		var me= this;
+		var me= this,
 		
 		porCuentaDe= me.lookupReference('ibiPorCuentaDe');
 		
@@ -549,8 +549,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			porCuentaDe.setValue("");
 		}
 	},
-	
-	cargarData: function (window) {
+
+	onHaCambiadoPorcentajeReserva: function(combo, value) {
+		
+		var me = this,
+		importeOferta = parseFloat(me.getViewModel().get('expediente.importe')).toFixed(2),
+		importeReserva = "",
+		importeReservaField = me.lookupReference('importeReserva');
+		importeReserva = importeOferta * value / 100;
+		
+		importeReservaField.setValue(importeReserva);
+		me.getViewModel().get('condiciones').set('importeReserva', importeReserva);
+	},
+
+	cargarDatosComprador: function (window) {
 		var me = this,
 		model = null,
 		models = null,
@@ -709,7 +721,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 				});
 		}
-		
+	},
+	
+	onHaCambiadoFechaInicioFinanciacion: function(field, value, oldValue){
+		var me= this;
+		var fechaInicioFinanciacion= value;
+		var fechaFinFinanciacion= me.lookupReference('fechaFinFinanciacion').value;
+		if(!Ext.isEmpty(fechaFinFinanciacion) && !Ext.isEmpty(fechaInicioFinanciacion) && fechaInicioFinanciacion>fechaFinFinanciacion){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
+		var fieldFechaFinFinanciacion= me.lookupReference('fechaFinFinanciacion');
+		fieldFechaFinFinanciacion.setMinValue(fechaInicioFinanciacion);
+	},
+	
+	onHaCambiadoFechaFinFinanciacion: function(field, value, oldValue){
+		var me= this;
+		var fechaFinFinanciacion= value;
+		var fechaInicioFinanciacion= me.lookupReference('fechaInicioFinanciacion').value;
+		if(!Ext.isEmpty(fechaInicioFinanciacion) && !Ext.isEmpty(fechaFinFinanciacion) && fechaInicioFinanciacion>fechaFinFinanciacion){
+			me.fireEvent("errorToast", HreRem.i18n("msg.fechaFin.mayor.Fecha.Inicio"));
+			field.setValue('');
+		}
 	}
 
 });

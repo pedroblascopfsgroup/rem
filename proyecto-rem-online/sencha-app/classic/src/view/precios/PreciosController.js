@@ -32,7 +32,8 @@ Ext.define('HreRem.view.precios.PreciosController', {
 	    			break;
 	    			
 	    		case 'generacionpropuestasautomatica':
-	    			store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo}
+	    			//Se mete estos parametros, ya que se requieren para la propuesta automatica
+	    			store.getProxy().extraParams = {entidadPropietariaCodigo: me.entidadPropietariaCodigo, tipoPropuestaCodigo: me.tipoPropuestaCodigo, conBloqueo: '0'}
 	    			break;
 	    	}	
 			return true;		
@@ -198,7 +199,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		}
 	},
 	
-	//HREOS-639 Generacion de propuesta automatica (segun celda seleccionada, tendra un propietario y un tipo propuesta)
+	//HREOS-639 Generacion de propuesta automatica (segun celda seleccionada, tendra un propietario y un tipo propuesta; Y deben ser activos SIN bloqueo)
 	generarPropuestaAutomatica: function() {
 		
 		var me = this,
@@ -208,6 +209,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		
 			params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
 	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+	    	params.conBloqueo = '0';
 	    	
 	    	me.realizarGeneracionPropuesta(params);
 	    	
@@ -217,6 +219,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		}
 	},
 	
+	//HREOS-639 Se genera el excel por Cartera, Tipo de precio y activos sin bloqueo
 	exportarExcelAutomatica: function() {
 		
 		var me = this,
@@ -225,6 +228,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
 		if(me.numActivosToGenerar > 0) {
 			params.entidadPropietariaCodigo = me.entidadPropietariaCodigo;
 	    	params.tipoPropuestaCodigo = me.tipoPropuestaCodigo;
+	    	params.conBloqueo = '0';
 			
 	    	me.realizarExportacionExcel(params,me);
 		}
@@ -333,7 +337,7 @@ Ext.define('HreRem.view.precios.PreciosController', {
     	switch (activeTab.xtype) {
     		
     		case 'generacionpropuestasmanual':
-    			me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(1); 
+    			me.lookupReference('generacionPropuestasActivosList').getStore().loadPage(0); 
     			break;
     			
     		case 'generacionpropuestasautomatica':

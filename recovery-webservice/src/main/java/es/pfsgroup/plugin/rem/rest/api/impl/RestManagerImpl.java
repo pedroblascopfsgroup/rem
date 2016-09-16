@@ -2,12 +2,13 @@ package es.pfsgroup.plugin.rem.rest.api.impl;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -16,14 +17,13 @@ import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dao.BrokerDao;
 import es.pfsgroup.plugin.rem.rest.dao.PeticionDao;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
-
-
 
 @Service("restManager")
 public class RestManagerImpl implements RestApi {
@@ -33,9 +33,10 @@ public class RestManagerImpl implements RestApi {
 
 	@Autowired
 	PeticionDao peticionDao;
-	
-	
-	
+
+	@Resource
+	private Properties appProperties;
+
 	@Override
 	public boolean validateSignature(Broker broker, String signature, String peticion)
 			throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -51,8 +52,6 @@ public class RestManagerImpl implements RestApi {
 		}
 		return resultado;
 	}
-
-	
 
 	@Override
 	public boolean validateId(Broker broker, String id) {
@@ -72,11 +71,22 @@ public class RestManagerImpl implements RestApi {
 		}
 		return resultado;
 	}
-	
 
 	@Override
 	public Broker getBrokerByIp(String ip) {
 		Broker broker = brokerDao.getBrokerByIp(ip);
+		return broker;
+	}
+
+	@Override
+	public Broker getBrokerDefault(String queryString) {
+		String DEFAULT_KEY = !Checks.esNulo(appProperties.getProperty("rest.server.rem.api.key"))
+				? appProperties.getProperty("rest.server.rem.api.key") : "";
+		Broker broker = new Broker();
+		broker.setBrokerId(new Long(-1));
+		broker.setValidarFirma(new Long(1));
+		broker.setValidarToken(new Long(1));
+		broker.setKey(DEFAULT_KEY);
 		return broker;
 	}
 
@@ -90,28 +100,24 @@ public class RestManagerImpl implements RestApi {
 		ArrayList<String> error = new ArrayList<String>();
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		Validator validator = factory.getValidator();
-		Set<ConstraintViolation<Serializable>> constraintViolations = validator
-				.validate(obj);
+		Set<ConstraintViolation<Serializable>> constraintViolations = validator.validate(obj);
 		if (!constraintViolations.isEmpty()) {
-			for(ConstraintViolation<Serializable> visitaFailure: constraintViolations){
-				error.add((visitaFailure.getPropertyPath()+" "+visitaFailure.getMessage()));
-				
+			for (ConstraintViolation<Serializable> visitaFailure : constraintViolations) {
+				error.add((visitaFailure.getPropertyPath() + " " + visitaFailure.getMessage()));
+
 			}
 		}
 		return error;
 	}
-	
+
 	@Override
-	public PeticionRest getPeticionById(Long id){
+	public PeticionRest getPeticionById(Long id) {
 		return peticionDao.get(id);
 	}
-	
-	
+
 	@Override
-	public PeticionRest getLastPeticionByToken(String token){
+	public PeticionRest getLastPeticionByToken(String token) {
 		return peticionDao.getLastPeticionByToken(token);
 	}
-
-	
 
 }

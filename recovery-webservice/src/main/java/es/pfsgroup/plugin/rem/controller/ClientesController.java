@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -30,15 +29,6 @@ public class ClientesController {
 	@Autowired
 	private ClienteComercialApi clienteComercialApi;
 	
-	@Autowired
-	private RestApi restApi;
-	
-	
-	
-	
-	
-	
-
 	
 	/**
 	 * Inserta o actualiza una lista de clienteComercial Ejem: IP:8080/pfs/rest/clientes
@@ -194,6 +184,10 @@ public class ClientesController {
 	}
 	
 	
+	
+	
+	
+
 
 	
 }

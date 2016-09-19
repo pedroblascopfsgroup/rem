@@ -186,5 +186,34 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean estadoAutorizaredicion(String numActivo){
 		return true;
 	}
+	
+	public Boolean existeBloqueoPreciosActivo(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO WHERE"
+				+ "			ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "			AND BORRADO = 0"
+				+ "			AND ACT_BLOQUEO_PRECIO_FECHA_INI IS NOT NULL");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	public Boolean existeOfertaAprobadaActivo(String numActivo){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT, ACT_OFR AO, OFR_OFERTAS OFR, DD_EOF_ESTADOS_OFERTA ESO WHERE"
+				+ "         AO.ACT_ID = ACT.ACT_ID"
+				+ "         AND AO.OFR_ID = OFR.OFR_ID"
+				+ "         AND OFR.DD_EOF_ID = ESO.DD_EOF_ID"
+				+ "			AND ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "         AND ESO.DD_EOF_CODIGO = '01'"
+				+ "			AND ACT.BORRADO = 0"
+				+ "			AND OFR.BORRADO = 0"
+				+ "			AND ACT.ACT_BLOQUEO_PRECIO_FECHA_INI IS NOT NULL");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
 		
 }

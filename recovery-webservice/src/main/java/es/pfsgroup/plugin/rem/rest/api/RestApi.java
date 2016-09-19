@@ -54,6 +54,13 @@ public interface RestApi {
 	 * @return
 	 */
 	public Broker getBrokerByIp(String ip);
+	
+	/**
+	 * Obtiene el operador por defecto para una querystring
+	 * @param queryString
+	 * @return
+	 */
+	public Broker getBrokerDefault(String queryString);
 
 	/**
 	 * Guarda una peticion rest

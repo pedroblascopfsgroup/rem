@@ -81,6 +81,11 @@ public class GenericController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioSubtipoProveedor(String codigoTipoProveedor){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioSubtipoProveedor(codigoTipoProveedor)));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboEspecial(String diccionario){
 	
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboEspecial(diccionario)));
@@ -131,7 +136,7 @@ public class GenericController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboMunicipio(String codigoProvincia){		
+	public ModelAndView getComboMunicipio(String codigoProvincia){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMunicipio(codigoProvincia)));		
 	}
 	
@@ -162,7 +167,12 @@ public class GenericController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo)));	
-	}	
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboSubtipoTrabajoCreaFiltered(String tipoTrabajoCodigo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajoCreaFiltered(tipoTrabajoCodigo)));	
+	}
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboSubtipoTrabajoTarificado(String tipoTrabajoCodigo){

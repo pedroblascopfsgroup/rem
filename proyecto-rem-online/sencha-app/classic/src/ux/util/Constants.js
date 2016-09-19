@@ -70,6 +70,13 @@ Ext.define('HreRem.ux.util.Constants', {
     	
     },
     
+        
+    TIPOS_CALCULO: {
+    	PORCENTAJE: '01',
+    	FIJO: '02'
+    },
+    
+    
     MAP_TAB_ACTIVO_XTYPE: {
 		FICHA:			'datosgeneralesactivo',
 		INFOREG:		'datosgeneralesactivo.tituloinformacionregistralactivo',

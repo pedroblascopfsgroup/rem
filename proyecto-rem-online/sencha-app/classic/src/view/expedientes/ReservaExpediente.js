@@ -1,8 +1,6 @@
 Ext.define('HreRem.view.expedientes.ReservaExpediente', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'reservaexpediente',    
-    cls	: 'panel-base shadow-panel',
-    collapsed: false,
     disableValidation: true,
     reference: 'reservaExpediente',
     scrollable	: 'y',
@@ -38,13 +36,14 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 							reference: 'comboTiposArras',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.arras'),
 				        	bind: {
-			            		store: '{comboTiposArras}',
+			            		store: '{storeTiposArras}',
 			            		value: '{reserva.tipoArrasCodigo}'
 			            	}
 				        },		                
 		                {
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.envio'),
-		                	bind:		'{reserva.fechaEvio}'		                		
+		                	bind:		'{reserva.fechaEnvio}'
 		                },
 		                {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),
@@ -55,6 +54,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	bind:		'{reserva.estadoReservaDescripcion}'
 		                },
 		                {
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.firma'),
 		                	bind:		'{reserva.fechaFirma}'		                		
 		                },
@@ -65,6 +65,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	bind:		'{reserva.conImpuesto}'		                
 		                },
 		                {
+		                	xtype:'datefieldbase',
 		                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.vencimiento'),
 		                	bind:		'{reserva.fechaVencimiento}'		                		
 		                }		               
@@ -107,7 +108,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 					    ]					    
 					}
             	]
-            } 
+            }
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });

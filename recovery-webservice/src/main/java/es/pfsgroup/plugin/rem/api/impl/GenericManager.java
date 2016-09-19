@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,6 +24,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -149,6 +150,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return (List<Localidad>) genericDao.getListOrdered(Localidad.class, order, filter);
 		
 	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getDiccionarioTipoProveedor")//DDTipoProveedor
+	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor) {
+		Filter filterTipo = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipoProveedor);
+		DDEntidadProveedor tipo = (DDEntidadProveedor) genericDao.get(DDEntidadProveedor.class, filterTipo);
+		
+		String codigoTipo = null;
+		
+		if(!Checks.esNulo(tipo)) {
+			codigoTipo = tipo.getCodigo();
+		}
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "id");
+		Filter filterSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoEntidadProveedor.codigo", codigoTipo);
+		
+		return (List<DDTipoProveedor>) genericDao.getListOrdered(DDTipoProveedor.class, order, filterSubtipo);
+		
+	}
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoActivo")
@@ -234,6 +254,29 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
 		return (List<DDSubtipoTrabajo>) genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
 
+	}
+	
+	@Override
+	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
+	public List<DDSubtipoTrabajo> getComboSubtipoTrabajoCreaFiltered(String tipoTrabajoCodigo) {
+		
+		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");			
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
+		List<DDSubtipoTrabajo> listaSubtipos = (List<DDSubtipoTrabajo>) genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
+		List<DDSubtipoTrabajo> listaSubtiposFiltered = new ArrayList<DDSubtipoTrabajo>();
+		
+		for(DDSubtipoTrabajo subtipo : listaSubtipos) {
+			if(!DDTipoTrabajo.CODIGO_PRECIOS.equals(subtipo.getCodigoTipoTrabajo())) {
+					return listaSubtipos;
+			}
+			else if(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS.equals(subtipo.getCodigo()) 
+					|| DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())
+					|| DDSubtipoTrabajo.CODIGO_PRECIOS_DESBLOQUEAR_ACTIVOS.equals(subtipo.getCodigo())) {
+						listaSubtiposFiltered.add(subtipo);
+			}
+		}
+
+		return listaSubtiposFiltered;
 	}
 	
 	@Override

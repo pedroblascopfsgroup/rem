@@ -78,7 +78,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 													width: 		'100%',
 													colspan: 1,
 										        	bind: {
-									            		store: '{comboTipoTrabajoCreaFiltered}',
+									            		store: '{comboTipoTrabajo}',
 									            		value: '{trabajo.tipoTrabajoCodigo}'
 									            	},
 						    						listeners: {
@@ -95,7 +95,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 										        	editable: false,
 										        	width: 		'100%',
 										        	bind: {
-									            		store: '{comboSubtipoTrabajo}',
+									            		store: '{comboSubtipoTrabajoCreaFiltered}',
 									            		value: '{trabajo.subtipoTrabajoCodigo}',
 									            		disabled: '{!trabajo.tipoTrabajoCodigo}'
 									            	},

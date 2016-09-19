@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
-import java.util.Map;
 
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;

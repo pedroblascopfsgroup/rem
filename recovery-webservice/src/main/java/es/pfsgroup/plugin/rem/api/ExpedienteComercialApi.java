@@ -2,19 +2,23 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.pagination.Page;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
 
 public interface ExpedienteComercialApi {
@@ -96,7 +100,7 @@ public interface ExpedienteComercialApi {
 		 * Método que recupera las observaciones del expediente comercial
 		 * @return
 		 */
-		public DtoPage getListObservaciones(Long idExpediente);
+		public DtoPage getListObservaciones(Long idExpediente, WebDto dto);
 		
 	    
 		/**
@@ -155,6 +159,21 @@ public interface ExpedienteComercialApi {
 	     */
 		public boolean deleteAdjunto(DtoAdjuntoExpediente dtoAdjunto);
 
+		
+		/**
+		 * Recupera la lista de compradores asociados al expediente
+		 * @param idExpediente
+		 * @return
+		 */
+		public Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
+		
+		/**
+		 * Recupera la informacion de un Comprador de un Expediente Comercial
+		 * @param idComprador
+		 * @return
+		 */
+		public VBusquedaDatosCompradorExpediente getDatosCompradorById(Long idComprador);
+
 		/**
 		 * Método que guarda la información de la pestaña Condicionantes del expediente
 		 * @param dto
@@ -163,6 +182,22 @@ public interface ExpedienteComercialApi {
 		 */
 		boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 		
+		/**
+		 * Método que guarda la información de la pestaña de un comprador del expediente
+		 * @param dto
+		 * @param idExpediente
+		 * @return
+		 */
+		boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
+		
+		/**
+		 * Método que guarda el comprador como principal
+		 * @param idComercial
+		 * @param idExpedienteComercial
+		 * @return
+		 */
+		boolean marcarCompradorPrincipal(Long idComprador, Long idExpedienteComercial);
+
 		/**
 		 * Método que obtiene el posicionamiento del expediente
 		 * @param dto
@@ -196,11 +231,12 @@ public interface ExpedienteComercialApi {
 		public DtoPage getNotariosExpediente(Long idExpediente);
 		
 		/**
-		 * Método que obtiene los gastos del expediente soportados por el propietario
+		 * Método que obtiene los honorarios del expediente
 		 * @param dto
 		 * @param idExpediente
 		 * @return
 		 */
+
 		public DtoPage getGastosSoportadoPropietario(Long idExpediente);
 		
 		/**
@@ -210,7 +246,18 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public DtoPage getGastosSoportadoHaya(Long idExpediente);
+
+		
+		/**
+		 * Modifica los datos de una reserva
+		 * @param dto
+		 * @param idEntidad
+		 * @return
+		 */
+		boolean saveReserva(DtoReserva dto, Long idEntidad);
 			
+		public DtoPage getHonorarios(Long idExpediente);
+
 		
 		/**
 		 * Método que obtiene el ExpedienteComercial relacionado con una determinada Oferta 

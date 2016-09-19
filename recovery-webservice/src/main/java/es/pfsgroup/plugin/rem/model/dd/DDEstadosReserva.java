@@ -31,6 +31,7 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDEstadosReserva implements Auditable, Dictionary {
 	
 
+	public static final String CODIGO_PENDIENTE_FIRMA = "01";
 	/**
 	 * 
 	 */

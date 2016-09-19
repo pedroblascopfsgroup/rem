@@ -31,30 +31,32 @@ import es.pfsgroup.plugin.rem.rest.dto.RequestDto;
 import es.pfsgroup.plugin.rem.rest.model.Broker;
 import es.pfsgroup.plugin.rem.rest.model.PeticionRest;
 
-public class RestSecurityFilter implements Filter  {
+public class RestSecurityFilter implements Filter {
 
 	@Autowired
 	private EntidadDao entidadDao;
 
 	@Autowired
 	private RestApi restApi;
-	
-	
+
 	@Override
 	public void destroy() {
 
 	}
+	
+	private final String WORKINCODE ="2038";
 
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 
 		PeticionRest peticion = crearPeticionObj(request);
 		boolean hibernateEnable = false;
 		Entidad entidad = null;
 		SecurityContext securityContext = null;
-		
+
 		try {
 			// imprescindible para poder inyectar componentes
 			SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
@@ -62,17 +64,19 @@ public class RestSecurityFilter implements Filter  {
 			RestRequestWrapper restRequest = new RestRequestWrapper((HttpServletRequest) request);
 
 			// obtenemos los datos de la peticion
-			RequestDto datajson = (RequestDto)restRequest.getRequestData(RequestDto.class);
+			RequestDto datajson = (RequestDto) restRequest.getRequestData(RequestDto.class);
 
-			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor por defecto
-			String workingCode = "2038";// <------parametrizarlo en
+			// obtenemos el workingcode. Si el cliente no lo pasa asumimos valor
+			// por defecto
+			String workingCode = WORKINCODE;// <------parametrizarlo en
 										// devon.properties
 
 			if (datajson.getWorkingcode() != null && !datajson.getWorkingcode().isEmpty()) {
 				workingCode = datajson.getWorkingcode();
 			}
 
-			// Obtenemos la entidad partiendo del working code y establecemos el contextholder
+			// Obtenemos la entidad partiendo del working code y establecemos el
+			// contextholder
 			// necesario para acceder al esquema de la entidad
 			try {
 				entidad = entidadDao.findByWorkingCode(workingCode);
@@ -88,13 +92,12 @@ public class RestSecurityFilter implements Filter  {
 				throwErrorWorkingCodeInvalido(response);
 				return;
 			}
-			
 
-			//Realizamos login en la plataforma		
-//			securityContext = doLogin(entidad);			
-//			if(Checks.esNulo(securityContext)){
-//				return;
-//			}
+			// Realizamos login en la plataforma
+			securityContext = doLogin(entidad);
+			if (Checks.esNulo(securityContext)) {
+				return;
+			}
 
 			// logamos el operador partiendo del parametro signature
 			String signature = ((HttpServletRequest) request).getHeader("signature");
@@ -104,8 +107,16 @@ public class RestSecurityFilter implements Filter  {
 
 			Broker broker = restApi.getBrokerByIp(ipClient);
 
-			if (broker != null) {
+			// configuracion por defecto
+			if (broker == null) {
+				broker = restApi.getBrokerDefault(((HttpServletRequest) request).getQueryString());
+				broker.setIp(ipClient);
+			}else{
 				peticion.setBroker(broker);
+			}
+
+			if (broker != null) {
+				
 
 				if (!restApi.validateSignature(broker, signature, restRequest.getBody())) {
 					logger.error("REST: La firma no es correcta");
@@ -119,16 +130,16 @@ public class RestSecurityFilter implements Filter  {
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_REPETEAD_REQUEST);
 						throwInvalidId(response);
-						
-					} else if(!restRequest.getBody().contains("data")) {
+
+					} else if (!restRequest.getBody().contains("data")) {
 						logger.error("REST: Petición no contiene información en el campo data.");
 						peticion.setResult(RestApi.CODE_ERROR);
 						peticion.setErrorDesc(RestApi.REST_MSG_REQUEST_WITHOUT_DATA);
 						throwInvalidRequest(response);
-						
+
 					} else {
 						chain.doFilter(restRequest, response);
-						
+
 						peticion.setResult(RestApi.CODE_OK);
 					}
 				}
@@ -151,10 +162,10 @@ public class RestSecurityFilter implements Filter  {
 			throwErrorGeneral(response, e);
 
 		} finally {
-//			if (securityContext!=null) {
-//				 //securityContext.getAuthentication().setAuthenticated(false);
-//				 SecurityContextHolder.clearContext();
-//			}
+			if (securityContext != null) {
+				securityContext.getAuthentication().setAuthenticated(false);
+				// securityContextHolder.clearContext();
+			}
 		}
 		if (hibernateEnable) {
 			restApi.guardarPeticionRest(peticion);
@@ -165,10 +176,6 @@ public class RestSecurityFilter implements Filter  {
 	public void init(FilterConfig filterConfig) throws ServletException {
 
 	}
-	
-	
-	
-	
 
 	/**
 	 * Error firma invalida
@@ -203,7 +210,7 @@ public class RestSecurityFilter implements Filter  {
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		response.getWriter().write(error);
 	}
-	
+
 	/**
 	 * Error data invalida
 	 * 
@@ -237,8 +244,7 @@ public class RestSecurityFilter implements Filter  {
 		response.setHeader("Content-Type", "application/json;charset=UTF-8");
 		response.getWriter().write(error);
 	}
-	
-	
+
 	/**
 	 * Error de workingcode
 	 * 
@@ -280,8 +286,6 @@ public class RestSecurityFilter implements Filter  {
 		response.getWriter().write(error);
 	}
 
-
-	
 	/**
 	 * Crea un objeto de tipo peticion rest
 	 * 
@@ -299,13 +303,14 @@ public class RestSecurityFilter implements Filter  {
 		return peticion;
 
 	}
-	
-	
+
 	/**
-	 * Crea un usuario ficticio. 
-	 * Los datos del usuario ficticio deberán existir en base de datos ya que en posteriores ejecuciones se accederá a ésta para login.
+	 * Crea un usuario ficticio. Los datos del usuario ficticio deberán existir
+	 * en base de datos ya que en posteriores ejecuciones se accederá a ésta
+	 * para login.
 	 * 
-	 * @param entidad de base de datos del usuario ficticio
+	 * @param entidad
+	 *            de base de datos del usuario ficticio
 	 * @return user usuario ficticio.
 	 */
 	private UsuarioSecurity loadUser(Entidad entidad) {
@@ -318,17 +323,18 @@ public class RestSecurityFilter implements Filter  {
 		user.setEntidad(entidad);
 		return user;
 	}
-	
-	
 
 	/**
-	 * Realiza el login de un usuario ficticio en una entidad de base de datos pasada por parámetro.
-	 * Los datos del usuario ficticio deberán existir en base de datos ya que en posteriores ejecuciones se accederá a ésta para login.
+	 * Realiza el login de un usuario ficticio en una entidad de base de datos
+	 * pasada por parámetro. Los datos del usuario ficticio deberán existir en
+	 * base de datos ya que en posteriores ejecuciones se accederá a ésta para
+	 * login.
 	 * 
-	 * @param entidad de base de datos del usuario ficticio
+	 * @param entidad
+	 *            de base de datos del usuario ficticio
 	 * @return securityContext
 	 */
-	protected SecurityContext doLogin(Entidad entidad) { 
+	protected SecurityContext doLogin(Entidad entidad) {
 
 		if (Checks.esNulo(entidad)) {
 			logger.error("No se ha proporcionado la entidad de base de datos a la que conectarse.");
@@ -338,21 +344,20 @@ public class RestSecurityFilter implements Filter  {
 		logger.debug("[INTEGRACION] Authenticando usuario para ws...");
 		UsuarioSecurity user = loadUser(entidad);
 		SecurityContext securityContext = SecurityContextHolder.getContext();
-		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(), RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
+		PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(user.getUsername(),
+				RestApi.REST_LOGGED_USER_EMPTY_PASSWORD);
 		authToken.setDetails(user);
-		
-		
+
 		AuthenticationRestService authRestService = new AuthenticationRestService();
 		authRestService.setUserNameprefix("REST-");
-		
+
 		PreAuthenticatedAuthenticationProvider preAuthenticatedProvider = new PreAuthenticatedAuthenticationProvider();
 		preAuthenticatedProvider.setPreAuthenticatedUserDetailsService(authRestService);
 		Authentication authentication = preAuthenticatedProvider.authenticate(authToken);
 		securityContext.setAuthentication(authentication);
 		logger.debug(String.format("Usuario autenticado [%s]!", authToken.getName()));
-		
+
 		return securityContext;
 	}
-
 
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -851,6 +852,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		//Tramite de bloqueo de precios
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_PRECIOS_BLOQUEAR_ACTIVOS)){
+			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
+		}
+		
+		//Tramite de actualizacion de precios / carga de precios
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CARGA_PRECIOS)){
 			tipoTramite = tipoProcedimientoManager.getByCodigo("T010");
 		}
 		
@@ -2135,11 +2141,38 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 							listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + trabajoDto.getIdUsuarioRem());
 						}
 					}
-					if(!Checks.esNulo(trabajoDto.getIdApiResponsable())){
-						ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdApiResponsable()));							
+					if(!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())){
+						ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRemResponsable()));							
 						if(Checks.esNulo(apiResp)){
-							listaErrores.add("No existe el apiResponsable en REM especificado en el campo idApiResponsable: " + trabajoDto.getIdApiResponsable());
+							listaErrores.add("No existe el apiResponsable en REM especificado en el campo idApiResponsable: " + trabajoDto.getIdProveedorRemResponsable());
 						}
+					}
+					//Validamos que no vengan los 2 campos a true
+					if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && trabajoDto.getUrgentePrioridadRequiriente() &&
+					   !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && trabajoDto.getRiesgoPrioridadRequiriente()){
+						listaErrores.add("Sólo uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente puede valer true.");
+					}
+					
+					if(!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta()) && trabajoDto.getFechaPrioridadRequirienteEsExacta()){
+						
+						//Validamos que no venga fecha concreta
+						if(!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())){
+							listaErrores.add("El campo fechaPrioridadRequiriente debe ser null ya que fechaPrioridadRequirienteEsExacta es true.");
+						}
+						//Validamos que no vengan los 2 campos a null
+						if(Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())){
+							listaErrores.add("Los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente son nulos. Al menos uno de los 2 campos debe ser True si fechaPrioridadRequirienteEsExacta = true.");
+						}						
+						//Validamos que no vengan los 2 campos a false
+						if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && !trabajoDto.getUrgentePrioridadRequiriente() &&
+						   !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && !trabajoDto.getRiesgoPrioridadRequiriente()){
+							listaErrores.add("Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
+						}
+						//Validamos que no venga 1 campo a null y el otro a false
+						if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente()) && !trabajoDto.getUrgentePrioridadRequiriente() && Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) ||
+						   !Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente()) && !trabajoDto.getRiesgoPrioridadRequiriente() && Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())	){
+							listaErrores.add("Al menos uno de los campos urgentePrioridadRequiriente y riesgoPrioridadRequiriente debe valer true.");
+						}			
 					}
 				}
 			}
@@ -2208,8 +2241,8 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 				if(!Checks.esNulo(descripcion) && !descripcion.equalsIgnoreCase("")){
 					dtoFichaTrabajo.setDescripcion(descripcion);
 				}	
-				if(!Checks.esNulo(trabajoDto.getIdApiResponsable())){
-					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdApiResponsable()));								
+				if(!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())){
+					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdProveedorRemResponsable()));								
 					if(!Checks.esNulo(apiResp)){
 						dtoFichaTrabajo.setIdMediador(apiResp.getId());
 					}
@@ -2225,19 +2258,22 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 				}
 				if(!Checks.esNulo(trabajoDto.getDescripcionRequiriente())){				
 					dtoFichaTrabajo.setTerceroContacto(trabajoDto.getDescripcionRequiriente());
-				}
-				if(!Checks.esNulo(trabajoDto.getFechaHoraConcretaRequiriente())){				
-					dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaHoraConcretaRequiriente());
-				}
-				if(!Checks.esNulo(trabajoDto.getFechaTopeRequiriente())){				
-					dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaTopeRequiriente());
-				}
-				if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())){				
-					dtoFichaTrabajo.setUrgente(trabajoDto.getUrgentePrioridadRequiriente());
-				}
-				if(!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())){				
-					dtoFichaTrabajo.setRiesgoInminenteTerceros(trabajoDto.getRiesgoPrioridadRequiriente());
+				}				
+				if(!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())){				
+					dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
 				}			
+				if(!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())){				
+					Calendar cal = Calendar.getInstance(); 
+					if(!Checks.esNulo(trabajoDto.getUrgentePrioridadRequiriente())){				
+						dtoFichaTrabajo.setUrgente(trabajoDto.getUrgentePrioridadRequiriente());
+						dtoFichaTrabajo.setFechaTope(cal.getTime());
+					}
+					if(!Checks.esNulo(trabajoDto.getRiesgoPrioridadRequiriente())){				
+						dtoFichaTrabajo.setRiesgoInminenteTerceros(trabajoDto.getRiesgoPrioridadRequiriente());
+						cal.add(Calendar.DATE, 2);						
+						dtoFichaTrabajo.setFechaTope(cal.getTime());
+					}	
+				}
    			}
    			
    			

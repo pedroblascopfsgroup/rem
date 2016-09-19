@@ -1,0 +1,398 @@
+--/*
+--##########################################
+--## AUTOR=DANIEL GUTIERREZ
+--## FECHA_CREACION=20160830
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.1
+--## INCIDENCIA_LINK=0
+--## PRODUCTO=NO
+--## Finalidad: Añadimos columnas a ACT_PVE_PROVEEDOR
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
+    V_NUM_SEQ NUMBER(16); -- Vble. para validar la existencia de una secuencia.  
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_PVE_PROVEEDOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.    
+    
+    
+BEGIN
+	
+
+	-- Comprobamos si existe columna DD_TPE_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_TPE_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPE_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_TPE_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPE_ID... Creado');
+		V_TEXT1 := 'Tipo de persona.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPE_ID IS '''||V_TEXT1||'''  ';
+	END IF;
+
+	--Comprobamos si existe foreign key FK_DD_TPE_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_TPE_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.FK_DD_TPE_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_DD_TPE_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TPE_ID FOREIGN KEY (DD_TPE_ID) REFERENCES '||V_ESQUEMA_M||'.DD_TPE_TIPO_PERSONA (DD_TPE_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.FK_DD_TPE_ID... Foreign key creada.');
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_NIF (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_NIF'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_NIF... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_NIF VARCHAR2(20 CHAR))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_NIF... Creado');
+		V_TEXT1 := 'Razón social.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_NIF IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_FECHA_ALTA (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_FECHA_ALTA'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_ALTA... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_FECHA_ALTA DATE)';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_ALTA... Creado');
+		V_TEXT1 := 'Fecha de alta como proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_ALTA IS '''||V_TEXT1||'''  ';
+	END IF;
+
+	-- Comprobamos si existe columna PVE_FECHA_BAJA (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_FECHA_BAJA'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_BAJA... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_FECHA_BAJA DATE)';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_BAJA... Creado');
+		V_TEXT1 := 'Fecha de baja como proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_BAJA IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_LOCALIZADA (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_LOCALIZADA'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_LOCALIZADA... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_LOCALIZADA NUMBER(1,0))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_LOCALIZADA... Creado');
+		V_TEXT1 := 'Indicador de si está localizada.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_LOCALIZADA IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+		-- Comprobamos si existe columna DD_EPR_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_EPR_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPR_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_EPR_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPR_ID... Creado');
+		V_TEXT1 := 'Estado del proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPR_ID IS '''||V_TEXT1||'''  ';
+	END IF;
+
+	--Comprobamos si existe foreign key FK_DD_EPR_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_EPR_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_EPR_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_DD_EPR_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_EPR_ID FOREIGN KEY (DD_EPR_ID) REFERENCES '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR (DD_EPR_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_EPR_ID... Foreign key creada.');
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_FECHA_CONSTITUCION (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_FECHA_CONSTITUCION'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_CONSTITUCION... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_FECHA_CONSTITUCION DATE)';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_CONSTITUCION... Creado');
+		V_TEXT1 := 'Fecha de constitución como proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_CONSTITUCION IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_AMBITO (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_AMBITO'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_AMBITO... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_AMBITO VARCHAR2(100 CHAR))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_AMBITO... Creado');
+		V_TEXT1 := 'Ámbito territorial del proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_AMBITO IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_OBSERVACIONES (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_OBSERVACIONES'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_OBSERVACIONES... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_OBSERVACIONES VARCHAR2(200 CHAR))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_OBSERVACIONES... Creado');
+		V_TEXT1 := 'Observaciones del proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_OBSERVACIONES IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_HOMOLOGADO (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_HOMOLOGADO'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_HOMOLOGADO... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_HOMOLOGADO NUMBER(1,0))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_HOMOLOGADO... Creado');
+		V_TEXT1 := 'Indicador si el proveedor está homologado o no.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_HOMOLOGADO IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna DD_CPR_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_CPR_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CPR_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_CPR_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CPR_ID... Creado');
+		V_TEXT1 := 'Calificación del proveedor.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CPR_ID IS '''||V_TEXT1||'''  ';
+	END IF;
+
+	--Comprobamos si existe foreign key FK_DD_CPR_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_CPR_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_CPR_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_DD_CPR_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_CPR_ID FOREIGN KEY (DD_CPR_ID) REFERENCES '||V_ESQUEMA||'.DD_CPR_CALIFICACION_PROVEEDOR (DD_CPR_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_CPR_ID... Foreign key creada.');
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_TOP (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_TOP'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_TOP... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_TOP NUMBER(1,0))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_TOP... Creado');
+		V_TEXT1 := 'Indicador si el proveedor está en el TOP 150 o no.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_TOP IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+		
+	-- Comprobamos si existe columna PVE_TITULAR_CUENTA (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_TITULAR_CUENTA'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_TITULAR_CUENTA... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_TITULAR_CUENTA VARCHAR2(200 CHAR))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_TITULAR_CUENTA... Creado');
+		V_TEXT1 := 'Nombre y apellidos del titular de la cuenta bancaria.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_TITULAR_CUENTA IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_RETENER (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_RETENER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_RETENER... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_RETENER NUMBER(1,0))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_RETENER... Creado');
+		V_TEXT1 := 'Indicador si se tienen que retener los pagos al proveedor o no.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_RETENER IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna DD_MRE_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_MRE_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MRE_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_MRE_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MRE_ID... Creado');
+		V_TEXT1 := 'Motivo de retención de pagos.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MRE_ID IS '''||V_TEXT1||'''  ';
+	END IF;
+
+	--Comprobamos si existe foreign key FK_DD_MRE_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_MRE_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_MRE_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_DD_TPE_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_MRE_ID FOREIGN KEY (DD_MRE_ID) REFERENCES '||V_ESQUEMA||'.DD_MRE_MOTIVO_RETENCION (DD_MRE_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_MRE_ID... Foreign key creada.');
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_FECHA_RETENCION (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_FECHA_RETENCION'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_RETENCION... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_FECHA_RETENCION DATE)';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_RETENCION... Creado');
+		V_TEXT1 := 'Fecha de retención de pagos.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_RETENCION IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_FECHA_PBC (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_FECHA_PBC'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_PBC... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_FECHA_PBC DATE)';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_PBC... Creado');
+		V_TEXT1 := 'Fecha proceso de blanqueo de capitales.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_FECHA_PBC IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna DD_UPO_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_RPB_ID'' and DATA_TYPE = ''NUMBER'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_RPB_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_RPB_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_RPB_ID... Creado');
+		V_TEXT1 := 'Resultado proceso de blanqueo de capitales.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_RPB_ID IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna PVE_CUSTODIO (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''PVE_CUSTODIO'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_CUSTODIO... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (PVE_CUSTODIO NUMBER(1, 0))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_CUSTODIO... Creado');
+		V_TEXT1 := 'Indicador de si es custodio.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.PVE_CUSTODIO IS '''||V_TEXT1||'''  ';
+	END IF;
+	
+	-- Comprobamos si existe columna DD_TAC_ID (si es así, no hacemos nada)
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''DD_TAC_ID'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAC_ID... Ya existe');
+	ELSE
+		EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (DD_TAC_ID NUMBER(16))';	
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAC_ID... Creado');
+		V_TEXT1 := 'Tipo de activos en cartera.';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAC_ID IS '''||V_TEXT1||'''  ';
+	END IF;
+
+	--Comprobamos si existe foreign key FK_DD_UPO_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_RPB_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_RPB_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_DD_UPO_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_RPB_ID FOREIGN KEY (DD_RPB_ID) REFERENCES '||V_ESQUEMA||'.DD_RPB_RES_PROCESO_BLANQUEO (DD_RPB_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_RPB_ID... Foreign key creada.');
+	END IF;
+	
+	--Comprobamos si existe foreign key FK_DD_TAC_ID
+	V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE CONSTRAINT_NAME= ''FK_DD_TAC_ID'' and TABLE_NAME='''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+	EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+	
+	IF V_NUM_TABLAS = 1 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TAC_ID... Ya existe. No hacemos nada.');		
+	ELSE
+	-- Creamos foreign key FK_DD_TAC_ID
+		V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT FK_DD_TAC_ID FOREIGN KEY (DD_TAC_ID) REFERENCES '||V_ESQUEMA||'.DD_TAC_TIPO_ACTIVOS_CARTERA (DD_TAC_ID) ON DELETE SET NULL)';
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.FK_DD_TAC_ID... Foreign key creada.');
+	END IF;
+	
+	EXCEPTION
+	     WHEN OTHERS THEN
+	          err_num := SQLCODE;
+	          err_msg := SQLERRM;
+	
+	          DBMS_OUTPUT.PUT_LINE('KO no modificada');
+	          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+	          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+	          DBMS_OUTPUT.put_line(err_msg);
+	
+	          ROLLBACK;
+	          RAISE;          
+
+END;
+
+/
+
+EXIT

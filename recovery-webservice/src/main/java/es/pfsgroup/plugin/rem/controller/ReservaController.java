@@ -110,7 +110,7 @@ public class ReservaController {
 					if (compradorExpediente.getImporteProporcionalOferta()!=null) {
 						titularUVEM.setPorcentaje(compradorExpediente.getPorcionCompra().toString());
 					}			
-					if (condExp.getReservaConImpuesto()!=null && condExp.getReservaConImpuesto()) {
+					if (condExp.getReservaConImpuesto()!=null && condExp.getReservaConImpuesto()==1) {
 						titularUVEM.setImpuestos("S");
 					} else {
 						titularUVEM.setImpuestos("N");

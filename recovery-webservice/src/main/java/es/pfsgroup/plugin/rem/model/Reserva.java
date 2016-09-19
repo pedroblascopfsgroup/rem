@@ -53,7 +53,7 @@ public class Reserva implements Serializable, Auditable {
 	@Id
     @Column(name = "RES_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ReservaGenerator")
-    @SequenceGenerator(name = "ReservaGenerator", sequenceName = "S_RES_RESERVA")
+    @SequenceGenerator(name = "ReservaGenerator", sequenceName = "S_RES_RESERVAS")
     private Long id;
 	
 	@OneToOne(fetch = FetchType.LAZY)
@@ -90,6 +90,18 @@ public class Reserva implements Serializable, Auditable {
     @JoinColumn(name = "RES_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<EntregaReserva> entregas;
+    
+    @Column(name="RES_FECHA_SOLICITUD")
+    private Date fechaSolicitud;
+    
+    @Column(name="RES_FECHA_RESOLUCION")
+    private Date fechaResolucion;
+    
+    @Column(name="RES_IND_IMP_ANULACION")
+    private Integer indicadorDevolucionReserva;
+    
+    @Column(name="RES_IMPORTE_DEVUELTO")
+    private Double importeDevuelto;
     
     
     @Version   
@@ -186,6 +198,38 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setEntregas(List<EntregaReserva> entregas) {
 		this.entregas = entregas;
+	}
+
+	public Date getFechaSolicitud() {
+		return fechaSolicitud;
+	}
+
+	public void setFechaSolicitud(Date fechaSolicitud) {
+		this.fechaSolicitud = fechaSolicitud;
+	}
+
+	public Date getFechaResolucion() {
+		return fechaResolucion;
+	}
+
+	public void setFechaResolucion(Date fechaResolucion) {
+		this.fechaResolucion = fechaResolucion;
+	}
+
+	public Integer getIndicadorDevolucionReserva() {
+		return indicadorDevolucionReserva;
+	}
+
+	public void setIndicadorDevolucionReserva(Integer indicadorDevolucionReserva) {
+		this.indicadorDevolucionReserva = indicadorDevolucionReserva;
+	}
+
+	public Double getImporteDevuelto() {
+		return importeDevuelto;
+	}
+
+	public void setImporteDevuelto(Double importeDevuelto) {
+		this.importeDevuelto = importeDevuelto;
 	}
 
 	public Long getVersion() {

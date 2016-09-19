@@ -62,6 +62,11 @@ Ext.define('HreRem.view.common.DDViewModel', {
 			        {"codigo":"04", "descripcion": "Fecha de carga"}
 			    ]
     			
+    		},
+    		
+    		comboPorCuenta: {
+    			source: 'porCuenta',
+    			loadSource: true
     		}
     		
     	

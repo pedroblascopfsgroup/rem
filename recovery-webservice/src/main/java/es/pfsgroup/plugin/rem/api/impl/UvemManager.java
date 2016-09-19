@@ -2,10 +2,14 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.math.BigDecimal;
 import java.util.Hashtable;
+import java.util.Properties;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -34,7 +38,10 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 @Service("uvemManager")
 public class UvemManager implements UvemManagerApi {
 
-	private String URL = "http://midtr2epd.cm.es:31485/bisa/endpoint";
+	private final Log logger = LogFactory.getLog(getClass());
+
+	private String URL = "";
+	private String ALIAS = "";
 
 	private GMPETS07_INS servicioGMPETS07_INS;
 
@@ -42,9 +49,22 @@ public class UvemManager implements UvemManagerApi {
 
 	private GMPAJC11_INS servicioGMJC11_INS;
 
+	@Resource
+	private Properties appProperties;
+
+	private void leerConfiguracion() {
+		this.URL = !Checks.esNulo(appProperties.getProperty("rest.client.uvem.url.base"))
+				? appProperties.getProperty("rest.client.uvem.url.base") : "";
+		this.ALIAS =!Checks.esNulo(appProperties.getProperty("rest.client.uvem.alias.integrador"))
+				? appProperties.getProperty("rest.client.uvem.alias.integrador") : "";
+	}
+
 	public Integer ejecutarSolicitarTasacion(Long bienId, String nombreGestor, String gestion)
 			throws WIMetaServiceException, WIException, TipoDeDatoException {
-		int numeroIdentificadorTasacion = -1;
+		
+		leerConfiguracion();
+		
+		int numeroIdentificadorTasacion = -1;		 
 
 		// parametros iniciales
 		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
@@ -150,7 +170,7 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMPETS07_INS.setIdentificadorDeProveedorlidpro(1234567890);
 		servicioGMPETS07_INS.setNumeroIdentificadorDeCerEnerlnuitr(1234567890);
 
-		servicioGMPETS07_INS.setAlias("PFS");
+		servicioGMPETS07_INS.setAlias(ALIAS);
 		servicioGMPETS07_INS.execute();
 
 		// recuperando resultado...
@@ -164,7 +184,10 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
-	public void ejecutarNumCliente(String nudnio, String cocldo, String idclow, String qcenre) throws WIException {
+	public void ejecutarNumCliente(String nudnio, String cocldo, String qcenre) throws WIException {
+
+		logger.info("------------ LLAMADA WS NUMCLIENTE -----------------");
+		leerConfiguracion();
 		// parametros iniciales
 		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
 		htInitParams.put(WIService.WORFLOW_PARAM, URL);
@@ -186,14 +209,19 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMJC11_INS.setcabeceraTecnica(cabeceraTecnica);
 
 		// seteamos parametros
+		logger.info("CodigoObjetoAccesocopace: CACL0000");
 		servicioGMJC11_INS.setCodigoObjetoAccesocopace("CACL0000");
+		logger.info("ClaseDeDocumentoIdentificadorcocldo: ".concat(cocldo));
 		servicioGMJC11_INS.setClaseDeDocumentoIdentificadorcocldo(cocldo.charAt(0));
+		logger.info("DniNifDelTitularDeLaOfertanudnio: ".concat(nudnio));
 		servicioGMJC11_INS.setDniNifDelTitularDeLaOfertanudnio(nudnio);
+		logger.info("IdentificadorClienteOfertaidclow: 1");
 		servicioGMJC11_INS.setIdentificadorClienteOfertaidclow(1);// <----?????????
-		
-		servicioGMJC11_INS.setAlias("PFS");
+		logger.info("CodEntidadRepresntClienteUrsusqcenre: ".concat(qcenre));
+		servicioGMJC11_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
+
+		servicioGMJC11_INS.setAlias(ALIAS);
 		servicioGMJC11_INS.execute();
-		
 
 	}
 
@@ -203,7 +231,9 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
-	public void ejecutarDatosCliente(String copace, Long idclow, String iddsfu, String qcenre) throws WIException {
+	public void ejecutarDatosCliente(Long idclow, String qcenre) throws WIException {
+		logger.info("------------ LLAMADA WS DatosCliente -----------------");
+		leerConfiguracion();
 		// parametros iniciales
 		Hashtable<String, String> htInitParams = new Hashtable<String, String>();
 		htInitParams.put(WIService.WORFLOW_PARAM, URL);
@@ -223,6 +253,17 @@ public class UvemManager implements UvemManagerApi {
 		servicioGMJC93_INS.setcabeceraAplicacion(cabeceraAplicacion);
 		servicioGMJC93_INS.setcabeceraFuncionalPeticion(cabeceraFuncional);
 		servicioGMJC93_INS.setcabeceraTecnica(cabeceraTecnica);
+
+		// seteamos parametros
+		logger.info("CodigoObjetoAccesocopace: CACL0000");
+		servicioGMJC93_INS.setCodigoObjetoAccesocopace("CACL0000");
+		logger.info("IdentificadorDiscriminadorFuncioniddsfu: DF01");
+		servicioGMJC93_INS.setIdentificadorDiscriminadorFuncioniddsfu("DF01");
+		logger.info("CodEntidadRepresntClienteUrsusqcenre: ".concat(qcenre));
+		servicioGMJC93_INS.setCodEntidadRepresntClienteUrsusqcenre(qcenre);
+
+		servicioGMJC93_INS.setAlias(ALIAS);
+		servicioGMJC93_INS.execute();
 
 	}
 

@@ -11,54 +11,92 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import es.capgemini.devon.utils.ApplicationContextUtil;
-import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.CambioBD;
-import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.RegistroCambiosBD;
-import es.pfsgroup.plugin.rem.restclient.utils.Converter;
+import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
+/**
+ * Task de Quartz que comprueba si ha habido algún cambio en BD que requiera de
+ * alguna llamada REST a WEBCOM.
+ * 
+ * La planificación del scheduler la encontraremos en el optional-configuration
+ * ac-rem-deteccion-cambios-bd.xml.
+ * 
+ * Esta clase implementa {@link ApplicationListener} porque necesita saber
+ * cuando ha terminado de cargarse el contexto de Spring
+ * 
+ * @author bruno
+ *
+ */
 public class DeteccionCambiosBDTask implements ApplicationListener {
-	
+
 	private static final Long ID_USUARIO_LOGADO = -1L;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
-	private RegistroCambiosBD registroCambios;
+	/*
+	 * Esa lista se puebla una vez terminado de cargar el contexto de Spring.
+	 * Esto se hace capturando el evento ContextRefreshedEvent. Ver el método
+	 * onApplicationEvent(ApplicationEvent event)
+	 */
+	private List<DetectorCambiosBD> registroCambiosHandlers = new ArrayList<DetectorCambiosBD>();
 
-	@Autowired
-	private ServiciosWebcomManager serviciosWebcom;
+	/**
+	 * Este método añade un nuevo handler para gestionar cambios de BD. Este
+	 * método es público para permitir realizar esta operación en los tests.
+	 * 
+	 * @param handler
+	 */
+	public void addRegistroCambiosBDHandler(DetectorCambiosBD handler) {
+		if (handler != null) {
+			logger.debug("Añadiendo un nuevo handler para detectar cambios en BD: " + handler.getClass());
+			this.registroCambiosHandlers.add(handler);
+		}
+	}
 
+	/**
+	 * Inicia la detección de cambios en BD.
+	 */
 	public void detectaCambios() {
 
-		if (registroCambios != null) {
-			List<CambioBD> cambios = registroCambios.listPendientes();
+		logger.info("Iniciando la detección de cambios");
+		if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
+			for (DetectorCambiosBD handler : registroCambiosHandlers) {
 
-			List<StockDto> stock = new ArrayList<StockDto>();
+				logger.debug(handler.getClass().getName() + ": obtenemos los cambios de la BD");
+				Class control = handler.getDtoClass();
+				List listPendientes = handler.listPendientes(control);
 
-			if (cambios != null) {
-				for (CambioBD cambio : cambios) {
-					StockDto dto = new StockDto();
-					Converter.updateObjectFromHashMap(cambio.getCambios(), dto, null);
-					stock.add(dto);
+				if ((listPendientes != null) && (!listPendientes.isEmpty())) {
+					logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
+					handler.invocaServicio(ID_USUARIO_LOGADO, listPendientes);
+					
+					logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
+					handler.marcaComoEnviados(control);
+					
+				} else {
+					logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
 				}
 			}
-
-			serviciosWebcom.enviarStock(ID_USUARIO_LOGADO, stock);
+			logger.info("Ha finalizado la detección de cambios");
 		} else {
 			logger.warn("El registro de cambios en BD aún no está disponible");
 		}
 
 	}
 
+	/**
+	 * Este método puebla la lista de detectores de cambios una vez el contexto
+	 * de Spring ya se encuentra inicializado.
+	 */
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
-		if (registroCambios == null) {
+		if (registroCambiosHandlers == null) {
 			if (event instanceof ContextRefreshedEvent) {
 				ApplicationContext applicationContext = ((ContextRefreshedEvent) event).getApplicationContext();
-				String[] beanNames = applicationContext.getBeanNamesForType(RegistroCambiosBD.class);
+				String[] beanNames = applicationContext.getBeanNamesForType(DetectorCambiosBD.class);
 				if ((beanNames != null) && (beanNames.length >= 1)) {
-					registroCambios = (RegistroCambiosBD) applicationContext.getBean(beanNames[0]);
+					DetectorCambiosBD handler = (DetectorCambiosBD) applicationContext.getBean(beanNames[0]);
+					this.addRegistroCambiosBDHandler(handler);
 				}
 
 			}

@@ -9,6 +9,13 @@ Ext.define('HreRem.view.activos.detalle.PropuestaActivosVinculadosList', {
         store: '{storePropuestaActivosVinculados}'
     },
     
+    listeners: {
+    	boxready: function() {
+    		me = this;
+    		me.evaluarEdicion();
+    	}
+    },
+    
     initComponent: function () {
      	
      	var me = this;
@@ -65,5 +72,14 @@ Ext.define('HreRem.view.activos.detalle.PropuestaActivosVinculadosList', {
 	    ];
 
 	    me.callParent();
+   },
+   
+   //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+   evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+			me.setTopBar(false);
+		}
    }
 });

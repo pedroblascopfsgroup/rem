@@ -6,6 +6,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
     requires: ['HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo'],
     topBar: true,
+
+    listeners: {
+    	boxready: function() {
+    		me = this;
+    		me.evaluarEdicion();
+    	}
+    },
         
     initComponent: function () {
         
@@ -301,6 +308,17 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me = this; 
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
+   },
+   
+   //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+   evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+			me.setTopBar(false);
+			me.rowEditing.clearListeners();
+		}
+		
    }
 
 

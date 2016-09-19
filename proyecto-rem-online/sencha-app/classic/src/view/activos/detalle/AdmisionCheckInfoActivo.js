@@ -10,7 +10,11 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
     requires: ['HreRem.model.Activo', 'HreRem.model.ActivoDatosRegistrales'],
     
     listeners: {
-    	boxready:'cargarTabData'
+    	boxready: function() {
+    		me = this;
+    		me.lookupController().cargarTabData(me);
+    		me.evaluarEdicion();
+    	}
     },
 
     
@@ -798,6 +802,10 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 							secFunPermToEnable : 'EDITAR_CHECKING_INFO_ADMISION'
 						},
 						
+						listener: function (tabPanel) { 
+				    		tabPanel.evaluarEdicion();
+						},
+						
 						columns: [
 							    {   
 									text: HreRem.i18n('fieldlabel.referencia.catastral'),
@@ -1122,5 +1130,15 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
     	me.getBindRecords()[0].set("longitud", longitud);
     	me.getBindRecords()[0].set("latitud", latitud);
     	
+    },
+    
+    //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+    evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
+			me.down('[xtype=gridBaseEditableRow]').rowEditing.clearListeners();
+		}
     }
 });

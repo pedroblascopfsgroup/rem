@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,18 +27,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoColaboracion;
  * Modelo que gestiona la relación de proveedores con las entidades propietarias de los activos.
  *  
  * @author Anahuac de Vicente
- *
  */
 @Entity
 @Table(name = "ACT_ETP_ENTIDAD_PROVEEDOR", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Where(clause = Auditoria.UNDELETED_RESTICTION)
+//@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class EntidadProveedor implements Serializable {
-
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -58,21 +53,20 @@ public class EntidadProveedor implements Serializable {
     @JoinColumn(name = "DD_TCL_ID")
     private DDTipoColaboracion tipoColaboracion;
     
-    @Column(name = "PRP_FECHA_CONTRATO")
+    @Column(name = "ETP_FECHA_CONTRATO")
 	private Date fechaContrato;
     
-    @Column(name = "PRP_FECHA_INICIO")
+    @Column(name = "ETP_FECHA_INICIO")
   	private Date fechaInicio;
     
-    @Column(name = "PRP_FECHA_FIN")
+    @Column(name = "ETP_FECHA_FIN")
   	private Date fechaFin;
     
-	@Column(name = "PRP_ESTADO")
+	@Column(name = "ETP_ESTADO")
 	private String estado;
 
-	
-	
-	
+//	@Embedded
+//	private Auditoria auditoria;
 	
 	public Long getId() {
 		return id;
@@ -137,6 +131,14 @@ public class EntidadProveedor implements Serializable {
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
+
+//	public Auditoria getAuditoria() {
+//		return auditoria;
+//	}
+//
+//	public void setAuditoria(Auditoria auditoria) {
+//		this.auditoria = auditoria;
+//	}
 
 
 }

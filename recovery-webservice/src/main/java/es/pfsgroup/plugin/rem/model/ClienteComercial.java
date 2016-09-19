@@ -73,8 +73,8 @@ public class ClienteComercial implements Serializable, Auditable {
     @Column(name = "CLC_APELLIDOS")
     private String apellidos;
     
-    @Column(name = "CLC_FECHA_ACCION")
-    private Date fechaAccion;
+    @Column(name = "CLC_FECHA_ALTA")
+    private Date fechaAlta;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USU_ID")
@@ -211,12 +211,12 @@ public class ClienteComercial implements Serializable, Auditable {
 		this.apellidos = apellidos;
 	}
 
-	public Date getFechaAccion() {
-		return fechaAccion;
+	public Date getFechaAlta() {
+		return fechaAlta;
 	}
 
-	public void setFechaAccion(Date fechaAccion) {
-		this.fechaAccion = fechaAccion;
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
 	}
 
 	public Usuario getUsuarioAccion() {

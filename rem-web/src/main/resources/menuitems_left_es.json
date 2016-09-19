@@ -78,6 +78,14 @@
 		                "cls": "app-menu-item",
 		                "routeId": "masivo",
 		                "secFunPermToRender": "MENU_MASIVO"
+		            },            
+		            {
+		                "text":   "Configuración",
+		                "view":   "configuracion.ConfiguracionMain",
+		                "leaf":   true,
+		                "iconCls": "app-menu-ico ico-configuracion",
+		                "cls": "app-menu-item",
+		                "routeId": "configuracion"
 		            }
             
             

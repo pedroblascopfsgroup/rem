@@ -31,6 +31,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTiposArras implements Auditable, Dictionary {
 	
 
+	public static final String PENITENCIALES = "01";
+	public static final String CONFIRMATORIAS = "02";
+	
 	/**
 	 * 
 	 */

@@ -21,7 +21,7 @@ public class VisitaDto implements Serializable {
 	private String codEstadoVisita;
 	@Size(max=20)
 	private String codDetalleEstadoVisita;
-	private Date fechaVisita;
+	private Date fechaAccion;
 	@NotNull
 	private Long idProveedorRemPrescriptor;
 	@NotNull
@@ -37,7 +37,7 @@ public class VisitaDto implements Serializable {
 	@NotNull
 	private Date fecha;
 	@NotNull
-	private Long idUsuarioRem;
+	private Long idUsuarioRemAccion;
 	
 	
 	
@@ -77,11 +77,11 @@ public class VisitaDto implements Serializable {
 	public void setCodDetalleEstadoVisita(String codDetalleEstadoVisita) {
 		this.codDetalleEstadoVisita = codDetalleEstadoVisita;
 	}
-	public Date getFechaVisita() {
-		return fechaVisita;
+	public Date getFechaAccion() {
+		return fechaAccion;
 	}
-	public void setFechaVisita(Date fechaVisita) {
-		this.fechaVisita = fechaVisita;
+	public void setFechaAccion(Date fechaVisita) {
+		this.fechaAccion = fechaVisita;
 	}
 	public Long getIdProveedorRemPrescriptor() {
 		return idProveedorRemPrescriptor;
@@ -125,11 +125,11 @@ public class VisitaDto implements Serializable {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public Long getIdUsuarioRem() {
-		return idUsuarioRem;
+	public Long getIdUsuarioRemAccion() {
+		return idUsuarioRemAccion;
 	}
-	public void setIdUsuarioRem(Long idUsuarioRem) {
-		this.idUsuarioRem = idUsuarioRem;
+	public void setIdUsuarioRemAccion(Long idUsuarioRemAccion) {
+		this.idUsuarioRemAccion = idUsuarioRemAccion;
 	}	
 	/*public Boolean getVisitaPrescriptor() {
 		return visitaPrescriptor;

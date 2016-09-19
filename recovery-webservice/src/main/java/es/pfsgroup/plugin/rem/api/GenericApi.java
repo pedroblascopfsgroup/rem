@@ -2,19 +2,18 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.util.List;
 
-import net.sf.json.JSONArray;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
-import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
+import net.sf.json.JSONArray;
 
 
 public interface GenericApi {
@@ -105,7 +104,9 @@ public interface GenericApi {
 	
 
 	@BusinessOperationDefinition("genericManager.getComboTipoJuzgadoPlaza")
-	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza); 
+	public List<TipoJuzgado> getComboTipoJuzgadoPlaza(Long idPlaza);
+
+	public List<DDTipoProveedor> getDiccionarioSubtipoProveedor(String codigoTipoProveedor);
 
 }
 

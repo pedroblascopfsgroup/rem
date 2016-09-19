@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -23,6 +24,12 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoProcesoBlanqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivosCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoZonaGeografica;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
@@ -124,8 +131,72 @@ public class ActivoProveedor implements Serializable, Auditable {
 	@Column(name = "PVE_NUM_CUENTA")
 	private String numCuenta;
 
+	@ManyToOne
+	@JoinColumn(name = "DD_TPE_ID")
+	private DDTipoPersona tipoPersona;
 	
+	@Column(name = "PVE_NIF")
+	private String nif;
+    
+	@Column(name = "PVE_FECHA_ALTA")
+	private Date fechaAlta;
 	
+	@Column(name = "PVE_FECHA_BAJA")
+	private Date fechaBaja;
+	
+	@Column(name = "PVE_LOCALIZADA")
+	private Integer localizada;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_EPR_ID")
+	private DDEstadoProveedor estadoProveedor;
+	
+	@Column(name = "PVE_FECHA_CONSTITUCION")
+	private Date fechaConstitucion;
+	
+	@Column(name = "PVE_AMBITO")
+	private String ambito;
+	
+	@Column(name = "PVE_OBSERVACIONES")
+	private String observaciones;
+	
+	@Column(name = "PVE_HOMOLOGADO")
+	private Integer homologado;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_CPR_ID")
+	private DDCalificacionProveedor calificacionProveedor;
+	
+	@Column(name = "PVE_TOP")
+	private Integer top;
+	
+	@Column(name = "PVE_TITULAR_CUENTA")
+	private String titularCuenta;
+	
+	@Column(name = "PVE_RETENER")
+	private Integer retener;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_MRE_ID")
+	private DDMotivoRetencion motivoRetencion;
+	
+	@Column(name = "PVE_FECHA_RETENCION")
+	private Date fechaRetencion;
+	
+	@Column(name = "PVE_FECHA_PBC")
+	private Date fechaProcesoBlanqueo;
+	
+	@Column(name = "PVE_CUSTODIO")
+	private Integer custodio;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_RPB_ID")
+	private DDResultadoProcesoBlanqueo resultadoProcesoBlanqueo;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_TAC_ID")
+	private DDTipoActivosCartera tipoActivosCartera;
+
 	@Version   
 	private Long version;
 	
@@ -312,6 +383,152 @@ public class ActivoProveedor implements Serializable, Auditable {
 		this.numCuenta = numCuenta;
 	}
 
+	public DDTipoPersona getTipoPersona() {
+		return tipoPersona;
+	}
+
+	public void setTipoPersona(DDTipoPersona tipoPersona) {
+		this.tipoPersona = tipoPersona;
+	}
+
+	public String getNif() {
+		return nif;
+	}
+
+	public void setNif(String nif) {
+		this.nif = nif;
+	}
+
+	public Date getFechaAlta() {
+		return fechaAlta;
+	}
+
+	public void setFechaAlta(Date fechaAlta) {
+		this.fechaAlta = fechaAlta;
+	}
+
+	public Date getFechaBaja() {
+		return fechaBaja;
+	}
+
+	public void setFechaBaja(Date fechaBaja) {
+		this.fechaBaja = fechaBaja;
+	}
+
+	public Integer getLocalizada() {
+		return localizada;
+	}
+
+	public void setLocalizada(Integer localizada) {
+		this.localizada = localizada;
+	}
+
+	public DDEstadoProveedor getEstadoProveedor() {
+		return estadoProveedor;
+	}
+
+	public void setEstadoProveedor(DDEstadoProveedor estadoProveedor) {
+		this.estadoProveedor = estadoProveedor;
+	}
+
+	public Date getFechaConstitucion() {
+		return fechaConstitucion;
+	}
+
+	public void setFechaConstitucion(Date fechaConstitucion) {
+		this.fechaConstitucion = fechaConstitucion;
+	}
+
+	public String getAmbito() {
+		return ambito;
+	}
+
+	public void setAmbito(String ambito) {
+		this.ambito = ambito;
+	}
+
+	public String getObservaciones() {
+		return observaciones;
+	}
+
+	public void setObservaciones(String observaciones) {
+		this.observaciones = observaciones;
+	}
+
+	public Integer getHomologado() {
+		return homologado;
+	}
+
+	public void setHomologado(Integer homologado) {
+		this.homologado = homologado;
+	}
+
+	public DDCalificacionProveedor getCalificacionProveedor() {
+		return calificacionProveedor;
+	}
+
+	public void setCalificacionProveedor(
+			DDCalificacionProveedor calificacionProveedor) {
+		this.calificacionProveedor = calificacionProveedor;
+	}
+
+	public Integer getTop() {
+		return top;
+	}
+
+	public void setTop(Integer top) {
+		this.top = top;
+	}
+
+	public String getTitularCuenta() {
+		return titularCuenta;
+	}
+
+	public void setTitularCuenta(String titularCuenta) {
+		this.titularCuenta = titularCuenta;
+	}
+
+	public Integer getRetener() {
+		return retener;
+	}
+
+	public void setRetener(Integer retener) {
+		this.retener = retener;
+	}
+
+	public DDMotivoRetencion getMotivoRetencion() {
+		return motivoRetencion;
+	}
+
+	public void setMotivoRetencion(DDMotivoRetencion motivoRetencion) {
+		this.motivoRetencion = motivoRetencion;
+	}
+
+	public Date getFechaRetencion() {
+		return fechaRetencion;
+	}
+
+	public void setFechaRetencion(Date fechaRetencion) {
+		this.fechaRetencion = fechaRetencion;
+	}
+
+	public Date getFechaProcesoBlanqueo() {
+		return fechaProcesoBlanqueo;
+	}
+
+	public void setFechaProcesoBlanqueo(Date fechaProcesoBlanqueo) {
+		this.fechaProcesoBlanqueo = fechaProcesoBlanqueo;
+	}
+
+	public DDResultadoProcesoBlanqueo getResultadoProcesoBlanqueo() {
+		return resultadoProcesoBlanqueo;
+	}
+
+	public void setResultadoProcesoBlanqueo(
+			DDResultadoProcesoBlanqueo resultadoProcesoBlanqueo) {
+		this.resultadoProcesoBlanqueo = resultadoProcesoBlanqueo;
+	}
+	
 	public Long getVersion() {
 		return version;
 	}
@@ -326,6 +543,22 @@ public class ActivoProveedor implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Integer getCustodio() {
+		return custodio;
+	}
+
+	public void setCustodio(Integer custodio) {
+		this.custodio = custodio;
+	}
+
+	public DDTipoActivosCartera getTipoActivosCartera() {
+		return tipoActivosCartera;
+	}
+
+	public void setTipoActivosCartera(DDTipoActivosCartera tipoActivosCartera) {
+		this.tipoActivosCartera = tipoActivosCartera;
 	}
 	
 	

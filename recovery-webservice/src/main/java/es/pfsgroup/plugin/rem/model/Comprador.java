@@ -24,8 +24,8 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
 /**
@@ -55,7 +55,7 @@ public class Comprador implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID")
-    private DDTipoPersona tipoPersona;
+    private DDTiposPersona tipoPersona;
     
     @Column(name = "COM_NOMBRE")
     private String nombre;
@@ -109,11 +109,11 @@ public class Comprador implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public DDTipoPersona getTipoPersona() {
+	public DDTiposPersona getTipoPersona() {
 		return tipoPersona;
 	}
 
-	public void setTipoPersona(DDTipoPersona tipoPersona) {
+	public void setTipoPersona(DDTiposPersona tipoPersona) {
 		this.tipoPersona = tipoPersona;
 	}
 

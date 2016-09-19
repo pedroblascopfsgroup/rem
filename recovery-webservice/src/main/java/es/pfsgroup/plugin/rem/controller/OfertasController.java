@@ -104,7 +104,7 @@ public class OfertasController {
 	 * signature - sdgsdgsdgsdg
 	 * 
 	 * BODY:
-	 * {"id":"111111114111","data": [{"idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1000", "idActivoHaya": "1000", "codEstadoOferta": "1000","codTipoOferta": "1000", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1000", "importeContraoferta": null, "idProveedorRemPrescriptor": "1000", "idProveedorRemCustodio": "1000", "idProveedorRemResponsable": "1000", "idProveedorRemFdv": "1000" , "importe": "1000.2", "titularesAdicionales": [{"nombre": "Nombre1", "codTipoDocumento": "1000", "documento":"48594626F"}, {"nombre": "Nombre2", "codTipoDocumento": "1001", "documento":"48594628F"}]}]}
+	 * {"id":"111111114111","data": [{"idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1", "idActivoHaya": "6346320", "codEstadoOferta": "04","codTipoOferta": "01", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRemAccion": "29468", "importeContraoferta": null, "idProveedorRemPrescriptor": "1000", "idProveedorRemCustodio": "1000", "idProveedorRemResponsable": "1000", "idProveedorRemFdv": "1000" , "importe": "1000.2", "titularesAdicionales": [{"nombre": "Nombre1", "codTipoDocumento": "15", "documento":"48594626F"}, {"nombre": "Nombre2", "codTipoDocumento": "15", "documento":"48594628F"}]}]}
 	 * @param model
 	 * @param request
 	 * @return

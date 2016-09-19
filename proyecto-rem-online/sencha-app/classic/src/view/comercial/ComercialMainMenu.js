@@ -6,7 +6,7 @@ Ext.define('HreRem.view.comercial.ComercialMainMenu', {
     layout: 'fit',
     
     requires	: ['HreRem.view.comercial.ComercialVisitasController','HreRem.view.comercial.ComercialModel',
-    'HreRem.view.comercial.visitas.VisitasComercialMain', 'HreRem.view.comercial.ofertas.OfertasComercialMain', 'HreRem.view.comercial.configuracion.ConfiguracionMain'],
+    'HreRem.view.comercial.visitas.VisitasComercialMain', 'HreRem.view.comercial.ofertas.OfertasComercialMain', 'HreRem.view.comercial.configuracion.ConfiguracionComercialMain'],
     
 
     initComponent: function () {
@@ -21,7 +21,7 @@ Ext.define('HreRem.view.comercial.ComercialMainMenu', {
 				xtype: 'ofertascomercialmain', reference: 'ofertasComercialMain'
 			},
 			{	
-				xtype: 'configuracionmain', reference: 'configuracionMain', disabled: true
+				xtype: 'configuracioncomercialmain', reference: 'configuracioncomercialMain', disabled: true
 			}
         ];
         

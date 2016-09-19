@@ -183,15 +183,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   
     	},
     	
-    	comboTiposPorCuentaPrueba: {
-    		model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposPorCuenta'}
-			}   
-    	},
-    	
     	comboTiposImpuesto: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -282,7 +273,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposPersona'}
+				extraParams: {diccionario: 'tipoPersona'}
 			}
     	},
     	

@@ -26,7 +26,7 @@ public class TrabajoDto implements Serializable{
 	@NotNull
 	private Date fechaAccion;
 	@NotNull
-	private Long idUsuarioRem;
+	private Long idUsuarioRemAccion;
 	@NotNull
 	@Size(max=256)
 	private String descripcion;
@@ -86,11 +86,11 @@ public class TrabajoDto implements Serializable{
 	public void setFechaAccion(Date fechaAccion) {
 		this.fechaAccion = fechaAccion;
 	}
-	public Long getIdUsuarioRem() {
-		return idUsuarioRem;
+	public Long getIdUsuarioRemAccion() {
+		return idUsuarioRemAccion;
 	}
-	public void setIdUsuarioRem(Long idUsuarioRem) {
-		this.idUsuarioRem = idUsuarioRem;
+	public void setIdUsuarioRemAccion(Long idUsuarioRemAccion) {
+		this.idUsuarioRemAccion = idUsuarioRemAccion;
 	}
 	public String getDescripcion() {
 		return descripcion;

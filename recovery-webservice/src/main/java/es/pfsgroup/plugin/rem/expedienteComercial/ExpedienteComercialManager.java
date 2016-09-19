@@ -65,6 +65,7 @@ import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
@@ -76,7 +77,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.observacionesExpediente.dao.ObservacionExpedienteDao;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager implements ExpedienteComercialApi {
@@ -1143,6 +1143,56 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 		//Falta la busqueda de los gastos y añadir un el dto a la lista de dto's
 		
 		return new DtoPage(gastosExpediente, gastosExpediente.size());
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", idOferta);
+		ExpedienteComercial expC = genericDao.get(ExpedienteComercial.class, filtro);
+		
+		return expC;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) {
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpedienteComercial);
+		Reserva reserva = expedienteComercial.getReserva();
+		entregaReserva.setReserva(reserva);
+		try {
+			genericDao.save(EntregaReserva.class, entregaReserva);
+		} catch(Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean update(ExpedienteComercial expedienteComercial) {
+		try {
+			genericDao.update(ExpedienteComercial.class, expedienteComercial);
+		} catch(Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public DDEstadosExpedienteComercial getEstado(String codigo) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigo);
+		DDEstadosExpedienteComercial estado = null;
+		try {
+			estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+		} catch(Exception e) {
+			return null;
+		}
+		
+		return estado;
 	}
 	
 

@@ -91,10 +91,10 @@ public class RestSecurityFilter implements Filter  {
 			
 
 			//Realizamos login en la plataforma		
-			securityContext = doLogin(entidad);			
-			if(Checks.esNulo(securityContext)){
-				return;
-			}
+//			securityContext = doLogin(entidad);			
+//			if(Checks.esNulo(securityContext)){
+//				return;
+//			}
 
 			// logamos el operador partiendo del parametro signature
 			String signature = ((HttpServletRequest) request).getHeader("signature");
@@ -151,10 +151,10 @@ public class RestSecurityFilter implements Filter  {
 			throwErrorGeneral(response, e);
 
 		} finally {
-			if (securityContext!=null) {
-				 //securityContext.getAuthentication().setAuthenticated(false);
-				 SecurityContextHolder.clearContext();
-			}
+//			if (securityContext!=null) {
+//				 //securityContext.getAuthentication().setAuthenticated(false);
+//				 SecurityContextHolder.clearContext();
+//			}
 		}
 		if (hibernateEnable) {
 			restApi.guardarPeticionRest(peticion);

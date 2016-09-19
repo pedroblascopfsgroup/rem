@@ -269,16 +269,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						listaErrores.add("No existe el activo en REM especificado en el campo idActivoHaya: " + ofertaDto.getIdActivoHaya());
 					}
 				}
-				if(!Checks.esNulo(ofertaDto.getIdUsuarioRem())){
-					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRem()));							
+				if(!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())){
+					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));							
 					if(Checks.esNulo(user)){
-						listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + ofertaDto.getIdUsuarioRem());
+						listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + ofertaDto.getIdUsuarioRemAccion());
 					}
 				}
 				if(!Checks.esNulo(ofertaDto.getCodEstadoOferta())){
 					DDEstadoOferta estadoOfr = (DDEstadoOferta) genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", ofertaDto.getCodEstadoOferta()));							
 					if(Checks.esNulo(estadoOfr)){
 						listaErrores.add("No existe el código del estado de la oferta especificado en el campo codEstadoOferta: " + ofertaDto.getCodEstadoOferta());
+					}else{
+						if(!ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE) && !ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
+							listaErrores.add("Código de estado no permitido. Valores permitidos: ".concat(DDEstadoOferta.CODIGO_PENDIENTE).concat(",").concat(DDEstadoOferta.CODIGO_RECHAZADA));
+						}
 					}
 				}				
 				if(!Checks.esNulo(ofertaDto.getCodTipoOferta())){
@@ -322,6 +326,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}
+				
 			}
 			
 		}catch (Exception e){
@@ -418,8 +423,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}		
-				if(!Checks.esNulo(ofertaDto.getIdUsuarioRem())){
-					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRem()));							
+				if(!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())){
+					Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));							
 					if(!Checks.esNulo(user)){
 						oferta.setUsuarioAccion(user);			
 					}
@@ -480,7 +485,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}						
 					}
 					oferta.setTitularesAdicionales(listaTit);
-				}				
+				}		
+				if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)){
+					oferta.setFechaAlta(ofertaDto.getFechaAccion());
+				}else if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
+					oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
+				}
+					
 				ofertaDao.save(oferta);	
 			}
 
@@ -522,7 +533,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						oferta.setEstadoOferta(null);
 					}
 				}
-				
+				if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_PENDIENTE)){
+					oferta.setFechaAlta(ofertaDto.getFechaAccion());
+				}else if(ofertaDto.getCodEstadoOferta().equals(DDEstadoOferta.CODIGO_RECHAZADA)){
+					oferta.setFechaRechazoOferta(ofertaDto.getFechaAccion());
+				}
 				ofertaDao.saveOrUpdate(oferta);
 			}
 

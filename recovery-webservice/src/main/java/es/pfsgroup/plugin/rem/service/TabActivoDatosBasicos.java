@@ -19,6 +19,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
@@ -44,7 +45,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
-	
+	@Autowired
+	private ActivoApi activoApi;
 
 	@Override
 	public String[] getKeys() {
@@ -172,6 +174,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 		}
+		
+		//HREOS-846 Si no esta en el perimetro, el activo se considera SOLO CONSULTA
+		BeanUtils.copyProperty(activoDto, "dentroPerimetro", activoApi.isActivoDentroPerimetro(activo.getId()));
 
 		return activoDto;	
 	}

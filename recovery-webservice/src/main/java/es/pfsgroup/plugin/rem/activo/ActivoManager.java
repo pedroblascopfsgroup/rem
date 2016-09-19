@@ -78,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
@@ -1171,5 +1172,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public boolean isActivoDentroPerimetro(Long idActivo) {
+		
+		List<PerimetroActivo> perimetros = new ArrayList<PerimetroActivo>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Order order = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		perimetros = genericDao.getListOrdered(PerimetroActivo.class,order,filtro);
+		
+		if(Checks.estaVacio(perimetros) || perimetros.get(0).getIncluidoEnPerimetro() == 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }

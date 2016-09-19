@@ -4,6 +4,12 @@ Ext.define('HreRem.view.activos.detalle.GestoresActivo', {
     requires: ['HreRem.view.activos.gestores.ComboGestores','HreRem.view.activos.gestores.GestoresList','Ext.plugin.LazyItems'],
     layout: 'fit',
     
+    listeners: { 	
+    	boxready: function (tabPanel) { 
+    		tabPanel.evaluarEdicion();
+    	}
+    },
+
     initComponent: function () {
     	var me = this;   	
     	me.setTitle(HreRem.i18n('title.gestores'));
@@ -41,6 +47,15 @@ Ext.define('HreRem.view.activos.detalle.GestoresActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
+    },
+    
+    //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+    evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+			me.down('[xtype=combogestores]').setVisible(false);
+		}
     }
     
 });

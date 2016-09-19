@@ -310,6 +310,14 @@ public interface ActivoApi {
 		 * @return Devuelve si se ha completado la operación con exito o no.
 		 */
 		public boolean deletePropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
+		
+		/**
+		 * HREOS-846. Comprueba si el activo esta dentro del perímetro de Haya
+		 * 
+		 * @param idActivo Activo a comprobar
+		 * @return true si esta dentro del perimetro Haya, false si esta fuera.
+		 */
+		public boolean isActivoDentroPerimetro(Long idActivo);
     }
 
 

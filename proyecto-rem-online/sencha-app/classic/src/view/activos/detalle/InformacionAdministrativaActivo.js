@@ -7,8 +7,12 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
     reference: 'informacionadministrativaactivo',
     scrollable	: 'y',
     listeners: {
-			boxready:'cargarTabData'
-	},
+    	boxready: function() {
+    		me = this;
+    		me.lookupController().cargarTabData(me);
+    		me.evaluarEdicion();
+    	}
+    },
 
 	recordName: "infoAdministrativa",
 	
@@ -516,6 +520,16 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
+   },
+   
+   //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+   evaluarEdicion: function() {    	
+		var me = this;
+		
+		if(me.lookupController().getViewModel().get('activo').get('dentroPerimetro')=="false") {
+			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
+			me.down('[xtype=gridBaseEditableRow]').rowEditing.clearListeners();
+		}
    }
 
 });

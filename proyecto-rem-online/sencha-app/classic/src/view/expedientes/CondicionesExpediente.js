@@ -269,7 +269,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
-								            		store: '{comboTiposPorCuenta}'
+								            		store: '{comboPorCuenta}'
 								            		,value: '{condiciones.plusvaliaPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
@@ -292,7 +292,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
-								            		store: '{comboTiposPorCuenta}',
+								            		store: '{comboPorCuenta}',
 								            		value: '{condiciones.notariaPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
@@ -314,7 +314,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
-								            		store: '{comboTiposPorCuenta}',
+								            		store: '{comboPorCuenta}',
 								            		value: '{condiciones.gastosCompraventaOtrosPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
@@ -362,7 +362,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 															xtype: 'comboboxfieldbase',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 												        	bind: {
-											            		store: '{comboTiposPorCuenta}'
+											            		store: '{comboPorCuenta}'
 											            		,value: '{condiciones.ibiPorCuentaDe}'
 											            	},
 											            	displayField: 'descripcion',
@@ -385,7 +385,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 															xtype: 'comboboxfieldbase',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 												        	bind: {
-											            		store: '{comboTiposPorCuenta}',
+											            		store: '{comboPorCuenta}',
 											            		value: '{condiciones.comunidadPorCuentaDe}'
 											            	},
 											            	displayField: 'descripcion',
@@ -407,7 +407,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 															xtype: 'comboboxfieldbase',
 										                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 												        	bind: {
-											            		store: '{comboTiposPorCuenta}',
+											            		store: '{comboPorCuenta}',
 											            		value: '{condiciones.suministrosPorCuentaDe}'
 											            	},
 											            	displayField: 'descripcion',
@@ -456,7 +456,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
-								            		store: '{comboTiposPorCuenta}',
+								            		store: '{comboPorCuenta}',
 								            		value: '{condiciones.impuestosPorCuentaDe}',
 								            		disabled: '{!esImpuestoMayorQueCero}'
 								            	},
@@ -477,7 +477,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
-								            		store: '{comboTiposPorCuenta}',
+								            		store: '{comboPorCuenta}',
 								            		value: '{condiciones.comunidadesPorCuentaDe}',
 								            		disabled: '{!esComunidadesMayorQueCero}'
 					    							
@@ -502,7 +502,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 									        	bind: {
-								            		store: '{comboTiposPorCuenta}',
+								            		store: '{comboPorCuenta}',
 								            		value: '{condiciones.cargasPendientesOtrosPorCuentaDe}'
 								            	},
 								            	displayField: 'descripcion',
@@ -717,7 +717,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								xtype: 'comboboxfieldbase',
 							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 								bind: {
-									store: '{comboTiposPorCuenta}',
+									store: '{comboPorCuenta}',
 								    value: '{condiciones.procedeDescalificacionPorCuentaDe}'
 								},
 								reference: 'procedeDescalificacionPorCuentaDe',
@@ -741,7 +741,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								xtype: 'comboboxfieldbase',
 							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
 								bind: {
-									store: '{comboTiposPorCuenta}',
+									store: '{comboPorCuenta}',
 								    value: '{condiciones.licenciaPorCuentaDe}'
 								},
 								reference: 'licenciaPorCuentaDe',

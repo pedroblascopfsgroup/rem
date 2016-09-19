@@ -39,7 +39,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 			
 			var me = this;
 			if (me.value == null || (me.value != binding.lastValue)) {
-				if (me.getStore() != null) {
+				if (me.getStore() != null && me.getStore().type!="chained") {
 					me.loadPage();
 				}
 				/*me.getStore().load({

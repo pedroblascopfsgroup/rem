@@ -22,7 +22,6 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -83,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
@@ -1306,7 +1306,7 @@ public class ExpedienteComercialManager implements ExpedienteComercialApi {
 			if(!Checks.esNulo(comprador)){
 				
 				if(!Checks.esNulo(dto.getCodTipoPersona())){
-					DDTipoPersona tipoPersona = (DDTipoPersona) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPersona.class, dto.getCodTipoPersona());
+					DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
 					comprador.setTipoPersona(tipoPersona);
 				}
 				

@@ -29,13 +29,17 @@ Ext.define('HreRem.model.Honorario', {
     			name: 'importeCalculo'
     		},
     		{
-    			name: 'honorarios'
+    			name: 'honorarios',
+    			critical: true
     		},
     		{
     			name: 'telefono'
     		},
     		{
     			name: 'email'
+    		},
+    		{
+    			name: 'observaciones'
     		}
     ],
     
@@ -44,7 +48,7 @@ Ext.define('HreRem.model.Honorario', {
 		writeAll: true,
 		localUrl: 'gastoGestionEconomica.json',
 		api: {
-            
+            update: 'expedientecomercial/saveHonorario'
         }
     }
 

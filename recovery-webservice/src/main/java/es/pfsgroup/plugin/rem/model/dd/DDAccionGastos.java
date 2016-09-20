@@ -49,6 +49,10 @@ public class DDAccionGastos implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_ACC_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
+	
+	public static final String CODIGO_PRESCRIPCION = "04";
+	public static final String CODIGO_COLABORACION = "05";
+	public static final String CODIGO_DOBLE_PRESCRIPCION = "06";
 	    
 	
 	    

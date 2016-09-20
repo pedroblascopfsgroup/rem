@@ -57,8 +57,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 						   {
 						   		text: HreRem.i18n('fieldlabel.cargo'),
 					            dataIndex: 'cargo',
-					            flex: 1	,
-					            data: 'NO DEFINIDO'
+					            flex: 1	
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.telefono'),

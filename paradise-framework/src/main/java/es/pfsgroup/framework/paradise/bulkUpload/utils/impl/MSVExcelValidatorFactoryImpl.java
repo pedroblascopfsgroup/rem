@@ -32,6 +32,9 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVActualizarPreciosActivoBloqueo actualizarDesbloqueoPrecioActivo;
+
+	@Autowired
+	private MSVActualizarPerimetroActivo actualizarPerimetroActivo;
 	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -54,9 +57,11 @@ public class MSVExcelValidatorFactoryImpl {
 					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(codTipoOperacion) ||
 					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(codTipoOperacion) ||
 					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(codTipoOperacion) ||
-					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion))
+					  MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion)){
 				return actualizarEstadoPublicacion;
-		
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO.equals(codTipoOperacion)) {
+				return actualizarPerimetroActivo;
+			}
 		return null;
 	}
 

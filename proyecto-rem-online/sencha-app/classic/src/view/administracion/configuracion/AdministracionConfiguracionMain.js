@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.administracion.gastos.AdministracionConfiguracionMain', {
-	extend		: 'Ext.panel.Panel',
+	extend		: 'Ext.tab.Panel',
     xtype		: 'administracionconfiguracionmain',
-    requires	: [''],
+//    requires	: [''],
     layout: {
         type: 'vbox',
         align: 'stretch'

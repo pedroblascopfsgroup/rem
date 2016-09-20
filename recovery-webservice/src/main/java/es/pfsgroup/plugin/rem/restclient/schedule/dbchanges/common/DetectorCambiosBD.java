@@ -115,7 +115,7 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements Info
 		}
 
 		if (dtoClass.equals(getDtoClass())) {
-			dao.marcaComoEnviados(this);
+			dao.marcaComoEnviados(dtoClass, this);
 		} else {
 			logger.warn("No coincide la clase con el DTO asociado al detctor. Se esperaba " + getDtoClass().getName()
 					+ " pero se ha especificado " + dtoClass.getName());

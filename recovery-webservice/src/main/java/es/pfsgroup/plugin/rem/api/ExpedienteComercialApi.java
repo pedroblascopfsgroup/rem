@@ -11,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -255,8 +256,20 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		boolean saveReserva(DtoReserva dto, Long idEntidad);
-			
+		
+		/**
+		 * Método que obtiene los honorarios(gastos) del expediente
+		 * @param idExpediente
+		 * @return
+		 */
 		public DtoPage getHonorarios(Long idExpediente);
+		
+		/**
+		 * Método que guarda los honorarios(gastos) del expediente
+		 * @param dtoGastoExpediente
+		 * @return
+		 */
+		public boolean saveHonorario(DtoGastoExpediente dtoGastoExpediente);
 
 		
 		/**

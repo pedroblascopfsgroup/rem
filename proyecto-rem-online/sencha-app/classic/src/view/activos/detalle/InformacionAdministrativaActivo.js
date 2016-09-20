@@ -522,7 +522,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
   		});
    },
    
-   //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+ //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar y las acciones editables por fila
    evaluarEdicion: function() {    	
 		var me = this;
 		

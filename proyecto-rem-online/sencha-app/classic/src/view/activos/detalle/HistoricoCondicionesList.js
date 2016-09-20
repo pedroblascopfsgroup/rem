@@ -77,7 +77,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoCondicionesList', {
 		    me.callParent();
    },
    
-   //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+   //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/quitar del grid
    evaluarEdicion: function() {    	
 		var me = this;
 		

@@ -461,7 +461,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 		me.lookupController().cargarTabData(me);
    },
    
-   //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+ //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar
    evaluarEdicion: function() {    	
 		var me = this;
 	

@@ -21,7 +21,7 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
             	items : [
             	
                 	{
-					    xtype		: 'gridBase',
+					    xtype		: 'gridBaseEditableRow',
 					    reference: 'listadohoronarios',
 						cls	: 'panel-base shadow-panel',
 						bind: {
@@ -30,14 +30,9 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 						
 						columns: [
 						   {
-					            text: HreRem.i18n('fieldlabel.colaborador'),
-					            dataIndex: 'colaborador',
+					            text: HreRem.i18n('fieldlabel.participacion'),
+					            dataIndex: 'participacion',
 					            flex: 1
-						   },
-						    {
-						   		text: HreRem.i18n('fieldlabel.tipo.proveedor'),
-					            dataIndex: 'tipoProveedor',
-					            flex: 1						   
 						   },						   
 						   {
 						   		text: HreRem.i18n('fieldlabel.proveedor'),
@@ -45,39 +40,65 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					            flex: 1						   
 						   },
 						   {
-						   		text: HreRem.i18n('fieldlabel.domicilio'),
-					            dataIndex: 'domicilio',
-					            flex: 1						   
-						   },
-						   {
 						   		text: HreRem.i18n('fieldlabel.id'),
-					            dataIndex: 'id',
+					            dataIndex: 'codigoId',
 					            flex: 1						   
 						   },
 						   {
 						   		text: HreRem.i18n('header.tipo.calculo'),
 					            dataIndex: 'tipoCalculo',
-					            flex: 1						   
+					            flex: 1,
+					            editor: {
+									xtype: 'combobox',	
+									reference: 'tipoCalculoHonorario',
+									store: new Ext.data.Store({
+										model: 'HreRem.model.ComboBase',
+										proxy: {
+											type: 'uxproxy',
+											remoteUrl: 'generic/getDiccionario',
+											extraParams: {diccionario: 'tiposCalculo'}
+										},
+										autoLoad: true
+									}),
+									displayField: 'descripcion',
+    								valueField: 'codigo',
+    								listeners:{
+					            		change: 'onHaCambiadoImporteCalculo'
+					           		}
+								}
 						   },
 						   {
 						   		text: HreRem.i18n('header.importe.calculo'),
 					            dataIndex: 'importeCalculo',
-					            flex: 1						   
+					            flex: 1,
+					            editor: {
+					            	xtype:'numberfield',
+					            	reference: 'importeCalculoHonorario',
+					            	listeners:{
+					            		change: 'onHaCambiadoImporteCalculo'
+					           		},
+					           		maxValue: null
+					           							            
+					            }
 						   },
 						   {
 						   		text: HreRem.i18n('fieldlabel.honorarios'),
-					            dataIndex: 'horonarios',
-					            flex: 1						   
+					            dataIndex: 'honorarios',
+					            flex: 1,
+					            editor: {
+					            	editable: false,
+					            	xtype:'textfield',
+					            	reference: 'honorarios'
+					            }
 						   },
-						   {
-						   		text: HreRem.i18n('fieldlabel.telefono'),
-					            dataIndex: 'telefono',
-					            flex: 1						   
-						   },
-						   {
-						   		text: HreRem.i18n('fieldlabel.email'),
-					            dataIndex: 'email',
-					            flex: 1						   
+						    {
+						   		text: HreRem.i18n('fieldlabel.observaciones'),
+					            dataIndex: 'observaciones',
+					            flex: 1,
+					            editor: {
+					            	xtype:'textarea',
+					            	reference: 'observaciones'
+					            }
 						   }
 					    ],
 					    dockedItems : [
@@ -98,13 +119,15 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 	    me.addPlugin({ptype: 'lazyitems', items: items });
 	    
 	    me.callParent(); 
-    }
+    },
     
-  // COMENTAR HASTA QUE SE DEFINA  
-//    funcionRecargar: function() {
-//    	var me = this; 
-//		me.recargar = false;		
-//		me.lookupController().cargarTabData(me);		
-//		
-//    }
+    funcionRecargar: function() {
+    	var me = this; 
+		me.recargar = false;
+		var listadoHonorarios = me.down("[reference=listadohoronarios]");
+		
+		// FIXME ¿¿Deberiamos cargar la primera página??
+		listadoHonorarios.getStore().load();		
+		
+    }
 });

@@ -230,6 +230,9 @@ public class Trabajo implements Serializable, Auditable {
     @JoinColumn(name = "TBJ_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private PropuestaPrecio propuestaPrecio;
+    
+    @Column(name="TBJ_FECHA_EMISION_FACTURA")
+    private Date fechaEmisionFactura;
        	
 	@Version   
 	private Long version;
@@ -790,6 +793,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setPropuestaPrecio(PropuestaPrecio propuestaPrecio) {
 		this.propuestaPrecio = propuestaPrecio;
+	}
+
+	public Date getFechaEmisionFactura() {
+		return fechaEmisionFactura;
+	}
+
+	public void setFechaEmisionFactura(Date fechaEmisionFactura) {
+		this.fechaEmisionFactura = fechaEmisionFactura;
 	}
 
 

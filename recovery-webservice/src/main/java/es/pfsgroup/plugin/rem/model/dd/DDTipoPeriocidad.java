@@ -21,14 +21,14 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 
 /**
- * Modelo que gestiona el diccionario de acción de gastos
+ * Modelo que gestiona el diccionario de tipos de periocidad
  */
 @Entity
-@Table(name = "DD_ACC_ACCION_GASTOS", schema = "${entity.schema}")
+@Table(name = "DD_TPE_TIPOS_PERIOCIDAD", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
-public class DDAccionGastos implements Auditable, Dictionary {
-
+public class DDTipoPeriocidad implements Auditable, Dictionary {
+	
 
 	/**
 	 * 
@@ -36,23 +36,19 @@ public class DDAccionGastos implements Auditable, Dictionary {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name = "DD_ACC_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDAccionGastosGenerator")
-	@SequenceGenerator(name = "DDAccionGastosGenerator", sequenceName = "S_DD_ACC_ACCION_GASTOS_")
+	@Column(name = "DD_TPE_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "DDTipoGastoGenerator")
+	@SequenceGenerator(name = "DDTipoGastoGenerator", sequenceName = "S_DD_TPE_TIPOS_PERIOCIDAD")
 	private Long id;
 	    
-	@Column(name = "DD_ACC_CODIGO")   
+	@Column(name = "DD_TPE_CODIGO")   
 	private String codigo;
 	 
-	@Column(name = "DD_ACC_DESCRIPCION")   
+	@Column(name = "DD_TPE_DESCRIPCION")   
 	private String descripcion;
 	    
-	@Column(name = "DD_ACC_DESCRIPCION_LARGA")   
+	@Column(name = "DD_TPE_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
-	
-	public static final String CODIGO_PRESCRIPCION = "04";
-	public static final String CODIGO_COLABORACION = "05";
-	public static final String CODIGO_DOBLE_PRESCRIPCION = "06";
 	    
 	
 	    

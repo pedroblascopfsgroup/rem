@@ -34,7 +34,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TPA_TIPOS_PERIOCIDAD'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'DD_TPE_TIPOS_PERIOCIDAD'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla para gestionar el diccionario de TIPOS de periocidad.'; -- Vble. para los comentarios de las tablas
 
 BEGIN
@@ -67,10 +67,10 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA|| '.'||V_TEXT_TABLA||'...');
 	V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 	(
-		DD_TPA_ID           		NUMBER(16)                  NOT NULL,
-		DD_TPA_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
-		DD_TPA_DESCRIPCION			VARCHAR2(100 CHAR),
-		DD_TPA_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
+		DD_TPE_ID           		NUMBER(16)                  NOT NULL,
+		DD_TPE_CODIGO        		VARCHAR2(20 CHAR)          	NOT NULL,
+		DD_TPE_DESCRIPCION			VARCHAR2(100 CHAR),
+		DD_TPE_DESCRIPCION_LARGA	VARCHAR2(250 CHAR),
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -91,13 +91,13 @@ BEGIN
 	
 
 	-- Creamos indice	
-	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_TPA_ID) TABLESPACE '||V_TABLESPACE_IDX;		
+	V_MSQL := 'CREATE UNIQUE INDEX '||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK ON '||V_ESQUEMA|| '.'||V_TEXT_TABLA||'(DD_TPE_ID) TABLESPACE '||V_TABLESPACE_IDX;		
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... Indice creado.');
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TPA_ID) USING INDEX)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CONSTRAINT '||V_TEXT_TABLA||'_PK PRIMARY KEY (DD_TPE_ID) USING INDEX)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'_PK... PK creada.');
 	

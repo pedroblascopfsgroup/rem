@@ -147,7 +147,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
   		});
     },
     
-    //HREOS-846 Si NO esta dentro del perimetro, ocultamos el contenedor de agregar gestores
+    //HREOS-846 Si NO esta dentro del perimetro, ocultamos los botones de agregar/eliminar
     evaluarEdicion: function() {    	
 		var me = this;
 

@@ -2135,10 +2135,10 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 							listaErrores.add("El código del subtipo de trabajo en REM especificado en el campo codSubtipoTrabajo: " + trabajoDto.getCodSubtipoTrabajo() + " no es de tipo " + DDTipoTrabajo.CODIGO_ACTUACION_TECNICA);
 						}
 					}	
-					if(!Checks.esNulo(trabajoDto.getIdUsuarioRem())){
-						Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdUsuarioRem()));							
+					if(!Checks.esNulo(trabajoDto.getIdUsuarioRemAccion())){
+						Usuario user = (Usuario) genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", trabajoDto.getIdUsuarioRemAccion()));							
 						if(Checks.esNulo(user)){
-							listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + trabajoDto.getIdUsuarioRem());
+							listaErrores.add("No existe el usuario en REM especificado en el campo idUsuarioRem: " + trabajoDto.getIdUsuarioRemAccion());
 						}
 					}
 					if(!Checks.esNulo(trabajoDto.getIdProveedorRemResponsable())){
@@ -2215,8 +2215,8 @@ private DtoPresupuestosTrabajo presupuestoTrabajoToDto(PresupuestoTrabajo presup
 				if(!Checks.esNulo(trabajoDto.getFechaAccion())){
 					dtoFichaTrabajo.setFechaSolicitud(trabajoDto.getFechaAccion());
 				}	
-				if(!Checks.esNulo(trabajoDto.getIdUsuarioRem())){
-					dtoFichaTrabajo.setIdSolicitante(trabajoDto.getIdUsuarioRem());
+				if(!Checks.esNulo(trabajoDto.getIdUsuarioRemAccion())){
+					dtoFichaTrabajo.setIdSolicitante(trabajoDto.getIdUsuarioRemAccion());
 				}	
 				if(!Checks.esNulo(trabajoDto.getDescripcion())){
 					String descStr = "Descripcion: ";

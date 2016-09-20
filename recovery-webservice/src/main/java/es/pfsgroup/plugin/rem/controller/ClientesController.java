@@ -17,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -30,15 +29,6 @@ public class ClientesController {
 	@Autowired
 	private ClienteComercialApi clienteComercialApi;
 	
-	@Autowired
-	private RestApi restApi;
-	
-	
-	
-	
-	
-	
-
 	
 	/**
 	 * Inserta o actualiza una lista de clienteComercial Ejem: IP:8080/pfs/rest/clientes
@@ -47,7 +37,7 @@ public class ClientesController {
 	 * signature - sdgsdgsdgsdg
 	 * 
 	 * BODY:
-	 * {"id":"111111111111","data": [{ "idClienteWebcom": "1", "idClienteRem": "1", "razonSocial": "Razon Social", "nombre": "Nombre","apellidos": "Apellidos", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1", "codTipoDocumento": "01", "documento": "123456789B", "codTipoDocumentoRepresentante": "01", "documentoRepresentante": "123456789B", "telefono1": "919876543", "telefono2": "919876543", "email": "email@email.com", "codTipoPrescriptor": "04", "idProveedorRemPrescriptor": "5045", "idProveedorRemResponsable": "1010",  "codTipoVia":"CL", "direccion": "Dirección", "numeroCalle":"10", "escalera":"A", "planta":"7",  "puerta":"20", "codMunicipio": "46250", "codigoPostal": "12312", "codProvincia": "46", "codPedania": "462500000", "observaciones": "Observaciones" }]}
+	 * {"id":"111111111111","data": [{ "idClienteWebcom": "1", "razonSocial":"Razon Social", "nombre": "Nombre","apellidos": "Apellidos", "fechaAccion": "2016-01-01T10:10:10", "idUsuarioRem": "1", "codTipoDocumento": "01", "documento": "123456789B", "codTipoDocumentoRepresentante": "01", "documentoRepresentante": "123456789B", "telefono1": "919876543", "telefono2": "919876543", "email": "email@email.com", "codTipoPrescriptor": "04", "idProveedorRemPrescriptor": "5045", "idProveedorRemResponsable": "1010",  "codTipoVia":"CL", "direccion": "Dirección", "numeroCalle":"10", "escalera":"A", "planta":"7",  "puerta":"20", "codMunicipio": "46250", "codigoPostal": "12312", "codProvincia": "46", "codPedania": "462500000", "observaciones": "Observaciones","idUsuarioRemAccion":"29468" }]}
 	 *  
 	 * @param model
 	 * @param request
@@ -194,6 +184,10 @@ public class ClientesController {
 	}
 	
 	
+	
+	
+	
+
 
 	
 }

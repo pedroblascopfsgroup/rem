@@ -11,10 +11,14 @@ import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
 
@@ -68,7 +72,30 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		public List<DtoEntregaReserva> getListEntregasReserva(Long id);
-
+		
+		
+		/**
+	     * Añadir una Entrega Reserva a un Expediente Comercial
+	     * @param entregaReserva
+	     * @param idExpedienteComercial
+	     * @return
+		 * @throws Exception 
+	     */
+		public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial);
+		
+		/**
+	     * Actualizar los valores del Expediente Comercial
+	     * @parame xpedienteComercial
+	     * @return
+	     */
+		public boolean update(ExpedienteComercial expedienteComercial);
+		
+		/**
+	     * Recupera el estado expediente asociado a un determinado codigo
+	     * @param codigo
+	     * @return
+	     */
+		public DDEstadosExpedienteComercial getEstado(String codigo);
 
 		/**
 		 * Método que recupera las observaciones del expediente comercial
@@ -229,10 +256,28 @@ public interface ExpedienteComercialApi {
 		 * @return
 		 */
 		boolean saveReserva(DtoReserva dto, Long idEntidad);
-			
+		
+		/**
+		 * Método que obtiene los honorarios(gastos) del expediente
+		 * @param idExpediente
+		 * @return
+		 */
 		public DtoPage getHonorarios(Long idExpediente);
+		
+		/**
+		 * Método que guarda los honorarios(gastos) del expediente
+		 * @param dtoGastoExpediente
+		 * @return
+		 */
+		public boolean saveHonorario(DtoGastoExpediente dtoGastoExpediente);
 
 		
+		/**
+		 * Método que obtiene el ExpedienteComercial relacionado con una determinada Oferta 
+		 * @param idOferta
+		 * @return
+		 */		
+		public ExpedienteComercial expedienteComercialPorOferta (Long idOferta);
 	   
 }
 

@@ -28,12 +28,12 @@ public class DetectorCambiosStockActivos extends DetectorCambiosBD<StockDto> {
 
 	@Override
 	public String nombreVistaDatosActuales() {
-		return "REM01.REM_WEBCOM_STOCK_ACTUAL";
+		return "REM01.VI_STOCK_ACTIVOS_WEBCOM";
 	}
 
 	@Override
 	public String nombreTablaDatosHistoricos() {
-		return "REM01.REM_WEBCOM_STOCK_HISTORICO";
+		return "REM01.SAW_STOCK_ACTIVOS_WEBCOM";
 	}
 
 	@Override

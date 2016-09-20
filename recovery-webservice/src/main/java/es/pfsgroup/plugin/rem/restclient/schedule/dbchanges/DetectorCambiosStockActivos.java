@@ -21,8 +21,8 @@ public class DetectorCambiosStockActivos extends DetectorCambiosBD<StockDto> {
 	}
 
 	@Override
-	public void invocaServicio(Long idUsuario, List<StockDto> data) {
-		serviciosWebcom.enviarStock(idUsuario, data);
+	public void invocaServicio(List<StockDto> data) {
+		serviciosWebcom.enviarStock(data);
 		
 	}
 

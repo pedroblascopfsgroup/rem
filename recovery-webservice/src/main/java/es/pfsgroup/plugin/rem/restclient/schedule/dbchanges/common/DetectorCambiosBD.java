@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 
 /**
@@ -26,7 +27,7 @@ import es.pfsgroup.plugin.rem.restclient.utils.Converter;
  *            Tipo del DTO asociado a este detector de cambios, es decir, que se
  *            va a usar para invocar al servicio
  */
-public abstract class DetectorCambiosBD<T> implements InfoTablasBD {
+public abstract class DetectorCambiosBD<T extends WebcomRESTDto> implements InfoTablasBD {
 
 	@Autowired
 	private CambiosBDDao dao;
@@ -44,13 +45,10 @@ public abstract class DetectorCambiosBD<T> implements InfoTablasBD {
 	/**
 	 * Este método contiene la lógica para invocar al srvicio REST de Webcom
 	 * 
-	 * @param idUsuario
-	 *            En todas las invocaciones a servicios es necesario indica el
-	 *            usuario que realiza el cambio.
 	 * @param data
 	 *            Lista de DTO's que se queren mandar al servicio.
 	 */
-	public abstract void invocaServicio(Long idUsuario, List<T> data);
+	public abstract void invocaServicio(List<T> data);
 
 	/**
 	 * Devuelve la lisa de cambios detectados ya convertidos al DTO

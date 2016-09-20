@@ -6,7 +6,9 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.FloatDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.StringDataType;
 
-public class StockDto {
+public class StockDto implements WebcomRESTDto{
+	private LongDataType idUsuarioRemAccion;
+	private DateDataType fechaAccion;
 	private LongDataType idActivoHaya;
 	private StringDataType codTipoVia;
 	private StringDataType nombreCalle;
@@ -384,6 +386,18 @@ public class StockDto {
 	}
 	public void setNuevo(BooleanDataType nuevo) {
 		this.nuevo = nuevo;
+	}
+	public LongDataType getIdUsuarioRemAccion() {
+		return idUsuarioRemAccion;
+	}
+	public void setIdUsuarioRemAccion(LongDataType idUsuarioRemAccion) {
+		this.idUsuarioRemAccion = idUsuarioRemAccion;
+	}
+	public DateDataType getFechaAccion() {
+		return fechaAccion;
+	}
+	public void setFechaAccion(DateDataType fechaAccion) {
+		this.fechaAccion = fechaAccion;
 	}
 			
 }

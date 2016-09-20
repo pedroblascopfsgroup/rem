@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.restclient.webcom;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,6 +12,8 @@ import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.ServiciosWebcomApi;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoOfertaDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.StockDto;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
@@ -41,69 +44,82 @@ public class ServiciosWebcomManager extends ServiciosWebcomBaseManager implement
 	private ClienteStock stockService;
 
 	@Override
-	public void enviaActualizacionEstadoTrabajo(Long usuarioId, Long idRem, Long idWebcom, String codEstado,
-			String motivoRechazo) {
+	public void enviaActualizacionEstadoTrabajo(List<EstadoTrabajoDto> estadoTrabajo) {
 		logger.info("Invocando servicio Webcom: Estado Trabajo");
-		HashMap<String, Object> params = createParametersMap(usuarioId);
-		params.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, idRem);
-		params.put(EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, idWebcom);
-		params.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, codEstado);
 
-		compruebaObligatorios(params, EstadoTrabajoConstantes.ID_TRABAJO_REM, EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM,
-				EstadoTrabajoConstantes.COD_ESTADO_TRABAJO);
-
-		if (motivoRechazo != null && (!"".equals(motivoRechazo))) {
-			params.put(EstadoTrabajoConstantes.MOTIVO_RECHAZO, motivoRechazo);
-		}
 		ParamsList paramsList = new ParamsList();
-		paramsList.add(params);
-		invocarServicioRestWebcom(paramsList, estadoTrabajoService);
+		if (estadoTrabajo != null) {
+			logger.debug("Convirtiendo EstadoTrabajoDto -> ParamsList");
+			for (EstadoTrabajoDto dto : estadoTrabajo) {
+				HashMap<String, Object> params = createParametersMap(dto);
+				params.putAll(Converter.dtoToMap(dto));
+				compruebaObligatorios(params, EstadoTrabajoConstantes.ID_TRABAJO_REM,
+						EstadoTrabajoConstantes.ID_TRABAJO_WEBCOM, EstadoTrabajoConstantes.COD_ESTADO_TRABAJO);
+				paramsList.add(params);
+			}
+		}else{
+			logger.debug("La lista de EstadoTrabajoDto es NULL");
+		}
+		
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, estadoTrabajoService);
+		}else{
+			logger.debug("ParamsList vacío. Nada qeu enviar");
+		}
 	}
 
 	@Override
-	public void enviaActualizacionEstadoOferta(Long usuarioId, Long idRem, Long idWebcom, String codEstadoOferta,
-			Long idActivoHaya, String codEstadoExpediente, Boolean vendido) {
+	public void enviaActualizacionEstadoOferta(List<EstadoOfertaDto> estadoOferta) {
 		logger.info("Invocando servicio Webcom: Estado Oferta");
-		HashMap<String, Object> params = createParametersMap(usuarioId);
-
-		params.put(EstadoOfertaConstantes.ID_OFERTA_WEBCOM, idWebcom);
-		params.put(EstadoOfertaConstantes.ID_OFERTA_REM, idRem);
-		params.put(EstadoOfertaConstantes.COD_ESTADO_OFERTA, codEstadoOferta);
-
-		compruebaObligatorios(params, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, EstadoOfertaConstantes.ID_OFERTA_REM,
-				EstadoOfertaConstantes.COD_ESTADO_OFERTA);
-
-		if (idActivoHaya != null) {
-			params.put(EstadoOfertaConstantes.ID_ACTIVO_HAYA, idActivoHaya);
-		}
-
-		if (codEstadoExpediente != null) {
-			params.put(EstadoOfertaConstantes.COD_ESTADO_EXPEDIENTE, codEstadoExpediente);
-		}
-
-		if (vendido != null) {
-			params.put(EstadoOfertaConstantes.VENDIDO, vendido);
-		}
-
+	
 		ParamsList paramsList = new ParamsList();
-		paramsList.add(params);
-		invocarServicioRestWebcom(paramsList, estadoOfertaService);
+		
+		if (estadoOferta != null){
+			logger.debug("Convirtiendo EstadoOfertaDto -> ParamsList");
+			for (EstadoOfertaDto dto : estadoOferta){
+				HashMap<String, Object> params = createParametersMap(dto);
+				params.putAll(Converter.dtoToMap(dto));
+				compruebaObligatorios(params, EstadoOfertaConstantes.ID_OFERTA_WEBCOM, EstadoOfertaConstantes.ID_OFERTA_REM,
+						EstadoOfertaConstantes.COD_ESTADO_OFERTA);
+				paramsList.add(params);
+				
+			}
+			
+		}else{
+			logger.debug("La lista de EstadoOfertaDto es NULL");
+		}
+		
+		
+		if (!paramsList.isEmpty()) {
+			invocarServicioRestWebcom(paramsList, estadoOfertaService);
+		}else{
+			logger.debug("ParamsList vacío. Nada qeu enviar");
+		}
+		
 
 	}
 
 	@Override
-	public void enviarStock(Long usuarioId, List<StockDto> stock) {
+	public void enviarStock(List<StockDto> stock) {
 		logger.info("Invocando servicio Webcom: Stock");
 
 		ParamsList paramsList = new ParamsList();
-		if ((stock != null) && (!stock.isEmpty())) {
+		logger.debug("Convirtiendo StockDto -> ParamsList");
+		if (stock != null) {
 			for (StockDto dto : stock) {
-				HashMap<String, Object> params = createParametersMap(usuarioId);
+				HashMap<String, Object> params = createParametersMap(dto);
+				compruebaObligatorios(params);
 				params.putAll(Converter.dtoToMap(dto));
 				paramsList.add(params);
 			}
-
+		}else{
+			logger.debug("La lista de StockDto es NULL");
+		}
+		
+		if (!paramsList.isEmpty()) {
 			invocarServicioRestWebcom(paramsList, stockService);
+		}else{
+			logger.debug("ParamsList vacío. Nada qeu enviar");
 		}
 
 	}

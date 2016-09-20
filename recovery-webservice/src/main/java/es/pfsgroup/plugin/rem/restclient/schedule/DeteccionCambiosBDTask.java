@@ -29,8 +29,6 @@ import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
  */
 public class DeteccionCambiosBDTask implements ApplicationListener {
 
-	private static final Long ID_USUARIO_LOGADO = -1L;
-
 	private final Log logger = LogFactory.getLog(getClass());
 
 	/*
@@ -58,7 +56,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 	 */
 	public void detectaCambios() {
 
-		logger.info("Iniciando la detección de cambios");
+		logger.info("[inicio] Detección de cambios en BD y envío de las modificaciones a WEBCOM mediante REST");
 		if ((registroCambiosHandlers != null) && (!registroCambiosHandlers.isEmpty())) {
 			for (DetectorCambiosBD handler : registroCambiosHandlers) {
 
@@ -68,7 +66,7 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 
 				if ((listPendientes != null) && (!listPendientes.isEmpty())) {
 					logger.debug(handler.getClass().getName() + ": invocando al servicio REST");
-					handler.invocaServicio(ID_USUARIO_LOGADO, listPendientes);
+					handler.invocaServicio(listPendientes);
 					
 					logger.debug(handler.getClass().getName() + ": marcando los registros de la BD como enviados");
 					handler.marcaComoEnviados(control);
@@ -77,10 +75,11 @@ public class DeteccionCambiosBDTask implements ApplicationListener {
 					logger.debug("'listPendientes' es nulo o está vacío. No hay datos que enviar por servicio");
 				}
 			}
-			logger.info("Ha finalizado la detección de cambios");
 		} else {
 			logger.warn("El registro de cambios en BD aún no está disponible");
 		}
+		
+		logger.info("[fin] Detección de cambios en BD y envío de las modificaciones a WEBCOM mediante REST");
 
 	}
 

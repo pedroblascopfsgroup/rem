@@ -1,10 +1,11 @@
 package es.pfsgroup.plugin.rem.tests.restclient.webcom.schedule;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
@@ -65,6 +65,7 @@ public class DeteccionCambiosBDTests {
 		Mockito.reset(detectorCambiosDao);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testDeteccionCambiosStock() {
 
@@ -89,7 +90,7 @@ public class DeteccionCambiosBDTests {
 		task.detectaCambios();
 
 		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).enviarStock(anyLong(), stockArgumentCaptor.capture());
+		verify(servicios).enviarStock(stockArgumentCaptor.capture());
 
 		List<StockDto> stockEnviado = stockArgumentCaptor.getValue();
 		assertEquals("No se ha enviado la cantidad de elementos esparada", 2, stockEnviado.size());
@@ -109,12 +110,13 @@ public class DeteccionCambiosBDTests {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testDeteccionCambioEstadoPeticionTrabajo(){
 		
-		
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put(EstadoTrabajoConstantes.ID_TRABAJO_REM, 1L);
+		data.put(EstadoTrabajoConstantes.COD_ESTADO_TRABAJO, "Z");
 		
 		List<CambioBD> cambiosBD = new ArrayList<CambioBD>();
 		cambiosBD.add(new CambioBDStub(data));
@@ -123,9 +125,13 @@ public class DeteccionCambiosBDTests {
 		
 		task.detectaCambios();
 		
-		ArgumentCaptor<List> stockArgumentCaptor = ArgumentCaptor.forClass(List.class);
-		verify(servicios).enviaActualizacionEstadoTrabajo(anyLong(), anyLong(), anyLong(), anyString(), anyString());
+		ArgumentCaptor<List> argumentCaptor = ArgumentCaptor.forClass(List.class);
+		verify(servicios).enviaActualizacionEstadoTrabajo(argumentCaptor.capture());
 		
+		List<EstadoTrabajoDto> dtoList = argumentCaptor.getValue();
+		assertFalse("La lista de cambios enviada al servicio no puede estar vacía", dtoList.isEmpty());
+		assertEquals("El valor de ID_TRABAJO_REM no coincide", new Long(1L), dtoList.get(0).getIdTrabajoRem().getValue());
+		assertEquals("El valor de COD_ESTADO_TRABAJO no coincide", "Z", dtoList.get(0).getCodEstadoTrabajo().getValue());
 	}
 
 }

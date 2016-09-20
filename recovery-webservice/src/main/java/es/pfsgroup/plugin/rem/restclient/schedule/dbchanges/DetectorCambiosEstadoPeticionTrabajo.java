@@ -9,8 +9,6 @@ import es.pfsgroup.plugin.rem.api.services.webcom.dto.EstadoTrabajoDto;
 import es.pfsgroup.plugin.rem.restclient.schedule.dbchanges.common.DetectorCambiosBD;
 import es.pfsgroup.plugin.rem.restclient.webcom.ServiciosWebcomManager;
 
-
-@Component
 public class DetectorCambiosEstadoPeticionTrabajo extends DetectorCambiosBD<EstadoTrabajoDto>{
 	
 	@Autowired
@@ -22,8 +20,8 @@ public class DetectorCambiosEstadoPeticionTrabajo extends DetectorCambiosBD<Esta
 	}
 
 	@Override
-	public void invocaServicio(Long idUsuario, List<EstadoTrabajoDto> data) {
-		this.serviciosWebcom.enviaActualizacionEstadoTrabajo(idUsuario, null, null, null, null);
+	public void invocaServicio(List<EstadoTrabajoDto> data) {
+		this.serviciosWebcom.enviaActualizacionEstadoTrabajo(data);
 		
 	}
 

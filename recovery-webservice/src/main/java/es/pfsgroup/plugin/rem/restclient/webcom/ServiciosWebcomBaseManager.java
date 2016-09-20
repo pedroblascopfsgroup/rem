@@ -13,6 +13,10 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.messagebroker.MessageBroker;
 import es.pfsgroup.plugin.rem.api.services.webcom.FaltanCamposObligatoriosException;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.DateDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.LongDataType;
+import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.NullDataType;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
 import es.pfsgroup.plugin.rem.restclient.webcom.clients.ClienteWebcomBase;
@@ -34,16 +38,32 @@ public abstract class ServiciosWebcomBaseManager {
 	 * Inicializa un HashMap de parámetros para invocar a un Servicio Web. Este
 	 * método setea los campos comunes que se requieren en todos los Servicios.
 	 * 
-	 * @param usuarioId ID del usuario que realiza la petición.
+	 *@param dto DTO que contiene los datos que queremos enviar.
 	 * @return
 	 */
-	protected HashMap<String, Object> createParametersMap(Long usuarioId) {
+	protected HashMap<String, Object> createParametersMap(WebcomRESTDto dto) {
+		
+		if (dto == null){
+			throw new IllegalArgumentException("'dto' no puede ser NULL");
+		}
+		
+		LongDataType usuarioId = dto.getIdUsuarioRemAccion();
+		if ((usuarioId == null) || (usuarioId instanceof NullDataType)){
+			throw new IllegalArgumentException("El dto no está bien conformado: 'idUsuarioRemAccion' no puede ser null");
+		}
+		
+		DateDataType fechaAccion = dto.getFechaAccion();
+		if ((fechaAccion == null) || (fechaAccion instanceof NullDataType)){
+			throw new IllegalArgumentException("El dto no está bien conformado: 'fechaAccion' no puede ser null");
+		}
+		
 		logger.debug("Inicializando HashMap de parámetros");
+		
 		HashMap<String, Object> params = new HashMap<String, Object>();
 
-		String fechaAccion = WebcomRequestUtils.formatDate(new Date());
-		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + fechaAccion);
-		params.put(ConstantesGenericas.FECHA_ACCION, fechaAccion);
+		String strFechaAccion = WebcomRequestUtils.formatDate(fechaAccion.getValue());
+		logger.debug(ConstantesGenericas.FECHA_ACCION + " = " + strFechaAccion);
+		params.put(ConstantesGenericas.FECHA_ACCION, strFechaAccion);
 
 		logger.debug(ConstantesGenericas.ID_USUARIO_REM_ACCION + " = " + usuarioId);
 		params.put(ConstantesGenericas.ID_USUARIO_REM_ACCION, usuarioId);
